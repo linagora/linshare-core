@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+
+	<!-- 
+	<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+	<property name="connection.driver_class">org.postgresql.Driver</property>
+	<property name="connection.url">jdbc:postgresql://10.75.128.149:5432/securedshare</property>
+	<property name="connection.username">postgres</property>
+	<property name="connection.password">postgres</property>
+	 -->
+
+    <property name="connection.autocommit">true</property>
+    
+      <!--Use ehcache as cache manager -->
+	<property name="hibernate.cache.provider_class"> 
+		net.sf.ehcache.hibernate.SingletonEhCacheProvider
+	</property>
+	<property name="net.sf.ehcache.configurationResourceName">/ehcache.cfg.xml</property>
+	<property name="hibernate.cache.use_minimal_puts">false</property>
+	<property name="hibernate.cache.use_query_cache">true</property>
+	<property name="hibernate.cache.use_second_level_cache">true</property>
+	<property name="hibernate.cache.use_structured_entries">true</property>
+	
+    <mapping resource="org/linagora/linShare/core/domain/entities/User.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/Document.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/Share.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/AllowedMimeType.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/Parameter.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/LogEntry.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/Signature.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/Contact.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/SecuredUrl.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/RecipientFavourite.hbm.xml"/>
+    
+    
+  </session-factory>
+</hibernate-configuration>

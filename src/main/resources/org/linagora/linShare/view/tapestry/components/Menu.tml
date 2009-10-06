@@ -1,0 +1,28 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+
+ 
+	<div class="menu-title">${title}</div>
+	<ul>
+	<t:loop source="listMenuEntry" value="object">
+			<t:if test="label">
+			<li>
+			 	<t:multilink url="${object.link}" target="${object.target}" class="menu-label${styleValue}">
+					<t:parameter name="content"><span>${object.label}</span></t:parameter>
+				</t:multilink>
+
+			</li>
+			</t:if> 
+			<t:if test="imageDisplay">
+				<div class="menu-imageContainer${styleValue}">
+					<t:multilink url="${object.link}" target="${object.target}" class="menu-link${styleValue}" >
+						<t:parameter name="content">
+							<img class="menu-image${styleValue}" src="${request.contextPath}/${object.image}" /> 
+						</t:parameter>
+					</t:multilink>
+				</div>
+			</t:if>
+	</t:loop>
+	</ul>
+</t:container>

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    
+    <br />
+
+	<div t:type="ck/SlidingPanel" t:id="panel1" t:closed="false" t:options="{duration:0.3}"
+		t:subject="${message:components.mimetypeconfigurator.panel}">
+
+        <t:form t:id="mimeTypeConfiguratorForm">
+
+        <t:errors />
+
+		<div id="displayChoice">
+			<t:textfield t:id="numberOfRow" size="2" class="edit-form-field" validate="required"/>/${totalSize}
+			<t:linkSubmit>${message:components.mimetypeconfigurator.refresh}</t:linkSubmit>
+		</div>
+
+		<div id="mimetypeActions">
+			<a onClick="setAllAuthorised()">${message:components.mimetypeconfigurator.authorised.all}</a>&nbsp;
+			<a onClick="setAllDenied()">${message:components.mimetypeconfigurator.denied.all}</a>&nbsp;
+			<a onClick="setAllWarn()">${message:components.mimetypeconfigurator.warn.all}</a>
+		</div>
+
+		<t:grid source="supportedMimeType" exclude="extensions,mimetype,id,status" row="allowedMimeTypeVO" add="actions" reorder="actions,label" rowsPerPage="${numberOfRow}">
+			<t:parameter t:name="empty">
+				${message:components.mimetypeconfigurator.grid.empty}
+			</t:parameter>
+			<t:parameter t:name="actionsHeader">
+				${message:components.mimetypeconfigurator.header.actions}
+			</t:parameter>
+		    <t:parameter t:name="labelHeader">
+				${message:components.mimetypeconfigurator.header.label}
+			</t:parameter>
+			
+			<t:parameter t:name="actionsCell">
+			   <t:radiogroup t:id="type" t:value="mimeTypeStatus">
+                    <t:radio t:id="authorised"/>&nbsp;<t:label for="authorised">${message:components.mimetypeconfigurator.radio.autorised}</t:label>
+                    ${message:global.space}
+                    <t:radio t:id="denied"/>&nbsp;<t:label for="denied">${message:components.mimetypeconfigurator.radio.denied}</t:label>
+                    ${message:global.space}
+                    <t:radio t:id="warn"/>&nbsp;<t:label for="warn">${message:components.mimetypeconfigurator.radio.warn}</t:label>
+                </t:radiogroup>
+			</t:parameter>
+		</t:grid>
+
+		<t:linkSubmit>${message:global.button.update}</t:linkSubmit>
+
+		</t:form>
+
+	</div>
+ 
+</t:container>

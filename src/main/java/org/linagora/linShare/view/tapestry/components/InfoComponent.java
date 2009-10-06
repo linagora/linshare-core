@@ -1,0 +1,124 @@
+/*
+ *    This file is part of Linshare.
+ *
+ *   Linshare is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU Affero General Public License as
+ *   published by the Free Software Foundation, either version 3 of
+ *   the License, or (at your option) any later version.
+ *
+ *   Linshare is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Affero General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Affero General Public
+ *   License along with Foobar.  If not, see
+ *                                    <http://www.gnu.org/licenses/>.
+ *
+ *   (c) 2008 Groupe Linagora - http://linagora.org
+ *
+*/
+package org.linagora.linShare.view.tapestry.components;
+
+import java.text.DateFormat;
+import java.util.Locale;
+
+import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linShare.core.Facade.DocumentFacade;
+import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.utils.FileUtils;
+
+public class InfoComponent {
+
+	/* ***********************************************************
+	 *                      Injected services
+	 ************************************************************ */
+	
+	@Inject
+	private DocumentFacade documentFacade;
+
+	@Inject
+	private Messages messages;
+	
+	@Inject
+	private Locale locale;
+	
+	/* ***********************************************************
+     *                Properties & injected symbol, ASO, etc
+     ************************************************************ */
+	
+	@ApplicationState
+	@Property
+	private UserVo userVo;
+	
+	@SuppressWarnings("unused")
+	@Property
+	private boolean userVoExists;
+	
+	@Property
+	private boolean isGuest;
+	
+	@Property
+	private boolean canUpload;
+	
+	@SuppressWarnings("unused")
+	@Property
+	private String expirationDate;
+	
+	@SuppressWarnings("unused")
+	@Property
+	private String usedQuota;
+	
+	@SuppressWarnings("unused")
+	@Property
+	private int usedQuotaPercent;
+	
+	@SuppressWarnings("unused")
+	@Property
+	private String totalQuota;
+	
+	@Persist
+	private DateFormat localisedDateFormat; // this formater is for the displayed date
+	
+	   /* ***********************************************************
+     *                   Event handlers&processing
+     ************************************************************ */
+	
+	
+	@SetupRender
+	void setupRender() {
+		canUpload = userVo.isUpload();
+		isGuest = userVo.isGuest();
+
+		// the formater for the displayed date : we hide the timeline date, and add our date in the 
+		// description
+		localisedDateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+		
+		if (canUpload) {
+			
+			long userAvailableQuota = documentFacade.getUserAvailableQuota(userVo);
+			long userTotalQuota = documentFacade.getUserTotalQuota(userVo);
+			long userUsedQuota = userTotalQuota - userAvailableQuota;
+			
+			if(userUsedQuota<0) userUsedQuota = 0;
+			usedQuotaPercent = (int) (100*userUsedQuota / userTotalQuota);
+			if(usedQuotaPercent>100) usedQuotaPercent = 100;
+			
+			FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(userTotalQuota);
+			usedQuota = FileUtils.getFriendlySize(userUsedQuota, messages, preferedUnity);
+			totalQuota = FileUtils.getFriendlySize(userTotalQuota, messages, preferedUnity);
+		}
+		
+		if (isGuest) {
+			expirationDate = localisedDateFormat.format(userVo.getExpirationDate());
+		}
+	}
+	
+	
+	
+}

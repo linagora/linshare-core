@@ -1,0 +1,17 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	
+	<div t:id="window_confirm" >
+	<div class="confirmPopup">
+
+		<div class="messageLabel"><img src="${asset:context:images/icons/alert.png}" alt=""/> ${messageLabel}</div>
+	
+		<div class="button">
+			<t:actionLink t:id="confirm" class="button"><span>${message:global.button.yes}</span></t:actionLink>
+			<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span>${message:global.button.no}</span></a>
+		</div>
+
+	</div>
+	</div>
+
+</t:container>

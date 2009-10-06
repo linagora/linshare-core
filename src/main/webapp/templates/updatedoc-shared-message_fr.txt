@@ -1,0 +1,10 @@
+
+Bonjour,
+
+${firstName} ${lastName} a mis à jour le fichier partagé ${fileOldName} : 
+- nom du nouveau fichier : ${fileName}
+- taille du fichier : ${fileSize}
+- type MIME : ${mimeType}
+
+-- 
+The LinShare dream team

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+	default-autowire="no">
+
+  <bean id="repository" class="org.linagora.linShare.core.dao.jackRabbit.BetterRepositoryFactoryBean">
+    <property name="configuration" value="classpath:repository.xml"/>
+    <property name="homeDir" value="${home.directory}"/>
+    <property name="configurationProperties">
+    	<list>
+    		<value>classpath:jackRabbit.properties</value>
+    		<value>${linagora.config.path}/jackRabbit.properties</value>
+    	</list>
+    </property>
+  </bean>
+  
+  <bean id="jcrSessionFactory" class="org.springmodules.jcr.JcrSessionFactory">
+    <property name="repository" ref="repository"/>
+    <property name="credentials">
+      <bean class="javax.jcr.SimpleCredentials">
+        <constructor-arg index="0" value="${repository.username}"/>
+        <constructor-arg index="1">
+          <bean factory-bean="password" factory-method="toCharArray"/>
+        </constructor-arg>
+      </bean>
+    </property>
+  </bean>
+  
+   <bean id="jcrDataSource" destroy-method="close" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${database.driver.class}"/>
+        <property name="url" value="jdbc:postgresql://${database.host}:${database.port}/${database.name}"/>
+        <property name="username" value="${database.username}"/>
+        <property name="password" value="${database.password}"/>
+    </bean>
+    
+    <bean id="transactionJackRabbit" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  	<property name="dataSource" ref="jcrDataSource"/>
+	</bean>
+  
+  <bean id="password" class="java.lang.String">
+      <constructor-arg index="0" value="${repository.password}"/>
+  </bean>
+  
+  <bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate">
+    <property name="sessionFactory" ref="jcrSessionFactory"/>
+    <property name="allowCreate" value="true"/>
+  </bean>	
+
+  <bean id="jackRabbitRepository" class="org.linagora.linShare.core.dao.jackRabbit.JackRabbitFileSystem">
+   <!--  <property name="fileFinder" ref="fileFinder"/> -->
+  <property name="jcrTemplate" ref="jcrTemplate"/>
+   <!--  <property name="contentSource" value="myRandomContentSource"/> -->
+   <!--  <property name="parser" ref="someRandomDocumentParser"/>
+    <property name="sourceDirectory" value="/path/to/my/random/content"/> -->
+  </bean>	
+	
+</beans>	

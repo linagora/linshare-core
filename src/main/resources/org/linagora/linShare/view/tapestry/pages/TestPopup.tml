@@ -1,0 +1,93 @@
+<t:MyBorderLayout t:title="TEST POPUPS" t:identifier="home"
+xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+   <a href="#" onclick="window1.showCenter(true)">click here for modal window</a>
+    
+    <a href="#" onclick="test();">click here for modal window</a>
+ 
+   <t:passwordPopup t:id="passwordPopup" t:title="${message:testpopup.title}" t:content="${message:testpopup.content}" t:errorBanner="${message:testpopup.errorBanner}"/>
+  
+  List of all theme
+ <br/>
+ Nota : the button on top of window can be added or removed as needed
+  
+  
+  <br/>
+  <a href="#" onclick="dialog.showCenter(true)">dialog theme</a>
+
+  <br/>
+  <a href="#" onclick="alert.showCenter(true)">alert theme</a>
+
+  <br/>
+  <a href="#" onclick="alert_lite.showCenter(true)">alert_lite theme</a>
+
+  <br/>
+  <a href="#" onclick="alphacube.showCenter(true)">alphacube theme</a>
+
+  <br/>
+  <a href="#" onclick="mac_os_x.showCenter(true)">mac_os_x theme</a>
+  <br/>
+  <a href="#" onclick="blur_os_x.showCenter(true)">blur_os_x theme</a>
+  <br/>
+  <a href="#" onclick="mac_os_x_dialog.showCenter(true)">mac_os_x_dialog theme</a>
+  <br/>
+  <a href="#" onclick="nuncio.showCenter(true)">nuncio theme</a>
+  <br/>
+  <a href="#" onclick="spread.showCenter(true)">spread theme</a>
+  <br/>
+  <a href="#" onclick="darkX.showCenter(true)">darkX theme</a>
+    <br/>
+  <a href="#" onclick="greenlighting.showCenter(true)">greenlighting theme</a>
+    <br/>
+  <a href="#" onclick="bluelighting.showCenter(true)">bluelighting theme</a>
+    <br/>
+  <a href="#" onclick="greylighting.showCenter(true)">greylighting theme</a>
+  	    <br/>
+  <a href="#" onclick="darkbluelighting.showCenter(true)">darkbluelighting theme</a>
+  
+  	<div t:id="dialog" >
+  	bob
+  	</div>
+  	  	<div t:id="alert" >
+  	bob
+  	</div>
+  	  	<div t:id="alert_lite" >
+  	bob
+  	</div>
+  	  	<div t:id="alphacube" >
+  	bob
+  	</div>
+  	  	<div t:id="mac_os_x" >
+  	bob
+  	</div>
+  	  	<div t:id="blur_os_x" >
+  	bob
+  	</div>
+  	  	<div t:id="mac_os_x_dialog" >
+  	bob
+  	</div>
+  	  	<div t:id="nuncio" >
+  	bob
+  	</div>
+  	  	<div t:id="spread" >
+  	bob
+  	</div>
+<div t:id="darkX" >
+  	bob
+  	</div>
+  	<div t:id="greenlighting" >
+  	bob
+  	</div>
+  	<div t:id="bluelighting" >
+  	bob
+  	</div>  	
+  	<div t:id="greylighting" >
+  	bob
+  	</div>
+  		<div t:id="darkbluelighting" >
+  	bob
+  	</div>  
+  
+   		
+</t:MyBorderLayout>   
+ 

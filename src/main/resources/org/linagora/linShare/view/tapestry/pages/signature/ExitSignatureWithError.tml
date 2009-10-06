@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.error.title" t:identifier="error"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	Unsupported
+
+	<!--
+	<!- Main content ->
+
+	<div id="content">
+
+		<div id="pageContent">
+
+			<div class="errorTitle">
+				${message:pages.exitSignatureWithError.title}
+			</div>
+			<div class="errorMessage">
+				<i>${message:pages.exitSignatureWithError.details}</i> ${userSignature.errorMessage}
+			</div>
+			<br />
+			<t:actionLink t:id="quitWizard">${message:pages.exitSignatureWithError.action.quit}</t:actionLink>
+
+		</div>
+
+	</div><!- id="content" ->   -->
+
+</t:MyBorderLayout>

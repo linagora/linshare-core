@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<ul>
+
+		<!-- Information > Guest account expiration date -->
+		<t:if t:test="isGuest">
+		<li>
+			<strong>${message:components.infoComponent.expirationDate}</strong>
+			${message:global.space}
+			<span>${expirationDate}</span>
+		</li>
+		</t:if>
+		
+		<!-- Information > User space quota -->
+		<t:if t:test="canUpload">
+		<li>
+			<strong>${message:components.infoComponent.usedQuota}</strong>
+			${message:global.space}
+			<span>${usedQuota} / ${totalQuota}</span>
+		</li>
+		<li>
+			<div id="userTotalSpaceDiv" style="width:100%; height:15px; background-color:white;">
+				<div id="userFreeSpaceDiv" style="width:${usedQuotaPercent}%; height:inherit; background-color:silver;"><span>${usedQuotaPercent}&nbsp;%</span></div>
+			</div>
+		</li>
+		</t:if>
+
+	</ul>
+
+</t:container>

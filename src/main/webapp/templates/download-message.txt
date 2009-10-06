@@ -1,0 +1,8 @@
+
+Hi ${firstName} ${lastName},
+
+${recipientFirstName} ${recipientLastName} downloaded the following file you shared with him:
+${documentNamestxt}
+
+-- 
+The LinShare dream team

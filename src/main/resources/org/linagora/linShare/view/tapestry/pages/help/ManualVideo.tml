@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="${message:pages.help.title} - ${roleLabel}" t:identifier="help" t:currentHighlight="help"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.help.title} – ${roleLabel}</h1>
+
+		<div id="pageContent">
+
+			<!-- id="helpVideo" -->
+			<t:help />
+
+			<h2 class="back"><t:pagelink t:page="help"><img src="${asset:context:images/icons/icon-help-back.png}" alt=""/> ${message:pages.help.back}</t:pagelink></h2>
+
+		</div>
+
+	</div><!-- id="content" -->
+	
+</t:MyBorderLayout>

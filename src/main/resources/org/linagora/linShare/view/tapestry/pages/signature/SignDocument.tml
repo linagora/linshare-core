@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.signature.title" t:identifier="signature"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	Unsupported
+	<!-- 
+	<script type="text/javascript">
+		function signature(){
+			var hashes = document.form.signContent.value;
+			var signatures = document.applets[0].sign(hashes,"${userSignature.signerKeystoreType}","${userSignature.alias}",navigator.userAgent);
+			document.form.signContent.value=signatures;
+		}
+	</script>
+
+	<!- Main content ->
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.signature.title}</h1>
+
+		<div id="pageContent">
+
+			<h2>${message:pages.signature.signdocument.identity}</h2>
+			<table id="userProperties" class="properties">
+				<colgroup>
+					<col id="fieldName" class="field" />
+					<col id="fieldValue" class="field" />
+				</colgroup>
+				<tbody>
+				<tr>
+					<td>${message:pages.signature.signdocument.completename}</td>
+					<td>${userVo.firstName} ${userVo.lastName}</td>
+				</tr>
+				<tr>
+					<td>${message:pages.signature.signdocument.mail}</td>
+					<td>${userVo.mail}</td>
+				</tr>
+				</tbody>
+			</table>
+		
+			<h2>${message:pages.signature.signdocument.currentdocumenttosign}</h2>
+			<div id="tbsFiles">
+				<t:grid source="documents" row="document" reorder="filename,friendlySize,createDate" add="friendlySize,createDate" exclude="type,size,encrypted,identifier,shared,ownerLogin">
+					<t:parameter t:name="filenameHeader">${message:pages.signature.signdocument.grid.filenameHeader}</t:parameter>
+					<t:parameter t:name="createDateHeader">${message:pages.signature.signdocument.grid.createDateHeader}</t:parameter>
+					<t:parameter t:name="friendlySizeHeader">${message:pages.signature.signdocument.grid.sizeHeader}</t:parameter>
+					<t:parameter t:name="createDateCell">${createDate}</t:parameter>
+					<t:parameter t:name="friendlySizeCell">${friendlySize}</t:parameter>
+				</t:grid>
+			</div>
+
+			<h2>${message:pages.signature.signdocument.signingkey}</h2>
+			<table id="certProperties" class="properties">
+				<colgroup>
+					<col id="fieldName" class="field" />
+					<col id="fieldValue" class="field" />
+				</colgroup>
+				<tbody>
+				<tr>
+					<td>${message:pages.signature.signdocument.subjectdn}</td>
+					<td>${userSignature.signercert.SubjectDN}</td>
+				</tr>
+				<tr>
+					<td>${message:pages.signature.signdocument.issuerdn}</td>
+					<td>${userSignature.signercert.IssuerDN}</td>
+				</tr>
+				<tr>
+					<td>${message:pages.signature.signdocument.certnotafter}</td>
+					<td>${signerCertNotAfter}</td>
+				</tr>
+				</tbody>
+			</table>
+
+			<t:form>
+				<t:textfield t:id="signContent"  style="display:none"/>		
+				<t:linkSubmit t:id="sign" onclick="signature();" title="${message:pages.signature.signdocument.button.sign.title}"><img src="${asset:context:images/icons/sign.png}" />${message:pages.signature.signdocument.button.sign}</t:linkSubmit>&nbsp;
+				<t:linkSubmit t:id="cancel">${message:pages.signature.signdocument.button.cancel}</t:linkSubmit>
+			</t:form>
+
+			<!- Applet ->
+
+			<applet name="myApplet"
+				archive="${asset:context:applet/linsign.jar}"
+				code="org.linagora.linsign.client.applet.LinSignApplet"
+				width="0" height="0">
+				<param name="debug" value="false" />
+				<param name="language" value="${locale}" />
+			</applet>
+
+		</div>
+
+	</div> --><!-- id="content" -->
+	
+</t:MyBorderLayout>

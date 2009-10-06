@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.linagora</groupId>
+	<artifactId>linshare</artifactId>
+	<version>0.6.10</version>
+	<packaging>war</packaging>
+	<name>LinShare, Secure File Sharing</name>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>tapestry-core</artifactId>
+			<version>${tapestry-release-version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>tapestry-spring</artifactId>
+			<version>${tapestry-release-version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>tapestry-upload</artifactId>
+			<version>${tapestry-release-version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.chenillekit</groupId>
+			<artifactId>chenillekit-tapestry</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>us.antera</groupId>
+			<artifactId>t5restfulws</artifactId>
+			<version>0.2.5-LNG</version>
+		</dependency>
+
+
+		<!--
+			A dependency on either JUnit or TestNG is required, or the surefire
+			plugin (which runs the tests) will fail, preventing Maven from
+			packaging the WAR. Tapestry includes a large number of testing
+			facilities designed for use with TestNG (http://testng.org/), so it's
+			recommended.
+		-->
+
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate</artifactId>
+			<version>3.2.6.ga</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+
+		<!-- Spring dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring-release-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring-release-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring-release-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring-release-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springmodules</groupId>
+			<artifactId>spring-modules-jcr</artifactId>
+			<version>0.8a</version>
+			<exclusions>
+				<exclusion>
+					<groupId>jeceira</groupId>
+					<artifactId>jeceira</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jsr170</groupId>
+					<artifactId>jsr170</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>aparzev</groupId>
+					<artifactId>doka</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>aparzev</groupId>
+					<artifactId>commons</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jug</groupId>
+					<artifactId>jug-asl</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-core</artifactId>
+			<version>1.3.0.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-core-tiger</artifactId>
+			<version>1.3.0.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-release-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security
+			</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security
+			</groupId>
+			<artifactId>spring-security-core-tiger
+			</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.semanticdesktop</groupId>
+			<artifactId>rdf2go.api</artifactId>
+			<version>4.6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.semanticdesktop</groupId>
+			<artifactId>aperture</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
+
+		<!-- Jack Rabbit dependencies -->
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-api</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-classloader</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-core</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>derby</artifactId>
+					<groupId>org.apache.derby</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-jca</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-jcr-commons</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-jcr-server</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-jcr-tests</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-ocm</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-ocm-nodemanagement
+			</artifactId>
+			<version>${jackrabbit-release-version}
+			</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.jcr</groupId>
+			<artifactId>jcr</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aparzev</groupId>
+			<artifactId>commons</artifactId>
+			<version>0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aparzev</groupId>
+			<artifactId>doka</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.safehaus.jug</groupId>
+			<artifactId>jug</artifactId>
+			<version>2.0.0</version>
+			<classifier>asl</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>8.3-603.jdbc3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.5.4</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.linagora.linkit</groupId>
+			<artifactId>timeline</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.linagora.linkit</groupId>
+			<artifactId>utils</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.linagora.linkit</groupId>
+			<artifactId>flexUploadComponent</artifactId>
+			<version>0.4</version>
+		</dependency>
+
+		<!-- Linsign dependencies -->
+		<dependency>
+			<groupId>xml-security</groupId>
+			<artifactId>xmlsec</artifactId>
+			<version>1.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>140</version>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.messaging.saaj
+			</groupId>
+			<artifactId>saaj-impl</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>net.taldius</groupId>
+			<artifactId>libclamav</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.linagora</groupId>
+			<artifactId>RestMarshaller</artifactId>
+			<version>1.0-dev-b2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotations</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+	<url>https://forge.linagora.com/redmine-linpki/projects/show/linshare</url>
+	<inceptionYear>2008</inceptionYear>
+	<issueManagement>
+		<system>Redmine bugtracker</system>
+		<url>https://forge.linagora.com/redmine-linpki/projects/linshare/issues</url>
+	</issueManagement>
+	<ciManagement>
+	</ciManagement>
+	<organization>
+		<name>LINAGORA</name>
+		<url>http://www.linagora.com/</url>
+	</organization>
+	<build>
+		<finalName>linShare</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+					<optimize>true</optimize>
+				</configuration>
+			</plugin>
+
+			<!-- Run the application using "mvn jetty:run" -->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.9</version>
+				<configuration>
+					<!-- Log to the console. -->
+					<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+						<!--
+							This doesn't do anything for Jetty, but is a workaround for a
+							Maven bug that prevents the requestLog from being set.
+						-->
+						<append>true</append>
+					</requestLog>
+				</configuration>
+			</plugin>
+
+
+			<!--
+				This changes the WAR file packaging so that what would normally go
+				into WEB-INF/classes is instead packaged as
+				WEB-INF/lib/securedShare.jar. This is necessary for Tapestry to be
+				able to search for page and component classes at startup. Only
+				certain application servers require this configuration, please see
+				the documentation at the Tapestry 5 project page
+				(http://tapestry.apache.org/tapestry5/).
+			-->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>hibernate3-maven-plugin
+				</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<components>
+						<component>
+							<name>hbm2ddl</name>
+							<!--implementation>jdbcconfiguration</implementation-->
+						</component>
+					</components>
+					<componentProperties>
+						<drop>false</drop>
+						<update>false</update>
+						<export>false</export>
+						<format>true</format>
+						<namingstrategy>
+							org.linagora.linShare.core.repository.hibernate.LinShareNamingStrategy
+						</namingstrategy>
+						<configurationfile>src/main/resources/hibernate.cfg.xml
+						</configurationfile>
+						<propertyfile>src/main/resources/reference-database.properties
+						</propertyfile>
+						<outputfilename>createSchema.sql</outputfilename>
+					</componentProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+		<extensions>
+			<extension>
+				<groupId>postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>8.3-603.jdbc3</version>
+			</extension>
+		</extensions>
+	</build>
+
+	<reporting>
+
+		<!--
+			Adds a report detailing the components, mixins and base classes
+			defined by this module.
+		-->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tapestry</groupId>
+				<artifactId>tapestry-component-report
+				</artifactId>
+				<version>${tapestry-release-version}
+				</version>
+				<configuration>
+					<rootPackage>org.linagora.linShare
+					</rootPackage>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<repositories>
+		<!--
+			This can be commented out when the tapestry-release-version is a not
+			a snapshot. The non-snapshot Tapestry artifacts are distributed
+			through the central repository at ibiblio.
+		-->
+
+		<repository>
+			<id>tapestry-snapshots</id>
+			<url>http://tapestry.formos.com/maven-snapshot-repository/
+			</url>
+		</repository>
+		<repository>
+			<id>chenillekit</id>
+			<url>http://www.chenillekit.org/mvnrepo/release
+			</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>linagora</id>
+			<url>http://repo.linpki.org/nexus/content/repositories/public/
+			</url>
+		</repository>
+
+		<repository>
+			<id>Linagora-releases</id>
+			<url>http://repo.linpki.org/nexus/content/repositories/releases
+			</url>
+		</repository>
+
+		<repository>
+			<id>Linagora-snapshot</id>
+			<url>http://repo.linpki.org/nexus/content/repositories/snapshots
+			</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>Linagora-new</id>
+			<url>http://ejbca-fr.org/repository/shared/
+			</url>
+		</repository>
+
+		<!--
+			<repository> <id>codehaus.snapshots</id>
+			<url>http://snapshots.repository.codehaus.org</url> </repository>
+
+			<repository> <id>OpenQA_Release</id> <name>OpenQA Release
+			Repository</name>
+			<url>http://archiva.openqa.org/repository/releases/</url>
+			</repository> <repository> <id>maven</id> <name>maven repo1</name>
+			<url>http://www.mvnrepository.com/artifact/</url> </repository>
+		-->
+		<repository>
+			<id>Java-Releases</id>
+			<url>http://download.java.net/maven/2/
+			</url>
+		</repository>
+	</repositories>
+
+	<properties>
+		<tapestry-release-version>5.0.18</tapestry-release-version>
+		<netbeans.hint.deploy.server>Tomcat60
+		</netbeans.hint.deploy.server>
+		<spring-release-version>2.5.5</spring-release-version>
+		<jackrabbit-release-version>1.4</jackrabbit-release-version>
+	</properties>
+</project>

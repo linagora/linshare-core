@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.index.title" t:identifier="administration" t:currentHighlight="administration"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.administration.title}</h1>
+		
+		<div id="pageContent">
+
+			<div id="version"><strong>${message:global.version.label} </strong> <code>${version}</code></div>
+
+
+			<h2>${message:pages.administration.index.visual.title}</h2>
+
+				<t:welcomeMessageConfigurer t:welcometexts="welcomeTexts"/>
+				
+				<t:form t:id="administrationForm">
+				<div id="edit-administration-general">
+					<table class="forForms">
+						<tr>
+							<td class="label"><t:label for="customLogoUrl" class="edit-form-label">${message:pages.administration.index.customLogoUrl}</t:label></td>
+							<td class="input"><t:textfield t:id="customLogoUrl" size="48" class="edit-form-field"/></td>
+						</tr>
+						<tr>
+							<td colspan="2"><h2>${message:pages.administration.index.accounts.title}</h2></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="guestAccountExpiryTime" class="edit-form-label">${message:pages.administration.index.guestAccountExpiryTime}</t:label></td>
+							<td class="input"><t:textfield t:id="guestAccountExpiryTime" size="2" class="edit-form-field" validate="required"/>&nbsp;&nbsp;<t:select t:id="guestAccountExpiryUnit" blankoption="never"/></td>
+						</tr>
+						<t:if test="needDeleteTempAdmin">
+							<tr>
+								<td class="label"><t:label for="deleteTempAdmin" class="edit-form-label">${message:pages.administration.index.deleteTempAdmin}</t:label></td>
+								<td class="input"><t:checkbox t:id="deleteTempAdmin" class="edit-form-field" /></td>
+							</tr>
+						</t:if>
+						<tr>
+							<td colspan="2"><h2>${message:pages.administration.index.share.title}</h2></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="userAvailableSize" class="edit-form-label">${message:pages.administration.index.userAvailableSize}</t:label></td>
+							<td class="input"><t:textfield t:id="userAvailableSize" size="5" class="edit-form-field" validate="required"/></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="fileSizeMax" class="edit-form-label">${message:pages.administration.index.fileSizeMax}</t:label></td>
+							<td class="input"><t:textfield t:id="fileSizeMax" size="5" class="edit-form-field" validate="required" /></td>
+						</tr>
+					</table>
+
+					<div id="edit-admin-file-expiry">
+					<h3>${message:pages.administration.index.shareExpiryRules}</h3>
+					
+						<t:label for="deleteDocWithShareExpiryTime" class="edit-form-label">
+							${message:pages.administration.index.deleteDocWithShareExpiryTime}
+						</t:label>
+						<t:checkbox t:id="deleteDocWithShareExpiryTime" class="edit-form-field"/>
+						<br/>
+                
+						<t:label for="defaultShareExpiryTime" class="edit-form-label">
+							${message:pages.administration.index.defaultShareExpiryTime}
+						</t:label>
+						<t:textfield t:id="defaultShareExpiryTime" size="2" value="defaultShareExpiryTime"
+							class="edit-form-field" validate="required" />
+						&nbsp;
+						<t:select t:id="defaultShareExpiryUnit" blankoption="never" value="defaultShareExpiryUnit"/>
+						<br/>
+						
+					<div t:type="ajaxformloop" t:id="shareExpiryRules" source="shareExpiryRules"
+						value="shareExpiryRule" encoder="shareExpiryRuleEncoder">
+						<t:label for="shareExpiryTime" class="edit-form-label">
+							${message:pages.administration.index.shareExpiryTime}
+						</t:label>
+						<t:textfield t:id="shareExpiryTime" size="2" value="shareExpiryRule.shareExpiryTime"
+							class="edit-form-field" validate="required"/>
+						&nbsp;
+						<t:select t:id="shareExpiryUnit" blankoption="never" value="shareExpiryRule.shareExpiryUnit"/>
+						&nbsp;
+						&nbsp;
+						<t:label for="shareSize">
+							${message:pages.administration.index.shareSize}
+						</t:label>
+						&nbsp;
+						<span style="font-weight:bolder">&lt;</span>
+						&nbsp;
+						<t:textfield t:id="shareSize" size="3" value="shareExpiryRule.shareSize" validate="required"/>
+						&nbsp;
+						<t:select t:id="shareSizeUnit" blankoption="never" value="shareExpiryRule.shareSizeUnit"/>
+						&nbsp;
+						<t:removerowlink><img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"/></t:removerowlink>
+						<t:parameter name="addRow">
+							<t:addrowlink>${message:pages.administration.index.shareExpiryRule.addRow}</t:addrowlink>
+						</t:parameter>
+						<br/>
+					</div>
+					
+					</div><!-- id="edit-admin-file-expiry" -->
+					<br/>
+					<table class="forForms">
+						<tr>
+							<td class="label"><t:label for="activeMimeType" class="edit-form-label">${message:pages.administration.index.activeMimeType}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeMimeType" class="edit-form-field"/></td>
+						</tr>
+						<tr>
+							<td colspan="2"><h2>${message:pages.administration.index.security.title}</h2></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="activeSignature" class="edit-form-label">${message:pages.administration.index.activeSignature}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeSignature" class="edit-form-field"/></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="activeEncipherment" class="edit-form-label">${message:pages.administration.index.activeEncipherment}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeEncipherment" class="edit-form-field" /></td>
+						</tr>
+					</table>
+					<br/>
+					<t:submit value="${message:pages.administration.index.button.save}"/>
+
+				</div>
+				</t:form>
+
+				<t:if test="${activeMimeType}">
+					<div id="edit-administration-mime">
+						<t:MimeTypeConfigurator	/>
+					</div>
+				</t:if>
+				<br />
+
+		</div>
+
+	</div><!-- id="content" -->
+
+</t:MyBorderLayout>

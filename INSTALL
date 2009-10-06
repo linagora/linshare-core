@@ -1,0 +1,5 @@
+Build procedure
+===============
+
+	* mvn package
+	* War file will be available as target

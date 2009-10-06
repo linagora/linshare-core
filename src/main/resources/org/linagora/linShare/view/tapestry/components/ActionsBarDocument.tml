@@ -1,0 +1,55 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<ul>
+
+		<!-- Action > Share -->
+		<li>
+			<a href="#" onclick="submitFormWithAction('${formName}','SHARED_ACTION');">
+				<img src="${asset:context:images/icons/share-on.png}" alt="" />
+				${message:components.listDocument.action.share}
+			</a>
+		</li>
+
+		<!-- Action > Delete -->
+		<li>
+			<t:actionLink t:id="deleteSubmitLink" t:zone="zoneTest"
+				class="listDocument" onClick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)">
+				<img src="${asset:context:images/icons/delete.png}" alt="" />
+				${message:components.listDocument.action.delete}
+				</t:actionLink>
+		</li>
+
+		<!-- Action > Sign -->
+		<t:if t:test="activeSignature">			
+		<li>
+			<a href="#" onclick="submitFormWithAction('${formName}','SIGNATURE_ACTION');">
+				<img src="${asset:context:images/icons/sign.png}" alt="" />
+				${message:components.listDocument.action.signature}
+			</a>
+		</li>
+		</t:if>	
+
+		<!-- Action > Encrypt/Decrypt -->
+		<t:if t:test="activeEncipherment">
+		<li>
+			<t:if t:test="userEnciphermentKeyGenerated">
+			<t:if t:test="cachePin.popupNeeded">
+				<t:actionLink t:id="encyphermentSubmit" t:zone="zoneTest" class="listDocument" onClick="window_passwordPopupSubmit.showCenter(true)">
+					<img src="${asset:context:images/icons/encrypt.png}" alt="" />
+					${message:components.listDocument.action.encipherment}
+					</t:actionLink>
+				<t:parameter name="else">
+					<a href="#" onclick="submitFormWithAction('${formName}','ENCYPHERMENT_ACTION');">
+						<img src="${asset:context:images/icons/encrypt.png}" alt="" />
+						${message:components.listDocument.action.encipherment}
+					</a>
+				</t:parameter>
+			</t:if>
+			</t:if>			
+		</li>
+		</t:if>	
+
+	</ul>
+
+</t:container>

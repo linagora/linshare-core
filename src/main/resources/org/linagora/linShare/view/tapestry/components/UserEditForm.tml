@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <div id="userEditFormComponent">
+        <t:form t:id="userForm">
+            <t:errors/>
+            
+			<h2>
+			<t:if test="userGuest">
+				${message:pages.user.edit.guestAccount.edition}
+				<t:parameter name="else">
+				${message:pages.user.edit.internalAccount.edition}
+				</t:parameter>
+			</t:if>
+			</h2>
+
+
+			<hr />
+
+            <t:label for="mail" class="edit-form-label">${message:pages.user.edit.email}</t:label>
+            <t:textfield t:id="mail" validate="required, regexp" size="20" class="edit-form-field" readonly="true" />
+            <br/>
+
+            <t:if test="userGuest">
+	            <t:label for="firstName" class="edit-form-label">${message:pages.user.edit.firstName}</t:label>
+	            <t:textfield t:id="firstName" validate="required" size="20" class="edit-form-field"/>
+	            <br/>
+
+	            <t:label for="lastName" class="edit-form-label">${message:pages.user.edit.lastName}</t:label>
+	            <t:textfield t:id="lastName" validate="required" size="20" class="edit-form-field"/>
+	            <br/>
+
+	            <t:label for="uploadGranted" class="edit-form-label">${message:pages.user.edit.uploadGranted}</t:label>
+	            <t:checkbox t:id="uploadGranted" class="edit-form-checkbox"/>
+				<br/>
+				
+				<t:label for="createGuestGranted" class="edit-form-label">${message:pages.user.edit.createGuestGranted}</t:label>
+	            <t:checkbox t:id="createGuestGranted" class="edit-form-checkbox"/>
+				<br/>
+
+				    <t:parameter name="else">
+						<t:if test="admin">
+						<t:label for="role" class="edit-form-label">${message:pages.user.edit.role}</t:label>
+			            <t:select t:id="role" t:blankoption="never" class="edit-form-select"/>
+						<br/>
+						</t:if>
+                	</t:parameter>
+			</t:if>
+
+
+			<hr />
+
+            <t:submit value="message:global.button.update" class="edit-form-field"/>
+
+        </t:form>
+    </div>
+</t:container>

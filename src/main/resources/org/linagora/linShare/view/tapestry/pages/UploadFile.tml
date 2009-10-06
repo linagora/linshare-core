@@ -1,0 +1,5 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<body>
+	<t:fileUploader user="user1" redirectPage="FilePage"/>
+</body>
+</html>

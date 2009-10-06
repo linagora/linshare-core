@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean name="userRepository" class="org.linagora.linShare.core.repository.hibernate.UserRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+    
+    <bean name="guestRepository" class="org.linagora.linShare.core.repository.hibernate.GuestRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+
+    <bean name="documentRepository" class="org.linagora.linShare.core.repository.hibernate.DocumentRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+
+    <bean name="logEntryRepository" class="org.linagora.linShare.core.repository.hibernate.LogEntryRepositoryImpl">
+    	<constructor-arg ref="hibernateTemplate"/>
+	</bean>    
+   <bean name="shareRepository"
+		class="org.linagora.linShare.core.repository.hibernate.ShareRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+    <bean name="securedUrlRepository" class="org.linagora.linShare.core.repository.hibernate.SecuredUrlRepositoryImpl">
+    	<constructor-arg ref="hibernateTemplate"/>
+    </bean>
+    
+    <bean name="allowedMimeTypeRepository" class="org.linagora.linShare.core.repository.hibernate.AllowedMimeTypeRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+    
+    <bean name="parameterRepository" class="org.linagora.linShare.core.repository.hibernate.ParameterRepositoryImpl">
+    <constructor-arg ref="hibernateTemplate"/>
+	</bean>
+  	
+  	<bean name="recipientFavouriteRepository" class="org.linagora.linShare.core.repository.hibernate.RecipientFavouriteRepository">
+    <constructor-arg ref="hibernateTemplate"/>
+	</bean>
+    
+</beans>

@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.signature.title" t:identifier="signature"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+	Unsupported
+	<!--
+	
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.signature.title}</h1>
+
+		<div id="pageContent">
+
+			<t:form>
+				<t:select model="availableSignaturePolicies" encoder="signaturePoliciesEncoder" label="configuration" value="selectedPolicy" />
+				<t:submit value="choisir"/>
+			</t:form>
+
+		</div>
+
+	</div> id="content" -->
+</t:MyBorderLayout>

@@ -1,0 +1,8 @@
+
+Bonjour ${firstName} ${lastName},
+
+Un utilisateur anonyme ${email} a téléchargé le fichier suivant que vous avez mis en partage :
+${documentNames}
+
+-- 
+The LinShare dream team

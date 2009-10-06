@@ -1,0 +1,8 @@
+
+Hi ${firstName} ${lastName},
+
+An anonymous user ${email} downloaded the following file you shared:
+${documentNamestxt}
+
+-- 
+The LinShare dream team

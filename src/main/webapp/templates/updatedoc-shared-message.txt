@@ -1,0 +1,9 @@
+Hi,
+
+${firstName} ${lastName} has updated the shared file ${fileOldName}:
+  * New file name: ${fileName}
+  * File size: ${fileSize}
+  * MIME type: ${mimeType}
+
+-- 
+The LinShare dream team

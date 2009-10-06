@@ -1,0 +1,132 @@
+/*
+ *    This file is part of Linshare.
+ *
+ *   Linshare is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU Affero General Public License as
+ *   published by the Free Software Foundation, either version 3 of
+ *   the License, or (at your option) any later version.
+ *
+ *   Linshare is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Affero General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Affero General Public
+ *   License along with Foobar.  If not, see
+ *                                    <http://www.gnu.org/licenses/>.
+ *
+ *   (c) 2008 Groupe Linagora - http://linagora.org
+ *
+*/
+package org.linagora.linShare.core.repository.hibernate;
+
+import java.util.Calendar;
+import java.util.List;
+
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linShare.core.domain.entities.LogEntry;
+import org.linagora.linShare.core.repository.LogEntryRepository;
+import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
+import org.linagora.linShare.view.tapestry.enums.CriterionMatchMode;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+
+public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> implements
+		LogEntryRepository {
+
+    public LogEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
+        super(hibernateTemplate);
+    }
+    
+	protected DetachedCriteria getNaturalKeyCriteria(LogEntry entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(LogEntry.class).add(Restrictions.eq("id", entity.getPersistenceId()));
+        return det;
+	}
+	
+	public List<LogEntry> findByUser(String mail) {
+		List<LogEntry> logEntry = findByCriteria(Restrictions.eq("actorMail", mail));
+		logEntry.addAll(findByCriteria(Restrictions.eq("targetMail", mail)));
+		return logEntry;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<LogEntry> findByDate(String mail, Calendar beginDate,
+			Calendar endDate) {
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(LogEntry.class);
+		
+		criteria.add(Restrictions.eq("actorMail", mail));
+		
+		if (beginDate != null) {
+			criteria.add(Restrictions.gt("actionDate", beginDate));
+		}
+		
+		if (endDate != null) {
+			criteria.add(Restrictions.lt("actionDate", endDate));
+		}
+		
+		return getHibernateTemplate().findByCriteria(criteria);
+	}
+
+	
+	
+	public List<LogEntry> findByCriteria(LogCriteriaBean logCriteria) {
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(LogEntry.class);
+		
+		
+		if ((logCriteria.getActorMails()!=null) && (logCriteria.getActorMails().size()>0)) {
+			criteria.add(Restrictions.in("actorMail", logCriteria.getActorMails()));
+		}
+		
+		if ((logCriteria.getTargetMails()!=null) && (logCriteria.getTargetMails().size()>0)) {
+			criteria.add(Restrictions.in("targetMail", logCriteria.getTargetMails()));
+		}
+		
+		if ((logCriteria.getActorFirstname()!=null) && (logCriteria.getActorFirstname().length()>0)) {
+			criteria.add(Restrictions.like("actorFirstname", logCriteria.getActorFirstname(), MatchMode.START).ignoreCase());
+		}
+		
+		if ((logCriteria.getActorLastname()!=null) && (logCriteria.getActorLastname().length()>0)) {
+			criteria.add(Restrictions.like("actorLastname", logCriteria.getActorLastname(), MatchMode.START).ignoreCase());
+		}
+		if ((logCriteria.getTargetFirstname()!=null) && (logCriteria.getTargetFirstname().length()>0)) {
+			criteria.add(Restrictions.like("targetFirstname", logCriteria.getTargetFirstname(), MatchMode.START).ignoreCase());
+		}
+		
+		if ((logCriteria.getTargetLastname()!=null) && (logCriteria.getTargetLastname().length()>0)) {
+			criteria.add(Restrictions.like("targetLastname", logCriteria.getTargetLastname(), MatchMode.START).ignoreCase());
+		}
+		
+		if ((logCriteria.getLogActions()!=null) && (logCriteria.getLogActions().size()>0)) {
+			criteria.add(Restrictions.in("logAction", logCriteria.getLogActions()));
+		}
+		if (logCriteria.getBeforeDate() != null) {
+			criteria.add(Restrictions.gt("actionDate", logCriteria.getBeforeDate()));
+		}
+		
+		if (logCriteria.getAfterDate() != null) {
+			criteria.add(Restrictions.lt("actionDate", logCriteria.getAfterDate()));
+		}
+		
+		if (logCriteria.getFileName() != null) {
+			
+			if(logCriteria.getFileNameMatchMode().equals(CriterionMatchMode.START)){
+				criteria.add(Restrictions.like("fileName", logCriteria.getFileName(), MatchMode.START).ignoreCase());
+			} else {
+				criteria.add(Restrictions.like("fileName", logCriteria.getFileName(), MatchMode.ANYWHERE).ignoreCase());
+			}
+		}
+		
+		if (logCriteria.getFileExtension() != null) {
+			criteria.add(Restrictions.like("fileName", logCriteria.getFileExtension(), MatchMode.END).ignoreCase());
+		}
+		
+		return getHibernateTemplate().findByCriteria(criteria);
+	}
+
+
+
+	
+}

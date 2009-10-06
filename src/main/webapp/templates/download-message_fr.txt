@@ -1,0 +1,8 @@
+
+Bonjour ${firstName} ${lastName},
+
+${recipientFirstName} ${recipientLastName} a téléchargé le fichier suivant que vous lui avez mis en partage :
+${documentNames}
+
+-- 
+The LinShare dream team

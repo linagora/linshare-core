@@ -1,0 +1,15 @@
+The Linshare Source Tree LAYOUT
+--------------------------------
+
+COPYING				: the license
+
+LAYOUT				: This files :)
+
+pom.xml				: Maven buildfile
+
+src/				: the source code
+ |
+ |--> test			: the place holder for junit tests
+ \--> main			: the Linshare source code
+
+INSTALL				: Installation procedure

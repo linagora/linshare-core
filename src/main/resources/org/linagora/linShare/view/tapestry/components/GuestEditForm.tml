@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <div id="guestEditFormComponent">
+
+        <t:form t:id="guestCreateForm" t:zone="guestFormZone">
+
+			<h2>${message:pages.user.edit.guestAccount.creation}</h2>
+        
+        	<t:zone t:id="guestFormZone" t:update="show" >
+          	</t:zone>
+
+
+			<hr />
+
+			<div class="number1"></div>
+
+            <t:label for="mail" class="edit-form-label">${message:pages.user.edit.email}</t:label>
+            <t:textfield t:id="mail" validate="required, regexp" size="20" class="edit-form-field"/>
+            <br/>
+
+            <t:label for="firstName" class="edit-form-label">${message:pages.user.edit.firstName}</t:label>
+            <t:textfield t:id="firstName" validate="required" size="20" class="edit-form-field"/>
+            <br/>
+
+            <t:label for="lastName" class="edit-form-label">${message:pages.user.edit.lastName}</t:label>
+            <t:textfield t:id="lastName" validate="required" size="20" class="edit-form-field"/>
+            <br/>
+
+
+			<hr />
+
+			<div class="number2"></div>
+
+			<div id="commentMessageBlock">
+	            <t:label for="commentArea">${message:components.guestEditForm.field.comment}</t:label>
+	            <t:textarea t:id="commentArea" t:value="comment" cols="40" rows="4" class="edit-form-textarea"/>
+				<br/>
+			</div>
+
+			<div class="number-hidden"></div>
+			
+			<div>
+			<!-- 
+			<t:label for="uploadGranted" class="edit-form-label">${message:pages.user.edit.uploadGranted}</t:label>
+			<t:checkbox t:id="uploadGranted" class="edit-form-checkbox"/>
+			<br/>
+			 -->
+			 <t:label for="createGuestGranted" class="edit-form-label">${message:pages.user.edit.createGuestGranted}</t:label>
+			<t:checkbox t:id="createGuestGranted" class="edit-form-checkbox"/>
+			<br/>
+			</div>
+			
+
+			<div id="askCustomMessageBlock">
+				<label for="customMessage" class="edit-form-label">${message:components.guestEditForm.field.addMessage}</label>
+				<input class="edit-form-checkbox" type="checkbox" name="customMessage"
+					onclick="javascript:enableCustomMessage();"/>
+			</div>
+			<div id="customMessageBlock" style="display:none">
+				<br/>
+				<t:label for="customMessageArea">${message:components.guestEditForm.field.message}</t:label>
+				<t:textarea t:id="customMessageArea" t:value="customMessage" cols="45" rows="6" class="edit-form-textarea"/>
+				<br/>
+			</div>
+			<br/>
+			<div class="clear"></div>
+
+
+			<hr />
+
+			<t:submit value="message:global.button.add" class="edit-form-field"/>		
+
+		</t:form>
+
+        
+        <t:block t:id="onFailure">
+        	<t:errors  banner="message:pages.user.edit.errorBanner"  />
+          	<script type="text/javascript">
+	       		new Effect.Shake('${JSONid}');
+	       	</script>
+        </t:block>
+        
+        <t:block t:id="onSuccess">
+          	<script type="text/javascript">
+	       		location.reload(true);
+	       	</script>
+        </t:block>
+        
+    </div>
+</t:container>

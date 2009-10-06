@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    
+    <div style="display:none">
+        <t:zone t:id="fileEditTemplateZone">
+	        <div id="fileEditFormComponent">
+		        <t:form t:id="editForm" >
+		            <t:errors/>
+					<h2>
+						${message:component.fileEditForm.title}
+					</h2>
+		
+					<hr />
+				        
+				            <t:label for="fileName" class="edit-form-label">${message:component.fileEditForm.newName}</t:label> :
+				            <t:textfield t:id="fileName" t:validate="required, regexp" size="32" class="edit-form-field"/>
+				            <br/>
+				            <t:label for="fileComment" class="edit-form-label">${message:component.fileEditForm.fileComment}</t:label> :
+				            <t:textarea t:id="fileComment" class="edit-form-field"/>
+					<hr />
+		
+		            <t:submit value="message:global.button.update" class="edit-form-field"/>&nbsp;
+		            <t:submit t:id="reset" value="message:global.button.cancel" class="edit-form-field" onclick="Windows.close('${JSONId}');return false;"/>
+					</t:form>
+		   	</div>
+        </t:zone>
+    </div>
+
+    <div t:id="fileEditWindow">
+        <t:zone id="${zoneClientId}" update="show"/>
+    </div>
+    
+</t:container>

@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.user.index.title" t:identifier="users" t:currentHighlight="user"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.user.title}</h1>
+
+
+		<!-- Message panel -->
+
+		<div id="messagePanel">
+			<ul>
+				<t:loop t:source="prop:notificationMessage" t:value="currentMessage">
+				<li>${currentMessage}</li>
+				</t:loop>
+			</ul>
+		</div><!-- id="messagePanel" -->
+
+
+		<!-- Action bar -->
+
+		<div id="actionBar">
+			<h4>Actions</h4>
+			<ul>
+				<t:if test="userVo.createGuest">
+				<li>
+					<a href="#" class="button" onclick="userSearchWindow.showCenter(true);">
+						<span><img src="${asset:context:images/icons/icon-add-users.png}" alt=""/>
+							${message:pages.user.edit.addbutton}</span>
+					</a>
+				</li>
+				</t:if>
+				<t:if test="userVo.createGuest" negate="true">	<t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
+				<li>&nbsp;</li>
+				</t:if>
+			</ul>
+		</div><!-- id="actionBar" -->
+
+
+		<!-- Page content -->
+
+		<div id="pageContent">
+
+			<!-- List : Search result -->
+			<t:userSearchResults users="users" userShareList="shareSessionObjects.users" />
+
+		</div>
+
+	</div><!-- id="content" -->
+
+
+
+	<!-- Popups -->
+
+	<!-- Confirm share popup -->
+	<t:confirmSharePopup t:messageLabel="${message:pages.user.fileSearch.messageConfirm}"
+		t:eventName="sharePopupEvent" t:usersVo="prop:shareSessionObjects.users"
+		t:documentsVo="prop:shareSessionObjects.documents" />
+
+	<!-- Guest edit popup -->
+    <div t:id="userSearchWindow">
+         <t:guestEditForm users="users" JSONid="userSearchWindowId" />
+    </div> 
+
+
+
+	<!-- Widgets -->
+
+	<!-- Search widget -->
+	<t:parameter name="searchWidget">
+		<t:widget widgetId="searchWidget" title="${message:components.widget.searchWidget.title}">
+			<t:userSearchField users="users" />
+		</t:widget>
+	</t:parameter>
+
+	<!-- Share widget -->
+	<t:parameter name="shareWidget">
+		<t:if test="shareSessionObjects.notEmpty">
+			<t:widget widgetId="shareWidget" title="${message:components.widget.shareWidget.title}">
+				<t:sharePanel listObject="shareSessionObjects.users" columns="completeName"
+					label="${message:pages.user.index.sharePanel.label}" />
+			</t:widget>
+		</t:if>
+	</t:parameter>
+
+
+</t:MyBorderLayout>

@@ -1,0 +1,70 @@
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+<body>
+<br/>
+Upload file, Multipart encoded form<br>
+<form method="post" action="http://localhost:8180/linShare/documentrestservice/uploadfile/"  enctype="multipart/form-data">
+<input type="file" name="file">
+<input type="submit">
+
+</form>
+
+<br>
+Get file list
+<a href="http://localhost:8180/linShare/documentrestservice/getdocumentlist/"> Get doc list</a>
+<br><br>
+
+<br>
+Get a file
+<a href="http://localhost:8180/linShare/documentrestservice/getdocument/13"> Get doc </a>
+<br><br>
+
+
+
+<br><br>
+Find docs
+<form method="post" action="http://localhost:8180/linShare/documentrestservice/finddocument">
+  name: <input type="text" name="name" value=""><br>
+  type : <input type="text" name="type" value=""><br>
+  shared : <input type="text" name="shared" value=""><br>
+  sizeMin :  <input type="text" name="sizeMin" value=""><br>
+  sizeMax:  <input type="text" name="sizeMax" value=""><br>
+  documentType : <input type="text" name="documentType" value=""><br>
+    <input type="submit">
+</form>
+
+
+
+<br><br>
+Create an user
+<form method="post" action="http://localhost:8180/linShare/userrestservice/createuser">
+   <input type="text" name="firstName" value="Alain">
+   <input type="text" name="lastName" value="Dupont">
+   <input type="text" name="mail" value="adupont@linagora.com">
+   <input type="text" name="canUpload" value="true">
+    <input type="submit">
+</form>
+
+<br>
+Get a user
+<a href="http://localhost:8180/linShare/userrestservice/getuser/adupont@linagora.com"> adupont </a>
+<br><br>
+
+Share a document
+<a href="http://localhost:8180/linShare/sharerestservice/sharedocument/adupont@linagora.com/7e6fb8a3-82dd-48c1-a3b8-f0eaaff815fb?securedShare=1"> Share a document</a>
+<br /><br />
+
+<h2>Share multiple documents</h2><br />
+<form method="post" action="http://localhost:8180/linShare/sharerestservice/multiplesharedocuments">
+	To: <input type="text" name="targetMail" value="adupont@linagora.com"/><br />
+	<input type="checkbox" name="securedShare" value="1" />Secured share<br />
+	<p>Files:</p>
+	<input type="text" name="file" value="7e6fb8a3-82dd-48c1-a3b8-f0eaaff815fb"/><br />
+	<input type="text" name="file1" value="4aec8802-18e4-4aec-9ceb-247440d56688"/><br />
+	<input type="text" name="file2" value="5af06dc9-3d9e-42be-a00b-6cf1bb77a0e0"/><br />
+	<input type="submit"/>
+</form>
+
+</body>
