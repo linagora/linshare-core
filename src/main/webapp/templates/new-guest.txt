@@ -1,0 +1,18 @@
+Personal message from ${ownerCN}, via LinShare
+
+${message}
+
+--------------------------------------------------------------
+
+Welcome ${firstName} ${lastName},
+
+${ownerCN} invite you to use LinShare.
+
+You can now login to this address: ${url}
+
+Your LinShare account:
+* Login: ${mail}  (your e-mail address)
+* Password: ${password}
+
+-- 
+The LinShare dream team

@@ -1,0 +1,13 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    	<!-- Update Doc Uploader popup -->
+		<div t:id="windowUpdateDocUpload">
+    		<div class="form-upload-container">
+        		<t:linkit.uploadcomponent t:id="fileUpdateUploadComponent" leftspace="userFreeSpace" maxfilesize="maxFileSize"/>
+    		</div>
+			<div class="closeUploadPopup">
+				<a href="#" onclick='location.reload(true)'>${message:pages.files.closeUploadPopup}</a>
+			</div>
+		</div>
+
+</t:container>

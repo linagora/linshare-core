@@ -1,0 +1,8 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	
+	<t:beanDisplay t:object="source" t:include="name,mimeType,size"/>
+	<br/>
+	<t:pagelink page="RepositoryContent">${message:components.fileInfoDisplayer.repository}</t:pagelink>
+    
+
+</t:container>

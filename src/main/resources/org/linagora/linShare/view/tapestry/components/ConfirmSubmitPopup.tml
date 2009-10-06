@@ -1,0 +1,17 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	
+	<div t:id="window_confirm_submit" >
+	<div class="confirmPopup">
+
+		<div class="messageLabel"><img src="${asset:context:images/icons/alert.png}" alt=""/> ${messageLabel}</div>
+
+		<div class="button">
+			<a href="#" id="confirmsubmitPopupYes" class="button"><span>${message:global.button.yes}</span></a>
+			<a href="#" id="confirmsubmitPopupNo" class="button"><span>${message:global.button.no}</span></a>
+		</div>
+
+	</div>
+	</div>
+
+</t:container>

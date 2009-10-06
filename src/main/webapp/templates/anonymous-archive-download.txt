@@ -1,0 +1,7 @@
+
+Hi ${firstName} ${lastName},
+
+An anonymous user ${email} downloaded an archive of the files you shared.
+
+-- 
+The LinShare dream team

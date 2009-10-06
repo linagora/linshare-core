@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <bean id="cleanOutdatedGuestsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linShare.core.job.quartz.CleanOutdatedGuests"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="userManagementBatch"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="cleanOutdatedGuestsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="cleanOutdatedGuestsJob"/>
+        <property name="cronExpression" value="${job.cron.expression}"/>
+    </bean>
+
+
+    <bean id="cleanOutdatedSharesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linShare.core.job.quartz.CleanOutdatedShares"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="shareManagementBatch"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="cleanOutdatediSharesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="cleanOutdatedSharesJob"/>
+        <property name="cronExpression" value="${job.cron.expression}"/>
+    </bean>
+
+    <bean id="cleanInconsistentDocumentEntriesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linShare.core.job.quartz.CleanInconsistentDocumentEntries"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="documentManagementBatch"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="cleanInconsistentDocumentEntriesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="cleanInconsistentDocumentEntriesJob"/>
+        <property name="cronExpression" value="${job.consistency.cron.expression}"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="cleanOutdatedGuestsJobTrigger"/>
+                <ref bean="cleanOutdatediSharesJobTrigger"/>
+                <ref bean="cleanInconsistentDocumentEntriesJobTrigger"/>
+            </list>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.userconfig.title" t:identifier="userConfig"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.userconfig.title}</h1>
+
+		<div id="pageContent">
+
+			<h2>${message:pages.administration.index.visual.title}</h2>
+			<div id="top_text">${message:pages.administration.userconfig.visual.texte}</div>
+			<br/>
+				<!-- Languages -->
+				<t:form t:id="configUserform">
+				<table cellspacing="8" cellpadding="0">
+					<tr>
+					<td class="field_langage">
+					<t:label for="currentLocale">${message:pages.administration.userconfig.currentLocale}</t:label>
+					</td>
+					<td class="field_form">
+					<t:select t:model="model" t:id="currentLocale" t:value="currentLocale" blankoption="never"/>
+					</td>
+					<td class="field_button">
+					<t:submit  value="message:global.button.update" class="edit-form-field"/>
+					</td>
+					</tr>
+					</table>
+					<br/>
+				</t:form>
+
+
+			<t:if test="activeEncipherment">
+			<h2>${message:pages.administration.index.security.title}</h2>
+			<b>${message:pages.administration.userconfig.encipherment}</b> : <div id="top_text">${message:pages.administration.userconfig.security.texte}</div>
+			<br/>
+			</t:if>
+
+				<!-- Encipherment -->
+				<t:if test="activeEncipherment">
+					<!-- Password -->
+					<t:if test="keyGenerated" negate="true">
+						<t:form t:id="keyform">
+							<t:errors banner="${message:pages.administration.userconfig.password.error}" />
+							<table cellspacing="8" cellpadding="0">
+							<tr>
+					        <td class="field_old_pass">
+							<t:label for="password">${message:pages.administration.userconfig.password}</t:label>
+							</td>
+							<td class="field_value">
+							<t:PasswordField t:id="password" t:value="password" validate="required,minlength=8"/>
+							</td>
+							</tr>
+							<tr>
+							<td class="field_new_pass">
+							<t:label for="confirmPassword">${message:pages.administration.userconfig.confirmPassword}</t:label>
+							</td>
+							<td class="field_value">
+							<t:PasswordField t:id="confirmPassword" t:value="confirmPassword" validate="required,minlength=8"/>
+							</td>
+							</tr>
+							</table>
+							<br/>
+							<t:submit t:value="message:pages.administration.userconfig.button.generate" class="edit-form-field"/>
+						</t:form>
+						<t:parameter name="else">
+							${message:pages.administration.userconfig.keyisgenerated}
+						</t:parameter>
+					</t:if>
+
+				</t:if>
+
+			<t:if test="userVo.guest">
+				<h2>${message:pages.administration.userconfig.changePassword.title}</h2>
+				<div id="top_text">${message:pages.administration.userconfig.changePassword.texte}</div>
+				<br/>
+				<t:form t:id="changePassword">
+					<t:BusinessMessagesDisplayer/>
+					<t:errors banner="${message:pages.administration.userconfig.password.error}"/>
+					<table cellspacing="8" cellpadding="0">
+					<tr>
+					<td class="field_old_pass">
+					<t:label for="oldUserPassword">${message:pages.administration.userconfig.changePassword.oldUserPassword}</t:label>
+					</td>
+					<td class="field_value">	
+					<t:PasswordField t:id="oldUserPassword" t:value="oldUserPassword" validate="required,minlength=8"/>
+					</td>
+					</tr>
+					<tr>
+					<td class="field_new_pass">
+					<t:label for="newUserPassword">${message:pages.administration.userconfig.changePassword.newUserPassword}</t:label>
+					</td>
+					<td class="field_value">
+					<t:PasswordField t:id="newUserPassword" t:value="newUserPassword" validate="required,minlength=8"/>
+					</td>
+					</tr>
+					<tr>
+					<td class="field_new_pass">
+					<t:label for="confirmNewUserPassword">${message:pages.administration.userconfig.changePassword.confirmNewUserPassword}</t:label>
+					</td>
+					<td class="field_value">
+					<t:PasswordField t:id="confirmNewUserPassword" t:value="confirmNewUserPassword" validate="required,minlength=8"/>
+					</td>
+					</tr>
+					</table>
+					<br/>
+					<t:submit t:value="message:pages.administration.userconfig.button.changePassword" class="edit-form-field"/>
+				</t:form>
+			</t:if>
+			
+		</div>
+
+	</div><!-- id="content" -->
+
+</t:MyBorderLayout>

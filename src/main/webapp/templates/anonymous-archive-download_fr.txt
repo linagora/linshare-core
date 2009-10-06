@@ -1,0 +1,7 @@
+
+Bonjour ${firstName} ${lastName},
+
+Un utilisateur anonyme ${email} a téléchargé une archive des fichiers que vous avez mis en partage.
+
+-- 
+The LinShare dream team

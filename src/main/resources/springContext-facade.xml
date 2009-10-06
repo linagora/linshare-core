@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+       default-autowire="no">
+       
+       <bean name="userFacade" class="org.linagora.linShare.core.Facade.impl.UserFacadeImpl">
+           <constructor-arg ref="userRepository"/>
+           <constructor-arg ref="userService"/>
+           <constructor-arg ref="guestRepository"/>
+           <constructor-arg ref="enciphermentService"/>
+       </bean>
+       
+   	  <bean name="documentFacade" class="org.linagora.linShare.core.Facade.impl.DocumentFacadeImpl">
+       	 <constructor-arg ref="documentService"/>
+       	 <constructor-arg ref="userRepository"/>
+       	 <constructor-arg ref="documentTransformer"/>
+       	 <constructor-arg ref="shareService"/>
+       	  <constructor-arg ref="signatureTransformer"/>
+       	  <constructor-arg ref="enciphermentService"/>
+   	  </bean>
+   	  
+   	  <bean name="searchDocumentFacade" class="org.linagora.linShare.core.Facade.impl.SearchDocumentFacadeImpl">
+       	 <constructor-arg ref="searchDocumentService"/>
+       	 <constructor-arg ref="documentTransformer"/>
+       	 <constructor-arg ref="documentService"/>
+   	  </bean>
+ 
+ 	<bean name="shareFacade" class="org.linagora.linShare.core.Facade.impl.ShareFacadeImpl">
+       	 <constructor-arg ref="shareService"/>
+       	 <constructor-arg ref="documentTransformer"/>
+       	 <constructor-arg ref="shareTransformer"/>
+       	 <constructor-arg ref="userRepository"/>
+       	 <constructor-arg ref="documentRepository"/>
+       	 <constructor-arg ref="notifierService"/>
+       	 <constructor-arg ref="userService"/>
+         <constructor-arg ref="documentService"/>
+         <constructor-arg ref="templating"/>
+   	  </bean>
+   	  
+   	  <bean name="securedUrlFacade" class="org.linagora.linShare.core.Facade.impl.SecuredUrlFacadeImpl">
+   	  	<constructor-arg ref="securedUrlService"/>
+   	  	<constructor-arg ref="documentAdapter"/>
+   	  	<constructor-arg ref="notifierService"/>
+   	  	<constructor-arg ref="templating"/>
+   	  </bean>
+   	  
+ <!-- 
+   	  <bean name="sharedDocumentFacade" class="org.linagora.linShare.core.Facade.impl.SharedDocumentFacadeImpl">
+       	 <constructor-arg ref="sharedDocumentService"/>
+       	 <constructor-arg ref="documentTransformer"/>
+       	 <constructor-arg ref="sharedDocumentTransformer"/>
+       	 <constructor-arg ref="userRepository"/>
+       	 <constructor-arg ref="documentRepository"/>
+       	 <constructor-arg ref="notifierService"/>
+       	 <constructor-arg ref="userService"/>
+   	  </bean>
+   	  
+   	   -->
+   	  <bean name="mimeTypeFacade" class="org.linagora.linShare.core.Facade.impl.MimeTypeFacadeImpl">
+       	 <constructor-arg ref="mimeTypeService"/>
+   	  </bean>
+   	  
+   	  <bean name="parameterFacade" class="org.linagora.linShare.core.Facade.impl.ParameterFacadeImpl">
+       	 <constructor-arg ref="parameterService"/>
+   	  </bean>
+   	  
+   	  <bean name="logEntryFacade" class="org.linagora.linShare.core.Facade.impl.LogEntryFacadeImpl">
+       	 <constructor-arg ref="logEntryRepository"/>
+       	 <constructor-arg ref="logEntryTransformer"/>
+       	 <constructor-arg ref="displayableLogEntryTransformer"/>
+   	  </bean>
+       
+      <bean name="recipientFavouriteFacade" class="org.linagora.linShare.core.Facade.impl.RecipientFavouriteFacadeImpl">
+       	 <constructor-arg ref="userService"/>
+       	 <constructor-arg ref="recipientFavouriteService"/>
+   	  </bean>
+       
+       
+    <aop:config>
+		<aop:pointcut id="linshareCoreServiceFacadeMethods" expression="execution(* org.linagora.linShare.core.Facade.*.*(..))" />
+
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="linshareCoreServiceFacadeMethods" />
+	 	<aop:advisor advice-ref="txAdviceJackRabbit" pointcut-ref="linshareCoreServiceFacadeMethods" />
+	</aop:config>
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRES_NEW"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<tx:advice id="txAdviceJackRabbit"  transaction-manager="transactionJackRabbit">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRES_NEW"/>
+		</tx:attributes>
+	</tx:advice>
+
+
+
+	<!-- 
+		Definition of the transformers
+	 -->
+	 
+	 <bean name="documentTransformer" class="org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer" >
+	 	<constructor-arg ref="documentRepository"/>
+	 </bean>
+	 
+	 <bean name="signatureTransformer" class="org.linagora.linShare.core.domain.transformers.impl.SignatureTransformer" >
+	 	<constructor-arg ref="userTransformer"/>
+	 </bean>
+	 
+	 <bean name="shareTransformer" class="org.linagora.linShare.core.domain.transformers.impl.ShareTransformer" >
+	 	<constructor-arg ref="documentTransformer"/>
+	 	<constructor-arg ref="shareRepository"/>
+	 	<constructor-arg ref="userRepository"/>
+	 	<constructor-arg ref="userTransformer"/>
+	 </bean>
+	 <bean name="logEntryTransformer" class="org.linagora.linShare.core.domain.transformers.impl.LogEntryTransformer" />
+	 
+	 <bean name="displayableLogEntryTransformer" class="org.linagora.linShare.core.domain.transformers.impl.DisplayableLogEntryTransformer" />
+	 	
+	 <bean name="documentAdapter" class="org.linagora.linShare.core.domain.transformers.impl.DocumentAdapter" >
+	 
+	 </bean>
+	 
+	 <bean name="userTransformer" class="org.linagora.linShare.core.domain.transformers.impl.UserTransformer" >
+	 	<constructor-arg ref="guestRepository"/>
+	 </bean>
+</beans>

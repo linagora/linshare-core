@@ -1,0 +1,78 @@
+/*
+ * LinShare - Large files secured sharing system
+ * CSS custom style ONLY FOR IE  (6.0 and inferiors)
+ * Report changes to: support@linagora.com
+ * Contributors: David GALICHET, Nicolas GAPAILLARD, Nicolas CHARLES, David CARELLA
+ *
+ * Version: LinShare all versions
+ * Language: all
+ * Encoding: ASCII
+ * 2009-06-19, LINAGORA Group
+ */
+
+/***************************************************************************
+ * WARNING: IE6 AND INFERIORS ARE NOT SUPPORTED IN LINSHARE                *
+ * Use a modern browser like Firefox, Safari, Opera, Chrome, Konqueror     *
+ **************************************************************************/
+
+
+/***************************************************************************
+* GLOBAL
+*/
+
+body {
+	height:767px;
+	margin: 0em;
+	padding: 0em;
+	background: #FFF url("../images/theme0/ie6-denial-message-image.jpg") no-repeat center 50px;
+}
+/* ie6-denial-message-image.jpg: CC-BY-ND, John Martz, http://www.flickr.com/photos/robotjohnny/3629069606/ */
+
+
+/***************************************************************************
+* LAYOUT (page)
+*/
+
+/*--------------------------------------------------------------------------
+* PAGE
+*/
+
+#doc, #doc1, #doc2, #doc3, #doc4 {
+	width: 100% !important;
+	margin: 0em !important;
+	padding: 0em !important;
+	min-width: 1024px !important;
+}
+
+
+/*--------------------------------------------------------------------------
+* HEADER, BODY, FOOTER
+*/
+
+#hd {
+	width: 100% !important;
+	height: 50px;
+	margin: 0em !important;
+	padding: 0em !important;
+	background: #C8DCE6 url("../images/theme0/ie6-denial-message-text.png") no-repeat center top;
+}
+#bd, #ft {
+	display: none;
+}
+
+/***************************************************************************
+* LAYOUT (local)
+*/
+
+/*--------------------------------------------------------------------------
+* HEADER > Content
+*/
+
+#hd #logo-linshare,
+#hd #logo-customer,
+#hd #settings {
+	display: none;
+}
+
+/***************************************************************************/
+/* EOF */

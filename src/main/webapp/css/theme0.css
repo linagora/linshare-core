@@ -1,0 +1,3309 @@
+/*
+ * LinShare - Large files secured sharing system
+ * CSS custom style
+ * Report changes to: info@linagora.com
+ *
+ * Language: all
+ * Encoding: UTF-8
+ * 2009-08-26, LINAGORA Group
+ */
+
+
+/***************************************************************************
+* GLOBAL
+*/
+
+* {		/* Proportional fonts */
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+body {
+	margin: 0em;
+	padding: 0em;
+	background: #FFF;
+	color: #000;
+}
+
+hr {
+	display: none;
+}
+
+a img {
+	border-width: 0px;
+}
+
+code, code *, samp, samp *, kbd, kbd *, pre, pre * {	/* Monospace fonts (reset) */
+	font-family: "Courier New", Courier, monospace;
+}
+
+strong {
+	font-weight: bold !important;
+}
+
+
+
+/***************************************************************************
+* LAYOUT (page)
+*/
+
+/*--------------------------------------------------------------------------
+* PAGE
+*/
+
+#doc, #doc1, #doc2, #doc3, #doc4 {
+	margin: 0em !important;
+	padding: 0em !important;
+	min-width: 950px !important;
+}
+
+
+/*--------------------------------------------------------------------------
+* HEADER
+*/
+
+#hd {
+	margin: 0em;
+	padding: 0em .5em;
+	height: 95px;
+	background: #C8DCE6 url("../images/theme0/bg-header.png") repeat-x;
+}
+
+
+/*--------------------------------------------------------------------------
+* BODY
+*/
+
+#bd {
+	overflow: hidden;
+	background-color: #FFF;
+}
+
+
+/*--------------------------------------------------------------------------
+* BODY > Menu bar
+*/
+
+#menuBar {
+	height: 38px;
+	background: #4E4E4E url("../images/theme0/bg-menubar.png") repeat-x;
+	-moz-user-select: none;
+}
+
+
+/*--------------------------------------------------------------------------
+* BODY > Main content
+*/
+
+#content {
+	margin: 5px -7px 5px 5px;
+	padding: 1em;
+	background: transparent url("../images/theme0/bg-main.png") repeat-x;
+	color: #000;
+}
+
+
+/*--------------------------------------------------------------------------
+* BODY > Side bar
+*/
+
+#sideBar {
+	padding: 7px;
+	margin-bottom: -500em;
+	padding-bottom: 500em;
+	border-left: 1px solid #888;
+	background-color: #DDD;
+	background: #DDD url("../images/theme0/bg-sidebar.png") repeat-y;
+}
+
+
+/*--------------------------------------------------------------------------
+* FOOTER
+*/
+
+
+#ft {
+	margin: 0em;
+	padding: .5em;
+	background: transparent url("../images/theme0/bg-footer.png") repeat-x;
+	border-top: 1px solid #888;
+}
+
+
+
+/***************************************************************************
+* LAYOUT (local)
+*/
+
+/*--------------------------------------------------------------------------
+* HEADER > Content
+*/
+
+#hd #logo-linshare {
+	float: left;
+	width: 275px;
+	height: 85px;
+}
+
+#hd #logo-customer {
+	float: left;
+	width: 250px;
+	height: 70px;
+	margin-top: 12px;
+}
+#hd #logo-customer img {
+	max-width: 225px;
+	max-height: 60px;
+	margin-left: 25px;
+}
+
+#hd #settings {
+	float: right;
+	width: 650px;
+	height: 40px;
+	margin-top: .5em;
+	margin-right: .5em;
+	margin-left: -250px;		/* Safety: 400px (max) - 650px (width) */
+	color: #3D697F;
+	text-align: right;
+}
+
+#settings #configuration a {
+	color: #2989BD;
+}
+#settings #configuration a:link, #settings #configuration a:visited {
+	color: #2989BD;
+	text-decoration: underline;
+}
+#settings #configuration a:hover, #settings #configuration a:active {
+	text-decoration: none;
+}
+
+#settings #configuration .link-help {
+	cursor: help;
+}
+
+
+/*--------------------------------------------------------------------------
+* BODY > Menu bar > Content
+*/
+
+#menuBar {
+	font-size: 15px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+#menuBar .menu-title {
+	display: none;
+}
+
+#menuBar ul {
+	margin: 0px;
+	padding: 8px;
+	list-style: none outside none;
+}
+
+#menuBar li {
+	display: inline;
+	margin: 0px;
+	padding: 0px;
+}
+
+#menuBar li a {
+	text-align: center;
+}
+
+/* Tab : Left background */
+#menuBar li a {
+	float: left;
+	height: 30px;
+	margin: 0em .5em 0em 0em;
+	padding: 0px;
+}
+#menuBar li a:hover {
+	background: transparent url("../images/theme0/bg-menubar-tab-hover.png") repeat-x scroll top;
+}
+
+#menuBar li a.menu-labelhighlight {
+	background: transparent url("../images/theme0/bg-menubar-tab-current.png") repeat-x scroll top;
+}
+#menuBar li a.menu-labelhighlight:hover {
+}
+
+/* Tab : Right background, and Text */
+#menuBar li a span {
+	display: block;
+	padding: 2px 10px 5px 10px;
+	border: 3px solid transparent;
+	text-align: right;
+}
+
+#menuBar li a.menu-labelhighlight span {
+	border: 3px solid #FFF;
+}
+
+/* Text link */
+#menuBar li a {
+	color: #AAA !important;
+	text-decoration: none;
+	border: none;
+}
+#menuBar li a:hover, #menuBar li a:active {
+	color: #FFF !important;
+}
+
+#menuBar li a.menu-labelhighlight {
+	color: #4E86A2 !important;
+}
+#menuBar li a.menu-labelhighlight:hover, #menuBar li a.menu-labelhighlight:active {
+	color: #3D697F !important;
+}
+
+
+/*--------------------------------------------------------------------------
+* BODY > Main > Content
+*/
+
+/* Title */
+
+#content h1, #content h2, #content h3, #content h4 {
+	font-weight: bold;
+}
+
+#content h1 {
+	height: 48px;
+	padding-left: 58px;
+	background: transparent url("../images/theme0/icon-heading-files.png") no-repeat scroll left center;
+	color: #5A93AF;
+	text-shadow: 2px 2px 1px rgba(0,0,0,.10);
+	-o-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
+	-moz-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
+	-icab-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
+	-khtml-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
+	-webkit-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
+	font-size: 1.8em;
+	line-height: 2em;
+}
+
+#home #content h1 {
+	background-image: url("../images/theme0/icon-heading-home.png");
+}
+#files #content h1 {
+	background-image: url("../images/theme0/icon-heading-files.png");
+}
+#users #content h1 {
+	background-image: url("../images/theme0/icon-heading-users.png");
+}
+#history #content h1 {
+	background-image: url("../images/theme0/icon-heading-history.png");
+}
+#administration #content h1 {
+	background-image: url("../images/theme0/icon-heading-administration.png");
+}
+#audit #content h1 {
+	background-image: url("../images/theme0/icon-heading-audit.png");
+}
+#signature #content h1 {
+	background-image: url("../images/theme0/icon-heading-signature.png");
+}
+#userConfig #content h1 {
+	background-image: url("../images/theme0/icon-heading-userconfig.png");
+}
+#help #content h1 {
+	background-image: url("../images/theme0/icon-heading-help.png");
+}
+#error #content h1 {
+	padding-left: 0px;
+	background-image: none;
+}
+
+
+/* Message panel */
+
+#content #messagePanel {
+	margin: 1em 0em 1.5em 0em;
+	color: #C00D2D;
+	font-weight: bold;
+}
+
+
+/* Action bar */
+
+#content #actionBar {
+	height: 0em;		/* Needed by Opera */
+	float: right;
+	position: relative;
+	top: 2.60em;
+	margin-bottom: -2.80em;		/* 2.80em  =  2.30em (button height)  +  .5em (li margin) */
+	z-index: 1;
+	-moz-user-select: none;
+}
+
+#actionBar h4 {
+	display: none;
+}
+
+#actionBar ul {
+	float: right;
+}
+#actionBar li {
+	float: right;
+	display: inline;
+	margin-bottom: .5em;
+	list-style: none outside none;
+	text-transform: uppercase;
+}
+#actionBar li a {
+	margin-left: .5em;
+}
+
+
+/* Page content */
+
+#content #pageContent {
+	clear: both;
+}
+
+
+/*--------------------------------------------------------------------------
+* BODY > Side bar > Widgets
+*/
+
+#sideBar .widget {
+	margin-bottom: 7px;
+	padding: 0em;
+	background-color: #EAF1F5;
+	border: 3px solid #FFF;
+	box-shadow: 3px 3px 3px rgba(0,0,0,.30);
+	-o-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
+	-moz-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
+	-icab-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
+	-khtml-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
+	-webkit-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
+}
+
+#sideBar .widget h4 {
+	margin: 0em;
+	padding: .30em .5em .40em .5em;
+	background: #427891 url("../images/theme0/bg-widget-title.png") repeat-x;
+	color: #FFF;
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
+#sideBar .widget > div {
+	margin: 0em;
+	padding: .5em;
+	color: #000;
+}
+
+
+/*--------------------------------------------------------------------------
+* FOOTER > Content
+*/
+
+#ft #copyright {
+	margin-top: -.20em;
+	color: #3D697F;
+	font-size: 1.1em;
+	text-align: center;
+}
+
+
+
+/***************************************************************************
+* COMPONENTS
+*/
+
+/*--------------------------------------------------------------------------
+* Components > Login
+*/
+
+#settings #connection {
+	margin-top: 2px;
+	margin-bottom: 5px;
+	color: inherit;
+}
+
+#settings #connection div.logout {
+	float: right;
+	width: 450px;
+}
+
+#settings #connection .userName {
+	font-size: 18px;
+/*	font-weight: bold;	/**/
+}
+
+#settings #connection a {
+	margin-left: 1.5em;
+	padding-left: 0em !important;
+}
+#settings #connection a:link, #settings #connection a:visited {
+	color: inherit;
+}
+#settings #connection a:hover, #settings #connection a:active {
+	color: #EE1139;
+}
+
+#settings #connection form {
+	margin-top: 5px;
+	font-size: 14px;
+}
+
+#settings #connection label {
+	display: none;
+	margin-left: 5px;
+}
+
+#settings #connection input {
+	margin-left: .75em;
+	border: 1px solid #3D697F !important;
+	color: #000;
+}
+#settings #connection input.loginSubmit {
+	float: none !important;
+	width: 100px;
+	height: 20px;
+	margin-top: 5px;
+	margin-left: 5px;
+	padding-top: 0px !important;
+	background-color: #EAF1F5;
+	cursor: pointer;
+}
+#settings #connection input.loginSubmit:hover,
+#settings #connection input.loginSubmit:focus {
+	color: #C00D2D;
+}
+#settings #connection input[type="text"], #settings #connection input[type="password"] {
+	padding: 1px 2px 1px 2px !important;
+	height: 16px;
+	background: #C8DCE6 url("../images/theme0/form-input-gradient.png") no-repeat;
+}
+#settings #connection input[type="text"]:hover, #settings #connection input[type="password"]:hover,
+#settings #connection input[type="text"]:focus, #settings #connection input[type="password"]:focus {
+	background-color: #FFF;
+}
+#settings #connection input#login {
+	width: 215px;
+	margin-left: 400px;		/* To force the line break */
+	padding-left: 18px !important;
+	background-image: url("../images/theme0/form-input-email.png");
+}
+#settings #connection input#password {
+	width: 110px;
+	padding-left: 18px !important;
+	background-image: url("../images/theme0/form-input-password.png");
+}
+
+/*
+* Components > Login > Error
+*/
+
+#settings #connection div.t-error {
+	float: none !important;
+	margin: 3px auto;
+	background-color: transparent !important;
+	border: 0px !important;
+	white-space: nowrap;
+}
+
+#settings #connection div.t-error div {
+	display:none;
+/*	display:block;/**/
+	margin: -4px auto -2px auto;
+	background-color: transparent !important;
+}
+
+#settings #connection div.t-error ul {
+	float: none !important;
+	margin-bottom: 4px;
+	background-color: transparent !important;
+}
+#settings #connection div.t-error li {
+	display: inline !important;
+	padding: 0px 4px 1px 5px;
+	border-radius: 3px;
+	-o-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-icab-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	background-color: #FCCFD7 !important;
+	color: #EE1139;
+	font-weight: bold;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Localizer
+*/
+
+.localizer-font {
+	padding-left: 0px;
+	color: #555;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Widgets
+*/
+
+/* Widget > Search */
+
+#sideBar #searchWidget > div {
+}
+
+#searchWidget > div #switch {
+	float: right;
+	display: block;
+	margin-top: -26px;
+	margin-right: 6px;
+	text-align: right;
+}
+
+#searchWidget > div #switch strong {
+	display: none;
+}
+
+#searchWidget > div #switch a {
+	font-size: 1.1em;
+	font-weight: bold;
+	text-decoration: none;
+}
+#searchWidget > div #switch a:link,
+#searchWidget > div #switch a:visited {
+	color: #C8DCE6;
+}
+#searchWidget > div #switch a:hover,
+#searchWidget > div #switch a:active {
+	color: #F57088;
+}
+#searchWidget > div #switch a img {
+	margin: auto -8px auto 0em;
+	vertical-align: -.14em;
+}
+/* + cf. Components > Search panels */
+
+
+/* Widget > Information */
+
+#sideBar #infoWidget > div {
+}
+
+#infoWidget > div ul {
+	margin: 0em;
+	padding: 0em;
+}
+
+#infoWidget > div ul li {
+	margin-bottom: .25em;
+	list-style: none outside none;
+	text-align: center;
+}
+
+#infoWidget > div ul li strong {
+	color: #808080;
+	font-size: 1.15em;
+	white-space: nowrap;
+}
+
+#infoWidget > div ul li span {
+	color: #3D697F;
+	font-size: 1.4em;
+	white-space: nowrap;
+}
+
+/* User space : Indicator bar */
+#infoWidget > div ul li #userTotalSpaceDiv {
+	width: 200px !important;
+	height: 12px !important;
+	margin: auto;
+	border: 1px solid #5A93AF;
+	text-align: left;
+}
+#infoWidget > div ul li #userTotalSpaceDiv #userFreeSpaceDiv {
+	height: inherit !important;
+	background: #C8DCE6 url("../images/theme0/bg-userspace.png") repeat-x scroll left bottom !important;
+	border-right: 1px solid #5A93AF;
+}
+#infoWidget > div ul li #userTotalSpaceDiv #userFreeSpaceDiv span {
+	position: relative;
+	bottom: 1px;
+	margin-left: .30em;
+	color: #333;
+	font-size: .85em;
+}
+
+
+/* Widget > Actions */
+
+#sideBar #actionsWidget > div {
+}
+
+#actionsWidget > div ul {
+	margin: -.5em;
+	padding: 0em;
+	text-align: left;
+}
+
+#actionsWidget > div ul li {
+	list-style: none outside none;
+	font-size: 1.1em;
+}
+
+#actionsWidget > div ul li a {
+	display: block;
+	margin: 0em;
+	padding: .25em 0em;
+	color: #000 !important;
+	text-decoration: none !important;
+}
+
+#actionsWidget > div ul li a img {
+	width: 16px;
+	height: 16px;
+	margin-left: .4em;
+	margin-right: .15em;
+	padding-bottom: 2px;
+	vertical-align: middle;
+}
+
+#actionsWidget > div ul li a:link,
+#actionsWidget > div ul li a:visited {
+	border: 1px solid transparent;
+}
+#actionsWidget > div ul li a:hover,
+#actionsWidget > div ul li a:active {
+	background-color: #D9E6ED;
+	border: 1px solid #8CB4C8;
+	color: #C00D2D;
+}
+
+
+/* Widget > Share */
+
+#sideBar #shareWidget > div {
+}
+
+#shareWidget > div div.t-data-grid {
+	width: 104.5%;
+	margin: 0em -.45em;
+}
+/* + cf. Components > Share panels */
+
+
+/* Widget > Events */
+
+#sideBar #eventsWidget > div {
+}
+
+#eventsWidget > div {
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Upload
+*/
+
+.uploadPopup li {
+	margin-left: 20px;
+	margin-top: 5px;
+	text-align: left;
+	font-weight: bold;
+}
+
+.closeUploadPopup {
+	text-align: center;
+}
+
+.fileMessage {
+	text-align: left;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Search
+*/
+
+/* Generic */
+
+#searchWidget > div form {
+	margin-top: -.25em;
+	font-size: 1.1em;
+}
+#searchWidget > div form label {
+	white-space: nowrap;
+}
+#searchWidget > div form input {
+	margin-top: .5em;
+}
+#searchWidget > div form input[type="text"] {
+	height: 16px !important;
+	padding: 1px 2px 1px 2px !important;
+	background: #F0F0F0 url("../images/theme0/form-input-gradient.png") no-repeat;
+	border: 1px solid #3D697F;
+	color: #000;
+}
+#searchWidget > div form input[type="text"]:hover,
+#searchWidget > div form input[type="text"]:focus {
+	background-color: #FFF;
+}
+#searchWidget > div form input[type="submit"] {
+	padding: 2px 7px 1px 20px !important;
+	background: #C8DCE6 url("../images/theme0/magnify-small.png") no-repeat scroll 6px 5px;
+	border: 1px solid #83AEC3;
+	border-radius: 12px;
+	-o-border-radius: 12px;
+	-moz-border-radius: 12px;
+	-icab-border-radius: 12px;
+	-khtml-border-radius: 12px;
+	-webkit-border-radius: 12px;
+	color: #3D697F;
+	font-weight: bold;
+	cursor: pointer;
+}
+#searchWidget > div form input[type="submit"]:hover,
+#searchWidget > div form input[type="submit"]:focus {
+	background-color: #FCCFD7;
+	border-color: #F5758C;
+	color: #C00D2D;
+}
+#searchWidget > div form input[type="submit"]:active {
+	background-color: #E3BBC2;
+	border-color: #E2697F;
+	color: #8F0A22;
+}
+#searchWidget > div form input[type="submit"][name="reset"] {
+	margin-left: 10px;
+	padding: 0px !important;
+	background: transparent none;
+	border: 0px none transparent;
+	font-weight: normal;	/**/
+}
+
+
+/* Specific > Files */
+
+#searchWidget > div #fileSearch {
+}
+#fileSearch form#simpleSearchForm label {
+	display: none;
+}
+#fileSearch form#simpleSearchForm input#name {
+	width: 84.0%;
+	padding-left: 18px !important;
+	background-image: url("../images/theme0/form-input-filename.png");
+}
+#fileSearch form#simpleSearchForm img.t-error-icon,
+#fileSearch form#simpleSearchForm img.t-autoloader-icon {
+	margin-bottom: 2px;
+	vertical-align: middle;
+}
+#fileSearch form#advancedSearchForm input#sizeMin,
+#fileSearch form#advancedSearchForm input#sizeMax {
+	width: 100px;
+}
+#fileSearch form#advancedSearchForm input#beginDate,
+#fileSearch form#advancedSearchForm input#endDate {
+	width: 100px;
+}
+#userSearch form#advancedSearchForm #shareStatus {
+	white-space: nowrap;
+}
+
+
+/* Specific > Users */
+
+#searchWidget > div #userSearch {
+}
+#userSearch form#userSearchForm label {
+	display: none;
+}
+#userSearch form#userSearchForm input#userSearchPattern {
+	width: 84.0%;
+	padding-left: 18px !important;
+	background-image: url("../images/theme0/form-input-email.png");
+}
+#userSearch form#userSearchForm img.t-error-icon,
+#userSearch form#userSearchForm img.t-autoloader-icon {
+	margin-bottom: 2px;
+	vertical-align: middle;
+}
+#userSearch form#advancedSearchForm input[type="text"] {
+	width: 97.5%;
+}
+#userSearch form#advancedSearchForm #userType {
+	white-space: nowrap;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Autocomplete
+*/
+
+/* Autocomplete search */
+
+div.t-autocomplete-menu {
+	margin: 0em;
+	padding: 0em;
+	border: 0px none;
+}
+div.t-autocomplete-menu ul {
+	margin: 0em;
+	padding: 0em;
+	background-color: #EAF1F5;
+	border: 1px solid #000;
+}
+div.t-autocomplete-menu li {
+	margin: 0em;
+	padding: .25em .5em;
+	background-color: transparent;
+	border: 0px none;
+	color: #3D697F;
+}
+div.t-autocomplete-menu li.selected, div.t-autocomplete-menu li:hover {
+	background-color: #3D697F;
+	color: #FFF;
+	font-weight: normal;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Lists  (Home, Files, Users)
+*/
+
+#list {
+}
+
+#list h2 {
+}
+
+#list div.t-data-grid-pager {
+	margin: .5em .5em .75em .5em;
+	font-weight: bold;
+}
+#list div.t-data-grid-pager span.current {
+	background-color: #ACC6D6;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Tables
+*/
+
+table.t-data-grid {
+	border-width: 0px !important;
+}
+
+table.t-data-grid thead tr {
+	background-color: #5A93AF !important;
+	border: 1px solid silver !important;
+
+}
+
+table.t-data-grid thead th {
+	padding: .5em .2em !important;
+	background-color: transparent !important;
+	border-width: 0px !important;
+	vertical-align: middle !important;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+table.t-data-grid thead th a:link,
+table.t-data-grid thead th a:visited {
+	color: #FFF !important;
+}
+table.t-data-grid thead th a:hover,
+table.t-data-grid thead th a:active {
+	background-color: transparent;
+	color: #EE1139 !important;
+}
+
+table.t-data-grid tbody tr {
+	border: 1px solid silver !important;
+}
+table.t-data-grid tbody tr:hover {
+	background-color: #FFFFCC !important;
+}
+
+table.t-data-grid tbody td {
+	padding: .25em .2em !important;
+	background: transparent url("../images/theme0/td-gradient.png") repeat-x !important;
+	border-width: 0px !important;
+	vertical-align: middle !important;
+	white-space: nowrap;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Share panels  (files, users)
+*/
+
+/* Generic */
+
+#shareWidget > div h5 {
+	margin-bottom: .5em;
+	color: #3D697F;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+#shareWidget > div div.t-data-grid table {
+	width: 100%;
+}
+#shareWidget > div div.t-data-grid table th {
+	padding: .25em .25em !important;
+	background-color: #8CB4C8 !important;
+}
+#shareWidget > div div.t-data-grid table th img.t-sort-icon {
+	vertical-align: -.28em;
+}
+#shareWidget > div div.t-data-grid table td {
+	padding: .25em .25em !important;
+}
+#shareWidget > div div.t-data-grid table td img {
+	width: 16px;
+	height: 16px;
+}
+
+#sharePanelShare, #sharePanelReset {
+	margin-top: .5em;
+	font-size: 1.15em;
+	white-space: nowrap;
+}
+#sharePanelShare {
+	float: left;
+	font-weight: bold;
+}
+#sharePanelReset {
+	float: right;
+}
+
+
+/* Share panel : Files, Users */
+
+
+#shareWidget > div div.t-data-grid table th.fileName,
+#shareWidget > div div.t-data-grid table td.fileName {
+	padding-left: .6em !important;
+	max-width:95px;
+	width:95px;
+}
+#shareWidget > div div.t-data-grid table td.fileName {
+	overflow: hidden; 
+	white-space: nowrap;
+}
+#shareWidget > div div.t-data-grid table th.completeName,
+#shareWidget > div div.t-data-grid table td.completeName {
+	padding-left: .6em !important;
+	max-width:95px;
+	width:95px;
+}
+#shareWidget > div div.t-data-grid table td.completeName {
+	overflow: hidden; 
+	white-space: nowrap;
+}
+#shareWidget > div div.t-data-grid table td.deleteColumn {
+	width: 1%;	/* In order to have the minimum width */
+	padding-right: .6em !important;
+	text-align: right;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Sorter  (Files, Users)
+*/
+
+#pageContent #list form#form {
+	height: 24px;		/* Needed by Opera */
+	margin: 1em 0em;
+	padding: 0em .5em;
+	background-color: #F3F3F3;
+}
+#pageContent #list form#form select#selectSorter {
+	height: 24px;		/* Needed by Opera */
+	margin-left: .75em;
+	background-color: #F8F8F8;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Tracker
+*/
+
+.tracker-title {
+	font-size: 12px;
+}
+
+.tracker-link {
+	font-size: 12px;	
+}
+
+.tracker-separator {
+	font-size: 12px;
+}
+
+.tracker-last {
+	font-size: 10px;
+}
+
+
+/*--------------------------------------------------------------------------
+* Components > Help Text
+*/
+
+#helpText {
+}
+/* Cf. Help page */
+
+
+/*--------------------------------------------------------------------------
+* Components > Help Video
+*/
+
+#helpVideo {
+}
+/* Cf. Help page */
+
+
+
+/***************************************************************************
+* OBJECTS (generic)
+*/
+
+/*--------------------------------------------------------------------------
+* Objects > Button link 1 (rounded and dynamic)
+*/
+
+/* Button : Left background */
+
+a.button {
+	float: left;
+	height: 30px;
+	margin: 0px 15px 0px 0px;
+	padding: 0px;
+	background: transparent url("../images/theme0/button.png") no-repeat scroll left 0px;
+	-moz-user-select: none;
+}
+a.button:hover, a.button:focus {
+	background-position: left -30px;
+}
+a.button:active {
+	background-position: left -60px;
+}
+
+/* Button : Right background, and Text */
+
+a.button span {
+	display: block;
+	position: relative;
+	right: -15px;
+	height: 24px;		/* 24px = 30px - 6px - 0px */
+	padding: 6px 15px 0px 0px;
+	background: transparent url("../images/theme0/button.png") no-repeat scroll right 0px;
+	text-align: right;
+}
+a.button:hover span, a.button:focus span {
+	background-position: right -30px;
+}
+a.button:active span {
+	background-position: right -60px;
+}
+a.button img {
+	max-width: 16px;
+	max-height: 16px;
+	margin: 0px .20em -1px 0px;
+	vertical-align: bottom;
+}
+
+/* Text link */
+
+a.button {
+/*	background-color: #C8DCE6;		/* INFO */
+	color: #2D4D5D !important;
+	text-align: center;
+	font-size: 13px !important;		/* FIXED */
+	font-weight: bold;
+	text-decoration: none !important;
+}
+a.button:hover, a.button:focus {
+/*	background-color: #FCCFD7;		/* INFO */
+	color: #C00D2D !important;
+}
+a.button:active {
+/*	background-color: #E3BBC2;		/* INFO */
+	color: #8F0A22 !important;
+}
+
+/* Button : Special Popups */
+
+div.dialog a.button span {
+	height: 23px;		/* 23px = 30px - 7px - 0px */
+	padding: 7px 15px 0px 0px;
+}
+div.dialog a.button img {
+	margin: 0px .20em -1px 0px;
+}
+
+
+/*--------------------------------------------------------------------------
+* Objects > Button link 2  (gray squared)
+*/
+
+.btn {
+	min-width: 22px;
+	min-height:22px;
+	margin : 3px;
+	padding: 3px;
+	background-color: rgb(243,242,235);
+	border-bottom: 1px solid #E6DFCF;
+	border-right: 1px solid #E6DFCF;
+	color: #A68C53;
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+	text-decoration: none;
+}
+
+
+/*--------------------------------------------------------------------------
+* Objects > Form elements
+*/
+
+input,
+select, button, textarea {
+	padding: 2px !important;
+	border: 0px none;
+}
+input[type="text"], input[type="password"], input[type="file"],
+input[type="submit"], input[type="reset"], input[type="button"],
+select, button, textarea {
+	border: 1px solid #DDD;
+}
+input[type="submit"], input[type="reset"], input[type="button"] {
+	cursor: pointer;
+}
+
+
+/*--------------------------------------------------------------------------
+* Objects > Message label
+*/
+
+div.messageLabel {
+	margin-top: .5em;
+	margin-bottom: 1.25em;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFF;
+}
+div.messageLabel img {
+	margin-top: -.1em;
+	margin-right: .5em;
+	vertical-align: middle;
+}
+
+
+/*--------------------------------------------------------------------------
+* Objects > Data grid
+*/
+
+div.t-data-grid {
+	margin: .5em 0em;
+	padding: 0em;
+	width: 100%;
+}
+
+table.t-data-grid {
+	margin: 0em;
+	padding: 0em;
+	width: 100%;
+}
+
+
+
+/***************************************************************************
+* PAGES
+*/
+
+/*--------------------------------------------------------------------------
+* Pages > Common : Page heading, Message panel, Action bar, Page content
+*/
+
+/* Action bar */
+
+#home #actionBar {
+	margin-top: -.06em;
+}
+#history #actionBar,
+#audit #actionBar {
+	top: -3.0em;
+}
+
+
+/* Page content */
+
+#pageContent h2 {
+	margin: .75em auto;
+	color: #3D697F;
+	font-size: 1.20em;
+	margin-bottom: 10px;
+	padding-bottom: 3px;
+	border-bottom: solid #b0d6ee 1px;
+}
+
+#pageContent h2 img {
+	vertical-align: middle;
+}
+
+#pageContent h3 {
+	color: #2D4D5D;
+	font-size: 1.10em;
+}
+#pageContent h3 img {
+	vertical-align: middle;
+}
+
+#pageContent h4 {
+	color: #000;
+	font-size: 1.05em;
+}
+
+#pageContent p {
+	margin-top: .5em;
+	text-align: justify;
+}
+
+#pageContent strong {
+	font-weight: bold;
+}
+
+#pageContent abbr[title], #pageContent acronym[title] {
+	border-bottom: 1px dotted;
+	cursor: help;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Home  (login, share)
+*/
+
+/* Message panel */
+
+#home #messagePanel.login p {
+	margin: 2em auto;
+	color: #5A93AF;
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.4em;
+}
+#home #messagePanel.welcome p {
+	margin-bottom: 1.5em;
+	color: #000;
+	text-align: justify;
+	font-weight: normal;
+	font-size: 1.3em;
+}
+
+
+/* List (table) */
+
+#home #pageContent #list {
+}
+
+#home #list td.fileProperties div {
+	overflow: hidden;
+	min-width: 300px;
+	white-space: normal;
+}
+#home #list td.fileProperties span {
+	white-space: nowrap;
+}
+#home #list td.fileProperties span.sharedBy {
+	position: relative;
+	left: .25em;
+}
+
+#home #list .expirationDate {
+	width: 11%;
+}
+#home #list .signed {
+	width: 6%;
+}
+#home #list .actions {
+	width: 1%;
+}
+
+#home #list td.actions span,
+#home #list td.actions a {
+	margin-left: 1.5em;		/* 16px + 0.5em */
+	margin-right: .5em;
+}
+#home #list td.actions span {
+	color: #CCC;
+}
+#home #list td.actions span img,
+#home #list td.actions a img {
+	margin-left: -16px;
+	vertical-align: middle;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Files
+*/
+
+#files #pageContent #list {
+}
+
+#files #list td.fileProperties div {
+	overflow: hidden;
+	min-width: 400px;		/* For 1024-width screen */
+	white-space: normal;
+}
+#files #list td.fileProperties span {
+	white-space: nowrap;
+}
+#files #list td.fileProperties span.ownerLogin {
+	position: relative;
+	left: .25em;
+}
+
+#files #list .updateDoc,
+#files #list .fileEdit,
+#files #list .shared,
+#files #list .signed,
+#files #list .encryptedAdd {
+	width: 4%;
+	min-width: 37px;	/* 37px = 42px - 5px */
+}
+#files #list .selectedValue {
+	width: 3.5%;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Users
+*/
+
+#users #pageContent #list {
+}
+
+#users #list td.mail div {
+	overflow: hidden;
+	min-width: 400px;
+	white-space: normal;
+}
+#users #list td.mail span {
+	white-space: nowrap;
+}
+#users #list td.mail span.expirationDate {
+	color: #F24061;
+}
+#users #list td.mail span.userComment {
+	position: relative;
+	left: .25em;
+}
+
+#users #list .picture {
+	width: 6%;
+}
+#users #list .action {
+	width: 9%;
+}
+#users #list td.action {
+	text-align: left;
+}
+#users #list .selectedValue {
+	width: 3.5%;
+}
+
+#users #list .picture img {
+	margin: auto .5em;
+}
+#users #list td.action a {
+	margin-left: .5em;
+}
+
+
+/* Actions panel (bottom) */
+
+#actionListUser {
+	padding: .5em;
+	height: 2em;
+	background-color: transparent;
+	text-align: center;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+#actionListUser a {
+	margin-left: 16px;
+}
+#actionListUser a img {
+	margin-left: -16px;
+	vertical-align: middle;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Signature
+*/
+
+#signature #pageContent {
+	margin-top: 0em;
+	font-size: 1.2em;
+}
+
+#signature #pageContent h2 {
+	margin-top: 1em;
+}
+
+#signature #pageContent table#steps {
+	margin-top: .75em;
+}
+#signature #pageContent table#steps col.step {
+	width: 25%;
+}
+#signature #pageContent table#steps col#step1 {
+	width: 20%;
+}
+#signature #pageContent table#steps th {
+	text-align: center;
+}
+#signature #pageContent table#steps td {
+	padding: .25em .5em;
+	vertical-align: top;
+	text-align: center;
+}
+
+#signature #pageContent table.properties {
+	width: 100%;
+	margin-top: .5em;
+}
+#signature #pageContent table.properties td {
+	padding: .25em 0em;
+}
+#signature #pageContent table.properties col#fieldName {
+	width: 25%;
+}
+#signature #pageContent table.properties col#fieldValue {
+	width: 75%;
+}
+#signature #pageContent table.properties td:first-child {
+	padding-right: 1em;
+	text-align: right;	/* Comment for left align */
+	font-weight: bold;
+}
+
+#signature #pageContent #tbsFiles table th,
+#signature #pageContent #tbsFiles table td {
+	padding: .3em .5em !important;
+}
+
+#signature #pageContent form {
+	margin-top: .75em;
+	margin-bottom: .25em;
+}
+#signature #pageContent form a {
+	margin-left: 1em;
+	font-weight: bold;
+}
+#signature #pageContent form a#sign {
+	margin-left: 0em;
+}
+
+#signature #pageContent ul {
+	margin-left: 1em;
+}
+#signature #pageContent ul li {
+	margin-top: .25em;
+	list-style: disc outside;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > History
+*/
+
+#history #pageContent {
+}
+
+/* Cf. Page > Audit */
+
+/*OLD (TimeLine)
+#history #pageContent #form {
+	margin: 0em 0em 2em 0em;
+}
+#history #pageContent #form input[type="submit"] {
+	margin-left: 1em;
+}
+
+#timelineZone {
+	margin: -1em;
+	border: 1px solid #BBB;
+}
+
+.shareEntry {
+	color: #66CC66;
+}
+.fileEntry {
+	color: #2882BD;
+}
+.userEntry {
+	color: #FF9900;
+}
+
+.timeline-event-bubble-time {
+	display: none;
+}
+/**/
+
+
+/*--------------------------------------------------------------------------
+* Pages > Administration
+*/
+
+#administration #pageContent {
+	font-size: 1.15em;
+}
+
+#administration #pageContent #version strong {
+	color: #2D4D5D;
+}
+#administration #pageContent #version code {
+	font-size: .95em;
+}
+
+#administration #pageContent h2 {
+	margin-top: .8em;
+	margin-bottom: .4em;
+	font-size: 1.15em;
+}
+#administration #pageContent h3 {
+	margin-bottom: .4em;
+	font-size: .95em;
+}
+
+#administration #pageContent table.t-data-grid td img {
+	vertical-align: middle;
+}
+
+
+/* Tables */
+
+table.forForms {
+	width: 100%;
+}
+table.forForms td {
+	border: none;
+}
+table.forForms td.label {
+	width: 350px;
+	padding-right: .5em;
+	text-align: right;
+}
+table.forForms td.input {
+	padding: .10em 0em .25em .5em;
+	text-align: left;
+}
+
+
+DIV.t-palette-controls BUTTON {
+	background: white;
+	border: none;
+}
+
+
+#edit-administration-general .edit-form-label {
+	text-align: right;
+}
+#edit-administration-general .edit-form-field {
+	margin-top: .25em;
+}
+#edit-administration-general input#activeSignature,
+#edit-administration-general input#activeMimeType {
+	margin-top: .5em;
+}
+
+
+#edit-admin-file-expiry {
+	margin: 1em 0em 0em 0em;
+	padding: .25em .5em;
+	border: .25em solid #5A93AF;
+}
+#edit-admin-file-expiry div.t-forminjector {
+	margin: -.5em 0em 0em 0em;
+	margin: 0em;
+	margin: .2em 0em 0em 0em;
+	padding: 0em;
+}
+#edit-admin-file-expiry .edit-form-label {
+	margin-top: .15em;
+	width: 350px;
+}
+#edit-admin-file-expiry .edit-form-field {
+	margin-left: 20px;
+}
+#edit-admin-file-expiry div.t-forminjector a {
+	margin-left: .75em;
+}
+#edit-admin-file-expiry div.t-forminjector a img {
+	vertical-align: middle;
+}
+#edit-admin-file-expiry div.t-forminjector .edit-form-label {
+	padding-top: .2em;
+	vertical-align: 0em;
+}
+
+
+#edit-administration-mime {
+	margin-top: 1.0em;
+	padding: 0px;
+	font-size: .9em;
+}
+#edit-administration-mime div.t-palette-title {
+	margin-bottom: -2px;
+	padding: .3em;
+	background-color: #5A93AF;
+}
+#edit-administration-mime form#mimeTypeConfiguratorForm #displayChoice {
+	margin: .5em 0em;
+}
+#edit-administration-mime form#mimeTypeConfiguratorForm #displayChoice input#numberOfRow {
+	height: 1.2em;
+	margin-right: .1em;
+	padding: 0em .2em !important;
+	text-align: right;
+}
+#edit-administration-mime form#mimeTypeConfiguratorForm #displayChoice a {
+	margin-left: .25em;
+}
+#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions {
+	margin: .75em 0em 1.2em 0em;
+}
+#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a {
+	margin-right: .5em;
+	padding: 0em .25em;
+	background-color: #EAF1F5;
+	border: 1px solid #ACC6D6;
+	color: #3D697F;
+	font-weight: bold;
+	cursor: pointer;
+}
+#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:link,
+#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:visited {
+	text-decoration: none;
+}
+#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:hover,
+#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:focus,
+#edit-administration-mime form#mimeTypeConfiguratorForm #mimetypeActions a:active {
+	background-color: #FDE7EB;
+	border: 1px solid #F24061;
+	color: #C00D2D;
+	text-decoration: none;
+}
+#edit-administration-mime form#mimeTypeConfiguratorForm a#linksubmit_0 {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+#MimeTypeConfiguratorPalette {
+	margin: -.5em 0em -1.25em;
+}
+#MimeTypeConfiguratorPalette select {
+	width: 420px;
+	border: 2px solid #5A93AF;
+}
+#MimeTypeConfiguratorPalette div.t-palette-controls {
+	margin: 9.5em .5em 0em .5em;
+}
+#MimeTypeConfiguratorPalette div.t-palette-controls button {
+	margin-bottom: 1em;
+}
+#MimeTypeConfiguratorPalette div.t-palette-selected {
+	float: right;
+	clear: right;
+	margin-left: -1em;		/* Safety margin */
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Audit  (Audit, History)
+*/
+
+#audit #pageContent {
+}
+
+#history #pageContent fieldset.title_criteria_zone,
+#audit #pageContent fieldset.title_criteria_zone {
+	float: left;
+	margin : 0px 15px 10px 0px;
+	padding: 3px 10px 3px 3px;
+	border: 2px solid #DDD;
+}
+
+#history #pageContent fieldset#actorCriterion,
+#audit #pageContent fieldset#actorCriterion {
+	width: 25%;
+	min-width: 275px;
+}
+#history #pageContent fieldset#targetCriterion,
+#audit #pageContent fieldset#targetCriterion {
+	width: 25%;
+	min-width: 275px;
+}
+#history #pageContent fieldset#fileCriterion,
+#audit #pageContent fieldset#fileCriterion {
+	width: 532px;
+}
+#history #pageContent fieldset#actionCriterion,
+#audit #pageContent fieldset#actionCriterion {
+	width: 532px;
+}
+
+#history #pageContent #formReport legend,
+#audit #pageContent #formReport legend {
+	font-size: 1.1em;
+}
+
+#history #pageContent fieldset.title_criteria_zone table,
+#audit #pageContent fieldset.title_criteria_zone table {
+	width: 100%;
+}
+
+#history #pageContent fieldset#fileCriterion table td,
+#audit #pageContent fieldset#fileCriterion table td {
+	white-space: nowrap;
+}
+#history #pageContent fieldset#fileCriterion table td.palette,
+#audit #pageContent fieldset#fileCriterion table td.palette {
+	width: 10em;
+}
+#history #pageContent fieldset#fileCriterion input[type="radio"],
+#audit #pageContent fieldset#fileCriterion input[type="radio"] {
+	position: relative;
+	top: .2em;
+	margin-left: .75em;
+}
+
+#history #pageContent a, #history #pageContent input[type="submit"],
+#audit #pageContent a, #audit #pageContent input[type="submit"] {
+	font-size: 1.2em;
+}
+
+#history #bigPalette,
+#audit #bigPalette {
+    padding: 0px;
+	font-size: .9em;
+}
+#history #bigPalette div.t-palette-title,
+#audit #bigPalette div.t-palette-title {
+	margin-bottom: -2px;
+	padding: .3em;
+	background-color: #5A93AF;
+}
+#MimeTypeConfiguratorPalette {
+	margin: -.5em 0em -1.25em;
+}
+#history #bigPalette select,
+#audit #bigPalette select {
+	width: 210px;
+	border: 2px solid #5A93AF;
+}
+#history #bigPalette div.t-palette-controls,
+#audit #bigPalette div.t-palette-controls {
+	margin: 17px .70em 0em .70em;
+}
+#history #bigPalette div.t-palette-controls button,
+#audit #bigPalette div.t-palette-controls button {
+	margin-bottom: 15px;
+}
+#history #bigPalette div.t-palette-selected,
+#audit #bigPalette div.t-palette-selected {
+	float: right;
+	clear: right;
+	margin-left: -1em;		/* Safety margin */
+}
+.palette {
+	padding: 5px;
+	color: #7F7F7F;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+#history #pageContent table.t-data-grid,
+#audit #pageContent table.t-data-grid {
+	margin-top: 1em;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > User Configuration
+*/
+
+#userConfig #pageContent {
+	<!--font-size: 1.2em;-->
+}
+
+#userConfig #pageContent h2 {
+    color: #3D697F;
+	font-size: 1.20em;
+	margin-bottom: 10px;
+	padding-bottom: 3px;
+	border-bottom: solid #b0d6ee 1px;
+}
+
+#top_text
+
+#userConfig #pageContent h3 {
+	margin-bottom: .4em;
+	font-size: .95em;
+}
+
+#userConfig #pageContent input, #userConfig #pageContent select {
+	margin-left: 1em;
+}
+
+/* Tables */ 
+
+td.field_langage {
+	vertical-align: middle;
+}
+
+td.field_old_pass {
+	vertical-align: middle;
+}
+
+td.field_new_pass {
+	vertical-align: middle;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Download
+*/
+
+/*--- BLOC DOWNLOAD ---*/
+
+div#blocDL {
+	background: url(../images/theme0/blocDLBG.gif) repeat-y;
+	width: 908px;
+	padding: 20px 0 20px 0;
+}
+
+div#blocDL hr {
+	display: block;
+	margin: 20px;
+	height: 2px;
+	background: #ADCFE1;
+	border: none;
+}
+
+div#blocDL a {
+	float: left;
+	font-size: 20px;
+	color: #2E92D0;
+}
+div#blocDL a:hover {
+	text-decoration: none;
+}
+div#blocDL a.btnDL, div#blocDL a.btnDLzip {
+	float: right;
+	display: block;
+	font-weight: bold;
+	background: url(../images/theme0/btnDL.gif) no-repeat;
+	width: 220px;
+	height: 33px;
+	font-size: 14px;
+	text-decoration: none;
+	padding-top: 14px;
+	padding-left: 35px;
+	color: black;
+}
+div#blocDL a.btnDL:hover, div#blocDL a.btnDLzip:hover {
+	color: #2E92D0;
+}
+div#blocDL a.btnDLzip {
+	float: none;
+	background: url(../images/theme0/btnDLzip.gif) no-repeat;
+	padding-left: 35px;
+	width: 320px;
+	margin-top: 20px;
+}
+
+div#blocDLheader, div#blocDLfooter {
+	background: url(../images/theme0/blocDLheader.gif) no-repeat;
+	font-size: 1px;
+	width: 908px;
+}
+div#blocDLheader {
+	height: 15px;
+}
+div#blocDLfooter {
+	background: #2E92D0 url(../images/theme0/blocDLfooter.gif) no-repeat bottom;
+	font-size: 20px;
+	color: #ADCFE1;
+	padding: 10px 0;
+}
+
+div#blocDL ul {
+	margin: 0;
+	padding: 0 20px;
+	list-style: none;
+}
+div#blocDL ul li {
+	margin: 10px 0;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Help
+*/
+
+#help #content h1 {
+	width: 100%;
+}
+
+#help #pageContent {
+	margin-bottom: -.5em;
+	font-size: 1.2em;
+}
+
+#help #pageContent h2 {
+	margin-top: 0em;
+	margin-bottom: 1.0em;
+	font-size: 1.15em;
+}
+
+#help #pageContent p {
+	margin: 0em 0em 1.0em 0em;
+}
+
+#help #pageContent h2.back {
+	clear: both;
+	margin-bottom: 0em;
+	padding-top: 1em;
+}
+
+
+/*** Help > Index ***/
+
+#helpHome dl dt {
+	clear: both;
+	margin-bottom: .5em;
+	padding: .25em .5em;
+	border-radius: .5em;
+	-o-border-radius: 3px;
+	-moz-border-radius: .3em;
+	-icab-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	background-color: #EEE;
+	color: #C00D2D;
+	font-size: 1.2em;
+}
+
+#helpHome dl dd {
+	float: left;
+	display: block;
+	overflow: hidden;
+	width: 33%;		/* 99%/n, e.g.: 33, 24.75, 19.8, 16.5 */
+	height: 64px;
+	min-width: 17em;
+	max-width: 21em;
+	margin-bottom: .5em;
+	border: 1px solid #EEE;
+}
+#helpHome dl dd:hover, #helpHome dl dd:focus {
+	background-color: #F4F4F4;
+	border-color: #CCC;
+}
+#helpHome dl dd:hover a.alt, #helpHome dl dd:focus a.alt {
+	color: #3D697F;
+}
+#helpHome dl dd.support {
+	height: 48px;
+}
+
+#helpHome dl dd .main {
+	white-space: nowrap;
+	display: block;
+	width: 100%;
+	height: inherit;
+	padding-top: 16px;
+	padding-left: 48px;
+	background: transparent url("../images/icons/icon-help-text.png") no-repeat scroll 0px 8px;
+	font-size: .9em;
+	font-weight: bold;
+}
+#helpHome dl dd .alt {
+	white-space: nowrap;
+	display: block;
+	float: left;
+	margin-top: -46px;
+	margin-left: 50px;		/* 48px */
+	font-size: .75em;
+	color: #B8B8B8;
+}
+#helpHome dl dd a.alt:hover,
+#helpHome dl dd a.alt:focus,
+#helpHome dl dd a.alt:active {
+	color: #C00D2D;
+}
+
+#helpHome dl dd .text {
+	background-image: url("../images/icons/icon-help-text.png");
+}
+#helpHome dl dd .video {
+	background-image: url("../images/icons/icon-help-video.png");
+}
+#helpHome dl dd .faq {
+	background-image: url("../images/icons/icon-help-faq.png");
+	background-position: 8px 8px;
+}
+#helpHome dl dd .email {
+	background-image: url("../images/icons/icon-help-email.png");
+	background-position: 8px 8px;
+}
+
+
+/*** Help > Text ***/
+
+#helpText {
+}
+
+/* Navigation */
+
+#helpText #navigation {
+	float: left;
+	width: 250px;		/* width <= image "tab-navigation.png" width,  e.g. 300px */
+	font-size: .95em;
+}
+
+/* Navigation > Tab : Right background */
+
+#helpText #navigation ul li a {		/* NORMAL OFF */
+	display: block;
+	height: 30px;
+	margin-left: 16px;
+	background: transparent url("../images/theme0/tab-navigation.png") no-repeat scroll right 0px;
+	font-weight: bold;
+	text-decoration: none;
+	-moz-user-select: none;
+}
+#helpText #navigation ul li a:hover, #helpText #navigation ul li a:focus {
+	background-position: right -60px;
+}
+#helpText #navigation ul li a:active {
+	background-position: right -90px;
+}
+#helpText #navigation ul li.current a {		/* NORMAL ON */
+	background-position: right -30px;
+}
+#helpText #navigation ul li.current a:hover, #helpText #navigation ul li.current a:focus {
+	background-position: right -60px;
+}
+#helpText #navigation ul li.current a:active {
+	background-position: right -90px;
+}
+
+/* Navigation > Tab : Left background, and Text */
+
+#helpText #navigation ul li a span {		/* NORMAL OFF */
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	position: relative;
+	left: -16px;
+	height: 24px;		/* 24px = 30px - 6px - 0px */
+	padding: 6px 5px 0px 5px;
+	background: transparent url("../images/theme0/tab-navigation.png") no-repeat scroll left 0px;
+}
+#helpText #navigation ul li a:hover span, #helpText #navigation ul li a:focus span {
+	background-position: left -60px;
+}
+#helpText #navigation ul li a:active span {
+	background-position: left -90px;
+}
+#helpText #navigation ul li.current a span {		/* NORMAL ON */
+	background-position: left -30px;
+}
+#helpText #navigation ul li.current a:hover span, #helpText #navigation ul li.current a:focus span {
+	background-position: left -60px;
+}
+#helpText #navigation ul li.current a:active span {
+	background-position: left -90px;
+}
+
+/* Content */
+
+#helpText .content {
+	display: none;
+	float: right;
+	width: 100%;
+	margin-left: -300px;
+	margin-bottom: 10px;		/* Safe margin */
+	text-align: justify;
+	font-size: .95em;
+}
+
+#helpText .content-wrapper {
+	margin-left: 260px;
+	text-align: inherit !important;
+}
+		
+#helpText .content h3 {
+	margin: .5em !important;
+	padding: 0em !important;
+}
+#helpText .content h3 span {
+	float: right;
+	margin-top: -1.25em;
+}
+
+#helpText .content ul {
+	margin: .5em !important;
+	padding-left: .1em;
+}
+#helpText .content ul li {
+	list-style: square inside none;
+}
+
+#helpText .content div {
+	text-align: center;
+}
+#helpText .content div img {
+	max-width: 100%;
+}
+
+#helpText .content.visible {
+	display: block;
+}
+
+
+/*** Help > Video ***/
+
+#helpVideo {
+}
+
+#helpVideo .content {
+	float: left;
+	width: 100%;
+	border: 1px solid #5A93AF;
+}
+
+#helpVideo .content div {
+	overflow: hidden;		/* Hide the Adblock Plus "Block" tab ;) */
+	text-align: center;
+}
+#helpVideo .content div object {
+	max-width: 1000px !important;
+	max-height: 636px !important;	/* 636px = 620px (window) + 16px (control bar) */
+}
+
+
+/*** Help > FAQ ***/
+
+#helpFAQ {
+}
+
+#helpFAQ #navigation ul {
+	margin: -.5em .5em .5em .5em !important;
+	padding-left: .2em;
+}
+#helpFAQ #navigation ul li {
+	margin-top: .25em;
+	list-style: disc inside none;
+}
+
+#helpFAQ .content {
+	display: none;
+	float: left;
+	width: 100%;
+	margin-top: 1em;
+	border: 1px solid #5A93AF;
+}
+
+#helpFAQ .content h3 {
+	margin: .5em !important;
+	padding: 0em !important;
+}
+
+#helpFAQ .content ul {
+	margin: .25em .5em .5em .5em !important;
+	padding-left: .2em;
+}
+#helpFAQ .content ul li {
+	margin-top: .5em;
+	list-style: square inside none;
+}
+
+#helpFAQ .content.visible {
+	display: block;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Error
+*/
+
+#error #pageContent {
+	margin-top: 0em;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 1.2em;
+}
+
+#error #pageContent div.errorTitle {
+	margin: auto;
+	padding: .5em;
+	background-color: #FCCFD7;
+	border: 1px solid #C00D2D;
+	color: #EE1139;
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.15em;
+}
+
+#error #pageContent div.errorMessage {
+	margin: auto;
+	padding: 1.5em;
+	background-color: #FFF;
+	text-align: center;
+	font-size: 1.10em;
+}
+
+
+
+/***************************************************************************
+* CONTENTS
+*/
+
+
+/*--------------------------------------------------------------------------
+* Generic
+*/
+
+.clear {
+	clear: both;
+	height: 0em;
+	margin: 0em;
+	padding: 0em;
+	font-size: 1px;
+}
+
+
+/*--------------------------------------------------------------------------
+* Side bar > Links
+*/
+
+#sideBar a {
+}
+#sideBar a:link,
+#sideBar a:visited {
+	color: #3D697F;
+	text-decoration: none;
+}
+#sideBar a:hover,
+#sideBar a:focus,
+#sideBar a:active {
+	color: #C00D2D;
+	text-decoration: underline;
+}
+
+
+/*--------------------------------------------------------------------------
+* Contents > Links
+*/
+
+#content a {
+}
+#content a:link,
+#content a:visited {
+	color: #3D697F;
+	text-decoration: none;
+}
+#content a:hover,
+#content a:focus,
+#content a:active {
+	color: #C00D2D;
+	text-decoration: underline;
+}
+
+#content td.mail a,
+#content td.fileProperties .ownerLogin a,
+#content td.fileProperties .sharedBy a {
+	cursor: help;
+}
+#content td.mail a {
+	font-size: 1.4em;
+}
+#content td.fileProperties .ownerLogin a,
+#content td.fileProperties .sharedBy a {
+	font-size: 1.0em !important;
+}
+
+#content div#actionBar a,
+#content td.shared a,
+#content td.deleteColumn a {
+	background-color: transparent;		/* KEEP IT */
+}
+
+
+/*--------------------------------------------------------------------------
+* Contents > Tables
+*/
+
+/* Layout */
+
+#content th.shared, #content th.signed, #content th.encryptedAdd, #content th.expirationDate, #content th.picture, #content th.actions, #content th.action, #content th.selectedValue,
+#content td.shared, #content td.signed, #content td.encryptedAdd, #content td.expirationDate, #content td.picture, #content td.actions, #content td.action, #content td.selectedValue {
+	text-align: center;
+}
+
+#content th.mail, #content th.completeName, #content th.fileProperties,
+#content td.mail, #content td.completeName, #content td.fileProperties {
+	padding-left: .5em !important;
+}
+
+#content th.selectedValue,
+#content td.selectedValue {
+	padding-left: .75em !important;
+	padding-right: .75em !important;
+	text-align: right;
+}
+
+#content th.deleteColumn,
+#content td.deleteColumn {
+	text-align: right;
+}
+
+#users #content td {
+	padding-top: .5em !important;
+	padding-bottom: .5em !important;
+    color: #888;
+}
+
+/* Fonts */
+
+#content td.fileProperties .fileName {
+	font-size: 1.4em;
+}
+
+#content td.fileProperties .creationDate {
+	margin-left: .25em;
+}
+
+#content td.fileProperties .creationDate,
+#content td.fileProperties .friendlySize,
+#content td.fileProperties .ownerLogin,
+#content td.fileProperties .sharedBy {
+	color: #888;
+}
+
+#content td.fileProperties .ownerLogin a:link, #content td.fileProperties .ownerLogin a:visited,
+#content td.fileProperties .sharedBy a:link, #content td.fileProperties .sharedBy a:visited {
+	color: #5A93AF;
+}
+#content td.fileProperties .ownerLogin a:hover, #content td.fileProperties .ownerLogin a:active,
+#content td.fileProperties .sharedBy a:hover, #content td.fileProperties .sharedBy a:active {
+	color: #F24061;
+}
+
+
+/*--------------------------------------------------------------------------
+* Contents > MIME Types (files)
+*/
+
+/* The most file icons come from Splitbrain.org, and are given away to the Public Domain.
+*  http://www.splitbrain.org/projects/file_icons
+*  Some file icons are created by David CARELLA, and are given away to the Public Domain.
+*/
+
+
+/*** Generic file extensions ***/
+
+#content a.fileName[type]:before {
+	content: url("../images/icons/mimetype/file.png") "\A0";
+}
+#content a.fileName[type^="image/"]:before {
+	content: url("../images/icons/mimetype/image.png") "\A0";
+}
+#content a.fileName[type^="video/"]:before {
+	content: url("../images/icons/mimetype/video.png") "\A0";
+}
+#content a.fileName[type^="audio/"]:before {
+	content: url("../images/icons/mimetype/audio.png") "\A0";
+}
+
+
+/*** Specific file extensions ***/
+
+/* MIME types already known in LinShare (with specific icon) */
+
+#content a.fileName[type="audio/x-aiff"]:before {
+	content: url("../images/icons/mimetype/aiff.png") "\A0";
+}
+#content a.fileName[type="application/bzip2"]:before {
+	content: url("../images/icons/mimetype/bz2.png") "\A0";
+}
+#content a.fileName[type="application/x-chm"]:before {
+	content: url("../images/icons/mimetype/chm.png") "\A0";
+}
+#content a.fileName[type="text/css"]:before {
+	content: url("../images/icons/mimetype/css.png") "\A0";
+}
+#content a.fileName[type="video/mp4"]:before {
+	content: url("../images/icons/mimetype/divx.png") "\A0";
+}
+#content a.fileName[type="application/vnd.ms-word"]:before,
+#content a.fileName[type="application/vnd.openxmlformats-officedocument.wordprocessingml"]:before {
+	content: url("../images/icons/mimetype/doc.png") "\A0";
+}
+#content a.fileName[type="message/rfc822"]:before {
+	content: url("../images/icons/mimetype/eml.png") "\A0";
+}
+#content a.fileName[type="image/gif"]:before {
+	content: url("../images/icons/mimetype/gif.png") "\A0";
+}
+#content a.fileName[type="application/gzip"]:before {
+	content: url("../images/icons/mimetype/gz.png") "\A0";
+}
+#content a.fileName[type="application/winhlp"]:before {
+	content: url("../images/icons/mimetype/hlp.png") "\A0";
+}
+#content a.fileName[type="text/html"]:before,
+#content a.fileName[type="application/xhtml+xml"]:before {
+	content: url("../images/icons/mimetype/html.png") "\A0";
+}
+#content a.fileName[type="image/jpeg"]:before {
+	content: url("../images/icons/mimetype/jpg.png") "\A0";
+}
+#content a.fileName[type="text/javascript"]:before {
+	content: url("../images/icons/mimetype/js.png") "\A0";
+}
+#content a.fileName[type="application/x-freemind"]:before {
+	content: url("../images/icons/mimetype/mm.png") "\A0";
+}
+#content a.fileName[type="video/quicktime"]:before {
+	content: url("../images/icons/mimetype/mov.png") "\A0";
+}
+#content a.fileName[type="audio/mpeg"]:before {
+	content: url("../images/icons/mimetype/mp3.png") "\A0";
+}
+#content a.fileName[type="video/mpeg"]:before {
+	content: url("../images/icons/mimetype/mpg.png") "\A0";
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.formula"]:before,
+#content a.fileName[type^="application/vnd.sun.xml.math"]:before {
+	content: url("../images/icons/mimetype/odf.png") "\A0";
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.graphics"]:before,
+#content a.fileName[type^="application/vnd.sun.xml.draw"]:before {
+	content: url("../images/icons/mimetype/odg.png") "\A0";
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.presentation"]:before,
+#content a.fileName[type^="application/vnd.sun.xml.impress"]:before {
+	content: url("../images/icons/mimetype/odp.png") "\A0";
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.spreadsheet"]:before,
+#content a.fileName[type^="application/vnd.sun.xml.calc"]:before {
+	content: url("../images/icons/mimetype/ods.png") "\A0";
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.text"]:before,
+#content a.fileName[type^="application/vnd.sun.xml.writer"]:before {
+	content: url("../images/icons/mimetype/odt.png") "\A0";
+}
+#content a.fileName[type="application/x-ogg"]:before {
+	content: url("../images/icons/mimetype/ogg.png") "\A0";
+}
+#content a.fileName[type="application/pdf"]:before {
+	content: url("../images/icons/mimetype/pdf.png") "\A0";
+}
+#content a.fileName[type="image/png"]:before {
+	content: url("../images/icons/mimetype/png.png") "\A0";
+}
+#content a.fileName[type="application/vnd.ms-powerpoint"]:before,
+#content a.fileName[type="application/vnd.openxmlformats-officedocument.presentationml"]:before {
+	content: url("../images/icons/mimetype/ppt.png") "\A0";
+}
+#content a.fileName[type="application/postscript"]:before {
+	content: url("../images/icons/mimetype/ps.png") "\A0";
+}
+#content a.fileName[type="application/vnd.rn-realmedia"]:before {
+	content: url("../images/icons/mimetype/ram.png") "\A0";
+}
+#content a.fileName[type="application/x-rar-compressed"]:before {
+	content: url("../images/icons/mimetype/rar.png") "\A0";
+}
+#content a.fileName[type="text/rtf"]:before {
+	content: url("../images/icons/mimetype/rtf.png") "\A0";
+}
+#content a.fileName[type="application/x-installshield-compressedfile"]:before {
+	content: url("../images/icons/mimetype/setup.png") "\A0";
+}
+#content a.fileName[type="application/pgp-signature"]:before {
+	content: url("../images/icons/mimetype/sig.png") "\A0";
+}
+#content a.fileName[type="application/x-shockwave-flash"]:before {
+	content: url("../images/icons/mimetype/swf.png") "\A0";
+}
+#content a.fileName[type="application/x-tar"]:before {
+	content: url("../images/icons/mimetype/tar.png") "\A0";
+}
+#content a.fileName[type="text/plain"]:before {
+	content: url("../images/icons/mimetype/txt.png") "\A0";
+}
+#content a.fileName[type="text/x-vcard"]:before {
+	content: url("../images/icons/mimetype/vcf.png") "\A0";
+}
+#content a.fileName[type="audio/x-wav"]:before {
+	content: url("../images/icons/mimetype/wav.png") "\A0";
+}
+#content a.fileName[type="audio/x-ms-wma"]:before {
+	content: url("../images/icons/mimetype/wma.png") "\A0";
+}
+#content a.fileName[type="video/x-ms-wmv"]:before {
+	content: url("../images/icons/mimetype/wmv.png") "\A0";
+}
+#content a.fileName[type="application/vnd.ms-excel"]:before,
+#content a.fileName[type="application/vnd.openxmlformats-officedocument.spreadsheetml"]:before {
+	content: url("../images/icons/mimetype/xls.png") "\A0";
+}
+#content a.fileName[type="text/xml"]:before {
+	content: url("../images/icons/mimetype/xml.png") "\A0";
+}
+#content a.fileName[type="application/zip"]:before {
+	content: url("../images/icons/mimetype/zip.png") "\A0";
+}
+
+
+/* MIME types already known in LinShare (with substitued icon) */
+
+#content a.fileName[type="application/x-bittorrent"]:before {
+	content: url("../images/icons/mimetype/conf.png") "\A0";
+}
+#content a.fileName[type="application/x-url"]:before {
+	content: url("../images/icons/mimetype/html.png") "\A0";
+}
+#content a.fileName[type="application/x-winamp-playlist"]:before {
+	content: url("../images/icons/mimetype/mp3.png") "\A0";
+}
+#content a.fileName[type="application/x-compress"]:before,
+#content a.fileName[type="application/stuffit"]:before,
+#content a.fileName[type="application/vnd.ms-cab-compressed"]:before,
+#content a.fileName[type="application/java-archive"]:before,
+#content a.fileName[type="application/x-java-webarchive"]:before,
+#content a.fileName[type="application/x-java-enterprisearchive"]:before {
+	content: url("../images/icons/mimetype/tar.png") "\A0";
+}
+#content a.fileName[type="text/java"]:before,
+#content a.fileName[type="application/x-java-manifest"]:before,
+#content a.fileName[type="application/bat"]:before,
+#content a.fileName[type="application/x-sh"]:before,
+#content a.fileName[type="application/x-csh"]:before,
+#content a.fileName[type="application/x-bash"]:before,
+#content a.fileName[type="application/x-ksh"]:before,
+#content a.fileName[type="application/x-tsh"]:before,
+#content a.fileName[type="application/x-applescript"]:before,
+#content a.fileName[type="application/x-ms-registry"]:before,
+#content a.fileName[type="application/x-md5"]:before,
+#content a.fileName[type="application/x-sha"]:before {
+	content: url("../images/icons/mimetype/txt.png") "\A0";
+}
+#content a.fileName[type="application/x-mozilla-addressbook"]:before {
+	content: url("../images/icons/mimetype/vcf.png") "\A0";
+}
+#content a.fileName[type="application/xslt+xml"]:before,
+#content a.fileName[type="application/rdf+xml"]:before,
+#content a.fileName[type="application/owl+xml"]:before,
+#content a.fileName[type="application/xspf+xml"]:before {
+	content: url("../images/icons/mimetype/xml.png") "\A0";
+}
+#content a.fileName[type="application/vnd.adobe.air-application-installer-package+zip"]:before {
+	content: url("../images/icons/mimetype/zip.png") "\A0";
+}
+
+
+/* Other MIME types (unknown in LinShare, on 2009-06-10), for future use */
+
+#content a.fileName[type="application/x-7z-compressed"]:before {
+	content: url("../images/icons/mimetype/7z.png") "\A0";
+}
+#content a.fileName[type="text/x-c"]:before {
+	content: url("../images/icons/mimetype/c.png") "\A0";
+}
+#content a.fileName[type="text/x-c++"]:before {
+	content: url("../images/icons/mimetype/cpp.png") "\A0";
+}
+#content a.fileName[type="application/x-python"]:before {
+	content: url("../images/icons/mimetype/py.png") "\A0";
+}
+#content a.fileName[type="application/x-rpm"]:before {
+	content: url("../images/icons/mimetype/rpm.png") "\A0";
+}
+#content a.fileName[type="application/x-tex"]:before,
+#content a.fileName[type="application/x-latex"]:before {
+	content: url("../images/icons/mimetype/tex.png") "\A0";
+}
+#content a.fileName[type="application/x-xpinstall"]:before {
+	content: url("../images/icons/mimetype/xpi.png") "\A0";
+}
+
+#content a.fileName[type="text/java"]:before,
+#content a.fileName[type="application/x-java-manifest"]:before {
+	content: url("../images/icons/mimetype/java.png") "\A0";
+}
+#content a.fileName[type="application/x-java-class"]:before {
+	content: url("../images/icons/mimetype/class.png") "\A0";
+}
+#content a.fileName[type="application/java-archive"]:before,
+#content a.fileName[type^="application/x-java-applet"]:before,
+#content a.fileName[type^="application/x-java-bean"]:before,
+#content a.fileName[type^="application/x-java-vm"]:before {
+	content: url("../images/icons/mimetype/jar.png") "\A0";		/* .jar */
+}
+#content a.fileName[type="application/x-java-webarchive"]:before {
+	content: url("../images/icons/mimetype/jar.png") "\A0";		/* .war */
+}
+#content a.fileName[type="application/x-java-enterprisearchive"]:before {
+	content: url("../images/icons/mimetype/jar.png") "\A0";		/* .ear */
+}
+
+#content a.fileName[type="application/x-executable"]:before,
+#content a.fileName[type="application/x-ms-dos-executable"]:before {
+	content: url("../images/icons/mimetype/exe.png") "\A0";
+}
+#content a.fileName[type="application/octet-stream"]:before {
+	content: url("../images/icons/mimetype/bin.png") "\A0";
+}
+
+#content a.fileName[type="application/pgp-keys"]:before {
+	content: url("../images/icons/mimetype/pgp.png") "\A0";
+}
+#content a.fileName[type="application/pgp-signature"]:before {	/* Cf. sig.png */
+}
+#content a.fileName[type="application/pgp"]:before,
+#content a.fileName[type="application/pgp-encrypted"]:before {
+	content: url("../images/icons/mimetype/enc.png") "\A0";
+}
+
+
+
+/***************************************************************************
+* POPUPS
+*/
+
+/*--------------------------------------------------------------------------
+* Popups > Common : Theme LinShare
+*/
+
+/* Popup layout theme */
+
+.bluelighting_nw {
+	background: url(../images/popupImages/lightingHeader_left.png) no-repeat !important;
+	height: 36px !important;
+	width: 22px !important;
+}
+.bluelighting_n {
+	background: url(../images/popupImages/lightingHeader.png) repeat-x !important;
+	height: 36px !important;
+}
+.bluelighting_ne {
+	background: url(../images/popupImages/lightingHeader_right.png) no-repeat !important;
+	height: 36px !important;
+	width: 26px !important;
+}
+.bluelighting_e {
+	background: url(../images/popupImages/lighting_right.png) repeat-y !important;
+	width: 14px !important;
+}
+.bluelighting_sizer {
+	background: url(../images/popupImages/lighting_cornerBottomRight.png) no-repeat !important;
+	width: 22px !important;
+	height: 22px !important;
+}
+.bluelighting_s {
+	background: url(../images/popupImages/lighting_bottom.png) repeat-x !important;
+	height: 22px !important;
+}
+.bluelighting_sw {
+	background: url(../images/popupImages/lighting_cornerBottomLeft.png) no-repeat !important;
+	width: 22px !important;
+	height: 22px !important;
+}
+.bluelighting_w {
+	background: url(../images/popupImages/lighting_left.png) repeat-y !important;
+	width: 10px !important;
+}
+
+.bluelighting_close {
+	background: url(../images/popupImages/lightingHeader_close.png) no-repeat !important;
+	width: 13px !important;
+	height: 13px !important;
+	right: 14px !important;
+	top: 12px !important;
+}
+
+.bluelighting_content {
+	background: #9DBED0 !important;
+}
+
+.bluelighting_content hr {
+	display: block;
+	height: 0em;
+	margin: 1em 0em;
+	border: 0px none;
+	border-top: 2px dotted #E6EEF2;
+}
+
+
+/* Sliding panel theme */
+
+div.ck_slidingpanel {
+}
+div.ck_slidingPanelSubject {
+	padding: 5px !important;
+	background: url(../images/popupImages/headerBlocs.gif) repeat-x !important;
+	border: 1px solid #1D5C7C;
+	color: #1D5C7C;
+	overflow: hidden;
+}
+div.ck_slidingPanelSubject-toggler {
+	background: url(../images/popupImages/plus.png) no-repeat !important;
+	width: 16px !important;
+	height: 16px !important;
+}
+div.ck_slidingPanelContent {
+	background: white !important;
+	border: 1px solid #1D5C7C !important;
+	border-top: none !important;
+}
+
+div.ck_slidingPanelContent ul {
+    list-style: circle !important;
+}
+
+div.ck_slidingPanelContent h3 {
+    font-weight: bold;
+}
+
+/*--------------------------------------------------------------------------
+* Popups > Common : Popup heading, Popup content, Buttons
+*/
+
+div.dialog {
+}
+
+div.dialog h2 {
+	margin: .5em auto .75em auto;
+	text-align: center;
+	color: #FFF;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+div.dialog div.description {
+	margin-bottom: .75em;
+}
+div.dialog div.description p {
+	text-align: justify;
+}
+
+div.dialog div.button {
+	padding-left: 5em;
+	text-align: center;
+}
+div.dialog div.button .button {
+	margin-left: 2em;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > Common : Panel Upload  (Quick share, Files upload)
+*/
+
+div.form-upload-container form .upload-list {
+	padding-right: 30px;
+	float: left;
+}
+
+div.form-upload-container form input {
+		margin-top: 5px;
+}
+
+div.form-upload-container form div.change-uploader {
+	margin-top: 5px;
+	margin-bottom: -1px;
+}
+div.form-upload-container form div.change-uploader a {
+	margin-left: .5em !important;
+	padding: 2px 6px 0px 6px !important;
+	background-color: #E0E0E0;
+	color: #707070;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.4em;
+	text-weight: bold;
+}
+div.form-upload-container form div.change-uploader a:hover,
+div.form-upload-container form div.change-uploader a:focus {
+	background-color: #FCCFD7;
+	color: #C00D2D !important;
+}
+div.form-upload-container form div.change-uploader a:active {
+	background-color: #E3BBC2;
+	color: #8F0A22 !important;
+}
+
+div.form-upload-container form .upload-panel-center div.upload-clear {
+	clear: both;
+	display: inline;
+	float: left;
+	margin-top: .5em;
+}
+
+div.form-upload-container span#bar,
+div.form-upload-container span#bar_0 {
+	display: block;
+	float: left;
+	margin-top: 1.25em;
+	margin-left: 2.5em;
+}
+
+div.form-upload-container span img.percentImage {
+}
+div.form-upload-container span span.percentText {
+	position: relative;
+	bottom: 2px;
+	margin-left: .75em;
+}
+
+div.closeUploadPopup {
+	margin-top: .5em;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > Common : Errors
+*/
+
+#formZone div.t-error {
+	float: none !important;
+	margin: 0px auto;
+	background-color: transparent !important;
+	border: 0px !important;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > Common : Confirmation  (Confirm share, etc.)
+*/
+
+.confirmPopup {
+	padding: 5px;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > Confirm share
+*/
+
+/* Files list */
+
+#confirmWindowContent div.filesList {
+	text-align: left;
+}
+
+#confirmWindowContent table {
+	width: 92.0%;
+	margin: .25em auto;
+	background-color: #EAF1F5;
+	font-size: 1.2em;
+}
+
+#confirmWindowContent table tr {
+	margin: .5em;
+	border: 1px solid #5A93AF !important;
+}
+
+#confirmWindowContent table tr th {
+	padding: .25em .5em !important;
+}
+#confirmWindowContent table tr th a:link,
+#confirmWindowContent table tr th a:visited {
+	text-decoration: none;
+}
+#confirmWindowContent table tr th a:hover,
+#confirmWindowContent table tr th a:focus,
+#confirmWindowContent table tr th a:active {
+	text-decoration: underline;
+}
+#confirmWindowContent table tr th a img {
+	margin-top: -.2em;
+	margin-left: .4em;
+	vertical-align: middle;
+}
+
+#confirmWindowContent table tr td {
+	padding: .25em .5em !important;
+	white-space: nowrap;
+	text-align: left;
+}
+
+/* Form : textarea */
+
+#confirmWindowContent form#confirmshare textarea.recipientsPattern {
+	width: 94.7%;		/* Without throbber = 98.1% */
+	margin-top: 5px;
+}
+#confirmWindowContent form#confirmshare textarea#textarea,
+#confirmWindowContent form#confirmshare textarea#textarea_0 {
+		width: 98.1%;
+	margin-top: 5px;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > Quick share
+*/
+
+/* Step numbers */
+
+div.number1, div.number2, div.number3, div.number-hidden {
+	float: left;
+	width: 35px;
+	height: 88px;
+	margin-right: 16px;
+	background: #9DBED0 url(../images/popupImages/one.gif) no-repeat right;
+}
+div.number2 {
+	background-image: url(../images/popupImages/two.gif);
+}
+div.number3 {
+	background-image: url(../images/popupImages/three.gif);
+}
+div.number-hidden {
+	visibility: hidden;
+	background-image: none;
+}
+
+/* Form : input */
+
+form#quickShareForm input.checkbox {
+	position: relative;
+	top: .2em;
+	margin-top: 1em;
+	margin-left: .5em;
+	text-align: left !important;
+}
+
+/* Form : textarea */
+
+#panelUpload_content {
+	background: #E6E6E6 url("../images/theme0/bg-quickshare-panelupload.png") repeat-x !important;
+}
+
+form#quickShareForm textarea.recipientsPattern {
+	width: 94.7%;		/* Without throbber = 98.1% */
+	margin-top: 5px;
+}
+form#quickShareForm textarea#textarea,
+form#quickShareForm textarea#textarea_0 {
+		width: 98.1%;
+	margin-top: 5px;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > Files upload
+*/
+
+form#uploadForm {
+	margin: 0em 1em;
+}
+
+form#uploadForm .upload-list {
+	margin-top: -5px;
+	margin-bottom: 1em;
+}
+
+.textUploadAction {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 5px;
+	background: #000 repeat-x scroll 0 -1px;
+	-moz-user-select: none;
+	color: #FFF;
+	text-align: left;
+	font-weight: bold;
+}
+
+/* Popup > Upload result message */
+
+.uploadMessage {
+	color: rgb(40, 130, 189);
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > Guest creation, User edition
+*/
+
+#guestEditFormComponent .edit-form-label,
+#userEditFormComponent .edit-form-label {
+	display: block;
+	width: 24em;
+	margin-top: .25em;
+	text-align: right !important;
+}
+#userEditFormComponent .edit-form-label {
+	width: 20em;
+}
+
+#guestEditFormComponent .edit-form-field,
+#userEditFormComponent .edit-form-field,
+#guestEditFormComponent .edit-form-checkbox,
+#userEditFormComponent .edit-form-checkbox,
+#guestEditFormComponent .edit-form-select,
+#userEditFormComponent .edit-form-select {
+	float: left;
+	margin-top: -1.5em;
+	margin-left: 22em;
+	border: 1px solid #5A93AF;
+}
+#guestEditFormComponent [readonly="true"],
+#userEditFormComponent [readonly="true"] {
+	background-color: #E0E0E0;
+}
+#guestEditFormComponent .edit-form-field,
+#userEditFormComponent .edit-form-field {
+	width: 20em;
+}
+#guestEditFormComponent .edit-form-checkbox,
+#userEditFormComponent .edit-form-checkbox {
+	margin-top: -1.35em;
+}
+
+#guestEditFormComponent img.t-error-icon,
+#userEditFormComponent img.t-error-icon {
+	float: left;
+	margin: -1.50em 0em 1.25em 20.25em;
+}
+
+#guestEditFormComponent #commentMessageBlock label,
+#guestEditFormComponent #askCustomMessageBlock label,
+#guestEditFormComponent #customMessageBlock label {
+	display: block;
+	margin-bottom: .25em;
+	text-align: justify;
+}
+
+#guestEditFormComponent textarea,
+#userEditFormComponent textarea {
+	float: left;
+	width: 42em;
+	margin-top: .25em;
+	margin-bottom: 1.5em;
+}
+#guestEditFormComponent input[type="submit"],
+#userEditFormComponent input[type="submit"] {
+	float: none;
+	width: auto;
+	margin: 0em auto;
+	padding: .25em .5em !important;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > User details displayer
+*/
+
+#userDetailsWindowContent {
+	margin-left: 5px;		/* To fix popup layout */
+}
+
+#userDetailsWindowContent table {
+	width: 97%;
+	margin: .5em auto;
+	background-color: #EAF1F5;
+	font-size: 1.2em;
+}
+
+#userDetailsWindowContent table tr {
+	margin: .5em;
+	border: 1px solid #5A93AF;
+}
+
+#userDetailsWindowContent table tr td {
+	padding: .5em;
+}
+#userDetailsWindowContent table tr td.label {
+	width: 250px;
+	white-space: nowrap;
+	text-align: right;
+	font-weight: bold;
+}
+#userDetailsWindowContent table tr td.value {
+	text-align: left;
+}
+
+
+/*--------------------------------------------------------------------------
+* Popups > Signature details displayer
+*/
+
+#signatureDetailsInfo {
+	padding-left: 5px;
+}
+
+#signatureDetailsInfo #currentfileName,
+#signatureDetailsInfo .signatureMessage {
+	margin-left: 7px;
+	text-align: left;
+}
+
+#signatureDetailsInfo #currentfileName {
+	color: #FFF;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.70em;
+	font-weight: bold;
+}
+
+#signatureDetailsInfo h1 {
+	padding-bottom: .75em;
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+#signatureDetailsInfo #signDocumentlist table {
+	background-color: #FFF;
+}
+
+#signatureDetailsInfo #signDocumentlist table th {
+	font-size: 1.2em;
+}
+
+/* Layout */
+
+#signatureDetailsInfo #signDocumentlist table td {
+	padding-top: .25em !important;
+	padding-bottom: .25em !important;
+}
+#signatureDetailsInfo #signDocumentlist table .signerInfo {		/* th and td */
+	padding-left: .5em !important;
+	text-align: left;
+}
+#signatureDetailsInfo #signDocumentlist table .creationDate {	/* th and td */
+	text-align: center;
+}
+#signatureDetailsInfo #signDocumentlist table .action {			/* th and td */
+	text-align: center;
+}
+
+/* Fonts */
+
+#signatureDetailsInfo #signDocumentlist a:link,
+#signatureDetailsInfo #signDocumentlist a:visited {
+	color: #3D697F;
+	text-decoration: none;
+}
+#signatureDetailsInfo #signDocumentlist a:hover,
+#signatureDetailsInfo #signDocumentlist a:active {
+	color: #C00D2D;
+	text-decoration: underline;
+}
+
+#signatureDetailsInfo #signDocumentlist table .completeName {
+	font-size: 1.5em;
+}
+#signatureDetailsInfo #signDocumentlist table .mail {
+	color: #555;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+#signatureDetailsInfo #signDocumentlist table .certSubjectDn {
+	display: block;
+	margin: .25em 0em -1.25em 0em;
+	padding: 0em;
+	color: #555;
+}
+#signatureDetailsInfo #signDocumentlist table .certIssuerDn {
+	color: #555;
+}
+#signatureDetailsInfo #signDocumentlist table td.creationDate {
+	color: #333;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+#signatureDetailsInfo #signDocumentlist table td.action {
+	font-size: 1.1em;
+}
+
+#signatureDetailsInfo div.button a {
+	font-size: 1.1em !important;
+}
+
+.errorMessagesClass {
+    color: #C00D2D;
+    font-weight: bold;
+    white-space: nowrap;
+    margin-left: 1em;
+    margin-bottom: 1em;
+}
+
+.errorMessagesClass h2 {
+    color: inherit !important;
+    font-weight: bolder;
+}
+
+.errorMessagesClass li {
+}
+
+.errorMessagesClass ul {
+    margin-left: 2em;
+}
+
+#errorMessages .message-info {
+    color: green;
+}
+
+#errorMessages .message-warn {
+    color: orange;
+}
+
+#errorMessages .message-error {
+    color: red;
+}
+
+DIV.t-error-popup {
+	z-index:999;
+}
+
+/* error message Tapestry in user configuration */ 
+DIV.t-error {
+    border: 1px solid red;
+    padding: 0px;
+    margin: 4px 0px;
+    margin-bottom: 1.0em
+}
+
+DIV.t-error DIV {
+    padding: 2px;
+    display: block;
+    margin: 0px;
+    background-color: #cc3333;
+    color: white;
+    font-weight: bold;
+}
+
+DIV.t-error UL {
+    margin: 2px 25px;
+    background-color: white;
+    color: black;
+}
+/***************************************************************************/
+/* EOF */

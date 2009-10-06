@@ -1,0 +1,50 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<t:form name="sharePanelForm">
+	
+		<h5>${label}</h5>
+
+		<t:if t:test="readOnly" negate="true">
+			<t:grid t:source="listObject" row="Object" model="shareModel">
+
+				<t:parameter t:name="deleteColumnHeader">
+				</t:parameter>	
+		
+				<t:parameter t:name="empty">
+		            ${message:components.sharePanel.grid.empty}
+				</t:parameter>
+				
+				<t:parameter name="deleteColumnCell">
+					<t:actionLink t:id="delete" t:context="prop:indexObject" title="${message:components.sharePanel.action.remove.title}">
+						<img src="${asset:context:images/icons/remove.png}" alt="${message:global.button.remove}"/>
+					</t:actionLink>	
+				</t:parameter>	
+
+			</t:grid>
+		</t:if>	
+
+		<t:if t:test="readOnly">
+			<t:grid t:source="listObject" row="Object" model="shareModel" />
+		</t:if>	
+
+
+		<t:if t:test="elements">
+		<t:if t:test="readOnly" negate="true">
+			<div id="sharePanelReset">
+				<t:actionLink t:id="reset">
+					${message:components.sharePanel.reset}
+				</t:actionLink>
+			</div>
+			<div id="sharePanelShare">
+				<t:linkSubmit>
+					${message:components.sharePanel.share}
+				</t:linkSubmit>
+			</div>
+			<div class="clear"></div>
+		</t:if>
+		</t:if>
+
+ 	</t:form>
+
+</t:container>

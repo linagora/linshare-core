@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<t:block id="comment">
+		This zone is used to contains the destination of the submit; to prevent a full page reloading
+	</t:block>
+	<t:zone t:id="zoneTest"/>
+
+
+	<div id="list">
+
+	<h2>${message:pages.index.list.sharedfiles.heading}</h2>
+	
+	<t:sorter t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listSharedDocument.sorter.date.creation.label},${message:components.listSharedDocument.sorter.date.expiration.label},${message:components.listSharedDocument.sorter.name.label},${message:components.listSharedDocument.sorter.size.label}" t:properties="literal:dateCreation,dateExpiration,name,size"/> 
+
+	<t:form t:id="search">
+	
+		<t:errors />
+
+		<t:grid source="shareDocuments" row="shareDocument" model="model"
+			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment"
+			rowsPerPage="20">
+
+
+			<!-- Header definition -->
+
+<t:linkit.Comment>
+			<t:parameter t:name="typeHeader">
+				${message:components.listSharedDocument.grid.typeHeader}
+			</t:parameter>
+</t:linkit.Comment>
+
+			<t:parameter t:name="empty">
+				${message:components.listSharedDocument.grid.empty}
+			</t:parameter>
+
+			<t:parameter t:name="filePropertiesHeader">
+				${message:components.listSharedDocument.grid.filePropertiesHeader}
+			</t:parameter>
+
+			<t:parameter t:name="expirationDateHeader">
+				${message:components.listSharedDocument.grid.expirationDate}
+			</t:parameter>
+
+			<t:parameter t:name="SignedHeader">
+				${message:components.listSharedDocument.grid.signed}
+			</t:parameter>
+
+
+			<!-- Selected cell definition -->
+
+			<t:parameter t:name="filePropertiesCell">
+			<div class="fileProperties">
+				<t:actionLink t:id="download" t:context="${shareDocument.identifier}" t:type="${shareDocument.type}"  t:title="${shareDocument.fileName}" class="fileName">
+					<span t:type="ck/TrimmedString" maxLength="42" trimPos="right"
+						value="shareDocument.fileName" />
+				</t:actionLink>
+				<br/>
+				<span class="creationDate">${creationDate},</span>${message:global.space}
+				<span class="friendlySize">${friendlySize},</span>${message:global.space}
+				<span class="sharedBy">${message:components.listSharedDocument.grid.sharedBy} 
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.login" onclick="userDetailsWindow.showCenter(true);">
+						${sharedBy}
+					</t:actionlink>
+				</span>
+			</div>
+			</t:parameter>
+
+			<t:parameter t:name="expirationDateCell">
+				 ${expirationDate}
+			</t:parameter>
+
+			<t:parameter t:name="signedCell">
+				<t:if t:test="documentSigned">
+					<t:actionlink t:id="showSignature" zone="signatureDetailsZone" context="shareDocument.identifier" onclick="signatureDetailsWindow.showCenter(true);">
+						<t:if t:test="documentSignedByCurrentUser">	
+							<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listSharedDocument.picture.signatureon.title}"/>
+						<t:parameter name="else">
+							<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listSharedDocument.picture.signatureother.title}"/>
+						</t:parameter>
+						</t:if>
+					</t:actionlink>
+					<t:parameter name="else">
+						<img src="${asset:context:images/icons/stamp-off.png}" alt="" title="${message:components.listDocument.picture.signatureoff.title}" />
+					</t:parameter>
+				</t:if>
+			</t:parameter>
+
+			<t:parameter t:name="actionsCell">
+				<t:actionLink t:id="delete" context="${shareDocument.identifier}" t:zone="zoneTest"
+					onClick="window_confirm.showCenter(true)" title="${message:components.listSharedDocument.action.delete.title}">
+					<img src="${asset:context:images/icons/delete.png}" alt="${message:components.listSharedDocument.action.delete}" />
+				</t:actionLink>
+				<t:if t:test="activeSignature">	
+					<t:if t:test="documentSignedByCurrentUser" negate="true">
+						<t:actionLink t:id="signature" context="${shareDocument.identifier}" t:zone="zoneTest" 
+							title="${message:components.listSharedDocument.action.sign.title}">
+							<img src="${asset:context:images/icons/sign.png}" alt="${message:components.listSharedDocument.action.sign}" />
+						</t:actionLink>
+						<t:parameter name="else">
+							<span class="link-disable" title="${message:components.listSharedDocument.action.sign.disable.title}"><img src="${asset:context:images/icons/sign-disable.png}" alt="${message:components.listSharedDocument.action.sign}" /></span>
+						</t:parameter>
+                    </t:if>
+				</t:if>
+				<t:if t:test="enabledToUpload">	
+                    <t:actionLink t:id="copy" context="${shareDocument.identifier}"
+						title="${message:components.listSharedDocument.action.copy.title}">
+						<img src="${asset:context:images/icons/copy.png}" alt="${message:components.listSharedDocument.action.copy}" />
+                    </t:actionLink>
+				</t:if>
+			</t:parameter>
+
+		</t:grid>
+	</t:form>
+
+	</div><!-- id="list" -->
+
+
+	<!-- Popups -->
+
+	<t:confirmPopup t:messageLabel="${message:components.listDocument.messageConfirm}" t:eventName="listDocumentEvent" />
+
+ 	<t:userDetailsDisplayer />
+
+	<t:signatureDetailsDisplayer />
+
+</t:container>

@@ -1,0 +1,402 @@
+/*
+ * LinShare - Large files secured sharing system
+ * CSS custom style ONLY FOR IE  (7.0 only)
+ * Report changes to: support@linagora.com
+ * Contributors: David GALICHET, Nicolas GAPAILLARD, Nicolas CHARLES, David CARELLA
+ *
+ * Version: LinShare 0.5+
+ * Language: all
+ * Encoding: ASCII
+ * 2009-06-22, LINAGORA Group
+ */
+
+
+/***************************************************************************
+* LAYOUT (page)
+*/
+
+/*--------------------------------------------------------------------------
+* BODY > Side bar
+*/
+
+#sideBar {
+	min-height: 20em;
+	margin-bottom: 0em;
+	padding-bottom: 0em;
+}
+
+
+
+/***************************************************************************
+* LAYOUT (local)
+*/
+
+/*--------------------------------------------------------------------------
+* BODY > Menu bar > Content
+*/
+
+#menuBar {
+	margin-top: 0px;
+}
+
+/* Tab : Left background */
+#menuBar li a {
+	line-height: 17px;
+}
+
+/* Tab : Right background, and Text */
+#menuBar li a span {
+	border: none;
+	border-top: 3px solid #666A6D;
+}
+#menuBar li a:hover span,
+#menuBar li a:active span {
+	border-top: 3px solid #848484;
+}
+#menuBar li a.menu-labelhighlight span {
+	border: 3px solid #FFF;
+}
+#menuBar li a.menu-labelhighlight:hover span,
+#menuBar li a.menu-labelhighlight:active span {
+	border: 3px solid #FFF;
+}
+
+
+
+/***************************************************************************
+* COMPONENTS
+*/
+
+/*--------------------------------------------------------------------------
+* Components > Tables
+*/
+
+table.t-data-grid {
+	border: 1px solid silver !important;
+}
+
+table.t-data-grid thead tr th {		/* Impossible to style 'tr' tags (5.5, 6, 7) */
+	background-color: #5A93AF !important;
+}
+
+/*--------------------------------------------------------------------------
+* Components > Sorter  (Files, Users)
+*/
+
+#pageContent #list form#form label {
+	position: relative;
+	bottom: .25em;
+}
+
+
+
+/***************************************************************************
+* CONTENTS
+*/
+
+/*--------------------------------------------------------------------------
+* Contents > MIME Types (files)
+*/
+
+/* MSIE: Selectors works only with IE7+ (not IE6, not IE5.5) */
+
+/*** Generic file extensions ***/
+
+#content a.fileName[type] {		/* Keep it */
+	content: normal;
+	padding-left: 22px;
+	background: transparent url("../images/icons/mimetype/file.png") no-repeat scroll left center;
+}
+#content a.fileName[type^="image/"] {
+	background-image: url("../images/icons/mimetype/image.png");
+}
+#content a.fileName[type^="video/"] {
+	background-image: url("../images/icons/mimetype/video.png");
+}
+#content a.fileName[type^="audio/"] {
+	background-image: url("../images/icons/mimetype/audio.png");
+}
+
+
+/*** Specific file extensions ***/
+
+/* MIME types already known in LinShare (with specific icon) */
+
+#content a.fileName[type="audio/x-aiff"] {
+	background-image: url("../images/icons/mimetype/aiff.png");
+}
+#content a.fileName[type="application/bzip2"] {
+	background-image: url("../images/icons/mimetype/bz2.png");
+}
+#content a.fileName[type="application/x-chm"] {
+	background-image: url("../images/icons/mimetype/chm.png");
+}
+#content a.fileName[type="text/css"] {
+	background-image: url("../images/icons/mimetype/css.png");
+}
+#content a.fileName[type="video/mp4"] {
+	background-image: url("../images/icons/mimetype/divx.png");
+}
+#content a.fileName[type="application/vnd.ms-word"],
+#content a.fileName[type="application/vnd.openxmlformats-officedocument.wordprocessingml"] {
+	background-image: url("../images/icons/mimetype/doc.png");
+}
+#content a.fileName[type="message/rfc822"] {
+	background-image: url("../images/icons/mimetype/eml.png");
+}
+#content a.fileName[type="image/gif"] {
+	background-image: url("../images/icons/mimetype/gif.png");
+}
+#content a.fileName[type="application/gzip"] {
+	background-image: url("../images/icons/mimetype/gz.png");
+}
+#content a.fileName[type="application/winhlp"] {
+	background-image: url("../images/icons/mimetype/hlp.png");
+}
+#content a.fileName[type="text/html"],
+#content a.fileName[type="application/xhtml+xml"] {
+	background-image: url("../images/icons/mimetype/html.png");
+}
+#content a.fileName[type="image/jpeg"] {
+	background-image: url("../images/icons/mimetype/jpg.png");
+}
+#content a.fileName[type="text/javascript"] {
+	background-image: url("../images/icons/mimetype/js.png");
+}
+#content a.fileName[type="application/x-freemind"] {
+	background-image: url("../images/icons/mimetype/mm.png");
+}
+#content a.fileName[type="video/quicktime"] {
+	background-image: url("../images/icons/mimetype/mov.png");
+}
+#content a.fileName[type="audio/mpeg"] {
+	background-image: url("../images/icons/mimetype/mp3.png");
+}
+#content a.fileName[type="video/mpeg"] {
+	background-image: url("../images/icons/mimetype/mpg.png");
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.formula"],
+#content a.fileName[type^="application/vnd.sun.xml.math"] {
+	background-image: url("../images/icons/mimetype/odf.png");
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.graphics"],
+#content a.fileName[type^="application/vnd.sun.xml.draw"] {
+	background-image: url("../images/icons/mimetype/odg.png");
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.presentation"],
+#content a.fileName[type^="application/vnd.sun.xml.impress"] {
+	background-image: url("../images/icons/mimetype/odp.png");
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.spreadsheet"],
+#content a.fileName[type^="application/vnd.sun.xml.calc"] {
+	background-image: url("../images/icons/mimetype/ods.png");
+}
+#content a.fileName[type^="application/vnd.oasis.opendocument.text"],
+#content a.fileName[type^="application/vnd.sun.xml.writer"] {
+	background-image: url("../images/icons/mimetype/odt.png");
+}
+#content a.fileName[type="application/x-ogg"] {
+	background-image: url("../images/icons/mimetype/ogg.png");
+}
+#content a.fileName[type="application/pdf"] {
+	background-image: url("../images/icons/mimetype/pdf.png");
+}
+#content a.fileName[type="image/png"] {
+	background-image: url("../images/icons/mimetype/png.png");
+}
+#content a.fileName[type="application/vnd.ms-powerpoint"],
+#content a.fileName[type="application/vnd.openxmlformats-officedocument.presentationml"] {
+	background-image: url("../images/icons/mimetype/ppt.png");
+}
+#content a.fileName[type="application/postscript"] {
+	background-image: url("../images/icons/mimetype/ps.png");
+}
+#content a.fileName[type="application/vnd.rn-realmedia"] {
+	background-image: url("../images/icons/mimetype/ram.png");
+}
+#content a.fileName[type="application/x-rar-compressed"] {
+	background-image: url("../images/icons/mimetype/rar.png");
+}
+#content a.fileName[type="text/rtf"] {
+	background-image: url("../images/icons/mimetype/rtf.png");
+}
+#content a.fileName[type="application/x-installshield-compressedfile"] {
+	background-image: url("../images/icons/mimetype/setup.png");
+}
+#content a.fileName[type="application/pgp-signature"] {
+	background-image: url("../images/icons/mimetype/sig.png");
+}
+#content a.fileName[type="application/x-shockwave-flash"] {
+	background-image: url("../images/icons/mimetype/swf.png");
+}
+#content a.fileName[type="application/x-tar"] {
+	background-image: url("../images/icons/mimetype/tar.png");
+}
+#content a.fileName[type="text/plain"] {
+	background-image: url("../images/icons/mimetype/txt.png");
+}
+#content a.fileName[type="text/x-vcard"] {
+	background-image: url("../images/icons/mimetype/vcf.png");
+}
+#content a.fileName[type="audio/x-wav"] {
+	background-image: url("../images/icons/mimetype/wav.png");
+}
+#content a.fileName[type="audio/x-ms-wma"] {
+	background-image: url("../images/icons/mimetype/wma.png");
+}
+#content a.fileName[type="video/x-ms-wmv"] {
+	background-image: url("../images/icons/mimetype/wmv.png");
+}
+#content a.fileName[type="application/vnd.ms-excel"],
+#content a.fileName[type="application/vnd.openxmlformats-officedocument.spreadsheetml"] {
+	background-image: url("../images/icons/mimetype/xls.png");
+}
+#content a.fileName[type="text/xml"] {
+	background-image: url("../images/icons/mimetype/xml.png");
+}
+#content a.fileName[type="application/zip"] {
+	background-image: url("../images/icons/mimetype/zip.png");
+}
+
+
+/* MIME types already known in LinShare (with substitued icon) */
+
+#content a.fileName[type="application/x-bittorrent"] {
+	background-image: url("../images/icons/mimetype/conf.png");
+}
+#content a.fileName[type="application/x-url"] {
+	background-image: url("../images/icons/mimetype/html.png");
+}
+#content a.fileName[type="application/x-winamp-playlist"] {
+	background-image: url("../images/icons/mimetype/mp3.png");
+}
+#content a.fileName[type="application/x-compress"],
+#content a.fileName[type="application/stuffit"],
+#content a.fileName[type="application/vnd.ms-cab-compressed"],
+#content a.fileName[type="application/java-archive"],
+#content a.fileName[type="application/x-java-webarchive"],
+#content a.fileName[type="application/x-java-enterprisearchive"] {
+	background-image: url("../images/icons/mimetype/tar.png");
+}
+#content a.fileName[type="text/java"],
+#content a.fileName[type="application/x-java-manifest"],
+#content a.fileName[type="application/bat"],
+#content a.fileName[type="application/x-sh"],
+#content a.fileName[type="application/x-csh"],
+#content a.fileName[type="application/x-bash"],
+#content a.fileName[type="application/x-ksh"],
+#content a.fileName[type="application/x-tsh"],
+#content a.fileName[type="application/x-applescript"],
+#content a.fileName[type="application/x-ms-registry"],
+#content a.fileName[type="application/x-md5"],
+#content a.fileName[type="application/x-sha"] {
+	background-image: url("../images/icons/mimetype/txt.png");
+}
+#content a.fileName[type="application/x-mozilla-addressbook"] {
+	background-image: url("../images/icons/mimetype/vcf.png");
+}
+#content a.fileName[type="application/xslt+xml"],
+#content a.fileName[type="application/rdf+xml"],
+#content a.fileName[type="application/owl+xml"],
+#content a.fileName[type="application/xspf+xml"] {
+	background-image: url("../images/icons/mimetype/xml.png");
+}
+#content a.fileName[type="application/vnd.adobe.air-application-installer-package+zip"] {
+	background-image: url("../images/icons/mimetype/zip.png");
+}
+
+
+/* Other MIME types (unknown in LinShare, on 2009-06-10), for future use */
+
+#content a.fileName[type="application/x-7z-compressed"] {
+	background-image: url("../images/icons/mimetype/7z.png");
+}
+#content a.fileName[type="text/x-c"] {
+	background-image: url("../images/icons/mimetype/c.png");
+}
+#content a.fileName[type="text/x-c++"] {
+	background-image: url("../images/icons/mimetype/cpp.png");
+}
+#content a.fileName[type="application/x-python"] {
+	background-image: url("../images/icons/mimetype/py.png");
+}
+#content a.fileName[type="application/x-rpm"] {
+	background-image: url("../images/icons/mimetype/rpm.png");
+}
+#content a.fileName[type="application/x-tex"],
+#content a.fileName[type="application/x-latex"] {
+	background-image: url("../images/icons/mimetype/tex.png");
+}
+#content a.fileName[type="application/x-xpinstall"] {
+	background-image: url("../images/icons/mimetype/xpi.png");
+}
+
+#content a.fileName[type="text/java"]:before,
+#content a.fileName[type="application/x-java-manifest"]:before {
+	background-image: url("../images/icons/mimetype/java.png");
+}
+#content a.fileName[type="application/x-java-class"]:before {
+	background-image: url("../images/icons/mimetype/class.png");
+}
+#content a.fileName[type="application/java-archive"]:before,
+#content a.fileName[type^="application/x-java-applet"]:before,
+#content a.fileName[type^="application/x-java-bean"]:before,
+#content a.fileName[type^="application/x-java-vm"]:before {
+	background-image: url("../images/icons/mimetype/jar.png");		/* .jar */
+}
+#content a.fileName[type="application/x-java-webarchive"]:before {
+	background-image: url("../images/icons/mimetype/jar.png");		/* .war */
+}
+#content a.fileName[type="application/x-java-enterprisearchive"]:before {
+	background-image: url("../images/icons/mimetype/jar.png");		/* .ear */
+}
+
+#content a.fileName[type="application/x-executable"]:before,
+#content a.fileName[type="application/x-ms-dos-executable"]:before {
+	background-image: url("../images/icons/mimetype/exe.png");
+}
+#content a.fileName[type="application/octet-stream"]:before {
+	background-image: url("../images/icons/mimetype/bin.png");
+}
+
+#content a.fileName[type="application/pgp-keys"]:before {
+	background-image: url("../images/icons/mimetype/pgp.png");
+}
+#content a.fileName[type="application/pgp-signature"]:before {	/* Cf. sig.png */
+}
+#content a.fileName[type="application/pgp"]:before,
+#content a.fileName[type="application/pgp-encrypted"]:before {
+	background-image: url("../images/icons/mimetype/enc.png");
+}
+
+
+
+/***************************************************************************
+* POPUPS
+*/
+
+/*--------------------------------------------------------------------------
+* Popups > Guest creation, User edition
+*/
+
+#guestEditFormComponent .edit-form-label,
+#userEditFormComponent .edit-form-label {
+	float: left;
+}
+#guestEditFormComponent .edit-form-field,
+#userEditFormComponent .edit-form-field {
+	width: 19em;
+}
+#guestEditFormComponent .edit-form-checkbox,
+#userEditFormComponent .edit-form-checkbox {
+	margin-top: -1.30em;
+	margin-right: 10em;		/* Safe margin */
+}
+#guestEditFormComponent textarea,
+#userEditFormComponent textarea {
+	width: 41em;
+}
+
+
+
+/***************************************************************************/

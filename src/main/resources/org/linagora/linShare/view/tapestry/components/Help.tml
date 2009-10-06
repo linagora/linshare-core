@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<t:if t:test="prop:helpsASOExists">
+
+
+	<t:if t:test="videoMode" negate="true">
+	<!-- Manual Text -->
+
+	<div id="helpText">
+
+		<h2>${helpTitle}</h2>
+
+
+		<!-- Section navigation -->
+
+		<div id="navigation">
+		<ul>
+			<t:loop source="subsections" value="subsection">
+				<t:if t:test="current">
+				<li class="current" id="subsectionMenu${subsection.index}">
+					<a href="#subsection${subsection.index}" onClick="changeStyle('${subsectionLength}','${subsection.index}','subsection','${classContent}','${classContentHover}'); return changeStyle('${subsectionLength}','${subsection.index}','subsectionMenu','${classNavigation}','${classNavigationHover}')"><span>${subsection.name}</span></a>
+				</li>
+				</t:if>
+				<t:if t:test="current" negate="true">
+				<li class="" id="subsectionMenu${subsection.index}">
+					<a href="#subsection${subsection.index}" onClick="changeStyle('${subsectionLength}','${subsection.index}','subsection','${classContent}','${classContentHover}'); return changeStyle('${subsectionLength}','${subsection.index}','subsectionMenu','${classNavigation}','${classNavigationHover}')"><span>${subsection.name}</span></a>
+				</li>
+				</t:if>
+			</t:loop>
+		</ul>
+		</div><!-- id="navigation" -->
+
+
+		<!-- Section content -->
+
+		<t:loop source="subsections" value="subsection">
+			<t:linkit.Comment>
+			<!-- 
+				"content visible" if the element is the first 
+				else only "content"
+			-->
+			</t:linkit.Comment>
+			<div class="${className}" id="subsection${subsection.index}">
+			<div class="content-wrapper">		
+			<h3>${subsection.name} <span>${subsection.index}/${subsectionLength}</span></h3>
+			<ul>
+				<t:loop source="subsection.descriptions" value="description">
+					<li>${description}</li>
+				</t:loop>
+			</ul>
+			
+			<t:if t:test="image">
+				<div>
+					<img src="${subsection.image}" title="${subsection.imageTitle}" alt=""/>
+				</div>
+			</t:if>
+			
+			</div>
+			</div><!-- class="content" -->
+				
+		</t:loop>
+	
+	</div><!-- id="helpText" -->
+	</t:if>
+
+
+	<t:if t:test="videoMode">
+	<!-- Manual Video -->
+
+	<div id="helpVideo">
+
+		<h2>${helpTitle}</h2>
+
+
+		<!-- Section content -->
+
+		<div class="content">
+			<t:if t:test="video">
+
+				<script type="text/javascript">
+					swfobject.registerObject("videoContent", "9.0.0");
+				</script>
+
+				<!-- Screencast (Flash video)  [1000 x 620 px] -->
+				<div>
+					<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="636" id="videoContent">
+						<param name="movie" value="${videoUrl}" />
+						<param name="bgcolor" value="#FFFFFF" />
+						<!--[if !IE]>-->
+						<object type="application/x-shockwave-flash" data="${videoUrl}" width="100%" height="636">
+							<param name="bgcolor" value="#FFFFFF" />
+						<!--<![endif]-->
+							<a href="http://www.adobe.com/go/getflashplayer">
+								<img src="${asset:context:images/get_adobe_flash_player.png}"
+									alt="${message:pages.help.manual.video.swfobject.alternate.getflash}"
+									title="${message:pages.help.manual.video.swfobject.alternate.getflash}" />
+							</a>
+						<!--[if !IE]>-->
+						</object>
+						<!--<![endif]-->
+					</object>
+				</div>
+
+			</t:if>
+			<t:if t:test="video" negate="true">
+				<div>${message:pages.help.manual.video.error.fileNotFound} <code>${videoUrl}</code></div>
+			</t:if>
+		</div><!-- class="content" -->
+
+	</div><!-- id="helpVideo" -->
+
+	</t:if>
+
+
+	</t:if>
+
+	<t:if t:test="prop:helpsASOExists" negate="true">
+		<t:businessMessagesDisplayer />
+	</t:if>
+
+</t:container>

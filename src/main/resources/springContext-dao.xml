@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+	default-autowire="no">
+	
+    <bean id="searchDocumentDao" class="org.linagora.linShare.core.dao.document.impl.SearchDocumentHibernate">
+        <constructor-arg index="0" ref="hibernateTemplate" />
+    </bean>
+
+    <!-- LDAP DAO. -->
+
+    <bean id="dirContextAuthenticationStrategyFactory" 
+        class="org.linagora.linShare.core.dao.ldap.DirContextAuthenticationStrategyFactory">
+            <constructor-arg value="${ldap.auth.strategy}"/>
+            <constructor-arg value="${ldap.auth.ssl.trustore.file}"/>
+            <constructor-arg value="${ldap.auth.ssl.trustore.password}"/>
+    </bean>
+
+    <bean id="LdapDao" class="org.linagora.linShare.core.dao.ldap.LdapDatasource">
+        <constructor-arg index="0" ref="ldapContextSource"/>
+        <constructor-arg index="1" ref="ldapTemplate" />
+        <constructor-arg index="2" value="${ldap.auth.baseDN}" />
+        <constructor-arg index="3" value="${ldap.auth.key}" />
+    	<constructor-arg index="4" value="${ldap.pageSize}" />
+    </bean>
+
+	<!-- Ldap connexion auth -->
+    <bean id="ldapContextSource"
+		class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="url" value="${ldap.auth.url}" />
+        <property name="base" value="${ldap.auth.base}" />
+        <property name="userDn" value="${ldap.auth.userDN}" />
+        <property name="password" value="${ldap.auth.password}" />
+        <property name="authenticationStrategy">
+            <bean factory-bean="dirContextAuthenticationStrategyFactory" factory-method="getInstance"/>
+        </property>
+    </bean>
+	<!-- Ldap template auth  -->
+    <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+        <constructor-arg ref="ldapContextSource" />
+    </bean>
+
+</beans>	

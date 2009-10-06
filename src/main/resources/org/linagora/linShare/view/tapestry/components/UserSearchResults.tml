@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<div id="list">
+
+	<h2>${message:pages.user.list.users.heading}</h2>
+	
+	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:pages.user.sorter.name.label},${message:pages.user.sorter.mail.label},${message:pages.user.sorter.expiration.label}" t:properties="literal:name,mail,expiration"/> 
+
+	<t:form t:id="results">
+
+		<t:grid source="users" row="user" include="mail, picture, action, selectedValue"
+				add="picture, action, selectedValue" reorder="mail, picture" rowsPerPage="10">
+
+			<t:parameter t:name="empty">
+				${message:components.userSearch.grid.empty}
+			</t:parameter>
+
+
+			<!-- Header definition -->
+
+			<t:parameter t:name="mailHeader">
+				${message:components.userSearch.grid.user}
+			</t:parameter>
+
+			<t:parameter t:name="pictureHeader">
+				${message:components.userSearch.grid.usertype}
+			</t:parameter>
+
+			<t:parameter t:name="actionHeader">
+				${message:components.userSearch.grid.actions}
+			</t:parameter>
+
+			<t:parameter t:name="selectedValueHeader">
+				<t:checkbox t:id="selectAll" onclick="checkAll();" value="valueCheck" title="${message:components.userSearch.grid.checkAll}"/>
+			</t:parameter>
+
+
+			<!-- Selected cell definition -->
+
+			<t:parameter name="pictureCell">
+				<t:if test="admin">
+					<t:if test="userGuest">
+						<img src="${asset:context:images/icons/usertype-guestsimple.png}"
+							alt="${message:components.userSearch.grid.usertype.guestSimple}"
+							title="${message:components.userSearch.grid.usertype.guestSimple}" />
+						<t:parameter name="else">
+							<t:if test="userAdmin">
+								<img src="${asset:context:images/icons/usertype-internaladmin.png}"
+									alt="${message:components.userSearch.grid.usertype.internalAdmin}"
+									title="${message:components.userSearch.grid.usertype.internalAdmin}" />
+								<t:parameter name="else">
+									<img src="${asset:context:images/icons/usertype-internalsimple.png}"
+										alt="${message:components.userSearch.grid.usertype.internalSimple}"
+										title="${message:components.userSearch.grid.usertype.internalSimple}" />
+								</t:parameter>
+							</t:if>
+						</t:parameter>
+					</t:if>
+				</t:if>
+			</t:parameter>
+
+			<t:parameter name="mailCell">
+				<div>
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${showUserTooltip}" context="user.mail" onclick="userDetailsWindow.showCenter(true);">
+						${user.firstName} ${user.lastName}
+					</t:actionlink>
+					<br/>
+					<span class="emailAddress">
+						${user.mail},
+						<t:if test="userGuest">
+							${message:UserType.GUEST}<t:if test="${user.expirationDate}">,</t:if>
+						</t:if>
+						<t:if test="userGuest" negate="true">
+							${message:UserType.INTERNAL}<t:if test="${user.expirationDate}">,</t:if>
+						</t:if>
+					</span>${message:global.space}
+					<span class="expirationDate">
+						<t:if test="${user.expirationDate}">
+							${message:components.userSearch.grid.expires} ${formattedUserExpiryDate}<t:if test="${userCommentExtract}">,</t:if>
+						</t:if>
+					</span>${message:global.space}
+					<span class="userComment">
+						<t:if test="${userCommentExtract}">
+							${userCommentExtract}
+						</t:if>
+					</span>
+				</div>
+			</t:parameter>
+
+			<t:parameter name="actionCell">
+				<t:actionLink t:id="share" t:context="user.login" title="${message:components.userSearch.action.share.title}">
+					<img src="${asset:context:images/icons/share-on.png}" alt="${message:global.button.share}"/>
+				</t:actionLink>
+				<t:if test="userEditable">
+					<t:actionLink t:id="edit" context="user.login" t:zone="userEditFormZone"
+						onClick="userEditWindow.showCenter(true)" title="${message:components.userSearch.action.edit.title}">
+						<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"/>
+					</t:actionLink>
+				</t:if>
+				<t:if test="userDeletable">
+					<t:actionLink t:id="delete" context="user.login" t:zone="zoneConfirmDelete"
+						onClick="window_confirm.showCenter(true)" title="${message:components.userSearch.action.delete.title}">
+						<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"/>
+					</t:actionLink>
+				</t:if>
+			</t:parameter>
+
+			<t:parameter name="selectedValueCell">
+				<t:checkbox t:id="selected" onclick="countUserCheckbox();"/>
+			</t:parameter>
+
+		</t:grid>
+
+
+		<t:if test="users.empty" negate="true">
+			<div id="actionListUser" style="display:none">
+				<t:linkSubmit t:event="share" class="listDocument" title="${message:components.userSearch.action.share}">
+				<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.userSearch.action.share}</t:linkSubmit>
+			</div>
+		</t:if>
+
+	</t:form>
+
+	</div><!-- id="list" -->
+
+
+	<!-- Popups -->
+
+    <t:confirmPopup
+        t:messageLabel="${message:components.userSearch.action.delete.ask}"
+        t:eventName="userDeleteEvent" />
+
+    <t:zone t:id="zoneConfirmDelete" />
+
+    <t:userDetailsDisplayer/>
+
+    <div style="display:none">
+        <t:zone t:id="userEditTemplateZone">
+            <t:userEditForm users="users" editUserWithMail="selectedLogin"/>
+        </t:zone>
+    </div>
+
+    <div t:id="userEditWindow">
+        <t:zone id="userEditFormZone" update="show"/>
+    </div>
+
+</t:container>

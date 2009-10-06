@@ -1,0 +1,335 @@
+/*
+ *    This file is part of Linshare.
+ *
+ *   Linshare is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU Affero General Public License as
+ *   published by the Free Software Foundation, either version 3 of
+ *   the License, or (at your option) any later version.
+ *
+ *   Linshare is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Affero General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Affero General Public
+ *   License along with Foobar.  If not, see
+ *                                    <http://www.gnu.org/licenses/>.
+ *
+ *   (c) 2008 Groupe Linagora - http://linagora.org
+ *
+*/
+package org.linagora.linShare.core.dao.ldap;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+
+import org.linagora.linShare.core.dao.LdapDao;
+import org.linagora.linShare.core.domain.entities.Internal;
+import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.exception.TechnicalErrorCode;
+import org.linagora.linShare.core.exception.TechnicalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ldap.NamingException;
+import org.springframework.ldap.control.PagedResultsDirContextProcessor;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.AttributesMapperCallbackHandler;
+import org.springframework.ldap.core.CollectingNameClassPairCallbackHandler;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.simple.AbstractParameterizedContextMapper;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.LikeFilter;
+import org.springframework.ldap.support.LdapUtils;
+
+public class LdapDatasource implements LdapDao {
+
+	protected static final Logger technicalTracer = LoggerFactory
+	.getLogger(LdapDatasource.class);
+
+	/**
+	 * We have one
+	 */
+    private final ContextSource contextSource;
+	private final LdapTemplate ldapTemplate;
+	private final String baseDn_ldap;
+	private final String ldap_filter;
+	private final int pageSize; // paging ldap result (limit result from ldap)
+	
+
+	//By default the scope is subtree
+	private int scope=SearchControls.SUBTREE_SCOPE;
+	//map the password to userPassword ldap field
+	private final String PASSWORDFIELD = "userPassword";
+	
+
+
+	/**
+	 * 
+	 * @param ldap
+	 * @param baseDn_ldap
+	 * @param ldap_filter
+	 */
+	public LdapDatasource(ContextSource contextSource, LdapTemplate ldapTemplate, String baseDn_ldap, String ldap_filter, int pageSize) {
+        this.contextSource = contextSource;
+		this.ldapTemplate = ldapTemplate;
+		this.baseDn_ldap = baseDn_ldap;
+		this.ldap_filter = ldap_filter;
+		this.pageSize = pageSize;
+	}
+	/**
+	 * 
+	 * @param ldap
+	 * @param baseDn_ldap
+	 * @param ldap_filter
+	 * @param scope
+	 */
+	public LdapDatasource(ContextSource contextSource, LdapTemplate ldap,String baseDn_ldap,String ldap_filter,
+        int scope, int pageSize ){
+		this(contextSource, ldap,baseDn_ldap,ldap_filter,pageSize);
+		this.scope=scope;
+	}
+
+	/**
+	 * in this implementation the exist method match only for FedMail
+	 */
+
+	public boolean exist(String... keys) {
+
+		try {
+
+			SearchControls searchControls=new SearchControls();
+			searchControls.setSearchScope(scope);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, (Object[])keys), searchControls);
+			if(naming.hasMore()){
+				return true;
+			}
+		} catch (NamingException e) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,"Object not found in ldap",e);
+		} catch (javax.naming.NamingException e) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,"Object not found in ldap");
+		}
+		return false;
+	}
+
+    /** Get values from LDAP.
+     * 
+     * @param keys search criterias
+     * @param attributes attributes we want to get.
+     * @return a Map<attribute, values>
+     */
+	public Map<String,String> getValues(List<String> keys ,String...attributes ){
+		try {
+			HashMap<String, String> hashMap=new HashMap<String, String>();
+			SearchControls searchControls=new SearchControls();
+			searchControls.setSearchScope(scope);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, keys.toArray()), searchControls);
+			if(naming.hasMore()){
+				SearchResult searchResult=naming.next();
+				for(String currentAttribute:attributes){
+					hashMap.put(currentAttribute, searchResult.getAttributes().get(currentAttribute).get().toString());
+				}
+				
+			}
+			
+			return hashMap;
+
+		}catch(Exception e){
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,"Object not found in ldap");
+		}
+	}
+
+	public boolean auth(String password, String... keys) {
+        List<String> results = ldapTemplate.search(baseDn_ldap, String.format(ldap_filter, (Object[]) keys), new DnContextMapper());
+        if (results.size() != 1) {
+            // user is not in LDAP, probably a guest or root account
+            return false;
+        }
+        DirContext ctx = null;
+        try {
+            ctx = contextSource.getContext(results.get(0), password);
+            return true;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            LdapUtils.closeContext(ctx);
+        }
+    }
+
+/**
+ * get the userPassword for an user
+ * this is important to get the salt (last four bytes)
+ * @param keys to compose login field
+ * @return user password
+ */
+	public byte[] getUserPassword(String... keys) {
+		
+		 byte[] res = null;
+		
+		try {
+
+			SearchControls searchControls=new SearchControls();
+			searchControls.setSearchScope(scope);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, (Object[])keys), searchControls);
+			if(naming.hasMore()){
+				SearchResult searchResult=naming.next();
+				res = (byte[])searchResult.getAttributes().get(PASSWORDFIELD).get();
+			}
+		} catch (NamingException e) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,"Object not found in ldap",e);
+		}catch(Exception e){
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,"problem to get PASSWORD FIELD",e);
+		}
+		return res;
+	}
+	
+	
+
+    /** Search a user (near match search).
+     * @param mail user mail.
+     * @param firstName user first name.
+     * @param lastName user last name.
+     * @return list of users.
+     */
+    public LdapSearchResult<User> searchUser(String mail, String firstName, String lastName) {
+        AndFilter filter = new AndFilter();
+        if (mail != null && mail.length() > 0) {
+            filter.and(new LikeFilter("mail", "*" + mail + "*"));
+        } else {
+            filter.and(new LikeFilter("mail", "*"));
+        }
+        if (firstName != null && firstName.length() > 0) {
+            filter.and(new LikeFilter("givenName", firstName + "*"));
+        } else {
+            filter.and(new LikeFilter("givenName", "*"));
+        }
+        if (lastName != null && lastName.length() > 0) {
+            filter.and(new LikeFilter("sn", lastName + "*"));
+        } else {
+            filter.and(new LikeFilter("sn", "*"));
+        }
+
+        technicalTracer.info("Search pattern = " + filter.encode());
+        
+        //you can use a pagedresultcookie to keep information of the position of your last research (not use here)
+        PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
+        SearchControls searchControls = new SearchControls();
+        searchControls.setSearchScope(scope);
+
+        CollectingNameClassPairCallbackHandler handler = new AttributesMapperCallbackHandler(new UserAttributesMapper());
+        ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+        
+        @SuppressWarnings( "unchecked" )
+        List<User> users = (List<User>) handler.getList();
+        
+        LdapSearchResult<User> pagedResult =  new LdapSearchResult<User>(users,null);
+        
+	    if(users.size()<=pageSize) pagedResult.setTruncated(false);
+	        else pagedResult.setTruncated(true);
+        
+        //old search without paging
+       // List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(),searchControls,new UserAttributesMapper());
+        //return users;
+	    
+	    return pagedResult;
+    }
+
+    /** 
+     * @see LdapDao#searchUserAnyWhere(String, String, String)
+     */
+    public LdapSearchResult<User> searchUserAnyWhere(String mail, String firstName, String lastName) {
+        AndFilter filter = new AndFilter();
+        if (mail != null && mail.length() > 0) {
+        	
+            filter.and(new LikeFilter("mail", "*" + mail + "*"));
+        } else {
+            filter.and(new LikeFilter("mail", "*"));
+        }
+        if (firstName != null && firstName.length() > 0) {
+            filter.and(new LikeFilter("givenName", "*" +firstName + "*"));
+        } else {
+            filter.and(new LikeFilter("givenName", "*"));
+        }
+        if (lastName != null && lastName.length() > 0) {
+            filter.and(new LikeFilter("sn", "*" +lastName + "*"));
+        } else {
+            filter.and(new LikeFilter("sn", "*"));
+        }
+
+        technicalTracer.info("Search pattern = " + filter.encode());
+        
+        PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
+        SearchControls searchControls = new SearchControls();
+        searchControls.setSearchScope(scope);
+        
+        CollectingNameClassPairCallbackHandler handler = new AttributesMapperCallbackHandler(new UserAttributesMapper());
+        ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+        
+        @SuppressWarnings( "unchecked" )
+        List<User> users = (List<User>) handler.getList();
+        
+        LdapSearchResult<User> pagedResult =  new LdapSearchResult<User>(users,null);
+        
+	    pagedResult.setTruncated(isSearchResultTrucated(users.size()));
+
+        //old search without paging
+        //List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
+        return pagedResult;
+    }
+    
+    /** Search a user (exact match search).
+     * @param mail user mail.
+     * @return founded user.
+     */
+    public User searchUser(String mail) {
+        if (mail == null || mail.length() == 0) {
+            throw new IllegalArgumentException("Argument must not be empty or null");
+        }
+        EqualsFilter filter = new EqualsFilter("mail", mail);
+        technicalTracer.info("Search pattern = " + filter.encode());
+
+        List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
+        if (users.size() == 0) {
+            return null;
+        } else if (users.size() == 1) {
+            return users.get(0);
+        } else {
+            throw new IllegalStateException("More than one user found with email : " + mail);
+        }
+    }
+
+    /** This class is used to map ldap attributes with a user entity. */
+    private class UserAttributesMapper implements AttributesMapper {
+
+        public Object mapFromAttributes(Attributes attributes) throws javax.naming.NamingException {
+            String mail = (String) attributes.get("mail").get();
+            String firstName = (String) attributes.get("givenName").get();
+            String lastName = (String) attributes.get("sn").get();
+            return new Internal(mail, firstName, lastName, mail);
+        }
+
+    }
+
+    private final static class DnContextMapper extends AbstractParameterizedContextMapper<String> {
+        @Override
+        protected String doMapFromContext(DirContextOperations ctx) {
+            return ctx.getNameInNamespace();
+        }
+    };
+    
+    public boolean isSearchResultTrucated(int listSize){
+    	if(listSize<pageSize) return false;
+    	else return true;
+    }
+
+
+}

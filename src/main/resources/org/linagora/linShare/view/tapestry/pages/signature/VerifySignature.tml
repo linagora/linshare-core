@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.signature.title" t:identifier="signature"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	Unsupported
+	<!-- 
+	<div id="content">
+
+		<h1>${message:pages.signature.verifySignature.title}</h1>
+
+		<div id="pageContent">
+
+			<p>${message:pages.signature.verifySignature.description}</p>
+			
+			<ul type="square">
+			  <li>${message:pages.signature.verifySignature.archive}</li>
+			  <li>${message:pages.signature.verifySignature.directory}</li>
+			</ul>
+			
+			<br/>
+			
+			<applet name="myApplet" alt="${message:pages.signature.verifySignature.applet.error}"
+				archive="${asset:context:applet/linsign.jar}"
+				code="org.linagora.linsign.client.applet.verify.LinSignVerifyXadesApplet" width="700" height="150">
+				<param name="debug" value="true" />
+				<param name="language" value="${locale}" />
+			</applet>
+		</div>
+		<br/>
+		<t:pagelink page="signature/verifySignature">${message:pages.signature.verifySignature.reload}</t:pagelink>
+
+	</div>-->
+
+
+</t:MyBorderLayout>

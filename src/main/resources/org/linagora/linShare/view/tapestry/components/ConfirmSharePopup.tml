@@ -1,0 +1,81 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	
+	<div t:id="confirmWindow" >
+	<div class="confirmPopup">
+
+ 		<h2>${messageLabel}</h2>
+
+		<t:zone t:id="formZone" t:update="show" >
+		</t:zone>
+
+
+		<hr />
+
+		<div class="number1"></div>
+    	<div class="filesList">
+	        <t:sharePanel listObject="prop:documentsVo" columns="fileName" label="${message:components.confirmSharePopup.documents.title}" t:readOnly="true"/>
+	    </div>
+		<div class="clear"></div>
+		
+
+		<t:form t:id="confirmshare" t:zone="formZone">
+
+			<hr />
+
+			<div class="number2"></div>
+			<div class="description"><p>${message:components.confirmSharePopup.description}</p></div>
+			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false"
+				t:subject="${message:components.confirmSharePopup.panelRecipients.subject}">      
+				<t:textarea t:id="recipientsPatternSharePopup" t:value="recipientsSearch" validate="required"
+					t:mixins="autocomplete" t:minChars="2" t:tokens=","
+					class="recipientsPattern" 
+					title="${message:components.confirmSharePopup.texarea.recipients.title}" />
+			</div>
+			<br />
+
+			<t:label for="secureSharing" class="edit-form-label">
+				${message:components.confirmSharePopup.secureSharing}
+			</t:label>
+			<t:checkbox t:id="secureSharing" class="edit-form-field" />
+			<div class="clear"></div>
+
+
+			<hr />
+
+			<div class="number3"></div>
+			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>
+			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
+				t:subject="${message:components.confirmSharePopup.panelMessage.subject}">  
+				<t:textarea value="textAreaValue"  title="${message:components.confirmSharePopup.texarea.message.title}" />
+			</div>
+			<div class="clear"></div>
+
+
+			<hr />
+
+ 			<div class="button">
+				<t:linkSubmit class="button"><span>${message:global.button.share}</span></t:linkSubmit>
+				<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span>${message:global.button.cancel}</span></a>
+			</div>
+
+		</t:form>
+
+		
+		<t:block t:id="onFailure">
+        	<t:errors  banner="message:components.confirmSharePopup.errorBanner"  />
+          	<script type="text/javascript">
+	       		new Effect.Shake('${JSONid}');
+	       	</script>
+        </t:block>
+        
+        <t:block t:id="onSuccess">
+          	<script type="text/javascript">
+	       		location.reload(true);
+	       	</script>
+        </t:block>
+
+	</div>
+	</div>
+
+</t:container>
