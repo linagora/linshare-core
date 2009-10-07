@@ -60,8 +60,7 @@
 		-->
 		<PersistenceManager
 			class="org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager">
-		<param name="url"
-			value="jdbc:postgresql://${database.host}:${database.port}/${database.name}" />
+		<param name="url" value="jdbc:postgresql://${database.host}:${database.port}/${database.name}" />
 		<param name="user" value="${database.username}" />
 		<param name="password" value="${database.password}" />
 			<param name="schemaObjectPrefix" value="${wsp.name}_" />
@@ -88,8 +87,7 @@
 		-->
 		<PersistenceManager
 			class="org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager">
-		<param name="url"
-			value="jdbc:postgresql://${database.host}:${database.port}/${database.name}" />
+		<param name="url" value="jdbc:postgresql://${database.host}:${database.port}/${database.name}" />
 		<param name="user" value="${database.username}" />
 		<param name="password" value="${database.password}" />
 			<param name="schemaObjectPrefix" value="version_" />
