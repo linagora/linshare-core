@@ -6,9 +6,9 @@
 	<!-- 
 	<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 	<property name="connection.driver_class">org.postgresql.Driver</property>
-	<property name="connection.url">jdbc:postgresql://10.75.128.149:5432/securedshare</property>
-	<property name="connection.username">postgres</property>
-	<property name="connection.password">postgres</property>
+	<property name="connection.url">jdbc:postgresql://127.0.0.1:5432/linshare</property>
+	<property name="connection.username">linshare</property>
+	<property name="connection.password">linshare</property>
 	 -->
 
     <property name="connection.autocommit">true</property>
