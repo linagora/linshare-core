@@ -127,7 +127,7 @@
         creation_date timestamp,
         role_id int4 not null,
         can_upload bool,
-        can_create_guest bool default 0,
+        can_create_guest bool default false,
         password varchar(255),
         locale varchar(255),
         expiry_date timestamp,
