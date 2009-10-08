@@ -7,6 +7,14 @@
 	<version>0.6.10</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
+
+    <licenses>
+        <license>
+            <name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
+            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.tapestry</groupId>
@@ -400,6 +408,9 @@
 	</issueManagement>
 	<ciManagement>
 	</ciManagement>
+	<scm>
+		<url>https://svn.linid.org/svn/linshare/trunk/linshare/</url>
+	</scm>
 	<organization>
 		<name>LINAGORA</name>
 		<url>http://www.linagora.com/</url>
