@@ -13,7 +13,7 @@
 		      <prop key="virusscanner.clamav.host" />
 		      <prop key="virusscanner.clamav.port">3310</prop>
 		      <!--  Override this property if you want to set properties outside the webapp -->
-		      <prop key="linagora.config.path"/>
+		      <prop key="linshare.config.path"/>
 		    </props>
 		  </property>
         <property name="locations">
@@ -22,8 +22,8 @@
                 <value>classpath:jackRabbit.properties</value>
                 <value>classpath:linShare.properties</value>
                 <value>classpath:jackRabbit.properties</value>
-                <value>${linagora.config.path}/linShare.properties</value>
-                <value>${linagora.config.path}/jackRabbit.properties</value>
+                <value>${linshare.config.path}/linShare.properties</value>
+                <value>${linshare.config.path}/jackRabbit.properties</value>
             </list>
         </property>
     </bean>
