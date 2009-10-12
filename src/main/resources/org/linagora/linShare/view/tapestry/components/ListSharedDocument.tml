@@ -121,8 +121,8 @@
 
 	<t:confirmPopup t:messageLabel="${message:components.listDocument.messageConfirm}" t:eventName="listDocumentEvent" />
 
- 	<t:userDetailsDisplayer />
+ 	<t:userDetailsDisplayer /><!--
 
-	<t:signatureDetailsDisplayer />
+		<t:signatureDetailsDisplayer />
 
-</t:container>
+--></t:container>

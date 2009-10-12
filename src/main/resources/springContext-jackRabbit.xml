@@ -10,7 +10,7 @@
     <property name="configurationProperties">
     	<list>
     		<value>classpath:jackRabbit.properties</value>
-    		<value>${linagora.config.path}/jackRabbit.properties</value>
+    		<value>${linshare.config.path}/jackRabbit.properties</value>
     	</list>
     </property>
   </bean>
