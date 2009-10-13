@@ -4,16 +4,79 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
-	<version>0.6.10</version>
+	<version>0.7-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
+	<description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
 
-    <licenses>
-        <license>
-            <name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
-            <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
-        </license>
-    </licenses>
+* Linshare allows employees to upload files into their space
+* Linshare can share files with internal or external collaborators
+* Linshare offers several features to securely exchange
+* User&amp;share allows Linshare to communicate with the fat client
+</description>
+	<url>http://linpki.org/projects/show/linshare
+	</url>
+	<inceptionYear>2008</inceptionYear>
+	<issueManagement>
+		<system>LinShare Redmine Bugtracker</system>
+		<url>http://linpki.org/projects/linshare/issues
+		</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>http://build.linid.org/hudson/view/LinShare/
+		</url>
+	</ciManagement>
+	<scm>
+		<developerConnection>scm:svn+ssh://svn.linid.org/var/svn/linshare/trunk/linshare/</developerConnection>
+		<connection>scm:http://svn.linid.org/svn/linshare/trunk/linshare/</connection>
+		<url>http://linpki.org/repositories/show/linshare</url>
+		<tag>trunk</tag>
+	</scm>
+	<organization>
+		<name>LINAGORA</name>
+		<url>http://www.linagora.com/</url>
+	</organization>
+	<developers>
+		<developer>
+			<id>slevesque</id>
+			<name>Sebastien Levesque</name>
+			<email>slevesque@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/
+			</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+	<mailingLists>
+		<mailingList>
+			<name>Users List</name>
+			<subscribe>linshare-users-subscribe@linpki.org
+			</subscribe>
+			<unsubscribe>linshare-users-unsubscribe@linpki.org
+			</unsubscribe>
+			<post>linshare-users@linpki.org</post>
+			<archive></archive>
+		</mailingList>
+		<mailingList>
+			<name>Developers List</name>
+			<subscribe>linshare-dev-subscribe@linpki.org
+			</subscribe>
+			<unsubscribe>linshare-dev-unsubscribe@linpki.org
+			</unsubscribe>
+			<post>linshare-dev@linpki.org</post>
+			<archive>http://127.0.0.1/user/</archive>
+		</mailingList>
+	</mailingLists>
+	<licenses>
+		<license>
+			<name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
+			<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html
+			</url>
+		</license>
+	</licenses>
 
 	<dependencies>
 		<dependency>
@@ -60,11 +123,23 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
 			<version>3.2.6.ga</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 			<version>1.5.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Spring dependencies -->
@@ -72,24 +147,48 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
 			<version>${spring-release-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring-release-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring-release-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring-release-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -106,9 +205,17 @@
 					<artifactId>jsr170</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>jsr170</groupId>
+					<artifactId>jcr</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring</artifactId>
 				</exclusion>
+				<!--
+					artefact groupId has been renamed from aparzev to com.aparzev. See
+					below
+				-->
 				<exclusion>
 					<groupId>aparzev</groupId>
 					<artifactId>doka</artifactId>
@@ -121,6 +228,10 @@
 					<groupId>jug</groupId>
 					<artifactId>jug-asl</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -128,12 +239,24 @@
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-core</artifactId>
 			<version>1.3.0.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-core-tiger</artifactId>
 			<version>1.3.0.RELEASE</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -141,32 +264,76 @@
 			<artifactId>spring-test</artifactId>
 			<version>${spring-release-version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring-release-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security
 			</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>2.0.4</version>
+			<version>${spring-security-release-version}
+			</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security
 			</groupId>
 			<artifactId>spring-security-core-tiger
 			</artifactId>
-			<version>2.0.4</version>
+			<version>${spring-security-release-version}
+			</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
-
+		<!--  Logger -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j-release-version}</version>
+		</dependency>
+		<!-- Common loggin compatibility -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j-release-version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.5.5</version>
+			<version>${slf4j-release-version}</version>
 		</dependency>
 
 		<dependency>
@@ -311,6 +478,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.opends</groupId>
+			<artifactId>opends-core</artifactId>
+			<version>2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.5.4</version>
@@ -321,7 +494,7 @@
 			<version>1.4.1</version>
 		</dependency>
 		<dependency>
-			<groupId>opensymphony</groupId>
+			<groupId>quartz</groupId>
 			<artifactId>quartz</artifactId>
 			<version>1.5.2</version>
 		</dependency>
@@ -341,17 +514,6 @@
 			<version>0.4</version>
 		</dependency>
 
-		<!-- Linsign dependencies -->
-		<dependency>
-			<groupId>xml-security</groupId>
-			<artifactId>xmlsec</artifactId>
-			<version>1.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
-			<version>140</version>
-		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
@@ -382,6 +544,12 @@
 			<groupId>net.taldius</groupId>
 			<artifactId>libclamav</artifactId>
 			<version>1.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.linagora</groupId>
@@ -400,21 +568,7 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-	<url>https://forge.linagora.com/redmine-linpki/projects/show/linshare</url>
-	<inceptionYear>2008</inceptionYear>
-	<issueManagement>
-		<system>Redmine bugtracker</system>
-		<url>https://forge.linagora.com/redmine-linpki/projects/linshare/issues</url>
-	</issueManagement>
-	<ciManagement>
-	</ciManagement>
-	<scm>
-		<url>https://svn.linid.org/svn/linshare/trunk/linshare/</url>
-	</scm>
-	<organization>
-		<name>LINAGORA</name>
-		<url>http://www.linagora.com/</url>
-	</organization>
+
 	<build>
 		<finalName>linShare</finalName>
 		<plugins>
@@ -463,7 +617,8 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultImplementationEntries>true
+							</addDefaultImplementationEntries>
 						</manifest>
 					</archive>
 				</configuration>
@@ -495,6 +650,21 @@
 						</propertyfile>
 						<outputfilename>createSchema.sql</outputfilename>
 					</componentProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin
+				</artifactId>
+				<configuration>
+					<instrumentation>
+						<ignores>
+							<ignore>org.linagora.*Test*</ignore>
+						</ignores>
+						<excludes>
+							<exclude>**/*Test.class</exclude>
+						</excludes>
+					</instrumentation>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -539,10 +709,13 @@
 			<id>tapestry-snapshots</id>
 			<url>http://tapestry.formos.com/maven-snapshot-repository/
 			</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>chenillekit</id>
-			<url>http://www.chenillekit.org/mvnrepo/release
+			<url>http://www.chenillekit.org/mvnrepo/release/
 			</url>
 			<snapshots>
 				<enabled>false</enabled>
@@ -559,6 +732,9 @@
 			<id>Linagora-releases</id>
 			<url>http://repo.linpki.org/nexus/content/repositories/releases
 			</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 
 		<repository>
@@ -569,10 +745,14 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+
 		<repository>
-			<id>Linagora-new</id>
-			<url>http://ejbca-fr.org/repository/shared/
+			<id>IBiblio-mirror</id>
+			<url>http://www.ibiblio.org/maven/mule/dependencies/maven2/
 			</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 
 		<!--
@@ -589,6 +769,9 @@
 			<id>Java-Releases</id>
 			<url>http://download.java.net/maven/2/
 			</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
@@ -597,6 +780,9 @@
 		<netbeans.hint.deploy.server>Tomcat60
 		</netbeans.hint.deploy.server>
 		<spring-release-version>2.5.5</spring-release-version>
+		<spring-security-release-version>2.0.4
+		</spring-security-release-version>
 		<jackrabbit-release-version>1.4</jackrabbit-release-version>
+		<slf4j-release-version>1.5.6</slf4j-release-version>
 	</properties>
 </project>
