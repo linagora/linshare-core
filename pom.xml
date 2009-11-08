@@ -570,7 +570,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>linShare</finalName>
+		<finalName>linshare</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
