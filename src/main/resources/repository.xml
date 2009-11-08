@@ -60,9 +60,9 @@
 		-->
 		<PersistenceManager
 			class="org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager">
-		<param name="url" value="jdbc:postgresql://${database.host}:${database.port}/${database.name}" />
-		<param name="user" value="${database.username}" />
-		<param name="password" value="${database.password}" />
+		<param name="url" value="${linshare.db.url}_data" />
+		<param name="user" value="${linshare.db.username}" />
+		<param name="password" value="${linshare.db.password}" />
 			<param name="schemaObjectPrefix" value="${wsp.name}_" />
 			<param name="externalBLOBs" value="false"/>
 		</PersistenceManager>
@@ -87,9 +87,9 @@
 		-->
 		<PersistenceManager
 			class="org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager">
-		<param name="url" value="jdbc:postgresql://${database.host}:${database.port}/${database.name}" />
-		<param name="user" value="${database.username}" />
-		<param name="password" value="${database.password}" />
+		<param name="url" value="${linshare.db.url}_data" />
+		<param name="user" value="${linshare.db.username}" />
+		<param name="password" value="${linshare.db.password}" />
 			<param name="schemaObjectPrefix" value="version_" />
 		</PersistenceManager>
 	</Versioning>

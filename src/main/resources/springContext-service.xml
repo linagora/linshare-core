@@ -56,7 +56,7 @@
         <constructor-arg index="7" ref="clamavVirusScannerService" />
     </bean>
 	     
-    
+   
     <bean id="securedUrlService" class="org.linagora.linShare.core.service.impl.SecuredUrlServiceImpl">
     	<constructor-arg ref="securedUrlRepository"/>
     	<constructor-arg ref="parameterService"/>
@@ -64,7 +64,7 @@
     	<constructor-arg ref="logEntryRepository" />
     </bean>
     
-    
+   
     <bean id="shareService" class="org.linagora.linShare.core.service.impl.ShareServiceImpl">
         <constructor-arg index="0" ref="userRepository" />
         <constructor-arg index="1" ref="shareRepository"/>
