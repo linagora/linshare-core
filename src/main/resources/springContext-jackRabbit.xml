@@ -9,6 +9,8 @@
     <property name="homeDir" value="${home.directory}"/>
     <property name="configurationProperties">
     	<list>
+    		<value>classpath:linShare.properties</value>
+    		<value>${linshare.config.path}/linShare.properties</value>
     		<value>classpath:jackRabbit.properties</value>
     		<value>${linshare.config.path}/jackRabbit.properties</value>
     	</list>
@@ -28,10 +30,11 @@
   </bean>
   
    <bean id="jcrDataSource" destroy-method="close" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${database.driver.class}"/>
-        <property name="url" value="jdbc:postgresql://${database.host}:${database.port}/${database.name}"/>
-        <property name="username" value="${database.username}"/>
-        <property name="password" value="${database.password}"/>
+        <property name="driverClassName" value="${linshare.db.driver.class}"/>
+	<!-- Use a database name suffixed by '_data' -->
+        <property name="url" value="${linshare.db.url}_data"/>
+        <property name="username" value="${linshare.db.username}"/>
+        <property name="password" value="${linshare.db.password}"/>
     </bean>
     
     <bean id="transactionJackRabbit" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

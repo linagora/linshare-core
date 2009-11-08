@@ -3,14 +3,6 @@
 <hibernate-configuration>
   <session-factory>
 
-	<!-- 
-	<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-	<property name="connection.driver_class">org.postgresql.Driver</property>
-	<property name="connection.url">jdbc:postgresql://127.0.0.1:5432/linshare</property>
-	<property name="connection.username">linshare</property>
-	<property name="connection.password">linshare</property>
-	 -->
-
     <property name="connection.autocommit">true</property>
     
       <!--Use ehcache as cache manager -->
