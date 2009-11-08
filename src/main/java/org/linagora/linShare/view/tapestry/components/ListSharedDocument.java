@@ -38,7 +38,6 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
@@ -46,8 +45,6 @@ import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
-import org.linagora.linShare.core.domain.vo.DocToSignContext;
-import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -57,7 +54,6 @@ import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
-import org.linagora.linShare.view.tapestry.models.impl.FileSorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.SharedFileSorterModel;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
@@ -92,8 +88,6 @@ public class ListSharedDocument {
 	 * Properties
 	 ***********************************/
 	
-
-	@SuppressWarnings("unused")
 	@Property
 	private ShareDocumentVo shareDocument;
 	
@@ -123,12 +117,12 @@ public class ListSharedDocument {
 	private UserDetailsDisplayer userDetailsDisplayer;
 	
 	@InjectComponent
-	private SignatureDetailsDisplayer signatureDetailsDisplayer;
+//	private SignatureDetailsDisplayer signatureDetailsDisplayer;
+	
+//	@Inject
+//	private LinkFactory linkFactory;
 	
 	@Inject
-	private LinkFactory linkFactory;
-	
-    @Inject
 	private BeanModelSource beanModelSource;
     
 	@SuppressWarnings("unchecked")
@@ -243,25 +237,25 @@ public class ListSharedDocument {
 		currentUuid = uuid;
 	}
 	
-	public Object onActionFromSignature(String uuid) throws BusinessException{
-		currentUuid = uuid;
-		ShareDocumentVo shareddoc = searchDocumentVoByUUid(componentdocuments,uuid);
-		
-		if(null==shareddoc){
-			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
-		}else{
-			// context is shared document
-			return linkFactory.createPageRenderLink("signature/SelectPolicy", true, new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
-		}
-	}
+//	public Object onActionFromSignature(String uuid) throws BusinessException{
+//		currentUuid = uuid;
+//		ShareDocumentVo shareddoc = searchDocumentVoByUUid(componentdocuments,uuid);
+//		
+//		if(null==shareddoc){
+//			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
+//		}else{
+//			// context is shared document
+//			return linkFactory.createPageRenderLink("signature/SelectPolicy", true, new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
+//		}
+//	}
 	
 	public Zone onActionFromShowUser(String mail) {
 		return userDetailsDisplayer.getShowUser(mail);	
 	}
 	
-	public Zone onActionFromShowSignature(String docidentifier) {
-		return signatureDetailsDisplayer.getShowSignature(docidentifier);
-	}
+//	public Zone onActionFromShowSignature(String docidentifier) {
+//		return signatureDetailsDisplayer.getShowSignature(docidentifier);
+//	}
 	
     public void onActionFromCopy(String docIdentifier) {
         ShareDocumentVo shareDocumentVo = searchDocumentVoByUUid(componentdocuments, docIdentifier);
@@ -303,14 +297,14 @@ public class ListSharedDocument {
 	}
 
 	
-	@OnEvent(value="signatureDocumentEvent")
-	public void signatureDocument() throws BusinessException{
-		if(null!=currentUuid){
-			componentResources.getContainer().getComponentResources().triggerEvent("eventSignatureUniqueFromListDocument", new Object[]{currentUuid}, null);
-		}else{
-			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid");
-		}
-	}
+//	@OnEvent(value="signatureDocumentEvent")
+//	public void signatureDocument() throws BusinessException{
+//		if(null!=currentUuid){
+//			componentResources.getContainer().getComponentResources().triggerEvent("eventSignatureUniqueFromListDocument", new Object[]{currentUuid}, null);
+//		}else{
+//			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid");
+//		}
+//	}
 	
 	
 	
