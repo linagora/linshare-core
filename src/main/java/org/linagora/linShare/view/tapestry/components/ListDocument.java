@@ -22,7 +22,6 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -95,7 +94,6 @@ public class ListDocument {
 	@Persist
 	private List<DocumentVo> listSelected;
 
-	@SuppressWarnings("unused")
 	@Property
 	private DocumentVo document;
 
@@ -103,7 +101,6 @@ public class ListDocument {
 	@Property
 	private Boolean valueCheck;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String action;
 	
@@ -157,8 +154,8 @@ public class ListDocument {
 	@InjectComponent
 	private WarningDisplayer warningEncipherment;
 
-	@InjectComponent
-	private SignatureDetailsDisplayer signatureDetailsDisplayer;
+//	@InjectComponent
+//	private SignatureDetailsDisplayer signatureDetailsDisplayer;
 
 	@InjectComponent
 	private PasswordPopup passwordPopup;
@@ -193,11 +190,9 @@ public class ListDocument {
 	/***************************************************************************
 	 * Flags
 	 **************************************************************************/
-	@SuppressWarnings("unused")
 	@Property
 	private boolean activeSignature;
 
-	@SuppressWarnings("unused")
 	@Property
 	private boolean activeEncipherment;
 
@@ -493,9 +488,9 @@ public class ListDocument {
 		return onActionFromShowWarningEncipherment();
 	}
 
-	public Zone onActionFromShowSignature(String docidentifier) {
-		return signatureDetailsDisplayer.getShowSignature(docidentifier);
-	}
+//	public Zone onActionFromShowSignature(String docidentifier) {
+//		return signatureDetailsDisplayer.getShowSignature(docidentifier);
+//	}
 
 	public void onActionFromEncyphermentSubmit() {
 		actionbutton = ActionFromBarDocument.ENCYPHERMENT_ACTION;
