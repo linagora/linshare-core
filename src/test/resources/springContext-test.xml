@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
     
-    <bean id="propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean id="propertyPlaceholder" class="org.linagora.linShare.core.utils.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true"/>
     	<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
     	
@@ -19,7 +19,7 @@
         <property name="locations">
             <list>
                 <value>classpath:linShare-test.properties</value>
-                <value>classpath:jackRabbit.properties</value>
+                <value>classpath:jackRabbit-test.properties</value>
                 <value>classpath:linShare.properties</value>
                 <value>classpath:jackRabbit.properties</value>
                 <value>${linshare.config.path}/linShare.properties</value>
