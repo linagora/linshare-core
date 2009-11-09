@@ -20,14 +20,12 @@
 */
 package org.linagora.linShare.view.tapestry.pages.files;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
@@ -46,7 +44,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
-import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -385,34 +382,34 @@ public class Index {
 	}
 	
 	
-	/**
-	 * sign the document 
-	 * Invoked when a user clicks on "sign" button in the searched document list
-	 * @param object a DocumentVo[]
-	 */
-	@SuppressWarnings("unchecked")
-	@OnEvent(value="eventSignatureFromListDocument")
-	public void signatureFromListDocument(Object[] object){
-
-		List<String> identifiers = new ArrayList<String>();
-		
-		//context is a list of document (tab files)
-		identifiers.add(DocToSignContext.DOCUMENT.toString());
-		
-		for(Object currentObject:object){
-			DocumentVo doc =  (DocumentVo) currentObject;
-			identifiers.add(doc.getIdentifier());
-		}
-		
-        Link mylink = linkFactory.createPageRenderLink("signature/SelectPolicy", true,identifiers.toArray());
-		
-        try {
-            response.sendRedirect(mylink);
-        } catch (IOException ex) {
-            throw new TechnicalException("Bad URL" + ex);
-        }
-		
-	}
+//	/**
+//	 * sign the document 
+//	 * Invoked when a user clicks on "sign" button in the searched document list
+//	 * @param object a DocumentVo[]
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@OnEvent(value="eventSignatureFromListDocument")
+//	public void signatureFromListDocument(Object[] object){
+//
+//		List<String> identifiers = new ArrayList<String>();
+//		
+//		//context is a list of document (tab files)
+//		identifiers.add(DocToSignContext.DOCUMENT.toString());
+//		
+//		for(Object currentObject:object){
+//			DocumentVo doc =  (DocumentVo) currentObject;
+//			identifiers.add(doc.getIdentifier());
+//		}
+//		
+//        Link mylink = linkFactory.createPageRenderLink("signature/SelectPolicy", true,identifiers.toArray());
+//		
+//        try {
+//            response.sendRedirect(mylink);
+//        } catch (IOException ex) {
+//            throw new TechnicalException("Bad URL" + ex);
+//        }
+//		
+//	}
 
 
 	/**
