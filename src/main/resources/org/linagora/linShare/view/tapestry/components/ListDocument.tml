@@ -139,7 +139,7 @@
 				</t:if>
 			</t:parameter>
 
-			<t:parameter t:name="signedCell">
+<!-- 			<t:parameter t:name="signedCell">
 				<t:if t:test="documentSigned">
 					<t:actionlink t:id="showSignature" zone="signatureDetailsZone"  context="document.identifier" onclick="signatureDetailsWindow.showCenter(true);">
 						<t:if t:test="documentSignedByCurrentUser">	
@@ -153,9 +153,9 @@
 						<img src="${asset:context:images/icons/stamp-off.png}" alt="" title="${message:components.listDocument.picture.signatureoff.title}" />
 					</t:parameter>
 				</t:if>
-			</t:parameter>
+			</t:parameter>  -->
 
-			<t:parameter t:name="encryptedAddCell">
+<!-- 			<t:parameter t:name="encryptedAddCell">
 				<t:if t:test="userEnciphermentKeyGenerated">
 				<t:if t:test="${document.shared}" negate="true"> 
 					<t:if t:test="cachePin.popupNeeded">
@@ -195,7 +195,7 @@
 					</t:actionLink>
 				</t:parameter>
 				</t:if>
-				<!--  If the owner key hasn't been created -->
+				!-  If the owner key hasn't been created -
 				<t:parameter name="else">
 					<t:if t:test="${document.encrypted}">
 						<img src="${asset:context:images/icons/encrypt-on.png}" alt="" title="${message:components.listDocument.picture.encrypton.title}" />
@@ -205,7 +205,7 @@
 					</t:if>
 				</t:parameter>
 				</t:if>
-			</t:parameter>
+			</t:parameter> -->
 
 <t:linkit.Comment>		<!-- OLD : TO DELETE  (TML and Java code) -->
 			<t:parameter t:name="actionsCell">
@@ -359,7 +359,7 @@
 
  	<t:userDetailsDisplayer/>
 
- 	<t:signatureDetailsDisplayer/>
+<!--  	<t:signatureDetailsDisplayer/>  -->
 
  	<t:passwordPopup t:id="passwordPopup" t:title="${message:components.listDocument.passwordPopup.title}" t:content="${message:components.listDocument.passwordPopup.content}" t:errorBanner="${message:components.listDocument.passwordPopup.errorBanner}" />
 
