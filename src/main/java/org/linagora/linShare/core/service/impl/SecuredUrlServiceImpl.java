@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 	private final SecuredUrlRepository securedUrlRepository;
-	private final ParameterService parameterService;
+	private final ShareExpiryDateServiceImpl shareExpiryDateService;
 	private final LogEntryRepository logEntryRepository;
 
 	private final String baseSecuredUrl;
@@ -58,10 +58,10 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 	.getLogger(SecuredUrlServiceImpl.class);
 
 	public SecuredUrlServiceImpl(final SecuredUrlRepository securedUrlRepository,
-			final ParameterService parameterService, String pageName,
+			final ShareExpiryDateServiceImpl shareExpiryDateService, String pageName,
 			final LogEntryRepository logEntryRepository) {
 		this.securedUrlRepository = securedUrlRepository;
-		this.parameterService = parameterService;
+		this.shareExpiryDateService = shareExpiryDateService;
 
 		this.baseSecuredUrl = pageName;
 		this.logEntryRepository = logEntryRepository;
@@ -88,25 +88,6 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		return Long.toString(sr.nextLong() & Long.MAX_VALUE, 36);
 	}
 
-	/**
-	 * Calculate the url expiry date.
-	 * 
-	 * @return url expiry date.
-	 */
-	protected Calendar calculateUrlExpiryDate() {
-		Calendar expiryDate = Calendar.getInstance();
-		Parameter parameter = parameterService.loadConfig();
-
-		if (parameter == null)
-			throw new IllegalStateException(
-			"No configuration found for linshare");
-		expiryDate.add(parameterService.loadConfig()
-				.getDefaultShareExpiryUnit().toCalendarValue(),
-				parameterService.loadConfig().getDefaultShareExpiryTime());
-
-		return expiryDate;
-	}
-
 	public SecuredUrl create(List<Document> documents, User sender, String password,List<Contact> recipients) {
 		return create(documents, sender, password, null,recipients);
 	}
@@ -121,7 +102,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 		// create the sercured url
 		SecuredUrl securedUrl = new SecuredUrl(url, alea,
-				calculateUrlExpiryDate(), sender, recipients);
+				shareExpiryDateService.computeMinShareExpiryDateOfList(documents), sender, recipients);
 		securedUrl.addDocuments(documents);
 
 		// Hash the password

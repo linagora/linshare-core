@@ -144,13 +144,6 @@ public interface ShareService {
     /** Clean all outdated shares. */
     public void cleanOutdatedShares();
     
-    /**
-     * Compute the expiration date of a document share
-     * @param doc : the document to be shared
-     * @return the expiration date
-     */
-    public Calendar computeShareExpirationDate(Document doc);
-    
     
 	/**
 	 * find secured url linked to the given doc

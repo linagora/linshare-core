@@ -35,7 +35,6 @@ import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
-import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
@@ -48,6 +47,7 @@ import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.SecuredUrlService;
+import org.linagora.linShare.core.service.ShareExpiryDateService;
 import org.linagora.linShare.core.service.ShareService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +64,7 @@ public class ShareServiceImpl implements ShareService{
 	private final DocumentRepository documentRepository;
 	private final SecuredUrlService secureUrlService;
 	private final FileSystemDao fileSystemDao;
+	private final ShareExpiryDateService shareExpiryDateService;
 	
 	
 //    private final DocumentService documentService;
@@ -74,7 +75,8 @@ public class ShareServiceImpl implements ShareService{
 			final ShareRepository shareRepository,
 			final LogEntryRepository logEntryRepository,
 			final ParameterService parameterService, final SecuredUrlRepository securedUrlRepository,
-			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, final FileSystemDao fileSystemDao) {
+			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
+			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService) {
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
@@ -84,6 +86,7 @@ public class ShareServiceImpl implements ShareService{
 		this.documentRepository = documentRepository;
         this.secureUrlService = secureUrlService;
         this.fileSystemDao = fileSystemDao;
+        this.shareExpiryDateService = shareExpiryDateService;
 	}
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
@@ -229,7 +232,7 @@ public class ShareServiceImpl implements ShareService{
 			
 				try{
 
-					Calendar expirationDate=computeShareExpirationDate(document);
+					Calendar expirationDate=shareExpiryDateService.computeShareExpiryDate(document);
 					
 		
 					Share share=new Share(sender,recipient,document,comment,expirationDate,true,false);
@@ -366,33 +369,6 @@ public class ShareServiceImpl implements ShareService{
             }
         }
         
-    }
-
-    public Calendar computeShareExpirationDate(Document doc) {
- 		List<ShareExpiryRule> shareRules = parameterService.loadConfig().getShareExpiryRules();
- 		
- 		Calendar defaultExpiration = null;
- 		// set the default exp time
- 		if (parameterService.loadConfig().getDefaultShareExpiryTime() != null) {
- 			defaultExpiration = GregorianCalendar.getInstance();
- 			defaultExpiration.add( parameterService.loadConfig().getDefaultShareExpiryUnit().toCalendarValue(), parameterService.loadConfig().getDefaultShareExpiryTime());
- 		}
- 		if ((shareRules == null) || (shareRules.size()==0)) { 
- 			return defaultExpiration;
- 		}
- 		
- 		// luckily, the shareExpiryRules are ordered according to the size, increasing
- 		for (ShareExpiryRule shareExpiryRule : shareRules) {
- 			if (doc.getSize()<shareExpiryRule.getShareSizeUnit().getPlainSize(shareExpiryRule.getShareSize())) {
- 				Calendar expiration = GregorianCalendar.getInstance();
-  				expiration.add(shareExpiryRule.getShareExpiryUnit().toCalendarValue(), shareExpiryRule.getShareExpiryTime());
- 				return expiration;	
- 			}
- 			
-		}
- 
- 		// nothing has been decided
-		return defaultExpiration;
     }
     
     

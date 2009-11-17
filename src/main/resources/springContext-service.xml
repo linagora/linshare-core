@@ -64,7 +64,7 @@
    
     <bean id="securedUrlService" class="org.linagora.linShare.core.service.impl.SecuredUrlServiceImpl">
     	<constructor-arg ref="securedUrlRepository"/>
-    	<constructor-arg ref="parameterService"/>
+    	<constructor-arg ref="shareExpiryDateService"/>
     	<constructor-arg value="download"/>
     	<constructor-arg ref="logEntryRepository" />
     </bean>
@@ -79,6 +79,7 @@
         <constructor-arg index="5" ref="documentRepository" />
         <constructor-arg index="6" ref="securedUrlService" />
         <constructor-arg index="7" ref="jackRabbitRepository" />
+    	<constructor-arg index="8" ref="shareExpiryDateService"/>
     </bean>
 
 	   
