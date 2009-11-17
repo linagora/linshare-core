@@ -56,6 +56,11 @@
         <constructor-arg index="7" ref="clamavVirusScannerService" />
     </bean>
 	     
+    
+    <bean id="shareExpiryDateService" class="org.linagora.linShare.core.service.impl.ShareExpiryDateServiceImpl">
+    	<constructor-arg ref="parameterService"/>
+    </bean>
+	     
    
     <bean id="securedUrlService" class="org.linagora.linShare.core.service.impl.SecuredUrlServiceImpl">
     	<constructor-arg ref="securedUrlRepository"/>
