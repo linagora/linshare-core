@@ -1,0 +1,19 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<div class="datePickerDiv">
+		<p>${message:components.datePicker.label} <t:datefield t:id="datePicked" id="datePicked" /></p>
+	</div>
+	
+	<script>
+		jQuery(document).ready(function($){
+			$.datepicker.setDefaults(
+					$.extend({showMonthAfterYear: false}, 
+							$.datepicker.regional['${message:components.datePicker.regional}']));
+			$("#datePicked").datepicker({
+				minDate:getValNewDate(${dateMinD}, ${dateMinM}, ${dateMinY}), 
+				maxDate:getValNewDate(${dateMaxD}, ${dateMaxM}, ${dateMaxY}), 
+				defaultDate:getValNewDate(${dateDefD}, ${dateDefM}, ${dateDefY})} );
+	     });
+	</script>
+</t:container>

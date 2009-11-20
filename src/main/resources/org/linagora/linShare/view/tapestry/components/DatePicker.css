@@ -1,0 +1,4 @@
+/* We don't want to display the tapestry dateField calendar */
+.datePickerDiv img {
+	display: none;	
+}
