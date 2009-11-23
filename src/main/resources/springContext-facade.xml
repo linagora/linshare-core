@@ -42,6 +42,11 @@
          <constructor-arg ref="documentService"/>
          <constructor-arg ref="templating"/>
    	  </bean>
+ 
+ 	<bean name="shareExpiryDateFacade" class="org.linagora.linShare.core.Facade.impl.ShareExpiryDateFacadeImpl">
+       	 <constructor-arg ref="shareExpiryDateService"/>
+       	 <constructor-arg ref="documentRepository"/>
+   	  </bean>
    	  
    	  <bean name="securedUrlFacade" class="org.linagora.linShare.core.Facade.impl.SecuredUrlFacadeImpl">
    	  	<constructor-arg ref="securedUrlService"/>
