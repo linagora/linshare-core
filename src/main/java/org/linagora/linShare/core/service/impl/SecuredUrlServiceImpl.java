@@ -88,21 +88,26 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		return Long.toString(sr.nextLong() & Long.MAX_VALUE, 36);
 	}
 
-	public SecuredUrl create(List<Document> documents, User sender, String password,List<Contact> recipients) {
-		return create(documents, sender, password, null,recipients);
+	public SecuredUrl create(List<Document> documents, User sender, String password,List<Contact> recipients, Calendar expiryDate) {
+		return create(documents, sender, password, null,recipients, expiryDate);
 	}
 
 	public SecuredUrl create(List<Document> documents, User sender, String password,
-			String urlPath,List<Contact> recipients) {
+			String urlPath,List<Contact> recipients, Calendar expiryDate) {
 		// Generate an alea
 		String alea = generateAlea();
 
 		// Get the defaultUrl if urlPath is null
 		String url = urlPath == null ? getBaseSecuredUrl() : urlPath;
 
+		// If the user have not selected an expiration date, compute default date
+		if (expiryDate == null) {
+			expiryDate=shareExpiryDateService.computeMinShareExpiryDateOfList(documents);
+		}
+		
 		// create the sercured url
 		SecuredUrl securedUrl = new SecuredUrl(url, alea,
-				shareExpiryDateService.computeMinShareExpiryDateOfList(documents), sender, recipients);
+				expiryDate, sender, recipients);
 		securedUrl.addDocuments(documents);
 
 		// Hash the password

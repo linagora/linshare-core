@@ -2970,7 +2970,7 @@ div.closeUploadPopup {
 
 /* Step numbers */
 
-div.number1, div.number2, div.number3, div.number-hidden {
+div.number1, div.number2, div.number3, div.number4, div.number-hidden {
 	float: left;
 	width: 35px;
 	height: 88px;
@@ -2982,6 +2982,9 @@ div.number2 {
 }
 div.number3 {
 	background-image: url(../images/popupImages/three.gif);
+}
+div.number4 {
+	background-image:url(../images/popupImages/four.gif);
 }
 div.number-hidden {
 	visibility: hidden;
@@ -3304,6 +3307,46 @@ DIV.t-error UL {
     margin: 2px 25px;
     background-color: white;
     color: black;
+}
+
+.confirmPopup .indente {
+	margin-left: 50px;	
+}
+
+.confirmPopup .option {
+	margin-bottom:10px;
+	margin-left:40px;
+	text-align:left;
+}
+
+.helpContent {
+	border-bottom:1px dotted;
+	cursor:help;
+}
+
+div.ck_tooltip {
+	width: 380px !important;
+}
+.tooltipTableDescription {
+	text-align: justified !important;
+	padding: 10px;
+}
+.tooltipTable th {
+	font-weight: bold;
+	background-color: #1D5C7C;
+	color: #fff;
+}
+.tooltipTable th, .tooltipTable td {
+	text-align: left !important;
+	padding-left: 10px;
+}
+.tooltipTable td {
+	background-color: #dee5e9;
+}
+.tooltipTable {
+	border: 1px solid #1D5C7C;
+	line-height: 200%;
+	width: 100%;
 }
 /***************************************************************************/
 /* EOF */

@@ -21,6 +21,7 @@
 package org.linagora.linShare.core.Facade.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +101,7 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents,
-			List<UserVo> recipients, String comment) throws BusinessException {
+			List<UserVo> recipients, String comment, Calendar expirationDate) throws BusinessException {
 		
 		List<User> recipientsList = new ArrayList<User>();
 		
@@ -120,7 +121,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, 
 				userRepository.findByLogin(owner.getLogin()),
 				recipientsList,
-				comment);
+				comment,
+				expirationDate);
 		
 		
 		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
@@ -132,9 +134,10 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(
 			UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,
-			String comment, String message, String messageTxt,String subject) throws BusinessException {
+			String comment, String message, String messageTxt,String subject,
+			Calendar expirationDate) throws BusinessException {
 		
-		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, comment);
+		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, comment, expirationDate);
 		
 		//Sending the mails
 		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
@@ -183,11 +186,26 @@ public class ShareFacadeImpl implements ShareFacade {
     }
 
 
-    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, 
-            List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,
-            String linShareUrl,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,
-            String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt) throws BusinessException {
-		
+    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
+			UserVo owner, List<DocumentVo> documents,
+			List<String> recipientsEmail, String comment, String subject,
+			String linShareUrl, boolean secureSharing,
+			String sharedTemplateContent, String sharedTemplateContentTxt,
+			String passwordSharedTemplateContent,
+			String passwordSharedTemplateContentTxt)
+			throws BusinessException {
+		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(owner, documents, recipientsEmail, comment, subject, linShareUrl, secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt, null);
+	}
+
+
+    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
+			UserVo owner, List<DocumentVo> documents,
+			List<String> recipientsEmail, String comment, String subject,
+			String linShareUrl, boolean secureSharing,
+			String sharedTemplateContent, String sharedTemplateContentTxt,
+			String passwordSharedTemplateContent,
+			String passwordSharedTemplateContentTxt, Calendar expiryDateSelected)
+			throws BusinessException {
 		User u = null;
 		
 		List<UserVo> knownRecipients = new ArrayList<UserVo>();
@@ -249,7 +267,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			} 
 			
 			//password is null for unprotected secured url
-			securedUrl = shareService.shareDocumentsWithSecuredUrlToUser(owner, docList, password, unKnownRecipientsEmail);
+			securedUrl = shareService.shareDocumentsWithSecuredUrlToUser(owner, docList, password, unKnownRecipientsEmail, expiryDateSelected);
 			
 			
 			//compose the secured url to give in mail
@@ -284,7 +302,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		//keep old method to share with user referenced in db
-		return createSharingWithMail(owner, documents, knownRecipients, comment, messageForInternalUserAndGuest, messageForInternalUserAndGuestTxt, subject);
+		return createSharingWithMail(owner, documents, knownRecipients, comment, messageForInternalUserAndGuest, messageForInternalUserAndGuestTxt, subject, expiryDateSelected);
 	}
     
     

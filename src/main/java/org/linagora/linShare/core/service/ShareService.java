@@ -21,6 +21,7 @@
 package org.linagora.linShare.core.service;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -119,7 +120,7 @@ public interface ShareService {
 	 * @param recipient the recipient of the document.
 	 * @param comment the comment for the share.
 	 */
-	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> document,User sender,List<User> recipient,String comment);
+	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> document,User sender,List<User> recipient,String comment, Calendar expirationDate);
 	
 	
 /**
@@ -132,7 +133,7 @@ public interface ShareService {
  * @throws BusinessException 
  * @throws IllegalArgumentException 
  */
-	public SecuredUrl shareDocumentsWithSecuredUrlToUser(UserVo owner, List<Document> docList,String password,List<Contact> mailrecipients) throws IllegalArgumentException, BusinessException;
+	public SecuredUrl shareDocumentsWithSecuredUrlToUser(UserVo owner, List<Document> docList,String password,List<Contact> mailrecipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException;
 	
 	
 	/**

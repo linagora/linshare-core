@@ -23,6 +23,7 @@ package org.linagora.linShare.core.service.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
@@ -220,7 +221,7 @@ public class ShareServiceImpl implements ShareService{
 
 	 */
 	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender,
-			List<User> recipients,String comment){
+			List<User> recipients,String comment, Calendar expiryDate){
 		
 		SuccessesAndFailsItems<Share> returnItems = new SuccessesAndFailsItems<Share>();
 		
@@ -232,10 +233,13 @@ public class ShareServiceImpl implements ShareService{
 			
 				try{
 
-					Calendar expirationDate=shareExpiryDateService.computeShareExpiryDate(document);
-					
+					// If the user have not selected an expiration date, compute default date
+					if (expiryDate == null) {
+						expiryDate=shareExpiryDateService.computeShareExpiryDate(document);
+					}						 					
+
 		
-					Share share=new Share(sender,recipient,document,comment,expirationDate,true,false);
+					Share share=new Share(sender,recipient,document,comment,expiryDate,true,false);
 					Share shareEntity=shareRepository.create(share);
 		
 		
@@ -249,7 +253,7 @@ public class ShareServiceImpl implements ShareService{
 		
 					ShareLogEntry logEntry = new ShareLogEntry(sender.getMail(), sender.getFirstName(), sender.getLastName(),
 				        		LogAction.FILE_SHARE, "Sharing of a file", document.getName(), document.getSize(), document.getType(),
-				        		recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), expirationDate);
+				        		recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), expiryDate);
 				       
 				    logEntryRepository.create(logEntry);
 				        
@@ -374,7 +378,7 @@ public class ShareServiceImpl implements ShareService{
     
 	public SecuredUrl shareDocumentsWithSecuredUrlToUser(
 			UserVo owner, List<Document> docList, String password,
-			List<Contact> recipients) throws IllegalArgumentException, BusinessException {
+			List<Contact> recipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException {
 
 		
 		SecuredUrl securedUrl =  null;
@@ -382,7 +386,7 @@ public class ShareServiceImpl implements ShareService{
 		User sender = userRepository.findByLogin(owner.getLogin());
 		//set the password associated with this secured url in mail
 		//can be null for unsecure url
-		securedUrl = secureUrlService.create(docList, sender, password, recipients);
+		securedUrl = secureUrlService.create(docList, sender, password, recipients, expiryDate);
 	
 			
 		for (Document doc : docList) {

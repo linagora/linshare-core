@@ -21,7 +21,10 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,10 +45,11 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
+import org.linagora.linShare.core.Facade.ShareExpiryDateFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.RecipientFavourite;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -53,6 +57,7 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
+import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.services.Templating;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
@@ -127,6 +132,23 @@ public class ConfirmSharePopup{
     @InjectComponent
     private Form confirmshare;
 	
+	@InjectComponent
+	private DatePicker datePicker;
+	
+	@Property
+	@Persist
+	private Date minDatePicker;
+	@Property
+	@Persist
+	private Date maxDatePicker;
+	@Property
+	private Date defaultDatePicker;
+
+	@Property
+	private String tooltipValue;
+	@Property
+	private String tooltipTitle;
+	
 
 	/* ***********************************************************
 	 *                      Injected services
@@ -154,6 +176,12 @@ public class ConfirmSharePopup{
 	private UserFacade userFacade;
 
 	@Inject
+	private PersistentLocale persistentLocale;
+	
+	@Inject
+	private ShareExpiryDateFacade shareExpiryDateFacade;
+
+	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 	
 	@Inject
@@ -178,6 +206,55 @@ public class ConfirmSharePopup{
 			}
 			recipientsSearch = emails.substring(0,emails.length()-1); //delete last comma.
 		}
+
+		computePickerDates();
+		buildTooltipValue();
+	}
+
+	/**
+	 * Compute the minDate, maxDate and defaultDate the user can select in
+	 * the datePicker for the expiration date of the share
+	 */
+	private void computePickerDates() {
+		Calendar today = Calendar.getInstance();
+		today.add(Calendar.DAY_OF_MONTH, 1);
+		minDatePicker = today.getTime();
+		Calendar expiryDateMin = shareExpiryDateFacade.computeMinShareExpiryDateOfList(documentsVo);
+		defaultDatePicker = expiryDateMin.getTime();
+		maxDatePicker = expiryDateMin.getTime();
+	}
+
+	/**
+	 * Build the content (title and message) of the tooltip which explain
+	 * how the expiration date of files is computed
+	 */
+	private void buildTooltipValue() {
+		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, persistentLocale.get());
+		tooltipTitle = messages.get("components.confirmSharePopup.tooltip.title");
+		
+		StringBuffer value = new StringBuffer();
+		value.append("<p class='tooltipTableDescription'>");
+		value.append(messages.get("components.confirmSharePopup.tooltip.description"));
+		value.append("</p>");
+		value.append("<table class='tooltipTable'><tr><th>");
+		value.append(messages.get("components.confirmSharePopup.tooltip.table.file"));
+		value.append("</th><th>");
+		value.append(messages.get("components.confirmSharePopup.tooltip.table.size"));
+		value.append("</th><th>");
+		value.append(messages.get("components.confirmSharePopup.tooltip.table.date"));
+		value.append("</th></tr>");
+		for (DocumentVo docVo : documentsVo) {
+			value.append("<tr><td>");
+			value.append(docVo.getFileName());
+			value.append("</td><td>");
+			value.append(FileUtils.getFriendlySize(docVo.getSize(), messages));
+			value.append("</td><td>");
+			value.append(dateFormat.format(shareExpiryDateFacade.computeShareExpiryDate(docVo).getTime()));
+			value.append("</td></tr>");
+		}
+		value.append("</table>");
+		
+		tooltipValue = value.toString();
 	}
 
 	public List<String> onProvideCompletionsFromRecipientsPatternSharePopup(String input) {
@@ -304,6 +381,16 @@ public class ConfirmSharePopup{
 	
 	
     public Block onSuccess() throws BusinessException {
+    	/** 
+		 * verify the value of the expiration date selected
+		 * 
+		 */
+		Calendar dateExpiry = Calendar.getInstance();
+		Date dateSelected = datePicker.getDatePicked();
+		if (dateSelected == null || dateSelected.after(maxDatePicker) || dateSelected.before(Calendar.getInstance().getTime())) {
+			dateExpiry = null;
+		}
+		else dateExpiry.setTime(dateSelected);
 
 		/** 
 		 * retrieve the url from propertie file
@@ -346,7 +433,7 @@ public class ConfirmSharePopup{
 			//sharing = shareFacade.createSharingWithMail(userVo, documentsVo, usersVo,textAreaValue, message,subject);
 			
 			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrl,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrl,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt, dateExpiry);
 			
 
 		
