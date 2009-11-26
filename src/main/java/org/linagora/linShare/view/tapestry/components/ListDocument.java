@@ -21,10 +21,10 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
@@ -660,8 +660,8 @@ public class ListDocument {
 	 * @return creation date the date in localized format.
 	 */
 	public String getCreationDate() {
-		return DateFormatUtils.format(document.getCreationDate().getTime(),
-				"dd/MM/yyyy", persistentLocale.get());
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(document.getCreationDate().getTime());
 	}
 
 	/**

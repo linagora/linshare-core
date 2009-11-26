@@ -22,9 +22,9 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -335,7 +335,8 @@ public class ListSharedDocument {
 	 * @return creation date the date in localized format.
 	 */
 	public String getCreationDate(){
-		return DateFormatUtils.format(shareDocument.getCreationDate().getTime(), "dd/MM/yyyy hh:mm", persistentLocale.get());
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(shareDocument.getCreationDate().getTime());
 	}
 
 	/**
@@ -343,7 +344,8 @@ public class ListSharedDocument {
 	 * @return creation date the date in localized format.
 	 */
 	public String getExpirationDate(){
-		return DateFormatUtils.format(shareDocument.getShareExpirationDate().getTime(), "dd/MM/yyyy hh:mm", persistentLocale.get());
+	   SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+	   return formatter.format(shareDocument.getShareExpirationDate().getTime());
 	}
 	
 	public String getFriendlySize(){
