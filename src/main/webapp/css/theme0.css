@@ -2970,7 +2970,7 @@ div.closeUploadPopup {
 
 /* Step numbers */
 
-div.number1, div.number2, div.number3, div.number4, div.number-hidden {
+div.number1, div.number2, div.number3, div.number4, div.number5, div.number-hidden {
 	float: left;
 	width: 35px;
 	height: 88px;
@@ -2985,6 +2985,9 @@ div.number3 {
 }
 div.number4 {
 	background-image:url(../images/popupImages/four.gif);
+}
+div.number5 {
+	background-image:url(../images/popupImages/five.gif);
 }
 div.number-hidden {
 	visibility: hidden;
