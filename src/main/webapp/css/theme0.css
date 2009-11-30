@@ -3346,10 +3346,16 @@ div.ck_tooltip {
 .tooltipTable td {
 	background-color: #dee5e9;
 }
-.tooltipTable {
-	border: 1px solid #1D5C7C;
-	line-height: 200%;
+.tooltipTable td {
+	line-height: 150%;
 	width: 100%;
+}
+
+.tooltipTable td.nowrap {
+	white-space: nowrap;	
+}
+.tooltipTable tr, .tooltipTable {
+	border: 1px solid #1D5C7C;
 }
 /***************************************************************************/
 /* EOF */

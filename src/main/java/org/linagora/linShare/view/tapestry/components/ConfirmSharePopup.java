@@ -245,8 +245,12 @@ public class ConfirmSharePopup{
 		value.append("</th></tr>");
 		for (DocumentVo docVo : documentsVo) {
 			value.append("<tr><td>");
-			value.append(docVo.getFileName());
-			value.append("</td><td>");
+			String docName = docVo.getFileName();
+			if (docName.length() > 28) {
+				docName = docName.substring(0, 28).concat("...");
+			}
+			value.append(docName);
+			value.append("</td><td class='nowrap'>");
 			value.append(FileUtils.getFriendlySize(docVo.getSize(), messages));
 			value.append("</td><td>");
 			value.append(dateFormat.format(shareExpiryDateFacade.computeShareExpiryDate(docVo).getTime()));
