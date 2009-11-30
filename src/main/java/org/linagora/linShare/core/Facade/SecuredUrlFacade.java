@@ -20,9 +20,12 @@
 */
 package org.linagora.linShare.core.Facade;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 
@@ -153,4 +156,14 @@ public interface SecuredUrlFacade {
 	 * @param email of the user who has downloaded the document
 	 */
 	void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, DocumentVo doc, String email);
+
+
+	
+	/**
+	 * Retrieve all the sharing urls of a file by a user (email)
+	 * @param sender the user
+	 * @param document
+	 * @return a list of couples : the mail of the recipient and the expiration of the url
+	 */
+	public Map<String, Calendar> getSharingsByMailAndFile(UserVo sender, DocumentVo document);
 }

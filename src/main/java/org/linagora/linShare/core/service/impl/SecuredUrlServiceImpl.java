@@ -22,6 +22,7 @@ package org.linagora.linShare.core.service.impl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,10 +30,10 @@ import org.apache.commons.lang.StringUtils;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
@@ -40,7 +41,6 @@ import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
-import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.SecuredUrlService;
 import org.linagora.linShare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -306,5 +306,20 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		} catch (LinShareNotSuchElementException e) {
 			throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE, "The secured URL cannot be found");
 		}
+	}
+	
+	public List<SecuredUrl> getUrlsByMailAndFile(User sender, DocumentVo document) {
+		List<SecuredUrl> allUrl = securedUrlRepository.findBySender(sender);
+
+		List<SecuredUrl> byDocUrl = new ArrayList<SecuredUrl>();
+		for (SecuredUrl securedUrl : allUrl) {
+			for (Document doc : securedUrl.getDocuments()) {
+				if (document.getIdentifier().equalsIgnoreCase(doc.getIdentifier())) {
+					byDocUrl.add(securedUrl);
+					break;
+				}
+			}
+		}
+		return byDocUrl;
 	}
 }

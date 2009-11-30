@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.entities.Contact;
@@ -164,6 +165,23 @@ public class ShareFacadeImpl implements ShareFacade {
 		return shareTransformer.disassembleList(new ArrayList<Share>(userRecipient.getReceivedShares()));		
 	}
 
+	public List<Share> getSharingsByUserAndFile(UserVo sender, DocumentVo document) {
+		User userSender = userRepository.findByLogin(sender.getLogin());
+		if (userSender==null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
+		}
+		
+		Set<Share> shares = shareService.getSentSharesByUser(userSender);
+
+		List<Share> sharingsOfDocument = new ArrayList<Share>();
+		for (Share share : shares) {			
+			if (share.getDocument().getIdentifier().equalsIgnoreCase(document.getIdentifier())) {
+				sharingsOfDocument.add(share);
+			}
+		}
+		
+		return sharingsOfDocument;
+	}
 
 	public void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException {
 		User actorUser = userRepository.findByLogin(actor.getLogin());

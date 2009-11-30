@@ -27,6 +27,7 @@ import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 
@@ -195,5 +196,14 @@ public interface SecuredUrlService {
 	 * @return
 	 */
 	public User getSecuredUrlOwner(String alea, String urlPath);
+
+	
+	/**
+	 * Retrieve all the sharings of a file by a user (email)
+	 * @param sender the user
+	 * @param document
+	 * @return
+	 */
+	public List<SecuredUrl> getUrlsByMailAndFile(User sender, DocumentVo document);
 	
 }
