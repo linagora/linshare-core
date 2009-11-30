@@ -53,6 +53,7 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ParameterService;
+import org.linagora.linShare.core.service.RecipientFavouriteService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
 import org.linagora.linShare.core.utils.HashUtils;
@@ -83,6 +84,8 @@ public class UserServiceImpl implements UserService {
     private final ParameterService parameterService;
     
     private final ShareService shareService;
+    
+    private final RecipientFavouriteService recipientFavouriteService;
 
     /** Constructor.
      * @param userRepository repository.
@@ -91,7 +94,8 @@ public class UserServiceImpl implements UserService {
      */
     public UserServiceImpl(UserRepository userRepository, NotifierService notifierService, LdapDao ldapDao,
     		final LogEntryRepository logEntryRepository,final GuestRepository guestRepository
-		, final ParameterService parameterService, ShareService shareService) {
+		, final ParameterService parameterService, ShareService shareService,
+		final RecipientFavouriteService recipientFavouriteService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.ldapDao = ldapDao;
@@ -99,6 +103,7 @@ public class UserServiceImpl implements UserService {
         this.guestRepository = guestRepository;
 		this.parameterService = parameterService;
 		this.shareService = shareService;
+		this.recipientFavouriteService = recipientFavouriteService;
     }
 
     /** Create a guest.
@@ -301,6 +306,9 @@ public class UserServiceImpl implements UserService {
 						}
 						
 						sentShare.clear();
+						
+						//clearing the favorites
+						recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
 						
 						// clearing all signatures
 						Set<Signature> ownSignatures = userToDelete.getOwnSignatures();

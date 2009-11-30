@@ -22,6 +22,7 @@ package org.linagora.linShare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 
@@ -105,4 +106,10 @@ public interface FavouriteRepository<T,U,V> extends AbstractRepository<V>{
 	 * @return list a list of all elements ordering descendant by their weight.
 	 */
 	public List<T> findMatchElementsOrderByWeight(T matchStartWith,U owner);
+	
+	/**
+	 * delete all the elements of the owner
+	 * @param owner
+	 */
+	public void deleteFavoritesOfUser(U owner) throws IllegalArgumentException, BusinessException;
 }
