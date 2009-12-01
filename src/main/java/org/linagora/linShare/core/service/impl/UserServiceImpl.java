@@ -155,42 +155,6 @@ public class UserServiceImpl implements UserService {
         return guest;
     }
 
-    /** Search a user.
-     * @param mail user email.
-     * @param firstName user first name.
-     * @param lastName user last name.
-     * @return a list of matching users.
-     */
-    public List<User> searchUser(String mail, String firstName, String lastName, User currentUser) {
-        List<User> users = new ArrayList<User>();
-        // search ldap for user :
-        
-        LdapSearchResult<User> pagedResult = ldapDao.searchUser(mail, firstName, lastName);
-        
-        List<User> internals = pagedResult.getResultList();
-        
-        //need linshare local information for these internals user
-        for (User ldapuser : internals) {
-        	User userdb = userRepository.findByMail(ldapuser.getMail());
-        	if (userdb!=null)  ldapuser.setRole(userdb.getRole());
-		}
-        
-        users.addAll(internals);
-        // now, we have to search guest that match the criterias.
-        
-        List<Guest> guests = null;
-        
-        if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){
-        	//if guest type, we give only the account he has created 
-        	guests = guestRepository.searchGuest(mail, firstName, lastName, currentUser);
-        } else {
-        	//we give everything
-        	guests = guestRepository.searchGuest(mail, firstName, lastName, null);
-        }
-        users.addAll(guests);
-        return users;
-    }
-
  /** Find a user (based on mail address).
      * Search first in database, then on ldap if not found.
      * @param login user login.
@@ -371,38 +335,32 @@ public class UserServiceImpl implements UserService {
 
 	public List<User> searchUser(String mail, String firstName,
 			String lastName, UserType userType, User currentUser) {
-		if(null==userType){
-			List<User> users=new ArrayList<User>();
-			
-			LdapSearchResult<User> pagedResult = ldapDao.searchUserAnyWhere(mail, firstName, lastName);
-	        List<User> internals = pagedResult.getResultList();
-	        users.addAll(internals);
-	        
-	        List<Guest> guests = null;
+		List<User> users=new ArrayList<User>();
+		
+		if(null==userType || userType.equals(UserType.GUEST)){
+			List<Guest> guests = null;
 	        if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){
 	        	//if guest type, we give only the account he has created 
 	        	guests = guestRepository.searchGuestAnyWhere(mail, firstName, lastName, currentUser.getLogin());
 	        }	else {
 	        	guests = guestRepository.searchGuestAnyWhere(mail, firstName, lastName, null);
 	        }
-	        
 	        users.addAll(guests);
-	        return users;
-		}else if(userType.equals(UserType.INTERNAL)){
-			LdapSearchResult<User> pagedResult = ldapDao.searchUserAnyWhere(mail, firstName, lastName);
-			return pagedResult.getResultList();
-		}else if(userType.equals(UserType.GUEST)){
-			List<Guest> guests = null;
-		        if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){
-		        	//if guest type, we give only the account he has created 
-		        	guests = guestRepository.searchGuestAnyWhere(mail, firstName, lastName, currentUser.getLogin());
-		        }	else {
-		        	guests = guestRepository.searchGuestAnyWhere(mail, firstName, lastName, null);
-		        }
-			return new ArrayList<User>(guests);
-		}else{
-			return new ArrayList<User>();
 		}
+		if(null==userType || userType.equals(UserType.INTERNAL)){
+			LdapSearchResult<User> pagedResult = ldapDao.searchUserAnyWhere(mail, firstName, lastName);
+			List<User> internals = pagedResult.getResultList();
+        
+			//need linshare local information for these internals user
+			for (User ldapuser : internals) {
+				User userdb = userRepository.findByMail(ldapuser.getMail());
+				if (userdb!=null)  ldapuser.setRole(userdb.getRole());
+			}
+        
+			users.addAll(internals);
+		}
+
+		return users;
 	}
 
 	public void updateGuest(String mail, String firstName, String lastName,

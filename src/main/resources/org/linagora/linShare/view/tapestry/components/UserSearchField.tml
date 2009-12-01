@@ -58,7 +58,7 @@
                              title="${message:components.userSearch.slidingField.mail}"/>
 				<br/>
 				<div id="userType">
-	                ${message:components.userSearch.slidingField.type}
+	                <!--  ${message:components.userSearch.slidingField.type}-->
 	                <t:radiogroup t:id="type" t:value="userType">
 	                    <t:radio t:id="internal"/>&nbsp;<t:label for="internal">${message:components.userSearch.radio.internal}</t:label>
 	                    ${message:global.space}

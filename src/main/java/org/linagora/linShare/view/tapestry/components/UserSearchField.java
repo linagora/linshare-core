@@ -86,6 +86,7 @@ public class UserSearchField {
 	private String mail;
 
 	@Property
+	@Persist
 	private UserTypes userType;
 
 	@SuppressWarnings("unused")
@@ -98,7 +99,8 @@ public class UserSearchField {
 	 ************************************************************ */
 	@SetupRender
 	public void initValues(){
-		userType=UserTypes.ALL;
+		if(userType==null) userType=UserTypes.ALL;
+		
 		if(lastName==null) lastName=messages.get("components.userSearch.slidingField.lastName");
 		
 		if(firstName==null) firstName=messages.get("components.userSearch.slidingField.firstName");
@@ -141,8 +143,6 @@ public class UserSearchField {
 	 * @return list of users.
 	 */
 	private List<UserVo> performSearch(String input) {
-
-
 		Set<UserVo> userSet = new HashSet<UserVo>();
 
 		String firstName_ = null;
@@ -159,29 +159,29 @@ public class UserSearchField {
 		}
 
         if (input != null) {
-            userSet.addAll(userFacade.searchUser(input.trim(), null, null, userVo));
+            userSet.addAll(userFacade.searchUser(input.trim(), null, null, null, userVo));
         }
-		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userVo));
-		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, userVo));
+		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, null, userVo));
+		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, null, userVo));
 
 		return new ArrayList<UserVo>(userSet);
 	}
 
 
 	public List<UserVo> performAnyWhereSearch(){
-		
-		
-		
 		Set<UserVo> userSet = new HashSet<UserVo>();
 		UserType type=null;
-		if(UserTypes.ALL.equals(userType)){
-			type=null;
-		}else if(UserTypes.GUEST.equals(userType)){
-			type=UserType.GUEST;
-		}else if(UserType.INTERNAL.equals(userType)){
-			type=UserType.INTERNAL;
-		}
 		
+		switch (userType) {
+		case GUEST:
+			type=UserType.GUEST;
+			break;
+		case INTERNAL:
+			type=UserType.INTERNAL;
+			break;
+		default:
+			break; //null = ALL
+		}
 		lastName=(messages.get("components.userSearch.slidingField.lastName").equals(lastName))?null:lastName;
 		firstName=(messages.get("components.userSearch.slidingField.firstName").equals(firstName))?null:firstName;
 		mail=(messages.get("components.userSearch.slidingField.mail").equals(mail))?null:mail;	

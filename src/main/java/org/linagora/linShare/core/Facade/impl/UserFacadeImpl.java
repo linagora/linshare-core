@@ -115,9 +115,9 @@ public class UserFacadeImpl implements UserFacade {
      * @param lastName user last name.
      * @return a list of matching users.
      */
-    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currrentUser) {
-    	User owner = userRepository.findByLogin(currrentUser.getLogin());
-    	List<User> users = userService.searchUser(mail, firstName, lastName,owner);
+    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) {
+    	User owner = userRepository.findByLogin(currentUser.getLogin());
+    	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
     }
 

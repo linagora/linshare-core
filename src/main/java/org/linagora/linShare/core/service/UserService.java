@@ -61,16 +61,6 @@ public interface UserService {
      * @param mail user email.
      * @param firstName user first name.
      * @param lastName user last name.
-     * @param currentUser the current user can be null, if not null and if user is a guest, the result includes the guests
-     * created by the current User
-     * @return a list of matching users.
-     */
-    List<User> searchUser(String mail, String firstName, String lastName, User currentUser);
-    
-    /** Search a user.
-     * @param mail user email.
-     * @param firstName user first name.
-     * @param lastName user last name.
      * @param userType type of user (internal/guest)
      * @param currentUser the current user can be null, if not null and if user is a guest, the result includes the guests
      * created by the current User
