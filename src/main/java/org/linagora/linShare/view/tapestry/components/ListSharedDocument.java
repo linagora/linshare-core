@@ -213,9 +213,15 @@ public class ListSharedDocument {
 		if(null==currentSharedDocumentVo){
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		}else{
+			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
+			
 			InputStream stream=documentFacade.retrieveFileStream(currentSharedDocumentVo, user);
-			//send an email to the owner
-			notifyOwnerByEmail(currentSharedDocumentVo);
+			
+			//send an email to the owner if it is the first time the document is downloaded
+			if (!alreadyDownloaded) {
+				notifyOwnerByEmail(currentSharedDocumentVo);
+				componentdocuments=shareFacade.getAllSharingReceivedByUser(user); //maj valeur downloaded dans le VO
+			}
 			
 			return new FileStreamResponse(currentSharedDocumentVo,stream);
 		}
@@ -264,6 +270,7 @@ public class ListSharedDocument {
     public void onActionFromCopy(String docIdentifier) {
         ShareDocumentVo shareDocumentVo = searchDocumentVoByUUid(componentdocuments, docIdentifier);
         boolean copyDone = false;
+        boolean alreadyDownloaded = shareDocumentVo.getDownloaded();
         
         //create the copy of the document and remove it from the received documents
         try {
@@ -274,8 +281,9 @@ public class ListSharedDocument {
             businessMessagesManagementService.notify(e);
         }
         
-        //send an email to the owner
-        notifyOwnerByEmail(shareDocumentVo);
+        //send an email to the owner if it is the first time the document is downloaded
+		if (!alreadyDownloaded) 
+			notifyOwnerByEmail(shareDocumentVo);
 		
         if (copyDone) {
             businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
