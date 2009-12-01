@@ -95,7 +95,7 @@
 	<!-- Search widget -->
 	<t:parameter name="searchWidget">
 		<t:widget widgetId="searchWidget" title="${message:components.widget.searchWidget.title}">
-			<t:SearchFile userlogin="userVo" advancedmode="advanced"/>
+			<t:SearchFile userlogin="userVo" />
 		</t:widget>
 	</t:parameter>
 	

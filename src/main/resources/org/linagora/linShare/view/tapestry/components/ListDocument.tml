@@ -11,7 +11,7 @@
 	<div id="list">
 	<h2>${message:pages.files.list.myfiles.heading}</h2>
 	
-	<t:sorter t:toggleNeeded="true" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listDocument.sorter.date.label},${message:components.listDocument.sorter.name.label},${message:components.listDocument.sorter.type.label},${message:components.listDocument.sorter.size.label}" t:properties="literal:date,name,type,size"/> 
+	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listDocument.sorter.date.label},${message:components.listDocument.sorter.name.label},${message:components.listDocument.sorter.type.label},${message:components.listDocument.sorter.size.label}" t:properties="literal:date,name,type,size"/> 
 
 	<t:form t:id="search">
 
