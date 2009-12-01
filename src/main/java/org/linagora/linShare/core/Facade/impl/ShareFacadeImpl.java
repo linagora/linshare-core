@@ -28,10 +28,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
+import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
@@ -43,6 +45,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.DocumentRepository;
+import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.NotifierService;
@@ -72,6 +75,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final UserService userService;
 
     private final DocumentService documentService;
+
+	private final LogEntryRepository logEntryRepository;
     
     
     private final Templating templating;
@@ -87,7 +92,8 @@ public class ShareFacadeImpl implements ShareFacade {
 			final NotifierService mailNotifierService,
 			final UserService userService,
             final DocumentService documentService,
-            final Templating templating) {
+            final Templating templating,
+            final LogEntryRepository logEntryRepository) {
 		super();
 		this.shareService = shareService;
 		this.documentTransformer = documentTransformer;
@@ -98,6 +104,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.userService = userService;
         this.documentService = documentService;
         this.templating=templating;
+        this.logEntryRepository=logEntryRepository;
 	}
 
 	
@@ -197,8 +204,20 @@ public class ShareFacadeImpl implements ShareFacade {
     public void createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException {
         Share share = shareTransformer.assemble(shareDocumentVo);
 		User user = userRepository.findByLogin(userVo.getLogin());
+        
         // create a copy of the document :
         documentService.duplicateDocument(share.getDocument(), user);
+        
+        //log the copy
+        ShareLogEntry logEntry = new ShareLogEntry(shareDocumentVo.getSender().getMail(),
+        		shareDocumentVo.getSender().getFirstName(), shareDocumentVo
+						.getSender().getLastName(),
+				LogAction.SHARE_DOWNLOAD, "Copy of a sharing", shareDocumentVo
+						.getFileName(), shareDocumentVo.getSize(), shareDocumentVo.getType(), userVo
+						.getMail(), userVo.getFirstName(), userVo
+						.getLastName(), null);
+		logEntryRepository.create(logEntry);
+		
         // remove the share :
         shareService.removeReceivedShareForUser(share, user, user);
     }
