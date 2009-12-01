@@ -145,17 +145,16 @@ public interface SecuredUrlFacade {
 			Integer documentId, String email);
 
 	/**
-	 * Send an email notification to the owner of the secured url when the doc is downloaded (doc may be null when a user download 
-	 * a zip archive of all the sharing)
+	 * Send an email notification to the owner of the secured url when the documents are downloaded
 	 * @param alea
 	 * @param urlPath
 	 * @param subject
 	 * @param anonymousDownloadTemplateContent
 	 * @param anonymousDownloadTemplateContentTxt
-	 * @param doc 
-	 * @param email of the user who has downloaded the document
+	 * @param docs 
+	 * @param email of the user who has downloaded the documents
 	 */
-	void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, DocumentVo doc, String email);
+	void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, List<DocumentVo> docs, String email);
 
 
 	

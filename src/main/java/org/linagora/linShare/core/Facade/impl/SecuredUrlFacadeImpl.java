@@ -108,7 +108,7 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		securedUrlService.logDownloadedDocument(alea, urlPath, password, documentId, email) ;
 	}
 
-	public void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, DocumentVo doc, String email) {
+	public void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, List<DocumentVo> docs, String email) {
 		//Setting parameters and values for supply the template.
 		Map<String,String> templateParams=new HashMap<String, String>();
 		
@@ -123,12 +123,14 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		StringBuffer names = new StringBuffer();
 		StringBuffer namesTxt = new StringBuffer();
 		
-		if (doc != null) {
-			names.append("<li>"+doc.getFileName()+"</li>");
-			namesTxt.append(doc.getFileName()+"\n");
-			templateParams.put("${documentNames}", names.toString());
-			templateParams.put("${documentNamesTxt}", namesTxt.toString());	
+		if (docs != null && docs.size()>0) {
+			for (DocumentVo doc : docs) {
+				names.append("<li>"+doc.getFileName()+"</li>");
+				namesTxt.append(doc.getFileName()+"\n");
+			}	
 		}
+		templateParams.put("${documentNames}", names.toString());
+		templateParams.put("${documentNamesTxt}", namesTxt.toString());
 		
 		String messageForAnonymousDownloadTemplateContent = templating.getMessage(anonymousDownloadTemplateContent, templateParams);
 		String messageForAnonymousDownloadTemplateContentTxt = templating.getMessage(anonymousDownloadTemplateContentTxt, templateParams);
