@@ -352,7 +352,6 @@ public class ListDocument {
      * the user in the list of documents.
 	 */
 	public String getTooltipValue() {
-		logger.debug("ROW INDEX : "+Integer.toString(rowIndex));
 		return tooltipValues.get(rowIndex);
 	}
 

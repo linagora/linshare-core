@@ -41,7 +41,6 @@
        	 <constructor-arg ref="userService"/>
          <constructor-arg ref="documentService"/>
          <constructor-arg ref="templating"/>
-         <constructor-arg ref="logEntryRepository" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linShare.core.Facade.impl.ShareExpiryDateFacadeImpl">

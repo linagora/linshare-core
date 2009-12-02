@@ -414,4 +414,24 @@ public class ShareServiceImpl implements ShareService{
 	public List<Share> getSharesLinkedToDocument(Document doc) {
 		 return shareRepository.getSharesLinkedToDocument(doc);
 	}
+	public void logLocalCopyOfDocument(Share share, User user) throws IllegalArgumentException, BusinessException {
+		ShareLogEntry logEntryShare = new ShareLogEntry(share.getSender().getMail(),
+				share.getSender().getFirstName(), share
+						.getSender().getLastName(),
+				LogAction.SHARE_DOWNLOAD, "Copy of a sharing", share.getDocument()
+						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
+						.getMail(), user.getFirstName(), user
+						.getLastName(), null);
+
+		ShareLogEntry logEntryDelete = new ShareLogEntry(share.getSender().getMail(),
+				share.getSender().getFirstName(), share
+						.getSender().getLastName(),
+				LogAction.SHARE_DELETE, "Copy of a sharing", share.getDocument()
+						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
+						.getMail(), user.getFirstName(), user
+						.getLastName(), null);
+		
+		logEntryRepository.create(logEntryShare);
+		logEntryRepository.create(logEntryDelete);
+	}
 }

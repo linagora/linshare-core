@@ -156,5 +156,12 @@ public interface ShareService {
     
     
     public List<Share> getSharesLinkedToDocument(Document doc);
+    
+    /**
+     * Do the log entries for a local copy
+     * @param doc
+     * @param share
+     */
+    public void logLocalCopyOfDocument(Share share, User user) throws IllegalArgumentException, BusinessException;
 
 }
