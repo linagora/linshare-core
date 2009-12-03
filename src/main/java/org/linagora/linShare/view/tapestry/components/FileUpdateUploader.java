@@ -105,7 +105,7 @@ public class FileUpdateUploader {
     
     
 	@SuppressWarnings("unused")
-	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=350"})
+	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=250"})
 	private WindowWithEffects windowUpdateDocUpload;
 	
 	

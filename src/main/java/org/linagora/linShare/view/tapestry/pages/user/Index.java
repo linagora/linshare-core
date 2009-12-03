@@ -30,6 +30,7 @@ import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -46,13 +47,14 @@ import org.linagora.linShare.view.tapestry.components.GuestEditForm;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.services.Templating;
 
+@IncludeJavaScriptLibrary("../../components/SizeOfPopup.js")
 public class Index {
 
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
     @SuppressWarnings("unused")
-    @Component(parameters = {"style=bluelighting", "show=false", "width=570", "height=550"})
+    @Component(parameters = {"style=bluelighting", "show=false", "width=570", "height=450"})
     private WindowWithEffects userSearchWindow;
 /*
     @InjectComponent
@@ -150,6 +152,8 @@ public class Index {
             flagFinishShare=false;
             shareSessionObjects.setMessages(new ArrayList<String>());
     	}
+    	//resize the share popup
+        renderSupport.addScript(String.format("userSearchWindow.setSize(600, getHeightForPopup())"));
     }
 
     public List<String> getNotificationMessage() {

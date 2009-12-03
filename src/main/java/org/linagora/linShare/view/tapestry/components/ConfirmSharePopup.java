@@ -34,8 +34,12 @@ import java.util.regex.Pattern;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
@@ -64,6 +68,7 @@ import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvide
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@IncludeJavaScriptLibrary("SizeOfPopup.js")
 public class ConfirmSharePopup{
 	private static final Logger logger = LoggerFactory.getLogger(ConfirmSharePopup.class);
 	
@@ -186,6 +191,9 @@ public class ConfirmSharePopup{
 	
 	@Inject
 	private PropertiesSymbolProvider propertiesSymbolProvider;
+	
+    @Environmental
+    private RenderSupport renderSupport;
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
@@ -210,6 +218,12 @@ public class ConfirmSharePopup{
 		computePickerDates();
 		buildTooltipValue();
 	}
+	
+	@AfterRender
+    public void afterRender() {
+    	//resize the share popup
+        renderSupport.addScript(String.format("confirmWindow.setSize(650, getHeightForPopup())"));
+    }
 
 	/**
 	 * Compute the minDate, maxDate and defaultDate the user can select in
