@@ -3,7 +3,14 @@
 
 	<div id="list">
 
-	<h2>${message:pages.user.list.users.heading}</h2>
+	<t:if test="inSearch">
+		<h2>${message:pages.user.list.users.search.heading}</h2>
+	</t:if>
+	<t:if test="inSearch" negate="true">
+		<h2>${message:pages.user.list.users.heading}</h2>
+	</t:if>
+
+	
 	
 	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:pages.user.sorter.name.label},${message:pages.user.sorter.mail.label},${message:pages.user.sorter.expiration.label}" t:properties="literal:name,mail,expiration"/> 
 
@@ -112,12 +119,13 @@
 
 		</t:grid>
 
-
-		<t:if test="users.empty" negate="true">
-			<div id="actionListUser" style="display:none">
-				<t:linkSubmit t:event="share" class="listDocument" title="${message:components.userSearch.action.share}">
-				<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.userSearch.action.share}</t:linkSubmit>
-			</div>
+		<t:if test="users">
+			<t:if test="users.empty" negate="true">
+				<div id="actionListUser" style="display:none">
+					<t:linkSubmit t:event="share" class="listDocument" title="${message:components.userSearch.action.share}">
+					<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.userSearch.action.share}</t:linkSubmit>
+				</div>
+			</t:if>
 		</t:if>
 
 	</t:form>

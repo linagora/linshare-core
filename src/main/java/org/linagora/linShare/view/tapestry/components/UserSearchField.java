@@ -27,7 +27,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -93,6 +95,15 @@ public class UserSearchField {
 	@Property
 	@Persist
 	private boolean advancedSearch;
+	
+	@Persist
+	private boolean reset;
+	
+	@Persist
+	private boolean resetSimple;
+
+    @Inject
+    private ComponentResources componentResources;
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
@@ -131,11 +142,38 @@ public class UserSearchField {
 	
 	
 	public void onSuccessFromUserSearchForm() {
-		users = performSearch(userSearchPattern);
+		if (resetSimple) {
+			this.userSearchPattern = null;
+			this.resetSimple = false;
+			componentResources.triggerEvent("resetListUsers", null, null);
+		}
+		else {
+			componentResources.triggerEvent("inUserSearch", null, null);
+			users = performSearch(userSearchPattern);
+		}
 	}
 
 	public void onSuccessFromAdvancedSearchForm() {
-		users=performAnyWhereSearch();
+		if (reset) {
+			this.userType=UserTypes.ALL;
+			this.lastName = null;
+			this.firstName = null;
+			this.mail = null;
+			this.reset = false;
+			componentResources.triggerEvent("resetListUsers", null, null);
+		}
+		else {
+			componentResources.triggerEvent("inUserSearch", null, null);
+			users=performAnyWhereSearch();
+		}
+	}
+	
+	void onSelectedFromReset() {
+		reset = true;
+	}
+	
+	void onSelectedFromResetSimple() {
+		resetSimple = true;
 	}
 	
 	/** Perform a user search using the user search pattern.
@@ -180,7 +218,7 @@ public class UserSearchField {
 			type=UserType.INTERNAL;
 			break;
 		default:
-			break; //null = ALL
+			break; //null => ALL
 		}
 		lastName=(messages.get("components.userSearch.slidingField.lastName").equals(lastName))?null:lastName;
 		firstName=(messages.get("components.userSearch.slidingField.firstName").equals(firstName))?null:firstName;

@@ -776,12 +776,9 @@ strong {
 	border-color: #E2697F;
 	color: #8F0A22;
 }
-#searchWidget > div form input[type="submit"][name="reset"] {
-	margin-left: 10px;
-	padding: 0px !important;
-	background: transparent none;
-	border: 0px none transparent;
-	font-weight: normal;	/**/
+#searchWidget > div form input[type="submit"][name="reset"],
+#searchWidget > div form input[type="submit"][name="resetSimple"] {
+	background-image: url('../images/icons/reset-small.png');
 }
 
 

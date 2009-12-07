@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
@@ -63,6 +64,10 @@ public class UserSearchResults {
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
     private List<UserVo> users;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean inSearch;
 
     /* ***********************************************************
      *                      Injected services
@@ -82,6 +87,9 @@ public class UserSearchResults {
 
     @InjectComponent
     private Zone userEditTemplateZone;
+
+    @Inject
+    private ComponentResources componentResources;
     
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -130,8 +138,7 @@ public class UserSearchResults {
             selectedUsers = new ArrayList<UserVo>();
         }
         if (users == null || users.size() == 0) {
-            String mail = userLoggedIn.getMail();
-            users = userFacade.searchGuest(mail);
+            users = userFacade.searchUser("", "", "", userLoggedIn);
     	}
         if(refreshFlag==true){
 			users=usr;
@@ -191,7 +198,7 @@ public class UserSearchResults {
     public void deleteUser() {
         userFacade.deleteGuest(selectedLogin, userLoggedIn);
         shareSessionObjects.addMessage(messages.get("components.userSearch.action.delete.confirm"));
-        users = userFacade.searchGuest(userLoggedIn.getMail());
+        componentResources.triggerEvent("resetListUsers", null, null);
     }
 
     public boolean isSelected() {

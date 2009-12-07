@@ -40,12 +40,15 @@ import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Response;
+import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.components.GuestEditForm;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.services.Templating;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @IncludeJavaScriptLibrary("../../components/SizeOfPopup.js")
 public class Index {
@@ -74,6 +77,9 @@ public class Index {
  
     @InjectComponent
 	private GuestEditForm guestEditForm;
+    
+    @Inject
+    private UserFacade userFacade;
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -100,6 +106,13 @@ public class Index {
     private List<UserVo> users;
 
     private boolean shareSessionObjectsExists;
+    
+    @Persist
+    @Property
+    private boolean inSearch;
+
+
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
     
     /* ***********************************************************
@@ -154,6 +167,17 @@ public class Index {
     	}
     	//resize the share popup
         renderSupport.addScript(String.format("userSearchWindow.setSize(600, getHeightForPopup())"));
+    }
+    
+    @OnEvent(value="resetListUsers")
+    public void resetListUsers(Object[] o1) {
+		inSearch=false;
+		users = userFacade.searchUser("", "", "", userVo);
+    }
+    
+    @OnEvent(value="inUserSearch")
+    public void inSearch(Object[] o1) {
+    	inSearch = true;
     }
 
     public List<String> getNotificationMessage() {
