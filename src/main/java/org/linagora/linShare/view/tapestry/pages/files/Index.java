@@ -177,6 +177,9 @@ public class Index {
 	@Persist
 	private boolean advanced;
 	
+	@Persist
+	@Property
+	private boolean inSearch;
 
 	/* ***********************************************************
 	 *                       Phase processing
@@ -260,6 +263,17 @@ public class Index {
 	public void clearList(){
 		reinitASO();
 	}
+    
+    @OnEvent(value="resetListFiles")
+    public void resetListFiles(Object[] o1) {
+		inSearch=false;
+		listDocumentsVo=searchDocumentFacade.retrieveDocument(userVo);
+    }
+    
+    @OnEvent(value="inFileSearch")
+    public void inSearch(Object[] o1) {
+    	inSearch = true;
+    }
 	
 
 	
@@ -300,7 +314,7 @@ public class Index {
 		if(null!=object && object.length>0 && !flagError){
 			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),object.length));
 					
-			
+			resetListFiles(null);
 		}
 	}
 	

@@ -97,6 +97,10 @@ public class ListDocument {
 	@Parameter(required = true, defaultPrefix = BindingConstants.PROP)
 	@Property
 	private List<DocumentVo> documents;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean inSearch;
 
 	/***************************************************************************
 	 * Properties

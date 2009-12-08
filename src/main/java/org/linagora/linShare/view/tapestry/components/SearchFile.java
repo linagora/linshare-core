@@ -161,6 +161,9 @@ public class SearchFile {
 	@Persist
 	private boolean reset;
 	
+	@Persist
+	private boolean resetSimple;
+	
 
 	@SuppressWarnings("unused")
 	@Persist
@@ -401,7 +404,9 @@ public class SearchFile {
 			this.name = null;
 			this.reset = false;
 			
-			return onSuccessFromSimpleSearchForm();
+			componentResources.triggerEvent("resetListFiles", null, null);
+			
+			return null;
 		}
 
 
@@ -440,6 +445,7 @@ public class SearchFile {
 		objects[0]=docs;
 		componentResources.getPage().getComponentResources().triggerEvent("eventDocument", objects,null);
 
+		componentResources.triggerEvent("inFileSearch", null, null);
 		return null;
 	}
 
@@ -449,6 +455,13 @@ public class SearchFile {
 	}
 
 	public Object onSuccessFromSimpleSearchForm(){
+		
+		if (resetSimple) {
+			this.name = null;
+			this.resetSimple = false;
+			componentResources.triggerEvent("resetListFiles", null, null);
+			return null;
+		}
 		
 		
 		Boolean shared = null;
@@ -472,11 +485,16 @@ public class SearchFile {
 		objects[0]=docs;
 		componentResources.getPage().getComponentResources().triggerEvent("eventDocument", objects,null);
 
+		componentResources.triggerEvent("inFileSearch", null, null);
 		return null;
 	}
 	
 	void onSelectedFromReset() { 
 		reset = true; 
+	}
+	
+	void onSelectedFromResetSimple() {
+		resetSimple = true;
 	}
 	
 	

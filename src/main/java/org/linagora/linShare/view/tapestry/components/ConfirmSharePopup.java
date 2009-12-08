@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
@@ -194,6 +195,9 @@ public class ConfirmSharePopup{
 	
     @Environmental
     private RenderSupport renderSupport;
+
+	@Inject
+	private ComponentResources componentResources;
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
@@ -467,6 +471,7 @@ public class ConfirmSharePopup{
 		} else {
 			recipientFavouriteFacade.increment(userVo, recipientsEmail);
 			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));
+			componentResources.triggerEvent("resetListFiles", null, null);
 		}
 		
 		return onSuccess;

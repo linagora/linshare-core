@@ -9,7 +9,14 @@
 
 	
 	<div id="list">
-	<h2>${message:pages.files.list.myfiles.heading}</h2>
+
+	<t:if test="inSearch">
+		<h2>${message:pages.files.list.mysearch.heading}</h2>
+	</t:if>
+	<t:if test="inSearch" negate="true">
+		<h2>${message:pages.files.list.myfiles.heading}</h2>
+	</t:if>
+	
 	
 	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listDocument.sorter.date.label},${message:components.listDocument.sorter.name.label},${message:components.listDocument.sorter.type.label},${message:components.listDocument.sorter.size.label}" t:properties="literal:date,name,type,size"/> 
 

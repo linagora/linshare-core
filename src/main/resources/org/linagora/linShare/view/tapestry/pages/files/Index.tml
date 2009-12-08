@@ -62,7 +62,7 @@
 
 			<!-- List : Search result -->
 
-			<t:ListDocument t:documents="listDocumentsVo" t:user="userVo" />
+			<t:ListDocument t:documents="listDocumentsVo" t:user="userVo" inSearch="prop:inSearch" />
 
 		</div>
 
