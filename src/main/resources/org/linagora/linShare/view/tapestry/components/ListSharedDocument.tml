@@ -10,7 +10,12 @@
 
 	<div id="list">
 
-	<h2>${message:pages.index.list.sharedfiles.heading}</h2>
+	<t:if test="inSearch">
+		<h2>${message:pages.index.list.sharedfiles.search.heading}</h2>
+	</t:if>
+	<t:if test="inSearch" negate="true">
+		<h2>${message:pages.index.list.sharedfiles.heading}</h2>
+	</t:if>
 	
 	<t:sorter t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listSharedDocument.sorter.date.creation.label},${message:components.listSharedDocument.sorter.date.expiration.label},${message:components.listSharedDocument.sorter.name.label},${message:components.listSharedDocument.sorter.size.label}" t:properties="literal:dateCreation,dateExpiration,name,size"/> 
 
@@ -32,7 +37,12 @@
 </t:linkit.Comment>
 
 			<t:parameter t:name="empty">
-				${message:components.listSharedDocument.grid.empty}
+				<t:if test="inSearch">
+					${message:components.listSharedDocument.grid.empty.search}
+				</t:if>
+				<t:if test="inSearch" negate="true">
+					${message:components.listSharedDocument.grid.empty}
+				</t:if>
 			</t:parameter>
 
 			<t:parameter t:name="filePropertiesHeader">

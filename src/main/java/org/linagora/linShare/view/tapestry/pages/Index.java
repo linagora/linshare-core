@@ -43,6 +43,7 @@ import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.utils.WelcomeMessageUtils;
+import org.slf4j.Logger;
 
 /**
  * Start page of application securedShare.
@@ -87,6 +88,7 @@ public class Index {
 
 	
 	@Persist
+	@Property
 	/** used to prevent the clearing of documentsVo with search*/
 	private boolean flag;
 	
@@ -130,6 +132,7 @@ public class Index {
         String uuid = (String) object[0];
         ShareDocumentVo shareddoc = searchShareVoByUUid(uuid);
         shareFacade.deleteSharing(shareddoc, userVo);
+        resetListFiles(null);
     }
 
     private ShareDocumentVo searchShareVoByUUid(String uuid) {
@@ -168,5 +171,16 @@ public class Index {
 		flag=true;
 		this.shares = (List<ShareDocumentVo>)object[0];
 	}
+    
+    @OnEvent(value="resetListFiles")
+    public void resetListFiles(Object[] o1) {
+    	flag=false;
+		shares = shareFacade.getAllSharingReceivedByUser(userVo);
+    }
+    
+    @OnEvent(value="inFileSearch")
+    public void inSearch(Object[] o1) {
+    	flag=true;
+    }
    
 }

@@ -86,6 +86,10 @@ public class ListSharedDocument {
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	@Property
 	private List<ShareDocumentVo> shareDocuments;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean inSearch;
 	
 	
 	/***********************************
@@ -288,6 +292,7 @@ public class ListSharedDocument {
         if (copyDone) {
             businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
                 MessageSeverity.INFO));
+            componentResources.triggerEvent("resetListFiles", null, null);
         }
     }
 	
