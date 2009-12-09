@@ -418,7 +418,7 @@ public class ShareServiceImpl implements ShareService{
 		ShareLogEntry logEntryShare = new ShareLogEntry(share.getSender().getMail(),
 				share.getSender().getFirstName(), share
 						.getSender().getLastName(),
-				LogAction.SHARE_DOWNLOAD, "Copy of a sharing", share.getDocument()
+				LogAction.SHARE_COPY, "Copy of a sharing", share.getDocument()
 						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
 						.getMail(), user.getFirstName(), user
 						.getLastName(), null);
