@@ -28,8 +28,8 @@ import java.util.Map;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -39,25 +39,29 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linShare.view.tapestry.pages.Index;
+import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
 
 public class ResetPassword {
 	@Property
+	@Persist
 	private String mail;
 
 	@Inject
 	private Logger logger;
-
-	@InjectPage
-	private Index index;
 
 	@ApplicationState
 	private ShareSessionObjects shareSessionObjects;
 
 	@Inject
 	private UserFacade userFacade;
+
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
 
 	@Inject
 	@Path("context:templates/reset-password.html")
@@ -73,6 +77,7 @@ public class ResetPassword {
 	@Inject
 	private Messages messages;
 
+	@SuppressWarnings("unused")
 	@Property
 	private String currentMessage;
 
@@ -86,7 +91,6 @@ public class ResetPassword {
 	public Object onSuccess() {
 		String mailContent = null;
 		String mailContentTxt = null;
-		logger.debug(mail);
 		
 		UserVo user = userFacade.findUser(mail);
 		if (null == user) {
@@ -122,7 +126,9 @@ public class ResetPassword {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		shareSessionObjects.addMessage(messages.get("pages.password.success"));
+		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.PASSWORD_RESET_SUCCESS,
+                MessageSeverity.INFO));
+		mail=null;
 
 		return this;
 	}
