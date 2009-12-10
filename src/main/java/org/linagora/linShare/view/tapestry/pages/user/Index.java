@@ -189,5 +189,12 @@ public class Index {
     public String getUserSearchWindowId() {
     	return userSearchWindow.getJSONId();
     }
+    
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
  
 }

@@ -31,6 +31,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.internal.services.LinkFactory;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
@@ -42,6 +43,7 @@ import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.utils.WelcomeMessageUtils;
 import org.slf4j.Logger;
 
@@ -49,6 +51,10 @@ import org.slf4j.Logger;
  * Start page of application securedShare.
  */
 public class Index {
+
+    @ApplicationState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
 
     /* ***********************************************************
      *                      Injected services
@@ -63,6 +69,10 @@ public class Index {
     private PersistentLocale persistentLocale;
     @Inject
     private Request request;
+	@Inject
+	private Messages messages;
+	@Inject
+	private Logger logger;
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -181,6 +191,13 @@ public class Index {
     @OnEvent(value="inFileSearch")
     public void inSearch(Object[] o1) {
     	flag=true;
+    }
+    
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
     }
    
 }

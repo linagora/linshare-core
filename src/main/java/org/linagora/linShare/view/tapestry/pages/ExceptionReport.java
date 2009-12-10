@@ -18,41 +18,19 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linShare.view.tapestry.pages.help;
+package org.linagora.linShare.view.tapestry.pages;
 
-import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.apache.tapestry5.services.ExceptionReporter;
 import org.slf4j.Logger;
 
-/**
- * Help pages: FAQ
- * @author dcarella
- *
- */
-public class FAQ {
-	@Inject 
+public class ExceptionReport implements ExceptionReporter {
+	@Inject
 	private Logger logger;
 
-    @ApplicationState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
+	public void reportException(Throwable exception) {
+		logger.error(exception.getMessage());
+		exception.printStackTrace();
+	}
 
-	/* ***********************************************************
-	 *                      Injected services
-	 ************************************************************ */
-
-	@SuppressWarnings("unused") // used in tml
-	@Inject
-	private Messages messages;
-	
-
-    Object onException(Throwable cause) {
-    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
-    	logger.error(cause.getMessage());
-    	cause.printStackTrace();
-    	return this;
-    }
 }

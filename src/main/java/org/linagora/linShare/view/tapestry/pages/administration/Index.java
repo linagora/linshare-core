@@ -35,6 +35,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.MimeTypeFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
@@ -46,6 +47,7 @@ import org.linagora.linShare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +58,16 @@ public class Index {
     
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
+    @ApplicationState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
+
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
+
+	@Inject
+	private Messages messages;
     @Inject
     private ParameterFacade parameterFacade;
     @Inject
@@ -237,6 +246,12 @@ public class Index {
 			return "trunk";
 		}
     }
-    
+
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
     
 }

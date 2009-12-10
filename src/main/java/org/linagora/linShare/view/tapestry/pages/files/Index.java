@@ -569,5 +569,12 @@ public class Index {
     public String getJSonId() {
         return windowUpload.getJSONId();
     }
+    
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	log.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
 
 }

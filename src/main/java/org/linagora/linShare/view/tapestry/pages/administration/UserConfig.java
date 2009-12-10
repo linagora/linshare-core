@@ -43,11 +43,13 @@ import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.impl.SimpleSelectModel;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
+import org.slf4j.Logger;
 
 
 /**
@@ -56,6 +58,13 @@ import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementSe
  *
  */
 public class UserConfig {
+	@Inject 
+	private Logger logger;
+
+    @ApplicationState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
+	
  	/* ***********************************************************
 	 *                         Parameters
 	 ************************************************************ */
@@ -232,4 +241,11 @@ public class UserConfig {
 	 *                      Getters & Setters
 	 ************************************************************ */ 
 
+
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
 }
