@@ -244,5 +244,14 @@ public class UserFacadeImpl implements UserFacade {
     	userService.changeGuestPassword(user.getLogin(), oldPassword, newPassword);
     	
     }
+
+	public void resetPassword(UserVo user, String mailSubject,
+			String mailContent, String mailContentTxt) throws BusinessException {
+		if (!user.getUserType().equals(UserType.GUEST)) {
+    		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user type is wrong, only a guest may change its password");
+    	}
+    	
+    	userService.resetPassword(user.getLogin(), mailSubject, mailContent, mailContentTxt);		
+	}
     
 }

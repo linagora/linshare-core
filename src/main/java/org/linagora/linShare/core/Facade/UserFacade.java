@@ -177,4 +177,10 @@ public interface UserFacade {
      */
     void changePassword(UserVo user, String oldPassword, String newPassword) throws BusinessException;
     
+    /**
+     * Set a new password to a guest user
+     * @param user
+     */
+    void resetPassword(UserVo user, String mailSubject,
+			String mailContent, String mailContentTxt) throws BusinessException;
 }

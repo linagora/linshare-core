@@ -444,4 +444,25 @@ public class UserServiceImpl implements UserService {
 		guest.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
 		guestRepository.update(guest);
 	}
+
+	public void resetPassword(String login, String mailSubject,
+			String mailContent, String mailContentTxt) throws BusinessException {
+		Guest guest = guestRepository.findByLogin(login);
+		if (guest == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+		}
+		
+		// generate a password.
+        String password = generatePassword();
+        String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+        
+        String content = NotifyContentFactory.makeGuestMailContent(mailContent, password);
+        String contentTxt = NotifyContentFactory.makeGuestMailContent(mailContentTxt, password);
+
+        // Send an email to the guest.
+        notifierService.sendNotification(guest.getMail(), guest.getMail(), mailSubject, content,contentTxt);
+        
+		guest.setPassword(hashedPassword);
+		guestRepository.update(guest);
+	}
 }

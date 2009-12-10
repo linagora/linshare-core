@@ -309,6 +309,9 @@ strong {
 #userConfig #content h1 {
 	background-image: url("../images/theme0/icon-heading-userconfig.png");
 }
+#password #content h1 {
+	background-image: url("../images/theme0/icon-heading-userconfig.png");
+}
 #help #content h1 {
 	background-image: url("../images/theme0/icon-heading-help.png");
 }
@@ -3354,5 +3357,35 @@ div.ck_tooltip {
 .tooltipTable tr, .tooltipTable {
 	border: 1px solid #1D5C7C;
 }
+
+/* Exception page */
+#exception #content h1 {
+background-image:url(../images/theme0/icon-heading-exception.png);
+}
+#exception #content p {
+color: #C00D2D;
+font-size: 110%;
+font-weight: bold;
+text-align: center;
+}
+
+/* Reset Password Page */
+#resetPassword input#mail {
+	width: 230px;
+	padding-left: 18px !important;
+	background-image: url("../images/theme0/form-input-email.png");
+}
+
+/* Form buttons */
+input[type="submit"] {
+background-color:#EAF1F5;
+cursor:pointer;
+float:none !important;
+margin-left:5px;
+padding-top:0 !important;
+border:1px solid #5A93AF !important;
+color:#000000;
+}
+
 /***************************************************************************/
 /* EOF */

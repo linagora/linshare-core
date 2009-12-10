@@ -136,5 +136,15 @@ public interface UserService {
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
 	public void changeGuestPassword(String login, String oldPassword, String newPassword) throws BusinessException;
-
+	
+	/**
+	 * Reset a guest password
+	 * @param login
+	 * @param mailSubject
+	 * @param mailContent
+	 * @param mailContentTxt
+	 * @throws BusinessException
+	 */
+	public void resetPassword(String login, String mailSubject,
+			String mailContent, String mailContentTxt) throws BusinessException;
 }
