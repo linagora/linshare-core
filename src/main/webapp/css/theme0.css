@@ -5,7 +5,7 @@
  *
  * Language: all
  * Encoding: UTF-8
- * 2009-08-26, LINAGORA Group
+ * 2009-12-17, LINAGORA Group
  */
 
 
@@ -1358,12 +1358,16 @@ table.t-data-grid {
 #files #pageContent #list {
 }
 
+#files #list td.fileProperties {
+	max-width: 400px;	/* Value <= 400px */
+}
 #files #list td.fileProperties div {
 	overflow: hidden;
 	min-width: 400px;		/* For 1024-width screen */
 	white-space: normal;
 }
-#files #list td.fileProperties span {
+#files #list td.fileProperties span,
+#files #list td.fileProperties a {
 	white-space: nowrap;
 }
 #files #list td.fileProperties span.ownerLogin {
@@ -1569,6 +1573,9 @@ table.t-data-grid {
 	font-size: 1.15em;
 }
 
+#administration #pageContent #version {
+	margin: .5em 0em 1.5em 0em;
+}
 #administration #pageContent #version strong {
 	color: #2D4D5D;
 }
@@ -2357,14 +2364,15 @@ div#blocDL ul li {
 
 /* Layout */
 
-#content th.shared, #content th.signed, #content th.encryptedAdd, #content th.expirationDate, #content th.picture, #content th.actions, #content th.action, #content th.selectedValue,
-#content td.shared, #content td.signed, #content td.encryptedAdd, #content td.expirationDate, #content td.picture, #content td.actions, #content td.action, #content td.selectedValue {
+#content th.updateDoc, #content th.fileEdit, #content th.shared, #content th.signed, #content th.encryptedAdd, #content th.expirationDate, #content th.picture, #content th.actions, #content th.action, #content th.selectedValue,
+#content td.updateDoc, #content td.fileEdit, #content td.shared, #content td.signed, #content td.encryptedAdd, #content td.expirationDate, #content td.picture, #content td.actions, #content td.action, #content td.selectedValue {
 	text-align: center;
 }
 
 #content th.mail, #content th.completeName, #content th.fileProperties,
 #content td.mail, #content td.completeName, #content td.fileProperties {
 	padding-left: .5em !important;
+	padding-right: .75em !important;
 }
 
 #content th.selectedValue,
