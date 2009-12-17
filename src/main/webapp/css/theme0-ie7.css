@@ -1,13 +1,12 @@
 /*
  * LinShare - Large files secured sharing system
  * CSS custom style ONLY FOR IE  (7.0 only)
- * Report changes to: support@linagora.com
- * Contributors: David GALICHET, Nicolas GAPAILLARD, Nicolas CHARLES, David CARELLA
+ * Report changes to: info@linagora.com
  *
- * Version: LinShare 0.5+
+ * Version: LinShare 0.7+
  * Language: all
  * Encoding: ASCII
- * 2009-06-22, LINAGORA Group
+ * 2009-12-17, LINAGORA Group
  */
 
 
@@ -86,6 +85,19 @@ table.t-data-grid thead tr th {		/* Impossible to style 'tr' tags (5.5, 6, 7) */
 #pageContent #list form#form label {
 	position: relative;
 	bottom: .25em;
+}
+
+
+
+/***************************************************************************
+* PAGES
+*/
+
+#files #list td.fileProperties {
+	width: 430px !important;
+}
+#files #list td.fileProperties div {
+	width: 430px !important;
 }
 
 

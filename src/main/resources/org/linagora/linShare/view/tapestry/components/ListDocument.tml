@@ -74,12 +74,17 @@
 			<div>
 				<t:if t:test="${document.encrypted}">
 					<t:actionLink t:id="showWarningHttp" zone="${warningHttp.zoneClientId}" onClick="${warningHttp.javascriptOpenPopup}" context="${document.identifier}" t:type="${document.type}" t:title="${document.fileName}" class="fileName">
-					<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" 	value="document.fileName" />
+<t:linkit.Comment>
+					<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" />
+</t:linkit.Comment>
+					<span>${document.fileName}</span>
 					</t:actionLink>
 					<t:parameter name="else">
 						<t:actionLink t:id="download" t:context="${document.identifier}" t:type="${document.type}" t:title="${document.fileName}" class="fileName">
-						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right"
-							value="document.fileName" />
+<t:linkit.Comment>
+						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" />
+</t:linkit.Comment>
+						<span>${document.fileName}</span>
 						</t:actionLink>
 					</t:parameter>
 				</t:if>
