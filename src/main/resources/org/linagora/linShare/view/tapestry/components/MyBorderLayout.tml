@@ -11,6 +11,7 @@
         <meta http-equiv="Cache-Control" content="no-cache,must-revalidate" />
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />
+        <t:outputraw value="ie8Css" />
         <t:outputraw value="ie7Css" />
         <t:outputraw value="ie6Css" />
 		<link rel="shortcut icon" href="${asset:context:images/favicon.ico}" type="image/x-icon" />
