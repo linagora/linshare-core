@@ -107,6 +107,10 @@ public class MyBorderLayout {
 	 *                      Injected services
 	 ************************************************************ */
 	@Inject
+	@Path("context:css/theme0-ie8.css")
+	private Asset ie8CssAsset;
+
+	@Inject
 	@Path("context:css/theme0-ie7.css")
 	private Asset ie7CssAsset;
 
@@ -151,6 +155,9 @@ public class MyBorderLayout {
 	private List<Locale> includeLocales;
 	
 	@Property
+	private String ie8Css;
+
+	@Property
 	private String ie7Css;
 
 	@Property
@@ -180,6 +187,8 @@ public class MyBorderLayout {
         ParameterVo parameterVo = parameterFacade.loadConfig();
         customLogoUrl = parameterVo.getCustomLogoUrl();
 		
+		ie8Css="<!--[if IE 8]><link href='"+ie8CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
+
 		ie7Css="<!--[if IE 7]><link href='"+ie7CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
 
 		ie6Css="<!--[if lte IE 6]><link href='"+ie6CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
