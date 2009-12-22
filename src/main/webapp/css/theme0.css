@@ -2254,18 +2254,6 @@ div#blocDL ul li {
 
 
 /*--------------------------------------------------------------------------
-* Pages > Exception
-*/
-
-#exception #content p {
-	color: #C00D2D;
-	font-size: 110%;
-	font-weight: bold;
-	text-align: center;
-}
-
-
-/*--------------------------------------------------------------------------
 * Pages > Error
 */
 
@@ -2291,6 +2279,18 @@ div#blocDL ul li {
 	padding: 1.5em;
 	background-color: #FFF;
 	text-align: center;
+	font-size: 1.10em;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Exception
+*/
+
+#exception #pageContent p {
+	color: #C00D2D;
+	text-align: center;
+	font-weight: bold;
 	font-size: 1.10em;
 }
 
@@ -2924,6 +2924,21 @@ div.closeUploadPopup {
 	padding: 5px;
 }
 
+.confirmPopup .indente {
+	margin-left: 50px;	
+}
+
+.confirmPopup .option {
+	margin-bottom: 10px;
+	margin-left: 40px;
+	text-align: left;
+}
+
+.helpContent {
+	border-bottom: 1px dotted;
+	cursor: help;
+}
+
 
 /*--------------------------------------------------------------------------
 * Popups > Confirm share
@@ -3337,20 +3352,8 @@ DIV.t-error UL {
 * Misc
 */
 
-.confirmPopup .indente {
-	margin-left: 50px;	
-}
 
-.confirmPopup .option {
-	margin-bottom:10px;
-	margin-left:40px;
-	text-align:left;
-}
-
-.helpContent {
-	border-bottom:1px dotted;
-	cursor:help;
-}
+/* Tooltip */
 
 div.ck_tooltip {
 	width: 380px !important;
@@ -3385,22 +3388,26 @@ div.ck_tooltip {
 
 
 /* Reset Password Page */
+
 #resetPassword input#mail {
 	width: 230px;
 	padding-left: 18px !important;
 	background-image: url("../images/theme0/form-input-email.png");
 }
 
+
 /* Form buttons */
+
 input[type="submit"] {
-background-color:#EAF1F5;
-cursor:pointer;
-float:none !important;
-margin-left:5px;
-padding-top:0 !important;
-border:1px solid #5A93AF !important;
-color:#000000;
+	background-color: #EAF1F5;
+	cursor: pointer;
+	float: none !important;
+	margin-left: 5px;
+	padding-top: 0 !important;
+	border: 1px solid #5A93AF !important;
+	color: #000000;
 }
+
 
 /***************************************************************************/
 /* EOF */

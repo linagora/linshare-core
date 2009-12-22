@@ -5,9 +5,15 @@
 	<!-- Main content -->
 
 	<div id="content">
-		<body>
-		<h1>${message:pages.exception.title}</h1>
-        	<p>${message:global.exception.message}</p>
-    	</body>
-	</div>
+
+		<h1>${message:components.myborderlayout.exception.title}</h1>
+		
+		<div id="pageContent">
+
+			<p>${message:pages.exception.message.default}</p>
+
+		</div>
+
+	</div><!-- id="content" -->
+
 </t:MyBorderLayout>
