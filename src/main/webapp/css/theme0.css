@@ -5,7 +5,7 @@
  *
  * Language: all
  * Encoding: UTF-8
- * 2009-08-26, LINAGORA Group
+ * 2009-12-22, LINAGORA Group
  */
 
 
@@ -314,6 +314,9 @@ strong {
 }
 #help #content h1 {
 	background-image: url("../images/theme0/icon-heading-help.png");
+}
+#exception #content h1 {
+	background-image: url(../images/theme0/icon-heading-exception.png);
 }
 #error #content h1 {
 	padding-left: 0px;
@@ -1358,12 +1361,16 @@ table.t-data-grid {
 #files #pageContent #list {
 }
 
+#files #list td.fileProperties {
+	max-width: 400px;	/* Value <= 400px */
+}
 #files #list td.fileProperties div {
 	overflow: hidden;
 	min-width: 400px;		/* For 1024-width screen */
 	white-space: normal;
 }
-#files #list td.fileProperties span {
+#files #list td.fileProperties span,
+#files #list td.fileProperties a {
 	white-space: nowrap;
 }
 #files #list td.fileProperties span.ownerLogin {
@@ -1569,6 +1576,9 @@ table.t-data-grid {
 	font-size: 1.15em;
 }
 
+#administration #pageContent #version {
+	margin: .5em 0em 1.5em 0em;
+}
 #administration #pageContent #version strong {
 	color: #2D4D5D;
 }
@@ -1854,8 +1864,6 @@ DIV.t-palette-controls BUTTON {
 	padding-bottom: 3px;
 	border-bottom: solid #b0d6ee 1px;
 }
-
-#top_text
 
 #userConfig #pageContent h3 {
 	margin-bottom: .4em;
@@ -2242,6 +2250,18 @@ div#blocDL ul li {
 
 #helpFAQ .content.visible {
 	display: block;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Exception
+*/
+
+#exception #content p {
+	color: #C00D2D;
+	font-size: 110%;
+	font-weight: bold;
+	text-align: center;
 }
 
 
@@ -3312,6 +3332,11 @@ DIV.t-error UL {
     color: black;
 }
 
+
+/*--------------------------------------------------------------------------
+* Misc
+*/
+
 .confirmPopup .indente {
 	margin-left: 50px;	
 }
@@ -3358,16 +3383,6 @@ div.ck_tooltip {
 	border: 1px solid #1D5C7C;
 }
 
-/* Exception page */
-#exception #content h1 {
-background-image:url(../images/theme0/icon-heading-exception.png);
-}
-#exception #content p {
-color: #C00D2D;
-font-size: 110%;
-font-weight: bold;
-text-align: center;
-}
 
 /* Reset Password Page */
 #resetPassword input#mail {
