@@ -10,7 +10,7 @@
 		
 		<div id="pageContent">
 
-			<p>${message:pages.exception.message.default}</p>
+			<p>${message:global.exception.message}</p>
 
 		</div>
 
