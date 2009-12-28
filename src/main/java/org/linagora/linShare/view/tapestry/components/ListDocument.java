@@ -21,7 +21,6 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +35,6 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -44,23 +42,21 @@ import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.batches.impl.DocumentManagementBatchImpl;
-import org.linagora.linShare.core.domain.entities.Contact;
-import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.CacheUserPinVo;
@@ -199,11 +195,8 @@ public class ListDocument {
 	@InjectComponent
 	private PasswordPopupSubmit passwordPopupSubmit;
 
-	
-	
-	
 	@Inject
-	private LinkFactory linkFactory;
+	private PageRenderLinkSource pageRenderLinkSource;
 
 	@Inject
 	private BeanModelSource beanModelSource;
@@ -219,7 +212,7 @@ public class ListDocument {
 	@Persist
 	private String pass;
 
-	@ApplicationState
+	@SessionState
 	@Property
 	private CacheUserPinVo cachePin;
 
@@ -452,8 +445,8 @@ public class ListDocument {
 					"invalid uuid for this user");
 		} else {
 			// context is a list of document (tab files)
-			return linkFactory.createPageRenderLink("signature/SelectPolicy",
-					true, new Object[] { DocToSignContext.DOCUMENT.toString(),
+			return pageRenderLinkSource.createPageRenderLinkWithContext("signature/SelectPolicy",
+					new Object[] { DocToSignContext.DOCUMENT.toString(),
 							currentDocumentVo.getIdentifier() });
 		}
 	}

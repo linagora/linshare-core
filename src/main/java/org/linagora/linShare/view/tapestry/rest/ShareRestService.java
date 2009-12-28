@@ -22,7 +22,6 @@ package org.linagora.linShare.view.tapestry.rest;
 
 import java.io.IOException;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 

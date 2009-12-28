@@ -24,13 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
@@ -52,7 +51,7 @@ import org.slf4j.Logger;
  */
 public class Index {
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
@@ -63,8 +62,6 @@ public class Index {
     private ShareFacade shareFacade;
     @Inject
     private ParameterFacade parameterFacade;
-    @Inject
-    private LinkFactory linkFactory;
     @Inject
     private PersistentLocale persistentLocale;
     @Inject
@@ -81,17 +78,18 @@ public class Index {
     @Persist
     private List<ShareDocumentVo> shares;
 
-    @SuppressWarnings("unused")
-    @ApplicationState
+    @SessionState
     @Property
     private UserVo userVo;
     @Property
     private boolean userVoExists;
 
-    @Property
+    @SuppressWarnings("unused")
+	@Property
     private String welcomeText;
     
     
+	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private boolean advanced;

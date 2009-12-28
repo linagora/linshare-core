@@ -26,18 +26,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.tapestry5.PrimaryKeyEncoder;
-import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linShare.core.Facade.MimeTypeFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.TimeUnit;
@@ -58,7 +53,7 @@ public class Index {
     
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
@@ -71,14 +66,9 @@ public class Index {
     @Inject
     private ParameterFacade parameterFacade;
     @Inject
-    private MimeTypeFacade mimeTypeFacade;
-    @Inject
     private UserFacade userFacade;
     
-    @Environmental
-    private RenderSupport renderSupport;
-    
-    @ApplicationState
+    @SessionState
     private UserVo loginUser;
     
     
@@ -100,13 +90,15 @@ public class Index {
     private Boolean activeEncipherment;
     @Property
     private Boolean deleteTempAdmin;
-    @Property
+    @SuppressWarnings("unused")
+	@Property
     private List<AllowedMimeTypeVO> supportedMimeType;
     @Property
     private Integer guestAccountExpiryTime;
     @Property
     private TimeUnit guestAccountExpiryUnit;
-    @Property
+    @SuppressWarnings("unused")
+	@Property
     private ShareExpiryRule shareExpiryRule;
     @Persist
     @Property
@@ -178,23 +170,21 @@ public class Index {
         }
     }
 
-    public PrimaryKeyEncoder<Integer, ShareExpiryRule> getShareExpiryRuleEncoder() {
-        return new PrimaryKeyEncoder<Integer, ShareExpiryRule>() {
+    public ValueEncoder<ShareExpiryRule> getShareExpiryRuleEncoder() {
+    	return new ValueEncoder<ShareExpiryRule>() {
+			public String toClient(ShareExpiryRule value) {
+                return ""+shareExpiryRules.indexOf(value);
+			}
 
-            public Integer toKey(ShareExpiryRule value) {
-                return shareExpiryRules.indexOf(value);
-            }
-
-            public void prepareForKeys(List<Integer> keys) { }
-
-            public ShareExpiryRule toValue(Integer key) {
+			public ShareExpiryRule toValue(String clientValue) {
+				int key = Integer.parseInt(clientValue);
                 if (shareExpiryRules.size() > key) {
                     return shareExpiryRules.get(key);
                 } else {
                     return null;
                 }
-            }
-        };
+			}
+    	};
     }
 
     public Object onAddRow() {

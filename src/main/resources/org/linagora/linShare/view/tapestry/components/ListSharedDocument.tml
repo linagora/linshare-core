@@ -30,11 +30,11 @@
 
 			<!-- Header definition -->
 
-<t:linkit.Comment>
-			<t:parameter t:name="typeHeader">
-				${message:components.listSharedDocument.grid.typeHeader}
-			</t:parameter>
-</t:linkit.Comment>
+			<t:linkit.Comment><!--
+					<t:parameter t:name="typeHeader">
+						${message:components.listSharedDocument.grid.typeHeader}
+					</t:parameter>
+			--></t:linkit.Comment>
 
 			<t:parameter t:name="empty">
 				<t:if test="inSearch">

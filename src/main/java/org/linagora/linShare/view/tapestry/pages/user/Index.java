@@ -27,7 +27,6 @@ import java.util.List;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
@@ -35,10 +34,11 @@ import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -70,7 +70,7 @@ public class Index {
     private Templating templating;
     
     @Inject
-    private LinkFactory linkFactory;
+    private PageRenderLinkSource pageRenderLinkSource;
   
     @Inject
     private Messages messages;
@@ -84,11 +84,11 @@ public class Index {
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
-    @ApplicationState
+    @SessionState
     @Property
     private UserVo userVo;
 
@@ -129,7 +129,7 @@ public class Index {
     public void onSharePanel(Object[] elements) {
         if (shareSessionObjects.getDocuments() == null || shareSessionObjects.getDocuments().size() == 0) {
             shareSessionObjects.addMessage(messages.get("pages.index.message.toFile"));
-            Link linkUser = linkFactory.createPageRenderLink("files/index", true);
+            Link linkUser = pageRenderLinkSource.createPageRenderLink("files/index");
             try {
                 response.sendRedirect(linkUser);
             } catch (IOException ex) {

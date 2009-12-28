@@ -37,7 +37,6 @@ public class RepositoryContent {
 	@Inject
 	private FileSystemDao fileRepository;
 	
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private List<FileInfo> listPath;

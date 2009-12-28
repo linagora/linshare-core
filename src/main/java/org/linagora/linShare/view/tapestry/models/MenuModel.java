@@ -20,9 +20,6 @@
 */
 package org.linagora.linShare.view.tapestry.models;
 
-import org.apache.tapestry5.Asset;
-
-
 public interface MenuModel<T> {
 
 	

@@ -22,8 +22,7 @@ package org.linagora.linShare.view.tapestry.pages;
 
 import java.io.IOException;
 
-import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.internal.services.LinkFactory;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
@@ -32,12 +31,9 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 public class Logout {
 
 	@SuppressWarnings("unused")
-	@ApplicationState
+	@SessionState
 	private UserVo userDetailsVo;
 
-	@Inject
-	private LinkFactory linkFactory;
-	
 	@Inject
 	private Response response;
 	

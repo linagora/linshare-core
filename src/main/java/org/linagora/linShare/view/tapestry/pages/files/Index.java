@@ -28,7 +28,6 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
@@ -37,8 +36,8 @@ import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Response;
@@ -88,13 +87,13 @@ public class Index {
 
 	public final static Logger log=LoggerFactory.getLogger(Index.class);
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
     private boolean shareSessionObjectsExists;
 
-	@ApplicationState
+	@SessionState
 	@Property
 	private UserVo userVo;
 
@@ -130,9 +129,6 @@ public class Index {
     private Response response;
 
     @Inject
-    private LinkFactory linkFactory;
-    
-    @Inject
     @Path("context:templates/shared-message.html")
     private Asset guestSharedTemplate;
     
@@ -153,7 +149,6 @@ public class Index {
      ************************************************************ */
 
 	
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	/** the document list passed to the listDocument component, containing ShareDocumentVo or DocumentVo */
@@ -295,7 +290,6 @@ public class Index {
 	 * It also removes the documents from the shared list 
 	 * @param object a DocumentVo[]
 	 */
-	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventDeleteFromListDocument")
 	public void deleteFromListDocument(Object[] object){
 		 
@@ -366,7 +360,6 @@ public class Index {
 	
 	
 	
-	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventEncyphermentUniqueFromListDocument")
 	public void refreshFromListDocument(Object[] object){
 			
@@ -431,7 +424,6 @@ public class Index {
 	 * Invoked when the user click on the multi share button 
 	 * @param object : a DocumentVo[]
 	 */
-	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventShare")
 	public void initShareList(Object[] object){
 		

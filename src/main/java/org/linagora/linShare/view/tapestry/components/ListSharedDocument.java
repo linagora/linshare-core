@@ -38,7 +38,6 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
@@ -46,8 +45,6 @@ import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
-import org.linagora.linShare.core.domain.vo.DocToSignContext;
-import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -57,7 +54,6 @@ import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
-import org.linagora.linShare.view.tapestry.models.impl.FileSorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.SharedFileSorterModel;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
@@ -129,9 +125,6 @@ public class ListSharedDocument {
 	
 //	@InjectComponent
 //	private SignatureDetailsDisplayer signatureDetailsDisplayer;
-	
-	@Inject
-	private LinkFactory linkFactory;
 	
 	@SuppressWarnings("unchecked")
 	@Property
