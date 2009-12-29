@@ -33,6 +33,7 @@ import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
+import org.linagora.linShare.core.domain.entities.User;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -64,6 +65,12 @@ public class SecuredUrlRepositoryImpl extends
 			// This should not append
 			throw new IllegalStateException("urlPath and alea must be unique");
 		}
+	}
+	
+	public List<SecuredUrl> findBySender(User sender) {
+		DetachedCriteria det = DetachedCriteria.forClass(SecuredUrl.class).add(
+				Restrictions.eq("sender", sender));
+		return findByCriteria(det);
 	}
 
 	public List<SecuredUrl> getOutdatedSecuredUrl() {

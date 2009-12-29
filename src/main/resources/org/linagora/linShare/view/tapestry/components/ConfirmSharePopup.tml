@@ -32,19 +32,45 @@
 					class="recipientsPattern" 
 					title="${message:components.confirmSharePopup.texarea.recipients.title}" />
 			</div>
-			<br />
+			<div class="clear"></div>
 
-			<t:label for="secureSharing" class="edit-form-label">
-				${message:components.confirmSharePopup.secureSharing}
-			</t:label>
-			<t:checkbox t:id="secureSharing" class="edit-form-field" />
+			<hr />
+			
+			<div class="number3"></div>
+			<div class="indente">
+				<div class="description">
+					<p>${message:components.confirmSharePopup.panelMessage.description.secureSharing}</p>
+				</div>
+				<div class="option">
+					<t:checkbox t:id="secureSharing" class="edit-form-field" />
+					<t:label for="secureSharing" class="edit-form-label">
+						${message:components.confirmSharePopup.secureSharing}
+					</t:label>
+				</div>
+			</div>
+			<div class="clear"></div>
+
+
+			<hr />
+			
+			<div class="number4"></div>
+			<div class="indente">
+				<div class="description">
+					<p>${message:components.confirmSharePopup.panelMessage.description.chooseExpiry} <span t:type="chenillekit/Tooltip" title="${tooltipTitle}" value="${tooltipValue}" effect="appear"><span class="helpContent"> ?  </span></span></p>
+				</div>
+				<div class="option">
+					<t:datePicker 	t:id="datePicker" t:minDate="prop:minDatePicker" 
+									t:maxDate="prop:maxDatePicker" t:defaultDate="prop:defaultDatePicker" /> 
+					 
+				</div>
+			</div>
 			<div class="clear"></div>
 
 
 			<hr />
 
-			<div class="number3"></div>
-			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>
+			<div class="number5"></div>
+			<div class="description"><p>${message:components.confirmSharePopup.panelMessage.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
 				t:subject="${message:components.confirmSharePopup.panelMessage.subject}">  
 				<t:textarea value="textAreaValue"  title="${message:components.confirmSharePopup.texarea.message.title}" />

@@ -23,6 +23,7 @@ package org.linagora.linShare.view.tapestry.components;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -71,6 +72,9 @@ public class UserEditForm {
 
     @Inject
     private Logger logger;
+
+    @Inject
+    private ComponentResources componentResources;
 
 
 	/* ***********************************************************
@@ -174,7 +178,8 @@ public class UserEditForm {
             logger.error(e.toString());
         }
         shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.confirm"));
-        users = userFacade.searchGuest(userLoggedIn.getMail()); //refresh list users ?
+
+		componentResources.triggerEvent("resetListUsers", null, null);
     }
 
     public void onFailure() {

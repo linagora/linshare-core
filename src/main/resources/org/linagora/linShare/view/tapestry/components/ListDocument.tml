@@ -9,9 +9,16 @@
 
 	
 	<div id="list">
-	<h2>${message:pages.files.list.myfiles.heading}</h2>
+
+	<t:if test="inSearch">
+		<h2>${message:pages.files.list.mysearch.heading}</h2>
+	</t:if>
+	<t:if test="inSearch" negate="true">
+		<h2>${message:pages.files.list.myfiles.heading}</h2>
+	</t:if>
 	
-	<t:sorter t:toggleNeeded="true" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listDocument.sorter.date.label},${message:components.listDocument.sorter.name.label},${message:components.listDocument.sorter.type.label},${message:components.listDocument.sorter.size.label}" t:properties="literal:date,name,type,size"/> 
+	
+	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listDocument.sorter.date.label},${message:components.listDocument.sorter.name.label},${message:components.listDocument.sorter.type.label},${message:components.listDocument.sorter.size.label}" t:properties="literal:date,name,type,size"/> 
 
 	<t:form t:id="search">
 
@@ -24,7 +31,8 @@
 		
 		<t:grid t:id="documentGrid" source="documents" row="document" model="model"
 			exclude="fileName, ownerLogin, encrypted, identifier, size, type, shareActive, fileComment, downloaded, actions"
-			rowsPerPage="20">
+			rowsPerPage="20"
+			rowIndex="prop:rowIndex">
 
 
 			<!-- Header definition -->
@@ -124,7 +132,9 @@
 					<t:actionLink t:id="showWarningShareBis" zone="${warningShare.zoneClientId}" onClick="${warningShare.javascriptOpenPopup}"
 						context="${document.identifier}">
 						<t:if t:test="${document.shared}">
-							<img src="${asset:context:images/icons/share-on.png}" alt="" title="${message:components.listDocument.picture.shareon.title}" />
+							<span t:type="chenillekit/Tooltip" title="${tooltipTitle}" value="${toolTipValue}" effect="appear">
+								<img src="${asset:context:images/icons/share-on.png}" alt="" title="${message:components.listDocument.picture.shareon.title}" />
+							</span>
 						</t:if>
 						<t:if t:test="${document.shared}" negate="true">
 							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.shareoff.title}" />
@@ -134,7 +144,9 @@
 					<t:actionLink t:id="uniqueShareLinkBis"
 						context="${document.identifier}">
 						<t:if t:test="${document.shared}">
-							<img src="${asset:context:images/icons/share-on.png}" alt="" title="${message:components.listDocument.picture.shareon.title}" />
+							<span t:type="chenillekit/Tooltip" title="${tooltipTitle}" value="${toolTipValue}" effect="appear">
+								<img src="${asset:context:images/icons/share-on.png}" alt="" title="${message:components.listDocument.picture.shareon.title}" />
+							</span>
 						</t:if>
 						<t:if t:test="${document.shared}" negate="true">
 							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.shareoff.title}" />

@@ -21,16 +21,20 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
-import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -38,18 +42,23 @@ import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.SecuredUrlFacade;
+import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.Share;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.CacheUserPinVo;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
@@ -61,6 +70,9 @@ import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.FileSorterModel;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @SupportsInformalParameters
 @IncludeJavaScriptLibrary(value = { "ListDocument.js" })
@@ -81,6 +93,10 @@ public class ListDocument {
 	@Parameter(required = true, defaultPrefix = BindingConstants.PROP)
 	@Property
 	private List<DocumentVo> documents;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean inSearch;
 
 	/***************************************************************************
 	 * Properties
@@ -103,8 +119,18 @@ public class ListDocument {
 	
 	@Property
 	private String action;
-	
 
+	
+	private Map<Integer, String> tooltipValues;
+	
+	private String tooltipValue;
+	@Property
+	private String tooltipTitle;
+	
+	@Property
+	private int rowIndex;
+	
+	
 	/***************************************************************************
 	 * Service injection
 	 **************************************************************************/
@@ -122,6 +148,12 @@ public class ListDocument {
 
 	@Inject
 	private UserFacade userFacade;
+	
+	@Inject 
+	private ShareFacade shareFacade;
+	
+	@Inject
+	private SecuredUrlFacade securedUrlFacade;
 
 	@Inject
 	private ComponentResources componentResources;
@@ -163,11 +195,8 @@ public class ListDocument {
 	@InjectComponent
 	private PasswordPopupSubmit passwordPopupSubmit;
 
-	
-	
-	
 	@Inject
-	private LinkFactory linkFactory;
+	private PageRenderLinkSource pageRenderLinkSource;
 
 	@Inject
 	private BeanModelSource beanModelSource;
@@ -183,7 +212,7 @@ public class ListDocument {
 	@Persist
 	private String pass;
 
-	@ApplicationState
+	@SessionState
 	@Property
 	private CacheUserPinVo cachePin;
 
@@ -229,6 +258,8 @@ public class ListDocument {
 	
 	@Persist
 	private List<DocumentVo> docs;
+
+    private Logger logger = LoggerFactory.getLogger(ListDocument.class);
 	
 	/***************************************************************************
 	 * Phase render
@@ -254,7 +285,71 @@ public class ListDocument {
 
 		// if(model==null)
 		initModel();
+		buildTooltipValues();
+	}
 
+	/**
+	 * Build the contents (title and messages) of the tooltip which shows
+	 * the active sharings of files
+	 */
+	private void buildTooltipValues() {
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		tooltipTitle = messages.get("components.listDocument.tooltip.title");
+		tooltipValues = new HashedMap();
+		int i=0;
+		for (DocumentVo docVo : documents) {
+			StringBuffer value = new StringBuffer();
+			
+			if (docVo.getShared()) {
+				List<Share> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
+				Map<String, Calendar> securedUrls = securedUrlFacade.getSharingsByMailAndFile(user, docVo);
+				value.append("<p class='tooltipTableDescription'>");
+				value.append(messages.get("components.listDocument.tooltip.description"));
+				value.append("</p>");
+				value.append("<table class='tooltipTable'><tr><th>");
+				value.append(messages.get("components.listDocument.tooltip.table.name"));
+				value.append("</th><th>");
+				value.append(messages.get("components.listDocument.tooltip.table.mail"));
+				value.append("</th><th>");
+				value.append(messages.get("components.listDocument.tooltip.table.dateExpiration"));
+				value.append("</th></tr>");
+
+				for (Share share : shares) {
+					User receiver = share.getReceiver();
+					value.append("<tr><td>");
+					value.append(receiver.getFirstName() + " " + receiver.getLastName());
+					value.append("</td><td>");
+					value.append(receiver.getMail());
+					value.append("</td><td>");
+					value.append(formatter.format(share.getExpirationDate().getTime()));
+					value.append("</td></tr>");
+				}
+				Set<Entry<String, Calendar>> set = securedUrls.entrySet();
+				for (Entry<String, Calendar> entry : set) {
+					value.append("<tr><td>");
+					value.append(" ");
+					value.append("</td><td>");
+					value.append(entry.getKey());
+					value.append("</td><td>");
+					value.append(formatter.format(entry.getValue().getTime()));
+					value.append("</td></tr>");
+				}
+				value.append("</table>");
+			}
+			else {
+				value.append(messages.get("components.listDocument.tooltip.noEntry"));
+			}
+			tooltipValues.put(i, value.toString());
+			i++;
+		}
+	}
+	
+	/**
+	 * Returns the good tooltip content for the document pointed by
+     * the user in the list of documents.
+	 */
+	public String getTooltipValue() {
+		return tooltipValues.get(rowIndex);
 	}
 
 	/**
@@ -350,8 +445,8 @@ public class ListDocument {
 					"invalid uuid for this user");
 		} else {
 			// context is a list of document (tab files)
-			return linkFactory.createPageRenderLink("signature/SelectPolicy",
-					true, new Object[] { DocToSignContext.DOCUMENT.toString(),
+			return pageRenderLinkSource.createPageRenderLinkWithContext("signature/SelectPolicy",
+					new Object[] { DocToSignContext.DOCUMENT.toString(),
 							currentDocumentVo.getIdentifier() });
 		}
 	}
@@ -660,8 +755,8 @@ public class ListDocument {
 	 * @return creation date the date in localized format.
 	 */
 	public String getCreationDate() {
-		return DateFormatUtils.format(document.getCreationDate().getTime(),
-				"dd/MM/yyyy", persistentLocale.get());
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(document.getCreationDate().getTime());
 	}
 
 	/**

@@ -5,7 +5,7 @@
  *
  * Language: all
  * Encoding: UTF-8
- * 2009-12-17, LINAGORA Group
+ * 2009-12-22, LINAGORA Group
  */
 
 
@@ -309,8 +309,14 @@ strong {
 #userConfig #content h1 {
 	background-image: url("../images/theme0/icon-heading-userconfig.png");
 }
+#password #content h1 {
+	background-image: url("../images/theme0/icon-heading-userconfig.png");
+}
 #help #content h1 {
 	background-image: url("../images/theme0/icon-heading-help.png");
+}
+#exception #content h1 {
+	background-image: url(../images/theme0/icon-heading-exception.png);
 }
 #error #content h1 {
 	padding-left: 0px;
@@ -776,12 +782,9 @@ strong {
 	border-color: #E2697F;
 	color: #8F0A22;
 }
-#searchWidget > div form input[type="submit"][name="reset"] {
-	margin-left: 10px;
-	padding: 0px !important;
-	background: transparent none;
-	border: 0px none transparent;
-	font-weight: normal;	/**/
+#searchWidget > div form input[type="submit"][name="reset"],
+#searchWidget > div form input[type="submit"][name="resetSimple"] {
+	background-image: url('../images/icons/reset-small.png');
 }
 
 
@@ -1862,8 +1865,6 @@ DIV.t-palette-controls BUTTON {
 	border-bottom: solid #b0d6ee 1px;
 }
 
-#top_text
-
 #userConfig #pageContent h3 {
 	margin-bottom: .4em;
 	font-size: .95em;
@@ -2278,6 +2279,18 @@ div#blocDL ul li {
 	padding: 1.5em;
 	background-color: #FFF;
 	text-align: center;
+	font-size: 1.10em;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Exception
+*/
+
+#exception #pageContent p {
+	color: #C00D2D;
+	text-align: center;
+	font-weight: bold;
 	font-size: 1.10em;
 }
 
@@ -2912,6 +2925,21 @@ div.closeUploadPopup {
 	padding: 5px;
 }
 
+.confirmPopup .indente {
+	margin-left: 50px;	
+}
+
+.confirmPopup .option {
+	margin-bottom: 10px;
+	margin-left: 40px;
+	text-align: left;
+}
+
+.helpContent {
+	border-bottom: 1px dotted;
+	cursor: help;
+}
+
 
 /*--------------------------------------------------------------------------
 * Popups > Confirm share
@@ -2978,7 +3006,7 @@ div.closeUploadPopup {
 
 /* Step numbers */
 
-div.number1, div.number2, div.number3, div.number-hidden {
+div.number1, div.number2, div.number3, div.number4, div.number5, div.number-hidden {
 	float: left;
 	width: 35px;
 	height: 88px;
@@ -2990,6 +3018,12 @@ div.number2 {
 }
 div.number3 {
 	background-image: url(../images/popupImages/three.gif);
+}
+div.number4 {
+	background-image:url(../images/popupImages/four.gif);
+}
+div.number5 {
+	background-image:url(../images/popupImages/five.gif);
 }
 div.number-hidden {
 	visibility: hidden;
@@ -3313,5 +3347,68 @@ DIV.t-error UL {
     background-color: white;
     color: black;
 }
+
+
+/*--------------------------------------------------------------------------
+* Misc
+*/
+
+
+/* Tooltip */
+
+div.ck_tooltip {
+	width: 380px !important;
+}
+.tooltipTableDescription {
+	text-align: justified !important;
+	padding: 10px;
+}
+.tooltipTable th {
+	font-weight: bold;
+	background-color: #1D5C7C;
+	color: #fff;
+}
+.tooltipTable th, .tooltipTable td {
+	text-align: left !important;
+	padding-left: 10px;
+}
+.tooltipTable td {
+	background-color: #dee5e9;
+}
+.tooltipTable td {
+	line-height: 150%;
+	width: 100%;
+}
+
+.tooltipTable td.nowrap {
+	white-space: nowrap;	
+}
+.tooltipTable tr, .tooltipTable {
+	border: 1px solid #1D5C7C;
+}
+
+
+/* Reset Password Page */
+
+#resetPassword input#mail {
+	width: 230px;
+	padding-left: 18px !important;
+	background-image: url("../images/theme0/form-input-email.png");
+}
+
+
+/* Form buttons */
+
+input[type="submit"] {
+	background-color: #EAF1F5;
+	cursor: pointer;
+	float: none !important;
+	margin-left: 5px;
+	padding-top: 0 !important;
+	border: 1px solid #5A93AF !important;
+	color: #000000;
+}
+
+
 /***************************************************************************/
 /* EOF */

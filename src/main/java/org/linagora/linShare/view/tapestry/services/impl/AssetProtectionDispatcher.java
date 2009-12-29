@@ -25,15 +25,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.internal.services.RequestConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.domain.constants.SecuredShareConstants;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
 
 
 /**
@@ -43,13 +43,14 @@ import org.linagora.linShare.core.exception.TechnicalErrorCode;
 public class AssetProtectionDispatcher implements Dispatcher {
 
 	private final ClasspathAssetAliasManager assetAliasManager;
-	private final LinkFactory linkFactory;
+	@Inject
+	private final PageRenderLinkSource pageRenderLinkSource;
 	private final List<Pattern> patterns;
 	
-	public AssetProtectionDispatcher(final LinkFactory linkFactory, 
+	public AssetProtectionDispatcher(final PageRenderLinkSource pageRenderLinkSource, 
 			final ClasspathAssetAliasManager manager, final List<String> regex) {
 		this.assetAliasManager = manager;
-		this.linkFactory = linkFactory;
+		this.pageRenderLinkSource = pageRenderLinkSource;
 		patterns = new ArrayList<Pattern>();
 		for(String r : regex) {
 			patterns.add(Pattern.compile(r));
@@ -74,7 +75,7 @@ public class AssetProtectionDispatcher implements Dispatcher {
 		}
 		
 		//if we get here, no regexp matches the path, so raise an error
-		response.sendRedirect(this.linkFactory.createPageRenderLink(SecuredShareConstants.ERROR_PAGE, true,BusinessErrorCode.AUTHENTICATION_ERROR));
+		response.sendRedirect(this.pageRenderLinkSource.createPageRenderLinkWithContext(SecuredShareConstants.ERROR_PAGE, BusinessErrorCode.AUTHENTICATION_ERROR));
 		return true;
 	}
 

@@ -62,7 +62,7 @@
 
 			<!-- List : Search result -->
 
-			<t:ListDocument t:documents="listDocumentsVo" t:user="userVo" />
+			<t:ListDocument t:documents="listDocumentsVo" t:user="userVo" inSearch="prop:inSearch" />
 
 		</div>
 
@@ -95,7 +95,7 @@
 	<!-- Search widget -->
 	<t:parameter name="searchWidget">
 		<t:widget widgetId="searchWidget" title="${message:components.widget.searchWidget.title}">
-			<t:SearchFile userlogin="userVo" advancedmode="advanced"/>
+			<t:SearchFile userlogin="userVo" />
 		</t:widget>
 	</t:parameter>
 	

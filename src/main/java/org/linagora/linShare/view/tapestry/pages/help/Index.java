@@ -21,11 +21,14 @@
 package org.linagora.linShare.view.tapestry.pages.help;
 
 import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.objects.HelpsASO;
+import org.slf4j.Logger;
 
 /**
  * Help pages
@@ -33,6 +36,12 @@ import org.linagora.linShare.view.tapestry.objects.HelpsASO;
  *
  */
 public class Index {
+	@Inject 
+	private Logger logger;
+
+    @ApplicationState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
 
 	/* ***********************************************************
 	 *                      Injected services
@@ -59,5 +68,11 @@ public class Index {
 	public boolean isUserAdmin(){
 		if(userVo==null){ return false;} else return userVo.isAdministrator();
 	};
-	
+
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
 }

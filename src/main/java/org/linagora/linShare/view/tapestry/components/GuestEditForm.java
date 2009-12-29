@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -136,6 +137,9 @@ public class GuestEditForm {
 
     private boolean userAlreadyExists = false;
 
+    @Inject
+    private ComponentResources componentResources;
+
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
@@ -198,7 +202,7 @@ public class GuestEditForm {
             logger.error(e.toString());
         }
         shareSessionObjects.addMessage(messages.get("components.guestEditForm.action.add.confirm"));
-        users = userFacade.searchGuest(userLoggedIn.getMail());
+        componentResources.triggerEvent("resetListUsers", null, null);
         
         return onSuccess;
     }

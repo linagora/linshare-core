@@ -24,13 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.internal.services.LinkFactory;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
@@ -42,12 +42,18 @@ import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.utils.WelcomeMessageUtils;
+import org.slf4j.Logger;
 
 /**
  * Start page of application securedShare.
  */
 public class Index {
+
+    @SessionState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
 
     /* ***********************************************************
      *                      Injected services
@@ -57,11 +63,13 @@ public class Index {
     @Inject
     private ParameterFacade parameterFacade;
     @Inject
-    private LinkFactory linkFactory;
-    @Inject
     private PersistentLocale persistentLocale;
     @Inject
     private Request request;
+	@Inject
+	private Messages messages;
+	@Inject
+	private Logger logger;
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -70,23 +78,25 @@ public class Index {
     @Persist
     private List<ShareDocumentVo> shares;
 
-    @SuppressWarnings("unused")
-    @ApplicationState
+    @SessionState
     @Property
     private UserVo userVo;
     @Property
     private boolean userVoExists;
 
-    @Property
+    @SuppressWarnings("unused")
+	@Property
     private String welcomeText;
     
     
+	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private boolean advanced;
 
 	
 	@Persist
+	@Property
 	/** used to prevent the clearing of documentsVo with search*/
 	private boolean flag;
 	
@@ -130,6 +140,7 @@ public class Index {
         String uuid = (String) object[0];
         ShareDocumentVo shareddoc = searchShareVoByUUid(uuid);
         shareFacade.deleteSharing(shareddoc, userVo);
+        resetListFiles(null);
     }
 
     private ShareDocumentVo searchShareVoByUUid(String uuid) {
@@ -168,5 +179,23 @@ public class Index {
 		flag=true;
 		this.shares = (List<ShareDocumentVo>)object[0];
 	}
+    
+    @OnEvent(value="resetListFiles")
+    public void resetListFiles(Object[] o1) {
+    	flag=false;
+		shares = shareFacade.getAllSharingReceivedByUser(userVo);
+    }
+    
+    @OnEvent(value="inFileSearch")
+    public void inSearch(Object[] o1) {
+    	flag=true;
+    }
+    
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
    
 }

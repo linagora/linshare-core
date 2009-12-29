@@ -61,16 +61,6 @@ public interface UserService {
      * @param mail user email.
      * @param firstName user first name.
      * @param lastName user last name.
-     * @param currentUser the current user can be null, if not null and if user is a guest, the result includes the guests
-     * created by the current User
-     * @return a list of matching users.
-     */
-    List<User> searchUser(String mail, String firstName, String lastName, User currentUser);
-    
-    /** Search a user.
-     * @param mail user email.
-     * @param firstName user first name.
-     * @param lastName user last name.
      * @param userType type of user (internal/guest)
      * @param currentUser the current user can be null, if not null and if user is a guest, the result includes the guests
      * created by the current User
@@ -146,5 +136,15 @@ public interface UserService {
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
 	public void changeGuestPassword(String login, String oldPassword, String newPassword) throws BusinessException;
-
+	
+	/**
+	 * Reset a guest password
+	 * @param login
+	 * @param mailSubject
+	 * @param mailContent
+	 * @param mailContentTxt
+	 * @throws BusinessException
+	 */
+	public void resetPassword(String login, String mailSubject,
+			String mailContent, String mailContentTxt) throws BusinessException;
 }

@@ -63,4 +63,10 @@ public interface RecipientFavouriteService {
 	 * @return list of emails
 	 */
 	public List<String> findRecipientFavorite(String matchEmail,User owner);
+	
+	/**
+	 * Delete all the favorites of a user
+	 * @param owner
+	 */
+	public void deleteFavoritesOfUser(User owner) throws IllegalArgumentException, BusinessException;
 }

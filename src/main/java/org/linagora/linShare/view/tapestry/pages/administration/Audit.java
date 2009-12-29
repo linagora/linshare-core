@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -49,13 +50,21 @@ import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.CriterionMatchMode;
 import org.linagora.linShare.view.tapestry.streams.CsvStreamResponse;
+import org.slf4j.Logger;
 
 
 
 
 public class Audit {
+	@Inject 
+	private Logger logger;
+
+    @ApplicationState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
 
 	
 	/* ***********************************************************
@@ -298,4 +307,11 @@ public class Audit {
     
 	public CriterionMatchMode getFileNameMatchModeStart() { return CriterionMatchMode.START; }
 	public CriterionMatchMode getFileNameMatchModeAnywhere() { return CriterionMatchMode.ANYWHERE; }
+
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
 }

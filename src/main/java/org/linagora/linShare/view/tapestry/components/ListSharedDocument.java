@@ -22,9 +22,9 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -38,7 +38,6 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
@@ -46,8 +45,6 @@ import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
-import org.linagora.linShare.core.domain.vo.DocToSignContext;
-import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -57,7 +54,6 @@ import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
-import org.linagora.linShare.view.tapestry.models.impl.FileSorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.SharedFileSorterModel;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
@@ -86,6 +82,10 @@ public class ListSharedDocument {
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	@Property
 	private List<ShareDocumentVo> shareDocuments;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean inSearch;
 	
 	
 	/***********************************
@@ -125,9 +125,6 @@ public class ListSharedDocument {
 	
 //	@InjectComponent
 //	private SignatureDetailsDisplayer signatureDetailsDisplayer;
-	
-	@Inject
-	private LinkFactory linkFactory;
 	
 	@SuppressWarnings("unchecked")
 	@Property
@@ -213,9 +210,15 @@ public class ListSharedDocument {
 		if(null==currentSharedDocumentVo){
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		}else{
+			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
+			
 			InputStream stream=documentFacade.retrieveFileStream(currentSharedDocumentVo, user);
-			//send an email to the owner
-			notifyOwnerByEmail(currentSharedDocumentVo);
+			
+			//send an email to the owner if it is the first time the document is downloaded
+			if (!alreadyDownloaded) {
+				notifyOwnerByEmail(currentSharedDocumentVo);
+				componentdocuments=shareFacade.getAllSharingReceivedByUser(user); //maj valeur downloaded dans le VO
+			}
 			
 			return new FileStreamResponse(currentSharedDocumentVo,stream);
 		}
@@ -264,6 +267,7 @@ public class ListSharedDocument {
     public void onActionFromCopy(String docIdentifier) {
         ShareDocumentVo shareDocumentVo = searchDocumentVoByUUid(componentdocuments, docIdentifier);
         boolean copyDone = false;
+        boolean alreadyDownloaded = shareDocumentVo.getDownloaded();
         
         //create the copy of the document and remove it from the received documents
         try {
@@ -274,12 +278,14 @@ public class ListSharedDocument {
             businessMessagesManagementService.notify(e);
         }
         
-        //send an email to the owner
-        notifyOwnerByEmail(shareDocumentVo);
+        //send an email to the owner if it is the first time the document is downloaded
+		if (!alreadyDownloaded) 
+			notifyOwnerByEmail(shareDocumentVo);
 		
         if (copyDone) {
             businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
                 MessageSeverity.INFO));
+            componentResources.triggerEvent("resetListFiles", null, null);
         }
     }
 	
@@ -335,7 +341,8 @@ public class ListSharedDocument {
 	 * @return creation date the date in localized format.
 	 */
 	public String getCreationDate(){
-		return DateFormatUtils.format(shareDocument.getCreationDate().getTime(), "dd/MM/yyyy hh:mm", persistentLocale.get());
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(shareDocument.getCreationDate().getTime());
 	}
 
 	/**
@@ -343,7 +350,8 @@ public class ListSharedDocument {
 	 * @return creation date the date in localized format.
 	 */
 	public String getExpirationDate(){
-		return DateFormatUtils.format(shareDocument.getShareExpirationDate().getTime(), "dd/MM/yyyy hh:mm", persistentLocale.get());
+	   SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+	   return formatter.format(shareDocument.getShareExpirationDate().getTime());
 	}
 	
 	public String getFriendlySize(){

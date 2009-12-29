@@ -105,7 +105,7 @@ public class FileUpdateUploader {
     
     
 	@SuppressWarnings("unused")
-	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=350"})
+	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=250"})
 	private WindowWithEffects windowUpdateDocUpload;
 	
 	
@@ -152,6 +152,7 @@ public class FileUpdateUploader {
 	  
     @OnEvent(value = "fileUploaded")
     public void processFilesUploaded(Object[] context) {
+    	boolean toUpdate=false;
 
         for (int i = 0; i < context.length; i++) {
             
@@ -191,6 +192,7 @@ public class FileUpdateUploader {
                     // Notify the add of a file.
                     Object[] addedFile = {document};
                     componentResources.triggerEvent("fileAdded", addedFile, null);
+                    toUpdate=true;
                 } catch (BusinessException e) {
                     messagesManagementService.notify(e);
                     readFileStream(uploadedFile);
@@ -203,6 +205,8 @@ public class FileUpdateUploader {
             	if (uploadedFile!=null) readFileStream(uploadedFile);
             }
         }
+        if (toUpdate) 
+        	componentResources.triggerEvent("resetListFiles", null, null);
     }
 	
     /* ***********************************************************

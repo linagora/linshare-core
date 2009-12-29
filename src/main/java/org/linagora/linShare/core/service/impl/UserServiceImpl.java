@@ -53,6 +53,7 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ParameterService;
+import org.linagora.linShare.core.service.RecipientFavouriteService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
 import org.linagora.linShare.core.utils.HashUtils;
@@ -83,6 +84,8 @@ public class UserServiceImpl implements UserService {
     private final ParameterService parameterService;
     
     private final ShareService shareService;
+    
+    private final RecipientFavouriteService recipientFavouriteService;
 
     /** Constructor.
      * @param userRepository repository.
@@ -91,7 +94,8 @@ public class UserServiceImpl implements UserService {
      */
     public UserServiceImpl(UserRepository userRepository, NotifierService notifierService, LdapDao ldapDao,
     		final LogEntryRepository logEntryRepository,final GuestRepository guestRepository
-		, final ParameterService parameterService, ShareService shareService) {
+		, final ParameterService parameterService, ShareService shareService,
+		final RecipientFavouriteService recipientFavouriteService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.ldapDao = ldapDao;
@@ -99,6 +103,7 @@ public class UserServiceImpl implements UserService {
         this.guestRepository = guestRepository;
 		this.parameterService = parameterService;
 		this.shareService = shareService;
+		this.recipientFavouriteService = recipientFavouriteService;
     }
 
     /** Create a guest.
@@ -148,42 +153,6 @@ public class UserServiceImpl implements UserService {
         notifierService.sendNotification(owner.getMail(), mail, mailSubject, content,contentTxt);
 
         return guest;
-    }
-
-    /** Search a user.
-     * @param mail user email.
-     * @param firstName user first name.
-     * @param lastName user last name.
-     * @return a list of matching users.
-     */
-    public List<User> searchUser(String mail, String firstName, String lastName, User currentUser) {
-        List<User> users = new ArrayList<User>();
-        // search ldap for user :
-        
-        LdapSearchResult<User> pagedResult = ldapDao.searchUser(mail, firstName, lastName);
-        
-        List<User> internals = pagedResult.getResultList();
-        
-        //need linshare local information for these internals user
-        for (User ldapuser : internals) {
-        	User userdb = userRepository.findByMail(ldapuser.getMail());
-        	if (userdb!=null)  ldapuser.setRole(userdb.getRole());
-		}
-        
-        users.addAll(internals);
-        // now, we have to search guest that match the criterias.
-        
-        List<Guest> guests = null;
-        
-        if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){
-        	//if guest type, we give only the account he has created 
-        	guests = guestRepository.searchGuest(mail, firstName, lastName, currentUser);
-        } else {
-        	//we give everything
-        	guests = guestRepository.searchGuest(mail, firstName, lastName, null);
-        }
-        users.addAll(guests);
-        return users;
     }
 
  /** Find a user (based on mail address).
@@ -302,6 +271,9 @@ public class UserServiceImpl implements UserService {
 						
 						sentShare.clear();
 						
+						//clearing the favorites
+						recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
+						
 						// clearing all signatures
 						Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
 						ownSignatures.clear();
@@ -363,38 +335,32 @@ public class UserServiceImpl implements UserService {
 
 	public List<User> searchUser(String mail, String firstName,
 			String lastName, UserType userType, User currentUser) {
-		if(null==userType){
-			List<User> users=new ArrayList<User>();
-			
-			LdapSearchResult<User> pagedResult = ldapDao.searchUserAnyWhere(mail, firstName, lastName);
-	        List<User> internals = pagedResult.getResultList();
-	        users.addAll(internals);
-	        
-	        List<Guest> guests = null;
+		List<User> users=new ArrayList<User>();
+		
+		if(null==userType || userType.equals(UserType.GUEST)){
+			List<Guest> guests = null;
 	        if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){
 	        	//if guest type, we give only the account he has created 
 	        	guests = guestRepository.searchGuestAnyWhere(mail, firstName, lastName, currentUser.getLogin());
 	        }	else {
 	        	guests = guestRepository.searchGuestAnyWhere(mail, firstName, lastName, null);
 	        }
-	        
 	        users.addAll(guests);
-	        return users;
-		}else if(userType.equals(UserType.INTERNAL)){
-			LdapSearchResult<User> pagedResult = ldapDao.searchUserAnyWhere(mail, firstName, lastName);
-			return pagedResult.getResultList();
-		}else if(userType.equals(UserType.GUEST)){
-			List<Guest> guests = null;
-		        if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){
-		        	//if guest type, we give only the account he has created 
-		        	guests = guestRepository.searchGuestAnyWhere(mail, firstName, lastName, currentUser.getLogin());
-		        }	else {
-		        	guests = guestRepository.searchGuestAnyWhere(mail, firstName, lastName, null);
-		        }
-			return new ArrayList<User>(guests);
-		}else{
-			return new ArrayList<User>();
 		}
+		if(null==userType || userType.equals(UserType.INTERNAL)){
+			LdapSearchResult<User> pagedResult = ldapDao.searchUserAnyWhere(mail, firstName, lastName);
+			List<User> internals = pagedResult.getResultList();
+        
+			//need linshare local information for these internals user
+			for (User ldapuser : internals) {
+				User userdb = userRepository.findByMail(ldapuser.getMail());
+				if (userdb!=null)  ldapuser.setRole(userdb.getRole());
+			}
+        
+			users.addAll(internals);
+		}
+
+		return users;
 	}
 
 	public void updateGuest(String mail, String firstName, String lastName,
@@ -476,6 +442,27 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		guest.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
+		guestRepository.update(guest);
+	}
+
+	public void resetPassword(String login, String mailSubject,
+			String mailContent, String mailContentTxt) throws BusinessException {
+		Guest guest = guestRepository.findByLogin(login);
+		if (guest == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+		}
+		
+		// generate a password.
+        String password = generatePassword();
+        String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+        
+        String content = NotifyContentFactory.makeGuestMailContent(mailContent, password);
+        String contentTxt = NotifyContentFactory.makeGuestMailContent(mailContentTxt, password);
+
+        // Send an email to the guest.
+        notifierService.sendNotification(guest.getMail(), guest.getMail(), mailSubject, content,contentTxt);
+        
+		guest.setPassword(hashedPassword);
 		guestRepository.update(guest);
 	}
 }

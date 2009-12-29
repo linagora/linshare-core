@@ -95,7 +95,8 @@ public class AppModule
     public static void bind(ServiceBinder binder)
     {
   	 binder.bind(Dispatcher.class,AssetProtectionDispatcher.class).withId("AssetProtectionDispatcher");
-     binder.bind(BusinessMessagesManagementService.class, BusinessMessagesManagementServiceImpl.class);
+     
+  	 //binder.bind(BusinessMessagesManagementService.class, BusinessMessagesManagementServiceImpl.class);
 
  	 //binder.bind(Marshaller.class,DocumentMarshaller.class).withId("DocumentMarshaller");
  	
@@ -106,6 +107,13 @@ public class AppModule
         // is provided inline, or requires more initialization than simply
         // invoking the constructor.
     }
+    
+    
+    public static BusinessMessagesManagementService buildBusinessMessagesManagementService(ApplicationStateManager applicationStateManager)
+    {
+    	return new BusinessMessagesManagementServiceImpl(applicationStateManager);
+	}
+    
     
     @Scope(ScopeConstants.PERTHREAD)
     public static MyMultipartDecoder buildMyMultipartDecoder(

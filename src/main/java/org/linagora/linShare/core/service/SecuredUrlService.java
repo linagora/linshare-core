@@ -20,12 +20,14 @@
 */
 package org.linagora.linShare.core.service;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 
@@ -46,7 +48,7 @@ public interface SecuredUrlService {
 	 *            the password (can be null)
 	 * @return the create secured URL
 	 */
-	SecuredUrl create(List<Document> documents, User sender, String password, List<Contact> recipients);
+	SecuredUrl create(List<Document> documents, User sender, String password, List<Contact> recipients, Calendar expirationDate);
 	
 	/**
 	 * Create a secure url with a set of documents
@@ -56,7 +58,7 @@ public interface SecuredUrlService {
 	 * @param urlPath the base url
 	 * @return the create secured URL
 	 */
-	SecuredUrl create(List<Document> documents, User sender, String password,String urlPath,List<Contact> recipients);
+	SecuredUrl create(List<Document> documents, User sender, String password,String urlPath,List<Contact> recipients, Calendar expirationDate);
 
 	/**
 	 * Verify that the given URL is a valid secured URL for the share id
@@ -194,5 +196,14 @@ public interface SecuredUrlService {
 	 * @return
 	 */
 	public User getSecuredUrlOwner(String alea, String urlPath);
+
+	
+	/**
+	 * Retrieve all the sharings of a file by a user (email)
+	 * @param sender the user
+	 * @param document
+	 * @return
+	 */
+	public List<SecuredUrl> getUrlsByMailAndFile(User sender, DocumentVo document);
 	
 }

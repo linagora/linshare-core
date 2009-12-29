@@ -115,9 +115,9 @@ public class UserFacadeImpl implements UserFacade {
      * @param lastName user last name.
      * @return a list of matching users.
      */
-    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currrentUser) {
-    	User owner = userRepository.findByLogin(currrentUser.getLogin());
-    	List<User> users = userService.searchUser(mail, firstName, lastName,owner);
+    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) {
+    	User owner = userRepository.findByLogin(currentUser.getLogin());
+    	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
     }
 
@@ -244,5 +244,14 @@ public class UserFacadeImpl implements UserFacade {
     	userService.changeGuestPassword(user.getLogin(), oldPassword, newPassword);
     	
     }
+
+	public void resetPassword(UserVo user, String mailSubject,
+			String mailContent, String mailContentTxt) throws BusinessException {
+		if (!user.getUserType().equals(UserType.GUEST)) {
+    		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user type is wrong, only a guest may change its password");
+    	}
+    	
+    	userService.resetPassword(user.getLogin(), mailSubject, mailContent, mailContentTxt);		
+	}
     
 }

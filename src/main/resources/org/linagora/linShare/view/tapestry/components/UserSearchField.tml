@@ -39,7 +39,9 @@
                 <t:label for="userSearchPattern">${message:components.userSearch.slidingField.name} </t:label>
                 <t:textfield t:id="userSearchPattern" t:mixins="autocomplete" t:minChars="2" class="userSearchPattern"
                              title="${message:components.userSearch.slidingField.name}"/><br/>
-                <t:submit value="${message:global.button.search}"/>
+                <t:submit t:id="searchSimple" value="${message:global.button.search}"/>
+                ${message:global.space}
+                <t:submit t:id="resetSimple" value="${message:global.button.reset}"/>
             </t:form>
         </t:if>
 
@@ -58,7 +60,7 @@
                              title="${message:components.userSearch.slidingField.mail}"/>
 				<br/>
 				<div id="userType">
-	                ${message:components.userSearch.slidingField.type}
+	                <!--  ${message:components.userSearch.slidingField.type}-->
 	                <t:radiogroup t:id="type" t:value="userType">
 	                    <t:radio t:id="internal"/>&nbsp;<t:label for="internal">${message:components.userSearch.radio.internal}</t:label>
 	                    ${message:global.space}
@@ -68,7 +70,9 @@
 	                </t:radiogroup>
 				</div>
 				<br/>
-                <t:submit value="${message:global.button.search}"/>
+                <t:submit t:id="search" value="${message:global.button.search}"/>
+                ${message:global.space}
+                <t:submit t:id="reset" value="${message:global.button.reset}"/>
             </t:form>
         </t:if>
 

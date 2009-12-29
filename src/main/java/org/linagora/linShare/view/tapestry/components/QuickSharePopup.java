@@ -77,7 +77,7 @@ import org.slf4j.LoggerFactory;
 
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = {"QuickSharePopup.js"})
+@IncludeJavaScriptLibrary(value = {"QuickSharePopup.js", "SizeOfPopup.js"})
 public class QuickSharePopup{
 	private static final Logger logger = LoggerFactory.getLogger(QuickSharePopup.class);
 
@@ -235,6 +235,10 @@ public class QuickSharePopup{
     public void afterRender() {
         renderSupport.addScript(String.format("setQuickShareMaxElement('%s');",maxUpload));
         renderSupport.addScript(String.format("setQuickShareCurrentElement('%s');",currentSize-1));
+        
+        //resize the share popup
+        renderSupport.addScript(String.format("quickShareWindow.setSize(650, getHeightForPopup())"));
+        
         quickShareForm.clearErrors();
     }
 	
