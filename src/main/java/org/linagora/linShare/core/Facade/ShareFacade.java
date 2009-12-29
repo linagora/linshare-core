@@ -20,8 +20,10 @@
 */
 package org.linagora.linShare.core.Facade;
 
+import java.util.Calendar;
 import java.util.List;
 
+import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -39,7 +41,7 @@ public interface ShareFacade {
 	 * @param recipients : the recipients list
 	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, String comment) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, String comment, Calendar expiryDate) throws BusinessException;
 	
 	
 	/**
@@ -55,7 +57,7 @@ public interface ShareFacade {
 	 * @return SuccessesAndFailsItems<SharedDocumentVo> : the list of sharing that succedded and failed
 	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,String comment, String message,String messageTxt,String subject) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,String comment, String message,String messageTxt,String subject, Calendar expirationDate) throws BusinessException;
 
 	
 	
@@ -75,6 +77,24 @@ public interface ShareFacade {
 	 * @throws BusinessException
 	 */
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrl,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt) throws BusinessException;
+
+	/**
+	 * same function as createSharingWithMailUsingRecipientsEmail() BUT we give the expiration date selected by the user
+	 * @param owner
+	 * @param documents
+	 * @param recipientsEmail
+	 * @param comment
+	 * @param message
+	 * @param subject
+	 * @param linShareUrl
+	 * @param secureSharing
+	 * @param sharedTemplateContent
+	 * @param passwordSharedTemplateContent
+     * @param expiryDateSelected
+	 * @return
+	 * @throws BusinessException
+	 */
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrl,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt, Calendar expiryDateSelected) throws BusinessException;
 	
 	
 	/**
@@ -83,6 +103,15 @@ public interface ShareFacade {
 	 * @return
 	 */
 	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipient);
+	
+	
+	/**
+	 * Retrieve all the sharings of a file by a user
+	 * @param sender the user
+	 * @param document
+	 * @return
+	 */
+	public List<Share> getSharingsByUserAndFile(UserVo sender, DocumentVo document);
 	
 	
 	/**

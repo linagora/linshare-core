@@ -21,15 +21,19 @@
 package org.linagora.linShare.core.Facade.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
+import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
@@ -41,6 +45,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.DocumentRepository;
+import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.NotifierService;
@@ -100,7 +105,7 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents,
-			List<UserVo> recipients, String comment) throws BusinessException {
+			List<UserVo> recipients, String comment, Calendar expirationDate) throws BusinessException {
 		
 		List<User> recipientsList = new ArrayList<User>();
 		
@@ -120,7 +125,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, 
 				userRepository.findByLogin(owner.getLogin()),
 				recipientsList,
-				comment);
+				comment,
+				expirationDate);
 		
 		
 		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
@@ -132,9 +138,10 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(
 			UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,
-			String comment, String message, String messageTxt,String subject) throws BusinessException {
+			String comment, String message, String messageTxt,String subject,
+			Calendar expirationDate) throws BusinessException {
 		
-		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, comment);
+		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, comment, expirationDate);
 		
 		//Sending the mails
 		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
@@ -161,6 +168,23 @@ public class ShareFacadeImpl implements ShareFacade {
 		return shareTransformer.disassembleList(new ArrayList<Share>(userRecipient.getReceivedShares()));		
 	}
 
+	public List<Share> getSharingsByUserAndFile(UserVo sender, DocumentVo document) {
+		User userSender = userRepository.findByLogin(sender.getLogin());
+		if (userSender==null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
+		}
+		
+		Set<Share> shares = shareService.getSentSharesByUser(userSender);
+
+		List<Share> sharingsOfDocument = new ArrayList<Share>();
+		for (Share share : shares) {			
+			if (share.getDocument().getIdentifier().equalsIgnoreCase(document.getIdentifier())) {
+				sharingsOfDocument.add(share);
+			}
+		}
+		
+		return sharingsOfDocument;
+	}
 
 	public void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException {
 		User actorUser = userRepository.findByLogin(actor.getLogin());
@@ -176,18 +200,41 @@ public class ShareFacadeImpl implements ShareFacade {
     public void createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException {
         Share share = shareTransformer.assemble(shareDocumentVo);
 		User user = userRepository.findByLogin(userVo.getLogin());
+        
         // create a copy of the document :
         documentService.duplicateDocument(share.getDocument(), user);
+		
         // remove the share :
         shareService.removeReceivedShareForUser(share, user, user);
+        
+        //log the copy
+        shareService.logLocalCopyOfDocument(share, user);
+		
+        // no more sharing of this file?
+		shareService.refreshShareAttributeOfDoc(share.getDocument());
     }
 
 
-    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, 
-            List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,
-            String linShareUrl,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,
-            String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt) throws BusinessException {
-		
+    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
+			UserVo owner, List<DocumentVo> documents,
+			List<String> recipientsEmail, String comment, String subject,
+			String linShareUrl, boolean secureSharing,
+			String sharedTemplateContent, String sharedTemplateContentTxt,
+			String passwordSharedTemplateContent,
+			String passwordSharedTemplateContentTxt)
+			throws BusinessException {
+		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(owner, documents, recipientsEmail, comment, subject, linShareUrl, secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt, null);
+	}
+
+
+    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
+			UserVo owner, List<DocumentVo> documents,
+			List<String> recipientsEmail, String comment, String subject,
+			String linShareUrl, boolean secureSharing,
+			String sharedTemplateContent, String sharedTemplateContentTxt,
+			String passwordSharedTemplateContent,
+			String passwordSharedTemplateContentTxt, Calendar expiryDateSelected)
+			throws BusinessException {
 		User u = null;
 		
 		List<UserVo> knownRecipients = new ArrayList<UserVo>();
@@ -249,7 +296,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			} 
 			
 			//password is null for unprotected secured url
-			securedUrl = shareService.shareDocumentsWithSecuredUrlToUser(owner, docList, password, unKnownRecipientsEmail);
+			securedUrl = shareService.shareDocumentsWithSecuredUrlToUser(owner, docList, password, unKnownRecipientsEmail, expiryDateSelected);
 			
 			
 			//compose the secured url to give in mail
@@ -284,7 +331,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		//keep old method to share with user referenced in db
-		return createSharingWithMail(owner, documents, knownRecipients, comment, messageForInternalUserAndGuest, messageForInternalUserAndGuestTxt, subject);
+		return createSharingWithMail(owner, documents, knownRecipients, comment, messageForInternalUserAndGuest, messageForInternalUserAndGuestTxt, subject, expiryDateSelected);
 	}
     
     

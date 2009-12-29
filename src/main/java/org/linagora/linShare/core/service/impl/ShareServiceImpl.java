@@ -23,6 +23,7 @@ package org.linagora.linShare.core.service.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,6 @@ import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
-import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
@@ -48,6 +48,7 @@ import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.SecuredUrlService;
+import org.linagora.linShare.core.service.ShareExpiryDateService;
 import org.linagora.linShare.core.service.ShareService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,7 @@ public class ShareServiceImpl implements ShareService{
 	private final DocumentRepository documentRepository;
 	private final SecuredUrlService secureUrlService;
 	private final FileSystemDao fileSystemDao;
+	private final ShareExpiryDateService shareExpiryDateService;
 	
 	
 //    private final DocumentService documentService;
@@ -74,7 +76,8 @@ public class ShareServiceImpl implements ShareService{
 			final ShareRepository shareRepository,
 			final LogEntryRepository logEntryRepository,
 			final ParameterService parameterService, final SecuredUrlRepository securedUrlRepository,
-			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, final FileSystemDao fileSystemDao) {
+			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
+			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService) {
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
@@ -84,6 +87,7 @@ public class ShareServiceImpl implements ShareService{
 		this.documentRepository = documentRepository;
         this.secureUrlService = secureUrlService;
         this.fileSystemDao = fileSystemDao;
+        this.shareExpiryDateService = shareExpiryDateService;
 	}
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
@@ -217,7 +221,7 @@ public class ShareServiceImpl implements ShareService{
 
 	 */
 	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender,
-			List<User> recipients,String comment){
+			List<User> recipients,String comment, Calendar expiryDate){
 		
 		SuccessesAndFailsItems<Share> returnItems = new SuccessesAndFailsItems<Share>();
 		
@@ -229,10 +233,13 @@ public class ShareServiceImpl implements ShareService{
 			
 				try{
 
-					Calendar expirationDate=computeShareExpirationDate(document);
-					
+					// If the user have not selected an expiration date, compute default date
+					if (expiryDate == null) {
+						expiryDate=shareExpiryDateService.computeShareExpiryDate(document);
+					}						 					
+
 		
-					Share share=new Share(sender,recipient,document,comment,expirationDate,true,false);
+					Share share=new Share(sender,recipient,document,comment,expiryDate,true,false);
 					Share shareEntity=shareRepository.create(share);
 		
 		
@@ -246,7 +253,7 @@ public class ShareServiceImpl implements ShareService{
 		
 					ShareLogEntry logEntry = new ShareLogEntry(sender.getMail(), sender.getFirstName(), sender.getLastName(),
 				        		LogAction.FILE_SHARE, "Sharing of a file", document.getName(), document.getSize(), document.getType(),
-				        		recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), expirationDate);
+				        		recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), expiryDate);
 				       
 				    logEntryRepository.create(logEntry);
 				        
@@ -367,38 +374,11 @@ public class ShareServiceImpl implements ShareService{
         }
         
     }
-
-    public Calendar computeShareExpirationDate(Document doc) {
- 		List<ShareExpiryRule> shareRules = parameterService.loadConfig().getShareExpiryRules();
- 		
- 		Calendar defaultExpiration = null;
- 		// set the default exp time
- 		if (parameterService.loadConfig().getDefaultShareExpiryTime() != null) {
- 			defaultExpiration = GregorianCalendar.getInstance();
- 			defaultExpiration.add( parameterService.loadConfig().getDefaultShareExpiryUnit().toCalendarValue(), parameterService.loadConfig().getDefaultShareExpiryTime());
- 		}
- 		if ((shareRules == null) || (shareRules.size()==0)) { 
- 			return defaultExpiration;
- 		}
- 		
- 		// luckily, the shareExpiryRules are ordered according to the size, increasing
- 		for (ShareExpiryRule shareExpiryRule : shareRules) {
- 			if (doc.getSize()<shareExpiryRule.getShareSizeUnit().getPlainSize(shareExpiryRule.getShareSize())) {
- 				Calendar expiration = GregorianCalendar.getInstance();
-  				expiration.add(shareExpiryRule.getShareExpiryUnit().toCalendarValue(), shareExpiryRule.getShareExpiryTime());
- 				return expiration;	
- 			}
- 			
-		}
- 
- 		// nothing has been decided
-		return defaultExpiration;
-    }
     
     
 	public SecuredUrl shareDocumentsWithSecuredUrlToUser(
 			UserVo owner, List<Document> docList, String password,
-			List<Contact> recipients) throws IllegalArgumentException, BusinessException {
+			List<Contact> recipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException {
 
 		
 		SecuredUrl securedUrl =  null;
@@ -406,7 +386,7 @@ public class ShareServiceImpl implements ShareService{
 		User sender = userRepository.findByLogin(owner.getLogin());
 		//set the password associated with this secured url in mail
 		//can be null for unsecure url
-		securedUrl = secureUrlService.create(docList, sender, password, recipients);
+		securedUrl = secureUrlService.create(docList, sender, password, recipients, expiryDate);
 	
 			
 		for (Document doc : docList) {
@@ -433,5 +413,25 @@ public class ShareServiceImpl implements ShareService{
 	}
 	public List<Share> getSharesLinkedToDocument(Document doc) {
 		 return shareRepository.getSharesLinkedToDocument(doc);
+	}
+	public void logLocalCopyOfDocument(Share share, User user) throws IllegalArgumentException, BusinessException {
+		ShareLogEntry logEntryShare = new ShareLogEntry(share.getSender().getMail(),
+				share.getSender().getFirstName(), share
+						.getSender().getLastName(),
+				LogAction.SHARE_COPY, "Copy of a sharing", share.getDocument()
+						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
+						.getMail(), user.getFirstName(), user
+						.getLastName(), null);
+
+		ShareLogEntry logEntryDelete = new ShareLogEntry(share.getSender().getMail(),
+				share.getSender().getFirstName(), share
+						.getSender().getLastName(),
+				LogAction.SHARE_DELETE, "Copy of a sharing", share.getDocument()
+						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
+						.getMail(), user.getFirstName(), user
+						.getLastName(), null);
+		
+		logEntryRepository.create(logEntryShare);
+		logEntryRepository.create(logEntryDelete);
 	}
 }

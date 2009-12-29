@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.pages;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,8 +187,9 @@ public class Download {
 				anonymousDownloadTemplateContent = templating.readFullyTemplateContent(anonymousDownloadTemplate.getResource().openStream());
 				
 				anonymousDownloadTemplateContentTxt = templating.readFullyTemplateContent(anonymousDownloadTemplateTxt.getResource().openStream());
-				
-				securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), subject, anonymousDownloadTemplateContent, anonymousDownloadTemplateContentTxt, doc,email);
+				List<DocumentVo> docList = new ArrayList<DocumentVo>();
+				docList.add(doc);
+				securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), subject, anonymousDownloadTemplateContent, anonymousDownloadTemplateContentTxt, docList,email);
 			} catch (IOException e) {
 				logger.error("Bad mail template", e);
 				throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
@@ -285,7 +287,7 @@ public class Download {
 				
 				anonymousArchiveDownloadTemplateContentTxt = templating.readFullyTemplateContent(anonymousArchiveDownloadTemplateTxt.getResource().openStream());
 				
-				securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), subject, anonymousArchiveDownloadTemplateContent, anonymousArchiveDownloadTemplateContentTxt, null, email);
+				securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), subject, anonymousArchiveDownloadTemplateContent, anonymousArchiveDownloadTemplateContentTxt, documents, email);
 			} catch (IOException e) {
 				logger.error("Bad mail template", e);
 				throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);

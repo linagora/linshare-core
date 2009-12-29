@@ -33,6 +33,7 @@
         <constructor-arg ref="guestRepository"/>
         <constructor-arg ref="parameterService"/>
         <constructor-arg ref="shareService"/>
+        <constructor-arg ref="recipientFavouriteService" />
     </bean>
     
     <bean id="clamavVirusScannerService" class="org.linagora.linShare.core.service.impl.ClamavVirusScannerServiceImpl">
@@ -56,10 +57,15 @@
         <constructor-arg index="7" ref="clamavVirusScannerService" />
     </bean>
 	     
+    
+    <bean id="shareExpiryDateService" class="org.linagora.linShare.core.service.impl.ShareExpiryDateServiceImpl">
+    	<constructor-arg ref="parameterService"/>
+    </bean>
+	     
    
     <bean id="securedUrlService" class="org.linagora.linShare.core.service.impl.SecuredUrlServiceImpl">
     	<constructor-arg ref="securedUrlRepository"/>
-    	<constructor-arg ref="parameterService"/>
+    	<constructor-arg ref="shareExpiryDateService"/>
     	<constructor-arg value="download"/>
     	<constructor-arg ref="logEntryRepository" />
     </bean>
@@ -74,6 +80,7 @@
         <constructor-arg index="5" ref="documentRepository" />
         <constructor-arg index="6" ref="securedUrlService" />
         <constructor-arg index="7" ref="jackRabbitRepository" />
+    	<constructor-arg index="8" ref="shareExpiryDateService"/>
     </bean>
 
 	   

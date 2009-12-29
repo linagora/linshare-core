@@ -24,11 +24,13 @@ import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 
 public interface SecuredUrlRepository extends AbstractRepository<SecuredUrl> {
 
 	SecuredUrl find(String shareId, String url) throws LinShareNotSuchElementException;
+	List<SecuredUrl> findBySender(User sender);
 	List<SecuredUrl> getOutdatedSecuredUrl();
 	List<SecuredUrl> getSecureUrlLinkedToDocument(Document doc) throws LinShareNotSuchElementException;
 }

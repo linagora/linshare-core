@@ -49,7 +49,9 @@ import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.CriterionMatchMode;
+import org.slf4j.Logger;
 
 
 /**
@@ -58,6 +60,11 @@ import org.linagora.linShare.view.tapestry.enums.CriterionMatchMode;
  *
  */
 public class Index {
+
+    @ApplicationState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
+
 
 	/* ***********************************************************
 	 *                Injected services 
@@ -89,6 +96,9 @@ public class Index {
 
     @InjectPage
     private org.linagora.linShare.view.tapestry.pages.administration.Audit auditPage;
+    
+    @Inject
+    private Logger logger;
 
 	/* ***********************************************************
 	 *                         Properties
@@ -265,4 +275,12 @@ public class Index {
 
 	public CriterionMatchMode getFileNameMatchModeStart() { return CriterionMatchMode.START; }
 	public CriterionMatchMode getFileNameMatchModeAnywhere() { return CriterionMatchMode.ANYWHERE; }
+
+    
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
 }

@@ -20,9 +20,12 @@
 */
 package org.linagora.linShare.core.Facade;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 
@@ -142,15 +145,24 @@ public interface SecuredUrlFacade {
 			Integer documentId, String email);
 
 	/**
-	 * Send an email notification to the owner of the secured url when the doc is downloaded (doc may be null when a user download 
-	 * a zip archive of all the sharing)
+	 * Send an email notification to the owner of the secured url when the documents are downloaded
 	 * @param alea
 	 * @param urlPath
 	 * @param subject
 	 * @param anonymousDownloadTemplateContent
 	 * @param anonymousDownloadTemplateContentTxt
-	 * @param doc 
-	 * @param email of the user who has downloaded the document
+	 * @param docs 
+	 * @param email of the user who has downloaded the documents
 	 */
-	void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, DocumentVo doc, String email);
+	void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, List<DocumentVo> docs, String email);
+
+
+	
+	/**
+	 * Retrieve all the sharing urls of a file by a user (email)
+	 * @param sender the user
+	 * @param document
+	 * @return a list of couples : the mail of the recipient and the expiration of the url
+	 */
+	public Map<String, Calendar> getSharingsByMailAndFile(UserVo sender, DocumentVo document);
 }

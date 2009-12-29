@@ -27,32 +27,37 @@ import java.util.List;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.internal.services.LinkFactory;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
+import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.components.GuestEditForm;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.services.Templating;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@IncludeJavaScriptLibrary("../../components/SizeOfPopup.js")
 public class Index {
 
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
     @SuppressWarnings("unused")
-    @Component(parameters = {"style=bluelighting", "show=false", "width=570", "height=550"})
+    @Component(parameters = {"style=bluelighting", "show=false", "width=570", "height=450"})
     private WindowWithEffects userSearchWindow;
 /*
     @InjectComponent
@@ -65,22 +70,25 @@ public class Index {
     private Templating templating;
     
     @Inject
-    private LinkFactory linkFactory;
+    private PageRenderLinkSource pageRenderLinkSource;
   
     @Inject
     private Messages messages;
  
     @InjectComponent
 	private GuestEditForm guestEditForm;
+    
+    @Inject
+    private UserFacade userFacade;
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
-    @ApplicationState
+    @SessionState
     @Property
     private UserVo userVo;
 
@@ -98,6 +106,13 @@ public class Index {
     private List<UserVo> users;
 
     private boolean shareSessionObjectsExists;
+    
+    @Persist
+    @Property
+    private boolean inSearch;
+
+
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
 
     
     /* ***********************************************************
@@ -114,7 +129,7 @@ public class Index {
     public void onSharePanel(Object[] elements) {
         if (shareSessionObjects.getDocuments() == null || shareSessionObjects.getDocuments().size() == 0) {
             shareSessionObjects.addMessage(messages.get("pages.index.message.toFile"));
-            Link linkUser = linkFactory.createPageRenderLink("files/index", true);
+            Link linkUser = pageRenderLinkSource.createPageRenderLink("files/index");
             try {
                 response.sendRedirect(linkUser);
             } catch (IOException ex) {
@@ -150,6 +165,19 @@ public class Index {
             flagFinishShare=false;
             shareSessionObjects.setMessages(new ArrayList<String>());
     	}
+    	//resize the share popup
+        renderSupport.addScript(String.format("userSearchWindow.setSize(600, getHeightForPopup())"));
+    }
+    
+    @OnEvent(value="resetListUsers")
+    public void resetListUsers(Object[] o1) {
+		inSearch=false;
+		users = userFacade.searchUser("", "", "", userVo);
+    }
+    
+    @OnEvent(value="inUserSearch")
+    public void inSearch(Object[] o1) {
+    	inSearch = true;
     }
 
     public List<String> getNotificationMessage() {
@@ -160,6 +188,13 @@ public class Index {
 
     public String getUserSearchWindowId() {
     	return userSearchWindow.getJSONId();
+    }
+    
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
     }
  
 }

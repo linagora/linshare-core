@@ -27,7 +27,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -86,19 +88,30 @@ public class UserSearchField {
 	private String mail;
 
 	@Property
+	@Persist
 	private UserTypes userType;
 
 	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private boolean advancedSearch;
+	
+	@Persist
+	private boolean reset;
+	
+	@Persist
+	private boolean resetSimple;
+
+    @Inject
+    private ComponentResources componentResources;
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
 	 ************************************************************ */
 	@SetupRender
 	public void initValues(){
-		userType=UserTypes.ALL;
+		if(userType==null) userType=UserTypes.ALL;
+		
 		if(lastName==null) lastName=messages.get("components.userSearch.slidingField.lastName");
 		
 		if(firstName==null) firstName=messages.get("components.userSearch.slidingField.firstName");
@@ -129,11 +142,38 @@ public class UserSearchField {
 	
 	
 	public void onSuccessFromUserSearchForm() {
-		users = performSearch(userSearchPattern);
+		if (resetSimple) {
+			this.userSearchPattern = null;
+			this.resetSimple = false;
+			componentResources.triggerEvent("resetListUsers", null, null);
+		}
+		else {
+			componentResources.triggerEvent("inUserSearch", null, null);
+			users = performSearch(userSearchPattern);
+		}
 	}
 
 	public void onSuccessFromAdvancedSearchForm() {
-		users=performAnyWhereSearch();
+		if (reset) {
+			this.userType=UserTypes.ALL;
+			this.lastName = null;
+			this.firstName = null;
+			this.mail = null;
+			this.reset = false;
+			componentResources.triggerEvent("resetListUsers", null, null);
+		}
+		else {
+			componentResources.triggerEvent("inUserSearch", null, null);
+			users=performAnyWhereSearch();
+		}
+	}
+	
+	void onSelectedFromReset() {
+		reset = true;
+	}
+	
+	void onSelectedFromResetSimple() {
+		resetSimple = true;
 	}
 	
 	/** Perform a user search using the user search pattern.
@@ -141,8 +181,6 @@ public class UserSearchField {
 	 * @return list of users.
 	 */
 	private List<UserVo> performSearch(String input) {
-
-
 		Set<UserVo> userSet = new HashSet<UserVo>();
 
 		String firstName_ = null;
@@ -159,29 +197,29 @@ public class UserSearchField {
 		}
 
         if (input != null) {
-            userSet.addAll(userFacade.searchUser(input.trim(), null, null, userVo));
+            userSet.addAll(userFacade.searchUser(input.trim(), null, null, null, userVo));
         }
-		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userVo));
-		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, userVo));
+		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, null, userVo));
+		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, null, userVo));
 
 		return new ArrayList<UserVo>(userSet);
 	}
 
 
 	public List<UserVo> performAnyWhereSearch(){
-		
-		
-		
 		Set<UserVo> userSet = new HashSet<UserVo>();
 		UserType type=null;
-		if(UserTypes.ALL.equals(userType)){
-			type=null;
-		}else if(UserTypes.GUEST.equals(userType)){
-			type=UserType.GUEST;
-		}else if(UserType.INTERNAL.equals(userType)){
-			type=UserType.INTERNAL;
-		}
 		
+		switch (userType) {
+		case GUEST:
+			type=UserType.GUEST;
+			break;
+		case INTERNAL:
+			type=UserType.INTERNAL;
+			break;
+		default:
+			break; //null => ALL
+		}
 		lastName=(messages.get("components.userSearch.slidingField.lastName").equals(lastName))?null:lastName;
 		firstName=(messages.get("components.userSearch.slidingField.firstName").equals(firstName))?null:firstName;
 		mail=(messages.get("components.userSearch.slidingField.mail").equals(mail))?null:mail;	

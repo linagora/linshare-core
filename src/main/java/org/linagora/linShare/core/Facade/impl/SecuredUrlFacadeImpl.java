@@ -20,22 +20,30 @@
 */
 package org.linagora.linShare.core.Facade.impl;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
+import org.linagora.linShare.core.domain.entities.Contact;
+import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentAdapter;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
+import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.SecuredUrlService;
 import org.linagora.linShare.view.tapestry.services.Templating;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
+
+	private static final Logger logger = LoggerFactory.getLogger(SecuredUrlFacadeImpl.class);
 	
 	private final SecuredUrlService securedUrlService;
 	
@@ -45,12 +53,16 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 	
 	private final Templating templating;
 	
+	private final UserRepository<User> userRepository;
+	
 	public SecuredUrlFacadeImpl(SecuredUrlService securedUrlService,DocumentAdapter documentAdapter,
-			final NotifierService notifierService, final Templating templating) {
+			final NotifierService notifierService, final Templating templating, 
+			final UserRepository<User> userRepository) {
 		this.securedUrlService=securedUrlService;
 		this.documentAdapter=documentAdapter;
 		this.notifierService = notifierService;
 		this.templating = templating;
+		this.userRepository = userRepository;
 		
 	}
 
@@ -96,7 +108,7 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		securedUrlService.logDownloadedDocument(alea, urlPath, password, documentId, email) ;
 	}
 
-	public void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, DocumentVo doc, String email) {
+	public void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, List<DocumentVo> docs, String email) {
 		//Setting parameters and values for supply the template.
 		Map<String,String> templateParams=new HashMap<String, String>();
 		
@@ -111,17 +123,33 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		StringBuffer names = new StringBuffer();
 		StringBuffer namesTxt = new StringBuffer();
 		
-		if (doc != null) {
-			names.append("<li>"+doc.getFileName()+"</li>");
-			namesTxt.append(doc.getFileName()+"\n");
-			templateParams.put("${documentNames}", names.toString());
-			templateParams.put("${documentNamesTxt}", namesTxt.toString());	
+		if (docs != null && docs.size()>0) {
+			for (DocumentVo doc : docs) {
+				names.append("<li>"+doc.getFileName()+"</li>");
+				namesTxt.append(doc.getFileName()+"\n");
+			}	
 		}
+		templateParams.put("${documentNames}", names.toString());
+		templateParams.put("${documentNamesTxt}", namesTxt.toString());
 		
 		String messageForAnonymousDownloadTemplateContent = templating.getMessage(anonymousDownloadTemplateContent, templateParams);
 		String messageForAnonymousDownloadTemplateContentTxt = templating.getMessage(anonymousDownloadTemplateContentTxt, templateParams);
 		
 		//send a notification by mail to the owner
 		notifierService.sendNotification(null,owner.getMail(), subject, messageForAnonymousDownloadTemplateContent,messageForAnonymousDownloadTemplateContentTxt);
+	}
+	
+	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {
+		User sender = userRepository.findByLogin(senderVo.getLogin());
+
+		List<SecuredUrl> secUrls = securedUrlService.getUrlsByMailAndFile(sender, document);
+
+		Map<String, Calendar> res = new HashMap<String, Calendar>();
+		for (SecuredUrl securedUrl : secUrls) {
+			for (Contact recipient : securedUrl.getRecipients()) {
+				res.put(recipient.getMail(), securedUrl.getExpirationTime());
+			}
+		}
+		return res;
 	}
 }

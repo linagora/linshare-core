@@ -54,6 +54,10 @@ public class RecipientFavouriteServiceImpl implements RecipientFavouriteService{
 	public List<String> findRecipientFavorite(String matchEmail, User owner) {
 		return repo.findMatchElementsOrderByWeight(matchEmail, owner);
 	}
+	
+	public void deleteFavoritesOfUser(User owner) throws IllegalArgumentException, BusinessException {
+		repo.deleteFavoritesOfUser(owner);
+	}
 
 
 }

@@ -20,8 +20,12 @@
 */
 package org.linagora.linShare.view.tapestry.pages.help;
 
+import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.slf4j.Logger;
 
 /**
  * Help pages: FAQ
@@ -29,6 +33,12 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  *
  */
 public class FAQ {
+	@Inject 
+	private Logger logger;
+
+    @ApplicationState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
 
 	/* ***********************************************************
 	 *                      Injected services
@@ -37,4 +47,12 @@ public class FAQ {
 	@SuppressWarnings("unused") // used in tml
 	@Inject
 	private Messages messages;
+	
+
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
 }

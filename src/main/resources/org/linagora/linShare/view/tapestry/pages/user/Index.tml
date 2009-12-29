@@ -45,7 +45,7 @@
 		<div id="pageContent">
 
 			<!-- List : Search result -->
-			<t:userSearchResults users="users" userShareList="shareSessionObjects.users" />
+			<t:userSearchResults users="users" userShareList="shareSessionObjects.users" inSearch="prop:inSearch" />
 
 		</div>
 

@@ -2,4 +2,4 @@ Build procedure
 ===============
 
 	* mvn package
-	* War file will be available as target
+	* War file will be available in target directory

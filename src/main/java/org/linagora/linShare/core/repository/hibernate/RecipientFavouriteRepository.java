@@ -230,4 +230,13 @@ public class RecipientFavouriteRepository extends AbstractRepositoryImpl<Recipie
 		}
 		return mails;
 	}
+
+	public void deleteFavoritesOfUser(User owner) throws IllegalArgumentException, BusinessException {
+		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
+		det.add(Restrictions.eq("owner", owner));
+		List<RecipientFavourite> recipients=findByCriteria(det);
+		for (RecipientFavourite recipientFavourite : recipients) {
+			delete(recipientFavourite);
+		}
+	}
 }

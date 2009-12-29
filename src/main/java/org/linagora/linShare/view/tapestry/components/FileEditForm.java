@@ -21,6 +21,7 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
@@ -66,6 +67,9 @@ public class FileEditForm {
 
     @Inject
     private Logger logger;
+
+	@Inject
+	private ComponentResources componentResources;
 
 
 	/* ***********************************************************
@@ -144,7 +148,8 @@ public class FileEditForm {
 
         documentFacade.updateFileProperties(editFileWithUuid, fileName, fileComment);
         shareSessionObjects.addMessage(messages.get("components.fileEditForm.action.update.confirm"));
-    }
+        componentResources.triggerEvent("resetListFiles", null, null);
+	}
 
     public void onFailure() {
     	 shareSessionObjects.addMessage(messages.get("components.fileEditForm.action.update.error"));

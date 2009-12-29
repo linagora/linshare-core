@@ -22,6 +22,7 @@ package org.linagora.linShare.core.service.impl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,10 +30,10 @@ import org.apache.commons.lang.StringUtils;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
@@ -40,7 +41,6 @@ import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
-import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.SecuredUrlService;
 import org.linagora.linShare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 	private final SecuredUrlRepository securedUrlRepository;
-	private final ParameterService parameterService;
+	private final ShareExpiryDateServiceImpl shareExpiryDateService;
 	private final LogEntryRepository logEntryRepository;
 
 	private final String baseSecuredUrl;
@@ -58,10 +58,10 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 	.getLogger(SecuredUrlServiceImpl.class);
 
 	public SecuredUrlServiceImpl(final SecuredUrlRepository securedUrlRepository,
-			final ParameterService parameterService, String pageName,
+			final ShareExpiryDateServiceImpl shareExpiryDateService, String pageName,
 			final LogEntryRepository logEntryRepository) {
 		this.securedUrlRepository = securedUrlRepository;
-		this.parameterService = parameterService;
+		this.shareExpiryDateService = shareExpiryDateService;
 
 		this.baseSecuredUrl = pageName;
 		this.logEntryRepository = logEntryRepository;
@@ -88,40 +88,26 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		return Long.toString(sr.nextLong() & Long.MAX_VALUE, 36);
 	}
 
-	/**
-	 * Calculate the url expiry date.
-	 * 
-	 * @return url expiry date.
-	 */
-	protected Calendar calculateUrlExpiryDate() {
-		Calendar expiryDate = Calendar.getInstance();
-		Parameter parameter = parameterService.loadConfig();
-
-		if (parameter == null)
-			throw new IllegalStateException(
-			"No configuration found for linshare");
-		expiryDate.add(parameterService.loadConfig()
-				.getDefaultShareExpiryUnit().toCalendarValue(),
-				parameterService.loadConfig().getDefaultShareExpiryTime());
-
-		return expiryDate;
-	}
-
-	public SecuredUrl create(List<Document> documents, User sender, String password,List<Contact> recipients) {
-		return create(documents, sender, password, null,recipients);
+	public SecuredUrl create(List<Document> documents, User sender, String password,List<Contact> recipients, Calendar expiryDate) {
+		return create(documents, sender, password, null,recipients, expiryDate);
 	}
 
 	public SecuredUrl create(List<Document> documents, User sender, String password,
-			String urlPath,List<Contact> recipients) {
+			String urlPath,List<Contact> recipients, Calendar expiryDate) {
 		// Generate an alea
 		String alea = generateAlea();
 
 		// Get the defaultUrl if urlPath is null
 		String url = urlPath == null ? getBaseSecuredUrl() : urlPath;
 
+		// If the user have not selected an expiration date, compute default date
+		if (expiryDate == null) {
+			expiryDate=shareExpiryDateService.computeMinShareExpiryDateOfList(documents);
+		}
+		
 		// create the sercured url
 		SecuredUrl securedUrl = new SecuredUrl(url, alea,
-				calculateUrlExpiryDate(), sender, recipients);
+				expiryDate, sender, recipients);
 		securedUrl.addDocuments(documents);
 
 		// Hash the password
@@ -299,7 +285,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 						.getFirstName(), owner.getLastName(),
 						LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file", docEntity
 						.getName(), docEntity.getSize(), docEntity
-						.getType(), "", "", "" ,null);
+						.getType(), email, "", "" ,null);
 
 				try {
 					logEntryRepository.create(logEntry);
@@ -320,5 +306,20 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		} catch (LinShareNotSuchElementException e) {
 			throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE, "The secured URL cannot be found");
 		}
+	}
+	
+	public List<SecuredUrl> getUrlsByMailAndFile(User sender, DocumentVo document) {
+		List<SecuredUrl> allUrl = securedUrlRepository.findBySender(sender);
+
+		List<SecuredUrl> byDocUrl = new ArrayList<SecuredUrl>();
+		for (SecuredUrl securedUrl : allUrl) {
+			for (Document doc : securedUrl.getDocuments()) {
+				if (document.getIdentifier().equalsIgnoreCase(doc.getIdentifier())) {
+					byDocUrl.add(securedUrl);
+					break;
+				}
+			}
+		}
+		return byDocUrl;
 	}
 }

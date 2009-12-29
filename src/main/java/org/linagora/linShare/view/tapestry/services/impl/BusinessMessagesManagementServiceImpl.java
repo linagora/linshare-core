@@ -22,8 +22,9 @@ package org.linagora.linShare.view.tapestry.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.tapestry5.annotations.ApplicationState;
+
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.services.ApplicationStateManager;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.objects.BusinessInformativeContentBundle;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
@@ -37,8 +38,20 @@ public class BusinessMessagesManagementServiceImpl implements BusinessMessagesMa
     private static final String ERROR_CODE_PREFIX = "error.code.";
     private static final String BUSINESS_MESSAGE_PREFIX = "business.message.";
 
-    @ApplicationState
-    private BusinessInformativeContentBundle businessInformativeContentBundle;
+    
+    private final ApplicationStateManager stateManager;
+    
+    
+    //we can not do that because BusinessMessagesManagementServiceImpl is a singleton
+    // and this field is injected only once for the first user...
+    //@ApplicationState
+    //private BusinessInformativeContentBundle businessInformativeContentBundle;
+    
+    
+    public BusinessMessagesManagementServiceImpl(ApplicationStateManager stateManager){
+    	this.stateManager = stateManager;
+    }
+    
 
     public void notify(BusinessException exception) {
         getBusinessInformativeContentBundle().getBusinessExceptions().add(exception);
@@ -82,9 +95,14 @@ public class BusinessMessagesManagementServiceImpl implements BusinessMessagesMa
 
     private BusinessInformativeContentBundle getBusinessInformativeContentBundle() {
 
-        if (businessInformativeContentBundle == null) {
+        
+    	BusinessInformativeContentBundle businessInformativeContentBundle = this.stateManager.get(BusinessInformativeContentBundle.class);
+    	
+    	
+    	if (businessInformativeContentBundle == null) {
             businessInformativeContentBundle = new BusinessInformativeContentBundle();
         }
+        
         return businessInformativeContentBundle;
     }
 

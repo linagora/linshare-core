@@ -21,6 +21,7 @@
 package org.linagora.linShare.core.service;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -119,7 +120,7 @@ public interface ShareService {
 	 * @param recipient the recipient of the document.
 	 * @param comment the comment for the share.
 	 */
-	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> document,User sender,List<User> recipient,String comment);
+	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> document,User sender,List<User> recipient,String comment, Calendar expirationDate);
 	
 	
 /**
@@ -132,7 +133,7 @@ public interface ShareService {
  * @throws BusinessException 
  * @throws IllegalArgumentException 
  */
-	public SecuredUrl shareDocumentsWithSecuredUrlToUser(UserVo owner, List<Document> docList,String password,List<Contact> mailrecipients) throws IllegalArgumentException, BusinessException;
+	public SecuredUrl shareDocumentsWithSecuredUrlToUser(UserVo owner, List<Document> docList,String password,List<Contact> mailrecipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException;
 	
 	
 	/**
@@ -143,13 +144,6 @@ public interface ShareService {
 
     /** Clean all outdated shares. */
     public void cleanOutdatedShares();
-    
-    /**
-     * Compute the expiration date of a document share
-     * @param doc : the document to be shared
-     * @return the expiration date
-     */
-    public Calendar computeShareExpirationDate(Document doc);
     
     
 	/**
@@ -162,5 +156,12 @@ public interface ShareService {
     
     
     public List<Share> getSharesLinkedToDocument(Document doc);
+    
+    /**
+     * Do the log entries for a local copy
+     * @param doc
+     * @param share
+     */
+    public void logLocalCopyOfDocument(Share share, User user) throws IllegalArgumentException, BusinessException;
 
 }

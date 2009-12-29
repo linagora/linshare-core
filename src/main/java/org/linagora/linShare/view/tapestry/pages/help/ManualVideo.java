@@ -27,8 +27,10 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.components.Help;
 import org.linagora.linShare.view.tapestry.objects.HelpsASO;
+import org.slf4j.Logger;
 
 /**
  * Help pages: Video version
@@ -36,10 +38,19 @@ import org.linagora.linShare.view.tapestry.objects.HelpsASO;
  *
  */
 public class ManualVideo {
+	@Inject 
+	private Logger logger;
+
+    @ApplicationState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
 
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */
+
+	@Inject
+	private Messages messages;
 
 	@InjectComponent
 	private Help help;
@@ -84,4 +95,10 @@ public class ManualVideo {
 		this.role = role;
 	}
 
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return new Index();
+    }
 }

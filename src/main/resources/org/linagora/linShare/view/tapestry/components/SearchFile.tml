@@ -43,6 +43,8 @@
                 <t:textfield t:id="name" t:mixins="autocomplete" t:minChars="2" class="fileSearchPattern"
                              title="${message:components.searchfile.fileName}"/><br/>
                 <t:submit value="${message:global.button.search}"/>
+                ${message:global.space}
+                <t:submit t:id="resetSimple" value="${message:global.button.reset}"/>
             </t:form>
         </t:if>
 

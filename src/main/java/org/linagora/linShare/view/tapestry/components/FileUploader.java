@@ -121,6 +121,7 @@ public class FileUploader {
 	  
     @OnEvent(value = "fileUploaded")
     public void processFilesUploaded(Object[] context) {
+    	boolean toUpdate=false;
 
         for (int i = 0; i < context.length; i++) {
             UploadedFile uploadedFile = (UploadedFile) context[i];
@@ -145,11 +146,14 @@ public class FileUploader {
                     // Notify the add of a file.
                     Object[] addedFile = {document};
                     componentResources.triggerEvent("fileAdded", addedFile, null);
+                    toUpdate=true;
                 } catch (BusinessException e) {
                     messagesManagementService.notify(e);
                 }
             }
         }
+        if (toUpdate) 
+        	componentResources.triggerEvent("resetListFiles", null, null);
     }
 	
     /* ***********************************************************

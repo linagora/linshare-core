@@ -26,15 +26,12 @@ import org.linagora.linShare.core.exception.BusinessErrorCode;
 public class Error {
 
 	
+	@SuppressWarnings("unused")
 	@Property
 	private boolean auth;
 	
 	public void onActivate(Integer code){
 		this.auth=code.equals(BusinessErrorCode.AUTHENTICATION_ERROR.getCode());
 	}
-	
-	
-	
-	
 	
 }
