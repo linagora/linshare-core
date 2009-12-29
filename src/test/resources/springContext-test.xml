@@ -28,13 +28,4 @@
         </property>
     </bean>
     
-    <bean id="mailRetriever" class="org.linagora.linShare.common.service.impl.MailTestRetrieverImpl">
-    	<constructor-arg index="0">
-    		<value>${linshare.test.mail.sender}</value>
-    	</constructor-arg>
-    	<constructor-arg index="1">
-    		<value>${linshare.test.mail.recipient}</value>
-    	</constructor-arg>
-    </bean>
-    
 </beans>

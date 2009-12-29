@@ -46,6 +46,16 @@
                 <role>Developer</role>
             </roles>
         </developer>
+        <developer>
+            <id>sduprey</id>
+            <name>Stefanie Duprey</name>
+            <email>sduprey@linagora.com</email>
+            <organization>LINAGORA</organization>
+            <organizationUrl>http://www.linagora.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
     <mailingLists>
         <mailingList>
