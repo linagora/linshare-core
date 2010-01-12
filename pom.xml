@@ -487,17 +487,17 @@
         <dependency>
             <groupId>org.linagora.linkit</groupId>
             <artifactId>timeline</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.linagora.linkit</groupId>
             <artifactId>utils</artifactId>
-            <version>0.1</version>
+            <version>0.2</version>
         </dependency>
         <dependency>
             <groupId>org.linagora.linkit</groupId>
             <artifactId>flexUploadComponent</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
         
         <dependency>
@@ -704,8 +704,25 @@
                     <goals>deploy redmine:create-report changes:announcement-mail redmine:publish-news</goals>
                 </configuration>
             </plugin>
+	        <plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/dist.xml</descriptor>
+						<descriptor>src/main/assembly/src.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
-         
+        
         <extensions>
             <extension>
                 <groupId>postgresql</groupId>
