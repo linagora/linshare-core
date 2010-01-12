@@ -220,27 +220,34 @@ public class LdapDatasource implements LdapDao {
 
         technicalTracer.info("Search pattern = " + filter.encode());
         
-        //you can use a pagedresultcookie to keep information of the position of your last research (not use here)
-        PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(scope);
 
         CollectingNameClassPairCallbackHandler handler = new AttributesMapperCallbackHandler(new UserAttributesMapper());
-        ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+        if(isPaged()) {
+            //you can use a pagedresultcookie to keep information of the position of your last research (not use here)
+            PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
+            ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+        } else {
+            ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler);
+        }
         
         @SuppressWarnings( "unchecked" )
         List<User> users = (List<User>) handler.getList();
         
-        LdapSearchResult<User> pagedResult =  new LdapSearchResult<User>(users,null);
+        LdapSearchResult<User> searchResult =  new LdapSearchResult<User>(users,null);
         
-	    if(users.size()<=pageSize) pagedResult.setTruncated(false);
-	        else pagedResult.setTruncated(true);
+	    if(isSearchResultTrucated(users.size())) {
+	    	searchResult.setTruncated(false);
+	    } else {
+	    	searchResult.setTruncated(true);
+	    }
         
         //old search without paging
        // List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(),searchControls,new UserAttributesMapper());
         //return users;
 	    
-	    return pagedResult;
+	    return searchResult;
     }
 
     /** 
@@ -267,23 +274,28 @@ public class LdapDatasource implements LdapDao {
 
         technicalTracer.info("Search pattern = " + filter.encode());
         
-        PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(scope);
-        
+
         CollectingNameClassPairCallbackHandler handler = new AttributesMapperCallbackHandler(new UserAttributesMapper());
-        ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+
+        if(isPaged()) {
+            PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
+            ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+        } else {
+            ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler);
+        }
         
         @SuppressWarnings( "unchecked" )
         List<User> users = (List<User>) handler.getList();
         
-        LdapSearchResult<User> pagedResult =  new LdapSearchResult<User>(users,null);
+        LdapSearchResult<User> searchResult =  new LdapSearchResult<User>(users,null);
         
-	    pagedResult.setTruncated(isSearchResultTrucated(users.size()));
+	    searchResult.setTruncated(isSearchResultTrucated(users.size()));
 
         //old search without paging
         //List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
-        return pagedResult;
+        return searchResult;
     }
     
     /** Search a user (exact match search).
@@ -327,9 +339,15 @@ public class LdapDatasource implements LdapDao {
     };
     
     public boolean isSearchResultTrucated(int listSize){
-    	if(listSize<pageSize) return false;
-    	else return true;
+    	if( isPaged() && listSize < pageSize ) {
+    		return false;
+    	} else {
+    		return true;
+    	}
     }
 
+    public boolean isPaged(){
+    	return pageSize > 0;
+    }
 
 }

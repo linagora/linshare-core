@@ -17,7 +17,9 @@ ldap.auth.userDN=cn=nss,dc=linagora,dc=com
 ldap.auth.password=nss
 
 #paging ldap search: pageSize < sizelimit of the ldap
-ldap.pageSize=400
+# Use only with compatible directories, 0 instead
+#ldap.pageSize=400
+ldap.pageSize=0
 
 #******************** MAIL CONFIGURATION TO SEND MAIL INFORMATION TO USER
 
