@@ -36,12 +36,11 @@
 
 
 			<!-- Header definition -->
-
-<t:linkit.Comment>
-			<t:parameter t:name="typeHeader">
+<!--
+ 			<t:parameter t:name="typeHeader">
 				${message:components.listDocument.grid.typeHeader}
-			</t:parameter>
-</t:linkit.Comment>
+			</t:parameter> -->
+
 
 			<t:parameter t:name="empty">
 				${message:components.listDocument.grid.empty}
@@ -82,15 +81,15 @@
 			<div>
 				<t:if t:test="${document.encrypted}">
 					<t:actionLink t:id="showWarningHttp" zone="${warningHttp.zoneClientId}" onClick="${warningHttp.javascriptOpenPopup}" context="${document.identifier}" t:type="${document.type}" t:title="${document.fileName}" class="fileName">
-<t:linkit.Comment>
-					<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" />
+<t:linkit.Comment><!-- 
+					<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 </t:linkit.Comment>
 					<span>${document.fileName}</span>
 					</t:actionLink>
 					<t:parameter name="else">
 						<t:actionLink t:id="download" t:context="${document.identifier}" t:type="${document.type}" t:title="${document.fileName}" class="fileName">
 <t:linkit.Comment>
-						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" />
+<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 </t:linkit.Comment>
 						<span>${document.fileName}</span>
 						</t:actionLink>
@@ -223,129 +222,6 @@
 				</t:parameter>
 				</t:if>
 			</t:parameter> -->
-
-<t:linkit.Comment>		<!-- OLD : TO DELETE  (TML and Java code) -->
-			<t:parameter t:name="actionsCell">
-				<div t:type="ck/SlidingPanel" t:id="panel1" t:closed="true" t:options="{duration:0.3}"
-					t:subject="${message:components.listDocument.action.actions}">
-
-					<t:if t:test="${document.encrypted}">
-					<div align="left" class="shareDiv">
-						<t:actionLink t:id="showWarningShare" zone="${warningShare.zoneClientId}" onClick="${warningShare.javascriptOpenPopup}" context="${document.identifier}">
-							<t:if t:test="${document.shared}" negate="true">
-								<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.listDocument.action.share}
-							</t:if>
-							<t:if t:test="${document.shared}">
-								<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.listDocument.action.share}
-							</t:if>
-						</t:actionLink>
-					</div>
-					<t:parameter name="else">
-						<div align="left" class="shareDiv">
-							<t:actionLink t:id="uniqueShareLink" context="${document.identifier}">
-								<t:if t:test="${document.shared}" negate="true">
-									<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.listDocument.action.share}
-								</t:if>
-								<t:if t:test="${document.shared}">
-									<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.listDocument.action.share}
-								</t:if>
-							</t:actionLink>
-						</div>
-					</t:parameter>
-					</t:if>
-					
-					<br />
-					
-					<t:if t:test="${document.encrypted}">
-					<t:actionLink t:id="showWarningHttpBis" zone="${warningHttp.zoneClientId}" onClick="${warningHttp.javascriptOpenPopup}" t:context="${document.identifier}"  class="listDocument">
-						<img src="${asset:context:images/icons/download.png}" alt="" /> ${message:components.listDocument.action.download}
-					</t:actionLink>
-					<t:parameter name="else">
-						<div align="left" class="downloadDiv"><t:actionLink
-							t:id="downloadOther" context="${document.identifier}"
-							class="listDocument">
-							<img src="${asset:context:images/icons/download.png}" alt="" /> ${message:components.listDocument.action.download}
-						</t:actionLink></div>
-					</t:parameter>
-					</t:if>
-
-					<div align="left" class="deleteDiv"><t:actionLink
-						t:id="delete" context="${document.identifier}" t:zone="zoneTest"
-						class="listDocument" onClick="window_confirm.showCenter(true)">
-						<img src="${asset:context:images/icons/delete.png}" alt="" /> ${message:components.listDocument.action.delete}
-					</t:actionLink></div>
-					<t:if t:test="activeSignature">
-					<t:if t:test="${document.encrypted}" negate="true">		
-					<t:if t:test="documentSignedByCurrentUser" negate="true">		
-					<div align="left" class="deleteDiv"><t:actionLink
-						t:id="signature" context="${document.identifier}" t:zone="zoneTest"
-						class="listDocument">
-						<img src="${asset:context:images/icons/sign.png}" alt="" /> ${message:components.listDocument.action.signature}
-					</t:actionLink></div>
-					</t:if>
-						<t:parameter name="else">
-							<div align="left" class="deleteDiv"><t:actionLink
-								t:id="showWarningSignature" t:context="${document.identifier}" zone="${warningSignature.zoneClientId}" onClick="${warningSignature.javascriptOpenPopup}"
-								class="listDocument">
-								<img src="${asset:context:images/icons/sign.png}" alt="" /> ${message:components.listDocument.action.signature}
-							</t:actionLink></div>
-						</t:parameter>
-					</t:if>		
-					</t:if>
-					<t:if t:test="activeEncipherment">
-						<t:if t:test="userEnciphermentKeyGenerated">
-							<t:if t:test="${document.shared}" negate="true"> 
-								<t:if t:test="cachePin.popupNeeded">
-									<div align="left" class="deleteDiv">
-										<t:actionLink
-											t:id="encipherment" context="${document.identifier}" t:zone="zoneTest"
-											class="listDocument" onClick="window_passwordPopup.showCenter(true)">
-											<t:if test="${document.encrypted}">
-												<img src="${asset:context:images/icons/encrypt.png}" alt="" /> ${message:components.listDocument.action.decrypt}
-												<t:parameter name="else">
-														<img src="${asset:context:images/icons/encrypt.png}" alt="" /> ${message:components.listDocument.action.encrypt}
-												</t:parameter>
-											</t:if>
-										</t:actionLink>
-									</div>
-								<t:parameter name="else">
-									<div align="left" class="deleteDiv">
-										<t:actionLink
-											t:id="enciphermentNoPopup" context="${document.identifier}" 
-											class="listDocument">
-											<t:if test="${document.encrypted}">
-												<img src="${asset:context:images/icons/encrypt.png}" alt="" /> ${message:components.listDocument.action.decrypt}
-												<t:parameter name="else">
-														<img src="${asset:context:images/icons/encrypt.png}" alt="" /> ${message:components.listDocument.action.encrypt}
-												</t:parameter>
-											</t:if>
-										</t:actionLink>
-									</div>
-								</t:parameter>	
-								</t:if>
-							<t:parameter name="else">
-								<div align="left" class="deleteDiv">
-									<t:actionLink
-										t:id="showWarningEncipherment" t:context="${document.identifier}" zone="${warningEncipherment.zoneClientId}" onClick="${warningEncipherment.javascriptOpenPopup}"
-										class="listDocument">
-											<t:if test="${document.encrypted}">
-												<img src="${asset:context:images/icons/encrypt.png}" alt="" /> ${message:components.listDocument.action.decrypt}
-												<t:parameter name="else">
-														<img src="${asset:context:images/icons/encrypt.png}" alt="" /> ${message:components.listDocument.action.encrypt}
-												</t:parameter>
-											</t:if>
-									</t:actionLink>
-								</div>
-							
-							</t:parameter>
-							</t:if>
-								
-						</t:if>
-					</t:if>
-					
-				</div>
-			</t:parameter>
-</t:linkit.Comment>
 
 			<t:parameter t:name="selectedValueCell">
 				<t:checkbox t:id="filesSelected" onclick="countCheckbox();" />
