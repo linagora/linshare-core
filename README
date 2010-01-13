@@ -1,0 +1,24 @@
+LinShare README
+
+
+
+Specially designed to secure paperless trading companies that put privacy and
+traceability in the heart of their problems of exchange, Linshare provides a
+simple solution completely intuitive.
+
+    * Linshare allows employees to upload files into their space
+    * Linshare can share files with internal or external collaborators
+    * Linshare offers several features to securely exchange
+    * User&share allows Linshare to communicate with the fat client
+
+Available online demonstration : LinShare en français | LinShare in english.
+Test account can be used with "demo@linagora.com" as login and "linagora" as password.
+
+Available video documentation : Documentation en français | English documentation
+
+Complete guide is available at the following location : French / English
+
+Continuous integration can be followed there and daily build here. You can test LinShare as
+standard user with login "user1@linpki.org" and password "password1". But take care that
+shared files are really available to everyone, are removed each time the build is successfully
+deployed and you are please not do share confidential or incorrect content :)

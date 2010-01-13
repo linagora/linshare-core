@@ -705,22 +705,65 @@
                 </configuration>
             </plugin>
 	        <plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/dist.xml</descriptor>
-						<descriptor>src/main/assembly/src.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+                                <artifactId>maven-antrun-plugin</artifactId>
+                                <executions>
+                                        <execution>
+                                                <id>prepare-jetty</id>
+                                                <phase>package</phase>
+                                                <configuration>
+                                                        <tasks>
+                                                                <property name="execution.path" refid="maven.runtime.classpath"></property>
+                                                                <ant antfile="${basedir}/misc/build.xml" target="prepare-jetty"></ant>
+                                                        </tasks>
+                                                </configuration>
+                                                <goals>
+                                                        <goal>run</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                        </plugin>
+         <plugin>
+			<artifactId>maven-assembly-plugin</artifactId>
+			<configuration>
+				<descriptors>
+					<descriptor>src/main/assembly/dist.xml</descriptor>
+					<descriptor>src/main/assembly/src.xml</descriptor>
+				</descriptors>
+			</configuration>
+			<executions>
+				<execution>
+					<phase>package</phase>
+					<goals>
+						<goal>single</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+
+                        <plugin>
+                                <groupId>org.codehaus.izpack</groupId>
+                                <artifactId>izpack-maven-plugin</artifactId>
+                                <version>1.0-alpha-5</version>
+
+                                <!-- common configuration by all executions -->
+                                <configuration>
+                                        <descriptor>${basedir}/src/install/install.xml</descriptor>
+                                        <descriptorEncoding>UTF-8</descriptorEncoding>
+                                        <fileExtension>jar</fileExtension>
+                                        <installerFile>${project.build.directory}/${project.artifactId}-${project.version}</installerFile>
+                                        <izpackBasedir>${project.build.directory}/${project.artifactId}-dist/${project.artifactId}-${project.version}</izpackBasedir>
+                                </configuration>
+
+                                <executions>
+                                        <execution>
+                                                <id>standard-installer</id>
+                                                <phase>package</phase>
+                                                <goals>
+                                                        <goal>izpack</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                        </plugin>
         </plugins>
         
         <extensions>

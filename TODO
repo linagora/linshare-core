@@ -1,0 +1,4 @@
+Handling unavailable directory: Fallback on local accounts only
+Handling missing email: if the user is correctly logged on but does not have any email, LinShare is throwing a bad stack trace
+Handle missing locales
+Fix missing assets

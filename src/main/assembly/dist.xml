@@ -21,23 +21,39 @@
 				<include>${project.basedir}/README*</include>
 				<include>${project.basedir}/LICENSE*</include>
 				<include>${project.basedir}/CHANGES*</include>
+				<include>${project.basedir}/COPYING*</include>
+				<include>${project.basedir}/INSTALL*</include>
 			</includes>
 		</fileSet>
 			
 		<!-- Include the sample and etc directories -->
 		<fileSet>
-			<directory>etc</directory>
-			<excludes>
-				<exclude>**/.placeholder</exclude>
-			</excludes>
+			<directory>${project.basedir}/target</directory>
+			<outputDirectory>webapps</outputDirectory>
+			<includes><include>linshare.war</include></includes>
 		</fileSet>
-		<fileSet> <directory>sample</directory> </fileSet>
+		<fileSet>
+			<directory>${project.basedir}/misc</directory>
+			<outputDirectory>contexts</outputDirectory>
+			<includes><include>jetty-context.xml</include></includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/misc/jetty</directory>
+			<outputDirectory>.</outputDirectory>
+			<excludes>
+				<exclude>bin/*.sh</exclude>
+			</excludes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/misc/jetty</directory>
+			<outputDirectory>.</outputDirectory>
+			<includes>
+				<include>bin/*.sh</include>
+			</includes>
+			<fileMode>0755</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
 	</fileSets>
-
-	<!-- Include all runtime dependencies of the project -->
-	<dependencySets>
-		<dependencySet>
-			<outputDirectory>lib</outputDirectory>
-		</dependencySet>
-	</dependencySets>
 </assembly>
