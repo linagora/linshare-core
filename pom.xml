@@ -720,6 +720,19 @@
                                                         <goal>run</goal>
                                                 </goals>
                                         </execution>
+                                        <execution>
+                                                <id>clean-jetty</id>
+                                                <phase>clean</phase>
+                                                <configuration>
+                                                        <tasks>
+                                                                <property name="execution.path" refid="maven.runtime.classpath"></property>
+                                                                <ant antfile="${basedir}/misc/build.xml" target="clean"></ant>
+                                                        </tasks>
+                                                </configuration>
+                                                <goals>
+                                                        <goal>run</goal>
+                                                </goals>
+                                        </execution>
                                 </executions>
                         </plugin>
          <plugin>
