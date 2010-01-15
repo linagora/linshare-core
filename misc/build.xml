@@ -3,10 +3,11 @@
     <!-- look for properties in ~/.lsc-build.properties, ~/lsc.properties -->
 	<property file="${user.home}/.${ant.project.name}-build.properties" />
 	<property file="${user.home}/build.properties" />
-	<property file="misc/build.properties" />
 	<property file="build.properties" />
 	<property environment="env" />
     
+	<property name="jetty.version" value="6.1.22" />
+	<property name="jetty.url" value="http://dist.codehaus.org/jetty/jetty-${jetty.version}/jetty-${jetty.version}.zip" />
 	<property name="build.dir" value="${basedir}/target" />
 	<property name="build.classes.dir" value="${build.dir}/classes" />
 	<property name="misc.dir" value="${basedir}/misc" />
@@ -20,7 +21,7 @@
 	    ===================================================================
 	-->
 	<target name="download-jetty" description="Download the Jetty archive" unless="jetty.archive.notexists">
-		<fail unless="jetty.url" message="You must specify Jetty URL in jetty.url variable"/>
+		<fail unless="jetty.url" message="You must specify Jetty URL in this Ant build file in jetty.url variable"/>
 		<get src="${jetty.url}" dest="${misc.dir}/jetty.zip" />
 	</target>
 
@@ -30,28 +31,29 @@
 
 		<unzip src="${misc.dir}/jetty.zip" dest="${misc.dir}" overwrite="true">
 		    <patternset>
-				<exclude name="jetty-*/contexts/**"/>
-				<exclude name="jetty-*/contrib/**"/>
+			<exclude name="jetty-*/contexts/**"/>
+			<exclude name="jetty-*/contrib/**"/>
 		        <exclude name="jetty-*/distribution/**"/>
 		        <exclude name="jetty-*/examples/**"/>
 		        <exclude name="jetty-*/extras/**"/>
         		<exclude name="jetty-*/javadoc/**"/>
-        		<exclude name="jetty-*/jetty-*/jxr/**"/>
-				<exclude name="jetty-*/modules/**"/>
-				<exclude name="jetty-*/patches/**"/>
-				<exclude name="jetty-*/project-website/**"/>
-				<exclude name="jetty-*/webapps/**"/>
+        		<exclude name="jetty-*/jxr/**"/>
+			<exclude name="jetty-*/modules/**"/>
+			<exclude name="jetty-*/patches/**"/>
+			<exclude name="jetty-*/project-website/**"/>
+			<exclude name="jetty-*/webapps/**"/>
 		    </patternset>
 		</unzip>
 		<move todir="${misc.dir}/jetty" >
-			<fileset dir="${misc.dir}/jetty-6.1.22" />
+			<fileset dir="${misc.dir}/jetty-${jetty.version}" />
 		</move>
 		<mkdir dir="${misc.dir}/jetty/contexts"/>
 		<mkdir dir="${misc.dir}/jetty/webapps"/>
 	</target>
 
 	<target name="clean">
-		<delete dir="${misc.dir}/jetty*" />
+		<delete dir="${misc.dir}/jetty" />
+		<delete file="${misc.dir}/jetty.zip" />
 	</target>
 
     <!--
@@ -65,8 +67,11 @@
             LinShare Jetty packaging script
             *****************************************
             
-            To get a Jetty fully available distribution
+            To get a embedded Jetty distribution
             &gt; ant prepare-jetty
+
+            To clean
+            &gt; ant clean
             
 		</echo>
 	</target>
