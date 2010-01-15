@@ -12,6 +12,7 @@
     <format>zip</format>
   </formats>
   <fileSets>
+    <!-- Avoid putting unwaited files -->
     <fileSet>
       <directory>${project.basedir}/src</directory>
       <outputDirectory>src</outputDirectory>
@@ -22,17 +23,27 @@
       <fileMode>0644</fileMode>
       <directoryMode>0755</directoryMode>
     </fileSet>
+    <!-- Avoid putting jetty -->
+    <fileSet>
+      <directory>${project.basedir}/misc</directory>
+      <outputDirectory>misc</outputDirectory>
+      <useDefaultExcludes>true</useDefaultExcludes>
+      <excludes>
+        <exclude>jetty/**</exclude>
+        <exclude>jetty.zip</exclude>
+      </excludes>
+      <fileMode>0644</fileMode>
+    </fileSet>
     <fileSet>
       <directory>${project.basedir}</directory>
       <outputDirectory>.</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <includes>
-        <include>COPYING</include>
-        <include>INSTALL</include>
-        <include>LAYOUT</include>
-        <include>TODO</include>
-        <include>pom.xml</include>
+        <include>*</include>
       </includes>
+      <excludes>
+        <exclude>**/.*</exclude>
+      </excludes>
       <fileMode>0644</fileMode>
     </fileSet>
   </fileSets>

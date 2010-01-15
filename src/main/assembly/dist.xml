@@ -1,8 +1,4 @@
-<!--	Build the distribution archive for LinShare	-->
-
-<!--	TODO:
-			- Add Jetty
--->
+<!--	Build LinShare distribution archive with Jetty embedded	-->
 
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -15,15 +11,18 @@
 	<baseDirectory>linshare-${project.version}</baseDirectory>
 
 	<fileSets>
-		<!-- Include text files describing the project -->
 		<fileSet>
+			<!-- Include all toplevel files except .* -->
+			<directory>${project.basedir}</directory>
+			<outputDirectory>.</outputDirectory>
+			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
-				<include>${project.basedir}/README*</include>
-				<include>${project.basedir}/LICENSE*</include>
-				<include>${project.basedir}/CHANGES*</include>
-				<include>${project.basedir}/COPYING*</include>
-				<include>${project.basedir}/INSTALL*</include>
+				<include>*</include>
 			</includes>
+			<excludes>
+				<exclude>**/.*</exclude>
+			</excludes>
+			<fileMode>0644</fileMode>
 		</fileSet>
 			
 		<!-- Include the sample and etc directories -->
