@@ -51,7 +51,7 @@
 	</listeners>
 
 	<packs>
-		<pack name="Main Application" required="yes" installGroups="default">
+		<pack name="LinShare" required="yes" installGroups="default">
 			<description>LinShare, secure file sharing.</description>
 			<fileset dir="." targetdir="$INSTALL_PATH">
 				<include name="**" />

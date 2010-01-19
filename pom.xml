@@ -747,6 +747,7 @@
 				<execution>
 					<phase>package</phase>
 					<goals>
+						<goal>directory-single</goal>
 						<goal>single</goal>
 					</goals>
 				</execution>
