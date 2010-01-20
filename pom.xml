@@ -742,6 +742,8 @@
 					<descriptor>src/main/assembly/dist.xml</descriptor>
 					<descriptor>src/main/assembly/src.xml</descriptor>
 				</descriptors>
+				<!-- Required since default value is true (Maven 2.2-beta-3)-->
+				<ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
 			</configuration>
 			<executions>
 				<execution>
