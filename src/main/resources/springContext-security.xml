@@ -11,6 +11,7 @@
                    CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
                    PATTERN_TYPE_APACHE_ANT
                    /=httpSessionIntegrationFilter
+                   /assets/**=#NONE#
                    /css/**=#NONE#
                    /images/**=#NONE#
                    /videos/**=#NONE#
