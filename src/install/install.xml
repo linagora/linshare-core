@@ -57,6 +57,7 @@
 				<include name="**" />
 			</fileset>
 			<executable targetfile="$INSTALL_PATH/bin/jetty.sh" os="unix"/>
+			<executable targetfile="$INSTALL_PATH/linshare.sh" os="unix"/>
 		</pack>
 	</packs>
 
