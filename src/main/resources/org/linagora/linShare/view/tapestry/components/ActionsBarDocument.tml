@@ -14,8 +14,8 @@
 		<!-- Action > Delete -->
 		<li>
 			<t:actionLink t:id="deleteSubmitLink" t:zone="zoneTest"
-				class="listDocument" onClick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)">
-				<img src="${asset:context:images/icons/delete.png}" alt="" />
+				class="listDocument">
+				<img src="${asset:context:images/icons/delete.png}" alt="" onClick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)"/>
 				${message:components.listDocument.action.delete}
 				</t:actionLink>
 		</li>
@@ -35,8 +35,8 @@
 		<li>
 			<t:if t:test="userEnciphermentKeyGenerated">
 			<t:if t:test="cachePin.popupNeeded">
-				<t:actionLink t:id="encyphermentSubmit" t:zone="zoneTest" class="listDocument" onClick="window_passwordPopupSubmit.showCenter(true)">
-					<img src="${asset:context:images/icons/encrypt.png}" alt="" />
+				<t:actionLink t:id="encyphermentSubmit" t:zone="zoneTest" class="listDocument">
+					<img src="${asset:context:images/icons/encrypt.png}" alt="" onClick="window_passwordPopupSubmit.showCenter(true)"/>
 					${message:components.listDocument.action.encipherment}
 					</t:actionLink>
 				<t:parameter name="else">

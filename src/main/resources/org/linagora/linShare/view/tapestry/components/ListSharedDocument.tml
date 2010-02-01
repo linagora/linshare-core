@@ -70,8 +70,8 @@
 				<span class="creationDate">${creationDate},</span>${message:global.space}
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
 				<span class="sharedBy">${message:components.listSharedDocument.grid.sharedBy} 
-					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.login" onclick="userDetailsWindow.showCenter(true);">
-						${sharedBy}
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.login">
+						<span onclick="userDetailsWindow.showCenter(true);">${sharedBy}</span>
 					</t:actionlink>
 				</span>
 			</div>
@@ -83,11 +83,11 @@
 
 <!-- 			<t:parameter t:name="signedCell">
 				<t:if t:test="documentSigned">
-					<t:actionlink t:id="showSignature" zone="signatureDetailsZone" context="shareDocument.identifier" onclick="signatureDetailsWindow.showCenter(true);">
+					<t:actionlink t:id="showSignature" zone="signatureDetailsZone" context="shareDocument.identifier">
 						<t:if t:test="documentSignedByCurrentUser">	
-							<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listSharedDocument.picture.signatureon.title}"/>
+							<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listSharedDocument.picture.signatureon.title}" onclick="signatureDetailsWindow.showCenter(true);"/>
 						<t:parameter name="else">
-							<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listSharedDocument.picture.signatureother.title}"/>
+							<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listSharedDocument.picture.signatureother.title}" onclick="signatureDetailsWindow.showCenter(true);"/>
 						</t:parameter>
 						</t:if>
 					</t:actionlink>

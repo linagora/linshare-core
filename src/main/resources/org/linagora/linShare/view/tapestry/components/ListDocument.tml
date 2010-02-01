@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<t:container
+<t:container xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
 	<t:block id="comment">
@@ -30,7 +30,7 @@
 		</t:if>
 		
 		<t:grid t:id="documentGrid" source="documents" row="document" model="model"
-			exclude="fileName, ownerLogin, encrypted, identifier, size, type, shareActive, fileComment, downloaded, actions"
+			exclude="fileName, ownerLogin, encrypted, identifier, size, type, shareActive, fileComment, downloaded, actions, signed, encryptedAdd"
 			rowsPerPage="20"
 			rowIndex="prop:rowIndex">
 
@@ -80,11 +80,11 @@
 			<t:parameter t:name="filePropertiesCell">
 			<div>
 				<t:if t:test="${document.encrypted}">
-					<t:actionLink t:id="showWarningHttp" zone="${warningHttp.zoneClientId}" onClick="${warningHttp.javascriptOpenPopup}" context="${document.identifier}" t:type="${document.type}" t:title="${document.fileName}" class="fileName">
+					<t:actionLink t:id="showWarningHttp" zone="${warningHttp.zoneClientId}" context="${document.identifier}" t:type="${document.type}" t:title="${document.fileName}" class="fileName">
 <t:linkit.Comment><!-- 
 					<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 </t:linkit.Comment>
-					<span>${document.fileName}</span>
+					<span onClick="literal:${warningHttp.javascriptOpenPopup};">${document.fileName}</span>
 					</t:actionLink>
 					<t:parameter name="else">
 						<t:actionLink t:id="download" t:context="${document.identifier}" t:type="${document.type}" t:title="${document.fileName}" class="fileName">
@@ -105,38 +105,37 @@
 				<span class="creationDate">${creationDate},</span>${message:global.space}
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
 				<span class="ownerLogin">
-					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="document.ownerlogin" onclick="userDetailsWindow.showCenter(true);">
-						${document.ownerlogin}
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="document.ownerlogin">
+						<span  onclick="literal:userDetailsWindow.showCenter(true);">${document.ownerlogin}</span>
 					</t:actionlink>
 				</span>
 			</div>
 			</t:parameter>
 			
 			<t:parameter t:name="updateDocCell">
-				<t:actionLink t:id="updateDoc"  onClick="windowUpdateDocUpload.showCenter(true);" t:zone="zoneTest"
-					context="${document.identifier}">
-					<img src="${asset:context:images/icons/update.png}" alt="" title="${message:components.listDocument.picture.update.title}" />
+				<t:actionLink t:id="updateDoc"  t:zone="zoneTest" context="${document.identifier}">
+					<img src="${asset:context:images/icons/update.png}" alt="" title="${message:components.listDocument.picture.update.title}" 
+						onClick="literal:windowUpdateDocUpload.showCenter(true);" />
 				</t:actionLink>
 			</t:parameter>
 
 			<t:parameter t:name="fileEditCell">
-				<t:actionLink t:id="fileEditProperties"  onClick="${fileEdit.javascriptOpenPopup}" t:zone="${fileEdit.zoneClientId}"
-					context="${document.identifier}">
-					<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
+				<t:actionLink t:id="fileEditProperties" t:zone="${fileEdit.zoneClientId}" context="${document.identifier}">
+					<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" 
+						onClick="literal:${fileEdit.javascriptOpenPopup}" />
 				</t:actionLink>
 			</t:parameter>
 
 			<t:parameter t:name="sharedCell">
 				<t:if t:test="${document.encrypted}">
-					<t:actionLink t:id="showWarningShareBis" zone="${warningShare.zoneClientId}" onClick="${warningShare.javascriptOpenPopup}"
-						context="${document.identifier}">
+					<t:actionLink t:id="showWarningShareBis" zone="${warningShare.zoneClientId}" context="${document.identifier}">
 						<t:if t:test="${document.shared}">
 							<span t:type="chenillekit/Tooltip" title="${tooltipTitle}" value="${toolTipValue}" effect="appear">
-								<img src="${asset:context:images/icons/share-on.png}" alt="" title="${message:components.listDocument.picture.shareon.title}" />
+								<img src="${asset:context:images/icons/share-on.png}" alt="" title="${message:components.listDocument.picture.shareon.title}" onClick="literal:${warningShare.javascriptOpenPopup}" />
 							</span>
 						</t:if>
 						<t:if t:test="${document.shared}" negate="true">
-							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.shareoff.title}" />
+							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.shareoff.title}" onClick="literal:${warningShare.javascriptOpenPopup}"/>
 						</t:if>
 					</t:actionLink>
 				<t:parameter name="else">
@@ -157,11 +156,11 @@
 
 <!-- 			<t:parameter t:name="signedCell">
 				<t:if t:test="documentSigned">
-					<t:actionlink t:id="showSignature" zone="signatureDetailsZone"  context="document.identifier" onclick="signatureDetailsWindow.showCenter(true);">
+					<t:actionlink t:id="showSignature" zone="signatureDetailsZone"  context="document.identifier">
 						<t:if t:test="documentSignedByCurrentUser">	
-							<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listDocument.picture.signatureon.title}" />
+							<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listDocument.picture.signatureon.title}" onclick="signatureDetailsWindow.showCenter(true);"/>
 						<t:parameter name="else">
-							<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listDocument.picture.signatureother.title}" />
+							<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listDocument.picture.signatureother.title}" onclick="signatureDetailsWindow.showCenter(true);"/>
 						</t:parameter>
 						</t:if>
 					</t:actionlink>
@@ -177,11 +176,11 @@
 					<t:if t:test="cachePin.popupNeeded">
 						<t:actionLink
 							t:id="enciphermentIcon" context="${document.identifier}" t:zone="zoneTest"
-							class="listDocument" onClick="window_passwordPopup.showCenter(true)">
+							class="listDocument" >
 							<t:if t:test="${document.encrypted}">
-									<img src="${asset:context:images/icons/encrypt-on.png}" alt="" title="${message:components.listDocument.picture.encrypton.title}" />
+									<img src="${asset:context:images/icons/encrypt-on.png}" alt="" title="${message:components.listDocument.picture.encrypton.title}" onClick="window_passwordPopup.showCenter(true)"/>
 								<t:parameter name="else">
-									<img src="${asset:context:images/icons/encrypt-off.png}" alt="" title="${message:components.listDocument.picture.encryptoff.title}" />
+									<img src="${asset:context:images/icons/encrypt-off.png}" alt="" title="${message:components.listDocument.picture.encryptoff.title}" onClick="window_passwordPopup.showCenter(true)"/>
 								</t:parameter>
 							</t:if>
 						</t:actionLink>

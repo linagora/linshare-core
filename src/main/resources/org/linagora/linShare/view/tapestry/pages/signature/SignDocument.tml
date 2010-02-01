@@ -73,7 +73,9 @@
 
 			<t:form>
 				<t:textfield t:id="signContent"  style="display:none"/>		
-				<t:linkSubmit t:id="sign" onclick="signature();" title="${message:pages.signature.signdocument.button.sign.title}"><img src="${asset:context:images/icons/sign.png}" />${message:pages.signature.signdocument.button.sign}</t:linkSubmit>&nbsp;
+				<t:linkSubmit t:id="sign" title="${message:pages.signature.signdocument.button.sign.title}">
+					<img src="${asset:context:images/icons/sign.png}" onclick="signature();"/>${message:pages.signature.signdocument.button.sign}
+				</t:linkSubmit>&nbsp;
 				<t:linkSubmit t:id="cancel">${message:pages.signature.signdocument.button.cancel}</t:linkSubmit>
 			</t:form>
 
