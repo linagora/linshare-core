@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.tapestry5.annotations.Property;
 import org.linagora.linShare.core.domain.constants.TimeUnit;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
