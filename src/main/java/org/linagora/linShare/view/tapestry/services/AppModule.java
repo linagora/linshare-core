@@ -100,7 +100,7 @@ public class AppModule
 
  	 //binder.bind(Marshaller.class,DocumentMarshaller.class).withId("DocumentMarshaller");
  	
-        // binder.bind(MyServiceInterface.class, MyServiceImpl.class);
+     //binder.bind(MyServiceInterface.class, MyServiceImpl.class);
         
         // Make bind() calls on the binder object to define most IoC services.
         // Use service builder methods (example below) when the implementation
@@ -235,7 +235,7 @@ public class AppModule
                     throws IOException
             {
                 long startTime = System.currentTimeMillis();
-
+				log.info(String.format("%s (XHR:%s) : %s", request.getMethod(), request.isXHR(), request.getPath()));
                 try
                 {
                     // The responsibility of a filter is to invoke the corresponding method
