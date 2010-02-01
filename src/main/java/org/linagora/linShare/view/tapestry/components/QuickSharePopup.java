@@ -36,7 +36,6 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -45,6 +44,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
@@ -90,10 +90,10 @@ public class QuickSharePopup{
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-	@ApplicationState
+	@SessionState
 	private UserVo userVo;
 
-	@ApplicationState
+	@SessionState
 	private ShareSessionObjects shareSessionObjects;
 	
 
@@ -208,7 +208,6 @@ public class QuickSharePopup{
     @Component
     private Zone reloadingZone;
 
-	@SuppressWarnings("unused")
 	@Component(parameters = {"style=bluelighting", "show=false","width=650", "height=550", "closable=true"})
 	private WindowWithEffects quickShareWindow;
 
