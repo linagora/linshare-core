@@ -22,9 +22,9 @@ objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
 objectClass: top
-sn: Name
-givenName: GivenName
-cn: Common Name
+sn: Doe
+givenName: John
+cn: Doe, John
 userPassword: password1
 mail: user1@linpki.org
 
@@ -34,8 +34,8 @@ objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
 objectClass: top
-sn: Name
-givenName: GivenName
-cn: Common Name
+sn: Smith
+givenName: Jane
+cn: Smith, Jane
 userPassword: password2
 mail: user2@linpki.org
