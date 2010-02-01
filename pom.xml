@@ -663,6 +663,7 @@
                 <executions>
                     <execution>
                         <id>announcement-mail</id>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>announcement-mail</goal>
                         </goals>
