@@ -53,5 +53,13 @@
 			<fileMode>0755</fileMode>
 			<directoryMode>0755</directoryMode>
 		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/misc</directory>
+			<outputDirectory>.</outputDirectory>
+			<includes>
+				<include>linshare.sh</include>
+			</includes>
+			<fileMode>0755</fileMode>
+		</fileSet>
 	</fileSets>
 </assembly>
