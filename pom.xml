@@ -26,10 +26,6 @@
         <url>http://build.linid.org/hudson/view/LinShare/</url>
     </ciManagement>
     <scm>
-        <developerConnection>scm:svn+ssh://svn.linid.org/var/svn/linshare/trunk/linshare/</developerConnection>
-        <connection>scm:http://svn.linid.org/svn/linshare/trunk/linshare/</connection>
-        <url>http://linpki.org/repositories/show/linshare</url>
-        <tag>trunk</tag>
     </scm>
     <organization>
         <name>LINAGORA</name>
@@ -99,7 +95,7 @@
         <dependency>
             <groupId>org.chenillekit</groupId>
             <artifactId>chenillekit-tapestry</artifactId>
-            <version>1.0.0</version>
+            <version>1.2.0</version>
         </dependency>
         
         <dependency>
@@ -464,12 +460,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.opends</groupId>
-            <artifactId>opends-core</artifactId>
-            <version>2.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.5.4</version>
@@ -552,7 +542,12 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-    </dependencies>
+	<dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.2.124</version>
+        </dependency>
+	</dependencies>
     
     <build>
         <finalName>linshare</finalName>
@@ -888,7 +883,15 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+       <repository>
+            <id>Maven Central Repository</id>
+            <url>http://repo1.maven.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
+
     
     <distributionManagement>
         <repository>
