@@ -295,4 +295,4 @@
 
     create sequence hibernate_sequence;
 
-    insert into linshare_version (id, description) values (6, 'LinShare version 0.6');
+    insert into linshare_version (id, description) values (7, 'LinShare version 0.7');
