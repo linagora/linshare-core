@@ -118,4 +118,10 @@
         <constructor-arg ref="recipientFavouriteRepository"/>
     </bean>
     
+    <bean name="statisticsService" class="org.linagora.linShare.core.service.impl.StatisticsServiceImpl">
+        <constructor-arg ref="userRepository"/>
+        <constructor-arg ref="documentRepository"/>
+        <constructor-arg ref="logEntryRepository"/>
+    </bean>
+    
 </beans>
