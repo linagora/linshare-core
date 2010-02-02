@@ -26,6 +26,10 @@
         <url>http://build.linid.org/hudson/view/LinShare/</url>
     </ciManagement>
     <scm>
+        <developerConnection>scm:svn+ssh://svn.linid.org/var/svn/linshare/trunk/linshare/</developerConnection>            
+        <connection>scm:http://svn.linid.org/svn/linshare/trunk/linshare/</connection>                                     
+        <url>http://linpki.org/repositories/show/linshare</url>                                                            
+        <tag>trunk</tag>   
     </scm>
     <organization>
         <name>LINAGORA</name>
@@ -454,9 +458,9 @@
             <version>2.2.0</version>
         </dependency>
         <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>1.8.0.7</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.2.126</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -547,7 +551,13 @@
                 <artifactId>h2</artifactId>
                 <version>1.2.124</version>
         </dependency>
-	</dependencies>
+        <dependency>                                                                                                       
+            <groupId>org.opends</groupId>                                                                                  
+            <artifactId>opends-core</artifactId>                                                                           
+            <version>2.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     
     <build>
         <finalName>linshare</finalName>
