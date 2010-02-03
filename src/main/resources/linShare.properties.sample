@@ -94,3 +94,6 @@ linshare.flash.allowed.agents=Windows
 #virusscanner.clamav.host=localhost
 #virusscanner.clamav.port=3310
 
+# Home for jackrabbit files
+linshare.files.directory=/home/you/tmp/repository
+
