@@ -58,8 +58,7 @@
 			persistence manager of the workspace:
 			class: FQN of class implementing the PersistenceManager interface
 		-->
-		<PersistenceManager
-			class="${linshare.db.persistence_manager}">
+		<PersistenceManager class="${linshare.db.persistence_manager}">
 		<param name="url" value="${linshare.db.url}_data" />
 		<param name="user" value="${linshare.db.username}" />
 		<param name="password" value="${linshare.db.password}" />
