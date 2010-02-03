@@ -20,6 +20,10 @@
 			</includes>
 			<excludes>
 				<exclude>**/.*</exclude>
+				<exclude>*.*</exclude>
+				<exclude>misc</exclude>
+				<exclude>src</exclude>
+				<exclude>target</exclude>
 			</excludes>
 			<fileMode>0644</fileMode>
 		</fileSet>
@@ -27,17 +31,17 @@
 		<!-- Include the sample and etc directories -->
 		<fileSet>
 			<directory>${project.basedir}/target</directory>
-			<outputDirectory>webapps</outputDirectory>
+			<outputDirectory>./jetty/webapps</outputDirectory>
 			<includes><include>linshare.war</include></includes>
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/misc</directory>
-			<outputDirectory>contexts</outputDirectory>
+			<outputDirectory>./jetty/contexts</outputDirectory>
 			<includes><include>jetty-context.xml</include></includes>
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/misc/jetty</directory>
-			<outputDirectory>.</outputDirectory>
+			<outputDirectory>./jetty</outputDirectory>
 			<excludes>
 				<exclude>bin/*.sh</exclude>
 			</excludes>
@@ -46,7 +50,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/misc/jetty</directory>
-			<outputDirectory>.</outputDirectory>
+			<outputDirectory>./jetty</outputDirectory>
 			<includes>
 				<include>bin/*.sh</include>
 			</includes>
@@ -60,6 +64,14 @@
 				<include>linshare.sh</include>
 			</includes>
 			<fileMode>0755</fileMode>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/src/test/resources</directory>
+			<outputDirectory>etc</outputDirectory>
+			<includes>
+				<include>linShare.properties</include>
+			</includes>
+			<fileMode>0644</fileMode>
 		</fileSet>
 	</fileSets>
 </assembly>
