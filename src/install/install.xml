@@ -32,6 +32,9 @@
 	<resources>
 		<res id="InfoPanel.info" src="README"/>
 		<res id="LicencePanel.licence" src="COPYING"/>
+		<res id="Installer.image" src="resources/linshare-logo.png" />
+<!--		<res id="Win_shortcutSpec.xml" src="resources/shortcut_win.xml" />
+		<res id="Unix_shortcutSpec.xml" src="resources/shortcut_unix.xml" /> -->
 	</resources>
 
 	<panels>
@@ -39,6 +42,7 @@
 		<panel classname="InfoPanel"/>
 		<panel classname="LicencePanel"/>
 		<panel classname="TargetPanel"/>
+<!--		<panel classname="ShortcutPanel"/> -->
 		<panel classname="SummaryPanel" />
 		<panel classname="InstallPanel" />
 		<panel classname="SimpleFinishPanel" />

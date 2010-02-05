@@ -67,9 +67,10 @@
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/src/test/resources</directory>
-			<outputDirectory>etc</outputDirectory>
+			<outputDirectory>jetty/resources</outputDirectory>
 			<includes>
 				<include>linShare.properties</include>
+				<include>*.xml</include>
 			</includes>
 			<fileMode>0644</fileMode>
 		</fileSet>

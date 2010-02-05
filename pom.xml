@@ -100,6 +100,12 @@
             <groupId>org.chenillekit</groupId>
             <artifactId>chenillekit-tapestry</artifactId>
             <version>1.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javassist</artifactId>
+                    <groupId>jboss</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
@@ -824,6 +830,64 @@
             </plugin>
         </plugins>
     </reporting>
+    <profiles>
+    	<profile>
+    		<id>default</id>
+    		<activation>
+    			<activeByDefault>true</activeByDefault>
+    		</activation>
+    	</profile>
+    	<profile>
+    		<id>sample</id>
+    		<activation>
+    			<property>
+    				<name>target</name>
+    				<value>sample</value>
+    			</property>
+    		</activation>
+    		<build>
+    			<resources>
+    				<resource>
+    					<directory>src/test/resources</directory>
+    				</resource><resource>
+    					<directory>src/test/java</directory>
+    					<excludes>
+    						<exclude>**/*.java</exclude>
+    					</excludes>
+    				</resource>
+    			</resources>
+    			<plugins>
+    				<plugin>
+    					<groupId>org.codehaus.mojo</groupId>
+    					<artifactId>build-helper-maven-plugin</artifactId>
+    					<version>1.3</version>
+    					<executions>
+    						<execution>
+    							<id>add-source</id>
+    							<phase>generate-sources</phase>
+    							<inherited>false</inherited>
+    							<goals>
+    								<goal>add-source</goal>
+    							</goals>
+    							<configuration>
+    							    <sources>
+    							        <source>src/test/java</source>
+    							    </sources>
+    							</configuration>
+    						</execution>
+    					</executions>
+    				</plugin>
+    			</plugins>
+    		</build>
+    		<dependencies>
+    			<dependency>
+    				<groupId>org.opends</groupId>
+    				<artifactId>opends-core</artifactId>
+    				<version>2.0</version>
+    			</dependency>
+    		</dependencies>
+    	</profile>
+    </profiles>
     
     <repositories>
         <!--
