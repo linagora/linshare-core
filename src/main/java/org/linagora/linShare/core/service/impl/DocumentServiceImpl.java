@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.core.service.impl;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +33,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
+import org.linagora.LinThumbnail.FileResource;
+import org.linagora.LinThumbnail.FileResourceFactory;
+import org.linagora.LinThumbnail.utils.Constants;
+import org.linagora.LinThumbnail.utils.ImageUtils;
 import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.constants.Reason;
@@ -199,9 +206,11 @@ public class DocumentServiceImpl implements DocumentService {
 		// Copy the input stream to a temporary file for safe use
 		File tempFile = null;
 		BufferedOutputStream bof = null;
+		String extension = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
+		System.out.println(extension);
 
 		try {
-			tempFile = File.createTempFile("linshare", null);
+			tempFile = File.createTempFile("linshare", extension); //we need to keep the extension for the thumbnail generator
 			tempFile.deleteOnExit();
 
 			if (log.isDebugEnabled()) {
@@ -257,6 +266,47 @@ public class DocumentServiceImpl implements DocumentService {
 					"File contains virus", extras);
 		}
 
+		//create and insert the thumbnail into the JCR
+		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
+		FileResource fileResource = fileResourceFactory.getFileResource(tempFile);
+		InputStream fisThmb = null;
+		BufferedImage bufferedImage=null;
+		File tempThumbFile = null;
+		String uuidThmb;
+		try {
+			bufferedImage = fileResource.generateThumbnailImage();
+			fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
+			tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
+			tempThumbFile.createNewFile();
+			
+			if (bufferedImage!=null)
+				ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
+		
+			if (log.isDebugEnabled()) {
+				log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
+			}
+			String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
+			
+			uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
+					tempThumbFile.getName(), mimeTypeThb);
+			
+		} catch (FileNotFoundException e1) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,
+					"couldn't open inputStream on the temporary file");
+		} catch (IOException e) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,
+			e.getMessage());
+		} finally {
+
+			try {
+				if (fisThmb != null)
+					fisThmb.close();
+			} catch (IOException e) {
+				// Do nothing Happy java :)
+			}
+			tempThumbFile.delete();
+		}
+		
 		// insert the file into JCR
 		FileInputStream fis = null;
 		String uuid;
@@ -264,7 +314,7 @@ public class DocumentServiceImpl implements DocumentService {
 			fis = new FileInputStream(tempFile);
 
 			if (log.isDebugEnabled()) {
-				log.debug("5)start insert in jack rabbit:" + fileName);
+				log.debug("5.2)start insert of the document in jack rabbit:" + fileName);
 			}
 
 			uuid = fileSystemDao.insertFile(owner.getLogin(), fis, size,
@@ -290,6 +340,7 @@ public class DocumentServiceImpl implements DocumentService {
 			Document aDoc = new Document(uuid, fileName, mimeType,
 					new GregorianCalendar(), new GregorianCalendar(), owner,
 					aesencrypted, false, size);
+			aDoc.setThmbUUID(uuidThmb);
 
 			if (log.isDebugEnabled()) {
 				log.debug("6)start insert in database file uuid:" + uuid);
@@ -487,6 +538,17 @@ public class DocumentServiceImpl implements DocumentService {
 
 	public Document getDocument(String uuid) {
 		return documentRepository.findById(uuid);
+	}
+
+	public InputStream getDocumentThumbnail(String uuid) {
+		Document doc = documentRepository.findById(uuid);
+		String thmbUUID = doc.getThmbUUID();
+
+		if (thmbUUID!=null && thmbUUID.length()>0) {
+			InputStream stream = fileSystemDao.getFileContentByUUID(thmbUUID);
+			return stream;
+		}
+		return null;
 	}
 
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor)

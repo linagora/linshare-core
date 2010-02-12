@@ -115,9 +115,9 @@ public class ActionsBarDocument {
 	/***************************
 	 * Events 
 	 ***************************/
-	public void onActionFromDeleteSubmitLink() {
-		//ActionFromBarDocument actionbutton = ActionFromBarDocument.DELETE_ACTION;
-	}
+//	public void onActionFromDeleteSubmitLink() {
+//		//ActionFromBarDocument actionbutton = ActionFromBarDocument.DELETE_ACTION;
+//	}
 	
 	public void onActionFromEncyphermentSubmit() {
 		//ActionFromBarDocument actionbutton = ActionFromBarDocument.ENCYPHERMENT_ACTION;

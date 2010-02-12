@@ -25,9 +25,10 @@
         size int8,
         file_comment text,
         owner_id int8,
+        thmb_uuid varchar(255),
         primary key (document_id)
     );
-
+	
     create table linshare_parameter (
         parameter_id int8 not null,
         file_size_max int8,

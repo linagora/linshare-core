@@ -167,4 +167,11 @@ public interface DocumentFacade {
 	public void renameFile(String uuid, String newName);
     
     public void  updateFileProperties(String uuid, String newName, String fileComment);
+
+    /**
+     * Get the thumbnail (InputStream) of the document
+     * @param uuid the identifier of the document
+     * @return InputStream of the thumbnail
+     */
+    public InputStream getDocumentThumbnail(String uuid);
 }

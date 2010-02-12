@@ -62,10 +62,11 @@
 
 			<t:parameter t:name="filePropertiesCell">
 			<div class="fileProperties">
-				<t:actionLink t:id="download" t:context="${shareDocument.identifier}" t:type="${shareDocument.type}"  t:title="${shareDocument.fileName}" class="fileName">
+				<span class="thumbnail"><div class="thumbnail_content"><img src="${thumbnailPath}" /><p>${shareDocument.fileName}</p></div>
+				<t:actionLink t:id="download" t:context="${shareDocument.identifier}" t:type="${shareDocument.type}" class="fileName">
 					<span t:type="ck/TrimmedString" maxLength="42" trimPos="right"
 						value="shareDocument.fileName" />
-				</t:actionLink>
+				</t:actionLink></span>
 				<br/>
 				<span class="creationDate">${creationDate},</span>${message:global.space}
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}

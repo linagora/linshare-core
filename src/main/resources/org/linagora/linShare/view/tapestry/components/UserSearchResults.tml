@@ -124,8 +124,8 @@
 		<t:if test="users">
 			<t:if test="users.empty" negate="true">
 				<div id="actionListUser" style="display:none">
-					<t:linkSubmit t:event="share" class="listDocument" title="${message:components.userSearch.action.share}">
-					<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.userSearch.action.share}</t:linkSubmit>
+					<t:eventLink t:event="share" class="listDocument" title="${message:components.userSearch.action.share}">
+					<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.userSearch.action.share}</t:eventLink>
 				</div>
 			</t:if>
 		</t:if>

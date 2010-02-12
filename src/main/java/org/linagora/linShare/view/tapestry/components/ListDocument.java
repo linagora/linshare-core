@@ -20,7 +20,12 @@
 */
 package org.linagora.linShare.view.tapestry.components;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,14 +34,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -52,6 +61,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.services.Response;
+import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
@@ -75,7 +86,9 @@ import org.slf4j.LoggerFactory;
 
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = { "ListDocument.js" })
+@IncludeJavaScriptLibrary(value = { "ListDocument.js","jquery/jquery-1.3.1.min.js",
+		"jquery/jquery.lightbox-0.5.min.js" })
+@IncludeStylesheet("jquery/jquery.lightbox-0.5.css")
 public class ListDocument {
 
 	/***************************************************************************
@@ -156,7 +169,11 @@ public class ListDocument {
 	private SecuredUrlFacade securedUrlFacade;
 
 	@Inject
-	private ComponentResources componentResources;
+	private ComponentResources componentResources;  
+	
+	@Inject
+	private Response response;
+
 
 	@InjectComponent
 	private UserDetailsDisplayer userDetailsDisplayer;
@@ -928,6 +945,43 @@ public class ListDocument {
 							messages
 									.get("components.listDocument.passwordPopup.error.message"));
 			return passwordPopupSubmit.formFail();
+		}
+	}
+
+	public Link getThumbnailPath() {
+        return componentResources.createEventLink("thumbnail", document.getIdentifier());
+	}
+	
+	public void onThumbnail(String docID) {
+		InputStream stream=null;
+		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,
+				docID);
+			stream = documentFacade.getDocumentThumbnail(currentDocumentVo.getIdentifier());
+			if (stream==null) return;
+		OutputStream os = null;
+			response.setDateHeader("Expires", 0);
+			response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+			response.setHeader("Cache-Control", "post-check=0, pre-check=0");
+			response.setHeader("Pragma", "no-cache");
+			try {
+			os = response.getOutputStream("image/png");
+				BufferedImage bufferedImage=ImageIO.read(stream);
+				if (bufferedImage!=null)
+					ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, os);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		 finally {
+
+			try {
+				if (os!=null) {
+					os.flush();
+					os.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 	}
 
