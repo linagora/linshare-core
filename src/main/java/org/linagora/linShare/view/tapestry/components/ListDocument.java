@@ -21,8 +21,6 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -45,7 +43,6 @@ import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
-import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -86,9 +83,7 @@ import org.slf4j.LoggerFactory;
 
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = { "ListDocument.js","jquery/jquery-1.3.1.min.js",
-		"jquery/jquery.lightbox-0.5.min.js" })
-@IncludeStylesheet("jquery/jquery.lightbox-0.5.css")
+@IncludeJavaScriptLibrary(value = { "ListDocument.js"})
 public class ListDocument {
 
 	/***************************************************************************
