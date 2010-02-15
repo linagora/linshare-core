@@ -97,3 +97,14 @@ linshare.flash.allowed.agents=Windows
 # Home for jackrabbit files
 linshare.files.directory=/home/you/tmp/repository
 
+
+#******************** SSO 
+sso.button.hide=true
+# extra config for CAS sso (disable springContext-security and use configuration springContext-securityCAS.xml)
+sso.cas.url=http://localhost:8081/cas-server-webapp-3.3.5
+sso.cas.url.login=http://localhost:8081/cas-server-webapp-3.3.5/login
+sso.cas.url.serviceId=http://localhost:8080/linshare/j_spring_cas_security_check
+
+
+
+

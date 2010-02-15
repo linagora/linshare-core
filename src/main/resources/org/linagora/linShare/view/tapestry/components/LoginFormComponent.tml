@@ -8,6 +8,7 @@
 		</div>
 	<t:parameter name="else">
 		<t:pagelink page="password/reset">${message:pages.index.link.password}</t:pagelink>
+
         <form method="post" action="${request.contextPath}/j_security_check">
 			<label for="login">${message:pages.login.form.loginLabel}</label>
 				<input id="login" type="text" name="login" title="${message:pages.login.form.loginLabel}"/>
@@ -15,6 +16,11 @@
 				<input id="password" type="password" name="password" title="${message:pages.login.form.passwordLabel}"/>
 			<input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel}"/>
         </form>
+		
+		<t:if t:test="ssoButtonHide" t:negate="true">
+		<t:pagelink page="sso"><form><input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel.internal}"/></form></t:pagelink>
+        </t:if>
+        
         <t:if t:test="loginFailed">
             <div class="t-error">
                 <ul><li>${message:pages.login.userNotDefined}</li></ul>

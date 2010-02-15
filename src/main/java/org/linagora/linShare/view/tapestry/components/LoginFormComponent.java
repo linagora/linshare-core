@@ -20,9 +20,10 @@
 */
 package org.linagora.linShare.view.tapestry.components;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 import org.linagora.linShare.core.domain.vo.UserVo;
 
@@ -46,7 +47,7 @@ public class LoginFormComponent {
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
 	@SuppressWarnings("unused")
-	@ApplicationState
+	@SessionState
 	private UserVo userDetailsVo;
 
 	private boolean userDetailsVoExists;
@@ -56,6 +57,12 @@ public class LoginFormComponent {
 
     @Property
     private String password;
+    
+    
+	@Inject @Symbol("sso.button.hide")
+	@Property
+	private boolean ssoButtonHide;
+    
 
     /* ***********************************************************
      *                   Event handlers&processing
