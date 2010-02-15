@@ -26,101 +26,101 @@ import javax.management.MXBean;
 public interface LinshareStats {
 	/**
 	 * Get the number of internal users
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbInternalUser();
 	/**
 	 * Get the number of guest users
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbExternalUser();
 	/**
 	 * Get the total number of users
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbUser();
 	/**
 	 * Get the total number of files
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbFiles();
 	/**
 	 * Get the number of files of size between minSize and maxSize.
 	 * @param minSize minimum file size in bytes
 	 * @param maxSize maximum file size in bytes
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbFiles(int minSize, int maxSize);
 	/**
 	 * Get the number of shared files
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbSharedFiles();
 	/**
 	 * Get the number of shared files of size between minSize and maxSize.
 	 * @param minSize minimum file size in bytes
 	 * @param maxSize maximum file size in bytes
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbSharedFiles(int minSize, int maxSize);
 	/**
 	 * Get the number of not shared files
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbNotSharedFiles();
 	/**
 	 * Get the number of not shared files of size between minSize and maxSize.
 	 * @param minSize minimum file size in bytes
 	 * @param maxSize maximum file size in bytes
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbNotSharedFiles(int minSize, int maxSize);
 	/**
 	 * Get the number of ciphered files
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbCipheredFiles();
 	/**
 	 * Get the number of ciphered files of size between minSize and maxSize.
 	 * @param minSize minimum file size in bytes
 	 * @param maxSize maximum file size in bytes
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbCipheredFiles(int minSize, int maxSize);
 	/**
 	 * Get the number of not ciphered files
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbNotCipheredFiles();
 	/**
 	 * Get the number of not ciphered files of size between minSize and maxSize.
 	 * @param minSize minimum file size in bytes
 	 * @param maxSize maximum file size in bytes
-	 * @return
+	 * @return an integer value in a IntStatistique object
 	 */
 	public IntStatistique getNbNotCipheredFiles(int minSize, int maxSize);
 	/**
 	 * Get the upload volume in bytes of the days between minDate and maxDate
 	 * @param minDate in format dd/mm/yyyy
 	 * @param maxDate in format dd/mm/yyyy
-	 * @return
+	 * @return a long value in a LongStatistique object
 	 */
 	public LongStatistique getUploadVolume(String minDate, String maxDate);
 	/**
 	 * Get the download volume in bytes of the days between minDate and maxDate
 	 * @param minDate in format dd/mm/yyyy
 	 * @param maxDate in format dd/mm/yyyy
-	 * @return
+	 * @return a long value in a LongStatistique object
 	 */
 	public LongStatistique getDownloadVolume(String minDate, String maxDate);
 	/**
 	 * Get today's upload volume in bytes
-	 * @return
+	 * @return a long value in a LongStatistique object
 	 */
 	public LongStatistique getTodaysUploadVolume();
 	/**
 	 * Get today's download volume in bytes
-	 * @return
+	 * @return a long value in a LongStatistique object
 	 */
 	public LongStatistique getTodaysDownloadVolume();
 }
