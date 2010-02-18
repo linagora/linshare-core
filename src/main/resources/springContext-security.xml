@@ -15,8 +15,8 @@
                    /css/**=#NONE#
                    /images/**=#NONE#
                    /videos/**=#NONE#
-                   /help/**=#NONE#
-                   /password/**=#NONE#
+                   /**/help/**=#NONE#
+                   /**/password/**=#NONE#
                    /**/*.js=#NONE#
                    /**/*.css=#NONE#
                    /**/*.swf=#NONE#
