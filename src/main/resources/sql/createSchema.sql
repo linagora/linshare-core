@@ -167,7 +167,17 @@
         id int8 not null,
         description varchar(255) not null
     );
-
+    
+    create table linshare_cookie (
+        cookie_id int8 not null,
+        identifier varchar(64) not null unique,
+        user_name varchar(255) not null,
+        value varchar(64) not null,
+        last_use timestamp not null,
+        primary key (cookie_id)
+	);
+	
+	create index index_cookie_identifier on linshare_cookie (identifier);
 
     create index index_document_name on linshare_document (name);
 

@@ -52,6 +52,7 @@ public class DaoAuthProvider implements UserDetailsService {
 
         UserVo userVo = userFacade.findUser(username);
         String password = userFacade.getPassword(username);
+        if (!userVo.isGuest() && password==null) password=""; //si utilisateur ldap
 
         if (userVo == null || password == null || Role.SYSTEM.equals(userVo.getRole())) {
             throw new UsernameNotFoundException("User not found");

@@ -64,8 +64,14 @@ strong {
 #hd {
 	margin: 0em;
 	padding: 0em .5em;
-	height: 95px;
+	height: 115px; /*95px*/
 	background: #C8DCE6 url("../images/theme0/bg-header.png") repeat-x;
+}
+
+#hd form p {
+	margin-top: 3px;	
+	margin-bottom: 3px;	
+	color: #000;
 }
 
 
