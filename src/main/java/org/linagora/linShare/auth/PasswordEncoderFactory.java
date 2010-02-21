@@ -25,8 +25,8 @@ import org.springframework.security.providers.encoding.PasswordEncoder;
 import org.springframework.security.providers.encoding.PlaintextPasswordEncoder;
 import org.springframework.security.providers.encoding.ShaPasswordEncoder;
 
-/** Returns an instance of password encoder.
- *
+/** 
+ * Returns an instance of password encoder.
  */
 public class PasswordEncoderFactory {
 
