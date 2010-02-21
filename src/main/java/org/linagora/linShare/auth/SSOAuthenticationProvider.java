@@ -94,7 +94,7 @@ public class SSOAuthenticationProvider extends LdapAuthenticationProvider {
 				}};
 			// Get role
 			GrantedAuthorityImpl[] granted = new GrantedAuthorityImpl[] {
-					new GrantedAuthorityImpl("ROLE_ANONYMOUS")
+					new GrantedAuthorityImpl("ROLE_AUTH")
 			};
 			
 			// Set fake user for pre-authentication
