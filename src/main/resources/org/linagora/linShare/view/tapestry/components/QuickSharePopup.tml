@@ -82,7 +82,7 @@
                     <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
                 </a>
 				<t:actionlink t:id="cancelQuickShare" class="button">
-                    <span onclick='Windows.close("${JSONId}")'>${message:global.button.cancel}</span>
+                    <span onclick='Windows.close("${JSONId}")'><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span>
                 </t:actionlink>
 			</div>
 

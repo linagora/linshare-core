@@ -172,7 +172,7 @@ public class Index {
 	}
 	
 	
-	void onSelectedFromReset() { reset = true; }
+	Object onActionFromReset() { reset = true; return onSuccessFromFormReport();}
 	
 	public void onValidateFormFromFormReport() {
 		

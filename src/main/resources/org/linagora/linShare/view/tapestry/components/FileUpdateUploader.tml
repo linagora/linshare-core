@@ -6,7 +6,7 @@
         		<t:linkit.uploadcomponent t:id="fileUpdateUploadComponent" divid="literal:formUpdateUpload" leftspace="userFreeSpace" maxfilesize="maxFileSize"/>
     		</div>
     		<div class="button">
-    			<a href="#" onclick="location.reload(true)" style="" class="button"><span><img src="${asset:context:images/icons/edit-redo.png}" alt=""/> ${message:pages.files.closeUploadPopup}
+    			<a href="#" onclick="windowUpdateDocUpload.close();" style="" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}
 			</span></a></div>
 		</div>
 

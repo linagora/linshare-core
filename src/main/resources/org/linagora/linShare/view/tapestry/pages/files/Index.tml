@@ -80,8 +80,9 @@
 	<!-- Uploader popup -->
 	<div t:id="windowUpload">
 		<t:fileUploader divId="literal:sendFiles" showsendbutton="literal:true"/>
-		<div class="closeUploadPopup">
-			<a id="closeUploadPopupNow" href="#" onclick='location.reload(true)' style="visibility:hidden">${message:pages.files.closeUploadPopup}</a>
+		<div class="button">
+		<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}
+			</span></a>
 		</div>
 	</div>
 

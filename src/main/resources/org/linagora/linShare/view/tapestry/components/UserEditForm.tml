@@ -49,7 +49,11 @@
 
 			<hr />
 
-            <t:submit value="message:global.button.update" class="edit-form-field"/>
+			<div class="button">
+				<t:linkSubmit class="button">
+                <span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:global.button.edit}</span></t:linkSubmit>
+				<a href="#" onclick="userEditWindow.close();" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+			</div>
 
         </t:form>
     </div>

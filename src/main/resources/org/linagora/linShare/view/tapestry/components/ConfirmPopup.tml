@@ -8,7 +8,7 @@
 	
 		<div class="button">
 			<t:actionLink t:id="confirm" class="button"><span>${message:global.button.yes}</span></t:actionLink>
-			<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span>${message:global.button.no}</span></a>
+			<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
 		</div>
 
 	</div>

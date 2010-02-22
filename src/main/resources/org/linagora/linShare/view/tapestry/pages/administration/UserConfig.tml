@@ -24,10 +24,14 @@
 					<t:select t:model="model" t:id="currentLocale" t:value="currentLocale" blankoption="never"/>
 					</td>
 					<td class="field_button">
-					<t:submit  value="message:global.button.update" class="edit-form-field"/>
+					
+<!--					<t:submit  value="message:global.button.update" class="edit-form-field"/>-->
 					</td>
 					</tr>
 					</table>
+					<br/>
+					<a href="#" onclick="configUserform.submit();" class="button"><span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:global.button.update}</span></a>
+					
 					<br/>
 				</t:form>
 

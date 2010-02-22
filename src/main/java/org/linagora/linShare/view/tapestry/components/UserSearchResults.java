@@ -183,6 +183,7 @@ public class UserSearchResults {
         if (!userShareList.contains(user_)) {
             userShareList.add(user_);
         }
+        shareSessionObjects.setMultipleSharing(true);
     }
 
     

@@ -763,7 +763,8 @@ strong {
 #searchWidget > div form input[type="text"]:focus {
 	background-color: #FFF;
 }
-#searchWidget > div form input[type="submit"] {
+#searchWidget > div form input[type="submit"],
+#shareWidget > div form input[type="submit"] {
 	padding: 2px 7px 1px 20px !important;
 	background: #C8DCE6 url("../images/theme0/magnify-small.png") no-repeat scroll 6px 5px;
 	border: 1px solid #83AEC3;
@@ -778,17 +779,24 @@ strong {
 	cursor: pointer;
 }
 #searchWidget > div form input[type="submit"]:hover,
-#searchWidget > div form input[type="submit"]:focus {
+#searchWidget > div form input[type="submit"]:focus,
+#shareWidget > div form input[type="submit"]:hover,
+#shareWidget > div form input[type="submit"]:focus {
 	background-color: #FCCFD7;
 	border-color: #F5758C;
 	color: #C00D2D;
 }
-#searchWidget > div form input[type="submit"]:active {
+#searchWidget > div form input[type="submit"]:active,
+#shareWidget > div form input[type="submit"]:active {
 	background-color: #E3BBC2;
 	border-color: #E2697F;
 	color: #8F0A22;
 }
+#shareWidget > div form input[type="submit"][name="share"] {
+	background-image: url('../images/icons/share-on-small.png');
+}
 #searchWidget > div form input[type="submit"][name="reset"],
+#shareWidget > div form input[type="submit"][name="reset"],
 #searchWidget > div form input[type="submit"][name="resetSimple"] {
 	background-image: url('../images/icons/reset-small.png');
 }

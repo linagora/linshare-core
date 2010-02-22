@@ -116,7 +116,9 @@
 						</tr>
 					</table>
 					<br/>
-					<t:submit value="${message:pages.administration.index.button.save}"/>
+					<div class="button">
+						<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:pages.administration.index.button.save}</span></t:linkSubmit>
+					</div>
 
 				</div>
 				</t:form>

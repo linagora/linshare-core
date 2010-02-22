@@ -109,6 +109,10 @@ public class SharePanel {
 	@Property
 	@Persist
 	private BeanModel shareModel;
+	
+	@Persist
+	private boolean reset;
+	
 
 	/**
 	 * The indexObject to match the object.
@@ -165,8 +169,16 @@ public class SharePanel {
 	 * The id of this event is "clearListObject"
 	 * @param identifier
 	 */
-	public void onActionFromReset(){
-		componentResources.getContainer().getComponentResources().triggerEvent("clearListObject",null, null);
+//	public void onActionFromReset(){
+//		componentResources.getContainer().getComponentResources().triggerEvent("clearListObject",null, null);
+//	}
+
+	
+	void onSelectedFromReset() {
+		reset = true;
+	}
+	void onSelectedFromShare() {
+		reset = false;
 	}
 	
 	/**
@@ -189,6 +201,10 @@ public class SharePanel {
 	 * @param identifier
 	 */
 	public void onSuccess(){
+		if (reset) {
+			componentResources.getContainer().getComponentResources().triggerEvent("clearListObject",null, null);
+			return;
+		}
 		
 		if(null!=listObject){
 			componentResources.getContainer().getComponentResources().triggerEvent("sharePanel", listObject.toArray(), null);
