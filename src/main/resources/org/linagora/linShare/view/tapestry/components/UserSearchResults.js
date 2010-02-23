@@ -14,7 +14,7 @@ function countUserCheckbox() {
 		document.getElementById('selectAll').checked=false;
 	}
 
-    $('actionListUser').style.display = result;
+    $('actionsWidget').style.display = result;
 }
 
 

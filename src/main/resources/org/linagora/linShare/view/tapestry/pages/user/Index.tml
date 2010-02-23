@@ -75,16 +75,25 @@
 			<t:userSearchField users="users" />
 		</t:widget>
 	</t:parameter>
-
-	<!-- Share widget -->
-	<t:parameter name="shareWidget">
-		<t:if test="shareSessionObjects.notEmpty">
-			<t:widget widgetId="shareWidget" title="${message:components.widget.shareWidget.title}">
-				<t:sharePanel listObject="shareSessionObjects.users" columns="completeName"
-					label="${message:pages.user.index.sharePanel.label}" />
+	
+	<!-- Actions widget -->
+	<t:parameter name="actionsWidget">
+		<t:if test="users.empty" negate="true">
+			<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
+				<t:actionsBarUser t:formName="results" />
 			</t:widget>
 		</t:if>
 	</t:parameter>
+
+	<!-- Share widget -->
+<!--	<t:parameter name="shareWidget">-->
+<!--		<t:if test="shareSessionObjects.notEmpty">-->
+<!--			<t:widget widgetId="shareWidget" title="${message:components.widget.shareWidget.title}">-->
+<!--				<t:sharePanel listObject="shareSessionObjects.users" columns="completeName"-->
+<!--					label="${message:pages.user.index.sharePanel.label}" />-->
+<!--			</t:widget>-->
+<!--		</t:if>-->
+<!--	</t:parameter>-->
 
 
 </t:MyBorderLayout>
