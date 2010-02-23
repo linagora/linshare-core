@@ -74,5 +74,11 @@
 			</includes>
 			<fileMode>0644</fileMode>
 		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/src/main/webapp/images</directory>
+			<outputDirectory>resources</outputDirectory>
+			<includes name="logo_linshare_0105x026.png"/>
+			<fileMode>0755</fileMode>
+		</fileSet>
 	</fileSets>
 </assembly>
