@@ -67,9 +67,14 @@
 
 			<div class="number3"></div>
 			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>
+			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
+				t:subject="${message:components.quickSharePopup.panelSubject.subject}">  
+				<t:textarea rows="1" value="textAreaSubjectValue"  title="${message:components.quickSharePopup.texarea.message.title}" />
+			</div>
+			<br />
 			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
-					t:subject="${message:components.quickSharePopup.panelMessage.subject}">  
-				<t:textarea value="textAreaValue"  title="${message:components.quickSharePopup.texarea.message.title}" />
+				t:subject="${message:components.quickSharePopup.panelMessage.subject}">  
+				<t:textarea rows="8" value="textAreaValue"  title="${message:components.quickSharePopup.texarea.message.title}" />
 			</div>
 			<div class="clear"></div>
 

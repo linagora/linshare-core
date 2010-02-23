@@ -113,6 +113,9 @@ public class ConfirmSharePopup{
 	@Property
 	private String textAreaValue;
 	
+	@Property
+	private String textAreaSubjectValue;
+	
 	
 	@Persist("flash")
 	@Property
@@ -423,8 +426,13 @@ public class ConfirmSharePopup{
 		/**
 		 * retrieve the subject of the mail.
 		 */
-		String subject=messages.get("mail.user.all.share.subject");
-
+		String subject = "";
+		if (textAreaSubjectValue==null || textAreaSubjectValue.trim().length()==0) {
+			subject=messages.get("mail.user.all.share.subject");
+		}
+		else {
+			subject = textAreaSubjectValue;
+		}
 		
 		// prevent NPE
 		if (textAreaValue==null)

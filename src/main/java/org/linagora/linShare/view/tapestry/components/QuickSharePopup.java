@@ -103,6 +103,9 @@ public class QuickSharePopup{
 
 	@Property
 	private String textAreaValue;
+	
+	@Property
+	private String textAreaSubjectValue;
 
     @Persist
     @Property
@@ -361,6 +364,7 @@ public class QuickSharePopup{
 		if(sendErrors) {
 			businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_BADMAIL,
                 MessageSeverity.ERROR, badFormatEmail));
+			addedDocuments = new ArrayList<DocumentVo>();
 			return;
 		} else {
 			this.recipientsEmail = recipients;
@@ -385,7 +389,13 @@ public class QuickSharePopup{
 		/**
 		 * retrieve the subject of the mail.
 		 */
-		String subject=messages.get("mail.user.all.share.subject");
+		String subject = "";
+		if (textAreaSubjectValue==null || textAreaSubjectValue.trim().length()==0) {
+			subject=messages.get("mail.user.all.share.subject");
+		}
+		else {
+			subject = textAreaSubjectValue;
+		}
 
 		
 		// prevent NPE
