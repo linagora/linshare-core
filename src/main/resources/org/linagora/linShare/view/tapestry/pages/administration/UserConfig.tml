@@ -7,7 +7,7 @@
 	<div id="content">
 
 		<h1>${message:components.myborderlayout.userconfig.title}</h1>
-
+		<t:messagePanel />
 		<div id="pageContent">
 
 			<h2>${message:pages.administration.index.visual.title}</h2>

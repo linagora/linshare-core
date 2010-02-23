@@ -77,10 +77,6 @@ public class ResetPassword {
 	@Inject
 	private Messages messages;
 
-	@SuppressWarnings("unused")
-	@Property
-	private String currentMessage;
-
 	public boolean onValidate() {
 		if (mail == null) {
 			return false;
@@ -94,12 +90,12 @@ public class ResetPassword {
 		
 		UserVo user = userFacade.findUser(mail);
 		if (null == user) {
-			shareSessionObjects.addMessage(messages.get("pages.password.error.badmail"));
+			shareSessionObjects.addError(messages.get("pages.password.error.badmail"));
 			return this;
 		}
 
 		if (!user.isGuest()) {
-			shareSessionObjects.addMessage(messages.get("pages.password.error.notguest"));
+			shareSessionObjects.addError(messages.get("pages.password.error.notguest"));
 			return this;
 		}
 		
@@ -132,19 +128,9 @@ public class ResetPassword {
 
 		return this;
 	}
-
-	public List<String> getNotificationMessage() {
-		List<String> notificationMessage = shareSessionObjects.getMessages();
-		shareSessionObjects.setMessages(new ArrayList<String>());
-		return notificationMessage;
-	}
-
-	public List<String> getMessagesInfo() {
-		return shareSessionObjects.getMessages();
-	}
     
     Object onException(Throwable cause) {
-    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;

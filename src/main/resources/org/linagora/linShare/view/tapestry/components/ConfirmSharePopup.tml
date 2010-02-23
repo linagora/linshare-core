@@ -90,7 +90,9 @@
 
 		
 		<t:block t:id="onFailure">
+			<t:form>
         	<t:errors  banner="message:components.confirmSharePopup.errorBanner"  />
+        	</t:form>
           	<script type="text/javascript">
 	       		new Effect.Shake('${JSONid}');
 	       	</script>

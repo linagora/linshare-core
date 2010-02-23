@@ -196,7 +196,7 @@ public class UserSearchResults {
             				this.selectedLogin));
             	}
             	else {
-            		shareSessionObjects.addMessage(messages.format("components.userSearch.action.delete.cannotdeleteinternal",
+            		shareSessionObjects.addWarning(messages.format("components.userSearch.action.delete.cannotdeleteinternal",
             				userVo.getLogin()));
             	}
             }

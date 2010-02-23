@@ -164,9 +164,6 @@ public class Index {
 
 	@Persist("flash")
 	private String fileMessage;
-	
-	@Property
-	private String currentMessage;
 
 	@Property
 	@Persist
@@ -218,7 +215,7 @@ public class Index {
 	public Object onUploadException(Throwable cause) {
 		if (cause instanceof
 				FileUploadBase.FileSizeLimitExceededException) {
-			shareSessionObjects.addMessage(String.format(messages.get("pages.upload.FileSizeLimitExceededException"),
+			shareSessionObjects.addError(String.format(messages.get("pages.upload.FileSizeLimitExceededException"),
 					FileUtils.getFriendlySize(parameterRepository.loadConfig().getFileSizeMax(), messages)));
 		}
 		myMultipartDecoder.cleanException();
@@ -299,7 +296,7 @@ public class Index {
 				documentFacade.removeDocument(userVo,((DocumentVo)currentObject));
 				
 			} catch (BusinessException e) {
-				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.failRemovingFile"),
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"),
 						((DocumentVo)currentObject).getFileName()) );
 			}
 			shareSessionObjects.removeDocument((DocumentVo)currentObject);
@@ -346,14 +343,14 @@ public class Index {
 			} catch (BusinessException e) {
 				
 				ko = true;
-				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.failfileEncipherment"),
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failfileEncipherment"),
 						(currentObject).getFileName()) );
 			}
 			
 		}
 		
 		if(!ko && numberIgnore<docObject.size()) shareSessionObjects.addMessage(messages.get("pages.index.message.fileEncipherment"));
-		if(numberIgnore>0) shareSessionObjects.addMessage(messages.get("pages.index.message.fileEncipherment.ignoreSharedFile"));
+		if(numberIgnore>0) shareSessionObjects.addWarning(messages.get("pages.index.message.fileEncipherment.ignoreSharedFile"));
 		
 	}
 	
@@ -368,7 +365,7 @@ public class Index {
 
 
 		if(currentDocumentVo.getShared()){ //ignore shared file in encrypt/decrypt process
-			shareSessionObjects.addMessage(messages.get("pages.index.message.fileEncipherment.ignoreSharedFile"));
+			shareSessionObjects.addWarning(messages.get("pages.index.message.fileEncipherment.ignoreSharedFile"));
 		}
 		else {
 
@@ -381,7 +378,7 @@ public class Index {
 				shareSessionObjects.addMessage(messages.get("pages.index.message.fileEncipherment"));
 
 			} catch (BusinessException e) {
-				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.failfileEncipherment"),
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failfileEncipherment"),
 						(currentDocumentVo).getFileName()) );
 			}
 
@@ -443,7 +440,7 @@ public class Index {
 		shareSessionObjects.setMultipleSharing(true); //enable to multiple file sharing
 		
 		if(giveWarning){
-     		shareSessionObjects.addMessage(messages.get("pages.index.message.shareWithExclusionEncryptedFiles"));
+     		shareSessionObjects.addWarning(messages.get("pages.index.message.shareWithExclusionEncryptedFiles"));
 		}
 	}
 
@@ -493,7 +490,7 @@ public class Index {
 			
 			//check is the document is encrypted and give a warning
 			if(documentVoTemp.getEncrypted()){
-			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.shareOneEncryptedFile"),
+			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.shareOneEncryptedFile"),
 					documentVoTemp.getFileName()) );
 			} else {
 				
@@ -544,10 +541,6 @@ public class Index {
 
     }
     
-    public List<String> getMessagesInfo() {
-    	return shareSessionObjects.getMessages();
-    }
-    
     
     private DocumentVo getDocumentByUUIDInList(String UUId) {
     	for (DocumentVo doc : listDocumentsVo) {
@@ -563,7 +556,7 @@ public class Index {
     }
     
     Object onException(Throwable cause) {
-    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	shareSessionObjects.addError(messages.get("global.exception.message"));
     	log.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;

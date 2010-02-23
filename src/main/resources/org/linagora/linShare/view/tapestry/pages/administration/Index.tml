@@ -7,7 +7,7 @@
 	<div id="content">
 
 		<h1>${message:components.myborderlayout.administration.title}</h1>
-		
+		<t:messagePanel />	
 		<div id="pageContent">
 
 			<div id="version"><strong>${message:global.version.label} </strong> <code>${version}</code></div>

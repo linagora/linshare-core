@@ -209,7 +209,7 @@ public class GuestEditForm {
 
     Block onFailure() {
     	if (!userAlreadyExists)
-    		shareSessionObjects.addMessage(messages.get("pages.user.edit.error.generic"));
+    		shareSessionObjects.addError(messages.get("pages.user.edit.error.generic"));
     	return onFailure;
     }
   

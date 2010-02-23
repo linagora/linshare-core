@@ -9,15 +9,7 @@
 		<h1>${message:components.myborderlayout.user.title}</h1>
 
 
-		<!-- Message panel -->
-
-		<div id="messagePanel">
-			<ul>
-				<t:loop t:source="prop:notificationMessage" t:value="currentMessage">
-				<li>${currentMessage}</li>
-				</t:loop>
-			</ul>
-		</div><!-- id="messagePanel" -->
+		<t:messagePanel />
 
 
 		<!-- Action bar -->

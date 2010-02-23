@@ -334,7 +334,6 @@ strong {
 
 #content #messagePanel {
 	margin: 1em 0em 1.5em 0em;
-	color: #C00D2D;
 	font-weight: bold;
 }
 
@@ -3331,7 +3330,7 @@ form#uploadForm .upload-list {
 }
 
 #errorMessages .message-error {
-    color: red;
+    color: #C00D2D;
 }
 
 DIV.t-error-popup {

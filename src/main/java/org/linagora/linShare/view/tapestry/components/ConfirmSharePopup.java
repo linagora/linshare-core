@@ -467,7 +467,7 @@ public class ConfirmSharePopup{
 		
 		shareSessionObjects=new ShareSessionObjects();
 		if (sharing.getFailsItem().size()>0) {
-			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.fail"));
+			shareSessionObjects.addError(messages.get("components.confirmSharePopup.fail"));
 		} else {
 			recipientFavouriteFacade.increment(userVo, recipientsEmail);
 			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));

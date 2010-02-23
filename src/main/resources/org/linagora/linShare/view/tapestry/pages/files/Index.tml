@@ -18,15 +18,7 @@
 		<h1>${message:components.myborderlayout.file.title}</h1>
 
 
-		<!-- Message panel -->
-
-		<div id="messagePanel">
-			<ul>
-				<t:loop t:source="prop:messagesInfo" t:value="currentMessage">
-				<li>${currentMessage}</li>
-				</t:loop>
-			</ul>
-		</div><!-- id="messagePanel" -->
+		<t:messagePanel />
 		<t:businessMessagesDisplayer />
 
 
