@@ -267,45 +267,7 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 
 		//create and insert the thumbnail into the JCR
-		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
-		FileResource fileResource = fileResourceFactory.getFileResource(tempFile);
-		InputStream fisThmb = null;
-		BufferedImage bufferedImage=null;
-		File tempThumbFile = null;
-		String uuidThmb;
-		try {
-			bufferedImage = fileResource.generateThumbnailImage();
-			fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
-			tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
-			tempThumbFile.createNewFile();
-			
-			if (bufferedImage!=null)
-				ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
-		
-			if (log.isDebugEnabled()) {
-				log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
-			}
-			String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
-			
-			uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
-					tempThumbFile.getName(), mimeTypeThb);
-			
-		} catch (FileNotFoundException e1) {
-			throw new TechnicalException(TechnicalErrorCode.GENERIC,
-					"couldn't open inputStream on the temporary file");
-		} catch (IOException e) {
-			throw new TechnicalException(TechnicalErrorCode.GENERIC,
-			e.getMessage());
-		} finally {
-
-			try {
-				if (fisThmb != null)
-					fisThmb.close();
-			} catch (IOException e) {
-				// Do nothing Happy java :)
-			}
-			tempThumbFile.delete();
-		}
+		String uuidThmb = generateThumbnailIntoJCR(fileName, owner, tempFile);
 		
 		// insert the file into JCR
 		FileInputStream fis = null;
@@ -382,11 +344,63 @@ public class DocumentServiceImpl implements DocumentService {
 	}
 
 	/**
+	 * Insert the tumbnail of the file in the JCR and return the thumbnail uuid.
+	 * 
+	 * @param fileName the name of the original file
+	 * @param owner the owner of the original file
+	 * @param tempFile the copy of the original file
+	 * @return the thumbnail uuid
+	 */
+	private String generateThumbnailIntoJCR(String fileName, User owner,
+			File tempFile) {
+		FileResourceFactory fileResourceFactory = FileResourceFactory.getInstance();
+		FileResource fileResource = fileResourceFactory.getFileResource(tempFile);
+		InputStream fisThmb = null;
+		BufferedImage bufferedImage=null;
+		File tempThumbFile = null;
+		String uuidThmb;
+		try {
+			bufferedImage = fileResource.generateThumbnailImage();
+			fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
+			tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
+			tempThumbFile.createNewFile();
+			
+			if (bufferedImage!=null)
+				ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
+		
+			if (log.isDebugEnabled()) {
+				log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
+			}
+			String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
+			
+			uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
+					tempThumbFile.getName(), mimeTypeThb);
+			
+		} catch (FileNotFoundException e1) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,
+					"couldn't open inputStream on the temporary file");
+		} catch (IOException e) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,
+			e.getMessage());
+		} finally {
+
+			try {
+				if (fisThmb != null)
+					fisThmb.close();
+			} catch (IOException e) {
+				// Do nothing Happy java :)
+			}
+			tempThumbFile.delete();
+		}
+		return uuidThmb;
+	}
+
+	/**
 	 * usefull method to replace file content (use it for example with encrypted
 	 * content)
 	 * 
 	 * @param currentFileUUID
-	 * @param file
+	 * @param inputStream
 	 * @param size
 	 * @param fileName
 	 * @param mimeType
@@ -395,23 +409,49 @@ public class DocumentServiceImpl implements DocumentService {
 	 * @throws BusinessException
 	 */
 	public Document updateFileContent(String currentFileUUID,
-			InputStream file, long size, String fileName, String mimeType,
+			InputStream inputStream, long size, String fileName, String mimeType,
 			User owner) {
 
 		String newUuid = null;
 		Document aDoc = null;
 
 		try {
+			// jack rabbit new thumbnail
+			File tempFile = File.createTempFile("linshareUpdateThmb", fileName);
+			tempFile.deleteOnExit();
+
+			BufferedOutputStream bof = new BufferedOutputStream(new FileOutputStream(tempFile));
+
+			// Transfer bytes from in to out
+			byte[] buf = new byte[20480];
+			int len;
+			while ((len = inputStream.read(buf)) > 0) {
+				bof.write(buf, 0, len);
+			}
+			bof.flush();
+			
+			String uuidThmb = generateThumbnailIntoJCR(fileName, owner, tempFile);
+			
 			// jack rabbit new file
-			newUuid = fileSystemDao.insertFile(owner.getLogin(), file, size,
+			newUuid = fileSystemDao.insertFile(owner.getLogin(), inputStream, size,
 					fileName, mimeType);
+			
+			// get the document to update
 			aDoc = documentRepository.findById(currentFileUUID);
+
+			// delete old thumbnail in JCR
+			String oldThumbUuid = aDoc.getThmbUUID();
+			fileSystemDao.removeFileByUUID(oldThumbUuid);
+			
+			// update the document
 			aDoc.setIdentifier(newUuid);
 			aDoc.setName(fileName);
 			aDoc.setType(mimeType);
 			aDoc.setSize(size);
-			
+			aDoc.setThmbUUID(uuidThmb);
 			aDoc = documentRepository.update(aDoc);
+			
+			// remove old document in JCR
 			fileSystemDao.removeFileByUUID(currentFileUUID);
 
 			// do we need a log entry for update content ? (check
@@ -426,6 +466,9 @@ public class DocumentServiceImpl implements DocumentService {
 			throw new TechnicalException(
 					TechnicalErrorCode.COULD_NOT_UPDATE_DOCUMENT,
 					"couldn't update the file content in the database");
+		} catch (IOException e) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC,
+					e.getMessage());
 		}
 
 	}
