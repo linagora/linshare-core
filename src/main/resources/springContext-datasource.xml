@@ -27,7 +27,7 @@
 		</property>
     </bean>
 
-    <bean name="dataSourceHibernate" class="org.springframework.jdbc.datasource.DriverManagerDataSource" destroy-method="close">
+    <bean name="dataSourceHibernate" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
         <property name="driverClassName" value="${linshare.db.driver.class}"/>
         <property name="url" value="${linshare.db.url}"/>
         <property name="username" value="${linshare.db.username}"/>

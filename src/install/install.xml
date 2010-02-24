@@ -9,6 +9,7 @@
 		<uninstaller name="uninstall.jar" path="${INSTALL_PATH}" write="yes" />
 		<javaversion>1.5</javaversion>
 		<requiresjdk>no</requiresjdk>
+		<summarylogfilepath>${INSTALL_PATH}/install.log</summarylogfilepath>
 	</info>
 
 	<guiprefs width="600" height="480" resizable="no">
@@ -42,35 +43,36 @@
 		<panel classname="InfoPanel"/>
 		<panel classname="LicencePanel"/>
 		<panel classname="TargetPanel"/>
-<!--		<panel classname="ShortcutPanel"/> -->
 		<panel classname="SummaryPanel" />
 		<panel classname="InstallPanel" />
+		<!--		<panel classname="ShortcutPanel"/> -->
 		<panel classname="SimpleFinishPanel" />
 	</panels>
 
 	<listeners>
 		<listener installer="SummaryLoggerInstallerListener">
-			<os family="windows" />
+			<os family="unix" />
 		</listener>
 	</listeners>
 
 	<packs>
-		<pack name="LinShare" required="yes" installGroups="default">
+		<pack name="LinShare" required="yes" installGroups="default"  >
 			<description>LinShare, secure file sharing.</description>
 			<fileset dir="." targetdir="$INSTALL_PATH">
 				<include name="**" />
 			</fileset>
-			<executable targetfile="$INSTALL_PATH/bin/jetty.sh" os="unix"/>
-			<executable targetfile="$INSTALL_PATH/linshare.sh" os="unix"/>
+			<executable targetfile="$INSTALL_PATH/jetty/bin/jetty.sh" os="unix" stage="never" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/linshare.sh" os="unix"  stage="never" keep="true"/>
 		</pack>
 	</packs>
 
-	<!--
+
+<!--
 		The native libraries to add. This is required for creating shortcuts
 		on Windows
 	-->
 	<native type="izpack" name="ShellLink.dll">
 		<os family="windows"/>
 	</native>
-
+	
 </installation>

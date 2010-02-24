@@ -592,11 +592,6 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
-	<dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>1.2.124</version>
-        </dependency>
         <dependency>                                                                                                       
             <groupId>org.opends</groupId>                                                                                  
             <artifactId>opends-core</artifactId>                                                                           
@@ -756,82 +751,7 @@
                     <goals>deploy redmine:create-report changes:announcement-mail redmine:publish-news</goals>
                 </configuration>
             </plugin>
-	        <plugin>
-                                <artifactId>maven-antrun-plugin</artifactId>
-                                <executions>
-                                        <execution>
-                                                <id>prepare-jetty</id>
-                                                <phase>package</phase>
-                                                <configuration>
-                                                        <tasks>
-                                                                <property name="execution.path" refid="maven.runtime.classpath"></property>
-                                                                <ant antfile="${basedir}/misc/build.xml" target="prepare-jetty"></ant>
-                                                        </tasks>
-                                                </configuration>
-                                                <goals>
-                                                        <goal>run</goal>
-                                                </goals>
-                                        </execution>
-                                        <execution>
-                                                <id>clean-jetty</id>
-                                                <phase>clean</phase>
-                                                <configuration>
-                                                        <tasks>
-                                                                <property name="execution.path" refid="maven.runtime.classpath"></property>
-                                                                <ant antfile="${basedir}/misc/build.xml" target="clean"></ant>
-                                                        </tasks>
-                                                </configuration>
-                                                <goals>
-                                                        <goal>run</goal>
-                                                </goals>
-                                        </execution>
-                                </executions>
-                        </plugin>
-         <plugin>
-			<artifactId>maven-assembly-plugin</artifactId>
-			<configuration>
-				<descriptors>
-					<descriptor>src/main/assembly/dist.xml</descriptor>
-					<descriptor>src/main/assembly/src.xml</descriptor>
-				</descriptors>
-				<!-- Required since default value is true (Maven 2.2-beta-3)-->
-				<ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
-			</configuration>
-			<executions>
-				<execution>
-					<phase>package</phase>
-					<goals>
-						<goal>directory-single</goal>
-						<goal>single</goal>
-					</goals>
-				</execution>
-			</executions>
-		</plugin>
-
-                        <plugin>
-                                <groupId>org.codehaus.izpack</groupId>
-                                <artifactId>izpack-maven-plugin</artifactId>
-                                <version>1.0-alpha-5</version>
-
-                                <!-- common configuration by all executions -->
-                                <configuration>
-                                        <descriptor>${basedir}/src/install/install.xml</descriptor>
-                                        <descriptorEncoding>UTF-8</descriptorEncoding>
-                                        <fileExtension>jar</fileExtension>
-                                        <installerFile>${project.build.directory}/${project.artifactId}-${project.version}</installerFile>
-                                        <izpackBasedir>${project.build.directory}/${project.artifactId}-dist/${project.artifactId}-${project.version}</izpackBasedir>
-                                </configuration>
-
-                                <executions>
-                                        <execution>
-                                                <id>standard-installer</id>
-                                                <phase>package</phase>
-                                                <goals>
-                                                        <goal>izpack</goal>
-                                                </goals>
-                                        </execution>
-                                </executions>
-                        </plugin>
+	       
         </plugins>
         
         <extensions>
@@ -878,18 +798,19 @@
     		</activation>
     	</profile>
     	<profile>
-    		<id>sample</id>
+    		<id>distribution</id>
     		<activation>
     			<property>
     				<name>target</name>
-    				<value>sample</value>
+    				<value>distribution</value>
     			</property>
     		</activation>
     		<build>
     			<resources>
+    			 	<resource>
+			       		 <directory>src/main/resources</directory>
+			    	</resource>
     				<resource>
-    					<directory>src/test/resources</directory>
-    				</resource><resource>
     					<directory>src/test/java</directory>
     					<excludes>
     						<exclude>**/*.java</exclude>
@@ -917,6 +838,81 @@
     						</execution>
     					</executions>
     				</plugin>
+    				 <plugin>
+                                <artifactId>maven-antrun-plugin</artifactId>
+                                <executions>
+                                        <execution>
+                                                <id>prepare-jetty</id>
+                                                <phase>package</phase>
+                                                <configuration>
+                                                        <tasks>
+                                                                <property name="execution.path" refid="maven.runtime.classpath"></property>
+                                                                <ant antfile="${basedir}/misc/build.xml" target="prepare-jetty"></ant>
+                                                        </tasks>
+                                                </configuration>
+                                                <goals>
+                                                        <goal>run</goal>
+                                                </goals>
+                                        </execution>
+                                        <execution>
+                                                <id>clean-jetty</id>
+                                                <phase>clean</phase>
+                                                <configuration>
+                                                        <tasks>
+                                                                <property name="execution.path" refid="maven.runtime.classpath"></property>
+                                                                <ant antfile="${basedir}/misc/build.xml" target="clean"></ant>
+                                                        </tasks>
+                                                </configuration>
+                                                <goals>
+                                                        <goal>run</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                        </plugin>
+				         <plugin>
+							<artifactId>maven-assembly-plugin</artifactId>
+							<configuration>
+								<descriptors>
+									<descriptor>src/main/assembly/dist.xml</descriptor>
+									<descriptor>src/main/assembly/src.xml</descriptor>
+								</descriptors>
+								<!-- Required since default value is true (Maven 2.2-beta-3)-->
+								<ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
+							</configuration>
+							<executions>
+								<execution>
+									<phase>package</phase>
+									<goals>
+										<goal>directory-single</goal>
+										<goal>single</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+				              <groupId>org.codehaus.izpack</groupId>
+				              <artifactId>izpack-maven-plugin</artifactId>
+				              <version>1.0-alpha-5</version>
+				
+				                                <!-- common configuration by all executions -->
+				               <configuration>
+				                   <descriptor>${basedir}/src/install/install.xml</descriptor>
+				                   <descriptorEncoding>UTF-8</descriptorEncoding>
+				                   <fileExtension>jar</fileExtension>
+				                   <installerFile>${project.build.directory}/${project.artifactId}-${project.version}</installerFile>
+				                   <izpackBasedir>${project.build.directory}/${project.artifactId}-dist/${project.artifactId}-${project.version}</izpackBasedir>
+				               </configuration>
+				
+				               <executions>
+				                        <execution>
+				                              <id>standard-installer</id>
+				                               <phase>package</phase>
+				                               <goals>
+				                                  <goal>izpack</goal>
+				                               </goals>
+				                               </execution>
+				                       </executions>
+				         </plugin>
     			</plugins>
     		</build>
     		<dependencies>
@@ -925,6 +921,11 @@
     				<artifactId>opends-core</artifactId>
     				<version>2.0</version>
     			</dependency>
+    			  <dependency>
+		            <groupId>com.h2database</groupId>
+		            <artifactId>h2</artifactId>
+		            <version>1.2.126</version>
+		        </dependency>
     		</dependencies>
     	</profile>
     </profiles>
