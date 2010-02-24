@@ -618,8 +618,8 @@
     					<version>1.3</version>
     					<executions>
     						<execution>
-    							<id>add-source</id>
-    							<phase>generate-sources</phase>
+    							<id>add-test-source</id>
+    							<phase>generate-test-sources</phase>
     							<inherited>false</inherited>
     							<goals>
     								<goal>add-test-source</goal>
@@ -852,8 +852,20 @@
     							<phase>generate-sources</phase>
     							<inherited>false</inherited>
     							<goals>
-    								<goal>add-test-source</goal>
     								<goal>add-source</goal>
+    							</goals>
+    							<configuration>
+    							    <sources>
+    							        <source>src/opends/java</source>
+    							    </sources>
+    							</configuration>
+    						</execution>
+    						<execution>
+    							<id>add-test-source</id>
+    							<phase>generate-test-sources</phase>
+    							<inherited>false</inherited>
+    							<goals>
+    								<goal>add-test-source</goal>
     							</goals>
     							<configuration>
     							    <sources>
