@@ -144,11 +144,11 @@ public class MailNotifierServiceImpl implements NotifierService {
 	       String cid = "image.part.1@linshare.org";
 	       MimeBodyPart rel_bpi = new MimeBodyPart();
 	       // Initialize and add the image file to the html body part
-	       rel_bpi.setFileName("mailLogo.png");
+	       rel_bpi.setFileName("logo_linshare_0210x052.png");
 	       rel_bpi.setText("linshare");
 	       String imageLogo = urlLinshare;
 	       if(!imageLogo.endsWith("/")) imageLogo = imageLogo + "/";
-	       imageLogo = imageLogo + "images/mailLogo.png";
+	       imageLogo = imageLogo + "images/logo_linshare_0210x052.png";
 	       rel_bpi.setDataHandler(new DataHandler(new URL(imageLogo)));
 	       rel_bpi.setHeader("Content-ID", "<" + cid + ">");
 	       rel_bpi.setDisposition("inline");

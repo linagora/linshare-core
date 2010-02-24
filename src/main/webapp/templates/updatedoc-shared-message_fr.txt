@@ -7,4 +7,4 @@ ${firstName} ${lastName} a mis à jour le fichier partagé ${fileOldName} :
 - type MIME : ${mimeType}
 
 -- 
-The LinShare dream team
+LinShare - http://linshare.org - Logiciel libre de partage de fichiers sécurisé

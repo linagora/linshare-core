@@ -6,4 +6,4 @@ ${firstName} ${lastName} has updated the shared file ${fileOldName}:
   * MIME type: ${mimeType}
 
 -- 
-The LinShare dream team
+LinShare - http://linshare.org - Open Source secured file sharing application

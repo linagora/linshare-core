@@ -146,8 +146,8 @@ strong {
 
 #hd #logo-linshare {
 	float: left;
-	width: 275px;
-	height: 85px;
+	margin-top: 12px;
+	margin-left: 5px;
 }
 
 #hd #logo-customer {
@@ -1968,6 +1968,9 @@ div#blocDLfooter {
 	color: #ADCFE1;
 	padding: 10px 0;
 }
+div#blocDLfooter a {
+	color: #fff;
+}
 
 div#blocDL ul {
 	margin: 0;
@@ -2795,6 +2798,7 @@ div#blocDL ul li {
 /* Sliding panel theme */
 
 div.ck_slidingpanel {
+	margin-left: 51px;
 }
 div.ck_slidingPanelSubject {
 	padding: 5px !important;
