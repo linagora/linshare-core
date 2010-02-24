@@ -612,6 +612,26 @@
                     <optimize>true</optimize>
                 </configuration>
             </plugin>
+            <plugin>
+    					<groupId>org.codehaus.mojo</groupId>
+    					<artifactId>build-helper-maven-plugin</artifactId>
+    					<version>1.3</version>
+    					<executions>
+    						<execution>
+    							<id>add-source</id>
+    							<phase>generate-sources</phase>
+    							<inherited>false</inherited>
+    							<goals>
+    								<goal>add-test-source</goal>
+    							</goals>
+    							<configuration>
+    							    <sources>
+    							        <source>src/opends/java</source>
+    							    </sources>
+    							</configuration>
+    						</execution>
+    					</executions>
+    		</plugin>
             
             <!-- Run the application using "mvn jetty:run" -->
             <plugin>
@@ -751,7 +771,6 @@
                     <goals>deploy redmine:create-report changes:announcement-mail redmine:publish-news</goals>
                 </configuration>
             </plugin>
-	       
         </plugins>
         
         <extensions>
@@ -761,6 +780,14 @@
                 <version>8.3-603.jdbc3</version>
             </extension>
         </extensions>
+        <testResources>
+        	<testResource>
+        		<directory>src/test/resources</directory>
+        	</testResource>
+	        <testResource>
+	    		 <directory>src/opends/resources</directory>
+	    	</testResource>
+    	</testResources>
         
     </build>
     
@@ -798,7 +825,7 @@
     		</activation>
     	</profile>
     	<profile>
-    		<id>distribution</id>
+    		<id>opends</id>
     		<activation>
     			<property>
     				<name>target</name>
@@ -810,12 +837,9 @@
     			 	<resource>
 			       		 <directory>src/main/resources</directory>
 			    	</resource>
-    				<resource>
-    					<directory>src/test/java</directory>
-    					<excludes>
-    						<exclude>**/*.java</exclude>
-    					</excludes>
-    				</resource>
+			    	<resource>
+			       		 <directory>src/opends/resources</directory>
+			    	</resource>
     			</resources>
     			<plugins>
     				<plugin>
@@ -828,16 +852,54 @@
     							<phase>generate-sources</phase>
     							<inherited>false</inherited>
     							<goals>
+    								<goal>add-test-source</goal>
     								<goal>add-source</goal>
     							</goals>
     							<configuration>
     							    <sources>
-    							        <source>src/test/java</source>
+    							        <source>src/opends/java</source>
     							    </sources>
     							</configuration>
     						</execution>
     					</executions>
     				</plugin>
+    		</plugins>
+    		</build>
+    		<dependencies>
+    			<dependency>
+    				<groupId>org.opends</groupId>
+    				<artifactId>opends-core</artifactId>
+    				<version>2.0</version>
+    			</dependency>
+    		</dependencies>
+    	</profile>
+    	<profile>
+    	 	<id>h2</id>
+    	 	<activation>
+    			<property>
+    				<name>target</name>
+    				<value>distribution</value>
+    			</property>
+    		</activation>
+    	 	<dependencies>
+    			  <dependency>
+		            <groupId>com.h2database</groupId>
+		            <artifactId>h2</artifactId>
+		            <version>1.2.126</version>
+		        </dependency>
+    		</dependencies>
+    		
+    	</profile>
+    	<profile>
+    		<id>distribution</id>
+    		<activation>
+    			<property>
+    				<name>target</name>
+    				<value>distribution</value>
+    			</property>
+    		</activation>
+    		<build>
+    			<plugins>
     				 <plugin>
                                 <artifactId>maven-antrun-plugin</artifactId>
                                 <executions>
@@ -893,8 +955,6 @@
 				              <groupId>org.codehaus.izpack</groupId>
 				              <artifactId>izpack-maven-plugin</artifactId>
 				              <version>1.0-alpha-5</version>
-				
-				                                <!-- common configuration by all executions -->
 				               <configuration>
 				                   <descriptor>${basedir}/src/install/install.xml</descriptor>
 				                   <descriptorEncoding>UTF-8</descriptorEncoding>
@@ -910,23 +970,12 @@
 				                               <goals>
 				                                  <goal>izpack</goal>
 				                               </goals>
-				                               </execution>
-				                       </executions>
+				                      </execution>
+				               </executions>
 				         </plugin>
     			</plugins>
     		</build>
-    		<dependencies>
-    			<dependency>
-    				<groupId>org.opends</groupId>
-    				<artifactId>opends-core</artifactId>
-    				<version>2.0</version>
-    			</dependency>
-    			  <dependency>
-		            <groupId>com.h2database</groupId>
-		            <artifactId>h2</artifactId>
-		            <version>1.2.126</version>
-		        </dependency>
-    		</dependencies>
+    		
     	</profile>
     </profiles>
     
