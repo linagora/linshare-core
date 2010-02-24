@@ -448,7 +448,9 @@ public class DocumentServiceImpl implements DocumentService {
 
 			// delete old thumbnail in JCR
 			String oldThumbUuid = aDoc.getThmbUUID();
-			fileSystemDao.removeFileByUUID(oldThumbUuid);
+			if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
+				fileSystemDao.removeFileByUUID(oldThumbUuid);
+			}
 			
 			// update the document
 			aDoc.setIdentifier(newUuid);
