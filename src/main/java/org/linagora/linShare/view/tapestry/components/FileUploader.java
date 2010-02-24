@@ -179,7 +179,7 @@ public class FileUploader {
         try {
             // read the complete stream.
             InputStream stream = file.getStream();
-            while (stream.read() != -1);
+            while (stream.read() != -1); // NOPMD by matthieu on 24/02/10 10:19
         } catch (IOException ex) {
             logger.error(ex.toString());
         }

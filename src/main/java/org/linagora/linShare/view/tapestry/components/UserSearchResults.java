@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
@@ -239,9 +240,11 @@ public class UserSearchResults {
     @SuppressWarnings("unchecked")
 	@OnEvent(value="eventReorderList")
     public void refreshUser(Object[] o1){
-    	this.usr=(List<UserVo>)o1[0];
-		this.sorterModel=new UserSorterModel(this.usr);
-		refreshFlag=true;
+    	if(o1!=null && o1.length>0){
+	    	this.usr=((List<UserVo>)Arrays.copyOf(o1,1)[0]);
+			this.sorterModel=new UserSorterModel(this.usr);
+	    	refreshFlag=true;
+    	}
     }
     
 	@OnEvent(value="userDeleteEvent")

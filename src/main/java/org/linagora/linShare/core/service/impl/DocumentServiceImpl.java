@@ -35,6 +35,8 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.linagora.LinThumbnail.FileResource;
 import org.linagora.LinThumbnail.FileResourceFactory;
 import org.linagora.LinThumbnail.utils.Constants;
@@ -68,8 +70,7 @@ import org.linagora.linShare.core.service.VirusScannerService;
 import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
 import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 import org.semanticdesktop.aperture.util.IOUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class DocumentServiceImpl implements DocumentService {
 
@@ -93,8 +94,8 @@ public class DocumentServiceImpl implements DocumentService {
 
 	private final LogEntryRepository logEntryRepository;
 
-	private static Logger log = LoggerFactory
-			.getLogger(DocumentServiceImpl.class);
+	private static Log log = LogFactory
+			.getLog(DocumentServiceImpl.class);
 
 	public DocumentServiceImpl(final DocumentRepository documentRepository,
 			final FileSystemDao fileSystemDao,
@@ -377,9 +378,11 @@ public class DocumentServiceImpl implements DocumentService {
 					tempThumbFile.getName(), mimeTypeThb);
 			
 		} catch (FileNotFoundException e1) {
+			log.error(e1,e1);
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
 					"couldn't open inputStream on the temporary file");
 		} catch (IOException e) {
+			log.error(e,e);
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
 			e.getMessage());
 		} finally {
@@ -390,7 +393,9 @@ public class DocumentServiceImpl implements DocumentService {
 			} catch (IOException e) {
 				// Do nothing Happy java :)
 			}
-			tempThumbFile.delete();
+			if(tempThumbFile!=null){
+				tempThumbFile.delete();
+			}
 		}
 		return uuidThmb;
 	}

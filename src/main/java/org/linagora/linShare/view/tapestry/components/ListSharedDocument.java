@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -63,6 +64,7 @@ import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.SharedFileSorterModel;
+import org.linagora.linShare.view.tapestry.models.impl.UserSorterModel;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
@@ -400,10 +402,12 @@ public class ListSharedDocument {
 	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventReorderList")
 	public void reorderList(Object[] o1){
+		if(o1!=null && o1.length>0){
+			this.docs=(List<ShareDocumentVo>)Arrays.copyOf(o1,1)[0];
+			this.sorterModel=new SharedFileSorterModel(this.docs);
+			refreshFlag=true;
+    	}
 		
-		this.docs=(List<ShareDocumentVo>)o1[0];
-		this.sorterModel=new SharedFileSorterModel(this.docs);
-		refreshFlag=true;
 	}
 	
 

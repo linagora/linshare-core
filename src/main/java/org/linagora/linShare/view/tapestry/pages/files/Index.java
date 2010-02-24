@@ -60,6 +60,8 @@ import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvide
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 
 
 /**
@@ -85,7 +87,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Index {
 
-	public final static Logger log=LoggerFactory.getLogger(Index.class);
+	public final static Logger Logger=LoggerFactory.getLogger(Index.class);
 
     @SessionState
     @Property
@@ -277,7 +279,7 @@ public class Index {
 	@OnEvent(value="eventDocument")
 	public void initListDoc(Object[] object){
 		flag=true;
-		this.listDocumentsVo = (List<DocumentVo>)object[0];
+		this.listDocumentsVo = (List<DocumentVo>)Arrays.copyOf(object,1)[0];
 	}
 
 
@@ -557,7 +559,7 @@ public class Index {
     
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
-    	log.error(cause.getMessage());
+    	Logger.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;
     }

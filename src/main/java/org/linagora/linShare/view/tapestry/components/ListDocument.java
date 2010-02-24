@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -675,10 +676,11 @@ public class ListDocument {
 	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventReorderList")
 	public void reorderList(Object[] o1){
-		
-		this.docs=(List<DocumentVo>)o1[0];
-		this.sorterModel=new FileSorterModel(this.docs);
-		refreshFlag=true;
+		if(o1!=null && o1.length>0){
+			this.docs=(List<DocumentVo>)Arrays.copyOf(o1,1)[0];
+			this.sorterModel=new FileSorterModel(this.docs);
+			refreshFlag=true;
+		}
 	}
 	
 	/**
