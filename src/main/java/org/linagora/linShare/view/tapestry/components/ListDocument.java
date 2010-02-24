@@ -949,6 +949,10 @@ public class ListDocument {
         return componentResources.createEventLink("thumbnail", document.getIdentifier());
 	}
 	
+	public boolean getThumbnailExists() {
+		return documentFacade.documentHasThumbnail(document.getIdentifier());
+	}
+	
 	public void onThumbnail(String docID) {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,

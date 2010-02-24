@@ -239,4 +239,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
     public InputStream getDocumentThumbnail(String uuid) {
     	return documentService.getDocumentThumbnail(uuid);
     }
+
+    public boolean documentHasThumbnail(String uuid) {
+		return documentService.documentHasThumbnail(uuid);
+    }
 }

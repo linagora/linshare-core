@@ -359,42 +359,44 @@ public class DocumentServiceImpl implements DocumentService {
 		InputStream fisThmb = null;
 		BufferedImage bufferedImage=null;
 		File tempThumbFile = null;
-		String uuidThmb;
-		try {
-			bufferedImage = fileResource.generateThumbnailImage();
-			fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
-			tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
-			tempThumbFile.createNewFile();
-			
-			if (bufferedImage!=null)
-				ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
-		
-			if (log.isDebugEnabled()) {
-				log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
-			}
-			String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
-			
-			uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
-					tempThumbFile.getName(), mimeTypeThb);
-			
-		} catch (FileNotFoundException e1) {
-			log.error(e1,e1);
-			throw new TechnicalException(TechnicalErrorCode.GENERIC,
-					"couldn't open inputStream on the temporary file");
-		} catch (IOException e) {
-			log.error(e,e);
-			throw new TechnicalException(TechnicalErrorCode.GENERIC,
-			e.getMessage());
-		} finally {
-
+		String uuidThmb = null;
+		if (fileResource != null) {
 			try {
-				if (fisThmb != null)
-					fisThmb.close();
+				bufferedImage = fileResource.generateThumbnailImage();
+				fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
+				tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
+				tempThumbFile.createNewFile();
+				
+				if (bufferedImage!=null)
+					ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
+			
+				if (log.isDebugEnabled()) {
+					log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
+				}
+				String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
+				
+				uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
+						tempThumbFile.getName(), mimeTypeThb);
+				
+			} catch (FileNotFoundException e1) {
+				log.error(e1,e1);
+				throw new TechnicalException(TechnicalErrorCode.GENERIC,
+						"couldn't open inputStream on the temporary file");
 			} catch (IOException e) {
-				// Do nothing Happy java :)
-			}
-			if(tempThumbFile!=null){
-				tempThumbFile.delete();
+				log.error(e,e);
+				throw new TechnicalException(TechnicalErrorCode.GENERIC,
+				e.getMessage());
+			} finally {
+	
+				try {
+					if (fisThmb != null)
+						fisThmb.close();
+				} catch (IOException e) {
+					// Do nothing Happy java :)
+				}
+				if(tempThumbFile!=null){
+					tempThumbFile.delete();
+				}
 			}
 		}
 		return uuidThmb;
@@ -597,6 +599,13 @@ public class DocumentServiceImpl implements DocumentService {
 			return stream;
 		}
 		return null;
+	}
+	
+	public boolean documentHasThumbnail(String uuid) {
+		Document doc = documentRepository.findById(uuid);
+		String thmbUUID = doc.getThmbUUID();
+
+		return (thmbUUID!=null && thmbUUID.length()>0);
 	}
 
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor)

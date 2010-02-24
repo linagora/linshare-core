@@ -3454,6 +3454,10 @@ span.thumbnail:hover .thumbnail_content img {
 	border: 1px solid #777;
 }
 
+.noThmbMsg {
+	font-style: italic;
+}
+
 
 
 /***************************************************************************/
