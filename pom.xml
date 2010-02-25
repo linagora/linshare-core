@@ -494,11 +494,6 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>8.3-603.jdbc3</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>2.2.0</version>
@@ -598,6 +593,12 @@
             <version>2.0</version>
             <scope>test</scope>
         </dependency>
+         <dependency>
+			 <groupId>xerces</groupId>
+			 <artifactId>xercesImpl</artifactId>
+			 <version>2.9.1</version>
+			<scope>compile</scope>	                       
+		</dependency> 
     </dependencies>
     
     <build>
@@ -771,7 +772,7 @@
                     <goals>deploy redmine:create-report changes:announcement-mail redmine:publish-news</goals>
                 </configuration>
             </plugin>
-        </plugins>
+        </plugins><!--
         
         <extensions>
             <extension>
@@ -780,7 +781,7 @@
                 <version>8.3-603.jdbc3</version>
             </extension>
         </extensions>
-        <testResources>
+        --><testResources>
         	<testResource>
         		<directory>src/test/resources</directory>
         	</testResource>
@@ -823,6 +824,13 @@
     		<activation>
     			<activeByDefault>true</activeByDefault>
     		</activation>
+    		<dependencies>
+    			 <dependency>
+		            <groupId>postgresql</groupId>
+		            <artifactId>postgresql</artifactId>
+		            <version>8.3-603.jdbc3</version>
+		        </dependency>
+    		</dependencies>
     	</profile>
     	<profile>
     		<id>opends</id>
@@ -984,6 +992,14 @@
 				                               </goals>
 				                      </execution>
 				               </executions>
+				               <dependencies>
+					               <dependency>
+									  <groupId>org.codehaus.izpack</groupId>
+									  <artifactId>izpack-standalone-compiler</artifactId>
+									  <version>4.3.2</version>
+									</dependency>   
+								</dependencies>
+								
 				         </plugin>
     			</plugins>
     		</build>

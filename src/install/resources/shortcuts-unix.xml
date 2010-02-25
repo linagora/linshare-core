@@ -42,41 +42,41 @@ description="IzPack user documentation (html format)">
         <createForPack name="Documentation-html"/>
     </shortcut>
     <shortcut
-name="Documentation"
-programGroup="yes"
-desktop="yes"
-applications="no"
-startMenu="yes"
-startup="no"
-target="acroread"
-workingDirectory=""
-commandLine="$INSTALL_PATH/doc/izpack/pdf/izpack-doc.pdf"
-initialState="noShow"
-iconFile="acroread"
-iconIndex="0"
-url="$INSTALL_PATH/doc/izpack/pdf/izpack-doc.pdf"
-type="Application"
-encoding="UTF-8"
-description="IzPack user documentation (PDF format)">
+		name="Documentation"
+		programGroup="yes"
+		desktop="yes"
+		applications="no"
+		startMenu="yes"
+		startup="no"
+		target="acroread"
+		workingDirectory=""
+		commandLine="$INSTALL_PATH/doc/izpack/pdf/izpack-doc.pdf"
+		initialState="noShow"
+		iconFile="acroread"
+		iconIndex="0"
+		url="$INSTALL_PATH/doc/izpack/pdf/izpack-doc.pdf"
+		type="Application"
+		encoding="UTF-8"
+		description="IzPack user documentation (PDF format)">
         <createForPack name="Documentation-PDF"/>
     </shortcut>
     <shortcut
-name="Uninstaller"
-programGroup="yes"
-desktop="yes"
-applications="no"
-startMenu="no"
-startup="no"
-target="/usr/lib/java/bin/java"
-commandLine="-jar
-&quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
-initialState="noShow"
-iconFile="trashcan_full"
-iconIndex="0"
-workingDirectory=""
-type="Application"
-encoding="UTF-8"
-description="IzPack uninstaller">
+			name="Uninstaller"
+			programGroup="yes"
+			desktop="yes"
+			applications="no"
+			startMenu="no"
+			startup="no"
+			target="/usr/lib/java/bin/java"
+			commandLine="-jar
+			&quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
+			initialState="noShow"
+			iconFile="trashcan_full"
+			iconIndex="0"
+			workingDirectory=""
+			type="Application"
+			encoding="UTF-8"
+			description="IzPack uninstaller">
         <createForPack name="Core" />
     </shortcut>
 </shortcuts>

@@ -9,7 +9,7 @@
     <property name="homeDir" value="${home.directory}"/>
     <property name="configurationProperties">
     	<list>
-    		<value>classpath:linShare.properties</value>
+    		<value>classpath:linShare-default.properties</value>
     		<value>${linshare.config.path}/linShare.properties</value>
     		<value>classpath:jackRabbit.properties</value>
     		<value>${linshare.config.path}/jackRabbit.properties</value>

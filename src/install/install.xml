@@ -9,7 +9,7 @@
 		<uninstaller name="uninstall.jar" path="${INSTALL_PATH}" write="yes" />
 		<javaversion>1.5</javaversion>
 		<requiresjdk>no</requiresjdk>
-		<summarylogfilepath>${INSTALL_PATH}/install.log</summarylogfilepath>
+		<summarylogfilepath>$INSTALL_PATH/install.log</summarylogfilepath>
 	</info>
 
 	<guiprefs width="600" height="480" resizable="no">
@@ -33,20 +33,24 @@
 	<resources>
 		<res id="InfoPanel.info" src="README"/>
 		<res id="LicencePanel.licence" src="COPYING"/>
-		<res id="Installer.image" src="resources/logo_linshare_0105x026.png" />
-<!--		<res id="Win_shortcutSpec.xml" src="resources/shortcut_win.xml" />
-		<res id="Unix_shortcutSpec.xml" src="resources/shortcut_unix.xml" /> -->
-	</resources>
+		<res id="Installer.image"   src="@{project.basedir}/src/install/resources/logo_linshare_0105x026.png" />
+		<res id="userInputSpec.xml" src="@{project.basedir}/src/install/resources/userInputSpec.xml" /><!--
+	
+		<res id="Win_shortcutSpec.xml" src="@{project.basedir}/src/install/resources/shortcut-win.xml" />
+		<res id="Unix_shortcutSpec.xml" src="@{project.basedir}/src/install/resources/shortcut-unix.xml" />  
+		
+	--></resources>
 
 	<panels>
 		<panel classname="CheckedHelloPanel"/>
 		<panel classname="InfoPanel"/>
 		<panel classname="LicencePanel"/>
 		<panel classname="TargetPanel"/>
+		<panel classname="UserInputPanel" id="myuserinput" />
 		<panel classname="SummaryPanel" />
 		<panel classname="InstallPanel" />
-		<!--		<panel classname="ShortcutPanel"/> -->
-		<panel classname="SimpleFinishPanel" />
+		<!--<panel classname="ShortcutPanel"/>
+		--><panel classname="SimpleFinishPanel" />
 	</panels>
 
 	<listeners>
@@ -61,8 +65,9 @@
 			<fileset dir="." targetdir="$INSTALL_PATH">
 				<include name="**" />
 			</fileset>
-			<executable targetfile="$INSTALL_PATH/jetty/bin/jetty.sh" os="unix" stage="never" keep="true"/>
-			<executable targetfile="$INSTALL_PATH/linshare.sh" os="unix"  stage="never" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jetty/bin/jetty.sh" stage="never" keep="true" os="unix,mac"/>
+			<executable targetfile="$INSTALL_PATH/linshare.sh"   stage="never" keep="true" os="unix,mac" />
+			<parsable 	targetfile="$INSTALL_PATH/jetty/resources/linShare.properties" encoding="UTF-8" type="javaprop"  />
 		</pack>
 	</packs>
 

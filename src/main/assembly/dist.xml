@@ -66,13 +66,7 @@
 			<fileMode>0755</fileMode>
 		</fileSet>
 		<fileSet>
-			<directory>${project.basedir}/src/main/webapp/images</directory>
-			<outputDirectory>./resources</outputDirectory>
-			<includes><include>logo_linshare_0105x026.png</include></includes>
-			<fileMode>0755</fileMode>
-		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/src/test/resources</directory>
+			<directory>${project.basedir}/misc</directory>
 			<outputDirectory>jetty/resources</outputDirectory>
 			<includes>
 				<include>linShare.properties</include>
