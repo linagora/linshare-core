@@ -1,5 +1,5 @@
 -- adding 40 days in expiry time
-INSERT INTO linshare_parameter(parameter_id, file_size_max, user_available_size, active_mimetype,active_signature,active_encipherment,user_expiry_time,user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id)  VALUES (1,10240000,51200000,'false','true','false','40','0', '100', '0');
+INSERT INTO linshare_parameter(parameter_id, file_size_max, user_available_size, active_mimetype,active_signature,active_encipherment,user_expiry_time,user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id)  VALUES (1,10240000,51200000,'false','false','false','40','0', '100', '0');
 
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
