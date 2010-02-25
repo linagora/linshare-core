@@ -165,7 +165,7 @@ public class GuestEditForm {
         String mailContent = null;
         String mailContentTxt = null;
 
-		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 
         String ownerCN = userLoggedIn.getFirstName() + " " + userLoggedIn.getLastName();
 

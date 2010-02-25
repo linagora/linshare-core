@@ -384,7 +384,8 @@ public class QuickSharePopup{
 		 * retrieve the url from propertie file
 		 * 
 		 */
-		String linShareUrl=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
+		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 
 		/**
 		 * retrieve the subject of the mail.
@@ -423,7 +424,7 @@ public class QuickSharePopup{
 		try {
 		
 			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments,recipientsEmail,textAreaValue,subject,linShareUrl,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
 		
 		
 		} catch (BusinessException e1) {

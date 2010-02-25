@@ -57,7 +57,8 @@ public interface ShareFacade {
 	 * @return SuccessesAndFailsItems<SharedDocumentVo> : the list of sharing that succedded and failed
 	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,String comment, String message,String messageTxt,String subject, Calendar expirationDate) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,String comment, String messageInternal, String messageInternalTxt,
+			String messageGuest, String messageGuestTxt,String subject, Calendar expirationDate) throws BusinessException;
 
 	
 	
@@ -69,14 +70,15 @@ public interface ShareFacade {
 	 * @param comment
 	 * @param message
 	 * @param subject
-	 * @param linShareUrl
+	 * @param linShareUrlInternal
+	 * @param linShareUrlAnonymous
 	 * @param secureSharing
 	 * @param sharedTemplateContent
 	 * @param passwordSharedTemplateContent
 	 * @return
 	 * @throws BusinessException
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrl,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt) throws BusinessException;
 
 	/**
 	 * same function as createSharingWithMailUsingRecipientsEmail() BUT we give the expiration date selected by the user
@@ -86,7 +88,8 @@ public interface ShareFacade {
 	 * @param comment
 	 * @param message
 	 * @param subject
-	 * @param linShareUrl
+	 * @param linShareUrlInternal
+	 * @param linShareUrlAnonymous
 	 * @param secureSharing
 	 * @param sharedTemplateContent
 	 * @param passwordSharedTemplateContent
@@ -94,7 +97,7 @@ public interface ShareFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrl,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt, Calendar expiryDateSelected) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt, Calendar expiryDateSelected) throws BusinessException;
 	
 	
 	/**

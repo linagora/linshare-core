@@ -161,7 +161,7 @@ public class UserRestServiceImpl implements UserRestService {
 		// Get the messages service to localize the mail sent
 		Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
 		
-		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 
         String ownerCN = actor.getFirstName() + " " + actor.getLastName();
 

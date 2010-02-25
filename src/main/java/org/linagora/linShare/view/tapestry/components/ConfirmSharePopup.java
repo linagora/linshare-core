@@ -421,7 +421,8 @@ public class ConfirmSharePopup{
 		 * retrieve the url from propertie file
 		 * 
 		 */
-		String linShareUrl=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
+		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 
 		/**
 		 * retrieve the subject of the mail.
@@ -463,7 +464,7 @@ public class ConfirmSharePopup{
 			//sharing = shareFacade.createSharingWithMail(userVo, documentsVo, usersVo,textAreaValue, message,subject);
 			
 			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrl,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt, dateExpiry);
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt, dateExpiry);
 			
 
 		

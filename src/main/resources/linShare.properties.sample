@@ -56,8 +56,10 @@ linshare.db.hbm2ddl.auto=validate
 linshare.default.maxUpload=10
 #Maximum size (in bytes) of a single upload request Defaults to -1 (no limit).
 linshare.default.maxUploadSize=-1
-#linshare url which is used in mail templates
-linshare.info.urlShare=http://localhost:8080/linshare/
+#linshare url which is used in mail templates. give a different internal url if internal
+# user connect with a different url (e.g. CAS url)
+linshare.info.url.base=http://localhost:8080/linshare/
+linshare.info.url.internal=http://localhost:8080/linshare/
 #set to true in tapestry production environnement
 linshare.productionMode=false
 #local work directory to encrypt/decrypt data
