@@ -21,8 +21,13 @@
 package org.linagora.linShare.view.tapestry.services.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.util.LocaleUtils;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.PersistentLocale;
@@ -41,14 +46,25 @@ public class UserLocaleDispatcher implements Dispatcher {
 
 	private final PersistentLocale persistentLocale;
 	private final ApplicationStateManager stateManager;
+	private final Locale defaultLocale; 
+	private final List<Locale> supportedLocales;
 	
 	
 	
 	public UserLocaleDispatcher(PersistentLocale persistentLocale,
-			ApplicationStateManager stateManager) {
+			ApplicationStateManager stateManager, 
+			SymbolSource symbolSource, String defaultLocale) {
 		super();
 		this.persistentLocale = persistentLocale;
 		this.stateManager = stateManager;
+		this.defaultLocale = LocaleUtils.toLocale(defaultLocale);
+		this.supportedLocales = new ArrayList<Locale>();
+
+		String stringLocales=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES);
+		String[]listLocales=stringLocales.split(",");
+		for (String currentLocale : listLocales) {
+			this.supportedLocales.add(LocaleUtils.toLocale(currentLocale));
+		}
 	}
 
 
@@ -69,7 +85,13 @@ public class UserLocaleDispatcher implements Dispatcher {
     		if (userVo.getLocale()!=null && !userVo.getLocale().equals("")) {
     			persistentLocale.set(new Locale(userVo.getLocale()));
     		} else {
-    			persistentLocale.set(request.getLocale());
+				Locale requestLocale = request.getLocale();
+				if (supportedLocales.contains(requestLocale)) {
+					persistentLocale.set(request.getLocale());
+				}
+				else {
+					persistentLocale.set(defaultLocale);
+				}
     		}
 		}
 		

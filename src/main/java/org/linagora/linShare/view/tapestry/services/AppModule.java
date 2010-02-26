@@ -39,6 +39,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ApplicationStateContribution;
@@ -348,9 +349,10 @@ public class AppModule
     /** Dispatcher to set the user locale */
     public static Dispatcher buildUserLocaleDispatcher(
 			ApplicationStateManager stateManager,
-			@InjectService("PersistentLocale") PersistentLocale persistentLocale) {
+			@InjectService("PersistentLocale") PersistentLocale persistentLocale,
+			@InjectService("SymbolSource") SymbolSource symbolSource) {
 
-		return new UserLocaleDispatcher(persistentLocale, stateManager);
+		return new UserLocaleDispatcher(persistentLocale, stateManager, symbolSource, "fr");
 	}
     
     /****************************
