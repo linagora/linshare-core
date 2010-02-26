@@ -332,7 +332,10 @@ public class LdapDatasource implements LdapDao {
 
         public Object mapFromAttributes(Attributes attributes) throws javax.naming.NamingException {
             String mail = (String) attributes.get("mail").get();
-            String firstName = (String) attributes.get("givenName").get();
+            String firstName = "";
+            if(attributes.get("givenName")!=null){
+            	firstName = (String) attributes.get("givenName").get();
+            }
             String lastName = (String) attributes.get("sn").get();
             return new Internal(mail, firstName, lastName, mail);
         }
