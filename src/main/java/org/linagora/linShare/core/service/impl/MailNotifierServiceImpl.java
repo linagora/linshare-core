@@ -178,9 +178,9 @@ public class MailNotifierServiceImpl implements NotifierService {
                 Transport.send(messageMim);
             }
         } catch (MessagingException e) {
-            throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, e.getCause().toString());
+            throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,  "Error sending notification",e);
         }  catch (Exception e) {
-            throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, e.getCause().toString());
+            throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification",e);
         }
     }
 
