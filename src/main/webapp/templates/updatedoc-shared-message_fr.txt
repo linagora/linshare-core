@@ -6,5 +6,8 @@ ${firstName} ${lastName} a mis à jour le fichier partagé ${fileOldName} :
 - taille du fichier : ${fileSize}
 - type MIME : ${mimeType}
 
+Pour télécharger le nouveau fichier, cliquez sur le lien ou copiez le dans votre navigateur :
+${url}${urlparam}
+
 -- 
 LinShare - http://linshare.org - Logiciel libre de partage de fichiers sécurisé

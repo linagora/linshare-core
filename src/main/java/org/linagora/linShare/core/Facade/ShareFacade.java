@@ -143,12 +143,14 @@ public interface ShareFacade {
      * @param currentDoc current document with an updated content
      * @param currentUser current user which does the update action
      * @param oldFileName old file name of the updated doc
+     * @param url url of the application
+     * @param urlInternal url for internal user connection
      * @param fileSizeTxt friendly size of the file
      * @param subject of the mail notification
      * @param sharedUpdateDocTemplateContent template
      * @param sharedUpdateDocTemplateContentTxt template
      * @throws BusinessException
      */
-    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String fileSizeTxt,String oldFileName, String subject, String sharedUpdateDocTemplateContent,String sharedUpdateDocTemplateContentTxt) throws BusinessException;
+    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String url, String urlInternal, String fileSizeTxt,String oldFileName, String subject, String sharedUpdateDocTemplateContent,String sharedUpdateDocTemplateContentTxt) throws BusinessException;
     
 }

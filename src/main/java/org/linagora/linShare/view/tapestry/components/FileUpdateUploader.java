@@ -51,6 +51,7 @@ import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.slf4j.Logger;
 
 
@@ -102,6 +103,9 @@ public class FileUpdateUploader {
     
     @Inject
     private Messages messages;
+
+	@Inject
+	private PropertiesSymbolProvider propertiesSymbolProvider;
     
     
 	@SuppressWarnings("unused")
@@ -179,13 +183,16 @@ public class FileUpdateUploader {
                     
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_UPDATE_FILE_CONTENT_OK,
                         MessageSeverity.INFO, initialdocument.getFileName(),uploadedFile.getFileName()));
+                    
+            		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
+            		String urlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
 
                     if(initialdocument.getShared()){
                     	String updateDocSharedTemplateHtmlContent = templating.readFullyTemplateContent(updateDocSharedTemplateHtml.getResource().openStream());
                     	String updateDocSharedTemplateTxtContent = templating.readFullyTemplateContent(updateDocSharedTemplateTxt.getResource().openStream());
                     	String filesizeTxt = FileUtils.getFriendlySize(document.getSize(), messages);
                     	//send email file has been replaced ....
-                    	shareFacade.sendSharedUpdateDocNotification(document, userDetails, filesizeTxt, initialdocument.getFileName(), messages.get("mail.user.all.updatedoc.subject"), updateDocSharedTemplateHtmlContent, updateDocSharedTemplateTxtContent);
+                    	shareFacade.sendSharedUpdateDocNotification(document, userDetails, url, urlInternal, filesizeTxt, initialdocument.getFileName(), messages.get("mail.user.all.updatedoc.subject"), updateDocSharedTemplateHtmlContent, updateDocSharedTemplateTxtContent);
                     }
                     
                     
