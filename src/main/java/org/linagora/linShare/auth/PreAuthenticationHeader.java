@@ -21,8 +21,12 @@
  */
 package org.linagora.linShare.auth;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.ui.preauth.header.RequestHeaderPreAuthenticatedProcessingFilter;
 import org.springframework.util.Assert;
 
@@ -31,20 +35,38 @@ import org.springframework.util.Assert;
  * against a LemonLDAP::NG Web Single Sign On
  * @author Clement Oudot &lt;coudot@linagora.com&gt;
  */
-public class PreAuthentificationHeader extends
+public class PreAuthenticationHeader extends
 		RequestHeaderPreAuthenticatedProcessingFilter {
 
+	/** */
 	private String principalRequestHeader;
+	
+	/** List of IP / DNS hostname */
+	private List<String> authorizedAddresses;
+	
+	private static Logger logger = LoggerFactory.getLogger(PreAuthenticationHeader.class);
 
 	@Override
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
 		// Do not throw exception if header is not set
-		String obj = request.getHeader(principalRequestHeader);
-		return obj;
+		String authenticationHeader = request.getHeader(principalRequestHeader);
+		if(authenticationHeader != null) {
+			if(!authorizedAddresses.contains(request.getRemoteAddr())) {
+				logger.error("SECURITY ALERT: Unauthorized header value '" + authenticationHeader 
+						+ "' from IP: " + request.getRemoteAddr() + ":" + request.getRemotePort());
+				return null;
+			}
+		}
+		return authenticationHeader;
 	}
 
 	public void setPrincipalRequestHeader(String principalRequestHeader) {
 		Assert.hasText(principalRequestHeader, "principalRequestHeader must not be empty or null");
 		this.principalRequestHeader = principalRequestHeader;
+	}
+
+	public void setAuthorizedAddresses(List<String> authorizedAddresses) {
+		Assert.hasText(authorizedAddresses.toString(), "authorizedAddresses must not be empty or null");
+		this.authorizedAddresses = authorizedAddresses;
 	}
 }

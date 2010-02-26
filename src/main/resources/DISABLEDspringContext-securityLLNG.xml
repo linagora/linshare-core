@@ -190,8 +190,13 @@
 	
 	<bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
 	
-	<bean id="lemonLDAPFilter" class="org.linagora.linShare.auth.PreAuthentificationHeader">
+	<bean id="lemonLDAPFilter" class="org.linagora.linShare.auth.PreAuthenticationHeader">
 		<security:custom-filter position="PRE_AUTH_FILTER" />
+		<property name="authorizedAddresses">
+			<list>
+				<value>${sso.header.allowfrom}</value>
+			</list>
+		</property>
 		<property name="principalRequestHeader" value="${sso.header.user}"/>
 		<property name="authenticationManager" ref="authenticationManager" />
 	</bean>
