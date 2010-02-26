@@ -19,10 +19,10 @@
         <property name="locations">
             <list>
                 <value>classpath:linShare-default.properties</value>
+                <value>classpath:linShare.properties</value>
                 <value>classpath:jackRabbit.properties</value>
                 <value>${linshare.config.path}/linShare.properties</value>
                 <value>${linshare.config.path}/jackRabbit.properties</value>
-                <value>classpath:linShare.properties</value>
             </list>
         </property>
     </bean>

@@ -25,8 +25,10 @@
 		<field type="text" variable="mailSmtpUser">
 			  <spec txt="User login:"  size="15" />
 		</field>
-		<field type="text" variable="mailSmtpPassword">
-			  <spec txt="User password:" size="15" />
+		<field type="password" variable="mailSmtpPassword">
+		<spec>
+			<pwd txt="User password:" size="15" set=""/>
+		</spec>
 		</field>	
 	</panel>
 </userInput>

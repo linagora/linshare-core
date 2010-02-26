@@ -62,6 +62,7 @@
 			<outputDirectory>.</outputDirectory>
 			<includes>
 				<include>linshare.sh</include>
+				<include>linshare.bat</include>
 			</includes>
 			<fileMode>0755</fileMode>
 		</fileSet>
