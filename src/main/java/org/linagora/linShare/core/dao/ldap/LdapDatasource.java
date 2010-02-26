@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.core.dao.ldap;
 
+import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.support.LdapUtils;
+
 
 public class LdapDatasource implements LdapDao {
 
@@ -309,14 +311,20 @@ public class LdapDatasource implements LdapDao {
         EqualsFilter filter = new EqualsFilter("mail", mail);
         technicalTracer.info("Search pattern = " + filter.encode());
 
-        List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
-        if (users.size() == 0) {
-            return null;
-        } else if (users.size() == 1) {
-            return users.get(0);
-        } else {
-            throw new IllegalStateException("More than one user found with email : " + mail);
+        try {
+        	List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
+        	if (users.size() == 0) {
+                return null;
+            } else if (users.size() == 1) {
+                return users.get(0);
+            } else {
+                throw new IllegalStateException("More than one user found with email : " + mail);
+            }
+        } catch(Exception e) {
+        	technicalTracer.warn("Cannot connect to Ldap directory",e);
+        	return null;
         }
+        
     }
 
     /** This class is used to map ldap attributes with a user entity. */
