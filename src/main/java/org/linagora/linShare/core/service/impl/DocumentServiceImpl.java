@@ -207,8 +207,13 @@ public class DocumentServiceImpl implements DocumentService {
 		// Copy the input stream to a temporary file for safe use
 		File tempFile = null;
 		BufferedOutputStream bof = null;
-		String extension = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
-		System.out.println(extension);
+		int splitIdx = fileName.lastIndexOf('.');
+		String extension = "";
+		if(splitIdx>-1){
+			extension = fileName.substring(splitIdx, fileName.length());
+		}
+		
+		log.debug("Found extension :"+extension);
 
 		try {
 			tempFile = File.createTempFile("linshare", extension); //we need to keep the extension for the thumbnail generator
