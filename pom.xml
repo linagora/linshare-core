@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linagora</groupId>
     <artifactId>linshare</artifactId>
-    <version>0.7-SNAPSHOT</version>
+    <version>0.7</version>
     <packaging>war</packaging>
     <name>LinShare, Secure File Sharing</name>
     <description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -26,9 +25,9 @@
         <url>http://build.linid.org/hudson/view/LinShare/</url>
     </ciManagement>
     <scm>
-        <developerConnection>scm:svn+ssh://svn.linid.org/var/svn/linshare/trunk/linshare/</developerConnection>            
-        <connection>scm:http://svn.linid.org/svn/linshare/trunk/linshare/</connection>                                     
-        <url>http://linpki.org/repositories/show/linshare</url>                                                            
+        <developerConnection>scm:svn:svn+ssh://svn.linid.org/var/svn/linshare/tags/linshare-0.7</developerConnection>
+        <connection>scm:svn:http://svn.linid.org/svn/linshare/tags/linshare-0.7</connection>
+        <url>http://linpki.org/repositories/show/linshare/tags/linshare-0.7</url>                                                            
         <tag>trunk</tag>   
     </scm>
     <organization>
@@ -63,7 +62,7 @@
             <subscribe>linshare-users-subscribe@linpki.org</subscribe>
             <unsubscribe>linshare-users-unsubscribe@linpki.org</unsubscribe>
             <post>linshare-users@linpki.org</post>
-            <archive></archive>
+            <archive />
         </mailingList>
         <mailingList>
             <name>Developers List</name>
@@ -522,7 +521,7 @@
         <dependency>
             <groupId>org.linagora.linkit</groupId>
             <artifactId>timeline</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>0.2</version>
         </dependency>
         <dependency>
             <groupId>org.linagora.linkit</groupId>
@@ -928,8 +927,8 @@
                                                 <phase>package</phase>
                                                 <configuration>
                                                         <tasks>
-                                                                <property name="execution.path" refid="maven.runtime.classpath"></property>
-                                                                <ant antfile="${basedir}/misc/build.xml" target="prepare-jetty"></ant>
+                                                                <property name="execution.path" refid="maven.runtime.classpath" />
+                                                                <ant antfile="${basedir}/misc/build.xml" target="prepare-jetty" />
                                                         </tasks>
                                                 </configuration>
                                                 <goals>
@@ -941,8 +940,8 @@
                                                 <phase>clean</phase>
                                                 <configuration>
                                                         <tasks>
-                                                                <property name="execution.path" refid="maven.runtime.classpath"></property>
-                                                                <ant antfile="${basedir}/misc/build.xml" target="clean"></ant>
+                                                                <property name="execution.path" refid="maven.runtime.classpath" />
+                                                                <ant antfile="${basedir}/misc/build.xml" target="clean" />
                                                         </tasks>
                                                 </configuration>
                                                 <goals>
