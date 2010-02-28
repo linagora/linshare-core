@@ -25,7 +25,7 @@
         <url>http://build.linid.org/hudson/view/LinShare/</url>
     </ciManagement>
     <scm>
-        <developerConnection>scm:svn:svn+ssh://svn.linid.org/var/svn/linshare/tags/linshare-0.7</developerConnection>
+        <developerConnection>scm:svn:https://svn.linid.org/svn/linshare/tags/linshare-0.7</developerConnection>
         <connection>scm:svn:http://svn.linid.org/svn/linshare/tags/linshare-0.7</connection>
         <url>http://linpki.org/repositories/show/linshare/tags/linshare-0.7</url>                                                            
         <tag>trunk</tag>   
