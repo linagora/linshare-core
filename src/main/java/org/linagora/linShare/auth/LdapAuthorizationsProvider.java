@@ -22,6 +22,9 @@ package org.linagora.linShare.auth;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.springframework.ldap.core.DirContextOperations;
@@ -34,6 +37,8 @@ import org.springframework.security.ldap.LdapAuthoritiesPopulator;
 public class LdapAuthorizationsProvider implements LdapAuthoritiesPopulator {
 
     private UserFacade userFacade;
+    
+    private final static Log logger = LogFactory.getLog(LdapAuthorizationsProvider.class);
 
     public LdapAuthorizationsProvider(UserFacade userFacade) {
         this.userFacade = userFacade;
@@ -50,8 +55,12 @@ public class LdapAuthorizationsProvider implements LdapAuthoritiesPopulator {
         String usermail = username; //mail is the login
         
         //if username is uid as a login and not an email
-        if(username!=null && username.indexOf("@")==-1){
+        if(username!=null && username.indexOf("@")==-1 ){  	
         	usermail = userData.getStringAttribute("mail");
+        	if(usermail==null || usermail.trim().length()<1){
+        		usermail = username;
+        		logger.error("User doesn't have any mail set in LDAP directory");
+        	}
         }
         
         UserVo user = userFacade.findUser(usermail);
