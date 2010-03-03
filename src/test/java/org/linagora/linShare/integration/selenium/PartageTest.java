@@ -24,12 +24,12 @@ public class PartageTest extends AbstractLinshareSeleneseTestCase {
 		File sample2 = File.createTempFile("test", "");
 		
 		selenium.type("file", sample1.getAbsolutePath());
+		Thread.sleep(1000);
 		selenium.click("link=+");
 		selenium.type("file_0", sample2.getAbsolutePath());
+		Thread.sleep(1000);
 		selenium.type("recipientsPatternQuickSharePopup", "mlaborie@linagora.com,");
 		selenium.click("secureSharing");
-		selenium.click("panelSubject_toggler");
-		selenium.click("panelSubject_toggler");
 		Thread.sleep(1000);
 		selenium.click("//form[@id='quickShareForm']/div[11]/a[1]/span");
 		selenium.click("submitQuickShare");

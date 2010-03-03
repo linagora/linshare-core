@@ -21,23 +21,11 @@
       </bean>
     </property>
   </bean>
-  
-    
-    <bean id="jcrDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-       <property name="driverClassName" value="${linshare.db.driver.class}"/>
-        <property name="url" value="${linshare.db-repository.url}"/>
-        <property name="username" value="${linshare.db-repository.username}"/>
-        <property name="password" value="${linshare.db-repository.password}"/>
-        <property name="maxActive" value="${linshare.db-repository.pool.maxactive}"/>
-        <property name="maxWait" value="${linshare.db-repository.pool.maxwait}"/>
-        <property name="poolPreparedStatements" value="true"/>
-        <property name="defaultAutoCommit" value="true"/>
-    </bean>
-    
-    
-    <bean id="transactionJackRabbit" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-  		<property name="dataSource" ref="jcrDataSource"/>
-	</bean>
+
+
+  <bean id="transactionJackRabbit" class="org.springmodules.jcr.jackrabbit.LocalTransactionManager">
+  		<property name="sessionFactory" ref="jcrSessionFactory"/>
+  </bean>
   
   <bean id="password" class="java.lang.String">
       <constructor-arg index="0" value="${repository.password}"/>
@@ -49,11 +37,7 @@
   </bean>	
 
   <bean id="jackRabbitRepository" class="org.linagora.linShare.core.dao.jackRabbit.JackRabbitFileSystem">
-   <!--  <property name="fileFinder" ref="fileFinder"/> -->
-  <property name="jcrTemplate" ref="jcrTemplate"/>
-   <!--  <property name="contentSource" value="myRandomContentSource"/> -->
-   <!--  <property name="parser" ref="someRandomDocumentParser"/>
-    <property name="sourceDirectory" value="/path/to/my/random/content"/> -->
+	  <property name="jcrTemplate" ref="jcrTemplate"/>
   </bean>	
 	
 </beans>	
