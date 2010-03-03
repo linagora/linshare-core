@@ -96,9 +96,9 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 		documents=new ArrayList<String>();
 		login="root@localhost.localdomain";
 		jackStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("jackRabbit.properties");
-		linStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare.properties");
+		linStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		jackUuid=fileRepository.insertFile(login, jackStream, 10000, "jackRabbit.properties", "text/plain");
-		linUuid=fileRepository.insertFile(login, linStream, 10000, "linShare.properties", "text/css");
+		linUuid=fileRepository.insertFile(login, linStream, 10000, "linShare-default.properties", "text/css");
 		user=userRepository.findByLogin(login);
 
 		userVo=new UserVo(user.getLogin(),user.getFirstName(),user.getLastName(),user.getMail(),user.getUserType());

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linagora</groupId>
     <artifactId>linshare</artifactId>
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.8-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>LinShare, Secure File Sharing</name>
     <description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -66,6 +66,9 @@
             <email>mlaborie@linagora.com</email>
             <organization>LINAGORA</organization>
             <organizationUrl>http://www.linagora.com/</organizationUrl>
+             <roles>
+                <role>Developer</role>
+            </roles>
         </developer>
     </developers>
     <mailingLists>
@@ -813,7 +816,24 @@
                 <version>8.3-603.jdbc3</version>
             </extension>
         </extensions>
-        --><testResources>
+        -->
+        <resources>
+        	<resource>
+        		<filtering>false</filtering>
+        		<directory>src/main/resources</directory>
+        		<excludes>
+        			<exclude>version.properties</exclude>
+        		</excludes>
+        	</resource>
+        	<resource>
+        		<filtering>true</filtering>
+        		<directory>src/main/resources</directory>
+        		<includes>
+        			<include>version.properties</include>
+        		</includes>
+        	</resource>
+        </resources>
+        <testResources>
         	<testResource>
         		<directory>src/test/resources</directory>
         	</testResource>

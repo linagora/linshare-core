@@ -47,7 +47,7 @@ public class TestJackRabbit extends AbstractJUnit4SpringContextTests{
 	@Before
 	public void setUp() throws Exception {
 		
-		this.inputStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare.properties");
+		this.inputStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		
 	}
 
@@ -56,14 +56,14 @@ public class TestJackRabbit extends AbstractJUnit4SpringContextTests{
 	public void testInsertFile(){
 		
 		
-		String uuid=this.fileRepository.insertFile("user1", inputStream, 0, "linShare.properties", "txt");
+		String uuid=this.fileRepository.insertFile("user1", inputStream, 0, "linShare-default.properties", "txt");
 		try {
 			this.inputStream.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		this.inputStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare.properties");
+		this.inputStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		
 		BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream));
 		BufferedReader out=new BufferedReader(new InputStreamReader(this.fileRepository.getFileContentByUUID(uuid)));

@@ -128,7 +128,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 									.findAndCreateUser("user1@linpki.org");
 							inputStream = Thread.currentThread()
 									.getContextClassLoader()
-									.getResourceAsStream("linShare.properties");
+									.getResourceAsStream("linShare-default.properties");
 
 							if (userService.searchUser(
 									mailTestRetriever.getSenderMail(),
