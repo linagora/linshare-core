@@ -4,17 +4,13 @@
   <session-factory>
 
     <property name="connection.autocommit">true</property>
-    
       <!--Use ehcache as cache manager -->
-	<property name="hibernate.cache.provider_class"> 
-		net.sf.ehcache.hibernate.SingletonEhCacheProvider
-	</property>
-	<property name="net.sf.ehcache.configurationResourceName">/ehcache.cfg.xml</property>
+	<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
 	<property name="hibernate.cache.use_minimal_puts">false</property>
 	<property name="hibernate.cache.use_query_cache">true</property>
 	<property name="hibernate.cache.use_second_level_cache">true</property>
 	<property name="hibernate.cache.use_structured_entries">true</property>
-	
+	<property name="net.sf.ehcache.configurationResourceName">/ehcache.cfg.xml</property> 
     <mapping resource="org/linagora/linShare/core/domain/entities/User.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/Document.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/Share.hbm.xml"/>

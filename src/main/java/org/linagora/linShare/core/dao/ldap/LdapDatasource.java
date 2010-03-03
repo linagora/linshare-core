@@ -20,7 +20,7 @@
 */
 package org.linagora.linShare.core.dao.ldap;
 
-import java.net.ConnectException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,10 +108,11 @@ public class LdapDatasource implements LdapDao {
 	public boolean exist(String... keys) {
 
 		try {
-
+			final String searchQuery = MessageFormat.format(ldap_filter, (Object[])keys);
+			technicalTracer.debug("Query LDAP for :"+searchQuery);
 			SearchControls searchControls=new SearchControls();
 			searchControls.setSearchScope(scope);
-			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, (Object[])keys), searchControls);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap,searchQuery, searchControls);
 			if(naming.hasMore()){
 				return true;
 			}
@@ -131,10 +132,12 @@ public class LdapDatasource implements LdapDao {
      */
 	public Map<String,String> getValues(List<String> keys ,String...attributes ){
 		try {
+			final String searchQuery = MessageFormat.format(ldap_filter, keys.toArray());
+			technicalTracer.debug("Query LDAP for :"+searchQuery);
 			HashMap<String, String> hashMap=new HashMap<String, String>();
 			SearchControls searchControls=new SearchControls();
 			searchControls.setSearchScope(scope);
-			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, keys.toArray()), searchControls);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, searchQuery, searchControls);
 			if(naming.hasMore()){
 				SearchResult searchResult=naming.next();
 				for(String currentAttribute:attributes){
@@ -151,7 +154,9 @@ public class LdapDatasource implements LdapDao {
 	}
 
 	public boolean auth(String password, String... keys) {
-        List<String> results = ldapTemplate.search(baseDn_ldap, String.format(ldap_filter, (Object[]) keys), new DnContextMapper());
+		final String searchQuery = MessageFormat.format(ldap_filter, (Object[]) keys);
+		technicalTracer.debug("Query LDAP for :"+searchQuery);
+		List<String> results = ldapTemplate.search(baseDn_ldap, searchQuery, new DnContextMapper());
         if (results.size() != 1) {
             // user is not in LDAP, probably a guest or root account
             return false;
@@ -181,7 +186,7 @@ public class LdapDatasource implements LdapDao {
 
 			SearchControls searchControls=new SearchControls();
 			searchControls.setSearchScope(scope);
-			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, (Object[])keys), searchControls);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, MessageFormat.format(ldap_filter, (Object[])keys), searchControls);
 			if(naming.hasMore()){
 				SearchResult searchResult=naming.next();
 				res = (byte[])searchResult.getAttributes().get(PASSWORDFIELD).get();

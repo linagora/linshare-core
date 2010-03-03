@@ -35,6 +35,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.service.NotifierService;
@@ -56,16 +58,23 @@ public class MailNotifierServiceImpl implements NotifierService {
 
     /** The smtp password. */
     private final String smtpPassword;
+    
+    /** The smtp port. */
+    private  final int smtpPort;
 
     /** Is the server needs authentification. */
-    private final boolean needsAuth;
+    private  final boolean needsAuth;
 
     /** Mail charset. */
     private final String charset;
+
     
+    private final boolean inlineLogo;
     
     /** url. */
     private final String urlLinshare;
+    
+    private final static Log logger = LogFactory.getLog(MailNotifierServiceImpl.class);
     
 
     /**
@@ -78,18 +87,25 @@ public class MailNotifierServiceImpl implements NotifierService {
      * @param charset
      */
     
-    public MailNotifierServiceImpl(String smtpServer, String smtpSender, String smtpUser, String smtpPassword,
-        boolean needsAuth, String charset, String urlLinshare) {
+    public MailNotifierServiceImpl(String smtpServer,int smtpPort,  String smtpSender, String smtpUser, String smtpPassword,
+        boolean needsAuth, String charset, String urlLinshare,boolean inlineLogo) {
         this.smtpServer = smtpServer;
+        this.smtpPort = smtpPort;
         this.smtpSender = smtpSender;
         this.smtpUser = smtpUser;
         this.smtpPassword = smtpPassword;
         this.needsAuth = needsAuth;
         this.charset = charset;
         this.urlLinshare = urlLinshare;
+        this.inlineLogo = inlineLogo;
     }
 
-    /** Send notification to a recipient.
+    
+    
+    
+
+
+	/** Send notification to a recipient.
      * @param recipient notification recipient.
      * @param subject subject.
      * @param content content.
@@ -112,6 +128,7 @@ public class MailNotifierServiceImpl implements NotifierService {
                     new InternetAddress(recipient));
 
             messageMim.setSubject(subject,charset);
+            
             
             
  	       // Create a "related" Multipart message
@@ -140,19 +157,21 @@ public class MailNotifierServiceImpl implements NotifierService {
 	       rel_bph.setDataHandler(new DataHandler(new ByteArrayDataSource(htmlContent,"text/html; charset="+charset)));
 	       html_mp.addBodyPart(rel_bph);
 	      
-	       //inline image ?
-	       String cid = "image.part.1@linshare.org";
-	       MimeBodyPart rel_bpi = new MimeBodyPart();
-	       // Initialize and add the image file to the html body part
-	       rel_bpi.setFileName("logo_linshare_0210x052.png");
-	       rel_bpi.setText("linshare");
-	       String imageLogo = urlLinshare;
-	       if(!imageLogo.endsWith("/")) imageLogo = imageLogo + "/";
-	       imageLogo = imageLogo + "images/logo_linshare_0210x052.png";
-	       rel_bpi.setDataHandler(new DataHandler(new URL(imageLogo)));
-	       rel_bpi.setHeader("Content-ID", "<" + cid + ">");
-	       rel_bpi.setDisposition("inline");
-	       html_mp.addBodyPart(rel_bpi);
+	      if(inlineLogo){
+		       //inline image ?
+		       String cid = "image.part.1@linshare.org";
+		       MimeBodyPart rel_bpi = new MimeBodyPart();
+		       // Initialize and add the image file to the html body part
+		       rel_bpi.setFileName("logo_linshare_0210x052.png");
+		       rel_bpi.setText("linshare");
+		       String imageLogo = urlLinshare;
+		       if(!imageLogo.endsWith("/")) imageLogo = imageLogo + "/";
+		       imageLogo = imageLogo + "images/logo_linshare_0210x052.png";
+		       rel_bpi.setDataHandler(new DataHandler(new URL(imageLogo)));
+		       rel_bpi.setHeader("Content-ID", "<" + cid + ">");
+		       rel_bpi.setDisposition("inline");
+		       html_mp.addBodyPart(rel_bpi);
+	      }
 	       
 	       // Create the second BodyPart of the multipart/alternative,
 	       // set its content to the html multipart, and add the
@@ -164,22 +183,25 @@ public class MailNotifierServiceImpl implements NotifierService {
             messageMim.setContent(mp);
             // Since we used html tags, the content must be marker as text/html
             //messageMim.setContent(content,"text/html; charset="+charset);
-
+          
+            
             Transport tr = session.getTransport("smtp");
-
+         
             // Connect to smtp server, if needed
             if (needsAuth) {
-                tr.connect(smtpUser, smtpPassword);
-
+                tr.connect(smtpServer, smtpPort ,smtpUser, smtpPassword);
+                messageMim.saveChanges();
                 tr.sendMessage(messageMim, messageMim.getAllRecipients());
                 tr.close();
             } else {
                 // Send message
-                Transport.send(messageMim);
+            	Transport.send(messageMim);
             }
         } catch (MessagingException e) {
+        	logger.error("Error sending notification on "+smtpServer+" port "+smtpPort,e);
             throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,  "Error sending notification",e);
         }  catch (Exception e) {
+          	logger.error("Error sending notification on "+smtpServer+" port "+smtpPort,e);
             throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification",e);
         }
     }
@@ -192,6 +214,8 @@ public class MailNotifierServiceImpl implements NotifierService {
     	// Set the host smtp address
         Properties props = new Properties();
         props.put("mail.smtp.host", smtpServer);
+        props.put("mail.smtp.port", smtpPort+"");
+
         if (needsAuth){
             props.put("mail.smtp.auth", "true");
         }else{
@@ -199,7 +223,11 @@ public class MailNotifierServiceImpl implements NotifierService {
         }
         // create some properties and get the default Session
         Session session = Session.getInstance(props, null);
-        session.setDebug(false);
+       if(logger.isDebugEnabled()){
+    	   session.setDebug(true);
+       } else {
+    	  session.setDebug(false);
+       }
 
         return session;
     }

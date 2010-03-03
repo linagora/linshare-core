@@ -4,18 +4,10 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
 	default-autowire="no">
 
-  <bean id="repository" class="org.linagora.linShare.core.dao.jackRabbit.BetterRepositoryFactoryBean">
+  <bean id="repository" class="org.linagora.linShare.core.dao.jackRabbit.BetterRepositoryFactoryBean" destroy-method="destroy"   >
     <property name="configuration" value="classpath:repository.xml"/>
     <property name="homeDir" value="${home.directory}"/>
-    <property name="configurationProperties">
-    	<list>
-    		<value>classpath:linShare-default.properties</value>
-    		<value>classpath:linShare.properties</value>
-    		<value>classpath:jackRabbit.properties</value>
-    		<value>${linshare.config.path}/linShare.properties</value>
-    		<value>${linshare.config.path}/jackRabbit.properties</value>
-    	</list>
-    </property>
+  	<property name="propertyPlaceholderConfigurer" ref="propertyPlaceholder" />
   </bean>
   
   <bean id="jcrSessionFactory" class="org.springmodules.jcr.JcrSessionFactory">
@@ -30,16 +22,21 @@
     </property>
   </bean>
   
-   <bean id="jcrDataSource" destroy-method="close" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${linshare.db.driver.class}"/>
-	<!-- Use a database name suffixed by '_data' -->
-        <property name="url" value="${linshare.db.url}_data"/>
-        <property name="username" value="${linshare.db.username}"/>
-        <property name="password" value="${linshare.db.password}"/>
+    
+    <bean id="jcrDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+       <property name="driverClassName" value="${linshare.db.driver.class}"/>
+        <property name="url" value="${linshare.db-repository.url}"/>
+        <property name="username" value="${linshare.db-repository.username}"/>
+        <property name="password" value="${linshare.db-repository.password}"/>
+        <property name="maxActive" value="${linshare.db-repository.pool.maxactive}"/>
+        <property name="maxWait" value="${linshare.db-repository.pool.maxwait}"/>
+        <property name="poolPreparedStatements" value="true"/>
+        <property name="defaultAutoCommit" value="true"/>
     </bean>
     
+    
     <bean id="transactionJackRabbit" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-  	<property name="dataSource" ref="jcrDataSource"/>
+  		<property name="dataSource" ref="jcrDataSource"/>
 	</bean>
   
   <bean id="password" class="java.lang.String">

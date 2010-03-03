@@ -18,30 +18,19 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linShare.core.utils;
-
-import java.util.Properties;
-
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-
-public class PropertyPlaceholderConfigurer extends
-		org.springframework.beans.factory.config.PropertyPlaceholderConfigurer
-		implements PropertyPlaceholder {
-
-	private Properties properties;
-
-	public Properties getProperties() {
-		return properties;
-	}
-
-	@Override
-	protected void processProperties(
-			ConfigurableListableBeanFactory beanFactoryToProcess,
-			Properties props) throws BeansException {
-		this.properties = props;
-		super.processProperties(beanFactoryToProcess, this.properties);
-	}
+package org.linagora.linShare.common.service;
 
 
+public interface MailTestRetriever {
+	/**
+	 * Retrieve the mail of the sender for tests
+	 * @return the sender of the mail.
+	 */
+	public String getSenderMail();
+	
+	/**
+	 * Retrieve the mail of the recipient for tests
+	 * @return the recipient of the mail.
+	 */
+	public String getRecipientMail();
 }
