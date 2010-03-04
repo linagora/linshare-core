@@ -784,15 +784,6 @@
                     <rootPackage>org.linagora.linShare</rootPackage>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.0.1</version>
-                <configuration>
-                    <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory>
-                </configuration>
-            </plugin>
         </plugins>
     </reporting>
     <profiles>
@@ -1035,16 +1026,6 @@
             </snapshots>
         </repository>
         
-        <!--
-			<repository> <id>codehaus.snapshots</id>
-			<url>http://snapshots.repository.codehaus.org</url> </repository>
-
-			<repository> <id>OpenQA_Release</id> <name>OpenQA Release
-			Repository</name>
-			<url>http://archiva.openqa.org/repository/releases/</url>
-			</repository> <repository> <id>maven</id> <name>maven repo1</name>
-			<url>http://www.mvnrepository.com/artifact/</url> </repository>
-		-->
         <repository>
             <id>Java-Releases</id>
             <url>http://download.java.net/maven/2/</url>
@@ -1077,7 +1058,6 @@
     
     <properties>
         <tapestry-release-version>5.1.0.5</tapestry-release-version>
-        <netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
         <spring-release-version>2.5.5</spring-release-version>
         <spring-security-release-version>2.0.5.RELEASE</spring-security-release-version>
         <jackrabbit-release-version>1.4</jackrabbit-release-version>
