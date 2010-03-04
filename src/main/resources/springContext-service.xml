@@ -104,8 +104,6 @@
         <constructor-arg index="4" value="${mail.smtp.password}"/>
         <constructor-arg index="5" value="${mail.smtp.auth.needed}"/>
         <constructor-arg index="6" value="${mail.smtp.charset}"/>
-        <constructor-arg index="7" value="${linshare.info.url.base}"/>
-      	<constructor-arg index="8" value="${linshare.mail.inlineLogo}"/>
     </bean>
     
     <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceImpl">

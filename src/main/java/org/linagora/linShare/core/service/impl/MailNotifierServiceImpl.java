@@ -20,7 +20,6 @@
 */
 package org.linagora.linShare.core.service.impl;
 
-import java.net.URL;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -69,11 +68,7 @@ public class MailNotifierServiceImpl implements NotifierService {
     private final String charset;
 
     
-    private final boolean inlineLogo;
-    
-    /** url. */
-    private final String urlLinshare;
-    
+
     private final static Log logger = LogFactory.getLog(MailNotifierServiceImpl.class);
     
 
@@ -88,7 +83,7 @@ public class MailNotifierServiceImpl implements NotifierService {
      */
     
     public MailNotifierServiceImpl(String smtpServer,int smtpPort,  String smtpSender, String smtpUser, String smtpPassword,
-        boolean needsAuth, String charset, String urlLinshare,boolean inlineLogo) {
+        boolean needsAuth, String charset) {
         this.smtpServer = smtpServer;
         this.smtpPort = smtpPort;
         this.smtpSender = smtpSender;
@@ -96,8 +91,6 @@ public class MailNotifierServiceImpl implements NotifierService {
         this.smtpPassword = smtpPassword;
         this.needsAuth = needsAuth;
         this.charset = charset;
-        this.urlLinshare = urlLinshare;
-        this.inlineLogo = inlineLogo;
     }
 
     
@@ -157,22 +150,20 @@ public class MailNotifierServiceImpl implements NotifierService {
 	       rel_bph.setDataHandler(new DataHandler(new ByteArrayDataSource(htmlContent,"text/html; charset="+charset)));
 	       html_mp.addBodyPart(rel_bph);
 	      
-	      if(inlineLogo){
-		       //inline image ?
-		       String cid = "image.part.1@linshare.org";
-		       MimeBodyPart rel_bpi = new MimeBodyPart();
+
+		    //inline image ?
+		    String cid = "image.part.1@linshare.org";
+		    MimeBodyPart rel_bpi = new MimeBodyPart();
 		       // Initialize and add the image file to the html body part
-		       rel_bpi.setFileName("logo_linshare_0210x052.png");
-		       rel_bpi.setText("linshare");
-		       String imageLogo = urlLinshare;
-		       if(!imageLogo.endsWith("/")) imageLogo = imageLogo + "/";
-		       imageLogo = imageLogo + "images/logo_linshare_0210x052.png";
-		       rel_bpi.setDataHandler(new DataHandler(new URL(imageLogo)));
-		       rel_bpi.setHeader("Content-ID", "<" + cid + ">");
-		       rel_bpi.setDisposition("inline");
-		       html_mp.addBodyPart(rel_bpi);
-	      }
-	       
+		   rel_bpi.setFileName("mail_logo.png");
+		   rel_bpi.setText("linshare");
+		   
+		   
+		   rel_bpi.setDataHandler(new DataHandler(getClass().getResource("/org/linagora/linShare/core/service/mail_logo.png")));
+		   rel_bpi.setHeader("Content-ID", "<" + cid + ">");
+		   rel_bpi.setDisposition("inline");
+		   html_mp.addBodyPart(rel_bpi);
+	
 	       // Create the second BodyPart of the multipart/alternative,
 	       // set its content to the html multipart, and add the
 	       // second bodypart to the main multipart.
