@@ -859,15 +859,6 @@
                     <rootPackage>org.linagora.linShare</rootPackage>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.0.1</version>
-                <configuration>
-                    <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory>
-                </configuration>
-            </plugin>
         </plugins>
     </reporting>
     <profiles>
@@ -1202,7 +1193,6 @@
     
     <properties>
         <tapestry-release-version>5.1.0.5</tapestry-release-version>
-        <netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
         <spring-release-version>2.5.5</spring-release-version>
         <spring-security-release-version>2.0.5.RELEASE</spring-security-release-version>
         <jackrabbit-release-version>1.4</jackrabbit-release-version>

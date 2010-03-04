@@ -68,6 +68,9 @@ public class MailNotifierServiceImpl implements NotifierService {
     private final String charset;
 
     
+    /** url. */
+    private final String urlLinshare;
+    
 
     private final static Log logger = LogFactory.getLog(MailNotifierServiceImpl.class);
     

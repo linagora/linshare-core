@@ -19,11 +19,12 @@
     </bean>
 
     <bean id="LdapDao" class="org.linagora.linShare.core.dao.ldap.LdapDatasource">
-        <constructor-arg index="0" ref="ldapContextSource"/>
-        <constructor-arg index="1" ref="ldapTemplate" />
-        <constructor-arg index="2" value="${ldap.auth.baseDN}" />
-        <constructor-arg index="3" value="${ldap.auth.key}" />
-    	<constructor-arg index="4" value="${ldap.pageSize}" />
+        <constructor-arg ref="ldapContextSource"/>
+        <constructor-arg ref="ldapTemplate" />
+        <constructor-arg value="${ldap.auth.baseDN}" />
+        <constructor-arg value="${ldap.auth.key}" />
+        <constructor-arg value="${ldap.auth.attribute}" />
+    	<constructor-arg value="${ldap.pageSize}" />
     </bean>
 
 	<!-- Ldap connexion auth -->

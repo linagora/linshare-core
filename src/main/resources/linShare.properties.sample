@@ -4,7 +4,8 @@
 ldap.auth.url=ldap://localhost:389
 ldap.auth.base=dc=linagora,dc=com
 ldap.auth.baseDN=ou=test,o=linShare
-ldap.auth.key=mail={0}
+ldap.auth.attribute=mail
+ldap.auth.key=${ldap.auth.attribute}={0}
 ldap.hash.algo=SHA
 # Strategy is SIMPLE, DEFAULT_TLS, or EXTERNAL_TLS for SASL connection. TLS is not supported at this time by linShare
 ldap.auth.strategy=SIMPLE

@@ -48,7 +48,6 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.simple.AbstractParameterizedContextMapper;
 import org.springframework.ldap.filter.AndFilter;
-import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.support.LdapUtils;
 
@@ -65,6 +64,7 @@ public class LdapDatasource implements LdapDao {
 	private final LdapTemplate ldapTemplate;
 	private final String baseDn_ldap;
 	private final String ldap_filter;
+	private final String ldapLoginAttribute;
 	private final int pageSize; // paging ldap result (limit result from ldap)
 	
 
@@ -73,19 +73,20 @@ public class LdapDatasource implements LdapDao {
 	//map the password to userPassword ldap field
 	private final String PASSWORDFIELD = "userPassword";
 	
-
-
 	/**
 	 * 
 	 * @param ldap
 	 * @param baseDn_ldap
 	 * @param ldap_filter
 	 */
-	public LdapDatasource(ContextSource contextSource, LdapTemplate ldapTemplate, String baseDn_ldap, String ldap_filter, int pageSize) {
+	public LdapDatasource(ContextSource contextSource, LdapTemplate ldapTemplate, 
+			String baseDn_ldap, String ldap_filter, 
+			String ldapLoginAttribute, int pageSize) {
         this.contextSource = contextSource;
 		this.ldapTemplate = ldapTemplate;
 		this.baseDn_ldap = baseDn_ldap;
 		this.ldap_filter = ldap_filter;
+		this.ldapLoginAttribute = ldapLoginAttribute;
 		this.pageSize = pageSize;
 	}
 	/**
@@ -95,9 +96,10 @@ public class LdapDatasource implements LdapDao {
 	 * @param ldap_filter
 	 * @param scope
 	 */
-	public LdapDatasource(ContextSource contextSource, LdapTemplate ldap,String baseDn_ldap,String ldap_filter,
-        int scope, int pageSize ){
-		this(contextSource, ldap,baseDn_ldap,ldap_filter,pageSize);
+	public LdapDatasource(ContextSource contextSource, LdapTemplate ldap,
+			String baseDn_ldap,String ldap_filter,
+			String ldapLoginAttribute, int scope, int pageSize ){
+		this(contextSource, ldap,baseDn_ldap,ldap_filter, ldapLoginAttribute, pageSize);
 		this.scope=scope;
 	}
 
@@ -313,11 +315,9 @@ public class LdapDatasource implements LdapDao {
         if (mail == null || mail.length() == 0) {
             throw new IllegalArgumentException("Argument must not be empty or null");
         }
-        EqualsFilter filter = new EqualsFilter("mail", mail);
-        technicalTracer.info("Search pattern = " + filter.encode());
-
+        String compiled = ldap_filter.replaceAll("\\{0\\}", mail);
         try {
-        	List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
+        	List<User> users = ldapTemplate.search(baseDn_ldap, compiled, new UserAttributesMapper());
         	if (users.size() == 0) {
                 return null;
             } else if (users.size() == 1) {
@@ -336,7 +336,7 @@ public class LdapDatasource implements LdapDao {
     private class UserAttributesMapper implements AttributesMapper {
 
         public Object mapFromAttributes(Attributes attributes) throws javax.naming.NamingException {
-            String mail = (String) attributes.get("mail").get();
+            String mail = (String) attributes.get(ldapLoginAttribute).get();
             String firstName = "";
             if(attributes.get("givenName")!=null){
             	firstName = (String) attributes.get("givenName").get();
