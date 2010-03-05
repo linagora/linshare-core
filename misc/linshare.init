@@ -56,6 +56,7 @@
 LINSHARE_HOME="/opt/linshare"
 LINSHARE_BIN="${LINSHARE_HOME}/linshare.sh"
 LINSHARE_BACKUPDIR="${LINSHARE_HOME}/var/backups"
+LINSHARE_JETTYDIR="/tmp"
 
 # -----------------------------------------------------------------------------
 #  Functions
@@ -93,6 +94,19 @@ backup ()
     echo "FAILED"
   fi
   exit ${ret}
+}
+
+#
+# Purge Jetty temporary files.
+#
+purge ()
+{
+  cmd="ls -1rt ${LINSHARE_JETTYDIR}/j[0-9]*"
+  max="`${cmd} | wc -l`"
+  nb="`expr ${max} - 2`"
+  if [ `expr ${nb} \< 2` -eq 0 ]; then
+    rm `${cmd} | head -n ${nb}`
+  fi
 }
 
 #
@@ -143,6 +157,9 @@ case "$1" in
   "backup")
     ACTIONS="backup"
     ;;
+  "purge")
+    ACTIONS="purge"
+    ;;
   "status")
     ACTIONS="status"
     ;;
@@ -169,6 +186,9 @@ for action in ${ACTIONS}; do
     "backup")
       echo -n "Backup in progress... "
       backup
+      ;;
+    "purge")
+      purge
       ;;
     "status")
       status
