@@ -1,0 +1,6 @@
+#
+# Regular cron jobs for LinShare
+#
+
+# Backup databases
+0 5  * * *   root      test -x /etc/init.d/linshare && /etc/init.d/linshare backup
