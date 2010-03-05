@@ -140,9 +140,6 @@ public class UserSearchResults {
 	private ActionFromBarDocument actionbutton;
 
 	@Property
-	private String deleteConfirmed;
-	
-	@Property
 	private String action;
     
     /* ***********************************************************
@@ -186,23 +183,6 @@ public class UserSearchResults {
                 }
             }
             selectedUsers = new ArrayList<UserVo>();
-			break;
-		case DELETE_ACTION:
-
-            for (UserVo userVo : selectedUsers) {
-            	if (userVo.isGuest()) {
-            		this.selectedLogin = userVo.getLogin();
-            		userFacade.deleteGuest(selectedLogin, userLoggedIn);
-            		shareSessionObjects.addMessage(messages.format("components.userSearch.action.delete.confirm",
-            				this.selectedLogin));
-            	}
-            	else {
-            		shareSessionObjects.addWarning(messages.format("components.userSearch.action.delete.cannotdeleteinternal",
-            				userVo.getLogin()));
-            	}
-            }
-	        componentResources.triggerEvent("resetListUsers", null, null);
-			
 			break;
 		case NO_ACTION:
 		default:

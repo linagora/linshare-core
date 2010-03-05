@@ -10,15 +10,6 @@
 				${message:components.userSearch.action.share}
 			</a>
 		</li>
-
-		<!-- Action > Delete -->
-		<li>
-			<a href="#" onClick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)">
-				<img src="${asset:context:images/icons/delete.png}" alt=""/>
-				${message:components.userSearch.action.deleteMultiple.title}
-				</a>
-		</li>
-
 	</ul>
 
 </t:container>
