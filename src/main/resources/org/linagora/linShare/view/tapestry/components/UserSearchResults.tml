@@ -15,7 +15,6 @@
 	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:pages.user.sorter.name.label},${message:pages.user.sorter.mail.label},${message:pages.user.sorter.expiration.label}" t:properties="literal:name,mail,expiration"/> 
 
 	<t:form t:id="results">
-		<t:linkit.hiddenfield t:id="deleteConfirmed" />
 		<t:linkit.hiddenfield t:id="action" />
 
 		<t:grid source="users" row="user" include="mail"
@@ -139,10 +138,6 @@
 
 	<!-- Popups -->
 
-	<t:confirmSubmitPopup
-		t:messageLabel="${message:components.userSearch.action.deleteMultiple.ask}"
-		t:fieldName="deleteConfirmed"
-		t:formName="results" />
     <t:confirmPopup
         t:messageLabel="${message:components.userSearch.action.delete.ask}"
         t:eventName="userDeleteEvent" />
