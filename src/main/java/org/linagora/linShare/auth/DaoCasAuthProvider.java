@@ -22,6 +22,9 @@ package org.linagora.linShare.auth;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -39,6 +42,8 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
 public class DaoCasAuthProvider implements UserDetailsService {
 
     private final UserFacade userFacade;
+    
+    private final static Log logger = LogFactory.getLog(DaoCasAuthProvider.class);
 
     public DaoCasAuthProvider(UserFacade userFacade) {
         this.userFacade = userFacade;
@@ -50,9 +55,17 @@ public class DaoCasAuthProvider implements UserDetailsService {
             throw new UsernameNotFoundException("username must not be null");
         }
         
-                
-        UserVo userVo = userFacade.findUser(username);
+        UserVo userVo = null;
         String password = "";
+        
+        //if username is uid as a login and not an email
+        if(username.indexOf("@")==-1 ){  	
+        	userVo = userFacade.findUserFromLdapwithUid(username);
+        	if(userVo==null) throw new UsernameNotFoundException("User not found with uid"+username);
+        }  else {
+        	//username (login) is email
+        	userVo = userFacade.findUser(username);
+        }
         
 
         if (userVo == null || password == null || Role.SYSTEM.equals(userVo.getRole())) {

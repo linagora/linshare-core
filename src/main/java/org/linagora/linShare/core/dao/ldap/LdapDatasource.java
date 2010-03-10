@@ -47,6 +47,7 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.simple.AbstractParameterizedContextMapper;
 import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.support.LdapUtils;
 
@@ -359,5 +360,29 @@ public class LdapDatasource implements LdapDao {
     public boolean isPaged(){
     	return pageSize > 0;
     }
+    
+    
+    
+	public User searchUserWithUid(String uid) {
+        if (uid == null || uid.length() == 0) {
+            throw new IllegalArgumentException("uid argument must not be empty or null");
+        }
+        EqualsFilter filter = new EqualsFilter("uid", uid);
+        technicalTracer.info("Search uid pattern = " + filter.encode());
+
+        try {
+        	List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
+        	if (users.size() == 0) {
+                return null;
+            } else if (users.size() == 1) {
+                return users.get(0);
+            } else {
+                throw new IllegalStateException("More than one user found with uid : " + uid);
+            }
+        } catch(Exception e) {
+        	technicalTracer.warn("Cannot connect to Ldap directory",e);
+        	return null;
+        }
+	}
 
 }

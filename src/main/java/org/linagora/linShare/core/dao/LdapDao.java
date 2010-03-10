@@ -82,6 +82,8 @@ public interface LdapDao {
     
     
     public boolean isSearchResultTrucated(int listSize);
+
+	public User searchUserWithUid(String uid);
     
 }
 

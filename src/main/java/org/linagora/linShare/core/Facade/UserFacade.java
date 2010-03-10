@@ -74,6 +74,14 @@ public interface UserFacade {
      * @return founded user.
      */
     UserVo findUser(String mail);
+    
+    
+    /** Search a user using its uid (only in ldap !) but not normal email.
+     * @param mail user uid.
+     * @return founded user.
+     */
+    UserVo findUserFromLdapwithUid(String uid);
+    
 
     /** Search a user.
      * @param mail user email.
