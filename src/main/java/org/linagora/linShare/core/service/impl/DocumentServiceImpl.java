@@ -307,7 +307,7 @@ public class DocumentServiceImpl implements DocumentService {
 		try {
 			Document aDoc = new Document(uuid, fileName, mimeType,
 					new GregorianCalendar(), new GregorianCalendar(), owner,
-					aesencrypted, false, size);
+					aesencrypted, false, false, size);
 			aDoc.setThmbUUID(uuidThmb);
 
 			if (log.isDebugEnabled()) {

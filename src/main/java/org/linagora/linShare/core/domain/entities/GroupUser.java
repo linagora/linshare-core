@@ -20,26 +20,27 @@
 */
 package org.linagora.linShare.core.domain.entities;
 
-public enum UserType {
+/** Internal user.
+ */
+public class GroupUser extends User {
 
-	INTERNAL(0), GUEST(1), GROUP(2);
+    /** Default constructor. */
+    private GroupUser() {
+        super();
+    }
 
-	private int value;
+    /** Constructor.
+     * @param login login.
+     * @param firstName first name.
+     * @param lastName last name.
+     * @param mail email.
+     */
+    public GroupUser(String login, String firstName, String lastName, String mail) {
+        super(login, firstName, lastName, mail, true,true);
+    }
 
-	private UserType(int value) {
-		this.value = value;
-	}
+    public UserType getUserType() {
+        return UserType.GROUP;
+    }
 
-	public int toInt() {
-		return value;
-	}
-
-	public static UserType fromInt(int value) {
-        switch (value) {
-            case 0: return UserType.INTERNAL;
-            case 1: return UserType.GUEST;
-            case 2: return UserType.GROUP;
-            default : throw new IllegalArgumentException("Doesn't match an existing UserType");
-        }
-	}
 }

@@ -68,6 +68,9 @@
 	<t:confirmSharePopup t:messageLabel="${message:pages.user.fileSearch.messageConfirm}"
 		t:eventName="sharePopupEvent" t:usersVo="prop:shareSessionObjects.users"
 		t:documentsVo="prop:shareSessionObjects.documents" />
+	<t:shareWithGroupsPopup t:messageLabel="${message:pages.user.fileSearch.messageConfirm}"
+		t:groupsVo="prop:shareSessionObjects.groups"
+		t:documentsVo="prop:shareSessionObjects.documents" />
 
 	<!-- Uploader popup -->
 	<div t:id="windowUpload">

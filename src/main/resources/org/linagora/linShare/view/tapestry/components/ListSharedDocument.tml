@@ -24,7 +24,7 @@
 		<t:errors />
 
 		<t:grid source="shareDocuments" row="shareDocument" model="model"
-			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment"
+			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, sharedWithGroup, type, shareActive, downloaded, comment"
 			rowsPerPage="20">
 
 

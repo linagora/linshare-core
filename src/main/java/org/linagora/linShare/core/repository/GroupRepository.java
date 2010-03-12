@@ -18,28 +18,14 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linShare.core.domain.entities;
+package org.linagora.linShare.core.repository;
 
-public enum UserType {
+import java.util.List;
 
-	INTERNAL(0), GUEST(1), GROUP(2);
+import org.linagora.linShare.core.domain.entities.Group;
+import org.linagora.linShare.core.domain.entities.User;
 
-	private int value;
-
-	private UserType(int value) {
-		this.value = value;
-	}
-
-	public int toInt() {
-		return value;
-	}
-
-	public static UserType fromInt(int value) {
-        switch (value) {
-            case 0: return UserType.INTERNAL;
-            case 1: return UserType.GUEST;
-            case 2: return UserType.GROUP;
-            default : throw new IllegalArgumentException("Doesn't match an existing UserType");
-        }
-	}
+public interface GroupRepository extends AbstractRepository<Group> {
+	public Group findByName(String name);
+	public List<Group> findByUser(final User user);
 }

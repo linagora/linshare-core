@@ -124,4 +124,10 @@
         <constructor-arg ref="logEntryRepository"/>
     </bean>
     
+    <bean name="groupService" class="org.linagora.linShare.core.service.impl.GroupServiceImpl">
+        <constructor-arg ref="groupRepository"/>
+        <constructor-arg ref="userRepository"/>
+        <constructor-arg ref="shareService"/>
+    </bean>
+    
 </beans>

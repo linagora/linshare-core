@@ -111,11 +111,11 @@ public class TestSearch extends AbstractJUnit4SpringContextTests{
 		Calendar exp=jackInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		//new Document
-		documentJack=new Document(jackUuid,jackInfo.getName(),jackInfo.getMimeType(),lastModified,exp,user,false,false,new Long(10000));
+		documentJack=new Document(jackUuid,jackInfo.getName(),jackInfo.getMimeType(),lastModified,exp,user,false,false,false,new Long(10000));
 		Calendar lastModifiedLin=linInfo.getLastModified();
 		Calendar expLin=linInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
-		documentLin=new Document(linUuid,linInfo.getName(),linInfo.getMimeType(),lastModifiedLin,expLin,user,false,false,new Long(10000));
+		documentLin=new Document(linUuid,linInfo.getName(),linInfo.getMimeType(),lastModifiedLin,expLin,user,false,false,false,new Long(10000));
 		
 		documentRepository.create(documentJack);
 		documentRepository.create(documentLin);

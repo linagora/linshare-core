@@ -163,6 +163,9 @@ public class Index {
 	
 	@Persist
 	private boolean flagFinishShare;
+	
+	@Persist
+	private boolean flagGroupShare;
 
 	@Persist("flash")
 	private String fileMessage;
@@ -506,6 +509,34 @@ public class Index {
 
 	}
 	
+	@OnEvent(value="eventShareWithGroupUniqueFromListDocument")
+	public void shareUniqueWithGroupFromListDocument(Object[] object) throws BusinessException {
+		DocumentVo documentVoTemp=null;
+
+		for(DocumentVo currentDocumentVo:this.listDocumentsVo){
+			if(currentDocumentVo.getIdentifier().equals((String)object[0])){
+				documentVoTemp=currentDocumentVo;
+				break;
+			}
+		}
+		if(null!=documentVoTemp){
+			
+			//check is the document is encrypted and give a warning
+			if(documentVoTemp.getEncrypted()){
+			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.shareOneEncryptedFile"),
+					documentVoTemp.getFileName()) );
+			} else {
+				
+				//enable direct sharing on this document
+				flagGroupShare=true;
+				shareSessionObjects.getDocuments().clear(); //delete all other doc
+				shareSessionObjects.addDocument(documentVoTemp);
+				shareSessionObjects.setMultipleSharing(false);
+			}
+		}
+
+	}
+	
 	/**
 	 * Remove the document from the share list
 	 * @param object : object[0] contains a the DocumentVo
@@ -539,6 +570,11 @@ public class Index {
     		//show the share window popup
              renderSupport.addScript(String.format("confirmWindow.showCenter(true)"));
             flagFinishShare=false;
+    	}
+    	
+    	if (flagGroupShare) {
+            renderSupport.addScript(String.format("groupShareWindow.showCenter(true)"));
+            flagGroupShare=false;
     	}
 
     }

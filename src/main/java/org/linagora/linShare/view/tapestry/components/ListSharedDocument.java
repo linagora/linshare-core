@@ -85,6 +85,8 @@ public class ListSharedDocument {
 	 */
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	private UserVo user;
+	@Parameter(required=false,defaultPrefix=BindingConstants.PROP)
+	private UserVo groupUser;
 
 	/**
 	 * The list of documents.
@@ -96,6 +98,10 @@ public class ListSharedDocument {
     @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
     @Property
     private boolean inSearch;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean inGroup;
 	
 	
 	/***********************************

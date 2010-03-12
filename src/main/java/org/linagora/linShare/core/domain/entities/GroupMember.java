@@ -20,26 +20,46 @@
 */
 package org.linagora.linShare.core.domain.entities;
 
-public enum UserType {
+import java.io.Serializable;
+import java.util.Calendar;
 
-	INTERNAL(0), GUEST(1), GROUP(2);
+public class GroupMember implements Serializable {
+	private static final long serialVersionUID = 8977072714137558071L;
 
-	private int value;
+	private User user;
+	private GroupMemberType type;
+	private Calendar membershipDate;
 
-	private UserType(int value) {
-		this.value = value;
+	public boolean equals(Object obj) {
+		return ((GroupMember) obj).getUser().equals(user);
 	}
 
-	public int toInt() {
-		return value;
+	public int hashCode() {
+		return user.hashCode();
 	}
 
-	public static UserType fromInt(int value) {
-        switch (value) {
-            case 0: return UserType.INTERNAL;
-            case 1: return UserType.GUEST;
-            case 2: return UserType.GROUP;
-            default : throw new IllegalArgumentException("Doesn't match an existing UserType");
-        }
+	public void setUser(User user) {
+		this.user = user;
 	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setType(GroupMemberType type) {
+		this.type = type;
+	}
+
+	public GroupMemberType getType() {
+		return type;
+	}
+
+	public void setMembershipDate(Calendar membershipDate) {
+		this.membershipDate = membershipDate;
+	}
+
+	public Calendar getMembershipDate() {
+		return membershipDate;
+	}
+
 }

@@ -300,6 +300,9 @@ strong {
 #users #content h1 {
 	background-image: url("../images/theme0/icon-heading-users.png");
 }
+#groups #content h1 {
+	background-image: url("../images/theme0/icon-heading-groups.png");
+}
 #history #content h1 {
 	background-image: url("../images/theme0/icon-heading-history.png");
 }
@@ -3112,7 +3115,8 @@ form#uploadForm .upload-list {
 */
 
 #guestEditFormComponent .edit-form-label,
-#userEditFormComponent .edit-form-label {
+#userEditFormComponent .edit-form-label,
+#createGroupZone .edit-form-label {
 	display: block;
 	width: 24em;
 	margin-top: .25em;
@@ -3127,7 +3131,10 @@ form#uploadForm .upload-list {
 #guestEditFormComponent .edit-form-checkbox,
 #userEditFormComponent .edit-form-checkbox,
 #guestEditFormComponent .edit-form-select,
-#userEditFormComponent .edit-form-select {
+#userEditFormComponent .edit-form-select,
+#createGroupZone .edit-form-field,
+#createGroupZone .edit-form-checkbox,
+#createGroupZone .edit-form-select {
 	float: left;
 	margin-top: -1.5em;
 	margin-left: 22em;
@@ -3138,16 +3145,19 @@ form#uploadForm .upload-list {
 	background-color: #E0E0E0;
 }
 #guestEditFormComponent .edit-form-field,
-#userEditFormComponent .edit-form-field {
+#userEditFormComponent .edit-form-field,
+#createGroupZone .edit-form-field {
 	width: 20em;
 }
 #guestEditFormComponent .edit-form-checkbox,
-#userEditFormComponent .edit-form-checkbox {
+#userEditFormComponent .edit-form-checkbox,
+#createGroupZone .edit-form-checkbox {
 	margin-top: -1.35em;
 }
 
 #guestEditFormComponent img.t-error-icon,
-#userEditFormComponent img.t-error-icon {
+#userEditFormComponent img.t-error-icon,
+#createGroupZone img.t-error-icon {
 	float: left;
 	margin: -1.50em 0em 1.25em 20.25em;
 }
@@ -3161,7 +3171,8 @@ form#uploadForm .upload-list {
 }
 
 #guestEditFormComponent textarea,
-#userEditFormComponent textarea {
+#userEditFormComponent textarea,
+#createGroupZone textarea {
 	float: left;
 	width: 42em;
 	margin-top: .25em;
@@ -3458,6 +3469,100 @@ span.thumbnail:hover .thumbnail_content img {
 	font-style: italic;
 }
 
+/* Groups page */
+dl.t-beandisplay {
+	background-color:#EAF1F5;
+	border:1px solid #B0D6EE;
+	margin-bottom:7px;
+	padding:5px;
+}
+dl.t-beandisplay dt {
+	color:#808080;
+	font-size:1.15em;
+	font-weight: bold;
+	text-align: left;
+	width: auto;
+}
+dl.t-beandisplay dd {
+	color:#3D697F;
+	font-size:1.15em;
+}
+
+div.t-beaneditor {
+	background: none;
+	border: none;	
+}
+
+#tabSetGroup {
+	border-bottom: 1px solid #B0D6EE;
+	font-size:1.15em;
+	padding-left: 10px;
+}
+#tabSetGroup li {
+	display: inline;
+	display: inline-block;
+	border: 1px solid #B0D6EE;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 4px;
+	padding-bottom: 3px;
+	margin-bottom: -1px;
+	margin-left:5px;
+}
+
+#tabSetGroup li.selected {
+	background-color: #fff;
+	border-bottom-color: #fff;
+}
+
+#tabSetGroup li.notSelected {
+	background-color: #EAF1F5;	
+}
+
+#tabSetGroup li.notSelected:hover {
+	background-color: #fff;
+}
+
+#tabSetGroup li.notSelected a, #tabSetGroup li.selected a {
+	text-decoration: none;
+}
+
+#tabSetGroup li.notSelected a:hover, #tabSetGroup li.notSelected a:active,
+#tabSetGroup li.selected a:hover, #tabSetGroup li.selected a:active {
+	text-decoration: none;
+	color: #2e4f60;
+}
+
+#userAddToGroupFormComponent table,
+#groupShareWindowContent table  {
+	width: 92.0%;
+	margin: .25em auto;
+	background-color: #EAF1F5;
+	font-size: 1.2em;
+}
+
+#userAddToGroupFormComponent table tr,
+#groupShareWindowContent table tr {
+	margin: .5em;
+	border: 1px solid #5A93AF !important;
+}
+
+#userAddToGroupFormComponent table tr th,
+#groupShareWindowContent table tr th {
+	padding: .25em .5em !important;
+}
+
+#userAddToGroupFormComponent table tr td,
+#groupShareWindowContent table tr td {
+	padding: .25em .5em !important;
+	white-space: nowrap;
+	text-align: left;
+}
+
+#userAddToGroupFormComponent div.filesList,
+#groupShareWindowContent div.filesList {
+	text-align: left;
+}
 
 
 /***************************************************************************/

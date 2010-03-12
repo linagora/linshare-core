@@ -22,6 +22,7 @@ package org.linagora.linShare.core.Facade.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.ShareTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -432,6 +434,39 @@ public class ShareFacadeImpl implements ShareFacade {
 			notifierService.sendNotification(currentUser.getMail(),share.getReceiver().getMail(), subject, messageForsharedUpdateDocTemplateContent, messageForsharedUpdateDocTemplateContentTxt);
 		}
     	
+    }
+    
+    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(
+    		UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients)
+    		throws BusinessException {
+    	List<User> groupUserObjectsList = new ArrayList<User>();
+		
+		for (GroupVo groupVo : recipients) {
+			try {
+				groupUserObjectsList.add(userService.findAndCreateUser(groupVo.getGroupLogin()));
+			} catch (BusinessException e) {
+				logger.error("Could not find the recipient " + groupVo.getGroupLogin() + " in the database");
+				throw e;
+			}
+		}
+
+		
+		List<Document> docList = new ArrayList<Document>();
+		for (DocumentVo documentVo : documents) {
+			docList.add(documentRepository.findById(documentVo.getIdentifier()));
+		}
+		Calendar expiryDate = GregorianCalendar.getInstance();
+		expiryDate.add(Calendar.YEAR, 3);
+		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, 
+				userRepository.findByLogin(owner.getLogin()),
+				groupUserObjectsList, "", expiryDate);
+		
+		
+		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
+		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));
+		results.setSuccessesItem(shareTransformer.disassembleList(successAndFails.getSuccessesItem()));
+		
+		return results;
     }
 
 }

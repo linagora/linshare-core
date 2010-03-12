@@ -68,6 +68,7 @@ import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.CacheUserPinVo;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
@@ -131,10 +132,15 @@ public class ListDocument {
 
 	
 	private Map<Integer, String> tooltipValues;
+	private Map<Integer, String> tooltipGroupValues;
 	
 	private String tooltipValue;
 	@Property
 	private String tooltipTitle;
+	
+	private String tooltipGroupValue;
+	@Property
+	private String tooltipGroupTitle;
 	
 	@Property
 	private int rowIndex;
@@ -309,33 +315,48 @@ public class ListDocument {
 		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 		tooltipTitle = messages.get("components.listDocument.tooltip.title");
 		tooltipValues = new HashedMap();
+		tooltipGroupTitle = messages.get("components.listDocument.tooltip.title");
+		tooltipGroupValues = new HashedMap();
 		int i=0;
 		for (DocumentVo docVo : documents) {
+			StringBuffer tempBuf = new StringBuffer();
 			StringBuffer value = new StringBuffer();
+			StringBuffer valueGroup = new StringBuffer();
 			
-			if (docVo.getShared()) {
+			if (docVo.getShared()||docVo.getSharedWithGroup()) {
 				List<Share> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
 				Map<String, Calendar> securedUrls = securedUrlFacade.getSharingsByMailAndFile(user, docVo);
-				value.append("<p class='tooltipTableDescription'>");
-				value.append(messages.get("components.listDocument.tooltip.description"));
-				value.append("</p>");
-				value.append("<table class='tooltipTable'><tr><th>");
-				value.append(messages.get("components.listDocument.tooltip.table.name"));
-				value.append("</th><th>");
-				value.append(messages.get("components.listDocument.tooltip.table.mail"));
-				value.append("</th><th>");
-				value.append(messages.get("components.listDocument.tooltip.table.dateExpiration"));
-				value.append("</th></tr>");
+				
+				tempBuf.append("<p class='tooltipTableDescription'>");
+				tempBuf.append(messages.get("components.listDocument.tooltip.description"));
+				tempBuf.append("</p><table class='tooltipTable'><tr><th>");
+				tempBuf.append(messages.get("components.listDocument.tooltip.table.name"));
+				tempBuf.append("</th><th>");
+				tempBuf.append(messages.get("components.listDocument.tooltip.table.mail"));
+				tempBuf.append("</th><th>");
+				tempBuf.append(messages.get("components.listDocument.tooltip.table.dateExpiration"));
+				tempBuf.append("</th></tr>");
+				
+				value.append(tempBuf);
+				valueGroup.append(tempBuf);
+				tempBuf = new StringBuffer();
 
 				for (Share share : shares) {
 					User receiver = share.getReceiver();
-					value.append("<tr><td>");
-					value.append(receiver.getFirstName() + " " + receiver.getLastName());
-					value.append("</td><td>");
-					value.append(receiver.getMail());
-					value.append("</td><td>");
-					value.append(formatter.format(share.getExpirationDate().getTime()));
-					value.append("</td></tr>");
+					tempBuf.append("<tr><td>");
+					tempBuf.append(receiver.getFirstName() + " " + receiver.getLastName());
+					tempBuf.append("</td><td>");
+					tempBuf.append(receiver.getMail());
+					tempBuf.append("</td><td>");
+					tempBuf.append(formatter.format(share.getExpirationDate().getTime()));
+					tempBuf.append("</td></tr>");
+					if (receiver.getUserType().equals(UserType.GROUP)) {
+						valueGroup.append(tempBuf);
+					}
+					else {
+						value.append(tempBuf);
+					}
+					tempBuf = new StringBuffer();
 				}
 				Set<Entry<String, Calendar>> set = securedUrls.entrySet();
 				for (Entry<String, Calendar> entry : set) {
@@ -348,11 +369,14 @@ public class ListDocument {
 					value.append("</td></tr>");
 				}
 				value.append("</table>");
+				valueGroup.append("</table>");
 			}
 			else {
 				value.append(messages.get("components.listDocument.tooltip.noEntry"));
+				valueGroup.append(messages.get("components.listDocument.tooltip.noEntry"));
 			}
 			tooltipValues.put(i, value.toString());
+			tooltipGroupValues.put(i, valueGroup.toString());
 			i++;
 		}
 	}
@@ -363,6 +387,9 @@ public class ListDocument {
 	 */
 	public String getTooltipValue() {
 		return tooltipValues.get(rowIndex);
+	}
+	public String getTooltipGroupValue() {
+		return tooltipGroupValues.get(rowIndex);
 	}
 
 	/**
@@ -547,6 +574,12 @@ public class ListDocument {
 
 		onActionFromUniqueShareLink(uuid);
 	}
+	public void onActionFromUniqueShareWithGroupLinkBis(String uuid) {
+
+		componentResources.getContainer().getComponentResources()
+			.triggerEvent("eventShareWithGroupUniqueFromListDocument",
+				new Object[] { uuid }, null);
+	}
 
 	/**
 	 * The action triggered when the delete link is pushed in the action menu
@@ -585,6 +618,10 @@ public class ListDocument {
 	}
 
 	public Zone onActionFromShowWarningShareBis() {
+		return warningShare.getShowWarning();
+	}
+
+	public Zone onActionFromShowWarningShareTer() {
 		return warningShare.getShowWarning();
 	}
 

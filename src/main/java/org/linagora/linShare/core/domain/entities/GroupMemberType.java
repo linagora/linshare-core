@@ -20,13 +20,13 @@
 */
 package org.linagora.linShare.core.domain.entities;
 
-public enum UserType {
+public enum GroupMemberType {
 
-	INTERNAL(0), GUEST(1), GROUP(2);
+	OWNER(0), MANAGER(1), MEMBER(2);
 
 	private int value;
 
-	private UserType(int value) {
+	private GroupMemberType(int value) {
 		this.value = value;
 	}
 
@@ -34,12 +34,12 @@ public enum UserType {
 		return value;
 	}
 
-	public static UserType fromInt(int value) {
+	public static GroupMemberType fromInt(int value) {
         switch (value) {
-            case 0: return UserType.INTERNAL;
-            case 1: return UserType.GUEST;
-            case 2: return UserType.GROUP;
-            default : throw new IllegalArgumentException("Doesn't match an existing UserType");
+            case 0: return GroupMemberType.OWNER;
+            case 1: return GroupMemberType.MANAGER;
+            case 2: return GroupMemberType.MEMBER;
+            default : throw new IllegalArgumentException("Doesn't match an existing GroupMemberType");
         }
 	}
 }

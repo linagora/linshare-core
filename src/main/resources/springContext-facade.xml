@@ -87,6 +87,13 @@
        	 <constructor-arg ref="recipientFavouriteService"/>
    	  </bean>
        
+      <bean name="groupFacade" class="org.linagora.linShare.core.Facade.impl.GroupFacadeImpl">
+   	  	<constructor-arg ref="userRepository"/>
+       	 <constructor-arg ref="userService"/>
+       	 <constructor-arg ref="groupService"/>
+       	 <constructor-arg ref="groupTransformer"/>
+   	  </bean>
+       
        
     <aop:config>
 		<aop:pointcut id="linshareCoreServiceFacadeMethods" expression="execution(* org.linagora.linShare.core.Facade.*.*(..))" />
@@ -137,5 +144,10 @@
 	 
 	 <bean name="userTransformer" class="org.linagora.linShare.core.domain.transformers.impl.UserTransformer" >
 	 	<constructor-arg ref="guestRepository"/>
+	 </bean>
+	 
+	 <bean name="groupTransformer" class="org.linagora.linShare.core.domain.transformers.impl.GroupTransformer" >
+	 	<constructor-arg ref="userTransformer"/>
+	 	<constructor-arg ref="groupRepository"/>
 	 </bean>
 </beans>

@@ -72,6 +72,11 @@ public class Document implements Serializable {
 	private Boolean shared;
 	
 	/**
+	 * if the document is shared with groups.
+	 */
+	private Boolean sharedWithGroup;
+	
+	/**
 	 * the document file size
 	 */
 	private Long size;
@@ -90,7 +95,7 @@ public class Document implements Serializable {
 	
 	public Document(String identifier,String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
-			Boolean shared, Long size) {
+			Boolean shared, Boolean sharedWithGroup,Long size) {
 		super();
 		this.identifier=identifier;
 		this.name = name;
@@ -100,6 +105,7 @@ public class Document implements Serializable {
 		this.owner = owner;
 		this.encrypted = encrypted;
 		this.shared = shared;
+		this.sharedWithGroup = sharedWithGroup;
 		this.size = size;
 		this.signatures = null;
 		this.thmbUUID = null;
@@ -185,6 +191,12 @@ public class Document implements Serializable {
 		this.shared = shared;
 	}
 
+	public void setSharedWithGroup(Boolean sharedWithGroup) {
+		this.sharedWithGroup = sharedWithGroup;
+	}
+	public Boolean getSharedWithGroup() {
+		return sharedWithGroup;
+	}
 	public User getOwner() {
 		return owner;
 	}

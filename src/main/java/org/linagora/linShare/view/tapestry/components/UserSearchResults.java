@@ -43,8 +43,10 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
@@ -79,6 +81,8 @@ public class UserSearchResults {
     @Inject
     private UserFacade userFacade;
     @Inject
+    private GroupFacade groupFacade;
+    @Inject
     private Logger logger;
     @Inject
     private Messages messages;
@@ -88,9 +92,16 @@ public class UserSearchResults {
     @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=280"})
     private WindowWithEffects userEditWindow;
+    
+    @SuppressWarnings("unused")
+    @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=280"})
+    private WindowWithEffects userAddToGroupWindow;
 
     @InjectComponent
     private Zone userEditTemplateZone;
+
+    @InjectComponent
+    private Zone userAddToGroupTemplateZone;
 
     @Inject
     private ComponentResources componentResources;
@@ -141,6 +152,10 @@ public class UserSearchResults {
 
 	@Property
 	private String action;
+	
+	@Property
+	@Persist
+	private List<GroupVo> groups;
     
     /* ***********************************************************
      *                   Event handlers&processing
@@ -153,6 +168,8 @@ public class UserSearchResults {
         if (users == null || users.size() == 0) {
             users = userFacade.searchUser("", "", "", userLoggedIn);
     	}
+        groups = groupFacade.findByUser(userLoggedIn.getLogin());
+        
         if(refreshFlag==true){
 			users=usr;
 			refreshFlag=false;
@@ -214,6 +231,11 @@ public class UserSearchResults {
             userShareList.add(user_);
         }
         shareSessionObjects.setMultipleSharing(true);
+    }
+    
+    public Zone onActionFromAddToGroup(String login) {
+        this.selectedLogin = login;
+        return userAddToGroupTemplateZone;
     }
 
     

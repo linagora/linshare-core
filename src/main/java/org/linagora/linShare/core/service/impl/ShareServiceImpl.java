@@ -23,7 +23,6 @@ package org.linagora.linShare.core.service.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +37,7 @@ import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -246,7 +246,12 @@ public class ShareServiceImpl implements ShareService{
 					recipient.addReceivedShare(shareEntity);
 					sender.addShare(shareEntity);
 					
-					document.setShared(true);
+					if (recipient.getUserType().equals(UserType.GROUP)) {
+						document.setSharedWithGroup(true);
+					}
+					else {
+						document.setShared(true);
+					}
 		
 					userRepository.update(recipient);
 					userRepository.update(sender);
@@ -284,6 +289,7 @@ public class ShareServiceImpl implements ShareService{
 		}
 		
 		doc.setShared(false);
+		doc.setSharedWithGroup(false);
 		
 		//2)delete secure url if we need
 		
@@ -325,6 +331,26 @@ public class ShareServiceImpl implements ShareService{
 			
 			} else {
 				doc.setShared(false);
+				doc.setSharedWithGroup(false);
+			}
+		} else { //there is some shares and/or secured url
+			if (listShare!=null && listShare.size()>0) { //there is some shares, test if it is with groups or user
+				List<Share> listShareToGroup = new ArrayList<Share>(); //shares with groups
+				for (Share share : listShare) {
+					if (share.getReceiver().getUserType().equals(UserType.GROUP)) {
+						listShareToGroup.add(share);
+					}
+				}
+
+				if (listShareToGroup!=null && listShareToGroup.size()>0) { //there is shares with groups
+					int nbSharedNotToGroup = listShare.size()-listShareToGroup.size();
+					if (nbSharedNotToGroup < 1) { //there is shares only with groups
+						doc.setShared(false);
+					} //else: shared with groups and user
+				}
+				else { //shared but not with group
+					doc.setSharedWithGroup(false);
+				}
 			}
 		}
 	}

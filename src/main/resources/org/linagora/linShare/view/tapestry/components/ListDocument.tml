@@ -31,6 +31,7 @@
 		
 		<t:grid t:id="documentGrid" source="documents" row="document" model="model"
 			exclude="fileName, ownerLogin, encrypted, identifier, size, type, shareActive, fileComment, downloaded, actions, signed, encryptedAdd"
+			reorder="fileProperties, updateDoc, fileEdit, shared, sharedWithGroup, selectedValue"
 			rowsPerPage="20"
 			rowIndex="prop:rowIndex">
 
@@ -59,6 +60,10 @@
 			</t:parameter>
 
 			<t:parameter t:name="SharedHeader">
+				<abbr title="${message:components.listDocument.grid.shared}">${message:components.listDocument.grid.shared.abbr}</abbr>
+			</t:parameter>
+
+			<t:parameter t:name="SharedWithGroupHeader">
 				<abbr title="${message:components.listDocument.grid.shared}">${message:components.listDocument.grid.shared.abbr}</abbr>
 			</t:parameter>
 				
@@ -152,6 +157,34 @@
 							</span>
 						</t:if>
 						<t:if t:test="${document.shared}" negate="true">
+							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.shareoff.title}" />
+						</t:if>
+					</t:actionLink>
+				</t:parameter>
+				</t:if>
+			</t:parameter>
+
+			<t:parameter t:name="sharedWithGroupCell">
+				<t:if t:test="${document.encrypted}">
+					<t:actionLink t:id="showWarningShareTer" zone="${warningShare.zoneClientId}" context="${document.identifier}">
+						<t:if t:test="${document.sharedWithGroup}">
+							<span t:type="chenillekit/Tooltip" title="${tooltipGroupTitle}" value="${toolTipGroupValue}" effect="appear">
+								<img src="${asset:context:images/icons/share-group-on.png}" alt="" title="${message:components.listDocument.picture.shareon.title}" onClick="literal:${warningShare.javascriptOpenPopup}" />
+							</span>
+						</t:if>
+						<t:if t:test="${document.sharedWithGroup}" negate="true">
+							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.shareoff.title}" onClick="literal:${warningShare.javascriptOpenPopup}"/>
+						</t:if>
+					</t:actionLink>
+				<t:parameter name="else">
+					<t:actionLink t:id="uniqueShareWithGroupLinkBis"
+						context="${document.identifier}">
+						<t:if t:test="${document.sharedWithGroup}">
+							<span t:type="chenillekit/Tooltip" title="${tooltipGroupTitle}" value="${toolTipGroupValue}" effect="appear">
+								<img src="${asset:context:images/icons/share-group-on.png}" alt="" title="${message:components.listDocument.picture.shareon.title}" />
+							</span>
+						</t:if>
+						<t:if t:test="${document.sharedWithGroup}" negate="true">
 							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.shareoff.title}" />
 						</t:if>
 					</t:actionLink>
