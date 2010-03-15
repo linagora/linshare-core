@@ -115,11 +115,9 @@ public class Index {
 
 	@Property
 	@Persist
-	private List<ShareDocumentVo> documents;
-
-	@Property
-	@Persist
-	private String newType;
+	private List<ShareDocumentVo> documents;	
+	
+	private GroupMemberType memberToChangeType;
     
 	@Environmental
 	private RenderSupport renderSupport;
@@ -303,6 +301,28 @@ public class Index {
 		}
 		return "notSelected";
 	}
+	
+	public GroupMemberType getMemberType() {
+		return GroupMemberType.MEMBER;
+	}
+	
+	public GroupMemberType getManagerType() {
+		return GroupMemberType.MANAGER;
+	}
+	
+	public GroupMemberType getMemberToChangeType() {
+		if (memberToChange == null) {
+			memberToChangeType =  GroupMemberType.MEMBER;
+		}
+		else {
+			memberToChangeType = memberToChange.getType();
+		}
+		return memberToChangeType;
+	}
+	
+	public void setMemberToChangeType(GroupMemberType type) {
+		memberToChangeType = type;
+	}
 
     public Zone onActionFromCreateGroup() {
         return createGroupPopup.getShowPopup();
@@ -355,7 +375,16 @@ public class Index {
 
 	public Object onSuccessFromEditMemberForm() {
 		try {
-			groupFacade.updateMember(group, userVo, memberToChange.getUserVo(), memberToChange.getType());
+			if (memberToChange.getType().equals(memberToChangeType)) {
+				shareSessionObjects.addWarning(String.format(messages.get("pages.groups.members.edit.unchanged"),
+						memberToChange.getFirstName(), memberToChange.getLastName()) );
+			}
+			else {
+				groupFacade.updateMember(group, userVo, memberToChange.getUserVo(), memberToChangeType);
+				memberToChange.setType(memberToChangeType);
+				shareSessionObjects.addMessage(String.format(messages.get("pages.groups.members.edit.success"),
+						memberToChange.getFirstName(), memberToChange.getLastName()) );
+			}
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}

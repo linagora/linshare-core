@@ -75,8 +75,8 @@
 					<t:parameter name="else">
 						<t:if test="member.isManager">
 							<img src="${asset:context:images/icons/usertype-internaladmin.png}"
-								alt="${message:pages.groups.members.type.admin}"
-								title="${message:pages.groups.members.type.admin}" />
+								alt="${message:pages.groups.members.type.manager}"
+								title="${message:pages.groups.members.type.manager}" />
 							<t:parameter name="else">
 								<img src="${asset:context:images/icons/usertype-internalsimple.png}"
 									alt="${message:pages.groups.members.type.member}"
@@ -213,7 +213,23 @@
     	<div class="confirmPopup">
 		<h2>${message:pages.groups.editMemberType}</h2>
 		<hr />
-			<t:beaneditform t:id="editMemberForm" object="memberToChange" t:submitLabel="message:global.button.edit"/>
+			<t:form t:id="editMemberForm">
+			<t:radiogroup t:id="newType" t:value="memberToChangeType">
+				<table><tr>
+                <td class="spacedTD"><t:label for="memberType">
+                	<img src="${asset:context:images/icons/usertype-internalsimple.png}"
+						alt="${message:pages.groups.members.type.member}" title="${message:pages.groups.members.type.member}" />
+					<br />${message:pages.groups.members.type.member}</t:label><br />
+          			<t:radio t:id="memberType"/></td>
+                <td class="spacedTD"><t:label for="managerType">
+          			<img src="${asset:context:images/icons/usertype-internaladmin.png}"
+						alt="${message:pages.groups.members.type.manager}" title="${message:pages.groups.members.type.manager}" />
+					<br />${message:pages.groups.members.type.manager}</t:label><br />
+                	<t:radio t:id="managerType"/></td>
+                </tr></table>
+            </t:radiogroup>
+			<br /><t:submit t:value="${message:global.button.edit}" />
+			</t:form>
 		</div>
     </div>
 
