@@ -368,20 +368,22 @@ public class DocumentServiceImpl implements DocumentService {
 		if (fileResource != null) {
 			try {
 				bufferedImage = fileResource.generateThumbnailImage();
-				fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
-				tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
-				tempThumbFile.createNewFile();
+				if (bufferedImage != null) {
+					fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
+					tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
+					tempThumbFile.createNewFile();
+					
+					if (bufferedImage!=null)
+						ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
 				
-				if (bufferedImage!=null)
-					ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
-			
-				if (log.isDebugEnabled()) {
-					log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
+					if (log.isDebugEnabled()) {
+						log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
+					}
+					String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
+					
+					uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
+							tempThumbFile.getName(), mimeTypeThb);
 				}
-				String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
-				
-				uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
-						tempThumbFile.getName(), mimeTypeThb);
 				
 			} catch (FileNotFoundException e1) {
 				log.error(e1,e1);
