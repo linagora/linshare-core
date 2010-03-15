@@ -102,6 +102,10 @@ public class ListSharedDocument {
     @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
     @Property
     private boolean inGroup;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean disableDeletion;
 	
 	
 	/***********************************

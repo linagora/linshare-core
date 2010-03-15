@@ -147,7 +147,7 @@
 			</t:form>
 			
 			
-			<t:ListSharedDocument t:shareDocuments="documents" t:user="userVo" />
+			<t:ListSharedDocument t:shareDocuments="documents" t:user="userVo" t:disableDeletion="${disableFilesDeletion}"/>
 			
 			<t:parameter name="else">
 				${message:pages.groups.noGroup}

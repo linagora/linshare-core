@@ -323,6 +323,13 @@ public class Index {
 	public void setMemberToChangeType(GroupMemberType type) {
 		memberToChangeType = type;
 	}
+	
+	public boolean getDisableFilesDeletion() {
+		if (group == null || memberConnected == null) {
+			return true;
+		}
+		return !(memberConnected.isAllowedToDeleteFile());
+	}
 
     public Zone onActionFromCreateGroup() {
         return createGroupPopup.getShowPopup();

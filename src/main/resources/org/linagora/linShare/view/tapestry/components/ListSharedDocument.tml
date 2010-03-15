@@ -99,12 +99,14 @@
 			</t:parameter>  -->
 
 			<t:parameter t:name="actionsCell">
-				<t:actionLink t:id="delete" context="${shareDocument.identifier}" t:zone="zoneTest"
-					title="${message:components.listSharedDocument.action.delete.title}">
-					<span onClick="window_confirm.showCenter(true)">
-					<img src="${asset:context:images/icons/delete.png}" alt="${message:components.listSharedDocument.action.delete}" />
-					</span>
-				</t:actionLink>
+				<t:if t:test="disableDeletion" negate="true">	
+					<t:actionLink t:id="delete" context="${shareDocument.identifier}" t:zone="zoneTest"
+						title="${message:components.listSharedDocument.action.delete.title}">
+						<span onClick="window_confirm.showCenter(true)">
+						<img src="${asset:context:images/icons/delete.png}" alt="${message:components.listSharedDocument.action.delete}" />
+						</span>
+					</t:actionLink>
+				</t:if>
 <!-- 			<t:if t:test="activeSignature">	
 					<t:if t:test="documentSignedByCurrentUser" negate="true">
 						<t:actionLink t:id="signature" context="${shareDocument.identifier}" t:zone="zoneTest" 
