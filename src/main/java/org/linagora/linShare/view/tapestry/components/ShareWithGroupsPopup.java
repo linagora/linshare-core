@@ -60,8 +60,7 @@ public class ShareWithGroupsPopup{
 	@ApplicationState
 	private ShareSessionObjects shareSessionObjects;
 	
-
-	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
+	@Persist
 	@Property
 	private List<GroupVo> groupsVo;
 
@@ -128,7 +127,7 @@ public class ShareWithGroupsPopup{
 	 */
 	@SetupRender
 	public void init() {
-		
+		groupsVo = new ArrayList<GroupVo>();
 		groups = groupFacade.findByUser(userVo.getLogin());
 
 	}
