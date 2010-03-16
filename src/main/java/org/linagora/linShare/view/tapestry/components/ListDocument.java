@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +37,7 @@ import java.util.Map.Entry;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
@@ -47,6 +49,7 @@ import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -75,11 +78,14 @@ import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.exception.TechnicalErrorCode;
+import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.FileSorterModel;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
+import org.linagora.linShare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -219,6 +225,25 @@ public class ListDocument {
 
 	@Inject
 	private BeanModelSource beanModelSource;
+	
+    @Inject
+	private Templating templating;
+	
+	@Inject
+	@Path("context:templates/tooltip.tml")
+	private Asset tooltipTemplate;
+	
+	@Inject
+	@Path("context:templates/tooltip_row.tml")
+	private Asset tooltipTemplateRow;
+	
+	@Inject
+	@Path("context:templates/tooltipGroup.tml")
+	private Asset tooltipTemplateGroup;
+	
+	@Inject
+	@Path("context:templates/tooltipGroup_row.tml")
+	private Asset tooltipTemplateGroupRow;
 
 	@SuppressWarnings("unchecked")
 	@Property
@@ -313,72 +338,93 @@ public class ListDocument {
 	 */
 	private void buildTooltipValues() {
 		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
-		tooltipTitle = messages.get("components.listDocument.tooltip.title");
-		tooltipValues = new HashedMap();
-		tooltipGroupTitle = messages.get("components.listDocument.tooltip.title");
-		tooltipGroupValues = new HashedMap();
-		int i=0;
-		for (DocumentVo docVo : documents) {
-			StringBuffer tempBuf = new StringBuffer();
-			StringBuffer value = new StringBuffer();
-			StringBuffer valueGroup = new StringBuffer();
-			
-			if (docVo.getShared()||docVo.getSharedWithGroup()) {
-				List<Share> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
-				Map<String, Calendar> securedUrls = securedUrlFacade.getSharingsByMailAndFile(user, docVo);
-				
-				tempBuf.append("<p class='tooltipTableDescription'>");
-				tempBuf.append(messages.get("components.listDocument.tooltip.description"));
-				tempBuf.append("</p><table class='tooltipTable'><tr><th>");
-				tempBuf.append(messages.get("components.listDocument.tooltip.table.name"));
-				tempBuf.append("</th><th>");
-				tempBuf.append(messages.get("components.listDocument.tooltip.table.mail"));
-				tempBuf.append("</th><th>");
-				tempBuf.append(messages.get("components.listDocument.tooltip.table.dateExpiration"));
-				tempBuf.append("</th></tr>");
-				
-				value.append(tempBuf);
-				valueGroup.append(tempBuf);
-				tempBuf = new StringBuffer();
 
-				for (Share share : shares) {
-					User receiver = share.getReceiver();
-					tempBuf.append("<tr><td>");
-					tempBuf.append(receiver.getFirstName() + " " + receiver.getLastName());
-					tempBuf.append("</td><td>");
-					tempBuf.append(receiver.getMail());
-					tempBuf.append("</td><td>");
-					tempBuf.append(formatter.format(share.getExpirationDate().getTime()));
-					tempBuf.append("</td></tr>");
-					if (receiver.getUserType().equals(UserType.GROUP)) {
-						valueGroup.append(tempBuf);
+		tooltipTitle = messages.get("components.listDocument.tooltip.title");
+		tooltipGroupTitle = messages.get("components.listDocument.tooltipGroup.title");
+		tooltipValues = new HashedMap();
+		tooltipGroupValues = new HashedMap();
+		
+		try {
+			String templateContainer = templating.readFullyTemplateContent(tooltipTemplate.getResource().openStream());
+			String templateRow = templating.readFullyTemplateContent(tooltipTemplateRow.getResource().openStream());
+			String templateGroupContainer = templating.readFullyTemplateContent(tooltipTemplateGroup.getResource().openStream());
+			String templateGroupRow = templating.readFullyTemplateContent(tooltipTemplateGroupRow.getResource().openStream());
+			
+			Map<String,String> templateRowParams=new HashMap<String, String>();
+			String value = "";
+			String valueGroup = "";
+			
+			int i=0;
+			for (DocumentVo docVo : documents) {
+				
+				if (docVo.getShared()||docVo.getSharedWithGroup()) {
+					StringBuffer tempBuf = new StringBuffer();
+					StringBuffer tempBufGroup = new StringBuffer();
+					Map<String,String> templateParams=new HashMap<String, String>();
+					
+					filleHeaderParams(templateParams);
+					
+					List<Share> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
+					Map<String, Calendar> securedUrls = securedUrlFacade.getSharingsByMailAndFile(user, docVo);
+
+					for (Share share : shares) {
+						User receiver = share.getReceiver();
+						if (receiver.getUserType().equals(UserType.GROUP)) {
+							filleGroupRowParams(templateRowParams, receiver.getLastName(), formatter.format(share.getExpirationDate().getTime()));
+							tempBufGroup.append(templating.getMessage(templateGroupRow, templateRowParams));
+							
+						}
+						else {
+							fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), formatter.format(share.getExpirationDate().getTime()));
+							tempBuf.append(templating.getMessage(templateRow, templateRowParams));
+						}
 					}
-					else {
-						value.append(tempBuf);
+					Set<Entry<String, Calendar>> set = securedUrls.entrySet();
+					for (Entry<String, Calendar> entry : set) {
+						fillRowParams(templateRowParams, " ", " ", entry.getKey(), formatter.format(entry.getValue().getTime()));
+						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
 					}
-					tempBuf = new StringBuffer();
+					
+					templateParams.put("${rows}", tempBuf.toString());
+					templateParams.put("${group_rows}", tempBufGroup.toString());
+					
+					value = templating.getMessage(templateContainer, templateParams);
+					valueGroup = templating.getMessage(templateGroupContainer, templateParams);
 				}
-				Set<Entry<String, Calendar>> set = securedUrls.entrySet();
-				for (Entry<String, Calendar> entry : set) {
-					value.append("<tr><td>");
-					value.append(" ");
-					value.append("</td><td>");
-					value.append(entry.getKey());
-					value.append("</td><td>");
-					value.append(formatter.format(entry.getValue().getTime()));
-					value.append("</td></tr>");
+				else {
+					value = messages.get("components.listDocument.tooltip.noEntry");
+					valueGroup = messages.get("components.listDocument.tooltip.noEntry");
 				}
-				value.append("</table>");
-				valueGroup.append("</table>");
+				tooltipValues.put(i, value.replaceAll("[\r\n]+", ""));
+				tooltipGroupValues.put(i, valueGroup.toString().replaceAll("[\r\n]+", ""));
+				i++;
 			}
-			else {
-				value.append(messages.get("components.listDocument.tooltip.noEntry"));
-				valueGroup.append(messages.get("components.listDocument.tooltip.noEntry"));
-			}
-			tooltipValues.put(i, value.toString());
-			tooltipGroupValues.put(i, valueGroup.toString());
-			i++;
+			
+		} catch (IOException e) {
+			logger.error("Bad mail template", e);
+			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
 		}
+	}
+	
+	private void filleHeaderParams(Map<String,String> templateParams) {
+		templateParams.put("${header_user}", messages.get("components.listDocument.tooltip.table.user"));
+		templateParams.put("${header_group}", messages.get("components.listDocument.tooltip.table.group"));
+		templateParams.put("${header_mail}", messages.get("components.listDocument.tooltip.table.mail"));
+		templateParams.put("${header_expiration}", messages.get("components.listDocument.tooltip.table.dateExpiration"));
+		templateParams.put("${description}", messages.get("components.listDocument.tooltip.description"));
+	}
+	
+	private void fillRowParams(Map<String,String> templateRowParams, String firstName, 
+			String lastName, String mail, String expiration) {
+		templateRowParams.put("${firstname}", firstName);
+		templateRowParams.put("${lastname}", lastName);
+		templateRowParams.put("${mail}", mail);
+		templateRowParams.put("${expiration}", expiration);
+	}
+	
+	private void filleGroupRowParams(Map<String, String> templateRowParams, String name, String expiration) {
+		templateRowParams.put("${name}", name);
+		templateRowParams.put("${expiration}", expiration);
 	}
 	
 	/**
