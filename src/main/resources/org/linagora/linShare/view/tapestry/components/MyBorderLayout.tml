@@ -23,7 +23,7 @@
 
 	<t:parameter name="header">
 		<div id="logo-linshare">
-			<t:pagelink page="Index"><span><img src="${asset:context:images/logo.png}" alt="${message:global.appName}" /></span></t:pagelink>
+			<t:pagelink page="Index"><span><img src="${asset:context:images/logo_linshare.png}" alt="${message:global.appName}" /></span></t:pagelink>
 		</div>
 		<div id="logo-customer">
 			<t:if test="customLogoUrl">

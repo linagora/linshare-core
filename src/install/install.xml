@@ -33,7 +33,7 @@
 	<resources>
 		<res id="InfoPanel.info" src="README"/>
 		<res id="LicencePanel.licence" src="COPYING"/>
-		<res id="Installer.image"   src="@{project.basedir}/src/install/resources/logo_linshare_0105x026.png" />
+		<res id="Installer.image"   src="@{project.basedir}/src/install/resources/logo_linshare_small.png" />
 		<res id="userInputSpec.xml" src="@{project.basedir}/src/install/resources/userInputSpec.xml" /><!--
 	
 		<res id="Win_shortcutSpec.xml" src="@{project.basedir}/src/install/resources/shortcut-win.xml" />
