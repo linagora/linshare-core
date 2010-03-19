@@ -21,9 +21,14 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
@@ -33,7 +38,9 @@ import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
@@ -45,6 +52,7 @@ import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.slf4j.Logger;
 
@@ -120,12 +128,23 @@ public class GuestEditForm {
     
     @Property
     private boolean createGuestGranted;
+    
+    @Property
+    private boolean restrictedGuest;
 
     @Property
     private String customMessage;
 
     @Property
     private String comment;
+	
+	
+	@Persist("flash")
+	private List<String> recipientsEmail;
+	
+	@Persist("flash")
+	@Property
+	private String recipientsSearch;
     
     @Inject
     @Path("context:templates/new-guest.html")
@@ -139,11 +158,63 @@ public class GuestEditForm {
 
     @Inject
     private ComponentResources componentResources;
+	
+	
+	@SetupRender
+	void init() {
+		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
+	}
+
+	public List<String> onProvideCompletionsFromRecipientsPatternGuestForm(String input) {
+		List<UserVo> searchResults = performSearch(input);
+
+		List<String> elements = new ArrayList<String>();
+		for (UserVo user : searchResults) {
+			 String completeName = MailCompletionService.formatLabel(user);
+            if (!elements.contains(completeName)) {
+                elements.add(completeName);
+            }
+		}
+
+		return elements;
+	}
+	
+	/** Perform a user search using the user search pattern.
+	 * @param input user search pattern.
+	 * @return list of users.
+	 */
+	private List<UserVo> performSearch(String input) {
+
+
+		Set<UserVo> userSet = new HashSet<UserVo>();
+
+		String firstName_ = null;
+		String lastName_ = null;
+
+		if (input != null && input.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
+			if (stringTokenizer.hasMoreTokens()) {
+				firstName_ = stringTokenizer.nextToken();
+				if (stringTokenizer.hasMoreTokens()) {
+					lastName_ = stringTokenizer.nextToken();
+				}
+			}
+		}
+
+        if (input != null) {
+            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userLoggedIn));
+        }
+		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userLoggedIn));
+		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userLoggedIn));
+		
+		return new ArrayList<UserVo>(userSet);
+	}
+	
 
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
-
+	
     public void  onValidateFormFromGuestCreateForm() {
 
     	if (guestCreateForm.getHasErrors()) {
@@ -159,6 +230,28 @@ public class GuestEditForm {
             userAlreadyExists = true;
             return ;
         }
+        
+		
+    	if (restrictedGuest) {
+        	boolean sendErrors = false;
+        	
+	    	List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+	    	String badFormatEmail =  "";
+			
+	    	for (String recipient : recipients) {
+	        	if (!MailCompletionService.MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
+	            	badFormatEmail = badFormatEmail + recipient + " ";
+	            	sendErrors = true;
+	            }
+	    	}
+			
+	    	if(sendErrors) {
+	        	guestCreateForm.recordError(String.format(messages.get("components.confirmSharePopup.validate.email"), badFormatEmail));
+	        }
+	    	else {
+	        	this.recipientsEmail = recipients;
+	        }
+    	}
     }
 
     Block onSuccess() {
@@ -197,6 +290,14 @@ public class GuestEditForm {
         	
         	userFacade.createGuest(mail, firstName, lastName, uploadGranted, createGuestGranted,comment,
                 messages.get("mail.user.guest.create.subject"), mailContent, mailContentTxt,userLoggedIn);
+        	
+        	if (restrictedGuest) {
+        		userFacade.setGuestContactRestriction(mail, recipientsEmail);
+        	}
+        	
+        	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
+        		userFacade.addGuestContactRestriction(userLoggedIn.getLogin(), mail);
+        	}
         } catch (BusinessException e) {
             // should never occur.
             logger.error(e.toString());

@@ -253,4 +253,23 @@ public class UserFacadeImpl implements UserFacade {
     	userService.resetPassword(user.getLogin(), mailSubject, mailContent, mailContentTxt);		
 	}
     
+	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException {
+		userService.setGuestContactRestriction(login, mailContacts);
+	}
+	
+	public void removeGuestContactRestriction(String login) throws BusinessException {
+		userService.removeGuestContactRestriction(login);
+	}
+	
+	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException {
+		userService.addGuestContactRestriction(ownerLogin, contactLogin);
+	}
+	
+	public List<UserVo> fetchGuestContacts(String login) throws BusinessException {
+		List<User> contacts = userService.fetchGuestContacts(login);
+		if (contacts!=null && !contacts.isEmpty()) {
+			return getUserVoList(contacts);
+		}
+		return null;
+	}
 }

@@ -30,3 +30,27 @@ alter table linshare_group_members
 
 ALTER TABLE linshare_document add column shared_with_group bool;
 UPDATE linshare_document SET shared_with_group='false';
+
+
+
+create table linshare_allowed_contact (
+        id int8 not null,
+        user_id int8 not null,
+        contact_id int8 not null,
+        primary key (id)
+);
+
+create index index_allowed_contact_user_id on linshare_allowed_contact (user_id);
+create index index_allowed_contact_contact_id on linshare_allowed_contact (contact_id);
+
+alter table linshare_allowed_contact
+        add constraint FK3684FF4C67FF97FF 
+        foreign key (user_id) 
+        references linshare_user;
+
+alter table linshare_allowed_contact
+        add constraint FK4284AA4C675AA721 
+        foreign key (contact_id) 
+        references linshare_user;
+
+alter table linshare_user add column restricted bool default false;

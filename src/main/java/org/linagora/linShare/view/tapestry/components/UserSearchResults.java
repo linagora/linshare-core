@@ -90,7 +90,7 @@ public class UserSearchResults {
     private UserDetailsDisplayer userDetailsDisplayer;
     
     @SuppressWarnings("unused")
-    @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=280"})
+    @Component(parameters = {"style=bluelighting", "show=false", "width=550", "height=400"})
     private WindowWithEffects userEditWindow;
     
     @SuppressWarnings("unused")
@@ -166,7 +166,9 @@ public class UserSearchResults {
             selectedUsers = new ArrayList<UserVo>();
         }
         if (users == null || users.size() == 0) {
-            users = userFacade.searchUser("", "", "", userLoggedIn);
+        	if (inSearch==false) {
+        		users = userFacade.searchUser("", "", "", userLoggedIn);
+        	}
     	}
         groups = groupFacade.findByUser(userLoggedIn.getLogin());
         
@@ -329,6 +331,11 @@ public class UserSearchResults {
     public boolean isUserGuest() {
     	return user.isGuest();
     }
+    
+    public boolean isUserGuestRestricted() {
+    	return (user.isGuest()&&user.isRestricted());
+    }
+    
     public boolean isUserAdmin() {
     	return (!user.isGuest()&&user.isAdministrator());
     }

@@ -3572,6 +3572,10 @@ div.t-beaneditor {
 	margin: 0 auto;
 }
 
+.align-with-number input {
+	margin-left: 26em !important;
+}
+
 
 /***************************************************************************/
 /* EOF */

@@ -147,4 +147,35 @@ public interface UserService {
 	 */
 	public void resetPassword(String login, String mailSubject,
 			String mailContent, String mailContentTxt) throws BusinessException;
+	
+	/**
+	 * Update a guest as restricted and set his list of contacts
+	 * 
+	 * @param login of the guest
+	 * @param mailContacts
+	 */
+	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException;
+	
+	/**
+	 * Set a guest as not restricted and remove his list of contacts
+	 * 
+	 * @param login
+	 */
+	public void removeGuestContactRestriction(String login) throws BusinessException;
+	
+	/**
+	 * Add one contact to a restricted guest
+	 * 
+	 * @param ownerLogin
+	 * @param contactLogin
+	 */
+	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException;
+	
+	/**
+	 * Retrieve the list of contacts of the guest
+	 * 
+	 * @param login
+	 * @return
+	 */
+	public List<User> fetchGuestContacts(String login) throws BusinessException;
 }

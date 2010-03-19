@@ -130,6 +130,7 @@
         role_id int4 not null,
         can_upload bool,
         can_create_guest bool default false,
+        restricted bool default false,
         password varchar(255),
         locale varchar(255),
         expiry_date timestamp,
@@ -205,6 +206,26 @@
         add constraint FK4284AE4C675E9722 
         foreign key (group_id) 
         references linshare_group;
+    
+	create table linshare_allowed_contact (
+        id int8 not null,
+        user_id int8 not null,
+        contact_id int8 not null,
+        primary key (id)
+	);
+	
+	create index index_allowed_contact_user_id on linshare_allowed_contact (user_id);
+	create index index_allowed_contact_contact_id on linshare_allowed_contact (contact_id);
+
+	alter table linshare_allowed_contact
+        add constraint FK3684FF4C67FF97FF 
+        foreign key (user_id) 
+        references linshare_user;
+
+	alter table linshare_allowed_contact
+        add constraint FK4284AA4C675AA721 
+        foreign key (contact_id) 
+        references linshare_user;
 	
 	create index index_cookie_identifier on linshare_cookie (identifier);
 

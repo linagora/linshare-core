@@ -36,6 +36,20 @@
 				<t:label for="createGuestGranted" class="edit-form-label">${message:pages.user.edit.createGuestGranted}</t:label>
 	            <t:checkbox t:id="createGuestGranted" class="edit-form-checkbox"/>
 				<br/>
+				
+					<t:label for="restrictedEditGuest" class="edit-form-label">${message:pages.user.edit.restrictedGuest}</t:label>
+					<t:checkbox t:id="restrictedEditGuest" class="edit-form-checkbox" onclick="javascript:toogleAllowedContactsEdit();"/>
+					<div id="allowedContactsEditBlock" style="display:block">
+						<t:label for="recipientsPatternEditForm" class="edit-form-label">${message:pages.user.edit.restrictedGuest.list}</t:label>
+						<t:textarea t:id="recipientsPatternEditForm" t:value="recipientsSearch"
+							t:mixins="autocomplete" t:minChars="2" t:tokens="," validate="required"
+							class="recipientsPattern" 
+							title="${message:components.confirmSharePopup.texarea.recipients.title}" />
+					</div>
+					<script type="text/javascript">
+						initAllowedContactsEdit(${restrictedEditGuest});
+					</script>
+					<br/>
 
 				    <t:parameter name="else">
 						<t:if test="admin">
@@ -44,6 +58,7 @@
 						<br/>
 						</t:if>
                 	</t:parameter>
+			<div class="clear"></div>
 			</t:if>
 
 

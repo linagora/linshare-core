@@ -65,6 +65,7 @@ import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,10 +216,7 @@ public class ConfirmSharePopup{
 		
 		//init emails list for selected users
 		if(usersVo!=null && usersVo.size()>0){
-			String emails="";
-			for (UserVo recipient : usersVo) {
-				emails = emails + formatLabel(recipient)+',';
-			}
+			String emails = MailCompletionService.formatList(usersVo);
 			recipientsSearch = emails.substring(0,emails.length()-1); //delete last comma.
 		}
 
@@ -287,7 +285,7 @@ public class ConfirmSharePopup{
 
 		List<String> elements = new ArrayList<String>();
 		for (UserVo user : searchResults) {
-			 String completeName = formatLabel(user);
+			 String completeName = MailCompletionService.formatLabel(user);
             if (!elements.contains(completeName)) {
                 elements.add(completeName);
             }
@@ -295,49 +293,6 @@ public class ConfirmSharePopup{
 
 		return elements;
 	}
-	
-	private String formatLabel(UserVo user){
-		StringBuffer buf = new StringBuffer();
-		
-		if(user.getLastName()!=null&&user.getFirstName()!=null){
-			//uservo from USER table or ldap
-			buf.append("\"").append(user.getLastName().trim()).append(" ").append(user.getFirstName().trim()).append("\"");
-			buf.append(" <").append(user.getMail()).append(">,");
-		} else {
-			//uservo from favorite table
-			buf.append(user.getMail()).append(",");
-		}
-		return buf.toString();
-	}
-	
-	// "Michael georges" <michael@linagora.com>,"Laporte Robert" <robert@robert.com>,bruce.willis@orange.fr,...
-	private static List<String> parseEmails(String recipientsList){
-		
-		String[] recipients = recipientsList.split(",");
-		ArrayList<String> emails = new ArrayList<String> ();
-		
-		for (String oneUser : recipients) {
-			
-			String email = contentInsideToken(oneUser, "<",">");
-			if(email==null) email = oneUser.trim();
-			
-			if(!email.equals("")) //ignore empty string
-			emails.add(email); // add good and bad email
-		}
-		
-		return emails;
-	}
-	
-	
-	public static String contentInsideToken(String str,String tokenright,String tokenleft) {
-		int deb = str.indexOf(tokenright,0);
-		int end = str.indexOf(tokenleft,1);
-		if(deb==-1||end==-1) return null;
-		else return str.substring(deb+1, end).trim();
-	}
-	
-	private static final Pattern MAILREGEXP = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$");
-	
 	
 	
 	/** Perform a user search using the user search pattern.
@@ -382,11 +337,11 @@ public class ConfirmSharePopup{
     	
     	boolean sendErrors = false;
 		
-		List<String> recipients = parseEmails(recipientsSearch);
+		List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
 		String badFormatEmail =  "";
 		
 		for (String recipient : recipients) {
-			if (!MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
+			if (!MailCompletionService.MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
 				badFormatEmail = badFormatEmail + recipient + " ";
 				sendErrors = true;
 			}

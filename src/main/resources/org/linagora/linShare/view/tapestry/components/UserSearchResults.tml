@@ -48,21 +48,28 @@
 
 			<t:parameter name="pictureCell">
 				<t:if test="admin">
-					<t:if test="userGuest">
-						<img src="${asset:context:images/icons/usertype-guestsimple.png}"
-							alt="${message:components.userSearch.grid.usertype.guestSimple}"
-							title="${message:components.userSearch.grid.usertype.guestSimple}" />
-						<t:parameter name="else">
-							<t:if test="userAdmin">
-								<img src="${asset:context:images/icons/usertype-internaladmin.png}"
-									alt="${message:components.userSearch.grid.usertype.internalAdmin}"
-									title="${message:components.userSearch.grid.usertype.internalAdmin}" />
-								<t:parameter name="else">
-									<img src="${asset:context:images/icons/usertype-internalsimple.png}"
-										alt="${message:components.userSearch.grid.usertype.internalSimple}"
-										title="${message:components.userSearch.grid.usertype.internalSimple}" />
-								</t:parameter>
-							</t:if>
+					<t:if test="userGuestRestricted">
+						<img src="${asset:context:images/icons/usertype-guestrestricted.png}"
+							alt="${message:components.userSearch.grid.usertype.guestRestricted}"
+							title="${message:components.userSearch.grid.usertype.guestRestricted}" />
+							<t:parameter name="else">
+								<t:if test="userGuest">
+									<img src="${asset:context:images/icons/usertype-guestsimple.png}"
+										alt="${message:components.userSearch.grid.usertype.guestSimple}"
+										title="${message:components.userSearch.grid.usertype.guestSimple}" />
+									<t:parameter name="else">
+										<t:if test="userAdmin">
+											<img src="${asset:context:images/icons/usertype-internaladmin.png}"
+												alt="${message:components.userSearch.grid.usertype.internalAdmin}"
+												title="${message:components.userSearch.grid.usertype.internalAdmin}" />
+											<t:parameter name="else">
+												<img src="${asset:context:images/icons/usertype-internalsimple.png}"
+													alt="${message:components.userSearch.grid.usertype.internalSimple}"
+													title="${message:components.userSearch.grid.usertype.internalSimple}" />
+											</t:parameter>
+										</t:if>
+									</t:parameter>
+								</t:if>
 						</t:parameter>
 					</t:if>
 				</t:if>

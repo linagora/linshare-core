@@ -23,6 +23,7 @@
     <mapping resource="org/linagora/linShare/core/domain/entities/RecipientFavourite.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/Cookie.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/Group.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/AllowedContact.hbm.xml"/>
     
     
   </session-factory>
