@@ -46,19 +46,22 @@
 			 -->
 			 <t:label for="createGuestGranted" class="edit-form-label">${message:pages.user.edit.createGuestGranted}</t:label>
 			<t:checkbox t:id="createGuestGranted" class="edit-form-checkbox"/>
-			<br/>
-			 <t:label for="restrictedGuest" class="edit-form-label">${message:pages.user.edit.restrictedGuest}</t:label>
-			<t:checkbox t:id="restrictedGuest" class="edit-form-checkbox" onclick="javascript:toogleAllowedContacts();"/>
+			<t:if test="userLoggedIn.restricted" negate="true">
+				<br/>
+				<t:label for="restrictedGuest" class="edit-form-label">${message:pages.user.edit.restrictedGuest}</t:label>
+				<t:checkbox t:id="restrictedGuest" class="edit-form-checkbox" onclick="javascript:toogleAllowedContacts();"/>
+			</t:if>
 			<div id="allowedContactsBlock" style="display:none">
+				<br/>
 				<t:label for="recipientsPatternGuestForm" class="edit-form-label">${message:pages.user.edit.restrictedGuest.list}</t:label>
 				<t:textarea t:id="recipientsPatternGuestForm" t:value="recipientsSearch"
 					t:mixins="autocomplete" t:minChars="2" t:tokens="," validate="required"
 					class="recipientsPattern" 
 					title="${message:components.confirmSharePopup.texarea.recipients.title}" />
 			</div>
-			<script type="text/javascript">
-				initAllowedContacts(${restrictedGuest});
-			</script>
+<!--			<script type="text/javascript">-->
+<!--				initAllowedContacts(${restrictedGuest});-->
+<!--			</script>-->
 			<br/>
 			<div class="clear"></div>
 			

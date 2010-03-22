@@ -267,7 +267,7 @@ public class UserEditForm {
     		return false;
     	}
 		
-    	if (restrictedEditGuest) {
+    	if (restrictedEditGuest || userLoggedIn.isRestricted()) {
         	boolean sendErrors = false;
         	
 	    	List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
@@ -304,10 +304,11 @@ public class UserEditForm {
         }
 		
 		if (userGuest) {
+			if (userLoggedIn.isRestricted()) restrictedEditGuest = true; //restricted guests can only manage restricted guests
 			try {
 				UserVo guest = userFacade.findUser(mail);
 				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
-						userFacade.setGuestContactRestriction(mail, recipientsEmail);
+					userFacade.setGuestContactRestriction(mail, recipientsEmail);
 				}
 				else if (!restrictedEditGuest && guest.isRestricted()) { //toogle restricted to false
 					userFacade.removeGuestContactRestriction(mail);
@@ -316,13 +317,12 @@ public class UserEditForm {
 					if (!intialContacts.equalsIgnoreCase(recipientsSearch)) {
 						userFacade.setGuestContactRestriction(mail, recipientsEmail);
 					}
-				}
+				}				
+		        shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.confirm"));
 			} catch (BusinessException e) {
-				shareSessionObjects.addError(messages.get("components.userEditForm.action.update.error"));
+				shareSessionObjects.addError(messages.get("components.guestEditForm.action.update.guestRestriction.badUser"));
 			}
     	}
-		
-        shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.confirm"));
 
 		componentResources.triggerEvent("resetListUsers", null, null);
     }

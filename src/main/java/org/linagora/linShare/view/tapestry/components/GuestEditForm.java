@@ -33,7 +33,10 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -113,6 +116,9 @@ public class GuestEditForm {
 
     @ApplicationState
     private ShareSessionObjects shareSessionObjects;
+    
+	@Environmental
+	private RenderSupport renderSupport;
 
     @Property
     private String mail;
@@ -163,6 +169,15 @@ public class GuestEditForm {
 	@SetupRender
 	void init() {
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
+		
+		if (userLoggedIn.isRestricted()) {
+			restrictedGuest=true;
+		}
+	}
+	
+	@AfterRender
+	void afterRender() {
+		renderSupport.addScript("initAllowedContacts("+Boolean.toString(restrictedGuest)+");");
 	}
 
 	public List<String> onProvideCompletionsFromRecipientsPatternGuestForm(String input) {
@@ -232,7 +247,7 @@ public class GuestEditForm {
         }
         
 		
-    	if (restrictedGuest) {
+    	if (restrictedGuest || userLoggedIn.isRestricted()) {
         	boolean sendErrors = false;
         	
 	    	List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
@@ -291,18 +306,24 @@ public class GuestEditForm {
         	userFacade.createGuest(mail, firstName, lastName, uploadGranted, createGuestGranted,comment,
                 messages.get("mail.user.guest.create.subject"), mailContent, mailContentTxt,userLoggedIn);
         	
-        	if (restrictedGuest) {
-        		userFacade.setGuestContactRestriction(mail, recipientsEmail);
-        	}
-        	
         	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
         		userFacade.addGuestContactRestriction(userLoggedIn.getLogin(), mail);
         	}
-        } catch (BusinessException e) {
-            // should never occur.
-            logger.error(e.toString());
+        	
+        	if (restrictedGuest || userLoggedIn.isRestricted()) { // a restricted guest can only create restricted guests
+        		userFacade.setGuestContactRestriction(mail, recipientsEmail);
+        	}
+            shareSessionObjects.addMessage(messages.get("components.guestEditForm.action.add.confirm"));
+        } catch (BusinessException e) { //bad contact for contacts list
+        	shareSessionObjects.addError(messages.get("components.guestEditForm.action.add.guestRestriction.badUser"));
+        	List<String> userLogin = new ArrayList<String>();
+        	userLogin.add(userLoggedIn.getLogin());
+        	try {
+				userFacade.setGuestContactRestriction(mail, userLogin); //default: set guest contact restriction with the owner
+			} catch (BusinessException e1) {
+				e1.printStackTrace();
+			}
         }
-        shareSessionObjects.addMessage(messages.get("components.guestEditForm.action.add.confirm"));
         componentResources.triggerEvent("resetListUsers", null, null);
         
         return onSuccess;

@@ -83,8 +83,13 @@
 					<br/>
 					<span class="emailAddress">
 						${user.mail},
-						<t:if test="userGuest">
-							${message:UserType.GUEST}<t:if test="${user.expirationDate}">,</t:if>
+						<t:if test="userGuestRestricted">
+							${message:components.userSearch.userType.RESTRICTED}<t:if test="${user.expirationDate}">,</t:if>
+						<t:parameter name="else">
+							<t:if test="userGuest">
+								${message:UserType.GUEST}<t:if test="${user.expirationDate}">,</t:if>
+							</t:if>
+						</t:parameter>
 						</t:if>
 						<t:if test="userGuest" negate="true">
 							${message:UserType.INTERNAL}<t:if test="${user.expirationDate}">,</t:if>

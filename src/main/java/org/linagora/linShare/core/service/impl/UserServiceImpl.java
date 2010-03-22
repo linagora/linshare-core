@@ -543,10 +543,10 @@ public class UserServiceImpl implements UserService {
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
 		}
-		
+		List<AllowedContact> precedents = new ArrayList<AllowedContact>();
 		try {
 			//clean actual contacts
-			List<AllowedContact> precedents = allowedContactRepository.findByOwner(guest);
+			precedents.addAll(allowedContactRepository.findByOwner(guest));
 			if (precedents!=null && !precedents.isEmpty()) {
 				for (AllowedContact allowedContact : precedents) {
 					allowedContactRepository.delete(allowedContact);
@@ -564,7 +564,10 @@ public class UserServiceImpl implements UserService {
 		} catch (IllegalArgumentException e1) {
 			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't set contacts restriction for user " + login);
 		} catch (BusinessException e1) {
-			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't set contacts restriction for user " + login);
+			for (AllowedContact entity : precedents) { //set old contacts list
+				allowedContactRepository.create(entity);				
+			}
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't set contacts restriction for user " + login);
 		}
 	}
 	

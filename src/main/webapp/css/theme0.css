@@ -3319,7 +3319,6 @@ form#uploadForm .upload-list {
 .errorMessagesClass {
     color: #C00D2D;
     font-weight: bold;
-    white-space: nowrap;
     margin-left: 1em;
     margin-bottom: 1em;
 }
