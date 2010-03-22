@@ -70,6 +70,9 @@ linshare.signature.tmp.dir=${LINSHARE_HOME}/var/lib/linshare/tmp/linSignDocument
 #directory used to store shared files
 linshare.files.directory=${LINSHARE_HOME}/var/lib/linshare/repository
 
+# internal user see all other internal user by default in the Users tab ?
+linshare.users.internal.defaultView.showAll=true
+
 
 #******************** VIRUS SCANNER
 #uncomment those properties if you want to enable clamav virus scanner feature

@@ -43,6 +43,7 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
@@ -109,6 +110,11 @@ public class UserSearchResults {
 	@Environmental
 	private RenderSupport renderSupport;
     
+    
+	@Inject @Symbol("users.internal.defaultView.showAll")
+	@Property
+	private boolean showAll;
+    
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
@@ -167,7 +173,12 @@ public class UserSearchResults {
         }
         if (users == null || users.size() == 0) {
         	if (inSearch==false) {
-        		users = userFacade.searchUser("", "", "", userLoggedIn);
+        		if (showAll || userLoggedIn.isRestricted()) {
+        			users = userFacade.searchUser("", "", "", userLoggedIn);
+        		}
+        		else {
+        			users = userFacade.searchGuest(userLoggedIn.getMail());
+        		}
         	}
     	}
         groups = groupFacade.findByUser(userLoggedIn.getLogin());
