@@ -55,6 +55,10 @@ public class GroupMemberVo implements Serializable {
 	public boolean getIsOwner() {
 		return (this.type.equals(GroupMemberType.OWNER));
 	}
+	
+	public boolean isWaitingForApproval() {
+		return(this.type.equals(GroupMemberType.WAITING_APPROVAL));
+	}
 
 	public String getFirstName() {
 		return this.userVo.getFirstName();

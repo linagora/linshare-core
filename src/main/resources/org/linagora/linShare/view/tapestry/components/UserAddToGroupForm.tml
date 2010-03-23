@@ -7,9 +7,14 @@
 			<h2>${message:pages.user.addToGroup.title}</h2>
 
 			<hr />
+    		<p>${message:pages.user.addToGroup.info}</p>
 
 			<t:grid t:id="groupsSelected" source="groupsAllowed" row="groupSelected" 
 				exclude="groupLogin, groupOwner, description" add="selectedValue">
+
+			<t:parameter t:name="empty">
+				<br /><strong>${message:pages.groups.info.empty}</strong>
+			</t:parameter>
 
 			<t:parameter t:name="nameHeader">
 				${message:pages.groups.info.name}

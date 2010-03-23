@@ -99,6 +99,10 @@ public class Index {
 
 	@Property
 	@Persist
+	private GroupMemberVo waitingForApprovalMember;
+
+	@Property
+	@Persist
 	private GroupMemberVo memberConnected;
 	
 	@Property
@@ -112,6 +116,9 @@ public class Index {
 	@Property
 	@Persist
 	private List<GroupMemberVo> members;
+	@Property
+	@Persist
+	private List<GroupMemberVo> waitingForApprovalMembers;
 
 	@Property
 	@Persist
@@ -146,6 +153,11 @@ public class Index {
 
 	@SetupRender
 	public void setupRender() {
+		if (shareSessionObjects.isReloadGroupsNeeded()) {
+			groups = null;
+			group = null;
+			shareSessionObjects.setReloadGroupsNeeded(false);
+		}
 		
 		if (groups == null) { //first display of the page for the session
 			groups = groupFacade.findByUser(userVo.getLogin());
@@ -162,7 +174,18 @@ public class Index {
 			User groupUserVo = new GroupUser(group.getGroupLogin(), "", group.getName(), group.getGroupLogin());
 			documents = shareFacade.getAllSharingReceivedByUser(new UserVo(groupUserVo));
 			
-			members = new ArrayList<GroupMemberVo>(group.getMembers());
+			List<GroupMemberVo> groupMembers = new ArrayList<GroupMemberVo>(group.getMembers());
+			members = new ArrayList<GroupMemberVo>();
+			waitingForApprovalMembers = new ArrayList<GroupMemberVo>();
+			
+			for (GroupMemberVo groupMemberVo : groupMembers) {
+				if (groupMemberVo.isWaitingForApproval()) {
+					waitingForApprovalMembers.add(groupMemberVo);
+				}
+				else {
+					members.add(groupMemberVo);
+				}
+			}
 			
 	        sorterModel=new MemberSorterModel(members);
 			memberConnected = group.findMember(userVo.getLogin());
@@ -238,6 +261,36 @@ public class Index {
 		}
 		groups = null;
 		group = null;
+		return this;
+	}
+	
+	Object onActionFromAcceptNewMember(String login) {
+		if (memberConnected.isAllowedToManageUser()) {
+			GroupMemberVo memberToAccept = group.findMember(login);
+			try {
+				groupFacade.acceptNewMember(group, memberConnected, memberToAccept);
+				shareSessionObjects.addMessage(messages.format("pages.groups.acceptMember.success", login, group.getName()));
+				groups = null;
+				group = null;
+			} catch (BusinessException e) {
+				shareSessionObjects.addError(messages.format("pages.groups.acceptMember.failure", login, group.getName()));
+			}
+		}
+		return this;
+	}
+	
+	Object onActionFromRejectNewMember(String login) {
+		if (memberConnected.isAllowedToManageUser()) {
+			GroupMemberVo memberToAccept = group.findMember(login);
+			try {
+				groupFacade.rejectNewMember(group, memberConnected, memberToAccept);
+				shareSessionObjects.addMessage(messages.format("pages.groups.rejectMember.success", login, group.getName()));
+				groups = null;
+				group = null;
+			} catch (BusinessException e) {
+				shareSessionObjects.addError(messages.format("pages.groups.rejectMember.failure", login, group.getName()));
+			}
+		}
 		return this;
 	}
 
@@ -338,6 +391,10 @@ public class Index {
     public Zone onActionFromShowUser(String mail) {
         return userDetailsDisplayer.getShowUser(mail);
     }
+
+    public Zone onActionFromShowWaitingUser(String mail) {
+        return userDetailsDisplayer.getShowUser(mail);
+    }
     
     public String getShowUserTooltip() {
     	if (member.getUserVo().isGuest()) {
@@ -347,11 +404,28 @@ public class Index {
     	}
     	return messages.get("pages.user.search.popup.welcome");
     }
+    
+    public String getShowWaitingUserTooltip() {
+    	if (waitingForApprovalMember.getUserVo().isGuest()) {
+    		if ((waitingForApprovalMember.getUserVo().getOwnerLogin().equals(userVo.getLogin()))&&(waitingForApprovalMember.getUserVo().getComment()!=null)&&(!waitingForApprovalMember.getUserVo().getComment().equals(""))) {
+    			return waitingForApprovalMember.getUserVo().getComment();
+    		}
+    	}
+    	return messages.get("pages.user.search.popup.welcome");
+    }
 
     public String getFormattedMembershipDate() {
         if (member.getMembershipDate() != null) {
             SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
             return formatter.format(member.getMembershipDate().getTime());
+        }
+        return null;
+    }
+
+    public String getMembershipDate() {
+        if (waitingForApprovalMember.getMembershipDate() != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
+            return formatter.format(waitingForApprovalMember.getMembershipDate().getTime());
         }
         return null;
     }

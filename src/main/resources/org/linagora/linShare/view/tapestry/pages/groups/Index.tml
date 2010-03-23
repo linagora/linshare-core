@@ -41,6 +41,45 @@
 				</t:parameter>
 			</t:if>
 			
+	<t:if test="memberConnected.allowedToManageUser">
+		<h2>${message:pages.groups.waitingForApprovalMembers.heading}</h2>
+		<t:grid source="waitingForApprovalMembers" row="waitingForApprovalMember" include="mail" add="membershipDate, moderation" rowsPerPage="5">
+			<t:parameter t:name="mailHeader">
+				${message:pages.groups.waitingForApprovalMembers.grid.user}
+			</t:parameter>
+			<t:parameter t:name="moderationHeader">
+				${message:pages.groups.waitingForApprovalMembers.grid.moderation}
+			</t:parameter>
+			<t:parameter t:name="membershipDateHeader">
+				${message:pages.groups.waitingForApprovalMembers.grid.membershipDate}
+			</t:parameter>
+			<t:parameter t:name="membershipDateCell">
+				${membershipDate}
+			</t:parameter>
+			<t:parameter name="mailCell">
+				<div>
+					<t:actionlink t:id="showWaitingUser" zone="userDetailsZone" title="${showWaitingUserTooltip}" context="waitingForApprovalMember.mail">
+						<span  onclick="userDetailsWindow.showCenter(true);">${waitingForApprovalMember.firstName} ${waitingForApprovalMember.lastName}</span>
+					</t:actionlink>
+					<br/><span class="emailAddress">${waitingForApprovalMember.mail}</span>
+				</div>
+			</t:parameter>
+			<t:parameter t:name="moderationCell">
+				<t:actionLink t:id="acceptNewMember" context="waitingForApprovalMember.userVo.login"
+					title="${message:pages.groups.waitingForApprovalMembers.accept}">
+					<img src="${asset:context:images/icons/validate.png}" alt="${message:pages.groups.waitingForApprovalMembers.accept}" />
+				</t:actionLink>
+				<t:actionLink t:id="rejectNewMember" context="waitingForApprovalMember.userVo.login"
+					title="${message:pages.groups.waitingForApprovalMembers.reject}">
+					<img src="${asset:context:images/icons/delete.png}" alt="${message:pages.groups.waitingForApprovalMembers.reject}" />
+				</t:actionLink>
+			</t:parameter>
+			 <t:parameter name="empty">
+              <p>${message:pages.groups.waitingForApprovalMembers.empty}</p>
+            </t:parameter>
+		</t:grid>
+	</t:if>
+			
 	<h2>${message:pages.groups.members.heading}</h2>
 	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:pages.user.sorter.name.label},${message:pages.user.sorter.mail.label},${message:pages.groups.sorter.membershipdate.label}" t:properties="literal:name,mail,membershipDate"/> 
 	<t:form t:id="results">

@@ -28,6 +28,7 @@ import org.linagora.linShare.core.domain.entities.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.GroupUser;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.GroupTransformer;
+import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -55,7 +56,6 @@ public class GroupFacadeImpl implements GroupFacade {
 		return groupTransformer.disassemble(group);
 	}
 	
-	@Override
 	public List<GroupVo> findByUser(String userLogin) {
 		User user = userRepository.findByLogin(userLogin);
 		List<Group> groups = groupService.findByUser(user);
@@ -92,7 +92,6 @@ public class GroupFacadeImpl implements GroupFacade {
 		groupService.addMember(group, manager, newMember);
 	}
 	
-	@Override
 	public void addMember(GroupVo groupVo, UserVo managerVo, UserVo newMemberVo,
 			GroupMemberType memberType) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
@@ -118,5 +117,19 @@ public class GroupFacadeImpl implements GroupFacade {
 	public boolean nameAlreadyExists(String groupName) {
 		Group groupExistant = groupService.findByName(groupName);
 		return (groupExistant!=null);
+	}
+	public void acceptNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToAcceptVo) throws BusinessException {
+		Group group = groupTransformer.assemble(groupVo);
+		User manager = userRepository.findByLogin(managerVo.getUserVo().getLogin());
+		User memberToAccept = userRepository.findByLogin(memberToAcceptVo.getUserVo().getLogin());
+		groupService.acceptNewMember(group, manager, memberToAccept);
+	}
+	
+	public void rejectNewMember(GroupVo groupVo, GroupMemberVo managerVo,
+			GroupMemberVo memberToRejectVo) throws BusinessException {
+		Group group = groupTransformer.assemble(groupVo);
+		User manager = userRepository.findByLogin(managerVo.getUserVo().getLogin());
+		User member = userRepository.findByLogin(memberToRejectVo.getUserVo().getLogin());
+		groupService.rejectNewMember(group, manager, member);
 	}
 }

@@ -22,7 +22,7 @@ package org.linagora.linShare.core.domain.entities;
 
 public enum GroupMemberType {
 
-	OWNER(0), MANAGER(1), MEMBER(2);
+	OWNER(0), MANAGER(1), MEMBER(2), WAITING_APPROVAL(3);
 
 	private int value;
 
@@ -39,6 +39,7 @@ public enum GroupMemberType {
             case 0: return GroupMemberType.OWNER;
             case 1: return GroupMemberType.MANAGER;
             case 2: return GroupMemberType.MEMBER;
+            case 3: return GroupMemberType.WAITING_APPROVAL;
             default : throw new IllegalArgumentException("Doesn't match an existing GroupMemberType");
         }
 	}

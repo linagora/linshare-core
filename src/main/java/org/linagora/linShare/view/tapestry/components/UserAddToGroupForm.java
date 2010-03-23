@@ -149,6 +149,7 @@ public class UserAddToGroupForm {
     	if (groupsWhereUserWillBeAdded.size()>0) {
     		for (GroupVo groupVo : groupsWhereUserWillBeAdded) {
 				groupFacade.addMember(groupVo, userLoggedIn, userAdded);
+				shareSessionObjects.setReloadGroupsNeeded(true);
 				shareSessionObjects.addMessage(messages.format("components.userAddToGroup.success", userAdded.getFirstName(), userAdded.getLastName(), groupVo.getName()));
 			}
     	}

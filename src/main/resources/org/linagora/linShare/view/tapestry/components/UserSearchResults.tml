@@ -113,7 +113,7 @@
 					<img src="${asset:context:images/icons/share-on.png}" alt="${message:global.button.share}"/>
 				</t:actionLink>
 				<t:actionLink t:id="addToGroup" context="user.login" t:zone="userAddToGroupFormZone"
-						title="${message:components.userSearch.action.edit.title}">
+						title="${message:components.userSearch.action.addToGroup.title}">
 						<img src="${asset:context:images/icons/add-member.png}" alt="${message:global.button.edit}"
 							onClick="userAddToGroupWindow.showCenter(true)" />
 				</t:actionLink>

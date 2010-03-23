@@ -22,7 +22,9 @@ package org.linagora.linShare.core.Facade;
 
 import java.util.List;
 
+import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMemberType;
+import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -38,4 +40,6 @@ public interface GroupFacade {
 	public void removeMember(GroupVo group, UserVo manager, UserVo member) throws BusinessException;
 	public void updateMember(GroupVo group, UserVo manager, UserVo member, GroupMemberType type) throws BusinessException;
 	public boolean nameAlreadyExists(String groupName);
+	public void acceptNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToAcceptVo) throws BusinessException;
+	public void rejectNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToRejectVo) throws BusinessException;
 }

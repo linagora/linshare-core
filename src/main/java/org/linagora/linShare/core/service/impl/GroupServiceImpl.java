@@ -134,7 +134,27 @@ public class GroupServiceImpl implements GroupService {
 		if (memberType==null) {
 			memberType=GroupMemberType.MEMBER;
 		}
-		newGroupMember.setType(memberType);
+		
+		Set<GroupMember> members = groupPersistant.getMembers();
+		GroupMember memberRequesting = null;
+		if (manager != null) {
+			for (GroupMember groupMember : members) {
+				if (manager.equals(groupMember.getUser())) {
+					memberRequesting = groupMember;
+				}
+			}
+		}
+		
+		if (memberRequesting != null && 
+				(memberRequesting.getType().equals(GroupMemberType.MANAGER) 
+						|| memberRequesting.getType().equals(GroupMemberType.OWNER))) {
+
+			newGroupMember.setType(memberType);
+		}
+		else {
+			newGroupMember.setType(GroupMemberType.WAITING_APPROVAL);
+		}
+		
 		newGroupMember.setUser(newMember);
 		newGroupMember.setMembershipDate(GregorianCalendar.getInstance());
 		
@@ -188,6 +208,33 @@ public class GroupServiceImpl implements GroupService {
 				throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't update member for the group " + group.getName());
 			}
 		}
+	}
+	
+	public void acceptNewMember(Group group, User manager, User memberToAccept)
+			throws BusinessException {
+		Group groupPersistant = groupRepository.findByName(group.getName());
+
+		boolean toUpdate = false;
+		for (GroupMember groupMember : groupPersistant.getMembers()) {
+			if (groupMember.getUser().equals(memberToAccept)) {
+				groupMember.setType(GroupMemberType.MEMBER);
+				toUpdate = true;
+				break;
+			}
+		}
+		if (toUpdate) {
+			try {
+				groupRepository.update(groupPersistant);
+			} catch (IllegalArgumentException e) {
+				logger.error("Could not validate membership for group " + group.getName() + " by user "
+						+ manager.getLogin() + ", reason : ", e);
+				throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't update validate membership for the group " + group.getName());
+			}
+		}
+	}
+	
+	public void rejectNewMember(Group group, User manager, User memberToReject) throws BusinessException {
+		removeMember(group, manager, memberToReject);
 	}
 
 }
