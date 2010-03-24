@@ -181,7 +181,8 @@
 	
     create table linshare_group (
         group_id int8 not null,
-	name varchar(255) not null,
+		group_user_id int8 not null,
+		name varchar(255) not null,
         description text,
         primary key (group_id)
 	);
@@ -206,6 +207,11 @@
         add constraint FK4284AE4C675E9722 
         foreign key (group_id) 
         references linshare_group;
+
+	alter table linshare_group
+        add constraint FK3684CCCCCCAE97A1 
+        foreign key (group_user_id) 
+        references linshare_user;
     
 	create table linshare_allowed_contact (
         id int8 not null,

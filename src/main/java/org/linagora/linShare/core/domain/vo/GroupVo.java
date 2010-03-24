@@ -35,17 +35,19 @@ public class GroupVo implements Serializable {
 	private String description;
 	private String ownerLogin;
 	private Set<GroupMemberVo> members;
+	private UserVo groupUser;
 
 	public GroupVo() {
 		this.name = null;
 		this.description = null;
 		this.ownerLogin = null;
 		this.members = new HashSet<GroupMemberVo>();
+		this.groupUser = null;
 	}
 	
 	public boolean equals(Object obj) {
 		if (obj instanceof GroupVo) {
-			return ((GroupVo)obj).getGroupLogin().equals(this.getGroupLogin());
+			return ((GroupVo)obj).getGroupUser().getLogin().equals(this.groupUser.getLogin());
 		}
 		return super.equals(obj);
 	}
@@ -109,7 +111,15 @@ public class GroupVo implements Serializable {
 	}
 
 	public String getGroupLogin() {
-		return (this.name.toLowerCase() + "@linshare.groups");
+		return groupUser.getLogin();
+	}
+
+	public void setGroupUser(UserVo groupUser) {
+		this.groupUser = groupUser;
+	}
+
+	public UserVo getGroupUser() {
+		return groupUser;
 	}
 
 }

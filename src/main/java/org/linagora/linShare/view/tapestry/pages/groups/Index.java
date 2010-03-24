@@ -171,8 +171,7 @@ public class Index {
 		}
 		
 		if (group != null) {//at least one group membership for this user
-			User groupUserVo = new GroupUser(group.getGroupLogin(), "", group.getName(), group.getGroupLogin());
-			documents = shareFacade.getAllSharingReceivedByUser(new UserVo(groupUserVo));
+			documents = shareFacade.getAllSharingReceivedByUser(group.getGroupUser());
 			
 			List<GroupMemberVo> groupMembers = new ArrayList<GroupMemberVo>(group.getMembers());
 			members = new ArrayList<GroupMemberVo>();

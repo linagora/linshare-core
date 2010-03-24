@@ -68,12 +68,18 @@ public class GroupServiceImpl implements GroupService {
 	public Group create(User owner, String name, String description)
 			throws BusinessException {
 		Group group = new Group();
+		
+		GroupUser groupUser = new GroupUser(name.toLowerCase()+"@linshare.groups", "", name, name.toLowerCase()+"@linshare.groups");
+		groupUser = userRepository.create(groupUser);
+		
 		GroupMember member = new GroupMember();
 		member.setType(GroupMemberType.OWNER);
 		member.setUser(owner);
 		member.setMembershipDate(GregorianCalendar.getInstance());
+		group.addMember(member);
 		group.setDescription(description);
 		group.setName(name);
+		group.setGroupUser(groupUser);
 		try {
 			group = groupRepository.create(group);
 		} catch (IllegalArgumentException e) {
@@ -83,22 +89,19 @@ public class GroupServiceImpl implements GroupService {
 					"Could not create group");
 
 		}
-		group.addMember(member);
-		group = groupRepository.update(group);
 		return group;
 	}
 
 	public void delete(Group group, User user) throws BusinessException {
 		Group groupPersistant = groupRepository.findByName(group.getName());
 		try {
-			GroupUser groupUser = userRepository.findByLogin(group.getGroupLogin());	
 			// clearing received shares
-			Set<Share> receivedShare = groupUser.getReceivedShares();
+			Set<Share> receivedShare = groupPersistant.getGroupUser().getReceivedShares();
 			
-			userRepository.delete(groupUser);
+			// delete group and groupUser
 			groupRepository.delete(groupPersistant);		
 			
-			
+			// refresh share attribute
 			for (Share share : receivedShare) {
 		    	shareService.refreshShareAttributeOfDoc(share.getDocument());
 			}

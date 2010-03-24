@@ -65,10 +65,6 @@ public class GroupFacadeImpl implements GroupFacade {
 	public GroupVo create(UserVo ownerVo, String name, String description) throws BusinessException {
 		User owner = userRepository.findByLogin(ownerVo.getLogin());
 		Group group = groupService.create(owner, name, description);
-		
-		GroupUser groupUserObject = new GroupUser(group.getGroupLogin(), "", name, group.getGroupLogin());
-		
-		userRepository.create(groupUserObject);
 		return groupTransformer.disassemble(group);
 	}
 

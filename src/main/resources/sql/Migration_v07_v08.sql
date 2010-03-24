@@ -2,7 +2,8 @@ insert into linshare_version (id, description) values (8, 'LinShare version 0.8'
 
 create table linshare_group (
         group_id int8 not null,
-	name varchar(255) not null,
+		group_user_id int8 not null,
+		name varchar(255) not null,
         description text,
         primary key (group_id)
 );
@@ -12,7 +13,7 @@ create table linshare_group_members (
         user_id int8 not null,
         member_type_id int4 not null,
         membership_date timestamp not null,
-	primary key (group_id,user_id)
+		primary key (group_id,user_id)
 );
 
 create index index_group_name on linshare_group (name);
@@ -27,6 +28,11 @@ alter table linshare_group_members
         add constraint FK4284AE4C675E9722 
         foreign key (group_id) 
         references linshare_group;
+
+alter table linshare_group
+        add constraint FK3684CCCCCCAE97A1 
+        foreign key (group_user_id) 
+        references linshare_user;
 
 ALTER TABLE linshare_document add column shared_with_group bool;
 UPDATE linshare_document SET shared_with_group='false';

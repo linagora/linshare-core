@@ -32,13 +32,13 @@ public class Group implements Serializable {
 	private String name;
 	private String description;
 	private Set<GroupMember> members;
-    private Set<Share> documents;
+    private User groupUser;
     
     public Group() {
 		this.name = null;
 		this.description = null;
     	this.members=new HashSet<GroupMember>();
-    	this.documents=new HashSet<Share>();
+    	this.groupUser=null;
 	}
     
 	public long getPersistenceId() {
@@ -71,18 +71,6 @@ public class Group implements Serializable {
 	public void removeMember(GroupMember member) {
 		this.members.remove(member);
 	}
-	public Set<Share> getDocuments() {
-		return documents;
-	}
-	public void setDocuments(Set<Share> documents) {
-		this.documents = documents;
-	}
-	public void addDocument(Share document) {
-		this.documents.add(document);
-	}
-	public void deleteDocument(Share document) {
-		this.documents.remove(document);
-	}
     public String getOwnerLogin() {
     	for (GroupMember member : this.members) {
 			if (member.getType().equals(GroupMemberType.OWNER)) {
@@ -101,6 +89,14 @@ public class Group implements Serializable {
     }
 	public String getGroupLogin() {
 		return (this.name.toLowerCase() + "@linshare.groups");
+	}
+
+	public void setGroupUser(User groupUser) {
+		this.groupUser = groupUser;
+	}
+
+	public User getGroupUser() {
+		return groupUser;
 	}
     
 }

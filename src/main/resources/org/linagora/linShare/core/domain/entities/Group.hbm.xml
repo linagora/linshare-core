@@ -11,6 +11,7 @@
       <generator class="native"/>
     </id>
     <property access="field" column="name" name="name" index="index_group_name" not-null="true" />
+    <many-to-one class="org.linagora.linShare.core.domain.entities.User" name="groupUser" column="group_user_id" unique="true" not-null="true" cascade="delete"/>
     <property access="field" column="description" name="description" type="text"/>
     <set name="members" table="group_members">
 		<key column="group_id" />
@@ -21,12 +22,6 @@
 				<column index="index_group_user_id" name="user_id"/>
 			</many-to-one>
 		</composite-element>    	
-    </set>
-    <set access="field" name="documents">
-      <key>
-        <column name="recipient_id" not-null="true"/>
-      </key>
-      <one-to-many class="org.linagora.linShare.core.domain.entities.Share"/>
     </set>
   </class>
 </hibernate-mapping>
