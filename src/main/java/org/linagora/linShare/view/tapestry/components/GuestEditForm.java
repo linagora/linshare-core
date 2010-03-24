@@ -54,6 +54,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.pages.user.Index;
 import org.linagora.linShare.view.tapestry.services.Templating;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
@@ -85,14 +86,6 @@ public class GuestEditForm {
 
     @InjectComponent
     private Form guestCreateForm;
-    
-    // The block that contains the action to be thrown on success 
-	@Inject
-	private Block onSuccess;
-    
-    // The block that contains the action to be thrown on failure
-	@Inject
-	private Block onFailure;
 	
     @Inject
     private Messages messages;
@@ -269,7 +262,7 @@ public class GuestEditForm {
     	}
     }
 
-    Block onSuccess() {
+    Object onSuccess() {
         String mailContent = null;
         String mailContentTxt = null;
 
@@ -326,13 +319,13 @@ public class GuestEditForm {
         }
         componentResources.triggerEvent("resetListUsers", null, null);
         
-        return onSuccess;
+        return Index.class;
     }
 
-    Block onFailure() {
+    Object onFailure() {
     	if (!userAlreadyExists)
     		shareSessionObjects.addError(messages.get("pages.user.edit.error.generic"));
-    	return onFailure;
+    	return this;
     }
   
 }

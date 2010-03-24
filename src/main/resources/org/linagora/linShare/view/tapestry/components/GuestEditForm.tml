@@ -2,12 +2,12 @@
 <t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <div id="guestEditFormComponent">
 
+        
+       <t:zone t:id="guestFormZone" t:update="show" >
         <t:form t:id="guestCreateForm" t:zone="guestFormZone">
 
 			<h2>${message:pages.user.edit.guestAccount.creation}</h2>
-        
-        	<t:zone t:id="guestFormZone" t:update="show" >
-          	</t:zone>
+        	<t:errors  banner="message:pages.user.edit.errorBanner"  />
 
 
 			<hr />
@@ -89,20 +89,7 @@
 			</div>
 
 		</t:form>
-
-        
-        <t:block t:id="onFailure">
-<!--        	<t:errors  banner="message:pages.user.edit.errorBanner"  />-->
-          	<script type="text/javascript">
-	       		new Effect.Shake('${JSONid}');
-	       	</script>
-        </t:block>
-        
-        <t:block t:id="onSuccess">
-          	<script type="text/javascript">
-	       		location.reload(true);
-	       	</script>
-        </t:block>
+       </t:zone>
         
     </div>
 </t:container>
