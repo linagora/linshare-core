@@ -21,7 +21,7 @@
     </issueManagement>
     <ciManagement>
         <system>Hudson</system>
-        <url>http://build.linid.org/hudson/view/LinShare/</url>
+        <url>http://build.linid.org/hudson/view/LinPKI/</url>
     </ciManagement>
     <scm>
         <developerConnection>scm:svn:https://svn.linid.org/svn/linshare/tags/linshare-0.7</developerConnection>
