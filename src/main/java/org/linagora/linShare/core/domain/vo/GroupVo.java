@@ -33,6 +33,7 @@ public class GroupVo implements Serializable {
 
 	private String name;
 	private String description;
+	private String functionalEmail;
 	private String ownerLogin;
 	private Set<GroupMemberVo> members;
 	private UserVo groupUser;
@@ -40,6 +41,7 @@ public class GroupVo implements Serializable {
 	public GroupVo() {
 		this.name = null;
 		this.description = null;
+		this.functionalEmail = null;
 		this.ownerLogin = null;
 		this.members = new HashSet<GroupMemberVo>();
 		this.groupUser = null;
@@ -120,6 +122,14 @@ public class GroupVo implements Serializable {
 
 	public UserVo getGroupUser() {
 		return groupUser;
+	}
+
+	public void setFunctionalEmail(String functionalEmail) {
+		this.functionalEmail = functionalEmail;
+	}
+
+	public String getFunctionalEmail() {
+		return functionalEmail;
 	}
 
 }

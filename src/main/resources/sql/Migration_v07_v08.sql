@@ -4,6 +4,7 @@ create table linshare_group (
         group_id int8 not null,
 		group_user_id int8 not null,
 		name varchar(255) not null,
+        functional_email varchar(255),
         description text,
         primary key (group_id)
 );

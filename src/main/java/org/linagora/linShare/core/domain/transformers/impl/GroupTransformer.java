@@ -71,6 +71,7 @@ public class GroupTransformer implements Transformer<Group, GroupVo> {
 		GroupVo groupVo = new GroupVo();
 		String ownerLogin=null;
 		groupVo.setDescription(entityObject.getDescription());
+		groupVo.setFunctionalEmail(entityObject.getFunctionalEmail());
 		groupVo.setName(entityObject.getName());
 		groupVo.setGroupUser(userTransformer.disassemble(entityObject.getGroupUser()));
 		for (GroupMember member : entityObject.getMembers()) {

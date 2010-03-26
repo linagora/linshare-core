@@ -65,7 +65,7 @@ public class GroupServiceImpl implements GroupService {
 		return groupRepository.findByUser(user);
 	}
 
-	public Group create(User owner, String name, String description)
+	public Group create(User owner, String name, String description, String functionalEmail)
 			throws BusinessException {
 		Group group = new Group();
 		
@@ -78,6 +78,7 @@ public class GroupServiceImpl implements GroupService {
 		member.setMembershipDate(GregorianCalendar.getInstance());
 		group.addMember(member);
 		group.setDescription(description);
+		group.setFunctionalEmail(functionalEmail);
 		group.setName(name);
 		group.setGroupUser(groupUser);
 		try {

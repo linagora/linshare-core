@@ -27,11 +27,8 @@
 				<dl class="t-beandisplay">
 					<dt class="name">${message:pages.groups.info.name}</dt><dd class="name">${group.name}</dd>
 					<dt class="description">${message:pages.groups.info.description}</dt>
-					<dd class="description">
-						<t:if test="group.description">${group.description}
-						<t:parameter name="else">&nbsp;</t:parameter>
-						</t:if>
-					</dd>
+					<dd class="description">${group.description}&nbsp;</dd>
+					<dt class="functionalEmail">${message:pages.groups.info.functionalEmail}</dt><dd class="functionalEmail">${group.functionalEmail}&nbsp;</dd>
 					<dt class="ownerLogin">${message:pages.groups.info.ownerLogin}</dt><dd class="ownerLogin">${group.ownerLogin}</dd>
 					<dt class="userMemberType">${message:pages.groups.info.userMemberType}</dt><dd class="userMemberType">${userMemberType}</dd>
 				</dl>

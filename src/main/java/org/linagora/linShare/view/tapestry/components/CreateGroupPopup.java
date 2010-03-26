@@ -23,8 +23,10 @@ package org.linagora.linShare.view.tapestry.components;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.ApplicationState;
+import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
@@ -34,6 +36,7 @@ import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 
 public class CreateGroupPopup {
     @ApplicationState
@@ -42,7 +45,7 @@ public class CreateGroupPopup {
     @ApplicationState
     private ShareSessionObjects shareSessionObjects;
     @SuppressWarnings("unused")
-    @Component(parameters = {"style=bluelighting", "show=false", "width=600", "height=230"})
+    @Component(parameters = {"style=bluelighting", "show=false", "width=600", "height=260"})
     private WindowWithEffects createGroupWindow;
     @InjectComponent
     private Zone createGroupTemplateZone;
@@ -66,50 +69,59 @@ public class CreateGroupPopup {
 	private Block onFailureCreateGroup;
     
     @Property
+    @Persist
     private String groupName;
     @Property
+    @Persist
     private String groupDescription;
-
-    private boolean groupAlreadyExists = false;
+    @Property
+    @Persist
+    private String groupFunctionalEmail;
+    @Persist
+    private boolean groupAlreadyExists;
     
-    void onValidateFromGroupName(String string) {
-    	boolean exist = groupFacade.nameAlreadyExists(string);
-    	if (exist)
-    		createGroupForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
+    @CleanupRender
+    void cleanupRender() {
+    	createGroupForm.clearErrors();
     }
     
-    public void  onValidateFormFromGuestCreateForm() {
-
-    	if (createGroupForm.getHasErrors()) {
-    		return ;
-    	}
-    	
+    public void onValidateFormFromCreateGroupForm() {
     	if (groupName==null) {
     		// the message will be handled by Tapestry
     		return ;
     	}
         if (groupFacade.nameAlreadyExists(groupName)) {
-        	createGroupForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
+            createGroupForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
+        	shareSessionObjects.addError(messages.get("pages.user.edit.error.alreadyExist"));
             groupAlreadyExists = true;
             return ;
         }
+        if (groupFunctionalEmail!=null && groupFunctionalEmail.trim().length()>0) {
+	        if (!MailCompletionService.MAILREGEXP.matcher(groupFunctionalEmail.toUpperCase()).matches()){
+	        	createGroupForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
+	        	shareSessionObjects.addError(String.format(messages.get("components.confirmSharePopup.validate.email"), groupFunctionalEmail));
+	        	return;
+	        }
+        }
     }
 
-    void onFailure() {
+    Zone onFailure() {
     	if (!groupAlreadyExists)
     		shareSessionObjects.addError(messages.get("pages.user.edit.error.generic"));
-//    	return onFailureCreateGroup;
+    	return createGroupTemplateZone;
     }
     
     void onSuccess() {
     	boolean exist = groupFacade.nameAlreadyExists(groupName);
     	if (exist) {
-    		createGroupForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
+    		shareSessionObjects.addError(messages.get("pages.user.edit.error.alreadyExist"));
     		return; //onFailureCreateGroup;
     	}
     	
+    	groupFunctionalEmail = (groupFunctionalEmail!=null && groupFunctionalEmail.trim().length()>0) ? groupFunctionalEmail : null;
+    	
     	try {
-			groupFacade.create(userLoggedIn, groupName, groupDescription);
+			groupFacade.create(userLoggedIn, groupName, groupDescription, groupFunctionalEmail);
 			shareSessionObjects.addMessage(messages.format("pages.groups.create.success", groupName));
 		} catch (BusinessException e) {
 			e.printStackTrace();

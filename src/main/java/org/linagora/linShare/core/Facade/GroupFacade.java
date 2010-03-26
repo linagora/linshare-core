@@ -22,7 +22,6 @@ package org.linagora.linShare.core.Facade;
 
 import java.util.List;
 
-import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMemberType;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
@@ -32,7 +31,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 public interface GroupFacade {
 	public GroupVo findByName(String groupName);
 	public List<GroupVo> findByUser(String userLogin);
-	public GroupVo create(UserVo owner, String name, String description) throws BusinessException;
+	public GroupVo create(UserVo owner, String name, String description, String functionalEmail) throws BusinessException;
 	public void delete(GroupVo group, UserVo user) throws BusinessException;
 	public void update(GroupVo group, UserVo user) throws BusinessException;
 	public void addMember(GroupVo group, UserVo manager, UserVo newMember) throws BusinessException;

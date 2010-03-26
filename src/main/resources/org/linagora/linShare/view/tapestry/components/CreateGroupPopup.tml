@@ -12,7 +12,7 @@
 		<t:form t:id="createGroupForm">
         	<t:errors  banner="message:pages.user.edit.errorBanner"  />
 		<hr />
-			<div class="number-hidden" />
+<!--			<div class="number-hidden" />-->
 				<t:label class="edit-form-label" for="groupName">${message:pages.groups.info.name}</t:label>
 <!--				<t:textfield class="edit-form-field" t:id="groupName" row="1" validate="required, regexp=^[A-Za-z][A-Za-z0-9]*$"/>-->
 				<t:textfield class="edit-form-field" t:id="groupName" row="1" validate="required, regexp=^[a-zA-Z]([a-zA-Z0-9_.-])+$"/>
@@ -20,6 +20,9 @@
             <br/>
 				<t:label class="edit-form-label" for="groupDescription">${message:pages.groups.info.description}</t:label>
 				<t:textarea class="edit-form-field" t:id="groupDescription" row="5" />
+            <br/>
+				<t:label class="edit-form-label" for="groupFunctionalEmail">${message:pages.groups.info.functionalEmail}</t:label>
+				<t:textfield class="edit-form-field" t:id="groupFunctionalEmail" />
             <br/>
 				<div class="clear" />
 			

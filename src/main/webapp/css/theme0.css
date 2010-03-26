@@ -3140,6 +3140,12 @@ form#uploadForm .upload-list {
 	margin-left: 22em;
 	border: 1px solid #5A93AF;
 }
+
+#createGroupZone .edit-form-field,
+#createGroupZone .edit-form-checkbox,
+#createGroupZone .edit-form-select {
+	margin-left: 26em;
+}
 #guestEditFormComponent [readonly="true"],
 #userEditFormComponent [readonly="true"] {
 	background-color: #E0E0E0;

@@ -31,12 +31,14 @@ public class Group implements Serializable {
 	
 	private String name;
 	private String description;
+	private String functionalEmail;
 	private Set<GroupMember> members;
     private User groupUser;
     
     public Group() {
 		this.name = null;
 		this.description = null;
+		this.functionalEmail = null;
     	this.members=new HashSet<GroupMember>();
     	this.groupUser=null;
 	}
@@ -97,6 +99,14 @@ public class Group implements Serializable {
 
 	public User getGroupUser() {
 		return groupUser;
+	}
+
+	public void setFunctionalEmail(String functionalEmail) {
+		this.functionalEmail = functionalEmail;
+	}
+
+	public String getFunctionalEmail() {
+		return functionalEmail;
 	}
     
 }

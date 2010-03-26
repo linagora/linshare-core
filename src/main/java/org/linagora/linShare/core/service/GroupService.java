@@ -30,7 +30,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 public interface GroupService {
 	public Group findByName(String name);
 	public List<Group> findByUser(User user);
-	public Group create(User owner, String name, String description) throws BusinessException;
+	public Group create(User owner, String name, String description, String functionalEmail) throws BusinessException;
 	public void delete(Group group, User user) throws BusinessException;
 	public void update(Group group, User user) throws BusinessException;
 	public void addMember(Group group, User manager, User newMember) throws BusinessException;

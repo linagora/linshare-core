@@ -12,6 +12,7 @@
     </id>
     <property access="field" column="name" name="name" index="index_group_name" not-null="true" />
     <many-to-one class="org.linagora.linShare.core.domain.entities.User" name="groupUser" column="group_user_id" unique="true" not-null="true" cascade="delete"/>
+    <property access="field" column="functional_email" name="functionalEmail" />
     <property access="field" column="description" name="description" type="text"/>
     <set name="members" table="group_members">
 		<key column="group_id" />

@@ -25,7 +25,6 @@ import java.util.List;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMemberType;
-import org.linagora.linShare.core.domain.entities.GroupUser;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.GroupTransformer;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
@@ -62,9 +61,9 @@ public class GroupFacadeImpl implements GroupFacade {
 		return groupTransformer.disassembleList(groups);
 	}
 	
-	public GroupVo create(UserVo ownerVo, String name, String description) throws BusinessException {
+	public GroupVo create(UserVo ownerVo, String name, String description, String functionalEmail) throws BusinessException {
 		User owner = userRepository.findByLogin(ownerVo.getLogin());
-		Group group = groupService.create(owner, name, description);
+		Group group = groupService.create(owner, name, description, functionalEmail);
 		return groupTransformer.disassemble(group);
 	}
 
@@ -78,6 +77,7 @@ public class GroupFacadeImpl implements GroupFacade {
 		User manager = userRepository.findByLogin(userVo.getLogin());
 		Group group = groupTransformer.assemble(groupVo);
 		group.setDescription(groupVo.getDescription());
+		group.setFunctionalEmail(groupVo.getFunctionalEmail());
 		groupService.update(group, manager);
 	}
 
