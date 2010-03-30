@@ -29,12 +29,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
-import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
-import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
@@ -48,13 +46,11 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.DocumentRepository;
-import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
-import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,9 +225,11 @@ public class ShareFacadeImpl implements ShareFacade {
 			String linShareUrlInternal, String linShareUrlAnonymous, boolean secureSharing,
 			String sharedTemplateContent, String sharedTemplateContentTxt,
 			String passwordSharedTemplateContent,
-			String passwordSharedTemplateContentTxt)
+			String passwordSharedTemplateContentTxt,
+			String includeDecryptUrlTemplateContent,
+			String includeDecryptUrlTemplateContentTxt)
 			throws BusinessException {
-		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(owner, documents, recipientsEmail, comment, subject, linShareUrlInternal, linShareUrlAnonymous, secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt, null);
+		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(owner, documents, recipientsEmail, comment, subject, linShareUrlInternal, linShareUrlAnonymous, secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt, includeDecryptUrlTemplateContent,includeDecryptUrlTemplateContentTxt,null);
 	}
 
 
@@ -241,7 +239,8 @@ public class ShareFacadeImpl implements ShareFacade {
 			String linShareUrlInternal, String linShareUrlAnonymous, boolean secureSharing,
 			String sharedTemplateContent, String sharedTemplateContentTxt,
 			String passwordSharedTemplateContent,
-			String passwordSharedTemplateContentTxt, Calendar expiryDateSelected)
+			String passwordSharedTemplateContentTxt,String includeDecryptUrlTemplateContent,
+			String includeDecryptUrlTemplateContentTxt,Calendar expiryDateSelected)
 			throws BusinessException {
 		User u = null;
 		
@@ -260,16 +259,38 @@ public class ShareFacadeImpl implements ShareFacade {
 		templateParams.put("${url}", linShareUrlInternal); //modified later for anonymous user and guest
 		templateParams.put("${urlparam}", "");
 		
+		
 		StringBuffer names = new StringBuffer();
 		StringBuffer namesTxt = new StringBuffer();
+		boolean isOneDocEncrypted = false;
 		
 		for (DocumentVo oneDoc : documents) {
 			names.append("<li>"+oneDoc.getFileName()+"</li>");
 			namesTxt.append(oneDoc.getFileName()+"\n");
+			if(oneDoc.getEncrypted()==true) isOneDocEncrypted = true;
 		}
 		
 		templateParams.put("${documentNames}", names.toString());
 		templateParams.put("${documentNamesTxt}", namesTxt.toString());
+		
+		//if one document is encrypted include message html or txt asset for "crypted" in the final message
+		if(isOneDocEncrypted && includeDecryptUrlTemplateContent!=null && includeDecryptUrlTemplateContentTxt!=null){
+			StringBuffer jwsEncryptUrl = new StringBuffer();
+			jwsEncryptUrl.append(linShareUrlAnonymous);
+			if(!linShareUrlAnonymous.endsWith("/")) jwsEncryptUrl.append("/");
+			jwsEncryptUrl.append("localDecrypt");
+			Map<String,String> templateIncludeParams=new HashMap<String, String>();
+			templateIncludeParams.put("${jwsEncryptUrl}", jwsEncryptUrl.toString());
+			String messageToIncludeForFileDecryption = templating.getMessage(includeDecryptUrlTemplateContent, templateIncludeParams);
+			String messageToIncludeTxtForFileDecryption = templating.getMessage(includeDecryptUrlTemplateContentTxt, templateIncludeParams);
+			
+			templateParams.put("${includeDecryptUrl}", messageToIncludeForFileDecryption);
+			templateParams.put("${includeDecryptUrlTxt}", messageToIncludeTxtForFileDecryption);
+		} else {
+			templateParams.put("${includeDecryptUrl}", "");
+			templateParams.put("${includeDecryptUrlTxt}", "");
+		}
+		
 		
 		String messageForInternalUser = templating.getMessage(sharedTemplateContent, templateParams);
 		String messageForInternalUserTxt = templating.getMessage(sharedTemplateContentTxt, templateParams);

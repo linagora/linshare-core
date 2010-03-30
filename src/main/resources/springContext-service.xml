@@ -107,7 +107,9 @@
         <constructor-arg index="6" value="${mail.smtp.charset}"/>
     </bean>
     
-    <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceImpl">
+    <!-- <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceImpl">  -->
+    
+    <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceAesCryptImpl">
         <constructor-arg ref="userService"/>
         <constructor-arg ref="documentService"/>
         <constructor-arg ref="documentRepository"/>

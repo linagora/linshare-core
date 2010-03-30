@@ -632,6 +632,25 @@
             </exclusions>
         </dependency>
         
+       <!--  linsign CSPN JDK 6 -->
+       <dependency>                                                                                                       
+            <groupId>org.linagora.jaxbxades</groupId>                                                                                  
+            <artifactId>xades</artifactId>                                                                           
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>                                                                                                       
+            <groupId>org.linagora.linsign</groupId>                                                                                  
+            <artifactId>linsign</artifactId>                                                                           
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>                                                                                                       
+            <groupId>linsignconfig</groupId>                                                                                  
+            <artifactId>linsignconfig</artifactId>                                                                           
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     
     <build>

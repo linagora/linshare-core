@@ -18,31 +18,29 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linShare.core.domain.vo;
+package org.linagora.linShare.view.tapestry.pages.signature;
 
-public class CacheUserPinVo {
+import java.util.Locale;
 
-	//want cache password in session for user ?
-	private static final boolean ACTIVE_CACHE = true; 
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
+
+public class VerifySignature {
 	
-	private String password;
+	@Inject
+	private PersistentLocale persistentLocale;
 	
-	public CacheUserPinVo() {
-		password = null;
+	@Property
+	private Locale locale;
+	
+	
+	
+	@SetupRender
+	public void init()
+	{
+		locale = persistentLocale.get();
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	public boolean isCacheActivated(){
-		return ACTIVE_CACHE;
-	}
-	public boolean isPopupNeeded(){
-		return ACTIVE_CACHE && (password==null);
-	}
 }

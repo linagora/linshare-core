@@ -82,7 +82,7 @@
 				 ${expirationDate}
 			</t:parameter>
 
-<!-- 			<t:parameter t:name="signedCell">
+			<t:parameter t:name="signedCell">
 				<t:if t:test="documentSigned">
 					<t:actionlink t:id="showSignature" zone="signatureDetailsZone" context="shareDocument.identifier">
 						<t:if t:test="documentSignedByCurrentUser">	
@@ -96,7 +96,7 @@
 						<img src="${asset:context:images/icons/stamp-off.png}" alt="" title="${message:components.listDocument.picture.signatureoff.title}" />
 					</t:parameter>
 				</t:if>
-			</t:parameter>  -->
+			</t:parameter>  
 
 			<t:parameter t:name="actionsCell">
 				<t:if t:test="disableDeletion" negate="true">	
@@ -107,17 +107,17 @@
 						</span>
 					</t:actionLink>
 				</t:if>
-<!-- 			<t:if t:test="activeSignature">	
-					<t:if t:test="documentSignedByCurrentUser" negate="true">
+			<t:if t:test="activeSignature">	
+					<t:if t:test="documentNotSignedByCurrentUserAndDocNotEncrypted">
 						<t:actionLink t:id="signature" context="${shareDocument.identifier}" t:zone="zoneTest" 
 							title="${message:components.listSharedDocument.action.sign.title}">
 							<img src="${asset:context:images/icons/sign.png}" alt="${message:components.listSharedDocument.action.sign}" />
 						</t:actionLink>
 						<t:parameter name="else">
-							<span class="link-disable" title="${message:components.listSharedDocument.action.sign.disable.title}"><img src="${asset:context:images/icons/sign-disable.png}" alt="${message:components.listSharedDocument.action.sign}" /></span>
+							<span class="link-disable" title="${message:components.listSharedDocument.action.sign.disable.title}"><img src="${asset:context:images/icons/sign-disable.png}"  /></span>
 						</t:parameter>
                     </t:if>
-				</t:if> -->
+				</t:if>
 				<t:if t:test="enabledToUpload">	
                     <t:actionLink t:id="copy" context="${shareDocument.identifier}"
 						title="${message:components.listSharedDocument.action.copy.title}">
@@ -136,8 +136,8 @@
 
 	<t:confirmPopup t:messageLabel="${message:components.listDocument.messageConfirm}" t:eventName="listDocumentEvent" />
 
- 	<t:userDetailsDisplayer /><!--
+ 	<t:userDetailsDisplayer />
 
 		<t:signatureDetailsDisplayer />
 
---></t:container>
+</t:container>

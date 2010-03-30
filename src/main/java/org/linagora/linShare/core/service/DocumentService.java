@@ -72,12 +72,13 @@ public interface DocumentService {
 	 * @param size of the data
 	 * @param fileName the name of the file which permits to identify it.
 	 * @param mimeType the mimeType of the file.
+	 * @param boolean encrypted if the file is encrypted
 	 * @param owner : the user who uploads the document
 	 * @return
 	 * @throws BusinessException
 	 */
 	public Document updateFileContent(String currentFileUUID, InputStream file, long size,
-			String fileName, String mimeType, User owner) throws BusinessException;
+			String fileName, String mimeType, boolean encrypted, User owner) throws BusinessException;
 	
 	
 	

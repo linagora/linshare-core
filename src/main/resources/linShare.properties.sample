@@ -61,6 +61,8 @@ linshare.default.maxUploadSize=-1
 # user connect with a different url (e.g. CAS url)
 linshare.info.url.base=http://localhost:8080/linshare/
 linshare.info.url.internal=http://localhost:8080/linshare/
+#url for jws, application to decrypt document (jwsDecrypt.jar)
+javawebstart.decrypt.url.codebase=http://localhost:8080/linshare/applet
 #set to true in tapestry production environnement
 linshare.productionMode=false
 #local work directory to encrypt/decrypt data

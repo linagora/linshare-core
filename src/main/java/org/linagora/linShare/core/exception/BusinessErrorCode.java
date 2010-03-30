@@ -34,6 +34,7 @@ public enum BusinessErrorCode implements ErrorCode{
     FILE_MIME_NOT_ALLOWED(3002),
     FILE_CONTAINS_VIRUS(3003),
     FILE_MIME_WARNING(3004),
+    FILE_ENCRYPTION_UNDEFINED(3005),
     INVALID_UUID(4000),
     SHARED_DOCUMENT_NOT_FOUND(5000),
     CANNOT_SHARE_DOCUMENT(5001),
@@ -45,7 +46,7 @@ public enum BusinessErrorCode implements ErrorCode{
     WRONG_URL(10000), 
     SECURED_URL_IS_EXPIRED(12000), 
     SECURED_URL_BAD_PASSWORD(12001), 
-    SECURED_URL_WRONG_DOCUMENT_ID(12002);
+    SECURED_URL_WRONG_DOCUMENT_ID(12002),;
     
     
 	private final int code;

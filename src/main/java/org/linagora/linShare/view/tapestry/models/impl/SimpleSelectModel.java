@@ -51,8 +51,17 @@ public class SimpleSelectModel<T> extends AbstractSelectModel {
 		List<OptionModel> optionModelList = new ArrayList<OptionModel>();
 		if (list != null) {
 			for (T obj : list) {
-				optionModelList.add(new OptionModelImpl(messages.get(keyHeader+"." +obj.toString()),
-						obj));
+				
+				String bundleKey = null;
+				
+				if (obj instanceof Enum) {
+					//toString may be override for enum !!!
+					bundleKey = keyHeader+"." + ((Enum) obj).name();
+				} else {
+					bundleKey = keyHeader+"." + obj.toString();
+				}
+				
+				optionModelList.add(new OptionModelImpl(messages.get(bundleKey),obj));
 			}
 		}
 		return optionModelList;

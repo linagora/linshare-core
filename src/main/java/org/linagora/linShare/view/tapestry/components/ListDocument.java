@@ -52,7 +52,6 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
@@ -72,7 +71,6 @@ import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
-import org.linagora.linShare.core.domain.vo.CacheUserPinVo;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -197,28 +195,28 @@ public class ListDocument {
 	
 	@Property(write = false)
 	@InjectComponent
-	private WarningDisplayer warningHttp;
-
-	@Property(write = false)
-	@InjectComponent
 	private WarningDisplayer warningSignature;
-
+	
 	@Property(write = false)
 	@InjectComponent
 	private WarningDisplayer warningShare;
-
-	@Property(write = false)
-	@InjectComponent
-	private WarningDisplayer warningEncipherment;
-
-//	@InjectComponent
-//	private SignatureDetailsDisplayer signatureDetailsDisplayer;
+	
+	
 
 	@InjectComponent
-	private PasswordPopup passwordPopup;
+	private SignatureDetailsDisplayer signatureDetailsDisplayer;
 
 	@InjectComponent
-	private PasswordPopupSubmit passwordPopupSubmit;
+	private PasswordCryptPopup passwordCryptPopup;
+	@InjectComponent
+	private PasswordDecryptPopup passwordDecryptPopup;
+
+	@InjectComponent
+	private PasswordCryptPopupSubmit passwordCryptPopupSubmit;
+	@InjectComponent
+	private PasswordDecryptPopupSubmit passwordDecryptPopupSubmit;
+	
+	
 
 	@Inject
 	private PageRenderLinkSource pageRenderLinkSource;
@@ -256,9 +254,6 @@ public class ListDocument {
 	@Persist
 	private String pass;
 
-	@SessionState
-	@Property
-	private CacheUserPinVo cachePin;
 
 	/***************************************************************************
 	 * Flags
@@ -269,9 +264,6 @@ public class ListDocument {
 	@Property
 	private boolean activeEncipherment;
 
-	@SuppressWarnings("unused")
-	@Property
-	private boolean userEnciphermentKeyGenerated;
 
 	@SuppressWarnings("unused")
 	private boolean filesSelected;
@@ -324,8 +316,6 @@ public class ListDocument {
 		activeSignature = parameterFacade.loadConfig().getActiveSignature();
 		activeEncipherment = parameterFacade.loadConfig()
 				.getActiveEncipherment();
-		userEnciphermentKeyGenerated = userFacade
-				.isUserEnciphermentKeyGenerated(user);
 
 		// if(model==null)
 		initModel();
@@ -468,53 +458,20 @@ public class ListDocument {
 					"invalid uuid for this user");
 		} else {
 
-			if (!currentDocumentVo.getEncrypted()) {
+//			if (!currentDocumentVo.getEncrypted()) {
+//				InputStream stream = documentFacade.retrieveFileStream(
+//						currentDocumentVo, user);
+//				return new FileStreamResponse(currentDocumentVo, stream);
+//			} else {
+//				throw new BusinessException(
+//						BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,
+//						"invalid download for a protected document");
+//			}
+			
 				InputStream stream = documentFacade.retrieveFileStream(
 						currentDocumentVo, user);
 				return new FileStreamResponse(currentDocumentVo, stream);
-			} else {
-				throw new BusinessException(
-						BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,
-						"invalid download for a protected document");
-			}
 		}
-
-		// // function to decrypt inputstream ...
-
-		// InputStream
-		// stream=documentFacade.retrieveFileStream(currentDocumentVo, user);
-		// String pass = cachePin.getPassword();
-		// SymmetricEnciphermentPBEwithAES enc = null;
-		// try {
-		// enc = new
-		// SymmetricEnciphermentPBEwithAES(pass,stream,null,Cipher.DECRYPT_MODE);
-		// return new
-		// FileStreamResponse(currentDocumentVo,enc.getCipherInputStream());
-		// } catch (InvalidKeyException e) {
-		// throw new
-		// BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not
-		// decrypt and download document");
-		// } catch (NoSuchAlgorithmException e) {
-		// throw new
-		// BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not
-		// decrypt and download document");
-		// } catch (InvalidKeySpecException e) {
-		// throw new
-		// BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not
-		// decrypt and download document");
-		// } catch (NoSuchPaddingException e) {
-		// throw new
-		// BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not
-		// decrypt and download document");
-		// } catch (InvalidAlgorithmParameterException e) {
-		// throw new
-		// BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not
-		// decrypt and download document");
-		// } catch (IOException e) {
-		// throw new
-		// BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not
-		// decrypt and download document");
-		// }
 
 	}
 
@@ -537,31 +494,29 @@ public class ListDocument {
 		}
 	}
 
-	/**
-	 * The action triggered when the user click on the Encipherment include in
-	 * the action menu for each document.
-	 * 
-	 * @param uuid
-	 *            the uuid of the document.
-	 */
-
-	public void onActionFromEncipherment(String uuid) throws BusinessException {
-		currentUuid = uuid;
-		actionbutton = ActionFromBarDocument.ENCYPHERMENT_ACTION;
-		passwordPopup.getFormPassword().clearErrors(); // delete popup message
-	}
 
 	/**
-	 * The action triggered when the user click on the Encipherment include in
-	 * the list for each document.
-	 * 
-	 * @param uuid
-	 *            the uuid of the document.
+	 * The action triggered when the user click on the icon include in the list for each document.
+	 * @param uuid the uuid of the document.
 	 */
 
-	public void onActionFromEnciphermentIcon(String uuid)
+	public void onActionFromEncryptIcon(String uuid)
 			throws BusinessException {
-		onActionFromEncipherment(uuid);
+		currentUuid = uuid;
+		actionbutton = ActionFromBarDocument.CRYPT_ACTION;
+		passwordCryptPopup.getFormPassword().clearErrors(); // delete popup message
+	}
+	
+	/**
+	 * The action triggered when the user click on the icon include in the list for each document.
+	 * @param uuid the uuid of the document.
+	 */
+
+	public void onActionFromDecryptIcon(String uuid)
+			throws BusinessException {
+		currentUuid = uuid;
+		actionbutton = ActionFromBarDocument.DECRYPT_ACTION;
+		passwordCryptPopup.getFormPassword().clearErrors(); // delete popup message
 	}
 	
 	
@@ -576,26 +531,6 @@ public class ListDocument {
         return fileEdit.getShowPopupWindow();
     }
 
-	/**
-	 * The action triggered when the user click on the download include in the
-	 * action menu for each document.
-	 * 
-	 * @param uuid
-	 *            the uuid of the document.
-	 * @return stream the stream of the document.
-	 */
-	public StreamResponse onActionFromDownloadOther(String uuid)
-			throws BusinessException {
-		return onActionFromDownload(uuid);
-	}
-
-	public void onActionFromDownloadwithPopupBis(String uuid) {
-		currentUuid = uuid;
-	}
-
-	public void onActionFromDownloadwithPopup(String uuid) {
-		currentUuid = uuid;
-	}
 
 	/**
 	 * The action triggered when the user click on the share link in the action
@@ -647,68 +582,24 @@ public class ListDocument {
 		return userDetailsDisplayer.getShowUser(mail);
 	}
 
-	public Zone onActionFromShowWarningHttp() {
-		return warningHttp.getShowWarning();
-	}
-
-	public Zone onActionFromShowWarningHttpBis() {
-		return warningHttp.getShowWarning();
-	}
 
 	public Zone onActionFromShowWarningSignature() {
 		return warningSignature.getShowWarning();
 	}
 
-	public Zone onActionFromShowWarningShare() {
-		return warningShare.getShowWarning();
+	public Zone onActionFromShowSignature(String docidentifier) {
+		return signatureDetailsDisplayer.getShowSignature(docidentifier);
 	}
-
-	public Zone onActionFromShowWarningShareBis() {
-		return warningShare.getShowWarning();
-	}
-
+	
 	public Zone onActionFromShowWarningShareTer() {
 		return warningShare.getShowWarning();
 	}
-
-	public Zone onActionFromShowWarningEncipherment() {
-		return warningEncipherment.getShowWarning();
-	}
-
-	public Zone onActionFromShowWarningEnciphermentIcon() {
-		return onActionFromShowWarningEncipherment();
-	}
-
-//	public Zone onActionFromShowSignature(String docidentifier) {
-//		return signatureDetailsDisplayer.getShowSignature(docidentifier);
-//	}
+	
 
 	public void onActionFromEncyphermentSubmit() {
-		actionbutton = ActionFromBarDocument.ENCYPHERMENT_ACTION;
+		actionbutton = ActionFromBarDocument.CRYPT_ACTION;
 	}
 
-	public void onActionFromEncyphermentSubmitBis() {
-		onActionFromEncyphermentSubmit();
-	}
-
-	public Object onActionFromEnciphermentNoPopup(String currentUuid) {
-
-		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,
-				currentUuid);
-		String pass = cachePin.getPassword();
-
-		List<Object> parameters = new ArrayList<Object>();
-		parameters.add(pass);
-		parameters.add(currentDocumentVo);
-		componentResources.getContainer().getComponentResources().triggerEvent(
-				"eventEncyphermentUniqueFromListDocument",
-				parameters.toArray(), null);
-		return null;
-	}
-
-	public void onActionFromEnciphermentNoPopupIcon(String currentUuid) {
-		onActionFromEnciphermentNoPopup(currentUuid);
-	}
 
     public void onActionFromRenameFile(String newName) {
         documentFacade.renameFile(currentUuid, newName);
@@ -751,10 +642,6 @@ public class ListDocument {
 		actionbutton = ActionFromBarDocument.SIGNATURE_ACTION;
 	}
 
-	@OnEvent(value = "encyphermentSubmitNopopup")
-	public void encyphermentSubmitNopopup() {
-		actionbutton = ActionFromBarDocument.ENCYPHERMENT_ACTION;
-	}
 
 	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventReorderList")
@@ -797,17 +684,22 @@ public class ListDocument {
 					.triggerEvent("eventSignatureFromListDocument",
 							listSelected.toArray(), null);
 			break;
-		case ENCYPHERMENT_ACTION:
-			List<Object> parameters = new ArrayList<Object>();
-			if (this.pass == null)
-				this.pass = cachePin.getPassword();
-			parameters.add(this.pass);
-			parameters.add(listSelected);
+		case CRYPT_ACTION:
+			List<Object> cryptParameters = new ArrayList<Object>();
+			cryptParameters.add(this.pass);
+			cryptParameters.add(listSelected);
 			componentResources.getContainer().getComponentResources()
-					.triggerEvent("eventEncyphermentFromListDocument",
-							parameters.toArray(), null);
-			pass = null;
+					.triggerEvent("eventCryptListDocFromListDocument",
+							cryptParameters.toArray(), null);
 			break;
+		case DECRYPT_ACTION:
+			List<Object> decryptParameters = new ArrayList<Object>();
+			decryptParameters.add(this.pass);
+			decryptParameters.add(listSelected);
+			componentResources.getContainer().getComponentResources()
+					.triggerEvent("eventDecryptListDocFromListDocument",
+							decryptParameters.toArray(), null);
+			break;	
 		case NO_ACTION:
 		default:
 			break;
@@ -949,6 +841,7 @@ public class ListDocument {
 		reorderlist.add("updateDoc");
         reorderlist.add("fileEdit");
 		reorderlist.add("shared");
+		reorderlist.add("sharedWithGroup");
 
 		if (activeSignature) {
 			model.add("signed", null);
@@ -974,37 +867,53 @@ public class ListDocument {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public Zone onValidateFormFromPasswordPopup() throws BusinessException {
+	public Zone onValidateFormFromPasswordCryptPopup() throws BusinessException {
+		
+		if (passwordCryptPopup.getPassword().equals(passwordCryptPopup.getConfirm())) {
+			String pass = passwordCryptPopup.getPassword();
 
-		// if password is not good reject in popup else continue
-		if (userFacade.checkEnciphermentKey(user, passwordPopup.getPassword())) {
-
-			String pass = passwordPopup.getPassword();
-			if (pass == null)
-				return null;
-			cachePin.setPassword(pass);
-
-			DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,
-					currentUuid);
+			DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,currentUuid);
 
 			List<Object> parameters = new ArrayList<Object>();
 			parameters.add(pass);
 			parameters.add(currentDocumentVo);
-			passwordPopup.getFormPassword().clearErrors();
+			passwordCryptPopup.getFormPassword().clearErrors();
 			componentResources.getContainer().getComponentResources()
-					.triggerEvent("eventEncyphermentUniqueFromListDocument",
+					.triggerEvent("eventCryptOneDocFromListDocument",
 							parameters.toArray(), null);
 
-			return passwordPopup.formSuccess();
+			return passwordCryptPopup.formSuccess();
 		} else {
-			passwordPopup
-					.getFormPassword()
-					.recordError(
-							messages
-									.get("components.listDocument.passwordPopup.error.message"));
-			return passwordPopup.formFail();
+			// if password is not like confirm reject in popup
+			return passwordCryptPopup.formFail();
 		}
 	}
+	
+	/**
+	 * this method is called when PasswordPopup for encipherment is called one
+	 * only one item
+	 * 
+	 * @return
+	 * @throws BusinessException
+	 */
+	public Zone onValidateFormFromPasswordDecryptPopup() throws BusinessException {
+		
+			String pass = passwordDecryptPopup.getPassword();
+
+			DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,currentUuid);
+
+			List<Object> parameters = new ArrayList<Object>();
+			parameters.add(pass);
+			parameters.add(currentDocumentVo);
+			passwordCryptPopup.getFormPassword().clearErrors();
+			componentResources.getContainer().getComponentResources()
+					.triggerEvent("eventDecryptOneDocFromListDocument",
+							parameters.toArray(), null);
+
+			return passwordCryptPopup.formSuccess();
+	}
+	
+	
 
 	/**
 	 * this method is called when PasswordPopupSubmit for encipherment is called
@@ -1012,19 +921,27 @@ public class ListDocument {
 	 * 
 	 * @return
 	 */
-	public Zone onValidateFormFromPasswordPopupSubmit() {
-		if (userFacade.checkEnciphermentKey(user, passwordPopupSubmit
-				.getPassword())) {
-			this.pass = passwordPopupSubmit.getPassword();
-			cachePin.setPassword(pass);
-			return passwordPopupSubmit.formSuccess(); // submit form
+	public Zone onValidateFormFromPasswordCryptPopupSubmit() {
+		if(passwordCryptPopupSubmit.getPassword().equals(passwordCryptPopupSubmit.getConfirm())){
+			this.pass=passwordCryptPopupSubmit.getPassword();
+			return passwordCryptPopupSubmit.formSuccess(); // submit form
 		} else {
-			passwordPopupSubmit
-					.getFormPassword()
-					.recordError(
-							messages
-									.get("components.listDocument.passwordPopup.error.message"));
-			return passwordPopupSubmit.formFail();
+			return passwordCryptPopupSubmit.formFail();
+		}
+	}
+	
+	/**
+	 * this method is called when PasswordPopupSubmit for encipherment is called
+	 * (list of files)
+	 * 
+	 * @return
+	 */
+	public Zone onValidateFormFromPasswordDecryptPopupSubmit() {
+		if(passwordDecryptPopupSubmit.getPassword()!=null){
+			this.pass=passwordDecryptPopupSubmit.getPassword();
+			return passwordDecryptPopupSubmit.formSuccess(); // submit form
+		} else {
+			return passwordDecryptPopupSubmit.formFail();
 		}
 	}
 

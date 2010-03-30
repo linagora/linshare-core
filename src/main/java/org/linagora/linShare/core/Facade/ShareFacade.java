@@ -79,7 +79,7 @@ public interface ShareFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt,String includeDecryptUrlTemplateContent ,String includeDecryptUrlTemplateContentTxt) throws BusinessException;
 
 	/**
 	 * same function as createSharingWithMailUsingRecipientsEmail() BUT we give the expiration date selected by the user
@@ -98,7 +98,7 @@ public interface ShareFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt, Calendar expiryDateSelected) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt,String includeDecryptUrlTemplateContent ,String includeDecryptUrlTemplateContentTxt,Calendar expiryDateSelected) throws BusinessException;
 	
 	
 	/**

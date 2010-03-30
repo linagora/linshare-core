@@ -157,7 +157,7 @@ public class ShareRestServiceImpl implements ShareRestService {
 		try {
 			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(
                     actor, listDoc, listRecipient, "", subject, linShareUrlInternal, linShareUrlBase,
-                    secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt);
+                    secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt,null,null);
 		} catch (BusinessException e) {
 			logger.error("could not share the document " + docVo.getIdentifier() + " to user " + targetMail + " by user " + actor.getMail() + " reason : " + e.getMessage());
 			response.setHeader("BusinessError", e.getErrorCode().getCode()+"");
@@ -280,7 +280,7 @@ public class ShareRestServiceImpl implements ShareRestService {
 		try {
 			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(
 					actor, listDoc, listRecipient, message, subject, linShareUrlInternal, linShareUrlBase, secureSharing,
-					sharedTemplateContent, sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
+					sharedTemplateContent, sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt,null,null);
 		} catch (BusinessException e) {
 			logger.error("could not share the document " + docVo.getIdentifier() + " to user " + targetMail + " by user " + actor.getMail() + " reason : " + e.getMessage());
 			response.setHeader("BusinessError", e.getErrorCode().getCode()+"");

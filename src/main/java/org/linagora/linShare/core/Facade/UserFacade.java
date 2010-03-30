@@ -128,26 +128,6 @@ public interface UserFacade {
 	 */
 	public void updateUserLocale(UserVo user, String locale);
 	
-	/**
-	 * generate challenge for the Encipherment Key
-	 * @param user
-	 * @param password material to derive the key
-	 * @throws BusinessException 
-	 */
-	public void generateEnciphermentKey(UserVo user, String password) throws BusinessException;
-	
-	/**
-	 * check challenge for the Encipherment Key
-	 * @param user
-	 * @param password to check with the previous one in referential
-	 * @return true if given password is ok
-	 */public boolean checkEnciphermentKey(UserVo user, String password);
-	/**
-	 * 
-	 * @param user
-	 * @return true if one key (one password) has been given and challenge is computed.
-	 */public boolean isUserEnciphermentKeyGenerated(UserVo user);
-	
 	
 	/**
 	 * temporary admin user (import.sql)

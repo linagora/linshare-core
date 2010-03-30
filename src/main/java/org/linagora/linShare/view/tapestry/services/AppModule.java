@@ -59,7 +59,6 @@ import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.vo.CacheUserPinVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.utils.PropertyPlaceholderConfigurer;
@@ -209,6 +208,7 @@ public class AppModule
 		conf.add("gif","^.*\\.gif$");
 		conf.add("swf","^.*\\.swf$");
 		conf.add("ico","^.*\\.ico$");
+		conf.add("applet","^.*applet/.*\\.jar$");
 	}
 
     /**
@@ -306,7 +306,6 @@ public class AppModule
 	public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration)
 	{
 		configuration.add(UserVo.class, new ApplicationStateContribution("session"));
-		configuration.add(CacheUserPinVo.class, new ApplicationStateContribution("session"));
 		configuration.add(ShareSessionObjects.class, new ApplicationStateContribution("session"));
 //        configuration.add(UserSignature.class, new ApplicationStateContribution("session"));
         configuration.add(BusinessInformativeContentBundle.class, new ApplicationStateContribution("session"));

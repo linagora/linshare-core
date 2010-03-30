@@ -1397,6 +1397,7 @@ table.t-data-grid {
 #files #list .updateDoc,
 #files #list .fileEdit,
 #files #list .shared,
+#files #list .sharedWithGroup,
 #files #list .signed,
 #files #list .encryptedAdd {
 	width: 4%;
@@ -2396,8 +2397,8 @@ div#blocDL ul li {
 
 /* Layout */
 
-#content th.shared, #content th.signed, #content th.encryptedAdd, #content th.expirationDate, #content th.picture, #content th.actions, #content th.action, #content th.selectedValue,
-#content td.shared, #content td.signed, #content td.encryptedAdd, #content td.expirationDate, #content td.picture, #content td.actions, #content td.action, #content td.selectedValue {
+#content th.sharedWithGroup, #content th.shared, #content th.signed, #content th.encryptedAdd, #content th.expirationDate, #content th.picture, #content th.actions, #content th.action, #content th.selectedValue,
+#content td.sharedWithGroup, #content td.shared, #content td.signed, #content td.encryptedAdd, #content td.expirationDate, #content td.picture, #content td.actions, #content td.action, #content td.selectedValue {
 	text-align: center;
 }
 

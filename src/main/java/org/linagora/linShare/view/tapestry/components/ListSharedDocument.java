@@ -47,12 +47,14 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -64,7 +66,6 @@ import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.SharedFileSorterModel;
-import org.linagora.linShare.view.tapestry.models.impl.UserSorterModel;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
@@ -146,8 +147,12 @@ public class ListSharedDocument {
 	@InjectComponent
 	private UserDetailsDisplayer userDetailsDisplayer;
 	
-//	@InjectComponent
-//	private SignatureDetailsDisplayer signatureDetailsDisplayer;
+	@InjectComponent
+	private SignatureDetailsDisplayer signatureDetailsDisplayer;
+	
+	@Inject
+	private PageRenderLinkSource linkFactory;
+	
 	
 	@SuppressWarnings("unchecked")
 	@Property
@@ -267,25 +272,25 @@ public class ListSharedDocument {
 		currentUuid = uuid;
 	}
 	
-//	public Object onActionFromSignature(String uuid) throws BusinessException{
-//		currentUuid = uuid;
-//		ShareDocumentVo shareddoc = searchDocumentVoByUUid(componentdocuments,uuid);
-//		
-//		if(null==shareddoc){
-//			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
-//		}else{
-//			// context is shared document
-//			return linkFactory.createPageRenderLink("signature/SelectPolicy", true, new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
-//		}
-//	}
+	public Object onActionFromSignature(String uuid) throws BusinessException{
+		currentUuid = uuid;
+		ShareDocumentVo shareddoc = searchDocumentVoByUUid(componentdocuments,uuid);
+		
+		if(null==shareddoc){
+			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
+		}else{
+			// context is shared document
+			return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
+		}
+	}
 	
 	public Zone onActionFromShowUser(String mail) {
 		return userDetailsDisplayer.getShowUser(mail);	
 	}
 	
-//	public Zone onActionFromShowSignature(String docidentifier) {
-//		return signatureDetailsDisplayer.getShowSignature(docidentifier);
-//	}
+	public Zone onActionFromShowSignature(String docidentifier) {
+		return signatureDetailsDisplayer.getShowSignature(docidentifier);
+	}
 	
     public void onActionFromCopy(String docIdentifier) {
         ShareDocumentVo shareDocumentVo = searchDocumentVoByUUid(componentdocuments, docIdentifier);
@@ -386,6 +391,9 @@ public class ListSharedDocument {
 
 	public boolean isDocumentSignedByCurrentUser(){
 		return documentFacade.isSignedDocumentByCurrentUser(user, shareDocument);
+	}
+	public boolean isDocumentNotSignedByCurrentUserAndDocNotEncrypted(){
+		return !shareDocument.getEncrypted() && !isDocumentSignedByCurrentUser();
 	}
 	
 	public boolean isDocumentSigned(){

@@ -22,7 +22,7 @@ package org.linagora.linShare.view.tapestry.enums;
 
 public enum ActionFromBarDocument
 {
-		NO_ACTION, SHARED_ACTION, DELETE_ACTION, ENCYPHERMENT_ACTION, SIGNATURE_ACTION;
+		NO_ACTION, SHARED_ACTION, DELETE_ACTION, CRYPT_ACTION, DECRYPT_ACTION, SIGNATURE_ACTION;
 		
 		public static ActionFromBarDocument fromString(String item){
 			
@@ -30,7 +30,8 @@ public enum ActionFromBarDocument
 			
 			if(item.equalsIgnoreCase("SHARED_ACTION")) return ActionFromBarDocument.SHARED_ACTION;
 			else if(item.equalsIgnoreCase("DELETE_ACTION")) return ActionFromBarDocument.DELETE_ACTION;
-			else if(item.equalsIgnoreCase("ENCYPHERMENT_ACTION")) return ActionFromBarDocument.ENCYPHERMENT_ACTION;
+			else if(item.equalsIgnoreCase("CRYPT_ACTION")) return ActionFromBarDocument.CRYPT_ACTION;
+			else if(item.equalsIgnoreCase("DECRYPT_ACTION")) return ActionFromBarDocument.DECRYPT_ACTION;
 			else if(item.equalsIgnoreCase("SIGNATURE_ACTION")) return ActionFromBarDocument.SIGNATURE_ACTION;
 			else return ActionFromBarDocument.NO_ACTION;
 		}

@@ -193,19 +193,6 @@ public class UserFacadeImpl implements UserFacade {
 		userService.updateUserLocale(user.getMail(), locale);
 	}
 
-	public boolean checkEnciphermentKey(UserVo user, String password) {
-		User owner = userRepository.findByLogin(user.getLogin());
-		return enciphermentService.checkEnciphermentKey(owner, password);
-	}
-
-	public void generateEnciphermentKey(UserVo user, String password) throws BusinessException {
-		enciphermentService.generateEnciphermentKey(user, password);
-	}
-
-	public boolean isUserEnciphermentKeyGenerated(UserVo user) {
-		User owner = userRepository.findByLogin(user.getLogin());
-		return enciphermentService.isUserEnciphermentKeyGenerated(owner);
-	}
 
     /** Load a User.
      * If the user doesn't exist in database, search informations in LDAP and create a user entry before returning it.
@@ -252,7 +239,7 @@ public class UserFacadeImpl implements UserFacade {
     	
     	userService.resetPassword(user.getLogin(), mailSubject, mailContent, mailContentTxt);		
 	}
-    
+
 	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException {
 		userService.setGuestContactRestriction(login, mailContacts);
 	}

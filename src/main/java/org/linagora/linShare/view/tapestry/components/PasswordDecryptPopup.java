@@ -21,7 +21,6 @@
 package org.linagora.linShare.view.tapestry.components;
 
 
-import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -44,7 +43,7 @@ import org.apache.tapestry5.corelib.components.Zone;
  * @author ncharles
  *
  */
-public class PasswordPopupSubmit {
+public class PasswordDecryptPopup {
 
 	/* ***********************************************************
      *                         Parameters
@@ -59,11 +58,6 @@ public class PasswordPopupSubmit {
 	@Property
 	private String content;
 	
-	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
-	@Property
-	private String formId;
-	
-	
 	// error banner
 	@Parameter("errorBanner")
 	@Property
@@ -77,7 +71,7 @@ public class PasswordPopupSubmit {
      ************************************************************ */
 	
     @Component(parameters = {"style=bluelighting", "show=false", "title=title", "width=450", "height=100"})
-    private WindowWithEffects window_passwordPopupSubmit;
+    private WindowWithEffects window_passwordDecryptPopup;
     
     
 	// The form that holds the password request
@@ -131,7 +125,7 @@ public class PasswordPopupSubmit {
 	}
 	
 	public String getJSONId() {
-		return window_passwordPopupSubmit.getJSONId();
+		return window_passwordDecryptPopup.getJSONId();
 	}
 	
 	public String getTitle() {

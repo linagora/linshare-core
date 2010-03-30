@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -64,9 +65,11 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.MimeTypeService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.VirusScannerService;
+import org.linagora.linShare.core.utils.AESCrypt;
 import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
 import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 import org.semanticdesktop.aperture.util.IOUtil;
@@ -196,13 +199,6 @@ public class DocumentServiceImpl implements DocumentService {
 				}
 		}
 		
-		boolean aesencrypted = false;
-		//aes encrypt ?
-		if (parameterRepository.loadConfig().getActiveEncipherment()) {
-			if(fileName.endsWith(".aes")){
-				aesencrypted = true;
-			}
-		}
 		
 		// Copy the input stream to a temporary file for safe use
 		File tempFile = null;
@@ -253,6 +249,29 @@ public class DocumentServiceImpl implements DocumentService {
 					bof.close();
 				} catch (IOException e) {
 				}
+			}
+		}
+		
+		
+		boolean aesencrypted = false;
+		//aes encrypt ? check headers
+		if (parameterRepository.loadConfig().getActiveEncipherment()) {
+			if(fileName.endsWith(".aes")){
+				
+				boolean testheaders = false;
+				try {
+					AESCrypt aestest = new AESCrypt();
+					testheaders = aestest.ckeckFileHeader(tempFile.getAbsolutePath());
+				} catch (IOException e) {
+					throw new BusinessException(BusinessErrorCode.FILE_ENCRYPTION_UNDEFINED,"undefined encryption format");
+				} catch (GeneralSecurityException e) {
+					throw new BusinessException(BusinessErrorCode.FILE_ENCRYPTION_UNDEFINED,"undefined encryption format");
+				}
+				
+				if(!testheaders)
+					throw new BusinessException(BusinessErrorCode.FILE_ENCRYPTION_UNDEFINED,"undefined encryption format");
+				else 
+					aesencrypted = true;
 			}
 		}
 
@@ -423,35 +442,48 @@ public class DocumentServiceImpl implements DocumentService {
 	 * @throws BusinessException
 	 */
 	public Document updateFileContent(String currentFileUUID,
-			InputStream inputStream, long size, String fileName, String mimeType,
+			InputStream inputStream, long size, String fileName, String mimeType, boolean encrypted,
 			User owner) {
 
 		String newUuid = null;
 		Document aDoc = null;
+		String uuidThmb = null;
+		FileInputStream finputStream = null;
 
 		try {
-			// jack rabbit new thumbnail
-			File tempFile = File.createTempFile("linshareUpdateThmb", fileName);
-			tempFile.deleteOnExit();
-
-			BufferedOutputStream bof = new BufferedOutputStream(new FileOutputStream(tempFile));
-
-			// Transfer bytes from in to out
-			byte[] buf = new byte[20480];
-			int len;
-			while ((len = inputStream.read(buf)) > 0) {
-				bof.write(buf, 0, len);
-			}
-			bof.flush();
-			
-			String uuidThmb = generateThumbnailIntoJCR(fileName, owner, tempFile);
-			
-			// jack rabbit new file
-			newUuid = fileSystemDao.insertFile(owner.getLogin(), inputStream, size,
-					fileName, mimeType);
 			
 			// get the document to update
 			aDoc = documentRepository.findById(currentFileUUID);
+			
+			if(!encrypted){
+			
+				// jack rabbit new thumbnail
+				File tempFile = File.createTempFile("linshareUpdateThmb", fileName);
+				tempFile.deleteOnExit();
+	
+				BufferedOutputStream bof = new BufferedOutputStream(new FileOutputStream(tempFile));
+	
+				// Transfer bytes from in to out
+				byte[] buf = new byte[20480];
+				int len;
+				while ((len = inputStream.read(buf)) > 0) {
+					bof.write(buf, 0, len);
+				}
+				bof.flush();
+				
+				uuidThmb = generateThumbnailIntoJCR(fileName, owner, tempFile);
+				
+				finputStream = new FileInputStream(tempFile);
+				// jack rabbit new file
+				newUuid = fileSystemDao.insertFile(owner.getLogin(), finputStream, size,
+						fileName, mimeType);
+				
+			} else {
+			
+				// jack rabbit new file
+				newUuid = fileSystemDao.insertFile(owner.getLogin(), inputStream, size,
+						fileName, mimeType);
+			}
 
 			// delete old thumbnail in JCR
 			String oldThumbUuid = aDoc.getThmbUUID();
@@ -459,12 +491,14 @@ public class DocumentServiceImpl implements DocumentService {
 				fileSystemDao.removeFileByUUID(oldThumbUuid);
 			}
 			
+			
 			// update the document
 			aDoc.setIdentifier(newUuid);
 			aDoc.setName(fileName);
 			aDoc.setType(mimeType);
 			aDoc.setSize(size);
 			aDoc.setThmbUUID(uuidThmb);
+			aDoc.setEncrypted(encrypted);
 			aDoc = documentRepository.update(aDoc);
 			
 			// remove old document in JCR
@@ -485,6 +519,12 @@ public class DocumentServiceImpl implements DocumentService {
 		} catch (IOException e) {
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
 					e.getMessage());
+		} finally {
+			
+			if(finputStream!=null)
+				try {
+					finputStream.close();
+				} catch (IOException e) {}
 		}
 
 	}
@@ -709,7 +749,7 @@ public class DocumentServiceImpl implements DocumentService {
 		
 		String logText = currentDoc.getName(); //old name of the doc
 		
-		Document doc = updateFileContent(currentFileUUID, file, size, fileName, mimeType, owner);
+		Document doc = updateFileContent(currentFileUUID, file, size, fileName, mimeType, false, owner);
 		
 
 		//clean all signatures ...

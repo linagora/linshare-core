@@ -37,7 +37,6 @@ import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
@@ -46,6 +45,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
@@ -74,10 +74,10 @@ import org.slf4j.LoggerFactory;
 public class ConfirmSharePopup{
 	private static final Logger logger = LoggerFactory.getLogger(ConfirmSharePopup.class);
 	
-	@ApplicationState
+	@SessionState
 	private UserVo userVo;
 
-	@ApplicationState
+	@SessionState
 	private ShareSessionObjects shareSessionObjects;
 	
 
@@ -159,6 +159,9 @@ public class ConfirmSharePopup{
 	@Property
 	private String tooltipTitle;
 	
+	@Property
+	private boolean warningCryptedFiles;
+	
 
 	/* ***********************************************************
 	 *                      Injected services
@@ -178,6 +181,16 @@ public class ConfirmSharePopup{
 	@Inject
 	@Path("context:templates/shared-message-withpassword.txt")
 	private Asset passwordSharedTemplateTxt;
+	
+	
+	@Inject
+	@Path("context:templates/includeDecryptUrl.html")
+	private Asset includeDecryptUrlTemplate;
+	
+	@Inject
+	@Path("context:templates/includeDecryptUrl.txt")
+	private Asset includeDecryptUrlTemplateTxt;
+	
 	
 	@Inject
 	private ShareFacade shareFacade;
@@ -222,8 +235,19 @@ public class ConfirmSharePopup{
 
 		computePickerDates();
 		buildTooltipValue();
+		this.warningCryptedFiles = checkCryptedFiles();
+		
 	}
 	
+	private boolean checkCryptedFiles() {
+		
+		boolean warning =false;
+		for (DocumentVo onedoc : documentsVo) {
+			if(onedoc.getEncrypted()) warning = true;
+		}
+		return warning;
+	}
+
 	@AfterRender
     public void afterRender() {
     	//resize the share popup
@@ -397,16 +421,23 @@ public class ConfirmSharePopup{
 		//html template
 		String sharedTemplateContent = null;
 		String passwordSharedTemplateContent = null;
+		String includeDecryptUrlTemplateContent = null;
+		
 		//TXT template
 		String sharedTemplateContentTxt = null;
 		String passwordSharedTemplateContentTxt = null;
+		String includeDecryptUrlTemplateContentTxt = null;
+		
+		
 
 		try {
 			sharedTemplateContent = templating.readFullyTemplateContent(sharedTemplate.getResource().openStream());
 			passwordSharedTemplateContent = templating.readFullyTemplateContent(passwordSharedTemplate.getResource().openStream());
+			includeDecryptUrlTemplateContent = templating.readFullyTemplateContent(includeDecryptUrlTemplate.getResource().openStream());
 			
 			sharedTemplateContentTxt = templating.readFullyTemplateContent(sharedTemplateTxt.getResource().openStream());
 			passwordSharedTemplateContentTxt = templating.readFullyTemplateContent(passwordSharedTemplateTxt.getResource().openStream());
+			includeDecryptUrlTemplateContentTxt = templating.readFullyTemplateContent(includeDecryptUrlTemplateTxt.getResource().openStream());
 			
 		} catch (IOException e) {
 			logger.error("Bad mail template", e);
@@ -419,7 +450,7 @@ public class ConfirmSharePopup{
 			//sharing = shareFacade.createSharingWithMail(userVo, documentsVo, usersVo,textAreaValue, message,subject);
 			
 			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt, dateExpiry);
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt, includeDecryptUrlTemplateContent,includeDecryptUrlTemplateContentTxt,dateExpiry);
 			
 
 		

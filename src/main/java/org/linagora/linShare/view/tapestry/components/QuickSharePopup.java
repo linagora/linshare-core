@@ -382,7 +382,8 @@ public class QuickSharePopup{
 		try {
 		
 			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
+			//no includeDecryptUrlTemplateContent because quick share with no encrypt ...
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt,null,null);
 		
 		
 		} catch (BusinessException e1) {
