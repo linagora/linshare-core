@@ -114,6 +114,10 @@
 							<td class="label"><t:label for="activeEncipherment" class="edit-form-label">${message:pages.administration.index.activeEncipherment}</t:label></td>
 							<td class="input"><t:checkbox t:id="activeEncipherment" class="edit-form-field" /></td>
 						</tr>
+						<tr>
+							<td class="label"><t:label for="activeDocTimeStamp" class="edit-form-label">${message:pages.administration.index.activeDocTimeStamp}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeDocTimeStamp" class="edit-form-field" /></td>
+						</tr>
 					</table>
 					<br/>
 					<div class="button">

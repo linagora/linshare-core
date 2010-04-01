@@ -42,6 +42,10 @@
     	<constructor-arg index="1" value="${virusscanner.clamav.port}"/>
     </bean>
     
+    <bean id="timeStampingService" class="org.linagora.linShare.core.service.impl.TimeStampingServiceImpl">
+    	<constructor-arg index="0" value="${tsa.url}"/>
+    </bean>
+    
     <bean id="mimeTypeService" class="org.linagora.linShare.core.service.impl.MimeTypeServiceImpl">
         <constructor-arg index="0" ref="allowedMimeTypeRepository" />
         <constructor-arg index="1" ref="mimeTypeMagicNumberDao" />
@@ -56,6 +60,7 @@
         <constructor-arg index="5" ref="shareService" />
         <constructor-arg index="6" ref="logEntryRepository" />
         <constructor-arg index="7" ref="clamavVirusScannerService" />
+        <constructor-arg index="8" ref="timeStampingService" />
     </bean>
 	     
     

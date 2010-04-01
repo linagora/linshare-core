@@ -1,5 +1,5 @@
 -- adding 40 days in expiry time
-INSERT INTO linshare_parameter(parameter_id, file_size_max, user_available_size, active_mimetype,active_signature,active_encipherment,user_expiry_time,user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id)  VALUES (1,10240000,51200000,'false','false','false','40','0', '100', '0');
+INSERT INTO linshare_parameter(parameter_id, file_size_max, user_available_size, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time,user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id)  VALUES (1,10240000,51200000,'false','false','false',false',40','0', '100', '0');
 
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
@@ -12,4 +12,4 @@ insert into linshare_welcome_texts (parameter_id , welcome_text, user_type_id, l
 insert into linshare_welcome_texts (parameter_id , welcome_text, user_type_id, language_id) values (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 1, 1);
 
 
--- SELECT setval('hibernate_sequence', 100);
+--SELECT setval('hibernate_sequence', 100);

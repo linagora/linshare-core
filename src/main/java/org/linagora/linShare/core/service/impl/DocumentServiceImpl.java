@@ -38,6 +38,8 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampResponse;
 import org.linagora.LinThumbnail.FileResource;
 import org.linagora.LinThumbnail.FileResourceFactory;
 import org.linagora.LinThumbnail.utils.Constants;
@@ -68,6 +70,7 @@ import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.MimeTypeService;
 import org.linagora.linShare.core.service.ShareService;
+import org.linagora.linShare.core.service.TimeStampingService;
 import org.linagora.linShare.core.service.VirusScannerService;
 import org.linagora.linShare.core.utils.AESCrypt;
 import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
@@ -87,6 +90,7 @@ public class DocumentServiceImpl implements DocumentService {
 	private final MimeTypeService mimeTypeService;
 
 	private final VirusScannerService virusScannerService;
+	private final TimeStampingService timeStampingService;
 
 	/**
 	 * to load parameter application constant
@@ -107,7 +111,8 @@ public class DocumentServiceImpl implements DocumentService {
 			final ParameterRepository parameterRepository,
 			final ShareService shareService,
 			final LogEntryRepository logEntryRepository,
-			final VirusScannerService virusScannerService) {
+			final VirusScannerService virusScannerService,
+			final TimeStampingService timeStampingService) {
 		this.documentRepository = documentRepository;
 		this.fileSystemDao = fileSystemDao;
 		this.userRepository = userRepository;
@@ -117,6 +122,7 @@ public class DocumentServiceImpl implements DocumentService {
 		this.shareService = shareService;
 		this.logEntryRepository = logEntryRepository;
 		this.virusScannerService = virusScannerService;
+		this.timeStampingService = timeStampingService;
 	}
 
 	/**
@@ -291,6 +297,46 @@ public class DocumentServiceImpl implements DocumentService {
 					"File contains virus", extras);
 		}
 
+		
+		byte[] timestampToken = null;
+		// want a timestamp on doc ?
+		if (parameterRepository.loadConfig().getActiveDocTimeStamp()) {
+			
+			FileInputStream fis = null;
+			
+			try{
+			
+				if(timeStampingService.isDisabled()){
+					//service is activated but
+					//it is disabled because bad configuration !
+					log.error("TSA service not well configured, check tsa.url");
+				} else {
+					
+					fis = new FileInputStream(tempFile);
+					TimeStampResponse resp =  timeStampingService.getTimeStamp(fis);
+					timestampToken  = resp.getEncoded();
+				}
+			} catch (TSPException e) {
+				log.error(e);
+				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			} catch (FileNotFoundException e) {
+				log.error(e);
+				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			} catch (IOException e) {
+				log.error(e);
+				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			} finally {
+
+				try {
+					if (fis != null)
+						fis.close();
+					fis = null;
+				} catch (IOException e) {}
+			}
+			
+		}
+		
+
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner, tempFile);
 		
@@ -328,6 +374,7 @@ public class DocumentServiceImpl implements DocumentService {
 					new GregorianCalendar(), new GregorianCalendar(), owner,
 					aesencrypted, false, false, size);
 			aDoc.setThmbUUID(uuidThmb);
+			if(timestampToken!=null) aDoc.setTimeStamp(timestampToken);
 
 			if (log.isDebugEnabled()) {
 				log.debug("6)start insert in database file uuid:" + uuid);

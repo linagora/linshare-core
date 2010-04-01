@@ -28,6 +28,7 @@
     <property column="ACTIVE_MIMETYPE" name="activeMimeType" type="boolean"/>
     <property column="ACTIVE_SIGNATURE" name="activeSignature" type="boolean"/>
     <property column="ACTIVE_ENCIPHERMENT" name="activeEncipherment" type="boolean"/>
+    <property column="ACTIVE_DOC_TIME_STAMP" name="activeDocTimeStamp" type="boolean"/>
     <property column="USER_EXPIRY_TIME" name="guestAccountExpiryTime"/>
     <property column="USER_EXPIRY_TIME_UNIT_ID" name="guestAccountExpiryUnit" type="timeUnitEnumType"/>
     <property column="CUSTOM_LOGO_URL" name="customLogoUrl"/>

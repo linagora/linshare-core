@@ -16,6 +16,7 @@
     <property access="field" column="size" name="size" type="long"/>
     <property access="field" column="file_comment" name="fileComment"/>
     <property access="field" column="thmb_uuid" name="thmbUUID"/>
+    <property access="field" column="timestamp" name="timeStamp"/>
     
     <many-to-one access="field" class="org.linagora.linShare.core.domain.entities.User" name="owner" not-null="true">
       <column index="index_document_owner_id" name="owner_id"/>

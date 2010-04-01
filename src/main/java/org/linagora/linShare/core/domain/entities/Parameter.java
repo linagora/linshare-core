@@ -43,6 +43,8 @@ public class Parameter implements Serializable {
 	private Boolean activeMimeType;
 	private Boolean activeSignature;
 	private Boolean activeEncipherment;
+	private Boolean activeDocTimeStamp;
+	
     private Integer guestAccountExpiryTime;
     private TimeUnit guestAccountExpiryUnit;
     private String customLogoUrl;
@@ -61,6 +63,7 @@ public class Parameter implements Serializable {
 		this.activeMimeType = false;
 		this.activeSignature = false;
 		this.activeEncipherment = false;
+		this.activeDocTimeStamp=false;
         this.customLogoUrl = null;
 		this.id=CONSTANT_KEY_ID;
         this.guestAccountExpiryTime = null;
@@ -104,6 +107,13 @@ public class Parameter implements Serializable {
 
 	public void setActiveSignature(Boolean activeSignature) {
 		this.activeSignature = activeSignature;
+	}
+	
+	public void setActiveDocTimeStamp(Boolean activeDocTimeStamp) {
+		this.activeDocTimeStamp = activeDocTimeStamp;
+	}
+	public Boolean getActiveDocTimeStamp() {
+		return activeDocTimeStamp;
 	}
 
 	public void setActiveMimeType(Boolean activeMimeType) {

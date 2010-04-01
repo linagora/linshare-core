@@ -89,6 +89,8 @@ public class Index {
     @Property
     private Boolean activeEncipherment;
     @Property
+    private Boolean activeDocTimeStamp;
+    @Property
     private Boolean deleteTempAdmin;
     @SuppressWarnings("unused")
 	@Property
@@ -134,6 +136,8 @@ public class Index {
         userAvailableSize = p.getUserAvailableSize();
         activeMimeType = p.getActiveMimeType();
         activeSignature = p.getActiveSignature();
+        activeDocTimeStamp = p.getActiveDocTimeStamp();
+        
         activeEncipherment = p.getActiveEncipherment();
         guestAccountExpiryTime = p.getGuestAccountExpiryTime();
         guestAccountExpiryUnit = p.getGuestAccountExpiryUnit();
@@ -206,7 +210,7 @@ public class Index {
             userAvailableSize = userAvailableSize * FACTORMULTI;
         }
 
-        ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, activeMimeType, activeSignature,activeEncipherment,guestAccountExpiryTime,
+        ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, activeMimeType, activeSignature,activeEncipherment,activeDocTimeStamp,guestAccountExpiryTime,
             guestAccountExpiryUnit, customLogoUrl,defaultShareExpiryUnit,  defaultShareExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,welcomeTexts);
         parameterFacade.createConfig(params);
 

@@ -61,3 +61,7 @@ alter table linshare_allowed_contact
         references linshare_user;
 
 alter table linshare_user add column restricted bool default false;
+
+
+alter table linshare_parameter add COLUMN active_doc_time_stamp bool default false;
+alter table linshare_document add COLUMN timestamp bytea;

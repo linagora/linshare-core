@@ -27,6 +27,7 @@
         file_comment text,
         owner_id int8,
         thmb_uuid varchar(255),
+        timestamp bytea,
         primary key (document_id)
     );
 	
@@ -37,6 +38,7 @@
         active_mimetype bool,
         active_signature bool,
         active_encipherment bool,
+        active_doc_time_stamp bool,
         user_expiry_time int4,
         user_expiry_time_unit_id int4,
         custom_logo_url varchar(255),

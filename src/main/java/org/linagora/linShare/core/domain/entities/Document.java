@@ -93,6 +93,12 @@ public class Document implements Serializable {
 	private String thmbUUID;
 	
 	
+	/**
+	 * timsStampresponse encoded (der)
+	 */
+	private byte[] timeStamp;
+	
+	
 	public Document(String identifier,String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
 			Boolean shared, Boolean sharedWithGroup,Long size) {
@@ -109,6 +115,7 @@ public class Document implements Serializable {
 		this.size = size;
 		this.signatures = null;
 		this.thmbUUID = null;
+		this.timeStamp = null;
 	}
 	/**
 	 * modifying from protected to public for using BeanUtils without construct 
@@ -237,6 +244,12 @@ public class Document implements Serializable {
 	}
 	public String getThmbUUID() {
 		return thmbUUID;
+	}
+	public byte[] getTimeStamp() {
+		return timeStamp;
+	}
+	public void setTimeStamp(byte[] timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 	
 }
