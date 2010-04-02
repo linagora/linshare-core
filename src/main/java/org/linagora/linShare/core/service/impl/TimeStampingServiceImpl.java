@@ -138,6 +138,9 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 				response = new TimeStampResponse(in);
 			    
 				response.validate (request);    // if it fails a TSPException is raised
+			} else {
+				//404 or 500 ...
+				throw new TSPException("service TSA is not available");
 			}
 			
 		} catch (ProtocolException e) {
