@@ -17,7 +17,7 @@
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
-*/
+ */
 package org.linagora.linShare.core.domain.vo;
 
 import java.io.Serializable;
@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.GroupMemberType;
+import org.linagora.linShare.core.utils.HashCodeUtil;
 
 public class GroupVo implements Serializable {
 
@@ -46,12 +47,26 @@ public class GroupVo implements Serializable {
 		this.members = new HashSet<GroupMemberVo>();
 		this.groupUser = null;
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj instanceof GroupVo) {
-			return ((GroupVo)obj).getGroupUser().getLogin().equals(this.groupUser.getLogin());
+			return ((GroupVo) obj).getGroupUser().getLogin().equals(this.groupUser.getLogin());
 		}
 		return super.equals(obj);
+	}
+
+	private int fHashCode;
+
+	@Override
+	public int hashCode() {
+		// this style of lazy initialization is
+		// suitable only if the object is immutable
+		if (fHashCode == 0) {
+			int result = HashCodeUtil.SEED;
+			result = HashCodeUtil.hash(result, groupUser.getLogin());
+			fHashCode = result;
+		}
+		return fHashCode;
 	}
 
 	public String getName() {
