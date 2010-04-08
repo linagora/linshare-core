@@ -111,7 +111,7 @@ public class UserSearchResults {
 	private RenderSupport renderSupport;
     
     
-	@Inject @Symbol("users.internal.defaultView.showAll")
+	@Inject @Symbol("linshare.users.internal.defaultView.showAll")
 	@Property
 	private boolean showAll;
     
