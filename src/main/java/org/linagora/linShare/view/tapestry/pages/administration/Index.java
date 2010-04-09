@@ -27,10 +27,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.ParameterFacade;
@@ -70,6 +72,10 @@ public class Index {
     
     @SessionState
     private UserVo loginUser;
+    
+	// The form that holds the admin params
+	@InjectComponent
+	private Form administrationForm;
     
     
 
@@ -201,6 +207,20 @@ public class Index {
         shareExpiryRules.remove(expiryRule);
     }
 
+    
+    
+    public void onValidateFormFromAdministrationForm() {
+    	
+    	//just validate JCE
+    	if(activeEncipherment==true||activeSignature==true){
+    		if(!parameterFacade.checkPlatformEncryptSupportedAlgo()){
+    			administrationForm.recordError(messages.get("pages.administration.index.jce.error"));
+    		}
+    	}
+    }
+    
+    
+    
     public void onSuccessFromAdministrationForm() throws BusinessException {
 
         if (fileSizeMax != null) {
