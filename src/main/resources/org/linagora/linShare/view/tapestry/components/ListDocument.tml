@@ -196,7 +196,9 @@
 						</t:if>
 					</t:actionlink>
 					<t:parameter name="else">
-						<img src="${asset:context:images/icons/stamp-off.png}" alt="" title="${message:components.listDocument.picture.signatureoff.title}" />
+						<t:actionLink t:id="signature" context="${document.identifier}">
+							<img src="${asset:context:images/icons/stamp-off.png}" alt="" title="${message:components.listDocument.picture.signatureoff.title}" />
+						</t:actionLink>
 					</t:parameter>
 				</t:if>
 			</t:parameter>
