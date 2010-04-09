@@ -1,15 +1,7 @@
--- adding 40 days in expiry time
-INSERT INTO linshare_parameter(parameter_id, file_size_max, user_available_size, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time,user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id)  VALUES (1,10240000,51200000,'false','false','false','false','40','0', '100', '0');
+-- Script to reset email templates and subjects
 
--- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (1, 0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 1, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');
-INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');
-
--- Welcom texts
-insert into linshare_welcome_texts (parameter_id , welcome_text, user_type_id, language_id) values (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 0, 0);
-insert into linshare_welcome_texts (parameter_id , welcome_text, user_type_id, language_id) values (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 0, 1);
-insert into linshare_welcome_texts (parameter_id , welcome_text, user_type_id, language_id) values (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 1, 0);
-insert into linshare_welcome_texts (parameter_id , welcome_text, user_type_id, language_id) values (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 1, 1);
+delete from linshare_mail_templates;
+delete from linshare_mail_subjects;
 
 -- Template GREETINGS
 insert into linshare_mail_templates values (1,0,'Hi ${firstName} ${lastName},<br/><br/>','Hi ${firstName} ${lastName},',0);
@@ -63,6 +55,7 @@ insert into linshare_mail_templates values (1,11,'Le mot de passe à utiliser es
 insert into linshare_mail_templates values (1,12,'<strong>${firstName} ${lastName}</strong> has updated the shared file <strong>${fileOldName}</strong>:<ul><li>New file name: ${fileName}</li><li>File size: ${fileSize}</li><li>MIME type: <code>${mimeType}</code></li></ul>','${firstName} ${lastName} has updated the shared file ${fileOldName}:\r- New file name: ${fileName}\r- File size: ${fileSize}\r- MIME type: ${mimeType}\r',0);
 insert into linshare_mail_templates values (1,12,'<strong>${firstName} ${lastName}</strong> a mis à jour le fichier partagé <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nom du nouveau fichier&nbsp;: ${fileName}</li><li>Taille du fichier&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>','${firstName} ${lastName} a mis à jour le fichier partagé ${fileOldName} : \r- nom du nouveau fichier : ${fileName}\r- taille du fichier : ${fileSize}\r- type MIME : ${mimeType}\r',1);
 
+
 -- Subject ANONYMOUS_DOWNLOAD
 insert into linshare_mail_subjects values (1, 0, 'LinShare: An anonymous user downloaded the file you shared',0);
 insert into linshare_mail_subjects values (1, 0, 'LinShare : Un utilisateur anonyme a téléchargé des fichiers en partage',1);
@@ -86,6 +79,3 @@ insert into linshare_mail_subjects values (1, 4, 'LinShare : Un utilisateur vous
 -- Subject SHARED_DOC_UPDATED
 insert into linshare_mail_subjects values (1, 5, 'LinShare: An user has updated a shared file',0);
 insert into linshare_mail_subjects values (1, 5, 'LinShare : Un utilisateur a mis à jour un fichier dans vos partages',1);
-
-
-SELECT setval('hibernate_sequence', 100);

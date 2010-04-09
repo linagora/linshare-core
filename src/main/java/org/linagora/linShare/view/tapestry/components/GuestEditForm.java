@@ -20,18 +20,13 @@
 */
 package org.linagora.linShare.view.tapestry.components;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
@@ -40,7 +35,6 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -49,14 +43,14 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.pages.user.Index;
 import org.linagora.linShare.view.tapestry.services.Templating;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.slf4j.Logger;
 
@@ -144,19 +138,14 @@ public class GuestEditForm {
 	@Persist("flash")
 	@Property
 	private String recipientsSearch;
-    
-    @Inject
-    @Path("context:templates/new-guest.html")
-    private Asset guestMailTemplate;
-    
-    @Inject
-    @Path("context:templates/new-guest.txt")
-    private Asset guestMailTemplateTxt;
 
     private boolean userAlreadyExists = false;
 
     @Inject
     private ComponentResources componentResources;
+    
+    @Inject
+    private MailContainerBuilder mailBuilder;
 	
 	
 	@SetupRender
@@ -263,41 +252,16 @@ public class GuestEditForm {
     }
 
     Object onSuccess() {
-        String mailContent = null;
-        String mailContentTxt = null;
-
-		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
-
-        String ownerCN = userLoggedIn.getFirstName() + " " + userLoggedIn.getLastName();
-
-		Map<String,String> hash=new HashMap<String, String>();
-		if (customMessage != null) {
-            hash.put("${message}", customMessage);
-        } else {
-            hash.put("${message}", "");
-        }
-		hash.put("${ownerCN}", ownerCN);
-		hash.put("${firstName}", firstName);
-		hash.put("${lastName}", lastName);
-        hash.put("${mail}", mail);
-		hash.put("${url}", url);
-
-		try {
-			mailContent = templating.getMessage(guestMailTemplate.getResource().openStream(), hash);
-			mailContentTxt = templating.getMessage(guestMailTemplateTxt.getResource().openStream(), hash);
-			
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
-		}
+		
+		MailContainer mailContainer = mailBuilder.buildMailContainer(userLoggedIn, customMessage);
 
         try {
             
         	//set uploadGranted always to true for guest
         	boolean uploadGranted = true;
         	
-        	userFacade.createGuest(mail, firstName, lastName, uploadGranted, createGuestGranted,comment,
-                messages.get("mail.user.guest.create.subject"), mailContent, mailContentTxt,userLoggedIn);
+        	userFacade.createGuest(mail, firstName, lastName, uploadGranted, createGuestGranted,comment, 
+        			mailContainer,userLoggedIn);
         	
         	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
         		userFacade.addGuestContactRestriction(userLoggedIn.getLogin(), mail);

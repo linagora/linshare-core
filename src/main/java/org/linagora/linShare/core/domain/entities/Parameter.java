@@ -51,6 +51,8 @@ public class Parameter implements Serializable {
 
     private List<ShareExpiryRule> shareExpiryRules;
     private Set<WelcomeText> welcomeTexts;
+    private Set<MailTemplate> mailTemplates;
+    private Set<MailSubject> mailSubjects;
     
     
     private Boolean deleteDocWithShareExpiryTime;
@@ -202,6 +204,36 @@ public class Parameter implements Serializable {
 	public void setDeleteDocWithShareExpiryTime(Boolean deleteDocWithShareExpiryTime) {
 		this.deleteDocWithShareExpiryTime = deleteDocWithShareExpiryTime;
 	}
+
+	public void setMailTemplates(Set<MailTemplate> mailTemplates) {
+		this.mailTemplates = mailTemplates;
+	}
+
+	public Set<MailTemplate> getMailTemplates() {
+		return mailTemplates;
+	}
+
+    public void addMailTemplate(MailTemplate mailTemplate) {
+        if (this.mailTemplates == null) {
+            this.mailTemplates = new HashSet<MailTemplate>();
+        }
+        mailTemplates.add(mailTemplate);
+    }
+
+	public void setMailSubjects(Set<MailSubject> mailSubjects) {
+		this.mailSubjects = mailSubjects;
+	}
+
+	public Set<MailSubject> getMailSubjects() {
+		return mailSubjects;
+	}
+
+    public void addMailSubject(MailSubject mailSubject) {
+        if (this.mailSubjects == null) {
+            this.mailSubjects = new HashSet<MailSubject>();
+        }
+        mailSubjects.add(mailSubject);
+    }
 
 	
 	@Override

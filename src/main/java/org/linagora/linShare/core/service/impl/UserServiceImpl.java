@@ -36,6 +36,7 @@ import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.AllowedContact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Guest;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.Share;
@@ -53,6 +54,7 @@ import org.linagora.linShare.core.repository.AllowedContactRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.RecipientFavouriteService;
@@ -90,6 +92,8 @@ public class UserServiceImpl implements UserService {
     private final ShareService shareService;
     
     private final RecipientFavouriteService recipientFavouriteService;
+    
+    private final MailContentBuildingService mailElementsFactory;
 
     /** Constructor.
      * @param userRepository repository.
@@ -100,7 +104,8 @@ public class UserServiceImpl implements UserService {
     		final LogEntryRepository logEntryRepository,final GuestRepository guestRepository
 		, final ParameterService parameterService, ShareService shareService,
 		final RecipientFavouriteService recipientFavouriteService,
-		final AllowedContactRepository allowedContactRepository) {
+		final AllowedContactRepository allowedContactRepository,
+		final MailContentBuildingService mailElementsFactory) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.ldapDao = ldapDao;
@@ -110,6 +115,7 @@ public class UserServiceImpl implements UserService {
 		this.shareService = shareService;
 		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
+		this.mailElementsFactory = mailElementsFactory;
     }
 
     /** Create a guest.
@@ -124,7 +130,7 @@ public class UserServiceImpl implements UserService {
      * @return persisted guest.
      */
     public Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment,
-        String mailSubject, String mailContent, String mailContentTxt, String ownerLogin) throws BusinessException {
+    		MailContainer mailContainer, String ownerLogin) throws BusinessException {
 
     	//We need to check that the guest email isn't registered
     	
@@ -152,11 +158,10 @@ public class UserServiceImpl implements UserService {
         
         logEntryRepository.create(logEntry);
         
-        String content = NotifyContentFactory.makeGuestMailContent(mailContent, password);
-        String contentTxt = NotifyContentFactory.makeGuestMailContent(mailContentTxt, password);
+        mailElementsFactory.buildMailNewGuest(mailContainer, owner, guest, password);
 
         // Send an email to the guest.
-        notifierService.sendNotification(owner.getMail(), mail, mailSubject, content,contentTxt);
+        notifierService.sendNotification(owner.getMail(), mail, mailContainer);
 
         return guest;
     }
@@ -474,8 +479,7 @@ public class UserServiceImpl implements UserService {
 		guestRepository.update(guest);
 	}
 
-	public void resetPassword(String login, String mailSubject,
-			String mailContent, String mailContentTxt) throws BusinessException {
+	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException {
 		Guest guest = guestRepository.findByLogin(login);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
@@ -485,11 +489,10 @@ public class UserServiceImpl implements UserService {
         String password = generatePassword();
         String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
         
-        String content = NotifyContentFactory.makeGuestMailContent(mailContent, password);
-        String contentTxt = NotifyContentFactory.makeGuestMailContent(mailContentTxt, password);
+        mailElementsFactory.buildMailResetPassword(mailContainer, guest, password);
 
         // Send an email to the guest.
-        notifierService.sendNotification(guest.getMail(), guest.getMail(), mailSubject, content,contentTxt);
+        notifierService.sendNotification(guest.getMail(), guest.getMail(), mailContainer);
         
 		guest.setPassword(hashedPassword);
 		guestRepository.update(guest);

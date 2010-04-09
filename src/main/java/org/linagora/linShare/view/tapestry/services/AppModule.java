@@ -71,6 +71,7 @@ import org.linagora.linShare.view.tapestry.rest.impl.UserRestServiceImpl;
 import org.linagora.linShare.view.tapestry.services.impl.AssetProtectionDispatcher;
 import org.linagora.linShare.view.tapestry.services.impl.BusinessMessagesManagementServiceImpl;
 import org.linagora.linShare.view.tapestry.services.impl.ConfigureMarshallerModule;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.MyMultipartDecoderImpl;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.linShare.view.tapestry.services.impl.UserAccessAuthentity;
@@ -398,8 +399,6 @@ public class AppModule
     		 @InjectService("ShareFacade") ShareFacade shareFacade,
     		 @InjectService("UserFacade") UserFacade userFacade,
              @InjectService("ParameterFacade") ParameterFacade parameterFacade,
-    		 @Inject @Path("context:templates/new-guest.html") Asset guestMailTemplate,
-    		 @Inject @Path("context:templates/new-guest.txt") Asset guestMailTemplateTxt,
     		 @Inject @Path("context:templates/shared-message.html") Asset sharedTemplate,
     		 @Inject @Path("context:templates/shared-message.txt") Asset sharedTemplateTxt,
     		 @Inject @Path("context:templates/shared-message-withpassword.html") Asset passwordSharedTemplate,
@@ -407,14 +406,24 @@ public class AppModule
     		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
     		 @InjectService("Templating") Templating templating,
     		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
-    		 @InjectService("ThreadLocale")  ThreadLocale threadLocale
+    		 @InjectService("ThreadLocale")  ThreadLocale threadLocale,
+    		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder
 
     		 )
     {
 
         config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, parameterFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller));
         config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, userFacade, documentFacade, sharedTemplate, sharedTemplateTxt, passwordSharedTemplate, passwordSharedTemplateTxt, propertiesSymbolProvider, templating, validationMessagesSource, threadLocale, xstreamMarshaller));
-        config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, guestMailTemplate, guestMailTemplateTxt,propertiesSymbolProvider, templating, validationMessagesSource,threadLocale, xstreamMarshaller));
+        config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
     }
      
+    public static MailContainerBuilder buildMailContainerBuilder(
+   		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
+		 @InjectService("Templating") Templating templating,
+		 @InjectService("PersistentLocale") PersistentLocale persistentLocale,
+		 @InjectService("Request") Request request,
+		 @Inject @Path("context:templates/mailContainer.html") Asset containerTemplate,
+		 @Inject @Path("context:templates/mailContainer.txt") Asset containerTemplateTxt) {
+    	return new MailContainerBuilder(propertiesSymbolProvider, templating, persistentLocale, request, containerTemplate, containerTemplateTxt);
+    }
 }

@@ -344,6 +344,31 @@
         add constraint FK36A0C738A44B78EB 
         foreign key (parameter_id) 
         references linshare_parameter;
+        
+    create table linshare_mail_templates (
+        parameter_id int8 not null,
+        template_id int4 not null,
+        content_html text,
+        content_txt text,
+        language_id int4
+    );
+
+    create table linshare_mail_subjects (
+        parameter_id int8 not null,
+        subject_id int4 not null,
+        content text,
+        language_id int4
+    );
+
+    alter table linshare_mail_templates 
+        add constraint FDD6A0CABCA44B78EB 
+        foreign key (parameter_id) 
+        references linshare_parameter;
+        
+    alter table linshare_mail_subjects 
+        add constraint FDD6CCCABCA44789EB 
+        foreign key (parameter_id) 
+        references linshare_parameter;
 
     create index index_userlog_entry_target_mail on public.linshare_log_entry (target_mail);
 

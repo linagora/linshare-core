@@ -33,6 +33,7 @@ import org.linagora.linShare.common.service.LinShareMessageHandler;
 import org.linagora.linShare.common.service.MailTestRetriever;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
@@ -133,13 +134,14 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 							if (userService.searchUser(
 									mailTestRetriever.getSenderMail(),
 									"sender", "senderName", null, owner).size() == 0) {
+								MailContainer mailContainer = new MailContainer(
+										"cool", "coolcool", "coolcoolTxt");
 								sender = userService.createGuest(
 										mailTestRetriever.getSenderMail(),
 										"sender", "senderName",
 										mailTestRetriever.getSenderMail(),
-										true, true, "comment", "cool",
-										"coolcool", "coolcoolTxt", owner
-												.getLogin());
+										true, true, "comment", mailContainer,
+										owner.getLogin());
 							} else {
 								sender = userService.findUser(mailTestRetriever
 										.getSenderMail());
@@ -148,13 +150,14 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 									mailTestRetriever.getRecipientMail(),
 									"receiver", "receiverName", null, owner)
 									.size() == 0) {
+								MailContainer mailContainer = new MailContainer(
+										"cool", "coolcool", "coolcoolTxt");
 								recipient = userService.createGuest(
 										mailTestRetriever.getRecipientMail(),
 										"receiver", "receiverName",
 										mailTestRetriever.getRecipientMail(),
-										true, true, "comment", "cool",
-										"coolcool", "coolcoolTxt", owner
-												.getLogin());
+										true, true, "comment", mailContainer,
+										owner.getLogin());
 							} else {
 								recipient = userService
 										.findUser(mailTestRetriever

@@ -36,6 +36,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.service.NotifierService;
@@ -222,4 +223,11 @@ public class MailNotifierServiceImpl implements NotifierService {
         return session;
     }
 
+    public void sendNotification(String fromUser, String recipient,
+    		MailContainer mailContainer) {
+    	sendNotification(fromUser, recipient, mailContainer.getSubject(), 
+    			mailContainer.getContentHTML(), mailContainer.getContentTXT());
+    	
+    }
+    
 }
