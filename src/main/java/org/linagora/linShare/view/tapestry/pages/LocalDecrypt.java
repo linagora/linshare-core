@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.domain.objects.FileInfo;
@@ -58,9 +57,12 @@ public class LocalDecrypt {
 	 * Service injection
 	 **************************************************************************/
 
-	@Inject @Symbol("javawebstart.decrypt.url.codebase")
-	@Property
-	private String jwsUrl;
+	@Inject @Symbol("javawebstart.decrypt.url.suffixcodebase")
+	private String suffixcodebase;
+	
+	
+	@Inject @Symbol("linshare.info.url.base")
+	private String linshareInfoUrlBase;
 	
 	
 	@Inject
@@ -78,7 +80,13 @@ public class LocalDecrypt {
 			
 			Map<String,String> templateParams=new HashMap<String, String>();
 			
-			templateParams.put("${javawebstart.decrypt.url.codebase}", jwsUrl);
+			//result codebase for JNLP is an url like http://localhost:8080/linshare/applet to download jwsDecrypt.jar
+			StringBuffer jwsUrlToPut = new StringBuffer(linshareInfoUrlBase);
+			if(!linshareInfoUrlBase.endsWith("/")) jwsUrlToPut.append("/");
+			jwsUrlToPut.append(suffixcodebase); //application jws directory: applet in this case
+			if(suffixcodebase.endsWith("/")) jwsUrlToPut.deleteCharAt(jwsUrlToPut.length()-1);
+			
+			templateParams.put("${javawebstart.decrypt.url.codebase}", jwsUrlToPut.toString());
 			String jnlp = templating.getMessage(tplcontent, templateParams);
 			
 			byte[] send = jnlp.getBytes();
