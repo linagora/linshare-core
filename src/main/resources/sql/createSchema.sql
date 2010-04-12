@@ -348,16 +348,16 @@
     create table linshare_mail_templates (
         parameter_id int8 not null,
         template_id int4 not null,
+        language_id int4 not null,
         content_html text,
-        content_txt text,
-        language_id int4 not null
+        content_txt text
     );
 
     create table linshare_mail_subjects (
         parameter_id int8 not null,
         subject_id int4 not null,
-        content text,
-        language_id int4 not null
+        language_id int4 not null,
+        content text
     );
 
     alter table linshare_mail_templates 
