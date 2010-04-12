@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linShare.common.service.LinShareMessageHandler;
 import org.linagora.linShare.common.service.MailTestRetriever;
+import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.MailContainer;
@@ -134,8 +135,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 							if (userService.searchUser(
 									mailTestRetriever.getSenderMail(),
 									"sender", "senderName", null, owner).size() == 0) {
-								MailContainer mailContainer = new MailContainer(
-										"cool", "coolcool", "coolcoolTxt");
+								MailContainer mailContainer = new MailContainer("cool",
+										"coolcool", "", Language.DEFAULT, "", "");
 								sender = userService.createGuest(
 										mailTestRetriever.getSenderMail(),
 										"sender", "senderName",
@@ -150,8 +151,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 									mailTestRetriever.getRecipientMail(),
 									"receiver", "receiverName", null, owner)
 									.size() == 0) {
-								MailContainer mailContainer = new MailContainer(
-										"cool", "coolcool", "coolcoolTxt");
+								MailContainer mailContainer = new MailContainer("cool",
+										"coolcool", "", Language.DEFAULT, "", "");
 								recipient = userService.createGuest(
 										mailTestRetriever.getRecipientMail(),
 										"receiver", "receiverName",
