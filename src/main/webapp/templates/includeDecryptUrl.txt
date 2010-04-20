@@ -1,5 +1,0 @@
-	
-	
-Some received files are encrypted. After downloading, take care of decrypting localy with the application:
-${jwsEncryptUrl}
-You have to use <i>password</i> which has been communicated by the person who has done this sharing.

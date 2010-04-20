@@ -1,7 +1,0 @@
-	
-	
-Certains de vos fichiers sont chiffrés. Après le téléchargement, vous devez les déchiffrer
-localement avec l'application:
-${jwsEncryptUrl}
-Vous devez vous munir du mot de passe de déchiffrement qui a du vous être communiqué par l'expéditeur des fichiers.
-

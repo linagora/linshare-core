@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadBase;
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
@@ -35,7 +33,6 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -59,8 +56,6 @@ import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.components.FileUploader;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.services.MyMultipartDecoder;
-import org.linagora.linShare.view.tapestry.services.Templating;
-import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,15 +102,11 @@ public class Index {
     @InjectComponent
     private FileUploader fileUploader;
     
-    @Inject
-    private ComponentResources resources;
-    
     
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
 	
-	@SuppressWarnings("unused")
 	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=250"})
 	private WindowWithEffects windowUpload;
     
@@ -126,21 +117,10 @@ public class Index {
 	private DocumentFacade documentFacade; 
 	
 	@Inject
-	private Templating templating;
-	
-	@SuppressWarnings("unused")
-	@Inject
 	private Messages messages;
 
     @Inject
     private Response response;
-
-    @Inject
-    @Path("context:templates/shared-message.html")
-    private Asset guestSharedTemplate;
-    
-    @Inject
-    private PropertiesSymbolProvider propertiesSymbolProvider;
     
     @Environmental
     private RenderSupport renderSupport;
@@ -459,7 +439,6 @@ public class Index {
 	 * Invoked when a user clicks on "sign" button in the searched document list
 	 * @param object a DocumentVo[]
 	 */
-	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventSignatureFromListDocument")
 	public void signatureFromListDocument(Object[] object){
 

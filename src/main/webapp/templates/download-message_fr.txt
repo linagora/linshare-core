@@ -1,9 +1,0 @@
-
-Bonjour ${firstName} ${lastName},
-
-${recipientFirstName} ${recipientLastName} a téléchargé le's) fichier(s) que vous lui avez mis en partage via LinShare :
-${documentNames}
-
--- 
-LinShare - http://linshare.org - Logiciel libre de partage de fichiers sécurisé
-
