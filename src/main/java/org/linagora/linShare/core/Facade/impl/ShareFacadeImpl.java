@@ -344,70 +344,45 @@ public class ShareFacadeImpl implements ShareFacade {
 		notifierService.sendNotification(currentUser.getMail(),owner.getMail(), subject, messageForDownloadedTemplateContent, messageForDownloadedTemplateContentTxt);
     }
     
-    
-    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String url, String urlInternal, String fileSizeTxt,String oldFileName, String subject, String sharedUpdateDocTemplateContent,String sharedUpdateDocTemplateContentTxt) throws BusinessException{
-    	
-    	//Setting parameters and values for supply the template.
-		Map<String,String> templateParams=new HashMap<String, String>();
-		
-		//TEMPLATE sharedUpdateDocTemplateContent
-		templateParams.put("${firstName}", currentUser.getFirstName());
-		templateParams.put("${lastName}", currentUser.getLastName());
-		templateParams.put("${fileOldName}", oldFileName);
-		
-		templateParams.put("${fileName}", currentDoc.getFileName());
-		templateParams.put("${fileSize}", fileSizeTxt)  ;
-
-		templateParams.put("${mimeType}", currentDoc.getType());
-		
-		//process message
-		String messageForsharedUpdateDocTemplateContent = null;
-		String messageForsharedUpdateDocTemplateContentTxt = null;
-
+    public void sendSharedUpdateDocNotification(DocumentVo currentDoc,
+    		UserVo currentUser, String fileSizeTxt, String oldFileName,
+    		MailContainer mailContainer) throws BusinessException {
     	
     	//1) share with secured url, notification to users.
-    	
+
+		User user = userRepository.findByLogin(currentUser.getLogin());
     	Document doc = documentRepository.findById(currentDoc.getIdentifier());
     	
     	List<SecuredUrl> urls = shareService.getSecureUrlLinkedToDocument(doc);
     	
-    	String urlBase = url;
+    	String urlBase = mailContainer.getUrlBase();
     	if (!(urlBase.charAt(urlBase.length()-1)=='/')) {
     		urlBase = urlBase.concat("/");
 		}
+    	String urlDownload = "";
     	for (SecuredUrl securedUrl : urls) {
 			List<Contact> recipients = securedUrl.getRecipients();
-			String urlDownload = urlBase.concat(securedUrl.getUrlPath()+"/");
+			urlDownload = urlBase.concat(securedUrl.getUrlPath()+"/");
 			urlDownload = urlDownload.concat(securedUrl.getAlea());
 			
-			templateParams.put("${url}", urlDownload);
-			
     		for (Contact contact : recipients) {
-    			templateParams.put("${urlparam}", "?email="+contact.getMail());
-    			
-    			messageForsharedUpdateDocTemplateContent = templating.getMessage(sharedUpdateDocTemplateContent, templateParams);
-    			messageForsharedUpdateDocTemplateContentTxt = templating.getMessage(sharedUpdateDocTemplateContentTxt, templateParams);
-    			
-    			notifierService.sendNotification(currentUser.getMail(),contact.getMail(), subject, messageForsharedUpdateDocTemplateContent, messageForsharedUpdateDocTemplateContentTxt);
+    			String urlparam = "?email="+contact.getMail();
+    			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, urlDownload, urlparam);
+    			notifierService.sendNotification(currentUser.getMail(),contact.getMail(), mailContainer_);
 			}
 		}
-
-		templateParams.put("${urlparam}", "");
 		
     	//2) normal share, notification to guest and internal user
 		List<Share> listShare = shareService.getSharesLinkedToDocument(doc);
 		
 		for (Share share : listShare) {
 			if (share.getReceiver().getUserType().equals(UserType.GUEST)) {
-				templateParams.put("${url}", url);
+				urlDownload = mailContainer.getUrlBase();
 			} else {
-				templateParams.put("${url}", urlInternal);
+				urlDownload = mailContainer.getUrlInternal();
 			}
-			
-			messageForsharedUpdateDocTemplateContent = templating.getMessage(sharedUpdateDocTemplateContent, templateParams);
-			messageForsharedUpdateDocTemplateContentTxt = templating.getMessage(sharedUpdateDocTemplateContentTxt, templateParams);
-			
-			notifierService.sendNotification(currentUser.getMail(),share.getReceiver().getMail(), subject, messageForsharedUpdateDocTemplateContent, messageForsharedUpdateDocTemplateContentTxt);
+			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, urlDownload, "");
+			notifierService.sendNotification(currentUser.getMail(),share.getReceiver().getMail(), mailContainer_);
 		}
     	
     }

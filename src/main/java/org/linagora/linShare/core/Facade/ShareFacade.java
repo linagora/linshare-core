@@ -143,16 +143,12 @@ public interface ShareFacade {
      * send a mail notification to all users which have received a given shared document which has been updated
      * @param currentDoc current document with an updated content
      * @param currentUser current user which does the update action
-     * @param oldFileName old file name of the updated doc
-     * @param url url of the application
-     * @param urlInternal url for internal user connection
      * @param fileSizeTxt friendly size of the file
-     * @param subject of the mail notification
-     * @param sharedUpdateDocTemplateContent template
-     * @param sharedUpdateDocTemplateContentTxt template
+     * @param oldFileName old file name of the updated doc
+     * @param mailContainer the informations to build the notification
      * @throws BusinessException
      */
-    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String url, String urlInternal, String fileSizeTxt,String oldFileName, String subject, String sharedUpdateDocTemplateContent,String sharedUpdateDocTemplateContentTxt) throws BusinessException;
+    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String fileSizeTxt,String oldFileName, MailContainer mailContainer) throws BusinessException;
     
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients) throws BusinessException;
 

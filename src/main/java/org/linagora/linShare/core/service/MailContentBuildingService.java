@@ -75,7 +75,7 @@ public interface MailContentBuildingService {
 			throws BusinessException;
 
 	/**
-	 * Notify a user that he received new sharings
+	 * Notify a user that he received new sharing
 	 */
 	public MailContainer buildMailNewSharing(MailContainer mailContainer,
 			User owner, String recipientMail, List<DocumentVo> docs, String linShareUrl,
@@ -89,8 +89,16 @@ public interface MailContentBuildingService {
 	 */
 	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer,
 			User owner, User recipient, Document document, String oldDocName,
-			String fileSizeTxt, String linShareUrl, String linShareUrlParam,
-			boolean hasToDecrypt, String jwsEncryptUrl) 
+			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
+			throws BusinessException;
+
+	/**
+	 * Notify a user that some shared files has been updated
+	 * by the sender
+	 */
+	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer,
+			User owner, String recipientMail, Document document, String oldDocName,
+			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
 			throws BusinessException;
 
 }
