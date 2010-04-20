@@ -39,9 +39,25 @@ public class MailContainer {
 	private String urlInternal;
 	private String urlBase;
 	private Language language;
+	
 
 	/**
-	 * Builder provided for testing purpose.
+	 * Copy constructor
+	 * 
+	 * @param mailContainer
+	 */
+	public MailContainer(MailContainer mailContainer) {
+		this.subject = mailContainer.subject;
+		this.contentTXT = mailContainer.contentTXT;
+		this.contentHTML = mailContainer.contentHTML;
+		this.personalMessage = mailContainer.personalMessage;
+		this.urlInternal = mailContainer.urlInternal;
+		this.urlBase = mailContainer.urlBase;
+		this.language = mailContainer.language;
+	}
+
+	/**
+	 * Constructor provided for testing purpose.
 	 * 
 	 * @param subject
 	 * @param contentTxt

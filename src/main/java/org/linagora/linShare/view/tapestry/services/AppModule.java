@@ -399,12 +399,7 @@ public class AppModule
     		 @InjectService("ShareFacade") ShareFacade shareFacade,
     		 @InjectService("UserFacade") UserFacade userFacade,
              @InjectService("ParameterFacade") ParameterFacade parameterFacade,
-    		 @Inject @Path("context:templates/shared-message.html") Asset sharedTemplate,
-    		 @Inject @Path("context:templates/shared-message.txt") Asset sharedTemplateTxt,
-    		 @Inject @Path("context:templates/shared-message-withpassword.html") Asset passwordSharedTemplate,
-    		 @Inject @Path("context:templates/shared-message-withpassword.txt") Asset passwordSharedTemplateTxt,
     		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
-    		 @InjectService("Templating") Templating templating,
     		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
     		 @InjectService("ThreadLocale")  ThreadLocale threadLocale,
     		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder
@@ -413,7 +408,7 @@ public class AppModule
     {
 
         config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, parameterFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller));
-        config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, userFacade, documentFacade, sharedTemplate, sharedTemplateTxt, passwordSharedTemplate, passwordSharedTemplateTxt, propertiesSymbolProvider, templating, validationMessagesSource, threadLocale, xstreamMarshaller));
+        config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, documentFacade, mailContainerBuilder));
         config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
     }
      

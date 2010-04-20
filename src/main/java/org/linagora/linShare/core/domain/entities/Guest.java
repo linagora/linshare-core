@@ -61,6 +61,14 @@ public class Guest extends User {
         this.comment = comment;
         this.restricted = false;
     }
+	
+
+	public Guest(String login, String firstName, String lastName, String mail) {
+        super(login, firstName, lastName, mail, false, false);
+        this.password = "";
+        this.comment = "";
+        this.restricted = true;
+    }
 
     @Override
     public UserType getUserType() {

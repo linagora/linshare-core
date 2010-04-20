@@ -25,6 +25,7 @@ import java.util.List;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
 /**
@@ -68,9 +69,18 @@ public interface MailContentBuildingService {
 	 * Notify a user that he received new sharings
 	 */
 	public MailContainer buildMailNewSharing(MailContainer mailContainer,
-			User owner, User recipient, List<Document> docs,
-			String personalMessage, String linShareUrl,
-			String linShareUrlParam, String password, boolean hasToDecrypt)
+			User owner, User recipient, List<DocumentVo> docs,
+			String linShareUrl, String linShareUrlParam, String password, 
+			boolean hasToDecrypt, String jwsEncryptUrl)
+			throws BusinessException;
+
+	/**
+	 * Notify a user that he received new sharings
+	 */
+	public MailContainer buildMailNewSharing(MailContainer mailContainer,
+			User owner, String recipientMail, List<DocumentVo> docs, String linShareUrl,
+			String linShareUrlParam, String password, 
+			boolean hasToDecrypt, String jwsEncryptUrl)
 			throws BusinessException;
 
 	/**
@@ -80,6 +90,7 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer,
 			User owner, User recipient, Document document, String oldDocName,
 			String fileSizeTxt, String linShareUrl, String linShareUrlParam,
-			boolean hasToDecrypt) throws BusinessException;
+			boolean hasToDecrypt, String jwsEncryptUrl) 
+			throws BusinessException;
 
 }

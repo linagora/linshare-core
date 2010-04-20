@@ -124,8 +124,8 @@ public class UserServiceImpl implements UserService {
      * @param lastName last name.
      * @param mail guest email address.
      * @param canUpload : if the user can upload file
-     * @param mailSubject mail subject.
-     * @param mailContent.
+     * @param canCreateGuest : if the user can create other users
+     * @param mailContainer : the informations for the notification
      * @param ownerLogin login of the user who create the guest.
      * @return persisted guest.
      */
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
         
         logEntryRepository.create(logEntry);
         
-        mailElementsFactory.buildMailNewGuest(mailContainer, owner, guest, password);
+        mailContainer = mailElementsFactory.buildMailNewGuest(mailContainer, owner, guest, password);
 
         // Send an email to the guest.
         notifierService.sendNotification(owner.getMail(), mail, mailContainer);
@@ -489,7 +489,7 @@ public class UserServiceImpl implements UserService {
         String password = generatePassword();
         String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
         
-        mailElementsFactory.buildMailResetPassword(mailContainer, guest, password);
+        mailContainer = mailElementsFactory.buildMailResetPassword(mailContainer, guest, password);
 
         // Send an email to the guest.
         notifierService.sendNotification(guest.getMail(), guest.getMail(), mailContainer);

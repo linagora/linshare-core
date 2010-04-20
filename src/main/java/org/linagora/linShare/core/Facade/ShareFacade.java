@@ -23,6 +23,7 @@ package org.linagora.linShare.core.Facade;
 import java.util.Calendar;
 import java.util.List;
 
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
@@ -52,14 +53,17 @@ public interface ShareFacade {
 	 * @param owner : the document owner
 	 * @param documents : the list of documents to be shared
 	 * @param recipients : the recipients list
-	 * @param comment : the comment added by the user
-	 * @param message : the message to send by mail
-	 * @param subject : the subject of the mail
+	 * @param mailContainer : the information to build notifications
+	 * @param expirationDate : the expiration date selected by user
+	 * @param docsEncrypted : if there is encrypted documents
+	 * @param jwsEncryptUrlString : the url for jws service
 	 * @return SuccessesAndFailsItems<SharedDocumentVo> : the list of sharing that succedded and failed
 	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,String comment, String messageInternal, String messageInternalTxt,
-			String messageGuest, String messageGuestTxt,String subject, Calendar expirationDate) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, 
+			List<UserVo> recipients, MailContainer mailContainer,
+			Calendar expirationDate, boolean docsEncrypted, String jwsEncryptUrlString) 
+			throws BusinessException;
 
 	
 	
@@ -68,38 +72,34 @@ public interface ShareFacade {
 	 * @param owner
 	 * @param documents
 	 * @param recipientsEmail
-	 * @param comment
-	 * @param message
-	 * @param subject
-	 * @param linShareUrlInternal
-	 * @param linShareUrlAnonymous
 	 * @param secureSharing
-	 * @param sharedTemplateContent
-	 * @param passwordSharedTemplateContent
+	 * @param mailContainer
 	 * @return
 	 * @throws BusinessException
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt,String includeDecryptUrlTemplateContent ,String includeDecryptUrlTemplateContentTxt) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
+			UserVo owner, List<DocumentVo> documents,
+			List<String> recipientsEmail,
+			boolean secureSharing, MailContainer mailContainer)
+			throws BusinessException;
 
 	/**
 	 * same function as createSharingWithMailUsingRecipientsEmail() BUT we give the expiration date selected by the user
 	 * @param owner
 	 * @param documents
 	 * @param recipientsEmail
-	 * @param comment
-	 * @param message
-	 * @param subject
-	 * @param linShareUrlInternal
-	 * @param linShareUrlAnonymous
 	 * @param secureSharing
-	 * @param sharedTemplateContent
-	 * @param passwordSharedTemplateContent
+	 * @param mailContainer
      * @param expiryDateSelected
 	 * @return
 	 * @throws BusinessException
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt,String includeDecryptUrlTemplateContent ,String includeDecryptUrlTemplateContentTxt,Calendar expiryDateSelected) throws BusinessException;
-	
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
+			UserVo owner, List<DocumentVo> documents,
+			List<String> recipientsEmail,
+			boolean secureSharing, MailContainer mailContainer,
+			Calendar expiryDateSelected)
+			throws BusinessException;
 	
 	/**
 	 * Retrieve all the sharing received by a user

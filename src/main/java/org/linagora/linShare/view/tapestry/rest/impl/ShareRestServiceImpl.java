@@ -25,25 +25,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
-import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.rest.ShareRestService;
-import org.linagora.linShare.view.tapestry.services.Templating;
-import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
-import org.linagora.restmarshaller.Marshaller;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,50 +49,22 @@ public class ShareRestServiceImpl implements ShareRestService {
 	private final ApplicationStateManager applicationStateManager; 
 	
 	private final ShareFacade shareFacade;
-	private final UserFacade userFacade;
+	
 	private final DocumentFacade documentFacade;
 	
-	private final Marshaller xstreamMarshaller;
-
-    private final Asset sharedTemplate;
-    private final Asset sharedTemplateTxt;
-    private final Asset passwordSharedTemplate;
-    private final Asset passwordSharedTemplateTxt;
-    
-	private final PropertiesSymbolProvider propertiesSymbolProvider;
-	
-	private final Templating templating;
-	private final ThreadLocale threadLocale; 
-	private final ValidationMessagesSource validationMessagesSource;
+	private final MailContainerBuilder mailContainerBuilder;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ShareRestServiceImpl.class);
 	
 	public ShareRestServiceImpl(final ApplicationStateManager applicationStateManager,
-				final ShareFacade shareFacade, 
-				final UserFacade userFacade,
+				final ShareFacade shareFacade,
 				final DocumentFacade documentFacade,
-				final Asset sharedTemplate,
-				final Asset sharedTemplateTxt,
-				final Asset passwordSharedTemplate,
-				final Asset passwordSharedTemplateTxt,
-				final PropertiesSymbolProvider propertiesSymbolProvider,
-				final Templating templating,  final ValidationMessagesSource validationMessagesSource,
-				final ThreadLocale threadLocale,
-				final Marshaller xstreamMarshaller) {
+				final MailContainerBuilder mailContainerBuilder) {
 		super();
 		this.applicationStateManager = applicationStateManager;
 		this.shareFacade = shareFacade;
-		this.userFacade = userFacade;
 		this.documentFacade = documentFacade;
-		this.sharedTemplate = sharedTemplate;
-		this.sharedTemplateTxt = sharedTemplateTxt;
-		this.passwordSharedTemplate = passwordSharedTemplate;
-		this.passwordSharedTemplateTxt = passwordSharedTemplateTxt;
-		this.propertiesSymbolProvider = propertiesSymbolProvider;
-		this.templating = templating;
-		this.threadLocale = threadLocale;
-		this.validationMessagesSource = validationMessagesSource;
-		this.xstreamMarshaller = xstreamMarshaller;
+		this.mailContainerBuilder = mailContainerBuilder;
 	}
 	
 	
@@ -136,28 +102,13 @@ public class ShareRestServiceImpl implements ShareRestService {
 		
 		SuccessesAndFailsItems<ShareDocumentVo> successes;
 
-		// Prepare mail content :
-		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
-		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
-
-		String sharedTemplateContent = templating.readFullyTemplateContent(sharedTemplate.getResource().openStream());
-		String sharedTemplateContentTxt = templating.readFullyTemplateContent(sharedTemplateTxt.getResource().openStream());
-		String passwordSharedTemplateContent = templating.readFullyTemplateContent(passwordSharedTemplate.getResource().openStream());
-		String passwordSharedTemplateContentTxt = templating.readFullyTemplateContent(passwordSharedTemplateTxt.getResource().openStream());
-
-		// Get the messages service to localize the mail sent
-		Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
-
-		String subject = messages.get("mail.user.all.share.subject");
-
 		// Get if it has to be a secured share
 		String securedShareValue = request.getParameter("securedShare");
 		boolean secureSharing = securedShareValue == null ? false : securedShareValue.equals("1");
 
 		try {
-			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(
-                    actor, listDoc, listRecipient, "", subject, linShareUrlInternal, linShareUrlBase,
-                    secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt,null,null);
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(actor, null);
+			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(actor, listDoc, listRecipient, secureSharing, mailContainer);
 		} catch (BusinessException e) {
 			logger.error("could not share the document " + docVo.getIdentifier() + " to user " + targetMail + " by user " + actor.getMail() + " reason : " + e.getMessage());
 			response.setHeader("BusinessError", e.getErrorCode().getCode()+"");
@@ -252,35 +203,11 @@ public class ShareRestServiceImpl implements ShareRestService {
 			message = request.getParameter("message");
 		}
 		
-		// getting the templating data
-		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
-		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
-		
-		
-		String sharedTemplateContent = null;
-		String sharedTemplateContentTxt = null;
-		String passwordSharedTemplateContent = null;
-		String passwordSharedTemplateContentTxt = null;
-		
-		sharedTemplateContent = templating.readFullyTemplateContent(sharedTemplate.getResource().openStream());
-		sharedTemplateContentTxt = templating.readFullyTemplateContent(sharedTemplateTxt.getResource().openStream());
-		passwordSharedTemplateContent = templating.readFullyTemplateContent(passwordSharedTemplate.getResource().openStream());
-		passwordSharedTemplateContentTxt = templating.readFullyTemplateContent(passwordSharedTemplateTxt.getResource().openStream());
-		
-		/**
-		 * retrieve the subject of the mail.
-		 */
-		// Get the messages service to localize the mail sent
-		Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
-		
-		String subject=messages.get("mail.user.all.share.subject");
-		
 		SuccessesAndFailsItems<ShareDocumentVo> successes;
 		
 		try {
-			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(
-					actor, listDoc, listRecipient, message, subject, linShareUrlInternal, linShareUrlBase, secureSharing,
-					sharedTemplateContent, sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt,null,null);
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(actor, message);
+			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(actor, listDoc, listRecipient, secureSharing, mailContainer);
 		} catch (BusinessException e) {
 			logger.error("could not share the document " + docVo.getIdentifier() + " to user " + targetMail + " by user " + actor.getMail() + " reason : " + e.getMessage());
 			response.setHeader("BusinessError", e.getErrorCode().getCode()+"");

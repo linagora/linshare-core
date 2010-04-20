@@ -20,7 +20,6 @@
 */
 package org.linagora.linShare.view.tapestry.components;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,9 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.regex.Pattern;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
@@ -42,7 +39,6 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -55,18 +51,16 @@ import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.ShareExpiryDateFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linShare.view.tapestry.services.Templating;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
-import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,17 +75,14 @@ public class ConfirmSharePopup{
 	private ShareSessionObjects shareSessionObjects;
 	
 
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	@Property
 	private List<UserVo> usersVo;
 
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	@Property
 	private List<DocumentVo> documentsVo;
 
-	@SuppressWarnings("unused")
 	@Component(parameters = {"style=bluelighting", "show=false","width=650", "height=550"})
 	private WindowWithEffects confirmWindow;
 
@@ -107,9 +98,6 @@ public class ConfirmSharePopup{
 
 	@Inject
 	private Messages messages;
-
-	@Inject
-	private Templating templating;
 	
 	@Property
 	private String textAreaValue;
@@ -162,35 +150,13 @@ public class ConfirmSharePopup{
 	@Property
 	private boolean warningCryptedFiles;
 	
+	@Inject
+	private MailContainerBuilder mailContainerBuilder;
+	
 
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */
-	@Inject
-	@Path("context:templates/shared-message.html")
-	private Asset sharedTemplate;
-	
-	@Inject
-	@Path("context:templates/shared-message.txt")
-	private Asset sharedTemplateTxt;
-	
-	@Inject
-	@Path("context:templates/shared-message-withpassword.html")
-	private Asset passwordSharedTemplate;
-	
-	@Inject
-	@Path("context:templates/shared-message-withpassword.txt")
-	private Asset passwordSharedTemplateTxt;
-	
-	
-	@Inject
-	@Path("context:templates/includeDecryptUrl.html")
-	private Asset includeDecryptUrlTemplate;
-	
-	@Inject
-	@Path("context:templates/includeDecryptUrl.txt")
-	private Asset includeDecryptUrlTemplateTxt;
-	
 	
 	@Inject
 	private ShareFacade shareFacade;
@@ -206,9 +172,6 @@ public class ConfirmSharePopup{
 
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
-	
-	@Inject
-	private PropertiesSymbolProvider propertiesSymbolProvider;
 	
     @Environmental
     private RenderSupport renderSupport;
@@ -396,62 +359,13 @@ public class ConfirmSharePopup{
 		}
 		else dateExpiry.setTime(dateSelected);
 
-		/** 
-		 * retrieve the url from propertie file
-		 * 
-		 */
-		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
-		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
-
-		/**
-		 * retrieve the subject of the mail.
-		 */
-		String subject = "";
-		if (textAreaSubjectValue==null || textAreaSubjectValue.trim().length()==0) {
-			subject=messages.get("mail.user.all.share.subject");
-		}
-		else {
-			subject = textAreaSubjectValue;
-		}
+		//PROCESS SHARE
 		
-		// prevent NPE
-		if (textAreaValue==null)
-			textAreaValue = "";
-		
-		//html template
-		String sharedTemplateContent = null;
-		String passwordSharedTemplateContent = null;
-		String includeDecryptUrlTemplateContent = null;
-		
-		//TXT template
-		String sharedTemplateContentTxt = null;
-		String passwordSharedTemplateContentTxt = null;
-		String includeDecryptUrlTemplateContentTxt = null;
-		
-		
-
-		try {
-			sharedTemplateContent = templating.readFullyTemplateContent(sharedTemplate.getResource().openStream());
-			passwordSharedTemplateContent = templating.readFullyTemplateContent(passwordSharedTemplate.getResource().openStream());
-			includeDecryptUrlTemplateContent = templating.readFullyTemplateContent(includeDecryptUrlTemplate.getResource().openStream());
-			
-			sharedTemplateContentTxt = templating.readFullyTemplateContent(sharedTemplateTxt.getResource().openStream());
-			passwordSharedTemplateContentTxt = templating.readFullyTemplateContent(passwordSharedTemplateTxt.getResource().openStream());
-			includeDecryptUrlTemplateContentTxt = templating.readFullyTemplateContent(includeDecryptUrlTemplateTxt.getResource().openStream());
-			
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
-		}
 		SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 		try {
-		
-			//OLD CALL with userVo !
-			//sharing = shareFacade.createSharingWithMail(userVo, documentsVo, usersVo,textAreaValue, message,subject);
-			
-			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt, includeDecryptUrlTemplateContent,includeDecryptUrlTemplateContentTxt,dateExpiry);
-			
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
+			mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo, recipientsEmail, secureSharing, mailContainer, dateExpiry);
 
 		
 		} catch (BusinessException e1) {
