@@ -31,7 +31,8 @@
 	</locale>
 
 	<resources>
-		<res id="InfoPanel.info" src="README"/>
+		<res id="HTMLInfoPanel.readme" src="README"/>
+		<res id="HTMLInfoPanel.launch" src="LAUNCH"/>
 		<res id="LicencePanel.licence" src="COPYING"/>
 		<res id="Installer.image"   src="@{project.basedir}/src/install/resources/logo_linshare_small.png" />
 		<res id="userInputSpec.xml" src="@{project.basedir}/src/install/resources/userInputSpec.xml" /><!--
@@ -43,14 +44,15 @@
 
 	<panels>
 		<panel classname="CheckedHelloPanel"/>
-		<panel classname="InfoPanel"/>
+		<panel classname="HTMLInfoPanel" id="readme"/>
 		<panel classname="LicencePanel"/>
 		<panel classname="TargetPanel"/>
 		<panel classname="UserInputPanel" id="myuserinput" />
 		<panel classname="SummaryPanel" />
 		<panel classname="InstallPanel" />
-		<!--<panel classname="ShortcutPanel"/>
-		--><panel classname="SimpleFinishPanel" />
+		<!--<panel classname="ShortcutPanel"/>-->
+		<panel classname="HTMLInfoPanel" id="launch"/>
+		<panel classname="SimpleFinishPanel" />
 	</panels>
 
 	<listeners>
