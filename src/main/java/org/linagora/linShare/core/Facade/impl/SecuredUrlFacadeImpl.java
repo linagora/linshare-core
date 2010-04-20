@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.core.Facade.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,8 @@ import java.util.Map;
 
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
 import org.linagora.linShare.core.domain.entities.Contact;
+import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentAdapter;
@@ -34,10 +37,11 @@ import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
+import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.SecuredUrlService;
-import org.linagora.linShare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,19 +55,23 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 	
 	private final NotifierService notifierService;
 	
-	private final Templating templating;
-	
 	private final UserRepository<User> userRepository;
+
+	private final DocumentRepository documentRepository;
+    
+    private final MailContentBuildingService mailElementsFactory;
 	
 	public SecuredUrlFacadeImpl(SecuredUrlService securedUrlService,DocumentAdapter documentAdapter,
-			final NotifierService notifierService, final Templating templating, 
-			final UserRepository<User> userRepository) {
+			final NotifierService notifierService,
+			final UserRepository<User> userRepository,
+			final DocumentRepository documentRepository,
+    		final MailContentBuildingService mailElementsFactory) {
 		this.securedUrlService=securedUrlService;
 		this.documentAdapter=documentAdapter;
 		this.notifierService = notifierService;
-		this.templating = templating;
 		this.userRepository = userRepository;
-		
+		this.documentRepository = documentRepository;
+		this.mailElementsFactory = mailElementsFactory;
 	}
 
 	public DocumentVo getDocument(String alea, String urlPath,
@@ -108,35 +116,17 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		securedUrlService.logDownloadedDocument(alea, urlPath, password, documentId, email) ;
 	}
 
-	public void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, List<DocumentVo> docs, String email) {
-		//Setting parameters and values for supply the template.
-		Map<String,String> templateParams=new HashMap<String, String>();
+	public void sendEmailNotification(String alea, String urlPath, MailContainer mailContainer, List<DocumentVo> docs, String email) throws BusinessException {
 		
 		User owner = securedUrlService.getSecuredUrlOwner(alea, urlPath);
-		
-		//TEMPLATE sharedTemplateContent
-		templateParams.put("${firstName}", owner.getFirstName());
-		templateParams.put("${lastName}", owner.getLastName());
-		
-		templateParams.put("${email}", email); //email of the user (anonymous) who has has made the download of the file
-		
-		StringBuffer names = new StringBuffer();
-		StringBuffer namesTxt = new StringBuffer();
-		
-		if (docs != null && docs.size()>0) {
-			for (DocumentVo doc : docs) {
-				names.append("<li>"+doc.getFileName()+"</li>");
-				namesTxt.append(doc.getFileName()+"\n");
-			}	
+		List<Document> docList = new ArrayList<Document>();
+		for (DocumentVo documentVo : docs) {
+			docList.add(documentRepository.findById(documentVo.getIdentifier()));
 		}
-		templateParams.put("${documentNames}", names.toString());
-		templateParams.put("${documentNamesTxt}", namesTxt.toString());
 		
-		String messageForAnonymousDownloadTemplateContent = templating.getMessage(anonymousDownloadTemplateContent, templateParams);
-		String messageForAnonymousDownloadTemplateContentTxt = templating.getMessage(anonymousDownloadTemplateContentTxt, templateParams);
-		
+		mailContainer = mailElementsFactory.buildMailAnonymousDownload(mailContainer, docList, email, owner);
 		//send a notification by mail to the owner
-		notifierService.sendNotification(null,owner.getMail(), subject, messageForAnonymousDownloadTemplateContent,messageForAnonymousDownloadTemplateContentTxt);
+		notifierService.sendNotification(null,owner.getMail(), mailContainer);
 	}
 	
 	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {

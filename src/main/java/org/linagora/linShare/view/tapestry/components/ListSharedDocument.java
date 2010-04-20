@@ -30,7 +30,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
@@ -38,7 +37,6 @@ import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -54,6 +52,7 @@ import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -70,7 +69,7 @@ import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,17 +163,9 @@ public class ListSharedDocument {
 
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
-    
-    @Inject
-	private Templating templating;
 	
 	@Inject
-	@Path("context:templates/download-message.html")
-	private Asset downloadTemplate;
-	
-	@Inject
-	@Path("context:templates/download-message.txt")
-	private Asset downloadTemplateTxt;
+	private MailContainerBuilder mailContainerBuilder;
 	
 	/***********************************
 	 * Flags
@@ -255,16 +246,11 @@ public class ListSharedDocument {
 	
 	private void notifyOwnerByEmail(ShareDocumentVo currentSharedDocumentVo) {
 		try {
-			
-			String subject=messages.get("mail.user.all.download.subject");
-			
-			String downloadTemplateContent = templating.readFullyTemplateContent(downloadTemplate.getResource().openStream());
-			
-			String downloadTemplateContentTxt = templating.readFullyTemplateContent(downloadTemplateTxt.getResource().openStream());
-			shareFacade.sendDownloadNotification(currentSharedDocumentVo, user, subject, downloadTemplateContent, downloadTemplateContentTxt);
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(user, null);
+			shareFacade.sendDownloadNotification(currentSharedDocumentVo, user, mailContainer);
+		} catch (BusinessException e) {
+			logger.error("Problem while sending mail", e);
+			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Problem while sending mail",e);
 		}		
 	}
 

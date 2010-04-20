@@ -40,7 +40,6 @@
        	 <constructor-arg ref="notifierService"/>
        	 <constructor-arg ref="userService"/>
          <constructor-arg ref="documentService"/>
-         <constructor-arg ref="templating"/>
          <constructor-arg ref="mailContentBuildingService" />
    	  </bean>
  
@@ -53,8 +52,9 @@
    	  	<constructor-arg ref="securedUrlService"/>
    	  	<constructor-arg ref="documentAdapter"/>
    	  	<constructor-arg ref="notifierService"/>
-   	  	<constructor-arg ref="templating"/>
    	  	<constructor-arg ref="userRepository"/>
+   	  	<constructor-arg ref="documentRepository"/>
+         <constructor-arg ref="mailContentBuildingService" />
    	  </bean>
    	  
  <!-- 

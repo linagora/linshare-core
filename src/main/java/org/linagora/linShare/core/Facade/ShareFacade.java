@@ -136,7 +136,14 @@ public interface ShareFacade {
     
     
     
-    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, String subject, String downloadTemplateContent,String downloadTemplateContentTxt);
+    /**
+     * Send a notification to the owner of the shared document which has been downloaded
+     * 
+     * @param sharedDocument
+     * @param currentUser
+     * @param mailContainer
+     */
+    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, MailContainer mailContainer) throws BusinessException;
     
     
     /**

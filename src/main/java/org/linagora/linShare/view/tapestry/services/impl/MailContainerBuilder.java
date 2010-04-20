@@ -80,7 +80,7 @@ public class MailContainerBuilder {
 			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
 		}
 		Locale userLocale = null;
-    	if (((userVo.getLocale())!= null) && (!userVo.getLocale().equals(""))) {
+    	if (userVo != null && userVo.getLocale()!= null && (!userVo.getLocale().equals(""))) {
     		userLocale = new Locale(userVo.getLocale());
     	}
     	Language language = WelcomeMessageUtils.getLanguageFromLocale(persistentLocale.get(), request.getLocale(), userLocale);

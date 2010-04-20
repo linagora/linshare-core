@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -148,13 +149,11 @@ public interface SecuredUrlFacade {
 	 * Send an email notification to the owner of the secured url when the documents are downloaded
 	 * @param alea
 	 * @param urlPath
-	 * @param subject
-	 * @param anonymousDownloadTemplateContent
-	 * @param anonymousDownloadTemplateContentTxt
+	 * @param mailContainer
 	 * @param docs 
 	 * @param email of the user who has downloaded the documents
 	 */
-	void sendEmailNotification(String alea, String urlPath, String subject, String anonymousDownloadTemplateContent,String anonymousDownloadTemplateContentTxt, List<DocumentVo> docs, String email);
+	void sendEmailNotification(String alea, String urlPath, MailContainer mailContainer, List<DocumentVo> docs, String email) throws BusinessException;
 
 
 	

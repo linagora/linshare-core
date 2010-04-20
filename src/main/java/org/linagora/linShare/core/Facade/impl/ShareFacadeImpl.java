@@ -23,9 +23,7 @@ package org.linagora.linShare.core.Facade.impl;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
@@ -53,7 +51,6 @@ import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
-import org.linagora.linShare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,9 +77,6 @@ public class ShareFacadeImpl implements ShareFacade {
     private final DocumentService documentService;
     
     
-    private final Templating templating;
-    
-    
 	
 	public ShareFacadeImpl(
 			final ShareService shareService,
@@ -93,7 +87,6 @@ public class ShareFacadeImpl implements ShareFacade {
 			final NotifierService mailNotifierService,
 			final UserService userService,
             final DocumentService documentService,
-            final Templating templating,
     		final MailContentBuildingService mailElementsFactory) {
 		super();
 		this.shareService = shareService;
@@ -104,7 +97,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.notifierService=mailNotifierService;
 		this.userService = userService;
         this.documentService = documentService;
-        this.templating=templating;
 		this.mailElementsFactory = mailElementsFactory;
 	}
 
@@ -322,26 +314,19 @@ public class ShareFacadeImpl implements ShareFacade {
     }
     
     
-    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, String subject, String downloadTemplateContent,String downloadTemplateContentTxt) {
-    	//Setting parameters and values for supply the template.
-		Map<String,String> templateParams=new HashMap<String, String>();
+    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, MailContainer mailContainer) throws BusinessException {
 		
-		UserVo owner = sharedDocument.getSender();
-		
-		//TEMPLATE sharedTemplateContent
-		templateParams.put("${firstName}", owner.getFirstName());
-		templateParams.put("${lastName}", owner.getLastName());
+		UserVo ownerVo = sharedDocument.getSender();
 
-		//currentUser who is doing the download is the recipient
-		templateParams.put("${recipientFirstName}", currentUser.getFirstName());
-		templateParams.put("${recipientLastName}", currentUser.getLastName());
+		User user = userRepository.findByLogin(currentUser.getLogin());
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
 		
-		templateParams.put("${documentNames}", "<li>" + sharedDocument.getFileName() + "</li>") ;
-		templateParams.put("${documentNamesTxt}", sharedDocument.getFileName());
+		Document doc = documentRepository.findById(sharedDocument.getIdentifier());
+		List<Document> docList = new ArrayList<Document>();
+		docList.add(doc);
 		
-		String messageForDownloadedTemplateContent = templating.getMessage(downloadTemplateContent, templateParams);
-		String messageForDownloadedTemplateContentTxt = templating.getMessage(downloadTemplateContentTxt, templateParams);
-		notifierService.sendNotification(currentUser.getMail(),owner.getMail(), subject, messageForDownloadedTemplateContent, messageForDownloadedTemplateContentTxt);
+		mailContainer = mailElementsFactory.buildMailRegisteredDownload(mailContainer, docList, user, owner);
+		notifierService.sendNotification(currentUser.getMail(),owner.getMail(), mailContainer);
     }
     
     public void sendSharedUpdateDocNotification(DocumentVo currentDoc,

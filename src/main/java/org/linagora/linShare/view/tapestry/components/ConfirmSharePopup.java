@@ -150,9 +150,6 @@ public class ConfirmSharePopup{
 	@Property
 	private boolean warningCryptedFiles;
 	
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
-	
 
 	/* ***********************************************************
 	 *                      Injected services
@@ -178,6 +175,9 @@ public class ConfirmSharePopup{
 
 	@Inject
 	private ComponentResources componentResources;
+	
+	@Inject
+	private MailContainerBuilder mailContainerBuilder;
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
