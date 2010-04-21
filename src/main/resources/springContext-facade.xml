@@ -37,6 +37,7 @@
        	 <constructor-arg ref="shareTransformer"/>
        	 <constructor-arg ref="userRepository"/>
        	 <constructor-arg ref="documentRepository"/>
+       	 <constructor-arg ref="groupRepository"/>
        	 <constructor-arg ref="notifierService"/>
        	 <constructor-arg ref="userService"/>
          <constructor-arg ref="documentService"/>

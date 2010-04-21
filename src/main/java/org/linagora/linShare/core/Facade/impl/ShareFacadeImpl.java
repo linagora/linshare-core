@@ -29,6 +29,8 @@ import java.util.Set;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Group;
+import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
@@ -45,6 +47,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.DocumentRepository;
+import org.linagora.linShare.core.repository.GroupRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
@@ -67,6 +70,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final UserRepository<User> userRepository;
 
 	private final DocumentRepository documentRepository;
+
+	private final GroupRepository groupRepository;
 	
 	private final NotifierService notifierService;
     
@@ -84,6 +89,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			final ShareTransformer shareTransformer,
 			final UserRepository<User> userRepository,
 			final DocumentRepository documentRepository,
+			final GroupRepository groupRepository,
 			final NotifierService mailNotifierService,
 			final UserService userService,
             final DocumentService documentService,
@@ -94,6 +100,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
 		this.documentRepository = documentRepository;
+		this.groupRepository = groupRepository;
 		this.notifierService=mailNotifierService;
 		this.userService = userService;
         this.documentService = documentService;
@@ -373,13 +380,17 @@ public class ShareFacadeImpl implements ShareFacade {
     }
     
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(
-    		UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients)
+    		UserVo ownerVo, List<DocumentVo> documents, List<GroupVo> recipients,
+    		MailContainer mailContainer)
     		throws BusinessException {
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
     	List<User> groupUserObjectsList = new ArrayList<User>();
+    	List<Group> groupList = new ArrayList<Group>();
 		
 		for (GroupVo groupVo : recipients) {
 			try {
 				groupUserObjectsList.add(userService.findAndCreateUser(groupVo.getGroupLogin()));
+				groupList.add(groupRepository.findByName(groupVo.getName()));
 			} catch (BusinessException e) {
 				logger.error("Could not find the recipient " + groupVo.getGroupLogin() + " in the database");
 				throw e;
@@ -401,6 +412,23 @@ public class ShareFacadeImpl implements ShareFacade {
 		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
 		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));
 		results.setSuccessesItem(shareTransformer.disassembleList(successAndFails.getSuccessesItem()));
+		
+		/**
+		 * Send notification ; if a functional mailBox is given, to this mailBox, 
+		 * otherwise to each group member.
+		 */
+		for (Group group : groupList) {
+			String functionalMail = group.getFunctionalEmail();
+			if (functionalMail != null && functionalMail.length() > 0) {
+				mailContainer = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, group, documents, mailContainer.getUrlBase(), "groups");
+				notifierService.sendNotification(owner.getMail(),functionalMail, mailContainer);
+			} else {
+				for (GroupMember member : group.getMembers()) {
+					MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, member.getUser(), group, documents, mailContainer.getUrlBase(), "groups");
+					notifierService.sendNotification(owner.getMail(), member.getUser().getMail(), mailContainer_);
+				}
+			}
+		}
 		
 		return results;
     }

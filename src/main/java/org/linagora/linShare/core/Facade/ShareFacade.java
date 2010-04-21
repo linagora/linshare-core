@@ -157,6 +157,15 @@ public interface ShareFacade {
      */
     public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String fileSizeTxt,String oldFileName, MailContainer mailContainer) throws BusinessException;
     
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients) throws BusinessException;
+	/**
+	 * Share some documents with some groups.
+	 * 
+	 * @param owner the user sharing the documents
+	 * @param documents the documents to share
+	 * @param recipients the recipient groups
+	 * @param mailContainer the informations to build the notification
+	 * @throws BusinessException
+	 */
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException;
 
 }

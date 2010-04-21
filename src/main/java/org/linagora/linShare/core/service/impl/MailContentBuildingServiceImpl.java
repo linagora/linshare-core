@@ -30,6 +30,7 @@ import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linShare.core.domain.constants.MailTemplateEnum;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MailSubject;
@@ -433,6 +434,42 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         return template;
 	}
 	
+	/**
+	 * Template GROUP_SHARE_NOTIFICATION
+	 */
+	private MailTemplate buildTemplateGroupShareNotification(Language language, List<DocumentVo> docs, User owner, Group group) throws BusinessException {
+		MailTemplate template = getMailTemplate(language, MailTemplateEnum.GROUP_SHARE_NOTIFICATION);
+		String contentTXT = template.getContentTXT();
+		String contentHTML = template.getContentHTML();
+
+		StringBuffer names = new StringBuffer();
+		StringBuffer namesTxt = new StringBuffer();
+		if (docs != null && docs.size()>0) {
+			for (DocumentVo doc : docs) {
+				names.append("<li>"+doc.getFileName()+"</li>");
+				namesTxt.append(doc.getFileName()+"\n");
+			}	
+		}
+		
+		String number = new Integer(docs.size()).toString();
+
+		contentTXT = StringUtils.replace(contentTXT, "${firstName}", owner.getFirstName());
+		contentTXT = StringUtils.replace(contentTXT, "${lastName}", owner.getLastName());
+		contentTXT = StringUtils.replace(contentTXT, "${number}", number);
+        contentTXT = StringUtils.replace(contentTXT, "${documentNamesTxt}", namesTxt.toString());
+        contentTXT = StringUtils.replace(contentTXT, "${groupName}", group.getName());
+        contentHTML = StringUtils.replace(contentHTML, "${firstName}", owner.getFirstName());
+		contentHTML = StringUtils.replace(contentHTML, "${lastName}", owner.getLastName());
+		contentHTML = StringUtils.replace(contentHTML, "${number}", number);
+        contentHTML = StringUtils.replace(contentHTML, "${documentNames}", names.toString());
+        contentHTML = StringUtils.replace(contentHTML, "${groupName}", group.getName());
+        
+        template.setContentTXT(contentTXT);
+        template.setContentHTML(contentHTML);
+        
+        return template;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailAnonymousDownload(org.linagora.linShare.core.domain.entities.MailContainer, java.util.List, java.lang.String, org.linagora.linShare.core.domain.entities.User)
 	 */
@@ -549,6 +586,37 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template2.getContentHTML() + "<br />");
 		
 		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), recipient, null, null);
+	}
+	
+	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
+			User owner, Group group, List<DocumentVo> docs, String linShareUrl,
+			String linShareUrlParam) throws BusinessException {
+		User tempUser = new Guest(group.getFunctionalEmail(), group.getFunctionalEmail(), "", group.getFunctionalEmail());
+		return buildMailNewGroupSharing(mailContainer, owner, tempUser, group, docs, linShareUrl, linShareUrlParam);
+	}
+	
+	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
+			User owner, User recipient, Group group, List<DocumentVo> docs,
+			String linShareUrl, String linShareUrlParam)
+			throws BusinessException {
+		MailTemplate template1 = buildTemplateGroupShareNotification(mailContainer.getLanguage(), docs, owner, group);
+		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
+		
+		String subjectContent = mailContainer.getSubject();
+		if (subjectContent == null || subjectContent.length() < 1) {
+			MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_GROUP_SHARING);
+			subjectContent = subject.getContent();
+		}
+		subjectContent = StringUtils.replace(subjectContent, "${groupName}", group.getName());
+		
+		StringBuffer contentTXT = new StringBuffer();
+		StringBuffer contentHTML = new StringBuffer();
+		contentTXT.append(template1.getContentTXT() + "\n");
+		contentTXT.append(template2.getContentTXT() + "\n");
+		contentHTML.append(template1.getContentHTML() + "<br />");
+		contentHTML.append(template2.getContentHTML() + "<br />");
+		
+		return buildMailContainer(mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
 	}
 
 }

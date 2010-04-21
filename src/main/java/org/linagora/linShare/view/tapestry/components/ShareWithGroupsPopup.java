@@ -40,6 +40,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
@@ -47,6 +48,7 @@ import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +118,9 @@ public class ShareWithGroupsPopup{
 
 	@Inject
 	private ComponentResources componentResources;
+	
+	@Inject
+	private MailContainerBuilder mailContainerBuilder;
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
@@ -169,7 +174,8 @@ public class ShareWithGroupsPopup{
 		
 		SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 		try {
-			sharing = shareFacade.createSharingWithGroups(userVo, documentsVo, groupsVo);
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
+			sharing = shareFacade.createSharingWithGroups(userVo, documentsVo, groupsVo, mailContainer);
 			
 
 		

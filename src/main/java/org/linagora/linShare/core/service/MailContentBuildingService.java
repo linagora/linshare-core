@@ -23,6 +23,7 @@ package org.linagora.linShare.core.service;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
@@ -66,7 +67,7 @@ public interface MailContentBuildingService {
 			User recipient, String password) throws BusinessException;
 
 	/**
-	 * Notify a user that he received new sharings
+	 * Notify a user that he received new sharing
 	 */
 	public MailContainer buildMailNewSharing(MailContainer mailContainer,
 			User owner, User recipient, List<DocumentVo> docs,
@@ -99,6 +100,22 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer,
 			User owner, String recipientMail, Document document, String oldDocName,
 			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
+			throws BusinessException;
+
+	/**
+	 * Notify a user that the group received new sharing
+	 */
+	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
+			User owner, User recipient, Group group, List<DocumentVo> docs,
+			String linShareUrl, String linShareUrlParam)
+			throws BusinessException;
+
+	/**
+	 * Notify a group (functional email) for a new sharing
+	 */
+	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
+			User owner, Group group, List<DocumentVo> docs,
+			String linShareUrl, String linShareUrlParam)
 			throws BusinessException;
 
 }

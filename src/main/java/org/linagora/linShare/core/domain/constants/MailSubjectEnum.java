@@ -32,7 +32,8 @@ public enum MailSubjectEnum {
 	NEW_GUEST(2), 
 	RESET_PASSWORD(3), 
 	NEW_SHARING(4), 
-	SHARED_DOC_UPDATED(5);
+	SHARED_DOC_UPDATED(5),
+	NEW_GROUP_SHARING(6);
 
 	private int value;
 
@@ -64,6 +65,9 @@ public enum MailSubjectEnum {
 			break;
 		case 5:
 			ret = SHARED_DOC_UPDATED;
+			break;
+		case 6:
+			ret = NEW_GROUP_SHARING;
 			break;
 		default:
 			throw new IllegalArgumentException("Doesn't match an existing MailSubjects");

@@ -39,7 +39,8 @@ public enum MailTemplateEnum {
 	ACCOUNT_DESCRIPTION(9),
 	SHARE_NOTIFICATION(10),
 	PASSWORD_GIVING(11),
-	FILE_UPDATED(12);
+	FILE_UPDATED(12),
+	GROUP_SHARE_NOTIFICATION(13);
 
 	private int value;
 
@@ -92,6 +93,9 @@ public enum MailTemplateEnum {
 			break;
 		case 12:
 			ret = FILE_UPDATED;
+			break;
+		case 13:
+			ret = GROUP_SHARE_NOTIFICATION;
 			break;
 		default:
 			throw new IllegalArgumentException("Doesn't match an existing MailTemplates");
