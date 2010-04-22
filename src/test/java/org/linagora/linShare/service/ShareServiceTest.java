@@ -136,7 +136,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 									mailTestRetriever.getSenderMail(),
 									"sender", "senderName", null, owner).size() == 0) {
 								MailContainer mailContainer = new MailContainer("cool",
-										"coolcool", "", Language.DEFAULT, "", "");
+										"coolcool", "", Language.DEFAULT);
 								sender = userService.createGuest(
 										mailTestRetriever.getSenderMail(),
 										"sender", "senderName",
@@ -152,7 +152,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 									"receiver", "receiverName", null, owner)
 									.size() == 0) {
 								MailContainer mailContainer = new MailContainer("cool",
-										"coolcool", "", Language.DEFAULT, "", "");
+										"coolcool", "", Language.DEFAULT);
 								recipient = userService.createGuest(
 										mailTestRetriever.getRecipientMail(),
 										"receiver", "receiverName",

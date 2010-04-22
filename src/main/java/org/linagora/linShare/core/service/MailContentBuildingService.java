@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Group;
+import org.linagora.linShare.core.domain.entities.GroupMember;
+import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
@@ -118,4 +120,32 @@ public interface MailContentBuildingService {
 			String linShareUrl, String linShareUrlParam)
 			throws BusinessException;
 
+	/**
+	 * Notify a group (functional email) that a sharing has been deleted
+	 */
+	public MailContainer buildMailGroupSharingDeleted(
+			MailContainer mailContainer, User manager, Group group, Document doc)
+			throws BusinessException;
+
+	/**
+	 * Notify user that a group sharing has been deleted
+	 */
+	public MailContainer buildMailGroupSharingDeleted(
+			MailContainer mailContainer, User manager, User user, Group group, Document doc)
+			throws BusinessException;
+
+	/**
+	 * Notify sbdy who request the membership of another user for a group
+	 * of the status of his request
+	 */
+	public MailContainer buildMailGroupMembershipStatus(MailContainer mailContainer, 
+			GroupMember newMember, Group group, GroupMembershipStatus status)
+			throws BusinessException;
+	
+	/**
+	 * Notify a user that he is now member of one group
+	 */
+	public MailContainer buildMailNewGroupMember(
+			MailContainer mailContainer, GroupMember newMember, Group group) 
+			throws BusinessException;
 }

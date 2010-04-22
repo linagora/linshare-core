@@ -19,10 +19,13 @@
 		<composite-element class="org.linagora.linShare.core.domain.entities.GroupMember">
 			<property name="type" column="member_type_id" type="memberEnumType" />
 			<property access="field" column="membership_date" name="membershipDate" not-null="true" type="calendar"/>
-			<many-to-one class="org.linagora.linShare.core.domain.entities.User" name="user">
+			<many-to-one class="org.linagora.linShare.core.domain.entities.User" name="user" not-null="true">
 				<column index="index_group_user_id" name="user_id"/>
 			</many-to-one>
-		</composite-element>    	
+			<many-to-one class="org.linagora.linShare.core.domain.entities.User" name="owner">
+				<column name="owner_id"/>
+			</many-to-one>
+		</composite-element>
     </set>
   </class>
 </hibernate-mapping>

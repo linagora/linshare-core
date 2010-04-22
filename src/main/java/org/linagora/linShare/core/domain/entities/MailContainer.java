@@ -20,6 +20,8 @@
 */
 package org.linagora.linShare.core.domain.entities;
 
+import java.util.HashMap;
+
 import org.linagora.linShare.core.domain.constants.Language;
 
 /**
@@ -36,9 +38,8 @@ public class MailContainer {
 	private String contentTXT;
 	private String contentHTML;
 	private String personalMessage;
-	private String urlInternal;
-	private String urlBase;
 	private Language language;
+	private HashMap<String, String> data;
 	
 
 	/**
@@ -51,9 +52,8 @@ public class MailContainer {
 		this.contentTXT = mailContainer.contentTXT;
 		this.contentHTML = mailContainer.contentHTML;
 		this.personalMessage = mailContainer.personalMessage;
-		this.urlInternal = mailContainer.urlInternal;
-		this.urlBase = mailContainer.urlBase;
 		this.language = mailContainer.language;
+		this.data = new HashMap<String, String>(mailContainer.data);
 	}
 
 	/**
@@ -78,19 +78,15 @@ public class MailContainer {
 	 * @param contentHTML template holding mail content in html format
 	 * @param personalMessage personalMessage: not required
 	 * @param language language of the email
-	 * @param urlBase the linshare application url 
-	 * @param urlInternal the internal user connection url
 	 */
 	public MailContainer(String contentTXT, String contentHTML,
-			String personalMessage, Language language,
-			String urlBase, String urlInternal) {
+			String personalMessage, Language language) {
 		super();
 		this.contentTXT = contentTXT;
 		this.contentHTML = contentHTML;
 		this.personalMessage = personalMessage;
 		this.language = language;
-		this.urlBase = urlBase;
-		this.urlInternal = urlInternal;
+		this.data = new HashMap<String, String>();
 	}
 
 	public void setSubject(String subject) {
@@ -128,20 +124,18 @@ public class MailContainer {
 	public String getPersonalMessage() {
 		return personalMessage;
 	}
-
-	public void setUrlInternal(String urlInternal) {
-		this.urlInternal = urlInternal;
+	
+	public void addData(String key, String value) {
+		if (this.data == null) {
+			this.data = new HashMap<String, String>();
+		}
+		this.data.put(key, value);
 	}
-
-	public String getUrlInternal() {
-		return urlInternal;
-	}
-
-	public void setUrlBase(String urlBase) {
-		this.urlBase = urlBase;
-	}
-
-	public String getUrlBase() {
-		return urlBase;
+	
+	public String getData(String key) {
+		if (this.data.containsKey(key)) {
+			return this.data.get(key);
+		}
+		return null;
 	}
 }

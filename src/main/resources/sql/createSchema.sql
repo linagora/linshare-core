@@ -193,6 +193,7 @@
 	create table linshare_group_members (
         group_id int8 not null,
         user_id int8 not null,
+        owner_id int8,
         member_type_id int4 not null,
         membership_date timestamp not null,
 		primary key (group_id,user_id)

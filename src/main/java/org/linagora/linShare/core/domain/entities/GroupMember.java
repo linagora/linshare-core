@@ -27,6 +27,7 @@ public class GroupMember implements Serializable {
 	private static final long serialVersionUID = 8977072714137558071L;
 
 	private User user;
+	private User owner;
 	private GroupMemberType type;
 	private Calendar membershipDate;
 
@@ -60,6 +61,14 @@ public class GroupMember implements Serializable {
 
 	public Calendar getMembershipDate() {
 		return membershipDate;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
+	public User getOwner() {
+		return owner;
 	}
 
 }

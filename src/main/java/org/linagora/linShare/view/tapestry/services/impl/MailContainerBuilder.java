@@ -24,9 +24,12 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.linagora.linShare.core.domain.constants.Language;
+import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
@@ -50,18 +53,21 @@ public class MailContainerBuilder {
     private Request request;
     private Asset containerTemplate;
     private Asset containerTemplateTxt;
+    private ValidationMessagesSource validationMessagesSource;
 
 	final private static Logger logger=LoggerFactory.getLogger(MailContainerBuilder.class);
 	
 	public MailContainerBuilder(PropertiesSymbolProvider propertiesSymbolProvider,
 			Templating templating, PersistentLocale persistentLocale,
-			Request request, Asset containerTemplate, Asset containerTemplateTxt) {
+			Request request, Asset containerTemplate, Asset containerTemplateTxt,
+			ValidationMessagesSource validationMessagesSource) {
 		this.propertiesSymbolProvider = propertiesSymbolProvider;
 		this.templating = templating;
 		this.persistentLocale = persistentLocale;
 		this.request = request;
 		this.containerTemplate = containerTemplate;
 		this.containerTemplateTxt = containerTemplateTxt;
+		this.validationMessagesSource = validationMessagesSource;
 	}
 
 	public MailContainer buildMailContainer(UserVo userVo, String customMessage) {
@@ -83,8 +89,16 @@ public class MailContainerBuilder {
     	if (userVo != null && userVo.getLocale()!= null && (!userVo.getLocale().equals(""))) {
     		userLocale = new Locale(userVo.getLocale());
     	}
-    	Language language = WelcomeMessageUtils.getLanguageFromLocale(persistentLocale.get(), request.getLocale(), userLocale);
-	
-    	return new MailContainer(mailContentTxt, mailContent, customMessage, language, urlBase, urlInternal);
+    	Locale locale = WelcomeMessageUtils.getNormalisedLocale(persistentLocale.get(), request.getLocale(), userLocale);
+    	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
+    	Messages messages = validationMessagesSource.getValidationMessages(locale);
+    	
+    	MailContainer mailContainer = new MailContainer(mailContentTxt, mailContent, customMessage, language);
+    	mailContainer.addData("urlBase", urlBase);
+    	mailContainer.addData("urlInternal", urlInternal);
+    	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.ACCEPTED.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.ACCEPTED.toString()));
+    	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.REJECTED.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.REJECTED.toString()));
+    	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.WAITING_APPROVAL.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.WAITING_APPROVAL.toString()));
+    	return mailContainer;
 	}
 }

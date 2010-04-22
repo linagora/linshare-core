@@ -40,15 +40,22 @@ public class WelcomeMessageUtils {
         return null;
     }
 
+    public static Language getLanguageFromLocale(Locale locale) {
+        if (Locale.FRENCH.equals(locale)) {
+        	return Language.FRENCH;
+        }
+        return Language.DEFAULT;
+    }
+
     /**
-     * Return the language, with the following priority : persistentLocale (cookie), userLocale (user parameter),
+     * Return the locale, with the following priority : persistentLocale (cookie), userLocale (user parameter),
      * browser language
      * @param persistentLocale
      * @param requestLocal
      * @param userLocale
      * @return
      */
-    public static Language getLanguageFromLocale(Locale persistentLocale, Locale requestLocal, Locale userLocale) {
+    public static Locale getNormalisedLocale(Locale persistentLocale, Locale requestLocal, Locale userLocale) {
         if (persistentLocale == null) {
         	if (userLocale!=null) {        		
         		return normaliseLocale(userLocale);
@@ -60,11 +67,11 @@ public class WelcomeMessageUtils {
         }
     }
     
-    private static Language normaliseLocale(Locale local) {
-    	if (Locale.FRENCH.equals(local) || Locale.FRANCE.equals(local)) {
-            return Language.FRENCH;
+    private static Locale normaliseLocale(Locale locale) {
+    	if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
+            return Locale.FRENCH;
         } else {
-            return Language.DEFAULT;
+            return Locale.ENGLISH;
         }
     }
 }

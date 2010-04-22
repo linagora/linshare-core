@@ -23,16 +23,23 @@ package org.linagora.linShare.core.Facade.impl;
 import java.util.List;
 
 import org.linagora.linShare.core.Facade.GroupFacade;
+import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Group;
+import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.GroupMemberType;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.GroupTransformer;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
+import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.GroupService;
+import org.linagora.linShare.core.service.MailContentBuildingService;
+import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.UserService;
 
 public class GroupFacadeImpl implements GroupFacade {
@@ -40,14 +47,24 @@ public class GroupFacadeImpl implements GroupFacade {
 	private final UserService userService;
 	private final GroupService groupService;
 	private final GroupTransformer groupTransformer;
+	private final NotifierService notifierService;
+	private final DocumentRepository documentRepository;
+    private final MailContentBuildingService mailElementsFactory;
 	
 	public GroupFacadeImpl(final UserRepository<User> userRepository,
 			final UserService userService,
-			final GroupService groupService, final GroupTransformer groupTransformer) {
+			final GroupService groupService, 
+			final GroupTransformer groupTransformer,
+			final NotifierService notifierService,
+            final DocumentRepository documentRepository,
+    		final MailContentBuildingService mailElementsFactory) {
 		this.userRepository = userRepository;
 		this.userService = userService;
 		this.groupService = groupService;
 		this.groupTransformer = groupTransformer;
+		this.notifierService = notifierService;
+		this.documentRepository = documentRepository;
+		this.mailElementsFactory = mailElementsFactory;
 	}
 
 	public GroupVo findByName(String name) {
@@ -81,19 +98,19 @@ public class GroupFacadeImpl implements GroupFacade {
 		groupService.update(group, manager);
 	}
 
-	public void addMember(GroupVo groupVo, UserVo managerVo, UserVo newMemberVo) throws BusinessException {
+	public void addMember(GroupVo groupVo, UserVo managerVo, UserVo newMemberVo, MailContainer mailContainer) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
 		User manager = userRepository.findByLogin(managerVo.getLogin());
 		User newMember = userService.findAndCreateUser(newMemberVo.getLogin());
-		groupService.addMember(group, manager, newMember);
+		groupService.addMember(group, manager, newMember, mailContainer);
 	}
 	
 	public void addMember(GroupVo groupVo, UserVo managerVo, UserVo newMemberVo,
-			GroupMemberType memberType) throws BusinessException {
+			GroupMemberType memberType, MailContainer mailContainer) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
 		User manager = userRepository.findByLogin(managerVo.getLogin());
 		User newMember = userService.findAndCreateUser(newMemberVo.getLogin());
-		groupService.addMember(group, manager, newMember, memberType);
+		groupService.addMember(group, manager, newMember, memberType, mailContainer);
 	}
 
 	public void removeMember(GroupVo groupVo, UserVo managerVo, UserVo memberVo) throws BusinessException {
@@ -114,18 +131,41 @@ public class GroupFacadeImpl implements GroupFacade {
 		Group groupExistant = groupService.findByName(groupName);
 		return (groupExistant!=null);
 	}
-	public void acceptNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToAcceptVo) throws BusinessException {
+	public void acceptNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToAcceptVo, MailContainer mailContainer) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
 		User manager = userRepository.findByLogin(managerVo.getUserVo().getLogin());
 		User memberToAccept = userRepository.findByLogin(memberToAcceptVo.getUserVo().getLogin());
-		groupService.acceptNewMember(group, manager, memberToAccept);
+		groupService.acceptNewMember(group, manager, memberToAccept, mailContainer);
 	}
 	
 	public void rejectNewMember(GroupVo groupVo, GroupMemberVo managerVo,
-			GroupMemberVo memberToRejectVo) throws BusinessException {
+			GroupMemberVo memberToRejectVo, MailContainer mailContainer) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
 		User manager = userRepository.findByLogin(managerVo.getUserVo().getLogin());
 		User member = userRepository.findByLogin(memberToRejectVo.getUserVo().getLogin());
-		groupService.rejectNewMember(group, manager, member);
+		groupService.rejectNewMember(group, manager, member, mailContainer);
+	}
+	
+	public void notifySharingDeleted(ShareDocumentVo shareddoc, UserVo managerVo,
+			GroupVo groupVo, MailContainer mailContainer)
+			throws BusinessException {
+		/**
+		 * Send notification ; if a functional mailBox is given, to this mailBox, 
+		 * otherwise to each group member.
+		 */
+		Group group = groupTransformer.assemble(groupVo);
+		Document doc = documentRepository.findById(shareddoc.getIdentifier());
+		User manager = userRepository.findByLogin(managerVo.getLogin());
+		String functionalMail = group.getFunctionalEmail();
+		if (functionalMail != null && functionalMail.length() > 0) {
+			mailContainer = mailElementsFactory.buildMailGroupSharingDeleted(mailContainer, manager, group, doc);
+			notifierService.sendNotification(manager.getMail(),functionalMail, mailContainer);
+		} else {
+			for (GroupMember member : group.getMembers()) {
+				MailContainer mailContainer_ = mailElementsFactory.buildMailGroupSharingDeleted(mailContainer, manager, member.getUser(), group, doc);
+				notifierService.sendNotification(manager.getMail(), member.getUser().getMail(), mailContainer_);
+			}
+		}
+		
 	}
 }

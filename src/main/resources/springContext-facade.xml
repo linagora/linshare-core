@@ -94,6 +94,9 @@
        	 <constructor-arg ref="userService"/>
        	 <constructor-arg ref="groupService"/>
        	 <constructor-arg ref="groupTransformer"/>
+       	 <constructor-arg ref="notifierService"/>
+       	 <constructor-arg ref="documentRepository"/>
+       	 <constructor-arg ref="mailContentBuildingService" />
    	  </bean>
        
        

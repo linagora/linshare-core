@@ -137,6 +137,8 @@
         <constructor-arg ref="groupRepository"/>
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="shareService"/>
+        <constructor-arg ref="mailContentBuildingService" />
+        <constructor-arg ref="notifierService"/>
     </bean>
     
     <bean name="mailContentBuildingService" class="org.linagora.linShare.core.service.impl.MailContentBuildingServiceImpl">

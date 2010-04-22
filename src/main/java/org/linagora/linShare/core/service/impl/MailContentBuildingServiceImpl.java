@@ -31,6 +31,8 @@ import org.linagora.linShare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linShare.core.domain.constants.MailTemplateEnum;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Group;
+import org.linagora.linShare.core.domain.entities.GroupMember;
+import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MailSubject;
@@ -48,6 +50,7 @@ import org.linagora.linShare.core.service.ParameterService;
 public class MailContentBuildingServiceImpl implements MailContentBuildingService {
 	private final ParameterService parameterService;
     private final static Log logger = LogFactory.getLog(MailContentBuildingServiceImpl.class);
+
 	
 	public MailContentBuildingServiceImpl(final ParameterService parameterService) throws BusinessException {
 		this.parameterService = parameterService;
@@ -470,6 +473,74 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         return template;
 	}
 	
+	/**
+	 * Template GROUP_MEMBERSHIP_STATUS
+	 */
+	private MailTemplate buildTemplateGroupMembershipStatus(MailContainer mailContainer, GroupMember newMember, Group group, GroupMembershipStatus status) throws BusinessException {
+		MailTemplate template = getMailTemplate(mailContainer.getLanguage(), MailTemplateEnum.GROUP_MEMBERSHIP_STATUS);
+		String contentTXT = template.getContentTXT();
+		String contentHTML = template.getContentHTML();
+		
+		String statusString = mailContainer.getData("GroupMembershipStatus."+status.toString());
+		logger.debug(status.toString());
+		
+		contentTXT = StringUtils.replace(contentTXT, "${newMemberFirstName}", newMember.getUser().getFirstName());
+		contentTXT = StringUtils.replace(contentTXT, "${newMemberLastName}", newMember.getUser().getLastName());
+        contentTXT = StringUtils.replace(contentTXT, "${status}", statusString);
+        contentTXT = StringUtils.replace(contentTXT, "${groupName}", group.getName());
+        contentHTML = StringUtils.replace(contentHTML, "${newMemberFirstName}", newMember.getUser().getFirstName());
+		contentHTML = StringUtils.replace(contentHTML, "${newMemberLastName}", newMember.getUser().getLastName());
+		contentHTML = StringUtils.replace(contentHTML, "${status}", statusString);
+        contentHTML = StringUtils.replace(contentHTML, "${groupName}", group.getName());
+        
+        template.setContentTXT(contentTXT);
+        template.setContentHTML(contentHTML);
+        
+        return template;
+	}
+	
+	/**
+	 * Template GROUP_NEW_MEMBER
+	 */
+	private MailTemplate buildTemplateGroupNewMember(
+			MailContainer mailContainer, GroupMember newMember, Group group) throws BusinessException {
+		MailTemplate template = getMailTemplate(mailContainer.getLanguage(), MailTemplateEnum.GROUP_NEW_MEMBER);
+		String contentTXT = template.getContentTXT();
+		String contentHTML = template.getContentHTML();
+		
+		
+        contentTXT = StringUtils.replace(contentTXT, "${groupName}", group.getName());
+        contentHTML = StringUtils.replace(contentHTML, "${groupName}", group.getName());
+        
+        template.setContentTXT(contentTXT);
+        template.setContentHTML(contentHTML);
+        
+        return template;
+	}
+	
+	/**
+	 * Template GROUP_SHARE_DELETED
+	 */
+	private MailTemplate buildTemplateGroupSharingDeleted(Language language, Document doc, User manager, Group group) throws BusinessException {
+		MailTemplate template = getMailTemplate(language, MailTemplateEnum.GROUP_SHARE_DELETED);
+		String contentTXT = template.getContentTXT();
+		String contentHTML = template.getContentHTML();
+		
+		contentTXT = StringUtils.replace(contentTXT, "${firstName}", manager.getFirstName());
+		contentTXT = StringUtils.replace(contentTXT, "${lastName}", manager.getLastName());
+        contentTXT = StringUtils.replace(contentTXT, "${groupName}", group.getName());
+        contentTXT = StringUtils.replace(contentTXT, "${documentName}", doc.getName());
+        contentHTML = StringUtils.replace(contentHTML, "${firstName}", manager.getFirstName());
+		contentHTML = StringUtils.replace(contentHTML, "${lastName}", manager.getLastName());
+        contentHTML = StringUtils.replace(contentHTML, "${groupName}", group.getName());
+        contentHTML = StringUtils.replace(contentHTML, "${documentName}", doc.getName());
+        
+        template.setContentTXT(contentTXT);
+        template.setContentHTML(contentHTML);
+        
+        return template;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailAnonymousDownload(org.linagora.linShare.core.domain.entities.MailContainer, java.util.List, java.lang.String, org.linagora.linShare.core.domain.entities.User)
 	 */
@@ -493,7 +564,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 */
 	public MailContainer buildMailNewGuest(MailContainer mailContainer, User owner, User recipient, String password) throws BusinessException {
 		MailTemplate template1 = buildTemplateGuestInvitation(mailContainer.getLanguage(), owner);
-		MailTemplate template2 = buildTemplateLinshareURL(mailContainer.getLanguage(), mailContainer.getUrlBase());
+		MailTemplate template2 = buildTemplateLinshareURL(mailContainer.getLanguage(), mailContainer.getData("urlBase"));
 		MailTemplate template3 = buildTemplateAccountDescription(mailContainer.getLanguage(), recipient, password);
 		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_GUEST);
 		
@@ -560,6 +631,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return buildMailNewSharing(mailContainer, owner, tempUser, docs, linShareUrl, linShareUrlParam, password, hasToDecrypt, jwsEncryptUrl);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailSharedDocUpdated(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, java.lang.String, org.linagora.linShare.core.domain.entities.Document, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer,
 			User owner, String recipientMail, Document document,
 			String oldDocName, String fileSizeTxt, String linShareUrl,
@@ -569,6 +643,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return buildMailSharedDocUpdated(mailContainer, owner, tempUser, document, oldDocName, fileSizeTxt, linShareUrl, linShareUrlParam);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailSharedDocUpdated(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Document, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer, 
 			User owner, User recipient, Document document, 
 			String oldDocName, String fileSizeTxt, 
@@ -588,6 +665,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), recipient, null, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewGroupSharing(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, java.util.List, java.lang.String, java.lang.String)
+	 */
 	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
 			User owner, Group group, List<DocumentVo> docs, String linShareUrl,
 			String linShareUrlParam) throws BusinessException {
@@ -595,6 +675,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return buildMailNewGroupSharing(mailContainer, owner, tempUser, group, docs, linShareUrl, linShareUrlParam);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewGroupSharing(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, java.util.List, java.lang.String, java.lang.String)
+	 */
 	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
 			User owner, User recipient, Group group, List<DocumentVo> docs,
 			String linShareUrl, String linShareUrlParam)
@@ -618,5 +701,73 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		return buildMailContainer(mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailGroupSharingDeleted(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, org.linagora.linShare.core.domain.entities.Document)
+	 */
+	public MailContainer buildMailGroupSharingDeleted(
+			MailContainer mailContainer, User manager, Group group, Document doc)
+			throws BusinessException {
+		User tempUser = new Guest(group.getFunctionalEmail(), group.getFunctionalEmail(), "", group.getFunctionalEmail());
+		return buildMailGroupSharingDeleted(mailContainer, manager, tempUser, group, doc);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailGroupSharingDeleted(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, org.linagora.linShare.core.domain.entities.Document)
+	 */
+	public MailContainer buildMailGroupSharingDeleted(
+			MailContainer mailContainer, User manager, User user, Group group, Document doc)
+			throws BusinessException {
+		MailTemplate template1 = buildTemplateGroupSharingDeleted(mailContainer.getLanguage(), doc, manager, group);
+		
+		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.GROUP_SHARING_DELETED);
+		String subjectContent = StringUtils.replace(subject.getContent(), "${groupName}", group.getName());
+		
+		StringBuffer contentTXT = new StringBuffer();
+		StringBuffer contentHTML = new StringBuffer();
+		contentTXT.append(template1.getContentTXT() + "\n");
+		contentHTML.append(template1.getContentHTML() + "<br />");
+		
+		return buildMailContainer(mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), user, null, null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailGroupMembershipStatus(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.GroupMember, org.linagora.linShare.core.domain.entities.Group, org.linagora.linShare.core.domain.entities.GroupMembershipStatus)
+	 */
+	public MailContainer buildMailGroupMembershipStatus(
+			MailContainer mailContainer, GroupMember newMember, Group group, GroupMembershipStatus status)
+			throws BusinessException {
+		MailTemplate template1 = buildTemplateGroupMembershipStatus(mailContainer, newMember, group, status);
+		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.MEMBERSHIP_REQUEST_STATUS);
 
+		String subjectString = StringUtils.replace(subject.getContent(), "${newMemberFirstName}", newMember.getUser().getFirstName());
+		subjectString = StringUtils.replace(subjectString, "${newMemberLastName}", newMember.getUser().getLastName());
+		subjectString = StringUtils.replace(subjectString, "${groupName}", group.getName());
+        
+		StringBuffer contentTXT = new StringBuffer();
+		StringBuffer contentHTML = new StringBuffer();
+		contentTXT.append(template1.getContentTXT() + "\n");
+		contentHTML.append(template1.getContentHTML() + "<br />");
+		
+		return buildMailContainer(mailContainer, subjectString, contentTXT.toString(), contentHTML.toString(), newMember.getOwner(), null, null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewGroupMember(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.GroupMember, org.linagora.linShare.core.domain.entities.Group)
+	 */
+	public MailContainer buildMailNewGroupMember(
+			MailContainer mailContainer, GroupMember newMember, Group group) 
+			throws BusinessException {
+		MailTemplate template1 = buildTemplateGroupNewMember(mailContainer, newMember, group);
+		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_GROUP_MEMBER);
+		
+		String subjectString = StringUtils.replace(subject.getContent(), "${groupName}", group.getName());
+        
+		StringBuffer contentTXT = new StringBuffer();
+		StringBuffer contentHTML = new StringBuffer();
+		contentTXT.append(template1.getContentTXT() + "\n");
+		contentHTML.append(template1.getContentHTML() + "<br />");
+		
+		return buildMailContainer(mailContainer, subjectString, contentTXT.toString(), contentHTML.toString(), newMember.getUser(), null, null);
+	}
 }

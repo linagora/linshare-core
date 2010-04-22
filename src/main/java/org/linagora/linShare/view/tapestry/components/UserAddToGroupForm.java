@@ -36,10 +36,12 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 
 /** This component is used to edit an user.
  */
@@ -70,6 +72,9 @@ public class UserAddToGroupForm {
 
     @Inject
     private Messages messages;
+    
+	@Inject
+	private MailContainerBuilder mailContainerBuilder;
 
 
 	/* ***********************************************************
@@ -148,7 +153,8 @@ public class UserAddToGroupForm {
     	
     	if (groupsWhereUserWillBeAdded.size()>0) {
     		for (GroupVo groupVo : groupsWhereUserWillBeAdded) {
-				groupFacade.addMember(groupVo, userLoggedIn, userAdded);
+    			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userLoggedIn, null);
+				groupFacade.addMember(groupVo, userLoggedIn, userAdded, mailContainer);
 				shareSessionObjects.setReloadGroupsNeeded(true);
 				shareSessionObjects.addMessage(messages.format("components.userAddToGroup.success", userAdded.getFirstName(), userAdded.getLastName(), groupVo.getName()));
 			}

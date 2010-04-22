@@ -359,9 +359,10 @@ public class AppModule
      * REST part
      ****************************/
 
-    // Adding the properties for mail subject 
+    // Adding the properties for mail subject and content
     public static void contributeValidationMessagesSource(OrderedConfiguration<String> configuration) {
     	configuration.add("app", "org/linagora/linShare/view/tapestry/rest/mail");
+    	configuration.add("app2", "org/linagora/linShare/view/tapestry/services/keys");
     }
     
     // These two methods are to be contributed by a submodule
@@ -417,8 +418,9 @@ public class AppModule
 		 @InjectService("Templating") Templating templating,
 		 @InjectService("PersistentLocale") PersistentLocale persistentLocale,
 		 @InjectService("Request") Request request,
+		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
 		 @Inject @Path("context:templates/mailContainer.html") Asset containerTemplate,
 		 @Inject @Path("context:templates/mailContainer.txt") Asset containerTemplateTxt) {
-    	return new MailContainerBuilder(propertiesSymbolProvider, templating, persistentLocale, request, containerTemplate, containerTemplateTxt);
+    	return new MailContainerBuilder(propertiesSymbolProvider, templating, persistentLocale, request, containerTemplate, containerTemplateTxt, validationMessagesSource);
     }
 }

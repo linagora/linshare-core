@@ -42,8 +42,7 @@ import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.GroupMemberType;
-import org.linagora.linShare.core.domain.entities.GroupUser;
-import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -58,6 +57,7 @@ import org.linagora.linShare.view.tapestry.components.UserDetailsDisplayer;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.MemberSorterModel;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +68,9 @@ public class Index {
 	private ShareFacade shareFacade;
 	@Inject
 	private UserFacade userFacade;
+	
+	@Inject
+	private MailContainerBuilder mailContainerBuilder;
 
 	@SessionState
 	@Property
@@ -267,7 +270,8 @@ public class Index {
 		if (memberConnected.isAllowedToManageUser()) {
 			GroupMemberVo memberToAccept = group.findMember(login);
 			try {
-				groupFacade.acceptNewMember(group, memberConnected, memberToAccept);
+				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
+				groupFacade.acceptNewMember(group, memberConnected, memberToAccept, mailContainer);
 				shareSessionObjects.addMessage(messages.format("pages.groups.acceptMember.success", login, group.getName()));
 				groups = null;
 				group = null;
@@ -282,7 +286,8 @@ public class Index {
 		if (memberConnected.isAllowedToManageUser()) {
 			GroupMemberVo memberToAccept = group.findMember(login);
 			try {
-				groupFacade.rejectNewMember(group, memberConnected, memberToAccept);
+				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
+				groupFacade.rejectNewMember(group, memberConnected, memberToAccept, mailContainer);
 				shareSessionObjects.addMessage(messages.format("pages.groups.rejectMember.success", login, group.getName()));
 				groups = null;
 				group = null;
@@ -320,6 +325,8 @@ public class Index {
 			if(null!=shareddoc){
 				UserVo groupUser = userFacade.findUser(group.getGroupLogin());
 		        shareFacade.deleteSharing(shareddoc, groupUser);
+				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
+		        groupFacade.notifySharingDeleted(shareddoc, userVo, group, mailContainer);
 				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),
 						shareddoc.getFileName()) );
 			} else {

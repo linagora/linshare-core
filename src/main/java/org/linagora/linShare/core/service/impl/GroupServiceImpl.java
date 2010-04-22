@@ -29,7 +29,9 @@ import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.GroupMemberType;
+import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.GroupUser;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -38,6 +40,8 @@ import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.GroupRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.GroupService;
+import org.linagora.linShare.core.service.MailContentBuildingService;
+import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ShareService;
 
 public class GroupServiceImpl implements GroupService {
@@ -45,15 +49,21 @@ public class GroupServiceImpl implements GroupService {
 	private final GroupRepository groupRepository;
 	private final UserRepository<GroupUser> userRepository;
     private final ShareService shareService;
+    private final MailContentBuildingService mailElementsFactory;
+	private final NotifierService notifierService;
 
 	private static Log logger = LogFactory.getLog(GroupServiceImpl.class);
 
 	public GroupServiceImpl(final GroupRepository groupRepository,
 			final UserRepository<GroupUser> userRepository,
-			final ShareService shareService) {
+			final ShareService shareService,
+			final MailContentBuildingService mailElementsFactory,
+			final NotifierService notifierService) {
 		this.groupRepository = groupRepository;
 		this.userRepository = userRepository;
 		this.shareService = shareService;
+		this.mailElementsFactory = mailElementsFactory;
+		this.notifierService = notifierService;
 	}
 	
 	public Group findByName(String name) {
@@ -126,13 +136,14 @@ public class GroupServiceImpl implements GroupService {
 		}
 	}
 
-	public void addMember(Group group, User manager, User newMember) throws BusinessException {
-		addMember(group, manager, newMember, GroupMemberType.MEMBER);
+	public void addMember(Group group, User manager, User newMember, MailContainer mailContainer) throws BusinessException {
+		addMember(group, manager, newMember, GroupMemberType.MEMBER, mailContainer);
 	}
 	
-	public void addMember(Group group, User manager, User newMember, GroupMemberType memberType) throws BusinessException {
+	public void addMember(Group group, User manager, User newMember, GroupMemberType memberType, MailContainer mailContainer) throws BusinessException {
 		Group groupPersistant = groupRepository.findByName(group.getName());
 		GroupMember newGroupMember = new GroupMember();
+		GroupMembershipStatus status = GroupMembershipStatus.WAITING_APPROVAL;
 		
 		if (memberType==null) {
 			memberType=GroupMemberType.MEMBER;
@@ -153,22 +164,30 @@ public class GroupServiceImpl implements GroupService {
 						|| memberRequesting.getType().equals(GroupMemberType.OWNER))) {
 
 			newGroupMember.setType(memberType);
+			status = GroupMembershipStatus.ACCEPTED;
 		}
 		else {
 			newGroupMember.setType(GroupMemberType.WAITING_APPROVAL);
 		}
 		
 		newGroupMember.setUser(newMember);
+		newGroupMember.setOwner(manager);
 		newGroupMember.setMembershipDate(GregorianCalendar.getInstance());
 		
 		groupPersistant.addMember(newGroupMember);
 		try {
-			groupRepository.update(groupPersistant);
+			groupPersistant = groupRepository.update(groupPersistant);
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not add member to group " + group.getName() + " by user "
 					+ manager.getLogin() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't add Member to the group " + group.getName());
 		}
+
+		
+		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(mailContainer, newGroupMember, groupPersistant, status);
+		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(mailContainer, newGroupMember, groupPersistant);
+		notifierService.sendNotification(null, newGroupMember.getOwner().getMail(), mailContainerOwner);
+		notifierService.sendNotification(null, newGroupMember.getUser().getMail(), mailContainerNewMember);
 	}
 
 	public void removeMember(Group group, User manager, User member) throws BusinessException {
@@ -213,13 +232,15 @@ public class GroupServiceImpl implements GroupService {
 		}
 	}
 	
-	public void acceptNewMember(Group group, User manager, User memberToAccept)
+	public void acceptNewMember(Group group, User manager, User memberToAccept, MailContainer mailContainer)
 			throws BusinessException {
 		Group groupPersistant = groupRepository.findByName(group.getName());
+		GroupMember groupMemberToUpdate = null;
 
 		boolean toUpdate = false;
 		for (GroupMember groupMember : groupPersistant.getMembers()) {
 			if (groupMember.getUser().equals(memberToAccept)) {
+				groupMemberToUpdate = groupMember;
 				groupMember.setType(GroupMemberType.MEMBER);
 				toUpdate = true;
 				break;
@@ -227,17 +248,40 @@ public class GroupServiceImpl implements GroupService {
 		}
 		if (toUpdate) {
 			try {
-				groupRepository.update(groupPersistant);
+				groupPersistant = groupRepository.update(groupPersistant);
 			} catch (IllegalArgumentException e) {
 				logger.error("Could not validate membership for group " + group.getName() + " by user "
 						+ manager.getLogin() + ", reason : ", e);
 				throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't update validate membership for the group " + group.getName());
 			}
 		}
+		
+		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.ACCEPTED);
+		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(mailContainer, groupMemberToUpdate, groupPersistant);
+		notifierService.sendNotification(null, groupMemberToUpdate.getOwner().getMail(), mailContainerOwner);
+		notifierService.sendNotification(null, groupMemberToUpdate.getUser().getMail(), mailContainerNewMember);
 	}
 	
-	public void rejectNewMember(Group group, User manager, User memberToReject) throws BusinessException {
-		removeMember(group, manager, memberToReject);
+	public void rejectNewMember(Group group, User manager, User memberToReject, MailContainer mailContainer) throws BusinessException {
+
+		Group groupPersistant = groupRepository.findByName(group.getName());
+		GroupMember groupMemberToUpdate = null;
+		String ownerMail = null;
+
+		for (GroupMember groupMember : groupPersistant.getMembers()) {
+			if (groupMember.getUser().equals(memberToReject)) {
+				groupMemberToUpdate = groupMember;
+				ownerMail = groupMember.getOwner().getMail();
+				break;
+			}
+		}
+		if (groupMemberToUpdate!=null) {
+			mailContainer = mailElementsFactory.buildMailGroupMembershipStatus(mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.REJECTED);
+			removeMember(group, manager, memberToReject);
+			if (ownerMail != null) {
+				notifierService.sendNotification(null, ownerMail, mailContainer);
+			}
+		}
 	}
 
 }
