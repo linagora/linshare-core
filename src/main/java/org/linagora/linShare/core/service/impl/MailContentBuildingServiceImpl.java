@@ -653,7 +653,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 			throws BusinessException {
 		MailTemplate template1 = buildTemplateFileUpdated(mailContainer.getLanguage(), owner, document, oldDocName, fileSizeTxt);
 		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING);
+		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPDATED);
 		
 		StringBuffer contentTXT = new StringBuffer();
 		StringBuffer contentHTML = new StringBuffer();
