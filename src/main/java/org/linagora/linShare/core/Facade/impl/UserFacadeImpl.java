@@ -108,6 +108,15 @@ public class UserFacadeImpl implements UserFacade {
     	}
     	return null;
     }
+    
+	public UserVo findUserFromLdapwithUid(String uid) {
+		User user = userService.findUserFromLdapwithUid(uid);
+    	if (user != null) {
+    		return new UserVo(user);
+    	} else return null;
+	}
+    
+    
 
     /** Search a user.
      * @param mail user email.

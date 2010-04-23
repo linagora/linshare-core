@@ -179,6 +179,10 @@ public class UserServiceImpl implements UserService {
         return user;
     }
     
+	public User findUserFromLdapwithUid(String uid) {
+		return ldapDao.searchUserWithUid(uid);
+	}
+    
 
     /** Find a user (based on mail address).
      * Search first in database, then on ldap if not found, and create him
@@ -590,4 +594,5 @@ public class UserServiceImpl implements UserService {
 		
 		return contactsUsers;
 	}
+
 }
