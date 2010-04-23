@@ -23,6 +23,7 @@ package org.linagora.linShare.core.service;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.Guest;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
@@ -40,14 +41,13 @@ public interface UserService {
      * @param mail guest email address.
      * @param canUpload : if the user can upload file
      * @param comment : the comment about the user
-     * @param mailSubject mail subject.
-     * @param mailContent mail content.
+     * @param mailContainer informations needed to construct the email
      * @param ownerLogin login of the user who create the guest.
      * @return persisted guest.
      * @throws BusinessException in case of duplicated guest.
      */
     Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment, 
-        String mailSubject, String mailContent, String mailContentTxt, String ownerLogin) throws BusinessException;
+    		MailContainer mailContainer, String ownerLogin) throws BusinessException;
 
     /**
      * generate the password of a guest (system generated)
@@ -140,13 +140,41 @@ public interface UserService {
 	/**
 	 * Reset a guest password
 	 * @param login
-	 * @param mailSubject
-	 * @param mailContent
-	 * @param mailContentTxt
+     * @param mailContainer informations needed to construct the email
 	 * @throws BusinessException
 	 */
-	public void resetPassword(String login, String mailSubject,
-			String mailContent, String mailContentTxt) throws BusinessException;
+	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException;
+	
+	/**
+	 * Update a guest as restricted and set his list of contacts
+	 * 
+	 * @param login of the guest
+	 * @param mailContacts
+	 */
+	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException;
+	
+	/**
+	 * Set a guest as not restricted and remove his list of contacts
+	 * 
+	 * @param login
+	 */
+	public void removeGuestContactRestriction(String login) throws BusinessException;
+	
+	/**
+	 * Add one contact to a restricted guest
+	 * 
+	 * @param ownerLogin
+	 * @param contactLogin
+	 */
+	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException;
+	
+	/**
+	 * Retrieve the list of contacts of the guest
+	 * 
+	 * @param login
+	 * @return
+	 */
+	public List<User> fetchGuestContacts(String login) throws BusinessException;
 
 	public User findUserFromLdapwithUid(String uid);
 }

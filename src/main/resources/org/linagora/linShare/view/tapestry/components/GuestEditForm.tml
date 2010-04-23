@@ -2,12 +2,12 @@
 <t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <div id="guestEditFormComponent">
 
+        
+       <t:zone t:id="guestFormZone" t:update="show" >
         <t:form t:id="guestCreateForm" t:zone="guestFormZone">
 
 			<h2>${message:pages.user.edit.guestAccount.creation}</h2>
-        
-        	<t:zone t:id="guestFormZone" t:update="show" >
-          	</t:zone>
+        	<t:errors  banner="message:pages.user.edit.errorBanner"  />
 
 
 			<hr />
@@ -37,9 +37,8 @@
 				<br/>
 			</div>
 
-			<div class="number-hidden"></div>
 			
-			<div>
+			<div class="align-with-number">
 			<!-- 
 			<t:label for="uploadGranted" class="edit-form-label">${message:pages.user.edit.uploadGranted}</t:label>
 			<t:checkbox t:id="uploadGranted" class="edit-form-checkbox"/>
@@ -47,8 +46,24 @@
 			 -->
 			 <t:label for="createGuestGranted" class="edit-form-label">${message:pages.user.edit.createGuestGranted}</t:label>
 			<t:checkbox t:id="createGuestGranted" class="edit-form-checkbox"/>
-			<br/>
+			<t:if test="userLoggedIn.restricted" negate="true">
+				<br/>
+				<t:label for="restrictedGuest" class="edit-form-label">${message:pages.user.edit.restrictedGuest}</t:label>
+				<t:checkbox t:id="restrictedGuest" class="edit-form-checkbox" onclick="javascript:toogleAllowedContacts();"/>
+			</t:if>
+			<div id="allowedContactsBlock" style="display:none">
+				<br/>
+				<t:label for="recipientsPatternGuestForm" class="edit-form-label">${message:pages.user.edit.restrictedGuest.list}</t:label>
+				<t:textarea t:id="recipientsPatternGuestForm" t:value="recipientsSearch"
+					t:mixins="autocomplete" t:minChars="2" t:tokens="," validate="required"
+					class="recipientsPattern" 
+					title="${message:components.confirmSharePopup.texarea.recipients.title}" />
 			</div>
+<!--			<script type="text/javascript">-->
+<!--				initAllowedContacts(${restrictedGuest});-->
+<!--			</script>-->
+			<br/>
+			<div class="clear"></div>
 			
 
 			<div id="askCustomMessageBlock">
@@ -60,10 +75,9 @@
 				<br/>
 				<t:label for="customMessageArea">${message:components.guestEditForm.field.message}</t:label>
 				<t:textarea t:id="customMessageArea" t:value="customMessage" cols="45" rows="6" class="edit-form-textarea"/>
-				<br/>
 			</div>
-			<br/>
 			<div class="clear"></div>
+			</div>
 
 
 			<hr />
@@ -75,20 +89,7 @@
 			</div>
 
 		</t:form>
-
-        
-        <t:block t:id="onFailure">
-        	<t:errors  banner="message:pages.user.edit.errorBanner"  />
-          	<script type="text/javascript">
-	       		new Effect.Shake('${JSONid}');
-	       	</script>
-        </t:block>
-        
-        <t:block t:id="onSuccess">
-          	<script type="text/javascript">
-	       		location.reload(true);
-	       	</script>
-        </t:block>
+       </t:zone>
         
     </div>
 </t:container>

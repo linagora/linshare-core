@@ -72,6 +72,11 @@ public class Document implements Serializable {
 	private Boolean shared;
 	
 	/**
+	 * if the document is shared with groups.
+	 */
+	private Boolean sharedWithGroup;
+	
+	/**
 	 * the document file size
 	 */
 	private Long size;
@@ -88,9 +93,15 @@ public class Document implements Serializable {
 	private String thmbUUID;
 	
 	
+	/**
+	 * timsStampresponse encoded (der)
+	 */
+	private byte[] timeStamp;
+	
+	
 	public Document(String identifier,String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
-			Boolean shared, Long size) {
+			Boolean shared, Boolean sharedWithGroup,Long size) {
 		super();
 		this.identifier=identifier;
 		this.name = name;
@@ -100,9 +111,11 @@ public class Document implements Serializable {
 		this.owner = owner;
 		this.encrypted = encrypted;
 		this.shared = shared;
+		this.sharedWithGroup = sharedWithGroup;
 		this.size = size;
 		this.signatures = null;
 		this.thmbUUID = null;
+		this.timeStamp = null;
 	}
 	/**
 	 * modifying from protected to public for using BeanUtils without construct 
@@ -185,6 +198,12 @@ public class Document implements Serializable {
 		this.shared = shared;
 	}
 
+	public void setSharedWithGroup(Boolean sharedWithGroup) {
+		this.sharedWithGroup = sharedWithGroup;
+	}
+	public Boolean getSharedWithGroup() {
+		return sharedWithGroup;
+	}
 	public User getOwner() {
 		return owner;
 	}
@@ -225,6 +244,12 @@ public class Document implements Serializable {
 	}
 	public String getThmbUUID() {
 		return thmbUUID;
+	}
+	public byte[] getTimeStamp() {
+		return timeStamp;
+	}
+	public void setTimeStamp(byte[] timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 	
 }

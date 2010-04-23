@@ -30,6 +30,7 @@ import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 
@@ -61,7 +62,7 @@ public class UserConfig {
 	@Inject 
 	private Logger logger;
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 	
@@ -94,9 +95,6 @@ public class UserConfig {
 	
 	
     @InjectComponent
-    private Form keyform;
-	
-    @InjectComponent
     private Form changePassword;
     
 	
@@ -104,7 +102,7 @@ public class UserConfig {
 	 *                Properties & injected symbol, ASO, etc
 	 ************************************************************ */
 	
-	@ApplicationState
+	@SessionState
 	@Property
 	private UserVo userVo;
 	
@@ -113,11 +111,6 @@ public class UserConfig {
 	
 	@Property
 	private String currentLocale;
-	
-	@Property
-	private String password;
-	@Property
-	private String confirmPassword;
 	
 	@Property
 	private String oldUserPassword;
@@ -133,9 +126,6 @@ public class UserConfig {
 	@Property
 	private SimpleSelectModel<String> model;
 
-	@Persist
-	@Property
-	private boolean keyGenerated;
 	
     @Property
     @Persist
@@ -161,9 +151,6 @@ public class UserConfig {
 			
 		}
 		
-		if(keyGenerated==false)
-		keyGenerated = userFacade.isUserEnciphermentKeyGenerated(userVo);
-		
 		ParameterVo p = parameterFacade.loadConfig();
 		activeEncipherment = p.getActiveEncipherment();
 		
@@ -181,21 +168,6 @@ public class UserConfig {
 		persistentLocale.set(LocaleUtils.toLocale(currentLocale));
 	}
 	
-	void onSuccessFromKeyform() throws BusinessException {
-		userFacade.generateEnciphermentKey(userVo,password);
-	}
-	
-    public boolean onValidateFormFromKeyform() {
-    	if (keyform.getHasErrors()) {
-    		return false;
-    	}
-    	
-    	if (!password.equals(confirmPassword)) {
-    		keyform.recordError(messages.get("pages.administration.userconfig.error.password"));
-    		return false;
-    	}
-        return true;
-    }
     
     public boolean onValidateFormFromChangePassword() {
     	if (changePassword.getHasErrors()) {
@@ -220,7 +192,6 @@ public class UserConfig {
     
     @CleanupRender
     public void cleanupRender(){
-    	keyform.clearErrors();
     	changePassword.clearErrors();
     }
 	

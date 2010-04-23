@@ -22,6 +22,7 @@ package org.linagora.linShare.core.Facade;
 
 import java.util.List;
 
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -39,14 +40,12 @@ public interface UserFacade {
      * @param lastName last name.
      * @param canUpload if the user can upoad.
      * @param comment : the comment about the user
-     * @param mailSubject mail subject.
-     * @param mailContent content of the mail in html.
-     * @param mailContentTxt content of the mail in text.
+     * @param mailContainer informations needed to construct the email
      * @param owner user who create the guest.
      * @throws BusinessException if user already exist.
      */
-    void createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment, String mailSubject,
-        String mailContent, String mailContentTxt, UserVo owner) throws BusinessException;
+    void createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
+    		MailContainer mailContainer, UserVo owner) throws BusinessException;
     
     /**
      * update a guest (edit)
@@ -136,26 +135,6 @@ public interface UserFacade {
 	 */
 	public void updateUserLocale(UserVo user, String locale);
 	
-	/**
-	 * generate challenge for the Encipherment Key
-	 * @param user
-	 * @param password material to derive the key
-	 * @throws BusinessException 
-	 */
-	public void generateEnciphermentKey(UserVo user, String password) throws BusinessException;
-	
-	/**
-	 * check challenge for the Encipherment Key
-	 * @param user
-	 * @param password to check with the previous one in referential
-	 * @return true if given password is ok
-	 */public boolean checkEnciphermentKey(UserVo user, String password);
-	/**
-	 * 
-	 * @param user
-	 * @return true if one key (one password) has been given and challenge is computed.
-	 */public boolean isUserEnciphermentKeyGenerated(UserVo user);
-	
 	
 	/**
 	 * temporary admin user (import.sql)
@@ -188,7 +167,38 @@ public interface UserFacade {
     /**
      * Set a new password to a guest user
      * @param user
+     * @param mailContainer informations needed to construct the email
      */
-    void resetPassword(UserVo user, String mailSubject,
-			String mailContent, String mailContentTxt) throws BusinessException;
+    void resetPassword(UserVo user, MailContainer mailContainer) throws BusinessException;
+    
+    /**
+	 * Update a guest as restricted and set his list of contacts
+	 * 
+	 * @param login of the guest
+	 * @param mailContacts
+	 */
+	void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException;
+	
+    /**
+	 * Set a guest as not restricted and remove his list of contacts
+	 * 
+	 * @param login
+	 */
+	public void removeGuestContactRestriction(String login) throws BusinessException;
+	
+	/**
+	 * Add one contact to a restricted guest
+	 * 
+	 * @param ownerLogin
+	 * @param contactLogin
+	 */
+	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException;
+    
+	/**
+	 * Retrieve the list of contacts of the guest
+	 * 
+	 * @param login
+	 * @return
+	 */
+	List<UserVo> fetchGuestContacts(String login) throws BusinessException;
 }

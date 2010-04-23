@@ -59,7 +59,6 @@ import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.vo.CacheUserPinVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.utils.PropertyPlaceholderConfigurer;
@@ -72,6 +71,7 @@ import org.linagora.linShare.view.tapestry.rest.impl.UserRestServiceImpl;
 import org.linagora.linShare.view.tapestry.services.impl.AssetProtectionDispatcher;
 import org.linagora.linShare.view.tapestry.services.impl.BusinessMessagesManagementServiceImpl;
 import org.linagora.linShare.view.tapestry.services.impl.ConfigureMarshallerModule;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.MyMultipartDecoderImpl;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.linShare.view.tapestry.services.impl.UserAccessAuthentity;
@@ -209,6 +209,7 @@ public class AppModule
 		conf.add("gif","^.*\\.gif$");
 		conf.add("swf","^.*\\.swf$");
 		conf.add("ico","^.*\\.ico$");
+		conf.add("applet","^.*applet/.*\\.jar$");
 	}
 
     /**
@@ -306,7 +307,6 @@ public class AppModule
 	public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration)
 	{
 		configuration.add(UserVo.class, new ApplicationStateContribution("session"));
-		configuration.add(CacheUserPinVo.class, new ApplicationStateContribution("session"));
 		configuration.add(ShareSessionObjects.class, new ApplicationStateContribution("session"));
 //        configuration.add(UserSignature.class, new ApplicationStateContribution("session"));
         configuration.add(BusinessInformativeContentBundle.class, new ApplicationStateContribution("session"));
@@ -359,9 +359,10 @@ public class AppModule
      * REST part
      ****************************/
 
-    // Adding the properties for mail subject 
+    // Adding the properties for mail subject and content
     public static void contributeValidationMessagesSource(OrderedConfiguration<String> configuration) {
     	configuration.add("app", "org/linagora/linShare/view/tapestry/rest/mail");
+    	configuration.add("app2", "org/linagora/linShare/view/tapestry/services/keys");
     }
     
     // These two methods are to be contributed by a submodule
@@ -399,23 +400,27 @@ public class AppModule
     		 @InjectService("ShareFacade") ShareFacade shareFacade,
     		 @InjectService("UserFacade") UserFacade userFacade,
              @InjectService("ParameterFacade") ParameterFacade parameterFacade,
-    		 @Inject @Path("context:templates/new-guest.html") Asset guestMailTemplate,
-    		 @Inject @Path("context:templates/new-guest.txt") Asset guestMailTemplateTxt,
-    		 @Inject @Path("context:templates/shared-message.html") Asset sharedTemplate,
-    		 @Inject @Path("context:templates/shared-message.txt") Asset sharedTemplateTxt,
-    		 @Inject @Path("context:templates/shared-message-withpassword.html") Asset passwordSharedTemplate,
-    		 @Inject @Path("context:templates/shared-message-withpassword.txt") Asset passwordSharedTemplateTxt,
     		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
-    		 @InjectService("Templating") Templating templating,
     		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
-    		 @InjectService("ThreadLocale")  ThreadLocale threadLocale
+    		 @InjectService("ThreadLocale")  ThreadLocale threadLocale,
+    		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder
 
     		 )
     {
 
         config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, parameterFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller));
-        config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, userFacade, documentFacade, sharedTemplate, sharedTemplateTxt, passwordSharedTemplate, passwordSharedTemplateTxt, propertiesSymbolProvider, templating, validationMessagesSource, threadLocale, xstreamMarshaller));
-        config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, guestMailTemplate, guestMailTemplateTxt,propertiesSymbolProvider, templating, validationMessagesSource,threadLocale, xstreamMarshaller));
+        config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, documentFacade, mailContainerBuilder));
+        config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
     }
      
+    public static MailContainerBuilder buildMailContainerBuilder(
+   		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
+		 @InjectService("Templating") Templating templating,
+		 @InjectService("PersistentLocale") PersistentLocale persistentLocale,
+		 @InjectService("Request") Request request,
+		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
+		 @Inject @Path("context:templates/mailContainer.html") Asset containerTemplate,
+		 @Inject @Path("context:templates/mailContainer.txt") Asset containerTemplateTxt) {
+    	return new MailContainerBuilder(propertiesSymbolProvider, templating, persistentLocale, request, containerTemplate, containerTemplateTxt, validationMessagesSource);
+    }
 }

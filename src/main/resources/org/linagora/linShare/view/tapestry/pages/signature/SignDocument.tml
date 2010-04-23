@@ -2,17 +2,15 @@
 <t:MyBorderLayout t:title="message:pages.signature.title" t:identifier="signature"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-	Unsupported
-	<!-- 
 	<script type="text/javascript">
 		function signature(){
 			var hashes = document.form.signContent.value;
-			var signatures = document.applets[0].sign(hashes,"${userSignature.signerKeystoreType}","${userSignature.alias}",navigator.userAgent);
+			var signatures = document.applets[0].sign(hashes,"${userSignature.signerKeystoreTypeName}","${userSignature.alias}",navigator.userAgent,"${userSignature.oidSignaturePolicy}");
 			document.form.signContent.value=signatures;
 		}
 	</script>
 
-	<!- Main content ->
+	<!-- Main content -->
 
 	<div id="content">
 
@@ -40,7 +38,7 @@
 		
 			<h2>${message:pages.signature.signdocument.currentdocumenttosign}</h2>
 			<div id="tbsFiles">
-				<t:grid source="documents" row="document" reorder="filename,friendlySize,createDate" add="friendlySize,createDate" exclude="type,size,encrypted,identifier,shared,ownerLogin">
+				<t:grid source="documents" row="document" reorder="filename,friendlySize,createDate" add="friendlySize,createDate" exclude="type,size,encrypted,identifier,shared,ownerLogin,fileComment,sharedWithGroup">
 					<t:parameter t:name="filenameHeader">${message:pages.signature.signdocument.grid.filenameHeader}</t:parameter>
 					<t:parameter t:name="createDateHeader">${message:pages.signature.signdocument.grid.createDateHeader}</t:parameter>
 					<t:parameter t:name="friendlySizeHeader">${message:pages.signature.signdocument.grid.sizeHeader}</t:parameter>
@@ -73,13 +71,11 @@
 
 			<t:form>
 				<t:textfield t:id="signContent"  style="display:none"/>		
-				<t:linkSubmit t:id="sign" title="${message:pages.signature.signdocument.button.sign.title}">
-					<img src="${asset:context:images/icons/sign.png}" onclick="signature();"/>${message:pages.signature.signdocument.button.sign}
-				</t:linkSubmit>&nbsp;
-				<t:linkSubmit t:id="cancel">${message:pages.signature.signdocument.button.cancel}</t:linkSubmit>
+				<t:submit t:id="sign" onclick="signature();" title="${message:pages.signature.signdocument.button.sign.title}" value="${message:pages.signature.signdocument.button.sign}" />&nbsp;
+				<t:submit t:id="cancel" value="${message:pages.signature.signdocument.button.cancel}" />
 			</t:form>
 
-			<!- Applet ->
+			<!-- Applet -->
 
 			<applet name="myApplet"
 				archive="${asset:context:applet/linsign.jar}"
@@ -87,10 +83,11 @@
 				width="0" height="0">
 				<param name="debug" value="false" />
 				<param name="language" value="${locale}" />
+				<param name="java_version" value="1.6+" />
 			</applet>
 
 		</div>
 
-	</div> --><!-- id="content" -->
+	</div><!-- id="content" -->
 	
 </t:MyBorderLayout>

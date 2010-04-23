@@ -33,8 +33,10 @@ import java.util.Set;
 import org.linagora.linShare.core.dao.LdapDao;
 import org.linagora.linShare.core.dao.ldap.LdapSearchResult;
 import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.entities.AllowedContact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Guest;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.Share;
@@ -48,9 +50,11 @@ import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
+import org.linagora.linShare.core.repository.AllowedContactRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.RecipientFavouriteService;
@@ -70,6 +74,8 @@ public class UserServiceImpl implements UserService {
 
     /** User repository. */
     private final GuestRepository guestRepository;
+    
+    private final AllowedContactRepository allowedContactRepository;
 
     /** Notifier service. */
     private final NotifierService notifierService;
@@ -86,6 +92,8 @@ public class UserServiceImpl implements UserService {
     private final ShareService shareService;
     
     private final RecipientFavouriteService recipientFavouriteService;
+    
+    private final MailContentBuildingService mailElementsFactory;
 
     /** Constructor.
      * @param userRepository repository.
@@ -95,7 +103,9 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository, NotifierService notifierService, LdapDao ldapDao,
     		final LogEntryRepository logEntryRepository,final GuestRepository guestRepository
 		, final ParameterService parameterService, ShareService shareService,
-		final RecipientFavouriteService recipientFavouriteService) {
+		final RecipientFavouriteService recipientFavouriteService,
+		final AllowedContactRepository allowedContactRepository,
+		final MailContentBuildingService mailElementsFactory) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.ldapDao = ldapDao;
@@ -104,6 +114,8 @@ public class UserServiceImpl implements UserService {
 		this.parameterService = parameterService;
 		this.shareService = shareService;
 		this.recipientFavouriteService = recipientFavouriteService;
+		this.allowedContactRepository = allowedContactRepository;
+		this.mailElementsFactory = mailElementsFactory;
     }
 
     /** Create a guest.
@@ -112,13 +124,13 @@ public class UserServiceImpl implements UserService {
      * @param lastName last name.
      * @param mail guest email address.
      * @param canUpload : if the user can upload file
-     * @param mailSubject mail subject.
-     * @param mailContent.
+     * @param canCreateGuest : if the user can create other users
+     * @param mailContainer : the informations for the notification
      * @param ownerLogin login of the user who create the guest.
      * @return persisted guest.
      */
     public Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment,
-        String mailSubject, String mailContent, String mailContentTxt, String ownerLogin) throws BusinessException {
+    		MailContainer mailContainer, String ownerLogin) throws BusinessException {
 
     	//We need to check that the guest email isn't registered
     	
@@ -146,11 +158,10 @@ public class UserServiceImpl implements UserService {
         
         logEntryRepository.create(logEntry);
         
-        String content = NotifyContentFactory.makeGuestMailContent(mailContent, password);
-        String contentTxt = NotifyContentFactory.makeGuestMailContent(mailContentTxt, password);
+        mailContainer = mailElementsFactory.buildMailNewGuest(mailContainer, owner, guest, password);
 
         // Send an email to the guest.
-        notifierService.sendNotification(owner.getMail(), mail, mailSubject, content,contentTxt);
+        notifierService.sendNotification(owner.getMail(), mail, mailContainer);
 
         return guest;
     }
@@ -167,10 +178,6 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
-    
-	public User findUserFromLdapwithUid(String uid) {
-		return ldapDao.searchUserWithUid(uid);
-	}
     
 
     /** Find a user (based on mail address).
@@ -278,6 +285,9 @@ public class UserServiceImpl implements UserService {
 						//clearing the favorites
 						recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
 						
+						//clearing allowed contacts
+						allowedContactRepository.deleteAllByUserBothSides(userToDelete);
+						
 						// clearing all signatures
 						Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
 						ownSignatures.clear();
@@ -289,6 +299,9 @@ public class UserServiceImpl implements UserService {
 						for (Guest guest : usersCreatedByTheGuest) {
 							guest.setOwner(owner);
 							guestRepository.update(guest);
+							if (guest.isRestricted()) { //if restricted guest, needs to have the new owner as contact
+								addGuestContactRestriction(guest.getLogin(), owner.getLogin());
+							}
 						}
 						
 						
@@ -340,6 +353,23 @@ public class UserServiceImpl implements UserService {
 	public List<User> searchUser(String mail, String firstName,
 			String lastName, UserType userType, User currentUser) {
 		List<User> users=new ArrayList<User>();
+		
+		if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
+			Guest currentGuest = guestRepository.findByLogin(currentUser.getLogin());
+			if (currentGuest.isRestricted() == true) {
+				List<AllowedContact> contacts = allowedContactRepository.searchContact(mail, firstName, lastName, currentGuest);
+				for (AllowedContact allowedContact : contacts) {
+					if (allowedContact.getContact().getUserType().equals(UserType.GUEST)) {
+						Guest guest = guestRepository.findByLogin(allowedContact.getContact().getLogin());
+						users.add(guest);
+					}
+					else {
+						users.add(allowedContact.getContact());
+					}
+				}
+				return users;
+			}
+		}
 		
 		if(null==userType || userType.equals(UserType.GUEST)){
 			List<Guest> guests = null;
@@ -449,8 +479,7 @@ public class UserServiceImpl implements UserService {
 		guestRepository.update(guest);
 	}
 
-	public void resetPassword(String login, String mailSubject,
-			String mailContent, String mailContentTxt) throws BusinessException {
+	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException {
 		Guest guest = guestRepository.findByLogin(login);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
@@ -460,14 +489,105 @@ public class UserServiceImpl implements UserService {
         String password = generatePassword();
         String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
         
-        String content = NotifyContentFactory.makeGuestMailContent(mailContent, password);
-        String contentTxt = NotifyContentFactory.makeGuestMailContent(mailContentTxt, password);
+        mailContainer = mailElementsFactory.buildMailResetPassword(mailContainer, guest, password);
 
         // Send an email to the guest.
-        notifierService.sendNotification(guest.getMail(), guest.getMail(), mailSubject, content,contentTxt);
+        notifierService.sendNotification(guest.getMail(), guest.getMail(), mailContainer);
         
 		guest.setPassword(hashedPassword);
 		guestRepository.update(guest);
 	}
+	
+	public void removeGuestContactRestriction(String login) throws BusinessException {
+		Guest guest = guestRepository.findByLogin(login);
+		if (guest == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+		}
+		
+		//clean contacts
+		List<AllowedContact> precedents = allowedContactRepository.findByOwner(guest);
+		if (precedents!=null && !precedents.isEmpty()) {
+			for (AllowedContact allowedContact : precedents) {
+				allowedContactRepository.delete(allowedContact);
+			}
+		}
+		
+		try {
+			guest.setRestricted(false);
+			guestRepository.update(guest);
+		} catch (IllegalArgumentException e1) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+		} catch (BusinessException e1) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not update guest restriction of " + login);
+		}
+	}
+	
 
+	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException {
+
+		Guest guest = guestRepository.findByLogin(ownerLogin);
+		if (guest == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + ownerLogin);
+		}
+		
+		try {
+			User contact = findAndCreateUser(contactLogin);
+			AllowedContact allowedContact = new AllowedContact(guest, contact);
+			allowedContactRepository.create(allowedContact);
+		} catch (IllegalArgumentException e) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user " + contactLogin);
+		} catch (BusinessException e) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Could not add the contact restriction");
+		}
+	}
+	
+	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException {
+		Guest guest = guestRepository.findByLogin(login);
+		if (guest == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+		}
+		List<AllowedContact> precedents = new ArrayList<AllowedContact>();
+		try {
+			//clean actual contacts
+			precedents.addAll(allowedContactRepository.findByOwner(guest));
+			if (precedents!=null && !precedents.isEmpty()) {
+				for (AllowedContact allowedContact : precedents) {
+					allowedContactRepository.delete(allowedContact);
+				}
+			}
+			//add new contacts
+			for (String mailContact : mailContacts) {
+				User contact=findAndCreateUser(mailContact);
+				AllowedContact allowedContact = new AllowedContact(guest, contact);
+				allowedContactRepository.create(allowedContact);
+			}
+			//set boolean restricted
+			guest.setRestricted(true);
+			guestRepository.update(guest);
+		} catch (IllegalArgumentException e1) {
+			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't set contacts restriction for user " + login);
+		} catch (BusinessException e1) {
+			for (AllowedContact entity : precedents) { //set old contacts list
+				allowedContactRepository.create(entity);				
+			}
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't set contacts restriction for user " + login);
+		}
+	}
+	
+	public List<User> fetchGuestContacts(String login) throws BusinessException {
+		Guest guest = guestRepository.findByLogin(login);
+		if (guest == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+		}
+		if (!guest.isRestricted()) {
+			return null;
+		}
+		List<User> contactsUsers = new ArrayList<User>();
+		List<AllowedContact> contacts = allowedContactRepository.findByOwner(guest);
+		for (AllowedContact allowedContact : contacts) {
+			contactsUsers.add(allowedContact.getContact());
+		}
+		
+		return contactsUsers;
+	}
 }

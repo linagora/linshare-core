@@ -38,6 +38,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.UserFacade;
@@ -107,6 +108,10 @@ public class Index {
     @Persist
     @Property
     private boolean inSearch;
+    
+	@Inject @Symbol("linshare.users.internal.defaultView.showAll")
+	@Property
+	private boolean showAll;
 
 
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
@@ -170,7 +175,12 @@ public class Index {
     @OnEvent(value="resetListUsers")
     public void resetListUsers(Object[] o1) {
 		inSearch=false;
-		users = userFacade.searchUser("", "", "", userVo);
+		if (showAll || userVo.isRestricted()) {
+			users = userFacade.searchUser("", "", "", userVo);
+		}
+		else {
+			users = userFacade.searchGuest(userVo.getMail());
+		}
     }
     
     @OnEvent(value="inUserSearch")

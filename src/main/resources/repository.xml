@@ -59,9 +59,10 @@
 			class: FQN of class implementing the PersistenceManager interface
 		-->
 		<PersistenceManager class="${linshare.db.persistence_manager}">
-		<param name="url" value="${linshare.db.url}_data" />
-		<param name="user" value="${linshare.db.username}" />
-		<param name="password" value="${linshare.db.password}" />
+			<param name="url" value="${linshare.db-repository.url}" />
+			<param name="user" value="${linshare.db-repository.username}" />
+			<param name="password" value="${linshare.db-repository.password}" />
+			<param name="driver" value="${linshare.db-repository.driver.class}"/>
 			<param name="schemaObjectPrefix" value="${wsp.name}_" />
 			<param name="externalBLOBs" value="false"/>
 		</PersistenceManager>
@@ -86,9 +87,10 @@
 		-->
 		<PersistenceManager
 			class="${linshare.db.persistence_manager}">
-		<param name="url" value="${linshare.db.url}_data" />
-		<param name="user" value="${linshare.db.username}" />
-		<param name="password" value="${linshare.db.password}" />
+			<param name="url" value="${linshare.db-repository.url}" />
+			<param name="user" value="${linshare.db-repository.username}" />
+			<param name="password" value="${linshare.db-repository.password}" />
+			<param name="driver" value="${linshare.db-repository.driver.class}"/>
 			<param name="schemaObjectPrefix" value="version_" />
 		</PersistenceManager>
 	</Versioning>

@@ -25,8 +25,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 
 import javax.jcr.Repository;
@@ -34,11 +32,10 @@ import javax.jcr.Repository;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
+import org.linagora.linShare.core.utils.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springmodules.jcr.RepositoryFactoryBean;
 import org.xml.sax.InputSource;
 
@@ -77,10 +74,12 @@ public class BetterRepositoryFactoryBean extends RepositoryFactoryBean {
    */
   private static final String DEFAULT_REP_DIR = ".";
 
+  
   /**
-   * Properties configuration the repository.
+   * Spring properties place holder
    */
-  private List configurationProperties;
+  private PropertyPlaceholderConfigurer propertyPlaceholderConfigurer;
+  
   /**
    * Home directory for the repository.
    */
@@ -119,9 +118,10 @@ public class BetterRepositoryFactoryBean extends RepositoryFactoryBean {
             + DEFAULT_REP_DIR);
       homeDir = new FileSystemResource(DEFAULT_REP_DIR);
     }
-    if (getConfigurationProperties() != null) {
+    if (propertyPlaceholderConfigurer != null) {
       String goodConfig = replaceVariables(loadConfigurationKeys(),
           getConfiguration(configuration), true);
+      
       repositoryConfig = RepositoryConfig.create(new InputSource(
           new StringReader(goodConfig)), homeDir.getFile().getAbsolutePath());
     } else {
@@ -146,7 +146,7 @@ public class BetterRepositoryFactoryBean extends RepositoryFactoryBean {
    * @throws IllegalArgumentException
    *           if the replacement of a referenced variable is not found
    */
-  public static String replaceVariables(Properties variables, String value,
+  private String replaceVariables(Properties variables, String value,
       boolean ignoreMissing) throws IllegalArgumentException {
     StringBuffer result = new StringBuffer();
 
@@ -161,15 +161,26 @@ public class BetterRepositoryFactoryBean extends RepositoryFactoryBean {
       q = value.indexOf("}", q + 2); // Find }
       if (q != -1) {
         String variable = value.substring(p + 2, q);
-        String replacement = variables.getProperty(variable);
-        if (replacement == null) {
-          if (ignoreMissing) {
-            replacement = "${" + variable + '}';
-          } else {
-            throw new IllegalArgumentException("Replacement not found for ${"
-                + variable + "}.");
-          }
+        String replacement = getSystemProperties(variable);
+        if(replacement==null){
+        	 replacement = variables.getProperty(variable);
         }
+        	
+        if (replacement == null) {
+            if (ignoreMissing) {
+              replacement = "${" + variable + '}';
+            } else {
+              throw new IllegalArgumentException("Replacement not found for ${"
+                  + variable + "}.");
+            }
+        }
+        
+        if(replacement.contains("${")){
+        	try {
+        		replacement = replaceVariables(variables,replacement,false);
+        	} catch (IllegalArgumentException e){ } 
+        }
+       
         result.append(replacement);
         p = q + 1;
         q = value.indexOf("${", p); // Find next ${
@@ -179,14 +190,36 @@ public class BetterRepositoryFactoryBean extends RepositoryFactoryBean {
     return result.toString();
   }
 
-  /**
+	private String getSystemProperties(String key) {
+		try {
+			String value = System.getProperty(key);
+			if (value == null) {
+				value = System.getenv(key);
+			}
+			return value;
+		} catch (Throwable ex) {
+			if (log.isDebugEnabled()) {
+				log.debug("Could not access system property '" + key + "': "
+						+ ex);
+			}
+			return null;
+		}
+
+	}
+
+/**
    * Shutdown method.
    *
    */
   public void destroy() throws Exception {
+
     // force cast (but use only the interface)
-    if (repository instanceof JackrabbitRepository)
+    if (repository instanceof JackrabbitRepository){
+      log.info("Closing repository ...");
       ((JackrabbitRepository) repository).shutdown();
+    }
+    
+    super.destroy();
   }
 
   /**
@@ -219,45 +252,21 @@ public class BetterRepositoryFactoryBean extends RepositoryFactoryBean {
     this.repositoryConfig = repositoryConfig;
   }
 
-  /**
-   * @return Returns the configuration properties.
-   */
-  public List getConfigurationProperties() {
-    return configurationProperties;
-  }
 
-  /**
-   * @param configurationProperties
-   *          The configuration properties to set for the repository.
-   */
-  public void setConfigurationProperties(List resources) {
-    this.configurationProperties = resources;
-  }
+  
+  public void setPropertyPlaceholderConfigurer(
+		PropertyPlaceholderConfigurer propertyPlaceholderConfigurer) {
+	this.propertyPlaceholderConfigurer = propertyPlaceholderConfigurer;
+}
 
-  /**
+/**
    * Load all the configuration properties
    *
    * @return
    */
   protected Properties loadConfigurationKeys() {
-    Iterator iter = configurationProperties.iterator();
-    Properties props = new Properties();
-    ResourceLoader loader = new DefaultResourceLoader(this.getClass()
-        .getClassLoader());
-    String location = "";
-    while (iter.hasNext()) {
-      try {
-        location = (String) iter.next();
-        if (loader.getResource(location).exists()) {
-        	props.load(loader.getResource(location).getInputStream());
-        } else {
-        	log.info("Error loading resource " + location);
-        }
-      } catch (IOException e) {
-        log.info("Error loading resource " + location, e);
-      }
-    }
-    return props;
+	 return propertyPlaceholderConfigurer.getProperties();
+	  
   }
 
   /**

@@ -27,13 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Zone;
@@ -42,17 +40,16 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.ArchiveZipStream;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.components.PasswordPopup;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,23 +110,8 @@ public class Download {
     private RequestGlobals requestGlobals;
 	
 	@Inject
-	private Templating templating;
+	private MailContainerBuilder mailContainerBuilder;
 	
-	@Inject
-	@Path("context:templates/anonymous-download.html")
-	private Asset anonymousDownloadTemplate;
-	
-	@Inject
-	@Path("context:templates/anonymous-download.txt")
-	private Asset anonymousDownloadTemplateTxt;
-	
-	@Inject
-	@Path("context:templates/anonymous-archive-download.html")
-	private Asset anonymousArchiveDownloadTemplate;
-	
-	@Inject
-	@Path("context:templates/anonymous-archive-download.txt")
-	private Asset anonymousArchiveDownloadTemplateTxt;
 	
 	public String[] getContext() {
 		return new String[] { alea, index.toString()};
@@ -167,36 +149,23 @@ public class Download {
 			}
 
 			if(!passwordProtected){
-			
-			final DocumentVo doc = securedUrlFacade.getDocument(alea,
-					componentResources.getPageName().toLowerCase(), password,
-					documentId);
-			final InputStream file = documentFacade.retrieveFileStream(doc,email);
-			
-			securedUrlFacade.logDownloadedDocument(alea, componentResources.getPageName().toLowerCase(), password, documentId, email);
-			
-			//html template
-			String anonymousDownloadTemplateContent = null;
-			//TXT template
-			String anonymousDownloadTemplateContentTxt = null;
-
-			try {
+				final DocumentVo doc = securedUrlFacade.getDocument(alea,
+						componentResources.getPageName().toLowerCase(), password,
+						documentId);
+				final InputStream file = documentFacade.retrieveFileStream(doc,email);
 				
-				String subject=messages.get("mail.user.all.download.subject");
-				
-				anonymousDownloadTemplateContent = templating.readFullyTemplateContent(anonymousDownloadTemplate.getResource().openStream());
-				
-				anonymousDownloadTemplateContentTxt = templating.readFullyTemplateContent(anonymousDownloadTemplateTxt.getResource().openStream());
+				securedUrlFacade.logDownloadedDocument(alea, componentResources.getPageName().toLowerCase(), password, documentId, email);
+	
 				List<DocumentVo> docList = new ArrayList<DocumentVo>();
 				docList.add(doc);
-				securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), subject, anonymousDownloadTemplateContent, anonymousDownloadTemplateContentTxt, docList,email);
-			} catch (IOException e) {
-				logger.error("Bad mail template", e);
-				throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
+				
+				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(null, null);
+				securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), mailContainer, docList,email);
+				
+				return new FileStreamResponse(doc, file); 
+			} else {
+				return null;
 			}
-			
-			return new FileStreamResponse(doc, file); }
-			else return null;
 			
 			
 		} catch (BusinessException e) {
@@ -272,29 +241,14 @@ public class Download {
 			ArchiveZipStream ai = new ArchiveZipStream(map);
 			
 			securedUrlFacade.logDownloadedDocument(alea, componentResources.getPageName().toLowerCase(), password, null,email);
-			
-			
-			//html template
-			String anonymousArchiveDownloadTemplateContent = null;
-			//TXT template
-			String anonymousArchiveDownloadTemplateContentTxt = null;
 
-			try {
-				
-				String subject=messages.get("mail.user.all.download.subject");
-				
-				anonymousArchiveDownloadTemplateContent = templating.readFullyTemplateContent(anonymousArchiveDownloadTemplate.getResource().openStream());
-				
-				anonymousArchiveDownloadTemplateContentTxt = templating.readFullyTemplateContent(anonymousArchiveDownloadTemplateTxt.getResource().openStream());
-				
-				securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), subject, anonymousArchiveDownloadTemplateContent, anonymousArchiveDownloadTemplateContentTxt, documents, email);
-			} catch (IOException e) {
-				logger.error("Bad mail template", e);
-				throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
-			}
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(null, null);
+			securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), mailContainer, documents, email);
 			
 			return (new FileStreamResponse(ai,null));
-		} else return null;
+		} else {
+			return null;
+		}
 	}
 	
 	

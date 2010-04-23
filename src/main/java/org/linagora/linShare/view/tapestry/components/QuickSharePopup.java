@@ -20,7 +20,6 @@
 */
 package org.linagora.linShare.view.tapestry.components;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,9 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.regex.Pattern;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
@@ -41,7 +38,6 @@ import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -49,7 +45,6 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.upload.services.UploadedFile;
@@ -57,20 +52,19 @@ import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linShare.view.tapestry.services.Templating;
-import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
+import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,21 +147,6 @@ public class QuickSharePopup{
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */
-	@Inject
-	@Path("context:templates/shared-message.html")
-	private Asset sharedTemplate;
-	
-	@Inject
-	@Path("context:templates/shared-message.txt")
-	private Asset sharedTemplateTxt;
-	
-	@Inject
-	@Path("context:templates/shared-message-withpassword.html")
-	private Asset passwordSharedTemplate;
-	
-	@Inject
-	@Path("context:templates/shared-message-withpassword.txt")
-	private Asset passwordSharedTemplateTxt;
 	
 	
 	@Inject
@@ -186,19 +165,13 @@ public class QuickSharePopup{
     private BusinessMessagesManagementService businessMessagesManagementService;
 
 	@Inject
-	private PropertiesSymbolProvider propertiesSymbolProvider;
-	
-	@Inject
-	private Messages messages;
-
-	@Inject
-	private Templating templating;
-
-	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 
     @Inject
     private ComponentResources resources;
+	
+	@Inject
+	private MailContainerBuilder mailContainerBuilder;
 
 	
 	@Inject @Symbol("linshare.default.maxUpload")
@@ -259,57 +232,14 @@ public class QuickSharePopup{
 
 		List<String> elements = new ArrayList<String>();
 		for (UserVo user : searchResults) {
-			 String completeName = formatLabel(user);
+			 String completeName = MailCompletionService.formatLabel(user);
             if (!elements.contains(completeName)) {
                 elements.add(completeName);
             }
 		}
 
 		return elements;
-	}
-	
-	private String formatLabel(UserVo user){
-		StringBuffer buf = new StringBuffer();
-		
-		if(user.getLastName()!=null&&user.getFirstName()!=null){
-			//uservo from USER table or ldap
-			buf.append("\"").append(user.getLastName().trim()).append(" ").append(user.getFirstName().trim()).append("\"");
-			buf.append(" <").append(user.getMail()).append(">,");
-		} else {
-			//uservo from favorite table
-			buf.append(user.getMail()).append(",");
-		}
-		return buf.toString();
-	}
-	
-	// "Michael georges" <michael@linagora.com>,"Laporte Robert" <robert@robert.com>,bruce.willis@orange.fr,...
-	private static List<String> parseEmails(String recipientsList){
-		
-		String[] recipients = recipientsList.split(",");
-		ArrayList<String> emails = new ArrayList<String> ();
-		
-		for (String oneUser : recipients) {
-			
-			String email = contentInsideToken(oneUser, "<",">");
-			if(email==null) email = oneUser.trim();
-			
-			if(!email.equals("")) //ignore empty string
-			emails.add(email); // add good and bad email
-		}
-		
-		return emails;
-	}
-	
-	
-	public static String contentInsideToken(String str,String tokenright,String tokenleft) {
-		int deb = str.indexOf(tokenright,0);
-		int end = str.indexOf(tokenleft,1);
-		if(deb==-1||end==-1) return null;
-		else return str.substring(deb+1, end).trim();
-	}
-	
-	private static final Pattern MAILREGEXP = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$");
-	
+	}	
 	
 	
 	/** Perform a user search using the user search pattern.
@@ -351,11 +281,11 @@ public class QuickSharePopup{
     	
     	boolean sendErrors = false;
 		
-		List<String> recipients = parseEmails(recipientsSearch);
+		List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
 		String badFormatEmail =  "";
 		
 		for (String recipient : recipients) {
-			if (!MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
+			if (!MailCompletionService.MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
 				badFormatEmail = badFormatEmail + recipient + " ";
 				sendErrors = true;
 			}
@@ -378,54 +308,12 @@ public class QuickSharePopup{
     	}
     	
 		//PROCESS SHARE
-    	
-    	
-    	/** 
-		 * retrieve the url from propertie file
-		 * 
-		 */
-		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
-		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
-
-		/**
-		 * retrieve the subject of the mail.
-		 */
-		String subject = "";
-		if (textAreaSubjectValue==null || textAreaSubjectValue.trim().length()==0) {
-			subject=messages.get("mail.user.all.share.subject");
-		}
-		else {
-			subject = textAreaSubjectValue;
-		}
-
 		
-		// prevent NPE
-		if (textAreaValue==null)
-			textAreaValue = "";
-		
-		//html template
-		String sharedTemplateContent = null;
-		String passwordSharedTemplateContent = null;
-		//txt template
-		String sharedTemplateContentTxt = null;
-		String passwordSharedTemplateContentTxt = null;
-
-		try {
-			sharedTemplateContent = templating.readFullyTemplateContent(sharedTemplate.getResource().openStream());
-			passwordSharedTemplateContent = templating.readFullyTemplateContent(passwordSharedTemplate.getResource().openStream());
-			sharedTemplateContentTxt = templating.readFullyTemplateContent(sharedTemplateTxt.getResource().openStream());
-			passwordSharedTemplateContentTxt = templating.readFullyTemplateContent(passwordSharedTemplateTxt.getResource().openStream());
-		
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
-		}
 		SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 		try {
-		
-			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
-		
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
+			mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer);
 		
 		} catch (BusinessException e1) {
 			logger.error("Could not create sharing", e1);

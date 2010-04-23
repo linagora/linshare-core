@@ -216,6 +216,23 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			return;
 
 		}
+		
+		long maxFileSize = -1;
+		try {
+			maxFileSize = parameterFacade.loadConfig().getFileSizeMax();
+		} catch (BusinessException e1) {
+			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load parameters");
+		}
+		long userFreeSpace = documentFacade.getUserAvailableQuota(actor);
+		
+		if (maxFileSize > 0 && theFile.getSize() > maxFileSize) {
+			response.sendError(HttpStatus.SC_METHOD_FAILURE, "The file is larger than the maximum allowed");
+			return;
+		}
+		if (theFile.getSize() > userFreeSpace) {
+			response.sendError(HttpStatus.SC_METHOD_FAILURE, "The file is larger than the remaining user space");
+			return;
+		}
 
 		String mimeType;
 		try {

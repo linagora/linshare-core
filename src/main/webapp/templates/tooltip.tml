@@ -1,0 +1,17 @@
+<p class='tooltipTableDescription'>
+	${description}
+</p>
+<table class='tooltipTable'>
+	<tr>
+		<th>
+			${header_user}
+		</th>
+		<th>
+			${header_mail}
+		</th>
+		<th>
+			${header_expiration}
+		</th>
+	</tr>
+	${rows}
+</table>

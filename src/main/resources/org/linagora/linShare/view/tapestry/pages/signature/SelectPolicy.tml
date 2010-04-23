@@ -3,9 +3,7 @@
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
 	<!-- Main content -->
-	Unsupported
-	<!--
-	
+
 	<div id="content">
 
 		<h1>${message:components.myborderlayout.signature.title}</h1>
@@ -19,5 +17,6 @@
 
 		</div>
 
-	</div> id="content" -->
+	</div><!-- id="content" -->
+
 </t:MyBorderLayout>

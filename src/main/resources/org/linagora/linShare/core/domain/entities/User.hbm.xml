@@ -59,9 +59,11 @@
         
     <subclass discriminator-value="0" name="org.linagora.linShare.core.domain.entities.Internal">
         </subclass>
+    <subclass discriminator-value="2" name="org.linagora.linShare.core.domain.entities.GroupUser" />
     <subclass discriminator-value="1" name="org.linagora.linShare.core.domain.entities.Guest">
       <property column="EXPIRY_DATE" name="expiryDate"/>
       <property access="field" column="comment" name="comment" type="text"/>
+      <property access="field" column="restricted" name="restricted" type="boolean"/>
       <many-to-one class="User" column="OWNER_ID" name="owner"/>
     </subclass>
   </class>

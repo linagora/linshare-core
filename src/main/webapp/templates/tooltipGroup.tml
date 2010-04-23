@@ -1,0 +1,14 @@
+<p class='tooltipTableDescription'>
+	${description}
+</p>
+<table class='tooltipTable'>
+	<tr>
+		<th>
+			${header_group}
+		</th>
+		<th>
+			${header_expiration}
+		</th>
+	</tr>
+	${group_rows}
+</table>

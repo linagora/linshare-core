@@ -40,6 +40,8 @@ public class ParameterVo implements Serializable {
 	private final Boolean activeMimeType;
 	private final Boolean activeSignature;
 	private final Boolean activeEncipherment;
+	private final Boolean activeDocTimeStamp;
+	
     private final Integer guestAccountExpiryTime;
     private final TimeUnit guestAccountExpiryUnit;
     private final String customLogoUrl;
@@ -53,11 +55,11 @@ public class ParameterVo implements Serializable {
     private Set<WelcomeText> welcomeTexts;
 
 	public ParameterVo() {
-		this(null, null,false, null,null,null, TimeUnit.DAY, null, null, null, null, null, null);
+		this(null, null,false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null);
 	}
 
 	public ParameterVo(Long fileSizeMax, Long userAvailableSize, Boolean activeMimeType, Boolean activeSignature,
-		Boolean activeEncipherment,Integer guestAccountExpiryTime, TimeUnit guestAccountExpiryUnit, String customLogoUrl, 
+		Boolean activeEncipherment,Boolean activeDocTimeStamp,Integer guestAccountExpiryTime, TimeUnit guestAccountExpiryUnit, String customLogoUrl, 
 		TimeUnit defaultShareExpiryUnit, Integer defaultShareExpiryTime,
         List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, Set<WelcomeText> welcomeTexts) {
 		this.fileSizeMax = fileSizeMax;
@@ -65,6 +67,7 @@ public class ParameterVo implements Serializable {
 		this.activeMimeType = activeMimeType;
 		this.activeSignature = activeSignature;
 		this.activeEncipherment = activeEncipherment;
+		this.activeDocTimeStamp=activeDocTimeStamp;
         this.guestAccountExpiryTime = guestAccountExpiryTime;
         this.guestAccountExpiryUnit = guestAccountExpiryUnit;
         this.customLogoUrl = customLogoUrl;
@@ -73,7 +76,6 @@ public class ParameterVo implements Serializable {
         this.defaultShareExpiryUnit = defaultShareExpiryUnit;
         this.defaultShareExpiryTime = defaultShareExpiryTime;
         this.deleteDocWithShareExpiryTime = deleteDocWithShareExpiryTime;
-        
 	}
 
     public ParameterVo(Parameter parameter) {
@@ -82,6 +84,7 @@ public class ParameterVo implements Serializable {
 		this.activeMimeType = parameter.getActiveMimeType();
 		this.activeSignature = parameter.getActiveSignature();
 		this.activeEncipherment = parameter.getActiveEncipherment();
+		this.activeDocTimeStamp=parameter.getActiveDocTimeStamp();
         this.guestAccountExpiryTime = parameter.getGuestAccountExpiryTime();
         this.guestAccountExpiryUnit = parameter.getGuestAccountExpiryUnit();
         this.customLogoUrl = parameter.getCustomLogoUrl();
@@ -121,6 +124,9 @@ public class ParameterVo implements Serializable {
 
 	public Boolean getActiveEncipherment() {
 		return activeEncipherment;
+	}
+	public Boolean getActiveDocTimeStamp() {
+		return activeDocTimeStamp;
 	}
 
 	public Integer getGuestAccountExpiryTime() {
@@ -162,6 +168,7 @@ public class ParameterVo implements Serializable {
         parameter.setActiveMimeType(activeMimeType);
         parameter.setActiveSignature(activeSignature);
         parameter.setActiveEncipherment(activeEncipherment);
+        parameter.setActiveDocTimeStamp(activeDocTimeStamp);
         parameter.setGuestAccountExpiryTime(guestAccountExpiryTime);
         parameter.setGuestAccountExpiryUnit(guestAccountExpiryUnit);
         parameter.setCustomLogoUrl(customLogoUrl);

@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <div id="userAddToGroupFormComponent">
+        <t:form t:id="userAddToGroup">
+            <t:errors/>
+            
+			<h2>${message:pages.user.addToGroup.title}</h2>
+
+			<hr />
+    		<p>${message:pages.user.addToGroup.info}</p>
+
+			<t:grid t:id="groupsSelected" source="groupsAllowed" row="groupSelected" 
+				exclude="groupLogin, groupOwner, description" add="selectedValue">
+
+			<t:parameter t:name="empty">
+				<br /><strong>${message:pages.groups.info.empty}</strong>
+			</t:parameter>
+
+			<t:parameter t:name="nameHeader">
+				${message:pages.groups.info.name}
+			</t:parameter>
+
+			<t:parameter t:name="ownerLoginHeader">
+				${message:pages.groups.members.type.owner}
+			</t:parameter>
+
+			<t:parameter t:name="selectedValueHeader">
+			</t:parameter>
+				<t:parameter name="selectedValueCell">
+					<t:checkbox t:id="selected" />
+				</t:parameter>		
+			</t:grid>
+			
+<!--			<t:label for="type"/>:-->
+<!--   				<t:select t:id="type" exlude="owner"/>-->
+
+			<hr />
+
+			<div class="button">
+				<t:linkSubmit class="button">
+                <span><img src="${asset:context:images/icons/add-member.png}" alt=""/> ${message:global.button.add}</span></t:linkSubmit>
+				<a href="#" onclick="userAddToGroupWindow.close();" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+			</div>
+
+        </t:form>
+    </div>
+</t:container>

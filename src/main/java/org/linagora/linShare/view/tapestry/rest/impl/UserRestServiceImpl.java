@@ -24,28 +24,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.rest.UserRestService;
-import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.restmarshaller.Marshaller;
 import org.slf4j.Logger;
@@ -60,40 +53,26 @@ public class UserRestServiceImpl implements UserRestService {
 	private final ApplicationStateManager applicationStateManager; 
 	
 	private final UserFacade userFacade;
-
-    private final Asset guestMailTemplate;
-    
-    private final Asset guestMailTemplateTxt;
        
 	private final PropertiesSymbolProvider propertiesSymbolProvider;
 	
-	private final Templating templating;
-	
-
-	private final ValidationMessagesSource validationMessagesSource;
-	
 	private final Marshaller xstreamMarshaller;
 	
-	private final ThreadLocale threadLocale; 
+	private final MailContainerBuilder mailContainerBuilder;
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserRestServiceImpl.class);
 
 	public UserRestServiceImpl(final ApplicationStateManager applicationStateManager,
-			final UserFacade userFacade, final Asset guestMailTemplate, final Asset guestMailTemplateTxt,
+			final UserFacade userFacade,
 			final PropertiesSymbolProvider propertiesSymbolProvider,
-			final Templating templating,  final ValidationMessagesSource validationMessagesSource,
-			final ThreadLocale threadLocale,
-			final Marshaller xstreamMarshaller) {
+			final Marshaller xstreamMarshaller,
+			final MailContainerBuilder mailContainerBuilder) {
 		super();
 		this.applicationStateManager = applicationStateManager;
 		this.userFacade = userFacade;
-		this.guestMailTemplate = guestMailTemplate;
-		this.guestMailTemplateTxt = guestMailTemplateTxt;
 		this.propertiesSymbolProvider = propertiesSymbolProvider;
-		this.templating = templating;
-		this.validationMessagesSource = validationMessagesSource;
-		this.threadLocale = threadLocale;
 		this.xstreamMarshaller = xstreamMarshaller;
+		this.mailContainerBuilder = mailContainerBuilder;
 	}
 
 	@RestfulWebMethod
@@ -158,40 +137,15 @@ public class UserRestServiceImpl implements UserRestService {
 		String canUpload =request.getParameter("canUpload") ;
 		String canCreateGuest =request.getParameter("canCreateGuest") ;
 		
-		// Get the messages service to localize the mail sent
-		Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
-		
 		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
-
-        String ownerCN = actor.getFirstName() + " " + actor.getLastName();
-
-		Map<String,String> hash=new HashMap<String, String>();
-
-		// Create the template
-		hash.put("${message}", "");
-		hash.put("${ownerCN}", ownerCN);
-		hash.put("${firstName}", firstName);
-		hash.put("${lastName}", lastName);
-        hash.put("${mail}", mail);
-		hash.put("${url}", url);
-
-		String mailContent; // in html
-		String mailContentTxt;
-		
-		try {
-			mailContent = templating.getMessage(guestMailTemplate.getResource().openStream(), hash);
-			mailContentTxt = templating.getMessage(guestMailTemplateTxt.getResource().openStream(), hash);
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
-		}
 
 		boolean uploadGranted = ((canUpload != null) && ("true".equals(canUpload)));
 		boolean createGuestGranted = ((canCreateGuest != null) && ("true".equals(canCreateGuest)));
 		
         try {
+        	MailContainer mailContainer = mailContainerBuilder.buildMailContainer(actor, null);
             userFacade.createGuest(mail, firstName, lastName, uploadGranted, createGuestGranted, "",
-                messages.get("mail.user.guest.create.subject"), mailContent, mailContentTxt, actor);
+                mailContainer, actor);
             logger.info("User " + mail + " successfully created");
         } catch (BusinessException e) {
         	logger.error(e.toString());

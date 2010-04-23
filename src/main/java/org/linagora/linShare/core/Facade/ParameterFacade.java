@@ -30,4 +30,12 @@ public interface ParameterFacade {
 
 	public ParameterVo loadConfig() throws  BusinessException;
 	public void createConfig(ParameterVo params) throws BusinessException;
+	
+	
+	/**
+	 * check that encrypt, signature is possible on the server side
+	 * just do a call to crypt function.
+	 */
+	public boolean checkPlatformEncryptSupportedAlgo();
+	
 }

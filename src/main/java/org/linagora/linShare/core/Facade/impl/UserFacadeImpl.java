@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.Guest;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
@@ -82,9 +83,9 @@ public class UserFacadeImpl implements UserFacade {
      * @param owner user who create the guest.
      * @throws BusinessException if user already exist.
      */
-    public void createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment, String mailSubject,
-        String mailContent, String mailContentTxt, UserVo owner) throws BusinessException {    	
-        userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, mailSubject, mailContent, mailContentTxt, owner.getLogin());
+    public void createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
+    		MailContainer mailContainer, UserVo owner) throws BusinessException {    	
+        userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, mailContainer, owner.getLogin());
     }
     
     public void updateGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException{
@@ -202,19 +203,6 @@ public class UserFacadeImpl implements UserFacade {
 		userService.updateUserLocale(user.getMail(), locale);
 	}
 
-	public boolean checkEnciphermentKey(UserVo user, String password) {
-		User owner = userRepository.findByLogin(user.getLogin());
-		return enciphermentService.checkEnciphermentKey(owner, password);
-	}
-
-	public void generateEnciphermentKey(UserVo user, String password) throws BusinessException {
-		enciphermentService.generateEnciphermentKey(user, password);
-	}
-
-	public boolean isUserEnciphermentKeyGenerated(UserVo user) {
-		User owner = userRepository.findByLogin(user.getLogin());
-		return enciphermentService.isUserEnciphermentKeyGenerated(owner);
-	}
 
     /** Load a User.
      * If the user doesn't exist in database, search informations in LDAP and create a user entry before returning it.
@@ -253,13 +241,31 @@ public class UserFacadeImpl implements UserFacade {
     	
     }
 
-	public void resetPassword(UserVo user, String mailSubject,
-			String mailContent, String mailContentTxt) throws BusinessException {
+	public void resetPassword(UserVo user, MailContainer mailContainer) throws BusinessException {
 		if (!user.getUserType().equals(UserType.GUEST)) {
     		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user type is wrong, only a guest may change its password");
     	}
     	
-    	userService.resetPassword(user.getLogin(), mailSubject, mailContent, mailContentTxt);		
+    	userService.resetPassword(user.getLogin(), mailContainer);		
 	}
-    
+
+	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException {
+		userService.setGuestContactRestriction(login, mailContacts);
+	}
+	
+	public void removeGuestContactRestriction(String login) throws BusinessException {
+		userService.removeGuestContactRestriction(login);
+	}
+	
+	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException {
+		userService.addGuestContactRestriction(ownerLogin, contactLogin);
+	}
+	
+	public List<UserVo> fetchGuestContacts(String login) throws BusinessException {
+		List<User> contacts = userService.fetchGuestContacts(login);
+		if (contacts!=null && !contacts.isEmpty()) {
+			return getUserVoList(contacts);
+		}
+		return null;
+	}
 }

@@ -12,6 +12,7 @@
                    PATTERN_TYPE_APACHE_ANT
                    /=httpSessionIntegrationFilter
                    /assets/**=#NONE#
+                   /applet/**=#NONE#
                    /css/**=#NONE#
                    /images/**=#NONE#
                    /videos/**=#NONE#
@@ -25,6 +26,7 @@
                    /download/**=#NONE#
                    /**/download.passwordpopup.formpassword=#NONE#
                    /download.downloadthemall/**=#NONE#
+                   /localDecrypt/**=#NONE#
                    /documentrestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
                    /userrestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
                    /sharerestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor

@@ -16,6 +16,8 @@
     	<div class="filesList">
 	        <t:sharePanel listObject="prop:documentsVo" columns="fileName" label="${message:components.confirmSharePopup.documents.title}" t:readOnly="true"/>
 	    </div>
+	    <t:if test="warningCryptedFiles"><p style="color:red;">${message:components.confirmSharePopup.documents.warning.crypted}</p></t:if>
+	    
 		<div class="clear"></div>
 		
 

@@ -248,4 +248,8 @@ public class UserSearchField {
 	 * @return type all
 	 */
 	public UserTypes getAll() { return UserTypes.ALL; }
+	
+	public boolean getNotRestrictedUser() {
+		return !userVo.isRestricted();
+	}
 }

@@ -20,11 +20,19 @@
 */
 package org.linagora.linShare.core.Facade.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.domain.transformers.impl.ParameterTransformer;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.ParameterService;
+import org.linagora.linShare.core.utils.AESCrypt;
 
 /** Facade entry for parameter application management.
  */
@@ -32,6 +40,7 @@ public class ParameterFacadeImpl implements ParameterFacade {
 
     /** parameter repository. */
     private ParameterService parameterservice;
+    
     
 	private ParameterTransformer parameterTransformer;
     
@@ -48,4 +57,28 @@ public class ParameterFacadeImpl implements ParameterFacade {
 	public ParameterVo loadConfig() throws BusinessException {
 		return new ParameterVo(parameterservice.loadConfig());
 	}
+
+	public boolean checkPlatformEncryptSupportedAlgo() {
+		
+			//test encrypt aes 256
+		
+			boolean res = true;
+			AESCrypt aes;
+
+			try {
+				aes = new AESCrypt(false, "password");
+				aes.encrypt(2, new ByteArrayInputStream("test".getBytes()),	new ByteArrayOutputStream());
+				
+			} catch (UnsupportedEncodingException e) {
+				res =  false;
+			} catch (GeneralSecurityException e) {
+				res =  false;
+			} catch (IOException e) {
+				res =  false;
+			} catch (Error err) {
+				res = false;
+			}
+
+			return res;
+		}
 }

@@ -20,6 +20,8 @@
 */
 package org.linagora.linShare.core.service;
 
+import org.linagora.linShare.core.domain.entities.MailContainer;
+
 /** Provides notification services.
  *
  */
@@ -34,4 +36,11 @@ public interface NotifierService {
  * @param htmlContent html mail content
  */
     public void sendNotification(String fromUser,String recipient, String subject, String htmlContent,String textContent);
+    
+    /**
+     * @param fromUser user who send the mail. can be null. if null put generic Linshare account.
+     * @param recipient the recipient mail
+     * @param mailContainer the mail container
+     */
+    public void sendNotification(String fromUser,String recipient, MailContainer mailContainer);
 }

@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -37,6 +38,8 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampResponse;
 import org.linagora.LinThumbnail.FileResource;
 import org.linagora.LinThumbnail.FileResourceFactory;
 import org.linagora.LinThumbnail.utils.Constants;
@@ -64,9 +67,12 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.MimeTypeService;
 import org.linagora.linShare.core.service.ShareService;
+import org.linagora.linShare.core.service.TimeStampingService;
 import org.linagora.linShare.core.service.VirusScannerService;
+import org.linagora.linShare.core.utils.AESCrypt;
 import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
 import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 import org.semanticdesktop.aperture.util.IOUtil;
@@ -84,6 +90,7 @@ public class DocumentServiceImpl implements DocumentService {
 	private final MimeTypeService mimeTypeService;
 
 	private final VirusScannerService virusScannerService;
+	private final TimeStampingService timeStampingService;
 
 	/**
 	 * to load parameter application constant
@@ -104,7 +111,8 @@ public class DocumentServiceImpl implements DocumentService {
 			final ParameterRepository parameterRepository,
 			final ShareService shareService,
 			final LogEntryRepository logEntryRepository,
-			final VirusScannerService virusScannerService) {
+			final VirusScannerService virusScannerService,
+			final TimeStampingService timeStampingService) {
 		this.documentRepository = documentRepository;
 		this.fileSystemDao = fileSystemDao;
 		this.userRepository = userRepository;
@@ -114,6 +122,7 @@ public class DocumentServiceImpl implements DocumentService {
 		this.shareService = shareService;
 		this.logEntryRepository = logEntryRepository;
 		this.virusScannerService = virusScannerService;
+		this.timeStampingService = timeStampingService;
 	}
 
 	/**
@@ -196,13 +205,6 @@ public class DocumentServiceImpl implements DocumentService {
 				}
 		}
 		
-		boolean aesencrypted = false;
-		//aes encrypt ?
-		if (parameterRepository.loadConfig().getActiveEncipherment()) {
-			if(fileName.endsWith(".aes")){
-				aesencrypted = true;
-			}
-		}
 		
 		// Copy the input stream to a temporary file for safe use
 		File tempFile = null;
@@ -255,6 +257,29 @@ public class DocumentServiceImpl implements DocumentService {
 				}
 			}
 		}
+		
+		
+		boolean aesencrypted = false;
+		//aes encrypt ? check headers
+		if (parameterRepository.loadConfig().getActiveEncipherment()) {
+			if(fileName.endsWith(".aes")){
+				
+				boolean testheaders = false;
+				try {
+					AESCrypt aestest = new AESCrypt();
+					testheaders = aestest.ckeckFileHeader(tempFile.getAbsolutePath());
+				} catch (IOException e) {
+					throw new BusinessException(BusinessErrorCode.FILE_ENCRYPTION_UNDEFINED,"undefined encryption format");
+				} catch (GeneralSecurityException e) {
+					throw new BusinessException(BusinessErrorCode.FILE_ENCRYPTION_UNDEFINED,"undefined encryption format");
+				}
+				
+				if(!testheaders)
+					throw new BusinessException(BusinessErrorCode.FILE_ENCRYPTION_UNDEFINED,"undefined encryption format");
+				else 
+					aesencrypted = true;
+			}
+		}
 
 		if (log.isDebugEnabled()) {
 			log.debug("4)antivirus activation:"
@@ -271,6 +296,46 @@ public class DocumentServiceImpl implements DocumentService {
 			throw new BusinessException(BusinessErrorCode.FILE_CONTAINS_VIRUS,
 					"File contains virus", extras);
 		}
+
+		
+		byte[] timestampToken = null;
+		// want a timestamp on doc ?
+		if (parameterRepository.loadConfig().getActiveDocTimeStamp()) {
+			
+			FileInputStream fis = null;
+			
+			try{
+			
+				if(timeStampingService.isDisabled()){
+					//service is activated but
+					//it is disabled because bad configuration !
+					log.error("TSA service not well configured, check tsa.url");
+				} else {
+					
+					fis = new FileInputStream(tempFile);
+					TimeStampResponse resp =  timeStampingService.getTimeStamp(fis);
+					timestampToken  = resp.getEncoded();
+				}
+			} catch (TSPException e) {
+				log.error(e);
+				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			} catch (FileNotFoundException e) {
+				log.error(e);
+				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			} catch (IOException e) {
+				log.error(e);
+				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
+			} finally {
+
+				try {
+					if (fis != null)
+						fis.close();
+					fis = null;
+				} catch (IOException e) {}
+			}
+			
+		}
+		
 
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner, tempFile);
@@ -307,8 +372,9 @@ public class DocumentServiceImpl implements DocumentService {
 		try {
 			Document aDoc = new Document(uuid, fileName, mimeType,
 					new GregorianCalendar(), new GregorianCalendar(), owner,
-					aesencrypted, false, size);
+					aesencrypted, false, false, size);
 			aDoc.setThmbUUID(uuidThmb);
+			if(timestampToken!=null) aDoc.setTimeStamp(timestampToken);
 
 			if (log.isDebugEnabled()) {
 				log.debug("6)start insert in database file uuid:" + uuid);
@@ -368,20 +434,22 @@ public class DocumentServiceImpl implements DocumentService {
 		if (fileResource != null) {
 			try {
 				bufferedImage = fileResource.generateThumbnailImage();
-				fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
-				tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
-				tempThumbFile.createNewFile();
+				if (bufferedImage != null) {
+					fisThmb = ImageUtils.getInputStreamFromImage(bufferedImage, "png");
+					tempThumbFile = File.createTempFile("linthumbnail", fileName+"_thumb.png");
+					tempThumbFile.createNewFile();
+					
+					if (bufferedImage!=null)
+						ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
 				
-				if (bufferedImage!=null)
-					ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
-			
-				if (log.isDebugEnabled()) {
-					log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
+					if (log.isDebugEnabled()) {
+						log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
+					}
+					String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
+					
+					uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
+							tempThumbFile.getName(), mimeTypeThb);
 				}
-				String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
-				
-				uuidThmb = fileSystemDao.insertFile(owner.getLogin(), fisThmb, tempThumbFile.length(),
-						tempThumbFile.getName(), mimeTypeThb);
 				
 			} catch (FileNotFoundException e1) {
 				log.error(e1,e1);
@@ -421,35 +489,48 @@ public class DocumentServiceImpl implements DocumentService {
 	 * @throws BusinessException
 	 */
 	public Document updateFileContent(String currentFileUUID,
-			InputStream inputStream, long size, String fileName, String mimeType,
+			InputStream inputStream, long size, String fileName, String mimeType, boolean encrypted,
 			User owner) {
 
 		String newUuid = null;
 		Document aDoc = null;
+		String uuidThmb = null;
+		FileInputStream finputStream = null;
 
 		try {
-			// jack rabbit new thumbnail
-			File tempFile = File.createTempFile("linshareUpdateThmb", fileName);
-			tempFile.deleteOnExit();
-
-			BufferedOutputStream bof = new BufferedOutputStream(new FileOutputStream(tempFile));
-
-			// Transfer bytes from in to out
-			byte[] buf = new byte[20480];
-			int len;
-			while ((len = inputStream.read(buf)) > 0) {
-				bof.write(buf, 0, len);
-			}
-			bof.flush();
-			
-			String uuidThmb = generateThumbnailIntoJCR(fileName, owner, tempFile);
-			
-			// jack rabbit new file
-			newUuid = fileSystemDao.insertFile(owner.getLogin(), inputStream, size,
-					fileName, mimeType);
 			
 			// get the document to update
 			aDoc = documentRepository.findById(currentFileUUID);
+			
+			if(!encrypted){
+			
+				// jack rabbit new thumbnail
+				File tempFile = File.createTempFile("linshareUpdateThmb", fileName);
+				tempFile.deleteOnExit();
+	
+				BufferedOutputStream bof = new BufferedOutputStream(new FileOutputStream(tempFile));
+	
+				// Transfer bytes from in to out
+				byte[] buf = new byte[20480];
+				int len;
+				while ((len = inputStream.read(buf)) > 0) {
+					bof.write(buf, 0, len);
+				}
+				bof.flush();
+				
+				uuidThmb = generateThumbnailIntoJCR(fileName, owner, tempFile);
+				
+				finputStream = new FileInputStream(tempFile);
+				// jack rabbit new file
+				newUuid = fileSystemDao.insertFile(owner.getLogin(), finputStream, size,
+						fileName, mimeType);
+				
+			} else {
+			
+				// jack rabbit new file
+				newUuid = fileSystemDao.insertFile(owner.getLogin(), inputStream, size,
+						fileName, mimeType);
+			}
 
 			// delete old thumbnail in JCR
 			String oldThumbUuid = aDoc.getThmbUUID();
@@ -457,12 +538,14 @@ public class DocumentServiceImpl implements DocumentService {
 				fileSystemDao.removeFileByUUID(oldThumbUuid);
 			}
 			
+			
 			// update the document
 			aDoc.setIdentifier(newUuid);
 			aDoc.setName(fileName);
 			aDoc.setType(mimeType);
 			aDoc.setSize(size);
 			aDoc.setThmbUUID(uuidThmb);
+			aDoc.setEncrypted(encrypted);
 			aDoc = documentRepository.update(aDoc);
 			
 			// remove old document in JCR
@@ -483,6 +566,12 @@ public class DocumentServiceImpl implements DocumentService {
 		} catch (IOException e) {
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
 					e.getMessage());
+		} finally {
+			
+			if(finputStream!=null)
+				try {
+					finputStream.close();
+				} catch (IOException e) {}
 		}
 
 	}
@@ -707,7 +796,7 @@ public class DocumentServiceImpl implements DocumentService {
 		
 		String logText = currentDoc.getName(); //old name of the doc
 		
-		Document doc = updateFileContent(currentFileUUID, file, size, fileName, mimeType, owner);
+		Document doc = updateFileContent(currentFileUUID, file, size, fileName, mimeType, false, owner);
 		
 
 		//clean all signatures ...

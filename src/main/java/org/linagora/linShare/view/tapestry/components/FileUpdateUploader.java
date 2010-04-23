@@ -24,13 +24,11 @@ package org.linagora.linShare.view.tapestry.components;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.OnEvent;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
@@ -40,17 +38,17 @@ import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.slf4j.Logger;
 
@@ -83,9 +81,6 @@ public class FileUpdateUploader {
 	@Inject
 	private ShareFacade shareFacade;
 	
-	@Inject
-	private Templating templating;
-	
     @Inject
     private BusinessMessagesManagementService messagesManagementService;
     
@@ -105,21 +100,12 @@ public class FileUpdateUploader {
     private Messages messages;
 
 	@Inject
-	private PropertiesSymbolProvider propertiesSymbolProvider;
+	private MailContainerBuilder mailContainerBuilder;
     
     
 	@SuppressWarnings("unused")
 	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=250"})
 	private WindowWithEffects windowUpdateDocUpload;
-	
-	
-	@Inject
-	@Path("context:templates/updatedoc-shared-message.html")
-	private Asset updateDocSharedTemplateHtml;
-	
-	@Inject
-	@Path("context:templates/updatedoc-shared-message.txt")
-	private Asset updateDocSharedTemplateTxt;
     
 	
 	
@@ -183,16 +169,12 @@ public class FileUpdateUploader {
                     
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_UPDATE_FILE_CONTENT_OK,
                         MessageSeverity.INFO, initialdocument.getFileName(),uploadedFile.getFileName()));
-                    
-            		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
-            		String urlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
 
                     if(initialdocument.getShared()){
-                    	String updateDocSharedTemplateHtmlContent = templating.readFullyTemplateContent(updateDocSharedTemplateHtml.getResource().openStream());
-                    	String updateDocSharedTemplateTxtContent = templating.readFullyTemplateContent(updateDocSharedTemplateTxt.getResource().openStream());
+            			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userDetails, null);
                     	String filesizeTxt = FileUtils.getFriendlySize(document.getSize(), messages);
                     	//send email file has been replaced ....
-                    	shareFacade.sendSharedUpdateDocNotification(document, userDetails, url, urlInternal, filesizeTxt, initialdocument.getFileName(), messages.get("mail.user.all.updatedoc.subject"), updateDocSharedTemplateHtmlContent, updateDocSharedTemplateTxtContent);
+                    	shareFacade.sendSharedUpdateDocNotification(document, userDetails, filesizeTxt, initialdocument.getFileName(), mailContainer);
                     }
                     
                     
@@ -203,10 +185,7 @@ public class FileUpdateUploader {
                 } catch (BusinessException e) {
                     messagesManagementService.notify(e);
                     readFileStream(uploadedFile);
-                } catch (IOException e) {
-                    readFileStream(uploadedFile);
-        			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
-				}
+                }
             } else {
             	
             	if (uploadedFile!=null) readFileStream(uploadedFile);

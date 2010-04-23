@@ -74,6 +74,9 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 		this.documentRepository = documentRepository;
 		this.logEntryRepository = logEntryRepository;
 		this.workingDir = workingDir; //linshare.encipherment.tmp.dir
+		
+		File workingDirtest = new File(workingDir);
+		if(!workingDirtest.exists()) workingDirtest.mkdirs();
 	}
 	
 	
@@ -177,10 +180,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			User owner = userService.findUser(user.getLogin());
 			
-			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), doc.getFileName(), doc.getType(), owner);
-			resdoc.setEncrypted(false);
-			documentRepository.update(resdoc);
-			
+			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), false,owner);
 			
 			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(),
 	        		LogAction.FILE_DECRYPT, "Decrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
@@ -241,10 +241,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			User owner = userService.findUser(user.getLogin());
 			
-			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), doc.getFileName(), doc.getType(), owner);
-			resdoc.setEncrypted(true);
-			documentRepository.update(resdoc);
-			
+			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), true, owner);
 			
 			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(),
 	        		LogAction.FILE_ENCRYPT, "Encrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
@@ -292,6 +289,31 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 		Document docdb = documentService.getDocument(doc.getIdentifier());
 		if (docdb==null) return false;
 		if(docdb.getEncrypted()==null) return false; else return docdb.getEncrypted();
+	}
+
+	
+
+	public String changeDocumentExtension(String docname) {
+		if(docname.toLowerCase().endsWith(EXTENSION_CRYPT))
+			return getDecryptedExtension(docname.toLowerCase());
+		else
+			return getEncryptedExtension(docname.toLowerCase());
+	}
+
+	private final static String EXTENSION_CRYPT=".aes";
+	
+	private static String getEncryptedExtension(String originalFileName) {
+		return originalFileName + EXTENSION_CRYPT;
+	}
+	
+	private static String getDecryptedExtension(String originalCryptedFileName) {
+		int pos = originalCryptedFileName.lastIndexOf(EXTENSION_CRYPT);
+		
+		if (pos==-1)
+			return  originalCryptedFileName;
+		else {
+			return originalCryptedFileName.substring(0,pos);
+		}
 	}
 
 }

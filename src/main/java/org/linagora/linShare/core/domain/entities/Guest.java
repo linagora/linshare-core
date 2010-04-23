@@ -37,11 +37,14 @@ public class Guest extends User {
 	
     /** The user who has created this guest. */
     private User owner;
+    
+    private boolean restricted;
 
     /** Default constructor. */
     protected Guest() {
         super();
         this.password = null;
+        this.restricted = false;
     }
 
     /** Constructor.
@@ -56,6 +59,15 @@ public class Guest extends User {
         super(login, firstName, lastName, mail, canUpload, canCreateGuest);
         this.password = password;
         this.comment = comment;
+        this.restricted = false;
+    }
+	
+
+	public Guest(String login, String firstName, String lastName, String mail) {
+        super(login, firstName, lastName, mail, false, false);
+        this.password = "";
+        this.comment = "";
+        this.restricted = true;
     }
 
     @Override
@@ -93,6 +105,14 @@ public class Guest extends User {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public void setRestricted(boolean restricted) {
+		this.restricted = restricted;
+	}
+
+	public boolean isRestricted() {
+		return restricted;
 	}
     
     

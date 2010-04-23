@@ -21,8 +21,6 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
@@ -30,11 +28,8 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.ParameterFacade;
-import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.vo.CacheUserPinVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
 
 
 @SupportsInformalParameters
@@ -68,16 +63,6 @@ public class ActionsBarDocument {
 
 	@Inject
 	private ParameterFacade parameterFacade;
-	@Inject
-	private UserFacade userFacade;
-	@Inject
-	private ComponentResources componentResources;
-	
-	
-	@ApplicationState
-	@Property
-	private CacheUserPinVo cachePin;
-	
     
 	/***********************************
 	 * Flags
@@ -89,10 +74,6 @@ public class ActionsBarDocument {
 	@SuppressWarnings("unused")
 	@Property
 	private boolean activeEncipherment;
-	
-	@SuppressWarnings("unused")
-	@Property
-	private boolean userEnciphermentKeyGenerated;
 	
 	
 	
@@ -108,7 +89,6 @@ public class ActionsBarDocument {
 	public void initUserlogin() throws BusinessException {
 		activeSignature = parameterFacade.loadConfig().getActiveSignature();
 		activeEncipherment = parameterFacade.loadConfig().getActiveEncipherment();
-		userEnciphermentKeyGenerated = userFacade.isUserEnciphermentKeyGenerated(user);
 	}
 	
 	
