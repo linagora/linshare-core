@@ -37,10 +37,11 @@
        	 <constructor-arg ref="shareTransformer"/>
        	 <constructor-arg ref="userRepository"/>
        	 <constructor-arg ref="documentRepository"/>
+       	 <constructor-arg ref="groupRepository"/>
        	 <constructor-arg ref="notifierService"/>
        	 <constructor-arg ref="userService"/>
          <constructor-arg ref="documentService"/>
-         <constructor-arg ref="templating"/>
+         <constructor-arg ref="mailContentBuildingService" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linShare.core.Facade.impl.ShareExpiryDateFacadeImpl">
@@ -52,8 +53,9 @@
    	  	<constructor-arg ref="securedUrlService"/>
    	  	<constructor-arg ref="documentAdapter"/>
    	  	<constructor-arg ref="notifierService"/>
-   	  	<constructor-arg ref="templating"/>
    	  	<constructor-arg ref="userRepository"/>
+   	  	<constructor-arg ref="documentRepository"/>
+         <constructor-arg ref="mailContentBuildingService" />
    	  </bean>
    	  
  <!-- 
@@ -85,6 +87,16 @@
       <bean name="recipientFavouriteFacade" class="org.linagora.linShare.core.Facade.impl.RecipientFavouriteFacadeImpl">
        	 <constructor-arg ref="userService"/>
        	 <constructor-arg ref="recipientFavouriteService"/>
+   	  </bean>
+       
+      <bean name="groupFacade" class="org.linagora.linShare.core.Facade.impl.GroupFacadeImpl">
+   	  	<constructor-arg ref="userRepository"/>
+       	 <constructor-arg ref="userService"/>
+       	 <constructor-arg ref="groupService"/>
+       	 <constructor-arg ref="groupTransformer"/>
+       	 <constructor-arg ref="notifierService"/>
+       	 <constructor-arg ref="documentRepository"/>
+       	 <constructor-arg ref="mailContentBuildingService" />
    	  </bean>
        
        
@@ -137,5 +149,10 @@
 	 
 	 <bean name="userTransformer" class="org.linagora.linShare.core.domain.transformers.impl.UserTransformer" >
 	 	<constructor-arg ref="guestRepository"/>
+	 </bean>
+	 
+	 <bean name="groupTransformer" class="org.linagora.linShare.core.domain.transformers.impl.GroupTransformer" >
+	 	<constructor-arg ref="userTransformer"/>
+	 	<constructor-arg ref="groupRepository"/>
 	 </bean>
 </beans>

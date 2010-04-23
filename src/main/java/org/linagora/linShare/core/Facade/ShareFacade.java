@@ -23,9 +23,11 @@ package org.linagora.linShare.core.Facade;
 import java.util.Calendar;
 import java.util.List;
 
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -51,14 +53,17 @@ public interface ShareFacade {
 	 * @param owner : the document owner
 	 * @param documents : the list of documents to be shared
 	 * @param recipients : the recipients list
-	 * @param comment : the comment added by the user
-	 * @param message : the message to send by mail
-	 * @param subject : the subject of the mail
+	 * @param mailContainer : the information to build notifications
+	 * @param expirationDate : the expiration date selected by user
+	 * @param docsEncrypted : if there is encrypted documents
+	 * @param jwsEncryptUrlString : the url for jws service
 	 * @return SuccessesAndFailsItems<SharedDocumentVo> : the list of sharing that succedded and failed
 	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,String comment, String messageInternal, String messageInternalTxt,
-			String messageGuest, String messageGuestTxt,String subject, Calendar expirationDate) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, 
+			List<UserVo> recipients, MailContainer mailContainer,
+			Calendar expirationDate, boolean docsEncrypted, String jwsEncryptUrlString) 
+			throws BusinessException;
 
 	
 	
@@ -67,38 +72,34 @@ public interface ShareFacade {
 	 * @param owner
 	 * @param documents
 	 * @param recipientsEmail
-	 * @param comment
-	 * @param message
-	 * @param subject
-	 * @param linShareUrlInternal
-	 * @param linShareUrlAnonymous
 	 * @param secureSharing
-	 * @param sharedTemplateContent
-	 * @param passwordSharedTemplateContent
+	 * @param mailContainer
 	 * @return
 	 * @throws BusinessException
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
+			UserVo owner, List<DocumentVo> documents,
+			List<String> recipientsEmail,
+			boolean secureSharing, MailContainer mailContainer)
+			throws BusinessException;
 
 	/**
 	 * same function as createSharingWithMailUsingRecipientsEmail() BUT we give the expiration date selected by the user
 	 * @param owner
 	 * @param documents
 	 * @param recipientsEmail
-	 * @param comment
-	 * @param message
-	 * @param subject
-	 * @param linShareUrlInternal
-	 * @param linShareUrlAnonymous
 	 * @param secureSharing
-	 * @param sharedTemplateContent
-	 * @param passwordSharedTemplateContent
+	 * @param mailContainer
      * @param expiryDateSelected
 	 * @return
 	 * @throws BusinessException
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(UserVo owner, List<DocumentVo> documents, List<String> recipientsEmail,String comment,String subject,String linShareUrlInternal, String linShareUrlAnonymous,boolean secureSharing,String sharedTemplateContent,String sharedTemplateContentTxt,String passwordSharedTemplateContent,String passwordSharedTemplateContentTxt, Calendar expiryDateSelected) throws BusinessException;
-	
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
+			UserVo owner, List<DocumentVo> documents,
+			List<String> recipientsEmail,
+			boolean secureSharing, MailContainer mailContainer,
+			Calendar expiryDateSelected)
+			throws BusinessException;
 	
 	/**
 	 * Retrieve all the sharing received by a user
@@ -135,22 +136,36 @@ public interface ShareFacade {
     
     
     
-    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, String subject, String downloadTemplateContent,String downloadTemplateContentTxt);
+    /**
+     * Send a notification to the owner of the shared document which has been downloaded
+     * 
+     * @param sharedDocument
+     * @param currentUser
+     * @param mailContainer
+     */
+    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, MailContainer mailContainer) throws BusinessException;
     
     
     /**
      * send a mail notification to all users which have received a given shared document which has been updated
      * @param currentDoc current document with an updated content
      * @param currentUser current user which does the update action
-     * @param oldFileName old file name of the updated doc
-     * @param url url of the application
-     * @param urlInternal url for internal user connection
      * @param fileSizeTxt friendly size of the file
-     * @param subject of the mail notification
-     * @param sharedUpdateDocTemplateContent template
-     * @param sharedUpdateDocTemplateContentTxt template
+     * @param oldFileName old file name of the updated doc
+     * @param mailContainer the informations to build the notification
      * @throws BusinessException
      */
-    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String url, String urlInternal, String fileSizeTxt,String oldFileName, String subject, String sharedUpdateDocTemplateContent,String sharedUpdateDocTemplateContentTxt) throws BusinessException;
+    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String fileSizeTxt,String oldFileName, MailContainer mailContainer) throws BusinessException;
     
+	/**
+	 * Share some documents with some groups.
+	 * 
+	 * @param owner the user sharing the documents
+	 * @param documents the documents to share
+	 * @param recipients the recipient groups
+	 * @param mailContainer the informations to build the notification
+	 * @throws BusinessException
+	 */
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException;
+
 }

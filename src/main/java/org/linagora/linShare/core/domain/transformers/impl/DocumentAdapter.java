@@ -37,7 +37,7 @@ public class DocumentAdapter {
 			
 			return new DocumentVo(doc.getIdentifier(),doc.getName(), doc.getFileComment(), doc.getCreationDate(),doc.getExpirationDate(),
 					doc.getType(), doc.getOwner().getLogin(), doc.getEncrypted(),
-					doc.getShared(),doc.getSize());
+					doc.getShared(),doc.getSharedWithGroup(),doc.getSize());
 		}else{	
 			return null;
 		}
@@ -48,7 +48,7 @@ public class DocumentAdapter {
 			
 			return new ShareDocumentVo(share.getDocument().getIdentifier(),share.getDocument().getName(),share.getDocument().getFileComment() ,share.getDocument().getCreationDate(),share.getDocument().getExpirationDate(),
 					share.getDocument().getType(), share.getDocument().getOwner().getLogin(), share.getDocument().getEncrypted(),
-					share.getDocument().getShared(),share.getDocument().getSize(),
+					share.getDocument().getShared(),share.getDocument().getSharedWithGroup(),share.getDocument().getSize(),
 					new UserVo(share.getSender()), new UserVo(share.getReceiver()),share.getExpirationDate(),
 			share.getDownloaded(), share.getComment());
 		}else{	

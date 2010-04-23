@@ -1,8 +1,0 @@
-
-Hi ${firstName} ${lastName},
-
-${recipientFirstName} ${recipientLastName} downloaded the following file you shared with him via LinShare:
-${documentNamestxt}
-
--- 
-LinShare - http://linshare.org - Open Source secured file sharing application

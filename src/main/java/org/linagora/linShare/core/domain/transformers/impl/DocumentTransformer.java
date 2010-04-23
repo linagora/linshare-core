@@ -67,7 +67,7 @@ public class DocumentTransformer implements Transformer<Document, DocumentVo>{
 			
 			return new DocumentVo(entityObject.getIdentifier(),entityObject.getName(), entityObject.getFileComment() ,entityObject.getCreationDate(),entityObject.getExpirationDate(),
 					entityObject.getType(), entityObject.getOwner().getLogin(), entityObject.getEncrypted(),
-					entityObject.getShared(),entityObject.getSize());
+					entityObject.getShared(),entityObject.getSharedWithGroup(),entityObject.getSize());
 		}else{	
 			return null;
 		}

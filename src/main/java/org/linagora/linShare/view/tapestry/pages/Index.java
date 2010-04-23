@@ -112,7 +112,8 @@ public class Index {
     	
         ParameterVo parameterVo = parameterFacade.loadConfig();
         if (userVoExists == false) {
-        	Language language = WelcomeMessageUtils.getLanguageFromLocale(persistentLocale.get(), request.getLocale(), null);
+        	Locale locale = WelcomeMessageUtils.getNormalisedLocale(persistentLocale.get(), request.getLocale(), null);
+        	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
             shares = new ArrayList<ShareDocumentVo>();
             welcomeText = WelcomeMessageUtils.getWelcomeText(parameterVo.getWelcomeTexts(), language,
                 UserType.INTERNAL).getWelcomeText();
@@ -122,7 +123,8 @@ public class Index {
         	if (((userVo.getLocale())!= null) && (!userVo.getLocale().equals(""))) {
         		userLocale = new Locale(userVo.getLocale());
         	}
-        	Language language = WelcomeMessageUtils.getLanguageFromLocale(persistentLocale.get(), request.getLocale(), userLocale);
+        	Locale locale = WelcomeMessageUtils.getNormalisedLocale(persistentLocale.get(), request.getLocale(), userLocale);
+        	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
             
         	if(!flag){
 	        	shares = shareFacade.getAllSharingReceivedByUser(userVo);

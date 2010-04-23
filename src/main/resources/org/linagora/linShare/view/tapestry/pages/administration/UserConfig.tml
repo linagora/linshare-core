@@ -34,47 +34,8 @@
 					
 					<br/>
 				</t:form>
-
-
-			<t:if test="activeEncipherment">
-			<h2>${message:pages.administration.index.security.title}</h2>
-			<b>${message:pages.administration.userconfig.encipherment}</b> : <div id="top_text">${message:pages.administration.userconfig.security.texte}</div>
+			
 			<br/>
-			</t:if>
-
-				<!-- Encipherment -->
-				<t:if test="activeEncipherment">
-					<!-- Password -->
-					<t:if test="keyGenerated" negate="true">
-						<t:form t:id="keyform">
-							<t:errors banner="${message:pages.administration.userconfig.password.error}" />
-							<table cellspacing="8" cellpadding="0">
-							<tr>
-					        <td class="field_old_pass">
-							<t:label for="password">${message:pages.administration.userconfig.password}</t:label>
-							</td>
-							<td class="field_value">
-							<t:PasswordField t:id="password" t:value="password" validate="required,minlength=8"/>
-							</td>
-							</tr>
-							<tr>
-							<td class="field_new_pass">
-							<t:label for="confirmPassword">${message:pages.administration.userconfig.confirmPassword}</t:label>
-							</td>
-							<td class="field_value">
-							<t:PasswordField t:id="confirmPassword" t:value="confirmPassword" validate="required,minlength=8"/>
-							</td>
-							</tr>
-							</table>
-							<br/>
-							<t:submit t:value="message:pages.administration.userconfig.button.generate" class="edit-form-field"/>
-						</t:form>
-						<t:parameter name="else">
-							${message:pages.administration.userconfig.keyisgenerated}
-						</t:parameter>
-					</t:if>
-
-				</t:if>
 
 			<t:if test="userVo.guest">
 				<h2>${message:pages.administration.userconfig.changePassword.title}</h2>

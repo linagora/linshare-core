@@ -21,6 +21,16 @@
     <param name="identifierMethod">toInt</param>
     <param name="valueOfMethod">fromInt</param>
   </typedef>
+  <typedef class="org.linagora.linShare.core.repository.hibernate.type.GenericEnumType" name="mailTemplateEnumType">
+    <param name="enumClass">org.linagora.linShare.core.domain.constants.MailTemplateEnum</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  <typedef class="org.linagora.linShare.core.repository.hibernate.type.GenericEnumType" name="mailSubjectEnumType">
+    <param name="enumClass">org.linagora.linShare.core.domain.constants.MailSubjectEnum</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
   <class name="Parameter" table="PARAMETER">
     <id column="PARAMETER_ID" name="id"/>
     <property column="FILE_SIZE_MAX" name="fileSizeMax"/>
@@ -28,6 +38,7 @@
     <property column="ACTIVE_MIMETYPE" name="activeMimeType" type="boolean"/>
     <property column="ACTIVE_SIGNATURE" name="activeSignature" type="boolean"/>
     <property column="ACTIVE_ENCIPHERMENT" name="activeEncipherment" type="boolean"/>
+    <property column="ACTIVE_DOC_TIME_STAMP" name="activeDocTimeStamp" type="boolean"/>
     <property column="USER_EXPIRY_TIME" name="guestAccountExpiryTime"/>
     <property column="USER_EXPIRY_TIME_UNIT_ID" name="guestAccountExpiryUnit" type="timeUnitEnumType"/>
     <property column="CUSTOM_LOGO_URL" name="customLogoUrl"/>
@@ -51,6 +62,23 @@
         <property column="WELCOME_TEXT" name="welcomeText" type="text"/>
         <property column="USER_TYPE_ID" name="userType" type="userEnumType"/>
         <property column="LANGUAGE_ID" name="language" type="languageEnumType"/>
+      </composite-element>
+    </set>
+    <set name="mailTemplates" table="MAIL_TEMPLATES">
+      <key column="PARAMETER_ID"/>
+      <composite-element class="MailTemplate">
+        <property column="TEMPLATE_ID" name="mailTemplate" type="mailTemplateEnumType" not-null="true"/>
+        <property column="LANGUAGE_ID" name="language" type="languageEnumType" not-null="true"/>
+        <property column="CONTENT_HTML" name="contentHTML" type="text"/>
+        <property column="CONTENT_TXT" name="contentTXT" type="text"/>
+      </composite-element>
+    </set>
+    <set name="mailSubjects" table="MAIL_SUBJECTS">
+      <key column="PARAMETER_ID"/>
+      <composite-element class="MailSubject">
+        <property column="SUBJECT_ID" name="mailSubject" type="mailSubjectEnumType" not-null="true"/>
+        <property column="LANGUAGE_ID" name="language" type="languageEnumType" not-null="true"/>      
+  	<property column="CONTENT" name="content" type="text"/>
       </composite-element>
     </set>
   </class>

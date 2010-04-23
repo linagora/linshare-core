@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.core.dao.ldap;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,6 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.simple.AbstractParameterizedContextMapper;
 import org.springframework.ldap.filter.AndFilter;
-import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.support.LdapUtils;
 
@@ -110,10 +110,11 @@ public class LdapDatasource implements LdapDao {
 	public boolean exist(String... keys) {
 
 		try {
-
+			final String searchQuery = MessageFormat.format(ldap_filter, (Object[])keys);
+			technicalTracer.debug("Query LDAP for :"+searchQuery);
 			SearchControls searchControls=new SearchControls();
 			searchControls.setSearchScope(scope);
-			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, (Object[])keys), searchControls);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap,searchQuery, searchControls);
 			if(naming.hasMore()){
 				return true;
 			}
@@ -133,10 +134,12 @@ public class LdapDatasource implements LdapDao {
      */
 	public Map<String,String> getValues(List<String> keys ,String...attributes ){
 		try {
+			final String searchQuery = MessageFormat.format(ldap_filter, keys.toArray());
+			technicalTracer.debug("Query LDAP for :"+searchQuery);
 			HashMap<String, String> hashMap=new HashMap<String, String>();
 			SearchControls searchControls=new SearchControls();
 			searchControls.setSearchScope(scope);
-			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, keys.toArray()), searchControls);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, searchQuery, searchControls);
 			if(naming.hasMore()){
 				SearchResult searchResult=naming.next();
 				for(String currentAttribute:attributes){
@@ -153,7 +156,9 @@ public class LdapDatasource implements LdapDao {
 	}
 
 	public boolean auth(String password, String... keys) {
-        List<String> results = ldapTemplate.search(baseDn_ldap, String.format(ldap_filter, (Object[]) keys), new DnContextMapper());
+		final String searchQuery = MessageFormat.format(ldap_filter, (Object[]) keys);
+		technicalTracer.debug("Query LDAP for :"+searchQuery);
+		List<String> results = ldapTemplate.search(baseDn_ldap, searchQuery, new DnContextMapper());
         if (results.size() != 1) {
             // user is not in LDAP, probably a guest or root account
             return false;
@@ -183,7 +188,7 @@ public class LdapDatasource implements LdapDao {
 
 			SearchControls searchControls=new SearchControls();
 			searchControls.setSearchScope(scope);
-			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, String.format(ldap_filter, (Object[])keys), searchControls);
+			NamingEnumeration<SearchResult> naming=ldapTemplate.getContextSource().getReadOnlyContext().search(baseDn_ldap, MessageFormat.format(ldap_filter, (Object[])keys), searchControls);
 			if(naming.hasMore()){
 				SearchResult searchResult=naming.next();
 				res = (byte[])searchResult.getAttributes().get(PASSWORDFIELD).get();
@@ -360,29 +365,5 @@ public class LdapDatasource implements LdapDao {
     public boolean isPaged(){
     	return pageSize > 0;
     }
-    
-    
-    
-	public User searchUserWithUid(String uid) {
-        if (uid == null || uid.length() == 0) {
-            throw new IllegalArgumentException("uid argument must not be empty or null");
-        }
-        EqualsFilter filter = new EqualsFilter("uid", uid);
-        technicalTracer.info("Search uid pattern = " + filter.encode());
-
-        try {
-        	List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
-        	if (users.size() == 0) {
-                return null;
-            } else if (users.size() == 1) {
-                return users.get(0);
-            } else {
-                throw new IllegalStateException("More than one user found with uid : " + uid);
-            }
-        } catch(Exception e) {
-        	technicalTracer.warn("Cannot connect to Ldap directory",e);
-        	return null;
-        }
-	}
 
 }

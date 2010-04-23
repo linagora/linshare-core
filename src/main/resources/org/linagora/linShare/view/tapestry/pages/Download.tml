@@ -12,7 +12,7 @@
 				<t:if test="containsDocuments">
 				<br /><br />
 				<center>
-					<img src="../images/logo_linshare_0420x104-90dpi.png" alt="logo" />
+					<img src="../images/logo_linshare_large.png" alt="LinShare" />
 					<br /><br />
 					<div id="blocDLheader">&nbsp;</div>
 					<div id="blocDL">
@@ -32,7 +32,7 @@
 					</div>
 					<div id="blocDLfooter">
 						${message:pages.download.footer} <a href="${message:global.companyURL}" title="${message:global.companyName}">${message:global.companyName}</a>
-						 via <a href="http://linshare.org/" title="LinShare">LinShare</a>
+						 via <a href="http://www.linshare.org/" title="LinShare.org">LinShare</a>
 					</div>
 				</center>
 				<br /><br />

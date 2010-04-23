@@ -20,30 +20,21 @@
 */
 package org.linagora.linShare.view.tapestry.pages.password;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 
 public class ResetPassword {
@@ -64,18 +55,10 @@ public class ResetPassword {
     private BusinessMessagesManagementService businessMessagesManagementService;
 
 	@Inject
-	@Path("context:templates/reset-password.html")
-	private Asset guestMailTemplate;
-
-	@Inject
-	@Path("context:templates/reset-password.txt")
-	private Asset guestMailTemplateTxt;
-
-	@Inject
-	private Templating templating;
-
-	@Inject
 	private Messages messages;
+    
+    @Inject
+    private MailContainerBuilder mailBuilder;
 
 	public boolean onValidate() {
 		if (mail == null) {
@@ -85,8 +68,6 @@ public class ResetPassword {
 	}
 
 	public Object onSuccess() {
-		String mailContent = null;
-		String mailContentTxt = null;
 		
 		UserVo user = userFacade.findUser(mail);
 		if (null == user) {
@@ -98,25 +79,11 @@ public class ResetPassword {
 			shareSessionObjects.addError(messages.get("pages.password.error.notguest"));
 			return this;
 		}
-		
-		Map<String,String> hash=new HashMap<String, String>();
-        hash.put("${mail}", mail);
-		
-		try {
-			mailContent = templating.getMessage(guestMailTemplate.getResource()
-					.openStream(), hash);
-			mailContentTxt = templating.getMessage(guestMailTemplateTxt
-					.getResource().openStream(), hash);
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,
-					"Bad template", e);
-		}
+
+		MailContainer mailContainer = mailBuilder.buildMailContainer(user, null);
 
 		try {
-			userFacade.resetPassword(user, messages
-					.get("mail.user.guest.resetpassword.subject"), mailContent,
-					mailContentTxt);
+			userFacade.resetPassword(user, mailContainer);
 		} catch (BusinessException e) {
 			// should never occur.
 			logger.error(e.getMessage());

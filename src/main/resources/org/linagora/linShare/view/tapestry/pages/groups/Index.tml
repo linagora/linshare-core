@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.groups.index.title" t:identifier="groups" t:currentHighlight="groups"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.group.title}</h1>
+
+		<t:messagePanel />
+		<t:businessMessagesDisplayer />
+		
+		
+		
+		<div id="pageContent">
+			<t:if test="${haveAtLeastOneGroup}">
+			<ul id="tabSetGroup">
+			<t:loop source="groups" value="groupSelected">
+				<li class="${classListe}">
+				<t:actionLink t:id="changeGroup" t:context="${groupSelected.name}">${groupSelected.name}</t:actionLink>
+				</li>
+			</t:loop>
+			</ul>
+		
+			<h2>${message:pages.groups.info.heading}</h2>
+			<t:if test="inModify" negate="true">
+				<dl class="t-beandisplay">
+					<dt class="name">${message:pages.groups.info.name}</dt><dd class="name">${group.name}</dd>
+					<dt class="description">${message:pages.groups.info.description}</dt>
+					<dd class="description">${group.description}&nbsp;</dd>
+					<dt class="functionalEmail">${message:pages.groups.info.functionalEmail}</dt><dd class="functionalEmail">${group.functionalEmail}&nbsp;</dd>
+					<dt class="ownerLogin">${message:pages.groups.info.ownerLogin}</dt><dd class="ownerLogin">${group.ownerLogin}</dd>
+					<dt class="userMemberType">${message:pages.groups.info.userMemberType}</dt><dd class="userMemberType">${userMemberType}</dd>
+				</dl>
+				<t:if test="memberConnected.isOwner"><t:actionLink t:id="getGroupModify">${message:pages.groups.description.modify}</t:actionLink></t:if>
+				<t:parameter name="else">
+					<t:beaneditform t:id="editGroupForm" object="group" exclude="name, ownerLogin" submitlabel="${message:global.button.edit}" />
+				</t:parameter>
+			</t:if>
+			
+	<t:if test="memberConnected.allowedToManageUser">
+		<h2>${message:pages.groups.waitingForApprovalMembers.heading}</h2>
+		<t:grid source="waitingForApprovalMembers" row="waitingForApprovalMember" include="mail" add="membershipDate, moderation" rowsPerPage="5">
+			<t:parameter t:name="mailHeader">
+				${message:pages.groups.waitingForApprovalMembers.grid.user}
+			</t:parameter>
+			<t:parameter t:name="moderationHeader">
+				${message:pages.groups.waitingForApprovalMembers.grid.moderation}
+			</t:parameter>
+			<t:parameter t:name="membershipDateHeader">
+				${message:pages.groups.waitingForApprovalMembers.grid.membershipDate}
+			</t:parameter>
+			<t:parameter t:name="membershipDateCell">
+				${membershipDate}
+			</t:parameter>
+			<t:parameter name="mailCell">
+				<div>
+					<t:actionlink t:id="showWaitingUser" zone="userDetailsZone" title="${showWaitingUserTooltip}" context="waitingForApprovalMember.mail">
+						<span  onclick="userDetailsWindow.showCenter(true);">${waitingForApprovalMember.firstName} ${waitingForApprovalMember.lastName}</span>
+					</t:actionlink>
+					<br/><span class="emailAddress">${waitingForApprovalMember.mail}</span>
+				</div>
+			</t:parameter>
+			<t:parameter t:name="moderationCell">
+				<t:actionLink t:id="acceptNewMember" context="waitingForApprovalMember.userVo.login"
+					title="${message:pages.groups.waitingForApprovalMembers.accept}">
+					<img src="${asset:context:images/icons/validate.png}" alt="${message:pages.groups.waitingForApprovalMembers.accept}" />
+				</t:actionLink>
+				<t:actionLink t:id="rejectNewMember" context="waitingForApprovalMember.userVo.login"
+					title="${message:pages.groups.waitingForApprovalMembers.reject}">
+					<img src="${asset:context:images/icons/delete.png}" alt="${message:pages.groups.waitingForApprovalMembers.reject}" />
+				</t:actionLink>
+			</t:parameter>
+			 <t:parameter name="empty">
+              <p>${message:pages.groups.waitingForApprovalMembers.empty}</p>
+            </t:parameter>
+		</t:grid>
+	</t:if>
+			
+	<h2>${message:pages.groups.members.heading}</h2>
+	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:pages.user.sorter.name.label},${message:pages.user.sorter.mail.label},${message:pages.groups.sorter.membershipdate.label}" t:properties="literal:name,mail,membershipDate"/> 
+	<t:form t:id="results">
+			<t:grid source="members" row="member" include="mail"
+				add="picture, action" reorder="mail, picture" rowsPerPage="5">
+
+
+			<t:parameter t:name="empty">
+				${message:components.userSearch.grid.empty}
+			</t:parameter>
+
+
+			<!-- Header definition -->
+
+			<t:parameter t:name="mailHeader">
+				${message:components.userSearch.grid.user}
+			</t:parameter>
+
+			<t:parameter t:name="pictureHeader">
+				${message:pages.groups.members.type.heading}
+			</t:parameter>
+
+			<t:parameter t:name="actionHeader">
+				${message:components.userSearch.grid.actions}
+			</t:parameter>
+
+			<t:parameter name="pictureCell">
+				<t:if test="member.isOwner">
+					<img src="${asset:context:images/icons/usertype-guestsimple.png}"
+						alt="${message:pages.groups.members.type.owner}"
+						title="${message:pages.groups.members.type.owner}" />
+					<t:parameter name="else">
+						<t:if test="member.isManager">
+							<img src="${asset:context:images/icons/usertype-internaladmin.png}"
+								alt="${message:pages.groups.members.type.manager}"
+								title="${message:pages.groups.members.type.manager}" />
+							<t:parameter name="else">
+								<img src="${asset:context:images/icons/usertype-internalsimple.png}"
+									alt="${message:pages.groups.members.type.member}"
+									title="${message:pages.groups.members.type.member}" />
+							</t:parameter>
+						</t:if>
+					</t:parameter>
+				</t:if>
+			</t:parameter>
+
+			<t:parameter name="mailCell">
+				<div>
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${showUserTooltip}" context="member.mail">
+						<span  onclick="userDetailsWindow.showCenter(true);">${member.firstName} ${member.lastName}</span>
+					</t:actionlink>
+					<br/>
+					<span class="emailAddress">
+						${member.mail},
+					</span>${message:global.space}
+					<span class="date">
+						${message:pages.groups.membershipDate.label}${formattedMembershipDate}
+					</span>
+				</div>
+			</t:parameter>
+			<t:parameter name="actionCell">
+				<t:if test="member.isOwner" negate="true">
+					<t:if test="isTheOneConnected">
+						<t:actionLink t:id="deleteSelfMembership" context="member.userVo.login" t:zone="zoneConfirmDeleteMembership"
+							title="${message:pages.groups.members.delete}">
+							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
+								onClick="windowConfirmDeleteMembership.showCenter(true)" />
+						</t:actionLink>
+					<t:parameter name="else">
+						<t:if test="member.isManager" negate="true"> <!-- isManager==false -->
+						<t:if test="memberConnected.allowedToManageUser">
+							<t:actionLink t:id="editMember" context="member.userVo.login" t:zone="zoneChangeMemberType"
+								title="${message:pages.groups.members.edit}">
+								<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
+									onClick="windowChangeMemberType.showCenter(true)" />
+							</t:actionLink>
+							<t:actionLink t:id="deleteMembership" context="member.userVo.login" t:zone="zoneConfirmDeleteMembership"
+								title="${message:pages.groups.members.delete}">
+								<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
+									onClick="windowConfirmDeleteMembership.showCenter(true)" />
+							</t:actionLink>
+						</t:if>
+							
+						<t:parameter name="else"> <!-- isManager==true -->
+							<t:if test="memberConnected.allowedToManageManager">
+								<t:actionLink t:id="editManager" context="member.userVo.login" t:zone="zoneChangeMemberType"
+									title="${message:pages.groups.members.edit}">
+									<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
+										onClick="windowChangeMemberType.showCenter(true)" />
+								</t:actionLink>
+								<t:actionLink t:id="deleteManagerMembership" context="member.userVo.login" t:zone="zoneConfirmDeleteMembership"
+									title="${message:pages.groups.members.delete}">
+									<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
+										onClick="windowConfirmDeleteMembership.showCenter(true)" />
+								</t:actionLink>
+							</t:if>
+						</t:parameter>
+					</t:if>
+					</t:parameter>
+				</t:if>
+				</t:if>
+			</t:parameter>		
+			</t:grid>
+			</t:form>
+			
+			
+			<t:ListSharedDocument t:shareDocuments="documents" t:user="userVo" t:disableDeletion="${disableFilesDeletion}"/>
+			
+			<t:parameter name="else">
+				${message:pages.groups.noGroup}
+			</t:parameter>
+			</t:if>
+		</div>
+		
+	    <t:userDetailsDisplayer/>
+	    <t:createGroupPopup/>
+	    
+	    
+	    
+	</div>
+	
+	<!-- Actions widget -->
+	<t:parameter name="actionsWidget">
+		<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
+			<ul>
+				<li>
+					<t:actionLink t:id="createGroup" t:zone="createGroupZone">
+					<span onclick="createGroupWindow.showCenter(true);">
+						<img src="${asset:context:images/icons/create-group-mini.png}" alt="${message:pages.groups.create}" />${message:pages.groups.create}
+					</span>
+					</t:actionLink>
+				</li>
+				<t:if test="${haveAtLeastOneGroup}">
+					<t:if test="memberConnected.allowedToManageGroup">
+					<li>
+						<t:actionLink t:id="deleteGroup" t:zone="zoneConfirmDeleteGroup"
+							title="${message:pages.groups.delete}${group.name}">
+							<span onclick="windowConfirmDeleteGroup.showCenter(true);">
+								<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />${message:pages.groups.delete}${group.name}
+							</span>
+						</t:actionLink>
+					</li>
+					</t:if>
+				</t:if>
+			</ul>
+		</t:widget>
+	</t:parameter>
+	
+	<div t:id="windowConfirmDeleteGroup">
+    	<div class="confirmPopup">
+		<div class="messageLabel"><img src="${asset:context:images/icons/alert.png}" alt=""/>${messageConfirmDeleteGroup}</div>
+		<div class="button">
+			<t:actionLink t:id="confirmDeleteGroup" class="button"><span>${message:global.button.yes}</span></t:actionLink>
+			<a href="#" onclick='windowConfirmDeleteGroup.close();' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+		</div>
+		</div>
+    </div>
+	
+	<div t:id="windowConfirmDeleteMembership">
+    	<div class="confirmPopup">
+		<div class="messageLabel"><img src="${asset:context:images/icons/alert.png}" alt=""/>${messageConfirmDeleteMembership}</div>
+		<div class="button">
+			<t:actionLink t:id="confirmDeleteMembership" class="button"><span>${message:global.button.yes}</span></t:actionLink>
+			<a href="#" onclick='windowConfirmDeleteMembership.close();' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+		</div>
+		</div>
+    </div>
+	
+	<div t:id="windowChangeMemberType">
+    	<div class="confirmPopup">
+		<h2>${message:pages.groups.editMemberType}</h2>
+		<hr />
+			<t:form t:id="editMemberForm">
+			<t:radiogroup t:id="newType" t:value="memberToChangeType">
+				<table><tr>
+                <td class="spacedTD"><t:label for="memberType">
+                	<img src="${asset:context:images/icons/usertype-internalsimple.png}"
+						alt="${message:pages.groups.members.type.member}" title="${message:pages.groups.members.type.member}" />
+					<br />${message:pages.groups.members.type.member}</t:label><br />
+          			<t:radio t:id="memberType"/></td>
+                <td class="spacedTD"><t:label for="managerType">
+          			<img src="${asset:context:images/icons/usertype-internaladmin.png}"
+						alt="${message:pages.groups.members.type.manager}" title="${message:pages.groups.members.type.manager}" />
+					<br />${message:pages.groups.members.type.manager}</t:label><br />
+                	<t:radio t:id="managerType"/></td>
+                </tr></table>
+            </t:radiogroup>
+			<br /><t:submit t:value="${message:global.button.edit}" />
+			</t:form>
+		</div>
+    </div>
+
+    <t:zone t:id="zoneConfirmDeleteGroup" />
+    <t:zone t:id="zoneChangeMemberType" />
+    <t:zone t:id="zoneConfirmDeleteMembership" />
+    
+</t:MyBorderLayout>

@@ -31,6 +31,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
@@ -38,6 +39,7 @@ import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
@@ -91,6 +93,9 @@ public class FileUploader {
 
     @Inject
     private ComponentResources componentResources;
+    
+	@Inject
+	private Messages messages;
 
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -126,6 +131,22 @@ public class FileUploader {
         for (int i = 0; i < context.length; i++) {
             UploadedFile uploadedFile = (UploadedFile) context[i];
             if (uploadedFile != null) {
+            	if (uploadedFile.getSize() > getMaxFileSize()) {
+            		messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_WITH_FILE_TOO_LARGE,
+                            MessageSeverity.ERROR, 
+                            uploadedFile.getFileName(), 
+                            FileUtils.getFriendlySize(uploadedFile.getSize(),messages),
+                            FileUtils.getFriendlySize(getMaxFileSize(),messages)));
+            		continue;
+            	}
+            	if (uploadedFile.getSize() > getUserFreeSpace()) {
+            		messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_NOT_ENOUGH_SPACE,
+                            MessageSeverity.ERROR, 
+                            uploadedFile.getFileName(), 
+                            FileUtils.getFriendlySize(uploadedFile.getSize(),messages),
+                            FileUtils.getFriendlySize(getUserFreeSpace(),messages)));
+            		continue;
+            	}
 
                 String mimeType;
                 try {

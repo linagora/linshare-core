@@ -34,11 +34,17 @@
         <constructor-arg ref="parameterService"/>
         <constructor-arg ref="shareService"/>
         <constructor-arg ref="recipientFavouriteService" />
+        <constructor-arg ref="allowedContactRepository" />
+        <constructor-arg ref="mailContentBuildingService" />
     </bean>
     
     <bean id="clamavVirusScannerService" class="org.linagora.linShare.core.service.impl.ClamavVirusScannerServiceImpl">
     	<constructor-arg index="0" value="${virusscanner.clamav.host}"/>
     	<constructor-arg index="1" value="${virusscanner.clamav.port}"/>
+    </bean>
+    
+    <bean id="timeStampingService" class="org.linagora.linShare.core.service.impl.TimeStampingServiceImpl">
+    	<constructor-arg index="0" value="${tsa.url}"/>
     </bean>
     
     <bean id="mimeTypeService" class="org.linagora.linShare.core.service.impl.MimeTypeServiceImpl">
@@ -55,6 +61,7 @@
         <constructor-arg index="5" ref="shareService" />
         <constructor-arg index="6" ref="logEntryRepository" />
         <constructor-arg index="7" ref="clamavVirusScannerService" />
+        <constructor-arg index="8" ref="timeStampingService" />
     </bean>
 	     
     
@@ -98,14 +105,17 @@
 
     <bean name="notifierService" class="org.linagora.linShare.core.service.impl.MailNotifierServiceImpl">
         <constructor-arg index="0" value="${mail.smtp.host}"/>
-        <constructor-arg index="1" value="${mail.smtp.sender}"/>
-        <constructor-arg index="2" value="${mail.smtp.user}"/>
-        <constructor-arg index="3" value="${mail.smtp.password}"/>
-        <constructor-arg index="4" value="${mail.smtp.auth.needed}"/>
-        <constructor-arg index="5" value="${mail.smtp.charset}"/>
+        <constructor-arg index="1" value="${mail.smtp.port}" />
+        <constructor-arg index="2" value="${mail.smtp.sender}"/>
+        <constructor-arg index="3" value="${mail.smtp.user}"/>
+        <constructor-arg index="4" value="${mail.smtp.password}"/>
+        <constructor-arg index="5" value="${mail.smtp.auth.needed}"/>
+        <constructor-arg index="6" value="${mail.smtp.charset}"/>
     </bean>
     
-    <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceImpl">
+    <!-- <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceImpl">  -->
+    
+    <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceAesCryptImpl">
         <constructor-arg ref="userService"/>
         <constructor-arg ref="documentService"/>
         <constructor-arg ref="documentRepository"/>
@@ -121,6 +131,18 @@
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="documentRepository"/>
         <constructor-arg ref="logEntryRepository"/>
+    </bean>
+    
+    <bean name="groupService" class="org.linagora.linShare.core.service.impl.GroupServiceImpl">
+        <constructor-arg ref="groupRepository"/>
+        <constructor-arg ref="userRepository"/>
+        <constructor-arg ref="shareService"/>
+        <constructor-arg ref="mailContentBuildingService" />
+        <constructor-arg ref="notifierService"/>
+    </bean>
+    
+    <bean name="mailContentBuildingService" class="org.linagora.linShare.core.service.impl.MailContentBuildingServiceImpl">
+        <constructor-arg ref="parameterService"/>
     </bean>
     
 </beans>

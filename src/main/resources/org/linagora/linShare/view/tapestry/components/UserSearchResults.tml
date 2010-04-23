@@ -48,21 +48,28 @@
 
 			<t:parameter name="pictureCell">
 				<t:if test="admin">
-					<t:if test="userGuest">
-						<img src="${asset:context:images/icons/usertype-guestsimple.png}"
-							alt="${message:components.userSearch.grid.usertype.guestSimple}"
-							title="${message:components.userSearch.grid.usertype.guestSimple}" />
-						<t:parameter name="else">
-							<t:if test="userAdmin">
-								<img src="${asset:context:images/icons/usertype-internaladmin.png}"
-									alt="${message:components.userSearch.grid.usertype.internalAdmin}"
-									title="${message:components.userSearch.grid.usertype.internalAdmin}" />
-								<t:parameter name="else">
-									<img src="${asset:context:images/icons/usertype-internalsimple.png}"
-										alt="${message:components.userSearch.grid.usertype.internalSimple}"
-										title="${message:components.userSearch.grid.usertype.internalSimple}" />
-								</t:parameter>
-							</t:if>
+					<t:if test="userGuestRestricted">
+						<img src="${asset:context:images/icons/usertype-guestrestricted.png}"
+							alt="${message:components.userSearch.grid.usertype.guestRestricted}"
+							title="${message:components.userSearch.grid.usertype.guestRestricted}" />
+							<t:parameter name="else">
+								<t:if test="userGuest">
+									<img src="${asset:context:images/icons/usertype-guestsimple.png}"
+										alt="${message:components.userSearch.grid.usertype.guestSimple}"
+										title="${message:components.userSearch.grid.usertype.guestSimple}" />
+									<t:parameter name="else">
+										<t:if test="userAdmin">
+											<img src="${asset:context:images/icons/usertype-internaladmin.png}"
+												alt="${message:components.userSearch.grid.usertype.internalAdmin}"
+												title="${message:components.userSearch.grid.usertype.internalAdmin}" />
+											<t:parameter name="else">
+												<img src="${asset:context:images/icons/usertype-internalsimple.png}"
+													alt="${message:components.userSearch.grid.usertype.internalSimple}"
+													title="${message:components.userSearch.grid.usertype.internalSimple}" />
+											</t:parameter>
+										</t:if>
+									</t:parameter>
+								</t:if>
 						</t:parameter>
 					</t:if>
 				</t:if>
@@ -76,8 +83,13 @@
 					<br/>
 					<span class="emailAddress">
 						${user.mail},
-						<t:if test="userGuest">
-							${message:UserType.GUEST}<t:if test="${user.expirationDate}">,</t:if>
+						<t:if test="userGuestRestricted">
+							${message:components.userSearch.userType.RESTRICTED}<t:if test="${user.expirationDate}">,</t:if>
+						<t:parameter name="else">
+							<t:if test="userGuest">
+								${message:UserType.GUEST}<t:if test="${user.expirationDate}">,</t:if>
+							</t:if>
+						</t:parameter>
 						</t:if>
 						<t:if test="userGuest" negate="true">
 							${message:UserType.INTERNAL}<t:if test="${user.expirationDate}">,</t:if>
@@ -99,6 +111,11 @@
 			<t:parameter name="actionCell">
 				<t:actionLink t:id="share" t:context="user.login" title="${message:components.userSearch.action.share.title}">
 					<img src="${asset:context:images/icons/share-on.png}" alt="${message:global.button.share}"/>
+				</t:actionLink>
+				<t:actionLink t:id="addToGroup" context="user.login" t:zone="userAddToGroupFormZone"
+						title="${message:components.userSearch.action.addToGroup.title}">
+						<img src="${asset:context:images/icons/add-member.png}" alt="${message:global.button.edit}"
+							onClick="userAddToGroupWindow.showCenter(true)" />
 				</t:actionLink>
 				<t:if test="userEditable">
 					<t:actionLink t:id="edit" context="user.login" t:zone="userEditFormZone"
@@ -152,8 +169,18 @@
         </t:zone>
     </div>
 
+    <div style="display:none">
+        <t:zone t:id="userAddToGroupTemplateZone">
+            <t:userAddToGroupForm groups="groups" addUserWithMail="selectedLogin"/>
+        </t:zone>
+    </div>
+
     <div t:id="userEditWindow">
         <t:zone id="userEditFormZone" update="show"/>
+    </div>
+
+    <div t:id="userAddToGroupWindow">
+        <t:zone id="userAddToGroupFormZone" update="show"/>
     </div>
 
 </t:container>

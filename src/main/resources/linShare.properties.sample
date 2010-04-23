@@ -61,6 +61,8 @@ linshare.default.maxUploadSize=-1
 # user connect with a different url (e.g. CAS url)
 linshare.info.url.base=http://localhost:8080/linshare/
 linshare.info.url.internal=http://localhost:8080/linshare/
+#directory of the jws application to decrypt document (jwsDecrypt.jar)
+javawebstart.decrypt.url.suffixcodebase=applet
 #set to true in tapestry production environnement
 linshare.productionMode=false
 #local work directory to encrypt/decrypt data
@@ -69,6 +71,9 @@ linshare.encipherment.tmp.dir=${LINSHARE_HOME}/var/lib/linshare/tmp
 linshare.signature.tmp.dir=${LINSHARE_HOME}/var/lib/linshare/tmp/linSignDocuments
 #directory used to store shared files
 linshare.files.directory=${LINSHARE_HOME}/var/lib/linshare/repository
+
+# internal user see all other internal user by default in the Users tab ?
+linshare.users.internal.defaultView.showAll=true
 
 
 #******************** VIRUS SCANNER
@@ -85,6 +90,10 @@ sso.cas.url.login=http://localhost:8081/cas-server-webapp-3.3.5/login
 sso.cas.url.serviceId=http://localhost:8080/linshare/j_spring_cas_security_check
 # LemonLDAP::NG / SiteMinder HTTP request authenticator
 sso.header.user=Auth-User
+
+
+#******** TSA Authority (optional)
+tsa.url=http://localhost:8080/signserver/tsa?signerId=1
 
 
 

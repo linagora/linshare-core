@@ -4,18 +4,10 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
 	default-autowire="no">
 
-  <bean id="repository" class="org.linagora.linShare.core.dao.jackRabbit.BetterRepositoryFactoryBean">
+  <bean id="repository" class="org.linagora.linShare.core.dao.jackRabbit.BetterRepositoryFactoryBean" destroy-method="destroy"   >
     <property name="configuration" value="classpath:repository.xml"/>
     <property name="homeDir" value="${home.directory}"/>
-    <property name="configurationProperties">
-    	<list>
-    		<value>classpath:linShare-default.properties</value>
-    		<value>classpath:linShare.properties</value>
-    		<value>classpath:jackRabbit.properties</value>
-    		<value>${linshare.config.path}/linShare.properties</value>
-    		<value>${linshare.config.path}/jackRabbit.properties</value>
-    	</list>
-    </property>
+  	<property name="propertyPlaceholderConfigurer" ref="propertyPlaceholder" />
   </bean>
   
   <bean id="jcrSessionFactory" class="org.springmodules.jcr.JcrSessionFactory">
@@ -29,18 +21,11 @@
       </bean>
     </property>
   </bean>
-  
-   <bean id="jcrDataSource" destroy-method="close" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${linshare.db.driver.class}"/>
-	<!-- Use a database name suffixed by '_data' -->
-        <property name="url" value="${linshare.db.url}_data"/>
-        <property name="username" value="${linshare.db.username}"/>
-        <property name="password" value="${linshare.db.password}"/>
-    </bean>
-    
-    <bean id="transactionJackRabbit" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-  	<property name="dataSource" ref="jcrDataSource"/>
-	</bean>
+
+
+  <bean id="transactionJackRabbit" class="org.springmodules.jcr.jackrabbit.LocalTransactionManager">
+  		<property name="sessionFactory" ref="jcrSessionFactory"/>
+  </bean>
   
   <bean id="password" class="java.lang.String">
       <constructor-arg index="0" value="${repository.password}"/>
@@ -52,11 +37,7 @@
   </bean>	
 
   <bean id="jackRabbitRepository" class="org.linagora.linShare.core.dao.jackRabbit.JackRabbitFileSystem">
-   <!--  <property name="fileFinder" ref="fileFinder"/> -->
-  <property name="jcrTemplate" ref="jcrTemplate"/>
-   <!--  <property name="contentSource" value="myRandomContentSource"/> -->
-   <!--  <property name="parser" ref="someRandomDocumentParser"/>
-    <property name="sourceDirectory" value="/path/to/my/random/content"/> -->
+	  <property name="jcrTemplate" ref="jcrTemplate"/>
   </bean>	
 	
 </beans>	

@@ -30,7 +30,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
@@ -38,7 +37,6 @@ import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -47,12 +45,15 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -64,12 +65,11 @@ import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.SharedFileSorterModel;
-import org.linagora.linShare.view.tapestry.models.impl.UserSorterModel;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linShare.view.tapestry.services.Templating;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +85,8 @@ public class ListSharedDocument {
 	 */
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	private UserVo user;
+	@Parameter(required=false,defaultPrefix=BindingConstants.PROP)
+	private UserVo groupUser;
 
 	/**
 	 * The list of documents.
@@ -96,6 +98,14 @@ public class ListSharedDocument {
     @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
     @Property
     private boolean inSearch;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean inGroup;
+    
+    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
+    @Property
+    private boolean disableDeletion;
 	
 	
 	/***********************************
@@ -136,8 +146,12 @@ public class ListSharedDocument {
 	@InjectComponent
 	private UserDetailsDisplayer userDetailsDisplayer;
 	
-//	@InjectComponent
-//	private SignatureDetailsDisplayer signatureDetailsDisplayer;
+	@InjectComponent
+	private SignatureDetailsDisplayer signatureDetailsDisplayer;
+	
+	@Inject
+	private PageRenderLinkSource linkFactory;
+	
 	
 	@SuppressWarnings("unchecked")
 	@Property
@@ -149,17 +163,9 @@ public class ListSharedDocument {
 
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
-    
-    @Inject
-	private Templating templating;
 	
 	@Inject
-	@Path("context:templates/download-message.html")
-	private Asset downloadTemplate;
-	
-	@Inject
-	@Path("context:templates/download-message.txt")
-	private Asset downloadTemplateTxt;
+	private MailContainerBuilder mailContainerBuilder;
 	
 	/***********************************
 	 * Flags
@@ -240,16 +246,11 @@ public class ListSharedDocument {
 	
 	private void notifyOwnerByEmail(ShareDocumentVo currentSharedDocumentVo) {
 		try {
-			
-			String subject=messages.get("mail.user.all.download.subject");
-			
-			String downloadTemplateContent = templating.readFullyTemplateContent(downloadTemplate.getResource().openStream());
-			
-			String downloadTemplateContentTxt = templating.readFullyTemplateContent(downloadTemplateTxt.getResource().openStream());
-			shareFacade.sendDownloadNotification(currentSharedDocumentVo, user, subject, downloadTemplateContent, downloadTemplateContentTxt);
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(user, null);
+			shareFacade.sendDownloadNotification(currentSharedDocumentVo, user, mailContainer);
+		} catch (BusinessException e) {
+			logger.error("Problem while sending mail", e);
+			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Problem while sending mail",e);
 		}		
 	}
 
@@ -257,25 +258,25 @@ public class ListSharedDocument {
 		currentUuid = uuid;
 	}
 	
-//	public Object onActionFromSignature(String uuid) throws BusinessException{
-//		currentUuid = uuid;
-//		ShareDocumentVo shareddoc = searchDocumentVoByUUid(componentdocuments,uuid);
-//		
-//		if(null==shareddoc){
-//			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
-//		}else{
-//			// context is shared document
-//			return linkFactory.createPageRenderLink("signature/SelectPolicy", true, new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
-//		}
-//	}
+	public Object onActionFromSignature(String uuid) throws BusinessException{
+		currentUuid = uuid;
+		ShareDocumentVo shareddoc = searchDocumentVoByUUid(componentdocuments,uuid);
+		
+		if(null==shareddoc){
+			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
+		}else{
+			// context is shared document
+			return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
+		}
+	}
 	
 	public Zone onActionFromShowUser(String mail) {
 		return userDetailsDisplayer.getShowUser(mail);	
 	}
 	
-//	public Zone onActionFromShowSignature(String docidentifier) {
-//		return signatureDetailsDisplayer.getShowSignature(docidentifier);
-//	}
+	public Zone onActionFromShowSignature(String docidentifier) {
+		return signatureDetailsDisplayer.getShowSignature(docidentifier);
+	}
 	
     public void onActionFromCopy(String docIdentifier) {
         ShareDocumentVo shareDocumentVo = searchDocumentVoByUUid(componentdocuments, docIdentifier);
@@ -376,6 +377,9 @@ public class ListSharedDocument {
 
 	public boolean isDocumentSignedByCurrentUser(){
 		return documentFacade.isSignedDocumentByCurrentUser(user, shareDocument);
+	}
+	public boolean isDocumentNotSignedByCurrentUserAndDocNotEncrypted(){
+		return !shareDocument.getEncrypted() && !isDocumentSignedByCurrentUser();
 	}
 	
 	public boolean isDocumentSigned(){

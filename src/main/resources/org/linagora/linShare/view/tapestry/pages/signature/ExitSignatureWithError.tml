@@ -2,10 +2,7 @@
 <t:MyBorderLayout t:title="message:pages.error.title" t:identifier="error"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-	Unsupported
-
-	<!--
-	<!- Main content ->
+	<!-- Main content -->
 
 	<div id="content">
 
@@ -22,6 +19,6 @@
 
 		</div>
 
-	</div><!- id="content" ->   -->
+	</div><!-- id="content" -->
 
 </t:MyBorderLayout>

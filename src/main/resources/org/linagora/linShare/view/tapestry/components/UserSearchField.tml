@@ -59,16 +59,18 @@
                 <t:textfield t:id="mailField" t:value="mail" onFocus="controlField(this,'${message:components.userSearch.slidingField.mail}')"
                              title="${message:components.userSearch.slidingField.mail}"/>
 				<br/>
-				<div id="userType">
+	            <t:if test="notRestrictedUser">
+					<div id="userType">
 	                <!--  ${message:components.userSearch.slidingField.type}-->
-	                <t:radiogroup t:id="type" t:value="userType">
-	                    <t:radio t:id="internal"/>&nbsp;<t:label for="internal">${message:components.userSearch.radio.internal}</t:label>
-	                    ${message:global.space}
-	                    <t:radio t:id="guest"/>&nbsp;<t:label for="guest">${message:components.userSearch.radio.guest}</t:label>
-	                    ${message:global.space}
-	                    <t:radio t:id="all"/>&nbsp;<t:label for="all">${message:components.userSearch.radio.both}</t:label>
-	                </t:radiogroup>
-				</div>
+	                	<t:radiogroup t:id="type" t:value="userType">
+	                    	<t:radio t:id="internal"/>&nbsp;<t:label for="internal">${message:components.userSearch.radio.internal}</t:label>
+	                    	${message:global.space}
+	                   		<t:radio t:id="guest"/>&nbsp;<t:label for="guest">${message:components.userSearch.radio.guest}</t:label>
+	                    	${message:global.space}
+	                    	<t:radio t:id="all"/>&nbsp;<t:label for="all">${message:components.userSearch.radio.both}</t:label>
+	                	</t:radiogroup>
+					</div>
+	            </t:if>
 				<br/>
                 <t:submit t:id="search" value="${message:global.button.search}"/>
                 ${message:global.space}

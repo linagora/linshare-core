@@ -48,6 +48,8 @@ public class ShareSessionObjects {
      */
     private boolean multipleSharing;
     
+    private boolean reloadGroupsNeeded;
+    
     
     public ShareSessionObjects() {
     	users = new ArrayList<UserVo>();
@@ -56,6 +58,7 @@ public class ShareSessionObjects {
     	errors=new ArrayList<String>();
     	warnings=new ArrayList<String>();
     	multipleSharing = true; //default: we use this object to remember multiple files selection 
+    	reloadGroupsNeeded = false;
     }
 
     public List<DocumentVo> getDocuments() {
@@ -153,6 +156,14 @@ public class ShareSessionObjects {
 
 	public void setMultipleSharing(boolean multipleSharing) {
 		this.multipleSharing = multipleSharing;
+	}
+
+	public void setReloadGroupsNeeded(boolean reloadGroupsNeeded) {
+		this.reloadGroupsNeeded = reloadGroupsNeeded;
+	}
+
+	public boolean isReloadGroupsNeeded() {
+		return reloadGroupsNeeded;
 	}
 	
 	

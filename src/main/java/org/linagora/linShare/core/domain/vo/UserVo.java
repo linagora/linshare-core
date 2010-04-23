@@ -48,6 +48,7 @@ public class UserVo implements Serializable {
     private Date expirationDate = null;
     private String comment;
     private String locale;
+    private boolean restricted;
 
     public UserVo(User user) {
         this.login = user.getLogin();
@@ -64,6 +65,7 @@ public class UserVo implements Serializable {
             ownerLogin = guest.getOwner().getLogin();
             expirationDate = (Date)guest.getExpiryDate().clone();
             this.comment = guest.getComment();
+            this.restricted = guest.isRestricted();
         }
     }
 	
@@ -80,6 +82,7 @@ public class UserVo implements Serializable {
         this.expirationDate = (Date)user.getExpiryDate().clone();
         this.comment = user.getComment();
         this.locale = user.getLocale();
+        this.restricted = user.isRestricted();
     }
 	public UserVo(String login, String firstName, String lastName,
 			String mail, UserType userType) {
@@ -93,6 +96,7 @@ public class UserVo implements Serializable {
 		this.upload=true;
 		this.createGuest=true;
 		this.ownerLogin = "";
+        this.restricted = false;
 	}
 	
 	public UserVo(String login, String firstName, String lastName,
@@ -106,6 +110,7 @@ public class UserVo implements Serializable {
 		this.role = role;
 		this.upload=true;
 		this.createGuest=true;
+        this.restricted = false;
 	}
 	
 	public UserVo(String login, String firstName, String lastName,
@@ -120,6 +125,7 @@ public class UserVo implements Serializable {
 		this.upload=true;
 		this.createGuest=true;
 		this.locale = locale;
+        this.restricted = false;
 	}
 
 	public String getLogin() {
@@ -161,7 +167,6 @@ public class UserVo implements Serializable {
 		return upload;
 	}
 
-	
     public boolean isCreateGuest() {
 		return createGuest;
 	}
@@ -173,8 +178,6 @@ public class UserVo implements Serializable {
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
-	
-	
 
 	public String getComment() {
 		return comment;
@@ -183,9 +186,6 @@ public class UserVo implements Serializable {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
-	
-	
 
 	public String getLocale() {
 		return locale;
@@ -193,6 +193,14 @@ public class UserVo implements Serializable {
 
 	public void setLocale(String locale) {
 		this.locale = locale;
+	}
+
+	public void setRestricted(boolean restricted) {
+		this.restricted = restricted;
+	}
+
+	public boolean isRestricted() {
+		return restricted;
 	}
 
 	@Override

@@ -2,8 +2,6 @@
 <t:MyBorderLayout t:title="message:pages.signature.title" t:identifier="signature"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-	Unsupported
-	<!-- 
 	<div id="content">
 
 		<h1>${message:pages.signature.verifySignature.title}</h1>
@@ -21,15 +19,17 @@
 			
 			<applet name="myApplet" alt="${message:pages.signature.verifySignature.applet.error}"
 				archive="${asset:context:applet/linsign.jar}"
-				code="org.linagora.linsign.client.applet.verify.LinSignVerifyXadesApplet" width="700" height="150">
-				<param name="debug" value="true" />
+				code="org.linagora.linsign.client.applet.verify.LinSignVerifyXadesApplet" width="680" height="150">
+				<param name="debug" value="false" />
 				<param name="language" value="${locale}" />
+				<param name="signaturePrefix" value="Signature_" />
+				<param name="java_version" value="1.6+" />
 			</applet>
 		</div>
 		<br/>
 		<t:pagelink page="signature/verifySignature">${message:pages.signature.verifySignature.reload}</t:pagelink>
 
-	</div>-->
+	</div>
 
 
 </t:MyBorderLayout>

@@ -22,38 +22,38 @@ package org.linagora.linShare.core.Facade.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
-import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Group;
+import org.linagora.linShare.core.domain.entities.GroupMember;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
-import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.ShareTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.DocumentRepository;
-import org.linagora.linShare.core.repository.LogEntryRepository;
+import org.linagora.linShare.core.repository.GroupRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
-import org.linagora.linShare.core.utils.FileUtils;
-import org.linagora.linShare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,15 +70,16 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final UserRepository<User> userRepository;
 
 	private final DocumentRepository documentRepository;
+
+	private final GroupRepository groupRepository;
 	
 	private final NotifierService notifierService;
+    
+    private final MailContentBuildingService mailElementsFactory;
 	
 	private final UserService userService;
 
     private final DocumentService documentService;
-    
-    
-    private final Templating templating;
     
     
 	
@@ -88,20 +89,22 @@ public class ShareFacadeImpl implements ShareFacade {
 			final ShareTransformer shareTransformer,
 			final UserRepository<User> userRepository,
 			final DocumentRepository documentRepository,
+			final GroupRepository groupRepository,
 			final NotifierService mailNotifierService,
 			final UserService userService,
             final DocumentService documentService,
-            final Templating templating) {
+    		final MailContentBuildingService mailElementsFactory) {
 		super();
 		this.shareService = shareService;
 		this.documentTransformer = documentTransformer;
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
 		this.documentRepository = documentRepository;
+		this.groupRepository = groupRepository;
 		this.notifierService=mailNotifierService;
 		this.userService = userService;
         this.documentService = documentService;
-        this.templating=templating;
+		this.mailElementsFactory = mailElementsFactory;
 	}
 
 	
@@ -139,11 +142,10 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(
 			UserVo owner, List<DocumentVo> documents, List<UserVo> recipients,
-			String comment, String messageInternal, String messageInternalTxt,
-			String messageGuest, String messageGuestTxt, String subject,
-			Calendar expirationDate) throws BusinessException {
+			MailContainer mailContainer, Calendar expirationDate, boolean isOneDocEncrypted, 
+			String jwsEncryptUrlString) throws BusinessException {
 		
-		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, comment, expirationDate);
+		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, mailContainer.getPersonalMessage(), expirationDate);
 		
 		//Sending the mails
 		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
@@ -153,13 +155,18 @@ public class ShareFacadeImpl implements ShareFacade {
 			}
 			
 		}
+		User owner_ = userRepository.findByLogin(owner.getLogin());
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
+			User recipient = userRepository.findByLogin(userVo.getLogin());
+			String linshareUrl = "";
 			if (userVo.isGuest()) {
-				notifierService.sendNotification(owner.getMail(),userVo.getMail(), subject, messageGuest,messageGuestTxt);
+				linshareUrl = mailContainer.getData("urlBase");
 			} else {
-				notifierService.sendNotification(owner.getMail(),userVo.getMail(), subject, messageInternal,messageInternalTxt);
+				linshareUrl = mailContainer.getData("urlInternal");
 			}
+			MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString);
+			notifierService.sendNotification(owner.getMail(),userVo.getMail(), mailContainer_);
 		}
 		return result;
 	}
@@ -223,57 +230,39 @@ public class ShareFacadeImpl implements ShareFacade {
 
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
 			UserVo owner, List<DocumentVo> documents,
-			List<String> recipientsEmail, String comment, String subject,
-			String linShareUrlInternal, String linShareUrlAnonymous, boolean secureSharing,
-			String sharedTemplateContent, String sharedTemplateContentTxt,
-			String passwordSharedTemplateContent,
-			String passwordSharedTemplateContentTxt)
+			List<String> recipientsEmail,
+			boolean secureSharing, MailContainer mailContainer)
 			throws BusinessException {
-		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(owner, documents, recipientsEmail, comment, subject, linShareUrlInternal, linShareUrlAnonymous, secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt, null);
+		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(owner, documents, recipientsEmail, secureSharing, mailContainer,null);
 	}
 
 
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
 			UserVo owner, List<DocumentVo> documents,
-			List<String> recipientsEmail, String comment, String subject,
-			String linShareUrlInternal, String linShareUrlAnonymous, boolean secureSharing,
-			String sharedTemplateContent, String sharedTemplateContentTxt,
-			String passwordSharedTemplateContent,
-			String passwordSharedTemplateContentTxt, Calendar expiryDateSelected)
+			List<String> recipientsEmail,
+			boolean secureSharing, MailContainer mailContainer,
+			Calendar expiryDateSelected)
 			throws BusinessException {
 		User u = null;
 		
 		List<UserVo> knownRecipients = new ArrayList<UserVo>();
 		List<Contact> unKnownRecipientsEmail = new ArrayList<Contact>();
 		
-		
-		//Setting parameters and values for supply the template.
-		Map<String,String> templateParams=new HashMap<String, String>();
-		
-		//TEMPLATE sharedTemplateContent
-		templateParams.put("${message}", comment);
-		templateParams.put("${firstName}", owner.getFirstName());
-		templateParams.put("${lastName}", owner.getLastName());
-		templateParams.put("${number}", new Integer(documents.size()).toString());
-		templateParams.put("${url}", linShareUrlInternal); //modified later for anonymous user and guest
-		templateParams.put("${urlparam}", "");
-		
-		StringBuffer names = new StringBuffer();
-		StringBuffer namesTxt = new StringBuffer();
+		boolean isOneDocEncrypted = false;
 		
 		for (DocumentVo oneDoc : documents) {
-			names.append("<li>"+oneDoc.getFileName()+"</li>");
-			namesTxt.append(oneDoc.getFileName()+"\n");
+			if(oneDoc.getEncrypted()==true) isOneDocEncrypted = true;
 		}
 		
-		templateParams.put("${documentNames}", names.toString());
-		templateParams.put("${documentNamesTxt}", namesTxt.toString());
-		
-		String messageForInternalUser = templating.getMessage(sharedTemplateContent, templateParams);
-		String messageForInternalUserTxt = templating.getMessage(sharedTemplateContentTxt, templateParams);
-		templateParams.put("${url}", linShareUrlAnonymous);
-		String messageForGuestUser = templating.getMessage(sharedTemplateContent, templateParams);
-		String messageForGuestUserTxt = templating.getMessage(sharedTemplateContentTxt, templateParams);
+		//if one document is encrypted include message html or txt asset for "crypted" in the final message
+		String jwsEncryptUrlString = "";
+		if(isOneDocEncrypted){
+			StringBuffer jwsEncryptUrl = new StringBuffer();
+			jwsEncryptUrl.append(mailContainer.getData("urlBase"));
+			if(!mailContainer.getData("urlBase").endsWith("/")) jwsEncryptUrl.append("/");
+			jwsEncryptUrl.append("localDecrypt");
+			jwsEncryptUrlString = jwsEncryptUrl.toString();
+		}
 		
 		// find known and unknown recipients of the share
 		for (String mail : recipientsEmail) {
@@ -293,15 +282,11 @@ public class ShareFacadeImpl implements ShareFacade {
 			}
 			
 			SecuredUrl securedUrl =  null;
-			String messageForSecureUrl = null;
-			String messageForSecureUrlTxt = null;
 			String password = null;
 			
 			if(secureSharing) {
 				//generate password for this sharing 
 				password = userService.generatePassword();
-				//set the password associated with this secured url in mail
-				templateParams.put("${password}", password);
 			} 
 			
 			//password is null for unprotected secured url
@@ -310,128 +295,142 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 			//compose the secured url to give in mail
 			StringBuffer httpUrlBase = new StringBuffer();
-			httpUrlBase.append(linShareUrlAnonymous);
-			if(!linShareUrlAnonymous.endsWith("/")) httpUrlBase.append("/");
+			httpUrlBase.append(mailContainer.getData("urlBase"));
+			if(!mailContainer.getData("urlBase").endsWith("/")) httpUrlBase.append("/");
 			httpUrlBase.append(securedUrl.getUrlPath());
 			if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
 			httpUrlBase.append(securedUrl.getAlea());
 			
 			//securedUrl must be ended with a "/" if no parameter (see urlparam)
-			templateParams.put("${url}", httpUrlBase.toString());
+			String linShareUrl = httpUrlBase.toString();
 			
 			
 			for (Contact oneContact : unKnownRecipientsEmail) {
 				
 				//give email as a parameter, useful to quickly know who is here
-				templateParams.put("${urlparam}", "?email=" + oneContact.getMail());
-				
-				//fill the template with given values 
-				if(secureSharing) {
-					messageForSecureUrl = templating.getMessage(passwordSharedTemplateContent, templateParams);
-					messageForSecureUrlTxt = templating.getMessage(passwordSharedTemplateContentTxt, templateParams);
-				} else {
-					messageForSecureUrl = templating.getMessage(sharedTemplateContent, templateParams);
-					messageForSecureUrlTxt = templating.getMessage(sharedTemplateContentTxt, templateParams);
-				}
-				
-				notifierService.sendNotification(owner.getMail(),oneContact.getMail(), subject, messageForSecureUrl,messageForSecureUrlTxt);
+				String linShareUrlParam = "?email=" + oneContact.getMail();
+				User owner_ = userRepository.findByLogin(owner.getLogin());
+				MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, password, isOneDocEncrypted, jwsEncryptUrlString);
+				notifierService.sendNotification(owner.getMail(), oneContact.getMail(), mailContainer_);
 			}
 			
 		}
 		
 		//keep old method to share with user referenced in db
-		return createSharingWithMail(owner, documents, knownRecipients, comment, messageForInternalUser, messageForInternalUserTxt,messageForGuestUser, messageForGuestUserTxt, subject, expiryDateSelected);
-	}
-    
-    
-    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, String subject, String downloadTemplateContent,String downloadTemplateContentTxt) {
-    	//Setting parameters and values for supply the template.
-		Map<String,String> templateParams=new HashMap<String, String>();
-		
-		UserVo owner = sharedDocument.getSender();
-		
-		//TEMPLATE sharedTemplateContent
-		templateParams.put("${firstName}", owner.getFirstName());
-		templateParams.put("${lastName}", owner.getLastName());
-
-		//currentUser who is doing the download is the recipient
-		templateParams.put("${recipientFirstName}", currentUser.getFirstName());
-		templateParams.put("${recipientLastName}", currentUser.getLastName());
-		
-		templateParams.put("${documentNames}", "<li>" + sharedDocument.getFileName() + "</li>") ;
-		templateParams.put("${documentNamesTxt}", sharedDocument.getFileName());
-		
-		String messageForDownloadedTemplateContent = templating.getMessage(downloadTemplateContent, templateParams);
-		String messageForDownloadedTemplateContentTxt = templating.getMessage(downloadTemplateContentTxt, templateParams);
-		notifierService.sendNotification(currentUser.getMail(),owner.getMail(), subject, messageForDownloadedTemplateContent, messageForDownloadedTemplateContentTxt);
+		return createSharingWithMail(owner, documents, knownRecipients, mailContainer, expiryDateSelected, isOneDocEncrypted, jwsEncryptUrlString);
     }
     
     
-    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String url, String urlInternal, String fileSizeTxt,String oldFileName, String subject, String sharedUpdateDocTemplateContent,String sharedUpdateDocTemplateContentTxt) throws BusinessException{
-    	
-    	//Setting parameters and values for supply the template.
-		Map<String,String> templateParams=new HashMap<String, String>();
+    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, MailContainer mailContainer) throws BusinessException {
 		
-		//TEMPLATE sharedUpdateDocTemplateContent
-		templateParams.put("${firstName}", currentUser.getFirstName());
-		templateParams.put("${lastName}", currentUser.getLastName());
-		templateParams.put("${fileOldName}", oldFileName);
-		
-		templateParams.put("${fileName}", currentDoc.getFileName());
-		templateParams.put("${fileSize}", fileSizeTxt)  ;
+		UserVo ownerVo = sharedDocument.getSender();
 
-		templateParams.put("${mimeType}", currentDoc.getType());
+		User user = userRepository.findByLogin(currentUser.getLogin());
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
 		
-		//process message
-		String messageForsharedUpdateDocTemplateContent = null;
-		String messageForsharedUpdateDocTemplateContentTxt = null;
-
+		Document doc = documentRepository.findById(sharedDocument.getIdentifier());
+		List<Document> docList = new ArrayList<Document>();
+		docList.add(doc);
+		
+		mailContainer = mailElementsFactory.buildMailRegisteredDownload(mailContainer, docList, user, owner);
+		notifierService.sendNotification(currentUser.getMail(),owner.getMail(), mailContainer);
+    }
+    
+    public void sendSharedUpdateDocNotification(DocumentVo currentDoc,
+    		UserVo currentUser, String fileSizeTxt, String oldFileName,
+    		MailContainer mailContainer) throws BusinessException {
     	
     	//1) share with secured url, notification to users.
-    	
+
+		User user = userRepository.findByLogin(currentUser.getLogin());
     	Document doc = documentRepository.findById(currentDoc.getIdentifier());
     	
     	List<SecuredUrl> urls = shareService.getSecureUrlLinkedToDocument(doc);
     	
-    	String urlBase = url;
+    	String urlBase = mailContainer.getData("urlBase");
     	if (!(urlBase.charAt(urlBase.length()-1)=='/')) {
     		urlBase = urlBase.concat("/");
 		}
+    	String urlDownload = "";
     	for (SecuredUrl securedUrl : urls) {
 			List<Contact> recipients = securedUrl.getRecipients();
-			String urlDownload = urlBase.concat(securedUrl.getUrlPath()+"/");
+			urlDownload = urlBase.concat(securedUrl.getUrlPath()+"/");
 			urlDownload = urlDownload.concat(securedUrl.getAlea());
 			
-			templateParams.put("${url}", urlDownload);
-			
     		for (Contact contact : recipients) {
-    			templateParams.put("${urlparam}", "?email="+contact.getMail());
-    			
-    			messageForsharedUpdateDocTemplateContent = templating.getMessage(sharedUpdateDocTemplateContent, templateParams);
-    			messageForsharedUpdateDocTemplateContentTxt = templating.getMessage(sharedUpdateDocTemplateContentTxt, templateParams);
-    			
-    			notifierService.sendNotification(currentUser.getMail(),contact.getMail(), subject, messageForsharedUpdateDocTemplateContent, messageForsharedUpdateDocTemplateContentTxt);
+    			String urlparam = "?email="+contact.getMail();
+    			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, urlDownload, urlparam);
+    			notifierService.sendNotification(currentUser.getMail(),contact.getMail(), mailContainer_);
 			}
 		}
-
-		templateParams.put("${urlparam}", "");
 		
     	//2) normal share, notification to guest and internal user
 		List<Share> listShare = shareService.getSharesLinkedToDocument(doc);
 		
 		for (Share share : listShare) {
 			if (share.getReceiver().getUserType().equals(UserType.GUEST)) {
-				templateParams.put("${url}", url);
+				urlDownload = mailContainer.getData("urlBase");
 			} else {
-				templateParams.put("${url}", urlInternal);
+				urlDownload = mailContainer.getData("urlInternal");
 			}
-			
-			messageForsharedUpdateDocTemplateContent = templating.getMessage(sharedUpdateDocTemplateContent, templateParams);
-			messageForsharedUpdateDocTemplateContentTxt = templating.getMessage(sharedUpdateDocTemplateContentTxt, templateParams);
-			
-			notifierService.sendNotification(currentUser.getMail(),share.getReceiver().getMail(), subject, messageForsharedUpdateDocTemplateContent, messageForsharedUpdateDocTemplateContentTxt);
+			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, urlDownload, "");
+			notifierService.sendNotification(currentUser.getMail(),share.getReceiver().getMail(), mailContainer_);
 		}
     	
+    }
+    
+    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(
+    		UserVo ownerVo, List<DocumentVo> documents, List<GroupVo> recipients,
+    		MailContainer mailContainer)
+    		throws BusinessException {
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
+    	List<User> groupUserObjectsList = new ArrayList<User>();
+    	List<Group> groupList = new ArrayList<Group>();
+		
+		for (GroupVo groupVo : recipients) {
+			try {
+				groupUserObjectsList.add(userService.findAndCreateUser(groupVo.getGroupLogin()));
+				groupList.add(groupRepository.findByName(groupVo.getName()));
+			} catch (BusinessException e) {
+				logger.error("Could not find the recipient " + groupVo.getGroupLogin() + " in the database");
+				throw e;
+			}
+		}
+
+		
+		List<Document> docList = new ArrayList<Document>();
+		for (DocumentVo documentVo : documents) {
+			docList.add(documentRepository.findById(documentVo.getIdentifier()));
+		}
+		Calendar expiryDate = GregorianCalendar.getInstance();
+		expiryDate.add(Calendar.YEAR, 3);
+		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, 
+				userRepository.findByLogin(owner.getLogin()),
+				groupUserObjectsList, "", expiryDate);
+		
+		
+		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
+		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));
+		results.setSuccessesItem(shareTransformer.disassembleList(successAndFails.getSuccessesItem()));
+		
+		/**
+		 * Send notification ; if a functional mailBox is given, to this mailBox, 
+		 * otherwise to each group member.
+		 */
+		for (Group group : groupList) {
+			String functionalMail = group.getFunctionalEmail();
+			if (functionalMail != null && functionalMail.length() > 0) {
+				mailContainer = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, group, documents, mailContainer.getData("urlBase"), "groups");
+				notifierService.sendNotification(owner.getMail(),functionalMail, mailContainer);
+			} else {
+				for (GroupMember member : group.getMembers()) {
+					MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, member.getUser(), group, documents, mailContainer.getData("urlBase"), "groups");
+					notifierService.sendNotification(owner.getMail(), member.getUser().getMail(), mailContainer_);
+				}
+			}
+		}
+		
+		return results;
     }
 
 }

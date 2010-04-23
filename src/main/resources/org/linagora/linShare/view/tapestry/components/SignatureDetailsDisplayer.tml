@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	
+	<div style="display:none">
+	<t:zone t:id="signatureDetailsTemplateZone">
+	<div id="signatureDetailsInfo">
+
+		<br/>
+		
+		<div id="currentfileName">
+			${currentfileName}
+		</div>
+		<t:if t:test="signedByCurrentUser">
+			<div class="signatureMessage">${message:components.signaturedetailsdisplayer.message} ${userOwnsignatureDate}.</div>
+			<t:parameter name="else">
+			<div class="signatureMessage">${message:components.signaturedetailsdisplayer.message.else}.</div>	
+			</t:parameter>
+		</t:if>
+
+
+		<hr />
+
+		<h2>${message:components.signaturedetailsdisplayer.list.message}</h2>
+
+		<div id="signDocumentlist">
+			<t:grid source="signatures" row="signature"
+				add="signerInfo, creationDate, action"
+				exclude="identifier,cert,certNotAfter,mail,certSubjectDn,certIssuerDn,certValidity,completeName,name,size,persistenceId"
+				reorder="signerInfo, creationDate">
+
+
+				<!-- Header definition -->
+
+				<t:parameter t:name="empty">
+					${message:components.signaturedetailsdisplayer.grid.empty}
+				</t:parameter>
+				<t:parameter t:name="signerInfoHeader">
+					${message:components.signaturedetailsdisplayer.grid.signerInfoHeader}
+				</t:parameter>
+				<t:parameter t:name="creationDateHeader">
+					${message:components.signaturedetailsdisplayer.grid.creationDateHeader}
+				</t:parameter>
+				<t:parameter t:name="actionHeader">
+					${message:components.signaturedetailsdisplayer.grid.actionHeader}
+				</t:parameter>
+
+
+				<!-- Selected cell definition -->
+
+				<t:parameter t:name="signerInfoCell">
+					<span class="completeName">${signature.completeName}, </span>
+					<span class="mail">${signature.mail}</span>
+					<br/>
+					<span class="certSubjectDn">${message:components.signaturedetailsdisplayer.grid.certSubjectDnLabel} ${signature.certSubjectDn}</span>
+					<br/>
+					<span class="certIssuerDn">${message:components.signaturedetailsdisplayer.grid.certIssuerDnLabel} ${signature.certIssuerDn}</span>
+				</t:parameter>
+					
+				<t:parameter t:name="creationDateCell">
+					<span class="creationDate">${creationDate}</span>
+				</t:parameter>
+					
+				<t:parameter t:name="actionCell">
+					<t:actionLink t:id="download" t:context="${signature.identifier}" class="fileName"
+						title="${message:components.signaturedetailsdisplayer.action.download.title}">
+						${message:components.signaturedetailsdisplayer.action.download}</t:actionLink>
+				</t:parameter>
+
+			</t:grid>
+
+
+			<hr />
+	
+			<div class="button">
+				<t:actionLink t:id="downloadSignedArchive" class="button"
+					title="${message:components.signaturedetailsdisplayer.action.archive.download.title}"><span>${message:components.signaturedetailsdisplayer.action.archive.download}</span></t:actionLink>
+				<t:pagelink page="signature/verifySignature" class="button"><span>${message:components.signaturedetailsdisplayer.action.verifySignature}</span></t:pagelink>
+				<a href="javascript:Windows.close('${JSONId}')" class="button"><span>${message:components.signaturedetailsdisplayer.close}</span></a>
+			</div>
+
+
+		</div><!-- id="signDocumentlist" -->
+
+	</div>
+	</t:zone>
+	</div>
+    
+	<div t:id="signatureDetailsWindow">
+        <t:zone t:id="signatureDetailsZone" update="show"/>
+    </div>
+    
+</t:container>

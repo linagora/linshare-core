@@ -20,12 +20,12 @@
 */
 package org.linagora.linShare.view.tapestry.pages.files;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadBase;
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
@@ -33,16 +33,17 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
+import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -55,8 +56,6 @@ import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.components.FileUploader;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.services.MyMultipartDecoder;
-import org.linagora.linShare.view.tapestry.services.Templating;
-import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,14 +102,11 @@ public class Index {
     @InjectComponent
     private FileUploader fileUploader;
     
-    @Inject
-    private ComponentResources resources;
     
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
 	
-	@SuppressWarnings("unused")
 	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=250"})
 	private WindowWithEffects windowUpload;
     
@@ -121,21 +117,10 @@ public class Index {
 	private DocumentFacade documentFacade; 
 	
 	@Inject
-	private Templating templating;
-	
-	@SuppressWarnings("unused")
-	@Inject
 	private Messages messages;
 
     @Inject
     private Response response;
-
-    @Inject
-    @Path("context:templates/shared-message.html")
-    private Asset guestSharedTemplate;
-    
-    @Inject
-    private PropertiesSymbolProvider propertiesSymbolProvider;
     
     @Environmental
     private RenderSupport renderSupport;
@@ -145,6 +130,11 @@ public class Index {
 	
 	@Inject
 	private MyMultipartDecoder myMultipartDecoder;
+	
+	
+	@Inject
+	private PageRenderLinkSource linkFactory;
+	
     
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -163,6 +153,9 @@ public class Index {
 	
 	@Persist
 	private boolean flagFinishShare;
+	
+	@Persist
+	private boolean flagGroupShare;
 
 	@Persist("flash")
 	private String fileMessage;
@@ -313,109 +306,167 @@ public class Index {
 	
 	
 	/**
-	 * encrypt/decrypt the document from the repository/facade 
+	 * crypt the list of documents
 	 * Invoked when a user clicks on "encrypt/decrypt" button in the searched document list
 	 * @param object a DocumentVo[]
 	 */
 	@SuppressWarnings("unchecked")
-	@OnEvent(value="eventEncyphermentFromListDocument")
-	public void encyphermentFromListDocument(Object[] object){
+	@OnEvent(value="eventCryptListDocFromListDocument")
+	public void cryptListDoc(Object[] object){
 		 
 		String pass = (String) object[0];
-		List<DocumentVo> docObject = (List<DocumentVo>) object[1];
+		List<DocumentVo> listDocToEncrypt = (List<DocumentVo>) object[1];
 		
 		boolean ko = false; //if one problem exist in encrypt/decrypt many files
-		int numberIgnore = 0;  //if it exists an entry which is already shared ignore it
+		int numberIgnore = 0;  
 		
-		for(DocumentVo currentObject:docObject){
+		for(DocumentVo currentObject:listDocToEncrypt){
 			try {
-				if(!currentObject.getEncrypted()){
-					
-					if(!currentObject.getShared()){
+				if(!currentObject.getEncrypted()&&!currentObject.getShared()){
 						documentFacade.encryptDocument(currentObject, userVo,pass);
-					} else {
-						numberIgnore++;
-					}
-					
-					
 				} else {
-					documentFacade.decryptDocument(currentObject, userVo,pass);
+					numberIgnore++; //if it exists an entry which is already encrypted ignore it
 				}
 				
 			} catch (BusinessException e) {
 				
 				ko = true;
-				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failfileEncipherment"),
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.crypt"),
 						(currentObject).getFileName()) );
 			}
 			
 		}
 		
-		if(!ko && numberIgnore<docObject.size()) shareSessionObjects.addMessage(messages.get("pages.index.message.fileEncipherment"));
-		if(numberIgnore>0) shareSessionObjects.addWarning(messages.get("pages.index.message.fileEncipherment.ignoreSharedFile"));
+		if(!ko && numberIgnore<listDocToEncrypt.size()) shareSessionObjects.addMessage(messages.get("pages.index.message.success.crypt"));
+		if(numberIgnore>0) shareSessionObjects.addWarning(messages.get("pages.index.message.crypt.ignoreFile"));
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@OnEvent(value="eventDecryptListDocFromListDocument")
+	public void decryptListDoc(Object[] object){
+		
+		String pass = (String) object[0];
+		List<DocumentVo> listDocToDecrypt = (List<DocumentVo>) object[1];
+		
+		boolean ko = false; //if one problem exist in encrypt/decrypt many files
+		int numberIgnore = 0;  
+		
+		for(DocumentVo currentObject:listDocToDecrypt){
+			try {
+				if(currentObject.getEncrypted()&&!currentObject.getShared()){
+						documentFacade.decryptDocument(currentObject, userVo,pass);
+				} else {
+					numberIgnore++; //if it exists an entry which is already encrypted ignore it
+				}
+				
+			} catch (BusinessException e) {
+				
+				ko = true;
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.decrypt"),
+						(currentObject).getFileName()) );
+			}
+			
+		}
+		
+		if(!ko && numberIgnore<listDocToDecrypt.size()) shareSessionObjects.addMessage(messages.get("pages.index.message.success.decrypt"));
+		if(numberIgnore>0) shareSessionObjects.addWarning(messages.get("pages.index.message.decrypt.ignoreFile"));
+	}
 	
 	
+	/**
+	 * crypt one doc
+	 * @param object
+	 */
+	@OnEvent(value="eventCryptOneDocFromListDocument")
+	public void cryptOneDoc(Object[] object){
+		
+		String pass = (String) object[0];
+		DocumentVo currentDocumentVo = (DocumentVo) object[1];
+
+		if(currentDocumentVo.getShared()) {
+			//do nothing on shared document
+			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.failed.crypt.sharedFile"),(currentDocumentVo).getFileName()));
+		} else {
+		
+			//ignore already encrypted file
+			if(!currentDocumentVo.getEncrypted()){ 
+				try {
+					documentFacade.encryptDocument(currentDocumentVo, userVo,pass);
+					shareSessionObjects.addMessage(messages.get("pages.index.message.success.crypt"));
 	
-	@OnEvent(value="eventEncyphermentUniqueFromListDocument")
-	public void refreshFromListDocument(Object[] object){
+				} catch (BusinessException e) {
+					shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.crypt"),
+							(currentDocumentVo).getFileName()) );
+				}
+	
+			}	
+		}		
+	}
+	
+	/**
+	 * decrypt one doc
+	 * @param object
+	 */
+	@OnEvent(value="eventDecryptOneDocFromListDocument")
+	public void decryptOneDoc(Object[] object){
 			
 		String pass = (String) object[0];
 		DocumentVo currentDocumentVo = (DocumentVo) object[1];
 
-
-		if(currentDocumentVo.getShared()){ //ignore shared file in encrypt/decrypt process
-			shareSessionObjects.addWarning(messages.get("pages.index.message.fileEncipherment.ignoreSharedFile"));
-		}
-		else {
-
-			try {
-				if(!currentDocumentVo.getEncrypted()&&!currentDocumentVo.getShared()){
-					documentFacade.encryptDocument(currentDocumentVo, userVo,pass);
-				} else {
+		if(currentDocumentVo.getShared()) {
+			//do nothing on shared document
+			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.failed.decrypt.sharedFile"),(currentDocumentVo).getFileName()));
+		} else {
+			//ignore decrypted file !
+			if(currentDocumentVo.getEncrypted()){ 
+				try {
 					documentFacade.decryptDocument(currentDocumentVo, userVo,pass);
+					shareSessionObjects.addMessage(messages.get("pages.index.message.success.decrypt"));
+	
+				} catch (BusinessException e) {
+					shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.decrypt"),
+							(currentDocumentVo).getFileName()) );
 				}
-				shareSessionObjects.addMessage(messages.get("pages.index.message.fileEncipherment"));
-
-			} catch (BusinessException e) {
-				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failfileEncipherment"),
-						(currentDocumentVo).getFileName()) );
+	
 			}
-
 		}	
 	}
 	
 	
-//	/**
-//	 * sign the document 
-//	 * Invoked when a user clicks on "sign" button in the searched document list
-//	 * @param object a DocumentVo[]
-//	 */
-//	@SuppressWarnings("unchecked")
-//	@OnEvent(value="eventSignatureFromListDocument")
-//	public void signatureFromListDocument(Object[] object){
-//
-//		List<String> identifiers = new ArrayList<String>();
-//		
-//		//context is a list of document (tab files)
-//		identifiers.add(DocToSignContext.DOCUMENT.toString());
-//		
-//		for(Object currentObject:object){
-//			DocumentVo doc =  (DocumentVo) currentObject;
-//			identifiers.add(doc.getIdentifier());
-//		}
-//		
-//        Link mylink = linkFactory.createPageRenderLink("signature/SelectPolicy", true,identifiers.toArray());
-//		
-//        try {
-//            response.sendRedirect(mylink);
-//        } catch (IOException ex) {
-//            throw new TechnicalException("Bad URL" + ex);
-//        }
-//		
-//	}
+	/**
+	 * sign the document 
+	 * Invoked when a user clicks on "sign" button in the searched document list
+	 * @param object a DocumentVo[]
+	 */
+	@OnEvent(value="eventSignatureFromListDocument")
+	public void signatureFromListDocument(Object[] object){
+
+		List<String> identifiers = new ArrayList<String>();
+		
+		//context is a list of document (tab files)
+		identifiers.add(DocToSignContext.DOCUMENT.toString());
+		
+		for(Object currentObject:object){
+			DocumentVo doc =  (DocumentVo) currentObject;
+			
+			if(doc.getEncrypted()) {
+				shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.signature.encryptedFiles")));
+				return; //quit
+			} else {
+				identifiers.add(doc.getIdentifier());
+			}
+		}
+		
+        Link mylink = linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", identifiers.toArray());
+		
+        try {
+            response.sendRedirect(mylink);
+        } catch (IOException ex) {
+            throw new TechnicalException("Bad URL" + ex);
+        }
+		
+	}
 
 
 	/**
@@ -427,23 +478,14 @@ public class Index {
 	public void initShareList(Object[] object){
 		
 		DocumentVo doc;
-		boolean giveWarning = false;
 		
 		for(Object currentObject:object){
 			doc = (DocumentVo)currentObject;
 			
-			if(!doc.getEncrypted())	{ //do not put encrypted document in sharing mode !!!
-				shareSessionObjects.addDocument(doc);
-			}	else {
-				giveWarning = true; //we want to share an encrypted document in the list
-			}
+			shareSessionObjects.addDocument(doc);
 		}
 
 		shareSessionObjects.setMultipleSharing(true); //enable to multiple file sharing
-		
-		if(giveWarning){
-     		shareSessionObjects.addWarning(messages.get("pages.index.message.shareWithExclusionEncryptedFiles"));
-		}
 	}
 
 	/**
@@ -489,6 +531,26 @@ public class Index {
 			}
 		}
 		if(null!=documentVoTemp){
+				//enable direct sharing on this document
+				flagFinishShare=true;
+				shareSessionObjects.getDocuments().clear(); //delete all other doc
+				shareSessionObjects.addDocument(documentVoTemp);
+				shareSessionObjects.setMultipleSharing(false);
+			}
+
+	}
+	
+	@OnEvent(value="eventShareWithGroupUniqueFromListDocument")
+	public void shareUniqueWithGroupFromListDocument(Object[] object) throws BusinessException {
+		DocumentVo documentVoTemp=null;
+
+		for(DocumentVo currentDocumentVo:this.listDocumentsVo){
+			if(currentDocumentVo.getIdentifier().equals((String)object[0])){
+				documentVoTemp=currentDocumentVo;
+				break;
+			}
+		}
+		if(null!=documentVoTemp){
 			
 			//check is the document is encrypted and give a warning
 			if(documentVoTemp.getEncrypted()){
@@ -497,7 +559,7 @@ public class Index {
 			} else {
 				
 				//enable direct sharing on this document
-				flagFinishShare=true;
+				flagGroupShare=true;
 				shareSessionObjects.getDocuments().clear(); //delete all other doc
 				shareSessionObjects.addDocument(documentVoTemp);
 				shareSessionObjects.setMultipleSharing(false);
@@ -539,6 +601,11 @@ public class Index {
     		//show the share window popup
              renderSupport.addScript(String.format("confirmWindow.showCenter(true)"));
             flagFinishShare=false;
+    	}
+    	
+    	if (flagGroupShare) {
+            renderSupport.addScript(String.format("groupShareWindow.showCenter(true)"));
+            flagGroupShare=false;
     	}
 
     }

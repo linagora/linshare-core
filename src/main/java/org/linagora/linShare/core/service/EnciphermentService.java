@@ -21,7 +21,6 @@
 package org.linagora.linShare.core.service;
 
 import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -30,34 +29,6 @@ import org.linagora.linShare.core.exception.BusinessException;
  * Services Encipherment.
  */
 public interface EnciphermentService {
-
-	/**
-	 * generate challenge for the Encipherment Key
-	 * 
-	 * @param user
-	 * @param password
-	 *            material to derive the key
-	 * @throws BusinessException 
-	 */
-	public void generateEnciphermentKey(UserVo user, String password) throws BusinessException;
-
-	
-	/**
-	 * check challenge for the Encipherment Key
-	 * 
-	 * @param user
-	 * @param password
-	 *            to check with the previous one in referential
-	 * @return true if two password are the same
-	 */
-	public boolean checkEnciphermentKey(User user, String password);
-
-	/**
-	 * 
-	 * @param user
-	 * @return true if one key (one password) has been given.
-	 */
-	public boolean isUserEnciphermentKeyGenerated(User user);
 
 	/**
 	 * encrypt the content of a document, and change the content in jackrabbit
@@ -85,4 +56,15 @@ public interface EnciphermentService {
 	 * @return
 	 */
 	public boolean isDocumentEncrypted(DocumentVo doc);
+	
+	/**
+	 * give the new name for a file encrypted /decrypted
+	 * for example change the extension with aes
+	 * file1.doc becomes file1.doc.aes (encrypted)
+	 * file1.doc.aes becomes file1.doc (decrypted)
+	 * @param docname
+	 * @return new filename
+	 */
+	public String changeDocumentExtension(String docname);
+	
 }

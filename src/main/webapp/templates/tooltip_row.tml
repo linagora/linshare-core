@@ -1,0 +1,11 @@
+<tr>
+	<td>
+		${firstname} ${lastname}
+	</td>
+	<td>
+		${mail}
+	</td>
+	<td>
+		${expiration}
+	</td>
+</tr>
