@@ -38,6 +38,10 @@ public class ShareSessionObjects {
     
     private List<String> messages;
     
+    private List<String> errors;
+    
+    private List<String> warnings;
+    
     /**
      * multiple or unique share
      * if set to true you will have a multiple share of files
@@ -49,6 +53,8 @@ public class ShareSessionObjects {
     	users = new ArrayList<UserVo>();
     	documents = new ArrayList<DocumentVo>();
     	messages=new ArrayList<String>();
+    	errors=new ArrayList<String>();
+    	warnings=new ArrayList<String>();
     	multipleSharing = true; //default: we use this object to remember multiple files selection 
     }
 
@@ -108,7 +114,39 @@ public class ShareSessionObjects {
 	public void removeMessage(String message) {
 		this.messages.remove(message);
 	}
+	
+	public void setErrors(List<String> errors) {
+		this.errors = errors;
+	}
 
+	public List<String> getErrors() {
+		return errors;
+	}
+	
+	public void addError(String error) {
+		this.errors.add(error);
+	}
+
+	public void removeError(String error) {
+		this.errors.remove(error);
+	}
+
+	public void setWarnings(List<String> warnings) {
+		this.warnings = warnings;
+	}
+
+	public List<String> getWarnings() {
+		return warnings;
+	}
+	
+	public void addWarning(String warning) {
+		this.warnings.add(warning);
+	}
+
+	public void removeWarning(String warning) {
+		this.warnings.remove(warning);
+	}
+	
 	public boolean isMultipleSharing() {
 		return multipleSharing;
 	}

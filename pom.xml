@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linagora</groupId>
     <artifactId>linshare</artifactId>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.7.3-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>LinShare, Secure File Sharing</name>
     <description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -14,8 +13,7 @@
         * Linshare offers several features to securely exchange
         * User&amp;share allows Linshare to communicate with the fat client
     </description>
-    <url>http://linpki.org/projects/show/linshare
-    </url>
+    <url>http://linpki.org/projects/show/linshare</url>
     <inceptionYear>2008</inceptionYear>
     <issueManagement>
         <system>LinShare Redmine Bugtracker</system>
@@ -23,13 +21,12 @@
     </issueManagement>
     <ciManagement>
         <system>Hudson</system>
-        <url>http://build.linid.org/hudson/view/LinShare/</url>
+        <url>http://build.linid.org/hudson/view/LinPKI/</url>
     </ciManagement>
     <scm>
-        <developerConnection>scm:svn+ssh://svn.linid.org/var/svn/linshare/trunk/linshare/</developerConnection>
-        <connection>scm:http://svn.linid.org/svn/linshare/trunk/linshare/</connection>
-        <url>http://linpki.org/repositories/show/linshare</url>
-        <tag>trunk</tag>
+        <developerConnection>scm:svn:https://svn.linid.org/svn/linshare/tags/linshare-0.7</developerConnection>
+        <connection>scm:svn:http://svn.linid.org/svn/linshare/tags/linshare-0.7</connection>
+        <url>http://linpki.org/repositories/show/linshare/tags/linshare-0.7</url>   
     </scm>
     <organization>
         <name>LINAGORA</name>
@@ -46,6 +43,23 @@
                 <role>Developer</role>
             </roles>
         </developer>
+        <developer>
+            <id>sduprey</id>
+            <name>Stefanie Duprey</name>
+            <email>sduprey@linagora.com</email>
+            <organization>LINAGORA</organization>
+            <organizationUrl>http://www.linagora.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>sbahloul</id>
+            <name>Sebastien Bahloul</name>
+            <email>sbahloul@linagora.com</email>
+            <organization>LINAGORA</organization>
+            <organizationUrl>http://www.linagora.com/</organizationUrl>
+        </developer>
     </developers>
     <mailingLists>
         <mailingList>
@@ -53,7 +67,7 @@
             <subscribe>linshare-users-subscribe@linpki.org</subscribe>
             <unsubscribe>linshare-users-unsubscribe@linpki.org</unsubscribe>
             <post>linshare-users@linpki.org</post>
-            <archive></archive>
+            <archive />
         </mailingList>
         <mailingList>
             <name>Developers List</name>
@@ -89,7 +103,38 @@
         <dependency>
             <groupId>org.chenillekit</groupId>
             <artifactId>chenillekit-tapestry</artifactId>
-            <version>1.0.0</version>
+            <version>1.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javassist</artifactId>
+                    <groupId>jboss</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>0.8.0-incubating</version>
+        </dependency>
+        <dependency>
+            <groupId>com.artofsolving</groupId>
+            <artifactId>jodconverter</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.5.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.linagora</groupId>
+            <artifactId>LinThumbnail</artifactId>
+            <version>1.0</version>
         </dependency>
         
         <dependency>
@@ -285,6 +330,20 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- do you need CAS sso ?
+        <dependency>
+        	<groupId>org.springframework.security</groupId>
+        	<artifactId>spring-security-cas-client</artifactId>
+        	<version>${spring-security-release-version}</version>
+        	<exclusions>
+        		<exclusion>
+        			<groupId>commons-logging</groupId>
+        			<artifactId>commons-logging</artifactId>
+        		</exclusion>
+        	</exclusions>
+        </dependency>
+        -->
+        
         
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -438,25 +497,14 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>8.3-603.jdbc3</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>2.2.0</version>
         </dependency>
         <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>1.8.0.7</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opends</groupId>
-            <artifactId>opends-core</artifactId>
-            <version>2.0</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.2.126</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -477,17 +525,17 @@
         <dependency>
             <groupId>org.linagora.linkit</groupId>
             <artifactId>timeline</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.2</version>
         </dependency>
         <dependency>
             <groupId>org.linagora.linkit</groupId>
             <artifactId>utils</artifactId>
-            <version>0.1</version>
+            <version>0.2</version>
         </dependency>
         <dependency>
             <groupId>org.linagora.linkit</groupId>
             <artifactId>flexUploadComponent</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
         </dependency>
         
         <dependency>
@@ -542,6 +590,19 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>                                                                                                       
+            <groupId>org.opends</groupId>                                                                                  
+            <artifactId>opends-core</artifactId>                                                                           
+            <version>2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+            <scope>compile</scope>	                       
+        </dependency>
+         
     </dependencies>
     
     <build>
@@ -551,10 +612,30 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                     <optimize>true</optimize>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <inherited>false</inherited>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/opends/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             
             <!-- Run the application using "mvn jetty:run" -->
@@ -636,23 +717,13 @@
                     </instrumentation>
                 </configuration>
             </plugin>
-<!--            <plugin>
-                <groupId>fr.fastconnect.maven</groupId>
-                <artifactId>maven-redmine-plugin</artifactId>
-                <configuration>
-                    <trackerTypes>
-                        <Bug>fix</Bug>
-                        <Feature>add</Feature>
-                        <Task>update</Task>
-                    </trackerTypes>
-                </configuration>
-            </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changes-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>announcement-mail</id>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>announcement-mail</goal>
                         </goals>
@@ -665,21 +736,6 @@
                     </toAddresses>
                 </configuration>
             </plugin>
-<!--            <plugin>
-                <groupId>fr.fastconnect.maven</groupId>
-                <artifactId>maven-redmine-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>publish-news</id>
-                        <goals>
-                            <goal>publish-news</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <newsTitle>${project.artifactId} ${project.version} released</newsTitle>
-                </configuration>
-            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changes-plugin</artifactId>
@@ -691,11 +747,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <goals>deploy redmine:create-report changes:announcement-mail redmine:publish-news</goals>
+                    <goals>deploy changes:announcement-mail</goals>
                 </configuration>
             </plugin>
         </plugins>
-         
+        <!--
+        
         <extensions>
             <extension>
                 <groupId>postgresql</groupId>
@@ -703,6 +760,14 @@
                 <version>8.3-603.jdbc3</version>
             </extension>
         </extensions>
+        --><testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/opends/resources</directory>
+            </testResource>
+        </testResources>
         
     </build>
     
@@ -721,17 +786,197 @@
                     <rootPackage>org.linagora.linShare</rootPackage>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.0.1</version>
-                <configuration>
-                    <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory>
-                </configuration>
-            </plugin>
         </plugins>
     </reporting>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>8.3-603.jdbc3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>opends</id>
+            <activation>
+                <property>
+                    <name>target</name>
+                    <value>distribution</value>
+                </property>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/opends/resources</directory>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.3</version>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>generate-sources</phase>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>src/opends/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>add-test-source</id>
+                                <phase>generate-test-sources</phase>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>add-test-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>src/opends/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>org.opends</groupId>
+                    <artifactId>opends-core</artifactId>
+                    <version>2.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>h2</id>
+            <activation>
+                <property>
+                    <name>target</name>
+                    <value>distribution</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>1.2.126</version>
+                </dependency>
+            </dependencies>
+            
+        </profile>
+        <profile>
+            <id>distribution</id>
+            <activation>
+                <property>
+                    <name>target</name>
+                    <value>distribution</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-jetty</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <tasks>
+                                        <property name="execution.path" refid="maven.runtime.classpath" />
+                                        <ant antfile="${basedir}/misc/build.xml" target="prepare-jetty" />
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>clean-jetty</id>
+                                <phase>clean</phase>
+                                <configuration>
+                                    <tasks>
+                                        <property name="execution.path" refid="maven.runtime.classpath" />
+                                        <ant antfile="${basedir}/misc/build.xml" target="clean" />
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/dist.xml</descriptor>
+                                <descriptor>src/main/assembly/src.xml</descriptor>
+                            </descriptors>
+                            <!-- Required since default value is true (Maven 2.2-beta-3)-->
+                            <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>directory-single</goal>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.izpack</groupId>
+                        <artifactId>izpack-maven-plugin</artifactId>
+                        <version>1.0-alpha-5</version>
+                        <configuration>
+                            <descriptor>${basedir}/src/install/install.xml</descriptor>
+                            <descriptorEncoding>UTF-8</descriptorEncoding>
+                            <fileExtension>jar</fileExtension>
+                            <installerFile>${project.build.directory}/${project.artifactId}-${project.version}</installerFile>
+                            <izpackBasedir>${project.build.directory}/${project.artifactId}-dist/${project.artifactId}-${project.version}</izpackBasedir>
+                        </configuration>
+                        
+                        <executions>
+                            <execution>
+                                <id>standard-installer</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>izpack</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.izpack</groupId>
+                                <artifactId>izpack-standalone-compiler</artifactId>
+                                <version>4.3.2</version>
+                            </dependency>
+                             
+                        </dependencies>
+                        
+                    </plugin>
+                </plugins>
+            </build>
+            
+        </profile>
+    </profiles>
     
     <repositories>
         <!--
@@ -784,16 +1029,6 @@
             </snapshots>
         </repository>
         
-        <!--
-			<repository> <id>codehaus.snapshots</id>
-			<url>http://snapshots.repository.codehaus.org</url> </repository>
-
-			<repository> <id>OpenQA_Release</id> <name>OpenQA Release
-			Repository</name>
-			<url>http://archiva.openqa.org/repository/releases/</url>
-			</repository> <repository> <id>maven</id> <name>maven repo1</name>
-			<url>http://www.mvnrepository.com/artifact/</url> </repository>
-		-->
         <repository>
             <id>Java-Releases</id>
             <url>http://download.java.net/maven/2/</url>
@@ -801,7 +1036,15 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>Maven Central Repository</id>
+            <url>http://repo1.maven.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
+    
     
     <distributionManagement>
         <repository>
@@ -818,9 +1061,8 @@
     
     <properties>
         <tapestry-release-version>5.1.0.5</tapestry-release-version>
-        <netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
         <spring-release-version>2.5.5</spring-release-version>
-        <spring-security-release-version>2.0.4</spring-security-release-version>
+        <spring-security-release-version>2.0.5.RELEASE</spring-security-release-version>
         <jackrabbit-release-version>1.4</jackrabbit-release-version>
         <slf4j-release-version>1.5.6</slf4j-release-version>
     </properties>

@@ -15,7 +15,7 @@
 
 
 			<!-- Message panel -->
-
+			<t:messagePanel />
 			<div id="messagePanel" class="welcome">
 				<!-- Welcome message and LinShare description -->
 				<p><t:outputraw t:value="welcomeText" /></p>

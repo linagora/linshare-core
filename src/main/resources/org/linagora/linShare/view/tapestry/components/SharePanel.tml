@@ -31,15 +31,15 @@
 
 		<t:if t:test="elements">
 		<t:if t:test="readOnly" negate="true">
-			<div id="sharePanelReset">
-				<t:actionLink t:id="reset">
-					${message:components.sharePanel.reset}
-				</t:actionLink>
-			</div>
+<!--			<div id="sharePanelReset">-->
+<!--				<t:actionLink t:id="reset">-->
+<!--					${message:components.sharePanel.reset}-->
+<!--				</t:actionLink>-->
+<!--			</div>-->
 			<div id="sharePanelShare">
-				<t:linkSubmit>
-					${message:components.sharePanel.share}
-				</t:linkSubmit>
+				<t:submit t:id="share" value="${message:components.sharePanel.share}"/>
+                ${message:global.space}
+                <t:submit t:id="reset" value="message:components.sharePanel.reset"/>
 			</div>
 			<div class="clear"></div>
 		</t:if>

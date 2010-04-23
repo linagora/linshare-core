@@ -103,7 +103,6 @@
         <constructor-arg index="3" value="${mail.smtp.password}"/>
         <constructor-arg index="4" value="${mail.smtp.auth.needed}"/>
         <constructor-arg index="5" value="${mail.smtp.charset}"/>
-        <constructor-arg index="6" value="${linshare.info.urlShare}"/>
     </bean>
     
     <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceImpl">
@@ -116,6 +115,12 @@
     
     <bean name="recipientFavouriteService" class="org.linagora.linShare.core.service.impl.RecipientFavouriteServiceImpl">
         <constructor-arg ref="recipientFavouriteRepository"/>
+    </bean>
+    
+    <bean name="statisticsService" class="org.linagora.linShare.core.service.impl.StatisticsServiceImpl">
+        <constructor-arg ref="userRepository"/>
+        <constructor-arg ref="documentRepository"/>
+        <constructor-arg ref="logEntryRepository"/>
     </bean>
     
 </beans>

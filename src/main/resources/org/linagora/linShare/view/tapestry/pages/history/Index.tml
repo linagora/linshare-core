@@ -8,7 +8,7 @@
 
 		<h1>${message:components.myborderlayout.history.title}</h1>
 
-
+		<t:messagePanel />
 		<!-- Action bar -->
 
 		<div id="actionBar">
@@ -18,7 +18,7 @@
 				</li>
 				<t:if test="${userVo.administrator}">
 				<li>
-					<t:actionlink t:id="applicationAudit" class="button"><span>${message:pages.history.index.applicationAuditLink}</span></t:actionlink>
+					<t:actionlink t:id="applicationAudit" class="button"><span><img src="${asset:context:images/theme0/icon-heading-audit.png}" alt=""/> ${message:pages.history.index.applicationAuditLink}</span></t:actionlink>
 				</li>
 				</t:if>
 			</ul>
@@ -142,14 +142,17 @@
 				</fieldset>
 
 				<div class="clear"></div>
-
-				<table width="100%" >
-					<tr align="center">
-						<td><t:submit class="Btn" value="message:global.button.search"/></td>
-						<td><t:submit class="Btn" t:id="reset" value="message:global.button.reset"/></td>
-					</tr>
-			
-				</table>
+				<a href="#" onclick="formReport.submit();" class="button" style="margin-right:40px"><span><img src="${asset:context:images/icons/update.png}" alt=""/> ${message:global.button.search}</span></a>
+				<t:actionLink class="button" t:id="reset" style="margin-right:40px"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.reset}</span></t:actionLink>
+				<br />
+				<div class="clear"></div>
+<!--				<table width="100%" >-->
+<!--					<tr align="center">-->
+<!--						<td><t:submit class="Btn" value="message:global.button.search"/></td>-->
+<!--						<td><t:submit class="Btn" t:id="reset" value="message:global.button.reset"/></td>-->
+<!--					</tr>-->
+<!--			-->
+<!--				</table>-->
 
 			</t:form>
 	

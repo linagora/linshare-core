@@ -111,18 +111,46 @@ public class HelpVO {
 	}
 	
 	@Override
-	public boolean equals(Object o){
-		if(o==this || 
-				(null!=o 
-				&& o instanceof HelpVO 
-				&& (((HelpVO)o).getIdSection().equals(idSection)) 
-				&& ((HelpVO)o).getHelpType().equals(helpType) 
-				&& ((HelpVO)o).getUuid().equals(uuid) )){ 
-				
-			return true;
-		}
-		return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((helpType == null) ? 0 : helpType.hashCode());
+		result = prime * result
+				+ ((idSection == null) ? 0 : idSection.hashCode());
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HelpVO other = (HelpVO) obj;
+		if (helpType == null) {
+			if (other.helpType != null)
+				return false;
+		} else if (!helpType.equals(other.helpType))
+			return false;
+		if (idSection == null) {
+			if (other.idSection != null)
+				return false;
+		} else if (!idSection.equals(other.idSection))
+			return false;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
+	}
+	
+	
+	
 
 
 	

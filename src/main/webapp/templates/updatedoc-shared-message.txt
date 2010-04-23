@@ -5,5 +5,8 @@ ${firstName} ${lastName} has updated the shared file ${fileOldName}:
   * File size: ${fileSize}
   * MIME type: ${mimeType}
 
+In order to download the new file, click on this link or paste it into your browser:
+${url}${urlparam}
+
 -- 
-The LinShare dream team
+LinShare - http://linshare.org - Open Source secured file sharing application

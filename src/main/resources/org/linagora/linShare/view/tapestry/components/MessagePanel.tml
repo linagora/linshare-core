@@ -1,0 +1,19 @@
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+		<!-- Message panel -->
+		<div id="messagesPanel" class="errorMessagesClass">
+			<ul id="errorMessages">
+				<t:loop t:source="prop:messagesError" t:value="currentMessage">
+				<li class="message-error">${currentMessage}</li>
+				</t:loop>
+				<t:loop t:source="prop:messagesWarning" t:value="currentMessage">
+				<li class="message-warn">${currentMessage}</li>
+				</t:loop>
+				<t:loop t:source="prop:messagesInfo" t:value="currentMessage">
+				<li class="message-info">${currentMessage}</li>
+				</t:loop>
+			</ul>
+		</div><!-- id="messagePanel" -->
+		
+</t:container>

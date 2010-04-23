@@ -183,7 +183,7 @@ public class UserEditForm {
     }
 
     public void onFailure() {
-    	 shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.error"));
+    	 shareSessionObjects.addError(messages.get("components.userEditForm.action.update.error"));
     	
     }
     

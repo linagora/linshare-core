@@ -1,0 +1,41 @@
+dn: dc=linpki,dc=org
+dc: linpki
+objectClass: dcObject
+objectClass: top
+description: linpki naming context
+
+dn: ou=People,dc=linpki,dc=org
+ou: People
+objectClass: organizationalUnit
+objectClass: top
+description: People subtree
+
+dn: ou=Groups,dc=linpki,dc=org
+ou: Groups
+objectClass: organizationalUnit
+objectClass: top
+description: Groups subtree
+
+dn: uid=user1,ou=People,dc=linpki,dc=org
+uid: user1
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Doe
+givenName: John
+cn: Doe, John
+userPassword: password1
+mail: user1@linpki.org
+
+dn: uid=user2,ou=People,dc=linpki,dc=org
+uid: user2
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Smith
+givenName: Jane
+cn: Smith, Jane
+userPassword: password2
+mail: user2@linpki.org

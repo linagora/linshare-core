@@ -27,6 +27,8 @@ import java.util.Set;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 public abstract class User {
 
     /** Surrogate key. */
@@ -255,7 +257,7 @@ public abstract class User {
 		return enciphermentKeyPass;
 	}
 	public void setEnciphermentKeyPass(byte[] enciphermentKeyPass) {
-		this.enciphermentKeyPass = enciphermentKeyPass;
+		this.enciphermentKeyPass = Arrays.copyOf(enciphermentKeyPass, enciphermentKeyPass.length);
 	}
 	
     public String getPassword() {

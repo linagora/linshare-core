@@ -31,7 +31,7 @@ public enum FileSizeUnit {
 
     private int value;
 
-    private FileSizeUnit(int value) {
+    private FileSizeUnit(final int value) {
         this.value = value;
     }
 
@@ -39,22 +39,26 @@ public enum FileSizeUnit {
         return value;
     }
 
-    public static FileSizeUnit fromInt(int value) {
-        switch(value) {
-            case 0 : return KILO;
-            case 1 : return MEGA;
-            case 2 : return GIGA;
+    public static FileSizeUnit fromInt(final int value) {
+    	FileSizeUnit ret = null;
+    	switch(value) {
+            case 0 : ret = KILO; break;
+            case 1 : ret = MEGA; break;
+            case 2 : ret = GIGA; break;
             default : throw new IllegalArgumentException("Doesn't match an existing Role");
         }
+    	return ret;
     }
 
-    public long getPlainSize(int size) {
-        BigInteger two = BigInteger.valueOf(2);
+    public long getPlainSize(final int size) {       
+        long ret = 0L;
         switch (value) {
-            case 0 : return size * two.pow(10).longValue();
-            case 1 : return size * two.pow(20).longValue();
-            case 2 : return size * two.pow(30).longValue();
-            default : return size;
+            case 0 : ret = size * BigInteger.valueOf(2).pow(10).longValue(); break;
+            case 1 : ret = size * BigInteger.valueOf(2).pow(20).longValue(); break;
+            case 2 : ret = size * BigInteger.valueOf(2).pow(30).longValue(); break;
+            default : ret = size; break;
         }
+        
+        return ret; 
     }
 }

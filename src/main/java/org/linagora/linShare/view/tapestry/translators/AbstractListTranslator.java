@@ -111,8 +111,8 @@ public abstract class AbstractListTranslator<A> implements Translator<List<A>> {
 		}
 	}
 
-	public void render(Field field, String message, MarkupWriter writer, FormSupport formSupport) {
-		//nothjing to do here
+	public  void render(Field field, String message, MarkupWriter writer, FormSupport formSupport) {
+		//Do Nothing
 	}
 
 	public String getMessageKey() {

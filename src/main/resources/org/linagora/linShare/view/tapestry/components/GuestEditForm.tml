@@ -68,7 +68,11 @@
 
 			<hr />
 
-			<t:submit value="message:global.button.add" class="edit-form-field"/>		
+			<div class="button">
+				<t:linkSubmit class="button">
+                    <span><img src="${asset:context:images/icons/icon-add-users.png}" alt=""/> ${message:global.button.add}</span></t:linkSubmit>
+				<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+			</div>
 
 		</t:form>
 

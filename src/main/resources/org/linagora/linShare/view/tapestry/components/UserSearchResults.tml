@@ -15,8 +15,9 @@
 	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:pages.user.sorter.name.label},${message:pages.user.sorter.mail.label},${message:pages.user.sorter.expiration.label}" t:properties="literal:name,mail,expiration"/> 
 
 	<t:form t:id="results">
+		<t:linkit.hiddenfield t:id="action" />
 
-		<t:grid source="users" row="user" include="mail, picture, action, selectedValue"
+		<t:grid source="users" row="user" include="mail"
 				add="picture, action, selectedValue" reorder="mail, picture" rowsPerPage="10">
 
 			<t:parameter t:name="empty">
@@ -69,8 +70,8 @@
 
 			<t:parameter name="mailCell">
 				<div>
-					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${showUserTooltip}" context="user.mail" onclick="userDetailsWindow.showCenter(true);">
-						${user.firstName} ${user.lastName}
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${showUserTooltip}" context="user.mail">
+						<span  onclick="userDetailsWindow.showCenter(true);">${user.firstName} ${user.lastName}</span>
 					</t:actionlink>
 					<br/>
 					<span class="emailAddress">
@@ -101,14 +102,16 @@
 				</t:actionLink>
 				<t:if test="userEditable">
 					<t:actionLink t:id="edit" context="user.login" t:zone="userEditFormZone"
-						onClick="userEditWindow.showCenter(true)" title="${message:components.userSearch.action.edit.title}">
-						<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"/>
+						title="${message:components.userSearch.action.edit.title}">
+						<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
+							onClick="userEditWindow.showCenter(true)" />
 					</t:actionLink>
 				</t:if>
 				<t:if test="userDeletable">
 					<t:actionLink t:id="delete" context="user.login" t:zone="zoneConfirmDelete"
-						onClick="window_confirm.showCenter(true)" title="${message:components.userSearch.action.delete.title}">
-						<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"/>
+						title="${message:components.userSearch.action.delete.title}">
+						<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
+							onClick="window_confirm.showCenter(true)" />
 					</t:actionLink>
 				</t:if>
 			</t:parameter>
@@ -122,8 +125,8 @@
 		<t:if test="users">
 			<t:if test="users.empty" negate="true">
 				<div id="actionListUser" style="display:none">
-					<t:linkSubmit t:event="share" class="listDocument" title="${message:components.userSearch.action.share}">
-					<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.userSearch.action.share}</t:linkSubmit>
+					<t:eventLink t:event="share" class="listDocument" title="${message:components.userSearch.action.share}">
+					<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.userSearch.action.share}</t:eventLink>
 				</div>
 			</t:if>
 		</t:if>

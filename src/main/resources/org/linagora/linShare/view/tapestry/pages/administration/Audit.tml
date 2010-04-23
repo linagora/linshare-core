@@ -8,14 +8,14 @@
 
 		<h1>${message:components.myborderlayout.audit.title}</h1>
 
-
+		<t:messagePanel />
 		<!-- Action bar -->
 
 		<div id="actionBar">
 			<h4>Actions</h4>
 			<ul>
 				<li>
-					<t:actionlink t:id="personalHistory" class="button"><span>${message:pages.administration.audit.personalHistoryLink}</span></t:actionlink>
+					<t:actionlink t:id="personalHistory" class="button"><span><img src="${asset:context:images/icons/usertype-internalsimple.png}" alt=""/> ${message:pages.administration.audit.personalHistoryLink}</span></t:actionlink>
 				</li>
 			</ul>
 		</div><!-- id="actionBar" -->
@@ -174,15 +174,19 @@
 				</fieldset>
 
 				<div class="clear"></div>
-
-				<table width="100%" >
-					<tr align="center">
-						<td><t:submit class="Btn"  t:id="generateCsv" value="message:global.button.generateCsv"/></td>
-						<td><t:submit class="Btn" value="message:global.button.generate"/></td>
-						<td><t:submit class="Btn" t:id="reset" value="message:global.button.reset"/></td>
-					</tr>
-			
-				</table>
+				<div class="button">
+					<a href="#" onclick="formReport.submit();" class="button" style="margin-right:40px"><span><img src="${asset:context:images/icons/update.png}" alt=""/> ${message:global.button.generate}</span></a>
+					<t:actionLink class="button" t:id="reset" style="margin-right:40px"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.reset}</span></t:actionLink>
+					<t:actionLink class="button" t:id="generateCsv"><span><img src="${asset:context:images/icons/edit-redo.png}" alt=""/> ${message:global.button.generateCsv}</span></t:actionLink>
+				</div>
+<!--				<table width="100%" >-->
+<!--					<tr align="center">-->
+<!--						<td><t:submit class="Btn"  t:id="generateCsv" value="message:global.button.generateCsv"/></td>-->
+<!--						<td><t:submit class="Btn" value="message:global.button.generate"/></td>-->
+<!--						<td><t:submit class="Btn" t:id="reset" value="message:global.button.reset"/></td>-->
+<!--					</tr>-->
+<!--				</table>-->
+				<div class="clear"></div>
 
 			</t:form>
 	

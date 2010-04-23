@@ -7,7 +7,7 @@
 	<div id="content">
 
 		<h1>${message:components.myborderlayout.help.title} – <abbr title="${message:pages.help.support.faq.title}">${message:pages.help.support.faq.title.abbr}</abbr></h1>
-
+		<t:messagePanel />
 		<div id="pageContent">
 
 			<div id="helpFAQ">

@@ -39,7 +39,7 @@
 				<t:if t:test="userVoExists">
 					<t:pagelink page="administration/userConfig">${message:components.myborderlayout.link.userConfig}</t:pagelink> |
 				</t:if>
-				<t:localizer t:respectiveLanguage="true" exclude="excludeLocales" separator="/" />
+				<t:localizer t:respectiveLanguage="false" exclude="excludeLocales" separator="/" />
 			</div>
 			<div id="connection">
 				<t:loginFormComponent />

@@ -47,7 +47,7 @@ import org.springmodules.jcr.JcrTemplate;
 public class JackRabbitFileSystem implements FileSystemDao {
 
 
-	final private static Logger log=LoggerFactory.getLogger(JackRabbitFileSystem.class);
+	final private static Logger Logger=LoggerFactory.getLogger(JackRabbitFileSystem.class);
 
 	private JcrTemplate jcrTemplate;
 
@@ -77,7 +77,7 @@ public class JackRabbitFileSystem implements FileSystemDao {
 
 				Node root=session.getRootNode();
 				Node fileNode=null;
-				System.out.println(completePath);
+				Logger.debug(completePath);
 				if(root.hasNode(completePath)){
 
 					fileNode=root.getNode(completePath);
@@ -85,10 +85,10 @@ public class JackRabbitFileSystem implements FileSystemDao {
 
 						return fileNode.getNode("jcr:content").getProperty("jcr:data").getStream();
 					}else{
-						log.error("the path node doesn't contain a file: "+completePath);
+						Logger.error("the path node doesn't contain a file: "+completePath);
 					}
 				}else{
-					log.error("the path node is invalid: "+completePath);
+					Logger.error("the path node is invalid: "+completePath);
 				}
 
 
@@ -119,10 +119,10 @@ public class JackRabbitFileSystem implements FileSystemDao {
 
 						return fileNode.getProperty("jcr:data").getStream();
 					}else{
-						log.error("the path node doesn't contain a file: "+uuid);
+						Logger.error("the path node doesn't contain a file: "+uuid);
 					}
 				}else{
-					log.error("the path node is invalid: "+uuid);
+					Logger.error("the path node is invalid: "+uuid);
 				}
 
 
@@ -145,8 +145,8 @@ public class JackRabbitFileSystem implements FileSystemDao {
 				if(root.hasNode(path)){
 					file=root.getNode(path);
 				}else{
-					log.info("the repository doesn't contain a node at this path: "+path);
-					log.info("The system will create the path");
+					Logger.info("the repository doesn't contain a node at this path: "+path);
+					Logger.info("The system will create the path");
 
 					file=root.addNode(path);
 				}
@@ -201,7 +201,7 @@ public class JackRabbitFileSystem implements FileSystemDao {
 				if(root.hasNode(path)){
 					node=root.getNode(path);
 				}else{
-					log.error("error");
+					Logger.error("error");
 				}
 
 				ArrayList<String> array=new ArrayList<String>();

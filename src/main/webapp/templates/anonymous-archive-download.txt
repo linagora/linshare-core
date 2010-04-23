@@ -1,8 +1,8 @@
 
 Hi ${firstName} ${lastName},
 
-An anonymous user ${email} downloaded an archive of the files you shared:
+An anonymous user ${email} downloaded an archive of the files you shared via LinShare:
 ${documentNames}
 
 -- 
-The LinShare dream team
+LinShare - http://linshare.org - Open Source secured file sharing application

@@ -43,10 +43,9 @@ public class Logout {
 	public void onActivate(){
 
 		userDetailsVo=null;
-		requestGlobals.getHTTPServletRequest().getSession().invalidate();
+//		requestGlobals.getHTTPServletRequest().getSession().invalidate(); //already done by j_spring_security_logout
 		try {
-			
-			response.sendRedirect("Index");
+			response.sendRedirect(requestGlobals.getHTTPServletRequest().getContextPath()+"/j_spring_security_logout");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

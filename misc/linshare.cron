@@ -1,0 +1,10 @@
+#
+# Regular cron jobs for LinShare
+#
+
+# Backup databases
+0 5  * * *   root      test -x /etc/init.d/linshare && /etc/init.d/linshare backup > /dev/null 2>&1
+
+# Purge jetty temporary files
+0 5  * * *   root      test -x /etc/init.d/linshare && /etc/init.d/linshare purge > /dev/null 2>&1
+

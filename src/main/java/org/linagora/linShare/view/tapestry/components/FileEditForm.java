@@ -152,7 +152,7 @@ public class FileEditForm {
 	}
 
     public void onFailure() {
-    	 shareSessionObjects.addMessage(messages.get("components.fileEditForm.action.update.error"));
+    	 shareSessionObjects.addError(messages.get("components.fileEditForm.action.update.error"));
     }
     
     @CleanupRender

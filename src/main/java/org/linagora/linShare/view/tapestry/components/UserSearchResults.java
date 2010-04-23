@@ -22,13 +22,16 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
@@ -44,6 +47,7 @@ import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.UserSorterModel;
 import org.slf4j.Logger;
@@ -91,6 +95,9 @@ public class UserSearchResults {
     @Inject
     private ComponentResources componentResources;
     
+	@Environmental
+	private RenderSupport renderSupport;
+    
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
@@ -128,6 +135,12 @@ public class UserSearchResults {
 	
 	@Persist
 	private List<UserVo> usr;    
+
+	@Persist("flash")
+	private ActionFromBarDocument actionbutton;
+
+	@Property
+	private String action;
     
     /* ***********************************************************
      *                   Event handlers&processing
@@ -147,9 +160,21 @@ public class UserSearchResults {
         sorterModel=new UserSorterModel(users);
     }
 
+	/**
+	 * Initialize the JS value
+	 */
+	@AfterRender
+	public void afterRender() {
+		if ((users != null) && (users.size() > 0))
+			renderSupport.addScript(String.format("countUserCheckbox('');"));
+	}
+
     public void onSuccess() {
-        if (share) {
-            if (userShareList == null) {
+		actionbutton =  ActionFromBarDocument.fromString(action);
+		
+		switch (actionbutton) {
+		case SHARED_ACTION:
+			if (userShareList == null) {
                 userShareList = new ArrayList<UserVo>();
             }
             for (UserVo userVo : selectedUsers) {
@@ -158,8 +183,13 @@ public class UserSearchResults {
                 }
             }
             selectedUsers = new ArrayList<UserVo>();
-        }
-        logger.debug("User share list : \n" + userShareList);
+			break;
+		case NO_ACTION:
+		default:
+			break;
+		}
+
+		actionbutton = ActionFromBarDocument.NO_ACTION;
     }
 
     public Zone onActionFromShowUser(String mail) {
@@ -183,21 +213,24 @@ public class UserSearchResults {
         if (!userShareList.contains(user_)) {
             userShareList.add(user_);
         }
+        shareSessionObjects.setMultipleSharing(true);
     }
 
     
     @SuppressWarnings("unchecked")
 	@OnEvent(value="eventReorderList")
     public void refreshUser(Object[] o1){
-    	this.usr=(List<UserVo>)o1[0];
-		this.sorterModel=new UserSorterModel(this.usr);
-		refreshFlag=true;
+    	if(o1!=null && o1.length>0){
+	    	this.usr=((List<UserVo>)Arrays.copyOf(o1,1)[0]);
+			this.sorterModel=new UserSorterModel(this.usr);
+	    	refreshFlag=true;
+    	}
     }
     
 	@OnEvent(value="userDeleteEvent")
     public void deleteUser() {
         userFacade.deleteGuest(selectedLogin, userLoggedIn);
-        shareSessionObjects.addMessage(messages.get("components.userSearch.action.delete.confirm"));
+        shareSessionObjects.addMessage(messages.format("components.userSearch.action.delete.confirm", selectedLogin));
         componentResources.triggerEvent("resetListUsers", null, null);
     }
 

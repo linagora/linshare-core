@@ -97,9 +97,6 @@ public class Index {
 
     @Persist
     private boolean flagFinishShare;
-
-	@Property
-	private String currentMessage;
     
     @Persist
     @Property
@@ -164,6 +161,7 @@ public class Index {
             renderSupport.addScript(String.format("confirmWindow.showCenter(true)"));
             flagFinishShare=false;
             shareSessionObjects.setMessages(new ArrayList<String>());
+            shareSessionObjects.setErrors(new ArrayList<String>());
     	}
     	//resize the share popup
         renderSupport.addScript(String.format("userSearchWindow.setSize(600, getHeightForPopup())"));
@@ -179,19 +177,13 @@ public class Index {
     public void inSearch(Object[] o1) {
     	inSearch = true;
     }
-
-    public List<String> getNotificationMessage() {
-        List<String> notificationMessage = shareSessionObjects.getMessages();
-        shareSessionObjects.setMessages(new ArrayList<String>());
-        return notificationMessage;
-    }
-
+    
     public String getUserSearchWindowId() {
     	return userSearchWindow.getJSONId();
     }
     
     Object onException(Throwable cause) {
-    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;

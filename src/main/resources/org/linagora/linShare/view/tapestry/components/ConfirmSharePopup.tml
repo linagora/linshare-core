@@ -71,9 +71,14 @@
 
 			<div class="number5"></div>
 			<div class="description"><p>${message:components.confirmSharePopup.panelMessage.description}</p></div>
+			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
+				t:subject="${message:components.confirmSharePopup.panelSubject.subject}">  
+				<t:textarea rows="1" value="textAreaSubjectValue"  title="${message:components.confirmSharePopup.texarea.message.title}" />
+			</div>
+			<br />
 			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
 				t:subject="${message:components.confirmSharePopup.panelMessage.subject}">  
-				<t:textarea value="textAreaValue"  title="${message:components.confirmSharePopup.texarea.message.title}" />
+				<t:textarea rows="8" value="textAreaValue"  title="${message:components.confirmSharePopup.texarea.message.title}" />
 			</div>
 			<div class="clear"></div>
 
@@ -81,15 +86,18 @@
 			<hr />
 
  			<div class="button">
-				<t:linkSubmit class="button"><span>${message:global.button.share}</span></t:linkSubmit>
-				<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span>${message:global.button.cancel}</span></a>
+				<t:linkSubmit class="button">
+                    <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share}</span></t:linkSubmit>
+				<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
 			</div>
 
 		</t:form>
 
 		
 		<t:block t:id="onFailure">
+			<t:form>
         	<t:errors  banner="message:components.confirmSharePopup.errorBanner"  />
+        	</t:form>
           	<script type="text/javascript">
 	       		new Effect.Shake('${JSONid}');
 	       	</script>

@@ -36,7 +36,6 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -45,6 +44,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
@@ -90,10 +90,10 @@ public class QuickSharePopup{
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-	@ApplicationState
+	@SessionState
 	private UserVo userVo;
 
-	@ApplicationState
+	@SessionState
 	private ShareSessionObjects shareSessionObjects;
 	
 
@@ -103,6 +103,9 @@ public class QuickSharePopup{
 
 	@Property
 	private String textAreaValue;
+	
+	@Property
+	private String textAreaSubjectValue;
 
     @Persist
     @Property
@@ -208,7 +211,6 @@ public class QuickSharePopup{
     @Component
     private Zone reloadingZone;
 
-	@SuppressWarnings("unused")
 	@Component(parameters = {"style=bluelighting", "show=false","width=650", "height=550", "closable=true"})
 	private WindowWithEffects quickShareWindow;
 
@@ -362,6 +364,7 @@ public class QuickSharePopup{
 		if(sendErrors) {
 			businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_BADMAIL,
                 MessageSeverity.ERROR, badFormatEmail));
+			addedDocuments = new ArrayList<DocumentVo>();
 			return;
 		} else {
 			this.recipientsEmail = recipients;
@@ -381,12 +384,19 @@ public class QuickSharePopup{
 		 * retrieve the url from propertie file
 		 * 
 		 */
-		String linShareUrl=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
+		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 
 		/**
 		 * retrieve the subject of the mail.
 		 */
-		String subject=messages.get("mail.user.all.share.subject");
+		String subject = "";
+		if (textAreaSubjectValue==null || textAreaSubjectValue.trim().length()==0) {
+			subject=messages.get("mail.user.all.share.subject");
+		}
+		else {
+			subject = textAreaSubjectValue;
+		}
 
 		
 		// prevent NPE
@@ -414,7 +424,7 @@ public class QuickSharePopup{
 		try {
 		
 			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments,recipientsEmail,textAreaValue,subject,linShareUrl,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
 		
 		
 		} catch (BusinessException e1) {

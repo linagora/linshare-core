@@ -20,14 +20,20 @@
 */
 package org.linagora.linShare.view.tapestry.components;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
@@ -42,9 +48,12 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.services.Response;
+import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -55,6 +64,7 @@ import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.SharedFileSorterModel;
+import org.linagora.linShare.view.tapestry.models.impl.UserSorterModel;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
@@ -115,7 +125,10 @@ public class ListSharedDocument {
 	private ParameterFacade parameterFacade;
 	
 	@Inject
-	private ComponentResources componentResources;
+	private ComponentResources componentResources; 
+	
+	@Inject
+	private Response response;
 
 	@Inject
 	private BeanModelSource beanModelSource;
@@ -389,10 +402,12 @@ public class ListSharedDocument {
 	@SuppressWarnings("unchecked")
 	@OnEvent(value="eventReorderList")
 	public void reorderList(Object[] o1){
+		if(o1!=null && o1.length>0){
+			this.docs=(List<ShareDocumentVo>)Arrays.copyOf(o1,1)[0];
+			this.sorterModel=new SharedFileSorterModel(this.docs);
+			refreshFlag=true;
+    	}
 		
-		this.docs=(List<ShareDocumentVo>)o1[0];
-		this.sorterModel=new SharedFileSorterModel(this.docs);
-		refreshFlag=true;
 	}
 	
 
@@ -450,4 +465,41 @@ public class ListSharedDocument {
 		return user.isUpload();
 	}
 
+
+	public Link getThumbnailPath() {
+        return componentResources.createEventLink("thumbnail", shareDocument.getIdentifier());
+	}
+	
+	public void onThumbnail(String docID) {
+		InputStream stream=null;
+		DocumentVo currentDocumentVo = searchDocumentVoByUUid(componentdocuments,
+				docID);
+			stream = documentFacade.getDocumentThumbnail(currentDocumentVo.getIdentifier());
+			if (stream==null) return;
+		OutputStream os = null;
+			response.setDateHeader("Expires", 0);
+			response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+			response.setHeader("Cache-Control", "post-check=0, pre-check=0");
+			response.setHeader("Pragma", "no-cache");
+			try {
+			os = response.getOutputStream("image/png");
+				BufferedImage bufferedImage=ImageIO.read(stream);
+				if (bufferedImage!=null)
+					ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, os);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		 finally {
+
+			try {
+				if (os!=null) {
+					os.flush();
+					os.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
 }

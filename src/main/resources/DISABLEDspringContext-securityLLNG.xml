@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+
+    <bean id="filterChainProxy" class="org.springframework.security.util.FilterChainProxy">
+        <property name="filterInvocationDefinitionSource">
+            <value>
+                   CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
+                   PATTERN_TYPE_APACHE_ANT
+                   /=httpSessionIntegrationFilter,lemonLDAPFilter
+                   /assets/**=#NONE#
+                   /css/**=#NONE#
+                   /images/**=#NONE#
+                   /videos/**=#NONE#
+                   /help/**=#NONE#
+                   /password/**=#NONE#
+                   /**/*.js=#NONE#
+                   /**/*.css=#NONE#
+                   /**/*.swf=#NONE#
+                   /**/en=#NONE#
+                   /**/fr=#NONE#
+                   /download/**=#NONE#
+                   /**/download.passwordpopup.formpassword=#NONE#
+                   /download.downloadthemall/**=#NONE#
+                   /documentrestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
+                   /userrestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
+                   /sharerestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
+                   /index.form=httpSessionIntegrationFilter
+                   /j_security_check=httpSessionIntegrationFilter,authenticationProcessingFilter
+                   /**=httpSessionIntegrationFilter,lemonLDAPFilter,exceptionTranslationFilter,filterSecurityInterceptor,logoutFilter
+                   
+            </value>
+        </property>
+    </bean>
+
+       <!--         FILTERS DEFINITION           -->
+    <bean id="httpSessionIntegrationFilter"
+             class="org.springframework.security.context.HttpSessionContextIntegrationFilter"/>
+
+    <bean id="authenticationProcessingFilter" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
+        <property name="usernameParameter" value="login"/>
+        <property name="passwordParameter" value="password"/>
+        <property name="defaultTargetUrl" value="/"/>
+        <property name="filterProcessesUrl" value="/j_security_check"/>
+        <property name="authenticationFailureUrl" value="/?login_error=1"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+    </bean>
+
+    <bean id="exceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
+        <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+    </bean>
+
+    <bean id="authenticationEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+        <property name="loginFormUrl" value="/"/>
+    </bean>
+
+    <bean id="logoutFilter" class="org.springframework.security.ui.logout.LogoutFilter">
+        <constructor-arg value="/"/>
+        <constructor-arg>
+            <list>
+                <bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="filterSecurityInterceptor" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="accessDecisionManager"/>
+        <property name="objectDefinitionSource">
+            <value>
+                CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
+                PATTERN_TYPE_APACHE_ANT
+                /administration/userconfig*=ROLE_AUTH
+                /administration/**=ROLE_ADMIN
+                /**=ROLE_AUTH
+            </value>
+        </property>
+    </bean>
+
+
+<!--  REST part / Magic lies there -->
+		<bean id="basicProcessingFilter" class="org.springframework.security.ui.basicauth.BasicProcessingFilter">
+        	<property name="authenticationManager"><ref bean="authenticationManager"/></property>
+        	<property name="authenticationEntryPoint"><ref bean="restAuthenticationEntryPoint"/></property>
+        </bean>
+        
+        <bean id="restAuthenticationEntryPoint"
+        class="org.springframework.security.ui.basicauth.BasicProcessingFilterEntryPoint">
+        	<property name="realmName"><value>Name Of Your Realm</value></property>
+        </bean>
+        
+		<bean id="basicExceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
+			<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint"/>
+		</bean>
+
+    <!--       AUTHENTICATION MANAGEMENT      -->
+
+    <!-- Authentication manager -->
+    <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref bean="uidLdapAuthenticationProvider"/>
+                <ref bean="ldapAuthenticationProvider"/>
+                <ref bean="daoAuthenticationProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- LDAP Authentication -->
+    <bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+        <constructor-arg value="${ldap.auth.url}/${ldap.auth.base}"/>
+        <property name="userDn" value="${ldap.auth.userDN}"/>
+        <property name="password" value="${ldap.auth.password}"/>
+    </bean>
+
+
+    <!-- LDAP Authentication: first provider based on uid-->
+    <bean id="uidLdapAuthenticationProvider" class="org.linagora.linShare.auth.SSOAuthenticationProvider">
+        <constructor-arg>
+            <bean class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
+                <constructor-arg index="0" ref="contextSource"/>
+                <property name="userSearch">
+                    <bean class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+                        <constructor-arg index="0" value="${ldap.auth.baseDN}"/>
+                        <constructor-arg index="1" value="uid={0}"/>
+                        <constructor-arg index="2" ref="contextSource"/>
+                    </bean>
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.linagora.linShare.auth.LdapAuthorizationsProvider">
+                <constructor-arg ref="userFacade"/>
+            </bean>
+        </constructor-arg>
+        <constructor-arg value="mail={0},${ldap.auth.baseDN}" />
+        <property name="userDetailsContextMapper">
+            <bean class="org.linagora.linShare.auth.LdapUidUserDetailsContextMapper" />
+        </property>
+    </bean>
+    
+    <!-- LDAP Authentication: second provider based on mail-->
+    <bean id="ldapAuthenticationProvider" class="org.springframework.security.providers.ldap.LdapAuthenticationProvider">
+        <constructor-arg>
+            <bean class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
+                <constructor-arg ref="contextSource"/>
+                <property name="userSearch">
+                    <bean class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+                        <constructor-arg index="0" value="${ldap.auth.baseDN}"/>
+                        <constructor-arg index="1" value="${ldap.auth.key}"/>
+                        <constructor-arg index="2" ref="contextSource"/>
+                    </bean>
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.linagora.linShare.auth.LdapAuthorizationsProvider">
+                <constructor-arg ref="userFacade"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+	<!-- DAO Authentification -->
+	<bean id="guestAuthProvider" class="org.linagora.linShare.auth.DaoAuthProvider">
+	    <constructor-arg ref="userFacade"/>
+	</bean>
+	
+	<bean id="passwordEncoderFactory" class="org.linagora.linShare.auth.PasswordEncoderFactory">
+	    <constructor-arg value="${ldap.hash.algo}"/>
+	</bean>
+	
+	<bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
+	    <property name="userDetailsService" ref="guestAuthProvider"/>
+	    <property name="passwordEncoder">
+	        <bean factory-bean="passwordEncoderFactory" factory-method="getInstance"/>
+	    </property>
+	</bean>
+	
+	<!--     AUTHORIZATIONS MANAGEMENT   -->
+	<bean id="accessDecisionManager" class="org.springframework.security.vote.UnanimousBased">
+	    <property name="decisionVoters">
+	        <list>
+	            <ref bean="roleVoter"/>
+	        </list>
+	    </property>
+	</bean>
+	
+	<bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
+	
+	<bean id="lemonLDAPFilter" class="org.linagora.linShare.auth.PreAuthenticationHeader">
+		<security:custom-filter position="PRE_AUTH_FILTER" />
+		<property name="authorizedAddresses">
+			<list>
+				<value>${sso.header.allowfrom}</value>
+			</list>
+		</property>
+		<property name="principalRequestHeader" value="${sso.header.user}"/>
+		<property name="authenticationManager" ref="authenticationManager" />
+	</bean>
+</beans>

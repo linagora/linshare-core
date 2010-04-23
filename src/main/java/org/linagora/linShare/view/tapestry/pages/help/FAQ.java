@@ -50,7 +50,7 @@ public class FAQ {
 	
 
     Object onException(Throwable cause) {
-    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;

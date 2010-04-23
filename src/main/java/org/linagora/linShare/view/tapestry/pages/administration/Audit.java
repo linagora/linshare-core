@@ -201,8 +201,8 @@ public class Audit {
 	}
 	
 	
-	void onSelectedFromGenerateCsv() { generateCsv = true; }
-	void onSelectedFromReset() { reset = true; }
+	Object onActionFromGenerateCsv() { generateCsv = true; return onSuccessFromFormReport();}
+	Object onActionFromReset() { reset = true; return onSuccessFromFormReport();}
 	
 	
 	/**
@@ -309,7 +309,7 @@ public class Audit {
 	public CriterionMatchMode getFileNameMatchModeAnywhere() { return CriterionMatchMode.ANYWHERE; }
 
     Object onException(Throwable cause) {
-    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;

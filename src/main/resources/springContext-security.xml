@@ -11,11 +11,12 @@
                    CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
                    PATTERN_TYPE_APACHE_ANT
                    /=httpSessionIntegrationFilter
+                   /assets/**=#NONE#
                    /css/**=#NONE#
                    /images/**=#NONE#
                    /videos/**=#NONE#
-                   /help/**=#NONE#
-                   /password/**=#NONE#
+                   /**/help/**=#NONE#
+                   /**/password/**=#NONE#
                    /**/*.js=#NONE#
                    /**/*.css=#NONE#
                    /**/*.swf=#NONE#
@@ -29,13 +30,36 @@
                    /sharerestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
                    /index.form=httpSessionIntegrationFilter
                    /j_security_check=httpSessionIntegrationFilter,authenticationProcessingFilter
-                   /**=httpSessionIntegrationFilter,exceptionTranslationFilter,filterSecurityInterceptor,logoutFilter
-                   
+                   /**=httpSessionIntegrationFilter,exceptionTranslationFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor
             </value>
         </property>
     </bean>
+    
+    <bean id="authenticationProcessingFilterEntryPoint"
+		class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+		<property name="loginFormUrl" value="/pages/login.jsf" />
+		<property name="forceHttps" value="false" />
+	</bean>
+    
+	 <!--         REMEMBER-ME SERVICE DEFINITION           -->
+	 <bean id="rememberMeAuthenticationProvider" class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
+	 	<property name="key" value="springRocks"/>
+	 </bean>
+	 
+	 <bean id="rememberMeService" class="org.linagora.linShare.view.tapestry.services.impl.LinshareRememberMeServices">
+	 	<property name="key" value="springRocks"/>
+	 	<property name="userDetailsService" ref="guestAuthProvider" />  
+	 	<property name="tokenRepository" ref="cookieRepository"/>
+	 	<property name="alwaysRemember" value="false"/>
+	 	<constructor-arg ref="cookieRepository"/>
+	 </bean>
+	
+	<bean id="rememberMeProcessingFilter" class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
+		<property name="rememberMeServices" ref="rememberMeService"/>
+		<property name="authenticationManager" ref="authenticationManager"/>
+	</bean>
 
-       <!--         FILTERS DEFINITION           -->
+    <!--         FILTERS DEFINITION           -->
     <bean id="httpSessionIntegrationFilter"
              class="org.springframework.security.context.HttpSessionContextIntegrationFilter"/>
 
@@ -45,7 +69,8 @@
         <property name="defaultTargetUrl" value="/"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="authenticationFailureUrl" value="/?login_error=1"/>
-        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationManager" ref="authenticationManager"/>		
+        <property name="rememberMeServices" ref="rememberMeService"/>
     </bean>
 
     <bean id="exceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
@@ -60,6 +85,7 @@
         <constructor-arg value="/"/>
         <constructor-arg>
             <list>
+				<ref bean="rememberMeService"/>
                 <bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler"/>
             </list>
         </constructor-arg>
@@ -80,7 +106,7 @@
     </bean>
 
 
-<!--  REST part / Magic lies there -->
+	<!--  REST part / Magic lies there -->
 		<bean id="basicProcessingFilter" class="org.springframework.security.ui.basicauth.BasicProcessingFilter">
         	<property name="authenticationManager"><ref bean="authenticationManager"/></property>
         	<property name="authenticationEntryPoint"><ref bean="restAuthenticationEntryPoint"/></property>
@@ -94,13 +120,13 @@
 		<bean id="basicExceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
 			<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint"/>
 		</bean>
-<!--  -->
 
        <!--       AUTHENTICATION MANAGEMENT      -->
        <!-- Authentication manager -->
     <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
         <property name="providers">
             <list>
+            	<ref bean="rememberMeAuthenticationProvider" />
                 <ref bean="uidLdapAuthenticationProvider"/>
                 <ref bean="ldapAuthenticationProvider"/>
                 <ref bean="daoAuthenticationProvider"/>
