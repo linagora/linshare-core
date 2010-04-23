@@ -62,16 +62,17 @@
 
 			<t:parameter t:name="filePropertiesCell">
 			<div class="fileProperties">
-				<t:actionLink t:id="download" t:context="${shareDocument.identifier}" t:type="${shareDocument.type}"  t:title="${shareDocument.fileName}" class="fileName">
+				<span class="thumbnail"><div class="thumbnail_content"><img src="${thumbnailPath}" /><p>${shareDocument.fileName}</p></div>
+				<t:actionLink t:id="download" t:context="${shareDocument.identifier}" t:type="${shareDocument.type}" class="fileName">
 					<span t:type="ck/TrimmedString" maxLength="42" trimPos="right"
 						value="shareDocument.fileName" />
-				</t:actionLink>
+				</t:actionLink></span>
 				<br/>
 				<span class="creationDate">${creationDate},</span>${message:global.space}
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
 				<span class="sharedBy">${message:components.listSharedDocument.grid.sharedBy} 
-					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.login" onclick="userDetailsWindow.showCenter(true);">
-						${sharedBy}
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.login">
+						<span onclick="userDetailsWindow.showCenter(true);">${sharedBy}</span>
 					</t:actionlink>
 				</span>
 			</div>
@@ -83,11 +84,11 @@
 
 <!-- 			<t:parameter t:name="signedCell">
 				<t:if t:test="documentSigned">
-					<t:actionlink t:id="showSignature" zone="signatureDetailsZone" context="shareDocument.identifier" onclick="signatureDetailsWindow.showCenter(true);">
+					<t:actionlink t:id="showSignature" zone="signatureDetailsZone" context="shareDocument.identifier">
 						<t:if t:test="documentSignedByCurrentUser">	
-							<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listSharedDocument.picture.signatureon.title}"/>
+							<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listSharedDocument.picture.signatureon.title}" onclick="signatureDetailsWindow.showCenter(true);"/>
 						<t:parameter name="else">
-							<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listSharedDocument.picture.signatureother.title}"/>
+							<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listSharedDocument.picture.signatureother.title}" onclick="signatureDetailsWindow.showCenter(true);"/>
 						</t:parameter>
 						</t:if>
 					</t:actionlink>
@@ -99,8 +100,10 @@
 
 			<t:parameter t:name="actionsCell">
 				<t:actionLink t:id="delete" context="${shareDocument.identifier}" t:zone="zoneTest"
-					onClick="window_confirm.showCenter(true)" title="${message:components.listSharedDocument.action.delete.title}">
+					title="${message:components.listSharedDocument.action.delete.title}">
+					<span onClick="window_confirm.showCenter(true)">
 					<img src="${asset:context:images/icons/delete.png}" alt="${message:components.listSharedDocument.action.delete}" />
+					</span>
 				</t:actionLink>
 <!-- 			<t:if t:test="activeSignature">	
 					<t:if t:test="documentSignedByCurrentUser" negate="true">

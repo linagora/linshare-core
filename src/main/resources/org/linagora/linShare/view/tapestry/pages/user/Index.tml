@@ -9,15 +9,7 @@
 		<h1>${message:components.myborderlayout.user.title}</h1>
 
 
-		<!-- Message panel -->
-
-		<div id="messagePanel">
-			<ul>
-				<t:loop t:source="prop:notificationMessage" t:value="currentMessage">
-				<li>${currentMessage}</li>
-				</t:loop>
-			</ul>
-		</div><!-- id="messagePanel" -->
+		<t:messagePanel />
 
 
 		<!-- Action bar -->
@@ -74,6 +66,15 @@
 		<t:widget widgetId="searchWidget" title="${message:components.widget.searchWidget.title}">
 			<t:userSearchField users="users" />
 		</t:widget>
+	</t:parameter>
+	
+	<!-- Actions widget -->
+	<t:parameter name="actionsWidget">
+		<t:if test="users.empty" negate="true">
+			<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
+				<t:actionsBarUser t:formName="results" />
+			</t:widget>
+		</t:if>
 	</t:parameter>
 
 	<!-- Share widget -->

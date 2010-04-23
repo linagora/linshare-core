@@ -58,8 +58,7 @@
 			persistence manager of the workspace:
 			class: FQN of class implementing the PersistenceManager interface
 		-->
-		<PersistenceManager
-			class="org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager">
+		<PersistenceManager class="${linshare.db.persistence_manager}">
 		<param name="url" value="${linshare.db.url}_data" />
 		<param name="user" value="${linshare.db.username}" />
 		<param name="password" value="${linshare.db.password}" />
@@ -86,7 +85,7 @@
 			implementations.
 		-->
 		<PersistenceManager
-			class="org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager">
+			class="${linshare.db.persistence_manager}">
 		<param name="url" value="${linshare.db.url}_data" />
 		<param name="user" value="${linshare.db.username}" />
 		<param name="password" value="${linshare.db.password}" />

@@ -14,4 +14,4 @@ Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre nav
 ${url}${urlparam}
 
 -- 
-The LinShare dream team
+LinShare - http://linshare.org - Logiciel libre de partage de fichiers sécurisé

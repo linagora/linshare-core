@@ -27,12 +27,11 @@ import java.util.Locale;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -70,7 +69,6 @@ public class MyBorderLayout {
 	@Property
 	private String currentHighlight;
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=false,value="false",defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private Boolean isHelpPage;
@@ -128,7 +126,7 @@ public class MyBorderLayout {
 	 *                Properties & injected symbol, ASO, etc
 	 ************************************************************ */
 	 
-	@ApplicationState
+	@SessionState
 	@Property
 	private UserVo userVo;
 	

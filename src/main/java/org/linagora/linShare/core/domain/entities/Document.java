@@ -82,6 +82,11 @@ public class Document implements Serializable {
 	
 	private String fileComment;
 	
+	/**
+	 * UUID of the thumbnail file
+	 */
+	private String thmbUUID;
+	
 	
 	public Document(String identifier,String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
@@ -97,6 +102,7 @@ public class Document implements Serializable {
 		this.shared = shared;
 		this.size = size;
 		this.signatures = null;
+		this.thmbUUID = null;
 	}
 	/**
 	 * modifying from protected to public for using BeanUtils without construct 
@@ -213,6 +219,12 @@ public class Document implements Serializable {
 	}
 	public void setSignatures(List<Signature> signatures) {
 		this.signatures = signatures;
+	}
+	public void setThmbUUID(String thmbUUID) {
+		this.thmbUUID = thmbUUID;
+	}
+	public String getThmbUUID() {
+		return thmbUUID;
 	}
 	
 }

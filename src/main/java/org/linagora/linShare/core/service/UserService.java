@@ -147,4 +147,6 @@ public interface UserService {
 	 */
 	public void resetPassword(String login, String mailSubject,
 			String mailContent, String mailContentTxt) throws BusinessException;
+
+	public User findUserFromLdapwithUid(String uid);
 }

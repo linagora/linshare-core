@@ -7,7 +7,7 @@
 	<div id="content">
 
 		<h1>${message:components.myborderlayout.help.title} – ${roleLabel}</h1>
-
+		<t:messagePanel />
 		<div id="pageContent">
 
 			<!-- id="helpVideo" -->

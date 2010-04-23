@@ -101,13 +101,12 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		String url = urlPath == null ? getBaseSecuredUrl() : urlPath;
 
 		// If the user have not selected an expiration date, compute default date
-		if (expiryDate == null) {
-			expiryDate=shareExpiryDateService.computeMinShareExpiryDateOfList(documents);
-		}
 		
 		// create the sercured url
 		SecuredUrl securedUrl = new SecuredUrl(url, alea,
-				expiryDate, sender, recipients);
+				expiryDate!=null? expiryDate :
+				shareExpiryDateService.computeMinShareExpiryDateOfList(documents)
+				, sender, recipients);
 		securedUrl.addDocuments(documents);
 
 		// Hash the password
@@ -161,7 +160,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		checkIfValid(securedUrl, password);
 
 		if (securedUrl.getDocuments() == null) {
-			// throw an exception
+			throw new BusinessException(BusinessErrorCode.SECURED_URL_WRONG_DOCUMENT_ID,"No documents in securedUrl");			
 		}
 		return securedUrl.getDocuments();
 	}
@@ -263,13 +262,12 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 			ShareLogEntry logEntry;
 			
-			if(email==null) email="";
 			
 			logEntry = new ShareLogEntry(owner.getMail(), owner
 				.getFirstName(), owner.getLastName(),
 				LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file", docEntity
 				.getName(), docEntity.getSize(), docEntity
-				.getType(), email, "", "" ,null);
+				.getType(), email!=null?email:"" , "", "" ,null);
 			
 			try {
 				logEntryRepository.create(logEntry);

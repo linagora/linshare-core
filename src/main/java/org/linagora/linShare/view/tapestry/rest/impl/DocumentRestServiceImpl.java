@@ -236,7 +236,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			
 			response.setStatus(HttpStatus.SC_CREATED);
 			
-			String url = propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+			String url = propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 			response.setHeader("Location", url +"documentrestservice/getdocument/" + doc.getIdentifier());
 			
 			String xml = xstreamMarshaller.toXml(doc);

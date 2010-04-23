@@ -1,8 +1,8 @@
 
 Bonjour ${firstName} ${lastName},
 
-Un utilisateur anonyme ${email} a téléchargé le fichier suivant que vous avez mis en partage :
+Un utilisateur anonyme ${email} a téléchargé le(s) fichier(s) que vous avez mis en partage via LinShare :
 ${documentNames}
 
 -- 
-The LinShare dream team
+LinShare - http://linshare.org - Logiciel libre de partage de fichiers sécurisé

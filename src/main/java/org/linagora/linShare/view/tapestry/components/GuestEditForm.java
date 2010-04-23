@@ -165,7 +165,7 @@ public class GuestEditForm {
         String mailContent = null;
         String mailContentTxt = null;
 
-		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String url=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 
         String ownerCN = userLoggedIn.getFirstName() + " " + userLoggedIn.getLastName();
 
@@ -209,7 +209,7 @@ public class GuestEditForm {
 
     Block onFailure() {
     	if (!userAlreadyExists)
-    		shareSessionObjects.addMessage(messages.get("pages.user.edit.error.generic"));
+    		shareSessionObjects.addError(messages.get("pages.user.edit.error.generic"));
     	return onFailure;
     }
   

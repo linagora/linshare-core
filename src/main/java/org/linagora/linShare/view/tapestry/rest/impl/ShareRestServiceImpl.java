@@ -137,7 +137,8 @@ public class ShareRestServiceImpl implements ShareRestService {
 		SuccessesAndFailsItems<ShareDocumentVo> successes;
 
 		// Prepare mail content :
-		String linShareUrl=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
+		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 
 		String sharedTemplateContent = templating.readFullyTemplateContent(sharedTemplate.getResource().openStream());
 		String sharedTemplateContentTxt = templating.readFullyTemplateContent(sharedTemplateTxt.getResource().openStream());
@@ -155,7 +156,7 @@ public class ShareRestServiceImpl implements ShareRestService {
 
 		try {
 			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(
-                    actor, listDoc, listRecipient, "", subject, linShareUrl,
+                    actor, listDoc, listRecipient, "", subject, linShareUrlInternal, linShareUrlBase,
                     secureSharing, sharedTemplateContent, sharedTemplateContentTxt, passwordSharedTemplateContent, passwordSharedTemplateContentTxt);
 		} catch (BusinessException e) {
 			logger.error("could not share the document " + docVo.getIdentifier() + " to user " + targetMail + " by user " + actor.getMail() + " reason : " + e.getMessage());
@@ -252,7 +253,8 @@ public class ShareRestServiceImpl implements ShareRestService {
 		}
 		
 		// getting the templating data
-		String linShareUrl=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
+		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 		
 		
 		String sharedTemplateContent = null;
@@ -277,7 +279,7 @@ public class ShareRestServiceImpl implements ShareRestService {
 		
 		try {
 			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(
-					actor, listDoc, listRecipient, message, subject, linShareUrl, secureSharing,
+					actor, listDoc, listRecipient, message, subject, linShareUrlInternal, linShareUrlBase, secureSharing,
 					sharedTemplateContent, sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt);
 		} catch (BusinessException e) {
 			logger.error("could not share the document " + docVo.getIdentifier() + " to user " + targetMail + " by user " + actor.getMail() + " reason : " + e.getMessage());

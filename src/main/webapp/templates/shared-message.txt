@@ -14,4 +14,4 @@ In order to download the files, click on this link or paste it into your browser
 ${url}${urlparam}
 
 -- 
-The LinShare dream team
+LinShare - http://linshare.org - Open Source secured file sharing application

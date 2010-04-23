@@ -7,7 +7,7 @@
 	<div id="content">
 
 		<h1>${message:components.myborderlayout.help.title}</h1>
-
+		<t:messagePanel />
 		<div id="pageContent">
 
 			<p>${message:pages.help.description} <a href="${message:pages.help.link.url}" title="${message:pages.help.link.title}">${message:pages.help.link.content}</a></p>

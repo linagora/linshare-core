@@ -113,6 +113,9 @@ public class ConfirmSharePopup{
 	@Property
 	private String textAreaValue;
 	
+	@Property
+	private String textAreaSubjectValue;
+	
 	
 	@Persist("flash")
 	@Property
@@ -418,13 +421,19 @@ public class ConfirmSharePopup{
 		 * retrieve the url from propertie file
 		 * 
 		 */
-		String linShareUrl=propertiesSymbolProvider.valueForSymbol("linshare.info.urlShare");
+		String linShareUrlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
+		String linShareUrlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 
 		/**
 		 * retrieve the subject of the mail.
 		 */
-		String subject=messages.get("mail.user.all.share.subject");
-
+		String subject = "";
+		if (textAreaSubjectValue==null || textAreaSubjectValue.trim().length()==0) {
+			subject=messages.get("mail.user.all.share.subject");
+		}
+		else {
+			subject = textAreaSubjectValue;
+		}
 		
 		// prevent NPE
 		if (textAreaValue==null)
@@ -455,7 +464,7 @@ public class ConfirmSharePopup{
 			//sharing = shareFacade.createSharingWithMail(userVo, documentsVo, usersVo,textAreaValue, message,subject);
 			
 			//CALL new share function with all adress mails !
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrl,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt, dateExpiry);
+			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo,recipientsEmail,textAreaValue,subject,linShareUrlInternal, linShareUrlBase,secureSharing,sharedTemplateContent,sharedTemplateContentTxt,passwordSharedTemplateContent,passwordSharedTemplateContentTxt, dateExpiry);
 			
 
 		
@@ -467,7 +476,7 @@ public class ConfirmSharePopup{
 		
 		shareSessionObjects=new ShareSessionObjects();
 		if (sharing.getFailsItem().size()>0) {
-			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.fail"));
+			shareSessionObjects.addError(messages.get("components.confirmSharePopup.fail"));
 		} else {
 			recipientFavouriteFacade.increment(userVo, recipientsEmail);
 			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));

@@ -51,6 +51,7 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.support.LdapUtils;
 
+
 public class LdapDatasource implements LdapDao {
 
 	protected static final Logger technicalTracer = LoggerFactory
@@ -63,6 +64,7 @@ public class LdapDatasource implements LdapDao {
 	private final LdapTemplate ldapTemplate;
 	private final String baseDn_ldap;
 	private final String ldap_filter;
+	private final String ldapLoginAttribute;
 	private final int pageSize; // paging ldap result (limit result from ldap)
 	
 
@@ -71,19 +73,20 @@ public class LdapDatasource implements LdapDao {
 	//map the password to userPassword ldap field
 	private final String PASSWORDFIELD = "userPassword";
 	
-
-
 	/**
 	 * 
 	 * @param ldap
 	 * @param baseDn_ldap
 	 * @param ldap_filter
 	 */
-	public LdapDatasource(ContextSource contextSource, LdapTemplate ldapTemplate, String baseDn_ldap, String ldap_filter, int pageSize) {
+	public LdapDatasource(ContextSource contextSource, LdapTemplate ldapTemplate, 
+			String baseDn_ldap, String ldap_filter, 
+			String ldapLoginAttribute, int pageSize) {
         this.contextSource = contextSource;
 		this.ldapTemplate = ldapTemplate;
 		this.baseDn_ldap = baseDn_ldap;
 		this.ldap_filter = ldap_filter;
+		this.ldapLoginAttribute = ldapLoginAttribute;
 		this.pageSize = pageSize;
 	}
 	/**
@@ -93,9 +96,10 @@ public class LdapDatasource implements LdapDao {
 	 * @param ldap_filter
 	 * @param scope
 	 */
-	public LdapDatasource(ContextSource contextSource, LdapTemplate ldap,String baseDn_ldap,String ldap_filter,
-        int scope, int pageSize ){
-		this(contextSource, ldap,baseDn_ldap,ldap_filter,pageSize);
+	public LdapDatasource(ContextSource contextSource, LdapTemplate ldap,
+			String baseDn_ldap,String ldap_filter,
+			String ldapLoginAttribute, int scope, int pageSize ){
+		this(contextSource, ldap,baseDn_ldap,ldap_filter, ldapLoginAttribute, pageSize);
 		this.scope=scope;
 	}
 
@@ -220,27 +224,34 @@ public class LdapDatasource implements LdapDao {
 
         technicalTracer.info("Search pattern = " + filter.encode());
         
-        //you can use a pagedresultcookie to keep information of the position of your last research (not use here)
-        PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(scope);
 
         CollectingNameClassPairCallbackHandler handler = new AttributesMapperCallbackHandler(new UserAttributesMapper());
-        ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+        if(isPaged()) {
+            //you can use a pagedresultcookie to keep information of the position of your last research (not use here)
+            PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
+            ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+        } else {
+            ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler);
+        }
         
         @SuppressWarnings( "unchecked" )
         List<User> users = (List<User>) handler.getList();
         
-        LdapSearchResult<User> pagedResult =  new LdapSearchResult<User>(users,null);
+        LdapSearchResult<User> searchResult =  new LdapSearchResult<User>(users,null);
         
-	    if(users.size()<=pageSize) pagedResult.setTruncated(false);
-	        else pagedResult.setTruncated(true);
+	    if(isSearchResultTrucated(users.size())) {
+	    	searchResult.setTruncated(false);
+	    } else {
+	    	searchResult.setTruncated(true);
+	    }
         
         //old search without paging
        // List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(),searchControls,new UserAttributesMapper());
         //return users;
 	    
-	    return pagedResult;
+	    return searchResult;
     }
 
     /** 
@@ -267,23 +278,28 @@ public class LdapDatasource implements LdapDao {
 
         technicalTracer.info("Search pattern = " + filter.encode());
         
-        PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(scope);
-        
+
         CollectingNameClassPairCallbackHandler handler = new AttributesMapperCallbackHandler(new UserAttributesMapper());
-        ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+
+        if(isPaged()) {
+            PagedResultsDirContextProcessor pagingProcessor = new PagedResultsDirContextProcessor(pageSize);         
+            ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler, pagingProcessor);
+        } else {
+            ldapTemplate.search(baseDn_ldap, filter.encode(), searchControls, handler);
+        }
         
         @SuppressWarnings( "unchecked" )
         List<User> users = (List<User>) handler.getList();
         
-        LdapSearchResult<User> pagedResult =  new LdapSearchResult<User>(users,null);
+        LdapSearchResult<User> searchResult =  new LdapSearchResult<User>(users,null);
         
-	    pagedResult.setTruncated(isSearchResultTrucated(users.size()));
+	    searchResult.setTruncated(isSearchResultTrucated(users.size()));
 
         //old search without paging
         //List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
-        return pagedResult;
+        return searchResult;
     }
     
     /** Search a user (exact match search).
@@ -294,25 +310,32 @@ public class LdapDatasource implements LdapDao {
         if (mail == null || mail.length() == 0) {
             throw new IllegalArgumentException("Argument must not be empty or null");
         }
-        EqualsFilter filter = new EqualsFilter("mail", mail);
-        technicalTracer.info("Search pattern = " + filter.encode());
-
-        List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
-        if (users.size() == 0) {
-            return null;
-        } else if (users.size() == 1) {
-            return users.get(0);
-        } else {
-            throw new IllegalStateException("More than one user found with email : " + mail);
+        String compiled = ldap_filter.replaceAll("\\{0\\}", mail);
+        try {
+        	List<User> users = ldapTemplate.search(baseDn_ldap, compiled, new UserAttributesMapper());
+        	if (users.size() == 0) {
+                return null;
+            } else if (users.size() == 1) {
+                return users.get(0);
+            } else {
+                throw new IllegalStateException("More than one user found with email : " + mail);
+            }
+        } catch(Exception e) {
+        	technicalTracer.warn("Cannot connect to Ldap directory",e);
+        	return null;
         }
+        
     }
 
     /** This class is used to map ldap attributes with a user entity. */
     private class UserAttributesMapper implements AttributesMapper {
 
         public Object mapFromAttributes(Attributes attributes) throws javax.naming.NamingException {
-            String mail = (String) attributes.get("mail").get();
-            String firstName = (String) attributes.get("givenName").get();
+            String mail = (String) attributes.get(ldapLoginAttribute).get();
+            String firstName = "";
+            if(attributes.get("givenName")!=null){
+            	firstName = (String) attributes.get("givenName").get();
+            }
             String lastName = (String) attributes.get("sn").get();
             return new Internal(mail, firstName, lastName, mail);
         }
@@ -327,9 +350,39 @@ public class LdapDatasource implements LdapDao {
     };
     
     public boolean isSearchResultTrucated(int listSize){
-    	if(listSize<pageSize) return false;
-    	else return true;
+    	if( isPaged() && listSize < pageSize ) {
+    		return false;
+    	} else {
+    		return true;
+    	}
     }
 
+    public boolean isPaged(){
+    	return pageSize > 0;
+    }
+    
+    
+    
+	public User searchUserWithUid(String uid) {
+        if (uid == null || uid.length() == 0) {
+            throw new IllegalArgumentException("uid argument must not be empty or null");
+        }
+        EqualsFilter filter = new EqualsFilter("uid", uid);
+        technicalTracer.info("Search uid pattern = " + filter.encode());
+
+        try {
+        	List<User> users = ldapTemplate.search(baseDn_ldap, filter.encode(), new UserAttributesMapper());
+        	if (users.size() == 0) {
+                return null;
+            } else if (users.size() == 1) {
+                return users.get(0);
+            } else {
+                throw new IllegalStateException("More than one user found with uid : " + uid);
+            }
+        } catch(Exception e) {
+        	technicalTracer.warn("Cannot connect to Ldap directory",e);
+        	return null;
+        }
+	}
 
 }

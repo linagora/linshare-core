@@ -39,5 +39,9 @@
   	<bean name="recipientFavouriteRepository" class="org.linagora.linShare.core.repository.hibernate.RecipientFavouriteRepository">
     <constructor-arg ref="hibernateTemplate"/>
 	</bean>
+  	
+  	<bean name="cookieRepository" class="org.linagora.linShare.core.repository.hibernate.CookieRepositoryImpl">
+    	<constructor-arg ref="hibernateTemplate"/>
+	</bean>
     
 </beans>

@@ -1,0 +1,35 @@
+<userInput>
+	<panel order="0" layout="left">
+		<createForPack name="LinShare" />
+		<field type="title"  txt="Here you should configure an SMTP server" bold="true" size="1"/>
+		<field type="divider" align="top"/>
+		<field type="text" variable="mailSmtpHost">
+			  <spec txt="Name of SMTP server:" size="25" set="smtp.linshare.localhost"/>
+			  <validator class="com.izforge.izpack.util.NotEmptyValidator" ></validator>
+		</field>
+		<field type="text" variable="mailSmtpSender">
+			  <spec txt="Mail sender adress:" layout="AN:15:U @ AN:10:40 . A:4:4"  size="25" set="admin@linshare.localhost"/>
+			  <validator
+			  class="com.izforge.izpack.util.RegularExpressionValidator"
+			      txt="Invalid email address!">
+			    <param
+			        name="pattern"
+			        value="[a-zA-Z0-9._-]{3,}@[a-zA-Z0-9._-]+([.][a-zA-Z0
+			        -9_-]+)*[.][a-zA-Z0-9._-]{2,4}"
+			    />
+			    </validator>
+		</field>
+		<field type="check" variable="mailSmtpAuthNeeded">
+		  <spec txt="Is authentication needed?"  true="true" false="false" set="false"/>
+		</field>
+		<field type="text" variable="mailSmtpUser">
+			  <spec txt="User login:"  size="15" />
+		</field>
+		<field type="password" variable="mailSmtpPassword">
+		<spec>
+			<pwd txt="User password:" size="15" set=""/>
+		</spec>
+		</field>	
+	</panel>
+</userInput>
+

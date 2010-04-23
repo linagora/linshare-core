@@ -39,6 +39,7 @@ import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ApplicationStateContribution;
@@ -100,7 +101,7 @@ public class AppModule
 
  	 //binder.bind(Marshaller.class,DocumentMarshaller.class).withId("DocumentMarshaller");
  	
-        // binder.bind(MyServiceInterface.class, MyServiceImpl.class);
+     //binder.bind(MyServiceInterface.class, MyServiceImpl.class);
         
         // Make bind() calls on the binder object to define most IoC services.
         // Use service builder methods (example below) when the implementation
@@ -207,6 +208,7 @@ public class AppModule
 		conf.add("css","^.*\\.css$");
 		conf.add("gif","^.*\\.gif$");
 		conf.add("swf","^.*\\.swf$");
+		conf.add("ico","^.*\\.ico$");
 	}
 
     /**
@@ -235,7 +237,7 @@ public class AppModule
                     throws IOException
             {
                 long startTime = System.currentTimeMillis();
-
+				log.info(String.format("%s (XHR:%s) : %s", request.getMethod(), request.isXHR(), request.getPath()));
                 try
                 {
                     // The responsibility of a filter is to invoke the corresponding method
@@ -347,9 +349,10 @@ public class AppModule
     /** Dispatcher to set the user locale */
     public static Dispatcher buildUserLocaleDispatcher(
 			ApplicationStateManager stateManager,
-			@InjectService("PersistentLocale") PersistentLocale persistentLocale) {
+			@InjectService("PersistentLocale") PersistentLocale persistentLocale,
+			@InjectService("SymbolSource") SymbolSource symbolSource) {
 
-		return new UserLocaleDispatcher(persistentLocale, stateManager);
+		return new UserLocaleDispatcher(persistentLocale, stateManager, symbolSource, "fr");
 	}
     
     /****************************

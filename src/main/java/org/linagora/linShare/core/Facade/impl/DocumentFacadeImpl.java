@@ -236,5 +236,11 @@ public class DocumentFacadeImpl implements DocumentFacade {
         documentService.updateFileProperties(uuid, newName,comment);
     }
     
-    
+    public InputStream getDocumentThumbnail(String uuid) {
+    	return documentService.getDocumentThumbnail(uuid);
+    }
+
+    public boolean documentHasThumbnail(String uuid) {
+		return documentService.documentHasThumbnail(uuid);
+    }
 }

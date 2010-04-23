@@ -20,6 +20,9 @@
 */
 package org.linagora.linShare.core.utils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  *
@@ -38,6 +41,8 @@ package org.linagora.linShare.core.utils;
  */
 public class Base64Utils
 {
+	
+	private static final Log LOGGER = LogFactory.getLog(Base64Utils.class);
     
     /** Specify encoding (value is <tt>true</tt>). */
     public final static boolean ENCODE = true;
@@ -134,15 +139,20 @@ public class Base64Utils
         byte[] b = encodeString(s).getBytes();
         byte[] c = decode( b, 0, b.length );
         
-        System.out.println( "\n\n" + s + ":" + new String(b) + ":" + new String(c) );
+        if(LOGGER.isDebugEnabled()){
+        	LOGGER.debug( "\n\n" + s + ":" + new String(b) + ":" + new String(c) );
+        }
         
         try
         {
             java.io.FileInputStream fis = new java.io.FileInputStream( "c:\\abcd.txt" );
             Base64Utils.InputStream b64is = new Base64Utils.InputStream( fis, DECODE );
             int ib = 0;
-            while( (ib = b64is.read()) > 0 )
-            {   //System.out.print( new String( ""+(char)ib ) );
+            if(LOGGER.isDebugEnabled()){
+	            while( (ib = b64is.read()) > 0 )
+	            {   
+	            	LOGGER.debug( new String( ""+(char)ib ) );
+	            }
             }
         }   // end try
         catch( Exception e)
@@ -576,7 +586,7 @@ public class Base64Utils
             }   // end if: white space, equals sign or better
             else
             {
-                System.err.println( "Bad Base64 input character at " + i + ": " + source[i] + "(decimal)" );
+            	LOGGER.error( "Bad Base64 input character at " + i + ": " + source[i] + "(decimal)" );
                 return null;
             }   // end else: 
         }   // each input character

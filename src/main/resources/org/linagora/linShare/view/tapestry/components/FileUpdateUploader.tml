@@ -3,11 +3,11 @@
     	<!-- Update Doc Uploader popup -->
 		<div t:id="windowUpdateDocUpload">
     		<div class="form-upload-container">
-        		<t:linkit.uploadcomponent t:id="fileUpdateUploadComponent" leftspace="userFreeSpace" maxfilesize="maxFileSize"/>
+        		<t:linkit.uploadcomponent t:id="fileUpdateUploadComponent" divid="literal:formUpdateUpload" leftspace="userFreeSpace" maxfilesize="maxFileSize"/>
     		</div>
-			<div class="closeUploadPopup">
-				<a href="#" onclick='location.reload(true)'>${message:pages.files.closeUploadPopup}</a>
-			</div>
+    		<div class="button">
+    			<a href="#" onclick="windowUpdateDocUpload.close();" style="" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}
+			</span></a></div>
 		</div>
 
 </t:container>

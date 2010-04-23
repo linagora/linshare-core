@@ -29,7 +29,6 @@ import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
-import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
@@ -108,6 +107,15 @@ public class UserFacadeImpl implements UserFacade {
     	}
     	return null;
     }
+    
+	public UserVo findUserFromLdapwithUid(String uid) {
+		User user = userService.findUserFromLdapwithUid(uid);
+    	if (user != null) {
+    		return new UserVo(user);
+    	} else return null;
+	}
+    
+    
 
     /** Search a user.
      * @param mail user email.

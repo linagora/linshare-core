@@ -21,6 +21,7 @@
 package org.linagora.linShare.view.tapestry.pages;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -177,7 +178,7 @@ public class Index {
 	@OnEvent(value="eventDocument")
 	public void initListDoc(Object[] object){
 		flag=true;
-		this.shares = (List<ShareDocumentVo>)object[0];
+		this.shares = (List<ShareDocumentVo>)Arrays.copyOf(object,1)[0];
 	}
     
     @OnEvent(value="resetListFiles")
@@ -192,7 +193,7 @@ public class Index {
     }
     
     Object onException(Throwable cause) {
-    	shareSessionObjects.addMessage(messages.get("global.exception.message"));
+    	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;
