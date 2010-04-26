@@ -38,6 +38,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.TimeUnit;
+import org.linagora.linShare.core.domain.entities.MailSubject;
+import org.linagora.linShare.core.domain.entities.MailTemplate;
 import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.entities.WelcomeText;
 import org.linagora.linShare.core.domain.vo.AllowedMimeTypeVO;
@@ -120,6 +122,14 @@ public class Index {
     
     @Property
     @Persist
+    private Set<MailTemplate> mailTemplates;
+    
+    @Property
+    @Persist
+    private Set<MailSubject> mailSubjects;
+    
+    @Property
+    @Persist
     private Boolean needDeleteTempAdmin;
     
     @Property
@@ -166,6 +176,14 @@ public class Index {
 
         if (welcomeTexts == null) {
             welcomeTexts = p.getWelcomeTexts();
+        }
+        
+        if (mailTemplates == null) {
+        	mailTemplates = p.getMailTemplates();
+        }
+        
+        if (mailSubjects == null) {
+        	mailSubjects = p.getMailSubjects();
         }
         
         //check temp admin account (created by import.sql)
@@ -231,7 +249,7 @@ public class Index {
         }
 
         ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, activeMimeType, activeSignature,activeEncipherment,activeDocTimeStamp,guestAccountExpiryTime,
-            guestAccountExpiryUnit, customLogoUrl,defaultShareExpiryUnit,  defaultShareExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,welcomeTexts);
+            guestAccountExpiryUnit, customLogoUrl,defaultShareExpiryUnit,  defaultShareExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,welcomeTexts, mailTemplates, mailSubjects);
         parameterFacade.createConfig(params);
 
         

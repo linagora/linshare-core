@@ -14,7 +14,8 @@
 
 
 			<h2>${message:pages.administration.index.visual.title}</h2>
-
+				<t:mailTemplateConfigurer t:mailTemplates="mailTemplates"/>
+				<t:mailSubjectConfigurer t:mailSubjects="mailSubjects"/>
 				<t:welcomeMessageConfigurer t:welcometexts="welcomeTexts"/>
 				
 				<t:form t:id="administrationForm">
