@@ -141,23 +141,25 @@ public class UserAddToGroupForm {
     }
 
     public void onSuccess() throws BusinessException {
-    	UserVo userAdded = userFacade.findUser(addUserWithMail);
-    	List<GroupVo> groupsOfUserAdded = groupFacade.findByUser(addUserWithMail);
-    	List<GroupVo> groupsWhereUserWillBeAdded = new ArrayList<GroupVo>();
-    	
-    	for (GroupVo groupVo : selectedGroups) {
-			if (!groupsOfUserAdded.contains(groupVo)) {
-				groupsWhereUserWillBeAdded.add(groupVo);
+    	if (selectedGroups != null) {
+        	UserVo userAdded = userFacade.findUser(addUserWithMail);
+        	List<GroupVo> groupsOfUserAdded = groupFacade.findByUser(addUserWithMail);
+        	List<GroupVo> groupsWhereUserWillBeAdded = new ArrayList<GroupVo>();
+        	
+	    	for (GroupVo groupVo : selectedGroups) {
+				if (!groupsOfUserAdded.contains(groupVo)) {
+					groupsWhereUserWillBeAdded.add(groupVo);
+				}
 			}
-		}
-    	
-    	if (groupsWhereUserWillBeAdded.size()>0) {
-    		for (GroupVo groupVo : groupsWhereUserWillBeAdded) {
-    			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userLoggedIn, null);
-				groupFacade.addMember(groupVo, userLoggedIn, userAdded, mailContainer);
-				shareSessionObjects.setReloadGroupsNeeded(true);
-				shareSessionObjects.addMessage(messages.format("components.userAddToGroup.success", userAdded.getFirstName(), userAdded.getLastName(), groupVo.getName()));
-			}
+	    	
+	    	if (groupsWhereUserWillBeAdded.size()>0) {
+	    		for (GroupVo groupVo : groupsWhereUserWillBeAdded) {
+	    			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userLoggedIn, null);
+					groupFacade.addMember(groupVo, userLoggedIn, userAdded, mailContainer);
+					shareSessionObjects.setReloadGroupsNeeded(true);
+					shareSessionObjects.addMessage(messages.format("components.userAddToGroup.success", userAdded.getFirstName(), userAdded.getLastName(), groupVo.getName()));
+				}
+	    	}
     	}
 		
 	}
