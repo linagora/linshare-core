@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h3>${message:components.mailSubjectConfigurer.title}</h3>
+    <div id="mailSubjectsConfigurer">
+    <t:form t:id="mailSubjectForm">
+        <t:grid source="mailSubjects" row="mailSubject" add="action"
+        	reorder="language, mailSubject, content, action"
+        	rowsPerPage="6">
+        	<t:parameter t:name="contentCell">
+        		<t:if test="inSubjectModificationState">
+        			<t:textarea t:id="value" t:value="mailSubject.content" t:validate="required" rows="2" cols="45" />
+        		</t:if>
+        		<t:if test="inSubjectModificationState" negate="true">
+        			${mailSubject.content}
+        		</t:if>
+        	</t:parameter>
+        	
+        	<t:parameter t:name="actionCell">
+        		<t:if test="inSubjectModificationState" negate="true">
+                	<t:actionLink t:id="switchToSubjectModificationState" context="mailSubject">
+                    	<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
+                    		title="${message:global.button.edit}"/>
+               		</t:actionLink>
+        		</t:if>
+        		<t:if test="inSubjectModificationState">					
+					<t:linkSubmit title="${message:global.button.edit}" alt="${message:global.button.edit}">
+						<img src="${asset:context:images/icons/validate.png}" alt="${message:global.button.edit}" />
+					</t:linkSubmit>
+<!--                	<t:actionLink t:id="switchFromSubjectModificationState" context="mailSubject">-->
+<!--                    	<img src="${asset:context:images/icons/cancel.png}" alt="${message:global.button.cancel}"-->
+<!--                    		title="${message:global.button.cancel}"/>-->
+<!--               		</t:actionLink>-->
+        		</t:if>
+        	</t:parameter>
+        </t:grid>
+	</t:form>
+    </div>
+</t:container>

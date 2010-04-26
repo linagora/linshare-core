@@ -36,7 +36,7 @@
                         <t:textarea t:id="welcomeMessage" cols="80"/>
                         <br/>
                         <div class="button">
-							<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:global.button.update}</span></t:linkSubmit>
+							<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/validate.png}" alt=""/> ${message:global.button.validate}</span></t:linkSubmit>
 						</div>
                     </t:form>
                 </div>
