@@ -28,6 +28,7 @@ import java.util.Set;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.Signature;
 import org.linagora.linShare.core.domain.entities.User;
@@ -84,7 +85,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 
 	
-	public void removeDocument(UserVo actor, DocumentVo document)
+	public void removeDocument(UserVo actor, DocumentVo document, MailContainer mailContainer)
 		throws BusinessException {
 		if (document instanceof ShareDocumentVo) {
 			// if this document is a sharedocumentVo, it means we received the document
@@ -113,7 +114,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 				throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "The sharing couldn't be found");
 			}
 		} else {
-			documentService.deleteFile(actor.getLogin(),document.getIdentifier(), Reason.NONE);
+			documentService.deleteFileWithNotification(actor.getLogin(),document.getIdentifier(), Reason.NONE, mailContainer);
 		}
 	}
 

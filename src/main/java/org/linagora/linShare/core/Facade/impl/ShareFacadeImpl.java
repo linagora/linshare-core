@@ -37,7 +37,7 @@ import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
-import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
+import org.linagora.linShare.core.domain.transformers.impl.GroupTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.ShareTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
@@ -63,8 +63,6 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final ShareService shareService;
 	
-	private final DocumentTransformer documentTransformer;
-	
 	private final ShareTransformer shareTransformer;
 	
 	private final UserRepository<User> userRepository;
@@ -80,12 +78,13 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final UserService userService;
 
     private final DocumentService documentService;
+
+    private final GroupTransformer groupTransformer;
     
     
 	
 	public ShareFacadeImpl(
 			final ShareService shareService,
-			final DocumentTransformer documentTransformer,
 			final ShareTransformer shareTransformer,
 			final UserRepository<User> userRepository,
 			final DocumentRepository documentRepository,
@@ -93,10 +92,10 @@ public class ShareFacadeImpl implements ShareFacade {
 			final NotifierService mailNotifierService,
 			final UserService userService,
             final DocumentService documentService,
-    		final MailContentBuildingService mailElementsFactory) {
+    		final MailContentBuildingService mailElementsFactory,
+    		final GroupTransformer groupTransformer) {
 		super();
 		this.shareService = shareService;
-		this.documentTransformer = documentTransformer;
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
 		this.documentRepository = documentRepository;
@@ -105,6 +104,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.userService = userService;
         this.documentService = documentService;
 		this.mailElementsFactory = mailElementsFactory;
+		this.groupTransformer = groupTransformer;
 	}
 
 	
@@ -432,5 +432,14 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		return results;
     }
-
+	
+	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo managerVo,
+			GroupVo groupVo, MailContainer mailContainer)
+			throws BusinessException {
+		Group group = groupTransformer.assemble(groupVo);
+		Document doc = documentRepository.findById(shareddoc.getIdentifier());
+		User manager = userRepository.findByLogin(managerVo.getLogin());
+		
+		shareService.notifyGroupSharingDeleted(doc, manager, group, mailContainer);
+	}
 }

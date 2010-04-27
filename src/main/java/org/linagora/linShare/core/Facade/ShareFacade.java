@@ -168,4 +168,13 @@ public interface ShareFacade {
 	 */
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException;
 
+	/**
+	 * Notify a group that a sharing was deleted
+	 * @param shareddoc
+	 * @param manager
+	 * @param group
+	 * @param mailContainer
+	 * @throws BusinessException
+	 */
+	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo manager, GroupVo group, MailContainer mailContainer) throws BusinessException;
 }

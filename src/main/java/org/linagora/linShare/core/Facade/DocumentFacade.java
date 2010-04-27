@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
 
@@ -65,9 +65,10 @@ public interface DocumentFacade {
 	 * Delete a Document (or a sharedDocument)
 	 * @param actor : the actor that removes the document
 	 * @param document : the document to be deleted (or a sharing)
+	 * @param mailContainer 
 	 * @throws BusinessException
 	*/
-	public void removeDocument(UserVo actor,DocumentVo document) throws BusinessException;
+	public void removeDocument(UserVo actor,DocumentVo document, MailContainer mailContainer) throws BusinessException;
 	
 	/**
 	 * Retrieve a stream of a Document 

@@ -25,6 +25,7 @@ import java.security.cert.X509Certificate;
 
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
@@ -122,10 +123,21 @@ public interface DocumentService {
 	 * Delete a file by its uuid, and delete all the sharing linked to the document
 	 * @param login
 	 * @param uuid
-	 * @param causedByExpiration : true if it's due to an expiration
+	 * @param causeOfDeletion
 	 * @throws BusinessException
 	 */
-	public void deleteFile(String login,String uuid, Reason causeOfDeletion) throws BusinessException;
+	public void deleteFile(String login, String uuid, Reason causeOfDeletion) throws BusinessException;
+
+	/**
+	 * Delete a file and send a notification for users having a sharing of this file.
+	 * @param login
+	 * @param identifier
+	 * @param causeOfDeletion
+	 * @param mailContainer
+	 * @throws BusinessException
+	 */
+	public void deleteFileWithNotification(String login, String identifier, Reason causeOfDeletion,
+			MailContainer mailContainer) throws BusinessException;
 	
 	/**
 	 * Find a doc by its uuid
@@ -201,4 +213,5 @@ public interface DocumentService {
      * @return true if the thumbnail exists, false otherwise
      */
 	public boolean documentHasThumbnail(String uuid);
+
 }

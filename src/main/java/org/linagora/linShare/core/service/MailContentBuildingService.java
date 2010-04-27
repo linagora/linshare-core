@@ -22,6 +22,7 @@ package org.linagora.linShare.core.service;
 
 import java.util.List;
 
+import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
@@ -147,5 +148,15 @@ public interface MailContentBuildingService {
 	 */
 	public MailContainer buildMailNewGroupMember(
 			MailContainer mailContainer, GroupMember newMember, Group group) 
+			throws BusinessException;
+
+	/**
+	 * Notify a user that a received shared file is about to be deleted by its owner.
+	 */
+	public MailContainer buildMailSharedFileDeleted(
+			MailContainer mailContainer, Document doc, User owner, User receiver)
+			throws BusinessException;
+	public MailContainer buildMailSharedFileDeleted(
+			MailContainer mailContainer, Document doc, User owner, Contact receiver)
 			throws BusinessException;
 }

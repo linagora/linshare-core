@@ -117,8 +117,8 @@ insert into linshare_mail_templates (parameter_id, template_id, content_html, co
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,4,'Vous pouvez vous connecter à cette adresse&nbsp;: <a href="${url}">${url}</a><br/>','Vous pouvez vous connecter à cette adresse : ${url}',1);
 
 -- Template FILE_DOWNLOAD_URL
-insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,5,'In order to download the files, click on this link or paste it into your browser: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>','In order to download the files, click on this link or paste it into your browser:\n${url}${urlparam}',0);
-insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,5,'Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a><br/>','Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur :\n${url}${urlparam}',1);
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,5,'In order to download the files, click on this link or paste it into your browser: <a href="${url}${urlparam}">${url}${urlparam}</a>','In order to download the files, click on this link or paste it into your browser:\n${url}${urlparam}',0);
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,5,'Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a>','Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur :\n${url}${urlparam}',1);
 
 -- Template DECRYPT_URL
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,6,'<p>Some received files are <b>encrypted</b>. After downloading, take care of decrypting localy with the application:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>You have to use <i>password</i> which has been communicated by the person who has done this sharing.</p><br/>','Some received files are encrypted. After downloading, take care of decrypting localy with the application:\n${jwsEncryptUrl}\nYou have to use <i>password</i> which has been communicated by the person who has done this sharing.\n',0);
@@ -164,6 +164,10 @@ insert into linshare_mail_templates (parameter_id, template_id, content_html, co
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,16,'${firstName} ${lastName} has deleted the file <strong>${documentName}</strong> shared with the group <strong>${groupName}</strong>.','${firstName} ${lastName} has deleted the file ${documentName} shared with the group ${groupName}.',0);
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,16,'${firstName} ${lastName} a supprimé le fichier <strong>${documentName}</strong> partagé avec le groupe <strong>${groupName}</strong>.','${firstName} ${lastName} a supprimé le fichier ${documentName} partagé avec le groupe ${groupName}.',1);
 
+-- Template SHARED_FILE_DELETED
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,17,'<strong>${firstName} ${lastName}</strong> has deleted the shared file <strong>${documentName}</strong>.','${firstName} ${lastName} has deleted the shared file ${documentName}.',0);
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,17,'<strong>${firstName} ${lastName}</strong> a supprimé le fichier partagé <strong>${documentName}</strong>.','${firstName} ${lastName} a supprimé le fichier partagé ${documentName}.',1);
+
 -- Subject ANONYMOUS_DOWNLOAD
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 0, 'LinShare: An anonymous user downloaded the file you shared',0);
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 0, 'LinShare : Un utilisateur anonyme a téléchargé des fichiers en partage',1);
@@ -203,6 +207,10 @@ insert into linshare_mail_subjects (parameter_id, subject_id, content, language_
 -- Subject GROUP_SHARING_DELETED
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 9, 'LinShare: A file shared with the group ${groupName} has been deleted.',0);
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 9, 'LinShare : Un fichier partagé avec le groupe ${groupName} a été supprimé',1);
+
+-- Subject SHARED_DOC_DELETED
+insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 10, 'LinShare: An user has deleted a shared file',0);
+insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 10, 'LinShare : Un utilisateur a supprimé un fichier partagé avec vous',1);
 
 
 

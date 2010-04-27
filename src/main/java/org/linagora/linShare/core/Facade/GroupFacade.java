@@ -26,7 +26,6 @@ import org.linagora.linShare.core.domain.entities.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
-import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -43,5 +42,4 @@ public interface GroupFacade {
 	public boolean nameAlreadyExists(String groupName);
 	public void acceptNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToAcceptVo, MailContainer mailContainer) throws BusinessException;
 	public void rejectNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToRejectVo, MailContainer mailContainer) throws BusinessException;
-	public void notifySharingDeleted(ShareDocumentVo shareddoc, UserVo manager, GroupVo group, MailContainer mailContainer) throws BusinessException;
 }

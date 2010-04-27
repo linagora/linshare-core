@@ -89,6 +89,9 @@
         <constructor-arg index="6" ref="securedUrlService" />
         <constructor-arg index="7" ref="jackRabbitRepository" />
     	<constructor-arg index="8" ref="shareExpiryDateService"/>
+        <constructor-arg index="9" ref="notifierService" />
+    	<constructor-arg index="10" ref="mailContentBuildingService"/>
+    	<constructor-arg index="11" ref="groupRepository"/>
     </bean>
 
 	   

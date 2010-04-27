@@ -32,6 +32,9 @@ import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
+import org.linagora.linShare.core.domain.entities.Group;
+import org.linagora.linShare.core.domain.entities.GroupMember;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
@@ -42,10 +45,13 @@ import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
+import org.linagora.linShare.core.repository.GroupRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.MailContentBuildingService;
+import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.SecuredUrlService;
 import org.linagora.linShare.core.service.ShareExpiryDateService;
@@ -66,6 +72,9 @@ public class ShareServiceImpl implements ShareService{
 	private final SecuredUrlService secureUrlService;
 	private final FileSystemDao fileSystemDao;
 	private final ShareExpiryDateService shareExpiryDateService;
+	private final NotifierService notifierService;
+	private final MailContentBuildingService mailBuilder;
+	private final GroupRepository groupRepository;
 	
 	
 //    private final DocumentService documentService;
@@ -77,7 +86,9 @@ public class ShareServiceImpl implements ShareService{
 			final LogEntryRepository logEntryRepository,
 			final ParameterService parameterService, final SecuredUrlRepository securedUrlRepository,
 			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
-			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService) {
+			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
+			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
+			final GroupRepository groupRepository) {
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
@@ -88,6 +99,9 @@ public class ShareServiceImpl implements ShareService{
         this.secureUrlService = secureUrlService;
         this.fileSystemDao = fileSystemDao;
         this.shareExpiryDateService = shareExpiryDateService;
+        this.notifierService = notifierService;
+        this.mailBuilder = mailBuilder;
+        this.groupRepository = groupRepository;
 	}
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
@@ -278,13 +292,23 @@ public class ShareServiceImpl implements ShareService{
 		return returnItems;
 
 	}
-	public void deleteAllSharesWithDocument(Document doc, User actor)
+	public void deleteAllSharesWithDocument(Document doc, User actor, MailContainer mailContainer)
 			throws BusinessException {
 		
 		//1)delete normal share
 		List<Share> listShare = shareRepository.getSharesLinkedToDocument(doc);
 		
 		for (Share share : listShare) {
+			if (mailContainer!=null) { //if notification is needed
+				if (share.getReceiver().getUserType().equals(UserType.GROUP)) { //group sharing
+					Group group = groupRepository.findByName(share.getReceiver().getLastName());
+					notifyGroupSharingDeleted(doc, actor, group, mailContainer);
+				}
+				else { //user sharing
+					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(mailContainer, doc, actor, share.getReceiver());
+					notifierService.sendNotification(null, share.getReceiver().getMail(), mailContainer_);
+				}
+			}
 			deleteShare(share, actor);
 		}
 		
@@ -295,6 +319,14 @@ public class ShareServiceImpl implements ShareService{
 		
 		List<SecuredUrl> listSecuredUrl = securedUrlRepository.getSecureUrlLinkedToDocument(doc);
 		for (SecuredUrl securedUrl : listSecuredUrl) {
+			if (mailContainer!=null) { //if notification is needed
+				List<Contact> recipients = securedUrl.getRecipients();
+				for (Contact contact : recipients) {				
+					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(mailContainer, doc, actor, contact);
+					notifierService.sendNotification(null, contact.getMail(), mailContainer_);
+				}
+			}
+			
 			securedUrlRepository.delete(securedUrl);
 		}
 	}
@@ -459,5 +491,25 @@ public class ShareServiceImpl implements ShareService{
 		
 		logEntryRepository.create(logEntryShare);
 		logEntryRepository.create(logEntryDelete);
+	}
+	
+
+	public void notifyGroupSharingDeleted(Document doc, User manager, Group group,
+			MailContainer mailContainer) throws BusinessException {
+
+		/**
+		 * Send notification ; if a functional mailBox is given, to this mailBox, 
+		 * otherwise to each group member.
+		 */
+		String functionalMail = group.getFunctionalEmail();
+		if (functionalMail != null && functionalMail.length() > 0) {
+			MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(mailContainer, manager, group, doc);
+			notifierService.sendNotification(manager.getMail(),functionalMail, mailContainer_);
+		} else {
+			for (GroupMember member : group.getMembers()) {
+				MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(mailContainer, manager, member.getUser(), group, doc);
+				notifierService.sendNotification(manager.getMail(), member.getUser().getMail(), mailContainer_);
+			}
+		}
 	}
 }
