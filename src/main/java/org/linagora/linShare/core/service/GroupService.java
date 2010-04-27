@@ -40,5 +40,6 @@ public interface GroupService {
 	public void updateMember(Group group, User manager, User member, GroupMemberType type) throws BusinessException;
 	public void acceptNewMember(Group group, User manager, User memberToAccept, MailContainer mailContainer) throws BusinessException;
 	public void rejectNewMember(Group group, User manager, User memberToReject, MailContainer mailContainer) throws BusinessException;
+	public void deleteAllMembershipOfUser(User userToDelete) throws BusinessException;
 
 }
