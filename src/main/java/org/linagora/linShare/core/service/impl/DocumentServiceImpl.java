@@ -286,9 +286,17 @@ public class DocumentServiceImpl implements DocumentService {
 					+ !virusScannerService.isDisabled());
 		}
 
+		boolean checkStatus = false;
+		try {
+			checkStatus = virusScannerService.check(tempFile);
+		} catch (TechnicalException e) {
+			log.error("File scan failed: antivirus enabled but not available ?");
+			throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED,
+					"File scan failed", e);
+		}
 		// check if the file contains virus
 		if ((!virusScannerService.isDisabled())
-				&& (!virusScannerService.check(tempFile))) {
+				&& (!checkStatus)) {
 			log.warn(owner.getMail()
 					+ " tried to upload a file containing virus:" + fileName);
 			tempFile.delete(); // SOS ! do not keep the file on the system...
