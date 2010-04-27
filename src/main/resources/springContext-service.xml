@@ -36,6 +36,7 @@
         <constructor-arg ref="recipientFavouriteService" />
         <constructor-arg ref="allowedContactRepository" />
         <constructor-arg ref="mailContentBuildingService" />
+        <constructor-arg ref="groupService" />
     </bean>
     
     <bean id="clamavVirusScannerService" class="org.linagora.linShare.core.service.impl.ClamavVirusScannerServiceImpl">

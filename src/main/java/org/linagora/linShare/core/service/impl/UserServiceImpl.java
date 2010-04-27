@@ -54,6 +54,7 @@ import org.linagora.linShare.core.repository.AllowedContactRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.GroupService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ParameterService;
@@ -94,6 +95,8 @@ public class UserServiceImpl implements UserService {
     private final RecipientFavouriteService recipientFavouriteService;
     
     private final MailContentBuildingService mailElementsFactory;
+    
+    private final GroupService groupService;
 
     /** Constructor.
      * @param userRepository repository.
@@ -105,7 +108,8 @@ public class UserServiceImpl implements UserService {
 		, final ParameterService parameterService, ShareService shareService,
 		final RecipientFavouriteService recipientFavouriteService,
 		final AllowedContactRepository allowedContactRepository,
-		final MailContentBuildingService mailElementsFactory) {
+		final MailContentBuildingService mailElementsFactory,
+		final GroupService groupService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.ldapDao = ldapDao;
@@ -116,6 +120,7 @@ public class UserServiceImpl implements UserService {
 		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
 		this.mailElementsFactory = mailElementsFactory;
+		this.groupService = groupService;
     }
 
     /** Create a guest.
@@ -291,6 +296,9 @@ public class UserServiceImpl implements UserService {
 						
 						//clearing allowed contacts
 						allowedContactRepository.deleteAllByUserBothSides(userToDelete);
+						
+						//clearing groups memberships
+						groupService.deleteAllMembershipOfUser(userToDelete);
 						
 						// clearing all signatures
 						Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
