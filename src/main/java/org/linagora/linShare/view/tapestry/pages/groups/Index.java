@@ -17,7 +17,7 @@
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
-*/
+ */
 package org.linagora.linShare.view.tapestry.pages.groups;
 
 import java.text.SimpleDateFormat;
@@ -68,7 +68,7 @@ public class Index {
 	private ShareFacade shareFacade;
 	@Inject
 	private UserFacade userFacade;
-	
+
 	@Inject
 	private MailContainerBuilder mailContainerBuilder;
 
@@ -79,7 +79,7 @@ public class Index {
 	@Property
 	@Persist
 	private List<GroupVo> groups;
-	
+
 	@Property
 	@Persist
 	private List<String> blockIds;
@@ -107,11 +107,11 @@ public class Index {
 	@Property
 	@Persist
 	private GroupMemberVo memberConnected;
-	
+
 	@Property
 	@Persist
 	private GroupMemberVo memberToChange;
-	
+
 	@Property
 	@Persist
 	private SorterModel<GroupMemberVo> sorterModel;
@@ -125,34 +125,37 @@ public class Index {
 
 	@Property
 	@Persist
-	private List<ShareDocumentVo> documents;	
-	
+	private List<ShareDocumentVo> documents;
+
 	private GroupMemberType memberToChangeType;
-    
+
 	@Environmental
 	private RenderSupport renderSupport;
-    @ApplicationState
-    private ShareSessionObjects shareSessionObjects;
-    @Inject
-    private Messages messages;
-    @InjectComponent
-    private UserDetailsDisplayer userDetailsDisplayer;
-    @InjectComponent
-    private CreateGroupPopup createGroupPopup;  
-    
-	@Component(parameters = {"style=bluelighting", "show=false","width=500", "height=100"})
+	@ApplicationState
+	private ShareSessionObjects shareSessionObjects;
+	@Inject
+	private Messages messages;
+	@InjectComponent
+	private UserDetailsDisplayer userDetailsDisplayer;
+	@InjectComponent
+	private CreateGroupPopup createGroupPopup;
+
+	@Component(parameters = { "style=bluelighting", "show=false", "width=500",
+			"height=100" })
 	private WindowWithEffects windowConfirmDeleteMembership;
-    
-	@Component(parameters = {"style=bluelighting", "show=false","width=500", "height=100"})
+
+	@Component(parameters = { "style=bluelighting", "show=false", "width=500",
+			"height=100" })
 	private WindowWithEffects windowConfirmDeleteGroup;
-    
-	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=200"})
+
+	@Component(parameters = { "style=bluelighting", "show=false", "width=600",
+			"height=200" })
 	private WindowWithEffects windowChangeMemberType;
 
-    private Logger logger = LoggerFactory.getLogger(Index.class);
-    
-    @Persist
-    private String loginOfMemberToConsider;
+	private Logger logger = LoggerFactory.getLogger(Index.class);
+
+	@Persist
+	private String loginOfMemberToConsider;
 
 	@SetupRender
 	public void setupRender() {
@@ -161,138 +164,164 @@ public class Index {
 			group = null;
 			shareSessionObjects.setReloadGroupsNeeded(false);
 		}
-		
-		if (groups == null) { //first display of the page for the session
+
+		if (groups == null) { // first display of the page for the session
 			groups = groupFacade.findByUser(userVo.getLogin());
-			if (groups!=null && groups.size()>0) {
-				group=groups.get(0); //display the first group of the list
+			if (groups != null && groups.size() > 0) {
+				group = groups.get(0); // display the first group of the list
 			}
-			blockIds = new ArrayList<String>(); //tabset titles
+			blockIds = new ArrayList<String>(); // tabset titles
 			for (GroupVo groupForBlock : groups) {
 				blockIds.add(groupForBlock.getName());
 			}
 		}
-		
-		if (group != null) {//at least one group membership for this user
-			documents = shareFacade.getAllSharingReceivedByUser(group.getGroupUser());
-			
-			List<GroupMemberVo> groupMembers = new ArrayList<GroupMemberVo>(group.getMembers());
+
+		if (group != null) {// at least one group membership for this user
+			documents = shareFacade.getAllSharingReceivedByUser(group
+					.getGroupUser());
+
+			List<GroupMemberVo> groupMembers = new ArrayList<GroupMemberVo>(
+					group.getMembers());
 			members = new ArrayList<GroupMemberVo>();
 			waitingForApprovalMembers = new ArrayList<GroupMemberVo>();
-			
+
 			for (GroupMemberVo groupMemberVo : groupMembers) {
 				if (groupMemberVo.isWaitingForApproval()) {
 					waitingForApprovalMembers.add(groupMemberVo);
-				}
-				else {
+				} else {
 					members.add(groupMemberVo);
 				}
 			}
-			
-	        sorterModel=new MemberSorterModel(members);
+
+			sorterModel = new MemberSorterModel(members);
 			memberConnected = group.findMember(userVo.getLogin());
 		}
 	}
-	
+
 	@AfterRender
 	public void afterRender() {
 		if ((members != null) && (members.size() > 0))
-			renderSupport.addScript(String.format("$('actionsWidget').style.display='block';"));
+			renderSupport.addScript(String
+					.format("$('actionsWidget').style.display='block';"));
 	}
-	
+
 	Object onActionFromChangeGroup(String groupName) {
-		if (groups != null) { //session expired but user clicked on the tabset => groups==null
+		if (groups != null) { // session expired but user clicked on the tabset
+								// => groups==null
 			group = getGroupVoFromName(groupName);
 		}
 		inModify = false;
 		return this; // =>setupRender
 	}
-	
+
 	void onActionFromGetGroupModify() {
-		inModify=true;
+		inModify = true;
 	}
-	
-	void onActionFromDeleteGroup() { //only show popup
+
+	void onActionFromDeleteGroup() { // only show popup
 	}
-	
+
 	void onActionFromEditMember(String login) {
 		memberToChange = group.findMember(login);
 	}
-	
+
 	void onActionFromEditManager(String login) {
 		memberToChange = group.findMember(login);
 	}
-	
+
 	void onActionFromDeleteMembership(String login) {
 		loginOfMemberToConsider = login;
 	}
-	
+
 	void onActionFromDeleteManagerMembership(String login) {
 		onActionFromDeleteMembership(login);
 	}
-	
+
 	void onActionFromDeleteSelfMembership(String login) {
-		logger.debug("onActionFromDeleteSelfMembership: "+login);
+		logger.debug("onActionFromDeleteSelfMembership: " + login);
 		onActionFromDeleteMembership(login);
 	}
-	
+
 	Object onActionFromConfirmDeleteMembership() throws BusinessException {
 
-		if (loginOfMemberToConsider!=null) {
-			GroupMemberVo memberToRemove = group.findMember(loginOfMemberToConsider);
+		if (loginOfMemberToConsider != null) {
+			GroupMemberVo memberToRemove = group
+					.findMember(loginOfMemberToConsider);
 			GroupMemberType memberType = memberToRemove.getType();
-			
+
 			if (memberToRemove != null) {
-				if ((memberConnected.isAllowedToManageUser() && memberType.equals(GroupMemberType.MEMBER))
-						||(memberConnected.isAllowedToManageManager() && memberType.equals(GroupMemberType.MANAGER))
-						||(userVo.getLogin().equals(memberToRemove.getUserVo().getLogin()) && !(memberType.equals(GroupMemberType.OWNER)))) {
-					groupFacade.removeMember(group, memberConnected.getUserVo(), memberToRemove.getUserVo());
-					shareSessionObjects.addMessage(messages.format("pages.groups.deleteMember.success", memberToRemove.getFirstName(), memberToRemove.getLastName(), group.getName()));
+				if ((memberConnected.isAllowedToManageUser() && memberType
+						.equals(GroupMemberType.MEMBER))
+						|| (memberConnected.isAllowedToManageManager() && memberType
+								.equals(GroupMemberType.MANAGER))
+						|| (userVo.getLogin().equals(
+								memberToRemove.getUserVo().getLogin()) && !(memberType
+								.equals(GroupMemberType.OWNER)))) {
+					groupFacade.removeMember(group,
+							memberConnected.getUserVo(), memberToRemove
+									.getUserVo());
+					shareSessionObjects.addMessage(messages.format(
+							"pages.groups.deleteMember.success", memberToRemove
+									.getFirstName(), memberToRemove
+									.getLastName(), group.getName()));
 				}
 			}
 		}
-		loginOfMemberToConsider=null;
+		loginOfMemberToConsider = null;
 		groups = null;
 		return this;
 	}
-	
+
 	Object onActionFromConfirmDeleteGroup() throws BusinessException {
 		if (memberConnected.isAllowedToManageGroup()) {
 			groupFacade.delete(group, userVo);
-			shareSessionObjects.addMessage(messages.format("pages.groups.delete.success", group.getName()));
+			shareSessionObjects.addMessage(messages.format(
+					"pages.groups.delete.success", group.getName()));
 		}
 		groups = null;
 		group = null;
 		return this;
 	}
-	
+
 	Object onActionFromAcceptNewMember(String login) {
 		if (memberConnected.isAllowedToManageUser()) {
 			GroupMemberVo memberToAccept = group.findMember(login);
 			try {
-				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
-				groupFacade.acceptNewMember(group, memberConnected, memberToAccept, mailContainer);
-				shareSessionObjects.addMessage(messages.format("pages.groups.acceptMember.success", login, group.getName()));
+				MailContainer mailContainer = mailContainerBuilder
+						.buildMailContainer(userVo, null);
+				groupFacade.acceptNewMember(group, memberConnected,
+						memberToAccept, mailContainer);
+				shareSessionObjects.addMessage(messages.format(
+						"pages.groups.acceptMember.success", login, group
+								.getName()));
 				groups = null;
 				group = null;
 			} catch (BusinessException e) {
-				shareSessionObjects.addError(messages.format("pages.groups.acceptMember.failure", login, group.getName()));
+				shareSessionObjects.addError(messages.format(
+						"pages.groups.acceptMember.failure", login, group
+								.getName()));
 			}
 		}
 		return this;
 	}
-	
+
 	Object onActionFromRejectNewMember(String login) {
 		if (memberConnected.isAllowedToManageUser()) {
 			GroupMemberVo memberToAccept = group.findMember(login);
 			try {
-				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
-				groupFacade.rejectNewMember(group, memberConnected, memberToAccept, mailContainer);
-				shareSessionObjects.addMessage(messages.format("pages.groups.rejectMember.success", login, group.getName()));
+				MailContainer mailContainer = mailContainerBuilder
+						.buildMailContainer(userVo, null);
+				groupFacade.rejectNewMember(group, memberConnected,
+						memberToAccept, mailContainer);
+				shareSessionObjects.addMessage(messages.format(
+						"pages.groups.rejectMember.success", login, group
+								.getName()));
 				groups = null;
 				group = null;
 			} catch (BusinessException e) {
-				shareSessionObjects.addError(messages.format("pages.groups.rejectMember.failure", login, group.getName()));
+				shareSessionObjects.addError(messages.format(
+						"pages.groups.rejectMember.failure", login, group
+								.getName()));
 			}
 		}
 		return this;
@@ -306,83 +335,91 @@ public class Index {
 		}
 		return null;
 	}
-	
+
 	public boolean getHaveAtLeastOneGroup() {
 		return groups.size() > 0;
 	}
-	
-	@OnEvent(value="eventUpdateListGroups")
+
+	@OnEvent(value = "eventUpdateListGroups")
 	void onEventFromUpdateGroups() {
-		groups = null; //will be refilled by setupRender
+		groups = null; // will be refilled by setupRender
 	}
-	
-	@OnEvent(value="eventDeleteUniqueFromListDocument")
-	public void onEventFromDeleteShare(Object[] object) throws BusinessException {
-        String uuid = (String) object[0];
+
+	@OnEvent(value = "eventDeleteUniqueFromListDocument")
+	public void onEventFromDeleteShare(Object[] object)
+			throws BusinessException {
+		String uuid = (String) object[0];
 		try {
-	
-			ShareDocumentVo shareddoc=getDocumentByUUIDInList(uuid);
-			if(null!=shareddoc){
+
+			ShareDocumentVo shareddoc = getDocumentByUUIDInList(uuid);
+			if (null != shareddoc) {
 				UserVo groupUser = userFacade.findUser(group.getGroupLogin());
-		        shareFacade.deleteSharing(shareddoc, groupUser);
-				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
-		        groupFacade.notifySharingDeleted(shareddoc, userVo, group, mailContainer);
-				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),
-						shareddoc.getFileName()) );
+				shareFacade.deleteSharing(shareddoc, groupUser);
+				MailContainer mailContainer = mailContainerBuilder
+						.buildMailContainer(userVo, null);
+				shareFacade.notifyGroupSharingDeleted(shareddoc, userVo, group,
+						mailContainer);
+				shareSessionObjects.addMessage(String.format(messages
+						.get("pages.index.message.fileRemoved"), shareddoc
+						.getFileName()));
 			} else {
-				throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid");
+				throw new BusinessException(BusinessErrorCode.INVALID_UUID,
+						"invalid uuid");
 			}
 		} catch (BusinessException e) {
-			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid",e);
+			throw new BusinessException(BusinessErrorCode.INVALID_UUID,
+					"invalid uuid", e);
 		}
 	}
-	
-    private ShareDocumentVo getDocumentByUUIDInList(String UUId) {
-    	for (ShareDocumentVo doc : documents) {
+
+	private ShareDocumentVo getDocumentByUUIDInList(String UUId) {
+		for (ShareDocumentVo doc : documents) {
 			if ((doc.getIdentifier()).equals(UUId)) {
 				return doc;
 			}
 		}
-    	throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE, "Could not find the document" );
-    }
+		throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE,
+				"Could not find the document");
+	}
 
 	public String getUserMemberType() {
-		return messages.get("GroupMemberType."+group.getMemberType(userVo.getLogin()).name());
+		return messages.get("GroupMemberType."
+				+ group.getMemberType(userVo.getLogin()).name());
 	}
-	
+
 	public boolean getIsTheOneConnected() {
 		return (userVo.getLogin().equals(member.getUserVo().getLogin()));
 	}
 
 	public String getClassListe() {
-		if (groupSelected!=null && group!=null && groupSelected.getName().equals(group.getName())) {
+		if (groupSelected != null && group != null
+				&& groupSelected.getName().equals(group.getName())) {
 			return "selected";
 		}
 		return "notSelected";
 	}
-	
+
 	public GroupMemberType getMemberType() {
 		return GroupMemberType.MEMBER;
 	}
-	
+
 	public GroupMemberType getManagerType() {
 		return GroupMemberType.MANAGER;
 	}
-	
+
 	public GroupMemberType getMemberToChangeType() {
 		if (memberToChange == null) {
-			memberToChangeType =  GroupMemberType.MEMBER;
-		}
-		else {
+			memberToChangeType = GroupMemberType.MEMBER;
+		} else {
 			memberToChangeType = memberToChange.getType();
 		}
 		return memberToChangeType;
 	}
-	
+
 	public void setMemberToChangeType(GroupMemberType type) {
 		memberToChangeType = type;
 	}
-	
+
 	public boolean getDisableFilesDeletion() {
 		if (group == null || memberConnected == null) {
 			return true;
@@ -390,64 +427,76 @@ public class Index {
 		return !(memberConnected.isAllowedToDeleteFile());
 	}
 
-    public Zone onActionFromCreateGroup() {
-        return createGroupPopup.getShowPopup();
-    }
-
-    public Zone onActionFromShowUser(String mail) {
-        return userDetailsDisplayer.getShowUser(mail);
-    }
-
-    public Zone onActionFromShowWaitingUser(String mail) {
-        return userDetailsDisplayer.getShowUser(mail);
-    }
-    
-    public String getShowUserTooltip() {
-    	if (member.getUserVo().isGuest()) {
-    		if ((member.getUserVo().getOwnerLogin().equals(userVo.getLogin()))&&(member.getUserVo().getComment()!=null)&&(!member.getUserVo().getComment().equals(""))) {
-    			return member.getUserVo().getComment();
-    		}
-    	}
-    	return messages.get("pages.user.search.popup.welcome");
-    }
-    
-    public String getShowWaitingUserTooltip() {
-    	if (waitingForApprovalMember.getUserVo().isGuest()) {
-    		if ((waitingForApprovalMember.getUserVo().getOwnerLogin().equals(userVo.getLogin()))&&(waitingForApprovalMember.getUserVo().getComment()!=null)&&(!waitingForApprovalMember.getUserVo().getComment().equals(""))) {
-    			return waitingForApprovalMember.getUserVo().getComment();
-    		}
-    	}
-    	return messages.get("pages.user.search.popup.welcome");
-    }
-
-    public String getFormattedMembershipDate() {
-        if (member.getMembershipDate() != null) {
-            SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
-            return formatter.format(member.getMembershipDate().getTime());
-        }
-        return null;
-    }
-
-    public String getMembershipDate() {
-        if (waitingForApprovalMember.getMembershipDate() != null) {
-            SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
-            return formatter.format(waitingForApprovalMember.getMembershipDate().getTime());
-        }
-        return null;
-    }
-    
-    public String getMessageConfirmDeleteGroup() {
-    	if (group!=null) {
-    		return messages.format("pages.groups.delete.confirm.message", group.getName());
-    	}
-    	return "";
+	public Zone onActionFromCreateGroup() {
+		return createGroupPopup.getShowPopup();
 	}
-    
-    public String getMessageConfirmDeleteMembership() {
-    	if (group!=null) {
-    		return messages.format("pages.groups.members.delete.confirm.message", group.getName());
-    	}
-    	return "";
+
+	public Zone onActionFromShowUser(String mail) {
+		return userDetailsDisplayer.getShowUser(mail);
+	}
+
+	public Zone onActionFromShowWaitingUser(String mail) {
+		return userDetailsDisplayer.getShowUser(mail);
+	}
+
+	public String getShowUserTooltip() {
+		if (member.getUserVo().isGuest()) {
+			if ((member.getUserVo().getOwnerLogin().equals(userVo.getLogin()))
+					&& (member.getUserVo().getComment() != null)
+					&& (!member.getUserVo().getComment().equals(""))) {
+				return member.getUserVo().getComment();
+			}
+		}
+		return messages.get("pages.user.search.popup.welcome");
+	}
+
+	public String getShowWaitingUserTooltip() {
+		if (waitingForApprovalMember.getUserVo().isGuest()) {
+			if ((waitingForApprovalMember.getUserVo().getOwnerLogin()
+					.equals(userVo.getLogin()))
+					&& (waitingForApprovalMember.getUserVo().getComment() != null)
+					&& (!waitingForApprovalMember.getUserVo().getComment()
+							.equals(""))) {
+				return waitingForApprovalMember.getUserVo().getComment();
+			}
+		}
+		return messages.get("pages.user.search.popup.welcome");
+	}
+
+	public String getFormattedMembershipDate() {
+		if (member.getMembershipDate() != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(messages
+					.get("global.pattern.date"));
+			return formatter.format(member.getMembershipDate().getTime());
+		}
+		return null;
+	}
+
+	public String getMembershipDate() {
+		if (waitingForApprovalMember.getMembershipDate() != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(messages
+					.get("global.pattern.date"));
+			return formatter.format(waitingForApprovalMember
+					.getMembershipDate().getTime());
+		}
+		return null;
+	}
+
+	public String getMessageConfirmDeleteGroup() {
+		if (group != null) {
+			return messages.format("pages.groups.delete.confirm.message", group
+					.getName());
+		}
+		return "";
+	}
+
+	public String getMessageConfirmDeleteMembership() {
+		if (group != null) {
+			return messages.format(
+					"pages.groups.members.delete.confirm.message", group
+							.getName());
+		}
+		return "";
 	}
 
 	public Object onSuccessFromEditGroupForm() {
@@ -463,14 +512,18 @@ public class Index {
 	public Object onSuccessFromEditMemberForm() {
 		try {
 			if (memberToChange.getType().equals(memberToChangeType)) {
-				shareSessionObjects.addWarning(String.format(messages.get("pages.groups.members.edit.unchanged"),
-						memberToChange.getFirstName(), memberToChange.getLastName()) );
-			}
-			else {
-				groupFacade.updateMember(group, userVo, memberToChange.getUserVo(), memberToChangeType);
+				shareSessionObjects.addWarning(String.format(messages
+						.get("pages.groups.members.edit.unchanged"),
+						memberToChange.getFirstName(), memberToChange
+								.getLastName()));
+			} else {
+				groupFacade.updateMember(group, userVo, memberToChange
+						.getUserVo(), memberToChangeType);
 				memberToChange.setType(memberToChangeType);
-				shareSessionObjects.addMessage(String.format(messages.get("pages.groups.members.edit.success"),
-						memberToChange.getFirstName(), memberToChange.getLastName()) );
+				shareSessionObjects.addMessage(String.format(messages
+						.get("pages.groups.members.edit.success"),
+						memberToChange.getFirstName(), memberToChange
+								.getLastName()));
 			}
 		} catch (BusinessException e) {
 			e.printStackTrace();

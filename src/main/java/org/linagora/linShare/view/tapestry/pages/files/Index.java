@@ -43,6 +43,7 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -56,6 +57,7 @@ import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.components.FileUploader;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.services.MyMultipartDecoder;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,6 +136,9 @@ public class Index {
 	
 	@Inject
 	private PageRenderLinkSource linkFactory;
+	
+	@Inject
+	private MailContainerBuilder mailContainerBuilder;
 	
     
 	/* ***********************************************************
@@ -288,7 +293,8 @@ public class Index {
 		boolean flagError=false;
 		for(Object currentObject:object){
 			try {
-				documentFacade.removeDocument(userVo,((DocumentVo)currentObject));
+				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
+				documentFacade.removeDocument(userVo,((DocumentVo)currentObject), mailContainer);
 				
 			} catch (BusinessException e) {
 				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"),
@@ -501,7 +507,8 @@ public class Index {
 	
 			DocumentVo documentVo=getDocumentByUUIDInList((String)object[0]);
 			if(null!=documentVo){
-				documentFacade.removeDocument(userVo, documentVo);
+				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
+				documentFacade.removeDocument(userVo, documentVo, mailContainer);
 				shareSessionObjects.removeDocument(documentVo);
 				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),
 						documentVo.getFileName()) );

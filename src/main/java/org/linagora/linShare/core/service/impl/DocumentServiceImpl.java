@@ -49,6 +49,7 @@ import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
@@ -67,7 +68,6 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
-import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.MimeTypeService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.TimeStampingService;
@@ -638,14 +638,20 @@ public class DocumentServiceImpl implements DocumentService {
 
 	}
 
-	public void deleteFile(String login, String uuid, Reason causeOfDeletion)
+	public void deleteFile(String login, String identifier,
+			Reason causeOfDeletion)
+			throws BusinessException {
+		deleteFileWithNotification(login, identifier, causeOfDeletion, null);
+	}
+	
+	public void deleteFileWithNotification(String login, String uuid, Reason causeOfDeletion, MailContainer mailContainer)
 			throws BusinessException {
 		Document doc = documentRepository.findById(uuid);
 		User owner = userRepository.findByLogin(login);
 		if (null != doc) {
 			try {
 
-				shareService.deleteAllSharesWithDocument(doc, owner);
+				shareService.deleteAllSharesWithDocument(doc, owner, mailContainer);
 
 				owner.deleteDocument(doc);
 
@@ -659,7 +665,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 				FileLogEntry logEntry;
 
-				User systemUser = userRepository.findByLogin("system");
+				//User systemUser = userRepository.findByLogin("system"); //TODO: unused?
 
 				if (Reason.EXPIRY.equals(causeOfDeletion)) {
 					logEntry = new FileLogEntry(owner.getMail(), owner
