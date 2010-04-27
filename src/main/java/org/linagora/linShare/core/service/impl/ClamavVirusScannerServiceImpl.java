@@ -65,7 +65,7 @@ public class ClamavVirusScannerServiceImpl implements VirusScannerService {
 		return disabled;
 	}
 
-	public boolean check(File fileToCheck) {
+	public boolean check(File fileToCheck) throws TechnicalException {
 		try {
 			InputStream fileAsStream = new FileInputStream(fileToCheck);
 			return check(fileAsStream);
