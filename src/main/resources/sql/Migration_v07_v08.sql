@@ -216,3 +216,9 @@ insert into linshare_mail_subjects (parameter_id, subject_id, content, language_
 
 -- Groups
 alter table linshare_group_members add column owner_id int8;
+
+
+-- Sharing date
+alter table linshare_share add column sharing_date timestamp;
+update linshare_share set sharing_date = (expiration_date - INTERVAL '100 days');
+create index index_share_sharing_date on linshare_share (sharing_date);

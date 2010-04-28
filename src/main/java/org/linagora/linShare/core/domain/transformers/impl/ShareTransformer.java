@@ -73,7 +73,7 @@ public class ShareTransformer implements Transformer<Share, ShareDocumentVo> {
 		return new ShareDocumentVo(documentTransformer.disassemble(share.getDocument()),
 				userTransformer.disassemble(share.getSender()), userTransformer.disassemble(share.getReceiver()),
 				share.getExpirationDate(), 
-				share.getDownloaded(), share.getComment());
+				share.getDownloaded(), share.getComment(), share.getSharingDate());
 	}
 
 	public List<ShareDocumentVo> disassembleList(List<Share> entityObjectList) {

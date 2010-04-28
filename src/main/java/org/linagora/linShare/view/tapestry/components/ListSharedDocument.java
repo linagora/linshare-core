@@ -367,6 +367,11 @@ public class ListSharedDocument {
 	   return formatter.format(shareDocument.getShareExpirationDate().getTime());
 	}
 	
+	public String getSharingDate(){
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(shareDocument.getSharingDate().getTime());
+	}
+	
 	public String getFriendlySize(){
 		return FileUtils.getFriendlySize(shareDocument.getSize(),messages);
 	}

@@ -22,7 +22,6 @@ package org.linagora.linShare.core.Facade.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -402,11 +401,9 @@ public class ShareFacadeImpl implements ShareFacade {
 		for (DocumentVo documentVo : documents) {
 			docList.add(documentRepository.findById(documentVo.getIdentifier()));
 		}
-		Calendar expiryDate = GregorianCalendar.getInstance();
-		expiryDate.add(Calendar.YEAR, 3);
 		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, 
 				userRepository.findByLogin(owner.getLogin()),
-				groupUserObjectsList, "", expiryDate);
+				groupUserObjectsList, "", null);
 		
 		
 		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();

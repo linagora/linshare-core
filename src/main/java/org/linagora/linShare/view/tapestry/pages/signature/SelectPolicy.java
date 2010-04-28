@@ -142,7 +142,7 @@ public class SelectPolicy {
 							//in the this list of document it can be documentVO or shareddocumentVO
 							if(!doc.getOwnerLogin().equalsIgnoreCase(userVo.getLogin())){
 								//not the owner
-								doc = new ShareDocumentVo(doc,null,userVo,null,null,null); //sduprey: jamais accedé ?
+								doc = new ShareDocumentVo(doc,null,userVo,null,null,null,null); //sduprey: jamais accedé ?
 							}
 							
 							//want to sign only one time (moreover we do not want to sign encrypted doc)

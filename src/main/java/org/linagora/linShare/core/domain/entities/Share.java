@@ -22,6 +22,7 @@ package org.linagora.linShare.core.domain.entities;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 /**
@@ -50,6 +51,9 @@ public class Share implements Serializable  {
 	
 	/** the expiration date of the share*/
 	private Calendar expirationDate;
+	
+	/** the date of the share*/
+	private Calendar sharingDate;
 	
 	/** is the sharing is still active or not */
 	private Boolean shareActive;
@@ -81,6 +85,7 @@ public class Share implements Serializable  {
 		this.expirationDate = expirationDate;
 		this.shareActive = shareActive;
 		this.downloaded = downloaded;
+		this.sharingDate = new GregorianCalendar();
 	}
 
 	public Long getPersistenceId() {
@@ -176,6 +181,16 @@ public class Share implements Serializable  {
 	public int hashCode(){
 		return new StringBuilder().append(sender.hashCode()).append(document.hashCode())
 		.append(receiver.hashCode()).toString().hashCode();
+	}
+
+
+	public void setSharingDate(Calendar sharingDate) {
+		this.sharingDate = sharingDate;
+	}
+
+
+	public Calendar getSharingDate() {
+		return sharingDate;
 	}
 
 
