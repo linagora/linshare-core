@@ -28,6 +28,7 @@ import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -157,6 +158,8 @@ public interface DocumentService {
 	 * @throws BusinessException 
 	 */
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException;
+	
+	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor) throws BusinessException;
 	
 	
 	/**

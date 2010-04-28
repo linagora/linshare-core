@@ -24,7 +24,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
@@ -115,7 +114,7 @@ public interface ShareFacade {
 	 * @param document
 	 * @return
 	 */
-	public List<Share> getSharingsByUserAndFile(UserVo sender, DocumentVo document);
+	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document);
 	
 	
 	/**

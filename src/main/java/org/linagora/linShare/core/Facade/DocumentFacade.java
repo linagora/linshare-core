@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
 
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -85,6 +86,15 @@ public interface DocumentFacade {
 	 * @return inputStream the stream of the document
 	 */
 	public InputStream retrieveFileStream(DocumentVo doc, String actor) throws BusinessException;
+	
+	/**
+	 * Download the shared document
+	 * @param doc
+	 * @param actor
+	 * @return
+	 * @throws BusinessException
+	 */
+	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor) throws BusinessException;
 	
 	/**
 	 * insert a signature file in repository

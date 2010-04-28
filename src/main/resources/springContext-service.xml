@@ -63,6 +63,7 @@
         <constructor-arg index="6" ref="logEntryRepository" />
         <constructor-arg index="7" ref="clamavVirusScannerService" />
         <constructor-arg index="8" ref="timeStampingService" />
+        <constructor-arg index="9" ref="shareTransformer" />
     </bean>
 	     
     
