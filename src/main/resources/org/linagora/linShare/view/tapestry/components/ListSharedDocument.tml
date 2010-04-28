@@ -17,7 +17,7 @@
 		<h2>${message:pages.index.list.sharedfiles.heading}</h2>
 	</t:if>
 	
-	<t:sorter t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listSharedDocument.sorter.date.creation.label},${message:components.listSharedDocument.sorter.date.expiration.label},${message:components.listSharedDocument.sorter.name.label},${message:components.listSharedDocument.sorter.size.label}" t:properties="literal:dateCreation,dateExpiration,name,size"/> 
+	<t:sorter t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listSharedDocument.sorter.date.sharing.label},${message:components.listSharedDocument.sorter.date.expiration.label},${message:components.listSharedDocument.sorter.name.label},${message:components.listSharedDocument.sorter.size.label}" t:properties="literal:dateSharing,dateExpiration,name,size"/> 
 
 	<t:form t:id="search">
 	
@@ -25,7 +25,7 @@
 
 		<t:grid source="shareDocuments" row="shareDocument" model="model"
 			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, sharedWithGroup, type, shareActive, downloaded, comment"
-			rowsPerPage="20">
+			rowsPerPage="10">
 
 
 			<!-- Header definition -->
@@ -68,13 +68,14 @@
 						value="shareDocument.fileName" />
 				</t:actionLink></span>
 				<br/>
-				<span class="creationDate">${creationDate},</span>${message:global.space}
+				<!--span class="creationDate">${creationDate},</span>${message:global.space}-->
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
 				<span class="sharedBy">${message:components.listSharedDocument.grid.sharedBy} 
 					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.login">
 						<span onclick="userDetailsWindow.showCenter(true);">${sharedBy}</span>
 					</t:actionlink>
 				</span>
+				<span class="sharedBy"> ${message:components.listSharedDocument.grid.sharedOn} ${sharingDate}</span>
 			</div>
 			</t:parameter>
 

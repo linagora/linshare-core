@@ -87,6 +87,7 @@
         sender_id int8,
         recipient_id int8,
         expiration_date timestamp,
+        sharing_date timestamp,
         share_active bool,
         downloaded bool,
         comment text,

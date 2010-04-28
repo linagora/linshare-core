@@ -18,6 +18,9 @@
     <property access="field" index="index_share_expiration_date" name="expirationDate" type="calendar">
       <column name="expiration_date"/>
     </property>
+    <property access="field" index="index_share_sharing_date" name="sharingDate" type="calendar">
+      <column name="sharing_date"/>
+    </property>
     <property access="field" column="shareActive" name="shareActive"/>
     <property access="field" column="downloaded" name="downloaded"/>
     <property access="field" column="comment" name="comment" type="text"/>

@@ -31,7 +31,8 @@ import org.linagora.linShare.view.tapestry.models.SorterModel;
 
 public class SharedFileSorterModel implements SorterModel<ShareDocumentVo>{
 
-	private static final String DATE_CREATION_FIELD="dateCreation";
+	private static final String DATE_SHARING_FIELD="dateSharing";
+//	private static final String DATE_CREATION_FIELD="dateCreation";
 	private static final String DATE_EXPIRATION_FIELD="dateExpiration";
 	private static final String NAME_FIELD="name";
 	private static final String SIZE_FIELD="size";
@@ -46,13 +47,20 @@ public class SharedFileSorterModel implements SorterModel<ShareDocumentVo>{
 	 * 
 	 */
 	public Comparator<ShareDocumentVo> getComparator(String fieldId) {
-		if(DATE_CREATION_FIELD.equals(fieldId)){
+		if(DATE_SHARING_FIELD.equals(fieldId)){
 			return new Comparator<ShareDocumentVo>(){
 				public int compare(ShareDocumentVo o1, ShareDocumentVo o2) {
-					return o1.getCreationDate().compareTo(o2.getCreationDate());
+					return o1.getSharingDate().compareTo(o2.getSharingDate());
 				}
 			};
 		}
+//		if(DATE_CREATION_FIELD.equals(fieldId)){
+//			return new Comparator<ShareDocumentVo>(){
+//				public int compare(ShareDocumentVo o1, ShareDocumentVo o2) {
+//					return o1.getCreationDate().compareTo(o2.getCreationDate());
+//				}
+//			};
+//		}
 		if(DATE_EXPIRATION_FIELD.equals(fieldId)){
 			return new Comparator<ShareDocumentVo>(){
 				public int compare(ShareDocumentVo o1, ShareDocumentVo o2) {
@@ -85,9 +93,12 @@ public class SharedFileSorterModel implements SorterModel<ShareDocumentVo>{
 	}
 
 	public Order getOrder(String fieldId) {
-		if(DATE_CREATION_FIELD.equals(fieldId)){
+		if(DATE_SHARING_FIELD.equals(fieldId)){
 			return Order.DESC;
 		}
+//		if(DATE_CREATION_FIELD.equals(fieldId)){
+//			return Order.DESC;
+//		}
 		if(DATE_EXPIRATION_FIELD.equals(fieldId)){
 			return Order.ASC;
 		}

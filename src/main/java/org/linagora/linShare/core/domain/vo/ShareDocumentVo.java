@@ -35,6 +35,9 @@ public class ShareDocumentVo extends DocumentVo {
 	/** the expiration date of the share*/
 	private final Calendar shareExpirationDate;
 	
+	/** the date of the share*/
+	private final Calendar sharingDate;
+	
 	/** is the document has been downloaded */
 	private final Boolean downloaded;
 	
@@ -45,7 +48,7 @@ public class ShareDocumentVo extends DocumentVo {
 			Calendar creationDate, Calendar expirationDate, String type,
 			String ownerLogin, Boolean encrypted, Boolean shared, Boolean sharedWithGroup,
 			Long size, UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
-			Boolean downloaded, String comment) {
+			Boolean downloaded, String comment, Calendar sharingDate) {
 		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin,
 				encrypted, shared, sharedWithGroup, size);
 		
@@ -54,11 +57,12 @@ public class ShareDocumentVo extends DocumentVo {
 		this.shareExpirationDate = shareExpirationDate;
 		this.downloaded = downloaded;
 		this.comment = comment;
+		this.sharingDate = sharingDate;
 	}
 	
 	public ShareDocumentVo(DocumentVo doc,
 			UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
-			Boolean downloaded, String comment) {
+			Boolean downloaded, String comment, Calendar sharingDate) {
 		
 		super(doc.getIdentifier(),doc.getFileName(),doc.getFileComment(),doc.getCreationDate(),doc.getExpirationDate(),doc.getType(), doc.getOwnerLogin(),
 				doc.getEncrypted(),doc.getShared(),doc.getSharedWithGroup(),doc.getSize());
@@ -69,6 +73,7 @@ public class ShareDocumentVo extends DocumentVo {
 		this.shareExpirationDate = shareExpirationDate;
 		this.downloaded = downloaded;
 		this.comment = comment;
+		this.sharingDate = sharingDate;
 	}
 
 	public UserVo getSender() {
@@ -89,6 +94,10 @@ public class ShareDocumentVo extends DocumentVo {
 
 	public String getComment() {
 		return comment;
+	}
+
+	public Calendar getSharingDate() {
+		return sharingDate;
 	}
 
 	
