@@ -217,6 +217,8 @@ public class SignDocument {
 				return  linkFactory.createPageRenderLink("files/Index");
 			} else if (userSignature.getDocContext().equals(DocToSignContext.SHARED)) {
 				return  linkFactory.createPageRenderLink("Index");
+			} else if (userSignature.getDocContext().equals(DocToSignContext.GROUP_SHARED)) {
+				return  linkFactory.createPageRenderLink("groups/Index");
 			}  else return null;
 		}
     }

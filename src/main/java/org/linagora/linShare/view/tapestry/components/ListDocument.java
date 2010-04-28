@@ -68,11 +68,10 @@ import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.Share;
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -354,11 +353,11 @@ public class ListDocument {
 					
 					filleHeaderParams(templateParams);
 					
-					List<Share> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
+					List<ShareDocumentVo> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
 					Map<String, Calendar> securedUrls = securedUrlFacade.getSharingsByMailAndFile(user, docVo);
 
-					for (Share share : shares) {
-						User receiver = share.getReceiver();
+					for (ShareDocumentVo share : shares) {
+						UserVo receiver = share.getReceiver();
 						if (receiver.getUserType().equals(UserType.GROUP)) {
 							filleGroupRowParams(templateRowParams, receiver.getLastName(), formatter.format(share.getExpirationDate().getTime()));
 							tempBufGroup.append(templating.getMessage(templateGroupRow, templateRowParams));

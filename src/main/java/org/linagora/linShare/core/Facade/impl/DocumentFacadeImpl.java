@@ -122,6 +122,10 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		return documentTransformer.disassemble(documentService.getDocument(uuid));
 	}
 	
+	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor) throws BusinessException {
+		return documentService.downloadSharedDocument(doc, actor);
+	}
+	
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException {
 		return documentService.retrieveFileStream(doc, actor);
 	}

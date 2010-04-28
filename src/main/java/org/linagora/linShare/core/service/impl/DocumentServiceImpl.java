@@ -32,7 +32,6 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -55,6 +54,7 @@ import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.Signature;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.transformers.impl.ShareTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
@@ -99,6 +99,8 @@ public class DocumentServiceImpl implements DocumentService {
 
 	private final ShareService shareService;
 
+	private final ShareTransformer shareTransformer;
+
 	private final LogEntryRepository logEntryRepository;
 
 	private static Log log = LogFactory
@@ -112,7 +114,8 @@ public class DocumentServiceImpl implements DocumentService {
 			final ShareService shareService,
 			final LogEntryRepository logEntryRepository,
 			final VirusScannerService virusScannerService,
-			final TimeStampingService timeStampingService) {
+			final TimeStampingService timeStampingService,
+			final ShareTransformer shareTransformer) {
 		this.documentRepository = documentRepository;
 		this.fileSystemDao = fileSystemDao;
 		this.userRepository = userRepository;
@@ -123,6 +126,7 @@ public class DocumentServiceImpl implements DocumentService {
 		this.logEntryRepository = logEntryRepository;
 		this.virusScannerService = virusScannerService;
 		this.timeStampingService = timeStampingService;
+		this.shareTransformer = shareTransformer;
 	}
 
 	/**
@@ -728,36 +732,25 @@ public class DocumentServiceImpl implements DocumentService {
 				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 						"The user couldn't be found");
 			}
-			// must find the share MAIS NON
-			Set<Share> listShare = receiver.getReceivedShares();
-			Share shareToRetrieve = null;
 
-			for (Share share : listShare) {
-				if (share.getDocument().getIdentifier().equals(
-						doc.getIdentifier())) {
-					shareToRetrieve = share;
-					break;
-				}
-			}
+			// must find the share MAIS NON
+//			Set<Share> listShare = receiver.getReceivedShares();
+//			Share shareToRetrieve = null;
+//
+//			for (Share share : listShare) {
+//				if (share.getDocument().getIdentifier().equals(
+//						doc.getIdentifier())) {
+//					shareToRetrieve = share;
+//					break;
+//				}
+//			}
+			Share shareToRetrieve = shareTransformer.assemble((ShareDocumentVo) doc);
 
 			if (shareToRetrieve == null) {
 				throw new BusinessException(
 						BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND,
 						"The sharing couldn't be found");
 			}
-
-			shareToRetrieve.setDownloaded(true);
-
-			ShareLogEntry logEntry;
-
-			logEntry = new ShareLogEntry(shareToRetrieve.getSender().getMail(),
-					shareToRetrieve.getSender().getFirstName(), shareToRetrieve
-							.getSender().getLastName(),
-					LogAction.SHARE_DOWNLOAD, "Download of a sharing", doc
-							.getFileName(), doc.getSize(), doc.getType(), actor
-							.getMail(), actor.getFirstName(), actor
-							.getLastName(), null);
-			logEntryRepository.create(logEntry);
 
 			return this.fileSystemDao.getFileContentByUUID(shareToRetrieve
 					.getDocument().getIdentifier());
@@ -781,6 +774,32 @@ public class DocumentServiceImpl implements DocumentService {
 						"Bad uuid for this user");
 			}
 		}
+	}
+	
+	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor)
+			throws BusinessException {
+		User receiver = userRepository.findByMail(actor.getMail());
+		if (receiver == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"The user couldn't be found");
+		}
+		Share shareToRetrieve = shareTransformer.assemble(doc);
+
+		shareToRetrieve.setDownloaded(true);
+
+		ShareLogEntry logEntry;
+
+		logEntry = new ShareLogEntry(shareToRetrieve.getSender().getMail(),
+				shareToRetrieve.getSender().getFirstName(), shareToRetrieve
+						.getSender().getLastName(),
+				LogAction.SHARE_DOWNLOAD, "Download of a sharing", doc
+						.getFileName(), doc.getSize(), doc.getType(), actor
+						.getMail(), actor.getFirstName(), actor
+						.getLastName(), null);
+		logEntryRepository.create(logEntry);
+		
+		return this.fileSystemDao.getFileContentByUUID(shareToRetrieve
+				.getDocument().getIdentifier());
 	}
 
 	public InputStream retrieveFileStream(DocumentVo doc, String actor) {
