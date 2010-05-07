@@ -283,5 +283,19 @@ public class GroupServiceImpl implements GroupService {
 			}
 		}
 	}
+	
+	public void deleteAllMembershipOfUser(User userToDelete)
+			throws BusinessException {
+		List<Group> groups = groupRepository.findByUser(userToDelete);
+		for (Group group : groups) {
+			for (GroupMember groupMember : group.getMembers()) {
+				if (groupMember.getUser().equals(userToDelete)) {
+					group.removeMember(groupMember);
+					break;
+				}
+			}
+			groupRepository.update(group);
+		}
+	}
 
 }

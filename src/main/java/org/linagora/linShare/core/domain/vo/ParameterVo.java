@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.domain.constants.TimeUnit;
+import org.linagora.linShare.core.domain.entities.MailSubject;
+import org.linagora.linShare.core.domain.entities.MailTemplate;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.entities.WelcomeText;
@@ -53,15 +55,18 @@ public class ParameterVo implements Serializable {
     private List<ShareExpiryRule> shareExpiryRules;
 
     private Set<WelcomeText> welcomeTexts;
+    private Set<MailTemplate> mailTemplates;
+    private Set<MailSubject> mailSubjects;
 
 	public ParameterVo() {
-		this(null, null,false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null);
+		this(null, null,false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null);
 	}
 
 	public ParameterVo(Long fileSizeMax, Long userAvailableSize, Boolean activeMimeType, Boolean activeSignature,
 		Boolean activeEncipherment,Boolean activeDocTimeStamp,Integer guestAccountExpiryTime, TimeUnit guestAccountExpiryUnit, String customLogoUrl, 
 		TimeUnit defaultShareExpiryUnit, Integer defaultShareExpiryTime,
-        List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, Set<WelcomeText> welcomeTexts) {
+        List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, 
+        Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects) {
 		this.fileSizeMax = fileSizeMax;
 		this.userAvailableSize = userAvailableSize;
 		this.activeMimeType = activeMimeType;
@@ -76,6 +81,8 @@ public class ParameterVo implements Serializable {
         this.defaultShareExpiryUnit = defaultShareExpiryUnit;
         this.defaultShareExpiryTime = defaultShareExpiryTime;
         this.deleteDocWithShareExpiryTime = deleteDocWithShareExpiryTime;
+        this.mailTemplates = mailTemplates;
+        this.mailSubjects = mailSubjects;
 	}
 
     public ParameterVo(Parameter parameter) {
@@ -99,6 +106,20 @@ public class ParameterVo implements Serializable {
         if (parameter.getWelcomeTexts()!=null) {
         	for (WelcomeText welcomeText : parameter.getWelcomeTexts()) {
         		welcomeTexts.add(welcomeText);
+        	}
+        }
+        
+        this.mailTemplates = new HashSet<MailTemplate>();
+        if (parameter.getMailTemplates()!=null) {
+        	for (MailTemplate mailTemplate : parameter.getMailTemplates()) {
+        		mailTemplates.add(mailTemplate);
+        	}
+        }
+        
+        this.mailSubjects = new HashSet<MailSubject>();
+        if (parameter.getMailSubjects()!=null) {
+        	for (MailSubject mailSubject : parameter.getMailSubjects()) {
+        		mailSubjects.add(mailSubject);
         	}
         }
         
@@ -186,6 +207,34 @@ public class ParameterVo implements Serializable {
         	}
         }
 
+        if (mailTemplates!=null) {
+        	for (MailTemplate mailTemplate : mailTemplates) {
+        		parameter.addMailTemplate(mailTemplate);
+        	}
+        }
+
+        if (mailSubjects!=null) {
+        	for (MailSubject mailSubject : mailSubjects) {
+        		parameter.addMailSubject(mailSubject);
+        	}
+        }
+
         return parameter;
     }
+
+	public void setMailTemplates(Set<MailTemplate> mailTemplates) {
+		this.mailTemplates = mailTemplates;
+	}
+
+	public Set<MailTemplate> getMailTemplates() {
+		return mailTemplates;
+	}
+
+	public void setMailSubjects(Set<MailSubject> mailSubjects) {
+		this.mailSubjects = mailSubjects;
+	}
+
+	public Set<MailSubject> getMailSubjects() {
+		return mailSubjects;
+	}
 }

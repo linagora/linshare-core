@@ -21,12 +21,13 @@
 package org.linagora.linShare.core.service;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Group;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
@@ -109,9 +110,10 @@ public interface ShareService {
 	 * Delete all the shares related to a document (and log the action)
 	 * @param share
 	 * @param actor
+	 * @param mailContainer
 	 * @throws BusinessException
 	 */
-	public void deleteAllSharesWithDocument(Document doc, User actor) throws BusinessException;
+	public void deleteAllSharesWithDocument(Document doc, User actor, MailContainer mailContainer) throws BusinessException;
 	
 	/**
 	 * Share a document from an user to other.
@@ -164,4 +166,9 @@ public interface ShareService {
      */
     public void logLocalCopyOfDocument(Share share, User user) throws IllegalArgumentException, BusinessException;
 
+    /**
+     * Notify a group that a shared file was deleted
+     */
+    public void notifyGroupSharingDeleted(Document doc, User manager, Group group,
+			MailContainer mailContainer) throws BusinessException;
 }

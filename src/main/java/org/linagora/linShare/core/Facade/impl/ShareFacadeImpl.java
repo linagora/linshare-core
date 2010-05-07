@@ -22,7 +22,6 @@ package org.linagora.linShare.core.Facade.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +36,7 @@ import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
-import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
+import org.linagora.linShare.core.domain.transformers.impl.GroupTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.ShareTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
@@ -63,8 +62,6 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final ShareService shareService;
 	
-	private final DocumentTransformer documentTransformer;
-	
 	private final ShareTransformer shareTransformer;
 	
 	private final UserRepository<User> userRepository;
@@ -80,12 +77,13 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final UserService userService;
 
     private final DocumentService documentService;
+
+    private final GroupTransformer groupTransformer;
     
     
 	
 	public ShareFacadeImpl(
 			final ShareService shareService,
-			final DocumentTransformer documentTransformer,
 			final ShareTransformer shareTransformer,
 			final UserRepository<User> userRepository,
 			final DocumentRepository documentRepository,
@@ -93,10 +91,10 @@ public class ShareFacadeImpl implements ShareFacade {
 			final NotifierService mailNotifierService,
 			final UserService userService,
             final DocumentService documentService,
-    		final MailContentBuildingService mailElementsFactory) {
+    		final MailContentBuildingService mailElementsFactory,
+    		final GroupTransformer groupTransformer) {
 		super();
 		this.shareService = shareService;
-		this.documentTransformer = documentTransformer;
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
 		this.documentRepository = documentRepository;
@@ -105,6 +103,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.userService = userService;
         this.documentService = documentService;
 		this.mailElementsFactory = mailElementsFactory;
+		this.groupTransformer = groupTransformer;
 	}
 
 	
@@ -181,7 +180,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		return shareTransformer.disassembleList(new ArrayList<Share>(userRecipient.getReceivedShares()));		
 	}
 
-	public List<Share> getSharingsByUserAndFile(UserVo sender, DocumentVo document) {
+	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document) {
 		User userSender = userRepository.findByLogin(sender.getLogin());
 		if (userSender==null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
@@ -196,7 +195,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			}
 		}
 		
-		return sharingsOfDocument;
+		return shareTransformer.disassembleList(sharingsOfDocument);
 	}
 
 	public void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException {
@@ -402,11 +401,9 @@ public class ShareFacadeImpl implements ShareFacade {
 		for (DocumentVo documentVo : documents) {
 			docList.add(documentRepository.findById(documentVo.getIdentifier()));
 		}
-		Calendar expiryDate = GregorianCalendar.getInstance();
-		expiryDate.add(Calendar.YEAR, 3);
 		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, 
 				userRepository.findByLogin(owner.getLogin()),
-				groupUserObjectsList, "", expiryDate);
+				groupUserObjectsList, "", null);
 		
 		
 		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
@@ -432,5 +429,14 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		return results;
     }
-
+	
+	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo managerVo,
+			GroupVo groupVo, MailContainer mailContainer)
+			throws BusinessException {
+		Group group = groupTransformer.assemble(groupVo);
+		Document doc = documentRepository.findById(shareddoc.getIdentifier());
+		User manager = userRepository.findByLogin(managerVo.getLogin());
+		
+		shareService.notifyGroupSharingDeleted(doc, manager, group, mailContainer);
+	}
 }

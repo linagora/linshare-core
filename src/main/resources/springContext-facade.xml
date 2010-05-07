@@ -33,7 +33,6 @@
  
  	<bean name="shareFacade" class="org.linagora.linShare.core.Facade.impl.ShareFacadeImpl">
        	 <constructor-arg ref="shareService"/>
-       	 <constructor-arg ref="documentTransformer"/>
        	 <constructor-arg ref="shareTransformer"/>
        	 <constructor-arg ref="userRepository"/>
        	 <constructor-arg ref="documentRepository"/>
@@ -42,6 +41,7 @@
        	 <constructor-arg ref="userService"/>
          <constructor-arg ref="documentService"/>
          <constructor-arg ref="mailContentBuildingService" />
+         <constructor-arg ref="groupTransformer" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linShare.core.Facade.impl.ShareExpiryDateFacadeImpl">
@@ -94,9 +94,6 @@
        	 <constructor-arg ref="userService"/>
        	 <constructor-arg ref="groupService"/>
        	 <constructor-arg ref="groupTransformer"/>
-       	 <constructor-arg ref="notifierService"/>
-       	 <constructor-arg ref="documentRepository"/>
-       	 <constructor-arg ref="mailContentBuildingService" />
    	  </bean>
        
        

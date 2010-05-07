@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linShare.core.domain.constants.MailTemplateEnum;
+import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
@@ -540,6 +541,27 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         
         return template;
 	}
+
+	/**
+	 * Template SHARED_FILE_DELETED
+	 */
+	private MailTemplate buildTemplateSharedFileDeleted(Language language, Document doc, User owner) throws BusinessException {
+		MailTemplate template = getMailTemplate(language, MailTemplateEnum.SHARED_FILE_DELETED);
+		String contentTXT = template.getContentTXT();
+		String contentHTML = template.getContentHTML();
+		
+		contentTXT = StringUtils.replace(contentTXT, "${firstName}", owner.getFirstName());
+		contentTXT = StringUtils.replace(contentTXT, "${lastName}", owner.getLastName());
+        contentTXT = StringUtils.replace(contentTXT, "${documentName}", doc.getName());
+        contentHTML = StringUtils.replace(contentHTML, "${firstName}", owner.getFirstName());
+		contentHTML = StringUtils.replace(contentHTML, "${lastName}", owner.getLastName());
+        contentHTML = StringUtils.replace(contentHTML, "${documentName}", doc.getName());
+        
+        template.setContentTXT(contentTXT);
+        template.setContentHTML(contentHTML);
+        
+        return template;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailAnonymousDownload(org.linagora.linShare.core.domain.entities.MailContainer, java.util.List, java.lang.String, org.linagora.linShare.core.domain.entities.User)
@@ -769,5 +791,28 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		
 		return buildMailContainer(mailContainer, subjectString, contentTXT.toString(), contentHTML.toString(), newMember.getUser(), null, null);
+	}
+	
+	public MailContainer buildMailSharedFileDeleted(
+			MailContainer mailContainer, Document doc, User owner,
+			Contact receiver)
+			throws BusinessException {
+		User tempUser = new Guest(receiver.getMail(), receiver.getMail(), "", receiver.getMail());
+		return buildMailSharedFileDeleted(mailContainer, doc, owner, tempUser);
+	}
+	
+	public MailContainer buildMailSharedFileDeleted(
+			MailContainer mailContainer, Document doc, User owner, User receiver) 
+			throws BusinessException {
+
+		MailTemplate template1 = buildTemplateSharedFileDeleted(mailContainer.getLanguage(), doc, owner);
+		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_DELETED);
+        
+		StringBuffer contentTXT = new StringBuffer();
+		StringBuffer contentHTML = new StringBuffer();
+		contentTXT.append(template1.getContentTXT() + "\n");
+		contentHTML.append(template1.getContentHTML() + "<br />");
+		
+		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), receiver, null, null);
 	}
 }

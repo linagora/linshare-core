@@ -23,6 +23,8 @@ package org.linagora.linShare.core.service;
 import java.io.File;
 import java.io.InputStream;
 
+import org.linagora.linShare.core.exception.TechnicalException;
+
 /**
  * Interface to VirusScanner
  */
@@ -38,7 +40,7 @@ public interface VirusScannerService {
 	 * @param fileToCheck a file to check
 	 * @return return true if the file is safe. return false if the file contains a virus
 	 */
-	boolean check(File fileToCheck);
+	boolean check(File fileToCheck) throws TechnicalException;
 	
 	/**
 	 * Check if a stream is safe

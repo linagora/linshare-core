@@ -32,7 +32,6 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -49,11 +48,13 @@ import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.Signature;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.transformers.impl.ShareTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
@@ -67,7 +68,6 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
-import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.MimeTypeService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.TimeStampingService;
@@ -99,6 +99,8 @@ public class DocumentServiceImpl implements DocumentService {
 
 	private final ShareService shareService;
 
+	private final ShareTransformer shareTransformer;
+
 	private final LogEntryRepository logEntryRepository;
 
 	private static Log log = LogFactory
@@ -112,7 +114,8 @@ public class DocumentServiceImpl implements DocumentService {
 			final ShareService shareService,
 			final LogEntryRepository logEntryRepository,
 			final VirusScannerService virusScannerService,
-			final TimeStampingService timeStampingService) {
+			final TimeStampingService timeStampingService,
+			final ShareTransformer shareTransformer) {
 		this.documentRepository = documentRepository;
 		this.fileSystemDao = fileSystemDao;
 		this.userRepository = userRepository;
@@ -123,6 +126,7 @@ public class DocumentServiceImpl implements DocumentService {
 		this.logEntryRepository = logEntryRepository;
 		this.virusScannerService = virusScannerService;
 		this.timeStampingService = timeStampingService;
+		this.shareTransformer = shareTransformer;
 	}
 
 	/**
@@ -286,15 +290,24 @@ public class DocumentServiceImpl implements DocumentService {
 					+ !virusScannerService.isDisabled());
 		}
 
-		// check if the file contains virus
-		if ((!virusScannerService.isDisabled())
-				&& (!virusScannerService.check(tempFile))) {
-			log.warn(owner.getMail()
-					+ " tried to upload a file containing virus:" + fileName);
-			tempFile.delete(); // SOS ! do not keep the file on the system...
-            String[] extras = {fileName};
-			throw new BusinessException(BusinessErrorCode.FILE_CONTAINS_VIRUS,
-					"File contains virus", extras);
+		if (!virusScannerService.isDisabled()) {
+			boolean checkStatus = false;
+			try {
+				checkStatus = virusScannerService.check(tempFile);
+			} catch (TechnicalException e) {
+				log.error("File scan failed: antivirus enabled but not available ?");
+				throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED,
+					"File scan failed", e);
+			}
+			// check if the file contains virus
+			if (!checkStatus) {
+				log.warn(owner.getMail()
+						+ " tried to upload a file containing virus:" + fileName);
+				tempFile.delete(); // SOS ! do not keep the file on the system...
+	            String[] extras = {fileName};
+				throw new BusinessException(BusinessErrorCode.FILE_CONTAINS_VIRUS,
+						"File contains virus", extras);
+			}
 		}
 
 		
@@ -629,14 +642,20 @@ public class DocumentServiceImpl implements DocumentService {
 
 	}
 
-	public void deleteFile(String login, String uuid, Reason causeOfDeletion)
+	public void deleteFile(String login, String identifier,
+			Reason causeOfDeletion)
+			throws BusinessException {
+		deleteFileWithNotification(login, identifier, causeOfDeletion, null);
+	}
+	
+	public void deleteFileWithNotification(String login, String uuid, Reason causeOfDeletion, MailContainer mailContainer)
 			throws BusinessException {
 		Document doc = documentRepository.findById(uuid);
 		User owner = userRepository.findByLogin(login);
 		if (null != doc) {
 			try {
 
-				shareService.deleteAllSharesWithDocument(doc, owner);
+				shareService.deleteAllSharesWithDocument(doc, owner, mailContainer);
 
 				owner.deleteDocument(doc);
 
@@ -650,7 +669,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 				FileLogEntry logEntry;
 
-				User systemUser = userRepository.findByLogin("system");
+				//User systemUser = userRepository.findByLogin("system"); //TODO: unused?
 
 				if (Reason.EXPIRY.equals(causeOfDeletion)) {
 					logEntry = new FileLogEntry(owner.getMail(), owner
@@ -713,36 +732,25 @@ public class DocumentServiceImpl implements DocumentService {
 				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
 						"The user couldn't be found");
 			}
-			// must find the share MAIS NON
-			Set<Share> listShare = receiver.getReceivedShares();
-			Share shareToRetrieve = null;
 
-			for (Share share : listShare) {
-				if (share.getDocument().getIdentifier().equals(
-						doc.getIdentifier())) {
-					shareToRetrieve = share;
-					break;
-				}
-			}
+			// must find the share MAIS NON
+//			Set<Share> listShare = receiver.getReceivedShares();
+//			Share shareToRetrieve = null;
+//
+//			for (Share share : listShare) {
+//				if (share.getDocument().getIdentifier().equals(
+//						doc.getIdentifier())) {
+//					shareToRetrieve = share;
+//					break;
+//				}
+//			}
+			Share shareToRetrieve = shareTransformer.assemble((ShareDocumentVo) doc);
 
 			if (shareToRetrieve == null) {
 				throw new BusinessException(
 						BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND,
 						"The sharing couldn't be found");
 			}
-
-			shareToRetrieve.setDownloaded(true);
-
-			ShareLogEntry logEntry;
-
-			logEntry = new ShareLogEntry(shareToRetrieve.getSender().getMail(),
-					shareToRetrieve.getSender().getFirstName(), shareToRetrieve
-							.getSender().getLastName(),
-					LogAction.SHARE_DOWNLOAD, "Download of a sharing", doc
-							.getFileName(), doc.getSize(), doc.getType(), actor
-							.getMail(), actor.getFirstName(), actor
-							.getLastName(), null);
-			logEntryRepository.create(logEntry);
 
 			return this.fileSystemDao.getFileContentByUUID(shareToRetrieve
 					.getDocument().getIdentifier());
@@ -766,6 +774,32 @@ public class DocumentServiceImpl implements DocumentService {
 						"Bad uuid for this user");
 			}
 		}
+	}
+	
+	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor)
+			throws BusinessException {
+		User receiver = userRepository.findByMail(actor.getMail());
+		if (receiver == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"The user couldn't be found");
+		}
+		Share shareToRetrieve = shareTransformer.assemble(doc);
+
+		shareToRetrieve.setDownloaded(true);
+
+		ShareLogEntry logEntry;
+
+		logEntry = new ShareLogEntry(shareToRetrieve.getSender().getMail(),
+				shareToRetrieve.getSender().getFirstName(), shareToRetrieve
+						.getSender().getLastName(),
+				LogAction.SHARE_DOWNLOAD, "Download of a sharing", doc
+						.getFileName(), doc.getSize(), doc.getType(), actor
+						.getMail(), actor.getFirstName(), actor
+						.getLastName(), null);
+		logEntryRepository.create(logEntry);
+		
+		return this.fileSystemDao.getFileContentByUUID(shareToRetrieve
+				.getDocument().getIdentifier());
 	}
 
 	public InputStream retrieveFileStream(DocumentVo doc, String actor) {

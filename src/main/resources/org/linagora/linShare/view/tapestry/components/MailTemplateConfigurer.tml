@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h3>${message:components.mailTemplateConfigurer.title}</h3>
+    <div id="mailTemplatesConfigurer">
+    <t:form t:id="mailTemplateForm">
+        <t:grid source="mailTemplates" row="mailTemplate" add="action"
+        	reorder="language, mailTemplate, contentHTML, contentTXT, action"
+        	rowsPerPage="6">
+        	<t:parameter t:name="contentHTMLCell">
+        		<t:if test="inModificationState">
+        			<t:textarea t:id="valueHTML" t:value="mailTemplate.contentHTML" t:validate="required" rows="4" cols="45" />
+        		</t:if>
+        		<t:if test="inModificationState" negate="true">
+        			${mailTemplate.contentHTML}
+        		</t:if>
+        	</t:parameter>
+        	<t:parameter t:name="contentTXTCell">
+        		<t:if test="inModificationState">
+        			<t:textarea t:id="valueTXT" t:value="mailTemplate.contentTXT" t:validate="required" rows="4" cols="45"/>
+        		</t:if>
+        		<t:if test="inModificationState" negate="true">
+        			${mailTemplate.contentTXT}
+        		</t:if>
+        	</t:parameter>
+        	<t:parameter t:name="actionCell">
+        		<t:if test="inModificationState" negate="true">
+                	<t:actionLink t:id="switchToModificationState" context="mailTemplate">
+                    	<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
+                    		title="${message:global.button.edit}"/>
+               		</t:actionLink>
+        		</t:if>
+        		<t:if test="inModificationState">					
+					<t:linkSubmit title="${message:global.button.edit}" alt="${message:global.button.edit}">
+						<img src="${asset:context:images/icons/validate.png}" alt="${message:global.button.edit}" />
+					</t:linkSubmit>
+<!--                	<t:actionLink t:id="switchFromModificationState" context="mailTemplate">-->
+<!--                    	<img src="${asset:context:images/icons/cancel.png}" alt="${message:global.button.cancel}"-->
+<!--                    		title="${message:global.button.cancel}"/>-->
+<!--               		</t:actionLink>-->
+        		</t:if>
+        	</t:parameter>
+        </t:grid>
+	</t:form>
+    </div>
+</t:container>

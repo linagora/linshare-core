@@ -3582,6 +3582,13 @@ div.t-beaneditor {
 	margin-left: 26em !important;
 }
 
+#mailTemplatesConfigurer td {
+	white-space: normal;	
+}
+
+#mailSubjectsConfigurer td {
+	white-space: normal;	
+}
 
 /***************************************************************************/
 /* EOF */

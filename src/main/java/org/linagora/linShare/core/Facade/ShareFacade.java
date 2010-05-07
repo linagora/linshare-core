@@ -24,7 +24,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
@@ -115,7 +114,7 @@ public interface ShareFacade {
 	 * @param document
 	 * @return
 	 */
-	public List<Share> getSharingsByUserAndFile(UserVo sender, DocumentVo document);
+	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document);
 	
 	
 	/**
@@ -168,4 +167,13 @@ public interface ShareFacade {
 	 */
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException;
 
+	/**
+	 * Notify a group that a sharing was deleted
+	 * @param shareddoc
+	 * @param manager
+	 * @param group
+	 * @param mailContainer
+	 * @throws BusinessException
+	 */
+	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo manager, GroupVo group, MailContainer mailContainer) throws BusinessException;
 }

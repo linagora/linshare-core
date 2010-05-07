@@ -53,6 +53,7 @@ import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -85,8 +86,6 @@ public class ListSharedDocument {
 	 */
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
 	private UserVo user;
-	@Parameter(required=false,defaultPrefix=BindingConstants.PROP)
-	private UserVo groupUser;
 
 	/**
 	 * The list of documents.
@@ -98,10 +97,6 @@ public class ListSharedDocument {
     @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
     @Property
     private boolean inSearch;
-    
-    @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
-    @Property
-    private boolean inGroup;
     
     @Parameter(required = false, defaultPrefix = BindingConstants.PROP)
     @Property
@@ -231,7 +226,7 @@ public class ListSharedDocument {
 		}else{
 			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
 			
-			InputStream stream=documentFacade.retrieveFileStream(currentSharedDocumentVo, user);
+			InputStream stream=documentFacade.downloadSharedDocument(currentSharedDocumentVo, user);
 			
 			//send an email to the owner if it is the first time the document is downloaded
 			if (!alreadyDownloaded) {
@@ -265,6 +260,10 @@ public class ListSharedDocument {
 		if(null==shareddoc){
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		}else{
+			// context is shared with group document
+			if (shareddoc.getReceiver().getUserType().equals(UserType.GROUP)) {
+				return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", new Object[]{DocToSignContext.GROUP_SHARED.toString(),shareddoc.getReceiver().getLastName(),shareddoc.getIdentifier()});
+			}
 			// context is shared document
 			return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
 		}
@@ -366,6 +365,11 @@ public class ListSharedDocument {
 	public String getExpirationDate(){
 	   SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 	   return formatter.format(shareDocument.getShareExpirationDate().getTime());
+	}
+	
+	public String getSharingDate(){
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(shareDocument.getSharingDate().getTime());
 	}
 	
 	public String getFriendlySize(){
