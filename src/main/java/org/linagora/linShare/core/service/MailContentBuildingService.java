@@ -30,6 +30,7 @@ import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
 /**
@@ -109,16 +110,20 @@ public interface MailContentBuildingService {
 	 * Notify a user that the group received new sharing
 	 */
 	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
-			User owner, User recipient, Group group, List<DocumentVo> docs,
-			String linShareUrl, String linShareUrlParam)
+			User owner, User recipient, Group group, List<ShareDocumentVo> docs,
+			String linShareUrl, String linShareUrlParam,
+			boolean isOneDocEncrypted, String jwsEncryptUrlString)
 			throws BusinessException;
 
 	/**
 	 * Notify a group (functional email) for a new sharing
+	 * @param jwsEncryptUrlString 
+	 * @param isOneDocEncrypted 
 	 */
 	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
-			User owner, Group group, List<DocumentVo> docs,
-			String linShareUrl, String linShareUrlParam)
+			User owner, Group group, List<ShareDocumentVo> docs,
+			String linShareUrl, String linShareUrlParam,
+			boolean isOneDocEncrypted, String jwsEncryptUrlString)
 			throws BusinessException;
 
 	/**

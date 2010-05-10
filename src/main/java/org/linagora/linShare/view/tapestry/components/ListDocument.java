@@ -196,10 +196,6 @@ public class ListDocument {
 	@InjectComponent
 	private WarningDisplayer warningSignature;
 	
-	@Property(write = false)
-	@InjectComponent
-	private WarningDisplayer warningShare;
-	
 	
 
 	@InjectComponent
@@ -588,10 +584,6 @@ public class ListDocument {
 
 	public Zone onActionFromShowSignature(String docidentifier) {
 		return signatureDetailsDisplayer.getShowSignature(docidentifier);
-	}
-	
-	public Zone onActionFromShowWarningShareTer() {
-		return warningShare.getShowWarning();
 	}
 	
 
