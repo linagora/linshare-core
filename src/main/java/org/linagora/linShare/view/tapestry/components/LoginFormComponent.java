@@ -20,6 +20,8 @@
 */
 package org.linagora.linShare.view.tapestry.components;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -46,7 +48,6 @@ public class LoginFormComponent {
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-	@SuppressWarnings("unused")
 	@SessionState
 	private UserVo userDetailsVo;
 
@@ -62,6 +63,9 @@ public class LoginFormComponent {
 	@Inject @Symbol("sso.button.hide")
 	@Property
 	private boolean ssoButtonHide;
+	
+	@Inject
+	private HttpServletRequest httpServletRequest;
     
 
     /* ***********************************************************
@@ -81,6 +85,10 @@ public class LoginFormComponent {
         } else {
             return false;
         }
+    }
+    
+    public String getSpringLogoutLink() {
+    	return (httpServletRequest.getContextPath()+"/j_spring_security_logout");
     }
 
 }
