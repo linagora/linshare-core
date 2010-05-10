@@ -4,7 +4,7 @@
 		<div class="logout">
 			<span class="userName">${userName}</span>
 			${message:global.space}
-			<t:pagelink page="logout">${message:pages.index.link.logout}</t:pagelink>
+			<a href="${springLogoutLink}" title="${message:pages.index.link.logout}">${message:pages.index.link.logout}</a>
 		</div>
 	<t:parameter name="else">
 		<t:pagelink page="password/reset">${message:pages.index.link.password}</t:pagelink>
