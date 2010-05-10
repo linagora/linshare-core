@@ -119,13 +119,13 @@
 				<img src="${asset:context:images/icons/pin.png}" />
 				</div>
 				</t:if>
-				<span class="creationDate">${creationDate},</span>${message:global.space}
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
-				<span class="ownerLogin">
-					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="document.ownerlogin">
-						<span  onclick="literal:userDetailsWindow.showCenter(true);">${document.ownerlogin}</span>
-					</t:actionlink>
-				</span>
+				<span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
+<!--				<span class="ownerLogin">-->
+<!--					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="document.ownerlogin">-->
+<!--						<span  onclick="literal:userDetailsWindow.showCenter(true);">${document.ownerlogin}</span>-->
+<!--					</t:actionlink>-->
+<!--				</span>-->
 			</div>
 			</t:parameter>
 			
@@ -158,31 +158,17 @@
 			</t:parameter>
 
 			<t:parameter t:name="sharedWithGroupCell">
-				<t:if t:test="${document.encrypted}">
-					<t:actionLink t:id="showWarningShareTer" zone="${warningShare.zoneClientId}" context="${document.identifier}">
-						<t:if t:test="${document.sharedWithGroup}">
-							<span t:type="chenillekit/Tooltip" title="${tooltipGroupTitle}" value="${toolTipGroupValue}" effect="appear">
-								<img src="${asset:context:images/icons/share-group-on.png}" alt="" title="${message:components.listDocument.picture.sharegroupon.title}" onClick="literal:${warningShare.javascriptOpenPopup}" />
-							</span>
-						</t:if>
-						<t:if t:test="${document.sharedWithGroup}" negate="true">
-							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.sharegroupoff.title}" onClick="literal:${warningShare.javascriptOpenPopup}"/>
-						</t:if>
-					</t:actionLink>
-				<t:parameter name="else">
-					<t:actionLink t:id="uniqueShareWithGroupLinkBis"
-						context="${document.identifier}">
-						<t:if t:test="${document.sharedWithGroup}">
-							<span t:type="chenillekit/Tooltip" title="${tooltipGroupTitle}" value="${toolTipGroupValue}" effect="appear">
-								<img src="${asset:context:images/icons/share-group-on.png}" alt="" title="${message:components.listDocument.picture.sharegroupon.title}" />
-							</span>
-						</t:if>
-						<t:if t:test="${document.sharedWithGroup}" negate="true">
-							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.sharegroupoff.title}" />
-						</t:if>
-					</t:actionLink>
-				</t:parameter>
-				</t:if>
+				<t:actionLink t:id="uniqueShareWithGroupLinkBis"
+					context="${document.identifier}">
+					<t:if t:test="${document.sharedWithGroup}">
+						<span t:type="chenillekit/Tooltip" title="${tooltipGroupTitle}" value="${toolTipGroupValue}" effect="appear">
+							<img src="${asset:context:images/icons/share-group-on.png}" alt="" title="${message:components.listDocument.picture.sharegroupon.title}" />
+						</span>
+					</t:if>
+					<t:if t:test="${document.sharedWithGroup}" negate="true">
+						<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.sharegroupoff.title}" />
+					</t:if>
+				</t:actionLink>
 			</t:parameter>
 
 			<t:parameter t:name="signedCell">
@@ -264,8 +250,6 @@
 
 	<t:passwordCryptPopupSubmit t:id="passwordCryptPopupSubmit" t:formId="search" t:title="${message:components.listDocument.passwordCryptPopup.title}" t:content="${message:components.listDocument.passwordCryptPopup.content}" t:errorBanner="${message:components.listDocument.passwordCryptPopup.errorBanner}" />
 	<t:passwordDecryptPopupSubmit t:id="passwordDecryptPopupSubmit" t:formId="search" t:title="${message:components.listDocument.passwordDecryptPopup.title}" t:content="${message:components.listDocument.passwordDecryptPopup.content}" t:errorBanner="${message:components.listDocument.passwordDecryptPopup.errorBanner}" />
-
-	<t:WarningDisplayer  t:id="warningShare" t:warningMessage="${message:components.listDocument.warningDisplayer.message.share}"/>
 
 	<t:WarningDisplayer  t:id="warningSignature" t:warningMessage="${message:components.listDocument.warningDisplayer.message.signature}"/>
 

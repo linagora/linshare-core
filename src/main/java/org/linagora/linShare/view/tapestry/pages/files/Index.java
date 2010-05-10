@@ -560,17 +560,17 @@ public class Index {
 		if(null!=documentVoTemp){
 			
 			//check is the document is encrypted and give a warning
-			if(documentVoTemp.getEncrypted()){
-			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.shareOneEncryptedFile"),
-					documentVoTemp.getFileName()) );
-			} else {
+//			if(documentVoTemp.getEncrypted()){
+//			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.shareOneEncryptedFile"),
+//					documentVoTemp.getFileName()) );
+//			} else {
 				
 				//enable direct sharing on this document
 				flagGroupShare=true;
 				shareSessionObjects.getDocuments().clear(); //delete all other doc
 				shareSessionObjects.addDocument(documentVoTemp);
 				shareSessionObjects.setMultipleSharing(false);
-			}
+//			}
 		}
 
 	}
