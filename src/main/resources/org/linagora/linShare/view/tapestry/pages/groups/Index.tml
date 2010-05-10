@@ -126,7 +126,7 @@
 			<t:parameter name="mailCell">
 				<div>
 					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${showUserTooltip}" context="member.mail">
-						<span  onclick="userDetailsWindow.showCenter(true);">${member.firstName} ${member.lastName}</span>
+						<span class="creationDate" onclick="userDetailsWindow.showCenter(true);">${member.firstName} ${member.lastName}</span>
 					</t:actionlink>
 					<br/>
 					<span class="emailAddress">

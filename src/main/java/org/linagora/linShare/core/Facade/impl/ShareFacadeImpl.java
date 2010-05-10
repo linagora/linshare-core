@@ -397,10 +397,24 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 
 		
+		boolean isOneDocEncrypted = false;
+		
 		List<Document> docList = new ArrayList<Document>();
 		for (DocumentVo documentVo : documents) {
+			if(documentVo.getEncrypted()==true) isOneDocEncrypted = true;
 			docList.add(documentRepository.findById(documentVo.getIdentifier()));
 		}
+		
+		//if one document is encrypted include message html or txt asset for "crypted" in the final message
+		String jwsEncryptUrlString = "";
+		if(isOneDocEncrypted){
+			StringBuffer jwsEncryptUrl = new StringBuffer();
+			jwsEncryptUrl.append(mailContainer.getData("urlBase"));
+			if(!mailContainer.getData("urlBase").endsWith("/")) jwsEncryptUrl.append("/");
+			jwsEncryptUrl.append("localDecrypt");
+			jwsEncryptUrlString = jwsEncryptUrl.toString();
+		}
+		
 		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, 
 				userRepository.findByLogin(owner.getLogin()),
 				groupUserObjectsList, "", null);
@@ -414,15 +428,17 @@ public class ShareFacadeImpl implements ShareFacade {
 		 * Send notification ; if a functional mailBox is given, to this mailBox, 
 		 * otherwise to each group member.
 		 */
-		for (Group group : groupList) {
-			String functionalMail = group.getFunctionalEmail();
-			if (functionalMail != null && functionalMail.length() > 0) {
-				mailContainer = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, group, documents, mailContainer.getData("urlBase"), "groups");
-				notifierService.sendNotification(owner.getMail(),functionalMail, mailContainer);
-			} else {
-				for (GroupMember member : group.getMembers()) {
-					MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, member.getUser(), group, documents, mailContainer.getData("urlBase"), "groups");
-					notifierService.sendNotification(owner.getMail(), member.getUser().getMail(), mailContainer_);
+		if (results.getSuccessesItem() != null && results.getSuccessesItem().size() > 0) {
+			for (Group group : groupList) {
+				String functionalMail = group.getFunctionalEmail();
+				if (functionalMail != null && functionalMail.length() > 0) {
+					mailContainer = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, group, results.getSuccessesItem(), mailContainer.getData("urlBase"), "groups", isOneDocEncrypted, jwsEncryptUrlString);
+					notifierService.sendNotification(owner.getMail(),functionalMail, mailContainer);
+				} else {
+					for (GroupMember member : group.getMembers()) {
+						MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, member.getUser(), group, results.getSuccessesItem(), mailContainer.getData("urlBase"), "groups", isOneDocEncrypted, jwsEncryptUrlString);
+						notifierService.sendNotification(owner.getMail(), member.getUser().getMail(), mailContainer_);
+					}
 				}
 			}
 		}

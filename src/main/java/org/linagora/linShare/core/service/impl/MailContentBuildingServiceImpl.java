@@ -41,6 +41,7 @@ import org.linagora.linShare.core.domain.entities.MailTemplate;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
@@ -441,7 +442,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template GROUP_SHARE_NOTIFICATION
 	 */
-	private MailTemplate buildTemplateGroupShareNotification(Language language, List<DocumentVo> docs, User owner, Group group) throws BusinessException {
+	private MailTemplate buildTemplateGroupShareNotification(Language language, List<ShareDocumentVo> docs, User owner, Group group) throws BusinessException {
 		MailTemplate template = getMailTemplate(language, MailTemplateEnum.GROUP_SHARE_NOTIFICATION);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
@@ -691,21 +692,23 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewGroupSharing(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, java.util.List, java.lang.String, java.lang.String)
 	 */
 	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
-			User owner, Group group, List<DocumentVo> docs, String linShareUrl,
-			String linShareUrlParam) throws BusinessException {
+			User owner, Group group, List<ShareDocumentVo> docs, String linShareUrl,
+			String linShareUrlParam, boolean isOneDocEncrypted, String jwsEncryptUrlString) throws BusinessException {
 		User tempUser = new Guest(group.getFunctionalEmail(), group.getFunctionalEmail(), "", group.getFunctionalEmail());
-		return buildMailNewGroupSharing(mailContainer, owner, tempUser, group, docs, linShareUrl, linShareUrlParam);
+		return buildMailNewGroupSharing(mailContainer, owner, tempUser, group, docs, linShareUrl, linShareUrlParam, isOneDocEncrypted, jwsEncryptUrlString);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewGroupSharing(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, java.util.List, java.lang.String, java.lang.String)
 	 */
 	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
-			User owner, User recipient, Group group, List<DocumentVo> docs,
-			String linShareUrl, String linShareUrlParam)
+			User owner, User recipient, Group group, List<ShareDocumentVo> docs,
+			String linShareUrl, String linShareUrlParam,
+			boolean isOneDocEncrypted, String jwsEncryptUrlString)
 			throws BusinessException {
 		MailTemplate template1 = buildTemplateGroupShareNotification(mailContainer.getLanguage(), docs, owner, group);
 		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
+		MailTemplate template3 = buildTemplateDecryptUrl(mailContainer.getLanguage(), isOneDocEncrypted, linShareUrl, jwsEncryptUrlString);
 		
 		String subjectContent = mailContainer.getSubject();
 		if (subjectContent == null || subjectContent.length() < 1) {
@@ -718,8 +721,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		StringBuffer contentHTML = new StringBuffer();
 		contentTXT.append(template1.getContentTXT() + "\n");
 		contentTXT.append(template2.getContentTXT() + "\n");
+		contentTXT.append(template3.getContentTXT() + "\n");
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		contentHTML.append(template2.getContentHTML() + "<br />");
+		contentHTML.append(template3.getContentHTML() + "<br />");
 		
 		return buildMailContainer(mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
 	}
