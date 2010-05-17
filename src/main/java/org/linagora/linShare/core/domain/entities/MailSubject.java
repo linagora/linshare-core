@@ -76,5 +76,34 @@ public class MailSubject {
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MailSubject other = (MailSubject) obj;
+        if (this.mailSubject != other.mailSubject) {
+            return false;
+        }
+        if (this.language != other.language) {
+            return false;
+        }
+        
+        return true;
+	}
+	
+	@Override
+	public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + (this.mailSubject != null ? this.mailSubject.hashCode() : 0);
+        hash = 71 * hash + (this.language != null ? this.language.hashCode() : 0);
+        return hash;
+	}
+	
 
 }
