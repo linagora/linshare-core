@@ -1011,6 +1011,16 @@
     		
     	</profile>
     	<profile>
+    	 	<id>mysql</id>
+    	 	<dependencies>
+    			  <dependency>
+		            <groupId>mysql</groupId>
+		            <artifactId>mysql-connector-java</artifactId>
+		            <version>5.1.12</version>
+		        </dependency>
+    		</dependencies>
+    	</profile>
+    	<profile>
     		<id>distribution</id>
     		<activation>
     			<property>
