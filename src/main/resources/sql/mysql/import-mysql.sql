@@ -79,6 +79,10 @@ insert into linshare_mail_templates (parameter_id, template_id, content_html, co
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,16,'${firstName} ${lastName} has deleted the file <strong>${documentName}</strong> shared with the group <strong>${groupName}</strong>.','${firstName} ${lastName} has deleted the file ${documentName} shared with the group ${groupName}.',0);
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,16,'${firstName} ${lastName} a supprimé le fichier <strong>${documentName}</strong> partagé avec le groupe <strong>${groupName}</strong>.','${firstName} ${lastName} a supprimé le fichier ${documentName} partagé avec le groupe ${groupName}.',1);
 
+-- Template SHARED_FILE_DELETED
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,17,'<strong>${firstName} ${lastName}</strong> has deleted the shared file <strong>${documentName}</strong>.','${firstName} ${lastName} has deleted the shared file ${documentName}.',0);
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,17,'<strong>${firstName} ${lastName}</strong> a supprimé le fichier partagé <strong>${documentName}</strong>.','${firstName} ${lastName} a supprimé le fichier partagé ${documentName}.',1);
+
 -- Subject ANONYMOUS_DOWNLOAD
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 0, 'LinShare: An anonymous user downloaded the file you shared',0);
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 0, 'LinShare : Un utilisateur anonyme a téléchargé des fichiers en partage',1);
@@ -118,4 +122,8 @@ insert into linshare_mail_subjects (parameter_id, subject_id, content, language_
 -- Subject GROUP_SHARING_DELETED
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 9, 'LinShare: A file shared with the group ${groupName} has been deleted.',0);
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 9, 'LinShare : Un fichier partagé avec le groupe ${groupName} a été supprimé',1);
+
+-- Subject SHARED_DOC_DELETED
+insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 10, 'LinShare: An user has deleted a shared file',0);
+insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 10, 'LinShare : Un utilisateur a supprimé un fichier partagé avec vous',1);
 
