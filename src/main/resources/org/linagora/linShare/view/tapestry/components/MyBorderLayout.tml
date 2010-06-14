@@ -54,9 +54,9 @@
         <div id="menuBar">
             <t:if t:test="admin">
                 <t:Menu t:title="Navigation"
-                        t:links="index;files/index;user/index;groups/index;administration/index;administration/audit;help/index"
-                        t:labels="${message:components.myborderlayout.home.title};${message:components.myborderlayout.file.title};${message:components.myborderlayout.user.title};${message:components.myborderlayout.group.title};${message:components.myborderlayout.administration.title};${message:components.myborderlayout.audit.title};${message:components.myborderlayout.help.title}"
-                        t:alternateStyle="false" t:highlights="home;files;user;groups;administration;audit;help" t:currentHighlight="${currentHighlight}" />
+                        t:links="index;files/index;user/index${groupsLink};administration/index;administration/audit;help/index"
+                        t:labels="${message:components.myborderlayout.home.title};${message:components.myborderlayout.file.title};${message:components.myborderlayout.user.title}${groupsLabel};${message:components.myborderlayout.administration.title};${message:components.myborderlayout.audit.title};${message:components.myborderlayout.help.title}"
+                        t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};administration;audit;help" t:currentHighlight="${currentHighlight}" />
             </t:if>
             <t:if t:test="admin" negate="true">
                 <t:if t:test="userExt">
@@ -66,9 +66,9 @@
                 </t:if>
                 <t:if t:test="userExt" negate="true">
                     <t:if t:test="user">
-                        <t:Menu t:title="Navigation" t:links="index;files/index;user/index;groups/index;history/index${helpLink};help/index"
-                                t:labels="${message:components.myborderlayout.home.title};${message:components.myborderlayout.file.title};${message:components.myborderlayout.user.title};${message:components.myborderlayout.group.title};${message:components.myborderlayout.history.title}${helpLabel};${message:components.myborderlayout.help.title}"
-                                t:alternateStyle="false" t:highlights="home;files;user;groups;history${helpHighlight};help" t:currentHighlight="${currentHighlight}" />
+                        <t:Menu t:title="Navigation" t:links="index;files/index;user/index${groupsLink};history/index${helpLink};help/index"
+                                t:labels="${message:components.myborderlayout.home.title};${message:components.myborderlayout.file.title};${message:components.myborderlayout.user.title}${groupsLabel};${message:components.myborderlayout.history.title}${helpLabel};${message:components.myborderlayout.help.title}"
+                                t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};history${helpHighlight};help" t:currentHighlight="${currentHighlight}" />
                     </t:if>
                     <t:if t:test="user" negate="true">
                         <!--  t:if t:test="isHelpPage">-->

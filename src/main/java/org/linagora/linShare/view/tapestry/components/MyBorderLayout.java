@@ -35,6 +35,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
@@ -170,10 +171,24 @@ public class MyBorderLayout {
 	@Property
 	private String helpHighlight ="";
 
+	@Property
+	private String groupsLink ="";
+	
+	@Property
+	private String groupsLabel ="";
+	
+	@Property
+	private String groupsHighlight ="";
+
     @Property(write=false)
     private String customLogoUrl;
+    
+	@Inject @Symbol("linshare.groups.activated")
+	@Property
+	private boolean showGroups;
 	
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
+	private static final String groupsLabelKey = "components.myborderlayout.group.title";
 	
 	/* ***********************************************************
 	 *                       Phase processing
@@ -206,6 +221,7 @@ public class MyBorderLayout {
 	//	includeLocales.add(Locale.JAPANESE);
 	//	includeLocales.add(Locale.CHINESE);
 		initHelpInfo();
+		initGroupsInfo();
 	}
 	
 	
@@ -223,6 +239,16 @@ public class MyBorderLayout {
 			helpLink = pre+"help";
 			helpLabel = pre+messages.get(helpLabelKey);
 			helpHighlight = pre+"help";
+		}
+		
+	}
+	void initGroupsInfo() {
+		String pre = ";";
+		
+		if (showGroups) {
+			groupsLink = pre+"groups";
+			groupsLabel = pre+messages.get(groupsLabelKey);
+			groupsHighlight = pre+"groups";
 		}
 		
 	}
