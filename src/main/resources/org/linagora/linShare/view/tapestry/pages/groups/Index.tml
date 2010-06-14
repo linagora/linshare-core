@@ -2,6 +2,7 @@
 <t:MyBorderLayout t:title="message:pages.groups.index.title" t:identifier="groups" t:currentHighlight="groups"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
+<t:if test="${showGroups}">
 
 	<div id="content">
 
@@ -272,5 +273,11 @@
     <t:zone t:id="zoneConfirmDeleteGroup" />
     <t:zone t:id="zoneChangeMemberType" />
     <t:zone t:id="zoneConfirmDeleteMembership" />
-    
+
+<t:parameter name="else">
+	<div id="content">
+		<p>${message:pages.groups.message.notActivated}</p>
+	</div>
+</t:parameter>
+</t:if>
 </t:MyBorderLayout>

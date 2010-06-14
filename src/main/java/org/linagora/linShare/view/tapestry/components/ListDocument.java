@@ -55,9 +55,11 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
@@ -148,6 +150,10 @@ public class ListDocument {
 	@Property
 	private int rowIndex;
 	
+	@Inject @Symbol("linshare.groups.activated")
+	@Property
+	private boolean showGroups;
+	
 	
 	/***************************************************************************
 	 * Service injection
@@ -211,7 +217,8 @@ public class ListDocument {
 	@InjectComponent
 	private PasswordDecryptPopupSubmit passwordDecryptPopupSubmit;
 	
-	
+	@InjectComponent
+    private Grid documentGrid;
 
 	@Inject
 	private PageRenderLinkSource pageRenderLinkSource;
@@ -315,6 +322,10 @@ public class ListDocument {
 		// if(model==null)
 		initModel();
 		buildTooltipValues();
+		
+		if (!showGroups) {
+			documentGrid.getDataModel().exclude("sharedWithGroup");
+		}
 	}
 
 	/**

@@ -38,6 +38,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
@@ -139,6 +140,10 @@ public class Index {
 	private UserDetailsDisplayer userDetailsDisplayer;
 	@InjectComponent
 	private CreateGroupPopup createGroupPopup;
+    
+	@Inject @Symbol("linshare.groups.activated")
+	@Property
+	private boolean showGroups;
 
 	@Component(parameters = { "style=bluelighting", "show=false", "width=500",
 			"height=100" })
@@ -159,42 +164,44 @@ public class Index {
 
 	@SetupRender
 	public void setupRender() {
-		if (shareSessionObjects.isReloadGroupsNeeded()) {
-			groups = null;
-			group = null;
-			shareSessionObjects.setReloadGroupsNeeded(false);
-		}
-
-		if (groups == null) { // first display of the page for the session
-			groups = groupFacade.findByUser(userVo.getLogin());
-			if (groups != null && groups.size() > 0) {
-				group = groups.get(0); // display the first group of the list
+		if (showGroups) {
+			if (shareSessionObjects.isReloadGroupsNeeded()) {
+				groups = null;
+				group = null;
+				shareSessionObjects.setReloadGroupsNeeded(false);
 			}
-			blockIds = new ArrayList<String>(); // tabset titles
-			for (GroupVo groupForBlock : groups) {
-				blockIds.add(groupForBlock.getName());
-			}
-		}
-
-		if (group != null) {// at least one group membership for this user
-			documents = shareFacade.getAllSharingReceivedByUser(group
-					.getGroupUser());
-
-			List<GroupMemberVo> groupMembers = new ArrayList<GroupMemberVo>(
-					group.getMembers());
-			members = new ArrayList<GroupMemberVo>();
-			waitingForApprovalMembers = new ArrayList<GroupMemberVo>();
-
-			for (GroupMemberVo groupMemberVo : groupMembers) {
-				if (groupMemberVo.isWaitingForApproval()) {
-					waitingForApprovalMembers.add(groupMemberVo);
-				} else {
-					members.add(groupMemberVo);
+	
+			if (groups == null) { // first display of the page for the session
+				groups = groupFacade.findByUser(userVo.getLogin());
+				if (groups != null && groups.size() > 0) {
+					group = groups.get(0); // display the first group of the list
+				}
+				blockIds = new ArrayList<String>(); // tabset titles
+				for (GroupVo groupForBlock : groups) {
+					blockIds.add(groupForBlock.getName());
 				}
 			}
-
-			sorterModel = new MemberSorterModel(members);
-			memberConnected = group.findMember(userVo.getLogin());
+	
+			if (group != null) {// at least one group membership for this user
+				documents = shareFacade.getAllSharingReceivedByUser(group
+						.getGroupUser());
+	
+				List<GroupMemberVo> groupMembers = new ArrayList<GroupMemberVo>(
+						group.getMembers());
+				members = new ArrayList<GroupMemberVo>();
+				waitingForApprovalMembers = new ArrayList<GroupMemberVo>();
+	
+				for (GroupMemberVo groupMemberVo : groupMembers) {
+					if (groupMemberVo.isWaitingForApproval()) {
+						waitingForApprovalMembers.add(groupMemberVo);
+					} else {
+						members.add(groupMemberVo);
+					}
+				}
+	
+				sorterModel = new MemberSorterModel(members);
+				memberConnected = group.findMember(userVo.getLogin());
+			}
 		}
 	}
 
@@ -337,6 +344,7 @@ public class Index {
 	}
 
 	public boolean getHaveAtLeastOneGroup() {
+		if (groups == null) return false;
 		return groups.size() > 0;
 	}
 
