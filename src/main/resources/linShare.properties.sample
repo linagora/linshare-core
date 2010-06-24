@@ -25,6 +25,7 @@ ldap.pageSize=0
 #******************** MAIL CONFIGURATION TO SEND MAIL INFORMATION TO USER
 
 mail.smtp.host=smtp.linagora.com
+mail.smtp.port=25
 mail.smtp.sender=linShare@linagora.com
 mail.smtp.user=user
 mail.smtp.password=password
@@ -74,6 +75,9 @@ linshare.files.directory=${LINSHARE_HOME}/var/lib/linshare/repository
 
 # internal user see all other internal user by default in the Users tab ?
 linshare.users.internal.defaultView.showAll=true
+
+# activate groups tab ?
+linshare.groups.activated=true
 
 
 #******************** VIRUS SCANNER
