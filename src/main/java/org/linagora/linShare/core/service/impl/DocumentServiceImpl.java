@@ -464,14 +464,12 @@ public class DocumentServiceImpl implements DocumentService {
 							tempThumbFile.getName(), mimeTypeThb);
 				}
 				
-			} catch (FileNotFoundException e1) {
-				log.error(e1,e1);
-				throw new TechnicalException(TechnicalErrorCode.GENERIC,
-						"couldn't open inputStream on the temporary file");
+			} catch (FileNotFoundException e) {
+				log.error(e,e);
+				// if the thumbnail generation fails, it's not big deal, it has not to block
+				// the entire process, we just don't have a thumbnail for this document
 			} catch (IOException e) {
 				log.error(e,e);
-				throw new TechnicalException(TechnicalErrorCode.GENERIC,
-				e.getMessage());
 			} finally {
 	
 				try {
