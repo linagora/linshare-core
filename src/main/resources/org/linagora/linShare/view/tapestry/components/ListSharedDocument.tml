@@ -62,11 +62,34 @@
 
 			<t:parameter t:name="filePropertiesCell">
 			<div class="fileProperties">
-				<span class="thumbnail"><div class="thumbnail_content"><img src="${thumbnailPath}" /><p>${shareDocument.fileName}</p></div>
-				<t:actionLink t:id="download" t:context="${shareDocument.identifier}" t:type="${shareDocument.type}" class="fileName">
-					<span t:type="ck/TrimmedString" maxLength="42" trimPos="right"
-						value="shareDocument.fileName" />
-				</t:actionLink></span>
+				<t:actionLink t:id="download"
+					t:context="${shareDocument.identifier}" t:type="${shareDocument.type}"
+					class="fileName">
+					<t:linkit.Comment>
+						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
+					</t:linkit.Comment>
+					<t:if t:test="${thumbnailExists}">
+						<span class="thumbnail">
+							${shareDocument.fileName}
+							<div class="thumbnail_content">
+								<img src="${thumbnailPath}" />
+								<p>${shareDocument.fileName}</p>
+							</div>
+						</span>
+						<t:parameter name="else">
+							<span class="thumbnail">
+								${shareDocument.fileName}
+								<div class="thumbnail_content">
+									<p class="noThmbMsg">
+										${message:components.listDocument.noThumb}
+									</p>
+									<p>${shareDocument.fileName}</p>
+								</div>
+							</span>
+						</t:parameter>
+					</t:if>
+				</t:actionLink>
+
 				<br/>
 				<!--span class="creationDate">${creationDate},</span>${message:global.space}-->
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
