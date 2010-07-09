@@ -478,6 +478,10 @@ public class ListSharedDocument {
         return componentResources.createEventLink("thumbnail", shareDocument.getIdentifier());
 	}
 	
+	public boolean getThumbnailExists() {
+		return documentFacade.documentHasThumbnail(shareDocument.getIdentifier());
+	}
+	
 	public void onThumbnail(String docID) {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(componentdocuments,
