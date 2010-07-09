@@ -45,8 +45,8 @@ public class FileStreamResponse implements StreamResponse{
 		this.size = documentVo.getSize().intValue();
 		this.fileName=documentVo.getFileName();
 		
-		this.contentType = BINARY_MIME_TYPE; //always save the doc before reading it ....
-		//this.contentType=documentVo.getType();
+		//this.contentType = BINARY_MIME_TYPE; //always save the doc before reading it ....
+		this.contentType=documentVo.getType();
 	}
 	
 	public FileStreamResponse(SignatureVo signatureVo,InputStream stream){
