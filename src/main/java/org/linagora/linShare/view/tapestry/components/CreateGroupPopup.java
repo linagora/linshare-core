@@ -91,14 +91,14 @@ public class CreateGroupPopup {
     		return ;
     	}
         if (groupFacade.nameAlreadyExists(groupName)) {
-            createGroupForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
-        	shareSessionObjects.addError(messages.get("pages.user.edit.error.alreadyExist"));
+            createGroupForm.recordError(messages.get("pages.group.create.error.alreadyExist"));
+        	shareSessionObjects.addError(messages.get("pages.group.create.error.alreadyExist"));
             groupAlreadyExists = true;
             return ;
         }
         if (groupFunctionalEmail!=null && groupFunctionalEmail.trim().length()>0) {
 	        if (!MailCompletionService.MAILREGEXP.matcher(groupFunctionalEmail.toUpperCase()).matches()){
-	        	createGroupForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
+	        	createGroupForm.recordError(messages.get("pages.group.create.error.alreadyExist"));
 	        	shareSessionObjects.addError(String.format(messages.get("components.confirmSharePopup.validate.email"), groupFunctionalEmail));
 	        	return;
 	        }
