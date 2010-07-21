@@ -100,6 +100,11 @@ public class ShareDocumentVo extends DocumentVo {
 		return sharingDate;
 	}
 
+	@Override
+	public int compareTo(Object arg0) { //DESC order
+		return -this.sharingDate.compareTo(((ShareDocumentVo)arg0).sharingDate);
+	}
+
 	
 	
 }

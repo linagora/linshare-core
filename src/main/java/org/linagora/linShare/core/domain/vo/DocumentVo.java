@@ -23,7 +23,7 @@ package org.linagora.linShare.core.domain.vo;
 import java.io.Serializable;
 import java.util.Calendar;
 
-public class DocumentVo implements Serializable{
+public class DocumentVo implements Serializable, Comparable {
 
 	private static final long serialVersionUID = 8048750523251506651L;
 
@@ -160,5 +160,10 @@ public class DocumentVo implements Serializable{
 	@Override
 	public int hashCode(){
 		return this.getIdentifier().hashCode();
+	}
+
+	@Override
+	public int compareTo(Object arg0) { //DESC order
+		return -this.creationDate.compareTo(((DocumentVo)arg0).creationDate);
 	}
 }
