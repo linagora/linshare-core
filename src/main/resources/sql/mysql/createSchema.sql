@@ -1,4 +1,3 @@
-
     create table linshare_allowed_contact (
         id bigint not null auto_increment,
         user_id bigint,
@@ -52,7 +51,7 @@
         name varchar(255) not null,
         group_user_id bigint not null unique,
         functional_email varchar(255),
-        description longtext,
+        description text,
         primary key (group_id)
     );
 
@@ -88,7 +87,7 @@
         parameter_id bigint not null,
         subject_id integer not null,
         language_id integer not null,
-        content longtext,
+        content text,
         primary key (parameter_id, subject_id, language_id)
     );
 
@@ -96,8 +95,8 @@
         parameter_id bigint not null,
         template_id integer not null,
         language_id integer not null,
-        content_html longtext,
-        content_txt longtext,
+        content_html text,
+        content_txt text,
         primary key (parameter_id, template_id, language_id)
     );
 
@@ -134,8 +133,8 @@
         password varchar(255),
         sender_id bigint,
         primary key (secured_url_id),
-        unique (url_path, alea)
-    );
+        unique( url_path, alea )
+    ) CHARACTER SET ascii COLLATE ascii_general_ci;
 
     create table linshare_secured_url_documents (
         secured_url_id bigint not null,
@@ -160,7 +159,7 @@
         sharing_date datetime,
         share_active bit,
         downloaded bit,
-        comment longtext,
+        comment text,
         primary key (share_id)
     );
 
@@ -184,7 +183,7 @@
         cert_subjectdn varchar(255),
         cert_issuerdn varchar(255),
         cert_notafter datetime,
-        cert longtext,
+        cert text,
         signer_id bigint,
         document_id_fk bigint,
         sort_order integer,
@@ -206,7 +205,7 @@
         password varchar(255),
         locale varchar(255),
         expiry_date datetime,
-        comment longtext,
+        comment text,
         restricted bit,
         owner_id bigint,
         primary key (user_id)
@@ -214,7 +213,7 @@
 
     create table linshare_welcome_texts (
         parameter_id bigint not null,
-        welcome_text longtext,
+        welcome_text text,
         user_type_id integer,
         language_id integer
     );
