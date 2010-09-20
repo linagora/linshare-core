@@ -7,25 +7,26 @@
 	<div id="content">
 
 		<h1>${message:components.myborderlayout.administration.title}</h1>
+		<!-- Action bar -->
+
+		<div id="actionBar">
+			<h4>Actions</h4>
+			<ul>
+				<li>
+					<t:pagelink t:id="personalization" t:page="administration/Personalization" class="button"><span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/> ${message:pages.administration.index.link.personalization}</span></t:pagelink>
+				</li>
+			</ul>
+		</div><!-- id="actionBar" -->
 		<t:messagePanel />	
+		
 		<div id="pageContent">
 
 			<div id="version"><strong>${message:global.version.label} </strong> <code>${version}</code></div>
-
-
-			<h2>${message:pages.administration.index.visual.title}</h2>
-				<t:mailTemplateConfigurer t:mailTemplates="mailTemplates"/>
-				<t:mailSubjectConfigurer t:mailSubjects="mailSubjects"/>
-				<t:welcomeMessageConfigurer t:welcometexts="welcomeTexts"/>
 				
 				<t:form t:id="administrationForm">
 				<t:errors t:banner="${message:pages.administration.index.errorBanner}" />
 				<div id="edit-administration-general">
 					<table class="forForms">
-						<tr>
-							<td class="label"><t:label for="customLogoUrl" class="edit-form-label">${message:pages.administration.index.customLogoUrl}</t:label></td>
-							<td class="input"><t:textfield t:id="customLogoUrl" size="48" class="edit-form-field"/></td>
-						</tr>
 						<tr>
 							<td colspan="2"><h2>${message:pages.administration.index.accounts.title}</h2></td>
 						</tr>
