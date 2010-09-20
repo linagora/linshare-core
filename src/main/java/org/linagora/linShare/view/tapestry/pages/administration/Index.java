@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -38,10 +37,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.TimeUnit;
-import org.linagora.linShare.core.domain.entities.MailSubject;
-import org.linagora.linShare.core.domain.entities.MailTemplate;
 import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
-import org.linagora.linShare.core.domain.entities.WelcomeText;
 import org.linagora.linShare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -113,20 +109,6 @@ public class Index {
     @Persist
     @Property
     private List<ShareExpiryRule> shareExpiryRules;
-    @Property
-    private String customLogoUrl;
-
-    @Property
-    @Persist
-    private Set<WelcomeText> welcomeTexts;
-    
-    @Property
-    @Persist
-    private Set<MailTemplate> mailTemplates;
-    
-    @Property
-    @Persist
-    private Set<MailSubject> mailSubjects;
     
     @Property
     @Persist
@@ -147,7 +129,6 @@ public class Index {
     public void init() throws BusinessException {
         ParameterVo p = parameterFacade.loadConfig();
 
-        customLogoUrl = p.getCustomLogoUrl();
         fileSizeMax = p.getFileSizeMax();
         userAvailableSize = p.getUserAvailableSize();
         activeMimeType = p.getActiveMimeType();
@@ -171,19 +152,6 @@ public class Index {
         }
         if (userAvailableSize != null) {
             userAvailableSize = userAvailableSize / FACTORMULTI;
-        }
-
-
-        if (welcomeTexts == null) {
-            welcomeTexts = p.getWelcomeTexts();
-        }
-        
-        if (mailTemplates == null) {
-        	mailTemplates = p.getMailTemplates();
-        }
-        
-        if (mailSubjects == null) {
-        	mailSubjects = p.getMailSubjects();
         }
         
         //check temp admin account (created by import.sql)
@@ -248,8 +216,9 @@ public class Index {
             userAvailableSize = userAvailableSize * FACTORMULTI;
         }
 
+        ParameterVo p = parameterFacade.loadConfig();
         ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, activeMimeType, activeSignature,activeEncipherment,activeDocTimeStamp,guestAccountExpiryTime,
-            guestAccountExpiryUnit, customLogoUrl,defaultShareExpiryUnit,  defaultShareExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,welcomeTexts, mailTemplates, mailSubjects);
+            guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects());
         parameterFacade.createConfig(params);
 
         

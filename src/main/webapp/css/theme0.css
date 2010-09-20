@@ -105,6 +105,7 @@ strong {
 	padding: 1em;
 	background: transparent url("../images/theme0/bg-main.png") repeat-x;
 	color: #000;
+	position:relative;
 }
 
 
@@ -346,7 +347,6 @@ strong {
 #content #actionBar {
 	height: 0em;		/* Needed by Opera */
 	float: right;
-	position: relative;
 	top: 2.60em;
 	margin-bottom: -2.80em;		/* 2.80em  =  2.30em (button height)  +  .5em (li margin) */
 	z-index: 1;
@@ -1252,15 +1252,12 @@ table.t-data-grid {
 */
 
 /* Action bar */
-
-#home #actionBar {
+#actionBar {
+	position: absolute;
+	right:20px;
+	top:30px;
 	margin-top: -.06em;
 }
-#history #actionBar,
-#audit #actionBar {
-	top: -3.0em;
-}
-
 
 /* Page content */
 
