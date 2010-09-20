@@ -20,8 +20,11 @@
 */
 package org.linagora.linShare.view.tapestry.pages.help;
 
-import org.apache.tapestry5.annotations.ApplicationState;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -39,7 +42,7 @@ public class Index {
 	@Inject 
 	private Logger logger;
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
@@ -48,15 +51,13 @@ public class Index {
 	 ************************************************************ */
 
 	@SuppressWarnings("unused")
-	@ApplicationState
+	@SessionState
 	private HelpsASO helpsASO;
 	
 	
-	@SuppressWarnings("unused")
-	@ApplicationState(create=false)
+	@SessionState(create=false)
 	private UserVo userVo;
 	
-	@SuppressWarnings("unused") // used in tml
 	@Inject
 	private Messages messages;
 	
@@ -74,5 +75,23 @@ public class Index {
     	logger.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;
+    }
+
+    public String getVersion() {
+    	Properties prop = new Properties();
+    	try {
+    		if (this.getClass().getResourceAsStream("/version.properties") != null) {
+    			prop.load(this.getClass().getResourceAsStream("/version.properties"));
+    		} else {
+    			logger.debug("Impossible to load version.properties, Is this a dev environnement?");
+    		}
+		} catch (IOException e) {
+			 logger.debug("Impossible to load version.properties, Is this a dev environnement?");
+		}
+		if (prop.getProperty("Implementation-Version") != null) {
+			return prop.getProperty("Implementation-Version");	
+		} else {
+			return "trunk";
+		}
     }
 }

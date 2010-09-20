@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.linagora</groupId>
     <artifactId>linshare</artifactId>
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.7.3</version>
     <packaging>war</packaging>
     <name>LinShare, Secure File Sharing</name>
     <description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -24,9 +24,9 @@
         <url>http://build.linid.org/hudson/view/LinPKI/</url>
     </ciManagement>
     <scm>
-        <developerConnection>scm:svn:https://svn.linid.org/svn/linshare/tags/linshare-0.7</developerConnection>
-        <connection>scm:svn:http://svn.linid.org/svn/linshare/tags/linshare-0.7</connection>
-        <url>http://linpki.org/repositories/show/linshare/tags/linshare-0.7</url>   
+        <developerConnection>scm:svn:https://svn.linid.org/svn/linshare/tags/linshare-0.7.3</developerConnection>
+        <connection>scm:svn:http://svn.linid.org/svn/linshare/tags/linshare-0.7.3</connection>
+        <url>http://linpki.org/repositories/show/linshare/tags/linshare-0.7.3</url>   
     </scm>
     <organization>
         <name>LINAGORA</name>
