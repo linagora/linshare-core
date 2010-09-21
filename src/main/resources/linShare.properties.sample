@@ -37,10 +37,10 @@ mail.smtp.charset=UTF-8
 ### PostgreSQL
 linshare.db.username=linshare
 linshare.db.password=linshare
-linshare.db.driver.class=org.postgresql.Driver
-linshare.db.url=jdbc:postgresql://localhost:5432/linshare
-linshare.db.dialect=org.hibernate.dialect.PostgreSQLDialect
-linshare.db.persistence_manager=org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager
+linshare.db.driver.class=com.mysql.jdbc.Driver
+linshare.db.url=jdbc:mysql://localhost:3306/linshare
+linshare.db.dialect=org.hibernate.dialect.MySQL5Dialect
+linshare.db.persistence_manager=org.apache.jackrabbit.core.persistence.bundle.MySqlPersistenceManager
 
 #show sql command in console (true in debug mode)
 linshare.db.show_sql=false

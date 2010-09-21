@@ -1,0 +1,54 @@
+# Subject ANONYMOUS_DOWNLOAD
+# LinShare: An anonymous user downloaded the file you shared
+msgid "mail_templates_0"
+msgstr "LinShare : Un utilisateur anonyme a téléchargé des fichiers en partage"
+
+# Subject REGISTERED_DOWNLOAD
+# LinShare: An user downloaded the file you shared
+msgid "mail_templates_1"
+msgstr "LinShare : Un utilisateur a téléchargé des fichiers en partage"
+
+# Subject NEW_GUEST
+# LinShare: Your account on LinShare has been created
+msgid "mail_templates_2"
+msgstr "LinShare : Votre compte LinShare a été créé"
+
+# Subject RESET_PASSWORD
+# LinShare: Your password was reset
+msgid "mail_templates_3"
+msgstr "LinShare : Votre nouveau mot de passe"
+
+# Subject NEW_SHARING
+# LinShare: A user deposited files in sharing for you
+msgid "mail_templates_4"
+msgstr "LinShare : Un utilisateur vous a déposé des fichiers en partage"
+
+# Subject SHARED_DOC_UPDATED
+# LinShare: An user has updated a shared file
+msgid "mail_templates_5"
+msgstr "LinShare : Un utilisateur a mis à jour un fichier dans vos partages"
+
+# Subject NEW_GROUP_SHARING
+# LinShare: A user deposited files in sharing for the group ${groupName}
+msgid "mail_templates_6"
+msgstr "LinShare : Un utilisateur a déposé des fichiers en partage pour le groupe ${groupName}"
+
+# Subject MEMBERSHIP_REQUEST_STATUS
+# LinShare: Status of your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName}
+msgid "mail_templates_7"
+msgstr "LinShare : Statut de votre demande d''adhésion au groupe ${groupName} concernant ${newMemberFirstName} ${newMemberLastName}"
+
+# Subject NEW_GROUP_MEMBER
+# LinShare: You are now member of the group ${groupName}
+msgid "mail_templates_8"
+msgstr "LinShare : Vous appartenez maintenant au groupe ${groupName}"
+
+# Subject GROUP_SHARING_DELETED
+# LinShare: A file shared with the group ${groupName} has been deleted.
+msgid "mail_templates_9"
+msgstr "LinShare : Un fichier partagé avec le groupe ${groupName} a été supprimé"
+
+# Subject SHARED_DOC_DELETED
+# LinShare: An user has deleted a shared file
+msgid "mail_templates_10"
+msgstr "LinShare : Un utilisateur a supprimé un fichier partagé avec vous"

@@ -1,0 +1,180 @@
+# Template GREETINGS
+
+# Hi ${firstName} ${lastName},<br/><br/>
+msgid "mail_subjects_0_html"
+msgstr "Bonjour ${firstName} ${lastName},<br/><br/>"
+
+# Hi ${firstName} ${lastName},<br/><br/>
+msgid "mail_subjects_0_txt"
+msgstr "Bonjour ${firstName} ${lastName},<br/><br/>"
+
+# Template FOOTER
+
+# <a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Open Source secured file sharing application
+msgid "mail_subjects_1_html"
+msgstr "<a href=\"http://linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a> - Logiciel libre de partage de fichiers sécurisé"
+
+# LinShare - Open Source secured file sharing application (http://linshare.org/)
+msgid "mail_subjects_1_txt"
+msgstr "<a href=\"http://linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a> - Logiciel libre de partage de fichiers sécurisé"
+
+# Template CONFIRM_DOWNLOAD_ANONYMOUS
+
+# An anonymous user ${email} downloaded the following file(s) you shared via LinShare:<ul>${documentNames}</ul>
+msgid "mail_subjects_2_html"
+msgstr "Un utilisateur anonyme ${email} a téléchargé le(s) fichier(s) que vous avez mis en partage via LinShare&nbsp;:<ul>${documentNames}</ul>"
+
+# An anonymous user ${email} downloaded the following file(s) you shared via LinShare:<ul>${documentNames}</ul>
+msgid "mail_subjects_2_txt"
+msgstr "Un utilisateur anonyme ${email} a téléchargé le(s) fichier(s) que vous avez mis en partage via LinShare&nbsp;:<ul>${documentNames}</ul>"
+
+# Template CONFIRM_DOWNLOAD_REGISTERED
+
+# ${recipientFirstName} ${recipientLastName} downloaded the following file you shared with him via LinShare:<ul>${documentNames}</ul>
+msgid "mail_subjects_3_html"
+msgstr "${recipientFirstName} ${recipientLastName} a téléchargé le(s) fichier(s) suivant que vous lui avez mis en partage via LinShare&nbsp;:<ul>${documentNames}</ul>"
+
+# ${recipientFirstName} ${recipientLastName} downloaded the following file you shared with him via LinShare:<ul>${documentNames}</ul>
+msgid "mail_subjects_3_txt"
+msgstr "${recipientFirstName} ${recipientLastName} a téléchargé le(s) fichier(s) suivant que vous lui avez mis en partage via LinShare&nbsp;:<ul>${documentNames}</ul>"
+
+# Template LINSHARE_URL
+
+# You can login to this address: <a href="${url}">${url}</a><br/>
+msgid "mail_subjects_4_html"
+msgstr "Vous pouvez vous connecter à cette adresse&nbsp;: <a href=\"${url}\">${url}</a><br/>"
+
+# You can login to this address: <a href="${url}">${url}</a><br/>
+msgid "mail_subjects_4_txt"
+msgstr "Vous pouvez vous connecter à cette adresse&nbsp;: <a href=\"${url}\">${url}</a><br/>"
+
+# Template FILE_DOWNLOAD_URL
+
+# In order to download the files, click on this link or paste it into your browser: <a href="${url}${urlparam}">${url}${urlparam}</a>
+msgid "mail_subjects_5_html"
+msgstr "Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a>"
+
+# In order to download the files, click on this link or paste it into your browser: <a href="${url}${urlparam}">${url}${urlparam}</a>
+msgid "mail_subjects_5_txt"
+msgstr "Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a>"
+
+# Template DECRYPT_URL
+
+# <p>Some received files are <b>encrypted</b>. After downloading, take care of decrypting localy with the application:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>You have to use <i>password</i> which has been communicated by the person who has done this sharing.</p><br/>
+msgid "mail_subjects_6_html"
+msgstr "<p>Certains de vos fichiers sont <b>chiffrés</b>. Après le téléchargement, vous devez les déchiffrer localement avec l''application:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>Vous devez vous munir <i>du mot de passe de déchiffrement</i> qui a dû vous être communiqué par l''expéditeur des fichiers.</p><br/>"
+
+# <p>Some received files are <b>encrypted</b>. After downloading, take care of decrypting localy with the application:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>You have to use <i>password</i> which has been communicated by the person who has done this sharing.</p><br/>
+msgid "mail_subjects_6_txt"
+msgstr "<p>Certains de vos fichiers sont <b>chiffrés</b>. Après le téléchargement, vous devez les déchiffrer localement avec l''application:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>Vous devez vous munir <i>du mot de passe de déchiffrement</i> qui a dû vous être communiqué par l''expéditeur des fichiers.</p><br/>"
+
+# Template PERSONAL_MESSAGE
+
+# <strong>Personal message from ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>
+msgid "mail_subjects_7_html"
+msgstr "<strong>Message personnel de ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>"
+
+# <strong>Personal message from ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>
+msgid "mail_subjects_7_txt"
+msgstr "<strong>Message personnel de ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>"
+
+# Template GUEST_INVITATION
+
+# <strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use LinShare.<br/>
+msgid "mail_subjects_8_html"
+msgstr "<strong>${ownerFirstName} ${ownerLastName}</strong> vous invite à utiliser LinShare.<br/>"
+
+# <strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use LinShare.<br/>
+msgid "mail_subjects_8_txt"
+msgstr "<strong>${ownerFirstName} ${ownerLastName}</strong> vous invite à utiliser LinShare.<br/>"
+
+# Template ACCOUNT_DESCRIPTION
+
+# Your LinShare account:<ul><li>Login: <code>${mail}</code> &nbsp;(your e-mail address)</li><li>Password: <code>${password}</code></li></ul>
+msgid "mail_subjects_9_html"
+msgstr "Votre compte LinShare&nbsp;:<ul><li>Identifiant&nbsp;: <code>${mail}</code> &nbsp;(votre adresse électronique)</li><li>Mot de passe&nbsp;: <code>${password}</code></li></ul>"
+
+# Your LinShare account:<ul><li>Login: <code>${mail}</code> &nbsp;(your e-mail address)</li><li>Password: <code>${password}</code></li></ul>
+msgid "mail_subjects_9_txt"
+msgstr "Votre compte LinShare&nbsp;:<ul><li>Identifiant&nbsp;: <code>${mail}</code> &nbsp;(votre adresse électronique)</li><li>Mot de passe&nbsp;: <code>${password}</code></li></ul>"
+
+# Template SHARE_NOTIFICATION
+
+# <strong>${firstName} ${lastName}</strong> sent you ${number} file(s):<ul>${documentNames}</ul>
+msgid "mail_subjects_10_html"
+msgstr "<strong>${firstName} ${lastName}</strong> a mis en partage ${number} fichier(s) à votre attention&nbsp;:<ul>${documentNames}</ul>"
+
+# <strong>${firstName} ${lastName}</strong> sent you ${number} file(s):<ul>${documentNames}</ul>
+msgid "mail_subjects_10_txt"
+msgstr "<strong>${firstName} ${lastName}</strong> a mis en partage ${number} fichier(s) à votre attention&nbsp;:<ul>${documentNames}</ul>"
+
+# Template PASSWORD_GIVING
+
+# The associated password to use is: <code>${password}</code><br/>
+msgid "mail_subjects_11_html"
+msgstr "Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/>"
+
+# The associated password to use is: <code>${password}</code><br/>
+msgid "mail_subjects_11_txt"
+msgstr "Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/>"
+
+# Template FILE_UPDATED
+
+# <strong>${firstName} ${lastName}</strong> has updated the shared file <strong>${fileOldName}</strong>:<ul><li>New file name: ${fileName}</li><li>File size: ${fileSize}</li><li>MIME type: <code>${mimeType}</code></li></ul>
+msgid "mail_subjects_12_html"
+msgstr "<strong>${firstName} ${lastName}</strong> a mis à jour le fichier partagé <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nom du nouveau fichier&nbsp;: ${fileName}</li><li>Taille du fichier&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>"
+
+# <strong>${firstName} ${lastName}</strong> has updated the shared file <strong>${fileOldName}</strong>:<ul><li>New file name: ${fileName}</li><li>File size: ${fileSize}</li><li>MIME type: <code>${mimeType}</code></li></ul>
+msgid "mail_subjects_12_txt"
+msgstr "<strong>${firstName} ${lastName}</strong> a mis à jour le fichier partagé <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nom du nouveau fichier&nbsp;: ${fileName}</li><li>Taille du fichier&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>"
+
+# Template GROUP_SHARE_NOTIFICATION
+
+# <strong>${firstName} ${lastName}</strong> has shared ${number} file(s) with the group ${groupName}:<ul>${documentNames}</ul>
+msgid "mail_subjects_13_html"
+msgstr "<strong>${firstName} ${lastName}</strong> a mis en partage ${number} fichier(s) pour le groupe ${groupName}&nbsp;:<ul>${documentNames}</ul>"
+
+# <strong>${firstName} ${lastName}</strong> has shared ${number} file(s) with the group ${groupName}:<ul>${documentNames}</ul>
+msgid "mail_subjects_13_txt"
+msgstr "<strong>${firstName} ${lastName}</strong> a mis en partage ${number} fichier(s) pour le groupe ${groupName}&nbsp;:<ul>${documentNames}</ul>"
+
+# Template GROUP_NEW_MEMBER
+
+# You are now member of the group ${groupName}.
+msgid "mail_subjects_14_html"
+msgstr "Vous appartenez maintenant au groupe ${groupName}."
+
+# You are now member of the group ${groupName}.
+msgid "mail_subjects_14_txt"
+msgstr "Vous appartenez maintenant au groupe ${groupName}."
+
+# Template GROUP_MEMBERSHIP_STATUS
+
+# Your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName} is ${status}.
+msgid "mail_subjects_15_html"
+msgstr "Votre demande d''adhésion au groupe ${groupName} concernant ${newMemberFirstName} ${newMemberLastName} est ${status}."
+
+# Your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName} is ${status}.
+msgid "mail_subjects_15_txt"
+msgstr "Votre demande d''adhésion au groupe ${groupName} concernant ${newMemberFirstName} ${newMemberLastName} est ${status}."
+
+# Template GROUP_SHARE_DELETED
+
+# ${firstName} ${lastName} has deleted the file <strong>${documentName}</strong> shared with the group <strong>${groupName}</strong>.
+msgid "mail_subjects_16_html"
+msgstr "${firstName} ${lastName} a supprimé le fichier <strong>${documentName}</strong> partagé avec le groupe <strong>${groupName}</strong>."
+
+# ${firstName} ${lastName} has deleted the file <strong>${documentName}</strong> shared with the group <strong>${groupName}</strong>.
+msgid "mail_subjects_16_txt"
+msgstr "${firstName} ${lastName} a supprimé le fichier <strong>${documentName}</strong> partagé avec le groupe <strong>${groupName}</strong>."
+
+# Template SHARED_FILE_DELETED
+
+# <strong>${firstName} ${lastName}</strong> has deleted the shared file <strong>${documentName}</strong>.
+msgid "mail_subjects_17_html"
+msgstr "<strong>${firstName} ${lastName}</strong> a supprimé le fichier partagé <strong>${documentName}</strong>."
+
+# <strong>${firstName} ${lastName}</strong> has deleted the shared file <strong>${documentName}</strong>.
+msgid "mail_subjects_17_txt"
+msgstr "<strong>${firstName} ${lastName}</strong> a supprimé le fichier partagé <strong>${documentName}</strong>."
+

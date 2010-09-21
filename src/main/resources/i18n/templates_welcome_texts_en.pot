@@ -1,0 +1,10 @@
+# Welcome texts
+
+# Welcome to LinShare, the Open Source secure files sharing system
+msgid "welcome_texts_0"
+msgstr "Hi ${firstName} ${lastName},<br/><br/>"
+
+# Welcome to LinShare, the Open Source secure files sharing system.
+msgid "welcome_texts_1"
+msgstr "Hi ${firstName} ${lastName},<br/><br/>"
+
