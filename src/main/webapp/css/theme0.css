@@ -3587,5 +3587,13 @@ div.t-beaneditor {
 	white-space: normal;	
 }
 
+#advancedSearchForm p {
+	padding: 5px;	
+}
+
+#advancedSearchForm .inputExtension {
+	top: 9.5px !important;	
+}
+
 /***************************************************************************/
 /* EOF */

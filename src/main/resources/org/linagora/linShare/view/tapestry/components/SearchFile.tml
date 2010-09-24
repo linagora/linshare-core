@@ -55,25 +55,33 @@
             <t:form t:id="advancedSearchForm">
                 <div><t:errors /></div>
                 
-                <t:label for="fileNamePattern">${message:components.searchfile.fileName} </t:label>
+                <p><t:label for="fileNamePattern">${message:components.searchfile.fileName} </t:label>
                 <t:textfield t:id="fileNamePattern" size="15" class="fileSearchPattern" title="${message:components.searchfile.fileName}"/><br/>
+                </p>
                 
+                <p>
                 <t:label for="extension">${message:components.searchfile.extension} </t:label>
                 <t:textfield size="3" t:id="extension" class="fileSearchPattern" title="${message:components.searchfile.extension}"/><br/>
+                </p>
                 
-                
+                <p>
+                <t:label for="sizeMin">${message:components.searchfile.size}&nbsp;</t:label>
                 <t:textfield t:id="sizeMin" size="15"  onFocus="controlField(this,'${message:components.searchfile.sizeMin}')"
                              title="${message:components.searchfile.sizeMin}"/>
-                ${message:components.searchfile.size.separator}
+                <t:label for="sizeMax">&nbsp;${message:components.searchfile.size.separator}&nbsp;</t:label>
                 <t:textfield t:id="sizeMax" size="15"  onFocus="controlField(this,'${message:components.searchfile.sizeMax}')"
                              title="${message:components.searchfile.sizeMax}"/>
-				<br />
+				</p>
+				
+				<p>
 				<t:label for="beginDate">${message:components.searchfile.beginDate}</t:label>&nbsp;<input t:type="ck/dateTimeField" t:id="beginDate" t:value="beginDate" t:datePattern="dd/MM/yyyy" />
-				<br />
+				</p>
+				<p>
 				<t:label for="endDate">${message:components.searchfile.endDate}</t:label>&nbsp;<input t:type="ck/dateTimeField" t:id="endDate" t:value="endDate" t:datePattern="dd/MM/yyyy" />
-				<br />
+				</p>
+				
 				<t:if t:test="forceFilterOnSharedFile" negate="true">
-				<div id="shareStatus">
+				<p id="shareStatus">
 	                ${message:components.searchfile.shared}
 	                <t:radiogroup t:id="shared">
 	                    <t:radio t:id="sharedAll" title="${message:components.searchfile.shared.all.title}" />&nbsp;<t:label for="sharedAll" title="${message:components.searchfile.shared.all.title}">${message:components.searchfile.shared.all}</t:label>
@@ -82,13 +90,14 @@
 	                    &nbsp;${message:global.space}
 	                    <t:radio t:id="sharedNone" title="${message:components.searchfile.shared.none.title}" />&nbsp;<t:label for="sharedNone" title="${message:components.searchfile.shared.none.title}">${message:components.searchfile.shared.none}</t:label>
 	                </t:radiogroup>
-				</div>
-				<br />
+				</p>
 				</t:if>
 				
 				<t:if t:test="forceFilterOnSharedFile">
+				<p>
 				<t:label for="sharedFrom">${message:components.searchfile.sharedFrom} </t:label>
-                <t:textfield t:id="sharedFrom" t:mixins="autocomplete" t:minChars="2" class="fileSearchPattern" title="${message:components.searchfile.sharedFrom}"/><br/>
+                <t:textfield t:id="sharedFrom" t:mixins="autocomplete" t:minChars="2" class="fileSearchPattern" title="${message:components.searchfile.sharedFrom}"/>
+				</p>
 				</t:if>
 				
                 <t:submit value="${message:global.button.search}"/>
