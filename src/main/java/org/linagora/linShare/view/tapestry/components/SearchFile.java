@@ -44,6 +44,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
+import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.enums.DocumentType;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
@@ -99,7 +100,10 @@ public class SearchFile {
 	private SearchDocumentFacade searchDocumentFacade;
 	
 	@Inject
-	private UserFacade userFacade;	
+	private UserFacade userFacade;
+	
+    @Inject
+    private ShareFacade shareFacade;
 
 	@Inject
 	private Messages messages;
@@ -322,29 +326,43 @@ public class SearchFile {
 	 */
 	public List<String> onProvideCompletionsFromName(String value){
 
-		if(forceFilterOnSharedFile)
-		shared = SharedType.SHARED_ONLY;
+		if(forceFilterOnSharedFile) {
+			System.out.println("SHARED ONLY !!!!!!!!!!!!!");
+			shared = SharedType.SHARED_ONLY;
+		}
 		
 		
 		SearchDocumentCriterion searchDocumentCriterion=new SearchDocumentCriterion(userlogin,value,null,null,null,isShared(this.shared),null,null,null,null, DocumentType.BOTH);
 		
-		List<DocumentVo> documents;
-		
-		if (forceFilterOnSharedFile) {
-			documents=searchDocumentFacade.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-		} else {
-			documents=searchDocumentFacade.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-		}		
-		
-		if(documents.size()>0){
-			ArrayList<String> names=new ArrayList<String>();
-			for(DocumentVo documentVo:documents){
-				names.add(documentVo.getFileName());
-			}
-			return names;
+		if (!forceFilterOnSharedFile) {
+			List<DocumentVo> documents=searchDocumentFacade.retrieveDocumentContainsCriterion(searchDocumentCriterion);
+			
+			if(documents.size()>0){
+				ArrayList<String> names=new ArrayList<String>();
+				for(DocumentVo documentVo:documents){
+					names.add(documentVo.getFileName());
+				}
+				return names;
 
-		}else{
-			return null;
+			}else{
+				return null;
+			}
+			
+		} else {
+			List<ShareDocumentVo> sharings=shareFacade.getAllSharingReceivedByUser(userlogin);
+			
+			if(sharings.size()>0){
+				ArrayList<String> names=new ArrayList<String>();
+				for(ShareDocumentVo documentVo:sharings){
+					if(documentVo.getFileName().contains(value)) {
+						names.add(documentVo.getFileName());
+					}
+				}
+				return names;
+
+			}else{
+				return null;
+			}
 		}
 	}
 	
