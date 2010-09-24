@@ -92,7 +92,7 @@
 	<t:parameter name="searchWidget">
 	<t:if test="userVoExists">
 		<t:widget widgetId="searchWidget" title="${message:components.widget.searchWidget.title}">
-			<t:SearchFile userlogin="userVo" advancedmode="advanced" forceFilterOnSharedFile="true"/>
+			<t:SearchFile userlogin="userVo" forceFilterOnSharedFile="true"/>
 		</t:widget>
 	</t:if>
 	</t:parameter>
