@@ -324,10 +324,12 @@ public class SearchFile {
 	 * @param value the value entered by the user
 	 * @return list the list of string matched by value.
 	 */
+	public List<String> onProvideCompletionsFromFileNamePattern(String value) {
+		return onProvideCompletionsFromName(value);
+	}
 	public List<String> onProvideCompletionsFromName(String value){
 
 		if(forceFilterOnSharedFile) {
-			System.out.println("SHARED ONLY !!!!!!!!!!!!!");
 			shared = SharedType.SHARED_ONLY;
 		}
 		
