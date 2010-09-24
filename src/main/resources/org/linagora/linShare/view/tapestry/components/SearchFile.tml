@@ -56,7 +56,7 @@
                 <div><t:errors /></div>
                 
                 <p><t:label for="fileNamePattern">${message:components.searchfile.fileName} </t:label>
-                <t:textfield t:id="fileNamePattern" size="15" class="fileSearchPattern" title="${message:components.searchfile.fileName}"/><br/>
+                <t:textfield t:id="fileNamePattern" t:mixins="autocomplete" t:minChars="2" size="15" class="fileSearchPattern" title="${message:components.searchfile.fileName}"/>
                 </p>
                 
                 <p>
