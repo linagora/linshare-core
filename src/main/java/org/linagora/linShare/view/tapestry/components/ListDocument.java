@@ -369,12 +369,12 @@ public class ListDocument {
 					for (ShareDocumentVo share : shares) {
 						UserVo receiver = share.getReceiver();
 						if (receiver.getUserType().equals(UserType.GROUP)) {
-							filleGroupRowParams(templateRowParams, receiver.getLastName(), formatter.format(share.getExpirationDate().getTime()));
+							filleGroupRowParams(templateRowParams, receiver.getLastName(), formatter.format(share.getShareExpirationDate().getTime()));
 							tempBufGroup.append(templating.getMessage(templateGroupRow, templateRowParams));
 							
 						}
 						else {
-							fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), formatter.format(share.getExpirationDate().getTime()));
+							fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), formatter.format(share.getShareExpirationDate().getTime()));
 							tempBuf.append(templating.getMessage(templateRow, templateRowParams));
 						}
 					}
