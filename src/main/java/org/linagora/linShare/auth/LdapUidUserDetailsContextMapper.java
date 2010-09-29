@@ -53,7 +53,12 @@ public class LdapUidUserDetailsContextMapper implements UserDetailsContextMapper
 //	With the BindAuthenticatior, the context returned from the bind operation will be used to read the attributes,
 //	otherwise the data will be read using the standard context obtained from the configured ContextSource
 //	(when a search is configured to locate the user, this will be the data returned by the search object). 
+
+	private final String ldapLoginAttribute;
 	
+	public LdapUidUserDetailsContextMapper(String ldapLoginAttribute) {
+		this.ldapLoginAttribute = ldapLoginAttribute;
+	}
 	
 	public UserDetails mapUserFromContext(DirContextOperations ctx,
 			String username, GrantedAuthority[] authority) {
@@ -75,10 +80,10 @@ public class LdapUidUserDetailsContextMapper implements UserDetailsContextMapper
 //			e.printStackTrace();
 //		}
         
-		String usermail = ctx.getStringAttribute("mail");
+		String usermail = ctx.getStringAttribute(ldapLoginAttribute);
 		
 		//set email as the new username of the user (from the login form it was uid)
-		if(usermail==null) throw new UsernameNotFoundException("usermail must not be null");
+		if(usermail==null) throw new UsernameNotFoundException(ldapLoginAttribute+" must not be null");
 		return new User(usermail, "", true, true, true, true,authority);
 	}
 

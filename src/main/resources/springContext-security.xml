@@ -159,11 +159,14 @@
         </constructor-arg>
         <constructor-arg>
             <bean class="org.linagora.linShare.auth.LdapAuthorizationsProvider">
-                <constructor-arg ref="userFacade"/>
+                <constructor-arg index="0" ref="userFacade"/>
+            	<constructor-arg index="1" value="${ldap.auth.attribute}" />
             </bean>
         </constructor-arg>
         <property name="userDetailsContextMapper">
-            <bean class="org.linagora.linShare.auth.LdapUidUserDetailsContextMapper" />
+            <bean class="org.linagora.linShare.auth.LdapUidUserDetailsContextMapper">
+            	<constructor-arg value="${ldap.auth.attribute}" />
+            </bean>
         </property>
     </bean>
     
@@ -190,7 +193,8 @@
         </constructor-arg>
         <constructor-arg>
             <bean class="org.linagora.linShare.auth.LdapAuthorizationsProvider">
-                <constructor-arg ref="userFacade"/>
+                <constructor-arg index="0" ref="userFacade"/>
+            	<constructor-arg index="1" value="${ldap.auth.attribute}" />
             </bean>
         </constructor-arg>
     </bean>
