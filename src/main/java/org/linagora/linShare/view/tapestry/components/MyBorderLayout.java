@@ -118,6 +118,10 @@ public class MyBorderLayout {
 	private Asset ie6CssAsset;
 
 	@Inject
+	@Path("context:js/DD_belatedPNG.js")
+	private Asset ie6DDPNGAsset;
+
+	@Inject
 	private Messages messages;
 
     @Inject
@@ -204,8 +208,9 @@ public class MyBorderLayout {
 
 		ie7Css="<!--[if IE 7]><link href='"+ie7CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
 
-		ie6Css="<!--[if lte IE 6]><link href='"+ie6CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
-
+		ie6Css="<!--[if lte IE 6]><link href='"+ie6CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>"
+				+ "<script src='"+ie6DDPNGAsset.toClientURL()+"' ></script><script>DD_belatedPNG.fix('img, h1, a.button, a.button span');</script><![endif]--> ";
+		
 		if(userVoExists){
 			admin=(userVo.getRole().equals(Role.ADMIN));
 			user=(userVo.getRole().equals(Role.SIMPLE));

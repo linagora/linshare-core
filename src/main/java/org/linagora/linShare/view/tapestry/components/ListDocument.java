@@ -436,6 +436,14 @@ public class ListDocument {
 	public String getTooltipGroupValue() {
 		return tooltipGroupValues.get(rowIndex);
 	}
+	
+	public String getTypeCSSClass() {
+		String ret = document.getType();
+		ret = ret.replace("/", "_");
+		ret = ret.replace("+", "__");
+		ret = ret.replace(".", "_-_");
+		return ret;
+	}
 
 	/**
 	 * Initialize the JS value

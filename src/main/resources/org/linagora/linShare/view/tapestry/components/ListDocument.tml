@@ -85,7 +85,7 @@
 			<div>
 				<t:actionLink t:id="download"
 					t:context="${document.identifier}" t:type="${document.type}"
-					class="fileName">
+					class="fileName ${typeCSSClass}">
 					<t:linkit.Comment>
 						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 					</t:linkit.Comment>
