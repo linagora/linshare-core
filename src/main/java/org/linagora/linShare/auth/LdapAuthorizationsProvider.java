@@ -37,11 +37,14 @@ import org.springframework.security.ldap.LdapAuthoritiesPopulator;
 public class LdapAuthorizationsProvider implements LdapAuthoritiesPopulator {
 
     private UserFacade userFacade;
+
+	private final String ldapLoginAttribute;
     
     private final static Log logger = LogFactory.getLog(LdapAuthorizationsProvider.class);
 
-    public LdapAuthorizationsProvider(UserFacade userFacade) {
+    public LdapAuthorizationsProvider(UserFacade userFacade, String ldapLoginAttribute) {
         this.userFacade = userFacade;
+		this.ldapLoginAttribute = ldapLoginAttribute;
     }
 
     /** Get Authorizations for a user.
@@ -56,10 +59,10 @@ public class LdapAuthorizationsProvider implements LdapAuthoritiesPopulator {
         
         //if username is uid as a login and not an email
         if(username!=null && username.indexOf("@")==-1 ){  	
-        	usermail = userData.getStringAttribute("mail");
+        	usermail = userData.getStringAttribute(ldapLoginAttribute);
         	if(usermail==null || usermail.trim().length()<1){
         		usermail = username;
-        		logger.error("User doesn't have any mail set in LDAP directory");
+        		logger.error("User doesn't have any "+ldapLoginAttribute+" set in LDAP directory");
         	}
         }
         
