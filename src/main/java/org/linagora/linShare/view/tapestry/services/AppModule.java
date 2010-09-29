@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.tapestry5.Asset;
@@ -54,6 +55,7 @@ import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
+import org.chenillekit.image.ChenilleKitImageConstants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
@@ -423,4 +425,15 @@ public class AppModule
 		 @Inject @Path("context:templates/mailContainer.txt") Asset containerTemplateTxt) {
     	return new MailContainerBuilder(propertiesSymbolProvider, templating, persistentLocale, request, containerTemplate, containerTemplateTxt, validationMessagesSource);
     }
+    
+    /**
+     * ChenilleKit Kaptcha configuration
+     * @param configuration
+     */
+    public static void contributeKaptchaProducer(MappedConfiguration<String, Properties> configuration) {
+    	Properties properties = new Properties();
+    	properties.setProperty("kaptcha.border", "no");
+    	configuration.add(ChenilleKitImageConstants.KAPATCHA_CONFIG_KEY, properties);
+    }
+
 }

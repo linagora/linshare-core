@@ -121,6 +121,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+    		<groupId>com.google.code</groupId>
+    		<artifactId>kaptcha</artifactId>
+    		<version>2.3</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>

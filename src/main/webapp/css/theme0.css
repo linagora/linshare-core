@@ -3595,5 +3595,17 @@ div.t-beaneditor {
 	top: 9.5px !important;	
 }
 
+/* Kaptcha */
+.ck-kaptcha {
+	width: 200px;
+	display:block;
+		
+}
+input.ck-kaptcha {
+	width:194px;
+	margin-top: 2px;
+	background-image:url(../images/theme0/form-input-gradient.png);
+}
+
 /***************************************************************************/
 /* EOF */
