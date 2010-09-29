@@ -56,7 +56,7 @@ Optional parameter :
                     	<div class="yui-b"><t:delegate to="left" /></div>
                     </t:if>
                     <t:if t:test="rightEnable" >
-                    	<div class="yui-b"><t:delegate to="right" /></div>
+                    	<div class="yui-b sidebaryui"><t:delegate to="right" /></div>
                     </t:if>
                 </div>
             </t:if>

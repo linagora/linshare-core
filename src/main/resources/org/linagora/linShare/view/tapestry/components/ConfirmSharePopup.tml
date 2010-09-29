@@ -92,6 +92,8 @@
                     <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share}</span></t:linkSubmit>
 				<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
 			</div>
+			
+			<div class="clear"></div>
 
 		</t:form>
 

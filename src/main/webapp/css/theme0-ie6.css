@@ -1,77 +1,485 @@
-/*
- * LinShare - Large files secured sharing system
- * CSS custom style ONLY FOR IE  (6.0 and inferiors)
- * Report changes to: info@linagora.com
- *
- * Version: LinShare all versions
- * Language: all
- * Encoding: ASCII
- * 2009-12-22, LINAGORA Group
- */
-
-/***************************************************************************
- * WARNING: IE6 AND INFERIORS ARE NOT SUPPORTED IN LINSHARE                *
- * Use a modern browser like Firefox, Safari, Opera, Chrome, Konqueror     *
- **************************************************************************/
 
 
-/***************************************************************************
-* GLOBAL
-*/
 
-body {
-	height:767px;
-	margin: 0em;
-	padding: 0em;
-	background: #FFF url("../images/theme0/ie6-denial-message-image.jpg") no-repeat center 50px;
-}
-/* ie6-denial-message-image.jpg: CC-BY-ND, John Martz, http://www.flickr.com/photos/robotjohnny/3629069606/ */
-
-
-/***************************************************************************
-* LAYOUT (page)
-*/
-
-/*--------------------------------------------------------------------------
-* PAGE
-*/
-
-#doc, #doc1, #doc2, #doc3, #doc4 {
-	width: 100% !important;
-	margin: 0em !important;
-	padding: 0em !important;
-	min-width: 1024px !important;
+#sideBar {
+	min-height: 20em;
+	margin-bottom: 0em;
+	padding-bottom: 0em;
 }
 
 
-/*--------------------------------------------------------------------------
-* HEADER, BODY, FOOTER
-*/
 
-#hd {
-	width: 100% !important;
-	height: 50px;
-	margin: 0em !important;
-	padding: 0em !important;
-	background: #C8DCE6 url("../images/theme0/ie6-denial-message-text.png") no-repeat center top;
-}
-#bd, #ft {
-	display: none;
-}
 
 /***************************************************************************
 * LAYOUT (local)
 */
 
 /*--------------------------------------------------------------------------
-* HEADER > Content
+* BODY > Menu bar > Content
 */
 
-#hd #logo-linshare,
-#hd #logo-customer,
-#hd #settings {
-	display: none;
+#menuBar {
+	margin-top: 0px;
 }
 
-/***************************************************************************/
-/* EOF */
+/* Tab : Left background */
+#menuBar li a {
+	line-height: 17px;
+}
+
+/* Tab : Right background, and Text */
+#menuBar li a span {
+	border: none;
+	border-top: 3px solid #666A6D;
+}
+#menuBar li a:hover span,
+#menuBar li a:active span {
+	border-top: 3px solid #848484;
+}
+#menuBar li a.menu-labelhighlight span {
+	border: 3px solid #FFF;
+}
+#menuBar li a.menu-labelhighlight:hover span,
+#menuBar li a.menu-labelhighlight:active span {
+	border: 3px solid #FFF;
+}
+
+
+
+/***************************************************************************
+* COMPONENTS
+*/
+
+/*--------------------------------------------------------------------------
+* Components > Tables
+*/
+
+table.t-data-grid {
+	border: 3px solid silver !important;
+}
+
+table.t-data-grid thead tr th {		/* Impossible to style 'tr' tags (5.5, 6, 7) */
+	background-color: #5A93AF !important;
+}
+
+/*--------------------------------------------------------------------------
+* Components > Sorter  (Files, Users)
+*/
+
+#pageContent #list form#form label {
+	position: relative;
+	bottom: .25em;
+}
+
+
+
+/***************************************************************************
+* PAGES
+*/
+
+#files #list td.fileProperties {
+	width: 430px !important;
+}
+#files #list td.fileProperties div {
+	width: 430px !important;
+}
+
+
+
+/***************************************************************************
+* CONTENTS
+*/
+
+/*--------------------------------------------------------------------------
+* Contents > MIME Types (files)
+*/
+
+/* MSIE: Selectors works only with IE7+ (not IE6, not IE5.5) */
+
+/*** Generic file extensions ***/
+
+#content a.fileName {		/* Keep it */
+	content: normal;
+	padding-left: 22px;
+	background: transparent url("../images/icons/mimetype/file.png") no-repeat scroll left center;
+}
+
+#content a.fileName.image_bmp,
+#content a.fileName.image_cis-cod,
+#content a.fileName.image_gif,
+#content a.fileName.image_ief,
+#content a.fileName.image_jpeg,
+#content a.fileName.image_pipeg,
+#content a.fileName.image_png,
+#content a.fileName.image_svg__xml,
+#content a.fileName.image_tiff,
+#content a.fileName.image_x-cmu-raster,
+#content a.fileName.image_x-cmx,
+#content a.fileName.image_x-icon,
+#content a.fileName.image_x-portable-anymap,
+#content a.fileName.image_x-portable-bitmap,
+#content a.fileName.image_x-portable-graymap,
+#content a.fileName.image_x-portable-pixmap,
+#content a.fileName.image_x-rgb,
+#content a.fileName.image_x-xbitmap,
+#content a.fileName.image_x-xpixmap,
+#content a.fileName.image_x-xwindowdump {
+	background-image: url("../images/icons/mimetype/image.png");	
+}
+#content a.fileName.video_mpeg,
+#content a.fileName.video_quicktime,
+#content a.fileName.video_x-la-asf,
+#content a.fileName.video_x-ms-asf,
+#content a.fileName.video_x-msvideo,
+#content a.fileName.video_x-sgi-movie {
+	background-image: url("../images/icons/mimetype/video.png");
+}
+#content a.fileName.audio_basic,
+#content a.fileName.audio_mid,
+#content a.fileName.audio_mpeg,
+#content a.fileName.audio_x-aiff,
+#content a.fileName.audio_x-mpegurl,
+#content a.fileName.audio_x-pn-realaudio,
+#content a.fileName.audio_x-wav {
+	background-image: url("../images/icons/mimetype/audio.png");
+}
+
+
+/*** Specific file extensions ***/
+
+/* MIME types already known in LinShare (with specific icon) */
+
+#content a.fileName.audio_x-aiff {
+	background-image: url("../images/icons/mimetype/aiff.png");
+}
+#content a.fileName.application_bzip2 {
+	background-image: url("../images/icons/mimetype/bz2.png");
+}
+#content a.fileName.application_x-chm {
+	background-image: url("../images/icons/mimetype/chm.png");
+}
+#content a.fileName.text_css {
+	background-image: url("../images/icons/mimetype/css.png");
+}
+#content a.fileName.video_mp4 {
+	background-image: url("../images/icons/mimetype/divx.png");
+}
+#content a.fileName.application_vnd_-_ms-word,
+#content a.fileName.application_vnd_-_openxmlformats-officedocument_-_wordprocessingml {
+	background-image: url("../images/icons/mimetype/doc.png");
+}
+#content a.fileName.message_rfc822 {
+	background-image: url("../images/icons/mimetype/eml.png");
+}
+#content a.fileName.image_gif {
+	background-image: url("../images/icons/mimetype/gif.png");
+}
+#content a.fileName.application_gzip {
+	background-image: url("../images/icons/mimetype/gz.png");
+}
+#content a.fileName.application_winhlp {
+	background-image: url("../images/icons/mimetype/hlp.png");
+}
+#content a.fileName.text_html,
+#content a.fileName.application_xhtml__xml {
+	background-image: url("../images/icons/mimetype/html.png");
+}
+#content a.fileName.image_jpeg {
+	background-image: url("../images/icons/mimetype/jpg.png");
+}
+#content a.fileName.text_javascript {
+	background-image: url("../images/icons/mimetype/js.png");
+}
+#content a.fileName.application_x-freemind {
+	background-image: url("../images/icons/mimetype/mm.png");
+}
+#content a.fileName.video_quicktime {
+	background-image: url("../images/icons/mimetype/mov.png");
+}
+#content a.fileName.audio_mpeg {
+	background-image: url("../images/icons/mimetype/mp3.png");
+}
+#content a.fileName.video_mpeg {
+	background-image: url("../images/icons/mimetype/mpg.png");
+}
+#content a.fileName.application_vnd_-_oasis_-_opendocument_-_formula,
+#content a.fileName.application_vnd_-_sun_-_xml_-_math {
+	background-image: url("../images/icons/mimetype/odf.png");
+}
+#content a.fileName.application_vnd_-_oasis_-_opendocument_-_graphics,
+#content a.fileName.application_vnd_-_sun_-_xml_-_draw {
+	background-image: url("../images/icons/mimetype/odg.png");
+}
+#content a.fileName.application_vnd_-_oasis_-_opendocument_-_presentation,
+#content a.fileName.application_vnd_-_sun_-_xml_-_impress {
+	background-image: url("../images/icons/mimetype/odp.png");
+}
+#content a.fileName.application_vnd_-_oasis_-_opendocument_-_spreadsheet,
+#content a.fileName.application_vnd_-_sun_-_xml_-_calc {
+	background-image: url("../images/icons/mimetype/ods.png");
+}
+#content a.fileName.application_vnd_-_oasis_-_opendocument_-_text,
+#content a.fileName.application_vnd_-_sun_-_xml_-_writer {
+	background-image: url("../images/icons/mimetype/odt.png");
+}
+#content a.fileName.application_x-ogg {
+	background-image: url("../images/icons/mimetype/ogg.png");
+}
+#content a.fileName.application_pdf {
+	background-image: url("../images/icons/mimetype/pdf.png");
+}
+#content a.fileName.image_png {
+	background-image: url("../images/icons/mimetype/png.png");
+}
+#content a.fileName.application_vnd_-_ms-powerpoint,
+#content a.fileName.application_vnd_-_openxmlformats-officedocument_-_presentationml {
+	background-image: url("../images/icons/mimetype/ppt.png");
+}
+#content a.fileName.application_postscript {
+	background-image: url("../images/icons/mimetype/ps.png");
+}
+#content a.fileName.application_vnd_-_rn-realmedia {
+	background-image: url("../images/icons/mimetype/ram.png");
+}
+#content a.fileName.application_x-rar-compressed {
+	background-image: url("../images/icons/mimetype/rar.png");
+}
+#content a.fileName.text_rtf {
+	background-image: url("../images/icons/mimetype/rtf.png");
+}
+#content a.fileName.application_x-installshield-compressedfile {
+	background-image: url("../images/icons/mimetype/setup.png");
+}
+#content a.fileName.application_pgp-signature {
+	background-image: url("../images/icons/mimetype/sig.png");
+}
+#content a.fileName.application_x-shockwave-flash {
+	background-image: url("../images/icons/mimetype/swf.png");
+}
+#content a.fileName.application_x-tar {
+	background-image: url("../images/icons/mimetype/tar.png");
+}
+#content a.fileName.text_plain {
+	background-image: url("../images/icons/mimetype/txt.png");
+}
+#content a.fileName.text_x-vcard {
+	background-image: url("../images/icons/mimetype/vcf.png");
+}
+#content a.fileName.audio_x-wav {
+	background-image: url("../images/icons/mimetype/wav.png");
+}
+#content a.fileName.audio_x-ms-wma {
+	background-image: url("../images/icons/mimetype/wma.png");
+}
+#content a.fileName.video_x-ms-wmv {
+	background-image: url("../images/icons/mimetype/wmv.png");
+}
+#content a.fileName.application_vnd_-_ms-excel,
+#content a.fileName.application_vnd_-_openxmlformats-officedocument_-_spreadsheetml {
+	background-image: url("../images/icons/mimetype/xls.png");
+}
+#content a.fileName.text_xml {
+	background-image: url("../images/icons/mimetype/xml.png");
+}
+#content a.fileName.application_zip {
+	background-image: url("../images/icons/mimetype/zip.png");
+}
+
+
+/* MIME types already known in LinShare (with substitued icon) */
+
+#content a.fileName.application_x-bittorrent {
+	background-image: url("../images/icons/mimetype/conf.png");
+}
+#content a.fileName.application_x-url {
+	background-image: url("../images/icons/mimetype/html.png");
+}
+#content a.fileName.application_x-winamp-playlist {
+	background-image: url("../images/icons/mimetype/mp3.png");
+}
+#content a.fileName.application_x-compress,
+#content a.fileName.application_stuffit,
+#content a.fileName.application_vnd_-_ms-cab-compressed,
+#content a.fileName.application_java-archive,
+#content a.fileName.application_x-java-webarchive,
+#content a.fileName.application_x-java-enterprisearchive {
+	background-image: url("../images/icons/mimetype/tar.png");
+}
+#content a.fileName.text_java,
+#content a.fileName.application_x-java-manifest,
+#content a.fileName.application_bat,
+#content a.fileName.application_x-sh,
+#content a.fileName.application_x-csh,
+#content a.fileName.application_x-bash,
+#content a.fileName.application_x-ksh,
+#content a.fileName.application_x-tsh,
+#content a.fileName.application_x-applescript,
+#content a.fileName.application_x-ms-registry,
+#content a.fileName.application_x-md5,
+#content a.fileName.application_x-sha {
+	background-image: url("../images/icons/mimetype/txt.png");
+}
+#content a.fileName.application_x-mozilla-addressbook {
+	background-image: url("../images/icons/mimetype/vcf.png");
+}
+#content a.fileName.application_xslt__xml,
+#content a.fileName.application_rdf__xml,
+#content a.fileName.application_owl__xml,
+#content a.fileName.application_xspf__xml {
+	background-image: url("../images/icons/mimetype/xml.png");
+}
+#content a.fileName.application_vnd_-_adobe_-_air-application-installer-package__zip {
+	background-image: url("../images/icons/mimetype/zip.png");
+}
+
+
+/* Other MIME types (unknown in LinShare, on 2009-06-10), for future use */
+
+#content a.fileName.application_x-7z-compressed {
+	background-image: url("../images/icons/mimetype/7z.png");
+}
+#content a.fileName.text_x-c {
+	background-image: url("../images/icons/mimetype/c.png");
+}
+#content a.fileName.text_x-c____ {
+	background-image: url("../images/icons/mimetype/cpp.png");
+}
+#content a.fileName.application_x-python {
+	background-image: url("../images/icons/mimetype/py.png");
+}
+#content a.fileName.application_x-rpm {
+	background-image: url("../images/icons/mimetype/rpm.png");
+}
+#content a.fileName.application_x-tex,
+#content a.fileName.application_x-latex {
+	background-image: url("../images/icons/mimetype/tex.png");
+}
+#content a.fileName.application_x-xpinstall {
+	background-image: url("../images/icons/mimetype/xpi.png");
+}
+
+#content a.fileName.text_java,
+#content a.fileName.application_x-java-manifest {
+	background-image: url("../images/icons/mimetype/java.png");
+}
+#content a.fileName.application_x-java-class {
+	background-image: url("../images/icons/mimetype/class.png");
+}
+#content a.fileName.application_java-archive,
+#content a.fileName.application_x-java-applet,
+#content a.fileName.application_x-java-bean,
+#content a.fileName.application_x-java-vm {
+	background-image: url("../images/icons/mimetype/jar.png");		/* .jar */
+}
+#content a.fileName.application_x-java-webarchive {
+	background-image: url("../images/icons/mimetype/jar.png");		/* .war */
+}
+#content a.fileName.application_x-java-enterprisearchive {
+	background-image: url("../images/icons/mimetype/jar.png");		/* .ear */
+}
+
+#content a.fileName.application_x-executable,
+#content a.fileName.application_x-ms-dos-executable {
+	background-image: url("../images/icons/mimetype/exe.png");
+}
+#content a.fileName.application_octet-stream {
+	background-image: url("../images/icons/mimetype/bin.png");
+}
+
+#content a.fileName.application_pgp-keys {
+	background-image: url("../images/icons/mimetype/pgp.png");
+}
+#content a.fileName.application_pgp-signature {	/* Cf. sig.png */
+}
+#content a.fileName.application_pgp,
+#content a.fileName.application_pgp-encrypted {
+	background-image: url("../images/icons/mimetype/enc.png");
+}
+
+
+
+/***************************************************************************
+* POPUPS
+*/
+
+/*--------------------------------------------------------------------------
+* Popups > Guest creation, User edition
+*/
+
+#guestEditFormComponent .edit-form-label,
+#userEditFormComponent .edit-form-label {
+	float: left;
+}
+#guestEditFormComponent .edit-form-field,
+#userEditFormComponent .edit-form-field {
+	width: 19em;
+}
+#guestEditFormComponent .edit-form-checkbox,
+#userEditFormComponent .edit-form-checkbox {
+	margin-top: -1.30em;
+	margin-right: 10em;		/* Safe margin */
+}
+#guestEditFormComponent textarea,
+#userEditFormComponent textarea {
+	width: 41em;
+}
+
+
+/* Min-width doesn't exists, so : fixed width */
+body {
+	width: 1200px;
+}
+
+/* Trick to have the right column having the same height as the left column */
+.yui-t6 .yui-b {
+	margin-bottom: -3000px; 
+	padding-bottom: 3000px;
+}
+
+#menuBar {
+	background-image: none !important;
+	background-color: #444 !important;
+	border-top: 2px solid #666;
+}
+
+#menuBar li a span {
+border:3px solid #444 !important;
+}
+
+#menuBar li a.menu-labelhighlight span {
+border:3px solid #FFF !important;
+}
+
+#menuBar li a:hover {
+	background-image: none !important;
+	background-color: #555 !important;
+}
+#menuBar li a:hover span {
+border:3px solid #555 !important;
+}
+
+#content #actionBar {
+	float:none !important;
+	margin-bottom: 0 !important;
+	position: static !important;
+}
+
+a.button span {
+	width: 90px;
+	text-align: center !important;
+}
+a.button {
+	width: 90px;
+}
+
+#sideBar div.widget div.widget_body {
+	padding: 10px;
+}
+
+div.button img {
+display:none;
+}
+
+div.dialog div.button {
+clear: both;
+}
