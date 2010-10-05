@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.components;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -32,6 +33,7 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 /**
  *
  */
+@IncludeJavaScriptLibrary(value = {"LoginFormComponent.js"})
 public class LoginFormComponent {
 
 	/* ***********************************************************
