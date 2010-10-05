@@ -3643,5 +3643,10 @@ input.ck-kaptcha {
 	background-image:url(../images/theme0/form-input-gradient.png);
 }
 
+/* QuickShareWindow */
+#quickShareWindowContent #panelUpload_content h2 {
+	display: none;
+}
+
 /***************************************************************************/
 /* EOF */
