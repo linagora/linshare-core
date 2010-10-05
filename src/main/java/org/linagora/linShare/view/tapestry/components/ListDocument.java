@@ -141,8 +141,8 @@ public class ListDocument {
 	private String action;
 
 	
-	private Map<Integer, String> tooltipValues;
-	private Map<Integer, String> tooltipGroupValues;
+	private Map<String, String> tooltipValues;
+	private Map<String, String> tooltipGroupValues;
 	
 	private String tooltipValue;
 	@Property
@@ -151,9 +151,6 @@ public class ListDocument {
 	private String tooltipGroupValue;
 	@Property
 	private String tooltipGroupTitle;
-	
-	@Property
-	private int rowIndex;
 	
 	@Inject @Symbol("linshare.groups.activated")
 	@Property
@@ -401,8 +398,8 @@ public class ListDocument {
 					value = messages.get("components.listDocument.tooltip.noEntry");
 					valueGroup = messages.get("components.listDocument.tooltip.noEntry");
 				}
-				tooltipValues.put(i, value.replaceAll("[\r\n]+", ""));
-				tooltipGroupValues.put(i, valueGroup.toString().replaceAll("[\r\n]+", ""));
+				tooltipValues.put(docVo.getIdentifier(), value.replaceAll("[\r\n]+", ""));
+				tooltipGroupValues.put(docVo.getIdentifier(), valueGroup.toString().replaceAll("[\r\n]+", ""));
 				i++;
 			}
 			
@@ -438,10 +435,10 @@ public class ListDocument {
      * the user in the list of documents.
 	 */
 	public String getTooltipValue() {
-		return tooltipValues.get(rowIndex);
+		return tooltipValues.get(document.getIdentifier());
 	}
 	public String getTooltipGroupValue() {
-		return tooltipGroupValues.get(rowIndex);
+		return tooltipGroupValues.get(document.getIdentifier());
 	}
 	
 	public String getTypeCSSClass() {
