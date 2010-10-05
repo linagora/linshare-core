@@ -15,7 +15,7 @@ function countCheckbox()
 	if(elements.length<allElements.length){
 		document.getElementById('selectAll').checked=false;
 	}
-    $('actionsWidget').style.display = result;
+    /*$('actionsWidget').style.display = result;*/
 }
 
 

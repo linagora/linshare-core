@@ -56,7 +56,7 @@ public class UserAddToGroupForm {
     
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
-    private String addUserWithMail;
+    private List<UserVo> newMemberList;
     
 
     /* ***********************************************************
@@ -95,10 +95,6 @@ public class UserAddToGroupForm {
     private List<GroupVo> groupsAllowed;
 	
     private List<GroupVo> selectedGroups;
-    
-//    @Property
-//    @Persist
-//    private GroupMemberType type;
 
     /* ***********************************************************
      *                   Event handlers&processing
@@ -107,20 +103,8 @@ public class UserAddToGroupForm {
     @SetupRender
     public void init(){
 		groupsAllowed = new ArrayList<GroupVo>();
-		if (groups != null && addUserWithMail != null) {
-			List<GroupVo> groupsAlreadyMember = groupFacade.findByUser(addUserWithMail);
-			if (groupsAlreadyMember==null || groupsAlreadyMember.size()<1) {
-				for (GroupVo groupVo : groups) {
-					groupsAllowed.add(groupVo);
-				}
-				groupsAllowed=groups;
-				return;
-			}
-			for (GroupVo groupVo : groups) {
-				if (!groupsAlreadyMember.contains(groupVo)) {
-					groupsAllowed.add(groupVo);
-				}
-			}
+		if (groups != null && newMemberList != null && newMemberList.size() > 0) {
+			groupsAllowed.addAll(groupFacade.findByUser(userLoggedIn.getLogin()));
 		}
     }
 
@@ -141,24 +125,29 @@ public class UserAddToGroupForm {
     }
 
     public void onSuccess() throws BusinessException {
-    	if (selectedGroups != null) {
-        	UserVo userAdded = userFacade.findUser(addUserWithMail);
-        	List<GroupVo> groupsOfUserAdded = groupFacade.findByUser(addUserWithMail);
-        	List<GroupVo> groupsWhereUserWillBeAdded = new ArrayList<GroupVo>();
-        	
-	    	for (GroupVo groupVo : selectedGroups) {
-				if (!groupsOfUserAdded.contains(groupVo)) {
-					groupsWhereUserWillBeAdded.add(groupVo);
+    	
+    	if (selectedGroups != null && newMemberList != null) {
+    		for (UserVo user : newMemberList) {
+	        	List<GroupVo> groupsOfUserAdded = groupFacade.findByUser(user.getLogin());
+	        	List<GroupVo> groupsWhereUserWillBeAdded = new ArrayList<GroupVo>();
+	        	
+		    	for (GroupVo groupVo : selectedGroups) {
+					if (!groupsOfUserAdded.contains(groupVo)) {
+						groupsWhereUserWillBeAdded.add(groupVo);
+					}
+					else {
+						shareSessionObjects.addWarning(messages.format("components.userAddToGroup.alreadyIn", user.getFirstName(), user.getLastName(), groupVo.getName()));
+					}
 				}
-			}
-	    	
-	    	if (groupsWhereUserWillBeAdded.size()>0) {
-	    		for (GroupVo groupVo : groupsWhereUserWillBeAdded) {
-	    			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userLoggedIn, null);
-					groupFacade.addMember(groupVo, userLoggedIn, userAdded, mailContainer);
-					shareSessionObjects.setReloadGroupsNeeded(true);
-					shareSessionObjects.addMessage(messages.format("components.userAddToGroup.success", userAdded.getFirstName(), userAdded.getLastName(), groupVo.getName()));
-				}
+		    	
+		    	if (groupsWhereUserWillBeAdded.size()>0) {
+		    		for (GroupVo groupVo : groupsWhereUserWillBeAdded) {
+		    			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userLoggedIn, null);
+						groupFacade.addMember(groupVo, userLoggedIn, user, mailContainer);
+						shareSessionObjects.setReloadGroupsNeeded(true);
+						shareSessionObjects.addMessage(messages.format("components.userAddToGroup.success", user.getFirstName(), user.getLastName(), groupVo.getName()));
+					}
+		    	}
 	    	}
     	}
 		

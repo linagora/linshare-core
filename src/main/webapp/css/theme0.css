@@ -21,7 +21,7 @@ body {
 	margin: 0em;
 	padding: 0em;
 	background: #FFF;
-	color: #000;
+	color: #222;
 }
 
 hr {
@@ -71,7 +71,7 @@ strong {
 #hd form p {
 	margin-top: 3px;	
 	margin-bottom: 3px;	
-	color: #000;
+	color: #222;
 }
 
 
@@ -104,7 +104,7 @@ strong {
 	margin: 5px -7px 5px 5px;
 	padding: 1em;
 	background: transparent url("../images/theme0/bg-main.png") repeat-x;
-	color: #000;
+	color: #222;
 	position:relative;
 }
 
@@ -251,7 +251,7 @@ strong {
 
 /* Text link */
 #menuBar li a {
-	color: #AAA !important;
+	color: #ddd !important;
 	text-decoration: none;
 	border: none;
 }
@@ -408,7 +408,7 @@ strong {
 #sideBar .widget > div {
 	margin: 0em;
 	padding: .5em;
-	color: #000;
+	color: #222;
 }
 
 
@@ -473,7 +473,7 @@ strong {
 #settings #connection input {
 	margin-left: .75em;
 	border: 1px solid #3D697F !important;
-	color: #000;
+	color: #222;
 }
 #settings #connection input.loginSubmit {
 	float: none !important;
@@ -670,7 +670,7 @@ strong {
 	display: block;
 	margin: 0em;
 	padding: .25em 0em;
-	color: #000 !important;
+	color: #222 !important;
 	text-decoration: none !important;
 }
 
@@ -759,7 +759,7 @@ strong {
 	padding: 1px 2px 1px 2px !important;
 	background: #F0F0F0 url("../images/theme0/form-input-gradient.png") no-repeat;
 	border: 1px solid #3D697F;
-	color: #000;
+	color: #222;
 }
 #searchWidget > div form input[type="text"]:hover,
 #searchWidget > div form input[type="text"]:focus {
@@ -1106,6 +1106,7 @@ a.button {
 	padding: 0px;
 	background: transparent url("../images/theme0/button.png") no-repeat scroll left 0px;
 	-moz-user-select: none;
+	display:inline;
 }
 a.button:hover, a.button:focus {
 	background-position: left -30px;
@@ -1115,7 +1116,6 @@ a.button:active {
 }
 
 /* Button : Right background, and Text */
-
 a.button span {
 	display: block;
 	position: relative;
@@ -1139,7 +1139,6 @@ a.button img {
 }
 
 /* Text link */
-
 a.button {
 /*	background-color: #C8DCE6;		/* INFO */
 	color: #2D4D5D !important;
@@ -1158,13 +1157,50 @@ a.button:active {
 }
 
 /* Button : Special Popups */
-
 div.dialog a.button span {
 	height: 23px;		/* 23px = 30px - 7px - 0px */
 	padding: 7px 15px 0px 0px;
 }
 div.dialog a.button img {
 	margin: 0px .20em -1px 0px;
+}
+
+div.dialog button {
+	color: #2D4D5D;
+	text-align: center;
+	font-size: 13px;
+	font-weight: bold;
+	text-decoration: none;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	height: 30px;
+	border: none;
+	background: transparent url("../images/theme0/button.png") no-repeat scroll center 0px;
+}
+div.dialog button.button:hover, div.dialog button.button:focus {
+	background-position: center -30px;
+	color: #C00D2D;
+}
+div.dialog button.button:active span {
+	background-position: center -60px;
+	color: #8F0A22;
+}
+
+
+div.dialog button span {
+	display: block;
+	position: relative;
+	right: -7px;
+	height: 24px;		/* 24px = 30px - 6px - 0px */
+	padding: 6px 15px 0px 0px;
+	text-align: right;
+}
+
+div.dialog button img {
+	margin: 0px .20em -1px 0px;
+	max-width: 16px;
+	max-height: 16px;
+	vertical-align: bottom;
 }
 
 
@@ -1193,13 +1229,13 @@ div.dialog a.button img {
 */
 
 input,
-select, button, textarea {
+select, textarea {
 	padding: 2px !important;
 	border: 0px none;
 }
 input[type="text"], input[type="password"], input[type="file"],
 input[type="submit"], input[type="reset"], input[type="button"],
-select, button, textarea {
+select, textarea {
 	border: 1px solid #DDD;
 }
 input[type="submit"], input[type="reset"], input[type="button"] {
@@ -1283,7 +1319,7 @@ table.t-data-grid {
 }
 
 #pageContent h4 {
-	color: #000;
+	color: #222;
 	font-size: 1.05em;
 }
 
@@ -1317,7 +1353,7 @@ table.t-data-grid {
 }
 #home #messagePanel.welcome p {
 	margin-bottom: 1.5em;
-	color: #000;
+	color: #222;
 	text-align: justify;
 	font-weight: normal;
 	font-size: 1.3em;
@@ -3436,7 +3472,7 @@ input[type="submit"] {
 	margin-left: 5px;
 	padding-top: 0 !important;
 	border: 1px solid #5A93AF !important;
-	color: #000000;
+	color: #222;
 }
 
 /* Thumbnail view */
@@ -3541,7 +3577,7 @@ div.t-beaneditor {
 	width: 92.0%;
 	margin: .25em auto;
 	background-color: #EAF1F5;
-	font-size: 1.2em;
+	font-size: 1.1em;
 }
 
 #userAddToGroupFormComponent table tr,

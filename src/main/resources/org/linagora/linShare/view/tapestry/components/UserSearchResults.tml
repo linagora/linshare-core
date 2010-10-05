@@ -47,7 +47,7 @@
 			<!-- Selected cell definition -->
 
 			<t:parameter name="pictureCell">
-				<t:if test="admin">
+<!--				<t:if test="admin">-->
 					<t:if test="userGuestRestricted">
 						<img src="${asset:context:images/icons/usertype-guestrestricted.png}"
 							alt="${message:components.userSearch.grid.usertype.guestRestricted}"
@@ -72,7 +72,7 @@
 								</t:if>
 						</t:parameter>
 					</t:if>
-				</t:if>
+<!--				</t:if>-->
 			</t:parameter>
 
 			<t:parameter name="mailCell">
@@ -175,7 +175,7 @@
 
     <div style="display:none">
         <t:zone t:id="userAddToGroupTemplateZone">
-            <t:userAddToGroupForm groups="groups" addUserWithMail="selectedLogin"/>
+            <t:userAddToGroupForm groups="groups" newMemberList="userAddToGroupsList"/>
         </t:zone>
     </div>
 
@@ -184,7 +184,9 @@
     </div>
 
     <div t:id="userAddToGroupWindow">
-        <t:zone id="userAddToGroupFormZone" update="show"/>
+        <t:zone id="userAddToGroupFormZone" update="show">
+            <t:userAddToGroupForm groups="groups" newMemberList="userAddToGroupsList"/>
+        </t:zone>
     </div>
 
 </t:container>

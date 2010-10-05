@@ -13,6 +13,14 @@
 			</a>
 		</li>
 
+		<!-- Action > GroupShare -->
+		<li>
+			<a href="#" onclick="submitFormWithAction('${formName}','GROUP_SHARE_ACTION');">
+				<img src="${asset:context:images/icons/share-group-on.png}" alt="" />
+				${message:components.listDocument.action.groupShare}
+			</a>
+		</li>
+
 		<!-- Action > Delete -->
 		<li>
 			<a href="#"

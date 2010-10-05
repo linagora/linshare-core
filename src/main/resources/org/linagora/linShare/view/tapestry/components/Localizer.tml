@@ -5,7 +5,7 @@
   	</t:if>
 	<t:loop source="locales" value="currentLocale">
 		
-		<font class="localizer-font">
+		<span class="localizer-font">
 			<t:if test="selected" negate="true">
 			<t:actionLink t:id="localeLink" href="#" t:context="prop:localeValue" class="localizer-link">${label}</t:actionLink>
 			</t:if>
@@ -15,7 +15,7 @@
 			<t:if test="last" negate="true">
 				${separator}
 			</t:if>
-		</font>
+		</span>
 	</t:loop>
 	
 </t:container>	
