@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,12 +36,14 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.StreamResponse;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
@@ -64,6 +67,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
+import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.SharedFileSorterModel;
@@ -76,6 +80,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+@SupportsInformalParameters
+@IncludeJavaScriptLibrary(value = { "ListDocument.js"})
 public class ListSharedDocument {
 
 	private static final Logger logger = LoggerFactory.getLogger(ListSharedDocument.class);
@@ -112,6 +118,10 @@ public class ListSharedDocument {
 	@SuppressWarnings("unused")
 	@Property
 	private ShareDocumentVo shareDocument;
+
+	@Property
+	@Persist
+	private List<ShareDocumentVo> listSelected;
 	
 
 	/***********************************
@@ -183,6 +193,26 @@ public class ListSharedDocument {
 	
 	@Persist
 	private List<ShareDocumentVo> docs;
+
+
+	@SuppressWarnings("unused")
+	private boolean filesSelected;
+
+	@SuppressWarnings("unused")
+	@Property
+	private Boolean valueCheck;
+
+	@Persist("flash")
+	private ActionFromBarDocument actionbutton;
+	
+	@Property
+	private String action;
+
+	@Property
+	private String deleteConfirmed;
+
+	@Persist
+	private String pass;
 	
 	
 	/**
@@ -204,6 +234,7 @@ public class ListSharedDocument {
 	 */
 	@SetupRender
 	public void init() throws BusinessException {
+		listSelected = new ArrayList<ShareDocumentVo>();
 		Collections.sort(shareDocuments);
 		this.componentdocuments = shareDocuments;
 		this.activeSignature = parameterFacade.loadConfig().getActiveSignature();
@@ -303,6 +334,49 @@ public class ListSharedDocument {
             componentResources.triggerEvent("resetListFiles", null, null);
         }
     }
+    
+	public Object onSuccessFromSearch() {
+		if (listSelected.size()<1) {
+            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.NOFILE_SELECTED,
+                    MessageSeverity.WARNING));
+    		return null;
+		}
+		
+		actionbutton =  ActionFromBarDocument.fromString(action);
+		
+		switch (actionbutton) {
+		case DELETE_ACTION:
+			if ("true".equals(deleteConfirmed)) {
+				componentResources.getContainer().getComponentResources()
+						.triggerEvent("eventDeleteFromListDocument",
+								listSelected.toArray(), null);
+			}
+			break;
+		case SIGNATURE_ACTION:
+			componentResources.getContainer().getComponentResources()
+					.triggerEvent("eventSignatureFromListDocument",
+							listSelected.toArray(), null);
+			break;
+		case COPY_ACTION:
+			copyFromListDocument(listSelected);
+			break;
+		case DECRYPT_ACTION:
+			List<Object> decryptParameters = new ArrayList<Object>();
+			decryptParameters.add(this.pass);
+			decryptParameters.add(listSelected);
+			componentResources.getContainer().getComponentResources()
+					.triggerEvent("eventDecryptListDocFromListDocument",
+							decryptParameters.toArray(), null);
+			break;	
+		case NO_ACTION:
+		default:
+			break;
+		}
+
+		actionbutton = ActionFromBarDocument.NO_ACTION;
+
+		return null;
+	}
 	
 	/***************************
 	 * Events 
@@ -330,7 +404,34 @@ public class ListSharedDocument {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid");
 		}
 	}
-	
+
+    
+	public void copyFromListDocument(List<ShareDocumentVo> shares) {
+		 
+		for(ShareDocumentVo shareDocumentVo:shares){
+	        boolean copyDone = false;
+	        boolean alreadyDownloaded = shareDocumentVo.getDownloaded();
+	        
+	        //create the copy of the document and remove it from the received documents
+	        try {
+	            shareFacade.createLocalCopy(shareDocumentVo, user);
+	            copyDone = true;
+	        } catch (BusinessException e) {
+	            // process business exception. Can be thrown if no space left or wrong mime type.
+	            businessMessagesManagementService.notify(e);
+	        }
+	        
+	        //send an email to the owner if it is the first time the document is downloaded
+			if (!alreadyDownloaded) 
+				notifyOwnerByEmail(shareDocumentVo);
+			
+	        if (copyDone) {
+	            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
+	                MessageSeverity.INFO));
+	        }
+		}
+        componentResources.triggerEvent("resetListFiles", null, null);
+	}
 	
 	
 	
@@ -390,6 +491,26 @@ public class ListSharedDocument {
 	
 	public boolean isDocumentSigned(){
 		return documentFacade.isSignedDocument(shareDocument);
+	}
+
+	/**
+	 * 
+	 * @return false (the document is never filesSelected by default)
+	 */
+	public boolean isFilesSelected() {
+		return false;
+	}
+
+	/**
+	 * This method is called when the form is submitted.
+	 * 
+	 * @param filesSelected
+	 *            filesSelected or not in the form.
+	 */
+	public void setFilesSelected(boolean selected) {
+		if (selected) {
+			listSelected.add(shareDocument);
+		}
 	}
 	
 	/**
@@ -457,12 +578,14 @@ public class ListSharedDocument {
         	model.add("expirationDate",null);
         	model.add("signed",null);
         	model.add("actions",null);
-        	model.reorder("fileProperties","expirationDate","signed","actions");
+    		model.add("selectedValue", null);
+        	model.reorder("fileProperties","expirationDate","signed","actions", "selectedValue");
     	} else {
         	model.add("fileProperties",null);
         	model.add("expirationDate",null);
         	model.add("actions",null);
-        	model.reorder("fileProperties","expirationDate","actions");
+    		model.add("selectedValue", null);
+        	model.reorder("fileProperties","expirationDate","actions", "selectedValue");
     	}
         return model;
     }

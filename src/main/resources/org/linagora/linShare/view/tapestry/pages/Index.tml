@@ -97,5 +97,14 @@
 	</t:if>
 	</t:parameter>
 	
+	<!-- Actions widget -->
+	<t:parameter name="actionsWidget">
+		<t:if test="shares">
+			<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
+				<t:actionsBarShare t:user="userVo" t:formName="search" />
+			</t:widget>
+		</t:if>
+	</t:parameter>
+	
 
 </t:MyBorderLayout>

@@ -67,6 +67,10 @@ public class UserSearchResults {
      ************************************************************ */
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     private List<UserVo> userShareList;
+    
+    @Property
+    @Persist
+    private List<UserVo> userAddToGroupsList;
 
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
@@ -95,7 +99,7 @@ public class UserSearchResults {
     private WindowWithEffects userEditWindow;
     
     @SuppressWarnings("unused")
-    @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=280"})
+    @Component(parameters = {"style=bluelighting", "show=false", "width=550", "height=350"})
     private WindowWithEffects userAddToGroupWindow;
 
     @InjectComponent
@@ -162,6 +166,10 @@ public class UserSearchResults {
 	@Property
 	@Persist
 	private List<GroupVo> groups;
+	
+	@Property
+	@Persist
+	private boolean memberAddShowPopup;
     
     /* ***********************************************************
      *                   Event handlers&processing
@@ -170,6 +178,9 @@ public class UserSearchResults {
     public void initUserSearch() {
         if (selectedUsers == null) {
             selectedUsers = new ArrayList<UserVo>();
+        }
+        if (userAddToGroupsList == null) {
+        	userAddToGroupsList = new ArrayList<UserVo>();
         }
         if (users == null || users.size() == 0) {
         	if (inSearch==false) {
@@ -197,6 +208,10 @@ public class UserSearchResults {
 	public void afterRender() {
 		if ((users != null) && (users.size() > 0))
 			renderSupport.addScript(String.format("countUserCheckbox('');"));
+		if (memberAddShowPopup) {
+            renderSupport.addScript(String.format("userAddToGroupWindow.showCenter(true)"));
+            memberAddShowPopup=false;
+		}
 	}
 
     public void onSuccess() {
@@ -213,6 +228,16 @@ public class UserSearchResults {
                 }
             }
             selectedUsers = new ArrayList<UserVo>();
+			break;
+		case MEMBER_ADD_ACTION:
+			userAddToGroupsList = new ArrayList<UserVo>();
+            for (UserVo userVo : selectedUsers) {
+                if (!userAddToGroupsList.contains(userVo)) {
+                	userAddToGroupsList.add(userVo);
+                }
+            }
+            selectedUsers = new ArrayList<UserVo>();
+            memberAddShowPopup=true;
 			break;
 		case NO_ACTION:
 		default:
@@ -246,8 +271,10 @@ public class UserSearchResults {
         shareSessionObjects.setMultipleSharing(true);
     }
     
-    public Zone onActionFromAddToGroup(String login) {
-        this.selectedLogin = login;
+    public Zone onActionFromAddToGroup(String userLogin) {
+    	userAddToGroupsList = new ArrayList<UserVo>();
+    	UserVo user = userFacade.loadUserDetails(userLogin);
+    	userAddToGroupsList.add(user);
         return userAddToGroupTemplateZone;
     }
 

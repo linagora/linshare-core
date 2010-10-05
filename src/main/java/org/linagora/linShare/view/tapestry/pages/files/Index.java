@@ -575,6 +575,20 @@ public class Index {
 
 	}
 	
+	@OnEvent(value="eventGroupShare")
+	public void shareWithGroupFromListDocument(Object[] object) throws BusinessException {
+		shareSessionObjects.getDocuments().clear(); //delete all other doc
+		flagGroupShare=true;
+		shareSessionObjects.setMultipleSharing(false);
+		
+		for (Object docObj : object) {
+			DocumentVo documentVoTemp=(DocumentVo) docObj;
+			if(null!=documentVoTemp){
+				shareSessionObjects.addDocument(documentVoTemp);
+			}
+		}
+	}
+	
 	/**
 	 * Remove the document from the share list
 	 * @param object : object[0] contains a the DocumentVo

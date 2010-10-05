@@ -20,6 +20,9 @@
 	<t:sorter t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listSharedDocument.sorter.date.sharing.label},${message:components.listSharedDocument.sorter.date.expiration.label},${message:components.listSharedDocument.sorter.name.label},${message:components.listSharedDocument.sorter.size.label}" t:properties="literal:dateSharing,dateExpiration,name,size"/> 
 
 	<t:form t:id="search">
+
+		<t:linkit.hiddenfield t:id="deleteConfirmed" />
+		<t:linkit.hiddenfield t:id="action" />
 	
 		<t:errors />
 
@@ -55,6 +58,10 @@
 
 			<t:parameter t:name="SignedHeader">
 				${message:components.listSharedDocument.grid.signed}
+			</t:parameter>
+
+			<t:parameter t:name="selectedValueHeader">
+				 <t:checkbox t:id="selectAll" onclick="checkAll();" value="valueCheck" title="${message:components.listDocument.grid.checkAll}"/>
 			</t:parameter>
 
 
@@ -150,6 +157,10 @@
 				</t:if>
 			</t:parameter>
 
+ 			<t:parameter t:name="selectedValueCell">
+				<t:checkbox t:id="filesSelected" onclick="countCheckbox();" />
+			</t:parameter>
+
 		</t:grid>
 	</t:form>
  
@@ -160,6 +171,13 @@
 
 	<t:confirmPopup t:messageLabel="${message:components.listDocument.messageConfirm}" t:eventName="listDocumentEvent" />
 
+	<t:confirmSubmitPopup
+		t:messageLabel="${message:components.listDocument.messageConfirm}"
+		t:fieldName="deleteConfirmed"
+		t:formName="search" />
+			
+	<t:passwordDecryptPopupSubmit t:id="passwordDecryptPopupSubmit" t:formId="search" t:title="${message:components.listDocument.passwordDecryptPopup.title}" t:content="${message:components.listDocument.passwordDecryptPopup.content}" t:errorBanner="${message:components.listDocument.passwordDecryptPopup.errorBanner}" />
+		
  	<t:userDetailsDisplayer />
 
 		<t:signatureDetailsDisplayer />

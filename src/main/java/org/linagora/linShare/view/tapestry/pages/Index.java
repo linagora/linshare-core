@@ -20,11 +20,13 @@
 */
 package org.linagora.linShare.view.tapestry.pages;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -33,16 +35,21 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.vo.DocToSignContext;
+import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.utils.WelcomeMessageUtils;
 import org.slf4j.Logger;
@@ -63,12 +70,16 @@ public class Index {
     private ShareFacade shareFacade;
     @Inject
     private ParameterFacade parameterFacade;
+	@Inject
+	private PageRenderLinkSource linkFactory;
     @Inject
     private PersistentLocale persistentLocale;
     @Inject
     private Request request;
 	@Inject
 	private Messages messages;
+    @Inject
+    private Response response;
 	@Inject
 	private Logger logger;
 
@@ -145,6 +156,50 @@ public class Index {
         shareFacade.deleteSharing(shareddoc, userVo);
         resetListFiles(null);
     }
+    
+	@OnEvent(value="eventDeleteFromListDocument")
+	public void deleteFromListDocument(Object[] object) throws BusinessException{
+		 
+		for(Object currentObject:object){
+			ShareDocumentVo share = (ShareDocumentVo)currentObject;
+	        shareFacade.deleteSharing(share, userVo);
+	        resetListFiles(null);
+		}
+	}
+	
+	/**
+	 * sign the document 
+	 * Invoked when a user clicks on "sign" button in the searched document list
+	 * @param object a DocumentVo[]
+	 */
+	@OnEvent(value="eventSignatureFromListDocument")
+	public void signatureFromListDocument(Object[] object){
+
+		List<String> identifiers = new ArrayList<String>();
+		
+		//context is a list of document (tab files)
+		identifiers.add(DocToSignContext.SHARED.toString());
+		
+		for(Object currentObject:object){
+			DocumentVo doc =  (DocumentVo) currentObject;
+			
+			if(doc.getEncrypted()) {
+				shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.signature.encryptedFiles")));
+				return; //quit
+			} else {
+				identifiers.add(doc.getIdentifier());
+			}
+		}
+		
+        Link mylink = linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", identifiers.toArray());
+		
+        try {
+            response.sendRedirect(mylink);
+        } catch (IOException ex) {
+            throw new TechnicalException("Bad URL" + ex);
+        }
+		
+	}
 
     private ShareDocumentVo searchShareVoByUUid(String uuid) {
         for (ShareDocumentVo shareDocumentVo : shares) {

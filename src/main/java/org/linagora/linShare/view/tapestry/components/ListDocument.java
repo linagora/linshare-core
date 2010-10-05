@@ -82,9 +82,13 @@ import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
+import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.FileSorterModel;
+import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.FileStreamResponse;
+import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -253,6 +257,9 @@ public class ListDocument {
 
 	@Inject
 	private Messages messages;
+
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
 
 	@Persist
 	private String pass;
@@ -678,12 +685,22 @@ public class ListDocument {
 	 */
 	public Object onSuccessFromSearch() {
 		
+		if (listSelected.size()<1) {
+            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.NOFILE_SELECTED,
+                    MessageSeverity.WARNING));
+    		return null;
+		}
+		
 		actionbutton =  ActionFromBarDocument.fromString(action);
 		
 		switch (actionbutton) {
 		case SHARED_ACTION:
 			componentResources.getContainer().getComponentResources()
 					.triggerEvent("eventShare", listSelected.toArray(), null);
+			break;
+		case GROUP_SHARE_ACTION:
+			componentResources.getContainer().getComponentResources()
+					.triggerEvent("eventGroupShare", listSelected.toArray(), null);
 			break;
 		case DELETE_ACTION:
 			if ("true".equals(deleteConfirmed)) {
