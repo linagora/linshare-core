@@ -31,8 +31,7 @@
 		
 		<t:grid t:id="documentGrid" source="documents" row="document" model="model"
 			exclude="fileName, ownerLogin, encrypted, identifier, size, type, shareActive, fileComment, downloaded, actions"
-			rowsPerPage="10"
-			rowIndex="prop:rowIndex">
+			rowsPerPage="10">
 
 
 			<!-- Header definition -->
