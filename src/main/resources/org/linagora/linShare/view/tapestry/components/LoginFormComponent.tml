@@ -9,13 +9,14 @@
 	<t:parameter name="else">
 		<t:pagelink page="password/reset">${message:pages.index.link.password}</t:pagelink>
 
-        <form method="post" action="${request.contextPath}/j_security_check">
+        <form id="linshareLoginForm" method="post" action="${request.contextPath}/j_security_check">
 			<label for="login">${message:pages.login.form.loginLabel}</label>
 				<input id="login" type="text" name="login" title="${message:pages.login.form.loginLabel}"/>
 			<label for="password">${message:pages.login.form.passwordLabel}</label>
 				<input id="password" type="password" name="password" title="${message:pages.login.form.passwordLabel}"/>
 			
-			<input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel}"/>
+<!--			<input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel}"/>-->
+				<button class="loginSubmit" onclick="submitWithCookie();">${message:pages.login.form.logLabel}</button>
 			
 			<br />
 			<p><input id="rememberMe" type="checkbox" name="_spring_security_remember_me"/> ${message:pages.login.form.rememberMeLabel}</p>

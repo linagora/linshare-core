@@ -475,7 +475,7 @@ strong {
 	border: 1px solid #3D697F !important;
 	color: #222;
 }
-#settings #connection input.loginSubmit {
+#settings #connection input.loginSubmit, button.loginSubmit {
 	float: none !important;
 	width: 100px;
 	height: 20px;
@@ -485,6 +485,13 @@ strong {
 	background-color: #EAF1F5;
 	cursor: pointer;
 }
+
+#settings #connection button {
+	border: 1px solid #3D697F !important;
+	color: #222;
+}
+#settings #connection button.loginSubmit:hover,
+#settings #connection button.loginSubmit:focus,
 #settings #connection input.loginSubmit:hover,
 #settings #connection input.loginSubmit:focus {
 	color: #C00D2D;
@@ -1176,6 +1183,7 @@ div.dialog button {
 	height: 30px;
 	border: none;
 	background: transparent url("../images/theme0/button.png") no-repeat scroll center 0px;
+	padding:0 6px !important;
 }
 div.dialog button.button:hover, div.dialog button.button:focus {
 	background-position: center -30px;
@@ -1228,7 +1236,7 @@ div.dialog button img {
 * Objects > Form elements
 */
 
-input,
+input, button,
 select, textarea {
 	padding: 2px !important;
 	border: 0px none;
