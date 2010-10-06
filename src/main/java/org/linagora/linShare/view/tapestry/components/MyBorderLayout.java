@@ -43,7 +43,6 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
 
-@IncludeStylesheet({"context:css/theme0.css"})
 public class MyBorderLayout {
 
 
@@ -118,6 +117,10 @@ public class MyBorderLayout {
 	private Asset ie6CssAsset;
 
 	@Inject
+	@Path("context:css/theme0.css")
+	private Asset defaultCssAsset;
+
+	@Inject
 	@Path("context:js/DD_belatedPNG.js")
 	private Asset ie6DDPNGAsset;
 
@@ -167,6 +170,9 @@ public class MyBorderLayout {
 	private String ie6Css;
 
 	@Property
+	private String defaultCss;
+
+	@Property
 	private String helpLink ="";
 	
 	@Property
@@ -210,6 +216,8 @@ public class MyBorderLayout {
 
 		ie6Css="<!--[if lte IE 6]><link href='"+ie6CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>"
 				+ "<script src='"+ie6DDPNGAsset.toClientURL()+"' ></script><script>DD_belatedPNG.fix('img, h1, a.button, a.button span');</script><![endif]--> ";
+		
+		defaultCss="<link href='"+defaultCssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>";
 		
 		if(userVoExists){
 			admin=(userVo.getRole().equals(Role.ADMIN));
