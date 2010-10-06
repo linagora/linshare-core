@@ -39,6 +39,7 @@ import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.Role;
+import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.Signature;
@@ -277,8 +278,24 @@ public class UserServiceImpl implements UserService {
 						
 						receivedShare.clear();
 						
+						// clearing sent urls
+						Set<SecuredUrl> sentUrls = userToDelete.getSecuredUrls();
+						for (SecuredUrl url : sentUrls) {
+							String docs = "";
+							for (Document doc : url.getDocuments()) {
+								docs += doc.getName()+";";
+							}
+							ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+					        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
+					        		docs,null,null,
+					        		userToDelete.getMail(), 
+					        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+							 logEntryRepository.create(logEntry);
+						}
+						sentUrls.clear();
+						
 						// clearing sent shares
-						Set<Share> sentShare = userToDelete.getReceivedShares();
+						Set<Share> sentShare = userToDelete.getShares();
 						
 						for (Share share : sentShare) {
 							ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
@@ -356,6 +373,7 @@ public class UserServiceImpl implements UserService {
         for (User guest : guests) {
             try {
                 deleteUser(guest.getLogin(), owner, false);
+                logger.info("Removed expired user : " + guest.getLogin());
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove expired user : " + guest.getLogin() + "\n" + ex.toString());
             }

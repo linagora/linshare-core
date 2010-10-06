@@ -78,7 +78,8 @@ public class SecuredUrl {
 
 	@Override
 	public int hashCode() {
-		return new StringBuilder(this.urlPath.hashCode()).append(this.alea.hashCode()).hashCode();
+		return (this.urlPath+this.alea).hashCode();
+		//return new StringBuilder(this.urlPath.hashCode()).append(this.alea.hashCode()).hashCode();
 	}
 
 	/**

@@ -42,6 +42,12 @@
       </key>
       <one-to-many class="org.linagora.linShare.core.domain.entities.Share"/>
     </set>
+    <set access="field" cascade="all,delete-orphan" name="securedUrls">
+      <key>
+        <column name="sender_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.linagora.linShare.core.domain.entities.SecuredUrl"/>
+    </set>
     <set access="field" cascade="all,delete-orphan" name="receivedShares">
       <key>
         <column name="recipient_id" not-null="true"/>
