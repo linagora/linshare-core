@@ -130,15 +130,18 @@
 			
 			<t:parameter t:name="updateDocCell">
 				<t:actionLink t:id="updateDoc"  t:zone="zoneTest" context="${document.identifier}">
-					<img src="${asset:context:images/icons/update.png}" alt="" title="${message:components.listDocument.picture.update.title}" 
-						onClick="literal:windowUpdateDocUpload.showCenter(true);" />
+					<span onclick="windowUpdateDocUpload.showCenter(true);">
+						<img src="${asset:context:images/icons/update.png}" alt="" title="${message:components.listDocument.picture.update.title}" />
+					</span>
 				</t:actionLink>
 			</t:parameter>
 
 			<t:parameter t:name="fileEditCell">
 				<t:actionLink t:id="fileEditProperties" t:zone="${fileEdit.zoneClientId}" context="${document.identifier}">
-					<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" 
-						onClick="literal:${fileEdit.javascriptOpenPopup}" />
+					<span onclick="literal:${fileEdit.javascriptOpenPopup}">
+						<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
+					</span>
+						
 				</t:actionLink>
 			</t:parameter>
 
@@ -173,10 +176,14 @@
 			<t:parameter t:name="signedCell">
 				<t:if t:test="documentSigned">
 					<t:actionlink t:id="showSignature" zone="signatureDetailsZone"  context="document.identifier">
-						<t:if t:test="documentSignedByCurrentUser">	
-							<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listDocument.picture.signatureon.title}" onclick="signatureDetailsWindow.showCenter(true);"/>
+						<t:if t:test="documentSignedByCurrentUser">
+							<span onclick="signatureDetailsWindow.showCenter(true);">
+								<img src="${asset:context:images/icons/stamp-on.png}" alt="" title="${message:components.listDocument.picture.signatureon.title}" />
+							</span>
 						<t:parameter name="else">
-							<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listDocument.picture.signatureother.title}" onclick="signatureDetailsWindow.showCenter(true);"/>
+							<span onclick="signatureDetailsWindow.showCenter(true);">
+								<img src="${asset:context:images/icons/stamp-other.png}" alt="" title="${message:components.listDocument.picture.signatureother.title}" />
+							</span>
 						</t:parameter>
 						</t:if>
 					</t:actionlink>
@@ -194,19 +201,20 @@
  					<t:actionLink t:id="decryptIcon"
  						context="${document.identifier}" t:zone="zoneTest"
  						class="listDocument">
- 						<img
- 							src="${asset:context:images/icons/encrypt-on.png}" alt=""
- 							title="${message:components.listDocument.picture.encrypton.title}"
- 							onClick="window_passwordDecryptPopup.showCenter(true)" />
+ 						<span onclick="window_passwordDecryptPopup.showCenter(true);">
+ 							<img src="${asset:context:images/icons/encrypt-on.png}" alt=""
+ 								title="${message:components.listDocument.picture.encrypton.title}" />
+ 						</span>
+ 							
  					</t:actionLink>
  					<t:parameter name="else">
  						<t:actionLink t:id="encryptIcon"
  							context="${document.identifier}" t:zone="zoneTest"
  							class="listDocument">
- 							<img
- 								src="${asset:context:images/icons/encrypt-off.png}" alt=""
- 								title="${message:components.listDocument.picture.encryptoff.title}"
- 								onClick="window_passwordCryptPopup.showCenter(true)" />
+ 							<span onclick="window_passwordCryptPopup.showCenter(true);" >
+ 								<img src="${asset:context:images/icons/encrypt-off.png}" alt=""
+ 									title="${message:components.listDocument.picture.encryptoff.title}" />
+ 							</span>
  						</t:actionLink>
 
  					</t:parameter>
