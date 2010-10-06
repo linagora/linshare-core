@@ -607,6 +607,14 @@ public class ListSharedDocument {
 		return documentFacade.documentHasThumbnail(shareDocument.getIdentifier());
 	}
 	
+	public String getTypeCSSClass() {
+		String ret = shareDocument.getType();
+		ret = ret.replace("/", "_");
+		ret = ret.replace("+", "__");
+		ret = ret.replace(".", "_-_");
+		return ret;
+	}
+	
 	public void onThumbnail(String docID) {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(componentdocuments,

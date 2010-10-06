@@ -71,7 +71,7 @@
 			<div class="fileProperties">
 				<t:actionLink t:id="download"
 					t:context="${shareDocument.identifier}" t:type="${shareDocument.type}"
-					class="fileName">
+					class="fileName ${typeCSSClass}">
 					<t:linkit.Comment>
 						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 					</t:linkit.Comment>
