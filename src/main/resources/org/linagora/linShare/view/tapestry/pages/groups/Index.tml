@@ -57,7 +57,7 @@
 			<t:parameter name="mailCell">
 				<div>
 					<t:actionlink t:id="showWaitingUser" zone="userDetailsZone" title="${showWaitingUserTooltip}" context="waitingForApprovalMember.mail">
-						<span  onclick="userDetailsWindow.showCenter(true);">${waitingForApprovalMember.firstName} ${waitingForApprovalMember.lastName}</span>
+						<span onclick="userDetailsWindow.showCenter(true);">${waitingForApprovalMember.firstName} ${waitingForApprovalMember.lastName}</span>
 					</t:actionlink>
 					<br/><span class="emailAddress">${waitingForApprovalMember.mail}</span>
 				</div>
@@ -143,21 +143,24 @@
 					<t:if test="isTheOneConnected">
 						<t:actionLink t:id="deleteSelfMembership" context="member.userVo.login" t:zone="zoneConfirmDeleteMembership"
 							title="${message:pages.groups.members.delete}">
-							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
-								onClick="windowConfirmDeleteMembership.showCenter(true)" />
+							<span onclick="windowConfirmDeleteMembership.showCenter(true)">
+								<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+							</span>
 						</t:actionLink>
 					<t:parameter name="else">
 						<t:if test="member.isManager" negate="true"> <!-- isManager==false -->
 						<t:if test="memberConnected.allowedToManageUser">
 							<t:actionLink t:id="editMember" context="member.userVo.login" t:zone="zoneChangeMemberType"
 								title="${message:pages.groups.members.edit}">
-								<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
-									onClick="windowChangeMemberType.showCenter(true)" />
+								<span onclick="windowChangeMemberType.showCenter(true)">
+									<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
+								</span>
 							</t:actionLink>
 							<t:actionLink t:id="deleteMembership" context="member.userVo.login" t:zone="zoneConfirmDeleteMembership"
 								title="${message:pages.groups.members.delete}">
-								<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
-									onClick="windowConfirmDeleteMembership.showCenter(true)" />
+								<span onclick="windowConfirmDeleteMembership.showCenter(true)">
+									<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+								</span>
 							</t:actionLink>
 						</t:if>
 							
@@ -165,13 +168,15 @@
 							<t:if test="memberConnected.allowedToManageManager">
 								<t:actionLink t:id="editManager" context="member.userVo.login" t:zone="zoneChangeMemberType"
 									title="${message:pages.groups.members.edit}">
-									<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
-										onClick="windowChangeMemberType.showCenter(true)" />
+									<span onclick="windowChangeMemberType.showCenter(true)">
+										<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
+									</span>
 								</t:actionLink>
 								<t:actionLink t:id="deleteManagerMembership" context="member.userVo.login" t:zone="zoneConfirmDeleteMembership"
 									title="${message:pages.groups.members.delete}">
-									<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
-										onClick="windowConfirmDeleteMembership.showCenter(true)" />
+									<span onclick="windowConfirmDeleteMembership.showCenter(true)">
+										<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+									</span>
 								</t:actionLink>
 							</t:if>
 						</t:parameter>
