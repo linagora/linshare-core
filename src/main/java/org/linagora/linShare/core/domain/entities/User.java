@@ -68,6 +68,9 @@ public abstract class User {
     /** Shares that user has shared to other */
     private Set<Share> shares;
     
+    /** Secured URL that user has shared to other */
+    private Set<SecuredUrl> securedUrls;
+    
     /**
      * Shares that user has received from other user
      */
@@ -94,6 +97,7 @@ public abstract class User {
     	this.documents = new HashSet<Document>();
     	this.shares=new HashSet<Share>();
     	this.receivedShares=new HashSet<Share>();
+    	this.securedUrls=new HashSet<SecuredUrl>();
     }
     /** Default constructor.
      * @param login login.
@@ -111,6 +115,7 @@ public abstract class User {
         this.documents = new HashSet<Document>();
     	this.shares=new HashSet<Share>();
     	this.receivedShares=new HashSet<Share>();
+    	this.securedUrls=new HashSet<SecuredUrl>();
         this.canUpload = canUpload;
         this.canCreateGuest = canCreateGuest;
         this.enciphermentKeyPass=null;
@@ -240,6 +245,12 @@ public abstract class User {
 	}
 	public void setShares(Set<Share> shares) {
 		this.shares = shares;
+	}
+	public Set<SecuredUrl> getSecuredUrls() {
+		return securedUrls;
+	}
+	public void setSecuredUrls(Set<SecuredUrl> securedUrls) {
+		this.securedUrls = securedUrls;
 	}
 	public Set<Share> getReceivedShares() {
 		return receivedShares;
