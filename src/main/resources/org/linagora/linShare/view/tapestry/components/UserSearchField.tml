@@ -39,9 +39,9 @@
                 <t:label for="userSearchPattern">${message:components.userSearch.slidingField.name} </t:label>
                 <t:textfield t:id="userSearchPattern" t:mixins="autocomplete" t:minChars="2" class="userSearchPattern"
                              title="${message:components.userSearch.slidingField.name}"/><br/>
-                <t:submit t:id="searchSimple" value="${message:global.button.search}"/>
+                <t:submit class="tsubmit" t:id="searchSimple" value="${message:global.button.search}"/>
                 ${message:global.space}
-                <t:submit t:id="resetSimple" value="${message:global.button.reset}"/>
+                <t:submit class="treset" t:id="resetSimple" value="${message:global.button.reset}"/>
             </t:form>
         </t:if>
 
@@ -51,13 +51,13 @@
         <t:if t:test="advancedSearch" >
             <t:form t:id="advancedSearchForm">
                 <t:textfield t:id="lastNameField" t:value="lastName" onFocus="controlField(this,'${message:components.userSearch.slidingField.lastName}')"
-                             title="${message:components.userSearch.slidingField.lastName}"/>
+                             title="${message:components.userSearch.slidingField.lastName}" class="userSearchPattern"/>
 				<br/>
                 <t:textfield t:id="firstnameField" t:value="firstname" onFocus="controlField(this,'${message:components.userSearch.slidingField.firstName}')"
-                             title="${message:components.userSearch.slidingField.firstName}"/>
+                             title="${message:components.userSearch.slidingField.firstName}" class="userSearchPattern"/>
 				<br/>
                 <t:textfield t:id="mailField" t:value="mail" onFocus="controlField(this,'${message:components.userSearch.slidingField.mail}')"
-                             title="${message:components.userSearch.slidingField.mail}"/>
+                             title="${message:components.userSearch.slidingField.mail}" class="userSearchPattern"/>
 				<br/>
 	            <t:if test="notRestrictedUser">
 					<div id="userType">
@@ -72,9 +72,9 @@
 					</div>
 	            </t:if>
 				<br/>
-                <t:submit t:id="search" value="${message:global.button.search}"/>
+                <t:submit class="tsubmit" t:id="search" value="${message:global.button.search}"/>
                 ${message:global.space}
-                <t:submit t:id="reset" value="${message:global.button.reset}"/>
+                <t:submit class="treset" t:id="reset" value="${message:global.button.reset}"/>
             </t:form>
         </t:if>
 

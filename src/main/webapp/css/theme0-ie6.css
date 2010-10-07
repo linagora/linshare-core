@@ -483,3 +483,228 @@ display:none;
 div.dialog div.button {
 clear: both;
 }
+
+
+
+
+
+
+#searchWidget div #switch {
+	float: right;
+	display: block;
+	margin-top: -35px;
+	margin-right: 6px;
+	text-align: right;
+}
+
+#searchWidget div #switch strong {
+	display: none;
+}
+
+#searchWidget div #switch a {
+	font-size: 1.1em;
+	font-weight: bold;
+	text-decoration: none;
+}
+#searchWidget div #switch a:link,
+#searchWidget div #switch a:visited {
+	color: #C8DCE6;
+}
+#searchWidget div #switch a:hover,
+#searchWidget div #switch a:active {
+	color: #F57088;
+}
+#searchWidget div #switch a img {
+	margin: auto -8px auto 0em;
+	vertical-align: -.14em;
+}
+/* + cf. Components > Search panels */
+
+
+/* Widget > Information */
+#infoWidget div ul {
+	margin: 0em;
+	padding: 0em;
+}
+
+#infoWidget div ul li {
+	margin-bottom: .25em;
+	list-style: none outside none;
+	text-align: center;
+}
+
+#infoWidget div ul li strong {
+	color: #808080;
+	font-size: 1.15em;
+	white-space: nowrap;
+}
+
+#infoWidget div ul li span {
+	color: #3D697F;
+	font-size: 1.4em;
+	white-space: nowrap;
+}
+
+/* User space : Indicator bar */
+#infoWidget div ul li #userTotalSpaceDiv {
+	width: 200px !important;
+	height: 12px !important;
+	margin: auto;
+	border: 1px solid #5A93AF;
+	text-align: left;
+}
+#infoWidget div ul li #userTotalSpaceDiv #userFreeSpaceDiv {
+	height: inherit !important;
+	background: #C8DCE6 url("../images/theme0/bg-userspace.png") repeat-x scroll left bottom !important;
+	border-right: 1px solid #5A93AF;
+}
+#infoWidget div ul li #userTotalSpaceDiv #userFreeSpaceDiv span {
+	position: relative;
+	bottom: 1px;
+	margin-left: .30em;
+	color: #333;
+	font-size: .85em;
+}
+
+
+/* Widget > Actions */
+
+#actionsWidget div ul {
+	margin: -.5em;
+	padding: 0em;
+	text-align: left;
+}
+
+#actionsWidget div ul li {
+	list-style: none outside none;
+	font-size: 1.1em;
+}
+
+#actionsWidget div ul li a {
+	display: block;
+	margin: 0em;
+	padding: .25em 0em;
+	color: #222 !important;
+	text-decoration: none !important;
+}
+
+#actionsWidget div ul li a img {
+	width: 16px;
+	height: 16px;
+	margin-left: .4em;
+	margin-right: .15em;
+	padding-bottom: 2px;
+	vertical-align: middle;
+}
+
+#actionsWidget div ul li a:link,
+#actionsWidget div ul li a:visited {
+	border: 1px solid #EAF1F5;
+}
+#actionsWidget div ul li a:hover,
+#actionsWidget div ul li a:active {
+	background-color: #D9E6ED;
+	border: 1px solid #8CB4C8;
+	color: #C00D2D;
+}
+
+
+/* Widget > Share */
+
+#sideBar #shareWidget div {
+}
+
+#shareWidget div div.t-data-grid {
+	width: 104.5%;
+	margin: 0em -.45em;
+}
+
+
+
+#searchWidget div form {
+	margin-top: -.25em;
+	font-size: 1.1em;
+}
+#searchWidget div form label {
+	white-space: nowrap;
+}
+#searchWidget div form input {
+	margin-top: .5em;
+}
+
+#searchWidget div form input.fileSearchPattern,
+#searchWidget div form input.userSearchPattern,
+#searchWidget div form input.datepicker {
+	padding-left: 5px;
+	height: 16px !important;
+	padding: 1px 2px 1px 2px !important;
+	background: #F0F0F0 url("../images/theme0/form-input-gradient.png") no-repeat;
+	border: 1px solid #3D697F;
+	color: #222;
+}
+#searchWidget div form input.tsubmit,
+#shareWidget div form input.tsubmit,
+#searchWidget div form input.treset,
+#shareWidget div form input.treset {
+	background: #C8DCE6 url("../images/theme0/magnify-small.png") no-repeat scroll 6px 5px;
+	border: 1px solid #83AEC3;
+	color: #3D697F;
+	font-weight: bold;
+	cursor: pointer;
+}
+#searchWidget div form input.tsubmit:hover,
+#searchWidget div form input.tsubmit:focus,
+#shareWidget div form input.tsubmit:hover,
+#shareWidget div form input.tsubmit:focus, 
+#searchWidget div form input.treset:hover,
+#searchWidget div form input.treset:focus,
+#shareWidget div form input.treset:hover,
+#shareWidget div form input.treset:focus {
+	background-color: #FCCFD7;
+	border-color: #F5758C;
+	color: #C00D2D;
+}
+#searchWidget div form input.tsubmit:active,
+#shareWidget div form input.tsubmit:active,
+#searchWidget div form input.treset:active,
+#shareWidget div form input.treset:active  {
+	background-color: #E3BBC2;
+	border-color: #E2697F;
+	color: #8F0A22;
+}
+#shareWidget div form input.tsubmit[name="share"] {
+	background-image: url('../images/icons/share-on-small.png');
+}
+#searchWidget div form input.treset {
+	background-image: url('../images/icons/reset-small.png');
+}
+
+.t-beaneditor-submit {
+	background-color:#EAF1F5;
+border:1px solid #5A93AF !important;
+color:#222222;
+cursor:pointer;
+float:none !important;
+margin-left:5px;
+padding-top:0 !important;
+}
+
+
+#formReport input, #formReport textarea {
+	border:1px solid #DDDDDD;
+}
+
+#formReport input#fileNameMatchModeStart,
+#formReport input#fileNameMatchModeAnywhere {
+	border: none;
+}
+
+#content {
+	width: 863px !important;	
+}
+
+
+#helpHome dl dt {
+	background-color: #FFF;
+	color: #C00D2D;
+}

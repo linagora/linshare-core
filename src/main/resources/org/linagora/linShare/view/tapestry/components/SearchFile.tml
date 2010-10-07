@@ -42,9 +42,9 @@
                 <t:label for="name">${message:components.searchfile.fileName} </t:label>
                 <t:textfield t:id="name" t:mixins="autocomplete" t:minChars="2" class="fileSearchPattern"
                              title="${message:components.searchfile.fileName}"/><br/>
-                <t:submit value="${message:global.button.search}"/>
+                <t:submit class="tsubmit" value="${message:global.button.search}"/>
                 ${message:global.space}
-                <t:submit t:id="resetSimple" value="${message:global.button.reset}"/>
+                <t:submit class="treset" t:id="resetSimple" value="${message:global.button.reset}"/>
             </t:form>
         </t:if>
 
@@ -67,10 +67,10 @@
                 <p>
                 <t:label for="sizeMin">${message:components.searchfile.size}&nbsp;</t:label>
                 <t:textfield t:id="sizeMin" size="15"  onFocus="controlField(this,'${message:components.searchfile.sizeMin}')"
-                             title="${message:components.searchfile.sizeMin}"/>
+                             title="${message:components.searchfile.sizeMin}" class="fileSearchPattern"/>
                 <t:label for="sizeMax">&nbsp;${message:components.searchfile.size.separator}&nbsp;</t:label>
                 <t:textfield t:id="sizeMax" size="15"  onFocus="controlField(this,'${message:components.searchfile.sizeMax}')"
-                             title="${message:components.searchfile.sizeMax}"/>
+                             title="${message:components.searchfile.sizeMax}" class="fileSearchPattern"/>
 				</p>
 				
 				<p>
@@ -100,9 +100,9 @@
 				</p>
 				</t:if>
 				
-                <t:submit value="${message:global.button.search}"/>
+                <t:submit class="tsubmit" value="${message:global.button.search}"/>
                 ${message:global.space}
-                <t:submit t:id="reset" value="${message:global.button.reset}"/>
+                <t:submit class="treset" t:id="reset" value="${message:global.button.reset}"/>
             </t:form>
         </t:if>
 
