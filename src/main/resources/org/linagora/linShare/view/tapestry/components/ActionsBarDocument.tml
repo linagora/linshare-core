@@ -8,7 +8,7 @@
 		<!-- Action > Share -->
 		<li>
 			<a href="#" onclick="submitFormWithAction('${formName}','SHARED_ACTION');">
-				<img src="${asset:context:images/icons/share-on.png}" alt="" />
+				<img src="${asset:context:images/icons/share-on-small.png}" alt="" />
 				${message:components.listDocument.action.share}
 			</a>
 		</li>
@@ -16,7 +16,7 @@
 		<!-- Action > GroupShare -->
 		<li>
 			<a href="#" onclick="submitFormWithAction('${formName}','GROUP_SHARE_ACTION');">
-				<img src="${asset:context:images/icons/share-group-on.png}" alt="" />
+				<img src="${asset:context:images/icons/share-group-on-small.png}" alt="" />
 				${message:components.listDocument.action.groupShare}
 			</a>
 		</li>
@@ -25,7 +25,7 @@
 		<li>
 			<a href="#"
 				class="listDocument" onClick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)">
-				<img src="${asset:context:images/icons/delete.png}" alt=""/>
+				<img src="${asset:context:images/icons/delete-small.png}" alt=""/>
 				${message:components.listDocument.action.delete}
 				</a>
 		</li>
@@ -34,7 +34,7 @@
 		<t:if t:test="activeSignature">			
 		<li>
 			<a href="#" onclick="submitFormWithAction('${formName}','SIGNATURE_ACTION');">
-				<img src="${asset:context:images/icons/sign.png}" alt="" />
+				<img src="${asset:context:images/icons/sign-small.png}" alt="" />
 				${message:components.listDocument.action.signature}
 			</a>
 		</li>
@@ -44,12 +44,12 @@
 		<t:if t:test="activeEncipherment">
 		<li>
 			<a href="#" class="listDocument" onClick="setFormWithAction('${formName}','CRYPT_ACTION');window_passwordCryptPopupSubmit.showCenter(true)">
-			<img src="${asset:context:images/icons/encrypt.png}"/> ${message:components.listDocument.action.crypt}
+			<img src="${asset:context:images/icons/encrypt-small.png}"/> ${message:components.listDocument.action.crypt}
 			</a>
 		</li>
 		<li>
 			<a href="#" class="listDocument" onClick="setFormWithAction('${formName}','DECRYPT_ACTION');window_passwordDecryptPopupSubmit.showCenter(true)">
-			<img src="${asset:context:images/icons/encrypt.png}"/> ${message:components.listDocument.action.decrypt}
+			<img src="${asset:context:images/icons/encrypt-small.png}"/> ${message:components.listDocument.action.decrypt}
 			</a>
 		</li>
 		</t:if>	

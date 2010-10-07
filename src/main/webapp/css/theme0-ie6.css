@@ -464,20 +464,12 @@ border:3px solid #555 !important;
 	position: static !important;
 }
 
-a.button span {
-	width: 90px;
-	text-align: center !important;
-}
-a.button {
-	width: 90px;
-}
-
 #sideBar div.widget div.widget_body {
 	padding: 10px;
 }
 
 div.button img {
-display:none;
+	display:none;
 }
 
 div.dialog div.button {
@@ -714,4 +706,58 @@ padding-top:0 !important;
 
 #sideBar {
 font-size: 0.9em;
+}
+
+#shareWidget div div.t-data-grid table td img {
+height:16px;
+width:16px;
+}
+
+#tabSetGroup li {
+	display: block;
+	float: left;
+	height: 18px;
+}
+#tabSetGroup li a.notSelected {
+	padding:0px 10px 0;
+}
+ul#tabSetGroup {
+	height: 26px;
+}
+#tabSetGroup li.selected a {
+	background: #fff;
+	padding:0px 10px 15px;
+}
+#tabSetGroup li.selected {
+	border-bottom: 1px solid #fff;
+	padding:4px 0 3px;
+}
+
+#pageContent h2 {
+	clear: both;
+}
+
+a.button {
+	display: block;
+	width:90px;
+}
+
+
+a.button:hover, a.button:focus {
+	background-position: left 0;
+}
+a.button:active {
+	background-position: left 0;
+}
+
+a.button span {
+	text-align: center !important;
+	width:90px;
+}
+
+a.button_wide {
+	width:290px;
+}
+a.button_wide span {
+	width:290px;
 }

@@ -142,8 +142,8 @@
 				</fieldset>
 
 				<div class="clear"></div>
-				<a href="#" onclick="formReport.submit();" class="button" style="margin-right:40px"><span><img src="${asset:context:images/icons/update.png}" alt=""/> ${message:global.button.search}</span></a>
-				<t:actionLink class="button" t:id="reset" style="margin-right:40px"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.reset}</span></t:actionLink>
+				<a href="#" onclick="formReport.submit();" class="button" style="margin-right:40px"><span><img src="${asset:context:images/icons/update-small.png}" alt=""/>${message:global.button.search}</span></a>
+				<t:actionLink class="button" t:id="reset" style="margin-right:40px"><span><img src="${asset:context:images/icons/reset-small.png}" alt=""/>${message:global.button.reset}</span></t:actionLink>
 				<br />
 				<div class="clear"></div>
 <!--				<table width="100%" >-->

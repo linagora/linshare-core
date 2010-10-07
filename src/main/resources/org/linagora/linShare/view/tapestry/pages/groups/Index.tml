@@ -231,7 +231,7 @@
 						<t:actionLink t:id="deleteGroup" t:zone="zoneConfirmDeleteGroup"
 							title="${message:pages.groups.delete}${group.name}">
 							<span onclick="windowConfirmDeleteGroup.showCenter(true);">
-								<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />${message:pages.groups.delete}${group.name}
+								<img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />${message:pages.groups.delete}${group.name}
 							</span>
 						</t:actionLink>
 					</li>
