@@ -27,7 +27,7 @@
 		<t:errors />
 
 		<t:grid source="shareDocuments" row="shareDocument" model="model"
-			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, sharedWithGroup, type, shareActive, downloaded, comment"
+			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, sharedWithGroup, type, shareActive, downloaded, comment, actions"
 			rowsPerPage="10">
 
 
@@ -133,7 +133,7 @@
 				</t:if>
 			</t:parameter>  
 
-			<t:parameter t:name="actionsCell">
+			<!--t:parameter t:name="actionsCell">
 				<t:if t:test="disableDeletion" negate="true">	
 					<t:actionLink t:id="delete" context="${shareDocument.identifier}" t:zone="zoneTest"
 						title="${message:components.listSharedDocument.action.delete.title}">
@@ -159,7 +159,7 @@
 						<img src="${asset:context:images/icons/copy.png}" alt="${message:components.listSharedDocument.action.copy}" />
                     </t:actionLink>
 				</t:if>
-			</t:parameter>
+			</t:parameter-->
 
  			<t:parameter t:name="selectedValueCell">
 				<t:checkbox t:id="filesSelected" onclick="countCheckbox();" />

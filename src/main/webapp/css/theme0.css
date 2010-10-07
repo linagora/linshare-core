@@ -2450,9 +2450,11 @@ div#blocDL ul li {
 
 #content th.selectedValue,
 #content td.selectedValue {
+	/*
 	padding-left: .75em !important;
 	padding-right: .75em !important;
 	text-align: right;
+	*/
 }
 
 #content th.deleteColumn,
