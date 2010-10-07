@@ -88,9 +88,12 @@
 			<hr />
 
  			<div class="button">
-				<t:linkSubmit class="button">
-                    <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share}</span></t:linkSubmit>
-				<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+                	<button id="quickshare_send_link" class="button" onclick="confirmshare.submit();">
+                    	<img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share}
+                	</button>
+				<!-- t:linkSubmit class="button">
+                    <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share}</span></t:linkSubmit-->
+				<button onclick='Windows.close("${JSONId}")' class="button"><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</button>
 			</div>
 			
 			<div class="clear"></div>

@@ -9,7 +9,7 @@
 		<li>
 			<a href="#"
 				class="listDocument" onclick="submitFormWithAction('${formName}','COPY_ACTION');">
-				<img src="${asset:context:images/icons/copy.png}" alt=""/>
+				<img src="${asset:context:images/icons/copy-small.png}" alt=""/>
 				${message:components.listDocument.action.copy}
 				</a>
 		</li>
@@ -18,7 +18,7 @@
 		<t:if t:test="activeSignature">			
 		<li>
 			<a href="#" onclick="submitFormWithAction('${formName}','SIGNATURE_ACTION');">
-				<img src="${asset:context:images/icons/sign.png}" alt="" />
+				<img src="${asset:context:images/icons/sign-small.png}" alt="" />
 				${message:components.listDocument.action.signature}
 			</a>
 		</li>
@@ -37,7 +37,7 @@
 		<li>
 			<a href="#"
 				class="listDocument" onclick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)">
-				<img src="${asset:context:images/icons/delete.png}" alt=""/>
+				<img src="${asset:context:images/icons/delete-small.png}" alt=""/>
 				${message:components.listDocument.action.delete}
 				</a>
 		</li>

@@ -872,28 +872,28 @@ strong {
 
 /* Autocomplete search */
 
-div.t-autocomplete-menu {
-	margin: 0em;
-	padding: 0em;
-	border: 0px none;
+bd div.t-autocomplete-menu {
+	margin: 0em !important;
+	padding: 0em !important;
+	border: 0px none !important;
 }
 div.t-autocomplete-menu ul {
-	margin: 0em;
-	padding: 0em;
-	background-color: #EAF1F5;
-	border: 1px solid #000;
+	margin: 0em !important;
+	padding: 0em !important;
+	background-color: #EAF1F5 !important;
+	border: 1px solid #000 !important;
 }
 div.t-autocomplete-menu li {
-	margin: 0em;
-	padding: .25em .5em;
-	background-color: transparent;
-	border: 0px none;
-	color: #3D697F;
+	margin: 0em !important;
+	padding: .25em .5em !important;
+	background-color: transparent !important;
+	border: 0px none !important;
+	color: #3D697F !important;
 }
 div.t-autocomplete-menu li.selected, div.t-autocomplete-menu li:hover {
-	background-color: #3D697F;
-	color: #FFF;
-	font-weight: normal;
+	background-color: #3D697F !important;
+	color: #FFF !important;
+	font-weight: normal !important;
 }
 
 
@@ -3096,7 +3096,7 @@ div.number-hidden {
 /* Form : input */
 
 form#quickShareForm input.checkbox {
-	position: relative;
+	/*position: relative;*/
 	top: .2em;
 	margin-top: 1em;
 	margin-left: .5em;
