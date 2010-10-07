@@ -492,7 +492,7 @@ clear: both;
 #searchWidget div #switch {
 	float: right;
 	display: block;
-	margin-top: -35px;
+	margin-top: -32px;
 	margin-right: 6px;
 	text-align: right;
 }
@@ -651,6 +651,7 @@ clear: both;
 	color: #3D697F;
 	font-weight: bold;
 	cursor: pointer;
+	padding-left: 5px;
 }
 #searchWidget div form input.tsubmit:hover,
 #searchWidget div form input.tsubmit:focus,
@@ -707,4 +708,10 @@ padding-top:0 !important;
 #helpHome dl dt {
 	background-color: #FFF;
 	color: #C00D2D;
+}
+
+
+
+#sideBar {
+font-size: 0.9em;
 }
