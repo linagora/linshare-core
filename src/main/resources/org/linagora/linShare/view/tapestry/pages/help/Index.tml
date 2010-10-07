@@ -9,7 +9,7 @@
 		<h1>${message:components.myborderlayout.help.title}</h1>
 		<t:messagePanel />
 		<div id="pageContent">
-
+			<div class="helpPageContent">
 			<p>${message:pages.help.description} <a href="${message:pages.help.link.url}" title="${message:pages.help.link.title}">${message:pages.help.link.content}</a></p>
 
 
@@ -17,7 +17,7 @@
 			<dl>
 
 			<dt>${message:pages.help.manual.user.title}</dt>
-			${message:pages.help.manual.user.link.message} <a href="${message:pages.help.manual.user.link.url}" title="${message:pages.help.manual.user.link.title}" target="_blank">${message:pages.help.manual.user.link.url}</a>
+			<dd>${message:pages.help.manual.user.link.message} <a href="${message:pages.help.manual.user.link.url}" title="${message:pages.help.manual.user.link.title}" target="_blank">${message:pages.help.manual.user.link.url}</a></dd>
 			
 <t:linkit.Comment>
 
@@ -67,7 +67,7 @@
 
 			<t:if t:test="userAdmin">
 			<dt>${message:pages.help.manual.admin.title}</dt>
-			${message:pages.help.manual.admin.link.message} <a href="${message:pages.help.manual.admin.link.url}" title="${message:pages.help.manual.admin.link.title}" target="_blank">${message:pages.help.manual.admin.link.url}</a>
+			<dd>${message:pages.help.manual.admin.link.message} <a href="${message:pages.help.manual.admin.link.url}" title="${message:pages.help.manual.admin.link.title}" target="_blank">${message:pages.help.manual.admin.link.url}</a></dd>
 			
 <t:linkit.Comment>
 				<dd><t:helpLauncher t:video="false" class="main text" t:role="admin" t:idSection="10overview" t:title="${message:help.manual.admin.10overview.title}" t:descItems="2,4,1" />
@@ -82,7 +82,7 @@
 			</t:if>
 
 			<dt>${message:pages.help.support.title}</dt>
-			${message:pages.help.manual.support.link.message} <a href="${message:pages.help.manual.support.link.url}" title="${message:pages.help.manual.support.link.title}" target="_blank">${message:pages.help.manual.support.link.url}</a>
+			<dd>${message:pages.help.manual.support.link.message} <a href="${message:pages.help.manual.support.link.url}" title="${message:pages.help.manual.support.link.title}" target="_blank">${message:pages.help.manual.support.link.url}</a></dd>
 
 <t:linkit.Comment>
 				<dd class="support"><a class="main faq" href="help/faq" title="${message:pages.help.support.faq.link.title}">${message:pages.help.support.faq.link}</a></dd>
@@ -99,7 +99,7 @@
 
 
 		</div>
-
+		</div>
 	</div><!-- id="content" -->
 	
 </t:MyBorderLayout>

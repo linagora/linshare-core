@@ -1333,7 +1333,6 @@ table.t-data-grid {
 
 #pageContent p {
 	margin-top: .5em;
-	text-align: justify;
 }
 
 #pageContent strong {
@@ -1362,7 +1361,6 @@ table.t-data-grid {
 #home #messagePanel.welcome p {
 	margin-bottom: 1.5em;
 	color: #222;
-	text-align: justify;
 	font-weight: normal;
 	font-size: 1.3em;
 }
@@ -2030,11 +2028,11 @@ div#blocDL ul li {
 /*--------------------------------------------------------------------------
 * Pages > Help
 */
-
+/*
 #help #content h1 {
 	width: 100%;
 }
-
+*/
 #help #pageContent {
 	margin-bottom: -.5em;
 	font-size: 1.2em;
@@ -2071,14 +2069,14 @@ div#blocDL ul li {
 	-webkit-border-radius: 3px;
 	background-color: #EEE;
 	color: #C00D2D;
-	font-size: 1.2em;
+	/*font-size: 1.2em;*/
 }
-
+/*
 #helpHome dl dd {
 	float: left;
 	display: block;
 	overflow: hidden;
-	width: 33%;		/* 99%/n, e.g.: 33, 24.75, 19.8, 16.5 */
+	width: 33%;
 	height: 64px;
 	min-width: 17em;
 	max-width: 21em;
@@ -2112,7 +2110,7 @@ div#blocDL ul li {
 	display: block;
 	float: left;
 	margin-top: -46px;
-	margin-left: 50px;		/* 48px */
+	margin-left: 50px;
 	font-size: .75em;
 	color: #B8B8B8;
 }
@@ -2136,7 +2134,11 @@ div#blocDL ul li {
 	background-image: url("../images/icons/icon-help-email.png");
 	background-position: 8px 8px;
 }
+*/
 
+#helpHome dl dd {
+	margin-bottom: 15px;	
+}
 
 /*** Help > Text ***/
 
@@ -2214,7 +2216,6 @@ div#blocDL ul li {
 	width: 100%;
 	margin-left: -300px;
 	margin-bottom: 10px;		/* Safe margin */
-	text-align: justify;
 	font-size: .95em;
 }
 
@@ -2892,7 +2893,6 @@ div.dialog div.description {
 	margin-bottom: .75em;
 }
 div.dialog div.description p {
-	text-align: justify;
 }
 
 div.dialog div.button {
@@ -3217,7 +3217,6 @@ form#uploadForm .upload-list {
 #guestEditFormComponent #customMessageBlock label {
 	display: block;
 	margin-bottom: .25em;
-	text-align: justify;
 }
 
 #guestEditFormComponent textarea,
@@ -3519,27 +3518,32 @@ span.thumbnail:hover .thumbnail_content img {
 }
 
 /* Groups page */
-dl.t-beandisplay {
+#pageContent dl.t-beandisplay {
 	background-color:#EAF1F5;
 	border:1px solid #B0D6EE;
 	margin-bottom:7px;
 	padding:5px;
 }
-dl.t-beandisplay dt {
+#pageContent dl.t-beandisplay dt {
 	color:#808080;
 	font-size:1.15em;
 	font-weight: bold;
 	text-align: left;
 	width: auto;
 }
-dl.t-beandisplay dd {
+#pageContent dl.t-beandisplay dd {
 	color:#3D697F;
 	font-size:1.15em;
 }
 
-div.t-beaneditor {
+#pageContent div.t-beaneditor {
 	background: none;
-	border: none;	
+	border: 1px solid #B0D6EE;
+}
+
+#pageContent div.t-beaneditor input#functionalEmail,
+#pageContent div.t-beaneditor input#description {
+	background-image:url(../images/theme0/form-input-gradient.png);
 }
 
 #tabSetGroup {
