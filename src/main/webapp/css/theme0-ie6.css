@@ -747,13 +747,18 @@ a.button span {
 	width:90px;
 }
 
-a.button_wide {
+div.dialog a.button_wide {
 	width:290px;
+}
+div.dialog a.button_wide span {
+	width:290px;
+}
+a.button_wide {
+	width:240px;
 }
 a.button_wide span {
-	width:290px;
+	width:240px;
 }
-
 
 div.dialog div.button img {
 	display:none;
