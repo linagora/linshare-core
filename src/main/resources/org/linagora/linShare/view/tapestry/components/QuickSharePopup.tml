@@ -84,7 +84,7 @@
 			
 
 			<div class="button">
-               		<t:submit name="submitQuickShare" id="submitQuickShare" style="visibility:hidden"/>
+               		<t:submit name="submitQuickShare" id="submitQuickShare" style="display:none" />
                		<a id="quickshare_send_link" href="#" class="button" onclick="sendFiles();">
                     <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
                 	</a>
