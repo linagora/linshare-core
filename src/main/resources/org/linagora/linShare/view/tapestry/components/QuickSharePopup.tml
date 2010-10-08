@@ -84,14 +84,14 @@
 			
 
 			<div class="button">
-                	<button id="quickshare_send_link" class="button" onclick="sendFiles();">
-                    	<img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}
-                	</button>
-					<button id="cancelQuickShare" class="button" onclick='Windows.close("${JSONId}")'>
-                   		<img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}
-                	</button>
-					<t:submit name="submitQuickShare" id="submitQuickShare" style="visibility:hidden;"/>
-				<div class="clear"></div>
+               		<t:submit name="submitQuickShare" id="submitQuickShare" style="visibility:hidden"/>
+               		<a id="quickshare_send_link" href="#" class="button" onclick="sendFiles();">
+                    <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
+                	</a>
+					<t:actionlink t:id="cancelQuickShare" class="button">
+                    	<span onclick='Windows.close("${JSONId}")'><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span>
+					</t:actionlink>
+                <div class="clear"></div>
 			</div>
 
 		</t:form>

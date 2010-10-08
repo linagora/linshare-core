@@ -1385,10 +1385,11 @@ table.t-data-grid {
 }
 
 #home #list .expirationDate {
-	width: 11%;
+	width: 12%;
 }
-#home #list .signed {
-	width: 6%;
+#home #list .signed, 
+#home #list .encryptedAdd {
+	width: 5%;
 }
 #home #list .actions {
 	width: 1%;
