@@ -762,3 +762,15 @@ div.dialog div.button img {
 div.dialog div.dialog div.button {
 clear: both;
 }
+
+
+div.dialog div.button a.button span {
+	position: static;
+	background: none;
+	margin-left: 10px;
+}
+
+div.dialog div.button a.button {
+	border: none;
+	background:transparent url(../images/theme0/button.png) no-repeat scroll center 0;
+}
