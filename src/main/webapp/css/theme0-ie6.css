@@ -468,14 +468,6 @@ border:3px solid #555 !important;
 	padding: 10px;
 }
 
-div.button img {
-	display:none;
-}
-
-div.dialog div.button {
-clear: both;
-}
-
 
 
 
@@ -760,4 +752,13 @@ a.button_wide {
 }
 a.button_wide span {
 	width:290px;
+}
+
+
+div.dialog div.button img {
+	display:none;
+}
+
+div.dialog div.dialog div.button {
+clear: both;
 }
