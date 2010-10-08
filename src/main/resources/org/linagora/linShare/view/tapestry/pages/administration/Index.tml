@@ -13,7 +13,7 @@
 			<h4>Actions</h4>
 			<ul>
 				<li>
-					<t:pagelink t:id="personalization" t:page="administration/Personalization" class="button"><span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/> ${message:pages.administration.index.link.personalization}</span></t:pagelink>
+					<t:pagelink t:id="personalization" t:page="administration/Personalization" class="button"><span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.personalization}</span></t:pagelink>
 				</li>
 			</ul>
 		</div><!-- id="actionBar" -->
@@ -124,7 +124,7 @@
 					</table>
 					<br/>
 					<div class="button">
-						<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:pages.administration.index.button.save}</span></t:linkSubmit>
+						<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
 					</div>
 
 				</div>
