@@ -17,7 +17,7 @@
 				
 				<t:parameter name="deleteColumnCell">
 					<t:actionLink t:id="delete" t:context="prop:indexObject" title="${message:components.sharePanel.action.remove.title}">
-						<img src="${asset:context:images/icons/remove.png}" alt="${message:global.button.remove}"/>
+						<img src="${asset:context:images/icons/remove-small.png}" alt="${message:global.button.remove}"/>
 					</t:actionLink>	
 				</t:parameter>	
 
