@@ -129,9 +129,10 @@ public interface ShareFacade {
     /** Create a local copy of a shared document.
      * @param shareDocumentVo shared document.
      * @param userVo user that the document belongs to.
+     * @return the DocumentVo corresponding to the local copy
      * @throws BusinessException if document is too large for user account or forbidden mime type.
      */
-    public void createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException;
+    public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException;
     
     
     

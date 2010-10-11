@@ -60,6 +60,7 @@ import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -155,6 +156,9 @@ public class ListSharedDocument {
 	@InjectComponent
 	private SignatureDetailsDisplayer signatureDetailsDisplayer;
 	
+	@InjectComponent
+	private PasswordDecryptPopup passwordDecryptPopup;
+	
 	@Inject
 	private PageRenderLinkSource linkFactory;
 	
@@ -184,6 +188,9 @@ public class ListSharedDocument {
 	
 	@Property
 	private boolean activeSignature;
+	
+	@Property
+	private boolean activeEncypher;
 	
 	@Property
 	private boolean enabledToUpload;
@@ -237,7 +244,9 @@ public class ListSharedDocument {
 		listSelected = new ArrayList<ShareDocumentVo>();
 		Collections.sort(shareDocuments);
 		this.componentdocuments = shareDocuments;
-		this.activeSignature = parameterFacade.loadConfig().getActiveSignature();
+		ParameterVo config = parameterFacade.loadConfig();
+		this.activeSignature = config.getActiveSignature();
+		this.activeEncypher = config.getActiveEncipherment();
 		//if(model==null) // need to redo the model each type, for the config may change 
 		model=initModel();
 		
@@ -300,6 +309,13 @@ public class ListSharedDocument {
 			// context is shared document
 			return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
 		}
+	}
+
+	public void onActionFromDecryptIcon(String uuid)
+			throws BusinessException {
+		currentUuid = uuid;
+		actionbutton = ActionFromBarDocument.DECRYPT_ACTION;
+		passwordDecryptPopup.getFormPassword().clearErrors(); // delete popup message
 	}
 	
 	public Zone onActionFromShowUser(String mail) {
@@ -376,6 +392,53 @@ public class ListSharedDocument {
 		actionbutton = ActionFromBarDocument.NO_ACTION;
 
 		return null;
+	}
+	
+	public Zone onValidateFormFromPasswordDecryptPopup() throws BusinessException {
+		String pass = passwordDecryptPopup.getPassword();
+
+		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments,currentUuid);
+		
+		if(null==currentSharedDocumentVo){
+			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
+		}else{
+	        boolean copyDone = false;
+	        boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
+	        
+	        //create the copy of the document and remove it from the received documents
+	        DocumentVo copyDoc = null;
+	        try {
+	            copyDoc = shareFacade.createLocalCopy(currentSharedDocumentVo, user);
+	            copyDone = true;
+	        } catch (BusinessException e) {
+	            // process business exception. Can be thrown if no space left or wrong mime type.
+	            businessMessagesManagementService.notify(e);
+	        }
+	        
+	        //send an email to the owner if it is the first time the document is downloaded
+			if (!alreadyDownloaded) 
+				notifyOwnerByEmail(currentSharedDocumentVo);
+			
+	        if (copyDone) {
+	            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
+	                MessageSeverity.INFO));
+	        }
+	        
+	        //decrypt document
+	        if(copyDoc != null && copyDoc.getEncrypted()){ 
+				try {
+					documentFacade.decryptDocument(copyDoc, user,pass);
+					 businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.DECRYPTION_OK,
+				                MessageSeverity.INFO));
+	
+				} catch (BusinessException e) {
+					businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.DECRYPTION_FAILED,
+				                MessageSeverity.WARNING));
+				}
+	
+			}
+		}
+	    return passwordDecryptPopup.formSuccess();
 	}
 	
 	/***************************
@@ -572,20 +635,23 @@ public class ListSharedDocument {
     	// Another native TML in HTML was: 
 		// exclude="identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment"
 		// add="friendlySize,createDate,expirationDate,signed,sharedBy,actions"
+
+    	model.add("fileProperties",null);
+    	model.add("expirationDate",null);
+		model.add("selectedValue", null);
+//    	model.add("actions",null);
     	
-    	if(activeSignature){
-        	model.add("fileProperties",null);
-        	model.add("expirationDate",null);
+    	
+    	if(activeSignature && activeEncypher){
         	model.add("signed",null);
-        	model.add("actions",null);
-    		model.add("selectedValue", null);
-        	model.reorder("fileProperties","expirationDate","signed","actions", "selectedValue");
+    		model.add("encryptedAdd", null);
+        	model.reorder("fileProperties","expirationDate","signed","encryptedAdd", "selectedValue");
+    	} else if (activeSignature){
+        	model.add("signed",null);
+        	model.reorder("fileProperties","expirationDate","signed", "selectedValue");
     	} else {
-        	model.add("fileProperties",null);
-        	model.add("expirationDate",null);
-        	model.add("actions",null);
-    		model.add("selectedValue", null);
-        	model.reorder("fileProperties","expirationDate","actions", "selectedValue");
+    		model.add("encryptedAdd", null);
+        	model.reorder("fileProperties","expirationDate","encryptedAdd", "selectedValue");
     	}
         return model;
     }
