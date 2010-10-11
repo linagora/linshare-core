@@ -42,6 +42,7 @@
          <constructor-arg ref="documentService"/>
          <constructor-arg ref="mailContentBuildingService" />
          <constructor-arg ref="groupTransformer" />
+         <constructor-arg ref="documentTransformer" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linShare.core.Facade.impl.ShareExpiryDateFacadeImpl">

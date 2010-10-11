@@ -36,6 +36,7 @@ import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
+import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.GroupTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.ShareTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
@@ -79,6 +80,8 @@ public class ShareFacadeImpl implements ShareFacade {
     private final DocumentService documentService;
 
     private final GroupTransformer groupTransformer;
+	
+	private final DocumentTransformer documentTransformer;
     
     
 	
@@ -92,7 +95,8 @@ public class ShareFacadeImpl implements ShareFacade {
 			final UserService userService,
             final DocumentService documentService,
     		final MailContentBuildingService mailElementsFactory,
-    		final GroupTransformer groupTransformer) {
+    		final GroupTransformer groupTransformer,
+			final DocumentTransformer documentTransformer) {
 		super();
 		this.shareService = shareService;
 		this.shareTransformer = shareTransformer;
@@ -104,6 +108,7 @@ public class ShareFacadeImpl implements ShareFacade {
         this.documentService = documentService;
 		this.mailElementsFactory = mailElementsFactory;
 		this.groupTransformer = groupTransformer;
+		this.documentTransformer = documentTransformer;
 	}
 
 	
@@ -209,12 +214,14 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 	}
 
-    public void createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException {
+    public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException {
         Share share = shareTransformer.assemble(shareDocumentVo);
 		User user = userRepository.findByLogin(userVo.getLogin());
         
         // create a copy of the document :
-        documentService.duplicateDocument(share.getDocument(), user);
+        Document copyDoc = documentService.duplicateDocument(share.getDocument(), user);
+        DocumentVo copyDocVo = documentTransformer.disassemble(copyDoc);
+        copyDoc = null; // prevent Hibernate StaleStateException
 		
         // remove the share :
         shareService.removeReceivedShareForUser(share, user, user);
@@ -224,6 +231,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		
         // no more sharing of this file?
 		shareService.refreshShareAttributeOfDoc(share.getDocument());
+		
+		return copyDocVo;
     }
 
 
