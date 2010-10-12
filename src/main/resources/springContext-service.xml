@@ -93,6 +93,7 @@
         <constructor-arg index="9" ref="notifierService" />
     	<constructor-arg index="10" ref="mailContentBuildingService"/>
     	<constructor-arg index="11" ref="groupRepository"/>
+    	<constructor-arg index="12" ref="guestRepository"/>
     </bean>
 
 	   
