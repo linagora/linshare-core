@@ -34,6 +34,7 @@ import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
+import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
@@ -46,6 +47,7 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.GroupRepository;
+import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
@@ -75,6 +77,7 @@ public class ShareServiceImpl implements ShareService{
 	private final NotifierService notifierService;
 	private final MailContentBuildingService mailBuilder;
 	private final GroupRepository groupRepository;
+	private final GuestRepository guestRepository;
 	
 	
 //    private final DocumentService documentService;
@@ -88,7 +91,7 @@ public class ShareServiceImpl implements ShareService{
 			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
 			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
-			final GroupRepository groupRepository) {
+			final GroupRepository groupRepository, final GuestRepository guestRepository) {
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
@@ -102,6 +105,7 @@ public class ShareServiceImpl implements ShareService{
         this.notifierService = notifierService;
         this.mailBuilder = mailBuilder;
         this.groupRepository = groupRepository;
+        this.guestRepository = guestRepository;
 	}
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
@@ -239,6 +243,15 @@ public class ShareServiceImpl implements ShareService{
 		
 		SuccessesAndFailsItems<Share> returnItems = new SuccessesAndFailsItems<Share>();
 		
+		// get new guest expiry date
+		Calendar guestExpiryDate = Calendar.getInstance();
+        Parameter parameter = parameterService.loadConfig();
+        if (parameter == null) {
+            throw new IllegalStateException("No configuration found for linshare");
+        }
+        guestExpiryDate.add(parameter.getGuestAccountExpiryUnit().toCalendarValue(), parameter.getGuestAccountExpiryTime());
+        
+		
 		for (User recipient : recipients) {
 			for (Document document : documents) {
 				//Creating a shareDocument
@@ -266,7 +279,14 @@ public class ShareServiceImpl implements ShareService{
 					else {
 						document.setShared(true);
 					}
-		
+					
+					// update guest account expiry date
+					if (recipient.getUserType().equals(UserType.GUEST)) {
+						Guest guest = guestRepository.findByLogin(recipient.getLogin());
+						guest.setExpiryDate(guestExpiryDate.getTime());
+						guestRepository.update(guest);
+					}
+	
 					userRepository.update(recipient);
 					userRepository.update(sender);
 		
