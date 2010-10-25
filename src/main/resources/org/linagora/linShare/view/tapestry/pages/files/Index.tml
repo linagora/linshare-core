@@ -1,16 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:MyBorderLayout t:title="message:pages.files.index.title" t:identifier="files" t:currentHighlight="files"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-
-    <script type="text/javascript" language="javaScript">
-        function processUploadCompleteEvent(message) {
-            setTimeout(submitShare, 1000);
-        }
-
-        function submitShare() {
-            location.reload(true);
-        }
-    </script>
 	<!-- Main content -->
 
 	<div id="content">
@@ -38,12 +28,6 @@
 				<t:if test="userVo.upload" negate="true">	<t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
 				<li>&nbsp;</li>
 				</t:if>
-				<!--li>
-					<a href="#" class="button" onclick="quickShareWindow.showCenter(true);">
-						<span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/>
-							${message:pages.files.quickshare.button}</span>
-					</a>
-				</li-->
 			</ul>
 		</div><!-- id="actionBar" -->
 
@@ -79,12 +63,7 @@
 			</span></a>
 		</div>
 	</div>
-
-	<!-- Quick share popup -->
-	<!--t:quickSharePopup t:eventName="sharePopupEvent" /-->
-
-
-
+	
 	<!-- Widgets -->
 
 	<!-- Search widget -->

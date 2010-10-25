@@ -31,6 +31,7 @@ import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -86,6 +87,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  * @author ncharles
  *
  */
+@IncludeJavaScriptLibrary("Index.js")
 public class Index {
 
 	public final static Logger Logger=LoggerFactory.getLogger(Index.class);
@@ -228,25 +230,8 @@ public class Index {
 	 */
     @OnEvent(value="sharePanel")
     public void onShare(Object[] elements) {
-    	
-    	
-    	//redirect on user tab (this function is not here any more ...)
-//    	if (shareSessionObjects.getUsers() == null || shareSessionObjects.getUsers().size() == 0) {
-//        	 
-//        	 Link linkUser = linkFactory.createPageRenderLink("user/index", true);
-//            try {
-//            	shareSessionObjects.addMessage(messages.get("pages.index.message.toUser"));
-//                response.sendRedirect(linkUser);
-//            } catch (IOException ex) {
-//                throw new TechnicalException("Bad URL" + ex);
-//            }
-//        } else {
-//        	flagFinishShare=true;
-//        }
     	flagFinishShare=true;
-    	
     }
-	
 	
 	/**
 	 * Clear the shared document list
@@ -266,8 +251,6 @@ public class Index {
     public void inSearch(Object[] o1) {
     	inSearch = true;
     }
-	
-
 	
 	/**
 	 * The search component returns a document list, and we store it
@@ -558,19 +541,11 @@ public class Index {
 			}
 		}
 		if(null!=documentVoTemp){
-			
-			//check is the document is encrypted and give a warning
-//			if(documentVoTemp.getEncrypted()){
-//			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.shareOneEncryptedFile"),
-//					documentVoTemp.getFileName()) );
-//			} else {
-				
 				//enable direct sharing on this document
 				flagGroupShare=true;
 				shareSessionObjects.getDocuments().clear(); //delete all other doc
 				shareSessionObjects.addDocument(documentVoTemp);
 				shareSessionObjects.setMultipleSharing(false);
-//			}
 		}
 
 	}
