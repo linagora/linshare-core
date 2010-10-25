@@ -72,7 +72,7 @@ linshare.info.url.internal=http://localhost:8080/linshare/
 #directory of the jws application to decrypt document (jwsDecrypt.jar)
 javawebstart.decrypt.url.suffixcodebase=applet
 #set to true in tapestry production environnement
-linshare.productionMode=false
+linshare.productionMode=true
 #local work directory to encrypt/decrypt data
 linshare.encipherment.tmp.dir=${LINSHARE_HOME}/var/lib/linshare/tmp
 #local work directory to sign data

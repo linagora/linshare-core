@@ -35,11 +35,6 @@
 
 
 			<!-- Header definition -->
-<!--
- 			<t:parameter t:name="typeHeader">
-				${message:components.listDocument.grid.typeHeader}
-			</t:parameter> -->
-
 
 			<t:parameter t:name="empty">
 				${message:components.listDocument.grid.empty}
@@ -120,11 +115,6 @@
 				</t:if>
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
 				<span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
-<!--				<span class="ownerLogin">-->
-<!--					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="document.ownerlogin">-->
-<!--						<span  onclick="literal:userDetailsWindow.showCenter(true);">${document.ownerlogin}</span>-->
-<!--					</t:actionlink>-->
-<!--				</span>-->
 			</div>
 			</t:parameter>
 			

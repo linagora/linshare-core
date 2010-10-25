@@ -166,7 +166,7 @@ public class AppModule
         
         configuration.add(UploadSymbols.FILESIZE_MAX , "0");
         configuration.add(UploadSymbols.REQUESTSIZE_MAX , propertiesSymbolProvider.valueForSymbol("linshare.default.maxUploadSize"));
-        configuration.add(SymbolConstants.SCRIPTS_AT_TOP,"true");
+        configuration.add(SymbolConstants.APPLICATION_VERSION, propertiesSymbolProvider.valueForSymbol("Implementation-Version"));
     }
 
     /** Configure flex renderer component */

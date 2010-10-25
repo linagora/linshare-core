@@ -5,6 +5,7 @@
 	<!-- HTML Head -->
 
     <t:parameter name="head">
+    	<t:if test="enableChromeForIE"><meta http-equiv="X-UA-Compatible" content="chrome=1" /></t:if>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<meta http-equiv="Content-Style-Type" content="text/css" />
 		<meta http-equiv="Content-Language" content="${message:language}" />

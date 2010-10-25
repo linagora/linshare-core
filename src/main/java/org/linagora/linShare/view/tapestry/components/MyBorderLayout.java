@@ -196,6 +196,10 @@ public class MyBorderLayout {
 	@Inject @Symbol("linshare.groups.activated")
 	@Property
 	private boolean showGroups;
+    
+	@Inject @Symbol("linshare.googleChromeFrame.enabled")
+	@Property
+	private boolean enableChromeForIE;
 	
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
 	private static final String groupsLabelKey = "components.myborderlayout.group.title";
