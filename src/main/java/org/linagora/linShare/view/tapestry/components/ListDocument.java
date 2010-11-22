@@ -472,23 +472,16 @@ public class ListDocument {
 
 	public StreamResponse onActionFromDownload(String uuid)
 			throws BusinessException {
+		// when user has been logged out
+		if (document == null) {
+			return null;
+		}
 
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents, uuid);
 		if (null == currentDocumentVo) {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,
 					"invalid uuid for this user");
 		} else {
-
-//			if (!currentDocumentVo.getEncrypted()) {
-//				InputStream stream = documentFacade.retrieveFileStream(
-//						currentDocumentVo, user);
-//				return new FileStreamResponse(currentDocumentVo, stream);
-//			} else {
-//				throw new BusinessException(
-//						BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,
-//						"invalid download for a protected document");
-//			}
-			
 				InputStream stream = documentFacade.retrieveFileStream(
 						currentDocumentVo, user);
 				return new FileStreamResponse(currentDocumentVo, stream);
