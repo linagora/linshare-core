@@ -21,6 +21,7 @@
 package org.linagora.linShare.core.domain.entities;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -249,7 +250,7 @@ public class Document implements Serializable {
 		return timeStamp;
 	}
 	public void setTimeStamp(byte[] timeStamp) {
-		this.timeStamp = timeStamp;
+		this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
 	}
 	
 }
