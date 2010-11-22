@@ -58,7 +58,7 @@ public class LdapAuthorizationsProvider implements LdapAuthoritiesPopulator {
         String usermail = username; //mail is the login
         
         //if username is uid as a login and not an email
-        if(username!=null && username.indexOf("@")==-1 ){  	
+        if(username != null && username.indexOf("@") == -1){
         	usermail = userData.getStringAttribute(ldapLoginAttribute);
         	if(usermail==null || usermail.trim().length()<1){
         		usermail = username;
