@@ -20,6 +20,7 @@
  */
 package org.linagora.linShare.core.service.impl;
 
+import java.util.GregorianCalendar;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -122,6 +123,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 					new InternetAddress(recipient));
 
 			messageMim.setSubject(subject, charset);
+			
+			messageMim.setSentDate(new GregorianCalendar().getTime());
 
 			// Create a "related" Multipart message
 			// content type is multipart/alternative
