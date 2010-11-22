@@ -42,6 +42,7 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -121,6 +122,10 @@ public class GuestEditForm {
     
     @Property
     private boolean createGuestGranted;
+	
+	@Inject @Symbol("linshare.guests.can.create.other")
+	@Property
+	private boolean guestsAllowedToCreateGuest;
     
     @Property
     private boolean restrictedGuest;
@@ -260,7 +265,9 @@ public class GuestEditForm {
         	//set uploadGranted always to true for guest
         	boolean uploadGranted = true;
         	
-        	userFacade.createGuest(mail, firstName, lastName, uploadGranted, createGuestGranted,comment, 
+        	boolean allowedToCreateGuest = (guestsAllowedToCreateGuest && createGuestGranted);
+        	
+        	userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, 
         			mailContainer,userLoggedIn);
         	
         	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
