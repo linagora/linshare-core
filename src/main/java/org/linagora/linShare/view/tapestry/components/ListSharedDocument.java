@@ -260,6 +260,10 @@ public class ListSharedDocument {
 	 * The action declenched when the user click on the download link on the name of the file. 
 	 */
 	public StreamResponse onActionFromDownload(String uuid) throws BusinessException{
+		// when user has been logged out
+		if (componentdocuments == null) {
+			return null;
+		}
 
 		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments,uuid);
 		
