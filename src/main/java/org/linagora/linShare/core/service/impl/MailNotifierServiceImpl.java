@@ -123,8 +123,6 @@ public class MailNotifierServiceImpl implements NotifierService {
 					new InternetAddress(recipient));
 
 			messageMim.setSubject(subject, charset);
-			
-			messageMim.setSentDate(new GregorianCalendar().getTime());
 
 			// Create a "related" Multipart message
 			// content type is multipart/alternative
@@ -176,6 +174,10 @@ public class MailNotifierServiceImpl implements NotifierService {
 			mp.addBodyPart(alt_bp2);
 
 			messageMim.setContent(mp);
+			
+			// RFC 822 "Date" header field
+			// Indicates that the message is complete and ready for delivery
+			messageMim.setSentDate(new GregorianCalendar().getTime());
 			
 			// Since we used html tags, the content must be marker as text/html
 			// messageMim.setContent(content,"text/html; charset="+charset);
