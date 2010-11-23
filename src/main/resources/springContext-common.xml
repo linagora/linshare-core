@@ -20,6 +20,7 @@
         <property name="locations">
             <list>
                 <value>classpath:version.properties</value>
+                <value>classpath:linShare-mailContainer.properties</value>
                 <value>classpath:linShare-default.properties</value>
                 <value>classpath:linShare.properties</value>
                 <value>classpath:jackRabbit.properties</value>

@@ -222,3 +222,24 @@ alter table linshare_group_members add column owner_id int8;
 alter table linshare_share add column sharing_date timestamp;
 update linshare_share set sharing_date = (expiration_date - INTERVAL '100 days');
 create index index_share_sharing_date on linshare_share (sharing_date);
+
+
+
+
+
+
+-----------------
+-- AFTER 0.8.1 --
+-----------------
+
+-- Subject SHARED_DOC_UPCOMING_OUTDATED
+insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 11, 'LinShare: A sharing will be soon deleted',0);
+insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 11, 'LinShare : Un partage va bientôt expirer',1);
+
+-- Template SECURED_URL_UPCOMING_OUTDATED
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,18,'A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date.','A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date.',0);
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,18,'Un partage provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger les fichiers avant cette date.','Un partage provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger les fichiers avant cette date.',1);
+
+-- Template SHARED_DOC_UPCOMING_OUTDATED
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,19,'The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.','The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.',0);
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,19,'Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement.','Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement.',1);

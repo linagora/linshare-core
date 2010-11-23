@@ -36,5 +36,9 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
     public void cleanOutdatedShares() {
         shareService.cleanOutdatedShares();
     }
+    
+    public void notifyUpcomingOutdatedShares() {
+    	shareService.notifyUpcomingOutdatedShares();
+    }
 
 }

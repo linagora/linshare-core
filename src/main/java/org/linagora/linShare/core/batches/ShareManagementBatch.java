@@ -26,4 +26,7 @@ public interface ShareManagementBatch {
     
     /** Clean all outdated shares. */
     void cleanOutdatedShares();
+    
+    /** Notify the upcoming outdated share. */
+    void notifyUpcomingOutdatedShares();
 }

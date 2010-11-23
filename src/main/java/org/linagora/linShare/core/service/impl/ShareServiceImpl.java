@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
@@ -78,6 +79,9 @@ public class ShareServiceImpl implements ShareService{
 	private final MailContentBuildingService mailBuilder;
 	private final GroupRepository groupRepository;
 	private final GuestRepository guestRepository;
+	private List<Integer> datesForNotifyUpcomingOutdatedShares;
+	private final String mailContentTxt;
+	private final String mailContentHTML;
 	
 	
 //    private final DocumentService documentService;
@@ -91,7 +95,9 @@ public class ShareServiceImpl implements ShareService{
 			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
 			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
-			final GroupRepository groupRepository, final GuestRepository guestRepository) {
+			final GroupRepository groupRepository, final GuestRepository guestRepository,
+			final String datesForNotifyUpcomingOutdatedShares, final String mailContentTxt,
+			final String mailContentHTML) {
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
@@ -106,6 +112,13 @@ public class ShareServiceImpl implements ShareService{
         this.mailBuilder = mailBuilder;
         this.groupRepository = groupRepository;
         this.guestRepository = guestRepository;
+        this.datesForNotifyUpcomingOutdatedShares = new ArrayList<Integer>();
+        String[] dates = datesForNotifyUpcomingOutdatedShares.split(",");
+        for (String date : dates) {
+        	this.datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
+		}
+        this.mailContentTxt = mailContentTxt;
+        this.mailContentHTML = mailContentHTML;
 	}
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
@@ -453,7 +466,52 @@ public class ShareServiceImpl implements ShareService{
         
     }
     
+    public void notifyUpcomingOutdatedShares() {
+		MailContainer mailContainer = new MailContainer(this.mailContentTxt, this.mailContentHTML, "", Language.FRENCH);
+        
+        for (Integer date : this.datesForNotifyUpcomingOutdatedShares) {
+	        List<Share> shares = shareRepository.getUpcomingOutdatedShares(date);
+	        logger.info(shares.size() + " upcoming (in "+date.toString()+" days) outdated share(s) found to be notified.");
+
+	        for (Share share : shares) {
+	        	if (!share.getDownloaded()) {
+	        		sendUpcomingOutdatedShareNotification(mailContainer, share, date);
+	        	}
+	        }
+	        
+	        List<SecuredUrl> securedUrlList = securedUrlRepository.getUpcomingOutdatedSecuredUrl(date);
+	        logger.info(securedUrlList.size() + " upcoming (in "+date.toString()+" days) outdated secured Url(s) found to be notified.");
+	        
+			for (SecuredUrl securedUrl : securedUrlList) {
+				sendUpcomingOutdatedSecuredUrlNotification(mailContainer, securedUrl, date);
+			}
+        }
+    	
+    }
     
+    
+	private void sendUpcomingOutdatedSecuredUrlNotification(MailContainer mailContainer, 
+			SecuredUrl securedUrl, Integer days) {
+		for (Contact recipient : securedUrl.getRecipients()) {
+			try {
+				MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedSecuredUrl(mailContainer, securedUrl, recipient, days);
+				notifierService.sendNotification(null, recipient.getMail(), mailContainerFinal);
+			} catch (BusinessException e) {
+				logger.error("Error while trying to notify upcoming outdated secured url", e);
+			}
+		}
+	}
+	
+	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
+			Share share, Integer days) {
+		try {
+			MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedShare(mailContainer, share, days);
+			notifierService.sendNotification(null, share.getReceiver().getMail(), mailContainerFinal);
+		} catch (BusinessException e) {
+				logger.error("Error while trying to notify upcoming outdated share", e);
+		}
+	}
+	
 	public SecuredUrl shareDocumentsWithSecuredUrlToUser(
 			UserVo owner, List<Document> docList, String password,
 			List<Contact> recipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException {

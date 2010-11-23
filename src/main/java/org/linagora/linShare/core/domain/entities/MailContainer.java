@@ -125,6 +125,10 @@ public class MailContainer {
 		return personalMessage;
 	}
 	
+	public void setPersonalMessage(String personalMessage) {
+		this.personalMessage = personalMessage;
+	}
+	
 	public void addData(String key, String value) {
 		if (this.data == null) {
 			this.data = new HashMap<String, String>();

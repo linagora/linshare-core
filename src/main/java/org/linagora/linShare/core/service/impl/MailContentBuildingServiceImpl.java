@@ -39,7 +39,10 @@ import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MailSubject;
 import org.linagora.linShare.core.domain.entities.MailTemplate;
 import org.linagora.linShare.core.domain.entities.Parameter;
+import org.linagora.linShare.core.domain.entities.SecuredUrl;
+import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -51,11 +54,16 @@ import org.linagora.linShare.core.service.ParameterService;
 
 public class MailContentBuildingServiceImpl implements MailContentBuildingService {
 	private final ParameterService parameterService;
+	private final String pUrlBase;
+	private final String pUrlInternal;
     private final static Log logger = LogFactory.getLog(MailContentBuildingServiceImpl.class);
 
 	
-	public MailContentBuildingServiceImpl(final ParameterService parameterService) throws BusinessException {
+	public MailContentBuildingServiceImpl(final ParameterService parameterService,
+			final String urlBase, final String urlInternal) throws BusinessException {
 		this.parameterService = parameterService;
+		this.pUrlBase = urlBase;
+		this.pUrlInternal = urlInternal;
 	}
 
 	/**
@@ -126,10 +134,14 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 			contentTXT = StringUtils.replace(contentTXT, "${personalMessage}", personalMessageTemplate.getContentTXT());
 	        contentHTML = StringUtils.replace(contentHTML, "${personalMessage}", personalMessageTemplate.getContentHTML());
+			contentTXT = StringUtils.replace(contentTXT, "%{personalMessage}", personalMessageTemplate.getContentTXT());
+	        contentHTML = StringUtils.replace(contentHTML, "%{personalMessage}", personalMessageTemplate.getContentHTML());
 		}
 		else {
 			contentTXT = StringUtils.replace(contentTXT, "${personalMessage}", "");
 	        contentHTML = StringUtils.replace(contentHTML, "${personalMessage}", "");
+			contentTXT = StringUtils.replace(contentTXT, "%{personalMessage}", "");
+	        contentHTML = StringUtils.replace(contentHTML, "%{personalMessage}", "");
 		}
 		
         contentTXT = StringUtils.replace(contentTXT, "${greetings}", greetings.getContentTXT());
@@ -139,6 +151,13 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         contentHTML = StringUtils.replace(contentHTML, "${footer}", footer.getContentHTML());
         contentHTML = StringUtils.replace(contentHTML, "${body}", bodyHTML);
         contentHTML = StringUtils.replace(contentHTML, "${mailSubject}", subject);
+        contentTXT = StringUtils.replace(contentTXT, "%{greetings}", greetings.getContentTXT());
+        contentTXT = StringUtils.replace(contentTXT, "%{footer}", footer.getContentTXT());
+        contentTXT = StringUtils.replace(contentTXT, "%{body}", bodyTXT);
+        contentHTML = StringUtils.replace(contentHTML, "%{greetings}", greetings.getContentHTML());
+        contentHTML = StringUtils.replace(contentHTML, "%{footer}", footer.getContentHTML());
+        contentHTML = StringUtils.replace(contentHTML, "%{body}", bodyHTML);
+        contentHTML = StringUtils.replace(contentHTML, "%{mailSubject}", subject);
         
         mailContainer.setContentTXT(contentTXT);
         mailContainer.setContentHTML(contentHTML);
@@ -563,6 +582,54 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         
         return template;
 	}
+
+	/**
+	 * Template SECURED_URL_UPCOMING_OUTDATED
+	 */
+	private MailTemplate buildTemplateUpcomingOutdatedSecuredUrl(
+			Language language, SecuredUrl securedUrl, Contact recipient,
+			Integer days) throws BusinessException {
+		MailTemplate template = getMailTemplate(language, MailTemplateEnum.SECURED_URL_UPCOMING_OUTDATED);
+		String contentTXT = template.getContentTXT();
+		String contentHTML = template.getContentHTML();
+		
+		contentTXT = StringUtils.replace(contentTXT, "${firstName}", securedUrl.getSender().getFirstName());
+		contentTXT = StringUtils.replace(contentTXT, "${lastName}", securedUrl.getSender().getLastName());
+        contentTXT = StringUtils.replace(contentTXT, "${nbDays}", days.toString());
+        contentHTML = StringUtils.replace(contentHTML, "${firstName}", securedUrl.getSender().getFirstName());
+		contentHTML = StringUtils.replace(contentHTML, "${lastName}", securedUrl.getSender().getLastName());
+        contentHTML = StringUtils.replace(contentHTML, "${nbDays}", days.toString());
+        
+        template.setContentTXT(contentTXT);
+        template.setContentHTML(contentHTML);
+        
+        return template;
+	}
+
+
+	/**
+	 * Template SHARED_DOC_UPCOMING_OUTDATED
+	 */
+	private MailTemplate buildTemplateUpcomingOutdatedShare(Language language,
+			Share share, Integer days) throws BusinessException {
+		MailTemplate template = getMailTemplate(language, MailTemplateEnum.SECURED_URL_UPCOMING_OUTDATED);
+		String contentTXT = template.getContentTXT();
+		String contentHTML = template.getContentHTML();
+		
+		contentTXT = StringUtils.replace(contentTXT, "${firstName}", share.getSender().getFirstName());
+		contentTXT = StringUtils.replace(contentTXT, "${lastName}", share.getSender().getLastName());
+        contentTXT = StringUtils.replace(contentTXT, "${nbDays}", days.toString());
+        contentTXT = StringUtils.replace(contentTXT, "${documentName}", share.getDocument().getName());
+        contentHTML = StringUtils.replace(contentHTML, "${firstName}", share.getSender().getFirstName());
+		contentHTML = StringUtils.replace(contentHTML, "${lastName}", share.getSender().getLastName());
+        contentHTML = StringUtils.replace(contentHTML, "${nbDays}", days.toString());
+        contentHTML = StringUtils.replace(contentHTML, "${documentName}", share.getDocument().getName());
+        
+        template.setContentTXT(contentTXT);
+        template.setContentHTML(contentHTML);
+        
+        return template;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailAnonymousDownload(org.linagora.linShare.core.domain.entities.MailContainer, java.util.List, java.lang.String, org.linagora.linShare.core.domain.entities.User)
@@ -819,5 +886,52 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		
 		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), receiver, null, null);
+	}
+	
+	public MailContainer buildMailUpcomingOutdatedSecuredUrl(
+			MailContainer mailContainer, SecuredUrl securedUrl,
+			Contact recipient, Integer days) throws BusinessException {
+		
+		StringBuffer httpUrlBase = new StringBuffer();
+		httpUrlBase.append(pUrlBase);
+		if(!pUrlBase.endsWith("/")) httpUrlBase.append("/");
+		httpUrlBase.append(securedUrl.getUrlPath());
+		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
+		httpUrlBase.append(securedUrl.getAlea());
+
+		MailTemplate template1 = buildTemplateUpcomingOutdatedSecuredUrl(mailContainer.getLanguage(), securedUrl, recipient, days);
+		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), httpUrlBase.toString(), "");
+		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPCOMING_OUTDATED);
+        
+		StringBuffer contentTXT = new StringBuffer();
+		StringBuffer contentHTML = new StringBuffer();
+		contentTXT.append(template1.getContentTXT() + "\n");
+		contentTXT.append(template2.getContentTXT() + "\n");
+		contentHTML.append(template1.getContentHTML() + "<br />");
+		contentHTML.append(template2.getContentHTML() + "<br />");
+		
+		User tempUser = new Guest(recipient.getMail(), recipient.getMail(), "", recipient.getMail());
+		
+		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), tempUser, null, null);
+	}
+
+	public MailContainer buildMailUpcomingOutdatedShare(
+			MailContainer mailContainer, Share share, Integer days) throws BusinessException {
+		
+		String linShareUrl = share.getReceiver().getUserType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
+
+		MailTemplate template1 = buildTemplateUpcomingOutdatedShare(mailContainer.getLanguage(), share, days);
+		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, "");
+		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPCOMING_OUTDATED);
+        
+		StringBuffer contentTXT = new StringBuffer();
+		StringBuffer contentHTML = new StringBuffer();
+		contentTXT.append(template1.getContentTXT() + "\n");
+		contentTXT.append(template2.getContentTXT() + "\n");
+		contentHTML.append(template1.getContentHTML() + "<br />");
+		contentHTML.append(template2.getContentHTML() + "<br />");
+		
+		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), share.getReceiver(), null, null);
+
 	}
 }

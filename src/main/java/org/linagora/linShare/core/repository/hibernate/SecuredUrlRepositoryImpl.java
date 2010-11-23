@@ -94,5 +94,15 @@ public class SecuredUrlRepositoryImpl extends
 		});
 		
 	}
+	
+	public List<SecuredUrl> getUpcomingOutdatedSecuredUrl(Integer date) {
+    	Calendar calMin = Calendar.getInstance();
+    	calMin.add(Calendar.DAY_OF_MONTH, date);
+    	
+    	Calendar calMax = Calendar.getInstance();
+    	calMax.add(Calendar.DAY_OF_MONTH, date+1);
+    	
+        return findByCriteria(Restrictions.lt("expirationTime", calMax), Restrictions.gt("expirationTime", calMin));
+	}
 
 }

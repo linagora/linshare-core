@@ -45,5 +45,7 @@ public interface ShareRepository extends AbstractRepository<Share> {
 	public List<Share> getSharesLinkedToDocument(Document doc);
 
     public List<Share> getOutdatedShares();
+
+	public List<Share> getUpcomingOutdatedShares(Integer date);
 	
 }

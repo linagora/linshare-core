@@ -68,5 +68,15 @@ public class ShareRepositoryImpl extends AbstractRepositoryImpl<Share> implement
     public List<Share> getOutdatedShares() {
         return findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
     }
+    
+    public List<Share> getUpcomingOutdatedShares(Integer date) {
+    	Calendar calMin = Calendar.getInstance();
+    	calMin.add(Calendar.DAY_OF_MONTH, date);
+    	
+    	Calendar calMax = Calendar.getInstance();
+    	calMax.add(Calendar.DAY_OF_MONTH, date+1);
+        
+    	return findByCriteria(Restrictions.lt("expirationDate", calMax), Restrictions.gt("expirationDate", calMin));
+    }
 
 }

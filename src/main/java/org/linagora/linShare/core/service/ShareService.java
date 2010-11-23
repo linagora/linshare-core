@@ -171,4 +171,6 @@ public interface ShareService {
      */
     public void notifyGroupSharingDeleted(Document doc, User manager, Group group,
 			MailContainer mailContainer) throws BusinessException;
+
+	public void notifyUpcomingOutdatedShares();
 }
