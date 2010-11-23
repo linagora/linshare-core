@@ -492,9 +492,22 @@ public class ShareServiceImpl implements ShareService{
     
 	private void sendUpcomingOutdatedSecuredUrlNotification(MailContainer mailContainer, 
 			SecuredUrl securedUrl, Integer days) {
+		
+		//compose the secured url to give in mail
+		StringBuffer httpUrlBase = new StringBuffer();
+		httpUrlBase.append(mailContainer.getData("urlBase"));
+		if(!mailContainer.getData("urlBase").endsWith("/")) httpUrlBase.append("/");
+		httpUrlBase.append(securedUrl.getUrlPath());
+		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
+		httpUrlBase.append(securedUrl.getAlea());
+		
+		//securedUrl must be ended with a "/" if no parameter (see urlparam)
+		String securedUrlBase = httpUrlBase.toString();
+		
 		for (Contact recipient : securedUrl.getRecipients()) {
+			String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
 			try {
-				MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedSecuredUrl(mailContainer, securedUrl, recipient, days);
+				MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedSecuredUrl(mailContainer, securedUrl, recipient, days, securedUrlWithParam);
 				notifierService.sendNotification(null, recipient.getMail(), mailContainerFinal);
 			} catch (BusinessException e) {
 				logger.error("Error while trying to notify upcoming outdated secured url", e);

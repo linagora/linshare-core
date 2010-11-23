@@ -890,17 +890,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	
 	public MailContainer buildMailUpcomingOutdatedSecuredUrl(
 			MailContainer mailContainer, SecuredUrl securedUrl,
-			Contact recipient, Integer days) throws BusinessException {
-		
-		StringBuffer httpUrlBase = new StringBuffer();
-		httpUrlBase.append(pUrlBase);
-		if(!pUrlBase.endsWith("/")) httpUrlBase.append("/");
-		httpUrlBase.append(securedUrl.getUrlPath());
-		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
-		httpUrlBase.append(securedUrl.getAlea());
+			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException {
 
 		MailTemplate template1 = buildTemplateUpcomingOutdatedSecuredUrl(mailContainer.getLanguage(), securedUrl, recipient, days);
-		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), httpUrlBase.toString(), "");
+		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), securedUrlWithParam, "");
 		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPCOMING_OUTDATED);
         
 		StringBuffer contentTXT = new StringBuffer();
