@@ -20,10 +20,8 @@
 */
 package org.linagora.linShare.view.tapestry.services.impl;
 
-import java.io.IOException;
 import java.util.Locale;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
@@ -32,12 +30,7 @@ import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
-import org.linagora.linShare.view.tapestry.services.Templating;
 import org.linagora.linShare.view.tapestry.utils.WelcomeMessageUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Build the mail container to give to the facades and services.
@@ -47,44 +40,19 @@ import org.slf4j.LoggerFactory;
  */
 public class MailContainerBuilder {
 
-	private PropertiesSymbolProvider propertiesSymbolProvider;
-	private Templating templating;
     private PersistentLocale persistentLocale;
     private Request request;
-    private Asset containerTemplate;
-    private Asset containerTemplateTxt;
     private ValidationMessagesSource validationMessagesSource;
-
-	final private static Logger logger=LoggerFactory.getLogger(MailContainerBuilder.class);
 	
-	public MailContainerBuilder(PropertiesSymbolProvider propertiesSymbolProvider,
-			Templating templating, PersistentLocale persistentLocale,
-			Request request, Asset containerTemplate, Asset containerTemplateTxt,
-			ValidationMessagesSource validationMessagesSource) {
-		this.propertiesSymbolProvider = propertiesSymbolProvider;
-		this.templating = templating;
+	public MailContainerBuilder(PersistentLocale persistentLocale,
+			Request request, ValidationMessagesSource validationMessagesSource) {
 		this.persistentLocale = persistentLocale;
 		this.request = request;
-		this.containerTemplate = containerTemplate;
-		this.containerTemplateTxt = containerTemplateTxt;
 		this.validationMessagesSource = validationMessagesSource;
 	}
 
 	public MailContainer buildMailContainer(UserVo userVo, String customMessage) {
-        String mailContent = null;
-        String mailContentTxt = null;
-
-		String urlBase=propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
-		String urlInternal=propertiesSymbolProvider.valueForSymbol("linshare.info.url.internal");
 		
-		try {
-			mailContent = templating.readFullyTemplateContent(containerTemplate.getResource().openStream());
-			mailContentTxt = templating.readFullyTemplateContent(containerTemplateTxt.getResource().openStream());
-			
-		} catch (IOException e) {
-			logger.error("Bad mail template", e);
-			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad template",e);
-		}
 		Locale userLocale = null;
     	if (userVo != null && userVo.getLocale()!= null && (!userVo.getLocale().equals(""))) {
     		userLocale = new Locale(userVo.getLocale());
@@ -93,9 +61,7 @@ public class MailContainerBuilder {
     	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
     	Messages messages = validationMessagesSource.getValidationMessages(locale);
     	
-    	MailContainer mailContainer = new MailContainer(mailContentTxt, mailContent, customMessage, language);
-    	mailContainer.addData("urlBase", urlBase);
-    	mailContainer.addData("urlInternal", urlInternal);
+    	MailContainer mailContainer = new MailContainer(customMessage, language);
     	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.ACCEPTED.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.ACCEPTED.toString()));
     	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.REJECTED.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.REJECTED.toString()));
     	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.WAITING_APPROVAL.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.WAITING_APPROVAL.toString()));

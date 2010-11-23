@@ -56,14 +56,20 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	private final ParameterService parameterService;
 	private final String pUrlBase;
 	private final String pUrlInternal;
+	private final String mailContentTxt;
+	private final String mailContentHTML;
+	
     private final static Log logger = LogFactory.getLog(MailContentBuildingServiceImpl.class);
 
 	
 	public MailContentBuildingServiceImpl(final ParameterService parameterService,
-			final String urlBase, final String urlInternal) throws BusinessException {
+			final String urlBase, final String urlInternal, final String mailContentTxt,
+			final String mailContentHTML) throws BusinessException {
 		this.parameterService = parameterService;
 		this.pUrlBase = urlBase;
 		this.pUrlInternal = urlInternal;
+        this.mailContentTxt = mailContentTxt;
+        this.mailContentHTML = mailContentHTML;
 	}
 
 	/**
@@ -122,12 +128,12 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @param personalMessage
 	 * @throws BusinessException
 	 */
-	private MailContainer buildMailContainer(MailContainer mailContainerInitial, String subject, String bodyTXT, String bodyHTML, User recipient, User owner, String personalMessage) throws BusinessException {
+	private MailContainer buildMailContainer(final MailContainer mailContainerInitial, String subject, String bodyTXT, String bodyHTML, User recipient, User owner, String personalMessage) throws BusinessException {
 		MailContainer mailContainer = new MailContainer(mailContainerInitial);
 		MailTemplate greetings = buildTemplateGreetings(mailContainer.getLanguage(), recipient);
 		MailTemplate footer = buildTemplateFooter(mailContainer.getLanguage());
-		String contentTXT = mailContainer.getContentTXT();
-		String contentHTML = mailContainer.getContentHTML();
+		String contentTXT = this.mailContentTxt;
+		String contentHTML = this.mailContentHTML;
 		
 		if (personalMessage != null && personalMessage.trim().length() > 0) {
 			MailTemplate personalMessageTemplate = buildTemplatePersonalMessage(mailContainer.getLanguage(), owner, personalMessage);
@@ -503,7 +509,6 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		String contentHTML = template.getContentHTML();
 		
 		String statusString = mailContainer.getData("GroupMembershipStatus."+status.toString());
-		logger.debug(status.toString());
 		
 		contentTXT = StringUtils.replace(contentTXT, "${newMemberFirstName}", newMember.getUser().getFirstName());
 		contentTXT = StringUtils.replace(contentTXT, "${newMemberLastName}", newMember.getUser().getLastName());
@@ -654,7 +659,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 */
 	public MailContainer buildMailNewGuest(MailContainer mailContainer, User owner, User recipient, String password) throws BusinessException {
 		MailTemplate template1 = buildTemplateGuestInvitation(mailContainer.getLanguage(), owner);
-		MailTemplate template2 = buildTemplateLinshareURL(mailContainer.getLanguage(), mailContainer.getData("urlBase"));
+		MailTemplate template2 = buildTemplateLinshareURL(mailContainer.getLanguage(), pUrlBase);
 		MailTemplate template3 = buildTemplateAccountDescription(mailContainer.getLanguage(), recipient, password);
 		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_GUEST);
 		

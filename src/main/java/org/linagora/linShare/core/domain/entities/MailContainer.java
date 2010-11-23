@@ -74,16 +74,11 @@ public class MailContainer {
 	 * Create a mailContainer, used by the MailContainerBuilder
 	 * tapestry service.
 	 * 
-	 * @param contentTXT template holding mail content in text format
-	 * @param contentHTML template holding mail content in html format
 	 * @param personalMessage personalMessage: not required
 	 * @param language language of the email
 	 */
-	public MailContainer(String contentTXT, String contentHTML,
-			String personalMessage, Language language) {
+	public MailContainer(String personalMessage, Language language) {
 		super();
-		this.contentTXT = contentTXT;
-		this.contentHTML = contentHTML;
 		this.personalMessage = personalMessage;
 		this.language = language;
 		this.data = new HashMap<String, String>();

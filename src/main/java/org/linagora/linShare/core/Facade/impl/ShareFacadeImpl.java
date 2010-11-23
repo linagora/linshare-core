@@ -82,6 +82,10 @@ public class ShareFacadeImpl implements ShareFacade {
     private final GroupTransformer groupTransformer;
 	
 	private final DocumentTransformer documentTransformer;
+	
+	private final String urlBase;
+	
+	private final String urlInternal;
     
     
 	
@@ -96,7 +100,9 @@ public class ShareFacadeImpl implements ShareFacade {
             final DocumentService documentService,
     		final MailContentBuildingService mailElementsFactory,
     		final GroupTransformer groupTransformer,
-			final DocumentTransformer documentTransformer) {
+			final DocumentTransformer documentTransformer,
+			final String urlBase,
+			final String urlInternal) {
 		super();
 		this.shareService = shareService;
 		this.shareTransformer = shareTransformer;
@@ -109,6 +115,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.mailElementsFactory = mailElementsFactory;
 		this.groupTransformer = groupTransformer;
 		this.documentTransformer = documentTransformer;
+		this.urlBase = urlBase;
+		this.urlInternal = urlInternal;
 	}
 
 	
@@ -163,12 +171,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLogin(userVo.getLogin());
-			String linshareUrl = "";
-			if (userVo.isGuest()) {
-				linshareUrl = mailContainer.getData("urlBase");
-			} else {
-				linshareUrl = mailContainer.getData("urlInternal");
-			}
+			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
 			MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString);
 			notifierService.sendNotification(owner.getMail(),userVo.getMail(), mailContainer_);
 		}
@@ -266,8 +269,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		String jwsEncryptUrlString = "";
 		if(isOneDocEncrypted){
 			StringBuffer jwsEncryptUrl = new StringBuffer();
-			jwsEncryptUrl.append(mailContainer.getData("urlBase"));
-			if(!mailContainer.getData("urlBase").endsWith("/")) jwsEncryptUrl.append("/");
+			jwsEncryptUrl.append(urlBase);
+			if(!urlBase.endsWith("/")) jwsEncryptUrl.append("/");
 			jwsEncryptUrl.append("localDecrypt");
 			jwsEncryptUrlString = jwsEncryptUrl.toString();
 		}
@@ -303,8 +306,8 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 			//compose the secured url to give in mail
 			StringBuffer httpUrlBase = new StringBuffer();
-			httpUrlBase.append(mailContainer.getData("urlBase"));
-			if(!mailContainer.getData("urlBase").endsWith("/")) httpUrlBase.append("/");
+			httpUrlBase.append(urlBase);
+			if(!urlBase.endsWith("/")) httpUrlBase.append("/");
 			httpUrlBase.append(securedUrl.getUrlPath());
 			if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
 			httpUrlBase.append(securedUrl.getAlea());
@@ -355,19 +358,19 @@ public class ShareFacadeImpl implements ShareFacade {
     	
     	List<SecuredUrl> urls = shareService.getSecureUrlLinkedToDocument(doc);
     	
-    	String urlBase = mailContainer.getData("urlBase");
-    	if (!(urlBase.charAt(urlBase.length()-1)=='/')) {
-    		urlBase = urlBase.concat("/");
+    	String sUrlBase = this.urlBase;
+    	if (!(sUrlBase.charAt(sUrlBase.length()-1)=='/')) {
+    		sUrlBase = sUrlBase.concat("/");
 		}
-    	String urlDownload = "";
+    	String sUrlDownload = "";
     	for (SecuredUrl securedUrl : urls) {
 			List<Contact> recipients = securedUrl.getRecipients();
-			urlDownload = urlBase.concat(securedUrl.getUrlPath()+"/");
-			urlDownload = urlDownload.concat(securedUrl.getAlea());
+			sUrlDownload = sUrlBase.concat(securedUrl.getUrlPath()+"/");
+			sUrlDownload = sUrlDownload.concat(securedUrl.getAlea());
 			
     		for (Contact contact : recipients) {
     			String urlparam = "?email="+contact.getMail();
-    			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, urlDownload, urlparam);
+    			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, sUrlDownload, urlparam);
     			notifierService.sendNotification(currentUser.getMail(),contact.getMail(), mailContainer_);
 			}
 		}
@@ -376,12 +379,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		List<Share> listShare = shareService.getSharesLinkedToDocument(doc);
 		
 		for (Share share : listShare) {
-			if (share.getReceiver().getUserType().equals(UserType.GUEST)) {
-				urlDownload = mailContainer.getData("urlBase");
-			} else {
-				urlDownload = mailContainer.getData("urlInternal");
-			}
-			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, urlDownload, "");
+			sUrlDownload = share.getReceiver().getUserType().equals(UserType.GUEST) ? urlBase : urlInternal;
+			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, "");
 			notifierService.sendNotification(currentUser.getMail(),share.getReceiver().getMail(), mailContainer_);
 		}
     	
@@ -418,8 +417,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		String jwsEncryptUrlString = "";
 		if(isOneDocEncrypted){
 			StringBuffer jwsEncryptUrl = new StringBuffer();
-			jwsEncryptUrl.append(mailContainer.getData("urlBase"));
-			if(!mailContainer.getData("urlBase").endsWith("/")) jwsEncryptUrl.append("/");
+			jwsEncryptUrl.append(urlBase);
+			if(!urlBase.endsWith("/")) jwsEncryptUrl.append("/");
 			jwsEncryptUrl.append("localDecrypt");
 			jwsEncryptUrlString = jwsEncryptUrl.toString();
 		}
@@ -441,11 +440,11 @@ public class ShareFacadeImpl implements ShareFacade {
 			for (Group group : groupList) {
 				String functionalMail = group.getFunctionalEmail();
 				if (functionalMail != null && functionalMail.length() > 0) {
-					mailContainer = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, group, results.getSuccessesItem(), mailContainer.getData("urlBase"), "groups", isOneDocEncrypted, jwsEncryptUrlString);
+					mailContainer = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString);
 					notifierService.sendNotification(owner.getMail(),functionalMail, mailContainer);
 				} else {
 					for (GroupMember member : group.getMembers()) {
-						MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, member.getUser(), group, results.getSuccessesItem(), mailContainer.getData("urlBase"), "groups", isOneDocEncrypted, jwsEncryptUrlString);
+						MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, member.getUser(), group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString);
 						notifierService.sendNotification(owner.getMail(), member.getUser().getMail(), mailContainer_);
 					}
 				}

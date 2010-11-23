@@ -1,5 +1,0 @@
-${personalMessage}
-${greetings}
-${body}	
--- 
-${footer}

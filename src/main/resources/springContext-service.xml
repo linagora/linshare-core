@@ -95,8 +95,7 @@
     	<constructor-arg index="11" ref="groupRepository"/>
     	<constructor-arg index="12" ref="guestRepository"/>
     	<constructor-arg index="13" value="${job.outdatedshares.beforedate.sendnotification}"/>
-    	<constructor-arg index="14" value="${linshare.mails.txt.container}"/>
-    	<constructor-arg index="15" value="${linshare.mails.html.container}"/>
+    	<constructor-arg index="14" value="${linshare.info.url.base}"/>
     </bean>
 
 	   
@@ -154,6 +153,8 @@
         <constructor-arg ref="parameterService"/>
         <constructor-arg value="${linshare.info.url.base}"/>
         <constructor-arg value="${linshare.info.url.internal}"/>
+    	<constructor-arg value="${linshare.mails.txt.container}"/>
+    	<constructor-arg value="${linshare.mails.html.container}"/>
     </bean>
     
 </beans>
