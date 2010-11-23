@@ -80,8 +80,7 @@ public class ShareServiceImpl implements ShareService{
 	private final GroupRepository groupRepository;
 	private final GuestRepository guestRepository;
 	private List<Integer> datesForNotifyUpcomingOutdatedShares;
-	private final String mailContentTxt;
-	private final String mailContentHTML;
+	private final String urlBase;
 	
 	
 //    private final DocumentService documentService;
@@ -96,8 +95,7 @@ public class ShareServiceImpl implements ShareService{
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
 			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
 			final GroupRepository groupRepository, final GuestRepository guestRepository,
-			final String datesForNotifyUpcomingOutdatedShares, final String mailContentTxt,
-			final String mailContentHTML) {
+			final String datesForNotifyUpcomingOutdatedShares, final String urlBase) {
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
@@ -117,8 +115,7 @@ public class ShareServiceImpl implements ShareService{
         for (String date : dates) {
         	this.datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
 		}
-        this.mailContentTxt = mailContentTxt;
-        this.mailContentHTML = mailContentHTML;
+        this.urlBase = urlBase;
 	}
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
@@ -467,7 +464,7 @@ public class ShareServiceImpl implements ShareService{
     }
     
     public void notifyUpcomingOutdatedShares() {
-		MailContainer mailContainer = new MailContainer(this.mailContentTxt, this.mailContentHTML, "", Language.FRENCH);
+		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
         
         for (Integer date : this.datesForNotifyUpcomingOutdatedShares) {
 	        List<Share> shares = shareRepository.getUpcomingOutdatedShares(date);
@@ -495,8 +492,8 @@ public class ShareServiceImpl implements ShareService{
 		
 		//compose the secured url to give in mail
 		StringBuffer httpUrlBase = new StringBuffer();
-		httpUrlBase.append(mailContainer.getData("urlBase"));
-		if(!mailContainer.getData("urlBase").endsWith("/")) httpUrlBase.append("/");
+		httpUrlBase.append(urlBase);
+		if(!urlBase.endsWith("/")) httpUrlBase.append("/");
 		httpUrlBase.append(securedUrl.getUrlPath());
 		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
 		httpUrlBase.append(securedUrl.getAlea());
