@@ -170,7 +170,7 @@ public interface MailContentBuildingService {
 
 	public MailContainer buildMailUpcomingOutdatedSecuredUrl(
 			MailContainer mailContainer, SecuredUrl securedUrl,
-			Contact recipient, Integer days) throws BusinessException;
+			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
 
 	public MailContainer buildMailUpcomingOutdatedShare(
 			MailContainer mailContainer, Share share, Integer days) 
