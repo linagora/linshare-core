@@ -83,6 +83,14 @@ insert into linshare_mail_templates (parameter_id, template_id, content_html, co
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,17,E'<strong>${firstName} ${lastName}</strong> has deleted the shared file <strong>${documentName}</strong>.',E'${firstName} ${lastName} has deleted the shared file ${documentName}.',0);
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,17,E'<strong>${firstName} ${lastName}</strong> a supprimé le fichier partagé <strong>${documentName}</strong>.',E'${firstName} ${lastName} a supprimé le fichier partagé ${documentName}.',1);
 
+-- Template SECURED_URL_UPCOMING_OUTDATED
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,18,E'A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date.',E'A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date.',0);
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,18,E'Un partage provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger les fichiers avant cette date.',E'Un partage provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger les fichiers avant cette date.',1);
+
+-- Template SHARED_DOC_UPCOMING_OUTDATED
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,19,E'The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.',E'The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.',0);
+insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,19,E'Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement.',E'Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement.',1);
+
 -- Subject ANONYMOUS_DOWNLOAD
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 0, E'LinShare: An anonymous user downloaded the file you shared',0);
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 0, E'LinShare : Un utilisateur anonyme a téléchargé des fichiers en partage',1);
@@ -126,5 +134,9 @@ insert into linshare_mail_subjects (parameter_id, subject_id, content, language_
 -- Subject SHARED_DOC_DELETED
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 10, E'LinShare: An user has deleted a shared file',0);
 insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 10, E'LinShare : Un utilisateur a supprimé un fichier partagé avec vous',1);
+
+-- Subject SHARED_DOC_UPCOMING_OUTDATED
+insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 11, E'LinShare: A sharing will be soon deleted',0);
+insert into linshare_mail_subjects (parameter_id, subject_id, content, language_id) values (1, 11, E'LinShare : Un partage va bientôt expirer',1);
 
 SELECT setval('hibernate_sequence', 100);

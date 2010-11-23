@@ -28,6 +28,8 @@ import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.SecuredUrl;
+import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -161,7 +163,16 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailSharedFileDeleted(
 			MailContainer mailContainer, Document doc, User owner, User receiver)
 			throws BusinessException;
+
 	public MailContainer buildMailSharedFileDeleted(
 			MailContainer mailContainer, Document doc, User owner, Contact receiver)
+			throws BusinessException;
+
+	public MailContainer buildMailUpcomingOutdatedSecuredUrl(
+			MailContainer mailContainer, SecuredUrl securedUrl,
+			Contact recipient, Integer days) throws BusinessException;
+
+	public MailContainer buildMailUpcomingOutdatedShare(
+			MailContainer mailContainer, Share share, Integer days) 
 			throws BusinessException;
 }

@@ -18,20 +18,22 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linShare.core.repository;
+package org.linagora.linShare.core.job.quartz;
 
-import java.util.List;
+import org.linagora.linShare.core.batches.ShareManagementBatch;
+import org.quartz.JobExecutionContext;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
-import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.SecuredUrl;
-import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
+public class NotifyOutdatedShares extends QuartzJobBean {
 
-public interface SecuredUrlRepository extends AbstractRepository<SecuredUrl> {
+    private ShareManagementBatch batch;
 
-	SecuredUrl find(String shareId, String url) throws LinShareNotSuchElementException;
-	List<SecuredUrl> findBySender(User sender);
-	List<SecuredUrl> getOutdatedSecuredUrl();
-	List<SecuredUrl> getSecureUrlLinkedToDocument(Document doc) throws LinShareNotSuchElementException;
-	List<SecuredUrl> getUpcomingOutdatedSecuredUrl(Integer date);
+    protected void executeInternal(JobExecutionContext context) {
+        batch.notifyUpcomingOutdatedShares();
+    }
+
+    public void setBatch(ShareManagementBatch batch) {
+        this.batch = batch;
+    }
+
 }

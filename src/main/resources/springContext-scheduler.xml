@@ -31,6 +31,20 @@
         <property name="cronExpression" value="${job.cron.expression}"/>
     </bean>
 
+
+    <bean id="notifyOutdatedSharesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linShare.core.job.quartz.NotifyOutdatedShares"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="shareManagementBatch"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="notifyOutdatedSharesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="notifyOutdatedSharesJob"/>
+        <property name="cronExpression" value="${job.outdatedshares.cron.expression}"/>
+    </bean>
+
     <bean id="cleanInconsistentDocumentEntriesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="org.linagora.linShare.core.job.quartz.CleanInconsistentDocumentEntries"/>
         <property name="jobDataAsMap">
@@ -49,6 +63,7 @@
             <list>
                 <ref bean="cleanOutdatedGuestsJobTrigger"/>
                 <ref bean="cleanOutdatediSharesJobTrigger"/>
+                <ref bean="notifyOutdatedSharesJobTrigger"/>
                 <ref bean="cleanInconsistentDocumentEntriesJobTrigger"/>
             </list>
         </property>
