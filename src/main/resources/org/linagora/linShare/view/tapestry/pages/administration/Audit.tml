@@ -17,6 +17,9 @@
 				<li>
 					<t:actionlink t:id="personalHistory" class="button button_wide"><span><img src="${asset:context:images/icons/usertype-small.png}" alt=""/> ${message:pages.administration.audit.personalHistoryLink}</span></t:actionlink>
 				</li>
+				<li>
+					<t:pagelink page="administration/AccountOccupation" class="button button_wide"><span><img src="${asset:context:images/theme0/magnify-small.png}" alt=""/> ${message:components.myborderlayout.accountoccupation.title}</span></t:pagelink>
+				</li>
 			</ul>
 		</div><!-- id="actionBar" -->
 

@@ -36,6 +36,7 @@ import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -82,6 +83,25 @@ abstract class GenericUserRepositoryImpl<U extends User> extends AbstractReposit
 	        } else {
 	            throw new IllegalStateException("Mail must be unique");
 	        }
+	}
+	
+	public List<U> findByCriteria(AccountOccupationCriteriaBean accountCriteria) {
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		
+		if ((accountCriteria.getActorMails()!=null) && (accountCriteria.getActorMails().size()>0)) {
+			criteria.add(Restrictions.in("mail", accountCriteria.getActorMails()));
+		}
+		
+		if ((accountCriteria.getActorFirstname()!=null) && (accountCriteria.getActorFirstname().length()>0)) {
+			criteria.add(Restrictions.like("firstName", accountCriteria.getActorFirstname(), MatchMode.START).ignoreCase());
+		}
+		
+		if ((accountCriteria.getActorLastname()!=null) && (accountCriteria.getActorLastname().length()>0)) {
+			criteria.add(Restrictions.like("lastName", accountCriteria.getActorLastname(), MatchMode.START).ignoreCase());
+		}
+		
+		return getHibernateTemplate().findByCriteria(criteria);
 	}
 
 	public void removeOwnerDocumentForUser(String login, String uuid)

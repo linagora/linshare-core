@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.audit.title" t:identifier="audit" t:currentHighlight="audit"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.accountoccupation.title}</h1>
+
+		<t:messagePanel />
+		<!-- Action bar -->
+
+		<div id="actionBar">
+			<h4>Actions</h4>
+			<ul>
+				<li>
+					<t:pagelink page="history/Index" class="button button_wide"><span><img src="${asset:context:images/icons/usertype-small.png}" alt=""/> ${message:pages.administration.audit.personalHistoryLink}</span></t:pagelink>
+				</li>
+				<li>
+					<t:pagelink page="administration/audit" class="button button_wide"><span><img src="${asset:context:images/theme0/magnify-small.png}" alt=""/> ${message:components.myborderlayout.audit.title}</span></t:pagelink>
+				</li>
+			</ul>
+		</div><!-- id="actionBar" -->
+
+
+		<!-- Page content -->
+
+		<div id="pageContent">
+
+			<!-- FORM -->
+
+			<t:form t:id="formReport">
+
+				<div class="error">
+					<t:errors />
+				</div>
+
+				<fieldset class="title_criteria_zone" id="actorCriterion">
+					<legend align="top" class="palette">${message:pages.administration.audit.form.actorCriterion}</legend>
+					<table>
+						<tr>
+							<td align="right" valign="top" class="palette" width="150">
+								<span>
+									${message:pages.administration.audit.form.actorMail}
+								</span>
+							</td>
+							<td>
+							 	<t:textarea t:id="actorMails" t:value="actorListMails" t:mixins="autoComplete" t:minChars="2" t:tokens="literal:,"/> 
+							</td>
+						</tr>
+						<tr>
+							<td align="right" valign="top" class="palette" width="150">
+								<span>
+									${message:pages.administration.audit.form.actorFirstname}
+								</span>
+							</td>
+							<td>
+								<t:textfield t:id="actorFirstname" t:value="criteria.actorFirstname"/>
+							</td>
+						</tr>
+						<tr>
+							<td align="right" valign="top" class="palette" width="150">
+								<span>
+									${message:pages.administration.audit.form.actorLastname}
+								</span>
+							</td>
+							<td>
+								<t:textfield t:id="actorLastname" t:value="criteria.actorLastname"/>
+							</td>
+						</tr>
+					</table>
+				</fieldset>
+
+				<div class="clear"></div>
+				<div class="button">
+					<a href="#" onclick="formReport.submit();" class="button" style="margin-right:40px"><span><img src="${asset:context:images/icons/update-small.png}" alt=""/>${message:global.button.generate}</span></a>
+					<t:actionLink class="button" t:id="reset" style="margin-right:40px"><span><img src="${asset:context:images/icons/reset-small.png}" alt=""/>${message:global.button.reset}</span></t:actionLink>
+				</div>
+				<div class="clear"></div>
+
+			</t:form>
+	
+	
+			<!-- RESULT -->
+
+			<t:if t:test="displayGrid">
+				<t:grid
+					t:source="accountOccupationEntries" 
+					row="accountOccupationEntry" 
+					t:empty="block:noData"
+					t:reorder="actorLastname, actorFirstname, actorMail, actorType, userUsedQuota">
+					
+					<t:parameter name="userAvailableQuotaCell">
+							${formattedUserAvailableQuota}
+					</t:parameter>
+					
+					<t:parameter name="userUsedQuotaCell">
+							${formattedUserUsedQuota}
+					</t:parameter>
+					
+					<t:parameter name="userTotalQuotaCell">
+							${formattedUserTotalQuota}
+					</t:parameter>
+					
+				</t:grid>
+			</t:if>
+			
+			<t:block t:id="noData">
+				${message:pages.administration.audit.error.noData}
+			</t:block>
+
+
+		</div>
+
+	</div><!-- id="content" -->
+
+</t:MyBorderLayout>
