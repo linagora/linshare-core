@@ -22,6 +22,7 @@ package org.linagora.linShare.core.Facade.impl;
 
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -32,8 +33,10 @@ import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.Signature;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.SignatureTransformer;
+import org.linagora.linShare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
@@ -44,6 +47,7 @@ import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.ShareService;
+import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
 
 
 public class DocumentFacadeImpl implements DocumentFacade {
@@ -204,8 +208,28 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	public Long getUserAvailableQuota(UserVo user) {
 		User currentUser =  userRepository.findByMail(user.getMail());
 		return documentService.getAvailableSize(currentUser);
+	}
+	
+	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) {
+		List<DisplayableAccountOccupationEntryVo> result = new ArrayList<DisplayableAccountOccupationEntryVo>();
 		
+		List<User> users = userRepository.findByCriteria(criteria);
+		for (User user : users) {
+			if (user.getUserType() != UserType.GROUP) {
+				DisplayableAccountOccupationEntryVo accountOccupation = getAccountStats(user);
+				result.add(accountOccupation);
+			}
+		}
 		
+		return result;
+	}
+
+	private DisplayableAccountOccupationEntryVo getAccountStats(User user) {
+		Long userAvailableQuota = documentService.getAvailableSize(user);
+		Long userTotalQuota = documentService.getTotalSize(user);
+		DisplayableAccountOccupationEntryVo accountOccupation = new DisplayableAccountOccupationEntryVo(user.getMail(), 
+				user.getFirstName(), user.getLastName(), user.getUserType(), userAvailableQuota, userTotalQuota, userTotalQuota-userAvailableQuota);
+		return accountOccupation;
 	}
 
 	public DocumentVo encryptDocument(DocumentVo doc,UserVo user, String password) throws BusinessException{

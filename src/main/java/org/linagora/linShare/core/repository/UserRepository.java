@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
 
 public interface UserRepository<T extends User> extends AbstractRepository<T> {
 
@@ -79,6 +80,11 @@ public interface UserRepository<T extends User> extends AbstractRepository<T> {
      * @param uuid the uuid of the document.
      */
     public void removeReceivedDocument(String login,String uuid) throws BusinessException;
+
+    /**
+     * Find account occupation by criteria on the user
+     */
+	List<T> findByCriteria(AccountOccupationCriteriaBean criteria);
      
     
 } 

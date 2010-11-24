@@ -25,12 +25,14 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
 
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
 
 public interface DocumentFacade {
 		
@@ -150,6 +152,13 @@ public interface DocumentFacade {
 	 * @return
 	 */
 	public Long getUserTotalQuota(UserVo user);
+	
+	/**
+	 * Return the occupation of accounts statistics
+	 * @param criteria
+	 * @return
+	 */
+	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria);
 	
 	/**
 	 * to update document content without change properties
