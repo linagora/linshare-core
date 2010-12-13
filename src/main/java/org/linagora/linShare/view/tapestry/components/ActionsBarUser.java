@@ -25,6 +25,8 @@ import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 
 
 @SupportsInformalParameters
@@ -33,4 +35,8 @@ public class ActionsBarUser {
 	@Property(read=true)
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	private String formName;
+	
+	@Inject @Symbol("linshare.groups.activated")
+	@Property
+	private boolean showGroups;
 }
