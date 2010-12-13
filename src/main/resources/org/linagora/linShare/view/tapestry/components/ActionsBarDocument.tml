@@ -14,12 +14,14 @@
 		</li>
 
 		<!-- Action > GroupShare -->
-		<li>
-			<a href="#" onclick="submitFormWithAction('${formName}','GROUP_SHARE_ACTION');">
-				<img src="${asset:context:images/icons/share-group-on-small.png}" alt="" />
-				${message:components.listDocument.action.groupShare}
-			</a>
-		</li>
+		<t:if test="showGroups">
+			<li>
+				<a href="#" onclick="submitFormWithAction('${formName}','GROUP_SHARE_ACTION');">
+					<img src="${asset:context:images/icons/share-group-on-small.png}" alt="" />
+					${message:components.listDocument.action.groupShare}
+				</a>
+			</li>
+		</t:if>
 
 		<!-- Action > Delete -->
 		<li>

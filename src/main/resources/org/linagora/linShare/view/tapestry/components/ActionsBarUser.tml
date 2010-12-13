@@ -12,12 +12,14 @@
 		</li>
 
 		<!-- Action > Add Member -->
-		<li>
-			<a href="#" onclick="submitFormWithAction('${formName}','MEMBER_ADD_ACTION');">
-				<img src="${asset:context:images/icons/add-member-small.png}" alt="" />
-				${message:components.userSearch.action.member_add}
-			</a>
-		</li>
+		<t:if test="showGroups">
+			<li>
+				<a href="#" onclick="submitFormWithAction('${formName}','MEMBER_ADD_ACTION');">
+					<img src="${asset:context:images/icons/add-member-small.png}" alt="" />
+					${message:components.userSearch.action.member_add}
+				</a>
+			</li>
+		</t:if>
 	</ul>
 
 </t:container>

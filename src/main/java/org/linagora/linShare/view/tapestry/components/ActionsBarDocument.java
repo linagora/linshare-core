@@ -27,6 +27,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -74,6 +75,10 @@ public class ActionsBarDocument {
 	@SuppressWarnings("unused")
 	@Property
 	private boolean activeEncipherment;
+    
+	@Inject @Symbol("linshare.groups.activated")
+	@Property
+	private boolean showGroups;
 	
 	
 	
