@@ -44,6 +44,10 @@ public class WelcomeMessageUtils {
         if (Locale.FRENCH.equals(locale)) {
         	return Language.FRENCH;
         }
+        /* java.util.Locale doesn't support dutch */
+        if (locale.getLanguage() == "nl_NL" || locale.getLanguage() == "nl") {
+        	return Language.DUTCH;
+        }
         return Language.DEFAULT;
     }
 
@@ -70,6 +74,9 @@ public class WelcomeMessageUtils {
     private static Locale normaliseLocale(Locale locale) {
     	if (Locale.FRENCH.equals(locale) || Locale.FRANCE.equals(locale)) {
             return Locale.FRENCH;
+        } else if ("nl".equals(locale.getLanguage()) || "nl_NL".equals(locale.getLanguage())) {
+            /* java.util.Locale doesn't support dutch */
+        	return locale;
         } else {
             return Locale.ENGLISH;
         }

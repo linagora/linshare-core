@@ -23,7 +23,7 @@ package org.linagora.linShare.core.domain.constants;
 /** Defines supported languages.
  */
 public enum Language {
-    DEFAULT(0), FRENCH(1);
+    DEFAULT(0), FRENCH(1), DUTCH(2);
 
     private int value;
 
@@ -39,6 +39,7 @@ public enum Language {
         switch(value) {
             case 0 : return DEFAULT;
             case 1 : return FRENCH;
+            case 2 : return DUTCH;
             default : throw new IllegalArgumentException("Doesn't match an existing Language");
         }
     }
