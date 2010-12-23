@@ -1,20 +1,20 @@
 #!/bin/bash
 
+echo "-- adding 40 days in expiry time" >> import.sql
+echo "INSERT INTO linshare_parameter(parameter_id, file_size_max, user_available_size, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time,user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id)  VALUES (1,10240000,51200000,'false','false','false','false','40','0', '100', '0');" >> import.sql
+
+echo "" >> import.sql
+
+echo "-- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'" >> import.sql
+echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (1, 0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 1, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');" >> import.sql
+echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');" >> import.sql
+
+echo "" >> import.sql
+
 for locale in en_0 fr_1 nl_2
 do
   lang=`echo $locale | cut -f 1 -d '_'`
   index=`echo $locale | cut -f 2 -d '_'`
-
-  echo "-- adding 40 days in expiry time" >> import.sql
-  echo "INSERT INTO linshare_parameter(parameter_id, file_size_max, user_available_size, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time,user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id)  VALUES (1,10240000,51200000,'false','false','false','false','40','0', '100', '0');" >> import.sql
-
-  echo "" >> import.sql
-
-  echo "-- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'" >> import.sql
-  echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (1, 0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 1, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');" >> import.sql
-  echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');" >> import.sql
-
-  echo "" >> import.sql
 
   echo "-- LOCALE $lang" >> import.sql
 

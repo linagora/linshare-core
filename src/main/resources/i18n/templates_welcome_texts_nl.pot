@@ -2,9 +2,9 @@
 
 # Welcome to LinShare, the Open Source secure files sharing system
 msgid "welcome_texts_0"
-msgstr "Beste ${firstName} ${lastName},<br/><br/>"
+msgstr "Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen."
 
 # Welcome to LinShare, the Open Source secure files sharing system.
 msgid "welcome_texts_1"
-msgstr "Hallo ${firstName} ${lastName},<br/><br/>"
+msgstr "Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen."
 
