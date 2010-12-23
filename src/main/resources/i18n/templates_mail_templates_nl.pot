@@ -182,19 +182,19 @@ msgstr "${firstName} ${lastName} heeft het gedeelde bestand ${documentName} gewi
 
 # A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date.
 msgid "mail_templates_18_html"
-msgstr "A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date."
+msgstr "Een share van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan de bestanden vóór die datum te downloaden."
 
 # A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date.
 msgid "mail_templates_18_txt"
-msgstr "A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date."
+msgstr "Een share van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan de bestanden vóór die datum te downloaden."
 
 # Template SHARED_DOC_UPCOMING_OUTDATED
 
 # The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.
 msgid "mail_templates_19_html"
-msgstr "The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file."
+msgstr "Het delen van het bestand ${documentName} afkomstig van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan dit bestand te downloaden of te kopiëren."
 
 # The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.
 msgid "mail_templates_19_txt"
-msgstr "The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file."
+msgstr "Het delen van het bestand ${documentName} afkomstig van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan dit bestand te downloaden of te kopiëren."
 
