@@ -243,3 +243,133 @@ insert into linshare_mail_templates (parameter_id, template_id, content_html, co
 -- Template SHARED_DOC_UPCOMING_OUTDATED
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,19,'The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.','The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.',0);
 insert into linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) values (1,19,'Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement.','Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement.',1);
+
+
+
+
+
+
+-----------------
+-- AFTER 0.8.2 --
+-----------------
+-- dutch translation
+
+-- Mail subjects
+-- Subject ANONYMOUS_DOWNLOAD
+-- LinShare: An anonymous user downloaded the file you shared
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 0, E'LinShare : Een anonieme gebruiker heeft het door u gedeelde bestand gedownload', 2);
+
+-- Subject REGISTERED_DOWNLOAD
+-- LinShare: An user downloaded the file you shared
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 1, E'LinShare : Een gebruiker heeft het door u gedeelde bestand gedownload', 2);
+
+-- Subject NEW_GUEST
+-- LinShare: Your account on LinShare has been created
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 2, E'LinShare : Uw LinShare account werd aangemaakt.', 2);
+
+-- Subject RESET_PASSWORD
+-- LinShare: Your password was reset
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 3, E'LinShare : Uw nieuwe wachtwoord', 2);
+
+-- Subject NEW_SHARING
+-- LinShare: A user deposited files in sharing for you
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 4, E'LinShare : Een gebruiker heeft te delen bestanden voor u klaargezet.', 2);
+
+-- Subject SHARED_DOC_UPDATED
+-- LinShare: An user has updated a shared file
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 5, E'LinShare : Een gebruiker heeft een gedeeld bestand bijgewerkt', 2);
+
+-- Subject NEW_GROUP_SHARING
+-- LinShare: A user deposited files in sharing for the group ${groupName}
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 6, E'LinShare : Een gebruiker heeft te delen bestanden klaargezet voor de groep ${groupName}', 2);
+
+-- Subject MEMBERSHIP_REQUEST_STATUS
+-- LinShare: Status of your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName}
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 7, E'LinShare : Status van uw aanvraag tot toetreding tot de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName}', 2);
+
+-- Subject NEW_GROUP_MEMBER
+-- LinShare: You are now member of the group ${groupName}
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 8, E'LinShare : U bent nu lid van de groep ${groupName}', 2);
+
+-- Subject GROUP_SHARING_DELETED
+-- LinShare: A file shared with the group ${groupName} has been deleted.
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 9, E'LinShare : Een bestand gedeeld met de groep ${groupName} werd gewist', 2);
+
+-- Subject SHARED_DOC_DELETED
+-- LinShare: An user has deleted a shared file
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 10, E'LinShare : Een gebruiker heeft een gedeeld bestand gewist', 2);
+
+-- Subject SHARED_DOC_UPCOMING_OUTDATED
+-- LinShare: A sharing will be soon deleted
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 11, E'LinShare : Een share zal binnenkort gewist worden.', 2);
+-- Mail templates
+-- Template GREETINGS
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, E'Hallo ${firstName} ${lastName},<br/><br/>', E'Hallo ${firstName} ${lastName},', 2);
+
+-- Template FOOTER
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 1, E'<a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Open Source toepassing voor het beveiligd delen van bestanden', E'LinShare - http://linshare.org - Open Source toepassing voor het beveiligd delen van bestanden', 2);
+
+-- Template CONFIRM_DOWNLOAD_ANONYMOUS
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 2, E'Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare&nbsp;:<ul>${documentNames}</ul>', E'Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare :\n${documentNamesTxt}', 2);
+
+-- Template CONFIRM_DOWNLOAD_REGISTERED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 3, E'${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare&nbsp;:<ul>${documentNames}</ul>', E'${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare :\n${documentNamesTxt}', 2);
+
+-- Template LINSHARE_URL
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 4, E'U kan inloggen op dit adres&nbsp;: <a href="${url}">${url}</a><br/>', E'U kan inloggen op dit adres : ${url}', 2);
+
+-- Template FILE_DOWNLOAD_URL
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 5, E'Om de bestanden te downloaden, klik op de link of kopieer de link naar uw browser&nbsp;: <a href="${url}${urlparam}">${url}${urlparam}</a>', E'Om de bestanden te downloaden, klik op de link of kopieer de link naar uw browser :\n${url}${urlparam}', 2);
+
+-- Template DECRYPT_URL
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 6, E'<p>Sommige ontvangen bestanden zijn <b>versleuteld</b>. Na het downloaden moet u ze plaatselijk ontsleutelen met de toepassing:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>U moet in het bezit zijn van het <i>versleutelwachtwoord</i> dat u gekregen hebt van de persoon die u de bestanden stuurt.</p><br/>', E'Sommige ontvangen bestanden zijn versleuteld. Na het downloaden moet u ze plaatselijk ontsleutelen met de toepassing:\n${jwsEncryptUrl}\nU moet in het bezit zijn van het versleutelwachtwoord dat u gekregen hebt van de persoon die u de bestanden stuurt.\n', 2);
+
+-- Template PERSONAL_MESSAGE
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 7, E'<strong>Persoonlijke boodschap van ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>', E'<strong>Persoonlijke boodschap van ${ownerFirstName} ${ownerLastName}, via LinShare\n\n${message}\n\n--------------------------------------------------------------', 2);
+
+-- Template GUEST_INVITATION
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 8, E'<strong>${ownerFirstName} ${ownerLastName}</strong> nodigt u uit gebruik te maken van LinShare.<br/>', E'${ownerFirstName} ${ownerLastName} nodigt u uit gebruik te maken van LinShare.', 2);
+
+-- Template ACCOUNT_DESCRIPTION
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 9, E'Uw LinShare account&nbsp;:<ul><li>Identificatie&nbsp;: <code>${mail}</code> &nbsp;(uw e-mailadres)</li><li>Wachtwoord&nbsp;: <code>${password}</code></li></ul>', E'Uw LinShare account :\n- Identificatie : ${mail} (uw e-mailadres)\n- Wachtwoord : ${password}', 2);
+
+-- Template SHARE_NOTIFICATION
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 10, E'<strong>${firstName} ${lastName}</strong> heeft ${number} te delen bestand(en) voor u klaargezet&nbsp;:<ul>${documentNames}</ul>', E'${firstName} ${lastName} heeft ${number} te delen bestand(en) voor u klaargezet :\n\n${documentNamesTxt}', 2);
+
+-- Template PASSWORD_GIVING
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 11, E'Het bijbehorende wachtwoord dat u moet gebruiken, is&nbsp;: <code>${password}</code><br/>', E'Het bijbehorende wachtwoord dat u moet gebruiken, is : ${password}', 2);
+
+-- Template FILE_UPDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 12, E'<strong>${firstName} ${lastName}</strong> heeft het gedeelde bestand bijgewerkt <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nieuwe bestandsnaam&nbsp;: ${fileName}</li><li>Grootte van het bestand&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>', E'${firstName} ${lastName} heeft het gedeelde bestand bijgewerkt ${fileOldName} :\n- Nieuwe bestandsnaam : ${fileName}\n- Grootte van het bestand : ${fileSize}\n- Type MIME : ${mimeType}\n', 2);
+
+-- Template GROUP_SHARE_NOTIFICATION
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 13, E'<strong>${firstName} ${lastName}</strong> heeft ${number} bestand(en) te delen aangeboden voor de groep${groupName}&nbsp;:<ul>${documentNames}</ul>', E'${firstName} ${lastName} heeft ${number} bestand(en) te delen aangeboden voor de groep${groupName} :\n\n${documentNamesTxt}', 2);
+
+-- Template GROUP_NEW_MEMBER
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 14, E'U bent nu lid van de groep ${groupName}.', E'U bent nu lid van de groep ${groupName}.', 2);
+
+-- Template GROUP_MEMBERSHIP_STATUS
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 15, E'Uw aanvraag tot toetreding van de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}.', E'Uw aanvraag tot toetreding van de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}.', 2);
+
+-- Template GROUP_SHARE_DELETED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 16, E'${firstName} ${lastName} heeft het bestand <strong>${documentName}</strong> dat gedeeld werd met de groep <strong>${groupName}</strong> gewist.', E'${firstName} ${lastName} heeft het bestand ${documentName} dat gedeeld werd met de groep ${groupName} gewist.', 2);
+
+-- Template SHARED_FILE_DELETED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 17, E'<strong>${firstName} ${lastName}</strong> heeft het gedeelde bestand <strong>${documentName}</strong> gewist.', E'${firstName} ${lastName} heeft het gedeelde bestand ${documentName} gewist.', 2);
+
+-- Template SECURED_URL_UPCOMING_OUTDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 18, E'Een share van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan de bestanden vóór die datum te downloaden.', E'Een share van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan de bestanden vóór die datum te downloaden.', 2);
+
+-- Template SHARED_DOC_UPCOMING_OUTDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 19, E'Het delen van het bestand ${documentName} afkomstig van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan dit bestand te downloaden of te kopiëren.', E'Het delen van het bestand ${documentName} afkomstig van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan dit bestand te downloaden of te kopiëren.', 2);
+
+-- Welcome texts
+-- Welcome texts
+
+-- Welcome to LinShare, the Open Source secure files sharing system
+INSERT INTO linshare_welcome_texts (parameter_id , welcome_text, user_type_id, language_id) VALUES (1, E'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 0, 2);
+
+
+-- Welcome to LinShare, the Open Source secure files sharing system.
+INSERT INTO linshare_welcome_texts (parameter_id , welcome_text, user_type_id, language_id) VALUES (1, E'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1, 2);
+
