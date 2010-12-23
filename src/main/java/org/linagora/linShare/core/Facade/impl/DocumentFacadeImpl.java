@@ -227,8 +227,9 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	private DisplayableAccountOccupationEntryVo getAccountStats(User user) {
 		Long userAvailableQuota = documentService.getAvailableSize(user);
 		Long userTotalQuota = documentService.getTotalSize(user);
-		DisplayableAccountOccupationEntryVo accountOccupation = new DisplayableAccountOccupationEntryVo(user.getMail(), 
-				user.getFirstName(), user.getLastName(), user.getUserType(), userAvailableQuota, userTotalQuota, userTotalQuota-userAvailableQuota);
+		DisplayableAccountOccupationEntryVo accountOccupation = new DisplayableAccountOccupationEntryVo(user.getFirstName(), 
+				user.getLastName(), user.getMail(), user.getUserType(), 
+				userAvailableQuota, userTotalQuota, userTotalQuota-userAvailableQuota);
 		return accountOccupation;
 	}
 
