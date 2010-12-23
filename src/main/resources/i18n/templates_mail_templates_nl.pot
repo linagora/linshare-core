@@ -2,199 +2,199 @@
 
 # Hi ${firstName} ${lastName},<br/><br/>
 msgid "mail_templates_0_html"
-msgstr "Bonjour ${firstName} ${lastName},<br/><br/>"
+msgstr "Hallo ${firstName} ${lastName},<br/><br/>"
 
 # Hi ${firstName} ${lastName},<br/><br/>
 msgid "mail_templates_0_txt"
-msgstr "Bonjour ${firstName} ${lastName},"
+msgstr "Hallo ${firstName} ${lastName},"
 
 # Template FOOTER
 
 # <a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Open Source secured file sharing application
 msgid "mail_templates_1_html"
-msgstr "<a href='http://linshare.org/' title='LinShare'><strong>LinShare</strong></a> - Logiciel libre de partage de fichiers sécurisé"
+msgstr "<a href='http://linshare.org/' title='LinShare'><strong>LinShare</strong></a> - Open Source toepassing voor het beveiligd delen van bestanden"
 
 # LinShare - Open Source secured file sharing application (http://linshare.org/)
 msgid "mail_templates_1_txt"
-msgstr "LinShare - http://linshare.org - Logiciel libre de partage de fichiers sécurisé"
+msgstr "LinShare - http://linshare.org - Open Source toepassing voor het beveiligd delen van bestanden"
 
 # Template CONFIRM_DOWNLOAD_ANONYMOUS
 
 # An anonymous user ${email} downloaded the following file(s) you shared via LinShare:<ul>${documentNames}</ul>
 msgid "mail_templates_2_html"
-msgstr "Un utilisateur anonyme ${email} a téléchargé le(s) fichier(s) que vous avez mis en partage via LinShare&nbsp;:<ul>${documentNames}</ul>"
+msgstr "Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare&nbsp;:<ul>${documentNames}</ul>"
 
 # An anonymous user ${email} downloaded the following file(s) you shared via LinShare:<ul>${documentNames}</ul>
 msgid "mail_templates_2_txt"
-msgstr "Un utilisateur anonyme ${email} a téléchargé le(s) fichier(s) que vous avez mis en partage via LinShare :\n${documentNamesTxt}"
+msgstr "Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare :\n${documentNamesTxt}"
 
 # Template CONFIRM_DOWNLOAD_REGISTERED
 
 # ${recipientFirstName} ${recipientLastName} downloaded the following file you shared with him via LinShare:<ul>${documentNames}</ul>
 msgid "mail_templates_3_html"
-msgstr "${recipientFirstName} ${recipientLastName} a téléchargé le(s) fichier(s) suivant que vous lui avez mis en partage via LinShare&nbsp;:<ul>${documentNames}</ul>"
+msgstr "${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare&nbsp;:<ul>${documentNames}</ul>"
 
 # ${recipientFirstName} ${recipientLastName} downloaded the following file you shared with him via LinShare:<ul>${documentNames}</ul>
 msgid "mail_templates_3_txt"
-msgstr "${recipientFirstName} ${recipientLastName} a téléchargé le(s) fichier(s) que vous lui avez mis en partage via LinShare :\n${documentNamesTxt}"
+msgstr "${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare :\n${documentNamesTxt}"
 
 # Template LINSHARE_URL
 
 # You can login to this address: <a href="${url}">${url}</a><br/>
 msgid "mail_templates_4_html"
-msgstr "Vous pouvez vous connecter à cette adresse&nbsp;: <a href='${url}'>${url}</a><br/>"
+msgstr "U kan inloggen op dit adres&nbsp;: <a href='${url}'>${url}</a><br/>"
 
 # You can login to this address: <a href="${url}">${url}</a><br/>
 msgid "mail_templates_4_txt"
-msgstr "Vous pouvez vous connecter à cette adresse : ${url}"
+msgstr "U kan inloggen op dit adres : ${url}"
 
 # Template FILE_DOWNLOAD_URL
 
 # In order to download the files, click on this link or paste it into your browser: <a href="${url}${urlparam}">${url}${urlparam}</a>
 msgid "mail_templates_5_html"
-msgstr "Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur&nbsp;: <a href='${url}${urlparam}'>${url}${urlparam}</a>"
+msgstr "Om de bestanden te downloaden, klik op de link of kopieer de link naar uw browser&nbsp;: <a href='${url}${urlparam}'>${url}${urlparam}</a>"
 
 # In order to download the files, click on this link or paste it into your browser: <a href="${url}${urlparam}">${url}${urlparam}</a>
 msgid "mail_templates_5_txt"
-msgstr "Pour télécharger les fichiers, cliquez sur le lien ou copiez le dans votre navigateur :\n${url}${urlparam}"
+msgstr "Om de bestanden te downloaden, klik op de link of kopieer de link naar uw browser :\n${url}${urlparam}"
 
 # Template DECRYPT_URL
 
 # <p>Some received files are <b>encrypted</b>. After downloading, take care of decrypting localy with the application:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>You have to use <i>password</i> which has been communicated by the person who has done this sharing.</p><br/>
 msgid "mail_templates_6_html"
-msgstr "<p>Certains de vos fichiers sont <b>chiffrés</b>. Après le téléchargement, vous devez les déchiffrer localement avec l’application:<br/><a href='${jwsEncryptUrl}'>${jwsEncryptUrl}</a><br/>Vous devez vous munir <i>du mot de passe de déchiffrement</i> qui a dû vous être communiqué par l’expéditeur des fichiers.</p><br/>"
+msgstr "<p>Sommige ontvangen bestanden zijn <b>versleuteld</b>. Na het downloaden moet u ze plaatselijk ontsleutelen met de toepassing:<br/><a href='${jwsEncryptUrl}'>${jwsEncryptUrl}</a><br/>U moet in het bezit zijn van het <i>versleutelwachtwoord</i> dat u gekregen hebt van de persoon die u de bestanden stuurt.</p><br/>"
 
 # <p>Some received files are <b>encrypted</b>. After downloading, take care of decrypting localy with the application:<br/><a href="${jwsEncryptUrl}">${jwsEncryptUrl}</a><br/>You have to use <i>password</i> which has been communicated by the person who has done this sharing.</p><br/>
 msgid "mail_templates_6_txt"
-msgstr "Certains de vos fichiers sont chiffrés. Après le téléchargement, vous devez les déchiffrer localement avec l’application:\n${jwsEncryptUrl}\nVous devez vous munir du mot de passe de déchiffrement qui a du vous être communiqué par l’expéditeur des fichiers.\n"
+msgstr "Sommige ontvangen bestanden zijn versleuteld. Na het downloaden moet u ze plaatselijk ontsleutelen met de toepassing:\n${jwsEncryptUrl}\nU moet in het bezit zijn van het versleutelwachtwoord dat u gekregen hebt van de persoon die u de bestanden stuurt.\n"
 
 # Template PERSONAL_MESSAGE
 
 # <strong>Personal message from ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>
 msgid "mail_templates_7_html"
-msgstr "<strong>Message personnel de ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>"
+msgstr "<strong>Persoonlijke boodschap van ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>"
 
 # <strong>Personal message from ${ownerFirstName} ${ownerLastName}, via LinShare</strong><pre>${message}</pre><hr/>
 msgid "mail_templates_7_txt"
-msgstr "Message personnel de ${ownerFirstName} ${ownerLastName}, via LinShare\n\n${message}\n\n--------------------------------------------------------------"
+msgstr "<strong>Persoonlijke boodschap van ${ownerFirstName} ${ownerLastName}, via LinShare\n\n${message}\n\n--------------------------------------------------------------"
 
 # Template GUEST_INVITATION
 
 # <strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use LinShare.<br/>
 msgid "mail_templates_8_html"
-msgstr "<strong>${ownerFirstName} ${ownerLastName}</strong> vous invite à utiliser LinShare.<br/>"
+msgstr "<strong>${ownerFirstName} ${ownerLastName}</strong> nodigt u uit gebruik te maken van LinShare.<br/>"
 
 # <strong>${ownerFirstName} ${ownerLastName}</strong> invites you to use LinShare.<br/>
 msgid "mail_templates_8_txt"
-msgstr "${ownerFirstName} ${ownerLastName} vous invite à utiliser LinShare."
+msgstr "${ownerFirstName} ${ownerLastName} nodigt u uit gebruik te maken van LinShare."
 
 # Template ACCOUNT_DESCRIPTION
 
 # Your LinShare account:<ul><li>Login: <code>${mail}</code> &nbsp;(your e-mail address)</li><li>Password: <code>${password}</code></li></ul>
 msgid "mail_templates_9_html"
-msgstr "Votre compte LinShare&nbsp;:<ul><li>Identifiant&nbsp;: <code>${mail}</code> &nbsp;(votre adresse électronique)</li><li>Mot de passe&nbsp;: <code>${password}</code></li></ul>"
+msgstr "Uw LinShare account&nbsp;:<ul><li>Identificatie&nbsp;: <code>${mail}</code> &nbsp;(uw e-mailadres)</li><li>Wachtwoord&nbsp;: <code>${password}</code></li></ul>"
 
 # Your LinShare account:<ul><li>Login: <code>${mail}</code> &nbsp;(your e-mail address)</li><li>Password: <code>${password}</code></li></ul>
 msgid "mail_templates_9_txt"
-msgstr "Votre compte LinShare : \n- identifiant : ${mail}  (votre adresse électronique) \n- mot de passe : ${password}"
+msgstr "Uw LinShare account :\n- Identificatie : ${mail} (uw e-mailadres)\n- Wachtwoord : ${password}"
 
 # Template SHARE_NOTIFICATION
 
 # <strong>${firstName} ${lastName}</strong> sent you ${number} file(s):<ul>${documentNames}</ul>
 msgid "mail_templates_10_html"
-msgstr "<strong>${firstName} ${lastName}</strong> a mis en partage ${number} fichier(s) à votre attention&nbsp;:<ul>${documentNames}</ul>"
+msgstr "<strong>${firstName} ${lastName}</strong> heeft ${number} te delen bestand(en) voor u klaargezet&nbsp;:<ul>${documentNames}</ul>"
 
 # <strong>${firstName} ${lastName}</strong> sent you ${number} file(s):<ul>${documentNames}</ul>
 msgid "mail_templates_10_txt"
-msgstr "${firstName} ${lastName} a mis en partage ${number} fichier(s) à votre attention :\n\n${documentNamesTxt}"
+msgstr "${firstName} ${lastName} heeft ${number} te delen bestand(en) voor u klaargezet :\n\n${documentNamesTxt}"
 
 # Template PASSWORD_GIVING
 
 # The associated password to use is: <code>${password}</code><br/>
 msgid "mail_templates_11_html"
-msgstr "Le mot de passe à utiliser est&nbsp;: <code>${password}</code><br/>"
+msgstr "Het bijbehorende wachtwoord dat u moet gebruiken, is&nbsp;: <code>${password}</code><br/>"
 
 # The associated password to use is: <code>${password}</code><br/>
 msgid "mail_templates_11_txt"
-msgstr "Le mot de passe à utiliser est : ${password}"
+msgstr "Het bijbehorende wachtwoord dat u moet gebruiken, is : ${password}"
 
 # Template FILE_UPDATED
 
 # <strong>${firstName} ${lastName}</strong> has updated the shared file <strong>${fileOldName}</strong>:<ul><li>New file name: ${fileName}</li><li>File size: ${fileSize}</li><li>MIME type: <code>${mimeType}</code></li></ul>
 msgid "mail_templates_12_html"
-msgstr "<strong>${firstName} ${lastName}</strong> a mis à jour le fichier partagé <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nom du nouveau fichier&nbsp;: ${fileName}</li><li>Taille du fichier&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>"
+msgstr "<strong>${firstName} ${lastName}</strong> heeft het gedeelde bestand bijgewerkt <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nieuwe bestandsnaam&nbsp;: ${fileName}</li><li>Grootte van het bestand&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>"
 
 # <strong>${firstName} ${lastName}</strong> has updated the shared file <strong>${fileOldName}</strong>:<ul><li>New file name: ${fileName}</li><li>File size: ${fileSize}</li><li>MIME type: <code>${mimeType}</code></li></ul>
 msgid "mail_templates_12_txt"
-msgstr "${firstName} ${lastName} a mis à jour le fichier partagé ${fileOldName} : \n- nom du nouveau fichier : ${fileName}\n- taille du fichier : ${fileSize}\n- type MIME : ${mimeType}\n"
+msgstr "${firstName} ${lastName} heeft het gedeelde bestand bijgewerkt ${fileOldName} :\n- Nieuwe bestandsnaam : ${fileName}\n- Grootte van het bestand : ${fileSize}\n- Type MIME : ${mimeType}\n"
 
 # Template GROUP_SHARE_NOTIFICATION
 
 # <strong>${firstName} ${lastName}</strong> has shared ${number} file(s) with the group ${groupName}:<ul>${documentNames}</ul>
 msgid "mail_templates_13_html"
-msgstr "<strong>${firstName} ${lastName}</strong> a mis en partage ${number} fichier(s) pour le groupe ${groupName}&nbsp;:<ul>${documentNames}</ul>"
+msgstr "<strong>${firstName} ${lastName}</strong> heeft ${number} bestand(en) te delen aangeboden voor de groep${groupName}&nbsp;:<ul>${documentNames}</ul>"
 
 # <strong>${firstName} ${lastName}</strong> has shared ${number} file(s) with the group ${groupName}:<ul>${documentNames}</ul>
 msgid "mail_templates_13_txt"
-msgstr "${firstName} ${lastName} a mis en partage ${number} fichier(s) pour le groupe ${groupName} :\n\n${documentNamesTxt}"
+msgstr "${firstName} ${lastName} heeft ${number} bestand(en) te delen aangeboden voor de groep${groupName} :\n\n${documentNamesTxt}"
 
 # Template GROUP_NEW_MEMBER
 
 # You are now member of the group ${groupName}.
 msgid "mail_templates_14_html"
-msgstr "Vous appartenez maintenant au groupe ${groupName}."
+msgstr "U bent nu lid van de groep ${groupName}."
 
 # You are now member of the group ${groupName}.
 msgid "mail_templates_14_txt"
-msgstr "Vous appartenez maintenant au groupe ${groupName}."
+msgstr "U bent nu lid van de groep ${groupName}."
 
 # Template GROUP_MEMBERSHIP_STATUS
 
 # Your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName} is ${status}.
 msgid "mail_templates_15_html"
-msgstr "Votre demande d’adhésion au groupe ${groupName} concernant ${newMemberFirstName} ${newMemberLastName} est ${status}."
+msgstr "Uw aanvraag tot toetreding van de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}."
 
 # Your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName} is ${status}.
 msgid "mail_templates_15_txt"
-msgstr "Votre demande d’adhésion au groupe ${groupName} concernant ${newMemberFirstName} ${newMemberLastName} est ${status}."
+msgstr "Uw aanvraag tot toetreding van de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}."
 
 # Template GROUP_SHARE_DELETED
 
 # ${firstName} ${lastName} has deleted the file <strong>${documentName}</strong> shared with the group <strong>${groupName}</strong>.
 msgid "mail_templates_16_html"
-msgstr "${firstName} ${lastName} a supprimé le fichier <strong>${documentName}</strong> partagé avec le groupe <strong>${groupName}</strong>."
+msgstr "${firstName} ${lastName} heeft het bestand <strong>${documentName}</strong> dat gedeeld werd met de groep <strong>${groupName}</strong> gewist."
 
 # ${firstName} ${lastName} has deleted the file <strong>${documentName}</strong> shared with the group <strong>${groupName}</strong>.
 msgid "mail_templates_16_txt"
-msgstr "${firstName} ${lastName} a supprimé le fichier ${documentName} partagé avec le groupe ${groupName}."
+msgstr "${firstName} ${lastName} heeft het bestand ${documentName} dat gedeeld werd met de groep ${groupName} gewist."
 
 # Template SHARED_FILE_DELETED
 
 # <strong>${firstName} ${lastName}</strong> has deleted the shared file <strong>${documentName}</strong>.
 msgid "mail_templates_17_html"
-msgstr "<strong>${firstName} ${lastName}</strong> a supprimé le fichier partagé <strong>${documentName}</strong>."
+msgstr "<strong>${firstName} ${lastName}</strong> heeft het gedeelde bestand <strong>${documentName}</strong> gewist."
 
 # <strong>${firstName} ${lastName}</strong> has deleted the shared file <strong>${documentName}</strong>.
 msgid "mail_templates_17_txt"
-msgstr "${firstName} ${lastName} a supprimé le fichier partagé ${documentName}."
+msgstr "${firstName} ${lastName} heeft het gedeelde bestand ${documentName} gewist."
 
 # Template SECURED_URL_UPCOMING_OUTDATED
 
 # A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date.
 msgid "mail_templates_18_html"
-msgstr "Un partage provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger les fichiers avant cette date."
+msgstr "A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date."
 
 # A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date.
 msgid "mail_templates_18_txt"
-msgstr "Un partage provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger les fichiers avant cette date."
+msgstr "A share from ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download the files before this date."
 
 # Template SHARED_DOC_UPCOMING_OUTDATED
 
 # The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.
 msgid "mail_templates_19_html"
-msgstr "Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement."
+msgstr "The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file."
 
 # The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.
 msgid "mail_templates_19_txt"
-msgstr "Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement."
+msgstr "The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file."
 
