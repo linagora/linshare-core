@@ -55,4 +55,5 @@ do
 
   # Computing global i18n.sql file
   cat i18n_$lang.sql >> import.sql
+  rm i18n_$lang.sql
 done

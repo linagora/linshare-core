@@ -55,6 +55,7 @@ do
 
   # Computing global import-postgresql.sql file
   cat i18n_pg_$lang.sql >> import-postgresql.sql
+  rm i18n_pg_$lang.sql
 done
 
 echo "" >> import-postgresql.sql
