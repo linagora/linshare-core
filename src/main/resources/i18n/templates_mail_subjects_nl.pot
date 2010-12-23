@@ -56,4 +56,4 @@ msgstr "LinShare : Een gebruiker heeft een gedeeld bestand gewist"
 # Subject SHARED_DOC_UPCOMING_OUTDATED
 # LinShare: A sharing will be soon deleted
 msgid "mail_subjects_11"
-msgstr "LinShare: A sharing will be soon deleted"
+msgstr "LinShare : Een share zal binnenkort gewist worden."
