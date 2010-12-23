@@ -1,8 +1,18 @@
+# Template GREETINGS
+
+# Welcome to LinShare, the Open Source secure files sharing system.
+msgid "mail_templates_0_html"
+msgstr "Welcome to LinShare, the Open Source secure files sharing system."
+
+# Welcome to LinShare, the Open Source secure files sharing system.
+msgid "mail_templates_0_txt"
+msgstr "Welcome to LinShare, the Open Source secure files sharing system."
+
 # Template FOOTER
 
 # <a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Open Source secured file sharing application
 msgid "mail_templates_1_html"
-msgstr "<a href="http://linshare.org/" title='LinShare'><strong>LinShare</strong></a> - Open Source secured file sharing application"
+msgstr "<a href='http://linshare.org/' title='LinShare'><strong>LinShare</strong></a> - Open Source secured file sharing application"
 
 # <a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Open Source secured file sharing application
 msgid "mail_templates_1_txt"
