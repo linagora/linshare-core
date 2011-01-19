@@ -473,7 +473,7 @@ public class ListDocument {
 	public StreamResponse onActionFromDownload(String uuid)
 			throws BusinessException {
 		// when user has been logged out
-		if (document == null) {
+		if (documents == null) {
 			return null;
 		}
 
