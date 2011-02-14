@@ -167,7 +167,8 @@ public class UserFacadeImpl implements UserFacade {
         }
         return userVOs;
     }
-    public void deleteGuest(String login, UserVo actor) {
+    
+    public void deleteUser(String login, UserVo actor) {
         try {
         	User owner = userRepository.findByLogin(actor.getLogin());
             userService.deleteUser(login, owner, true);

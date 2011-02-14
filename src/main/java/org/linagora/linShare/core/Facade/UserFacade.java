@@ -106,11 +106,11 @@ public interface UserFacade {
      */
     List<UserVo> searchGuest(String mail);
 
-    /** Delete a guest.
-     * @param login login of the guest to delete.
-     * @param owner : the actor that needs to be the guest creator or an admin of the application
+    /** Delete a guest, purge an internal user.
+     * @param login login of the user to delete.
+     * @param owner : the actor that has to be the guest creator or an admin of the application
      */
-    void deleteGuest(String login, UserVo actor);
+    void deleteUser(String login, UserVo actor);
     
     
     List<String> findMails(String beginWith);

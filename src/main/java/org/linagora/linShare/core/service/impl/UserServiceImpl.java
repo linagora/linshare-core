@@ -256,109 +256,119 @@ public class UserServiceImpl implements UserService {
 		if (userToDelete!=null) {
 			if (userToDelete instanceof Guest) {
 				if (checkOwnership && !isAdmin && !((Guest)userToDelete).getOwner().equals(owner)) {
-					throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + owner.getLogin() +" cannot delete " + login);
+					throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + owner.getLogin() 
+							+" cannot delete " + login);
 				} else {
-					try {
-						// The list of all document that were in the received shares
-						Set<Document> documentsToClean = new HashSet<Document>();
-						
-						
-						// clearing received shares
-						Set<Share> receivedShare = userToDelete.getReceivedShares();
-						
-						for (Share share : receivedShare) {
-							ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-					        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
-					        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
-					        		userToDelete.getMail(), 
-					        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
-							 logEntryRepository.create(logEntry);
-							 documentsToClean.add(share.getDocument());
-						}
-						
-						receivedShare.clear();
-						
-						// clearing sent urls
-						Set<SecuredUrl> sentUrls = userToDelete.getSecuredUrls();
-						for (SecuredUrl url : sentUrls) {
-							String docs = "";
-							for (Document doc : url.getDocuments()) {
-								docs += doc.getName()+";";
-							}
-							ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-					        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
-					        		docs,null,null,
-					        		userToDelete.getMail(), 
-					        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
-							 logEntryRepository.create(logEntry);
-						}
-						sentUrls.clear();
-						
-						// clearing sent shares
-						Set<Share> sentShare = userToDelete.getShares();
-						
-						for (Share share : sentShare) {
-							ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-					        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
-					        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
-					        		userToDelete.getMail(), 
-					        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
-							 logEntryRepository.create(logEntry);
-						}
-						
-						sentShare.clear();
-						
-						//clearing the favorites
-						recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
-						
-						//clearing allowed contacts
-						allowedContactRepository.deleteAllByUserBothSides(userToDelete);
-						
-						//clearing groups memberships
-						groupService.deleteAllMembershipOfUser(userToDelete);
-						
-						// clearing all signatures
-						Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
-						ownSignatures.clear();
-						
-						//a guest can create guest (since evolution guest with grant privilege)...
-						//so when deleting a guest (A) you may need to delete the guests (B, C, D) which were created by this guest (A).
-						//to fix this: deleting a guest means you will be the new owner of the guest account which were created (B, C, D)
-						List<Guest> usersCreatedByTheGuest = guestRepository.searchGuest(null, null, null, userToDelete);
-						for (Guest guest : usersCreatedByTheGuest) {
-							guest.setOwner(owner);
-							guestRepository.update(guest);
-							if (guest.isRestricted()) { //if restricted guest, needs to have the new owner as contact
-								addGuestContactRestriction(guest.getLogin(), owner.getLogin());
-							}
-						}
-						
-						
-						userRepository.update(userToDelete);
-						userRepository.delete(userToDelete);
-						UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-					        		LogAction.USER_DELETE, "Deleting of a guest", userToDelete.getMail(), 
-					        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
-        
-					    logEntryRepository.create(logEntry);
-					    
-					    for (Document document : documentsToClean) {
-					    	shareService.refreshShareAttributeOfDoc(document);
-							
-						}
-					} catch (IllegalArgumentException e) {
-						logger.error("Couldn't find the user " + login +" to be deleted", e);
-						throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + login +" to be deleted");
-					}
+					doDeleteUser(login, owner, userToDelete);
 				}
 			} else {
-				logger.error("The user " + login +" cannot be deleted, he is not a guest");
-				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login +" cannot be deleted, he is not a guest");
+				if (isAdmin) {
+					doDeleteUser(login, owner, userToDelete);
+				} else {
+					logger.error("The user " + login +" cannot be deleted, he is not a guest");
+					throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
+							+" cannot be deleted, he is not a guest, or "+ owner.getLogin()+ " is not an admin");
+				}
 			}
-			
 			
 		} else {
 			logger.error("Couldn't find the user " + login +" to be deleted");
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + login +" to be deleted");
+		}
+	}
+
+	private void doDeleteUser(String login, User owner, User userToDelete)
+			throws BusinessException {
+		try {
+			// The list of all document that were in the received shares
+			Set<Document> documentsToClean = new HashSet<Document>();
+			
+			
+			// clearing received shares
+			Set<Share> receivedShare = userToDelete.getReceivedShares();
+			
+			for (Share share : receivedShare) {
+				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+		        		LogAction.SHARE_DELETE, "Deleting a user-Removing shares", 
+		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
+		        		userToDelete.getMail(), 
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+				 logEntryRepository.create(logEntry);
+				 documentsToClean.add(share.getDocument());
+			}
+			
+			receivedShare.clear();
+			
+			// clearing sent urls
+			Set<SecuredUrl> sentUrls = userToDelete.getSecuredUrls();
+			for (SecuredUrl url : sentUrls) {
+				String docs = "";
+				for (Document doc : url.getDocuments()) {
+					docs += doc.getName()+";";
+				}
+				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+		        		LogAction.SHARE_DELETE, "Deleting a user-Removing url shares", 
+		        		docs,null,null,
+		        		userToDelete.getMail(), 
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+				 logEntryRepository.create(logEntry);
+			}
+			sentUrls.clear();
+			
+			// clearing sent shares
+			Set<Share> sentShare = userToDelete.getShares();
+			
+			for (Share share : sentShare) {
+				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
+		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
+		        		userToDelete.getMail(), 
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+				 logEntryRepository.create(logEntry);
+			}
+			
+			sentShare.clear();
+			
+			//clearing the favorites
+			recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
+			
+			//clearing allowed contacts
+			allowedContactRepository.deleteAllByUserBothSides(userToDelete);
+			
+			//clearing groups memberships
+			groupService.deleteAllMembershipOfUser(userToDelete);
+			
+			// clearing all signatures
+			Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
+			ownSignatures.clear();
+			
+			//a guest can create guest (since evolution guest with grant privilege)...
+			//so when deleting a guest (A) you may need to delete the guests (B, C, D) which were created by this guest (A).
+			//to fix this: deleting a guest means you will be the new owner of the guest account which were created (B, C, D)
+			List<Guest> usersCreatedByTheUserToDelete = guestRepository.searchGuest(null, null, null, userToDelete);
+			for (Guest guest : usersCreatedByTheUserToDelete) {
+				guest.setOwner(owner);
+				guestRepository.update(guest);
+				if (guest.isRestricted()) { //if restricted guest, needs to have the new owner as contact
+					addGuestContactRestriction(guest.getLogin(), owner.getLogin());
+				}
+			}
+			
+			
+			userRepository.update(userToDelete);
+			userRepository.delete(userToDelete);
+			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+		        		LogAction.USER_DELETE, "Deleting an user", userToDelete.getMail(), 
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+      
+		    logEntryRepository.create(logEntry);
+		    
+		    for (Document document : documentsToClean) {
+		    	shareService.refreshShareAttributeOfDoc(document);
+				
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error("Couldn't find the user " + login +" to be deleted", e);
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + login +" to be deleted");
 		}
 	}
