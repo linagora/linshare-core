@@ -23,5 +23,5 @@ package org.linagora.linShare.core.domain.constants;
 /** List reasons of some events.
  */
 public enum Reason {
-    EXPIRY, INCONSISTENCY, NONE;
+    EXPIRY, INCONSISTENCY, USER_DELETED, NONE;
 }
