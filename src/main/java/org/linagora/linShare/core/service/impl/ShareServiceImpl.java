@@ -372,22 +372,27 @@ public class ShareServiceImpl implements ShareService{
 				//we delete the original file if all its shares are outdated.
 			
 				User owner  = doc.getOwner();
+				String fileUUID = doc.getIdentifier();
+				String thumbnailUUID = doc.getThmbUUID();
+				
+				//we log the deletion of this file with FILE_EXPIRE
+				User systemUser = userRepository.findByLogin("system");
+				FileLogEntry logEntry = new FileLogEntry(systemUser.getMail(), systemUser
+							.getFirstName(), systemUser.getLastName(),
+							LogAction.FILE_EXPIRE, "Deletion of outdated file", doc
+									.getName(), doc.getSize(), doc.getType());
+				
 				owner.deleteDocument(doc);
 				userRepository.update(owner);
 				
 				
-				InputStream stream = fileSystemDao.getFileContentByUUID(doc.getIdentifier());
-				if(stream!=null)
-				fileSystemDao.removeFileByUUID(doc.getIdentifier());
-
-				FileLogEntry logEntry;
-				User systemUser = userRepository.findByLogin("system");
-				
-				//we log the deletion of this file with FILE_EXPIRE
-				logEntry = new FileLogEntry(systemUser.getMail(), systemUser
-							.getFirstName(), systemUser.getLastName(),
-							LogAction.FILE_EXPIRE, "Deletion of outdated file", doc
-									.getName(), doc.getSize(), doc.getType());
+				InputStream stream = fileSystemDao.getFileContentByUUID(fileUUID);
+				if(stream!=null) {
+					fileSystemDao.removeFileByUUID(fileUUID);
+					if (thumbnailUUID != null && thumbnailUUID.length() > 0) {
+						fileSystemDao.removeFileByUUID(thumbnailUUID);
+					}
+				}
 				
 				logEntryRepository.create(logEntry);
 			

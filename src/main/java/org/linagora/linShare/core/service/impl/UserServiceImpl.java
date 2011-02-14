@@ -30,11 +30,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.dao.LdapDao;
 import org.linagora.linShare.core.dao.ldap.LdapSearchResult;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.AllowedContact;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Parameter;
@@ -98,6 +100,8 @@ public class UserServiceImpl implements UserService {
     private final MailContentBuildingService mailElementsFactory;
     
     private final GroupService groupService;
+    
+    private final FileSystemDao fileSystemDao;
 
     /** Constructor.
      * @param userRepository repository.
@@ -110,7 +114,8 @@ public class UserServiceImpl implements UserService {
 		final RecipientFavouriteService recipientFavouriteService,
 		final AllowedContactRepository allowedContactRepository,
 		final MailContentBuildingService mailElementsFactory,
-		final GroupService groupService) {
+		final GroupService groupService,
+		final FileSystemDao fileSystemDao) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.ldapDao = ldapDao;
@@ -122,6 +127,7 @@ public class UserServiceImpl implements UserService {
 		this.allowedContactRepository = allowedContactRepository;
 		this.mailElementsFactory = mailElementsFactory;
 		this.groupService = groupService;
+		this.fileSystemDao = fileSystemDao;
     }
 
     /** Create a guest.
@@ -328,6 +334,22 @@ public class UserServiceImpl implements UserService {
 			}
 			
 			sentShare.clear();
+			
+			//clearing user documents
+			Set<Document> documents = userToDelete.getDocuments();
+			for (Document document : documents) {
+				String fileUUID = document.getIdentifier();
+				String thumbnailUUID = document.getThmbUUID();
+				if (thumbnailUUID != null && thumbnailUUID.length()>0) {
+					fileSystemDao.removeFileByUUID(thumbnailUUID);
+				}
+				fileSystemDao.removeFileByUUID(fileUUID);
+				FileLogEntry logEntry = new FileLogEntry(owner.getMail(), 
+						owner.getFirstName(), owner.getLastName(),
+						LogAction.USER_DELETE, "User deleted", document.getName(), 
+						document.getSize(), document.getType());
+				logEntryRepository.create(logEntry);
+			}
 			
 			//clearing the favorites
 			recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
