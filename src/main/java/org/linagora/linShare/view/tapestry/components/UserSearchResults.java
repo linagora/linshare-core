@@ -291,7 +291,7 @@ public class UserSearchResults {
     
 	@OnEvent(value="userDeleteEvent")
     public void deleteUser() {
-        userFacade.deleteGuest(selectedLogin, userLoggedIn);
+        userFacade.deleteUser(selectedLogin, userLoggedIn);
         shareSessionObjects.addMessage(messages.format("components.userSearch.action.delete.confirm", selectedLogin));
         componentResources.triggerEvent("resetListUsers", null, null);
     }
@@ -338,19 +338,19 @@ public class UserSearchResults {
     }
     
     /**
-     * an admin can delete any Guest user (but not the internal ldap)
+     * an admin can delete any Guest user and can purge internal user
      * an simple user can delete only his users (owner of the guest)
      * @return true if the logged in user on the application can edit the data of one user on the grid
      */
     
     public boolean isUserDeletable() {
-        
-        if (userLoggedIn.isAdministrator()) {
-        	if (UserType.INTERNAL.equals(user.getUserType())) return false;
-        	else return true;
-        } else {
-            return isOwner();
+        if (user.getLogin().trim().equals(userLoggedIn.getLogin().trim())) {
+        	return false;
         }
+        if (userLoggedIn.isAdministrator()) {
+        	return true;
+        } 
+        return isOwner();
     }
     /**
      * is the logged in user the owner of the user guest account ?
