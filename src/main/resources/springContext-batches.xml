@@ -22,6 +22,10 @@
         <constructor-arg ref="jackRabbitRepository"/>
     </bean>
 
+    <bean name="jcrGarbageCollectionBatch" class="org.linagora.linShare.core.batches.impl.JcrGarbageCollectionBatchImpl">
+        <constructor-arg ref="jcrTemplate"/>
+    </bean>
+
 
     <!-- Transactions declaration. -->
     <aop:config>
