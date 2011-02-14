@@ -58,6 +58,19 @@
         <property name="cronExpression" value="${job.consistency.cron.expression}"/>
     </bean>
 
+    <bean id="cleanJcrUnusedFilesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linShare.core.job.quartz.CleanJcrUnusedFiles"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="jcrGarbageCollectionBatch"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="cleanJcrUnusedFilesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="cleanJcrUnusedFilesJob"/>
+        <property name="cronExpression" value="${job.jcrgarbagecollector.cron.expression}"/>
+    </bean>
+
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
@@ -65,6 +78,7 @@
                 <ref bean="cleanOutdatediSharesJobTrigger"/>
                 <ref bean="notifyOutdatedSharesJobTrigger"/>
                 <ref bean="cleanInconsistentDocumentEntriesJobTrigger"/>
+                <ref bean="cleanJcrUnusedFilesJobTrigger"/>
             </list>
         </property>
     </bean>
