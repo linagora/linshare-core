@@ -654,6 +654,9 @@ public class DocumentServiceImpl implements DocumentService {
 			try {
 
 				shareService.deleteAllSharesWithDocument(doc, owner, mailContainer);
+				
+				String fileUUID = uuid;
+				String thumbnailUUID = doc.getThmbUUID();
 
 				owner.deleteDocument(doc);
 
@@ -662,7 +665,10 @@ public class DocumentServiceImpl implements DocumentService {
 				if (!Reason.INCONSISTENCY.equals(causeOfDeletion)) {
 					// If the reason of the delete is inconsistency, the
 					// document doesn't exist in file system.
-					fileSystemDao.removeFileByUUID(uuid);
+					if (thumbnailUUID != null && thumbnailUUID.length()>0) {
+						fileSystemDao.removeFileByUUID(thumbnailUUID);
+					}
+					fileSystemDao.removeFileByUUID(fileUUID);
 				}
 
 				FileLogEntry logEntry;
