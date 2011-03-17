@@ -20,6 +20,17 @@
 */
 package org.linagora.linShare.core.batches;
 
+/**
+ * !!!!! Warning !!!!!
+ * We found that this garbage collector was buggy in the
+ * Jackrabbit version we use with LinShare (1.4)
+ * Do not use this Batch if you do not upgrade the Jackrabbit
+ * version
+ * https://issues.apache.org/jira/browse/JCR-2492
+ * 
+ * @author sduprey
+ *
+ */
 public interface JcrGarbageCollectionBatch {
 	
 	void removeUnusedFiles();
