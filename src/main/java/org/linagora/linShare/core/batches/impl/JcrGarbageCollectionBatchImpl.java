@@ -32,6 +32,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springmodules.jcr.JcrTemplate;
 
+/**
+ * !!!!! Warning !!!!!
+ * We found that this garbage collector was buggy in the
+ * Jackrabbit version we use with LinShare (1.4)
+ * Do not use this Batch if you do not upgrade the Jackrabbit
+ * version
+ * https://issues.apache.org/jira/browse/JCR-2492
+ * 
+ * @author sduprey
+ *
+ */
 public class JcrGarbageCollectionBatchImpl implements JcrGarbageCollectionBatch {
 
 	final private static Logger Logger = LoggerFactory
