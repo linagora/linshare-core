@@ -1237,7 +1237,7 @@
             </snapshots>
        </repository>
        <repository>
-            <id>Codehaus snapshot</id>
+            <id>Codehaus</id>
             <url>http://repository.codehaus.org/</url>
             <snapshots>
                  <enabled>false</enabled>
