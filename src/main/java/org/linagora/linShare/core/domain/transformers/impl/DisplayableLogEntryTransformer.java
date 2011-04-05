@@ -24,6 +24,7 @@ package org.linagora.linShare.core.domain.transformers.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linShare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
@@ -61,6 +62,12 @@ public class DisplayableLogEntryTransformer implements Transformer<LogEntry, Dis
 					entityObject.getLogAction(), entityObject.getDescription(),
 					((UserLogEntry)entityObject).getTargetMail(), ((UserLogEntry)entityObject).getTargetFirstname(),
 					((UserLogEntry)entityObject).getTargetLastname(), ((UserLogEntry)entityObject).getExpirationDate());
+		}
+		if (entityObject instanceof AntivirusLogEntry) {
+			return new DisplayableLogEntryVo(entityObject.getActionDate().getTime(), entityObject.getActorMail(),
+					entityObject.getActorFirstname(), entityObject.getActorLastname(),
+					entityObject.getLogAction(), entityObject.getDescription(),
+					entityObject.getDescription(), null, "");
 		}
 		
 		throw new TechnicalException(TechnicalErrorCode.BEAN_ERROR, "Wrong instance of object " + entityObject.getClass() );
