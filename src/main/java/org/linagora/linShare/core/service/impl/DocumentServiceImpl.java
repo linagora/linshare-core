@@ -46,8 +46,10 @@ import org.linagora.LinThumbnail.utils.ImageUtils;
 import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.constants.Reason;
+import org.linagora.linShare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
+import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linShare.core.domain.entities.Share;
@@ -295,12 +297,18 @@ public class DocumentServiceImpl implements DocumentService {
 			try {
 				checkStatus = virusScannerService.check(tempFile);
 			} catch (TechnicalException e) {
+				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
+						owner.getLastName(), LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
+				logEntryRepository.create(logEntry);
 				log.error("File scan failed: antivirus enabled but not available ?");
 				throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED,
 					"File scan failed", e);
 			}
 			// check if the file contains virus
 			if (!checkStatus) {
+				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
+						owner.getLastName(), LogAction.FILE_WITH_VIRUS, fileName);
+				logEntryRepository.create(logEntry);
 				log.warn(owner.getMail()
 						+ " tried to upload a file containing virus:" + fileName);
 				tempFile.delete(); // SOS ! do not keep the file on the system...
