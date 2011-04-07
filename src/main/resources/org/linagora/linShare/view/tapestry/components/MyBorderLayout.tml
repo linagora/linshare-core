@@ -55,10 +55,18 @@
     <t:parameter name="menuBar">
         <div id="menuBar">
             <t:if t:test="admin">
+            	<t:if t:test="securedStorageDisallowed">
                 <t:Menu t:title="Navigation"
+                        t:links="index;files/index;user/index${groupsLink};administration/index;administration/audit;help/index"
+                        t:labels="${message:components.myborderlayout.securedStorageDisallowed.home.title};${message:components.myborderlayout.securedStorageDisallowed.file.title};${message:components.myborderlayout.user.title}${groupsLabel};${message:components.myborderlayout.administration.title};${message:components.myborderlayout.audit.title};${message:components.myborderlayout.help.title}"
+                        t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};administration;audit;help" t:currentHighlight="${currentHighlight}" />
+            	<t:parameter name="else">
+                	<t:Menu t:title="Navigation"
                         t:links="index;files/index;user/index${groupsLink};administration/index;administration/audit;help/index"
                         t:labels="${message:components.myborderlayout.home.title};${message:components.myborderlayout.file.title};${message:components.myborderlayout.user.title}${groupsLabel};${message:components.myborderlayout.administration.title};${message:components.myborderlayout.audit.title};${message:components.myborderlayout.help.title}"
                         t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};administration;audit;help" t:currentHighlight="${currentHighlight}" />
+            	</t:parameter>
+            	</t:if>
             </t:if>
             <t:if t:test="admin" negate="true">
                 <t:if t:test="userExt">
@@ -68,6 +76,16 @@
                 </t:if>
                 <t:if t:test="userExt" negate="true">
                     <t:if t:test="user">
+                    	<t:if t:test="securedStorageDisallowed">
+                			<t:Menu t:title="Navigation" t:links="index;files/index;user/index${groupsLink};history/index${helpLink};help/index"
+                                t:labels="${message:components.myborderlayout.securedStorageDisallowed.home.title};${message:components.myborderlayout.securedStorageDisallowed.file.title};${message:components.myborderlayout.user.title}${groupsLabel};${message:components.myborderlayout.history.title}${helpLabel};${message:components.myborderlayout.help.title}"
+                                t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};history${helpHighlight};help" t:currentHighlight="${currentHighlight}" />
+                    		<t:parameter name="else">
+                				<t:Menu t:title="Navigation" t:links="index;files/index;user/index${groupsLink};history/index${helpLink};help/index"
+                                t:labels="${message:components.myborderlayout.securedStorageDisallowed.home.title};${message:components.myborderlayout.securedStorageDisallowed.file.title};${message:components.myborderlayout.user.title}${groupsLabel};${message:components.myborderlayout.history.title}${helpLabel};${message:components.myborderlayout.help.title}"
+                                t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};history${helpHighlight};help" t:currentHighlight="${currentHighlight}" />
+                    		</t:parameter>
+            			</t:if>
                         <t:Menu t:title="Navigation" t:links="index;files/index;user/index${groupsLink};history/index${helpLink};help/index"
                                 t:labels="${message:components.myborderlayout.home.title};${message:components.myborderlayout.file.title};${message:components.myborderlayout.user.title}${groupsLabel};${message:components.myborderlayout.history.title}${helpLabel};${message:components.myborderlayout.help.title}"
                                 t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};history${helpHighlight};help" t:currentHighlight="${currentHighlight}" />

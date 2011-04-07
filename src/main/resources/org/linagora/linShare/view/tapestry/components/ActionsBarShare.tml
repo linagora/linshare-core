@@ -6,6 +6,7 @@
 	<ul>
 
 		<!-- Action > Copy -->
+		<t:if t:test="securedStorageDisallowed" negate="true">		
 		<li>
 			<a href="#"
 				class="listDocument" onclick="submitFormWithAction('${formName}','COPY_ACTION');">
@@ -13,6 +14,7 @@
 				${message:components.listDocument.action.copy}
 				</a>
 		</li>
+		</t:if>
 
 		<!-- Action > Sign -->
 		<t:if t:test="activeSignature">			

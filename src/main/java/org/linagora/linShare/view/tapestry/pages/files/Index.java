@@ -40,6 +40,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.DocumentFacade;
@@ -147,6 +148,10 @@ public class Index {
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
 
+
+	@Inject @Symbol("linshare.secured-storage.disallow")
+	@Property
+	private boolean securedStorageDisallowed;
 	
 	@Property
 	@Persist
@@ -618,6 +623,16 @@ public class Index {
     
     public String getJSonId() {
         return windowUpload.getJSONId();
+    }
+    
+    public boolean isDisplayUploadButton() {
+    	return ( (!securedStorageDisallowed) && userVo.isUpload() );
+    }
+    
+    public String getPageTitle() {
+    	return securedStorageDisallowed ? 
+    			messages.get("components.myborderlayout.securedStorageDisallowed.file.title") 
+    			: messages.get("components.myborderlayout.file.title");
     }
     
     Object onException(Throwable cause) {

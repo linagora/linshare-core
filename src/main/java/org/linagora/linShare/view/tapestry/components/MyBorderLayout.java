@@ -200,6 +200,11 @@ public class MyBorderLayout {
 	@Inject @Symbol("linshare.googleChromeFrame.enabled")
 	@Property
 	private boolean enableChromeForIE;
+
+	@SuppressWarnings("unused")
+	@Inject @Symbol("linshare.secured-storage.disallow")
+	@Property
+	private boolean securedStorageDisallowed;
 	
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
 	private static final String groupsLabelKey = "components.myborderlayout.group.title";
