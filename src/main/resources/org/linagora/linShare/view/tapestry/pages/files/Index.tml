@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<t:MyBorderLayout t:title="message:pages.files.index.title" t:identifier="files" t:currentHighlight="files"
+<t:MyBorderLayout t:title="prop:pageTitle" t:identifier="files" t:currentHighlight="files"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 	<!-- Main content -->
 
 	<div id="content">
 
-		<h1>${message:components.myborderlayout.file.title}</h1>
+		<h1>${pageTitle}</h1>
 
 
 		<t:messagePanel />
@@ -17,16 +17,16 @@
 		<div id="actionBar">
 			<h4>Actions</h4>
 			<ul>
-				<t:if test="userVo.upload">
+				<t:if test="displayUploadButton">
 				<li>
 					<a href="#" class="button" onclick="windowUpload.showCenter(true);">
 						<span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/>
 							${message:pages.files.upload.addbutton}</span>
 					</a>
 				</li>
-				</t:if>
-				<t:if test="userVo.upload" negate="true">	<t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
+				<t:parameter name="else"><t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
 				<li>&nbsp;</li>
+				</t:parameter>
 				</t:if>
 			</ul>
 		</div><!-- id="actionBar" -->

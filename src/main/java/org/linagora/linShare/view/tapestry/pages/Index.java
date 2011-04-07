@@ -35,6 +35,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
@@ -111,6 +112,10 @@ public class Index {
 	@Property
 	/** used to prevent the clearing of documentsVo with search*/
 	private boolean flag;
+
+	@Inject @Symbol("linshare.secured-storage.disallow")
+	@Property
+	private boolean securedStorageDisallowed;
 	
 	
 
@@ -247,6 +252,12 @@ public class Index {
     @OnEvent(value="inFileSearch")
     public void inSearch(Object[] o1) {
     	flag=true;
+    }
+    
+    public String getPageTitle() {
+    	return securedStorageDisallowed ? 
+    			messages.get("components.myborderlayout.securedStorageDisallowed.home.title") 
+    			: messages.get("components.myborderlayout.home.title");
     }
     
     Object onException(Throwable cause) {

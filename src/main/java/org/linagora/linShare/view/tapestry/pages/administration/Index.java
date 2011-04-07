@@ -34,6 +34,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.TimeUnit;
@@ -120,6 +121,10 @@ public class Index {
     private Integer defaultShareExpiryTime;
     @Property
     private Boolean deleteDocWithShareExpiryTime;
+
+	@Inject @Symbol("linshare.secured-storage.disallow")
+	@Property
+	private boolean securedStorageDisallowed;
     
 
     /* ***********************************************************
@@ -135,7 +140,7 @@ public class Index {
         activeSignature = p.getActiveSignature();
         activeDocTimeStamp = p.getActiveDocTimeStamp();
         
-        activeEncipherment = p.getActiveEncipherment();
+        activeEncipherment = securedStorageDisallowed ? false : p.getActiveEncipherment();
         guestAccountExpiryTime = p.getGuestAccountExpiryTime();
         guestAccountExpiryUnit = p.getGuestAccountExpiryUnit();
         defaultShareExpiryUnit = p.getDefaultShareExpiryUnit();
@@ -215,9 +220,10 @@ public class Index {
         if (userAvailableSize != null) {
             userAvailableSize = userAvailableSize * FACTORMULTI;
         }
+        boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;
 
         ParameterVo p = parameterFacade.loadConfig();
-        ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, activeMimeType, activeSignature,activeEncipherment,activeDocTimeStamp,guestAccountExpiryTime,
+        ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
             guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects());
         parameterFacade.createConfig(params);
 
