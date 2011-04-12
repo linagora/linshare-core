@@ -119,12 +119,23 @@ public class Index {
     private TimeUnit defaultShareExpiryUnit;
     @Property
     private Integer defaultShareExpiryTime;
+    
+    @Property
+    private TimeUnit defaultFileExpiryUnit;
+    @Property
+    private Integer defaultFileExpiryTime;
+    
     @Property
     private Boolean deleteDocWithShareExpiryTime;
 
 	@Inject @Symbol("linshare.secured-storage.disallow")
 	@Property
 	private boolean securedStorageDisallowed;
+
+	@SuppressWarnings("unused")
+	@Inject @Symbol("linshare.secured-storage.disallowed.job.file-cleaner.activate")
+	@Property
+	private boolean fileCleanerActivated;
     
 
     /* ***********************************************************
@@ -146,6 +157,9 @@ public class Index {
         defaultShareExpiryUnit = p.getDefaultShareExpiryUnit();
         defaultShareExpiryTime = p.getDefaultShareExpiryTime();
         deleteDocWithShareExpiryTime = p.getDeleteDocWithShareExpiryTime();
+        
+        defaultFileExpiryUnit = p.getDefaultFileExpiryUnit();
+        defaultFileExpiryTime = p.getDefaultFileExpiryTime();
         
         shareExpiryRules = p.getShareExpiryRules();
         if (shareExpiryRules == null) {
@@ -201,9 +215,10 @@ public class Index {
     
     
     public void onValidateFormFromAdministrationForm() {
+        boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;
     	
     	//just validate JCE
-    	if(activeEncipherment==true||activeSignature==true){
+    	if(activeEnciph==true||activeSignature==true){
     		if(!parameterFacade.checkPlatformEncryptSupportedAlgo()){
     			administrationForm.recordError(messages.get("pages.administration.index.jce.error"));
     		}
@@ -224,7 +239,7 @@ public class Index {
 
         ParameterVo p = parameterFacade.loadConfig();
         ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
-            guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects());
+            guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, defaultFileExpiryUnit, defaultFileExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects());
         parameterFacade.createConfig(params);
 
         

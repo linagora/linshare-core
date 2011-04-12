@@ -19,6 +19,7 @@
         name varchar(255) not null,
         creation_date timestamp not null,
         expiration_date timestamp not null,
+        deletion_date timestamp,
         type varchar(255),
         encrypted bool,
         shared bool,
@@ -44,6 +45,8 @@
         custom_logo_url varchar(255),
         default_expiry_time int4,
         default_expiry_time_unit_id int4,
+        default_file_expiry_time int4,
+        default_file_expiry_time_unit_id int4,
 		delete_doc_expiry_time bool default false,
         primary key (parameter_id)
     );

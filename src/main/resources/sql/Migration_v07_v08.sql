@@ -373,3 +373,13 @@ INSERT INTO linshare_welcome_texts (parameter_id , welcome_text, user_type_id, l
 -- Welcome to LinShare, the Open Source secure files sharing system.
 INSERT INTO linshare_welcome_texts (parameter_id , welcome_text, user_type_id, language_id) VALUES (1, E'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1, 2);
 
+
+
+
+-----------------
+-- AFTER 0.8.3 --
+-----------------
+
+ALTER TABLE linshare_document ADD COLUMN deletion_date timestamp DEFAULT NULL;
+ALTER TABLE linshare_parameter ADD COLUMN default_file_expiry_time int4;
+ALTER TABLE linshare_parameter ADD COLUMN default_file_expiry_time_unit_id int4;

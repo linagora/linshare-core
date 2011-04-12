@@ -9,6 +9,7 @@
     <property access="field" column="name" index="index_document_name" name="name" not-null="true"/>
     <property access="field" column="creation_date" name="creationDate" not-null="true" type="calendar"/>
     <property access="field" column="expiration_date" index="index_document_expiration_date" name="expirationDate" not-null="true" type="calendar"/>
+    <property access="field" column="deletion_date" name="deletionDate" type="calendar"/>
     <property access="field" column="type" name="type"/>
     <property access="field" column="encrypted" name="encrypted"/>
     <property access="field" column="shared" name="shared"/>

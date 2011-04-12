@@ -30,7 +30,6 @@ import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.domain.transformers.impl.ParameterTransformer;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.utils.AESCrypt;
 

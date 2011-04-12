@@ -73,6 +73,19 @@
         <property name="cronExpression" value="${job.jcrgarbagecollector.cron.expression}"/>
     </bean-->
 
+    <bean id="cleanOutdatedDocumentsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linShare.core.job.quartz.CleanOutdatedDocuments"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="documentManagementBatch"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="cleanOutdatedDocumentsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="cleanOutdatedDocumentsJob"/>
+        <property name="cronExpression" value="${linshare.secured-storage.disallowed.job.file-cleaner.cron}"/>
+    </bean>
+
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
@@ -81,6 +94,7 @@
                 <ref bean="notifyOutdatedSharesJobTrigger"/>
                 <ref bean="cleanInconsistentDocumentEntriesJobTrigger"/>
                 <!--ref bean="cleanJcrUnusedFilesJobTrigger"/-->
+                <ref bean="cleanOutdatedDocumentsJobTrigger"/>
             </list>
         </property>
     </bean>

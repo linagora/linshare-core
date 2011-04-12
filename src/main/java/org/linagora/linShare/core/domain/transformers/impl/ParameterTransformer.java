@@ -68,7 +68,8 @@ public class ParameterTransformer implements Transformer<Parameter, ParameterVo>
 		if(null!=entityObject){
 			return new ParameterVo(entityObject.getFileSizeMax(), entityObject.getUserAvailableSize(),
                 entityObject.getActiveMimeType(), entityObject.getActiveSignature() , entityObject.getActiveEncipherment(),entityObject.getActiveDocTimeStamp(),entityObject.getGuestAccountExpiryTime(),
-                entityObject.getGuestAccountExpiryUnit(), null, entityObject.getDefaultShareExpiryUnit(), entityObject.getDefaultShareExpiryTime(), null,entityObject.getDeleteDocWithShareExpiryTime() ,null, null, null);
+                entityObject.getGuestAccountExpiryUnit(), null, entityObject.getDefaultShareExpiryUnit(), entityObject.getDefaultShareExpiryTime(), entityObject.getDefaultFileExpiryUnit(), 
+                entityObject.getDefaultFileExpiryTime(), null,entityObject.getDeleteDocWithShareExpiryTime() ,null, null, null);
 		}else{	
 			return null;
 		}

@@ -58,6 +58,8 @@ public class Parameter implements Serializable {
     private Boolean deleteDocWithShareExpiryTime;
     private TimeUnit defaultShareExpiryUnit;
     private Integer defaultShareExpiryTime;
+    private TimeUnit defaultFileExpiryUnit;
+    private Integer defaultFileExpiryTime;
 
     public Parameter() {
     	this.fileSizeMax = null;
@@ -73,6 +75,8 @@ public class Parameter implements Serializable {
         this.defaultShareExpiryTime = null;
         this.defaultShareExpiryUnit = TimeUnit.DAY;
         this.deleteDocWithShareExpiryTime = false;
+        this.defaultFileExpiryTime = null;
+        this.defaultFileExpiryUnit = TimeUnit.DAY;
     }
 
 	public Long getId() {
@@ -235,6 +239,21 @@ public class Parameter implements Serializable {
         mailSubjects.add(mailSubject);
     }
 
+    public void setDefaultFileExpiryTime(Integer defaultFileExpiryTime) {
+		this.defaultFileExpiryTime = defaultFileExpiryTime;
+	}
+    
+    public Integer getDefaultFileExpiryTime() {
+		return defaultFileExpiryTime;
+	}
+    
+    public void setDefaultFileExpiryUnit(TimeUnit defaultFileExpiryUnit) {
+		this.defaultFileExpiryUnit = defaultFileExpiryUnit;
+	}
+    
+    public TimeUnit getDefaultFileExpiryUnit() {
+		return defaultFileExpiryUnit;
+	}
 	
 	@Override
     public boolean equals(Object o1){
