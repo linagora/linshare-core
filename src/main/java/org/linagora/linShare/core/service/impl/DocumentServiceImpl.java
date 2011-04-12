@@ -657,11 +657,12 @@ public class DocumentServiceImpl implements DocumentService {
 	public void deleteFileWithNotification(String login, String uuid, Reason causeOfDeletion, MailContainer mailContainer)
 			throws BusinessException {
 		Document doc = documentRepository.findById(uuid);
-		User owner = userRepository.findByLogin(login);
+		User owner = doc.getOwner();
+		User actor = userRepository.findByLogin(login);
 		if (null != doc) {
 			try {
 
-				shareService.deleteAllSharesWithDocument(doc, owner, mailContainer);
+				shareService.deleteAllSharesWithDocument(doc, actor, mailContainer);
 				
 				String fileUUID = uuid;
 				String thumbnailUUID = doc.getThmbUUID();
@@ -681,23 +682,21 @@ public class DocumentServiceImpl implements DocumentService {
 
 				FileLogEntry logEntry;
 
-				//User systemUser = userRepository.findByLogin("system"); //TODO: unused?
-
 				if (Reason.EXPIRY.equals(causeOfDeletion)) {
-					logEntry = new FileLogEntry(owner.getMail(), owner
-							.getFirstName(), owner.getLastName(),
+					logEntry = new FileLogEntry(actor.getMail(), actor
+							.getFirstName(), actor.getLastName(),
 							LogAction.FILE_EXPIRE, "Expiration of a file", doc
 									.getName(), doc.getSize(), doc.getType());
 				} else if (Reason.INCONSISTENCY.equals(causeOfDeletion)) {
-					logEntry = new FileLogEntry(owner.getMail(), owner
-							.getFirstName(), owner.getLastName(),
+					logEntry = new FileLogEntry(actor.getMail(), actor
+							.getFirstName(), actor.getLastName(),
 							LogAction.FILE_INCONSISTENCY,
 							"File removed because of inconsistence. "
 									+ "Please contact your administrator.", doc
 									.getName(), doc.getSize(), doc.getType());
 				} else {
-					logEntry = new FileLogEntry(owner.getMail(), owner
-							.getFirstName(), owner.getLastName(),
+					logEntry = new FileLogEntry(actor.getMail(), actor
+							.getFirstName(), actor.getLastName(),
 							LogAction.FILE_DELETE, "Deletion of a file", doc
 									.getName(), doc.getSize(), doc.getType());
 				}
