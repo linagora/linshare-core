@@ -21,20 +21,25 @@
 package org.linagora.linShare.core.batches.impl;
 
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linShare.core.batches.DocumentManagementBatch;
 import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
+import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Batch for document management.
- *
+/** 
+ * Batch for document management.
  */
 public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
@@ -43,12 +48,19 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     private final DocumentRepository documentRepository;
     private final DocumentService documentService;
     private final FileSystemDao fileSystemDao;
+    private final boolean securedStorageDisallowed;
+    private final boolean cronActivated;
+    private final ParameterRepository parameterRepository;
 
     public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentService documentService,
-        FileSystemDao fileSystemDao) {
+        FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated,
+        ParameterRepository parameterRepository) {
         this.documentRepository = documentRepository;
         this.documentService = documentService;
         this.fileSystemDao = fileSystemDao;
+        this.securedStorageDisallowed = securedStorageDisallowed;
+        this.cronActivated = cronActivated;
+        this.parameterRepository = parameterRepository;
     }
 
     public void removeMissingDocuments() {
@@ -71,5 +83,64 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
             }
         }
         logger.info("Remove missing documents batch ended.");
+    }
+    
+    public void cleanOldDocuments() {
+    	
+    	if (!securedStorageDisallowed) {
+    		logger.info("Documents cleaner batch launched but secured storage not disallowed : stopping.");
+    		return;
+    	}
+    	
+    	if (!cronActivated) {
+    		logger.info("Documents cleaner batch launched but was told to be unactivated : stopping.");
+    		return;
+    	}
+    	
+    	logger.info("Documents cleaner batch launched.");
+    	
+    	Parameter param = parameterRepository.loadConfig();
+    	if (param.getDefaultFileExpiryTime() == null || 
+    			param.getDefaultFileExpiryUnit() == null) {
+    		logger.info("Documents cleaner batch launched but no expiration time was defined : stopping.");
+    		return;
+    	}
+    	
+    	List<Document> documents = documentRepository.findAll();
+    	
+    	Calendar now = GregorianCalendar.getInstance();
+    	for (Document document : documents) {
+			if (!document.getShared() && !document.getSharedWithGroup()) {
+				if (document.getDeletionDate() == null) {
+			    	
+			    	Calendar deletionDate = (Calendar)document.getCreationDate().clone();
+					deletionDate.add(param.getDefaultFileExpiryUnit().toCalendarValue(),
+							param.getDefaultFileExpiryTime());
+					
+					document.setDeletionDate(deletionDate);
+					
+					try {
+						documentRepository.update(document);
+						logger.info("Documents cleaner batch has set a file to be cleaned at "+(new Date(deletionDate.getTimeInMillis())).toString());
+					} catch (Exception e) {
+						logger.error("Documents cleaner batch error while updating deletion date : "+e.getMessage());
+						e.printStackTrace();
+					}
+				} else {
+					if (document.getDeletionDate().before(now)) {
+						try {
+							documentService.deleteFile("system", document.getIdentifier(), Reason.EXPIRY);
+							logger.info("Documents cleaner batch has removed a file.");
+						} catch (BusinessException e) {
+							logger.error("Documents cleaner batch error when deleting expired file : "+e.getMessage());
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+    	
+    	logger.info("Documents cleaner batch ended.");
+    	
     }
 }

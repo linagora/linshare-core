@@ -40,6 +40,27 @@
 								<td class="input"><t:checkbox t:id="deleteTempAdmin" class="edit-form-field" /></td>
 							</tr>
 						</t:if>
+						<t:if test="fileCleanerActivated">
+						<tr>
+							<td colspan="2"><h2>${message:pages.administration.index.file-cleaner.title}</h2></td>
+						</tr>
+						<tr>
+							<td class="label">
+								<t:label for="defaultFileExpiryTime" class="edit-form-label">
+										${message:pages.administration.index.defaultFileExpiryTime}
+								</t:label>
+							</td> 
+							<td class="input">
+								<t:textfield t:id="defaultFileExpiryTime" size="2"
+									value="defaultFileExpiryTime" class="edit-form-field"
+									validate="required" /> 
+								&nbsp; 
+								<t:select
+									t:id="defaultFileExpiryUnit" blankoption="never"
+									value="defaultFileExpiryUnit" />
+							</td>
+						</tr>
+						</t:if>
 						<tr>
 							<td colspan="2"><h2>${message:pages.administration.index.share.title}</h2></td>
 						</tr>

@@ -34,6 +34,7 @@
         name varchar(255) not null,
         creation_date datetime not null,
         expiration_date datetime not null,
+        deletion_date timestamp,
         type varchar(255),
         encrypted bit,
         shared bit,
@@ -114,6 +115,8 @@
         default_expiry_time integer,
         delete_doc_expiry_time bit,
         default_expiry_time_unit_id integer,
+        default_file_expiry_time integer,
+        default_file_expiry_time_unit_id integer,
         primary key (parameter_id)
     );
 

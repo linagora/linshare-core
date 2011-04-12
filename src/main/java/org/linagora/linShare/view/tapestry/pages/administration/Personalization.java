@@ -122,7 +122,7 @@ public class Personalization {
         ParameterVo p = parameterFacade.loadConfig();
 
         ParameterVo params = new ParameterVo(p.getFileSizeMax(), p.getUserAvailableSize(), p.getActiveMimeType(), p.getActiveSignature(),p.getActiveEncipherment(),p.getActiveDocTimeStamp(),p.getGuestAccountExpiryTime(),
-            p.getGuestAccountExpiryUnit(), customLogoUrl,p.getDefaultShareExpiryUnit(),  p.getDefaultShareExpiryTime(), p.getShareExpiryRules(), p.getDeleteDocWithShareExpiryTime(),welcomeTexts, mailTemplates, mailSubjects);
+            p.getGuestAccountExpiryUnit(), customLogoUrl,p.getDefaultShareExpiryUnit(),  p.getDefaultShareExpiryTime(), p.getDefaultFileExpiryUnit(), p.getDefaultFileExpiryTime(), p.getShareExpiryRules(), p.getDeleteDocWithShareExpiryTime(),welcomeTexts, mailTemplates, mailSubjects);
         parameterFacade.createConfig(params);
         
     }

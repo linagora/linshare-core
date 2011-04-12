@@ -53,6 +53,11 @@ public class Document implements Serializable {
 	private Calendar expirationDate;
 	
 	/**
+	 * the deletion date of the document.
+	 */
+	private Calendar deletionDate;
+	
+	/**
 	 * the document owner.
 	 */
 	private User owner;
@@ -117,6 +122,7 @@ public class Document implements Serializable {
 		this.signatures = null;
 		this.thmbUUID = null;
 		this.timeStamp = null;
+		this.deletionDate = null;
 	}
 	/**
 	 * modifying from protected to public for using BeanUtils without construct 
@@ -251,6 +257,12 @@ public class Document implements Serializable {
 	}
 	public void setTimeStamp(byte[] timeStamp) {
 		this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
+	}
+	public void setDeletionDate(Calendar deletionDate) {
+		this.deletionDate = deletionDate;
+	}
+	public Calendar getDeletionDate() {
+		return deletionDate;
 	}
 	
 }

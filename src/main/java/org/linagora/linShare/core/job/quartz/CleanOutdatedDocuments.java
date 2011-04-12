@@ -18,25 +18,24 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+package org.linagora.linShare.core.job.quartz;
+
+import org.linagora.linShare.core.batches.DocumentManagementBatch;
+import org.quartz.JobExecutionContext;
+import org.springframework.scheduling.quartz.QuartzJobBean;
+
+/** This job verifies that documents in database are also available
+ *
  */
+public class CleanOutdatedDocuments extends QuartzJobBean {
 
-package org.linagora.linShare.core.batches;
+    private DocumentManagementBatch documentManagementBatch;
 
+    protected void executeInternal(JobExecutionContext context) {
+        documentManagementBatch.cleanOldDocuments();
+    }
 
-public interface DocumentManagementBatch {
-
-    /** 
-     * Check that documents in database are also in jackrabbit repository.
-     * If the document is not present in jackrabbit repository, we must delete it in database.
-     */
-    public void removeMissingDocuments();
-    
-    
-    /**
-     * Delete old documents when strong box disallowed
-     */
-    public void cleanOldDocuments();
+    public void setBatch(DocumentManagementBatch documentManagementBatch) {
+        this.documentManagementBatch = documentManagementBatch;
+    }
 }

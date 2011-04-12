@@ -56,6 +56,8 @@
         <property column="SIZE_UNIT_ID" name="shareSizeUnit" type="fileSizeEnumType"/>
       </composite-element>
     </list>
+    <property column="DEFAULT_FILE_EXPIRY_TIME" name="defaultFileExpiryTime"/>
+    <property column="DEFAULT_FILE_EXPIRY_TIME_UNIT_ID" name="defaultFileExpiryUnit" type="timeUnitEnumType"/>
     <set name="welcomeTexts" table="WELCOME_TEXTS">
       <key column="PARAMETER_ID"/>
       <composite-element class="WelcomeText">

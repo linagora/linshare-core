@@ -51,6 +51,8 @@ public class ParameterVo implements Serializable {
     private final Boolean deleteDocWithShareExpiryTime;
     private final TimeUnit defaultShareExpiryUnit;
     private final Integer defaultShareExpiryTime;
+    private final TimeUnit defaultFileExpiryUnit;
+    private final Integer defaultFileExpiryTime;
     
     private List<ShareExpiryRule> shareExpiryRules;
 
@@ -59,12 +61,13 @@ public class ParameterVo implements Serializable {
     private Set<MailSubject> mailSubjects;
 
 	public ParameterVo() {
-		this(null, null,false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null);
+		this(null, null,false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	public ParameterVo(Long fileSizeMax, Long userAvailableSize, Boolean activeMimeType, Boolean activeSignature,
 		Boolean activeEncipherment,Boolean activeDocTimeStamp,Integer guestAccountExpiryTime, TimeUnit guestAccountExpiryUnit, String customLogoUrl, 
 		TimeUnit defaultShareExpiryUnit, Integer defaultShareExpiryTime,
+		TimeUnit defaultFileExpiryUnit, Integer defaultFileExpiryTime,
         List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, 
         Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects) {
 		this.fileSizeMax = fileSizeMax;
@@ -80,6 +83,8 @@ public class ParameterVo implements Serializable {
         this.welcomeTexts = welcomeTexts;
         this.defaultShareExpiryUnit = defaultShareExpiryUnit;
         this.defaultShareExpiryTime = defaultShareExpiryTime;
+        this.defaultFileExpiryUnit = defaultFileExpiryUnit;
+        this.defaultFileExpiryTime = defaultFileExpiryTime;
         this.deleteDocWithShareExpiryTime = deleteDocWithShareExpiryTime;
         this.mailTemplates = mailTemplates;
         this.mailSubjects = mailSubjects;
@@ -96,6 +101,8 @@ public class ParameterVo implements Serializable {
         this.guestAccountExpiryUnit = parameter.getGuestAccountExpiryUnit();
         this.customLogoUrl = parameter.getCustomLogoUrl();
         this.deleteDocWithShareExpiryTime = parameter.getDeleteDocWithShareExpiryTime();
+        this.defaultFileExpiryUnit = parameter.getDefaultFileExpiryUnit();
+        this.defaultFileExpiryTime = parameter.getDefaultFileExpiryTime();
 
         this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
         for (ShareExpiryRule shareExpiryRule : parameter.getShareExpiryRules()) {
@@ -169,6 +176,14 @@ public class ParameterVo implements Serializable {
 	public Integer getDefaultShareExpiryTime() {
 		return defaultShareExpiryTime;
 	}
+	
+	public Integer getDefaultFileExpiryTime() {
+		return defaultFileExpiryTime;
+	}
+	
+	public TimeUnit getDefaultFileExpiryUnit() {
+		return defaultFileExpiryUnit;
+	}
 
 	public List<ShareExpiryRule> getShareExpiryRules() {
         return shareExpiryRules;
@@ -196,6 +211,8 @@ public class ParameterVo implements Serializable {
         parameter.setDeleteDocWithShareExpiryTime(deleteDocWithShareExpiryTime);
         parameter.setDefaultShareExpiryTime(defaultShareExpiryTime);
         parameter.setDefaultShareExpiryUnit(defaultShareExpiryUnit);
+        parameter.setDefaultFileExpiryTime(defaultFileExpiryTime);
+        parameter.setDefaultFileExpiryUnit(defaultFileExpiryUnit);
         
         for (ShareExpiryRule shareExpiryRule : shareExpiryRules) {
             parameter.addShareExpiryRules(shareExpiryRule);
