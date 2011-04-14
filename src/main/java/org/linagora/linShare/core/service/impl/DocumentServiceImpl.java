@@ -52,6 +52,7 @@ import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.Signature;
@@ -413,6 +414,8 @@ public class DocumentServiceImpl implements DocumentService {
 							.getType());
 
 			logEntryRepository.create(logEntry);
+			
+			addDocSizeToGlobalUsedQuota(docEntity);
 
 		} catch (BusinessException e) {
 			log.error("Could not add  " + fileName + " to user "
@@ -434,6 +437,14 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 		
 		return docEntity;
+	}
+
+	private void addDocSizeToGlobalUsedQuota(Document docEntity)
+			throws BusinessException {
+		Parameter param = parameterRepository.loadConfig();
+		long newUsedQuota = param.getUsedQuota() + docEntity.getSize();
+		param.setUsedQuota(newUsedQuota);
+		parameterRepository.update(param);
 	}
 
 	/**
@@ -621,28 +632,42 @@ public class DocumentServiceImpl implements DocumentService {
 	}
 
 	public long getAvailableSize(User user) {
+		
+		Parameter param = parameterRepository.loadConfig();
+		
+		if (param.getGlobalQuotaActive()) {
+			long availableSize = param.getGlobalQuota().longValue() - param.getUsedQuota().longValue();
+			if (availableSize < 0) {
+				availableSize = 0;
+			}
+			return availableSize;
+			
+		} else {
 
-		// use config parameter
-		long userQuota = parameterRepository.loadConfig()
-				.getUserAvailableSize();
-
-		if ((user.getDocuments() == null) || (user.getDocuments().size() == 0)) {
+			// use config parameter
+			long userQuota = param.getUserAvailableSize() == null ? 0 : param.getUserAvailableSize().longValue();
+	
+			if ((user.getDocuments() == null) || (user.getDocuments().size() == 0)) {
+				return userQuota;
+			}
+	
+			for (Document userDoc : user.getDocuments()) {
+				userQuota -= userDoc.getSize();
+			}
+	
 			return userQuota;
 		}
-
-		for (Document userDoc : user.getDocuments()) {
-			userQuota -= userDoc.getSize();
-		}
-
-		return userQuota;
 
 	}
 
 	public long getTotalSize(User user) {
-
-		// use config parameter
-		long userQuota = parameterRepository.loadConfig()
-				.getUserAvailableSize();
+		
+		Parameter param = parameterRepository.loadConfig();
+		
+		if (param.getGlobalQuotaActive()) {
+			return param.getUsedQuota();
+		}
+		long userQuota = param.getUserAvailableSize() == null ? 0 : param.getUserAvailableSize().longValue();
 
 		return userQuota;
 
@@ -666,10 +691,13 @@ public class DocumentServiceImpl implements DocumentService {
 				
 				String fileUUID = uuid;
 				String thumbnailUUID = doc.getThmbUUID();
+				long docSize = doc.getSize();
 
 				owner.deleteDocument(doc);
 
 				userRepository.update(owner);
+				
+				removeDocSizeFromGlobalUsedQuota(docSize);
 
 				if (!Reason.INCONSISTENCY.equals(causeOfDeletion)) {
 					// If the reason of the delete is inconsistency, the
@@ -710,6 +738,14 @@ public class DocumentServiceImpl implements DocumentService {
 						"Could not delete document");
 			}
 		}
+	}
+
+	private void removeDocSizeFromGlobalUsedQuota(long docSize)
+			throws BusinessException {
+		Parameter param = parameterRepository.loadConfig();
+		long newUsedQuota = param.getUsedQuota() - docSize;
+		param.setUsedQuota(newUsedQuota);
+		parameterRepository.update(param);
 	}
 
 	public Document getDocument(String uuid) {

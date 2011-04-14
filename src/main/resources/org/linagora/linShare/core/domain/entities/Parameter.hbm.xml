@@ -35,6 +35,9 @@
     <id column="PARAMETER_ID" name="id"/>
     <property column="FILE_SIZE_MAX" name="fileSizeMax"/>
     <property column="USER_AVAILABLE_SIZE" name="userAvailableSize"/>
+    <property column="GLOBAL_QUOTA" name="globalQuota"/>
+    <property column="GLOBAL_USED_QUOTA" name="usedQuota"/>
+    <property column="ACTIVE_GLOBAL_QUOTA" name="globalQuotaActive" type="boolean"/>
     <property column="ACTIVE_MIMETYPE" name="activeMimeType" type="boolean"/>
     <property column="ACTIVE_SIGNATURE" name="activeSignature" type="boolean"/>
     <property column="ACTIVE_ENCIPHERMENT" name="activeEncipherment" type="boolean"/>

@@ -86,6 +86,8 @@ public class Index {
     @Property
     private Long userAvailableSize; //ko
     @Property
+    private Long globalQuota;
+    @Property
     private Boolean activeMimeType;
     
     
@@ -95,6 +97,8 @@ public class Index {
     private Boolean activeEncipherment;
     @Property
     private Boolean activeDocTimeStamp;
+    @Property
+    private Boolean activeGlobalQuota;
     @Property
     private Boolean deleteTempAdmin;
     @SuppressWarnings("unused")
@@ -147,9 +151,11 @@ public class Index {
 
         fileSizeMax = p.getFileSizeMax();
         userAvailableSize = p.getUserAvailableSize();
+        globalQuota = p.getGlobalQuota();
         activeMimeType = p.getActiveMimeType();
         activeSignature = p.getActiveSignature();
         activeDocTimeStamp = p.getActiveDocTimeStamp();
+        activeGlobalQuota = p.getGlobalQuotaActive();
         
         activeEncipherment = securedStorageDisallowed ? false : p.getActiveEncipherment();
         guestAccountExpiryTime = p.getGuestAccountExpiryTime();
@@ -171,6 +177,9 @@ public class Index {
         }
         if (userAvailableSize != null) {
             userAvailableSize = userAvailableSize / FACTORMULTI;
+        }
+        if (globalQuota != null) {
+        	globalQuota = globalQuota / FACTORMULTI;
         }
         
         //check temp admin account (created by import.sql)
@@ -228,6 +237,7 @@ public class Index {
     
     
     public void onSuccessFromAdministrationForm() throws BusinessException {
+        ParameterVo p = parameterFacade.loadConfig();
 
         if (fileSizeMax != null) {
             fileSizeMax = fileSizeMax * FACTORMULTI;
@@ -235,10 +245,13 @@ public class Index {
         if (userAvailableSize != null) {
             userAvailableSize = userAvailableSize * FACTORMULTI;
         }
+        if (globalQuota != null) {
+        	globalQuota = globalQuota * FACTORMULTI;
+        }
+        
         boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;
 
-        ParameterVo p = parameterFacade.loadConfig();
-        ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
+        ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, globalQuota, p.getUsedQuota(),activeGlobalQuota,activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
             guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, defaultFileExpiryUnit, defaultFileExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects());
         parameterFacade.createConfig(params);
 

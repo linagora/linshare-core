@@ -383,3 +383,11 @@ INSERT INTO linshare_welcome_texts (parameter_id , welcome_text, user_type_id, l
 ALTER TABLE linshare_document ADD COLUMN deletion_date timestamp DEFAULT NULL;
 ALTER TABLE linshare_parameter ADD COLUMN default_file_expiry_time int4;
 ALTER TABLE linshare_parameter ADD COLUMN default_file_expiry_time_unit_id int4;
+
+ALTER TABLE linshare_parameter ADD COLUMN global_quota int8 DEFAULT 0;
+ALTER TABLE linshare_parameter ADD COLUMN global_used_quota int8 DEFAULT 0;
+ALTER TABLE linshare_parameter ADD COLUMN active_global_quota bool DEFAULT E'false';
+
+UPDATE linshare_parameter SET global_used_quota = (SELECT sum(ld.size) FROM linshare_document ld);
+
+

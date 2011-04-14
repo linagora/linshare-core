@@ -1,6 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:container
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	
+	<t:if test="displayWidget">
+	<t:widget widgetId="infoWidget" title="${message:components.widget.infoWidget.title}">
 
 	<ul>
 
@@ -14,7 +17,7 @@
 		</t:if>
 		
 		<!-- Information > User space quota -->
-		<t:if t:test="canUpload">
+		<t:if t:test="displayQuota">
 		<li>
 			<strong>${message:components.infoComponent.usedQuota}</strong>
 			${message:global.space}
@@ -28,5 +31,7 @@
 		</t:if>
 
 	</ul>
+	</t:widget>
+	</t:if>
 
 </t:container>

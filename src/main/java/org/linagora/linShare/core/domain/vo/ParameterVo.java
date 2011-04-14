@@ -39,6 +39,9 @@ public class ParameterVo implements Serializable {
 	
 	private final Long fileSizeMax;
 	private final Long userAvailableSize;
+	private final Long globalQuota;
+	private final Long usedQuota;
+	private final Boolean globalQuotaActive;
 	private final Boolean activeMimeType;
 	private final Boolean activeSignature;
 	private final Boolean activeEncipherment;
@@ -61,17 +64,23 @@ public class ParameterVo implements Serializable {
     private Set<MailSubject> mailSubjects;
 
 	public ParameterVo() {
-		this(null, null,false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, false, false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null);
 	}
 
-	public ParameterVo(Long fileSizeMax, Long userAvailableSize, Boolean activeMimeType, Boolean activeSignature,
-		Boolean activeEncipherment,Boolean activeDocTimeStamp,Integer guestAccountExpiryTime, TimeUnit guestAccountExpiryUnit, String customLogoUrl, 
+	public ParameterVo(Long fileSizeMax, Long userAvailableSize, 
+		Long globalQuota, Long usedQuota, Boolean globalQuotaActive,
+		Boolean activeMimeType, Boolean activeSignature,
+		Boolean activeEncipherment,Boolean activeDocTimeStamp,Integer guestAccountExpiryTime, 
+		TimeUnit guestAccountExpiryUnit, String customLogoUrl, 
 		TimeUnit defaultShareExpiryUnit, Integer defaultShareExpiryTime,
 		TimeUnit defaultFileExpiryUnit, Integer defaultFileExpiryTime,
         List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, 
         Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects) {
 		this.fileSizeMax = fileSizeMax;
 		this.userAvailableSize = userAvailableSize;
+		this.globalQuota = globalQuota;
+		this.usedQuota = usedQuota;
+		this.globalQuotaActive = globalQuotaActive;
 		this.activeMimeType = activeMimeType;
 		this.activeSignature = activeSignature;
 		this.activeEncipherment = activeEncipherment;
@@ -93,6 +102,9 @@ public class ParameterVo implements Serializable {
     public ParameterVo(Parameter parameter) {
 		this.fileSizeMax = parameter.getFileSizeMax();
 		this.userAvailableSize = parameter.getUserAvailableSize();
+		this.globalQuota = parameter.getGlobalQuota();
+		this.usedQuota = parameter.getUsedQuota();
+		this.globalQuotaActive = parameter.getGlobalQuotaActive();
 		this.activeMimeType = parameter.getActiveMimeType();
 		this.activeSignature = parameter.getActiveSignature();
 		this.activeEncipherment = parameter.getActiveEncipherment();
@@ -196,11 +208,27 @@ public class ParameterVo implements Serializable {
     public Boolean getDeleteDocWithShareExpiryTime() {
 		return deleteDocWithShareExpiryTime;
 	}
+    
+    public Long getGlobalQuota() {
+		return globalQuota;
+	}
+    
+    public Long getUsedQuota() {
+		return usedQuota;
+	}
+    
+    public Boolean getGlobalQuotaActive() {
+		return globalQuotaActive;
+	}
+    
 
 	public Parameter getParameter() {
         Parameter parameter = new Parameter();
         parameter.setFileSizeMax(fileSizeMax);
         parameter.setUserAvailableSize(userAvailableSize);
+        parameter.setGlobalQuota(globalQuota);
+        parameter.setUsedQuota(usedQuota);
+        parameter.setGlobalQuotaActive(globalQuotaActive);
         parameter.setActiveMimeType(activeMimeType);
         parameter.setActiveSignature(activeSignature);
         parameter.setActiveEncipherment(activeEncipherment);

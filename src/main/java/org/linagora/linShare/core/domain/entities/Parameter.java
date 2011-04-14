@@ -40,6 +40,9 @@ public class Parameter implements Serializable {
 
 	private Long fileSizeMax;
 	private Long userAvailableSize;
+	private Long globalQuota;
+	private Long usedQuota;
+	private Boolean globalQuotaActive;
 	private Boolean activeMimeType;
 	private Boolean activeSignature;
 	private Boolean activeEncipherment;
@@ -64,6 +67,9 @@ public class Parameter implements Serializable {
     public Parameter() {
     	this.fileSizeMax = null;
 		this.userAvailableSize = null;
+		this.globalQuota = null;
+		this.usedQuota = null;
+		this.globalQuotaActive = false;
 		this.activeMimeType = false;
 		this.activeSignature = false;
 		this.activeEncipherment = false;
@@ -253,6 +259,30 @@ public class Parameter implements Serializable {
     
     public TimeUnit getDefaultFileExpiryUnit() {
 		return defaultFileExpiryUnit;
+	}
+    
+    public void setGlobalQuota(Long globalQuota) {
+		this.globalQuota = globalQuota;
+	}
+    
+    public Long getGlobalQuota() {
+		return globalQuota;
+	}
+    
+    public void setUsedQuota(Long usedQuota) {
+		this.usedQuota = usedQuota;
+	}
+    
+    public Long getUsedQuota() {
+		return usedQuota;
+	}
+    
+    public void setGlobalQuotaActive(Boolean globalQuotaActive) {
+		this.globalQuotaActive = globalQuotaActive;
+	}
+    
+    public Boolean getGlobalQuotaActive() {
+		return globalQuotaActive;
 	}
 	
 	@Override
