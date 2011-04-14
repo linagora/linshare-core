@@ -34,6 +34,10 @@
 							<td class="label"><t:label for="guestAccountExpiryTime" class="edit-form-label">${message:pages.administration.index.guestAccountExpiryTime}</t:label></td>
 							<td class="input"><t:textfield t:id="guestAccountExpiryTime" size="2" class="edit-form-field" validate="required"/>&nbsp;&nbsp;<t:select t:id="guestAccountExpiryUnit" blankoption="never"/></td>
 						</tr>
+						<tr>
+							<td class="label"><t:label for="userAvailableSize" class="edit-form-label">${message:pages.administration.index.userAvailableSize}</t:label></td>
+							<td class="input"><t:textfield t:id="userAvailableSize" size="5" class="edit-form-field" validate="required"/></td>
+						</tr>
 						<t:if test="needDeleteTempAdmin">
 							<tr>
 								<td class="label"><t:label for="deleteTempAdmin" class="edit-form-label">${message:pages.administration.index.deleteTempAdmin}</t:label></td>
@@ -62,11 +66,18 @@
 						</tr>
 						</t:if>
 						<tr>
-							<td colspan="2"><h2>${message:pages.administration.index.share.title}</h2></td>
+							<td colspan="2"><h2>${message:pages.administration.index.globalQuota.title}</h2></td>
 						</tr>
 						<tr>
-							<td class="label"><t:label for="userAvailableSize" class="edit-form-label">${message:pages.administration.index.userAvailableSize}</t:label></td>
-							<td class="input"><t:textfield t:id="userAvailableSize" size="5" class="edit-form-field" validate="required"/></td>
+							<td class="label"><t:label for="activeGlobalQuota" class="edit-form-label">${message:pages.administration.index.activeGlobalQuota}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeGlobalQuota" class="edit-form-field"/></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="globalQuota" class="edit-form-label">${message:pages.administration.index.globalQuota}</t:label></td>
+							<td class="input"><t:textfield t:id="globalQuota" size="5" class="edit-form-field" validate="required"/></td>
+						</tr>
+						<tr>
+							<td colspan="2"><h2>${message:pages.administration.index.share.title}</h2></td>
 						</tr>
 						<tr>
 							<td class="label"><t:label for="fileSizeMax" class="edit-form-label">${message:pages.administration.index.fileSizeMax}</t:label></td>

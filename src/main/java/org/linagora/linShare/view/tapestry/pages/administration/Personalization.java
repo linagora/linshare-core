@@ -20,8 +20,6 @@
 */
 package org.linagora.linShare.view.tapestry.pages.administration;
 
-import java.io.IOException;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -121,7 +119,7 @@ public class Personalization {
     public void onSuccessFromPersonalizationForm() throws BusinessException {
         ParameterVo p = parameterFacade.loadConfig();
 
-        ParameterVo params = new ParameterVo(p.getFileSizeMax(), p.getUserAvailableSize(), p.getActiveMimeType(), p.getActiveSignature(),p.getActiveEncipherment(),p.getActiveDocTimeStamp(),p.getGuestAccountExpiryTime(),
+        ParameterVo params = new ParameterVo(p.getFileSizeMax(), p.getUserAvailableSize(), p.getGlobalQuota(), p.getUsedQuota(), p.getGlobalQuotaActive(), p.getActiveMimeType(), p.getActiveSignature(),p.getActiveEncipherment(),p.getActiveDocTimeStamp(),p.getGuestAccountExpiryTime(),
             p.getGuestAccountExpiryUnit(), customLogoUrl,p.getDefaultShareExpiryUnit(),  p.getDefaultShareExpiryTime(), p.getDefaultFileExpiryUnit(), p.getDefaultFileExpiryTime(), p.getShareExpiryRules(), p.getDeleteDocWithShareExpiryTime(),welcomeTexts, mailTemplates, mailSubjects);
         parameterFacade.createConfig(params);
         

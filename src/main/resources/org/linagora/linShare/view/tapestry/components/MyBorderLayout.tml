@@ -86,9 +86,6 @@
                                 t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};history${helpHighlight};help" t:currentHighlight="${currentHighlight}" />
                     		</t:parameter>
             			</t:if>
-                        <t:Menu t:title="Navigation" t:links="index;files/index;user/index${groupsLink};history/index${helpLink};help/index"
-                                t:labels="${message:components.myborderlayout.home.title};${message:components.myborderlayout.file.title};${message:components.myborderlayout.user.title}${groupsLabel};${message:components.myborderlayout.history.title}${helpLabel};${message:components.myborderlayout.help.title}"
-                                t:alternateStyle="false" t:highlights="home;files;user${groupsHighlight};history${helpHighlight};help" t:currentHighlight="${currentHighlight}" />
                     </t:if>
                     <t:if t:test="user" negate="true">
                         <!--  t:if t:test="isHelpPage">-->
@@ -114,9 +111,7 @@
 	<t:parameter name="right">
 		<div id="sideBar">
 			<t:if t:test="userVoExists">
-				<t:widget widgetId="infoWidget" title="${message:components.widget.infoWidget.title}">
-					<t:infoComponent />
-				</t:widget>
+				<t:infoComponent />
 			</t:if>
 			<t:delegate to="searchWidget" />
 			<t:delegate to="actionsWidget" />

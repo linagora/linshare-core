@@ -36,6 +36,9 @@
         parameter_id int8 not null,
         file_size_max int8,
         user_available_size int8,
+        global_quota int8,
+        global_used_quota int8,
+        active_global_quota bool,
         active_mimetype bool,
         active_signature bool,
         active_encipherment bool,
@@ -47,7 +50,7 @@
         default_expiry_time_unit_id int4,
         default_file_expiry_time int4,
         default_file_expiry_time_unit_id int4,
-		delete_doc_expiry_time bool default false,
+        delete_doc_expiry_time bool default false,
         primary key (parameter_id)
     );
 
