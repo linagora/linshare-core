@@ -23,6 +23,7 @@
                    /**/*.swf=#NONE#
                    /**/en=#NONE#
                    /**/fr=#NONE#
+                   /**/nl=#NONE#
                    /download/**=#NONE#
                    /**/download.passwordpopup.formpassword=#NONE#
                    /download.downloadthemall/**=#NONE#
