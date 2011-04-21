@@ -28,13 +28,17 @@ import java.util.List;
 
 import org.linagora.linShare.core.batches.DocumentManagementBatch;
 import org.linagora.linShare.core.dao.FileSystemDao;
+import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.MailContentBuildingService;
+import org.linagora.linShare.core.service.NotifierService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,16 +55,20 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     private final boolean securedStorageDisallowed;
     private final boolean cronActivated;
     private final ParameterRepository parameterRepository;
+	private final NotifierService notifierService;
+	private final MailContentBuildingService mailBuilder;
 
     public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentService documentService,
         FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated,
-        ParameterRepository parameterRepository) {
+        ParameterRepository parameterRepository, NotifierService notifierService, MailContentBuildingService mailBuilder) {
         this.documentRepository = documentRepository;
         this.documentService = documentService;
         this.fileSystemDao = fileSystemDao;
         this.securedStorageDisallowed = securedStorageDisallowed;
         this.cronActivated = cronActivated;
         this.parameterRepository = parameterRepository;
+        this.notifierService = notifierService;
+        this.mailBuilder = mailBuilder;
     }
 
     public void removeMissingDocuments() {
@@ -122,6 +130,10 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 					try {
 						documentRepository.update(document);
 						logger.info("Documents cleaner batch has set a file to be cleaned at "+(new Date(deletionDate.getTimeInMillis())).toString());
+						
+						final long MILISECOND_PER_DAY = 24 * 60 * 60 * 1000;
+						int days = Math.round(Math.abs((deletionDate.getTimeInMillis()- now.getTimeInMillis())/MILISECOND_PER_DAY))+1;
+						sendUpcomingDeletionNotification(document, days);
 					} catch (Exception e) {
 						logger.error("Documents cleaner batch error while updating deletion date : "+e.getMessage());
 						e.printStackTrace();
@@ -143,4 +155,16 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     	logger.info("Documents cleaner batch ended.");
     	
     }
+
+	private void sendUpcomingDeletionNotification(Document document, Integer days) {
+		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
+		MailContainer mailContainerFinal;
+		try {
+			mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedDocument(mailContainer, document, days);
+			notifierService.sendNotification(null, document.getOwner().getMail(), mailContainerFinal);
+		} catch (BusinessException e) {
+			logger.error("Can't create the email for "+document.getOwner().getMail());
+			e.printStackTrace();
+		}
+	}
 }

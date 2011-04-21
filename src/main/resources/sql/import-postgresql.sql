@@ -54,6 +54,11 @@ INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_
 -- Subject SHARED_DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
 INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 11, E'LinShare: A sharing will be soon deleted', 0);
+
+-- Subject DOC_UPCOMING_OUTDATED
+-- LinShare: A sharing will be soon deleted
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 12, E'LinShare: A file will be soon deleted', 0);
+
 -- Mail templates
 -- Template GREETINGS
 INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, E'Welcome to LinShare, the Open Source secure files sharing system.', E'Welcome to LinShare, the Open Source secure files sharing system.', 0);
@@ -115,6 +120,9 @@ INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, co
 -- Template SHARED_DOC_UPCOMING_OUTDATED
 INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 19, E'The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.', E'The sharing of the file ${documentName} by ${firstName} ${lastName} will expire in ${nbDays} days. Remember to download or copy this file.', 0);
 
+-- Template DOC_UPCOMING_OUTDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, E'The file <strong>${documentName}</strong> will expire in ${nbDays} days.', E'The file ${documentName} will expire in ${nbDays} days.', 0);
+
 -- Welcome texts
 -- Welcome texts
 
@@ -175,6 +183,11 @@ INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_
 -- Subject SHARED_DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
 INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 11, E'LinShare : Un partage va bientôt expirer', 1);
+
+-- Subject DOC_UPCOMING_OUTDATED
+-- LinShare: A sharing will be soon deleted
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 12, E'LinShare : Un fichier va bientôt être supprimé', 1);
+
 -- Mail templates
 -- Template GREETINGS
 INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, E'Bonjour ${firstName} ${lastName},<br/><br/>', E'Bonjour ${firstName} ${lastName},', 1);
@@ -236,6 +249,9 @@ INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, co
 -- Template SHARED_DOC_UPCOMING_OUTDATED
 INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 19, E'Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement.', E'Le partage du fichier ${documentName} provenant de ${firstName} ${lastName} va expirer dans ${nbDays} jours. Pensez à télécharger ou copier ce fichier rapidement.', 1);
 
+-- Template DOC_UPCOMING_OUTDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, E'Le fichier <strong>${documentName}</strong> va expirer dans ${nbDays} jours.', E'Le fichier ${documentName} va expirer dans ${nbDays} jours.', 1);
+
 -- Welcome texts
 -- Welcome texts
 
@@ -296,6 +312,10 @@ INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_
 -- Subject SHARED_DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
 INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 11, E'LinShare : Een share zal binnenkort gewist worden.', 2);
+
+-- Subject DOC_UPCOMING_OUTDATED
+-- LinShare: A sharing will be soon deleted
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 12, E'LinShare : Een bestand zal binnenkort gewist worden.', 2);
 -- Mail templates
 -- Template GREETINGS
 INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, E'Hallo ${firstName} ${lastName},<br/><br/>', E'Hallo ${firstName} ${lastName},', 2);
@@ -356,6 +376,9 @@ INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, co
 
 -- Template SHARED_DOC_UPCOMING_OUTDATED
 INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 19, E'Het delen van het bestand ${documentName} afkomstig van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan dit bestand te downloaden of te kopiëren.', E'Het delen van het bestand ${documentName} afkomstig van ${firstName} ${lastName} zal verlopen binnen ${nbDays} dagen. Denk eraan dit bestand te downloaden of te kopiëren.', 2);
+
+-- Template DOC_UPCOMING_OUTDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, E'Het bestand <strong>${documentName}</strong> zal verlopen binnen ${nbDays} dagen.', E'Het bestand ${documentName} zal verlopen binnen ${nbDays} dagen.', 2);
 
 -- Welcome texts
 -- Welcome texts

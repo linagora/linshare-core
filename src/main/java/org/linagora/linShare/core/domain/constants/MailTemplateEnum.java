@@ -46,7 +46,8 @@ public enum MailTemplateEnum {
 	GROUP_SHARE_DELETED(16),
 	SHARED_FILE_DELETED(17),
 	SECURED_URL_UPCOMING_OUTDATED(18),
-	SHARED_DOC_UPCOMING_OUTDATED(19);
+	SHARED_DOC_UPCOMING_OUTDATED(19), 
+	DOC_UPCOMING_OUTDATED(20);
 
 	private int value;
 
@@ -120,6 +121,9 @@ public enum MailTemplateEnum {
 			break;
 		case 19:
 			ret = SHARED_DOC_UPCOMING_OUTDATED;
+			break;
+		case 20:
+			ret = DOC_UPCOMING_OUTDATED;
 			break;
 		default:
 			throw new IllegalArgumentException("Doesn't match an existing MailTemplates");
