@@ -134,6 +134,12 @@ public class InfoComponent {
 				FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(globalQuotaB);
 				usedQuota = FileUtils.getFriendlySize(usedQuotaB, messages, preferedUnity);
 				totalQuota = FileUtils.getFriendlySize(globalQuotaB, messages, preferedUnity);
+				if (usedQuotaB<1) {
+					usedQuotaPercent = 0;
+				} else {
+					usedQuotaPercent = (int) (100*usedQuotaB / globalQuotaB);
+					if(usedQuotaPercent>100) usedQuotaPercent = 100;
+				}
 			}
 		}
 		
