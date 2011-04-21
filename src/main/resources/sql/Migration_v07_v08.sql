@@ -390,4 +390,25 @@ ALTER TABLE linshare_parameter ADD COLUMN active_global_quota bool DEFAULT E'fal
 
 UPDATE linshare_parameter SET global_used_quota = (SELECT sum(ld.size) FROM linshare_document ld);
 
+-- Subject DOC_UPCOMING_OUTDATED
+-- LinShare: A sharing will be soon deleted
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare: A file will be soon deleted', 0);
+
+-- Subject DOC_UPCOMING_OUTDATED
+-- LinShare: A sharing will be soon deleted
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare : Un fichier va bientôt être supprimé', 1);
+
+-- Subject DOC_UPCOMING_OUTDATED
+-- LinShare: A sharing will be soon deleted
+INSERT INTO linshare_mail_subjects (parameter_id, subject_id, content, language_id) VALUES (1, 12, 'LinShare : Een bestand zal binnenkort gewist worden.', 2);
+
+-- Template DOC_UPCOMING_OUTDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, 'The file <strong>${documentName}</strong> will expire in ${nbDays} days.', 'The file ${documentName} will expire in ${nbDays} days.', 0);
+
+-- Template DOC_UPCOMING_OUTDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, 'Le fichier <strong>${documentName}</strong> va expirer dans ${nbDays} jours.', 'Le fichier ${documentName} va expirer dans ${nbDays} jours.', 1);
+
+-- Template DOC_UPCOMING_OUTDATED
+INSERT INTO linshare_mail_templates (parameter_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, 'Het bestand <strong>${documentName}</strong> zal verlopen binnen ${nbDays} dagen.', 'Het bestand ${documentName} zal verlopen binnen ${nbDays} dagen.', 2);
+
 

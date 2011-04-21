@@ -168,6 +168,9 @@ public interface MailContentBuildingService {
 			MailContainer mailContainer, Document doc, User owner, Contact receiver)
 			throws BusinessException;
 
+	/**
+	 * Notify a user that received a share that the share will soon be deleted
+	 */
 	public MailContainer buildMailUpcomingOutdatedSecuredUrl(
 			MailContainer mailContainer, SecuredUrl securedUrl,
 			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
@@ -175,4 +178,10 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailUpcomingOutdatedShare(
 			MailContainer mailContainer, Share share, Integer days) 
 			throws BusinessException;
+
+	/**
+	 * Notify a user that an outdated document will be soon deleted (secured storage disabled)
+	 */
+	public MailContainer buildMailUpcomingOutdatedDocument(
+			MailContainer mailContainer, Document document, Integer days) throws BusinessException;
 }
