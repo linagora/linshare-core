@@ -408,7 +408,7 @@ public class AppModule
     		 )
     {
 
-        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, parameterFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller));
+        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, parameterFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
         config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, documentFacade, mailContainerBuilder));
         config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
     }
