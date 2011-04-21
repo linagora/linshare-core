@@ -23,7 +23,9 @@ package org.linagora.linShare.view.tapestry.rest.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +33,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
@@ -38,6 +41,7 @@ import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.enums.DocumentType;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
@@ -45,6 +49,7 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.rest.DocumentRestService;
 import org.linagora.linShare.view.tapestry.services.MyMultipartDecoder;
+import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.restmarshaller.Marshaller;
 import org.slf4j.Logger;
@@ -71,6 +76,8 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 	private final PropertiesSymbolProvider propertiesSymbolProvider;
 	
 	private final Marshaller xstreamMarshaller;
+
+        private final MailContainerBuilder mailContainerBuilder;
 	
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 	
@@ -80,7 +87,8 @@ public class DocumentRestServiceImpl implements DocumentRestService {
             final ParameterFacade parameterFacade,
 			final MyMultipartDecoder myMultipartDecoder,
 			final PropertiesSymbolProvider propertiesSymbolProvider,
-			final Marshaller xstreamMarshaller) {
+			final Marshaller xstreamMarshaller,
+                        final MailContainerBuilder mailContainerBuilder) {
 		super();
 		this.applicationStateManager = applicationStateManager;
 		this.searchDocumentFacade = searchDocumentFacade;
@@ -89,6 +97,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		this.xstreamMarshaller = xstreamMarshaller;
 		this.myMultipartDecoder = myMultipartDecoder;
 		this.propertiesSymbolProvider = propertiesSymbolProvider;
+                this.mailContainerBuilder = mailContainerBuilder;              
 	}
 	
 
@@ -116,7 +125,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		
 		String xml = xstreamMarshaller.toXml(list);
 		
-		PrintWriter writer = response.getPrintWriter("text/xml");
+                OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
 		response.setStatus(HttpStatus.SC_OK);
 		writer.append(xml);
 		writer.flush();
@@ -168,6 +177,37 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			response.sendError(HttpStatus.SC_NOT_FOUND, "document not found");
 		}
 	}
+
+        @RestfulWebMethod
+	public void removedocument(Request request, Response response, String uuid) throws IOException {
+		UserVo actor = applicationStateManager.getIfExists(UserVo.class);
+
+		if (actor== null) {
+			response.sendError(HttpStatus.SC_UNAUTHORIZED, "You are not authorized to use this service");
+			return;
+		}
+
+		DocumentVo docVo = documentFacade.getDocument(actor.getLogin(), uuid);
+
+		if (docVo!= null ) {
+
+			try {
+                                MailContainer mC = mailContainerBuilder.buildMailContainer(actor, null);
+				documentFacade.removeDocument(actor,docVo,mC);
+				response.setStatus(HttpStatus.SC_OK);
+			} catch (BusinessException e) {
+				logger.error("Could not remove document " + uuid +" for user " + actor.getMail() + " : " + e.getMessage() );
+				response.setHeader("BusinessError", e.getErrorCode().getCode()+"");
+				response.sendError(HttpStatus.SC_EXPECTATION_FAILED, "could not remove the document");
+			}
+
+
+		} else {
+			logger.info("Did not found  document " + uuid +" for user " + actor.getMail() );
+			response.sendError(HttpStatus.SC_NOT_FOUND, "document not found");
+		}
+	}
+        
 
 	
 	
@@ -243,12 +283,12 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		} catch (BusinessException e) {
 			mimeType = theFile.getContentType();
 		}
-		
+                
 		try {
 			DocumentVo doc = documentFacade.insertFile(theFile.getStream(), theFile.getSize(), theFile.getFileName(), mimeType, actor );
 			
 			
-			PrintWriter writer = response.getPrintWriter("text/xml");
+			OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
 			
 			
 			response.setStatus(HttpStatus.SC_CREATED);
@@ -285,7 +325,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			return;
 
 		}
-
+                
 		if (request.getParameterNames().size()<1) {
 			response.sendError(HttpStatus.SC_BAD_REQUEST, "Not enough parameters");
 			return;
@@ -368,13 +408,52 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 	
 		String xml = xstreamMarshaller.toXml(list);
 		
-		PrintWriter writer = response.getPrintWriter("text/xml");
+		OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
 		response.setStatus(HttpStatus.SC_OK);
 		writer.append(xml);
 		writer.flush();
 		writer.close();
 		
 	}
+
+
+        @RestfulWebMethod
+	public void getdocumentproperties(Request request, Response response,String uid) throws IOException {
+		UserVo actor = applicationStateManager.getIfExists(UserVo.class);
+
+		if (actor== null) {
+			response.sendError(HttpStatus.SC_UNAUTHORIZED, "You are not authorized to use this service");
+			return;
+		}
+
+
+
+		SearchDocumentCriterion searchDocumentCriterion = new SearchDocumentCriterion(actor, null, null, null, null, null, null, null, null, null,null);
+
+		List<DocumentVo> list = searchDocumentFacade.retrieveDocumentContainsCriterion(searchDocumentCriterion);
+
+
+		if (list == null) {
+			response.sendError(HttpStatus.SC_NOT_FOUND, "No such document");
+			return;
+		}
+
+            for (DocumentVo dV : list) {
+                if (dV.getIdentifier().equals(uid)) {
+
+                    String xml = xstreamMarshaller.toXml(dV);
+                    OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
+                    response.setStatus(HttpStatus.SC_OK);
+                    writer.append(xml);
+                    writer.flush();
+                    writer.close();
+                    break;
+                }
+            }
+		
+
+	}
+
 	
 	/**
 	 * Write all the content on the inputStream to the outputStream, using 4kB blocks
@@ -408,7 +487,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
         Long freeSpace = documentFacade.getUserAvailableQuota(actor);
 
 		String xml = xstreamMarshaller.toXml(freeSpace);
-		PrintWriter writer = response.getPrintWriter("text/xml");
+		OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
 		response.setStatus(HttpStatus.SC_OK);
 		writer.append(xml);
 		writer.flush();
@@ -425,7 +504,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
         }
 
 		String xml = xstreamMarshaller.toXml(maxFileSize);
-		PrintWriter writer = response.getPrintWriter("text/xml");
+		OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
 		response.setStatus(HttpStatus.SC_OK);
 		writer.append(xml);
 		writer.flush();

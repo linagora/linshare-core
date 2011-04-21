@@ -62,7 +62,7 @@ public class ConfigureMarshallerModule {
 
 
 		omitFields.add("4", new StringClasse(DocumentVo.class, "ownerLogin"));
-		omitFields.add("5", new StringClasse(DocumentVo.class, "creationDate"));
+		//omitFields.add("5", new StringClasse(DocumentVo.class, "creationDate"));
 		
 		omitFields.add("6", new StringClasse(DocumentVo.class, "expirationDate"));
 		omitFields.add("7", new StringClasse(DocumentVo.class, "signatures"));

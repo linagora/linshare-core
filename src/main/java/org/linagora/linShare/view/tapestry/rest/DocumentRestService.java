@@ -12,7 +12,7 @@
  *   GNU Affero General Public License for more details.
  *
  *   You should have received a copy of the GNU Affero General Public
- *   License along with Foobar.  If not, see
+ *   License along with Linshare.  If not, see
  *                                    <http://www.gnu.org/licenses/>.
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
@@ -51,6 +51,20 @@ public interface DocumentRestService {
 	 */
 	public void getdocument(Request request, Response response, String uuid)
 			throws IOException;
+
+        /**
+	 * Remove a file owned by the authed user
+	 * -> SC_FORBIDDEN if no user is authed
+	 * -> SC_NOT_FOUND if the doc does not belong to the user
+	 * -> SC_OK 
+	 * @param request : mandatory parameter for rest
+	 * @param response : mandatory parameter for rest
+	 * @param uuid : the file uuid
+	 * @throws IOException : if something goes wrong
+	*/
+	public void removedocument(Request request, Response response, String uuid)
+			throws IOException;
+
 
 	/**
 	 * Expect a post request, multipart encoded
@@ -101,4 +115,8 @@ public interface DocumentRestService {
 	 * @throws IOException : if something goes wrong
 	 */
     void getMaxFileSize(Request request, Response response) throws IOException;
+
+    void getdocumentproperties(Request request, Response response,String uid) throws IOException;
+
+
 }
