@@ -51,5 +51,17 @@
   	<bean name="allowedContactRepository" class="org.linagora.linShare.core.repository.hibernate.AllowedContactRepositoryImpl">
     	<constructor-arg ref="hibernateTemplate"/>
 	</bean>
+  	
+  	<bean name="domainPatternRepository" class="org.linagora.linShare.core.repository.hibernate.DomainPatternRepositoryImpl">
+    	<constructor-arg ref="hibernateTemplate"/>
+	</bean>
+  	
+  	<bean name="domainRepository" class="org.linagora.linShare.core.repository.hibernate.DomainRepositoryImpl">
+    	<constructor-arg ref="hibernateTemplate"/>
+	</bean>
+  	
+  	<bean name="ldapConnectionRepository" class="org.linagora.linShare.core.repository.hibernate.LDAPConnectionRepositoryImpl">
+    	<constructor-arg ref="hibernateTemplate"/>
+	</bean>
     
 </beans>

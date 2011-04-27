@@ -158,4 +158,14 @@
     	<constructor-arg value="${linshare.mails.html.container}"/>
     </bean>
     
+    <bean name="domainService" class="org.linagora.linShare.core.service.impl.DomainServiceImpl">
+        <constructor-arg ref="ldapConnectionRepository"/>
+        <constructor-arg ref="domainPatternRepository"/>
+        <constructor-arg ref="domainRepository"/>
+    </bean>
+    
+    <bean name="ldapQueryService" class="org.linagora.linShare.core.service.impl.LDAPQueryServiceImpl">
+        <constructor-arg ref="domainService"/>
+    </bean>
+    
 </beans>
