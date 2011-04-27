@@ -24,6 +24,9 @@
     <mapping resource="org/linagora/linShare/core/domain/entities/Cookie.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/Group.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/AllowedContact.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/DomainPattern.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/LDAPConnection.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/Domain.hbm.xml"/>
     
     
   </session-factory>
