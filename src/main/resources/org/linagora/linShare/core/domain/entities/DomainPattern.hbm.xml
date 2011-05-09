@@ -13,9 +13,5 @@
     <property access="field" column="auth_command" name="authCommand"/>
     <property access="field" column="search_user_command" name="searchUserCommand"/>
     <property access="field" column="get_user_result" name="getUserResult"/>
-    <property access="field" column="get_all_domain_users_result" name="getAllDomainUsersResult"/>
-    <property access="field" column="is_admin_result" name="isAdminResult"/>
-    <property access="field" column="auth_result" name="authResult"/>
-    <property access="field" column="search_user_result" name="searchUserResult"/>
   </class>
 </hibernate-mapping>

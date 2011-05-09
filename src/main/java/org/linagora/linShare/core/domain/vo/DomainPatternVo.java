@@ -26,18 +26,12 @@ public class DomainPatternVo {
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
 		this.getUserResult = domainPattern.getGetUserResult();
-		this.getAllDomainUsersResult = domainPattern.getGetAllDomainUsersResult();
-		this.isAdminResult = domainPattern.getIsAdminResult();
-		this.authResult = domainPattern.getAuthResult();
-		this.searchUserResult = domainPattern.getSearchUserResult();
 	}
 
 	public DomainPatternVo(String identifier, String description,
 			String getUserCommand, String getAllDomainUsersCommand,
 			String isAdminCommand, String authCommand,
-			String searchUserCommand, String getUserResult,
-			String getAllDomainUsersResult, String isAdminResult,
-			String authResult, String searchUserResult) {
+			String searchUserCommand, String getUserResult) {
 		super();
 		this.identifier = identifier;
 		this.description = description;
@@ -47,10 +41,6 @@ public class DomainPatternVo {
 		this.authCommand = authCommand;
 		this.searchUserCommand = searchUserCommand;
 		this.getUserResult = getUserResult;
-		this.getAllDomainUsersResult = getAllDomainUsersResult;
-		this.isAdminResult = isAdminResult;
-		this.authResult = authResult;
-		this.searchUserResult = searchUserResult;
 	}
 
 

@@ -9,11 +9,7 @@ import javax.naming.NamingException;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.linagora.linShare.core.domain.entities.Domain;
-import org.linagora.linShare.core.domain.entities.DomainPattern;
-import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
 import org.linagora.linShare.core.domain.vo.DomainVo;
@@ -57,11 +53,7 @@ public class LDAPQueryServiceTest extends AbstractJUnit4SpringContextTests {
 					"", 
 					"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
 					"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
-					"mail givenName sn", 
-					"", 
-					"", 
-					"", 
-					"");
+					"mail givenName sn");
 			DomainVo domainVo = new DomainVo(DOMAIN_IDENTIFIER, "dc=linpki,dc=org", pattern, ldapConn);
 			domainService.createLDAPConnection(ldapConn);
 			domainService.createDomainPattern(pattern);
