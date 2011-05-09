@@ -50,19 +50,19 @@ public class LDAPQueryServiceTest extends AbstractJUnit4SpringContextTests {
 	@Before
 	public void setUp() throws Exception {
 		if (!initialized) {
-			LDAPConnectionVo ldapConn = new LDAPConnectionVo("testldap", "ldap://localhost:389", "anonymous");
+			LDAPConnectionVo ldapConn = new LDAPConnectionVo("testldap", "ldap://localhost:33389", "anonymous");
 			DomainPatternVo pattern = new DomainPatternVo("testPattern", "testPattern", 
-					"ldap.entry(\"uid=\" + userId + \",ou=test,o=linShare,\" + domain, \"objectClass=*\");", 
-					"ldap.list(\"ou=test,o=linShare,\" + domain, \"objectClass=*\");", 
+					"ldap.entry(\"uid=\" + userId + \",ou=People,\" + domain, \"objectClass=*\");", 
+					"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");", 
 					"", 
-					"ldap.list(\"ou=test,o=linShare,\" + domain, \"(&(objectClass=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
-					"ldap.list(\"ou=test,o=linShare,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
-					"postalAddress givenName sn", 
+					"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
+					"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
+					"mail givenName sn", 
 					"", 
 					"", 
 					"", 
 					"");
-			DomainVo domainVo = new DomainVo(DOMAIN_IDENTIFIER, "dc=nodomain,dc=com", pattern, ldapConn);
+			DomainVo domainVo = new DomainVo(DOMAIN_IDENTIFIER, "dc=linpki,dc=org", pattern, ldapConn);
 			domainService.createLDAPConnection(ldapConn);
 			domainService.createDomainPattern(pattern);
 			domainService.createDomain(domainVo);
@@ -72,14 +72,14 @@ public class LDAPQueryServiceTest extends AbstractJUnit4SpringContextTests {
 
 	@Test
 	public void testGetUser() throws BusinessException {
-		User user = ldapQueryService.getUser("jvaljean", DOMAIN_IDENTIFIER, null);
-		Assert.assertEquals("jvaljean@nodomain.com", user.getMail());
+		User user = ldapQueryService.getUser("user1", DOMAIN_IDENTIFIER, null);
+		Assert.assertEquals("user1@linpki.org", user.getMail());
 	}
 
 	@Test
 	public void testGetAllDomainUsers() throws BusinessException {
 		List<User> users = ldapQueryService.getAllDomainUsers(DOMAIN_IDENTIFIER, null);
-		Assert.assertEquals(4, users.size());
+		Assert.assertEquals(2, users.size());
 	}
 
 	@Test
@@ -89,17 +89,17 @@ public class LDAPQueryServiceTest extends AbstractJUnit4SpringContextTests {
 
 	@Test
 	public void testAuth() throws BusinessException, NamingException, IOException {
-		boolean response = ldapQueryService.auth("rlaporte", "robert", DOMAIN_IDENTIFIER);
+		boolean response = ldapQueryService.auth("user1", "password1", DOMAIN_IDENTIFIER);
 		Assert.assertEquals(true, response);
-		response = ldapQueryService.auth("rlaporte", "robert2", DOMAIN_IDENTIFIER);
+		response = ldapQueryService.auth("user1", "bla", DOMAIN_IDENTIFIER);
 		Assert.assertEquals(false, response);
-		response = ldapQueryService.auth("rlaporte@nodomain.com", "robert", DOMAIN_IDENTIFIER);
+		response = ldapQueryService.auth("user1@linpki.org", "password1", DOMAIN_IDENTIFIER);
 		Assert.assertEquals(true, response);
 	}
 
 	@Test
 	public void testSearchUser() throws BusinessException {
-		List<User> users = ldapQueryService.searchUser("rla", null, null, DOMAIN_IDENTIFIER, null);
+		List<User> users = ldapQueryService.searchUser("er1", null, null, DOMAIN_IDENTIFIER, null);
 		Assert.assertEquals(1, users.size());
 	}
 
