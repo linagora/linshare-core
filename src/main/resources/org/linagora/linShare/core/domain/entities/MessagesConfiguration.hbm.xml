@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linShare.core.domain.entities">
+  <typedef class="org.linagora.linShare.core.repository.hibernate.type.GenericEnumType" name="userEnumType">
+    <param name="enumClass">org.linagora.linShare.core.domain.entities.UserType</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  <typedef class="org.linagora.linShare.core.repository.hibernate.type.GenericEnumType" name="languageEnumType">
+    <param name="enumClass">org.linagora.linShare.core.domain.constants.Language</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  <typedef class="org.linagora.linShare.core.repository.hibernate.type.GenericEnumType" name="mailTemplateEnumType">
+    <param name="enumClass">org.linagora.linShare.core.domain.constants.MailTemplateEnum</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  <typedef class="org.linagora.linShare.core.repository.hibernate.type.GenericEnumType" name="mailSubjectEnumType">
+    <param name="enumClass">org.linagora.linShare.core.domain.constants.MailSubjectEnum</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  <class name="MessagesConfiguration" table="MESSAGES_CONFIGURATION">
+    <id name="id" type="long">
+      <column name="MESSAGES_CONFIGURATION_ID" not-null="true"/>
+      <generator class="native"/>
+    </id>
+    <!-- id column="MESSAGES_CONFIGURATION_ID" name="id"/-->
+    <set name="welcomeTexts" table="WELCOME_TEXTS">
+      <key column="MESSAGES_CONFIGURATION_ID"/>
+      <composite-element class="WelcomeText">
+        <property column="WELCOME_TEXT" name="welcomeText" type="text"/>
+        <property column="USER_TYPE_ID" name="userType" type="userEnumType"/>
+        <property column="LANGUAGE_ID" name="language" type="languageEnumType"/>
+      </composite-element>
+    </set>
+    <set name="mailTemplates" table="MAIL_TEMPLATES">
+      <key column="MESSAGES_CONFIGURATION_ID"/>
+      <composite-element class="MailTemplate">
+        <property column="TEMPLATE_ID" name="mailTemplate" type="mailTemplateEnumType" not-null="true"/>
+        <property column="LANGUAGE_ID" name="language" type="languageEnumType" not-null="true"/>
+        <property column="CONTENT_HTML" name="contentHTML" type="text"/>
+        <property column="CONTENT_TXT" name="contentTXT" type="text"/>
+      </composite-element>
+    </set>
+    <set name="mailSubjects" table="MAIL_SUBJECTS">
+      <key column="MESSAGES_CONFIGURATION_ID"/>
+      <composite-element class="MailSubject">
+        <property column="SUBJECT_ID" name="mailSubject" type="mailSubjectEnumType" not-null="true"/>
+        <property column="LANGUAGE_ID" name="language" type="languageEnumType" not-null="true"/>      
+  	<property column="CONTENT" name="content" type="text"/>
+      </composite-element>
+    </set>
+  </class>
+</hibernate-mapping>

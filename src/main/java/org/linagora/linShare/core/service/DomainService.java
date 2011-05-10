@@ -15,6 +15,7 @@ public interface DomainService {
 	public LDAPConnection createLDAPConnection(LDAPConnectionVo ldapConnectionVo) throws BusinessException;
 	public LDAPConnection retrieveLDAPConnection(String identifier) throws BusinessException;
 	public Domain retrieveDomain(String identifier) throws BusinessException;
-	
+	public DomainPattern retrieveDomainPattern(String identifier) throws BusinessException;
+	public void deleteDomain(String identifier) throws BusinessException;
 
 }

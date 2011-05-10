@@ -54,5 +54,17 @@ public class DomainServiceImpl implements DomainService {
 	public Domain retrieveDomain(String identifier) throws BusinessException {
 		return domainRepository.findById(identifier);
 	}
+	
+	public DomainPattern retrieveDomainPattern(String identifier)
+			throws BusinessException {
+		return domainPatternRepository.findById(identifier);
+	}
+	
+	@Override
+	public void deleteDomain(String identifier) throws BusinessException {
+		Domain domain = domainRepository.findById(identifier);
+		domainRepository.delete(domain);
+		
+	}
 
 }
