@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.linagora.linShare.core.domain.constants.TimeUnit;
 
 public class Parameter implements Serializable {
@@ -53,9 +54,6 @@ public class Parameter implements Serializable {
     private String customLogoUrl;
 
     private List<ShareExpiryRule> shareExpiryRules;
-    private Set<WelcomeText> welcomeTexts;
-    private Set<MailTemplate> mailTemplates;
-    private Set<MailSubject> mailSubjects;
     
     
     private Boolean deleteDocWithShareExpiryTime;
@@ -63,6 +61,8 @@ public class Parameter implements Serializable {
     private Integer defaultShareExpiryTime;
     private TimeUnit defaultFileExpiryUnit;
     private Integer defaultFileExpiryTime;
+    
+    private MessagesConfiguration messagesConfiguration;
 
     public Parameter() {
     	this.fileSizeMax = null;
@@ -83,6 +83,7 @@ public class Parameter implements Serializable {
         this.deleteDocWithShareExpiryTime = false;
         this.defaultFileExpiryTime = null;
         this.defaultFileExpiryUnit = TimeUnit.DAY;
+        this.messagesConfiguration = new MessagesConfiguration();
     }
 
 	public Long getId() {
@@ -168,21 +169,6 @@ public class Parameter implements Serializable {
         Collections.sort(this.shareExpiryRules);
     }
 
-    public Set<WelcomeText> getWelcomeTexts() {
-        return welcomeTexts;
-    }
-
-    public void addWelcomeText(WelcomeText welcomeText) {
-        if (this.welcomeTexts == null) {
-            this.welcomeTexts = new HashSet<WelcomeText>();
-        }
-        welcomeTexts.add(welcomeText);
-    }
-
-    public void setWelcomeTexts(Set<WelcomeText> welcomeTexts) {
-        this.welcomeTexts = welcomeTexts;
-    }
-
     public String getCustomLogoUrl() {
         return customLogoUrl;
     }
@@ -214,36 +200,6 @@ public class Parameter implements Serializable {
 	public void setDeleteDocWithShareExpiryTime(Boolean deleteDocWithShareExpiryTime) {
 		this.deleteDocWithShareExpiryTime = deleteDocWithShareExpiryTime;
 	}
-
-	public void setMailTemplates(Set<MailTemplate> mailTemplates) {
-		this.mailTemplates = mailTemplates;
-	}
-
-	public Set<MailTemplate> getMailTemplates() {
-		return mailTemplates;
-	}
-
-    public void addMailTemplate(MailTemplate mailTemplate) {
-        if (this.mailTemplates == null) {
-            this.mailTemplates = new HashSet<MailTemplate>();
-        }
-        mailTemplates.add(mailTemplate);
-    }
-
-	public void setMailSubjects(Set<MailSubject> mailSubjects) {
-		this.mailSubjects = mailSubjects;
-	}
-
-	public Set<MailSubject> getMailSubjects() {
-		return mailSubjects;
-	}
-
-    public void addMailSubject(MailSubject mailSubject) {
-        if (this.mailSubjects == null) {
-            this.mailSubjects = new HashSet<MailSubject>();
-        }
-        mailSubjects.add(mailSubject);
-    }
 
     public void setDefaultFileExpiryTime(Integer defaultFileExpiryTime) {
 		this.defaultFileExpiryTime = defaultFileExpiryTime;
@@ -284,6 +240,15 @@ public class Parameter implements Serializable {
     public Boolean getGlobalQuotaActive() {
 		return globalQuotaActive;
 	}
+    
+    public void setMessagesConfiguration(
+			MessagesConfiguration messagesConfiguration) {
+		this.messagesConfiguration = messagesConfiguration;
+	}
+    
+    public MessagesConfiguration getMessagesConfiguration() {
+		return messagesConfiguration;
+	}
 	
 	@Override
     public boolean equals(Object o1){
@@ -302,4 +267,37 @@ public class Parameter implements Serializable {
     public int hashCode(){
     	return new Long(this.id).hashCode();
     }
+
+	public Set<WelcomeText> getWelcomeTexts() {
+		return messagesConfiguration.getWelcomeTexts();
+	}
+
+	public Set<MailTemplate> getMailTemplates() {
+		return messagesConfiguration.getMailTemplates();
+	}
+
+	public Set<MailSubject> getMailSubjects() {
+		return messagesConfiguration.getMailSubjects();
+	}
+
+	public void addWelcomeText(WelcomeText welcomeText) {
+		if (messagesConfiguration.getWelcomeTexts() == null) {
+			messagesConfiguration.setWelcomeTexts(new HashSet<WelcomeText>());
+		}
+		messagesConfiguration.addWelcomeText(welcomeText);
+	}
+
+	public void addMailTemplate(MailTemplate mailTemplate) {
+		if (messagesConfiguration.getMailTemplates() == null) {
+			messagesConfiguration.setMailTemplates(new HashSet<MailTemplate>());
+		}
+		messagesConfiguration.addMailTemplate(mailTemplate);
+	}
+
+	public void addMailSubject(MailSubject mailSubject) {
+		if (messagesConfiguration.getMailSubjects() == null) {
+			messagesConfiguration.setMailSubjects(new HashSet<MailSubject>());
+		}
+		messagesConfiguration.addMailSubject(mailSubject);
+	}
 }
