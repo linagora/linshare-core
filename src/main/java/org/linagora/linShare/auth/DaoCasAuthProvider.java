@@ -59,13 +59,13 @@ public class DaoCasAuthProvider implements UserDetailsService {
         String password = "";
         
         //if username is uid as a login and not an email
-        if(username.indexOf("@")==-1 ){  	
-        	userVo = userFacade.findUserFromLdapwithUid(username);
-        	if(userVo==null) throw new UsernameNotFoundException("User not found with uid"+username);
-        }  else {
-        	//username (login) is email
-        	userVo = userFacade.findUser(username);
-        }
+//        if(username.indexOf("@")==-1 ){  	
+//        	userVo = userFacade.findUserFromLdapwithUid(username);
+//        	if(userVo==null) throw new UsernameNotFoundException("User not found with uid"+username);
+//        }  else {
+//        	//username (login) is email
+//        	userVo = userFacade.findUser(username);
+//        }
         
 
         if (userVo == null || password == null || Role.SYSTEM.equals(userVo.getRole())) {

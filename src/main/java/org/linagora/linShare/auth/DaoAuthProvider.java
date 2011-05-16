@@ -22,9 +22,11 @@ package org.linagora.linShare.auth;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -50,7 +52,12 @@ public class DaoAuthProvider implements UserDetailsService {
             throw new UsernameNotFoundException("username must not be null");
         }
 
-        UserVo userVo = userFacade.findUser(username);
+        UserVo userVo;
+		try {
+			userVo = userFacade.findUser(username, null);
+		} catch (BusinessException e) {
+			throw new UsernameNotFoundException("Could not load user from DB: "+username, e);
+		}
         String password = userFacade.getPassword(username);
         if (userVo!=null &&  !userVo.isGuest() && password==null) password=""; //si utilisateur ldap
 

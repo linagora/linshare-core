@@ -12,7 +12,10 @@
     <param name="valueOfMethod">fromInt</param>
   </typedef>
   <class name="Parameter" table="PARAMETER">
-    <id column="PARAMETER_ID" name="id"/>
+    <id column="parameter_id" name="id">
+      <generator class="native"/>
+    </id>
+    <property access="field" column="identifier" index="index_parameter_identifier" name="identifier" not-null="true" unique="true"/>
     <property column="FILE_SIZE_MAX" name="fileSizeMax"/>
     <property column="USER_AVAILABLE_SIZE" name="userAvailableSize"/>
     <property column="GLOBAL_QUOTA" name="globalQuota"/>

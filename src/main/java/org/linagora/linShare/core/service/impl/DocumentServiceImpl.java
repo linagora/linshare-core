@@ -48,6 +48,7 @@ import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.core.domain.entities.MailContainer;
@@ -71,6 +72,7 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.MimeTypeService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.TimeStampingService;
@@ -82,6 +84,8 @@ import org.semanticdesktop.aperture.util.IOUtil;
 
 
 public class DocumentServiceImpl implements DocumentService {
+	
+	private final DomainService domainService;
 
 	private final DocumentRepository documentRepository;
 
@@ -118,7 +122,8 @@ public class DocumentServiceImpl implements DocumentService {
 			final LogEntryRepository logEntryRepository,
 			final VirusScannerService virusScannerService,
 			final TimeStampingService timeStampingService,
-			final ShareTransformer shareTransformer) {
+			final ShareTransformer shareTransformer,
+			final DomainService domainService) {
 		this.documentRepository = documentRepository;
 		this.fileSystemDao = fileSystemDao;
 		this.userRepository = userRepository;
@@ -130,6 +135,7 @@ public class DocumentServiceImpl implements DocumentService {
 		this.virusScannerService = virusScannerService;
 		this.timeStampingService = timeStampingService;
 		this.shareTransformer = shareTransformer;
+		this.domainService = domainService;
 	}
 
 	/**
@@ -163,6 +169,8 @@ public class DocumentServiceImpl implements DocumentService {
 			String fileName, String mimeType, User owner)
 			throws BusinessException {
 		
+		Domain domain = domainService.retrieveDomain(owner.getDomain().getIdentifier());
+		
 		boolean putwarning =  false;
 		
 
@@ -182,7 +190,7 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 
 		// check if the file MimeType is allowed
-		if (parameterRepository.loadConfig().getActiveMimeType()) {
+		if (domain.getParameter() != null) {
 			// use mimetype filtering
 			if (log.isDebugEnabled()) {
 				log.debug("2)check the type mime:" + mimeType);
@@ -268,7 +276,7 @@ public class DocumentServiceImpl implements DocumentService {
 		
 		boolean aesencrypted = false;
 		//aes encrypt ? check headers
-		if (parameterRepository.loadConfig().getActiveEncipherment()) {
+		if (domain.getParameter().getActiveEncipherment()) {
 			if(fileName.endsWith(".aes")){
 				
 				boolean testheaders = false;
@@ -322,7 +330,7 @@ public class DocumentServiceImpl implements DocumentService {
 		
 		byte[] timestampToken = null;
 		// want a timestamp on doc ?
-		if (parameterRepository.loadConfig().getActiveDocTimeStamp()) {
+		if (domain.getParameter().getActiveDocTimeStamp()) {
 			
 			FileInputStream fis = null;
 			
@@ -415,7 +423,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 			logEntryRepository.create(logEntry);
 			
-			addDocSizeToGlobalUsedQuota(docEntity);
+			addDocSizeToGlobalUsedQuota(docEntity, domain.getParameter());
 
 		} catch (BusinessException e) {
 			log.error("Could not add  " + fileName + " to user "
@@ -439,9 +447,8 @@ public class DocumentServiceImpl implements DocumentService {
 		return docEntity;
 	}
 
-	private void addDocSizeToGlobalUsedQuota(Document docEntity)
+	private void addDocSizeToGlobalUsedQuota(Document docEntity, Parameter param)
 			throws BusinessException {
-		Parameter param = parameterRepository.loadConfig();
 		long newUsedQuota = param.getUsedQuota() + docEntity.getSize();
 		param.setUsedQuota(newUsedQuota);
 		parameterRepository.update(param);
@@ -631,9 +638,11 @@ public class DocumentServiceImpl implements DocumentService {
 		logEntryRepository.create(logEntry);
 	}
 
-	public long getAvailableSize(User user) {
+	public long getAvailableSize(User user) throws BusinessException {
 		
-		Parameter param = parameterRepository.loadConfig();
+		Domain domain = domainService.retrieveDomain(user.getDomain().getIdentifier());
+		
+		Parameter param = domain.getParameter();
 		
 		if (param.getGlobalQuotaActive()) {
 			long availableSize = param.getGlobalQuota().longValue() - param.getUsedQuota().longValue();
@@ -660,9 +669,11 @@ public class DocumentServiceImpl implements DocumentService {
 
 	}
 
-	public long getTotalSize(User user) {
+	public long getTotalSize(User user) throws BusinessException {
 		
-		Parameter param = parameterRepository.loadConfig();
+		Domain domain = domainService.retrieveDomain(user.getDomain().getIdentifier());
+		
+		Parameter param = domain.getParameter();
 		
 		if (param.getGlobalQuotaActive()) {
 			return param.getUsedQuota();
@@ -697,7 +708,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 				userRepository.update(owner);
 				
-				removeDocSizeFromGlobalUsedQuota(docSize);
+				removeDocSizeFromGlobalUsedQuota(docSize, owner.getDomain());
 
 				if (!Reason.INCONSISTENCY.equals(causeOfDeletion)) {
 					// If the reason of the delete is inconsistency, the
@@ -740,9 +751,9 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 	}
 
-	private void removeDocSizeFromGlobalUsedQuota(long docSize)
+	private void removeDocSizeFromGlobalUsedQuota(long docSize, Domain domain)
 			throws BusinessException {
-		Parameter param = parameterRepository.loadConfig();
+		Parameter param = domain.getParameter();
 		long newUsedQuota = param.getUsedQuota() - docSize;
 		param.setUsedQuota(newUsedQuota);
 		parameterRepository.update(param);

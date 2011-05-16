@@ -22,7 +22,6 @@
         <constructor-arg ref="jackRabbitRepository"/>
         <constructor-arg value="${linshare.secured-storage.disallow}" />
         <constructor-arg value="${linshare.secured-storage.disallowed.job.file-cleaner.activate}" />
-        <constructor-arg ref="parameterRepository" />
         <constructor-arg ref="notifierService" />
         <constructor-arg ref="mailContentBuildingService" />
     </bean>

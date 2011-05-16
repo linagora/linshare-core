@@ -40,14 +40,14 @@ public interface RecipientFavouriteFacade {
 	 * @param owner the owner having the favourites.
 	 * @return recipients all recipients associated to the owner ordered by point in descendant way.
 	 */
-	public List<String> allRecipientsOrderedByWeightDesc(UserVo owner);
+	public List<String> allRecipientsOrderedByWeightDesc(UserVo owner) throws BusinessException;
 	
 	/**
 	 * Give all recipients associated to the owner ordered by point in descendant way.
 	 * @param recipients to reordered (UserVo form).
 	 * @return recipients all recipients associated to the owner ordered by point in descendant way (UserVo form).
 	 */
-	public List<UserVo> recipientsOrderedByWeightDesc(List<UserVo> recipients,UserVo owner);
+	public List<UserVo> recipientsOrderedByWeightDesc(List<UserVo> recipients,UserVo owner) throws BusinessException;
 
 	/**
 	 * find all user's recipients of his sharing process. 
@@ -56,5 +56,5 @@ public interface RecipientFavouriteFacade {
 	 * @param owner owner of the recipient
 	 * @return list of favorite user
 	 */
-	public List<UserVo> findRecipientFavorite(String matchStartWith,UserVo owner);
+	public List<UserVo> findRecipientFavorite(String matchStartWith,UserVo owner) throws BusinessException;
 }

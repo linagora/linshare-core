@@ -25,7 +25,6 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linShare.core.domain.entities.Parameter;
-import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -37,25 +36,18 @@ public class ParameterRepositoryImpl extends AbstractRepositoryImpl<Parameter> i
 
     @Override
     protected DetachedCriteria getNaturalKeyCriteria(Parameter param) {
-        DetachedCriteria det = DetachedCriteria.forClass(Parameter.class).add(Restrictions.eq("id", param.getId()));
+        DetachedCriteria det = DetachedCriteria.forClass(Parameter.class).add(Restrictions.eq("identifier", param.getIdentifier()));
         return det;
     }
 
-	public Parameter loadConfig() {
+	public Parameter loadConfig(String identifier) {
 		
-		Parameter p = null;
+		List<Parameter> paramsinDb = findByCriteria(Restrictions.eq("identifier", identifier));
 		
-		List<Parameter> paramsinDb = findByCriteria(Restrictions.eq("id", Parameter.CONSTANT_KEY_ID));
-		
-		if(paramsinDb!=null && paramsinDb.size()>0) 
-		p = paramsinDb.get(0);
-		else p = new Parameter();
-		
-		return p;
-	}
-	
-	public void createConfig(Parameter params) throws  BusinessException {
-		getHibernateTemplate().saveOrUpdate(params);
+		if (paramsinDb != null && paramsinDb.size() == 1) {
+			return paramsinDb.get(0);
+		}
+		return null;
 	}
 
 } 

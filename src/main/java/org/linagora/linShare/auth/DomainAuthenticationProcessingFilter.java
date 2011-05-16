@@ -18,17 +18,19 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linShare.core.service;
+package org.linagora.linShare.auth;
 
-import org.linagora.linShare.core.domain.entities.Parameter;
-import org.linagora.linShare.core.exception.BusinessException;
+import javax.servlet.http.HttpServletRequest;
 
-/**
- * admin parameters for application
- * @author slevesque
- *
- */
-public interface ParameterService {
-	public Parameter loadConfig(String identifier);
-	public Parameter saveOrUpdate(Parameter params) throws BusinessException;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
+
+public class DomainAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
+	
+	@Override
+	protected void setDetails(HttpServletRequest request,
+			UsernamePasswordAuthenticationToken authRequest) {
+		authRequest.setDetails(request.getParameter("domain"));
+	}
+
 }

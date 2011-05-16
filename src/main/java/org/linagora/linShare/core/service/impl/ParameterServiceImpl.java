@@ -41,12 +41,20 @@ public class ParameterServiceImpl implements ParameterService {
     }
 
 
-	public void createConfig(Parameter params) throws BusinessException {
-		parameterRepository.createConfig(params);
+	public Parameter saveOrUpdate(Parameter params) throws BusinessException {
+		//TODO sorry can't find out why saveOrUpdate is not working, weird hibernate error...
+		Parameter param = loadConfig(params.getIdentifier());
+		if (param == null) {
+			param = parameterRepository.create(params);
+		} else {
+			param.updateFrom(params);
+			param = parameterRepository.update(param);
+		}
+		return param;
 	}
 
 
-	public Parameter loadConfig()  {
-		return parameterRepository.loadConfig();
+	public Parameter loadConfig(String identifier)  {
+		return parameterRepository.loadConfig(identifier);
 	}
 }

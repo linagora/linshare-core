@@ -7,7 +7,8 @@
     </id>
     <property access="field" column="identifier" index="index_domain_identifier" name="identifier" not-null="true" unique="true"/>
     <property access="field" column="differential_key" name="differentialKey"/>
-    <many-to-one lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.DomainPattern" column="domain_pattern_id_fk" name="pattern" not-null="true"/>
-    <many-to-one lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.LDAPConnection" column="ldap_connection_id_fk" name="ldapConnection" not-null="true"/>
+    <many-to-one lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.DomainPattern" column="domain_pattern_id" name="pattern" not-null="true"/>
+    <many-to-one lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.LDAPConnection" column="ldap_connection_id" name="ldapConnection" not-null="true"/>
+    <many-to-one lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.Parameter" column="parameter_id" name="parameter" not-null="true"/>
   </class>
 </hibernate-mapping>

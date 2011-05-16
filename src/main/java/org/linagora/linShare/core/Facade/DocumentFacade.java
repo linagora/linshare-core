@@ -143,7 +143,7 @@ public interface DocumentFacade {
 	 * @param user
 	 * @return
 	 */
-	public Long getUserAvailableQuota(UserVo user);
+	public Long getUserAvailableQuota(UserVo user) throws BusinessException;
 	
 	
 	/**
@@ -151,14 +151,14 @@ public interface DocumentFacade {
 	 * @param user
 	 * @return
 	 */
-	public Long getUserTotalQuota(UserVo user);
+	public Long getUserTotalQuota(UserVo user) throws BusinessException;
 	
 	/**
 	 * Return the occupation of accounts statistics
 	 * @param criteria
 	 * @return
 	 */
-	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria);
+	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) throws BusinessException;
 	
 	/**
 	 * to update document content without change properties

@@ -26,33 +26,42 @@ import java.util.List;
 
 import org.linagora.linShare.core.Facade.ShareExpiryDateFacade;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.repository.DocumentRepository;
+import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.ShareExpiryDateService;
 
 public class ShareExpiryDateFacadeImpl implements ShareExpiryDateFacade {
 
 	private final DocumentRepository documentRepository;
 	private final ShareExpiryDateService shareExpiryDateService;
+	private final UserRepository<User> userRepository;
 	
 	public ShareExpiryDateFacadeImpl(final DocumentRepository documentRepository,
-			final ShareExpiryDateService shareExpiryDateService) {
+			final ShareExpiryDateService shareExpiryDateService,
+			final UserRepository<User> userRepository) {
 		super();
 		this.documentRepository = documentRepository;
 		this.shareExpiryDateService = shareExpiryDateService;
+		this.userRepository = userRepository;
 	}
 
-	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo) {
+	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo, UserVo ownerVo) {
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
+		
 		List<Document> docList = new ArrayList<Document>();
 		for (DocumentVo documentVo : docsVo) {
 			docList.add(documentRepository.findById(documentVo.getIdentifier()));
 		}
-		return shareExpiryDateService.computeMinShareExpiryDateOfList(docList);
+		return shareExpiryDateService.computeMinShareExpiryDateOfList(docList, owner);
 	}
 
-	public Calendar computeShareExpiryDate(DocumentVo docVo) {
+	public Calendar computeShareExpiryDate(DocumentVo docVo, UserVo ownerVo) {
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
 		Document document = documentRepository.findById(docVo.getIdentifier());
-		return shareExpiryDateService.computeShareExpiryDate(document);
+		return shareExpiryDateService.computeShareExpiryDate(document, owner);
 	}
 
 }
