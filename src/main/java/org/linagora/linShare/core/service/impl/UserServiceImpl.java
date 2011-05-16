@@ -56,6 +56,7 @@ import org.linagora.linShare.core.repository.AllowedContactRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.GroupService;
 import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
@@ -98,6 +99,8 @@ public class UserServiceImpl implements UserService {
     private final FileSystemDao fileSystemDao;
     
     private final LDAPQueryService ldapQueryService;
+    
+    private final DomainService domainService;
 
     /** Constructor.
      * @param userRepository repository.
@@ -114,7 +117,8 @@ public class UserServiceImpl implements UserService {
     		final MailContentBuildingService mailElementsFactory,
     		final GroupService groupService,
     		final FileSystemDao fileSystemDao,
-    		final LDAPQueryService ldapQueryService) {
+    		final LDAPQueryService ldapQueryService,
+    		final DomainService domainService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.logEntryRepository = logEntryRepository;
@@ -126,6 +130,7 @@ public class UserServiceImpl implements UserService {
 		this.groupService = groupService;
 		this.fileSystemDao = fileSystemDao;
 		this.ldapQueryService = ldapQueryService;
+		this.domainService = domainService;
     }
 
     /** Create a guest.
@@ -208,12 +213,15 @@ public class UserServiceImpl implements UserService {
      */ 
     public User findAndCreateUser(String mail, String domainId) throws BusinessException {
         User user = userRepository.findByMail(mail);
-        if (user == null) {
+        if (user == null && domainId != null) {
             List<User> users = ldapQueryService.searchUser(mail, "", "", domainId, null);
             if (users!=null && users.size()==1) {
             	user = users.get(0);
             	try {
-					userRepository.create(user);
+					User created = userRepository.create(user);
+					Domain domain = domainService.retrieveDomain(domainId);
+					created.setDomain(domain);
+					user = userRepository.update(created);
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not create the user " + user.getLogin()+" in the database ", e);
 					throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user could not be created in the DB " + e);
@@ -227,6 +235,7 @@ public class UserServiceImpl implements UserService {
             	throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user could not be found in the DB nor in the LDAP");
             }
         }
+        System.out.println("creating user with domain : "+user.getDomain().getIdentifier());
         return user;
     }
     

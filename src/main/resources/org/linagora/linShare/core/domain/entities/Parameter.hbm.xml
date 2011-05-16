@@ -30,6 +30,10 @@
     <property column="CUSTOM_LOGO_URL" name="customLogoUrl"/>
     <property column="DEFAULT_EXPIRY_TIME" name="defaultShareExpiryTime"/>
     <property column="DELETE_DOC_EXPIRY_TIME" name="deleteDocWithShareExpiryTime"/>
+    <property column="CLOSED_DOMAIN" name="closedDomain" type="boolean"/>
+    <property column="RESTRICTED_DOMAIN" name="restrictedDomain" type="boolean"/>
+    <property column="DOMAIN_WITH_GUESTS" name="domainWithGuests" type="boolean"/>
+    <property column="GUEST_CAN_CREATE_OTHER" name="guestCanCreateOther" type="boolean"/>
     
     <property column="DEFAULT_EXPIRY_TIME_UNIT_ID" name="defaultShareExpiryUnit" type="timeUnitEnumType"/>
     <list name="shareExpiryRules" table="SHARE_EXPIRY_RULES">

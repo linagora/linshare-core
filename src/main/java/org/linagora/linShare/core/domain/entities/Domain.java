@@ -72,5 +72,10 @@ public class Domain {
 	public Parameter getParameter() {
 		return parameter;
 	}
+	
+	@Override
+	public String toString() {
+		return "[Domain with id: "+identifier+"]";
+	}
 
 }

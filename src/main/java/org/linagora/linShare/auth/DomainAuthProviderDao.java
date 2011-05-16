@@ -20,15 +20,22 @@
 */
 package org.linagora.linShare.auth;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.NamingException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.core.service.UserService;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.AuthenticationException;
 import org.springframework.security.AuthenticationServiceException;
 import org.springframework.security.BadCredentialsException;
@@ -42,6 +49,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 	
 	private LDAPQueryService ldapQueryService;
 	private UserService userService;
+	private DomainService domainService;
 	
     private final static Log logger = LogFactory.getLog(DomainAuthProviderDao.class);
 	
@@ -51,6 +59,10 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
+	}
+	
+	public void setDomainService(DomainService domainService) {
+		this.domainService = domainService;
 	}
 
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
@@ -66,18 +78,70 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		String password = (String)authentication.getCredentials();
 		String domain = (String)authentication.getDetails();
 		User user = null;
+		User foundUser = null;		
 		
+		// domain was specified
+		if (domain != null) {
+			try {
+				foundUser = ldapQueryService.auth(login, password, domain);
+				if(foundUser == null) {
+				      throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
+				          "Bad credentials"), domain);
+				} 
+			} catch (Exception e) {
+				logger.error("Could not authenticate user: "+login, e);
+				throw new AuthenticationServiceException("Could not authenticate user: "+login, e);
+			}
+		}
+		
+		/* 
+		 * if the domain is not specified (invisible domains), we try to
+		 * find the user in the DB to know its domain.
+		 * if we can't find it (first login), we search all the domains.
+		 * in the case of invisible domains, the user has to provide
+		 * its email address and not LDAP uid to log in. 
+		 */
+		if (domain == null && username.indexOf("@") != -1) {
+			try {
+				foundUser = userService.findUser(username, null);
+				if (foundUser == null) {
+					List<Domain> domains = domainService.findAllDomains();
+					for (Domain loopedDomain : domains) {
+						try {
+							foundUser = ldapQueryService.auth(login, password, loopedDomain.getIdentifier());
+							if (foundUser != null) {
+								domain = loopedDomain.getIdentifier();
+								System.out.println("User found in domain "+domain);
+								break;
+							}
+						} catch (NameNotFoundException e) {
+							// just not found in this domain
+						} catch (IOException e) {
+							//TLS negociation problem
+							logger.error(e);
+						} catch (NamingException e) {
+							logger.error(e);
+						}
+					}
+				}
+			} catch (BusinessException e) {
+				// cannot be because throwed when domain != null
+				logger.error(e);
+			}
+		}
+		
+		// invisible domain and user not found (uid login or found in no domain)
+		if (foundUser == null && domain == null) {
+			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
+	          "Bad credentials, no domain specified and user found in no domain"), domain);
+		}
+
+		// invisible domain and user found or visible domain and user found
 		try {
-			User foundUser = ldapQueryService.auth(login, password, domain);
-			if(foundUser == null) {
-			      throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-			          "Bad credentials"), domain);
-			 } else {
-				 user = userService.findAndCreateUser(foundUser.getMail(), domain);
-			 }
-		} catch (Exception e) {
-			logger.error("Could not authenticate user: "+login, e);
-			throw new AuthenticationServiceException("Could not authenticate user: "+login, e);
+			user = userService.findAndCreateUser(foundUser.getMail(), domain);
+		} catch (BusinessException e) {
+			logger.error(e);
+			throw new AuthenticationServiceException("Could not create user account: "+foundUser.getMail(), e);
 		}
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();

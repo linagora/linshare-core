@@ -49,6 +49,11 @@ public class ParameterVo implements Serializable {
 	private final Boolean activeEncipherment;
 	private final Boolean activeDocTimeStamp;
 	
+	private final Boolean closedDomain;
+	private final Boolean restrictedDomain;
+	private final Boolean domainWithGuests;
+	private final Boolean guestCanCreateOther;
+	
     private final Integer guestAccountExpiryTime;
     private final TimeUnit guestAccountExpiryUnit;
     private final String customLogoUrl;
@@ -66,7 +71,7 @@ public class ParameterVo implements Serializable {
     private Set<MailSubject> mailSubjects;
 
 	public ParameterVo() {
-		this(null,null, null, null, null, false, false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null);
+		this(null,null, null, null, null, false, false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null, false, false, false, false);
 	}
 
 	public ParameterVo(String identifier, Long fileSizeMax, Long userAvailableSize, 
@@ -77,7 +82,8 @@ public class ParameterVo implements Serializable {
 		TimeUnit defaultShareExpiryUnit, Integer defaultShareExpiryTime,
 		TimeUnit defaultFileExpiryUnit, Integer defaultFileExpiryTime,
         List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, 
-        Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects) {
+        Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects,
+        Boolean closedDomain, Boolean restrictedDomain, Boolean domainWithGuests, Boolean guestCanCreateOther) {
 		this.identifier = identifier;
 		this.fileSizeMax = fileSizeMax;
 		this.userAvailableSize = userAvailableSize;
@@ -100,6 +106,10 @@ public class ParameterVo implements Serializable {
         this.deleteDocWithShareExpiryTime = deleteDocWithShareExpiryTime;
         this.mailTemplates = mailTemplates;
         this.mailSubjects = mailSubjects;
+		this.closedDomain=closedDomain;
+		this.restrictedDomain=restrictedDomain;
+		this.domainWithGuests=domainWithGuests;
+		this.guestCanCreateOther=guestCanCreateOther;
 	}
 
     public ParameterVo(Parameter parameter) {
@@ -148,6 +158,10 @@ public class ParameterVo implements Serializable {
         
         this.defaultShareExpiryUnit = parameter.getDefaultShareExpiryUnit();
         this.defaultShareExpiryTime = parameter.getDefaultShareExpiryTime();
+		this.closedDomain=parameter.getClosedDomain();
+		this.restrictedDomain=parameter.getRestrictedDomain();
+		this.domainWithGuests=parameter.getDomainWithGuests();
+		this.guestCanCreateOther=parameter.getGuestCanCreateOther();
     }
 
 	public Long getFileSizeMax() {
@@ -290,5 +304,21 @@ public class ParameterVo implements Serializable {
 	
 	public String getIdentifier() {
 		return identifier;
+	}
+	
+	public Boolean getClosedDomain() {
+		return closedDomain;
+	}
+	
+	public Boolean getDomainWithGuests() {
+		return domainWithGuests;
+	}
+	
+	public Boolean getGuestCanCreateOther() {
+		return guestCanCreateOther;
+	}
+	
+	public Boolean getRestrictedDomain() {
+		return restrictedDomain;
 	}
 }

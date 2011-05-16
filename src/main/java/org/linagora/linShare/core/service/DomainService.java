@@ -19,6 +19,7 @@ public interface DomainService {
 	public Domain retrieveDomain(String identifier) throws BusinessException;
 	public DomainPattern retrieveDomainPattern(String identifier) throws BusinessException;
 	public void deleteDomain(String identifier) throws BusinessException;
-	public List<String> getAllDomainIdentifiers() throws BusinessException;;
+	public List<String> getAllDomainIdentifiers() throws BusinessException;
+	public List<Domain> findAllDomains() throws BusinessException;
 
 }

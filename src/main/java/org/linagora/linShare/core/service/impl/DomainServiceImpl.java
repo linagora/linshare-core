@@ -77,5 +77,9 @@ public class DomainServiceImpl implements DomainService {
 	public List<String> getAllDomainIdentifiers() throws BusinessException {
 		return domainRepository.findAllIdentifiers();
 	}
+	
+	public List<Domain> findAllDomains() throws BusinessException {
+		return domainRepository.findAll();
+	}
 
 }
