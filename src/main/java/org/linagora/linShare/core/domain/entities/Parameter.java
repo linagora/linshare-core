@@ -49,6 +49,11 @@ public class Parameter implements Serializable {
 	private Boolean activeEncipherment;
 	private Boolean activeDocTimeStamp;
 	
+	private Boolean closedDomain;
+	private Boolean restrictedDomain;
+	private Boolean domainWithGuests;
+	private Boolean guestCanCreateOther;
+	
     private Integer guestAccountExpiryTime;
     private TimeUnit guestAccountExpiryUnit;
     private String customLogoUrl;
@@ -75,6 +80,10 @@ public class Parameter implements Serializable {
 		this.activeSignature = false;
 		this.activeEncipherment = false;
 		this.activeDocTimeStamp=false;
+		this.closedDomain=false;
+		this.restrictedDomain=false;
+		this.domainWithGuests=false;
+		this.guestCanCreateOther=false;
         this.customLogoUrl = null;
         this.guestAccountExpiryTime = null;
         this.guestAccountExpiryUnit = TimeUnit.DAY;
@@ -94,7 +103,8 @@ public class Parameter implements Serializable {
 		TimeUnit defaultShareExpiryUnit, Integer defaultShareExpiryTime,
 		TimeUnit defaultFileExpiryUnit, Integer defaultFileExpiryTime,
         List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, 
-        Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects) {
+        Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects,
+        Boolean closedDomain, Boolean restrictedDomain, Boolean domainWithGuests, Boolean guestCanCreateOther) {
 		this.identifier = identifier;
 		this.fileSizeMax = fileSizeMax;
 		this.userAvailableSize = userAvailableSize;
@@ -118,6 +128,10 @@ public class Parameter implements Serializable {
         this.messagesConfiguration.setMailSubjects(mailSubjects);
         this.messagesConfiguration.setMailTemplates(mailTemplates);
         this.messagesConfiguration.setWelcomeTexts(welcomeTexts);
+		this.closedDomain=closedDomain;
+		this.restrictedDomain=restrictedDomain;
+		this.domainWithGuests=domainWithGuests;
+		this.guestCanCreateOther=guestCanCreateOther;
 	}
 
     public void updateFrom(ParameterVo parameter) {
@@ -166,6 +180,10 @@ public class Parameter implements Serializable {
         
         this.defaultShareExpiryUnit = parameter.getDefaultShareExpiryUnit();
         this.defaultShareExpiryTime = parameter.getDefaultShareExpiryTime();
+		this.closedDomain=parameter.getClosedDomain();
+		this.restrictedDomain=parameter.getRestrictedDomain();
+		this.domainWithGuests=parameter.getDomainWithGuests();
+		this.guestCanCreateOther=parameter.getGuestCanCreateOther();
     }
 
     public void updateFrom(Parameter parameter) {
@@ -214,6 +232,10 @@ public class Parameter implements Serializable {
         
         this.defaultShareExpiryUnit = parameter.getDefaultShareExpiryUnit();
         this.defaultShareExpiryTime = parameter.getDefaultShareExpiryTime();
+		this.closedDomain=parameter.getClosedDomain();
+		this.restrictedDomain=parameter.getRestrictedDomain();
+		this.domainWithGuests=parameter.getDomainWithGuests();
+		this.guestCanCreateOther=parameter.getGuestCanCreateOther();
     }
 	
 	public String getIdentifier() {
@@ -434,4 +456,38 @@ public class Parameter implements Serializable {
 		}
 		messagesConfiguration.addMailSubject(mailSubject);
 	}
+
+	public Boolean getClosedDomain() {
+		return closedDomain;
+	}
+
+	public void setClosedDomain(Boolean closedDomain) {
+		this.closedDomain = closedDomain;
+	}
+
+	public Boolean getRestrictedDomain() {
+		return restrictedDomain;
+	}
+
+	public void setRestrictedDomain(Boolean restrictedDomain) {
+		this.restrictedDomain = restrictedDomain;
+	}
+
+	public Boolean getDomainWithGuests() {
+		return domainWithGuests;
+	}
+
+	public void setDomainWithGuests(Boolean domainWithGuests) {
+		this.domainWithGuests = domainWithGuests;
+	}
+
+	public Boolean getGuestCanCreateOther() {
+		return guestCanCreateOther;
+	}
+
+	public void setGuestCanCreateOther(Boolean guestCanCreateOther) {
+		this.guestCanCreateOther = guestCanCreateOther;
+	}
+	
+	
 }

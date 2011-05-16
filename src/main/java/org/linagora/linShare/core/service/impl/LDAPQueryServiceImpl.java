@@ -16,6 +16,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.ldap.JScriptEvaluator;
+import org.springframework.ldap.NameNotFoundException;
 
 public class LDAPQueryServiceImpl implements LDAPQueryService {
 	
@@ -35,8 +36,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		params.put("userId", userId);
 		params.put("domain", domain.getDifferentialKey());
 		Map<String, List<String>> retMap = JScriptEvaluator.evalToEntryMap(domain, command, params);
-		System.out.println(retMap);
-		System.out.println("----------");
+//		System.out.println(retMap);
+//		System.out.println("----------");
 		// tableau de correspondance entre attribut LDAP retourné et attribut de l'objet user
 		String[] keys = domain.getPattern().getGetUserResult().split(" ");
 		User user = mapToUser(retMap, keys, domain);
@@ -73,9 +74,14 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		params.put("login", login);
 		params.put("domain", domain.getDifferentialKey());
 		List<String> retList = JScriptEvaluator.evalToStringList(domain, command, params);
-		System.out.println(retList);
-		System.out.println("----------");
-		System.out.println(userPasswd);
+//		System.out.println(retList);
+//		System.out.println("----------");
+//		System.out.println(userPasswd);
+		
+		if (retList == null || retList.size() < 1) {
+			throw new NameNotFoundException("No user found for login: "+login+" and domain: "+domainId);
+		}
+		
 		// tableau de correspondance entre attribut LDAP retourné et attribut de l'objet user
 		String dn = retList.get(0);
 		if(JScriptEvaluator.auth(userPasswd, dn, domain)) {
@@ -91,7 +97,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		
 		Domain domain = domainService.retrieveDomain(domainId);
 		String command = domain.getPattern().getSearchUserCommand();
-		System.out.println(command);
+//		System.out.println(command);
 		Map<String, Object> params = new HashMap<String, Object>();
 		mail = toStarredString(mail);
 		firstName = toStarredString(firstName);
@@ -116,9 +122,9 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	private List<User> dnListToUsersList(Domain domain, List<String> ret) {
-		System.out.println(ret);
+//		System.out.println(ret);
 		String[] keys = domain.getPattern().getGetUserResult().split(" ");
-		System.out.println(Arrays.asList(keys));
+//		System.out.println(Arrays.asList(keys));
 		List<User> users = new ArrayList<User>();
 		for (String string : ret) {
 			User user = dnToUser(domain, keys, string);
@@ -132,7 +138,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		Map<String, Object> unitParams = new HashMap<String, Object>();
 		unitParams.put("dn", string);
 		Map<String, List<String>> retMap = JScriptEvaluator.evalToEntryMap(domain, unitCommand, unitParams);
-		System.out.println(retMap);
+//		System.out.println(retMap);
 		User user = mapToUser(retMap, keys, domain);
 		return user;
 	}

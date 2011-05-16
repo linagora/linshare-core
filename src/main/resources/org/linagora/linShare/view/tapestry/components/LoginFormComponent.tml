@@ -14,6 +14,14 @@
 				<input id="login" type="text" name="login" title="${message:pages.login.form.loginLabel}"/>
 			<label for="password">${message:pages.login.form.passwordLabel}</label>
 				<input id="password" type="password" name="password" title="${message:pages.login.form.passwordLabel}"/>
+			<t:if test="domainVisible">
+			<label for="domain">${message:pages.login.form.domainLabel}</label>
+              	<select name="domain" id="domain">
+              		<t:loop source="availableDomains" value="availableDomain">
+              			<option value="${availableDomain}">${availableDomain}</option>
+              		</t:loop>
+              	</select>
+            </t:if>
 			
 <!--			<input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel}"/>-->
 				<button class="loginSubmit" onclick="submitWithCookie();">${message:pages.login.form.logLabel}</button>
