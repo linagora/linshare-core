@@ -255,7 +255,7 @@ public class ShareServiceImpl implements ShareService{
 		
 		// get new guest expiry date
 		Calendar guestExpiryDate = Calendar.getInstance();
-        Parameter parameter = parameterService.loadConfig();
+        Parameter parameter = sender.getDomain().getParameter();
         if (parameter == null) {
             throw new IllegalStateException("No configuration found for linshare");
         }
@@ -272,7 +272,7 @@ public class ShareServiceImpl implements ShareService{
 
 					// If the user have not selected an expiration date, compute default date
 					if (expiryDate == null) {
-						expiryDate=shareExpiryDateService.computeShareExpiryDate(document);
+						expiryDate=shareExpiryDateService.computeShareExpiryDate(document, sender);
 					}						 					
 
 		
@@ -335,7 +335,7 @@ public class ShareServiceImpl implements ShareService{
 					notifyGroupSharingDeleted(doc, actor, group, mailContainer);
 				}
 				else { //user sharing
-					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(mailContainer, doc, actor, share.getReceiver());
+					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(actor, mailContainer, doc, actor, share.getReceiver());
 					notifierService.sendNotification(null, share.getReceiver().getMail(), mailContainer_);
 				}
 			}
@@ -352,7 +352,7 @@ public class ShareServiceImpl implements ShareService{
 			if (mailContainer!=null) { //if notification is needed
 				List<Contact> recipients = securedUrl.getRecipients();
 				for (Contact contact : recipients) {				
-					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(mailContainer, doc, actor, contact);
+					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(actor, mailContainer, doc, actor, contact);
 					notifierService.sendNotification(null, contact.getMail(), mailContainer_);
 				}
 			}
@@ -440,7 +440,6 @@ public class ShareServiceImpl implements ShareService{
         logger.info(securedUrlList.size() + " expired secured Url(s) found to be delete.");
         
         //read the linshare config (we need to know if we need to delete the original doc which was shared to many people)
-        Parameter config =  parameterService.loadConfig();
         
 		for (SecuredUrl securedUrl : securedUrlList) {
 			
@@ -449,7 +448,8 @@ public class ShareServiceImpl implements ShareService{
 				secureUrlService.delete(securedUrl.getAlea(), securedUrl.getUrlPath());
 				
 				for (Document document : docs) {
-					 refreshShareAttributeOfDoc(document,config.getDeleteDocWithShareExpiryTime());
+					Parameter config = document.getOwner().getDomain().getParameter();
+					refreshShareAttributeOfDoc(document,config.getDeleteDocWithShareExpiryTime());
 				}
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove a securedUrl : \n" + ex.toString());
@@ -459,6 +459,7 @@ public class ShareServiceImpl implements ShareService{
         for (Share share : shares) {
             try {
                 Document sharedDocument = share.getDocument();
+				Parameter config = sharedDocument.getOwner().getDomain().getParameter();
                 deleteShare(share, owner);
                 refreshShareAttributeOfDoc(sharedDocument,config.getDeleteDocWithShareExpiryTime());
             } catch (BusinessException ex) {
@@ -509,7 +510,7 @@ public class ShareServiceImpl implements ShareService{
 		for (Contact recipient : securedUrl.getRecipients()) {
 			String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
 			try {
-				MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedSecuredUrl(mailContainer, securedUrl, recipient, days, securedUrlWithParam);
+				MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedSecuredUrl(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam);
 				notifierService.sendNotification(null, recipient.getMail(), mailContainerFinal);
 			} catch (BusinessException e) {
 				logger.error("Error while trying to notify upcoming outdated secured url", e);
@@ -520,7 +521,7 @@ public class ShareServiceImpl implements ShareService{
 	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
 			Share share, Integer days) {
 		try {
-			MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedShare(mailContainer, share, days);
+			MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedShare(share.getSender(), mailContainer, share, days);
 			notifierService.sendNotification(null, share.getReceiver().getMail(), mailContainerFinal);
 		} catch (BusinessException e) {
 				logger.error("Error while trying to notify upcoming outdated share", e);
@@ -596,11 +597,11 @@ public class ShareServiceImpl implements ShareService{
 		 */
 		String functionalMail = group.getFunctionalEmail();
 		if (functionalMail != null && functionalMail.length() > 0) {
-			MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(mailContainer, manager, group, doc);
+			MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(manager, mailContainer, manager, group, doc);
 			notifierService.sendNotification(manager.getMail(),functionalMail, mailContainer_);
 		} else {
 			for (GroupMember member : group.getMembers()) {
-				MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(mailContainer, manager, member.getUser(), group, doc);
+				MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(manager, mailContainer, manager, member.getUser(), group, doc);
 				notifierService.sendNotification(manager.getMail(), member.getUser().getMail(), mailContainer_);
 			}
 		}

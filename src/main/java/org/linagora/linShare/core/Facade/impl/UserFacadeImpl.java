@@ -85,7 +85,7 @@ public class UserFacadeImpl implements UserFacade {
      */
     public void createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
     		MailContainer mailContainer, UserVo owner) throws BusinessException {    	
-        userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, mailContainer, owner.getLogin());
+        userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, mailContainer, owner.getLogin(), owner.getDomainIdentifier());
     }
     
     public void updateGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException{
@@ -100,17 +100,18 @@ public class UserFacadeImpl implements UserFacade {
     /** Search a user using its mail.
      * @param mail user mail.
      * @return founded user.
+     * @throws BusinessException 
      */
-    public UserVo findUser(String mail) {
-    	User user = userService.findUser(mail);
+    public UserVo findUser(String mail, String domain) throws BusinessException {
+    	User user = userService.findUser(mail, domain);
     	if (user != null) {
     		return new UserVo(user);
     	}
     	return null;
     }
     
-	public UserVo findUserFromLdapwithUid(String uid) {
-		User user = userService.findUserFromLdapwithUid(uid);
+	public UserVo findUserFromLdapwithUid(String uid, String domain) throws BusinessException {
+		User user = userService.findUserFromLdapwithUid(uid, domain);
     	if (user != null) {
     		return new UserVo(user);
     	} else return null;
@@ -124,7 +125,7 @@ public class UserFacadeImpl implements UserFacade {
      * @param lastName user last name.
      * @return a list of matching users.
      */
-    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) {
+    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException {
     	User owner = userRepository.findByLogin(currentUser.getLogin());
     	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
@@ -182,7 +183,7 @@ public class UserFacadeImpl implements UserFacade {
      * @see UserFacade#searchUser(String, String, String, UserType)
      */
 	public List<UserVo> searchUser(String mail, String firstName,
-			String lastName, UserType userType,UserVo currentUser) {
+			String lastName, UserType userType,UserVo currentUser) throws BusinessException {
 		User owner = userRepository.findByLogin(currentUser.getLogin());
 		return getUserVoList(userService.searchUser(mail, firstName, lastName, userType, owner));
 	}
@@ -192,12 +193,12 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	public void deleteTempAdminUser() throws  BusinessException {
-		User user = userService.findUser(ADMIN_TEMP_MAIL);
+		User user = userService.findUser(ADMIN_TEMP_MAIL, null);
 		if(user!=null) userRepository.delete(user);
 	}
 
-	public UserVo searchTempAdminUser() {
-		return findUser(ADMIN_TEMP_MAIL);
+	public UserVo searchTempAdminUser() throws BusinessException {
+		return findUser(ADMIN_TEMP_MAIL, null);
 	}
 
 	public void updateUserLocale(UserVo user, String locale) {
@@ -210,16 +211,16 @@ public class UserFacadeImpl implements UserFacade {
      * @param login user login.
      * @return user details or null if user is neither in database or LDAP.
      */
-    public UserVo loadUserDetails(String login) {
+    public UserVo loadUserDetails(String login, String domainId) {
         User user = null;
         try {
-            user = userService.findAndCreateUser(login);
+            user = userService.findAndCreateUser(login, domainId);
         } catch (BusinessException ex) {
             throw new RuntimeException("User can't be created, please contact your administrator");
         }
         return new UserVo(user);
     }
-
+    
     /** Get user password.
      * @param login user login.
      * @return password or null if empty or null.

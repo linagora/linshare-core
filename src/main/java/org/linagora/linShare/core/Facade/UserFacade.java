@@ -72,14 +72,14 @@ public interface UserFacade {
      * @param mail user mail.
      * @return founded user.
      */
-    UserVo findUser(String mail);
+    UserVo findUser(String mail, String domain) throws BusinessException;
     
     
     /** Search a user using its uid (only in ldap !) but not normal email.
      * @param mail user uid.
      * @return founded user.
      */
-    UserVo findUserFromLdapwithUid(String uid);
+    UserVo findUserFromLdapwithUid(String uid, String domain) throws BusinessException;
     
 
     /** Search a user.
@@ -88,7 +88,7 @@ public interface UserFacade {
      * @param lastName user last name.
      * @return a list of matching users.
      */
-    List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser);
+    List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException;
 
     
     /** Search a user.
@@ -98,7 +98,7 @@ public interface UserFacade {
      * @param userType the type of the user.
      * @return a list of matching users.
      */
-    List<UserVo> searchUser(String mail, String firstName, String lastName,UserType userType, UserVo currentUser);
+    List<UserVo> searchUser(String mail, String firstName, String lastName,UserType userType, UserVo currentUser) throws BusinessException;
 
     /** Get all guests created by a user.
      * @param mail owner mail.
@@ -126,7 +126,7 @@ public interface UserFacade {
 	 * key is linshare.admin.temp.mail in linshare.properties
 	 * @return
 	 */
-	public UserVo searchTempAdminUser();
+	public UserVo searchTempAdminUser() throws BusinessException;
 	
 	/**
 	 * Update a user locale
@@ -147,7 +147,7 @@ public interface UserFacade {
      * @param login user login.
      * @return user details or null if user is neither in database or LDAP.
      */
-    UserVo loadUserDetails(String login);
+    UserVo loadUserDetails(String login, String domainId);
 
     /** Get user password.
      * @param login user login.

@@ -66,7 +66,7 @@
     <bean id="httpSessionIntegrationFilter"
              class="org.springframework.security.context.HttpSessionContextIntegrationFilter"/>
 
-    <bean id="authenticationProcessingFilter" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
+    <bean id="authenticationProcessingFilter" class="org.linagora.linShare.auth.DomainAuthenticationProcessingFilter">
         <property name="usernameParameter" value="login"/>
         <property name="passwordParameter" value="password"/>
         <property name="defaultTargetUrl" value="/"/>
@@ -130,8 +130,9 @@
         <property name="providers">
             <list>
             	<ref bean="rememberMeAuthenticationProvider" />
-                <ref bean="uidLdapAuthenticationProvider"/>
-                <ref bean="ldapAuthenticationProvider"/>
+                <!-- ref bean="uidLdapAuthenticationProvider"/-->
+                <!-- ref bean="ldapAuthenticationProvider"/-->
+                <ref bean="domainAuthenticationProvider"/>
                 <ref bean="daoAuthenticationProvider"/>
             </list>
         </property>
@@ -177,13 +178,6 @@
             <bean class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
                 <constructor-arg ref="contextSource"/>
                 <property name="userSearch">
-                    <!--  
-                     <bean class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-                      <constructor-arg index="0" value="ou=test,o=linShare"/>
-                      <constructor-arg index="1" value="mail={0}"/>
-                      <constructor-arg index="2" ref="contextSource"/>
-                     </bean>
-                    -->
                     <bean class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
                         <constructor-arg index="0" value="${ldap.auth.baseDN}"/>
                         <constructor-arg index="1" value="${ldap.auth.key}"/>
@@ -214,6 +208,13 @@
            <property name="passwordEncoder">
                <bean factory-bean="passwordEncoderFactory" factory-method="getInstance"/>
            </property>
+       </bean>
+       
+       <!-- Domain Authentification -->
+
+       <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
+           <property name="ldapQueryService" ref="ldapQueryService"/>
+           <property name="userService" ref="userService"/>
        </bean>
 
        <!--     AUTHORIZATIONS MANAGEMENT   -->

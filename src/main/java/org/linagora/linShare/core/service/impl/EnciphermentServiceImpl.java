@@ -115,7 +115,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 	}
 	
 	
-	public boolean checkEnciphermentKey(User user, String password) {
+	public boolean checkEnciphermentKey(User user, String password) throws BusinessException {
 		
 		boolean res = false;
 		SymmetricEnciphermentPBEwithAES enc;
@@ -123,7 +123,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 		try {
 			
 			
-			User userDb = userService.findUser(user.getMail());
+			User userDb = userService.findUser(user.getMail(), user.getDomain().getIdentifier());
 			if(userDb==null) return false;
 			byte[] encryptedChallenge = userDb.getEnciphermentKeyPass();
 			if (encryptedChallenge==null) return false;
@@ -178,7 +178,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin());
+			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), false,owner);
 			
@@ -239,7 +239,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin());
+			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), true, owner);
 			

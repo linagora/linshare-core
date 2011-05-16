@@ -105,7 +105,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		// create the sercured url
 		SecuredUrl securedUrl = new SecuredUrl(url, alea,
 				expiryDate!=null? expiryDate :
-				shareExpiryDateService.computeMinShareExpiryDateOfList(documents)
+				shareExpiryDateService.computeMinShareExpiryDateOfList(documents, sender)
 				, sender, recipients);
 		securedUrl.addDocuments(documents);
 

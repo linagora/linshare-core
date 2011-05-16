@@ -39,7 +39,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		System.out.println("----------");
 		// tableau de correspondance entre attribut LDAP retourné et attribut de l'objet user
 		String[] keys = domain.getPattern().getGetUserResult().split(" ");
-		User user = mapToUser(retMap, keys);
+		User user = mapToUser(retMap, keys, domain);
         
         return user;
 	}
@@ -65,19 +65,24 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public boolean auth(String login, String userPasswd, String domainId) throws BusinessException, NamingException, IOException {
+	public User auth(String login, String userPasswd, String domainId) throws BusinessException, NamingException, IOException {
 		
 		Domain domain = domainService.retrieveDomain(domainId);
 		String command = domain.getPattern().getAuthCommand();
 		Map<String, Object> params = new HashMap<String, Object>();
-//		params.put("principal", actor.getId());
 		params.put("login", login);
 		params.put("domain", domain.getDifferentialKey());
 		List<String> retList = JScriptEvaluator.evalToStringList(domain, command, params);
 		System.out.println(retList);
 		System.out.println("----------");
+		System.out.println(userPasswd);
 		// tableau de correspondance entre attribut LDAP retourné et attribut de l'objet user
-		return JScriptEvaluator.auth(userPasswd, retList.get(0), domain);
+		String dn = retList.get(0);
+		if(JScriptEvaluator.auth(userPasswd, dn, domain)) {
+			String[] keys = domain.getPattern().getGetUserResult().split(" ");
+			return dnToUser(domain, keys, dn);
+		}
+		return null;
 	}
 
 	@Override
@@ -128,15 +133,17 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		unitParams.put("dn", string);
 		Map<String, List<String>> retMap = JScriptEvaluator.evalToEntryMap(domain, unitCommand, unitParams);
 		System.out.println(retMap);
-		User user = mapToUser(retMap, keys);
+		User user = mapToUser(retMap, keys, domain);
 		return user;
 	}
 
-	private User mapToUser(Map<String, List<String>> retMap, String[] keys) {
+	private User mapToUser(Map<String, List<String>> retMap, String[] keys, Domain domain) {
 		String mail = (String) retMap.get(keys[0]).get(0);
         String firstName = (String) retMap.get(keys[1]).get(0);
         String lastName = (String) retMap.get(keys[2]).get(0);
-        return new Internal(mail, firstName, lastName, mail);
+        User user = new Internal(mail, firstName, lastName, mail);
+		user.setDomain(domain);
+		return user;
 	}
 
 }

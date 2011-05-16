@@ -10,7 +10,7 @@ public class LDAPConnectionVo {
 	private String securityPrincipal;
 	private String securityCredentials;
 	
-	protected LDAPConnectionVo(LDAPConnection ldapConn) {
+	public LDAPConnectionVo(LDAPConnection ldapConn) {
 		this.identifier = ldapConn.getIdentifier();
 		this.providerUrl = ldapConn.getProviderUrl();
 		this.securityAuth = ldapConn.getSecurityAuth();

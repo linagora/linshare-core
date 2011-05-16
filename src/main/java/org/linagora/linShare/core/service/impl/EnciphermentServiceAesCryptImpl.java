@@ -96,7 +96,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin());
+			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
 			
 			String finalFileName = changeDocumentExtension(doc.getFileName());
 			
@@ -149,7 +149,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin());
+			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
 			
 			String finalFileName =  changeDocumentExtension(doc.getFileName());	
 			

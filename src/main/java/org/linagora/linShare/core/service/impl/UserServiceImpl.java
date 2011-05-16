@@ -31,11 +31,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.dao.FileSystemDao;
-import org.linagora.linShare.core.dao.LdapDao;
-import org.linagora.linShare.core.dao.ldap.LdapSearchResult;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.AllowedContact;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
@@ -58,9 +57,9 @@ import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.GroupService;
+import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
-import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.RecipientFavouriteService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
@@ -83,15 +82,10 @@ public class UserServiceImpl implements UserService {
 
     /** Notifier service. */
     private final NotifierService notifierService;
-
-    /** LDAP DAO. */
-    private final LdapDao ldapDao;
     
   //  private final SharedDocumentService sharedDocumentService;
     
-    private final LogEntryRepository logEntryRepository; 
-    
-    private final ParameterService parameterService;
+    private final LogEntryRepository logEntryRepository;
     
     private final ShareService shareService;
     
@@ -102,32 +96,36 @@ public class UserServiceImpl implements UserService {
     private final GroupService groupService;
     
     private final FileSystemDao fileSystemDao;
+    
+    private final LDAPQueryService ldapQueryService;
 
     /** Constructor.
      * @param userRepository repository.
      * @param notifierService notifier service.
      * @param ldapDao LDAP DAO.
      */
-    public UserServiceImpl(UserRepository userRepository, NotifierService notifierService, LdapDao ldapDao,
-    		final LogEntryRepository logEntryRepository,final GuestRepository guestRepository
-		, final ParameterService parameterService, ShareService shareService,
-		final RecipientFavouriteService recipientFavouriteService,
-		final AllowedContactRepository allowedContactRepository,
-		final MailContentBuildingService mailElementsFactory,
-		final GroupService groupService,
-		final FileSystemDao fileSystemDao) {
+    public UserServiceImpl(final UserRepository userRepository,
+    		final NotifierService notifierService, 
+    		final LogEntryRepository logEntryRepository,
+    		final GuestRepository guestRepository, 
+    		final ShareService shareService,
+    		final RecipientFavouriteService recipientFavouriteService,
+    		final AllowedContactRepository allowedContactRepository,
+    		final MailContentBuildingService mailElementsFactory,
+    		final GroupService groupService,
+    		final FileSystemDao fileSystemDao,
+    		final LDAPQueryService ldapQueryService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
-        this.ldapDao = ldapDao;
         this.logEntryRepository = logEntryRepository;
         this.guestRepository = guestRepository;
-		this.parameterService = parameterService;
 		this.shareService = shareService;
 		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
 		this.mailElementsFactory = mailElementsFactory;
 		this.groupService = groupService;
 		this.fileSystemDao = fileSystemDao;
+		this.ldapQueryService = ldapQueryService;
     }
 
     /** Create a guest.
@@ -142,11 +140,11 @@ public class UserServiceImpl implements UserService {
      * @return persisted guest.
      */
     public Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment,
-    		MailContainer mailContainer, String ownerLogin) throws BusinessException {
+    		MailContainer mailContainer, String ownerLogin, String ownerDomain) throws BusinessException {
 
     	//We need to check that the guest email isn't registered
     	
-    	if (findUser(mail) != null) {
+    	if (findUser(mail, ownerDomain) != null) {
     		throw new BusinessException(BusinessErrorCode.DUPLICATE_USER_ENTRY, "A user with the same email already exists");
     	}
 
@@ -160,7 +158,7 @@ public class UserServiceImpl implements UserService {
 
         Guest guest = new Guest(login, firstName, lastName, mail, hashedPassword, canUpload, canCreateGuest, comment);
         guest.setOwner(owner);
-		guest.setExpiryDate(calculateUserExpiryDate());
+		guest.setExpiryDate(calculateUserExpiryDate(owner.getDomain()));
         guestRepository.create(guest);
         
         Calendar expDate = new GregorianCalendar();
@@ -170,7 +168,7 @@ public class UserServiceImpl implements UserService {
         
         logEntryRepository.create(logEntry);
         
-        mailContainer = mailElementsFactory.buildMailNewGuest(mailContainer, owner, guest, password);
+        mailContainer = mailElementsFactory.buildMailNewGuest(owner, mailContainer, owner, guest, password);
 
         // Send an email to the guest.
         notifierService.sendNotification(owner.getMail(), mail, mailContainer);
@@ -182,17 +180,21 @@ public class UserServiceImpl implements UserService {
      * Search first in database, then on ldap if not found.
      * @param login user login.
      * @return founded user.
+ * @throws BusinessException 
      */
-    public User findUser(String mail) {
+    public User findUser(String mail, String domain) throws BusinessException {
         User user = userRepository.findByMail(mail);
-        if (user == null) {
-            user = ldapDao.searchUser(mail);
+        if (user == null && domain != null) {
+            List<User> users = ldapQueryService.searchUser(mail, "", "", domain, null);
+            if (users != null && users.size() == 1) {
+            	user = users.get(0);
+            }
         }
         return user;
     }
     
-	public User findUserFromLdapwithUid(String uid) {
-		return ldapDao.searchUserWithUid(uid);
+	public User findUserFromLdapwithUid(String uid, String domain) throws BusinessException {
+		return ldapQueryService.getUser(uid, domain, null);
 	}
     
 
@@ -204,11 +206,12 @@ public class UserServiceImpl implements UserService {
      * @throws BusinessException 
      * @throws TechnicalException if the user could not be found nor created 
      */ 
-    public User findAndCreateUser(String mail) throws BusinessException {
+    public User findAndCreateUser(String mail, String domainId) throws BusinessException {
         User user = userRepository.findByMail(mail);
         if (user == null) {
-            user = ldapDao.searchUser(mail);
-            if (user!=null) {
+            List<User> users = ldapQueryService.searchUser(mail, "", "", domainId, null);
+            if (users!=null && users.size()==1) {
+            	user = users.get(0);
             	try {
 					userRepository.create(user);
 				} catch (IllegalArgumentException e) {
@@ -226,12 +229,13 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
+    
     /** Calculate the user expiry date.
      * @return user expiry date.
      */
-    private Date calculateUserExpiryDate() {
+    private Date calculateUserExpiryDate(Domain domain) {
         Calendar expiryDate = Calendar.getInstance();
-        Parameter parameter = parameterService.loadConfig();;
+        Parameter parameter = domain.getParameter();
 
 
         if (parameter == null) 
@@ -413,7 +417,7 @@ public class UserServiceImpl implements UserService {
     }
 
 	public List<User> searchUser(String mail, String firstName,
-			String lastName, UserType userType, User currentUser) {
+			String lastName, UserType userType, User currentUser) throws BusinessException {
 		List<User> users=new ArrayList<User>();
 		
 		if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
@@ -444,8 +448,7 @@ public class UserServiceImpl implements UserService {
 	        users.addAll(guests);
 		}
 		if(null==userType || userType.equals(UserType.INTERNAL)){
-			LdapSearchResult<User> pagedResult = ldapDao.searchUserAnyWhere(mail, firstName, lastName);
-			List<User> internals = pagedResult.getResultList();
+			List<User> internals = ldapQueryService.searchUser(mail, firstName, lastName, currentUser.getDomain().getIdentifier(), currentUser);
         
 			//need linshare local information for these internals user
 			for (User ldapuser : internals) {
@@ -481,7 +484,7 @@ public class UserServiceImpl implements UserService {
 	public void updateUser(String mail,Role role, UserVo owner) throws BusinessException{
 		
 		//search in database internal user, next in ldap, create it in db if needed
-		User user = findAndCreateUser(mail);
+		User user = findAndCreateUser(mail, owner.getDomainIdentifier());
 		
 		user.setRole(role);
 		userRepository.update(user);
@@ -551,7 +554,7 @@ public class UserServiceImpl implements UserService {
         String password = generatePassword();
         String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
         
-        mailContainer = mailElementsFactory.buildMailResetPassword(mailContainer, guest, password);
+        mailContainer = mailElementsFactory.buildMailResetPassword(guest, mailContainer, guest, password);
 
         // Send an email to the guest.
         notifierService.sendNotification(guest.getMail(), guest.getMail(), mailContainer);
@@ -593,7 +596,7 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		try {
-			User contact = findAndCreateUser(contactLogin);
+			User contact = findAndCreateUser(contactLogin, guest.getDomain().getIdentifier());
 			AllowedContact allowedContact = new AllowedContact(guest, contact);
 			allowedContactRepository.create(allowedContact);
 		} catch (IllegalArgumentException e) {
@@ -619,7 +622,7 @@ public class UserServiceImpl implements UserService {
 			}
 			//add new contacts
 			for (String mailContact : mailContacts) {
-				User contact=findAndCreateUser(mailContact);
+				User contact=findAndCreateUser(mailContact, guest.getDomain().getIdentifier());
 				AllowedContact allowedContact = new AllowedContact(guest, contact);
 				allowedContactRepository.create(allowedContact);
 			}

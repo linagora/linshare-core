@@ -28,16 +28,15 @@
     <bean name="userService" class="org.linagora.linShare.core.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="notifierService"/>
-        <constructor-arg ref="LdapDao" />
         <constructor-arg ref="logEntryRepository" />
         <constructor-arg ref="guestRepository"/>
-        <constructor-arg ref="parameterService"/>
         <constructor-arg ref="shareService"/>
         <constructor-arg ref="recipientFavouriteService" />
         <constructor-arg ref="allowedContactRepository" />
         <constructor-arg ref="mailContentBuildingService" />
         <constructor-arg ref="groupService" />
         <constructor-arg ref="jackRabbitRepository" />
+        <constructor-arg ref="ldapQueryService" />
     </bean>
     
     <bean id="clamavVirusScannerService" class="org.linagora.linShare.core.service.impl.ClamavVirusScannerServiceImpl">
@@ -65,11 +64,11 @@
         <constructor-arg index="7" ref="clamavVirusScannerService" />
         <constructor-arg index="8" ref="timeStampingService" />
         <constructor-arg index="9" ref="shareTransformer" />
+        <constructor-arg index="10" ref="domainService" />
     </bean>
 	     
     
     <bean id="shareExpiryDateService" class="org.linagora.linShare.core.service.impl.ShareExpiryDateServiceImpl">
-    	<constructor-arg ref="parameterService"/>
     </bean>
 	     
    
@@ -151,7 +150,6 @@
     </bean>
     
     <bean name="mailContentBuildingService" class="org.linagora.linShare.core.service.impl.MailContentBuildingServiceImpl">
-        <constructor-arg ref="parameterService"/>
         <constructor-arg value="${linshare.info.url.base}"/>
         <constructor-arg value="${linshare.info.url.internal}"/>
     	<constructor-arg value="${linshare.mails.txt.container}"/>
@@ -162,6 +160,7 @@
         <constructor-arg ref="ldapConnectionRepository"/>
         <constructor-arg ref="domainPatternRepository"/>
         <constructor-arg ref="domainRepository"/>
+        <constructor-arg ref="parameterRepository"/>
     </bean>
     
     <bean name="ldapQueryService" class="org.linagora.linShare.core.service.impl.LDAPQueryServiceImpl">

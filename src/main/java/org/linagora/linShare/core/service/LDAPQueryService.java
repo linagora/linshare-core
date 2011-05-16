@@ -13,7 +13,7 @@ public interface LDAPQueryService {
 	public User getUser(String userId, String domainId, User actor) throws BusinessException;
 	public List<User> getAllDomainUsers(String domainId, User actor) throws BusinessException;
 	public boolean isAdmin(String userId, String domainId) throws BusinessException;
-	public boolean auth(String userId, String userPasswd, String domainId) throws BusinessException, NamingException, IOException;
+	public User auth(String userId, String userPasswd, String domainId) throws BusinessException, NamingException, IOException;
 	public List<User> searchUser(String mail, String firstName, 
 			String lastName, String domainId, User actor) throws BusinessException;
 	

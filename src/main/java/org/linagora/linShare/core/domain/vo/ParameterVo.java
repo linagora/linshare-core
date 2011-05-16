@@ -37,6 +37,8 @@ public class ParameterVo implements Serializable {
 
 	private static final long serialVersionUID = -3129935137911233245L;
 	
+	private final String identifier;
+	
 	private final Long fileSizeMax;
 	private final Long userAvailableSize;
 	private final Long globalQuota;
@@ -64,10 +66,10 @@ public class ParameterVo implements Serializable {
     private Set<MailSubject> mailSubjects;
 
 	public ParameterVo() {
-		this(null, null, null, null, false, false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null);
+		this(null,null, null, null, null, false, false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null);
 	}
 
-	public ParameterVo(Long fileSizeMax, Long userAvailableSize, 
+	public ParameterVo(String identifier, Long fileSizeMax, Long userAvailableSize, 
 		Long globalQuota, Long usedQuota, Boolean globalQuotaActive,
 		Boolean activeMimeType, Boolean activeSignature,
 		Boolean activeEncipherment,Boolean activeDocTimeStamp,Integer guestAccountExpiryTime, 
@@ -76,6 +78,7 @@ public class ParameterVo implements Serializable {
 		TimeUnit defaultFileExpiryUnit, Integer defaultFileExpiryTime,
         List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, 
         Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects) {
+		this.identifier = identifier;
 		this.fileSizeMax = fileSizeMax;
 		this.userAvailableSize = userAvailableSize;
 		this.globalQuota = globalQuota;
@@ -100,6 +103,7 @@ public class ParameterVo implements Serializable {
 	}
 
     public ParameterVo(Parameter parameter) {
+    	this.identifier = parameter.getIdentifier();
 		this.fileSizeMax = parameter.getFileSizeMax();
 		this.userAvailableSize = parameter.getUserAvailableSize();
 		this.globalQuota = parameter.getGlobalQuota();
@@ -224,6 +228,7 @@ public class ParameterVo implements Serializable {
 
 	public Parameter getParameter() {
         Parameter parameter = new Parameter();
+        parameter.setIdentifier(identifier);
         parameter.setFileSizeMax(fileSizeMax);
         parameter.setUserAvailableSize(userAvailableSize);
         parameter.setGlobalQuota(globalQuota);
@@ -281,5 +286,9 @@ public class ParameterVo implements Serializable {
 
 	public Set<MailSubject> getMailSubjects() {
 		return mailSubjects;
+	}
+	
+	public String getIdentifier() {
+		return identifier;
 	}
 }

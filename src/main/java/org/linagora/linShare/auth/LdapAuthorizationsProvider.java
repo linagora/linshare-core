@@ -66,24 +66,24 @@ public class LdapAuthorizationsProvider implements LdapAuthoritiesPopulator {
         	}
         }
         
-        UserVo user = userFacade.findUser(usermail);
-
+//        UserVo user = userFacade.findUser(usermail);
+//
         grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_AUTH));
-
-        if (user == null) {
-            return grantedAuthorities.toArray(new GrantedAuthority[0]);
-        }
-
-        if (user.isAdministrator()) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
-        }
-        if (!user.isGuest()) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_INTERNAL));
-        }
-        if (!user.isGuest() || user.isUpload()) {
-            // the user is an internal or he has the rights for upload
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
-        }
+//
+//        if (user == null) {
+//            return grantedAuthorities.toArray(new GrantedAuthority[0]);
+//        }
+//
+//        if (user.isAdministrator()) {
+//            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
+//        }
+//        if (!user.isGuest()) {
+//            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_INTERNAL));
+//        }
+//        if (!user.isGuest() || user.isUpload()) {
+//            // the user is an internal or he has the rights for upload
+//            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
+//        }
         return grantedAuthorities.toArray(new GrantedAuthority[0]);
     }
 }

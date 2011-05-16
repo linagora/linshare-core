@@ -205,12 +205,12 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	}
 	
 
-	public Long getUserAvailableQuota(UserVo user) {
+	public Long getUserAvailableQuota(UserVo user) throws BusinessException {
 		User currentUser =  userRepository.findByMail(user.getMail());
 		return documentService.getAvailableSize(currentUser);
 	}
 	
-	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) {
+	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) throws BusinessException {
 		List<DisplayableAccountOccupationEntryVo> result = new ArrayList<DisplayableAccountOccupationEntryVo>();
 		
 		List<User> users = userRepository.findByCriteria(criteria);
@@ -224,7 +224,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		return result;
 	}
 
-	private DisplayableAccountOccupationEntryVo getAccountStats(User user) {
+	private DisplayableAccountOccupationEntryVo getAccountStats(User user) throws BusinessException {
 		Long userAvailableQuota = documentService.getAvailableSize(user);
 		Long userTotalQuota = documentService.getTotalSize(user);
 		Long userUsedSize = 0L;
@@ -251,7 +251,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		return enciphermentService.isDocumentEncrypted(doc);
 	}
 
-	public Long getUserTotalQuota(UserVo user) {
+	public Long getUserTotalQuota(UserVo user) throws BusinessException {
 		User currentUser =  userRepository.findByMail(user.getMail());
 		return documentService.getTotalSize(currentUser);
 	}

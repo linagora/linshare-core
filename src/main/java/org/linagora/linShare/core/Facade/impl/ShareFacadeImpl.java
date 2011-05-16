@@ -127,7 +127,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		for (UserVo userVo : recipients) {
 			try {
-				recipientsList.add(userService.findAndCreateUser(userVo.getMail()));
+				recipientsList.add(userService.findAndCreateUser(userVo.getMail(), owner.getDomainIdentifier()));
 			} catch (BusinessException e) {
 				logger.error("Could not find the recipient " + userVo.getMail() + " in the database nor in the ldap");
 				throw e;
@@ -172,7 +172,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLogin(userVo.getLogin());
 			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
-			MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString);
+			MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString);
 			notifierService.sendNotification(owner.getMail(),userVo.getMail(), mailContainer_);
 		}
 		return result;
@@ -277,7 +277,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		// find known and unknown recipients of the share
 		for (String mail : recipientsEmail) {
-			u = userService.findUser(mail);
+			u = userService.findUser(mail, owner.getDomainIdentifier());
 			if(u!=null){
 				knownRecipients.add(new UserVo(u));}
 			else {
@@ -321,7 +321,7 @@ public class ShareFacadeImpl implements ShareFacade {
 				//give email as a parameter, useful to quickly know who is here
 				String linShareUrlParam = "?email=" + oneContact.getMail();
 				User owner_ = userRepository.findByLogin(owner.getLogin());
-				MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, password, isOneDocEncrypted, jwsEncryptUrlString);
+				MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, password, isOneDocEncrypted, jwsEncryptUrlString);
 				notifierService.sendNotification(owner.getMail(), oneContact.getMail(), mailContainer_);
 			}
 			
@@ -343,7 +343,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		List<Document> docList = new ArrayList<Document>();
 		docList.add(doc);
 		
-		mailContainer = mailElementsFactory.buildMailRegisteredDownload(mailContainer, docList, user, owner);
+		mailContainer = mailElementsFactory.buildMailRegisteredDownload(owner, mailContainer, docList, user, owner);
 		notifierService.sendNotification(currentUser.getMail(),owner.getMail(), mailContainer);
     }
     
@@ -370,7 +370,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			
     		for (Contact contact : recipients) {
     			String urlparam = "?email="+contact.getMail();
-    			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, sUrlDownload, urlparam);
+    			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(user, mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, sUrlDownload, urlparam);
     			notifierService.sendNotification(currentUser.getMail(),contact.getMail(), mailContainer_);
 			}
 		}
@@ -380,7 +380,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		for (Share share : listShare) {
 			sUrlDownload = share.getReceiver().getUserType().equals(UserType.GUEST) ? urlBase : urlInternal;
-			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, "");
+			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, "");
 			notifierService.sendNotification(currentUser.getMail(),share.getReceiver().getMail(), mailContainer_);
 		}
     	
@@ -396,7 +396,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		for (GroupVo groupVo : recipients) {
 			try {
-				groupUserObjectsList.add(userService.findAndCreateUser(groupVo.getGroupLogin()));
+				groupUserObjectsList.add(userService.findAndCreateUser(groupVo.getGroupLogin(), ownerVo.getDomainIdentifier()));
 				groupList.add(groupRepository.findByName(groupVo.getName()));
 			} catch (BusinessException e) {
 				logger.error("Could not find the recipient " + groupVo.getGroupLogin() + " in the database");
@@ -440,11 +440,11 @@ public class ShareFacadeImpl implements ShareFacade {
 			for (Group group : groupList) {
 				String functionalMail = group.getFunctionalEmail();
 				if (functionalMail != null && functionalMail.length() > 0) {
-					mailContainer = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString);
+					mailContainer = mailElementsFactory.buildMailNewGroupSharing(owner, mailContainer, owner, group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString);
 					notifierService.sendNotification(owner.getMail(),functionalMail, mailContainer);
 				} else {
 					for (GroupMember member : group.getMembers()) {
-						MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(mailContainer, owner, member.getUser(), group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString);
+						MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(owner, mailContainer, owner, member.getUser(), group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString);
 						notifierService.sendNotification(owner.getMail(), member.getUser().getMail(), mailContainer_);
 					}
 				}

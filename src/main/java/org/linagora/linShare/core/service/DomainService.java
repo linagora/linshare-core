@@ -1,5 +1,7 @@
 package org.linagora.linShare.core.service;
 
+import java.util.List;
+
 import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
@@ -17,5 +19,6 @@ public interface DomainService {
 	public Domain retrieveDomain(String identifier) throws BusinessException;
 	public DomainPattern retrieveDomainPattern(String identifier) throws BusinessException;
 	public void deleteDomain(String identifier) throws BusinessException;
+	public List<String> getAllDomainIdentifiers() throws BusinessException;;
 
 }

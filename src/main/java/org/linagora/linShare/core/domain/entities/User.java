@@ -88,6 +88,8 @@ public abstract class User {
     
     /** If the user is allowed to create guest */
     private Boolean canCreateGuest;
+    
+    private Domain domain;
 
     protected User() {
     	this.login = null;
@@ -98,6 +100,7 @@ public abstract class User {
     	this.shares=new HashSet<Share>();
     	this.receivedShares=new HashSet<Share>();
     	this.securedUrls=new HashSet<SecuredUrl>();
+    	this.domain = null;
     }
     /** Default constructor.
      * @param login login.
@@ -119,6 +122,7 @@ public abstract class User {
         this.canUpload = canUpload;
         this.canCreateGuest = canCreateGuest;
         this.enciphermentKeyPass=null;
+    	this.domain = null;
 	}
 	
 	@Override
@@ -283,5 +287,13 @@ public abstract class User {
 	}
 	public void setOwnSignatures(Set<Signature> ownSignatures) {
 		this.ownSignatures = ownSignatures;
+	}
+	
+	public Domain getDomain() {
+		return domain;
+	}
+	
+	public void setDomain(Domain domain) {
+		this.domain = domain;
 	}
 }

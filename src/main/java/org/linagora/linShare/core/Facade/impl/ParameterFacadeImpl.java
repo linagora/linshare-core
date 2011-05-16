@@ -27,9 +27,10 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
 import org.linagora.linShare.core.Facade.ParameterFacade;
-import org.linagora.linShare.core.domain.transformers.impl.ParameterTransformer;
+import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.utils.AESCrypt;
 
@@ -41,20 +42,29 @@ public class ParameterFacadeImpl implements ParameterFacade {
     private ParameterService parameterservice;
     
     
-	private ParameterTransformer parameterTransformer;
+	private ParameterRepository parameterRepository;
     
 
-    public ParameterFacadeImpl(ParameterService parameterservice) {
+    public ParameterFacadeImpl(ParameterService parameterservice,
+    		ParameterRepository parameterRepository) {
         this.parameterservice = parameterservice;
-        this.parameterTransformer =  new ParameterTransformer();
+        this.parameterRepository =  parameterRepository;
     }
 
-	public void createConfig(ParameterVo parameterVo) throws BusinessException {
-		parameterservice.createConfig(parameterVo.getParameter());
+	public ParameterVo saveOrUpdate(ParameterVo parameterVo) throws BusinessException {
+//		Parameter param = parameterservice.loadConfig(parameterVo.getIdentifier());
+//		if (param == null) {
+//			parameterRepository.create(parameterVo.getParameter());
+//		} else {
+//			param.updateFrom(parameterVo);
+//			parameterRepository.saveOrUpdate(param);
+//		}
+//		return new ParameterVo(parameterservice.loadConfig(parameterVo.getIdentifier()));
+		return new ParameterVo(parameterservice.saveOrUpdate(parameterVo.getParameter()));
 	}
 
-	public ParameterVo loadConfig() throws BusinessException {
-		return new ParameterVo(parameterservice.loadConfig());
+	public ParameterVo loadConfig(String identifier) throws BusinessException {
+		return new ParameterVo(parameterservice.loadConfig(identifier));
 	}
 
 	public boolean checkPlatformEncryptSupportedAlgo() {

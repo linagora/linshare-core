@@ -47,7 +47,7 @@ public interface MailContentBuildingService {
 	 * Notify a user that shared files has been downloaded
 	 * by an anonymous user
 	 */
-	public MailContainer buildMailAnonymousDownload(
+	public MailContainer buildMailAnonymousDownload(User actor,
 			MailContainer mailContainer, List<Document> docs, String email,
 			User recipient) throws BusinessException;
 
@@ -55,27 +55,27 @@ public interface MailContentBuildingService {
 	 * Notify a user that shared files has been downloaded
 	 * by a registered user
 	 */
-	public MailContainer buildMailRegisteredDownload(
+	public MailContainer buildMailRegisteredDownload(User actor,
 			MailContainer mailContainer, List<Document> docs,
 			User downloadingUser, User recipient) throws BusinessException;
 
 	/**
 	 * Notify somebody that his linshare account has been created
 	 */
-	public MailContainer buildMailNewGuest(MailContainer mailContainer,
+	public MailContainer buildMailNewGuest(User actor,MailContainer mailContainer,
 			User owner, User recipient, String password)
 			throws BusinessException;
 
 	/**
 	 * Notify a guest user of his new password
 	 */
-	public MailContainer buildMailResetPassword(MailContainer mailContainer,
+	public MailContainer buildMailResetPassword(User actor,MailContainer mailContainer,
 			User recipient, String password) throws BusinessException;
 
 	/**
 	 * Notify a user that he received new sharing
 	 */
-	public MailContainer buildMailNewSharing(MailContainer mailContainer,
+	public MailContainer buildMailNewSharing(User actor,MailContainer mailContainer,
 			User owner, User recipient, List<DocumentVo> docs,
 			String linShareUrl, String linShareUrlParam, String password, 
 			boolean hasToDecrypt, String jwsEncryptUrl)
@@ -84,7 +84,7 @@ public interface MailContentBuildingService {
 	/**
 	 * Notify a user that he received new sharing
 	 */
-	public MailContainer buildMailNewSharing(MailContainer mailContainer,
+	public MailContainer buildMailNewSharing(User actor,MailContainer mailContainer,
 			User owner, String recipientMail, List<DocumentVo> docs, String linShareUrl,
 			String linShareUrlParam, String password, 
 			boolean hasToDecrypt, String jwsEncryptUrl)
@@ -94,7 +94,7 @@ public interface MailContentBuildingService {
 	 * Notify a user that some shared files has been updated
 	 * by the sender
 	 */
-	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer,
+	public MailContainer buildMailSharedDocUpdated(User actor,MailContainer mailContainer,
 			User owner, User recipient, Document document, String oldDocName,
 			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
 			throws BusinessException;
@@ -103,7 +103,7 @@ public interface MailContentBuildingService {
 	 * Notify a user that some shared files has been updated
 	 * by the sender
 	 */
-	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer,
+	public MailContainer buildMailSharedDocUpdated(User actor,MailContainer mailContainer,
 			User owner, String recipientMail, Document document, String oldDocName,
 			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
 			throws BusinessException;
@@ -111,7 +111,7 @@ public interface MailContentBuildingService {
 	/**
 	 * Notify a user that the group received new sharing
 	 */
-	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
+	public MailContainer buildMailNewGroupSharing(User actor,MailContainer mailContainer,
 			User owner, User recipient, Group group, List<ShareDocumentVo> docs,
 			String linShareUrl, String linShareUrlParam,
 			boolean isOneDocEncrypted, String jwsEncryptUrlString)
@@ -122,7 +122,7 @@ public interface MailContentBuildingService {
 	 * @param jwsEncryptUrlString 
 	 * @param isOneDocEncrypted 
 	 */
-	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
+	public MailContainer buildMailNewGroupSharing(User actor,MailContainer mailContainer,
 			User owner, Group group, List<ShareDocumentVo> docs,
 			String linShareUrl, String linShareUrlParam,
 			boolean isOneDocEncrypted, String jwsEncryptUrlString)
@@ -131,14 +131,14 @@ public interface MailContentBuildingService {
 	/**
 	 * Notify a group (functional email) that a sharing has been deleted
 	 */
-	public MailContainer buildMailGroupSharingDeleted(
+	public MailContainer buildMailGroupSharingDeleted(User actor,
 			MailContainer mailContainer, User manager, Group group, Document doc)
 			throws BusinessException;
 
 	/**
 	 * Notify user that a group sharing has been deleted
 	 */
-	public MailContainer buildMailGroupSharingDeleted(
+	public MailContainer buildMailGroupSharingDeleted(User actor,
 			MailContainer mailContainer, User manager, User user, Group group, Document doc)
 			throws BusinessException;
 
@@ -146,42 +146,42 @@ public interface MailContentBuildingService {
 	 * Notify sbdy who request the membership of another user for a group
 	 * of the status of his request
 	 */
-	public MailContainer buildMailGroupMembershipStatus(MailContainer mailContainer, 
+	public MailContainer buildMailGroupMembershipStatus(User actor,MailContainer mailContainer, 
 			GroupMember newMember, Group group, GroupMembershipStatus status)
 			throws BusinessException;
 	
 	/**
 	 * Notify a user that he is now member of one group
 	 */
-	public MailContainer buildMailNewGroupMember(
+	public MailContainer buildMailNewGroupMember(User actor,
 			MailContainer mailContainer, GroupMember newMember, Group group) 
 			throws BusinessException;
 
 	/**
 	 * Notify a user that a received shared file is about to be deleted by its owner.
 	 */
-	public MailContainer buildMailSharedFileDeleted(
+	public MailContainer buildMailSharedFileDeleted(User actor,
 			MailContainer mailContainer, Document doc, User owner, User receiver)
 			throws BusinessException;
 
-	public MailContainer buildMailSharedFileDeleted(
+	public MailContainer buildMailSharedFileDeleted(User actor,
 			MailContainer mailContainer, Document doc, User owner, Contact receiver)
 			throws BusinessException;
 
 	/**
 	 * Notify a user that received a share that the share will soon be deleted
 	 */
-	public MailContainer buildMailUpcomingOutdatedSecuredUrl(
+	public MailContainer buildMailUpcomingOutdatedSecuredUrl(User actor,
 			MailContainer mailContainer, SecuredUrl securedUrl,
 			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
 
-	public MailContainer buildMailUpcomingOutdatedShare(
+	public MailContainer buildMailUpcomingOutdatedShare(User actor,
 			MailContainer mailContainer, Share share, Integer days) 
 			throws BusinessException;
 
 	/**
 	 * Notify a user that an outdated document will be soon deleted (secured storage disabled)
 	 */
-	public MailContainer buildMailUpcomingOutdatedDocument(
+	public MailContainer buildMailUpcomingOutdatedDocument(User actor,
 			MailContainer mailContainer, Document document, Integer days) throws BusinessException;
 }

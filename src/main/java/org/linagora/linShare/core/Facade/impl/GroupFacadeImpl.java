@@ -86,7 +86,7 @@ public class GroupFacadeImpl implements GroupFacade {
 	public void addMember(GroupVo groupVo, UserVo managerVo, UserVo newMemberVo, MailContainer mailContainer) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
 		User manager = userRepository.findByLogin(managerVo.getLogin());
-		User newMember = userService.findAndCreateUser(newMemberVo.getLogin());
+		User newMember = userService.findAndCreateUser(newMemberVo.getLogin(), managerVo.getDomainIdentifier());
 		groupService.addMember(group, manager, newMember, mailContainer);
 	}
 	
@@ -94,7 +94,7 @@ public class GroupFacadeImpl implements GroupFacade {
 			GroupMemberType memberType, MailContainer mailContainer) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
 		User manager = userRepository.findByLogin(managerVo.getLogin());
-		User newMember = userService.findAndCreateUser(newMemberVo.getLogin());
+		User newMember = userService.findAndCreateUser(newMemberVo.getLogin(), managerVo.getDomainIdentifier());
 		groupService.addMember(group, manager, newMember, memberType, mailContainer);
 	}
 

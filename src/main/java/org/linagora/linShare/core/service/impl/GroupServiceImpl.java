@@ -184,8 +184,8 @@ public class GroupServiceImpl implements GroupService {
 		}
 
 		
-		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(mailContainer, newGroupMember, groupPersistant, status);
-		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(mailContainer, newGroupMember, groupPersistant);
+		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, newGroupMember, groupPersistant, status);
+		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(manager, mailContainer, newGroupMember, groupPersistant);
 		notifierService.sendNotification(null, newGroupMember.getOwner().getMail(), mailContainerOwner);
 		notifierService.sendNotification(null, newGroupMember.getUser().getMail(), mailContainerNewMember);
 	}
@@ -256,8 +256,8 @@ public class GroupServiceImpl implements GroupService {
 			}
 		}
 		
-		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.ACCEPTED);
-		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(mailContainer, groupMemberToUpdate, groupPersistant);
+		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.ACCEPTED);
+		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(manager, mailContainer, groupMemberToUpdate, groupPersistant);
 		notifierService.sendNotification(null, groupMemberToUpdate.getOwner().getMail(), mailContainerOwner);
 		notifierService.sendNotification(null, groupMemberToUpdate.getUser().getMail(), mailContainerNewMember);
 	}
@@ -276,7 +276,7 @@ public class GroupServiceImpl implements GroupService {
 			}
 		}
 		if (groupMemberToUpdate!=null) {
-			mailContainer = mailElementsFactory.buildMailGroupMembershipStatus(mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.REJECTED);
+			mailContainer = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.REJECTED);
 			removeMember(group, manager, memberToReject);
 			if (ownerMail != null) {
 				notifierService.sendNotification(null, ownerMail, mailContainer);

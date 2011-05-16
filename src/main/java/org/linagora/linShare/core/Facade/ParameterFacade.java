@@ -28,8 +28,8 @@ import org.linagora.linShare.core.exception.BusinessException;
  */
 public interface ParameterFacade {
 
-	public ParameterVo loadConfig() throws  BusinessException;
-	public void createConfig(ParameterVo params) throws BusinessException;
+	public ParameterVo loadConfig(String identifier) throws  BusinessException;
+	public ParameterVo saveOrUpdate(ParameterVo params) throws BusinessException;
 	
 	
 	/**

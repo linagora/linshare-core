@@ -49,6 +49,7 @@ public class UserVo implements Serializable {
     private String comment;
     private String locale;
     private boolean restricted;
+    private String domainIdentifier;
 
     public UserVo(User user) {
         this.login = user.getLogin();
@@ -67,6 +68,9 @@ public class UserVo implements Serializable {
             this.comment = guest.getComment();
             this.restricted = guest.isRestricted();
         }
+        if (user.getDomain() != null) {
+        	this.domainIdentifier = user.getDomain().getIdentifier();
+        }
     }
 	
     public UserVo(Guest user) {
@@ -83,6 +87,9 @@ public class UserVo implements Serializable {
         this.comment = user.getComment();
         this.locale = user.getLocale();
         this.restricted = user.isRestricted();
+        if (user.getDomain() != null) {
+        	this.domainIdentifier = user.getDomain().getIdentifier();
+        }
     }
 	public UserVo(String login, String firstName, String lastName,
 			String mail, UserType userType) {
@@ -97,6 +104,7 @@ public class UserVo implements Serializable {
 		this.createGuest=true;
 		this.ownerLogin = "";
         this.restricted = false;
+        this.domainIdentifier = null;
 	}
 	
 	public UserVo(String login, String firstName, String lastName,
@@ -111,6 +119,7 @@ public class UserVo implements Serializable {
 		this.upload=true;
 		this.createGuest=true;
         this.restricted = false;
+        this.domainIdentifier = null;
 	}
 	
 	public UserVo(String login, String firstName, String lastName,
@@ -126,6 +135,7 @@ public class UserVo implements Serializable {
 		this.createGuest=true;
 		this.locale = locale;
         this.restricted = false;
+        this.domainIdentifier = null;
 	}
 
 	public String getLogin() {
@@ -236,6 +246,9 @@ public class UserVo implements Serializable {
         if (this.createGuest != other.createGuest) {
             return false;
         }
+        if (this.domainIdentifier != other.domainIdentifier) {
+            return false;
+        }
         return true;
     }
 
@@ -248,6 +261,7 @@ public class UserVo implements Serializable {
         hash = 47 * hash + (this.mail != null ? this.mail.hashCode() : 0);
         hash = 47 * hash + (this.userType != null ? this.userType.hashCode() : 0);
         hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 47 * hash + (this.domainIdentifier != null ? this.domainIdentifier.hashCode() : 0);
         return hash;
     }
 
@@ -259,7 +273,16 @@ public class UserVo implements Serializable {
         stringBuffer.append("\nmail : ").append(mail);
         stringBuffer.append("\nuser type : ").append(userType);
         stringBuffer.append("\nrole : ").append(role);
+        stringBuffer.append("\ndomain : ").append(domainIdentifier);
         return stringBuffer.toString();
     }
+    
+    public String getDomainIdentifier() {
+		return domainIdentifier;
+	}
+    
+    public void setDomainIdentifier(String domainIdentifier) {
+		this.domainIdentifier = domainIdentifier;
+	}
 
 }

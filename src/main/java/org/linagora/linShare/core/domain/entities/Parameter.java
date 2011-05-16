@@ -28,16 +28,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.domain.constants.TimeUnit;
+import org.linagora.linShare.core.domain.vo.ParameterVo;
 
 public class Parameter implements Serializable {
 
 	private static final long serialVersionUID = 6390630184268725483L;
-
-	//we have only one line of parameter (many columns for each param)
-	public static final long CONSTANT_KEY_ID = 1; 
 	
 	/** Surrogate key. */
     private long id;
+    
+    private String identifier;
 
 	private Long fileSizeMax;
 	private Long userAvailableSize;
@@ -65,6 +65,7 @@ public class Parameter implements Serializable {
     private MessagesConfiguration messagesConfiguration;
 
     public Parameter() {
+    	this.identifier = null;
     	this.fileSizeMax = null;
 		this.userAvailableSize = null;
 		this.globalQuota = null;
@@ -75,7 +76,6 @@ public class Parameter implements Serializable {
 		this.activeEncipherment = false;
 		this.activeDocTimeStamp=false;
         this.customLogoUrl = null;
-		this.id=CONSTANT_KEY_ID;
         this.guestAccountExpiryTime = null;
         this.guestAccountExpiryUnit = TimeUnit.DAY;
         this.defaultShareExpiryTime = null;
@@ -86,12 +86,146 @@ public class Parameter implements Serializable {
         this.messagesConfiguration = new MessagesConfiguration();
     }
 
-	public Long getId() {
-		return id;
+	public Parameter(String identifier, Long fileSizeMax, Long userAvailableSize, 
+		Long globalQuota, Long usedQuota, Boolean globalQuotaActive,
+		Boolean activeMimeType, Boolean activeSignature,
+		Boolean activeEncipherment,Boolean activeDocTimeStamp,Integer guestAccountExpiryTime, 
+		TimeUnit guestAccountExpiryUnit, String customLogoUrl, 
+		TimeUnit defaultShareExpiryUnit, Integer defaultShareExpiryTime,
+		TimeUnit defaultFileExpiryUnit, Integer defaultFileExpiryTime,
+        List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, 
+        Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects) {
+		this.identifier = identifier;
+		this.fileSizeMax = fileSizeMax;
+		this.userAvailableSize = userAvailableSize;
+		this.globalQuota = globalQuota;
+		this.usedQuota = usedQuota;
+		this.globalQuotaActive = globalQuotaActive;
+		this.activeMimeType = activeMimeType;
+		this.activeSignature = activeSignature;
+		this.activeEncipherment = activeEncipherment;
+		this.activeDocTimeStamp=activeDocTimeStamp;
+        this.guestAccountExpiryTime = guestAccountExpiryTime;
+        this.guestAccountExpiryUnit = guestAccountExpiryUnit;
+        this.customLogoUrl = customLogoUrl;
+        this.shareExpiryRules = shareExpiryRules;
+        this.defaultShareExpiryUnit = defaultShareExpiryUnit;
+        this.defaultShareExpiryTime = defaultShareExpiryTime;
+        this.defaultFileExpiryUnit = defaultFileExpiryUnit;
+        this.defaultFileExpiryTime = defaultFileExpiryTime;
+        this.deleteDocWithShareExpiryTime = deleteDocWithShareExpiryTime;
+        this.messagesConfiguration = new MessagesConfiguration();
+        this.messagesConfiguration.setMailSubjects(mailSubjects);
+        this.messagesConfiguration.setMailTemplates(mailTemplates);
+        this.messagesConfiguration.setWelcomeTexts(welcomeTexts);
 	}
 
-	public void setId(long id) {
-		this.id = id;
+    public void updateFrom(ParameterVo parameter) {
+    	this.identifier = parameter.getIdentifier();
+		this.fileSizeMax = parameter.getFileSizeMax();
+		this.userAvailableSize = parameter.getUserAvailableSize();
+		this.globalQuota = parameter.getGlobalQuota();
+		this.usedQuota = parameter.getUsedQuota();
+		this.globalQuotaActive = parameter.getGlobalQuotaActive();
+		this.activeMimeType = parameter.getActiveMimeType();
+		this.activeSignature = parameter.getActiveSignature();
+		this.activeEncipherment = parameter.getActiveEncipherment();
+		this.activeDocTimeStamp=parameter.getActiveDocTimeStamp();
+        this.guestAccountExpiryTime = parameter.getGuestAccountExpiryTime();
+        this.guestAccountExpiryUnit = parameter.getGuestAccountExpiryUnit();
+        this.customLogoUrl = parameter.getCustomLogoUrl();
+        this.deleteDocWithShareExpiryTime = parameter.getDeleteDocWithShareExpiryTime();
+        this.defaultFileExpiryUnit = parameter.getDefaultFileExpiryUnit();
+        this.defaultFileExpiryTime = parameter.getDefaultFileExpiryTime();
+
+        this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
+        if (parameter.getShareExpiryRules() != null) {
+        for (ShareExpiryRule shareExpiryRule : parameter.getShareExpiryRules()) {
+            shareExpiryRules.add(shareExpiryRule);
+        }
+        }
+        
+        this.messagesConfiguration = new MessagesConfiguration();
+        if (parameter.getWelcomeTexts()!=null) {
+        	for (WelcomeText welcomeText : parameter.getWelcomeTexts()) {
+        		messagesConfiguration.addWelcomeText(welcomeText);
+        	}
+        }
+        
+        if (parameter.getMailTemplates()!=null) {
+        	for (MailTemplate mailTemplate : parameter.getMailTemplates()) {
+        		messagesConfiguration.addMailTemplate(mailTemplate);
+        	}
+        }
+        
+        if (parameter.getMailSubjects()!=null) {
+        	for (MailSubject mailSubject : parameter.getMailSubjects()) {
+        		messagesConfiguration.addMailSubject(mailSubject);
+        	}
+        }
+        
+        this.defaultShareExpiryUnit = parameter.getDefaultShareExpiryUnit();
+        this.defaultShareExpiryTime = parameter.getDefaultShareExpiryTime();
+    }
+
+    public void updateFrom(Parameter parameter) {
+    	this.identifier = parameter.getIdentifier();
+		this.fileSizeMax = parameter.getFileSizeMax();
+		this.userAvailableSize = parameter.getUserAvailableSize();
+		this.globalQuota = parameter.getGlobalQuota();
+		this.usedQuota = parameter.getUsedQuota();
+		this.globalQuotaActive = parameter.getGlobalQuotaActive();
+		this.activeMimeType = parameter.getActiveMimeType();
+		this.activeSignature = parameter.getActiveSignature();
+		this.activeEncipherment = parameter.getActiveEncipherment();
+		this.activeDocTimeStamp=parameter.getActiveDocTimeStamp();
+        this.guestAccountExpiryTime = parameter.getGuestAccountExpiryTime();
+        this.guestAccountExpiryUnit = parameter.getGuestAccountExpiryUnit();
+        this.customLogoUrl = parameter.getCustomLogoUrl();
+        this.deleteDocWithShareExpiryTime = parameter.getDeleteDocWithShareExpiryTime();
+        this.defaultFileExpiryUnit = parameter.getDefaultFileExpiryUnit();
+        this.defaultFileExpiryTime = parameter.getDefaultFileExpiryTime();
+
+        this.shareExpiryRules = new ArrayList<ShareExpiryRule>();
+        if (parameter.getShareExpiryRules() != null) {
+        for (ShareExpiryRule shareExpiryRule : parameter.getShareExpiryRules()) {
+            shareExpiryRules.add(shareExpiryRule);
+        }
+        }
+        
+        this.messagesConfiguration = new MessagesConfiguration();
+        if (parameter.getWelcomeTexts()!=null) {
+        	for (WelcomeText welcomeText : parameter.getWelcomeTexts()) {
+        		messagesConfiguration.addWelcomeText(welcomeText);
+        	}
+        }
+        
+        if (parameter.getMailTemplates()!=null) {
+        	for (MailTemplate mailTemplate : parameter.getMailTemplates()) {
+        		messagesConfiguration.addMailTemplate(mailTemplate);
+        	}
+        }
+        
+        if (parameter.getMailSubjects()!=null) {
+        	for (MailSubject mailSubject : parameter.getMailSubjects()) {
+        		messagesConfiguration.addMailSubject(mailSubject);
+        	}
+        }
+        
+        this.defaultShareExpiryUnit = parameter.getDefaultShareExpiryUnit();
+        this.defaultShareExpiryTime = parameter.getDefaultShareExpiryTime();
+    }
+	
+	public String getIdentifier() {
+		return identifier;
+	}
+	
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public Long getFileSizeMax() {
