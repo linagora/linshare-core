@@ -105,6 +105,7 @@
       <bean name="domainFacade" class="org.linagora.linShare.core.Facade.impl.DomainFacadeImpl">
    	  	 <constructor-arg ref="domainService"/>
        	 <constructor-arg ref="domainTransformer"/>
+       	 <constructor-arg ref="userService"/>
    	  </bean>
        
        

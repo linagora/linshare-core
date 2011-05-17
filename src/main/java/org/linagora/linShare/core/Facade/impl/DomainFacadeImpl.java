@@ -23,22 +23,28 @@ package org.linagora.linShare.core.Facade.impl;
 import java.util.List;
 
 import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.DomainTransformer;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
 import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.DomainService;
+import org.linagora.linShare.core.service.UserService;
 
 public class DomainFacadeImpl implements DomainFacade {
 
 	private DomainService domainService;
 	private DomainTransformer domainTransformer;
+	private UserService userService;
 
 	public DomainFacadeImpl(DomainService domainService,
-			DomainTransformer domainTransformer) {
+			DomainTransformer domainTransformer, 
+			UserService userService) {
 		this.domainService = domainService;
 		this.domainTransformer = domainTransformer;
+		this.userService = userService;
 	}
 
 	public DomainVo createDomain(DomainVo domainVo) throws BusinessException {
@@ -81,6 +87,11 @@ public class DomainFacadeImpl implements DomainFacade {
 	
 	public List<String> getAllDomainIdentifiers() throws BusinessException {
 		return domainService.getAllDomainIdentifiers();
+	}
+	
+	public boolean userCanCreateGuest(UserVo userVo) throws BusinessException {
+		User user = userService.findUser(userVo.getMail(), userVo.getDomainIdentifier());
+		return domainService.userCanCreateGuest(user);
 	}
 
 }

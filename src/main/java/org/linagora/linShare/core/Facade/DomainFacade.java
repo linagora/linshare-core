@@ -25,6 +25,7 @@ import java.util.List;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
 import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
 public interface DomainFacade {
@@ -37,5 +38,6 @@ public interface DomainFacade {
 	public DomainPatternVo retrieveDomainPattern(String identifier) throws BusinessException;
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers() throws BusinessException;
+	public boolean userCanCreateGuest(UserVo userVo) throws BusinessException;
 
 }

@@ -126,5 +126,18 @@ public class DomainServiceImpl implements DomainService {
 		}
 		return true;
 	}
+	
+	public boolean userCanCreateGuest(User user) throws BusinessException {
+    	Domain domain = user.getDomain();
+    	
+    	if (domain == null) {
+    		return false;
+    	}
+
+    	if (user.getUserType()==UserType.GUEST) {
+    		return domain.getParameter().getGuestCanCreateOther();
+    	}
+    	return domain.getParameter().getDomainWithGuests();
+	}
 
 }
