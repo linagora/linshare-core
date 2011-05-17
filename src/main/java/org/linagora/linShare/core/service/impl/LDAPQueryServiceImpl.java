@@ -2,7 +2,6 @@ package org.linagora.linShare.core.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,23 +12,15 @@ import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.Internal;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.ldap.JScriptEvaluator;
 import org.springframework.ldap.NameNotFoundException;
 
 public class LDAPQueryServiceImpl implements LDAPQueryService {
-	
-	private final DomainService domainService;
-
-	public LDAPQueryServiceImpl(DomainService domainService) {
-		this.domainService = domainService;
-	}
 
 	@Override
-	public User getUser(String userId, String domainId, User actor) throws BusinessException {
+	public User getUser(String userId, Domain domain, User actor) throws BusinessException {
 		
-		Domain domain = domainService.retrieveDomain(domainId);
 		String command = domain.getPattern().getGetUserCommand();
 		Map<String, Object> params = new HashMap<String, Object>();
 //		params.put("principal", actor.getId());
@@ -46,9 +37,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public List<User> getAllDomainUsers(String domainId, User actor) throws BusinessException {
+	public List<User> getAllDomainUsers(Domain domain, User actor) throws BusinessException {
 		
-		Domain domain = domainService.retrieveDomain(domainId);
 		String command = domain.getPattern().getGetAllDomainUsersCommand();
 		Map<String, Object> params = new HashMap<String, Object>();
 //		params.put("principal", actor.getId());
@@ -60,15 +50,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public boolean isAdmin(String userId, String domainId) throws BusinessException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public User auth(String login, String userPasswd, String domainId) throws BusinessException, NamingException, IOException {
+	public User auth(String login, String userPasswd, Domain domain) throws BusinessException, NamingException, IOException {
 		
-		Domain domain = domainService.retrieveDomain(domainId);
 		String command = domain.getPattern().getAuthCommand();
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("login", login);
@@ -79,7 +62,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 //		System.out.println(userPasswd);
 		
 		if (retList == null || retList.size() < 1) {
-			throw new NameNotFoundException("No user found for login: "+login+" and domain: "+domainId);
+			throw new NameNotFoundException("No user found for login: "+login+" and domain: "+domain.getIdentifier());
 		}
 		
 		// tableau de correspondance entre attribut LDAP retourné et attribut de l'objet user
@@ -93,9 +76,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 	@Override
 	public List<User> searchUser(String mail, String firstName,
-			String lastName, String domainId, User actor) throws BusinessException {
+			String lastName, Domain domain, User actor) throws BusinessException {
 		
-		Domain domain = domainService.retrieveDomain(domainId);
 		String command = domain.getPattern().getSearchUserCommand();
 //		System.out.println(command);
 		Map<String, Object> params = new HashMap<String, Object>();

@@ -83,7 +83,8 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		// domain was specified
 		if (domain != null) {
 			try {
-				foundUser = ldapQueryService.auth(login, password, domain);
+				Domain domainObject = domainService.retrieveDomain(domain);
+				foundUser = ldapQueryService.auth(login, password, domainObject);
 				if(foundUser == null) {
 				      throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
 				          "Bad credentials"), domain);
@@ -108,7 +109,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 					List<Domain> domains = domainService.findAllDomains();
 					for (Domain loopedDomain : domains) {
 						try {
-							foundUser = ldapQueryService.auth(login, password, loopedDomain.getIdentifier());
+							foundUser = ldapQueryService.auth(login, password, loopedDomain);
 							if (foundUser != null) {
 								domain = loopedDomain.getIdentifier();
 								System.out.println("User found in domain "+domain);

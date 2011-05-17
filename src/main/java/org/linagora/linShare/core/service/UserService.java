@@ -175,6 +175,4 @@ public interface UserService {
 	 * @return
 	 */
 	public List<User> fetchGuestContacts(String login) throws BusinessException;
-
-	public User findUserFromLdapwithUid(String uid, String domain) throws BusinessException;
 }
