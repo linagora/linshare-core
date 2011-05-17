@@ -164,7 +164,10 @@ public class UserServiceImpl implements UserService {
         Guest guest = new Guest(login, firstName, lastName, mail, hashedPassword, canUpload, canCreateGuest, comment);
         guest.setOwner(owner);
 		guest.setExpiryDate(calculateUserExpiryDate(owner.getDomain()));
-        guestRepository.create(guest);
+		Guest created = guestRepository.create(guest);
+		Domain domain = domainService.retrieveDomain(owner.getDomain().getIdentifier());
+		created.setDomain(domain);
+		guestRepository.update(created);
         
         Calendar expDate = new GregorianCalendar();
         expDate.setTime(guest.getExpiryDate());
@@ -231,7 +234,9 @@ public class UserServiceImpl implements UserService {
             	throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user could not be found in the DB nor in the LDAP");
             }
         }
-        System.out.println("creating user with domain : "+user.getDomain().getIdentifier());
+        System.out.println("ICI!!! "+user.getDomain());
+        System.out.println(user.getDomain().getIdentifier());
+        logger.debug("creating user with domain : "+user.getDomain().getIdentifier());
         return user;
     }
     
