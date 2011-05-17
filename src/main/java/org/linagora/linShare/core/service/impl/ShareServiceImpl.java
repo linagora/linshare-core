@@ -53,9 +53,9 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
-import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.SecuredUrlService;
 import org.linagora.linShare.core.service.ShareExpiryDateService;
 import org.linagora.linShare.core.service.ShareService;
@@ -69,7 +69,7 @@ public class ShareServiceImpl implements ShareService{
 	private final UserRepository<User> userRepository;
 	private final ShareRepository shareRepository;
 	private final LogEntryRepository logEntryRepository;
-	private final ParameterService parameterService;
+	private final DomainService domainService;
 	private final SecuredUrlRepository securedUrlRepository;
 	private final DocumentRepository documentRepository;
 	private final SecuredUrlService secureUrlService;
@@ -90,7 +90,7 @@ public class ShareServiceImpl implements ShareService{
 	public ShareServiceImpl(final UserRepository<User> userRepository,
 			final ShareRepository shareRepository,
 			final LogEntryRepository logEntryRepository,
-			final ParameterService parameterService, final SecuredUrlRepository securedUrlRepository,
+			final DomainService domainService, final SecuredUrlRepository securedUrlRepository,
 			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
 			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
@@ -100,7 +100,7 @@ public class ShareServiceImpl implements ShareService{
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
 		this.logEntryRepository=logEntryRepository;
-		this.parameterService = parameterService;
+		this.domainService = domainService;
 		this.securedUrlRepository=securedUrlRepository;
 		this.documentRepository = documentRepository;
         this.secureUrlService = secureUrlService;
@@ -252,17 +252,26 @@ public class ShareServiceImpl implements ShareService{
 			List<User> recipients,String comment, Calendar expiryDate){
 		
 		SuccessesAndFailsItems<Share> returnItems = new SuccessesAndFailsItems<Share>();
-		
-		// get new guest expiry date
-		Calendar guestExpiryDate = Calendar.getInstance();
-        Parameter parameter = sender.getDomain().getParameter();
-        if (parameter == null) {
-            throw new IllegalStateException("No configuration found for linshare");
-        }
-        guestExpiryDate.add(parameter.getGuestAccountExpiryUnit().toCalendarValue(), parameter.getGuestAccountExpiryTime());
         
 		
 		for (User recipient : recipients) {
+			
+			boolean allowedToShareWithHim = false;
+			
+			try {
+				allowedToShareWithHim = domainService.userIsAllowedToShareWith(sender, recipient);
+				
+			} catch (BusinessException e1) {
+				logger.error("Failed to read domain of sender while sharing documents", e1);
+				allowedToShareWithHim = false;
+			}
+			
+			if (!allowedToShareWithHim) {
+				generateFailItemsForUser(documents, sender, comment, returnItems, recipient);
+				break;
+			}
+			
+			
 			for (Document document : documents) {
 				//Creating a shareDocument
 				
@@ -292,6 +301,16 @@ public class ShareServiceImpl implements ShareService{
 					
 					// update guest account expiry date
 					if (recipient.getUserType().equals(UserType.GUEST)) {
+						
+						// get new guest expiry date
+						Calendar guestExpiryDate = Calendar.getInstance();
+				        Parameter parameter = recipient.getDomain().getParameter();
+				        if (parameter == null) {
+				            throw new IllegalStateException("No configuration found for linshare for domain "+recipient.getDomain());
+				        }
+				        guestExpiryDate.add(parameter.getGuestAccountExpiryUnit().toCalendarValue(), parameter.getGuestAccountExpiryTime());
+				        
+				        
 						Guest guest = guestRepository.findByLogin(recipient.getLogin());
 						guest.setExpiryDate(guestExpiryDate.getTime());
 						guestRepository.update(guest);
@@ -321,6 +340,14 @@ public class ShareServiceImpl implements ShareService{
 		}
 		return returnItems;
 
+	}
+	private void generateFailItemsForUser(List<Document> documents,
+			User sender, String comment,
+			SuccessesAndFailsItems<Share> returnItems, User recipient) {
+		for (Document doc : documents) {
+			Share failSharing=new Share(sender,recipient,doc,comment,new GregorianCalendar(),true,false);
+			returnItems.addFailItem(failSharing);
+		}
 	}
 	public void deleteAllSharesWithDocument(Document doc, User actor, MailContainer mailContainer)
 			throws BusinessException {

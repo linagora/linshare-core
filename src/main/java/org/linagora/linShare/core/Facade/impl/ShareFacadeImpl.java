@@ -50,6 +50,7 @@ import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.GroupRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ShareService;
@@ -83,6 +84,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final DocumentTransformer documentTransformer;
 	
+	private final DomainService domainService;
+	
 	private final String urlBase;
 	
 	private final String urlInternal;
@@ -102,7 +105,8 @@ public class ShareFacadeImpl implements ShareFacade {
     		final GroupTransformer groupTransformer,
 			final DocumentTransformer documentTransformer,
 			final String urlBase,
-			final String urlInternal) {
+			final String urlInternal,
+			final DomainService domainService) {
 		super();
 		this.shareService = shareService;
 		this.shareTransformer = shareTransformer;
@@ -117,6 +121,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.documentTransformer = documentTransformer;
 		this.urlBase = urlBase;
 		this.urlInternal = urlInternal;
+		this.domainService = domainService;
 	}
 
 	
@@ -287,44 +292,57 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		if(unKnownRecipientsEmail.size()>0){ //secureUrl for these users (no need to have an account to activate sharing)
 			
-			List<Document> docList = new ArrayList<Document>();
-			for (DocumentVo documentVo : documents) {
-				docList.add(documentRepository.findById(documentVo.getIdentifier()));
+			boolean hasRightsToShareWithExternals = false;
+			
+			User sender = userService.findUser(owner.getMail(), owner.getDomainIdentifier());
+			
+			try {
+				hasRightsToShareWithExternals = domainService.hasRightsToShareWithExternals(sender);
+			} catch (BusinessException e) {
+				logger.error("Could not retrieve domain of sender while sharing to externals: "+sender.getMail());
 			}
 			
-			SecuredUrl securedUrl =  null;
-			String password = null;
+			if (hasRightsToShareWithExternals) {
 			
-			if(secureSharing) {
-				//generate password for this sharing 
-				password = userService.generatePassword();
-			} 
-			
-			//password is null for unprotected secured url
-			securedUrl = shareService.shareDocumentsWithSecuredUrlToUser(owner, docList, password, unKnownRecipientsEmail, expiryDateSelected);
-			
-			
-			//compose the secured url to give in mail
-			StringBuffer httpUrlBase = new StringBuffer();
-			httpUrlBase.append(urlBase);
-			if(!urlBase.endsWith("/")) httpUrlBase.append("/");
-			httpUrlBase.append(securedUrl.getUrlPath());
-			if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
-			httpUrlBase.append(securedUrl.getAlea());
-			
-			//securedUrl must be ended with a "/" if no parameter (see urlparam)
-			String linShareUrl = httpUrlBase.toString();
-			
-			
-			for (Contact oneContact : unKnownRecipientsEmail) {
+				List<Document> docList = new ArrayList<Document>();
+				for (DocumentVo documentVo : documents) {
+					docList.add(documentRepository.findById(documentVo.getIdentifier()));
+				}
 				
-				//give email as a parameter, useful to quickly know who is here
-				String linShareUrlParam = "?email=" + oneContact.getMail();
-				User owner_ = userRepository.findByLogin(owner.getLogin());
-				MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, password, isOneDocEncrypted, jwsEncryptUrlString);
-				notifierService.sendNotification(owner.getMail(), oneContact.getMail(), mailContainer_);
-			}
+				SecuredUrl securedUrl =  null;
+				String password = null;
+				
+				if(secureSharing) {
+					//generate password for this sharing 
+					password = userService.generatePassword();
+				} 
+				
+				//password is null for unprotected secured url
+				securedUrl = shareService.shareDocumentsWithSecuredUrlToUser(owner, docList, password, unKnownRecipientsEmail, expiryDateSelected);
+				
+				
+				//compose the secured url to give in mail
+				StringBuffer httpUrlBase = new StringBuffer();
+				httpUrlBase.append(urlBase);
+				if(!urlBase.endsWith("/")) httpUrlBase.append("/");
+				httpUrlBase.append(securedUrl.getUrlPath());
+				if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
+				httpUrlBase.append(securedUrl.getAlea());
+				
+				//securedUrl must be ended with a "/" if no parameter (see urlparam)
+				String linShareUrl = httpUrlBase.toString();
+				
+				
+				for (Contact oneContact : unKnownRecipientsEmail) {
+					
+					//give email as a parameter, useful to quickly know who is here
+					String linShareUrlParam = "?email=" + oneContact.getMail();
+					User owner_ = userRepository.findByLogin(owner.getLogin());
+					MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, password, isOneDocEncrypted, jwsEncryptUrlString);
+					notifierService.sendNotification(owner.getMail(), oneContact.getMail(), mailContainer_);
+				}
 			
+			}
 		}
 		
 		//keep old method to share with user referenced in db
