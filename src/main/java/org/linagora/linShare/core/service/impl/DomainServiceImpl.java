@@ -1,11 +1,13 @@
 package org.linagora.linShare.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.domain.entities.Parameter;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
 import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
@@ -15,6 +17,7 @@ import org.linagora.linShare.core.repository.DomainRepository;
 import org.linagora.linShare.core.repository.LDAPConnectionRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.service.DomainService;
+import org.linagora.linShare.core.service.LDAPQueryService;
 
 public class DomainServiceImpl implements DomainService {
 	
@@ -22,15 +25,18 @@ public class DomainServiceImpl implements DomainService {
 	private final DomainPatternRepository domainPatternRepository;
 	private final DomainRepository domainRepository;
 	private final ParameterRepository parameterRepository;
+	private final LDAPQueryService ldapQueryService;
 
 	public DomainServiceImpl(LDAPConnectionRepository ldapConnectionRepository,
 			DomainPatternRepository domainPatternRepository,
 			DomainRepository domainRepository,
-			ParameterRepository parameterRepository) {
+			ParameterRepository parameterRepository,
+			LDAPQueryService ldapQueryService) {
 		this.ldapConnectionRepository = ldapConnectionRepository;
 		this.domainPatternRepository = domainPatternRepository;
 		this.domainRepository = domainRepository;
 		this.parameterRepository = parameterRepository;
+		this.ldapQueryService = ldapQueryService;
 	}
 
 	public Domain createDomain(DomainVo domainVo) throws BusinessException {
@@ -80,6 +86,24 @@ public class DomainServiceImpl implements DomainService {
 	
 	public List<Domain> findAllDomains() throws BusinessException {
 		return domainRepository.findAll();
+	}
+	
+	public List<User> searchUser(String mail, String firstName,
+			String lastName, String domainId, User currentUser) throws BusinessException {
+		Domain domain = retrieveDomain(domainId);
+		List<User> users = new ArrayList<User>();
+		
+		if (domain.getParameter().getClosedDomain()) {
+			users.addAll(ldapQueryService.searchUser(mail, firstName, lastName, domain, currentUser));
+		} else {
+			List<Domain> domains = findAllDomains();
+			for (Domain domainFound : domains) {
+				users.addAll(ldapQueryService.searchUser(mail, firstName, lastName, domainFound, currentUser));
+			}
+			
+		}
+		
+		return users;
 	}
 
 }

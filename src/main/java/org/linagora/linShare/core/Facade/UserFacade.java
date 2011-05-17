@@ -74,13 +74,6 @@ public interface UserFacade {
      */
     UserVo findUser(String mail, String domain) throws BusinessException;
     
-    
-    /** Search a user using its uid (only in ldap !) but not normal email.
-     * @param mail user uid.
-     * @return founded user.
-     */
-    UserVo findUserFromLdapwithUid(String uid, String domain) throws BusinessException;
-    
 
     /** Search a user.
      * @param mail user email.

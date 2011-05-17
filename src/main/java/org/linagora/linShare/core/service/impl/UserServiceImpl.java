@@ -190,17 +190,13 @@ public class UserServiceImpl implements UserService {
     public User findUser(String mail, String domain) throws BusinessException {
         User user = userRepository.findByMail(mail);
         if (user == null && domain != null) {
-            List<User> users = ldapQueryService.searchUser(mail, "", "", domain, null);
+            List<User> users = domainService.searchUser(mail, "", "", domain, null);
             if (users != null && users.size() == 1) {
             	user = users.get(0);
             }
         }
         return user;
     }
-    
-	public User findUserFromLdapwithUid(String uid, String domain) throws BusinessException {
-		return ldapQueryService.getUser(uid, domain, null);
-	}
     
 
     /** Find a user (based on mail address).
@@ -214,7 +210,7 @@ public class UserServiceImpl implements UserService {
     public User findAndCreateUser(String mail, String domainId) throws BusinessException {
         User user = userRepository.findByMail(mail);
         if (user == null && domainId != null) {
-            List<User> users = ldapQueryService.searchUser(mail, "", "", domainId, null);
+            List<User> users = domainService.searchUser(mail, "", "", domainId, null);
             if (users!=null && users.size()==1) {
             	user = users.get(0);
             	try {
@@ -457,7 +453,7 @@ public class UserServiceImpl implements UserService {
 	        users.addAll(guests);
 		}
 		if(null==userType || userType.equals(UserType.INTERNAL)){
-			List<User> internals = ldapQueryService.searchUser(mail, firstName, lastName, currentUser.getDomain().getIdentifier(), currentUser);
+			List<User> internals = domainService.searchUser(mail, firstName, lastName, currentUser.getDomain().getIdentifier(), currentUser);
         
 			//need linshare local information for these internals user
 			for (User ldapuser : internals) {

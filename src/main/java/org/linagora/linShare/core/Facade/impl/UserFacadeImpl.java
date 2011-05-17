@@ -110,13 +110,6 @@ public class UserFacadeImpl implements UserFacade {
     	return null;
     }
     
-	public UserVo findUserFromLdapwithUid(String uid, String domain) throws BusinessException {
-		User user = userService.findUserFromLdapwithUid(uid, domain);
-    	if (user != null) {
-    		return new UserVo(user);
-    	} else return null;
-	}
-    
     
 
     /** Search a user.

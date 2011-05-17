@@ -132,8 +132,8 @@
             	<ref bean="rememberMeAuthenticationProvider" />
                 <!-- ref bean="uidLdapAuthenticationProvider"/-->
                 <!-- ref bean="ldapAuthenticationProvider"/-->
-                <ref bean="domainAuthenticationProvider"/>
                 <ref bean="daoAuthenticationProvider"/>
+                <ref bean="domainAuthenticationProvider"/>
             </list>
         </property>
     </bean>

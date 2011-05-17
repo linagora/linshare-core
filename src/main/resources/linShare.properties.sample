@@ -81,7 +81,7 @@ linshare.signature.tmp.dir=${LINSHARE_HOME}/var/lib/linshare/tmp/linSignDocument
 linshare.files.directory=${LINSHARE_HOME}/var/lib/linshare/repository
 
 # internal user see all other internal user by default in the Users tab ?
-linshare.users.internal.defaultView.showAll=true
+linshare.users.internal.defaultView.showAll=false
 
 # activate groups tab ?
 linshare.groups.activated=true

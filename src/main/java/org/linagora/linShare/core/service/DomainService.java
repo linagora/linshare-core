@@ -5,6 +5,7 @@ import java.util.List;
 import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
 import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
@@ -21,5 +22,6 @@ public interface DomainService {
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers() throws BusinessException;
 	public List<Domain> findAllDomains() throws BusinessException;
+	public List<User> searchUser(String mail, String firstName, String lastName, String domainId, User currentUser) throws BusinessException;
 
 }

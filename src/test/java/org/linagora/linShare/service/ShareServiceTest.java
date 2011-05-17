@@ -144,7 +144,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 		Parameter param = new Parameter("testParam", new Long(1000000000L), new Long(1000000000L), new Long(1000000000L), new Long(0L), Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, 
 				Boolean.FALSE, new Integer(100), TimeUnit.DAY, "", TimeUnit.DAY, new Integer(100), TimeUnit.DAY, new Integer(100), 
 				new ArrayList<ShareExpiryRule>(), Boolean.FALSE, new HashSet<WelcomeText>(), 
-				MailContentRetriever.getMailTemplates(), MailContentRetriever.getMailSubjects());
+				MailContentRetriever.getMailTemplates(), MailContentRetriever.getMailSubjects(),
+				Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
 		LDAPConnectionVo ldapConnVo = new LDAPConnectionVo("testldap", "ldap://localhost:33389", "anonymous");
 		DomainPatternVo patternVo = new DomainPatternVo("testPattern", "testPattern", 
 				"ldap.entry(\"uid=\" + userId + \",ou=People,\" + domain, \"objectClass=*\");", 
