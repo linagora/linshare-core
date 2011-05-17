@@ -8,6 +8,7 @@ import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
 import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
@@ -104,6 +105,26 @@ public class DomainServiceImpl implements DomainService {
 		}
 		
 		return users;
+	}
+	
+	public boolean userIsAllowedToShareWith(User sender, User recipient)
+			throws BusinessException {
+		Domain domain = retrieveDomain(sender.getDomain().getIdentifier());
+		if (domain.getParameter().getRestrictedDomain()) {
+			if (recipient.getUserType()!=UserType.INTERNAL) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean hasRightsToShareWithExternals(User sender)
+			throws BusinessException {
+		Domain domain = retrieveDomain(sender.getDomain().getIdentifier());
+		if (domain.getParameter().getRestrictedDomain()) {
+			return false;
+		}
+		return true;
 	}
 
 }

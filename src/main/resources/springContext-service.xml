@@ -85,7 +85,7 @@
         <constructor-arg index="0" ref="userRepository" />
         <constructor-arg index="1" ref="shareRepository"/>
         <constructor-arg index="2" ref="logEntryRepository" />
-        <constructor-arg index="3" ref="parameterService" />
+        <constructor-arg index="3" ref="domainService" />
         <constructor-arg index="4" ref="securedUrlRepository" />
         <constructor-arg index="5" ref="documentRepository" />
         <constructor-arg index="6" ref="securedUrlService" />
