@@ -17,7 +17,7 @@
 		<div id="actionBar">
 			<h4>Actions</h4>
 			<ul>
-				<t:if test="userVo.createGuest">
+				<t:if test="userCanCreateGuest">
 				<li>
 					<a href="#" class="button" onclick="userSearchWindow.showCenter(true);">
 						<span><img src="${asset:context:images/icons/icon-add-users.png}" alt=""/>

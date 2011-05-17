@@ -25,5 +25,6 @@ public interface DomainService {
 	public List<User> searchUser(String mail, String firstName, String lastName, String domainId, User currentUser) throws BusinessException;
 	public boolean userIsAllowedToShareWith(User sender, User recipient) throws BusinessException;
 	public boolean hasRightsToShareWithExternals(User sender) throws BusinessException;
+	public boolean userCanCreateGuest(User user) throws BusinessException;
 
 }
