@@ -39,9 +39,7 @@
 			<div id="configuration">
 				<!-- t:pagelink page="help/index" class="link-help">${message:components.myborderlayout.link.help}</t:pagelink> | -->
 				<t:if t:test="userVoExists">
-				<t:if t:test="superadmin" negate="true">
 					<t:pagelink page="administration/userConfig">${message:components.myborderlayout.link.userConfig}</t:pagelink> |
-				</t:if>
 				</t:if>
 				<t:localizer t:respectiveLanguage="false" exclude="excludeLocales" separator="/" />
 			</div>
