@@ -260,6 +260,10 @@ public class ParameterVo implements Serializable {
         parameter.setDefaultShareExpiryUnit(defaultShareExpiryUnit);
         parameter.setDefaultFileExpiryTime(defaultFileExpiryTime);
         parameter.setDefaultFileExpiryUnit(defaultFileExpiryUnit);
+        parameter.setClosedDomain(closedDomain);
+        parameter.setRestrictedDomain(restrictedDomain);
+        parameter.setGuestCanCreateOther(guestCanCreateOther);
+        parameter.setDomainWithGuests(domainWithGuests);
         
         for (ShareExpiryRule shareExpiryRule : shareExpiryRules) {
             parameter.addShareExpiryRules(shareExpiryRule);

@@ -8,21 +8,15 @@ public class DomainPatternVo {
 	private String description;
 	private String getUserCommand;
 	private String getAllDomainUsersCommand;
-	private String isAdminCommand;
 	private String authCommand;
 	private String searchUserCommand;
 	private String getUserResult;
-	private String getAllDomainUsersResult;
-	private String isAdminResult;
-	private String authResult;
-	private String searchUserResult;
 
 	public DomainPatternVo(DomainPattern domainPattern) {
 		this.identifier = domainPattern.getIdentifier();
 		this.description = domainPattern.getDescription();
 		this.getUserCommand = domainPattern.getGetUserCommand();
 		this.getAllDomainUsersCommand = domainPattern.getGetAllDomainUsersCommand();
-		this.isAdminCommand = domainPattern.getIsAdminCommand();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
 		this.getUserResult = domainPattern.getGetUserResult();
@@ -30,14 +24,13 @@ public class DomainPatternVo {
 
 	public DomainPatternVo(String identifier, String description,
 			String getUserCommand, String getAllDomainUsersCommand,
-			String isAdminCommand, String authCommand,
+			String authCommand,
 			String searchUserCommand, String getUserResult) {
 		super();
 		this.identifier = identifier;
 		this.description = description;
 		this.getUserCommand = getUserCommand;
 		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
-		this.isAdminCommand = isAdminCommand;
 		this.authCommand = authCommand;
 		this.searchUserCommand = searchUserCommand;
 		this.getUserResult = getUserResult;
@@ -69,14 +62,6 @@ public class DomainPatternVo {
 		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 	}
 
-	public String getIsAdminCommand() {
-		return isAdminCommand;
-	}
-
-	public void setIsAdminCommand(String isAdminCommand) {
-		this.isAdminCommand = isAdminCommand;
-	}
-
 	public String getAuthCommand() {
 		return authCommand;
 	}
@@ -104,39 +89,5 @@ public class DomainPatternVo {
 	public void setGetUserResult(String getUserResult) {
 		this.getUserResult = getUserResult;
 	}
-
-	public String getGetAllDomainUsersResult() {
-		return getAllDomainUsersResult;
-	}
-
-	public void setGetAllDomainUsersResult(String getAllDomainUsersResult) {
-		this.getAllDomainUsersResult = getAllDomainUsersResult;
-	}
-
-	public String getIsAdminResult() {
-		return isAdminResult;
-	}
-
-	public void setIsAdminResult(String isAdminResult) {
-		this.isAdminResult = isAdminResult;
-	}
-
-	public String getAuthResult() {
-		return authResult;
-	}
-
-	public void setAuthResult(String authResult) {
-		this.authResult = authResult;
-	}
-
-	public String getSearchUserResult() {
-		return searchUserResult;
-	}
-
-	public void setSearchUserResult(String searchUserResult) {
-		this.searchUserResult = searchUserResult;
-	}
-	
-	
 
 }

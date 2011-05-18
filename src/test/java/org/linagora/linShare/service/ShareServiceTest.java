@@ -149,8 +149,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 		LDAPConnectionVo ldapConnVo = new LDAPConnectionVo("testldap", "ldap://localhost:33389", "anonymous");
 		DomainPatternVo patternVo = new DomainPatternVo("testPattern", "testPattern", 
 				"ldap.entry(\"uid=\" + userId + \",ou=People,\" + domain, \"objectClass=*\");", 
-				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");", 
-				"", 
+				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");",
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
 				"mail givenName sn");

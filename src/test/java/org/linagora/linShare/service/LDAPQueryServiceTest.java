@@ -70,7 +70,6 @@ public class LDAPQueryServiceTest extends AbstractJUnit4SpringContextTests {
 			DomainPatternVo patternVo = new DomainPatternVo("testPattern", "testPattern", 
 					"ldap.entry(\"uid=\" + userId + \",ou=People,\" + domain, \"objectClass=*\");", 
 					"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");", 
-					"", 
 					"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
 					"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
 					"mail givenName sn");
