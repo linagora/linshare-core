@@ -155,6 +155,28 @@
 						</tr>
 					</table>
 					<br/>
+					<table class="forForms">
+						<tr>
+							<td colspan="2"><h2>${message:pages.administration.index.domain.title}</h2></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="closedDomain" class="edit-form-label">${message:pages.administration.index.closedDomain}</t:label></td>
+							<td class="input"><t:checkbox t:id="closedDomain" class="edit-form-field"/></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="restrictedDomain" class="edit-form-label">${message:pages.administration.index.restrictedDomain}</t:label></td>
+							<td class="input"><t:checkbox t:id="restrictedDomain" class="edit-form-field"/></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="domainWithGuests" class="edit-form-label">${message:pages.administration.index.domainWithGuests}</t:label></td>
+							<td class="input"><t:checkbox t:id="domainWithGuests" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="guestsCanCreateOther" class="edit-form-label">${message:pages.administration.index.guestsCanCreateOther}</t:label></td>
+							<td class="input"><t:checkbox t:id="guestsCanCreateOther" class="edit-form-field" /></td>
+						</tr>
+					</table>
+					<br/>
 					<div class="button">
 						<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
 					</div>

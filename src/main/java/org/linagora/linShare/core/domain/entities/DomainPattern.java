@@ -12,7 +12,6 @@ public class DomainPattern {
 	private String description;
 	private String getUserCommand;
 	private String getAllDomainUsersCommand;
-	private String isAdminCommand;
 	private String authCommand;
 	private String searchUserCommand;
 	private String getUserResult;
@@ -25,13 +24,12 @@ public class DomainPattern {
 
 	public DomainPattern(String identifier, String description,
 			String getUserCommand, String getAllDomainUsersCommand,
-			String isAdminCommand, String authCommand,
+			String authCommand,
 			String searchUserCommand, String getUserResult) {
 		this.identifier = identifier;
 		this.description = description;
 		this.getUserCommand = getUserCommand;
 		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
-		this.isAdminCommand = isAdminCommand;
 		this.authCommand = authCommand;
 		this.searchUserCommand = searchUserCommand;
 		this.getUserResult = getUserResult;
@@ -44,7 +42,6 @@ public class DomainPattern {
 		this.description = domainPatternVo.getDescription();
 		this.getUserCommand = domainPatternVo.getGetUserCommand();
 		this.getAllDomainUsersCommand = domainPatternVo.getGetAllDomainUsersCommand();
-		this.isAdminCommand = domainPatternVo.getIsAdminCommand();
 		this.authCommand = domainPatternVo.getAuthCommand();
 		this.searchUserCommand = domainPatternVo.getSearchUserCommand();
 		this.getUserResult = domainPatternVo.getGetUserResult();
@@ -84,14 +81,6 @@ public class DomainPattern {
 
 	public void setGetAllDomainUsersCommand(String getAllDomainUsersCommand) {
 		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
-	}
-
-	public String getIsAdminCommand() {
-		return isAdminCommand;
-	}
-
-	public void setIsAdminCommand(String isAdminCommand) {
-		this.isAdminCommand = isAdminCommand;
 	}
 
 	public String getAuthCommand() {

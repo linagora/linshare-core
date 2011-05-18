@@ -96,6 +96,15 @@ public class Index {
     @Property
     private Boolean activeMimeType;
     
+    @Property
+    private Boolean closedDomain;
+    @Property
+    private Boolean restrictedDomain;
+    @Property
+    private Boolean domainWithGuests;
+    @Property
+    private Boolean guestsCanCreateOther;
+    
     
     @Property
     private Boolean activeSignature;
@@ -199,6 +208,11 @@ public class Index {
         defaultShareExpiryUnit = p.getDefaultShareExpiryUnit();
         defaultShareExpiryTime = p.getDefaultShareExpiryTime();
         deleteDocWithShareExpiryTime = p.getDeleteDocWithShareExpiryTime();
+        
+        closedDomain = p.getClosedDomain();
+        restrictedDomain = p.getRestrictedDomain();
+        domainWithGuests = p.getDomainWithGuests();
+        guestsCanCreateOther = p.getGuestCanCreateOther();
         
         defaultFileExpiryUnit = p.getDefaultFileExpiryUnit();
         defaultFileExpiryTime = p.getDefaultFileExpiryTime();
@@ -313,15 +327,21 @@ public class Index {
         }
         
         boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;
+        
+        System.out.println(closedDomain);
 
         ParameterVo params = new ParameterVo(p.getIdentifier(), fileSizeMax, userAvailableSize, globalQuota, p.getUsedQuota(),activeGlobalQuota,activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
             guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, defaultFileExpiryUnit, defaultFileExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects(),
-            p.getClosedDomain(), p.getRestrictedDomain(), p.getDomainWithGuests(), p.getGuestCanCreateOther());
+            closedDomain, restrictedDomain, domainWithGuests, guestsCanCreateOther);
+        System.out.println(params.getClosedDomain());
         params = parameterFacade.saveOrUpdate(params);
         
         if (selectedDomain != null) {
             selectedDomain.setParameterVo(params);
         }
+        
+        System.out.println(params.getClosedDomain());
+        System.out.println(selectedDomain.getParameterVo().getClosedDomain());
 
         
         //delete admin temp account
