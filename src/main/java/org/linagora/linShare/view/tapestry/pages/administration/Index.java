@@ -22,7 +22,9 @@ package org.linagora.linShare.view.tapestry.pages.administration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.tapestry5.ValueEncoder;
@@ -35,11 +37,13 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.TimeUnit;
 import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.vo.AllowedMimeTypeVO;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -64,6 +68,8 @@ public class Index {
 
 	@Inject
 	private Messages messages;
+    @Inject
+    private DomainFacade domainFacade;
     @Inject
     private ParameterFacade parameterFacade;
     @Inject
@@ -140,6 +146,18 @@ public class Index {
 	@Inject @Symbol("linshare.secured-storage.disallowed.job.file-cleaner.activate")
 	@Property
 	private boolean fileCleanerActivated;
+	
+	@Persist
+	@Property
+	private List<DomainVo> domains;
+	
+	@Persist
+	@Property
+	private DomainVo selectedDomain;
+	
+	@Property
+	@Persist
+	private boolean superadmin;
     
 
     /* ***********************************************************
@@ -147,7 +165,25 @@ public class Index {
      ************************************************************ */
     @SetupRender
     public void init() throws BusinessException {
-        ParameterVo p = parameterFacade.loadConfig();
+    	
+    	ParameterVo p = null;
+    	
+    	superadmin = loginUser.isSuperAdmin();
+    	
+    	if (superadmin && selectedDomain == null) {
+    		domains = domainFacade.findAllDomains();
+    		if (domains == null || domains.size() < 1) {
+    			
+    		} else {
+    			selectedDomain = domains.get(0);
+    		}
+    	} 
+    	
+    	if (selectedDomain != null) {
+			p = selectedDomain.getParameterVo();
+    	} else {    		
+    		p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
+    	}
 
         fileSizeMax = p.getFileSizeMax();
         userAvailableSize = p.getUserAvailableSize();
@@ -193,6 +229,26 @@ public class Index {
         	}
         }
     }
+    
+    public ValueEncoder<DomainVo> getValueEncoder() {
+    	return new ValueEncoder<DomainVo>() {
+    		public String toClient(DomainVo value) {
+    			return value.getIdentifier();
+    		}
+    		public DomainVo toValue(String clientValue) {
+    			for (DomainVo domain : domains) {
+    	    		if (domain.getIdentifier().equals(clientValue)) {
+    	    			return domain;
+    	    		}
+    			}
+    			return null;
+    		}
+		};
+    }
+    
+    public Object onSubmitFormUpdateDomain() {
+    	return this;
+    }
 
     public ValueEncoder<ShareExpiryRule> getShareExpiryRuleEncoder() {
     	return new ValueEncoder<ShareExpiryRule>() {
@@ -237,7 +293,14 @@ public class Index {
     
     
     public void onSuccessFromAdministrationForm() throws BusinessException {
-        ParameterVo p = parameterFacade.loadConfig();
+    	
+        ParameterVo p = null;
+        
+        if(superadmin) {
+        	p = selectedDomain.getParameterVo();
+        } else {	
+        	p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
+        }
 
         if (fileSizeMax != null) {
             fileSizeMax = fileSizeMax * FACTORMULTI;
@@ -251,9 +314,14 @@ public class Index {
         
         boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;
 
-        ParameterVo params = new ParameterVo(fileSizeMax, userAvailableSize, globalQuota, p.getUsedQuota(),activeGlobalQuota,activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
-            guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, defaultFileExpiryUnit, defaultFileExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects());
-        parameterFacade.createConfig(params);
+        ParameterVo params = new ParameterVo(p.getIdentifier(), fileSizeMax, userAvailableSize, globalQuota, p.getUsedQuota(),activeGlobalQuota,activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
+            guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, defaultFileExpiryUnit, defaultFileExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects(),
+            p.getClosedDomain(), p.getRestrictedDomain(), p.getDomainWithGuests(), p.getGuestCanCreateOther());
+        params = parameterFacade.saveOrUpdate(params);
+        
+        if (selectedDomain != null) {
+            selectedDomain.setParameterVo(params);
+        }
 
         
         //delete admin temp account

@@ -43,5 +43,17 @@
 		</div>
 
 	</div><!-- id="content" -->
+	
+	<!-- Actions widget -->
+	<t:parameter name="actionsWidget">
+		<t:if test="superadmin">
+			<t:widget widgetId="actionsWidget" title="Other title">
+				<t:form t:id="updateDomain">
+					<t:select t:id="domainSelect" t:value="selectedDomain" t:model="domains" t:encoder="valueEncoder" blankOption="never" />
+					<t:submit value="${message:global.button.validate}"/>
+				</t:form>
+			</t:widget>
+		</t:if>
+	</t:parameter>
 
 </t:MyBorderLayout>

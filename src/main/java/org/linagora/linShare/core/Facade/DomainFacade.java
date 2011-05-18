@@ -39,5 +39,6 @@ public interface DomainFacade {
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers() throws BusinessException;
 	public boolean userCanCreateGuest(UserVo userVo) throws BusinessException;
+	public List<DomainVo> findAllDomains() throws BusinessException;
 
 }

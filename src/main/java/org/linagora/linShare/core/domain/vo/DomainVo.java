@@ -63,5 +63,10 @@ public class DomainVo {
 	public ParameterVo getParameterVo() {
 		return parameterVo;
 	}
+	
+	@Override
+	public String toString() {
+		return identifier;
+	}
 
 }
