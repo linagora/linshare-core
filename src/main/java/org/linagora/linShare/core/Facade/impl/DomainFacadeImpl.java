@@ -93,5 +93,10 @@ public class DomainFacadeImpl implements DomainFacade {
 		User user = userService.findUser(userVo.getMail(), userVo.getDomainIdentifier());
 		return domainService.userCanCreateGuest(user);
 	}
+	
+	@Override
+	public List<DomainVo> findAllDomains() throws BusinessException {
+		return domainTransformer.disassembleList(domainService.findAllDomains());
+	}
 
 }
