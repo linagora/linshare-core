@@ -234,9 +234,6 @@ public class UserServiceImpl implements UserService {
             	throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user could not be found in the DB nor in the LDAP");
             }
         }
-        System.out.println("ICI!!! "+user.getDomain());
-        System.out.println(user.getDomain().getIdentifier());
-        logger.debug("creating user with domain : "+user.getDomain().getIdentifier());
         return user;
     }
     
@@ -458,7 +455,8 @@ public class UserServiceImpl implements UserService {
 	        users.addAll(guests);
 		}
 		if(null==userType || userType.equals(UserType.INTERNAL)){
-			List<User> internals = domainService.searchUser(mail, firstName, lastName, currentUser.getDomain().getIdentifier(), currentUser);
+			String domainId = (currentUser.getDomain() == null) ? null : currentUser.getDomain().getIdentifier();
+			List<User> internals = domainService.searchUser(mail, firstName, lastName, domainId, currentUser);
         
 			//need linshare local information for these internals user
 			for (User ldapuser : internals) {
@@ -491,10 +489,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	
-	public void updateUser(String mail,Role role, UserVo owner) throws BusinessException{
+	public void updateUser(String mail,Role role, UserVo ownerVo) throws BusinessException{
+		
+        User owner = userRepository.findByLogin(ownerVo.getLogin());
+        Domain domain = owner.getDomain();
+		
+		if ((domain == null || domain.getIdentifier() == null) 
+				&& owner.getRole() == Role.SUPERADMIN) {
+			domain = guessUserDomain(mail, owner);
+		}
 		
 		//search in database internal user, next in ldap, create it in db if needed
-		User user = findAndCreateUser(mail, owner.getDomainIdentifier());
+		if (domain == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find user in db nor in domains " + mail);
+		}
+		
+		User user = findAndCreateUser(mail, domain.getIdentifier());
 		
 		user.setRole(role);
 		userRepository.update(user);
@@ -505,6 +515,31 @@ public class UserServiceImpl implements UserService {
         
         logEntryRepository.create(logEntry);
 		
+	}
+
+	private Domain guessUserDomain(String mail, User owner) {
+		User foundUser = null;
+		Domain domain = null;
+		try {
+			foundUser = findUser(mail, null);
+			if (foundUser == null) {
+				List<Domain> domains = domainService.findAllDomains();
+				for (Domain loopedDomain : domains) {
+					List<User> founds = ldapQueryService.searchUser(mail, "", "", loopedDomain, owner);
+					if (founds != null && founds.size() == 1) {
+						foundUser = founds.get(0);
+						domain = foundUser.getDomain();
+						break;
+					}
+				}
+			} else {
+				domain = foundUser.getDomain();
+			}
+		} catch (BusinessException e) {
+			// cannot be because throwed when domain != null
+			logger.error("BusinessException while trying to find the user", e);
+		}
+		return domain;
 	}
 	
 	public void updateUserLocale(String mail, String locale) {

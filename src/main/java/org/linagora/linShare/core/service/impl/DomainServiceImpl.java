@@ -7,6 +7,7 @@ import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.domain.entities.Parameter;
+import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
@@ -91,12 +92,21 @@ public class DomainServiceImpl implements DomainService {
 	
 	public List<User> searchUser(String mail, String firstName,
 			String lastName, String domainId, User currentUser) throws BusinessException {
-		Domain domain = retrieveDomain(domainId);
+		
+		Domain domain = null;
+		if (domainId!=null) {
+			domain = retrieveDomain(domainId);
+		}
+		
+		if (domain == null && (currentUser.getRole() != Role.SUPERADMIN)) {
+			throw new BusinessException("Domain cannot be null for this user : "+currentUser.getMail());
+		}
+		
 		List<User> users = new ArrayList<User>();
 		
-		if (domain.getParameter().getClosedDomain()) {
+		if (domain != null && domain.getParameter().getClosedDomain()) {
 			users.addAll(ldapQueryService.searchUser(mail, firstName, lastName, domain, currentUser));
-		} else {
+		} else { //domain==null&&superadmin || !closedDomain
 			List<Domain> domains = findAllDomains();
 			for (Domain domainFound : domains) {
 				users.addAll(ldapQueryService.searchUser(mail, firstName, lastName, domainFound, currentUser));

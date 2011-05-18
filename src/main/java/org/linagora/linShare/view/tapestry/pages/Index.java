@@ -40,10 +40,9 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.constants.Language;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
@@ -70,7 +69,7 @@ public class Index {
     @Inject
     private ShareFacade shareFacade;
     @Inject
-    private ParameterFacade parameterFacade;
+    private DomainFacade domainFacade;
 	@Inject
 	private PageRenderLinkSource linkFactory;
     @Inject
@@ -122,19 +121,30 @@ public class Index {
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
+	
+	public Object onActivate() {
+		if (userVoExists && userVo.isSuperAdmin()) {
+			return org.linagora.linShare.view.tapestry.pages.user.Index.class;
+		}
+		return null;
+	}
+	
     @SuppressWarnings("unused")
     @SetupRender
     private void initList() throws BusinessException {
     	
-        ParameterVo parameterVo = parameterFacade.loadConfig();
         if (userVoExists == false) {
         	Locale locale = WelcomeMessageUtils.getNormalisedLocale(persistentLocale.get(), request.getLocale(), null);
         	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
             shares = new ArrayList<ShareDocumentVo>();
-            welcomeText = WelcomeMessageUtils.getWelcomeText(parameterVo.getWelcomeTexts(), language,
-                UserType.INTERNAL).getWelcomeText();
+            welcomeText = "blabla";
+            //welcomeText = WelcomeMessageUtils.getWelcomeText(parameterVo.getWelcomeTexts(), language,
+            //    UserType.INTERNAL).getWelcomeText();
 
         } else {
+            ParameterVo parameterVo = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
+            System.out.println(parameterVo.getIdentifier());
+            System.out.println(parameterVo.getWelcomeTexts());
         	Locale userLocale = null;
         	if (((userVo.getLocale())!= null) && (!userVo.getLocale().equals(""))) {
         		userLocale = new Locale(userVo.getLocale());

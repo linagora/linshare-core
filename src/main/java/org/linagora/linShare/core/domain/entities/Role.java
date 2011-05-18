@@ -23,7 +23,7 @@ package org.linagora.linShare.core.domain.entities;
 /**
  */
 public enum Role {
-    SIMPLE(0), ADMIN(1), SYSTEM(2);
+    SIMPLE(0), ADMIN(1), SYSTEM(2), SUPERADMIN(3);
 
     private int value;
 
@@ -40,6 +40,7 @@ public enum Role {
             case 0 : return SIMPLE;
             case 1 : return ADMIN;
             case 2 : return SYSTEM;
+            case 3 : return SUPERADMIN;
             default : throw new IllegalArgumentException("Doesn't match an existing Role");
         }
     }
