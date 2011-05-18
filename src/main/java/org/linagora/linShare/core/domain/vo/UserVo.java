@@ -166,8 +166,12 @@ public class UserVo implements Serializable {
 	}
 
     public boolean isAdministrator() {
-        return Role.ADMIN.equals(role);
+        return Role.ADMIN.equals(role)||isSuperAdmin();
     }
+
+	public boolean isSuperAdmin() {
+		return Role.SUPERADMIN.equals(role);
+	}
 
     public boolean isGuest() {
         return UserType.GUEST.equals(userType);

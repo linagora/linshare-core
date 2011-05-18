@@ -39,7 +39,9 @@
 			<div id="configuration">
 				<!-- t:pagelink page="help/index" class="link-help">${message:components.myborderlayout.link.help}</t:pagelink> | -->
 				<t:if t:test="userVoExists">
+				<t:if t:test="superadmin" negate="true">
 					<t:pagelink page="administration/userConfig">${message:components.myborderlayout.link.userConfig}</t:pagelink> |
+				</t:if>
 				</t:if>
 				<t:localizer t:respectiveLanguage="false" exclude="excludeLocales" separator="/" />
 			</div>
@@ -54,6 +56,14 @@
 
     <t:parameter name="menuBar">
         <div id="menuBar">
+        	<t:if t:test="superadmin">
+        		 <t:Menu t:title="Navigation"
+                        t:links="user/index;help/index"
+                        t:labels="${message:components.myborderlayout.user.title};${message:components.myborderlayout.help.title}"
+                        t:alternateStyle="false" t:highlights="user;help" t:currentHighlight="${currentHighlight}" />
+        	
+        	
+        	<t:parameter name="else">
             <t:if t:test="admin">
             	<t:if t:test="securedStorageDisallowed">
                 <t:Menu t:title="Navigation"
@@ -97,6 +107,8 @@
                     </t:if>
                 </t:if>
             </t:if>
+            </t:parameter>
+            </t:if>
         </div>
     </t:parameter>
 
@@ -111,7 +123,9 @@
 	<t:parameter name="right">
 		<div id="sideBar">
 			<t:if t:test="userVoExists">
+				<t:if t:test="superadmin" negate="true">
 				<t:infoComponent />
+				</t:if>
 			</t:if>
 			<t:delegate to="searchWidget" />
 			<t:delegate to="actionsWidget" />

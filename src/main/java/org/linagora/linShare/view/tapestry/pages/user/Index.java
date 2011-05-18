@@ -43,6 +43,7 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -98,6 +99,9 @@ public class Index {
     @SessionState
     @Property
     private UserVo userVo;
+	
+	@Property
+	private boolean userVoExists;
 
     @Environmental
     private RenderSupport renderSupport;
@@ -118,6 +122,10 @@ public class Index {
 	@Inject @Symbol("linshare.users.internal.defaultView.showAll")
 	@Property
 	private boolean showAll;
+	
+	@SuppressWarnings("unused")
+	@Property
+	private boolean superadmin;
 
 
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
@@ -131,6 +139,7 @@ public class Index {
     	if (!shareSessionObjectsExists) {
     		shareSessionObjects = new ShareSessionObjects();
     	}
+		superadmin=(userVoExists && userVo.getRole().equals(Role.SUPERADMIN));
     }
     
     @OnEvent(value="sharePanel")

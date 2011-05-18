@@ -27,7 +27,6 @@ import java.util.Locale;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;
@@ -36,7 +35,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -127,8 +126,8 @@ public class MyBorderLayout {
 	@Inject
 	private Messages messages;
 
-    @Inject
-    private ParameterFacade parameterFacade;
+	@Inject
+	private DomainFacade domainFacade;
 
     /* ***********************************************************
 	 *                Properties & injected symbol, ASO, etc
@@ -144,6 +143,10 @@ public class MyBorderLayout {
 	@SuppressWarnings("unused")
 	@Property
 	private boolean admin;
+	
+	@SuppressWarnings("unused")
+	@Property
+	private boolean superadmin;
 	
 	@SuppressWarnings("unused")
 	@Property
@@ -215,9 +218,9 @@ public class MyBorderLayout {
 	
 	@SetupRender
 	public void init() throws BusinessException {
-		
-        ParameterVo parameterVo = parameterFacade.loadConfig();
-        customLogoUrl = parameterVo.getCustomLogoUrl();
+
+//		ParameterVo config = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
+//        customLogoUrl = config.getCustomLogoUrl();
 		
 		ie8Css="<!--[if IE 8]><link href='"+ie8CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
 
@@ -230,10 +233,12 @@ public class MyBorderLayout {
 		
 		if(userVoExists){
 			admin=(userVo.getRole().equals(Role.ADMIN));
+			superadmin=(userVo.getRole().equals(Role.SUPERADMIN));
 			user=(userVo.getRole().equals(Role.SIMPLE));
 			userExt=(userVo.isGuest() && !userVo.isUpload());
 		}else{
 			admin=false;
+			superadmin=false;
 			user=false;
 			userExt=false;
 		}
