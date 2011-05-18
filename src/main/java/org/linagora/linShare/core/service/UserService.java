@@ -129,13 +129,13 @@ public interface UserService {
 	public void updateUserEnciphermentKey(String mail, byte[] challenge);
 	
 	/**
-	 * change a guest password
+	 * change a guest or superadmin password
 	 * @param login
 	 * @param oldPassword
 	 * @param newPassword
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
-	public void changeGuestPassword(String login, String oldPassword, String newPassword) throws BusinessException;
+	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException;
 	
 	/**
 	 * Reset a guest password

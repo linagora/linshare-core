@@ -575,18 +575,18 @@ public class UserServiceImpl implements UserService {
 		
 	}
 	
-	public void changeGuestPassword(String login, String oldPassword, String newPassword) throws BusinessException {
-		Guest guest = guestRepository.findByLogin(login);
-		if (guest == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException {
+		User user = userRepository.findByLogin(login);
+		if (user == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a user with the login " + login);
 		}
 		
-		if (!guest.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes()))) {
+		if (!user.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes()))) {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR, "The supplied password is invalid");
 		}
 		
-		guest.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
-		guestRepository.update(guest);
+		user.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
+		userRepository.update(user);
 	}
 
 	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException {

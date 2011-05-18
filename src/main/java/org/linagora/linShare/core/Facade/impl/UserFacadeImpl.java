@@ -228,11 +228,12 @@ public class UserFacadeImpl implements UserFacade {
     }
     
     public void changePassword(UserVo user, String oldPassword, String newPassword) throws BusinessException {
-    	if (!user.getUserType().equals(UserType.GUEST)) {
-    		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user type is wrong, only a guest may change its password");
+    	if (!(user.getUserType().equals(UserType.GUEST) ||
+    			user.getRole().equals(Role.SUPERADMIN))) {
+    		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Only a guest or superadmin may change its password");
     	}
     	
-    	userService.changeGuestPassword(user.getLogin(), oldPassword, newPassword);
+    	userService.changePassword(user.getLogin(), oldPassword, newPassword);
     	
     }
 
