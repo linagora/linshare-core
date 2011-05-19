@@ -55,6 +55,7 @@ import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.chenillekit.image.ChenilleKitImageConstants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
@@ -403,14 +404,15 @@ public class AppModule
     		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
     		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
     		 @InjectService("ThreadLocale")  ThreadLocale threadLocale,
-    		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder
+    		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder,
+    		 @InjectService("DomainFacade")  DomainFacade domainFacade
 
     		 )
     {
 
-        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, parameterFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
+        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, parameterFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,domainFacade));
         config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, documentFacade, mailContainerBuilder));
-        config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
+        config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,domainFacade));
     }
      
     public static MailContainerBuilder buildMailContainerBuilder(

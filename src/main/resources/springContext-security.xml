@@ -10,7 +10,7 @@
             <value>
                    CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
                    PATTERN_TYPE_APACHE_ANT
-                   /=httpSessionIntegrationFilter
+                   /=httpSessionIntegrationFilter,rememberMeProcessingFilter
                    /assets/**=#NONE#
                    /applet/**=#NONE#
                    /css/**=#NONE#
@@ -21,9 +21,9 @@
                    /**/*.js=#NONE#
                    /**/*.css=#NONE#
                    /**/*.swf=#NONE#
-                   /**/en=#NONE#
-                   /**/fr=#NONE#
-                   /**/nl=#NONE#
+                   /**/en=httpSessionIntegrationFilter,rememberMeProcessingFilter
+                   /**/fr=httpSessionIntegrationFilter,rememberMeProcessingFilter
+                   /**/nl=httpSessionIntegrationFilter,rememberMeProcessingFilter
                    /download/**=#NONE#
                    /**/download.passwordpopup.formpassword=#NONE#
                    /download.downloadthemall/**=#NONE#
