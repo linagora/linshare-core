@@ -167,8 +167,7 @@ public class UserFacadeImpl implements UserFacade {
         	User owner = userRepository.findByLogin(actor.getLogin());
             userService.deleteUser(login, owner, true);
         } catch (BusinessException e) {
-            logger.error(e.toString());
-            throw new IllegalArgumentException("Provided login doesn't match an existing user");
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 

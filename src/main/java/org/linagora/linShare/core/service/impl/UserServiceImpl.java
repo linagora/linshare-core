@@ -268,30 +268,29 @@ public class UserServiceImpl implements UserService {
 
 	public void deleteUser(String login, User owner, boolean checkOwnership) throws BusinessException {
 		User userToDelete = userRepository.findByLogin(login);
-		boolean isAdmin = owner.getRole().equals(Role.ADMIN);
 		
 		if (userToDelete!=null) {
-			if (userToDelete instanceof Guest) {
-				if (checkOwnership && !isAdmin && !((Guest)userToDelete).getOwner().equals(owner)) {
-					throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + owner.getLogin() 
-							+" cannot delete " + login);
-				} else {
-					doDeleteUser(login, owner, userToDelete);
-				}
+			boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, userToDelete, checkOwnership);
+			
+			logger.debug("As right ? : "+hasRightToDeleteThisUser);
+			
+			if (!hasRightToDeleteThisUser) {
+				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
+						+" cannot be deleted, he is not a guest, or "+ owner.getLogin()+ " is not an admin");
 			} else {
-				if (isAdmin) {
-					doDeleteUser(login, owner, userToDelete);
-				} else {
-					logger.error("The user " + login +" cannot be deleted, he is not a guest");
-					throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
-							+" cannot be deleted, he is not a guest, or "+ owner.getLogin()+ " is not an admin");
-				}
+				doDeleteUser(login, owner, userToDelete);
 			}
 			
-		} else {
-			logger.error("Couldn't find the user " + login +" to be deleted");
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + login +" to be deleted");
 		}
+	}
+
+	private boolean isAdminForThisUser(User owner, User userToAdministrate, boolean checkOwnership) {
+		boolean hasRightToAdministrateThisUser = owner.getRole().equals(Role.SUPERADMIN) 
+			|| owner.getRole().equals(Role.SYSTEM)
+			|| (owner.getRole().equals(Role.ADMIN) && owner.getDomain().getIdentifier().equals(userToAdministrate.getDomain().getIdentifier()))
+			|| (checkOwnership && userToAdministrate instanceof Guest && ((Guest)userToAdministrate).getOwner().equals(owner));
+		
+		return hasRightToAdministrateThisUser;
 	}
 
 	private void doDeleteUser(String login, User owner, User userToDelete)
@@ -471,10 +470,20 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void updateGuest(String mail, String firstName, String lastName,
-			Boolean canUpload, Boolean canCreateGuest, UserVo owner)
+			Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo)
 			throws BusinessException {
-        
+		
 		Guest guest = guestRepository.findByLogin(mail);
+		User owner = userRepository.findByMail(ownerVo.getMail());
+		
+		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest, true);
+		
+		if (!hasRightToDeleteThisUser) {
+			logger.error("The user " + mail +" cannot be updated by "+owner.getMail());
+			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
+					+" cannot be deleted, he is not a guest, or "+ owner.getLogin()+ " is not an admin");
+		}
+        
 		guest.setFirstName(firstName);
 		guest.setLastName(lastName);
 		guest.setCanUpload(canUpload);
