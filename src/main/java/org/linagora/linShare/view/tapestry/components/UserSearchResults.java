@@ -49,6 +49,7 @@ import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
@@ -175,7 +176,7 @@ public class UserSearchResults {
      *                   Event handlers&processing
      ************************************************************ */
     @SetupRender
-    public void initUserSearch() {
+    public void initUserSearch() throws BusinessException {
         if (selectedUsers == null) {
             selectedUsers = new ArrayList<UserVo>();
         }
@@ -247,7 +248,7 @@ public class UserSearchResults {
 		actionbutton = ActionFromBarDocument.NO_ACTION;
     }
 
-    public Zone onActionFromShowUser(String mail) {
+    public Zone onActionFromShowUser(String mail) throws BusinessException {
         return userDetailsDisplayer.getShowUser(mail);
     }
 
@@ -273,7 +274,7 @@ public class UserSearchResults {
     
     public Zone onActionFromAddToGroup(String userLogin) {
     	userAddToGroupsList = new ArrayList<UserVo>();
-    	UserVo user = userFacade.loadUserDetails(userLogin);
+    	UserVo user = userFacade.loadUserDetails(userLogin, userLoggedIn.getDomainIdentifier());
     	userAddToGroupsList.add(user);
         return userAddToGroupTemplateZone;
     }
@@ -329,8 +330,11 @@ public class UserSearchResults {
      */
     
     public boolean isUserEditable() {
-        
-        if (userLoggedIn.isAdministrator()) {
+
+        if (userLoggedIn.isSuperAdmin()) {
+        	return true;
+        }
+        if (userLoggedIn.isAdministrator() && userLoggedIn.getDomainIdentifier().equals(user.getDomainIdentifier())) {
             return true;
         } else {
             return isOwner();
@@ -347,7 +351,10 @@ public class UserSearchResults {
         if (user.getLogin().trim().equals(userLoggedIn.getLogin().trim())) {
         	return false;
         }
-        if (userLoggedIn.isAdministrator()) {
+        if (userLoggedIn.isSuperAdmin()) {
+        	return true;
+        }
+        if (userLoggedIn.isAdministrator() && userLoggedIn.getDomainIdentifier().equals(user.getDomainIdentifier())) {
         	return true;
         } 
         return isOwner();
