@@ -23,6 +23,9 @@ package org.linagora.linShare.view.tapestry.services.impl;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.userdetails.UserDetails;
@@ -35,6 +38,8 @@ public class UserAccessAuthentity  {
 
     private final UserFacade userFacade;
     private final ApplicationStateManager applicationStateManager;
+    
+	private static final Logger logger = LoggerFactory.getLogger(UserAccessAuthentity.class);
 
     public UserAccessAuthentity(UserFacade userFacade, ApplicationStateManager applicationStateManager) {
         this.userFacade = userFacade;
@@ -49,7 +54,12 @@ public class UserAccessAuthentity  {
         	if (applicationStateManager.getIfExists(UserVo.class) == null) {
         		// fetch user if not existing
 	            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-	            UserVo userVo = userFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
+	            UserVo userVo = null;
+				try {
+					userVo = userFacade.findUser(userDetails.getUsername().toLowerCase(), null);
+				} catch (BusinessException e) {
+					logger.error("Error while trying to find user details", e);
+				}
 	            applicationStateManager.set(UserVo.class, userVo);
         	} else {
         		// if the login doesn't match the session user email, change the user
@@ -57,18 +67,16 @@ public class UserAccessAuthentity  {
         				((UserDetails)(authentication.getPrincipal())).getUsername())) {
         			// fetch user 
     	            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    	            UserVo userVo = userFacade.loadUserDetails(userDetails.getUsername());
+    	            UserVo userVo = null;
+					try {
+						userVo = userFacade.findUser(userDetails.getUsername().toLowerCase(), null);
+					} catch (BusinessException e) {
+						logger.error("Error while trying to find user details", e);
+					}
     	            applicationStateManager.set(UserVo.class, userVo);
         		}
         	}
-        } 
-        /**
-        else {
-        	//if(applicationStateManager.getIfExists(UserVo.class)==null)
-        	// invalidate session
-        	//applicationStateManager.set(UserVo.class, null);
         }
-        */
     }
 
 }
