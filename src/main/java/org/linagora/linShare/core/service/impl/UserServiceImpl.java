@@ -230,10 +230,7 @@ public class UserServiceImpl implements UserService {
             if (users!=null && users.size()==1) {
             	user = users.get(0);
             	try {
-					User created = userRepository.create(user);
-					Domain domain = domainService.retrieveDomain(domainId);
-					created.setDomain(domain);
-					user = userRepository.update(created);
+					user = userRepository.create(user);
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not create the user " + user.getLogin()+" in the database ", e);
 					throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user could not be created in the DB " + e);
