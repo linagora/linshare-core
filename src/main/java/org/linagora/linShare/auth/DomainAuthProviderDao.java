@@ -104,7 +104,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		 */
 		if (domain == null && username.indexOf("@") != -1) {
 			try {
-				foundUser = userService.findUser(username, null);
+				foundUser = userService.findUserInDB(username);
 				if (foundUser == null) {
 					List<Domain> domains = domainService.findAllDomains();
 					for (Domain loopedDomain : domains) {
@@ -112,7 +112,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 							foundUser = ldapQueryService.auth(login, password, loopedDomain);
 							if (foundUser != null) {
 								domain = loopedDomain.getIdentifier();
-								System.out.println("User found in domain "+domain);
+								logger.debug("User found in domain "+domain);
 								break;
 							}
 						} catch (NameNotFoundException e) {
@@ -124,15 +124,25 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 							logger.error(e);
 						}
 					}
+				} else {
+					domain = foundUser.getDomain().getIdentifier();
+					try {
+						foundUser = ldapQueryService.auth(login, password, foundUser.getDomain());
+					} catch (NameNotFoundException e) {
+						throw new BadCredentialsException("Could not retrieve user : "+login+" in domain : "+domain, e);
+					} catch (IOException e) {
+						throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domain, e);
+					} catch (NamingException e) {
+						throw new BadCredentialsException("Could not retrieve user : "+login+" in domain : "+domain, e);
+					}
 				}
 			} catch (BusinessException e) {
-				// cannot be because throwed when domain != null
-				logger.error(e);
+				throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domain, e);
 			}
 		}
 		
 		// invisible domain and user not found (uid login or found in no domain)
-		if (foundUser == null && domain == null) {
+		if (foundUser == null || domain == null) {
 			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
 	          "Bad credentials, no domain specified and user found in no domain"), domain);
 		}
