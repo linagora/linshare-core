@@ -122,7 +122,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	@Autowired
 	private ParameterService parameterService;
 	
-	private static final String DOMAIN_IDENTIFIER = "testDomain";
+	private static final String DOMAIN_IDENTIFIER = "baseDomain";
 
 	private SMTPServer wiser;
 
@@ -137,29 +137,9 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	@Before
 	public void setUp() throws Exception {
 		
-			wiser.start();
-		
+		wiser.start();
 		
 		this.transactionTemplate = new TransactionTemplate(tx);
-		Parameter param = new Parameter("testParam", new Long(1000000000L), new Long(1000000000L), new Long(1000000000L), new Long(0L), Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, 
-				Boolean.FALSE, new Integer(100), TimeUnit.DAY, "", TimeUnit.DAY, new Integer(100), TimeUnit.DAY, new Integer(100), 
-				new ArrayList<ShareExpiryRule>(), Boolean.FALSE, new HashSet<WelcomeText>(), 
-				MailContentRetriever.getMailTemplates(), MailContentRetriever.getMailSubjects(),
-				Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
-		LDAPConnectionVo ldapConnVo = new LDAPConnectionVo("testldap", "ldap://localhost:33389", "anonymous");
-		DomainPatternVo patternVo = new DomainPatternVo("testPattern", "testPattern", 
-				"ldap.entry(\"uid=\" + userId + \",ou=People,\" + domain, \"objectClass=*\");", 
-				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");",
-				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
-				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
-				"mail givenName sn");
-		LDAPConnection ldapConn = domainService.createLDAPConnection(ldapConnVo);
-		DomainPattern pattern = domainService.createDomainPattern(patternVo);
-		param = parameterService.saveOrUpdate(param);
-		
-		Domain domain = new Domain(DOMAIN_IDENTIFIER, "dc=linpki,dc=org", pattern, ldapConn, param);
-		
-		domainRepository.create(domain);
 
 		/**
 		 * Creating the stream for testing.
@@ -172,6 +152,9 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						try {
 							owner = userService
 									.findAndCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
+							
+							Assert.assertNotNull(owner);
+							
 							inputStream = Thread.currentThread()
 									.getContextClassLoader()
 									.getResourceAsStream("linShare-default.properties");
@@ -208,15 +191,15 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 							}
 
 						} catch (BusinessException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
+							Assert.assertTrue(false);
 						}
 
 						/**
 						 * Creating documents for testing.
 						 */
 						try {
-							Assert.assertTrue(null != owner);
+							Assert.assertNotNull(owner);
 							if (documentRepository.findAll().size() > 1) {
 								Assert.fail("Too much doc in the repository");
 							}
@@ -230,8 +213,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 										owner);
 							}
 						} catch (BusinessException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
+							Assert.assertTrue(false);
 						}
 
 					}
@@ -255,8 +238,6 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						try {
 							sender = userService.findUser(mailTestRetriever
 								.getSenderMail(), DOMAIN_IDENTIFIER);
-							Domain domain = domainService.retrieveDomain(DOMAIN_IDENTIFIER);
-							sender.setDomain(domain);
 							
 							recipient = userService.findUser(mailTestRetriever
 									.getRecipientMail(), DOMAIN_IDENTIFIER);
@@ -408,17 +389,15 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						 */
 
 						try {
-							User recipient = userService
-									.findUser(mailTestRetriever
-											.getRecipientMail(), DOMAIN_IDENTIFIER);
+							User owner = userService.findUser("user1@linpki.org", DOMAIN_IDENTIFIER);;
 							userService.deleteUser(mailTestRetriever
-									.getRecipientMail(), recipient, false);
+									.getRecipientMail(), owner, true);
 
 							sender = userService.findUser(mailTestRetriever
 									.getSenderMail(), DOMAIN_IDENTIFIER);
 						} catch (BusinessException e) {
-							Assert.assertFalse(true);
 							e.printStackTrace();
+							Assert.assertFalse(true);
 						}
 						Assert.assertTrue(sender.getShares().size() == 0);
 						Assert
