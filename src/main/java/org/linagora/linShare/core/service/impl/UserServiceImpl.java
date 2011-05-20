@@ -190,10 +190,23 @@ public class UserServiceImpl implements UserService {
      * @return founded user.
  * @throws BusinessException 
      */
+    public User findUserInDB(String mail) {
+        return userRepository.findByMail(mail);
+    }
     public User findUser(String mail, String domain) throws BusinessException {
         User user = userRepository.findByMail(mail);
-        if (user == null && domain != null) {
+        if (user == null) {
             List<User> users = domainService.searchUser(mail, "", "", domain, null);
+            if (users != null && users.size() == 1) {
+            	user = users.get(0);
+            }
+        }
+        return user;
+    }
+    public User findUser(String mail, String domain, User actor) throws BusinessException {
+        User user = userRepository.findByMail(mail);
+        if (user == null) {
+            List<User> users = domainService.searchUser(mail, "", "", domain, actor);
             if (users != null && users.size() == 1) {
             	user = users.get(0);
             }

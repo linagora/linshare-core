@@ -109,6 +109,14 @@ public class UserFacadeImpl implements UserFacade {
     	}
     	return null;
     }
+    public UserVo findUser(String mail, String domain, UserVo actorVO) throws BusinessException {
+    	User actor = userService.findUser(actorVO.getMail(), actorVO.getDomainIdentifier());
+    	User user = userService.findUser(mail, domain, actor);
+    	if (user != null) {
+    		return new UserVo(user);
+    	}
+    	return null;
+    }
     
     
 

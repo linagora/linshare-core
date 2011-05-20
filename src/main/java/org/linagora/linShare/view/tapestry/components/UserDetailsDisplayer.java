@@ -67,7 +67,7 @@ public class UserDetailsDisplayer {
      *                   Event handlers&processing
      ************************************************************ */
     public Zone getShowUser(String mail) throws BusinessException {
-        detailedUser = userFacade.findUser(mail, userLoggedIn.getDomainIdentifier());
+        detailedUser = userFacade.findUser(mail, userLoggedIn.getDomainIdentifier(), userLoggedIn);
         return userDetailsTemplateZone;
     }
 

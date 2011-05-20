@@ -327,22 +327,15 @@ public class Index {
         }
         
         boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;
-        
-        System.out.println(closedDomain);
 
         ParameterVo params = new ParameterVo(p.getIdentifier(), fileSizeMax, userAvailableSize, globalQuota, p.getUsedQuota(),activeGlobalQuota,activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
             guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, defaultFileExpiryUnit, defaultFileExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects(),
             closedDomain, restrictedDomain, domainWithGuests, guestsCanCreateOther);
-        System.out.println(params.getClosedDomain());
         params = parameterFacade.saveOrUpdate(params);
         
         if (selectedDomain != null) {
             selectedDomain.setParameterVo(params);
         }
-        
-        System.out.println(params.getClosedDomain());
-        System.out.println(selectedDomain.getParameterVo().getClosedDomain());
-
         
         //delete admin temp account
         if(needDeleteTempAdmin && deleteTempAdmin){

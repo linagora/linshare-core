@@ -143,8 +143,7 @@ public class Index {
 
         } else {
             ParameterVo parameterVo = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
-            System.out.println(parameterVo.getIdentifier());
-            System.out.println(parameterVo.getWelcomeTexts());
+            
         	Locale userLocale = null;
         	if (((userVo.getLocale())!= null) && (!userVo.getLocale().equals(""))) {
         		userLocale = new Locale(userVo.getLocale());

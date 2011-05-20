@@ -204,7 +204,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 								Assert.fail("Too much doc in the repository");
 							}
 							if (documentRepository.findAll().size() == 0) {
-								System.out.println("inserting a new file for tests");
+								logger.info("inserting a new file for tests");
 								documentService.insertFile(sender.getLogin(),
 										inputStream, 20000,
 										"linShare.properties", documentService

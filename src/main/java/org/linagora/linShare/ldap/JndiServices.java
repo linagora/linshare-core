@@ -411,7 +411,8 @@ public final class JndiServices {
 		LdapContext bindContext = this.getContext();
 		Properties authProps = new Properties();
 		String oldAuth = (String) bindContext.getEnvironment().get(Context.SECURITY_AUTHENTICATION);
-		if (oldAuth == null) {
+		boolean ret = false;
+		if (oldAuth == null || oldAuth.equals("none")) {
 			authProps.put(Context.SECURITY_AUTHENTICATION, "none");
 		} else {
 			String oldPrincipal = (String) bindContext.getEnvironment().get(Context.SECURITY_PRINCIPAL);
@@ -421,20 +422,24 @@ public final class JndiServices {
 			authProps.put(Context.SECURITY_CREDENTIALS, oldCredentials);
 		}
 		try {
-		 bindContext.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
-		 bindContext.addToEnvironment(Context.SECURITY_PRINCIPAL, dn);
-		 bindContext.addToEnvironment(Context.SECURITY_CREDENTIALS, password);
-		 bindContext.reconnect(bindContext.getConnectControls());
+			bindContext.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
+			bindContext.addToEnvironment(Context.SECURITY_PRINCIPAL, dn);
+			bindContext.addToEnvironment(Context.SECURITY_CREDENTIALS, password);
+			bindContext.reconnect(bindContext.getConnectControls());
+			ret = true;
 		} catch (Exception e) {
-			return false;
+			ret = false;
 		} finally {
+            bindContext.removeFromEnvironment(Context.SECURITY_AUTHENTICATION);
+            bindContext.removeFromEnvironment(Context.SECURITY_PRINCIPAL);
+            bindContext.removeFromEnvironment(Context.SECURITY_CREDENTIALS);
             for (Entry<Object, Object> propertyEntry : authProps.entrySet()) {
             	bindContext.addToEnvironment(propertyEntry.getKey().toString(), propertyEntry.getValue());
             }
             bindContext.reconnect(bindContext.getConnectControls());
 
 		}
-		return true;
+		return ret;
     }
 
 	/**

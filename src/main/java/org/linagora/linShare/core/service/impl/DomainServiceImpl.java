@@ -98,8 +98,8 @@ public class DomainServiceImpl implements DomainService {
 			domain = retrieveDomain(domainId);
 		}
 		
-		if (domain == null && (currentUser.getRole() != Role.SUPERADMIN)) {
-			throw new BusinessException("Domain cannot be null for this user : "+currentUser.getMail());
+		if ((domain == null && currentUser == null) || (domain == null && currentUser != null && (currentUser.getRole() != Role.SUPERADMIN))) {
+			throw new BusinessException("Domain cannot be null for this user : "+ (currentUser == null ? "null" : currentUser.getMail()));
 		}
 		
 		List<User> users = new ArrayList<User>();

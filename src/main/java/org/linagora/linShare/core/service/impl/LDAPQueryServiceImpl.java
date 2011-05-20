@@ -23,12 +23,10 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		
 		String command = domain.getPattern().getGetUserCommand();
 		Map<String, Object> params = new HashMap<String, Object>();
-//		params.put("principal", actor.getId());
 		params.put("userId", userId);
 		params.put("domain", domain.getDifferentialKey());
 		Map<String, List<String>> retMap = JScriptEvaluator.evalToEntryMap(domain, command, params);
-//		System.out.println(retMap);
-//		System.out.println("----------");
+		
 		// tableau de correspondance entre attribut LDAP retourné et attribut de l'objet user
 		String[] keys = domain.getPattern().getGetUserResult().split(" ");
 		User user = mapToUser(retMap, keys, domain);
@@ -41,7 +39,6 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		
 		String command = domain.getPattern().getGetAllDomainUsersCommand();
 		Map<String, Object> params = new HashMap<String, Object>();
-//		params.put("principal", actor.getId());
 		params.put("domain", domain.getDifferentialKey());
 		List<String> ret = JScriptEvaluator.evalToStringList(domain, command, params);
 		List<User> users = dnListToUsersList(domain, ret);
@@ -57,9 +54,6 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		params.put("login", login);
 		params.put("domain", domain.getDifferentialKey());
 		List<String> retList = JScriptEvaluator.evalToStringList(domain, command, params);
-//		System.out.println(retList);
-//		System.out.println("----------");
-//		System.out.println(userPasswd);
 		
 		if (retList == null || retList.size() < 1) {
 			throw new NameNotFoundException("No user found for login: "+login+" and domain: "+domain.getIdentifier());
@@ -79,7 +73,6 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 			String lastName, Domain domain, User actor) throws BusinessException {
 		
 		String command = domain.getPattern().getSearchUserCommand();
-//		System.out.println(command);
 		Map<String, Object> params = new HashMap<String, Object>();
 		mail = toStarredString(mail);
 		firstName = toStarredString(firstName);
@@ -104,9 +97,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	private List<User> dnListToUsersList(Domain domain, List<String> ret) {
-//		System.out.println(ret);
 		String[] keys = domain.getPattern().getGetUserResult().split(" ");
-//		System.out.println(Arrays.asList(keys));
 		List<User> users = new ArrayList<User>();
 		for (String string : ret) {
 			User user = dnToUser(domain, keys, string);
@@ -120,7 +111,6 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		Map<String, Object> unitParams = new HashMap<String, Object>();
 		unitParams.put("dn", string);
 		Map<String, List<String>> retMap = JScriptEvaluator.evalToEntryMap(domain, unitCommand, unitParams);
-//		System.out.println(retMap);
 		User user = mapToUser(retMap, keys, domain);
 		return user;
 	}

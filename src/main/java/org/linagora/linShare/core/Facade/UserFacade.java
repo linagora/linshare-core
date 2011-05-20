@@ -73,6 +73,7 @@ public interface UserFacade {
      * @return founded user.
      */
     UserVo findUser(String mail, String domain) throws BusinessException;
+    UserVo findUser(String mail, String domain, UserVo actorVO) throws BusinessException;
     
 
     /** Search a user.

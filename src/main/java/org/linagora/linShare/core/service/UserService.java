@@ -74,7 +74,9 @@ public interface UserService {
      * @param login user login.
      * @return founded user.
      */
+    public User findUserInDB(String mail);
     public User findUser(String mail, String domain) throws BusinessException;
+    public User findUser(String mail, String domain, User actor) throws BusinessException;
     
     /** Find a  user (based on mail address).
      * Search first in database, then on ldap if not found.
