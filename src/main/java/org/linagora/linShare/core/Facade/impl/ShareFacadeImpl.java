@@ -22,6 +22,7 @@ package org.linagora.linShare.core.Facade.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -260,6 +261,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			Calendar expiryDateSelected)
 			throws BusinessException {
 		User u = null;
+		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
 		
 		List<UserVo> knownRecipients = new ArrayList<UserVo>();
 		List<Contact> unKnownRecipientsEmail = new ArrayList<Contact>();
@@ -342,11 +344,20 @@ public class ShareFacadeImpl implements ShareFacade {
 					notifierService.sendNotification(owner.getMail(), oneContact.getMail(), mailContainer_);
 				}
 			
+			} else {
+				for (DocumentVo doc : documents) {
+					for (Contact oneContact : unKnownRecipientsEmail) {
+						UserVo recipient = new UserVo(oneContact.getMail(), "", "", oneContact.getMail(), null);
+						ShareDocumentVo failSharing=new ShareDocumentVo(doc, owner, recipient, new GregorianCalendar(), false, "", new GregorianCalendar());
+						result.addFailItem(failSharing);
+					}
+				}
 			}
 		}
 		
 		//keep old method to share with user referenced in db
-		return createSharingWithMail(owner, documents, knownRecipients, mailContainer, expiryDateSelected, isOneDocEncrypted, jwsEncryptUrlString);
+		result.addAll(createSharingWithMail(owner, documents, knownRecipients, mailContainer, expiryDateSelected, isOneDocEncrypted, jwsEncryptUrlString));
+		return result;
     }
     
     
