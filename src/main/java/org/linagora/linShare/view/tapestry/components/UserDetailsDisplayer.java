@@ -21,16 +21,18 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import java.text.SimpleDateFormat;
-import org.apache.tapestry5.annotations.ApplicationState;
+
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 
 /**
  * display in a pôpup the user details
@@ -43,7 +45,7 @@ public class UserDetailsDisplayer {
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
-    @ApplicationState
+    @SessionState
     private UserVo userLoggedIn;
     @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=700", "height=300"})
@@ -64,8 +66,8 @@ public class UserDetailsDisplayer {
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
-    public Zone getShowUser(String mail) {
-        detailedUser = userFacade.findUser(mail);
+    public Zone getShowUser(String mail) throws BusinessException {
+        detailedUser = userFacade.findUser(mail, userLoggedIn.getDomainIdentifier());
         return userDetailsTemplateZone;
     }
 

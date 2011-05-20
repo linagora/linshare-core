@@ -225,7 +225,7 @@ public class ConfirmSharePopup{
 		Calendar today = Calendar.getInstance();
 		today.add(Calendar.DAY_OF_MONTH, 1);
 		minDatePicker = today.getTime();
-		Calendar expiryDateMin = shareExpiryDateFacade.computeMinShareExpiryDateOfList(documentsVo);
+		Calendar expiryDateMin = shareExpiryDateFacade.computeMinShareExpiryDateOfList(documentsVo, userVo);
 		defaultDatePicker = expiryDateMin.getTime();
 		maxDatePicker = expiryDateMin.getTime();
 	}
@@ -259,7 +259,7 @@ public class ConfirmSharePopup{
 			value.append("</td><td class='nowrap'>");
 			value.append(FileUtils.getFriendlySize(docVo.getSize(), messages));
 			value.append("</td><td>");
-			value.append(dateFormat.format(shareExpiryDateFacade.computeShareExpiryDate(docVo).getTime()));
+			value.append(dateFormat.format(shareExpiryDateFacade.computeShareExpiryDate(docVo, userVo).getTime()));
 			value.append("</td></tr>");
 		}
 		value.append("</table>");
@@ -304,14 +304,21 @@ public class ConfirmSharePopup{
 			}
 		}
 
-        if (input != null) {
-            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userVo));
-        }
-		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userVo));
-		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userVo));
-		userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), userVo));
-		
-		return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), userVo);
+        
+		try {
+			if (input != null) {
+	            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userVo));
+	        }
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userVo));
+
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userVo));
+			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), userVo));
+			
+			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), userVo);
+		} catch (BusinessException e) {
+			logger.error("Failed to search user on ConfirmSharePopup", e);
+		}
+		return new ArrayList<UserVo>();
 	}
 	
 	

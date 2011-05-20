@@ -23,20 +23,22 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
@@ -81,9 +83,9 @@ public class FileUploader {
 	
     @Inject
     private BusinessMessagesManagementService messagesManagementService;
-    
-    @Inject
-    private ParameterFacade parameterFacade;
+
+	@Inject
+	private DomainFacade domainFacade;
 
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
@@ -101,7 +103,7 @@ public class FileUploader {
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
 	
-	@ApplicationState
+	@SessionState
 	private UserVo userDetails;
 
     /* ***********************************************************
@@ -182,20 +184,26 @@ public class FileUploader {
      ************************************************************ */
 	
     public long getUserFreeSpace() {
-        return documentFacade.getUserAvailableQuota(userDetails);
+    	long res = 0;
+        try {
+			res = documentFacade.getUserAvailableQuota(userDetails);
+		} catch (BusinessException e) {
+			messagesManagementService.notify(e);
+		}
+		return res;
     }
 
     public long getMaxFileSize() {
         long maxFileSize = DEFAULT_MAX_FILE_SIZE;
         try {
-            maxFileSize = parameterFacade.loadConfig().getFileSizeMax();
+    		DomainVo domain = domainFacade.retrieveDomain(userDetails.getDomainIdentifier());
+            maxFileSize = domain.getParameterVo().getFileSizeMax();
         } catch (BusinessException e) {
             // value has not been defined. We use the default value.
         }
         return maxFileSize;
     }
 
-    @SuppressWarnings("empty-statement")
     private void readFileStream(UploadedFile file) {
         try {
             // read the complete stream.

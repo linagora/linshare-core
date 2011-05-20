@@ -20,11 +20,10 @@
 */
 package org.linagora.linShare.view.tapestry.pages.password;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.chenillekit.tapestry.core.components.Kaptcha;
@@ -55,8 +54,11 @@ public class ResetPassword {
 	@Inject
 	private Logger logger;
 
-	@ApplicationState
+	@SessionState
 	private ShareSessionObjects shareSessionObjects;
+	
+	@SessionState
+	private UserVo userVo;
 
 	@Inject
 	private UserFacade userFacade;
@@ -77,13 +79,13 @@ public class ResetPassword {
 		return true;
 	}
 
-	public Object onSuccess() {
+	public Object onSuccess() throws BusinessException {
 		if (!kaptchaValid) {
 	    	shareSessionObjects.addError(messages.get("pages.password.error.badcaptcha"));
 			return this;
 		}
 		
-		UserVo user = userFacade.findUser(mail);
+		UserVo user = userFacade.findUser(mail, userVo.getDomainIdentifier());
 		if (null == user) {
 			shareSessionObjects.addError(messages.get("pages.password.error.badmail"));
 			return this;

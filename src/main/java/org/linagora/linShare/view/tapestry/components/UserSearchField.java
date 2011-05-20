@@ -28,11 +28,10 @@ import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -40,12 +39,16 @@ import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.enums.UserTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class UserSearchField {
+	private static final Logger logger = LoggerFactory.getLogger(UserSearchField.class);
 	/* ***********************************************************
 	 *                         Parameters
 	 ************************************************************ */
@@ -69,7 +72,7 @@ public class UserSearchField {
 	/* ***********************************************************
 	 *                Properties & injected symbol, ASO, etc
 	 ************************************************************ */
-	@ApplicationState
+	@SessionState
 	private UserVo userVo;
 	
 	@Property
@@ -91,7 +94,6 @@ public class UserSearchField {
 	@Persist
 	private UserTypes userType;
 
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private boolean advancedSearch;
@@ -121,16 +123,23 @@ public class UserSearchField {
 	}
 	
 	public List<String> onProvideCompletionsFromUserSearchPattern(String input) {
-		List<UserVo> searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input),userVo);
+		List<UserVo> searchResults;
 
 		List<String> elements = new ArrayList<String>();
-		for (UserVo user : searchResults) {
-            String completeName = user.getFirstName().trim() + " " + user.getLastName().trim();
-            if (!elements.contains(completeName)) {
-                elements.add(completeName);
-            }
-		}
+		try {
+			searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input),userVo);
 
+			for (UserVo user : searchResults) {
+	            String completeName = user.getFirstName().trim() + " " + user.getLastName().trim();
+	            if (!elements.contains(completeName)) {
+	                elements.add(completeName);
+	            }
+			}
+
+			return elements;
+		} catch (BusinessException e) {
+			logger.error("Error while trying to autocomplete", e);
+		}
 		return elements;
 	}
 
@@ -195,18 +204,22 @@ public class UserSearchField {
 				}
 			}
 		}
-
-        if (input != null) {
-            userSet.addAll(userFacade.searchUser(input.trim(), null, null, null, userVo));
-        }
-		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, null, userVo));
-		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, null, userVo));
+		
+		try {
+	        if (input != null) {
+	            userSet.addAll(userFacade.searchUser(input.trim(), null, null, null, userVo));
+	        }
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, null, userVo));
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, null, userVo));
+		} catch (BusinessException e) {
+			logger.error("Error while trying to autocomplete", e);
+		}
 
 		return new ArrayList<UserVo>(userSet);
 	}
 
 
-	public List<UserVo> performAnyWhereSearch(){
+	public List<UserVo> performAnyWhereSearch() {
 		Set<UserVo> userSet = new HashSet<UserVo>();
 		UserType type=null;
 		
@@ -224,7 +237,11 @@ public class UserSearchField {
 		firstName=(messages.get("components.userSearch.slidingField.firstName").equals(firstName))?null:firstName;
 		mail=(messages.get("components.userSearch.slidingField.mail").equals(mail))?null:mail;	
 		
-		userSet.addAll(userFacade.searchUser(this.mail, this.firstName,this.lastName,type,userVo));
+		try {
+			userSet.addAll(userFacade.searchUser(this.mail, this.firstName,this.lastName,type,userVo));
+		} catch (BusinessException e) {
+			logger.error("Error while trying to search user", e);
+		}
 		return new ArrayList<UserVo>(userSet);
 	}
 	/**

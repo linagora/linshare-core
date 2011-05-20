@@ -53,9 +53,12 @@ import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.enums.SharedType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SearchFile {
+	private static final Logger logger = LoggerFactory.getLogger(SearchFile.class);
 
 
 	/* ***********************************************************
@@ -375,17 +378,24 @@ public class SearchFile {
 	 * @return
 	 */
 	public List<String> onProvideCompletionsFromSharedFrom(String input) {
-		List<UserVo> searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input),userTemp);
+		List<UserVo> searchResults;
+		try {
+			searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input),userTemp);
+			
+			List<String> elements = new ArrayList<String>();
+			for (UserVo user : searchResults) {
+	            String email = user.getMail();
+	            if (!elements.contains(email)) {
+	                elements.add(email);
+	            }
+			}
 
-		List<String> elements = new ArrayList<String>();
-		for (UserVo user : searchResults) {
-            String email = user.getMail();
-            if (!elements.contains(email)) {
-                elements.add(email);
-            }
+			return elements;
+		} catch (BusinessException e) {
+			logger.error("Error while trying to provide completion", e);
 		}
-
-		return elements;
+		
+		return new ArrayList<String>();
 	}
 	
 	/** Perform a user search using the user search pattern.
@@ -398,7 +408,11 @@ public class SearchFile {
 		Set<UserVo> userSet = new HashSet<UserVo>();
 
         if (input != null) {
-            userSet.addAll(userFacade.searchUser(input.trim(), null, null, userTemp));
+            try {
+				userSet.addAll(userFacade.searchUser(input.trim(), null, null, userTemp));
+			} catch (BusinessException e) {
+				logger.error("Error while trying to search user", e);
+			}
         }
 
 		return new ArrayList<UserVo>(userSet);
