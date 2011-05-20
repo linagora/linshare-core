@@ -540,7 +540,7 @@ public class UserServiceImpl implements UserService {
 		User foundUser = null;
 		Domain domain = null;
 		try {
-			foundUser = findUser(mail, null);
+			foundUser = findUserInDB(mail);
 			if (foundUser == null) {
 				List<Domain> domains = domainService.findAllDomains();
 				for (Domain loopedDomain : domains) {
