@@ -24,11 +24,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
@@ -36,6 +36,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.DisplayableAccountOccupationEntryVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -48,7 +49,7 @@ public class AccountOccupation {
 	@Inject 
 	private Logger logger;
 
-    @ApplicationState
+	@SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
@@ -122,7 +123,7 @@ public class AccountOccupation {
 		}
 	}
 	
-	public Object onSuccessFromFormReport()  {
+	public Object onSuccessFromFormReport() throws BusinessException  {
 		
 		if (reset){
 			criteria = new AccountOccupationCriteriaBean();
@@ -142,7 +143,7 @@ public class AccountOccupation {
 		return null;
 	}
 	
-	Object onActionFromReset() { 
+	Object onActionFromReset() throws BusinessException { 
 		reset = true; 
 		return onSuccessFromFormReport();
 	}

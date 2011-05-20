@@ -44,16 +44,17 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.DocumentFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
-import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.components.FileUploader;
@@ -131,7 +132,7 @@ public class Index {
     private RenderSupport renderSupport;
     
 	@Inject
-    private ParameterRepository parameterRepository;
+    private DomainFacade domainFacade;
 	
 	@Inject
 	private MyMultipartDecoder myMultipartDecoder;
@@ -218,12 +219,15 @@ public class Index {
 	/**
 	 * This is when the upload fails.
 	 * It must be in the page, and not in the component
+	 * @throws BusinessException 
 	 */
-	public Object onUploadException(Throwable cause) {
+	public Object onUploadException(Throwable cause) throws BusinessException {
 		if (cause instanceof
 				FileUploadBase.FileSizeLimitExceededException) {
+	    	
+	        ParameterVo p = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
 			shareSessionObjects.addError(String.format(messages.get("pages.upload.FileSizeLimitExceededException"),
-					FileUtils.getFriendlySize(parameterRepository.loadConfig().getFileSizeMax(), messages)));
+					FileUtils.getFriendlySize(p.getFileSizeMax(), messages)));
 		}
 		myMultipartDecoder.cleanException();
 		return this;

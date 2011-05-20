@@ -54,7 +54,7 @@ import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.UserType;
@@ -137,9 +137,9 @@ public class ListSharedDocument {
 
 	@Inject
 	private ShareFacade shareFacade;
-	
+
 	@Inject
-	private ParameterFacade parameterFacade;
+	private DomainFacade domainFacade;
 	
 	@Inject
 	private ComponentResources componentResources; 
@@ -244,7 +244,7 @@ public class ListSharedDocument {
 		listSelected = new ArrayList<ShareDocumentVo>();
 		Collections.sort(shareDocuments);
 		this.componentdocuments = shareDocuments;
-		ParameterVo config = parameterFacade.loadConfig();
+		ParameterVo config = domainFacade.retrieveDomain(user.getDomainIdentifier()).getParameterVo();
 		this.activeSignature = config.getActiveSignature();
 		this.activeEncypher = config.getActiveEncipherment();
 		//if(model==null) // need to redo the model each type, for the config may change 
@@ -322,7 +322,7 @@ public class ListSharedDocument {
 		passwordDecryptPopup.getFormPassword().clearErrors(); // delete popup message
 	}
 	
-	public Zone onActionFromShowUser(String mail) {
+	public Zone onActionFromShowUser(String mail) throws BusinessException {
 		return userDetailsDisplayer.getShowUser(mail);	
 	}
 	
