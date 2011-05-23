@@ -2,7 +2,7 @@
 #******************** LDAP FOR AUTHENTICATION
 #if you use ssl with ldap put ldaps in url
 ldap.auth.url=ldap://localhost:389
-ldap.auth.base=dc=linagora,dc=com
+ldap.auth.base=dc=yourdomain,dc=com
 ldap.auth.baseDN=ou=test,o=linShare
 ldap.auth.attribute=mail
 ldap.auth.key=${ldap.auth.attribute}={0}
@@ -14,7 +14,7 @@ ldap.auth.ssl.trustore.file=
 ldap.auth.ssl.trustore.password=
 
 #Leave userDN and password empty for anonymous connection to LDAP
-ldap.auth.userDN=cn=nss,dc=linagora,dc=com
+ldap.auth.userDN=cn=nss,dc=yourdomain,dc=com
 ldap.auth.password=nss
 
 #paging ldap search: pageSize < sizelimit of the ldap
@@ -24,9 +24,9 @@ ldap.pageSize=0
 
 #******************** MAIL CONFIGURATION TO SEND MAIL INFORMATION TO USER
 
-mail.smtp.host=smtp.linagora.com
+mail.smtp.host=smtp.yourdomain.com
 mail.smtp.port=25
-mail.smtp.sender=linShare@linagora.com
+mail.smtp.sender=linShare@yourdomain.com
 mail.smtp.user=user
 mail.smtp.password=password
 mail.smtp.auth.needed=false
