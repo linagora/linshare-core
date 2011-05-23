@@ -42,5 +42,5 @@ echo "INSERT INTO linshare_domain_pattern(domain_pattern_id, identifier, descrip
 
 echo "INSERT INTO linshare_domain(domain_id, identifier, differential_key, domain_pattern_id, ldap_connection_id, parameter_id) VALUES (1, 'baseDomain', '$ldap_base', 1, 1, 1);"
 
-echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (4, 0, 'superadmin@localhost.localdomain', '', '', 'superadmin@localhost.localdomain', '2009-01-01', 3, '$hashpass', '2019-01-01', 'false','false');"
+echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (4, 0, 'root@localhost.localdomain', '', '', 'root@localhost.localdomain', '2009-01-01', 3, '$hashpass', '2019-01-01', 'false','false');"
 

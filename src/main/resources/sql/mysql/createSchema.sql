@@ -1,3 +1,10 @@
+    create table linshare_messages_configuration (
+        messages_configuration_id bigint not null auto_increment,
+        primary key (messages_configuration_id)
+    );
+
+
+
     create table linshare_allowed_contact (
         id bigint not null auto_increment,
         user_id bigint,
@@ -85,7 +92,7 @@
     );
 
     create table linshare_mail_subjects (
-        parameter_id bigint not null,
+        messages_configuration_id bigint not null,
         subject_id integer not null,
         language_id integer not null,
         content text,
@@ -93,13 +100,55 @@
     );
 
     create table linshare_mail_templates (
-        parameter_id bigint not null,
+        messages_configuration_id bigint not null,
         template_id integer not null,
         language_id integer not null,
         content_html text,
         content_txt text,
         primary key (parameter_id, template_id, language_id)
     );
+
+
+    create table linshare_ldap_connection (
+	ldap_connection_id bigint not null auto_increment, 
+	identifier varchar(255) not null unique, 
+	provider_url varchar(255), 
+	security_auth varchar(255), 
+	security_principal varchar(255), 
+	security_credentials varchar(255),
+        primary key (ldap_connection_id)
+    );
+
+    create index index_ldap_connection on linshare_ldap_connection (identifier);
+
+    create table linshare_domain_pattern (
+	domain_pattern_id bigint not null auto_increment, 
+	identifier varchar(255) not null unique, 
+	description varchar(255), 
+	get_user_command varchar(255), 
+	get_all_domain_users_command varchar(255), 
+	auth_command varchar(255), 
+	search_user_command varchar(255), 
+	get_user_result varchar(255),
+        primary key (domain_pattern_id)
+    );
+
+    create index index_domain_pattern on linshare_domain_pattern (identifier);
+
+    create table linshare_domain (
+	domain_id bigint not null auto_increment,
+	identifier varchar(255),
+	differential_key varchar(255),
+	domain_pattern_id bigint not null,
+	ldap_connection_id bigint not null,
+	parameter_id bigint not null,
+        primary key (domain_id)
+    );
+
+    create index index_domain on linshare_domain (identifier);
+
+
+
 
     create table linshare_parameter (
         parameter_id bigint not null,
@@ -120,8 +169,31 @@
         default_expiry_time_unit_id integer,
         default_file_expiry_time integer,
         default_file_expiry_time_unit_id integer,
+	closed_domain integer,
+	restricted_domain integer,
+	domain_with_guests integer,
+	guest_can_create_other integer,
+	messages_configuration_id bigint not null,
         primary key (parameter_id)
     );
+
+
+    alter table linshare_domain 
+        add constraint FAA6A0CAAAA44B78EB 
+        foreign key (domain_pattern_id) 
+        references linshare_domain_pattern (domain_pattern_id);
+
+    alter table linshare_domain 
+        add constraint FBB6A0CABBB44B78EB 
+        foreign key (ldap_connection_id) 
+        references linshare_ldap_connection (ldap_connection_id);
+
+    alter table linshare_domain 
+        add constraint FCC6A0CABCACCB78EB 
+        foreign key (parameter_id) 
+        references linshare_parameter (parameter_id);
+
+
 
     create table linshare_recipient_favourite (
         id bigint not null auto_increment,
@@ -199,6 +271,7 @@
     create table linshare_user (
         user_id bigint not null auto_increment,
         user_type_id varchar(255) not null,
+	domain_id bigint,
         login varchar(255) not null unique,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
@@ -218,7 +291,7 @@
     );
 
     create table linshare_welcome_texts (
-        parameter_id bigint not null,
+        messages_configuration bigint not null,
         welcome_text text,
         user_type_id integer,
         language_id integer
@@ -303,16 +376,16 @@
     create index index_filelog_entry_file_name on linshare_log_entry (file_name);
 
     alter table linshare_mail_subjects 
-        add index FK1C97F3BEA44B78EB (parameter_id), 
+        add index FK1C97F3BEA44B78EB (messages_configuration_id), 
         add constraint FK1C97F3BEA44B78EB 
-        foreign key (parameter_id) 
-        references linshare_parameter (parameter_id);
+        foreign key (messages_configuration_id) 
+        references linshare_messages_configuration (messages_configuration_id);
 
     alter table linshare_mail_templates 
         add index FKDD1B7F22A44B78EB (parameter_id), 
         add constraint FKDD1B7F22A44B78EB 
-        foreign key (parameter_id) 
-        references linshare_parameter (parameter_id);
+        foreign key (messages_configuration_id) 
+        references linshare_messages_configuration (messages_configuration_id);
 
     create index index_favourite_recipient_id on linshare_recipient_favourite (user_id);
 
@@ -421,5 +494,20 @@
     alter table linshare_welcome_texts 
         add index FK36A0C738A44B78EB (parameter_id), 
         add constraint FK36A0C738A44B78EB 
-        foreign key (parameter_id) 
-        references linshare_parameter (parameter_id);
+        foreign key (messages_configuration_id) 
+        references linshare_messages_configuration (messages_configuration_id);
+
+
+    alter table linshare_user 
+        add constraint FK56DFC97C6F5F97F1 
+        foreign key (domain_id) 
+        references linshare_domain;
+
+
+    alter table linshare_parameter 
+        add constraint FA56DAC97C6F5BB7F1 
+        foreign key (messages_configuration_id) 
+        references linshare_messages_configuration (messages_configuration_id);
+
+    insert into linshare_version (id, description) values (9, 'LinShare version 0.9');
+
