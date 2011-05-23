@@ -42,7 +42,8 @@ public enum LogAction {
 	
 	USER_CREATE,
 	USER_DELETE,
-	USER_EXPIRE, 
+	USER_EXPIRE,
+	USER_AUTH,
 	
 	FILE_SIGN, 
 	USER_UPDATE, 

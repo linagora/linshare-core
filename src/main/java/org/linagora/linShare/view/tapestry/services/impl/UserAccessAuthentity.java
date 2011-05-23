@@ -20,10 +20,15 @@
 */
 package org.linagora.linShare.view.tapestry.services.impl;
 
+import java.util.GregorianCalendar;
+
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.entities.UserLogEntry;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
@@ -38,12 +43,15 @@ public class UserAccessAuthentity  {
 
     private final UserFacade userFacade;
     private final ApplicationStateManager applicationStateManager;
+    private final LogEntryRepository logEntryRepository;
     
 	private static final Logger logger = LoggerFactory.getLogger(UserAccessAuthentity.class);
 
-    public UserAccessAuthentity(UserFacade userFacade, ApplicationStateManager applicationStateManager) {
+    public UserAccessAuthentity(UserFacade userFacade, ApplicationStateManager applicationStateManager,
+    		LogEntryRepository logEntryRepository) {
         this.userFacade = userFacade;
         this.applicationStateManager = applicationStateManager;
+        this.logEntryRepository = logEntryRepository;
     }
 
     public void processAuth() {
@@ -60,7 +68,8 @@ public class UserAccessAuthentity  {
 				} catch (BusinessException e) {
 					logger.error("Error while trying to find user details", e);
 				}
-	            applicationStateManager.set(UserVo.class, userVo);
+				generateAuthLogEntry(userVo);
+				applicationStateManager.set(UserVo.class, userVo);
         	} else {
         		// if the login doesn't match the session user email, change the user
         		if (!applicationStateManager.getIfExists(UserVo.class).getMail().equalsIgnoreCase(
@@ -73,10 +82,22 @@ public class UserAccessAuthentity  {
 					} catch (BusinessException e) {
 						logger.error("Error while trying to find user details", e);
 					}
+					generateAuthLogEntry(userVo);
     	            applicationStateManager.set(UserVo.class, userVo);
         		}
         	}
         }
     }
+
+	private void generateAuthLogEntry(UserVo userVo) {
+		UserLogEntry logEntry = new UserLogEntry(new GregorianCalendar(), userVo.getMail(), userVo.getFirstName(), userVo.getLastName(), LogAction.USER_AUTH, "Successfull authentification", null, null, null, null);
+		try {
+			logEntryRepository.create(logEntry);
+		} catch (IllegalArgumentException e) {
+			logger.error("Error while trying to log user successfull auth", e);
+		} catch (BusinessException e) {
+			logger.error("Error while trying to log user successfull auth", e);
+		}
+	}
 
 }

@@ -300,6 +300,11 @@ public class Audit {
 			return "";
 		return FileUtils.getFriendlySize(logEntry.getFileSize(), messages);
 	}
+	
+	public String getActionDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(logEntry.getActionDate().getTime());
+	}
 
     public Object onActionFromPersonalHistory() {
         return historyPage;
