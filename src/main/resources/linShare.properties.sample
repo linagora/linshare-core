@@ -1,27 +1,4 @@
 
-#******************** LDAP FOR AUTHENTICATION
-#if you use ssl with ldap put ldaps in url
-ldap.auth.url=ldap://localhost:389
-ldap.auth.base=dc=yourdomain,dc=com
-ldap.auth.baseDN=ou=test,o=linShare
-ldap.auth.attribute=mail
-ldap.auth.key=${ldap.auth.attribute}={0}
-ldap.hash.algo=SHA
-# Strategy is SIMPLE, DEFAULT_TLS, or EXTERNAL_TLS for SASL connection. TLS is not supported at this time by linShare
-ldap.auth.strategy=SIMPLE
-#Leave ldap ssl configuration empty if not used. Give path to a java trustore.
-ldap.auth.ssl.trustore.file=
-ldap.auth.ssl.trustore.password=
-
-#Leave userDN and password empty for anonymous connection to LDAP
-ldap.auth.userDN=cn=nss,dc=yourdomain,dc=com
-ldap.auth.password=nss
-
-#paging ldap search: pageSize < sizelimit of the ldap
-# Use only with compatible directories, 0 instead
-#ldap.pageSize=400
-ldap.pageSize=0
-
 #******************** MAIL CONFIGURATION TO SEND MAIL INFORMATION TO USER
 
 mail.smtp.host=smtp.yourdomain.com
@@ -107,4 +84,10 @@ sso.header.user=Auth-User
 tsa.url=http://localhost:8080/signserver/tsa?signerId=1
 
 
+#******** Secured storage
+linshare.secured-storage.disallow=false
+linshare.secured-storage.disallowed.job.file-cleaner.activate=false
+linshare.secured-storage.disallowed.job.file-cleaner.cron=0 0 0 1 1 ?
 
+#******** Domain
+linshare.domain.visible=false
