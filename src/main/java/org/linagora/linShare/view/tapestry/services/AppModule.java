@@ -61,6 +61,7 @@ import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.utils.PropertyPlaceholderConfigurer;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -261,8 +262,9 @@ public class AppModule
     /** This service that loads user informations in session. */
     public static UserAccessAuthentity buildUserAccessAuthentity(
         @InjectService("UserFacade") UserFacade userFacade,
+        @InjectService("LogEntryRepository") LogEntryRepository logEntryRepository,
         ApplicationStateManager applicationStateManager) {
-        return new UserAccessAuthentity(userFacade, applicationStateManager);
+        return new UserAccessAuthentity(userFacade, applicationStateManager, logEntryRepository);
     }
 
     public static RequestFilter buildUserAccessAuthentityFilter(
