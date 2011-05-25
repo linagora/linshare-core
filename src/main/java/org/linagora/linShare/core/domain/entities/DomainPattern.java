@@ -39,7 +39,7 @@ public class DomainPattern {
 
 	public DomainPattern(DomainPatternVo domainPatternVo) {
 		this.identifier = domainPatternVo.getIdentifier();
-		this.description = domainPatternVo.getDescription();
+		this.description = domainPatternVo.getPatternDescription();
 		this.getUserCommand = domainPatternVo.getGetUserCommand();
 		this.getAllDomainUsersCommand = domainPatternVo.getGetAllDomainUsersCommand();
 		this.authCommand = domainPatternVo.getAuthCommand();

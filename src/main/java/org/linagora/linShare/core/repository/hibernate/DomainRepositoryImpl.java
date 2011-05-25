@@ -8,7 +8,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.repository.DomainRepository;
 import org.springframework.orm.hibernate3.HibernateCallback;
@@ -24,7 +23,7 @@ public class DomainRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(Domain entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(Document.class).add(
+		DetachedCriteria det = DetachedCriteria.forClass(Domain.class).add(
 				Restrictions.eq("identifier", entity.getIdentifier()));
 		return det;
 	}

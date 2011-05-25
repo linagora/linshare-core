@@ -20,9 +20,14 @@
 */
 package org.linagora.linShare.core.Facade.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.domain.entities.Domain;
+import org.linagora.linShare.core.domain.entities.DomainPattern;
+import org.linagora.linShare.core.domain.entities.LDAPConnection;
+import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.DomainTransformer;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
@@ -31,6 +36,7 @@ import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.DomainService;
+import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.core.service.UserService;
 
 public class DomainFacadeImpl implements DomainFacade {
@@ -38,13 +44,16 @@ public class DomainFacadeImpl implements DomainFacade {
 	private DomainService domainService;
 	private DomainTransformer domainTransformer;
 	private UserService userService;
+	private LDAPQueryService ldapQueryService;
 
 	public DomainFacadeImpl(DomainService domainService,
 			DomainTransformer domainTransformer, 
-			UserService userService) {
+			UserService userService,
+			LDAPQueryService ldapQueryService) {
 		this.domainService = domainService;
 		this.domainTransformer = domainTransformer;
 		this.userService = userService;
+		this.ldapQueryService = ldapQueryService;
 	}
 
 	public DomainVo createDomain(DomainVo domainVo) throws BusinessException {
@@ -81,8 +90,72 @@ public class DomainFacadeImpl implements DomainFacade {
 				domainService.retrieveDomainPattern(identifier));
 	}
 
-	public void deleteDomain(String identifier) throws BusinessException {
+	public void deleteDomain(String identifier, UserVo actorVo) throws BusinessException {
+		User actor = userService.findUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+		if (actor.getRole() != Role.SUPERADMIN) {
+			throw new BusinessException("Cannot delete domain because actor is not super admin");
+		}
+		Domain domain = domainService.retrieveDomain(identifier);
+		List<User> users = ldapQueryService.getAllDomainUsers(domain, null);
+		for (User user : users) {
+			userService.deleteUser(user.getLogin(), actor, false);
+		}
+		users = userService.findUsersInDB(identifier);
+		for (User user : users) {
+			userService.deleteUser(user.getLogin(), actor, false);
+		}
 		domainService.deleteDomain(identifier);
+	}
+	
+	public void deleteConnection(String connectionToDelete, UserVo actorVo)
+			throws BusinessException {
+		User actor = userService.findUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+		if (actor.getRole() != Role.SUPERADMIN) {
+			throw new BusinessException("Cannot delete connection because actor is not super admin");
+		}
+		
+		if (!connectionIsDeletable(connectionToDelete, actorVo)) {
+			throw new BusinessException("Cannot delete connection because still used by domains");
+		}
+		domainService.deleteConnection(connectionToDelete);
+	}
+	
+	public void deletePattern(String patternToDelete, UserVo actorVo)
+	throws BusinessException {
+		User actor = userService.findUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+		if (actor.getRole() != Role.SUPERADMIN) {
+			throw new BusinessException("Cannot delete pattern because actor is not super admin");
+		}
+		if (!patternIsDeletable(patternToDelete, actorVo)) {
+			throw new BusinessException("Cannot delete pattern because still used by domains");
+		}
+		domainService.deletePattern(patternToDelete);
+	}
+	
+	public boolean connectionIsDeletable(String connectionToDelete, UserVo actor)
+			throws BusinessException {
+		List<DomainVo> domains = findAllDomains();
+		boolean used = false;
+		for (DomainVo domainVo : domains) {
+			if (domainVo.getLdapConnection().getIdentifier().equals(connectionToDelete)) {
+				used = true;
+				break;
+			}
+		}
+		return (!used);
+	}
+	
+	public boolean patternIsDeletable(String patternToDelete, UserVo actor)
+			throws BusinessException {
+		List<DomainVo> domains = findAllDomains();
+		boolean used = false;
+		for (DomainVo domainVo : domains) {
+			if (domainVo.getPattern().getIdentifier().equals(patternToDelete)) {
+				used = true;
+				break;
+			}
+		}
+		return (!used);
 	}
 	
 	public List<String> getAllDomainIdentifiers() throws BusinessException {
@@ -94,9 +167,42 @@ public class DomainFacadeImpl implements DomainFacade {
 		return domainService.userCanCreateGuest(user);
 	}
 	
-	@Override
 	public List<DomainVo> findAllDomains() throws BusinessException {
 		return domainTransformer.disassembleList(domainService.findAllDomains());
+	}
+	
+	public List<DomainPatternVo> findAllDomainPatterns()
+			throws BusinessException {
+		List<DomainPattern> domainPatterns = domainService.findAllDomainPatterns();
+		List<DomainPatternVo> ret = new ArrayList<DomainPatternVo>();
+		for (DomainPattern domainPattern : domainPatterns) {
+			ret.add(new DomainPatternVo(domainPattern));
+		}
+		return ret;
+	}
+	
+	public List<LDAPConnectionVo> findAllLDAPConnections()
+			throws BusinessException {
+		List<LDAPConnection> ldapConns = domainService.findAllLDAPConnections();
+		List<LDAPConnectionVo> ret = new ArrayList<LDAPConnectionVo>();
+		for (LDAPConnection ldapConn : ldapConns) {
+			ret.add(new LDAPConnectionVo(ldapConn));
+		}
+		return ret;
+	}
+	
+	public void updateLDAPConnection(LDAPConnectionVo ldapConn)
+			throws BusinessException {
+		domainService.updateLDAPConnection(new LDAPConnection(ldapConn));
+	}
+	
+	public void updateDomainPattern(DomainPatternVo domainPattern)
+			throws BusinessException {
+		domainService.updateDomainPattern(new DomainPattern(domainPattern));
+	}
+	
+	public void updateDomain(DomainVo domain) throws BusinessException {
+		domainService.updateDomain(domain.getIdentifier(), domain.getDifferentialKey(), new LDAPConnection(domain.getLdapConnection()), new DomainPattern(domain.getPattern()));
 	}
 
 }

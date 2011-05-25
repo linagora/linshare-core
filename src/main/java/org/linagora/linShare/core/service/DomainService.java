@@ -26,5 +26,12 @@ public interface DomainService {
 	public boolean userIsAllowedToShareWith(User sender, User recipient) throws BusinessException;
 	public boolean hasRightsToShareWithExternals(User sender) throws BusinessException;
 	public boolean userCanCreateGuest(User user) throws BusinessException;
+	public List<DomainPattern> findAllDomainPatterns() throws BusinessException;
+	public List<LDAPConnection> findAllLDAPConnections() throws BusinessException;
+	public void updateLDAPConnection(LDAPConnection ldapConnection) throws BusinessException;
+	public void updateDomainPattern(DomainPattern domainPattern) throws BusinessException;
+	public void updateDomain(String identifier, String differentialKey, LDAPConnection ldapConnection, DomainPattern domainPattern) throws BusinessException;
+	public void deleteConnection(String connectionToDelete) throws BusinessException;
+	public void deletePattern(String patternToDelete) throws BusinessException;
 
 }

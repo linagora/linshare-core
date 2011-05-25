@@ -1,20 +1,24 @@
 package org.linagora.linShare.core.domain.vo;
 
+import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 
 public class DomainPatternVo {
 
-	private final String identifier;
-	private String description;
+	private String identifier;
+	private String patternDescription;
 	private String getUserCommand;
 	private String getAllDomainUsersCommand;
 	private String authCommand;
 	private String searchUserCommand;
 	private String getUserResult;
+	
+	public DomainPatternVo() {
+	}
 
 	public DomainPatternVo(DomainPattern domainPattern) {
 		this.identifier = domainPattern.getIdentifier();
-		this.description = domainPattern.getDescription();
+		this.patternDescription = domainPattern.getDescription();
 		this.getUserCommand = domainPattern.getGetUserCommand();
 		this.getAllDomainUsersCommand = domainPattern.getGetAllDomainUsersCommand();
 		this.authCommand = domainPattern.getAuthCommand();
@@ -28,7 +32,7 @@ public class DomainPatternVo {
 			String searchUserCommand, String getUserResult) {
 		super();
 		this.identifier = identifier;
-		this.description = description;
+		this.patternDescription = description;
 		this.getUserCommand = getUserCommand;
 		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 		this.authCommand = authCommand;
@@ -36,16 +40,25 @@ public class DomainPatternVo {
 		this.getUserResult = getUserResult;
 	}
 
-
-
-	public String getDescription() {
-		return description;
+	
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	@Validate("required")
+	public String getIdentifier() {
+		return identifier;
 	}
 
+	public String getPatternDescription() {
+		return patternDescription;
+	}
+
+	public void setPatternDescription(String description) {
+		this.patternDescription = description;
+	}
+
+	@Validate("required")
 	public String getGetUserCommand() {
 		return getUserCommand;
 	}
@@ -54,6 +67,7 @@ public class DomainPatternVo {
 		this.getUserCommand = getUserCommand;
 	}
 
+	@Validate("required")
 	public String getGetAllDomainUsersCommand() {
 		return getAllDomainUsersCommand;
 	}
@@ -62,6 +76,7 @@ public class DomainPatternVo {
 		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 	}
 
+	@Validate("required")
 	public String getAuthCommand() {
 		return authCommand;
 	}
@@ -70,6 +85,7 @@ public class DomainPatternVo {
 		this.authCommand = authCommand;
 	}
 
+	@Validate("required")
 	public String getSearchUserCommand() {
 		return searchUserCommand;
 	}
@@ -78,16 +94,18 @@ public class DomainPatternVo {
 		this.searchUserCommand = searchUserCommand;
 	}
 
-	public String getIdentifier() {
-		return identifier;
-	}
-
+	@Validate("required")
 	public String getGetUserResult() {
 		return getUserResult;
 	}
 
 	public void setGetUserResult(String getUserResult) {
 		this.getUserResult = getUserResult;
+	}
+	
+	@Override
+	public String toString() {
+		return identifier;
 	}
 
 }

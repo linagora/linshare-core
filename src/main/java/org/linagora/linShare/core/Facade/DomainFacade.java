@@ -36,9 +36,18 @@ public interface DomainFacade {
 	public LDAPConnectionVo retrieveLDAPConnection(String identifier) throws BusinessException;
 	public DomainVo retrieveDomain(String identifier) throws BusinessException;
 	public DomainPatternVo retrieveDomainPattern(String identifier) throws BusinessException;
-	public void deleteDomain(String identifier) throws BusinessException;
+	public void deleteDomain(String identifier, UserVo actor) throws BusinessException;
 	public List<String> getAllDomainIdentifiers() throws BusinessException;
 	public boolean userCanCreateGuest(UserVo userVo) throws BusinessException;
 	public List<DomainVo> findAllDomains() throws BusinessException;
+	public List<DomainPatternVo> findAllDomainPatterns() throws BusinessException;
+	public List<LDAPConnectionVo> findAllLDAPConnections() throws BusinessException;
+	public void updateLDAPConnection(LDAPConnectionVo ldapConn) throws BusinessException;
+	public void updateDomainPattern(DomainPatternVo domainPattern) throws BusinessException;
+	public void updateDomain(DomainVo domain) throws BusinessException;
+	public void deletePattern(String patternToDelete, UserVo actor) throws BusinessException;
+	public void deleteConnection(String connectionToDelete, UserVo actor) throws BusinessException;
+	public boolean patternIsDeletable(String patternToDelete, UserVo actor) throws BusinessException;
+	public boolean connectionIsDeletable(String connectionToDelete, UserVo actor) throws BusinessException;
 
 }

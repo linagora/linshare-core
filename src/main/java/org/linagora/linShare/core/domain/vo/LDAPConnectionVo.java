@@ -1,14 +1,18 @@
 package org.linagora.linShare.core.domain.vo;
 
+import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
 
 public class LDAPConnectionVo {
 
-	private final String identifier;
+	private String identifier;
 	private String providerUrl;
 	private String securityAuth;
 	private String securityPrincipal;
 	private String securityCredentials;
+	
+	public LDAPConnectionVo() {
+	}
 	
 	public LDAPConnectionVo(LDAPConnection ldapConn) {
 		this.identifier = ldapConn.getIdentifier();
@@ -25,11 +29,17 @@ public class LDAPConnectionVo {
 		this.securityCredentials = null;
 		this.securityPrincipal = null;
 	}
-
+	
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+	
+	@Validate("required")
 	public String getIdentifier() {
 		return identifier;
 	}
 
+	@Validate("required")
 	public String getProviderUrl() {
 		return providerUrl;
 	}
@@ -38,6 +48,7 @@ public class LDAPConnectionVo {
 		this.providerUrl = providerUrl;
 	}
 
+	@Validate("required")
 	public String getSecurityAuth() {
 		return securityAuth;
 	}
@@ -60,6 +71,11 @@ public class LDAPConnectionVo {
 
 	public void setSecurityCredentials(String securityCredentials) {
 		this.securityCredentials = securityCredentials;
+	}
+	
+	@Override
+	public String toString() {
+		return identifier;
 	}
 
 }

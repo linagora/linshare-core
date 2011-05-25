@@ -56,9 +56,9 @@
         <div id="menuBar">
         	<t:if t:test="superadmin">
         		 <t:Menu t:title="Navigation"
-                        t:links="user/index;administration/index;help/index"
-                        t:labels="${message:components.myborderlayout.user.title};${message:components.myborderlayout.administration.title};${message:components.myborderlayout.help.title}"
-                        t:alternateStyle="false" t:highlights="user;administration;help" t:currentHighlight="${currentHighlight}" />
+                        t:links="user/index;administration/index;administration/domains/index;help/index"
+                        t:labels="${message:components.myborderlayout.user.title};${message:components.myborderlayout.administration.title};${message:components.myborderlayout.administration.domains.title};${message:components.myborderlayout.help.title}"
+                        t:alternateStyle="false" t:highlights="user;administration;domains;help" t:currentHighlight="${currentHighlight}" />
         	
         	
         	<t:parameter name="else">

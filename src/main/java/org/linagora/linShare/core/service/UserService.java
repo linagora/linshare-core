@@ -75,6 +75,7 @@ public interface UserService {
      * @return founded user.
      */
     public User findUserInDB(String mail);
+    public List<User> findUsersInDB(String domain);
     public User findUser(String mail, String domain) throws BusinessException;
     public User findUser(String mail, String domain, User actor) throws BusinessException;
     
