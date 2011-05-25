@@ -74,6 +74,9 @@ public class DaoAuthProvider implements UserDetailsService {
         if (userVo.isAdministrator()) {
             grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
         }
+        if (userVo.isSuperAdmin()) {
+            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_SUPERADMIN));
+        }
         return new User(userVo.getLogin(), password, true, true, true, true,
             grantedAuthorities.toArray(new GrantedAuthority[0]));
     }
