@@ -29,4 +29,5 @@ public interface AuthRole {
     static final String ROLE_ADMIN = "ROLE_ADMIN";
     static final String ROLE_UPLOAD = "ROLE_UPLOAD";
     static final String ROLE_INTERNAL = "ROLE_INTERNAL";
+	static final String ROLE_SUPERADMIN = "ROLE_SUPERADMIN";
 }

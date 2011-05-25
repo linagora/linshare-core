@@ -102,6 +102,8 @@
                 CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
                 /**/administration/userconfig*=ROLE_AUTH
+                /**/administration/domains=ROLE_SUPERADMIN
+                /**/administration/domains/**=ROLE_SUPERADMIN
                 /**/administration/**=ROLE_ADMIN
                 /**=ROLE_AUTH
             </value>
