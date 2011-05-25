@@ -163,6 +163,7 @@
         <constructor-arg ref="domainRepository"/>
         <constructor-arg ref="parameterRepository"/>
         <constructor-arg ref="ldapQueryService"/>
+        <constructor-arg ref="messagesRepository"/>
     </bean>
     
     <bean name="ldapQueryService" class="org.linagora.linShare.core.service.impl.LDAPQueryServiceImpl">

@@ -6,6 +6,7 @@ import java.util.List;
 import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
+import org.linagora.linShare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
@@ -17,6 +18,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DomainPatternRepository;
 import org.linagora.linShare.core.repository.DomainRepository;
 import org.linagora.linShare.core.repository.LDAPConnectionRepository;
+import org.linagora.linShare.core.repository.MessagesRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.LDAPQueryService;
@@ -28,23 +30,34 @@ public class DomainServiceImpl implements DomainService {
 	private final DomainRepository domainRepository;
 	private final ParameterRepository parameterRepository;
 	private final LDAPQueryService ldapQueryService;
+	private final MessagesRepository messagesRepository;
 
 	public DomainServiceImpl(LDAPConnectionRepository ldapConnectionRepository,
 			DomainPatternRepository domainPatternRepository,
 			DomainRepository domainRepository,
 			ParameterRepository parameterRepository,
-			LDAPQueryService ldapQueryService) {
+			LDAPQueryService ldapQueryService,
+			MessagesRepository messagesRepository) {
 		this.ldapConnectionRepository = ldapConnectionRepository;
 		this.domainPatternRepository = domainPatternRepository;
 		this.domainRepository = domainRepository;
 		this.parameterRepository = parameterRepository;
 		this.ldapQueryService = ldapQueryService;
+		this.messagesRepository = messagesRepository;
 	}
 
 	public Domain createDomain(DomainVo domainVo) throws BusinessException {
 		DomainPattern pattern = domainPatternRepository.findById(domainVo.getPattern().getIdentifier());
 		LDAPConnection conn = ldapConnectionRepository.findById(domainVo.getLdapConnection().getIdentifier());
-		Parameter param = parameterRepository.loadConfig(domainVo.getParameterVo().getIdentifier());
+		Parameter param = null;
+		if (domainVo.getParameterVo() == null) {
+			Parameter entity = Parameter.getDefault(domainVo.getIdentifier()+"Param");
+			MessagesConfiguration defaultMessages = messagesRepository.loadDefault();
+			entity.setMessagesConfiguration(defaultMessages);
+			param = parameterRepository.create(entity);
+		} else {
+			param = parameterRepository.loadConfig(domainVo.getParameterVo().getIdentifier());
+		}
 		Domain domain = new Domain(domainVo.getIdentifier(), domainVo.getDifferentialKey(), pattern, conn, param);
 		Domain createdDomain = domainRepository.create(domain);
 		return createdDomain;
@@ -77,9 +90,20 @@ public class DomainServiceImpl implements DomainService {
 	}
 	
 	public void deleteDomain(String identifier) throws BusinessException {
-		Domain domain = domainRepository.findById(identifier);
+		Domain domain = retrieveDomain(identifier);
 		domainRepository.delete(domain);
-		
+	}
+	
+	public void deleteConnection(String connectionToDelete)
+			throws BusinessException {
+		LDAPConnection conn = retrieveLDAPConnection(connectionToDelete);
+		ldapConnectionRepository.delete(conn);
+	}
+	
+	public void deletePattern(String patternToDelete)
+			throws BusinessException {
+		DomainPattern pattern = retrieveDomainPattern(patternToDelete);
+		domainPatternRepository.delete(pattern);
 	}
 	
 	public List<String> getAllDomainIdentifiers() throws BusinessException {
@@ -148,6 +172,49 @@ public class DomainServiceImpl implements DomainService {
     		return domain.getParameter().getGuestCanCreateOther();
     	}
     	return domain.getParameter().getDomainWithGuests();
+	}
+	
+	public List<DomainPattern> findAllDomainPatterns() throws BusinessException {
+		return domainPatternRepository.findAll();
+	}
+	
+	public List<LDAPConnection> findAllLDAPConnections()
+			throws BusinessException {
+		return ldapConnectionRepository.findAll();
+	}
+	
+	public void updateLDAPConnection(LDAPConnection ldapConnection)
+			throws BusinessException {
+		LDAPConnection ldapConn = ldapConnectionRepository.findById(ldapConnection.getIdentifier());
+		ldapConn.setProviderUrl(ldapConnection.getProviderUrl());
+		ldapConn.setSecurityAuth(ldapConnection.getSecurityAuth());
+		ldapConn.setSecurityCredentials(ldapConnection.getSecurityCredentials());
+		ldapConn.setSecurityPrincipal(ldapConnection.getSecurityCredentials());
+		ldapConnectionRepository.update(ldapConn);
+	}
+	
+	public void updateDomainPattern(DomainPattern domainPattern)
+			throws BusinessException {
+		DomainPattern pattern = domainPatternRepository.findById(domainPattern.getIdentifier());
+		pattern.setDescription(domainPattern.getDescription());
+		pattern.setGetUserCommand(domainPattern.getGetUserCommand());
+		pattern.setGetAllDomainUsersCommand(domainPattern.getGetAllDomainUsersCommand());
+		pattern.setAuthCommand(domainPattern.getAuthCommand());
+		pattern.setSearchUserCommand(domainPattern.getSearchUserCommand());
+		pattern.setGetUserResult(domainPattern.getGetUserResult());
+		domainPatternRepository.update(pattern);
+	}
+	
+	public void updateDomain(String identifier, String differentialKey,
+			LDAPConnection ldapConnection, DomainPattern domainPattern)
+			throws BusinessException {
+		Domain domain = domainRepository.findById(identifier);
+		domain.setDifferentialKey(differentialKey);
+		LDAPConnection conn = ldapConnectionRepository.findById(ldapConnection.getIdentifier());
+		domain.setLdapConnection(conn);
+		DomainPattern pattern = domainPatternRepository.findById(domainPattern.getIdentifier());
+		domain.setPattern(pattern);
+		domainRepository.update(domain);
 	}
 
 }

@@ -4,7 +4,7 @@ import org.linagora.linShare.core.domain.entities.Domain;
 
 public class DomainVo {
 
-	private final String identifier;
+	private String identifier;
 	private String differentialKey;
 	private DomainPatternVo pattern;
 	private LDAPConnectionVo ldapConnection;
@@ -17,6 +17,9 @@ public class DomainVo {
 		this.ldapConnection = new LDAPConnectionVo(domain.getLdapConnection());
 		this.parameterVo = null;
 	}
+	
+	public DomainVo() {
+	}
 
 	public DomainVo(String identifier, String differentialKey,
 			DomainPatternVo pattern, LDAPConnectionVo ldapConn,
@@ -26,6 +29,14 @@ public class DomainVo {
 		this.pattern = pattern;
 		this.ldapConnection = ldapConn;
 		this.parameterVo = parameterVo;
+	}
+	
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public String getIdentifier() {
+		return identifier;
 	}
 
 	public String getDifferentialKey() {
@@ -50,10 +61,6 @@ public class DomainVo {
 
 	public void setLdapConnection(LDAPConnectionVo ldapConnection) {
 		this.ldapConnection = ldapConnection;
-	}
-
-	public String getIdentifier() {
-		return identifier;
 	}
 	
 	public void setParameterVo(ParameterVo parameterVo) {

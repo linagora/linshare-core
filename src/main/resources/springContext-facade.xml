@@ -106,6 +106,7 @@
    	  	 <constructor-arg ref="domainService"/>
        	 <constructor-arg ref="domainTransformer"/>
        	 <constructor-arg ref="userService"/>
+         <constructor-arg ref="ldapQueryService"/>
    	  </bean>
        
        

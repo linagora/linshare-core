@@ -193,6 +193,9 @@ public class UserServiceImpl implements UserService {
     public User findUserInDB(String mail) {
         return userRepository.findByMail(mail);
     }
+    public List<User> findUsersInDB(String domain) {
+    	return userRepository.findByDomain(domain);
+    }
     public User findUser(String mail, String domain) throws BusinessException {
         User user = userRepository.findByMail(mail);
         if (user == null) {

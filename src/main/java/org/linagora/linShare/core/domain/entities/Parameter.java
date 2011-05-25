@@ -488,6 +488,14 @@ public class Parameter implements Serializable {
 	public void setGuestCanCreateOther(Boolean guestCanCreateOther) {
 		this.guestCanCreateOther = guestCanCreateOther;
 	}
+
+	public static Parameter getDefault(String identifier) {
+		Parameter param = new Parameter(identifier, new Long(100L), new Long(100L), new Long(1000L), new Long(0L), Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, 
+				Boolean.FALSE, new Integer(100), TimeUnit.DAY, "", TimeUnit.DAY, new Integer(100), TimeUnit.DAY, new Integer(100), 
+				new ArrayList<ShareExpiryRule>(), Boolean.FALSE, new HashSet<WelcomeText>(), 
+				new HashSet<MailTemplate>(), new HashSet<MailSubject>(), Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE);
+		return param;
+	}
 	
 	
 }
