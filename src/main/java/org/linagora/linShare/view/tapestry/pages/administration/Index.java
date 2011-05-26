@@ -260,7 +260,7 @@ public class Index {
 		};
     }
     
-    public Object onSubmitFormUpdateDomain() {
+    public Object onSubmitFromUpdateDomain() {
     	return this;
     }
 

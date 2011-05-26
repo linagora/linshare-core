@@ -29,6 +29,7 @@ import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
@@ -270,5 +271,10 @@ public class UserFacadeImpl implements UserFacade {
 			return getUserVoList(contacts);
 		}
 		return null;
+	}
+	
+	public void updateUserDomain(String mail, DomainVo selectedDomain,
+			UserVo userLoggedIn) throws BusinessException {
+		userService.updateUserDomain(mail, selectedDomain.getIdentifier(), userLoggedIn);
 	}
 }

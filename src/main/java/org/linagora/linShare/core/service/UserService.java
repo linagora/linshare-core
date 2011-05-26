@@ -178,4 +178,6 @@ public interface UserService {
 	 * @return
 	 */
 	public List<User> fetchGuestContacts(String login) throws BusinessException;
+
+	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
 }

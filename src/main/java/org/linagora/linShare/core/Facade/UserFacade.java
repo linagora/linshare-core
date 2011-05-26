@@ -25,6 +25,7 @@ import java.util.List;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -195,4 +196,7 @@ public interface UserFacade {
 	 * @return
 	 */
 	List<UserVo> fetchGuestContacts(String login) throws BusinessException;
+
+	void updateUserDomain(String mail, DomainVo selectedDomain,
+			UserVo userLoggedIn) throws BusinessException;
 }
