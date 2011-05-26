@@ -512,21 +512,8 @@ public class UserServiceImpl implements UserService {
 
 	
 	public void updateUser(String mail,Role role, UserVo ownerVo) throws BusinessException{
-		
-        User owner = userRepository.findByLogin(ownerVo.getLogin());
-        Domain domain = owner.getDomain();
-		
-		if ((domain == null || domain.getIdentifier() == null) 
-				&& owner.getRole() == Role.SUPERADMIN) {
-			domain = guessUserDomain(mail, owner);
-		}
-		
-		//search in database internal user, next in ldap, create it in db if needed
-		if (domain == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find user in db nor in domains " + mail);
-		}
-		
-		User user = findAndCreateUser(mail, domain.getIdentifier());
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
+        User user = findAndCreateUserWithoutKnowingDomain(mail, owner);
 		
 		user.setRole(role);
 		userRepository.update(user);
@@ -721,5 +708,37 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		return contactsUsers;
+	}
+	
+	public void updateUserDomain(String mail, String selectedDomain, UserVo ownerVo)
+			throws BusinessException {
+		if (!ownerVo.isSuperAdmin()) {
+			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
+					+" cannot be moved to "+selectedDomain+" domain, "+ ownerVo.getLogin()+ " is not a superadmin");
+		}
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
+        User user = findAndCreateUserWithoutKnowingDomain(mail, owner);
+		
+		Domain newDomain = domainService.retrieveDomain(selectedDomain);
+		user.setDomain(newDomain);
+		userRepository.update(user);
+	}
+
+	private User findAndCreateUserWithoutKnowingDomain(String mail,
+			User owner) throws BusinessException {
+        Domain domain = owner.getDomain();
+		
+		if ((domain == null || domain.getIdentifier() == null) 
+				&& owner.getRole() == Role.SUPERADMIN) {
+			domain = guessUserDomain(mail, owner);
+		}
+		
+		//search in database internal user, next in ldap, create it in db if needed
+		if (domain == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find user in db nor in domains " + mail);
+		}
+		
+		User user = findAndCreateUser(mail, domain.getIdentifier());
+		return user;
 	}
 }
