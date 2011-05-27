@@ -204,7 +204,11 @@ public class UserFacadeImpl implements UserFacade {
 	}
 
 	public UserVo searchTempAdminUser() throws BusinessException {
-		return findUser(ADMIN_TEMP_MAIL, null);
+		UserVo user = findUser(ADMIN_TEMP_MAIL, null);
+		if (user.isSuperAdmin()) {
+			return null; // a super admin is not a temp admin, we need to keep this account !
+		}
+		return user;
 	}
 
 	public void updateUserLocale(UserVo user, String locale) {
