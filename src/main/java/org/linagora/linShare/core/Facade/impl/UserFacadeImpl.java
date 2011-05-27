@@ -132,6 +132,11 @@ public class UserFacadeImpl implements UserFacade {
     	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
     }
+    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser, boolean multiDomain) throws BusinessException {
+    	User owner = userRepository.findByLogin(currentUser.getLogin());
+    	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner, multiDomain);
+        return getUserVoList(users);
+    }
 
     /** Get all guests created by a user.
      * @param mail owner mail.

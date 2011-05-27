@@ -50,6 +50,7 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 	private final String actorMail = "testActorMail";
 	private final String actorFirstname = "testActorFirstName";
 	private final String actorLastname = "testActorLastName";
+	private final String actorDomain = "testActorDomain";
 	private final String fileName = "testFileName";
 	private final Long fileSize = 10L;	
 	private final String fileType = "testExt";
@@ -60,7 +61,8 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 
 	@Test
 	public void testExistFileLogEntry() throws BusinessException{
-		LogEntry testFileLogEntry = new FileLogEntry(actionDate, actorMail, actorFirstname, actorLastname, LogAction.FILE_UPLOAD,
+		LogEntry testFileLogEntry = new FileLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
+				actorDomain, LogAction.FILE_UPLOAD,
 				"test description", fileName, fileSize, fileType);
 		
 		logEntryRepository.create(testFileLogEntry);
@@ -80,7 +82,8 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 	
 	@Test
 	public void testExistUserLogEntry() throws BusinessException{
-		LogEntry testFileLogEntry = new UserLogEntry(actionDate, actorMail, actorFirstname, actorLastname, LogAction.USER_CREATE,
+		LogEntry testFileLogEntry = new UserLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
+				actorDomain, LogAction.USER_CREATE,
 				"test description", targetMail, targetFirstname, targetLastname, null);
 		
 		logEntryRepository.create(testFileLogEntry);
@@ -98,7 +101,8 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 	
 	@Test
 	public void testExistShareLogEntry() throws BusinessException{
-		LogEntry testFileLogEntry = new ShareLogEntry(actionDate, actorMail, actorFirstname, actorLastname, LogAction.FILE_SHARE,
+		LogEntry testFileLogEntry = new ShareLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
+				actorDomain, LogAction.FILE_SHARE,
 				"test description", fileName, fileSize, fileType, targetMail, targetFirstname, targetLastname, null);
 		
 		logEntryRepository.create(testFileLogEntry);

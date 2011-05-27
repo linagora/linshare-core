@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
         
         Calendar expDate = new GregorianCalendar();
         expDate.setTime(guest.getExpiryDate());
-        UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+        UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(), owner.getDomainId(),
         		LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), expDate);
         
         logEntryRepository.create(logEntry);
@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
     public User findUser(String mail, String domain) throws BusinessException {
         User user = userRepository.findByMail(mail);
         if (user == null) {
-            List<User> users = domainService.searchUser(mail, "", "", domain, null);
+            List<User> users = domainService.searchUser(mail, "", "", domain, null, true);
             if (users != null && users.size() == 1) {
             	user = users.get(0);
             }
@@ -209,7 +209,7 @@ public class UserServiceImpl implements UserService {
     public User findUser(String mail, String domain, User actor) throws BusinessException {
         User user = userRepository.findByMail(mail);
         if (user == null) {
-            List<User> users = domainService.searchUser(mail, "", "", domain, actor);
+            List<User> users = domainService.searchUser(mail, "", "", domain, actor, true);
             if (users != null && users.size() == 1) {
             	user = users.get(0);
             }
@@ -229,7 +229,7 @@ public class UserServiceImpl implements UserService {
     public User findAndCreateUser(String mail, String domainId) throws BusinessException {
         User user = userRepository.findByMail(mail);
         if (user == null && domainId != null) {
-            List<User> users = domainService.searchUser(mail, "", "", domainId, null);
+            List<User> users = domainService.searchUser(mail, "", "", domainId, null, true);
             if (users!=null && users.size()==1) {
             	user = users.get(0);
             	try {
@@ -318,6 +318,7 @@ public class UserServiceImpl implements UserService {
 			
 			for (Share share : receivedShare) {
 				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
 		        		LogAction.SHARE_DELETE, "Deleting a user-Removing shares", 
 		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
 		        		userToDelete.getMail(), 
@@ -336,6 +337,7 @@ public class UserServiceImpl implements UserService {
 					docs += doc.getName()+";";
 				}
 				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
 		        		LogAction.SHARE_DELETE, "Deleting a user-Removing url shares", 
 		        		docs,null,null,
 		        		userToDelete.getMail(), 
@@ -349,6 +351,7 @@ public class UserServiceImpl implements UserService {
 			
 			for (Share share : sentShare) {
 				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
 		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
 		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
 		        		userToDelete.getMail(), 
@@ -369,6 +372,7 @@ public class UserServiceImpl implements UserService {
 				fileSystemDao.removeFileByUUID(fileUUID);
 				FileLogEntry logEntry = new FileLogEntry(owner.getMail(), 
 						owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
 						LogAction.USER_DELETE, "User deleted", document.getName(), 
 						document.getSize(), document.getType());
 				logEntryRepository.create(logEntry);
@@ -403,8 +407,9 @@ public class UserServiceImpl implements UserService {
 			userRepository.update(userToDelete);
 			userRepository.delete(userToDelete);
 			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-		        		LogAction.USER_DELETE, "Deleting an user", userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+					owner.getDomainId(),
+		        	LogAction.USER_DELETE, "Deleting an user", userToDelete.getMail(), 
+		        	userToDelete.getFirstName(), userToDelete.getLastName(), null);
       
 		    logEntryRepository.create(logEntry);
 		    
@@ -434,9 +439,15 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
-
+    
 	public List<User> searchUser(String mail, String firstName,
 			String lastName, UserType userType, User currentUser) throws BusinessException {
+		return searchUser(mail, firstName, lastName, userType, currentUser, true);
+	}
+		
+	public List<User> searchUser(String mail, String firstName,
+	    		String lastName, UserType userType, User currentUser,
+	    		boolean multiDomain) throws BusinessException {
 		List<User> users=new ArrayList<User>();
 		
 		if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
@@ -468,7 +479,7 @@ public class UserServiceImpl implements UserService {
 		}
 		if(null==userType || userType.equals(UserType.INTERNAL)){
 			String domainId = (currentUser.getDomain() == null) ? null : currentUser.getDomain().getIdentifier();
-			List<User> internals = domainService.searchUser(mail, firstName, lastName, domainId, currentUser);
+			List<User> internals = domainService.searchUser(mail, firstName, lastName, domainId, currentUser, multiDomain);
         
 			//need linshare local information for these internals user
 			for (User ldapuser : internals) {
@@ -504,6 +515,7 @@ public class UserServiceImpl implements UserService {
         guestRepository.update(guest);
 
         UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+				owner.getDomainId(),
         		LogAction.USER_UPDATE, "Update of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), null);
         
         logEntryRepository.create(logEntry);
@@ -520,6 +532,7 @@ public class UserServiceImpl implements UserService {
 		
 		
         UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+				owner.getDomainId(),
         		LogAction.USER_UPDATE, "Update role of a user", user.getMail(), user.getFirstName(), user.getLastName(), null);
         
         logEntryRepository.create(logEntry);

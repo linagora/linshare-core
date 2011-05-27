@@ -86,7 +86,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			byte[] res = enc.encryptString();
 			userService.updateUserEnciphermentKey(user.getMail(),res);
 			
-	        UserLogEntry logEntry = new UserLogEntry(user.getMail(), user.getFirstName(), user.getLastName(),
+	        UserLogEntry logEntry = new UserLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.USER_UPDATE, "Generate symetric key (challenge) of a user", user.getMail(), user.getFirstName(), user.getLastName(), null);
 	        
 	        logEntryRepository.create(logEntry);
@@ -182,7 +182,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), false,owner);
 			
-			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(),
+			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.FILE_DECRYPT, "Decrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 	        
 	        logEntryRepository.create(logEntry);
@@ -243,7 +243,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), true, owner);
 			
-			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(),
+			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.FILE_ENCRYPT, "Encrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 			
 	        logEntryRepository.create(logEntry);

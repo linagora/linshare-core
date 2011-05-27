@@ -90,7 +90,9 @@ public class UserAccessAuthentity  {
     }
 
 	private void generateAuthLogEntry(UserVo userVo) {
-		UserLogEntry logEntry = new UserLogEntry(new GregorianCalendar(), userVo.getMail(), userVo.getFirstName(), userVo.getLastName(), LogAction.USER_AUTH, "Successfull authentification", null, null, null, null);
+		UserLogEntry logEntry = new UserLogEntry(new GregorianCalendar(), userVo.getMail(), 
+				userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
+				LogAction.USER_AUTH, "Successfull authentification", null, null, null, null);
 		try {
 			logEntryRepository.create(logEntry);
 		} catch (IllegalArgumentException e) {

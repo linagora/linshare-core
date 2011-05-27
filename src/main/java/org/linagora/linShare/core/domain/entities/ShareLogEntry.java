@@ -44,12 +44,14 @@ public class ShareLogEntry extends FileLogEntry {
 		this.expirationDate = null;
 	}
 	public ShareLogEntry(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction,
+			String actorFirstname, String actorLastname, String actorDomain,
+			LogAction logAction,
 			String description, String fileName, Long fileSize,
 			String fileType, 
 			String targetMail, String targetFirstname,
 			String targetLastname, Calendar expirationDate) {
-		super(actionDate, actorMail, actorFirstname, actorLastname, logAction,
+		super(actionDate, actorMail, actorFirstname, actorLastname, actorDomain,
+				logAction,
 				description, fileName, fileSize, fileType);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;
@@ -58,12 +60,14 @@ public class ShareLogEntry extends FileLogEntry {
 	}
 
 	public ShareLogEntry(String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction,
+			String actorFirstname, String actorLastname, String actorDomain, 
+			LogAction logAction,
 			String description, String fileName, Long fileSize,
 			String fileType, 
 			String targetMail, String targetFirstname,
 			String targetLastname, Calendar expirationDate) {
-		super(actorMail, actorFirstname, actorLastname, logAction,
+		super(actorMail, actorFirstname, actorLastname, actorDomain,
+				logAction,
 				description, fileName, fileSize, fileType);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;

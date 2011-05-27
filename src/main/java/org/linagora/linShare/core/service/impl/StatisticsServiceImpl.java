@@ -88,7 +88,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		logCriteria.setAfterDate(maxDate);
 		logCriteria.setBeforeDate(minDate);
 		
-		List<LogEntry> logs = logEntryRepository.findByCriteria(logCriteria);
+		List<LogEntry> logs = logEntryRepository.findByCriteria(logCriteria, null);
 		
 		for (LogEntry logEntry : logs) {
 			LogAction action = logEntry.getLogAction();
@@ -108,7 +108,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		logCriteria.setAfterDate(maxDate);
 		logCriteria.setBeforeDate(minDate);
 		
-		List<LogEntry> logs = logEntryRepository.findByCriteria(logCriteria);
+		List<LogEntry> logs = logEntryRepository.findByCriteria(logCriteria, null);
 		
 		for (LogEntry logEntry : logs) {
 			LogAction action = logEntry.getLogAction();

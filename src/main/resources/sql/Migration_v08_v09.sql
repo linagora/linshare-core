@@ -90,11 +90,11 @@ alter table linshare_mail_subjects add constraint FDD6CCCABCA44789EB
 
 alter table linshare_user add column domain_id int8 default 1;
 
-
+--------
 --- here you have to insert your domain configuration here
 --- and the super admin account
 --- generated with update/linshare8_to_linshare9.sh
-
+--------
 
     alter table linshare_user 
         add constraint FK56DFC97C6F5F97F1 
@@ -102,4 +102,10 @@ alter table linshare_user add column domain_id int8 default 1;
         references linshare_domain;
 
     insert into linshare_version (id, description) values (9, 'LinShare version 0.9');
+
+
+--- Since 0.9.1
+
+    alter table linshare_log_entry add column actor_domain varchar(255);
+    create index index_log_entry_actor_domain on linshare_log_entry (actor_domain);
 

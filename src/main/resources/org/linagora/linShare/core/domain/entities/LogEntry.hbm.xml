@@ -24,6 +24,9 @@
     <property access="field" index="index_log_entry_actor_last_name" name="actorLastname" type="string">
       <column name="actor_lastname" not-null="true"/>
     </property>
+    <property access="field" index="index_log_entry_actor_domain" name="actorDomain" type="string">
+      <column name="actor_domain" not-null="false"/>
+    </property>
     <property access="field" index="index_log_entry_action" name="logAction" type="LogAction">
       <column name="log_action" not-null="true"/>
     </property>

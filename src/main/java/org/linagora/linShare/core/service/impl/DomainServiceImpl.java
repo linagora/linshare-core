@@ -115,7 +115,7 @@ public class DomainServiceImpl implements DomainService {
 	}
 	
 	public List<User> searchUser(String mail, String firstName,
-			String lastName, String domainId, User currentUser) throws BusinessException {
+			String lastName, String domainId, User currentUser, boolean multiDomain) throws BusinessException {
 		
 		Domain domain = null;
 		if (domainId!=null) {
@@ -128,9 +128,9 @@ public class DomainServiceImpl implements DomainService {
 		
 		List<User> users = new ArrayList<User>();
 		
-		if (domain != null && domain.getParameter().getClosedDomain()) {
+		if (domain != null && (domain.getParameter().getClosedDomain() || !multiDomain)) {
 			users.addAll(ldapQueryService.searchUser(mail, firstName, lastName, domain, currentUser));
-		} else { //domain==null&&superadmin || !closedDomain
+		} else { //domain==null&&superadmin || !closedDomain && multiDomain
 			List<Domain> domains = findAllDomains();
 			for (Domain domainFound : domains) {
 				users.addAll(ldapQueryService.searchUser(mail, firstName, lastName, domainFound, currentUser));

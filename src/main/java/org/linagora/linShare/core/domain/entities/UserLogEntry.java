@@ -21,8 +21,6 @@
 package org.linagora.linShare.core.domain.entities;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.linagora.linShare.core.domain.LogAction;
 
@@ -51,11 +49,13 @@ public class UserLogEntry extends LogEntry {
 		this.expirationDate = null;
 	}
 	public UserLogEntry(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction, String description,
+			String actorFirstname, String actorLastname, String actorDomain,
+			LogAction logAction, String description,
 			String targetMail, String targetFirstname,
 			String targetLastname, Calendar expirationDate) {
 		super(actionDate, actorMail,
-				actorFirstname, actorLastname, logAction, description);
+				actorFirstname, actorLastname, actorDomain,
+				logAction, description);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;
 		this.targetLastname = targetLastname;
@@ -63,11 +63,13 @@ public class UserLogEntry extends LogEntry {
 	}
 	
 	public UserLogEntry(String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction, String description,
+			String actorFirstname, String actorLastname, String actorDomain,
+			LogAction logAction, String description,
 			String targetMail, String targetFirstname,
 			String targetLastname, Calendar expirationDate) {
 		super(actorMail,
-				actorFirstname, actorLastname, logAction, description);
+				actorFirstname, actorLastname, actorDomain,
+				logAction, description);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;
 		this.targetLastname = targetLastname;
