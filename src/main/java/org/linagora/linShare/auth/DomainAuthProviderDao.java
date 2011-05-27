@@ -150,6 +150,15 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		// invisible domain and user found or visible domain and user found
 		try {
 			user = userService.findAndCreateUser(foundUser.getMail(), domain);
+			
+			// if we already have a guest with the same mail, and then, a domain with
+			// this mail is added in linshare, when the domain user connects he should not
+			// retrieve the guest account. if the two user are in the same domain, we can't
+			// do anything I think...
+			if (!domain.equals(user.getDomainId())) {
+				throw new AuthenticationServiceException("User "+user.getLogin()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domain);
+			}
+			
 		} catch (BusinessException e) {
 			logger.error(e);
 			throw new AuthenticationServiceException("Could not create user account: "+foundUser.getMail(), e);
