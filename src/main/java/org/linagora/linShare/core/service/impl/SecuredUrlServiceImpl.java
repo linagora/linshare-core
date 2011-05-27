@@ -264,7 +264,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 			
 			
 			logEntry = new ShareLogEntry(owner.getMail(), owner
-				.getFirstName(), owner.getLastName(),
+				.getFirstName(), owner.getLastName(), owner.getDomainId(),
 				LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file", docEntity
 				.getName(), docEntity.getSize(), docEntity
 				.getType(), email!=null?email:"" , "", "" ,null);
@@ -280,7 +280,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 			//it's all the file at once
 			for (Document docEntity : securedUrl.getDocuments()) {
 				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner
-						.getFirstName(), owner.getLastName(),
+						.getFirstName(), owner.getLastName(), owner.getDomainId(),
 						LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file", docEntity
 						.getName(), docEntity.getSize(), docEntity
 						.getType(), email, "", "" ,null);

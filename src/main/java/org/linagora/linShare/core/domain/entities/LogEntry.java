@@ -49,6 +49,8 @@ public abstract class LogEntry implements Serializable {
 	
 	private final String actorLastname;
 	
+	private final String actorDomain;
+	
 	private final LogAction logAction;
 	
 	private String description;
@@ -61,6 +63,7 @@ public abstract class LogEntry implements Serializable {
 		this.persistenceId = null;
 		this.actionDate = null;
 		this.actorMail = null;
+		this.actorDomain = null;
 		this.actorFirstname = null;
 		this.actorLastname = null;
 		this.logAction = null;
@@ -68,21 +71,25 @@ public abstract class LogEntry implements Serializable {
 		
 	}
 	public LogEntry(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction, String description) {
+			String actorFirstname, String actorLastname, String actorDomain,
+			LogAction logAction, String description) {
 		this.actionDate = (Calendar)actionDate.clone();
 		this.actorMail = actorMail;
 		this.actorFirstname = actorFirstname;
 		this.actorLastname = actorLastname;
+		this.actorDomain = actorDomain;
 		this.logAction = logAction;
 		this.description = description;
 	}
 	
 	public LogEntry(String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction, String description) {
+			String actorFirstname, String actorLastname, String actorDomain, 
+			LogAction logAction, String description) {
 		this.actionDate = new GregorianCalendar();
 		this.actorMail = actorMail;
 		this.actorFirstname = actorFirstname;
 		this.actorLastname = actorLastname;
+		this.actorDomain = actorDomain;
 		this.logAction = logAction;
 		this.description = description;
 	}
@@ -98,6 +105,9 @@ public abstract class LogEntry implements Serializable {
 	}
 	public String getActorLastname() {
 		return actorLastname;
+	}
+	public String getActorDomain() {
+		return actorDomain;
 	}
 	public LogAction getLogAction() {
 		return logAction;

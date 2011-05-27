@@ -22,7 +22,7 @@ public interface DomainService {
 	public void deleteDomain(String identifier) throws BusinessException;
 	public List<String> getAllDomainIdentifiers() throws BusinessException;
 	public List<Domain> findAllDomains() throws BusinessException;
-	public List<User> searchUser(String mail, String firstName, String lastName, String domainId, User currentUser) throws BusinessException;
+	public List<User> searchUser(String mail, String firstName, String lastName, String domainId, User currentUser, boolean multiDomain) throws BusinessException;
 	public boolean userIsAllowedToShareWith(User sender, User recipient) throws BusinessException;
 	public boolean hasRightsToShareWithExternals(User sender) throws BusinessException;
 	public boolean userCanCreateGuest(User user) throws BusinessException;

@@ -84,6 +84,7 @@ public interface UserFacade {
      * @return a list of matching users.
      */
     List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException;
+    List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser, boolean multiDomain) throws BusinessException;
 
     
     /** Search a user.

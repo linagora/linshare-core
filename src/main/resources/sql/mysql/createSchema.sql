@@ -79,6 +79,7 @@
         actor_mail varchar(255) not null,
         actor_firstname varchar(255) not null,
         actor_lastname varchar(255) not null,
+        actor_domain varchar(255),
         log_action varchar(255) not null,
         description varchar(255),
         file_name varchar(255),
@@ -364,6 +365,8 @@
     create index index_log_entry_actor_first_name on linshare_log_entry (actor_firstname);
 
     create index index_log_entry_actor_mail on linshare_log_entry (actor_mail);
+
+    create index index_log_entry_actor_domain on linshare_log_entry (actor_domain);
 
     create index index_log_entry_action_date on linshare_log_entry (action_date);
 

@@ -307,7 +307,8 @@ public class DocumentServiceImpl implements DocumentService {
 				checkStatus = virusScannerService.check(tempFile);
 			} catch (TechnicalException e) {
 				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
-						owner.getLastName(), LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
+						owner.getLastName(), owner.getDomainId(), 
+						LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
 				logEntryRepository.create(logEntry);
 				log.error("File scan failed: antivirus enabled but not available ?");
 				throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED,
@@ -316,7 +317,7 @@ public class DocumentServiceImpl implements DocumentService {
 			// check if the file contains virus
 			if (!checkStatus) {
 				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
-						owner.getLastName(), LogAction.FILE_WITH_VIRUS, fileName);
+						owner.getLastName(), owner.getDomainId(), LogAction.FILE_WITH_VIRUS, fileName);
 				logEntryRepository.create(logEntry);
 				log.warn(owner.getMail()
 						+ " tried to upload a file containing virus:" + fileName);
@@ -416,7 +417,7 @@ public class DocumentServiceImpl implements DocumentService {
 			userRepository.update(owner);
 
 			FileLogEntry logEntry = new FileLogEntry(owner.getMail(), owner
-					.getFirstName(), owner.getLastName(),
+					.getFirstName(), owner.getLastName(), owner.getDomainId(),
 					LogAction.FILE_UPLOAD, "Creation of a file", docEntity
 							.getName(), docEntity.getSize(), docEntity
 							.getType());
@@ -631,7 +632,7 @@ public class DocumentServiceImpl implements DocumentService {
 		documentRepository.update(aDoc);
 
 		FileLogEntry logEntry = new FileLogEntry(owner.getMail(), owner
-				.getFirstName(), owner.getLastName(), LogAction.FILE_SIGN,
+				.getFirstName(), owner.getLastName(), owner.getDomainId(), LogAction.FILE_SIGN,
 				"signature of a file", aDoc.getName(), aDoc.getSize(), aDoc
 						.getType());
 
@@ -723,19 +724,19 @@ public class DocumentServiceImpl implements DocumentService {
 
 				if (Reason.EXPIRY.equals(causeOfDeletion)) {
 					logEntry = new FileLogEntry(actor.getMail(), actor
-							.getFirstName(), actor.getLastName(),
+							.getFirstName(), actor.getLastName(), actor.getDomainId(),
 							LogAction.FILE_EXPIRE, "Expiration of a file", doc
 									.getName(), doc.getSize(), doc.getType());
 				} else if (Reason.INCONSISTENCY.equals(causeOfDeletion)) {
 					logEntry = new FileLogEntry(actor.getMail(), actor
-							.getFirstName(), actor.getLastName(),
+							.getFirstName(), actor.getLastName(), actor.getDomainId(),
 							LogAction.FILE_INCONSISTENCY,
 							"File removed because of inconsistence. "
 									+ "Please contact your administrator.", doc
 									.getName(), doc.getSize(), doc.getType());
 				} else {
 					logEntry = new FileLogEntry(actor.getMail(), actor
-							.getFirstName(), actor.getLastName(),
+							.getFirstName(), actor.getLastName(), actor.getDomainId(),
 							LogAction.FILE_DELETE, "Deletion of a file", doc
 									.getName(), doc.getSize(), doc.getType());
 				}
@@ -849,7 +850,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 		logEntry = new ShareLogEntry(shareToRetrieve.getSender().getMail(),
 				shareToRetrieve.getSender().getFirstName(), shareToRetrieve
-						.getSender().getLastName(),
+						.getSender().getLastName(), shareToRetrieve.getSender().getDomainId(),
 				LogAction.SHARE_DOWNLOAD, "Download of a sharing", doc
 						.getFileName(), doc.getSize(), doc.getType(), actor
 						.getMail(), actor.getFirstName(), actor
@@ -904,7 +905,7 @@ public class DocumentServiceImpl implements DocumentService {
 		}	
 		
 		FileLogEntry logEntry = new FileLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-				LogAction.FILE_UPDATE, "Update of a file", logText, doc.getSize(), doc.getType());
+				owner.getDomainId(), LogAction.FILE_UPDATE, "Update of a file", logText, doc.getSize(), doc.getType());
 		
 		logEntryRepository.create(logEntry);
 

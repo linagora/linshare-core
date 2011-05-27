@@ -44,6 +44,6 @@ public interface LogEntryRepository extends AbstractRepository<LogEntry> {
 	public List<LogEntry> findByDate(String mail, Calendar beginDate, Calendar endDate);
 	
 	
-	public List<LogEntry> findByCriteria(LogCriteriaBean criteria);
+	public List<LogEntry> findByCriteria(LogCriteriaBean criteria, String domainId);
 	
 }

@@ -296,4 +296,8 @@ public abstract class User {
 	public void setDomain(Domain domain) {
 		this.domain = domain;
 	}
+	
+	public String getDomainId() {
+		return ( (this.domain == null) ? null : this.domain.getIdentifier() );
+	}
 }

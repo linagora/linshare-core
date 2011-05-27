@@ -71,7 +71,7 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 
 	
 	
-	public List<LogEntry> findByCriteria(LogCriteriaBean logCriteria) {
+	public List<LogEntry> findByCriteria(LogCriteriaBean logCriteria, String domainId) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(LogEntry.class);
 		
@@ -91,6 +91,11 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		if ((logCriteria.getActorLastname()!=null) && (logCriteria.getActorLastname().length()>0)) {
 			criteria.add(Restrictions.like("actorLastname", logCriteria.getActorLastname(), MatchMode.START).ignoreCase());
 		}
+		
+		if (domainId != null && domainId.length() > 0) {
+			criteria.add(Restrictions.like("actorDomain", domainId));
+		}
+		
 		if ((logCriteria.getTargetFirstname()!=null) && (logCriteria.getTargetFirstname().length()>0)) {
 			criteria.add(Restrictions.like("targetFirstname", logCriteria.getTargetFirstname(), MatchMode.START).ignoreCase());
 		}

@@ -34,10 +34,12 @@ public class UserLogEntryVo extends LogEntryVo {
 	private final Calendar expirationDate;
 	
 	public UserLogEntryVo(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction,
+			String actorFirstname, String actorLastname, 
+			String actorDomain, LogAction logAction,
 			String description, String targetMail, String targetFirstname,
 			String targetLastname, final Calendar expirationDate) {
-		super(actionDate, actorMail, actorFirstname, actorLastname, logAction,
+		super(actionDate, actorMail, actorFirstname, actorLastname, actorDomain, 
+				logAction,
 				description);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;

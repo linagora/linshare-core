@@ -67,6 +67,7 @@ public interface UserService {
      * @return a list of matching users.
      */
     List<User> searchUser(String mail, String firstName, String lastName,UserType userType,User currentUser) throws BusinessException;
+    List<User> searchUser(String mail, String firstName, String lastName,UserType userType,User currentUser, boolean multiDomain) throws BusinessException;
     
     
     /** Find a user (based on mail address).
