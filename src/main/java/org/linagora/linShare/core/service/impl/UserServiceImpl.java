@@ -327,7 +327,18 @@ public class UserServiceImpl implements UserService {
 				 documentsToClean.add(share.getDocument());
 			}
 			
-			receivedShare.clear();
+			// clearing sent shares
+			Set<Share> sentShare = userToDelete.getShares();
+			
+			for (Share share : sentShare) {
+				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
+		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
+		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
+		        		userToDelete.getMail(), 
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+				 logEntryRepository.create(logEntry);
+			}
 			
 			// clearing sent urls
 			Set<SecuredUrl> sentUrls = userToDelete.getSecuredUrls();
@@ -344,22 +355,12 @@ public class UserServiceImpl implements UserService {
 		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
 				 logEntryRepository.create(logEntry);
 			}
-			sentUrls.clear();
-			
-			// clearing sent shares
-			Set<Share> sentShare = userToDelete.getShares();
-			
-			for (Share share : sentShare) {
-				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-						owner.getDomainId(),
-		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
-		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
-		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
-				 logEntryRepository.create(logEntry);
-			}
 			
 			sentShare.clear();
+			receivedShare.clear();
+			sentUrls.clear();
+			
+			userRepository.update(userToDelete);
 			
 			//clearing user documents
 			Set<Document> documents = userToDelete.getDocuments();
