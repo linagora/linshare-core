@@ -48,6 +48,6 @@
     </list>
     <property column="DEFAULT_FILE_EXPIRY_TIME" name="defaultFileExpiryTime"/>
     <property column="DEFAULT_FILE_EXPIRY_TIME_UNIT_ID" name="defaultFileExpiryUnit" type="timeUnitEnumType"/>
-    <many-to-one access="field" cascade="all" class="org.linagora.linShare.core.domain.entities.MessagesConfiguration" name="messagesConfiguration" column="MESSAGES_CONFIGURATION_ID" not-null="true" />
+    <many-to-one cascade="save-update" lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.MessagesConfiguration" name="messagesConfiguration" column="MESSAGES_CONFIGURATION_ID" not-null="true" />
   </class>
 </hibernate-mapping>
