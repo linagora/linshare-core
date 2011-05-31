@@ -149,7 +149,7 @@
        </bean>
 
        <bean id="passwordEncoderFactory" class="org.linagora.linShare.auth.PasswordEncoderFactory">
-           <constructor-arg value="${ldap.hash.algo}"/>
+           <constructor-arg value="SHA"/>
        </bean>
 
        <bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">

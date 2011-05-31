@@ -53,6 +53,9 @@ import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.support.LdapUtils;
 
 
+/**
+ * @deprecated not used anymore since domain implementation
+ */
 public class LdapDatasource implements LdapDao {
 
 	protected static final Logger technicalTracer = LoggerFactory

@@ -26,6 +26,9 @@ import java.util.Map;
 import org.linagora.linShare.core.dao.ldap.LdapSearchResult;
 import org.linagora.linShare.core.domain.entities.User;
 
+/**
+ * @deprecated not used anymore since domain implementation
+ */
 public interface LdapDao {
 	/**
 	 * This method permits to know if key exists in a data source
