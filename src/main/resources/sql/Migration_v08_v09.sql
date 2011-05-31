@@ -108,4 +108,10 @@ alter table linshare_user add column domain_id int8 default 1;
 
     alter table linshare_log_entry add column actor_domain varchar(255);
     create index index_log_entry_actor_domain on linshare_log_entry (actor_domain);
+    alter table linshare_log_entry add column target_domain varchar(255);
+
+
+-- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
+INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 0,0);
+
 
