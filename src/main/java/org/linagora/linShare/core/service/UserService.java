@@ -89,6 +89,7 @@ public interface UserService {
      * @throws TechnicalError if the user cannot be created
      */
     public User findAndCreateUser(String mail, String domainId) throws BusinessException ;
+    public User findAndCreateUserWithoutKnowingDomain(String mail, User owner) throws BusinessException;
     
     /**
      * Delete a User (and all the corresponding share )

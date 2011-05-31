@@ -21,7 +21,6 @@
 package org.linagora.linShare.auth;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -29,7 +28,6 @@ import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.core.domain.entities.Domain;
-import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.DomainService;
@@ -40,7 +38,6 @@ import org.springframework.security.AuthenticationException;
 import org.springframework.security.AuthenticationServiceException;
 import org.springframework.security.BadCredentialsException;
 import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.userdetails.UserDetails;
@@ -76,7 +73,10 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		
 		String login = username;
 		String password = (String)authentication.getCredentials();
-		String domain = (String)authentication.getDetails();
+		String domain = null;
+		if (authentication.getDetails() != null && authentication.getDetails() instanceof String) {
+			domain = (String)authentication.getDetails();
+		}
 		User user = null;
 		User foundUser = null;		
 		
@@ -90,8 +90,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 				          "Bad credentials"), domain);
 				} 
 			} catch (Exception e) {
-				logger.error("Could not authenticate user: "+login, e);
-				throw new AuthenticationServiceException("Could not authenticate user: "+login, e);
+				throw new BadCredentialsException("Could not authenticate user: "+login, e);
 			}
 		}
 		
@@ -164,14 +163,9 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			throw new AuthenticationServiceException("Could not create user account: "+foundUser.getMail(), e);
 		}
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-        grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_AUTH));
-        
-        if (user.getRole() == Role.ADMIN) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
-        }
-        
-        return new org.springframework.security.userdetails.User(user.getLogin(), "", true, true, true, true,
+        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
+
+		return new org.springframework.security.userdetails.User(user.getLogin(), "", true, true, true, true,
 		                grantedAuthorities.toArray(new GrantedAuthority[0]));
 	}
 

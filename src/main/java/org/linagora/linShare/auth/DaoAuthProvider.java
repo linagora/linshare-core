@@ -20,7 +20,6 @@
 */
 package org.linagora.linShare.auth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linShare.core.Facade.UserFacade;
@@ -29,7 +28,6 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UserDetailsService;
@@ -65,18 +63,8 @@ public class DaoAuthProvider implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-        grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_AUTH));
-
-        if (userVo.isUpload()) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
-        }
-        if (userVo.isAdministrator()) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
-        }
-        if (userVo.isSuperAdmin()) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_SUPERADMIN));
-        }
+        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(userVo);
+        
         return new User(userVo.getLogin(), password, true, true, true, true,
             grantedAuthorities.toArray(new GrantedAuthority[0]));
     }

@@ -738,12 +738,15 @@ public class UserServiceImpl implements UserService {
 		userRepository.update(user);
 	}
 
-	private User findAndCreateUserWithoutKnowingDomain(String mail,
+	public User findAndCreateUserWithoutKnowingDomain(String mail,
 			User owner) throws BusinessException {
-        Domain domain = owner.getDomain();
+        Domain domain = null;
+        if (owner != null) {
+        	domain = owner.getDomain();
+        }
 		
 		if ((domain == null || domain.getIdentifier() == null) 
-				&& owner.getRole() == Role.SUPERADMIN) {
+				&& (owner == null || owner.getRole() == Role.SUPERADMIN)) {
 			domain = guessUserDomain(mail, owner);
 		}
 		

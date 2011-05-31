@@ -1,3 +1,5 @@
+# Password conf
+ldap.hash.algo=SHA
 
 #******************** MAIL CONFIGURATION TO SEND MAIL INFORMATION TO USER
 
