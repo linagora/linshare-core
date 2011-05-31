@@ -88,6 +88,7 @@
         target_mail varchar(255),
         target_firstname varchar(255),
         target_lastname varchar(255),
+        target_domain varchar(255),
         expiration_date datetime,
         primary key (id)
     );

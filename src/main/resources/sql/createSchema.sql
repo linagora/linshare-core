@@ -130,7 +130,7 @@
         size int8,
         cert_subjectdn varchar(255),
         cert_issuerdn varchar(255),
-        cert_notafter timestamp,
+        cert_notafter timestamp,l
         cert text,
         signer_id int8,
         document_id_fk int8,
@@ -183,6 +183,7 @@
         target_mail varchar(255),
         target_firstname varchar(255),
         target_lastname varchar(255),
+        target_domain varchar(255),
         expiration_date timestamp,
         primary key (id)
     );

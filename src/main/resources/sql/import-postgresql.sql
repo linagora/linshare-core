@@ -2,6 +2,9 @@ INSERT INTO linshare_messages_configuration (messages_configuration_id) VALUES (
 
 INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (1, 0, E'system', E'', E'', E'system@localhost', E'2009-01-01', 2, E'JYRd2THzjEqTGYq3gjzUh2UBso8=', E'2019-01-01', E'true',E'true');
 
+-- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
+INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, E'root@localhost.localdomain', E'Administrator', E'LinShare', E'root@localhost.localdomain', E'2009-01-01', 3, E'JYRd2THzjEqTGYq3gjzUh2UBso8=', E'2019-01-01', E'false',E'false');
+
 -- LOCALE en
 -- Mail subjects
 -- Subject ANONYMOUS_DOWNLOAD
