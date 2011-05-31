@@ -19,6 +19,7 @@
 					<t:label for="identifier"/>
                 	<t:textfield t:id="identifier" value="ldapConn.identifier" disabled="inModify"/>
 				</p:identifier>
+				<p:securityAuth></p:securityAuth> <!--  NB: do a t:select in the future -->
 			</t:beanEditForm>
 
 		</div>

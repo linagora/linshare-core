@@ -66,6 +66,7 @@ public class CreateLdapConnection {
 	}
 	
 	public Object onSubmit() {
+		ldapConn.setSecurityAuth("simple"); //TODO support another auth in the future
 		try {
 			if (inModify) {
 				domainFacade.updateLDAPConnection(ldapConn);
