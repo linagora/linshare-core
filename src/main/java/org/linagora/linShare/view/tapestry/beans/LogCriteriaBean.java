@@ -34,12 +34,16 @@ public class LogCriteriaBean {
 	private String actorFirstname;
 	
 	private String actorLastname;
+	
+	private String actorDomain;
 
 	private List<String> targetMails; //The list of the selected users
 	
 	private String targetFirstname;
 	
 	private String targetLastname;
+	
+	private String targetDomain;
 
 	private Calendar beforeDate; //The begin date for the search
 	
@@ -60,15 +64,17 @@ public class LogCriteriaBean {
 		fileNameMatchMode = CriterionMatchMode.START;
 	}
 	
-	public LogCriteriaBean(List<String> actorMails, String actorFirstname, String actorLastname,
-			List<String> targetMails, String targetFirstname, String targetLastname,
+	public LogCriteriaBean(List<String> actorMails, String actorFirstname, String actorLastname, String actorDomain,
+			List<String> targetMails, String targetFirstname, String targetLastname, String targetDomain,
 			Calendar beforeDate, Calendar afterDate, List<LogAction> logActions) {
 		this.actorMails = actorMails;
 		this.actorFirstname = actorFirstname;
 		this.actorLastname = actorLastname;
+		this.actorDomain = actorDomain;
 		this.targetMails = targetMails;
 		this.targetFirstname = targetFirstname;
 		this.targetLastname = targetLastname;
+		this.targetDomain = targetDomain;
 		this.beforeDate = beforeDate;
 		this.afterDate = afterDate;
 		this.logActions = logActions;
@@ -171,6 +177,22 @@ public class LogCriteriaBean {
 
 	public void setFileNameMatchMode(CriterionMatchMode fileNameMatchMode) {
 		this.fileNameMatchMode = fileNameMatchMode;
+	}
+	
+	public void setActorDomain(String actorDomain) {
+		this.actorDomain = actorDomain;
+	}
+	
+	public void setTargetDomain(String targetDomain) {
+		this.targetDomain = targetDomain;
+	}
+	
+	public String getActorDomain() {
+		return actorDomain;
+	}
+	
+	public String getTargetDomain() {
+		return targetDomain;
 	}
 	
 }

@@ -39,6 +39,8 @@ public class UserLogEntry extends LogEntry {
 	
 	private final String targetLastname;
 	
+	private final String targetDomain;
+	
 	private final Calendar expirationDate;
 
 	protected UserLogEntry() {
@@ -46,19 +48,22 @@ public class UserLogEntry extends LogEntry {
 		this.targetMail = null;
 		this.targetFirstname = null;
 		this.targetLastname = null;
+		this.targetDomain = null;
 		this.expirationDate = null;
 	}
 	public UserLogEntry(Calendar actionDate, String actorMail,
 			String actorFirstname, String actorLastname, String actorDomain,
 			LogAction logAction, String description,
 			String targetMail, String targetFirstname,
-			String targetLastname, Calendar expirationDate) {
+			String targetLastname, String targetDomain,
+			Calendar expirationDate) {
 		super(actionDate, actorMail,
 				actorFirstname, actorLastname, actorDomain,
 				logAction, description);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;
 		this.targetLastname = targetLastname;
+		this.targetDomain = targetDomain;
 		this.expirationDate = expirationDate;
 	}
 	
@@ -66,13 +71,15 @@ public class UserLogEntry extends LogEntry {
 			String actorFirstname, String actorLastname, String actorDomain,
 			LogAction logAction, String description,
 			String targetMail, String targetFirstname,
-			String targetLastname, Calendar expirationDate) {
+			String targetLastname, String targetDomain,
+			Calendar expirationDate) {
 		super(actorMail,
 				actorFirstname, actorLastname, actorDomain,
 				logAction, description);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;
 		this.targetLastname = targetLastname;
+		this.targetDomain = targetDomain;
 		this.expirationDate = expirationDate;
 	}
 
@@ -91,7 +98,9 @@ public class UserLogEntry extends LogEntry {
 	public Calendar getExpirationDate() {
 		return expirationDate;
 	}
-	
+	public String getTargetDomain() {
+		return targetDomain;
+	}
 	
 	
 	

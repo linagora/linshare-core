@@ -42,6 +42,7 @@
       <property access="field" index="index_userlog_entry_target_mail" name="targetMail" not-null="false" type="string"/>
       <property access="field" name="targetFirstname" not-null="false" type="string"/>
       <property access="field" name="targetLastname" not-null="false" type="string"/>
+      <property access="field" name="targetDomain" not-null="false" type="string"/>
       <property access="field" name="expirationDate" not-null="false" type="calendar"/>
     </subclass>
     <subclass discriminator-value="share" name="org.linagora.linShare.core.domain.entities.ShareLogEntry">
@@ -51,6 +52,7 @@
       <property access="field" index="index_sharelog_entry_target_mail" name="targetMail" not-null="false" type="string"/>
       <property access="field" name="targetFirstname" not-null="false" type="string"/>
       <property access="field" name="targetLastname" not-null="false" type="string"/>
+      <property access="field" name="targetDomain" not-null="false" type="string"/>
       <property access="field" name="expirationDate" not-null="false" type="calendar"/>
     </subclass>
     <subclass discriminator-value="antivirus" name="org.linagora.linShare.core.domain.entities.AntivirusLogEntry" />

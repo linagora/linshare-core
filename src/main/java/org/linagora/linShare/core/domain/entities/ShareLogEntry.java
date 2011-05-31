@@ -33,6 +33,8 @@ public class ShareLogEntry extends FileLogEntry {
 	private final String targetFirstname;
 	
 	private final String targetLastname;
+	
+	private final String targetDomain;
 
 	private final Calendar expirationDate;
 	
@@ -41,6 +43,7 @@ public class ShareLogEntry extends FileLogEntry {
 		this.targetMail = null;
 		this.targetFirstname = null;
 		this.targetLastname = null;
+		this.targetDomain = null;
 		this.expirationDate = null;
 	}
 	public ShareLogEntry(Calendar actionDate, String actorMail,
@@ -49,12 +52,14 @@ public class ShareLogEntry extends FileLogEntry {
 			String description, String fileName, Long fileSize,
 			String fileType, 
 			String targetMail, String targetFirstname,
-			String targetLastname, Calendar expirationDate) {
+			String targetLastname, String targetDomain,
+			Calendar expirationDate) {
 		super(actionDate, actorMail, actorFirstname, actorLastname, actorDomain,
 				logAction,
 				description, fileName, fileSize, fileType);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;
+		this.targetDomain = targetDomain;
 		this.targetLastname = targetLastname;
 		this.expirationDate = expirationDate;
 	}
@@ -65,13 +70,15 @@ public class ShareLogEntry extends FileLogEntry {
 			String description, String fileName, Long fileSize,
 			String fileType, 
 			String targetMail, String targetFirstname,
-			String targetLastname, Calendar expirationDate) {
+			String targetLastname, String targetDomain,
+			Calendar expirationDate) {
 		super(actorMail, actorFirstname, actorLastname, actorDomain,
 				logAction,
 				description, fileName, fileSize, fileType);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;
 		this.targetLastname = targetLastname;
+		this.targetDomain = targetDomain;
 		this.expirationDate = expirationDate;
 	}
 	
@@ -88,6 +95,10 @@ public class ShareLogEntry extends FileLogEntry {
 	}
 	public Calendar getExpirationDate() {
 		return expirationDate;
+	}
+	
+	public String getTargetDomain() {
+		return targetDomain;
 	}
 	
 	

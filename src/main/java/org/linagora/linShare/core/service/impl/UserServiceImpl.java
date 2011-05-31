@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
         Calendar expDate = new GregorianCalendar();
         expDate.setTime(guest.getExpiryDate());
         UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(), owner.getDomainId(),
-        		LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), expDate);
+        		LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), expDate);
         
         logEntryRepository.create(logEntry);
         
@@ -322,7 +322,7 @@ public class UserServiceImpl implements UserService {
 		        		LogAction.SHARE_DELETE, "Deleting a user-Removing shares", 
 		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
 		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
 				 logEntryRepository.create(logEntry);
 				 documentsToClean.add(share.getDocument());
 			}
@@ -336,7 +336,7 @@ public class UserServiceImpl implements UserService {
 		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
 		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
 		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
 				 logEntryRepository.create(logEntry);
 			}
 			
@@ -352,7 +352,7 @@ public class UserServiceImpl implements UserService {
 		        		LogAction.SHARE_DELETE, "Deleting a user-Removing url shares", 
 		        		docs,null,null,
 		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
 				 logEntryRepository.create(logEntry);
 			}
 			
@@ -410,7 +410,7 @@ public class UserServiceImpl implements UserService {
 			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
 					owner.getDomainId(),
 		        	LogAction.USER_DELETE, "Deleting an user", userToDelete.getMail(), 
-		        	userToDelete.getFirstName(), userToDelete.getLastName(), null);
+		        	userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
       
 		    logEntryRepository.create(logEntry);
 		    
@@ -517,7 +517,7 @@ public class UserServiceImpl implements UserService {
 
         UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
 				owner.getDomainId(),
-        		LogAction.USER_UPDATE, "Update of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), null);
+        		LogAction.USER_UPDATE, "Update of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), null);
         
         logEntryRepository.create(logEntry);
 
@@ -534,7 +534,7 @@ public class UserServiceImpl implements UserService {
 		
         UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
 				owner.getDomainId(),
-        		LogAction.USER_UPDATE, "Update role of a user", user.getMail(), user.getFirstName(), user.getLastName(), null);
+        		LogAction.USER_UPDATE, "Update role of a user", user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
         logEntryRepository.create(logEntry);
 		

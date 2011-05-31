@@ -854,7 +854,7 @@ public class DocumentServiceImpl implements DocumentService {
 				LogAction.SHARE_DOWNLOAD, "Download of a sharing", doc
 						.getFileName(), doc.getSize(), doc.getType(), actor
 						.getMail(), actor.getFirstName(), actor
-						.getLastName(), null);
+						.getLastName(), actor.getDomainIdentifier(), null);
 		logEntryRepository.create(logEntry);
 		
 		return this.fileSystemDao.getFileContentByUUID(shareToRetrieve
