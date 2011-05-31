@@ -171,7 +171,7 @@ public class ShareServiceImpl implements ShareService{
 				actor.getDomainId(),
         		LogAction.SHARE_DELETE, "Remove a received sharing", 
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
-        		user.getMail(), user.getFirstName(), user.getLastName(), null);
+        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
         logEntryRepository.create(logEntry);
 	}
@@ -189,7 +189,7 @@ public class ShareServiceImpl implements ShareService{
 					actor.getDomainId(),
 	        		LogAction.SHARE_DELETE, "Remove a received sharing", 
 	        		currentShare.getDocument().getName(), currentShare.getDocument().getSize(), currentShare.getDocument().getType(),
-	        		user.getMail(), user.getFirstName(), user.getLastName(), null);
+	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
 	        
 	        logEntryRepository.create(logEntry);
 		}
@@ -208,7 +208,7 @@ public class ShareServiceImpl implements ShareService{
 				actor.getDomainId(),
         		LogAction.SHARE_DELETE, "Cancel a sharing", 
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
-        		user.getMail(), user.getFirstName(), user.getLastName(), null);
+        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
         logEntryRepository.create(logEntry);
         
@@ -227,7 +227,7 @@ public class ShareServiceImpl implements ShareService{
 					actor.getDomainId(),
 	        		LogAction.SHARE_DELETE, "Cancel a sharing", 
 	        		currentShare.getDocument().getName(), currentShare.getDocument().getSize(), currentShare.getDocument().getType(),
-	        		user.getMail(), user.getFirstName(), user.getLastName(), null);
+	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
 	        
 	        logEntryRepository.create(logEntry);
 	        
@@ -243,7 +243,7 @@ public class ShareServiceImpl implements ShareService{
 				actor.getDomainId(),
         		LogAction.SHARE_DELETE, "Delete a sharing", 
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
-        		share.getReceiver().getMail(), share.getReceiver().getFirstName(), share.getReceiver().getLastName(), null);
+        		share.getReceiver().getMail(), share.getReceiver().getFirstName(), share.getReceiver().getLastName(), share.getReceiver().getDomainId(), null);
         
         logEntryRepository.create(logEntry);
         
@@ -327,7 +327,7 @@ public class ShareServiceImpl implements ShareService{
 					ShareLogEntry logEntry = new ShareLogEntry(sender.getMail(), sender.getFirstName(), sender.getLastName(),
 							sender.getDomainId(),
 				        	LogAction.FILE_SHARE, "Sharing of a file", document.getName(), document.getSize(), document.getType(),
-				        	recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), expiryDate);
+				        	recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), recipient.getDomainId(), expiryDate);
 				       
 				    logEntryRepository.create(logEntry);
 				        
@@ -584,7 +584,7 @@ public class ShareServiceImpl implements ShareService{
 				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
 						owner.getDomainIdentifier(),
 		        		LogAction.FILE_SHARE, "Sharing of a file", doc.getName(), doc.getSize(), doc.getType(),
-		        		oneContact.getMail(), "", "", securedUrl.getExpirationTime());
+		        		oneContact.getMail(), "", "", "", securedUrl.getExpirationTime());
 		       
 				logEntryRepository.create(logEntry);
 			}
@@ -607,7 +607,7 @@ public class ShareServiceImpl implements ShareService{
 				LogAction.SHARE_COPY, "Copy of a sharing", share.getDocument()
 						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
 						.getMail(), user.getFirstName(), user
-						.getLastName(), null);
+						.getLastName(), user.getDomainId(), null);
 
 		ShareLogEntry logEntryDelete = new ShareLogEntry(share.getSender().getMail(),
 				share.getSender().getFirstName(), share
@@ -615,7 +615,7 @@ public class ShareServiceImpl implements ShareService{
 				LogAction.SHARE_DELETE, "Copy of a sharing", share.getDocument()
 						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
 						.getMail(), user.getFirstName(), user
-						.getLastName(), null);
+						.getLastName(), user.getDomainId(), null);
 		
 		logEntryRepository.create(logEntryShare);
 		logEntryRepository.create(logEntryDelete);

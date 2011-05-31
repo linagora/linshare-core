@@ -267,7 +267,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 				.getFirstName(), owner.getLastName(), owner.getDomainId(),
 				LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file", docEntity
 				.getName(), docEntity.getSize(), docEntity
-				.getType(), email!=null?email:"" , "", "" ,null);
+				.getType(), email!=null?email:"" , "", "" , "",null);
 			
 			try {
 				logEntryRepository.create(logEntry);
@@ -283,7 +283,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 						.getFirstName(), owner.getLastName(), owner.getDomainId(),
 						LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file", docEntity
 						.getName(), docEntity.getSize(), docEntity
-						.getType(), email, "", "" ,null);
+						.getType(), email, "", "" , "",null);
 
 				try {
 					logEntryRepository.create(logEntry);

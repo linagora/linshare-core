@@ -87,7 +87,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			userService.updateUserEnciphermentKey(user.getMail(),res);
 			
 	        UserLogEntry logEntry = new UserLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
-	        		LogAction.USER_UPDATE, "Generate symetric key (challenge) of a user", user.getMail(), user.getFirstName(), user.getLastName(), null);
+	        		LogAction.USER_UPDATE, "Generate symetric key (challenge) of a user", user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(), null);
 	        
 	        logEntryRepository.create(logEntry);
 			

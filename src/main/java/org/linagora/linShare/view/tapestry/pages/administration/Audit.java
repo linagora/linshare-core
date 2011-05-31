@@ -37,6 +37,7 @@ import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
@@ -44,10 +45,10 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.LogEntryFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.LogAction;
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -140,6 +141,17 @@ public class Audit {
 	@Persist
 	private LogCriteriaBean criteria;
 	
+	@Persist
+	@Property
+	private List<String> domains;
+	
+	@Inject
+	private DomainFacade domainFacade;
+	
+	@Property
+	@Persist
+	private boolean superadmin;
+	
 	
 	/* ***********************************************************
 	 *                       Phase processing
@@ -148,6 +160,12 @@ public class Audit {
 	/* ***********************************************************
 	 *                   Event handlers&processing
 	 ************************************************************ */	
+	
+	@SetupRender
+	public void init() throws BusinessException {
+		domains = domainFacade.getAllDomainIdentifiers();
+		superadmin = userLoggedIn.isSuperAdmin();
+	}
 	
 	public void onActivate() {
 		logActionEncoder = new EnumValueEncoder<LogAction>(LogAction.class);

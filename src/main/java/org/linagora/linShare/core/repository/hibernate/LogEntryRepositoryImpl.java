@@ -94,6 +94,8 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		
 		if (domainId != null && domainId.length() > 0) {
 			criteria.add(Restrictions.like("actorDomain", domainId));
+		} else if (logCriteria.getActorDomain() != null && logCriteria.getActorDomain().length() > 0) {
+			criteria.add(Restrictions.like("actorDomain", logCriteria.getActorDomain()));
 		}
 		
 		if ((logCriteria.getTargetFirstname()!=null) && (logCriteria.getTargetFirstname().length()>0)) {
@@ -102,6 +104,10 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		
 		if ((logCriteria.getTargetLastname()!=null) && (logCriteria.getTargetLastname().length()>0)) {
 			criteria.add(Restrictions.like("targetLastname", logCriteria.getTargetLastname(), MatchMode.START).ignoreCase());
+		}
+		
+		if (logCriteria.getTargetDomain() != null && logCriteria.getTargetDomain().length() > 0) {
+			criteria.add(Restrictions.like("targetDomain", logCriteria.getTargetDomain()));
 		}
 		
 		if ((logCriteria.getLogActions()!=null) && (logCriteria.getLogActions().size()>0)) {

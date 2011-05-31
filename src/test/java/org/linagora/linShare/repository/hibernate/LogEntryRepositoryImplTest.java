@@ -57,6 +57,7 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 	private final String targetMail = "testTargetMail";
 	private final String targetFirstname = "testTargetFirstName";
 	private final String targetLastname= "testTargetLastName";
+	private final String targetDomain= "testTargetDomain";
 	
 
 	@Test
@@ -84,7 +85,7 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 	public void testExistUserLogEntry() throws BusinessException{
 		LogEntry testFileLogEntry = new UserLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
 				actorDomain, LogAction.USER_CREATE,
-				"test description", targetMail, targetFirstname, targetLastname, null);
+				"test description", targetMail, targetFirstname, targetLastname, targetDomain, null);
 		
 		logEntryRepository.create(testFileLogEntry);
 		
@@ -103,7 +104,7 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 	public void testExistShareLogEntry() throws BusinessException{
 		LogEntry testFileLogEntry = new ShareLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
 				actorDomain, LogAction.FILE_SHARE,
-				"test description", fileName, fileSize, fileType, targetMail, targetFirstname, targetLastname, null);
+				"test description", fileName, fileSize, fileType, targetMail, targetFirstname, targetLastname, targetDomain, null);
 		
 		logEntryRepository.create(testFileLogEntry);
 		
