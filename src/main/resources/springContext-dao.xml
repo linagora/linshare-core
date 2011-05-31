@@ -11,24 +11,24 @@
 
     <!-- LDAP DAO. -->
 
-    <bean id="dirContextAuthenticationStrategyFactory" 
+    <!-- bean id="dirContextAuthenticationStrategyFactory" 
         class="org.linagora.linShare.core.dao.ldap.DirContextAuthenticationStrategyFactory">
             <constructor-arg value="${ldap.auth.strategy}"/>
             <constructor-arg value="${ldap.auth.ssl.trustore.file}"/>
             <constructor-arg value="${ldap.auth.ssl.trustore.password}"/>
-    </bean>
+    </bean-->
 
-    <bean id="LdapDao" class="org.linagora.linShare.core.dao.ldap.LdapDatasource">
+    <!-- bean id="LdapDao" class="org.linagora.linShare.core.dao.ldap.LdapDatasource">
         <constructor-arg ref="ldapContextSource"/>
         <constructor-arg ref="ldapTemplate" />
         <constructor-arg value="${ldap.auth.baseDN}" />
         <constructor-arg value="${ldap.auth.key}" />
         <constructor-arg value="${ldap.auth.attribute}" />
     	<constructor-arg value="${ldap.pageSize}" />
-    </bean>
+    </bean-->
 
 	<!-- Ldap connexion auth -->
-    <bean id="ldapContextSource"
+    <!-- bean id="ldapContextSource"
 		class="org.springframework.ldap.core.support.LdapContextSource">
         <property name="url" value="${ldap.auth.url}" />
         <property name="base" value="${ldap.auth.base}" />
@@ -37,10 +37,10 @@
         <property name="authenticationStrategy">
             <bean factory-bean="dirContextAuthenticationStrategyFactory" factory-method="getInstance"/>
         </property>
-    </bean>
+    </bean-->
 	<!-- Ldap template auth  -->
-    <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+    <!-- bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
         <constructor-arg ref="ldapContextSource" />
-    </bean>
+    </bean-->
 
 </beans>	
