@@ -48,6 +48,11 @@
         <property name="defaultTargetUrl" value="/"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="authenticationFailureUrl" value="/?login_error=1"/>
+        <property name="exceptionMappings">
+  			<props>
+    			<prop key="org.linagora.linShare.auth.exceptions.BadDomainException">/?login_error=2</prop>
+  			</props>
+		</property>
         <property name="authenticationManager" ref="authenticationManager"/>		
         <property name="rememberMeServices" ref="rememberMeService"/>
     </bean>

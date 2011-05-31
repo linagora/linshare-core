@@ -114,12 +114,14 @@ public class LoginFormComponent {
 		return userDetailsVo.getFirstName() + " " + userDetailsVo.getLastName();
 	}
 
-    public boolean isLoginFailed() {
-        if (request.getParameter("login_error") != null) {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean isBadCredentials() {
+    	String param = request.getParameter("login_error");
+        return (param != null && param.equals("1"));
+    }
+
+    public boolean isBadDomain() {
+    	String param = request.getParameter("login_error");
+        return (param != null && param.equals("2"));
     }
     
     public String getSpringLogoutLink() {

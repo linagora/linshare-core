@@ -27,8 +27,10 @@ import javax.naming.NamingException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.linagora.linShare.auth.exceptions.BadDomainException;
 import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.LDAPQueryService;
@@ -85,13 +87,22 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			try {
 				Domain domainObject = domainService.retrieveDomain(domain);
 				foundUser = ldapQueryService.auth(login, password, domainObject);
-				if(foundUser == null) {
-				      throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-				          "Bad credentials"), domain);
-				} 
+			} catch (NameNotFoundException e) {
+				foundUser = userService.findUserInDB(username);
+				if (foundUser != null && !foundUser.getUserType().equals(UserType.INTERNAL) && domain.equals(foundUser.getDomainId())) {
+					throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
+			          "Bad credentials"), domain);
+				} else {
+					throw new BadDomainException(e.getMessage(), domain);
+				}
 			} catch (Exception e) {
-				throw new BadCredentialsException("Could not authenticate user: "+login, e);
+				throw new AuthenticationServiceException("Could not authenticate user: "+login, e);
 			}
+			
+			if(foundUser == null) {
+			      throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
+			          "Bad credentials"), domain);
+			} 
 		}
 		
 		/* 
@@ -128,7 +139,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 					try {
 						foundUser = ldapQueryService.auth(login, password, foundUser.getDomain());
 					} catch (NameNotFoundException e) {
-						throw new BadCredentialsException("Could not retrieve user : "+login+" in domain : "+domain, e);
+						throw new BadDomainException("Could not retrieve user : "+login+" in domain : "+domain, e);
 					} catch (IOException e) {
 						throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domain, e);
 					} catch (NamingException e) {
@@ -155,7 +166,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			// retrieve the guest account. if the two user are in the same domain, we can't
 			// do anything I think...
 			if (!domain.equals(user.getDomainId())) {
-				throw new AuthenticationServiceException("User "+user.getLogin()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domain);
+				throw new BadDomainException("User "+user.getLogin()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domain);
 			}
 			
 		} catch (BusinessException e) {
