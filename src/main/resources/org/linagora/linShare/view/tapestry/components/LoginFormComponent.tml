@@ -35,9 +35,15 @@
 		<t:pagelink page="sso"><form><input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel.internal}"/></form></t:pagelink>
         </t:if>
         
-        <t:if t:test="loginFailed">
+        <t:if t:test="badCredentials">
             <div class="t-error">
                 <ul><li>${message:pages.login.userNotDefined}</li></ul>
+            </div>
+        </t:if>
+        
+        <t:if t:test="badDomain">
+            <div class="t-error">
+                <ul><li>${message:pages.login.badDomain}</li></ul>
             </div>
         </t:if>
 	</t:parameter>
