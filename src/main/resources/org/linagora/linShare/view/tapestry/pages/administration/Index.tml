@@ -9,6 +9,7 @@
 		<h1>${message:components.myborderlayout.administration.title}</h1>
 		<!-- Action bar -->
 
+			<t:if test="noDomain" negate="true">
 		<div id="actionBar">
 			<h4>Actions</h4>
 			<ul>
@@ -17,9 +18,14 @@
 				</li>
 			</ul>
 		</div><!-- id="actionBar" -->
+		</t:if>
 		<t:messagePanel />	
 		
 		<div id="pageContent">
+			<t:if test="noDomain">
+				${message:pages.administration.index.noDomain.info}
+			</t:if>
+			<t:if test="noDomain" negate="true">
 
 			<div id="version"><strong>${message:global.version.label} </strong> <code>${version}</code></div>
 				
@@ -190,7 +196,7 @@
 					</div>
 				</t:if>
 				<br />
-
+		</t:if>
 		</div>
 
 	</div><!-- id="content" -->
