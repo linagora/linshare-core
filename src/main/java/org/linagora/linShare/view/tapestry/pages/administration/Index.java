@@ -165,6 +165,9 @@ public class Index {
 	@Property
 	@Persist
 	private boolean superadmin;
+	
+	@Property
+	private boolean noDomain;
     
 
     /* ***********************************************************
@@ -177,69 +180,79 @@ public class Index {
     	
     	superadmin = loginUser.isSuperAdmin();
     	
-    	if (superadmin && selectedDomain == null) {
+    	if (superadmin) {
     		domains = domainFacade.findAllDomains();
-    		if (domains == null || domains.size() < 1) {
-    			
-    		} else {
-    			selectedDomain = domains.get(0);
-    		}
-    	} 
-    	
-    	if (selectedDomain != null) {
-			p = domainFacade.retrieveDomain(selectedDomain.getIdentifier()).getParameterVo();
-    	} else {    		
-    		p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
     	}
-
-        fileSizeMax = p.getFileSizeMax();
-        userAvailableSize = p.getUserAvailableSize();
-        globalQuota = p.getGlobalQuota();
-        activeMimeType = p.getActiveMimeType();
-        activeSignature = p.getActiveSignature();
-        activeDocTimeStamp = p.getActiveDocTimeStamp();
-        activeGlobalQuota = p.getGlobalQuotaActive();
-        
-        activeEncipherment = securedStorageDisallowed ? false : p.getActiveEncipherment();
-        guestAccountExpiryTime = p.getGuestAccountExpiryTime();
-        guestAccountExpiryUnit = p.getGuestAccountExpiryUnit();
-        defaultShareExpiryUnit = p.getDefaultShareExpiryUnit();
-        defaultShareExpiryTime = p.getDefaultShareExpiryTime();
-        deleteDocWithShareExpiryTime = p.getDeleteDocWithShareExpiryTime();
-        
-        closedDomain = p.getClosedDomain();
-        restrictedDomain = p.getRestrictedDomain();
-        domainWithGuests = p.getDomainWithGuests();
-        guestsCanCreateOther = p.getGuestCanCreateOther();
-        
-        defaultFileExpiryUnit = p.getDefaultFileExpiryUnit();
-        defaultFileExpiryTime = p.getDefaultFileExpiryTime();
-        
-        shareExpiryRules = p.getShareExpiryRules();
-        if (shareExpiryRules == null) {
-            shareExpiryRules = new ArrayList<ShareExpiryRule>();
-        }
-
-        if (fileSizeMax != null) {
-            fileSizeMax = fileSizeMax / FACTORMULTI;
-        }
-        if (userAvailableSize != null) {
-            userAvailableSize = userAvailableSize / FACTORMULTI;
-        }
-        if (globalQuota != null) {
-        	globalQuota = globalQuota / FACTORMULTI;
-        }
-        
-        //check temp admin account (created by import.sql)
-        if(needDeleteTempAdmin==null){
-        	if(loginUser!=null && loginUser.getMail().equals(UserFacade.ADMIN_TEMP_MAIL)) {
-        		needDeleteTempAdmin =false;
-        	} else {
-        		UserVo uservo = userFacade.searchTempAdminUser();
-            	if(uservo!=null) needDeleteTempAdmin = true;
-        		else needDeleteTempAdmin=false;
-        	}
-        }
+    	
+    	if (domains == null || domains.isEmpty()) {
+    		
+    		noDomain = true;
+    		
+    	} else {
+    	
+    		noDomain = false;
+    		
+	    	if (superadmin && selectedDomain == null) {
+	    		if (!(domains == null || domains.size() < 1)) {
+	    			selectedDomain = domains.get(0);
+	    		}
+	    	} 
+	    	
+	    	if (selectedDomain != null) {
+				p = domainFacade.retrieveDomain(selectedDomain.getIdentifier()).getParameterVo();
+	    	} else {    		
+	    		p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
+	    	}
+	
+	        fileSizeMax = p.getFileSizeMax();
+	        userAvailableSize = p.getUserAvailableSize();
+	        globalQuota = p.getGlobalQuota();
+	        activeMimeType = p.getActiveMimeType();
+	        activeSignature = p.getActiveSignature();
+	        activeDocTimeStamp = p.getActiveDocTimeStamp();
+	        activeGlobalQuota = p.getGlobalQuotaActive();
+	        
+	        activeEncipherment = securedStorageDisallowed ? false : p.getActiveEncipherment();
+	        guestAccountExpiryTime = p.getGuestAccountExpiryTime();
+	        guestAccountExpiryUnit = p.getGuestAccountExpiryUnit();
+	        defaultShareExpiryUnit = p.getDefaultShareExpiryUnit();
+	        defaultShareExpiryTime = p.getDefaultShareExpiryTime();
+	        deleteDocWithShareExpiryTime = p.getDeleteDocWithShareExpiryTime();
+	        
+	        closedDomain = p.getClosedDomain();
+	        restrictedDomain = p.getRestrictedDomain();
+	        domainWithGuests = p.getDomainWithGuests();
+	        guestsCanCreateOther = p.getGuestCanCreateOther();
+	        
+	        defaultFileExpiryUnit = p.getDefaultFileExpiryUnit();
+	        defaultFileExpiryTime = p.getDefaultFileExpiryTime();
+	        
+	        shareExpiryRules = p.getShareExpiryRules();
+	        if (shareExpiryRules == null) {
+	            shareExpiryRules = new ArrayList<ShareExpiryRule>();
+	        }
+	
+	        if (fileSizeMax != null) {
+	            fileSizeMax = fileSizeMax / FACTORMULTI;
+	        }
+	        if (userAvailableSize != null) {
+	            userAvailableSize = userAvailableSize / FACTORMULTI;
+	        }
+	        if (globalQuota != null) {
+	        	globalQuota = globalQuota / FACTORMULTI;
+	        }
+	        
+	        //check temp admin account (created by import.sql)
+	        if(needDeleteTempAdmin==null){
+	        	if(loginUser!=null && loginUser.getMail().equals(UserFacade.ADMIN_TEMP_MAIL)) {
+	        		needDeleteTempAdmin =false;
+	        	} else {
+	        		UserVo uservo = userFacade.searchTempAdminUser();
+	            	if(uservo!=null) needDeleteTempAdmin = true;
+	        		else needDeleteTempAdmin=false;
+	        	}
+	        }
+    	}
     }
     
     public ValueEncoder<DomainVo> getValueEncoder() {
