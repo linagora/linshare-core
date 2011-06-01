@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<t:MyBorderLayout t:title="message:pages.administration.domains.index.createldapconnection.index" t:identifier="administration" t:currentHighlight="administration"
+<t:MyBorderLayout t:title="message:pages.administration.domains.index.createldapconnection.index" t:identifier="domains" t:currentHighlight="domains"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 
 	<!-- Main content -->
