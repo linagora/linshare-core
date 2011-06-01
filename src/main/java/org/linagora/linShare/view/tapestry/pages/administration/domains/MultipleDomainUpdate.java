@@ -18,14 +18,13 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linShare.view.tapestry.pages.administration;
+package org.linagora.linShare.view.tapestry.pages.administration.domains;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -46,11 +45,12 @@ import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.pages.administration.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public class Index {
+@IncludeJavaScriptLibrary(value = {"../../../components/UserSearchResults.js"})
+public class MultipleDomainUpdate {
 
     private static final int FACTORMULTI = 1024;
     
@@ -144,6 +144,9 @@ public class Index {
     
     @Property
     private Boolean deleteDocWithShareExpiryTime;
+    
+    @Property
+    private String customLogoUrl;
 
 	@Inject @Symbol("linshare.secured-storage.disallow")
 	@Property
@@ -158,14 +161,56 @@ public class Index {
 	@Property
 	private List<DomainVo> domains;
 	
-	@Persist
-	@Property
-	private DomainVo selectedDomain;
-	
 	@Property
 	@Persist
 	private boolean superadmin;
+	
+	
+	@Property
+	private boolean guestAccountExpiryTimeChecked;
+	@Property
+	private boolean userAvailableSizeChecked;
+	@Property
+	private boolean defaultFileExpiryChecked;
+	@Property
+	private boolean activeGlobalQuotaChecked;
+	@Property
+	private boolean globalQuotaChecked;
+	@Property
+	private boolean fileSizeMaxChecked;
+	@Property
+	private boolean activeMimeTypeChecked;
+	@Property
+	private boolean activeSignatureChecked;
+	@Property
+	private boolean activeEnciphermentChecked;
+	@Property
+	private boolean activeDocTimeStampChecked;
+	@Property
+	private boolean closedDomainChecked;
+	@Property
+	private boolean restrictedDomainChecked;
+	@Property
+	private boolean domainWithGuestsChecked;
+	@Property
+	private boolean guestsCanCreateOtherChecked;
+	@Property
+	private boolean defaultShareExpiryTimeChecked;
+	@Property
+	private boolean deleteDocWithShareExpiryTimeChecked;
+	@Property
+	private boolean customLogoUrlChecked;
+
+    @SuppressWarnings("unused")
+	@Property
+    private Boolean valueCheck;
+
+	@Property
+	private DomainVo domain;
     
+	@Persist
+	@Property
+	private List<DomainVo> selectedDomains;
 
     /* ***********************************************************
      *                   Event handlers&processing
@@ -173,23 +218,11 @@ public class Index {
     @SetupRender
     public void init() throws BusinessException {
     	
-    	ParameterVo p = null;
-    	
+    	ParameterVo p = new ParameterVo();
     	superadmin = loginUser.isSuperAdmin();
     	
-    	if (superadmin && selectedDomain == null) {
+    	if (superadmin) {
     		domains = domainFacade.findAllDomains();
-    		if (domains == null || domains.size() < 1) {
-    			
-    		} else {
-    			selectedDomain = domains.get(0);
-    		}
-    	} 
-    	
-    	if (selectedDomain != null) {
-			p = domainFacade.retrieveDomain(selectedDomain.getIdentifier()).getParameterVo();
-    	} else {    		
-    		p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
     	}
 
         fileSizeMax = p.getFileSizeMax();
@@ -200,7 +233,7 @@ public class Index {
         activeDocTimeStamp = p.getActiveDocTimeStamp();
         activeGlobalQuota = p.getGlobalQuotaActive();
         
-        activeEncipherment = securedStorageDisallowed ? false : p.getActiveEncipherment();
+        activeEncipherment = false;
         guestAccountExpiryTime = p.getGuestAccountExpiryTime();
         guestAccountExpiryUnit = p.getGuestAccountExpiryUnit();
         defaultShareExpiryUnit = p.getDefaultShareExpiryUnit();
@@ -214,6 +247,8 @@ public class Index {
         
         defaultFileExpiryUnit = p.getDefaultFileExpiryUnit();
         defaultFileExpiryTime = p.getDefaultFileExpiryTime();
+        
+        customLogoUrl = p.getCustomLogoUrl();
         
         shareExpiryRules = p.getShareExpiryRules();
         if (shareExpiryRules == null) {
@@ -240,26 +275,28 @@ public class Index {
         		else needDeleteTempAdmin=false;
         	}
         }
-    }
-    
-    public ValueEncoder<DomainVo> getValueEncoder() {
-    	return new ValueEncoder<DomainVo>() {
-    		public String toClient(DomainVo value) {
-    			return value.getIdentifier();
-    		}
-    		public DomainVo toValue(String clientValue) {
-    			for (DomainVo domain : domains) {
-    	    		if (domain.getIdentifier().equals(clientValue)) {
-    	    			return domain;
-    	    		}
-    			}
-    			return null;
-    		}
-		};
-    }
-    
-    public Object onSubmitFromUpdateDomain() {
-    	return this;
+        
+        guestAccountExpiryTimeChecked = false;
+        userAvailableSizeChecked = false;
+        defaultFileExpiryChecked = false;
+        activeGlobalQuotaChecked = false;
+        globalQuotaChecked = false;
+        fileSizeMaxChecked = false;
+        activeMimeTypeChecked = false;
+        activeSignatureChecked = false;
+        activeEnciphermentChecked = false;
+        activeDocTimeStampChecked = false;
+        closedDomainChecked = false;
+        restrictedDomainChecked = false;
+        domainWithGuestsChecked = false;
+        guestsCanCreateOtherChecked = false;
+        defaultShareExpiryTimeChecked = false;
+        deleteDocWithShareExpiryTimeChecked = false;
+        customLogoUrlChecked = false;
+        
+
+        selectedDomains = new ArrayList<DomainVo>();
+        
     }
 
     public ValueEncoder<ShareExpiryRule> getShareExpiryRuleEncoder() {
@@ -304,15 +341,11 @@ public class Index {
     
     
     
-    public void onSuccessFromAdministrationForm() throws BusinessException {
-    	
-        ParameterVo p = null;
+    public Object onSuccessFromAdministrationForm() throws BusinessException {
         
-        if(superadmin) {
-        	p = selectedDomain.getParameterVo();
-        } else {	
-        	p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
-        }
+        for (DomainVo selected : selectedDomains) {
+			System.out.println(selected.getIdentifier());
+		}
 
         if (fileSizeMax != null) {
             fileSizeMax = fileSizeMax * FACTORMULTI;
@@ -325,40 +358,57 @@ public class Index {
         }
         
         boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;
+        
+        for (DomainVo selected : selectedDomains) {
+			DomainVo domainToUpdate = domainFacade.retrieveDomain(selected.getIdentifier());
+			ParameterVo p = domainToUpdate.getParameterVo();
 
-        ParameterVo params = new ParameterVo(p.getIdentifier(), fileSizeMax, userAvailableSize, globalQuota, p.getUsedQuota(),activeGlobalQuota,activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
-            guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, defaultFileExpiryUnit, defaultFileExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects(),
-            closedDomain, restrictedDomain, domainWithGuests, guestsCanCreateOther);
-        params = parameterFacade.saveOrUpdate(params);
+	        ParameterVo params = new ParameterVo(p.getIdentifier(), 
+	        		fileSizeMaxChecked ? fileSizeMax : p.getFileSizeMax(), 
+	        		userAvailableSizeChecked ? userAvailableSize : p.getUserAvailableSize(), 
+	        		globalQuotaChecked ? globalQuota : p.getGlobalQuota(), 
+	        		p.getUsedQuota(),
+	        		activeGlobalQuotaChecked ? activeGlobalQuota : p.getGlobalQuotaActive(),
+	        		activeMimeTypeChecked ? activeMimeType : p.getActiveMimeType(), 
+	        		activeSignatureChecked ? activeSignature : p.getActiveSignature(),
+	        		activeEnciphermentChecked ? activeEnciph : p.getActiveEncipherment(),
+	        		activeDocTimeStampChecked ? activeDocTimeStamp : p.getActiveDocTimeStamp(),
+	        		guestAccountExpiryTimeChecked ? guestAccountExpiryTime : p.getGuestAccountExpiryTime(),
+	        		guestAccountExpiryTimeChecked ? guestAccountExpiryUnit : p.getGuestAccountExpiryUnit(), 
+	        		customLogoUrlChecked ? customLogoUrl : p.getCustomLogoUrl(),
+	        		defaultShareExpiryTimeChecked ? defaultShareExpiryUnit : p.getDefaultShareExpiryUnit(),  
+	        		defaultShareExpiryTimeChecked ? defaultShareExpiryTime : p.getDefaultShareExpiryTime(), 
+	        		defaultFileExpiryChecked ? defaultFileExpiryUnit : p.getDefaultFileExpiryUnit(), 
+	        		defaultFileExpiryChecked ? defaultFileExpiryTime : p.getDefaultFileExpiryTime(), 
+	        		p.getShareExpiryRules(), 
+	        		deleteDocWithShareExpiryTimeChecked ? deleteDocWithShareExpiryTime : p.getDeleteDocWithShareExpiryTime(),
+	        		p.getWelcomeTexts(), 
+	        		p.getMailTemplates(), 
+	        		p.getMailSubjects(),
+	        		closedDomainChecked ? closedDomain : p.getClosedDomain(), 
+	        		restrictedDomainChecked ? restrictedDomain : p.getRestrictedDomain(), 
+	        		domainWithGuestsChecked ? domainWithGuests : p.getDomainWithGuests(), 
+	        		guestsCanCreateOtherChecked ? guestsCanCreateOther : p.getGuestCanCreateOther());
+	        params = parameterFacade.saveOrUpdate(params);
+		}
         
-        if (selectedDomain != null) {
-            selectedDomain.setParameterVo(params);
-        }
+        shareSessionObjects.addMessage(messages.get("pages.administration.domains.multipleDomainUpdate.success"));
         
-        //delete admin temp account
-        if(needDeleteTempAdmin && deleteTempAdmin){
-        	userFacade.deleteTempAdminUser();
-        	needDeleteTempAdmin = false;
-        }
+        return org.linagora.linShare.view.tapestry.pages.administration.domains.Index.class;
         
     }
-    
-    public String getVersion() {
-    	Properties prop = new Properties();
-    	try {
-    		if (this.getClass().getResourceAsStream("/version.properties") != null) {
-    			prop.load(this.getClass().getResourceAsStream("/version.properties"));
-    		} else {
-    			logger.debug("Impossible to load version.properties, Is this a dev environnement?");
-    		}
-		} catch (IOException e) {
-			 logger.debug("Impossible to load version.properties, Is this a dev environnement?");
-		}
-		if (prop.getProperty("Implementation-Version") != null) {
-			return prop.getProperty("Implementation-Version");	
-		} else {
-			return "trunk";
-		}
+
+    public boolean isSelected() {
+        return false;
+    }
+
+    public void setSelected(boolean selected) {
+    	if (selected && !selectedDomains.contains(domain)) {
+    		selectedDomains.add(domain);
+    	}
+    	if (!selected && selectedDomains.contains(domain)) {
+    		selectedDomains.remove(domain);
+    	}
     }
 
     Object onException(Throwable cause) {
@@ -367,5 +417,5 @@ public class Index {
     	cause.printStackTrace();
     	return this;
     }
-    
+
 }

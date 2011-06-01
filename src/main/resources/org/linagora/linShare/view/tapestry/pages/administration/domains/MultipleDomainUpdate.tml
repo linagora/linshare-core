@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.domains.index.title" t:identifier="domains" t:currentHighlight="domains"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:pages.administration.domains.multipleDomainUpdate.title}</h1>
+		
+		<t:messagePanel />	
+		
+		<div id="pageContent">
+			<t:form t:id="administrationForm">
+				<t:errors t:banner="${message:pages.administration.index.errorBanner}" />
+				<div id="edit-administration-general">
+					<h2>${message:pages.administration.domains.multipleDomainUpdate.values.title}</h2>
+					<table class="forForms">
+						<tr>
+							<th>${message:pages.administration.domains.multipleDomainUpdate.values.title.title}</th>
+							<th>${message:pages.administration.domains.multipleDomainUpdate.values.value.title}</th>
+							<th>${message:pages.administration.domains.multipleDomainUpdate.values.select.title}</th>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="guestAccountExpiryTime" class="edit-form-label">${message:pages.administration.index.guestAccountExpiryTime}</t:label></td>
+							<td class="input"><t:textfield t:id="guestAccountExpiryTime" size="2" class="edit-form-field" />&nbsp;&nbsp;<t:select t:id="guestAccountExpiryUnit" blankoption="never"/></td>
+							<td class="input"><t:checkbox t:id="guestAccountExpiryTimeChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="userAvailableSize" class="edit-form-label">${message:pages.administration.index.userAvailableSize}</t:label></td>
+							<td class="input"><t:textfield t:id="userAvailableSize" size="5" class="edit-form-field" /></td>
+							<td class="input"><t:checkbox t:id="userAvailableSizeChecked" class="edit-form-field" /></td>
+						</tr>
+						<t:if test="fileCleanerActivated">
+						<tr>
+							<td class="input">
+								<t:label for="defaultFileExpiryTime" class="edit-form-label">
+										${message:pages.administration.index.defaultFileExpiryTime}
+								</t:label>
+							</td> 
+							<td class="input">
+								<t:textfield t:id="defaultFileExpiryTime" size="2"
+									value="defaultFileExpiryTime" class="edit-form-field"
+									 /> 
+								&nbsp; 
+								<t:select
+									t:id="defaultFileExpiryUnit" blankoption="never"
+									value="defaultFileExpiryUnit" />
+							</td>
+							<td class="input"><t:checkbox t:id="defaultFileExpiryChecked" class="edit-form-field" /></td>
+						</tr>
+						</t:if>
+						<tr>
+							<td class="input"><t:label for="activeGlobalQuota" class="edit-form-label">${message:pages.administration.index.activeGlobalQuota}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeGlobalQuota" class="edit-form-field"/></td>
+							<td class="input"><t:checkbox t:id="activeGlobalQuotaChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="globalQuota" class="edit-form-label">${message:pages.administration.index.globalQuota}</t:label></td>
+							<td class="input"><t:textfield t:id="globalQuota" size="5" class="edit-form-field" /></td>
+							<td class="input"><t:checkbox t:id="globalQuotaChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="fileSizeMax" class="edit-form-label">${message:pages.administration.index.fileSizeMax}</t:label></td>
+							<td class="input"><t:textfield t:id="fileSizeMax" size="5" class="edit-form-field"  /></td>
+							<td class="input"><t:checkbox t:id="fileSizeMaxChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="deleteDocWithShareExpiryTime" class="edit-form-label">${message:pages.administration.index.deleteDocWithShareExpiryTime}</t:label></td>
+							<td class="input"><t:checkbox t:id="deleteDocWithShareExpiryTime" class="edit-form-field"/></td>
+							<td class="input"><t:checkbox t:id="deleteDocWithShareExpiryTimeChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="defaultShareExpiryTime" class="edit-form-label">${message:pages.administration.index.defaultShareExpiryTime}</t:label></td>
+							<td class="input"><t:textfield t:id="defaultShareExpiryTime" size="2" value="defaultShareExpiryTime" class="edit-form-field" />&nbsp;&nbsp;<t:select t:id="defaultShareExpiryUnit" blankoption="never" value="defaultShareExpiryUnit"/></td>
+							<td class="input"><t:checkbox t:id="defaultShareExpiryTimeChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="activeMimeType" class="edit-form-label">${message:pages.administration.index.activeMimeType}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeMimeType" class="edit-form-field"/></td>
+							<td class="input"><t:checkbox t:id="activeMimeTypeChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="activeSignature" class="edit-form-label">${message:pages.administration.index.activeSignature}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeSignature" class="edit-form-field"/></td>
+							<td class="input"><t:checkbox t:id="activeSignatureChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="activeEncipherment" class="edit-form-label">${message:pages.administration.index.activeEncipherment}</t:label></td>
+							<td class="input"><t:checkbox t:disabled="securedStorageDisallowed" t:id="activeEncipherment" class="edit-form-field" /></td>
+							<td class="input"><t:checkbox t:disabled="securedStorageDisallowed" t:id="activeEnciphermentChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="activeDocTimeStamp" class="edit-form-label">${message:pages.administration.index.activeDocTimeStamp}</t:label></td>
+							<td class="input"><t:checkbox t:id="activeDocTimeStamp" class="edit-form-field" /></td>
+							<td class="input"><t:checkbox t:id="activeDocTimeStampChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="closedDomain" class="edit-form-label">${message:pages.administration.index.closedDomain}</t:label></td>
+							<td class="input"><t:checkbox t:id="closedDomain" class="edit-form-field"/></td>
+							<td class="input"><t:checkbox t:id="closedDomainChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="restrictedDomain" class="edit-form-label">${message:pages.administration.index.restrictedDomain}</t:label></td>
+							<td class="input"><t:checkbox t:id="restrictedDomain" class="edit-form-field"/></td>
+							<td class="input"><t:checkbox t:id="restrictedDomainChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="domainWithGuests" class="edit-form-label">${message:pages.administration.index.domainWithGuests}</t:label></td>
+							<td class="input"><t:checkbox t:id="domainWithGuests" class="edit-form-field" /></td>
+							<td class="input"><t:checkbox t:id="domainWithGuestsChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="guestsCanCreateOther" class="edit-form-label">${message:pages.administration.index.guestsCanCreateOther}</t:label></td>
+							<td class="input"><t:checkbox t:id="guestsCanCreateOther" class="edit-form-field" /></td>
+							<td class="input"><t:checkbox t:id="guestsCanCreateOtherChecked" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="input"><t:label for="customLogoUrl" class="edit-form-label">${message:pages.administration.index.customLogoUrl}</t:label></td>
+							<td class="input"><t:textfield t:id="customLogoUrl" size="48" class="edit-form-field"/></td>
+							<td class="input"><t:checkbox t:id="customLogoUrlChecked" class="edit-form-field" /></td>
+						</tr>
+					</table>
+					<br/>
+					<h2>${message:pages.administration.domains.multipleDomainUpdate.domains.title}</h2>
+					<t:grid source="domains" include="identifier" add="selectedValue" row="domain">
+
+						<t:parameter t:name="selectedValueHeader">
+							<t:checkbox t:id="selectAll" onclick="checkAll();" value="valueCheck" title="${message:components.userSearch.grid.checkAll}"/>
+						</t:parameter>
+			
+						<t:parameter name="selectedValueCell">
+							<t:checkbox t:id="selected" onclick="countUserCheckbox();"/>
+						</t:parameter>
+			
+					</t:grid>
+					<div class="button">
+						<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:global.button.validate}</span></t:linkSubmit>
+					</div>
+					
+					<br />
+
+				</div>
+				</t:form>
+		</div>
+		
+	</div>
+	
+</t:MyBorderLayout>
