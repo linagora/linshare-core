@@ -758,4 +758,24 @@ public class UserServiceImpl implements UserService {
 		User user = findAndCreateUser(mail, domain.getIdentifier());
 		return user;
 	}
+	
+	public List<User> searchAllBreakedUsers(User actor) {
+		List<User> users = userRepository.findAll();
+		List<User> internalsBreaked = new ArrayList<User>();
+		for (User user : users) {
+			if (user.getUserType().equals(UserType.INTERNAL)) {
+				if (!(user.getRole().equals(Role.SYSTEM) || user.getRole().equals(Role.SUPERADMIN))) { //hide these accounts
+					try {
+						List<User> found = domainService.searchUser(user.getMail(), null, null, user.getDomainId(), actor, false);
+						if (found == null || found.size() != 1) {
+							internalsBreaked.add(user);
+						}
+					} catch (BusinessException e) {
+						logger.error("Error while searching inconsistent users", e);
+					}
+				}
+			}
+		}
+		return internalsBreaked;
+	}
 }

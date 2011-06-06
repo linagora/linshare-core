@@ -1,6 +1,23 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-
+	<t:if test="isSuperAdmin">
+		<div id="actionBar">
+			<h4>Actions</h4>
+			<ul>
+				<li>
+					<t:actionlink t:id="breakedUsers" class="button">
+						<t:if test="showBreakedUsers">
+							<span><img src="${asset:context:images/icons/usertype-small.png}" alt=""/>${message:pages.user.list.users.heading}</span>
+						</t:if>
+						<t:if test="showBreakedUsers" negate="true">
+							<span><img src="${asset:context:images/icons/tango-applications-system.png}" alt=""/>${message:components.userSearch.showBreakedUsers}</span>
+						</t:if>
+					</t:actionlink>
+				</li>
+			</ul>
+		</div><!-- id="actionBar" -->
+	</t:if>
+	
 	<div id="list">
 
 	<t:if test="inSearch">

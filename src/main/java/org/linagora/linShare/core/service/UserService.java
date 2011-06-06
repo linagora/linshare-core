@@ -182,4 +182,12 @@ public interface UserService {
 	public List<User> fetchGuestContacts(String login) throws BusinessException;
 
 	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
+
+	/**
+	 * Search user that are internal and in the DB but not in domains (=removed from ldap).
+	 * 
+	 * @param userLoggedIn
+	 * @return
+	 */
+	List<User> searchAllBreakedUsers(User actor);
 }

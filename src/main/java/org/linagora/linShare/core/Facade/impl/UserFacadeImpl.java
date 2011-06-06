@@ -286,4 +286,9 @@ public class UserFacadeImpl implements UserFacade {
 			UserVo userLoggedIn) throws BusinessException {
 		userService.updateUserDomain(mail, selectedDomain.getIdentifier(), userLoggedIn);
 	}
+	
+	public List<UserVo> searchAllBreakedUsers(UserVo userLoggedIn) {
+		User actor = userRepository.findByLogin(userLoggedIn.getLogin());
+		return getUserVoList(userService.searchAllBreakedUsers(actor));
+	}
 }
