@@ -40,6 +40,7 @@
 	
     create table linshare_parameter (
         parameter_id int8 not null,
+        identifier varchar(255) not null unique,
         file_size_max int8,
         user_available_size int8,
         global_quota int8,

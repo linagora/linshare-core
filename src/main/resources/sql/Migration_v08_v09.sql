@@ -10,6 +10,7 @@ alter table linshare_parameter add column restricted_domain bool default false;
 alter table linshare_parameter add column domain_with_guests bool default true;
 alter table linshare_parameter add column guest_can_create_other bool default true;
 alter table linshare_parameter add column messages_configuration_id int8 not null default 1;
+alter table linshare_parameter add column identifier varchar(255) not null unique;
 
 
 alter table linshare_mail_templates drop constraint FDD6A0CABCA44B78EB;
