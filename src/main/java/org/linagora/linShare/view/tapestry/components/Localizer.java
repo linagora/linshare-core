@@ -30,6 +30,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.internal.util.LocaleUtils;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.PersistentLocale;
@@ -116,6 +117,9 @@ public class Localizer {
 
 	@Inject
 	private PersistentLocale persistentLocale;
+	
+	@Inject
+	private Messages messages;
 
 
 	
@@ -158,31 +162,7 @@ public class Localizer {
     }
     
 	public String getLabel(){
-
-		
-		if(null==type || "".equals(type) || LANGUAGE.equalsIgnoreCase(type)){
-			Locale locale=persistentLocale.get();
-			if(respectiveLanguage){
-				return currentLocale.getDisplayLanguage(currentLocale);
-			}
-			if(locale!=null){
-				return currentLocale.getDisplayLanguage(locale);
-			}else{
-				return currentLocale.getDisplayLanguage();
-			}
-		}else if(COUNTRY.equalsIgnoreCase(type)){
-			Locale locale=persistentLocale.get();
-			if(respectiveLanguage){
-				return currentLocale.getDisplayCountry(currentLocale);
-			}
-			if(locale!=null){
-				return currentLocale.getDisplayCountry(locale);	
-			}else{
-				return currentLocale.getDisplayCountry();	
-			}
-					
-		}
-		return null;
+		return messages.get("pages.administration.userconfig.select."+currentLocale.toString());
 	}
 
 	public boolean isLast(){
