@@ -200,4 +200,12 @@ public interface UserFacade {
 
 	void updateUserDomain(String mail, DomainVo selectedDomain,
 			UserVo userLoggedIn) throws BusinessException;
+
+	/**
+	 * Search user that are internal and in the DB but not in domains (=removed from ldap).
+	 * 
+	 * @param userLoggedIn
+	 * @return
+	 */
+	List<UserVo> searchAllBreakedUsers(UserVo userLoggedIn);
 }

@@ -192,6 +192,10 @@ public class UserSearchResults {
     @Inject
     private DomainFacade domainFacade;
     
+    @Property
+    @Persist
+    private boolean showBreakedUsers;
+    
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
@@ -204,11 +208,12 @@ public class UserSearchResults {
         	userAddToGroupsList = new ArrayList<UserVo>();
         }
         if (users == null || users.size() == 0) {
-        	if (inSearch==false) {
+        	if (userLoggedIn.isSuperAdmin() && showBreakedUsers) {
+    			users = userFacade.searchAllBreakedUsers(userLoggedIn);
+    		} else if (inSearch==false) {
         		if (showAll || userLoggedIn.isRestricted()) {
         			users = userFacade.searchUser("", "", "", userLoggedIn);
-        		}
-        		else {
+        		} else {
         			users = userFacade.searchGuest(userLoggedIn.getMail());
         		}
         	}
@@ -314,6 +319,17 @@ public class UserSearchResults {
     	UserVo user = userFacade.loadUserDetails(userLogin, userLoggedIn.getDomainIdentifier());
     	userAddToGroupsList.add(user);
         return userAddToGroupTemplateZone;
+    }
+    
+    public Object onActionFromBreakedUsers() {
+    	showBreakedUsers = !showBreakedUsers;
+    	inSearch = false;
+    	users = null;
+    	return this;
+    }
+    
+    public boolean getIsSuperAdmin() {
+    	return userLoggedIn.isSuperAdmin();
     }
     
     public ValueEncoder<DomainVo> getValueEncoder() {
