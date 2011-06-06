@@ -8,6 +8,7 @@
         }
 
         function sendFiles() {
+        	document.body.style.cursor="wait";
             var link = document.getElementById('quickshare_send_link');
             link.onclick = "";
             launchUpload('flexUpload');
