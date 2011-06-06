@@ -83,6 +83,9 @@
 					<br/>
 					<span class="emailAddress">
 						${user.mail},
+						<t:if test="superAdmin">
+							${user.domainIdentifier},
+						</t:if>
 						<t:if test="userGuestRestricted">
 							${message:components.userSearch.userType.RESTRICTED}<t:if test="${user.expirationDate}">,</t:if>
 						<t:parameter name="else">
@@ -119,6 +122,14 @@
 						</span>
 							
 				</t:actionLink-->
+				<t:if test="userDomainMovable">
+					<t:actionLink t:id="domainMove" context="user.login" t:zone="zoneDomainFormMove"
+						title="${message:components.userSearch.action.domainMove.title}">
+						<span onClick="zoneDomainMoveWindow.showCenter(true)">
+							<img src="${asset:context:images/icons/update.png}" alt="${message:components.userSearch.action.domainMove.title}" />
+						</span>
+					</t:actionLink>
+				</t:if>
 				<t:if test="userEditable">
 					<t:actionLink t:id="edit" context="user.login" t:zone="userEditFormZone"
 						title="${message:components.userSearch.action.edit.title}">
@@ -186,6 +197,16 @@
     <div t:id="userAddToGroupWindow">
         <t:zone id="userAddToGroupFormZone" update="show">
             <t:userAddToGroupForm groups="groups" newMemberList="userAddToGroupsList"/>
+        </t:zone>
+    </div>
+
+    <div t:id="zoneDomainMoveWindow">
+        <t:zone t:id="zoneDomainFormMove" update="show">
+        	<h2>${message:components.userSearch.action.domainMove.info}</h2>
+        	<t:form t:id="updateDomain">
+					<t:select t:id="domainSelect" t:value="selectedDomain" t:model="domains" t:encoder="valueEncoder" blankOption="never" />
+					<t:submit value="${message:global.button.validate}"/>
+			</t:form>
         </t:zone>
     </div>
 

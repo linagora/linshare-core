@@ -1,6 +1,7 @@
 package org.linagora.linShare.core.domain.entities;
 
 
+
 public class Domain {
 	/**
 	 * Database persistence identifier
@@ -11,13 +12,16 @@ public class Domain {
 	private String differentialKey;
 	private DomainPattern pattern;
 	private LDAPConnection ldapConnection;
+	private Parameter parameter;
 
 	public Domain(String identifier, String differentialKey,
-			DomainPattern pattern, LDAPConnection ldapConn) {
+			DomainPattern pattern, LDAPConnection ldapConn,
+			Parameter parameter) {
 		this.identifier = identifier;
 		this.differentialKey = differentialKey;
 		this.pattern = pattern;
 		this.ldapConnection = ldapConn;
+		this.parameter = parameter;
 	}
 	
 	public long getPersistenceId() {
@@ -58,6 +62,19 @@ public class Domain {
 
 	public void setLdapConnection(LDAPConnection ldapConnection) {
 		this.ldapConnection = ldapConnection;
+	}
+	
+	public void setParameter(Parameter parameter) {
+		this.parameter = parameter;
+	}
+	
+	public Parameter getParameter() {
+		return parameter;
+	}
+	
+	@Override
+	public String toString() {
+		return "[Domain with id: "+identifier+"]";
 	}
 
 }

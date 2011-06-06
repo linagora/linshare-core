@@ -32,8 +32,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -67,13 +67,14 @@ import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -165,15 +166,9 @@ public class ListDocument {
 	private RenderSupport renderSupport;
 
 	@Inject
-	private PersistentLocale persistentLocale;
-
-	@Inject
 	private DocumentFacade documentFacade;
 	@Inject
-	private ParameterFacade parameterFacade;
-
-	@Inject
-	private UserFacade userFacade;
+	private DomainFacade domainFacade;
 	
 	@Inject 
 	private ShareFacade shareFacade;
@@ -322,9 +317,9 @@ public class ListDocument {
 		listSelected = new ArrayList<DocumentVo>();
 		userlogin = user.getLogin();
 		actionbutton = ActionFromBarDocument.NO_ACTION;
-		activeSignature = parameterFacade.loadConfig().getActiveSignature();
-		activeEncipherment = parameterFacade.loadConfig()
-				.getActiveEncipherment();
+		DomainVo domain = domainFacade.retrieveDomain(user.getDomainIdentifier());
+		activeSignature = domain.getParameterVo().getActiveSignature();
+		activeEncipherment = domain.getParameterVo().getActiveEncipherment();
 
 		// if(model==null)
 		initModel();
@@ -592,7 +587,7 @@ public class ListDocument {
 		actionbutton = ActionFromBarDocument.DELETE_ACTION;
 	}
 
-	public Zone onActionFromShowUser(String mail) {
+	public Zone onActionFromShowUser(String mail) throws BusinessException {
 		return userDetailsDisplayer.getShowUser(mail);
 	}
 

@@ -361,7 +361,7 @@ public class Index {
 
 			ShareDocumentVo shareddoc = getDocumentByUUIDInList(uuid);
 			if (null != shareddoc) {
-				UserVo groupUser = userFacade.findUser(group.getGroupLogin());
+				UserVo groupUser = userFacade.findUser(group.getGroupLogin(), userVo.getDomainIdentifier());
 				shareFacade.deleteSharing(shareddoc, groupUser);
 				MailContainer mailContainer = mailContainerBuilder
 						.buildMailContainer(userVo, null);
@@ -439,11 +439,11 @@ public class Index {
 		return createGroupPopup.getShowPopup();
 	}
 
-	public Zone onActionFromShowUser(String mail) {
+	public Zone onActionFromShowUser(String mail) throws BusinessException {
 		return userDetailsDisplayer.getShowUser(mail);
 	}
 
-	public Zone onActionFromShowWaitingUser(String mail) {
+	public Zone onActionFromShowWaitingUser(String mail) throws BusinessException {
 		return userDetailsDisplayer.getShowUser(mail);
 	}
 

@@ -31,11 +31,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.dao.FileSystemDao;
-import org.linagora.linShare.core.dao.LdapDao;
-import org.linagora.linShare.core.dao.ldap.LdapSearchResult;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.AllowedContact;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
@@ -57,10 +56,11 @@ import org.linagora.linShare.core.repository.AllowedContactRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.GroupService;
+import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
-import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.RecipientFavouriteService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
@@ -83,15 +83,10 @@ public class UserServiceImpl implements UserService {
 
     /** Notifier service. */
     private final NotifierService notifierService;
-
-    /** LDAP DAO. */
-    private final LdapDao ldapDao;
     
   //  private final SharedDocumentService sharedDocumentService;
     
-    private final LogEntryRepository logEntryRepository; 
-    
-    private final ParameterService parameterService;
+    private final LogEntryRepository logEntryRepository;
     
     private final ShareService shareService;
     
@@ -102,32 +97,40 @@ public class UserServiceImpl implements UserService {
     private final GroupService groupService;
     
     private final FileSystemDao fileSystemDao;
+    
+    private final LDAPQueryService ldapQueryService;
+    
+    private final DomainService domainService;
 
     /** Constructor.
      * @param userRepository repository.
      * @param notifierService notifier service.
      * @param ldapDao LDAP DAO.
      */
-    public UserServiceImpl(UserRepository userRepository, NotifierService notifierService, LdapDao ldapDao,
-    		final LogEntryRepository logEntryRepository,final GuestRepository guestRepository
-		, final ParameterService parameterService, ShareService shareService,
-		final RecipientFavouriteService recipientFavouriteService,
-		final AllowedContactRepository allowedContactRepository,
-		final MailContentBuildingService mailElementsFactory,
-		final GroupService groupService,
-		final FileSystemDao fileSystemDao) {
+    public UserServiceImpl(final UserRepository userRepository,
+    		final NotifierService notifierService, 
+    		final LogEntryRepository logEntryRepository,
+    		final GuestRepository guestRepository, 
+    		final ShareService shareService,
+    		final RecipientFavouriteService recipientFavouriteService,
+    		final AllowedContactRepository allowedContactRepository,
+    		final MailContentBuildingService mailElementsFactory,
+    		final GroupService groupService,
+    		final FileSystemDao fileSystemDao,
+    		final LDAPQueryService ldapQueryService,
+    		final DomainService domainService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
-        this.ldapDao = ldapDao;
         this.logEntryRepository = logEntryRepository;
         this.guestRepository = guestRepository;
-		this.parameterService = parameterService;
 		this.shareService = shareService;
 		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
 		this.mailElementsFactory = mailElementsFactory;
 		this.groupService = groupService;
 		this.fileSystemDao = fileSystemDao;
+		this.ldapQueryService = ldapQueryService;
+		this.domainService = domainService;
     }
 
     /** Create a guest.
@@ -142,11 +145,11 @@ public class UserServiceImpl implements UserService {
      * @return persisted guest.
      */
     public Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment,
-    		MailContainer mailContainer, String ownerLogin) throws BusinessException {
+    		MailContainer mailContainer, String ownerLogin, String ownerDomain) throws BusinessException {
 
     	//We need to check that the guest email isn't registered
     	
-    	if (findUser(mail) != null) {
+    	if (findUser(mail, ownerDomain) != null) {
     		throw new BusinessException(BusinessErrorCode.DUPLICATE_USER_ENTRY, "A user with the same email already exists");
     	}
 
@@ -160,17 +163,20 @@ public class UserServiceImpl implements UserService {
 
         Guest guest = new Guest(login, firstName, lastName, mail, hashedPassword, canUpload, canCreateGuest, comment);
         guest.setOwner(owner);
-		guest.setExpiryDate(calculateUserExpiryDate());
-        guestRepository.create(guest);
+		guest.setExpiryDate(calculateUserExpiryDate(owner.getDomain()));
+		Guest created = guestRepository.create(guest);
+		Domain domain = domainService.retrieveDomain(owner.getDomain().getIdentifier());
+		created.setDomain(domain);
+		guestRepository.update(created);
         
         Calendar expDate = new GregorianCalendar();
         expDate.setTime(guest.getExpiryDate());
-        UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-        		LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), expDate);
+        UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(), owner.getDomainId(),
+        		LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), expDate);
         
         logEntryRepository.create(logEntry);
         
-        mailContainer = mailElementsFactory.buildMailNewGuest(mailContainer, owner, guest, password);
+        mailContainer = mailElementsFactory.buildMailNewGuest(owner, mailContainer, owner, guest, password);
 
         // Send an email to the guest.
         notifierService.sendNotification(owner.getMail(), mail, mailContainer);
@@ -182,18 +188,34 @@ public class UserServiceImpl implements UserService {
      * Search first in database, then on ldap if not found.
      * @param login user login.
      * @return founded user.
+ * @throws BusinessException 
      */
-    public User findUser(String mail) {
+    public User findUserInDB(String mail) {
+        return userRepository.findByMail(mail);
+    }
+    public List<User> findUsersInDB(String domain) {
+    	return userRepository.findByDomain(domain);
+    }
+    public User findUser(String mail, String domain) throws BusinessException {
         User user = userRepository.findByMail(mail);
         if (user == null) {
-            user = ldapDao.searchUser(mail);
+            List<User> users = domainService.searchUser(mail, "", "", domain, null, true);
+            if (users != null && users.size() == 1) {
+            	user = users.get(0);
+            }
         }
         return user;
     }
-    
-	public User findUserFromLdapwithUid(String uid) {
-		return ldapDao.searchUserWithUid(uid);
-	}
+    public User findUser(String mail, String domain, User actor) throws BusinessException {
+        User user = userRepository.findByMail(mail);
+        if (user == null) {
+            List<User> users = domainService.searchUser(mail, "", "", domain, actor, true);
+            if (users != null && users.size() == 1) {
+            	user = users.get(0);
+            }
+        }
+        return user;
+    }
     
 
     /** Find a user (based on mail address).
@@ -204,13 +226,14 @@ public class UserServiceImpl implements UserService {
      * @throws BusinessException 
      * @throws TechnicalException if the user could not be found nor created 
      */ 
-    public User findAndCreateUser(String mail) throws BusinessException {
+    public User findAndCreateUser(String mail, String domainId) throws BusinessException {
         User user = userRepository.findByMail(mail);
-        if (user == null) {
-            user = ldapDao.searchUser(mail);
-            if (user!=null) {
+        if (user == null && domainId != null) {
+            List<User> users = domainService.searchUser(mail, "", "", domainId, null, true);
+            if (users!=null && users.size()==1) {
+            	user = users.get(0);
             	try {
-					userRepository.create(user);
+					user = userRepository.create(user);
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not create the user " + user.getLogin()+" in the database ", e);
 					throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user could not be created in the DB " + e);
@@ -226,12 +249,13 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
+    
     /** Calculate the user expiry date.
      * @return user expiry date.
      */
-    private Date calculateUserExpiryDate() {
+    private Date calculateUserExpiryDate(Domain domain) {
         Calendar expiryDate = Calendar.getInstance();
-        Parameter parameter = parameterService.loadConfig();;
+        Parameter parameter = domain.getParameter();
 
 
         if (parameter == null) 
@@ -257,30 +281,29 @@ public class UserServiceImpl implements UserService {
 
 	public void deleteUser(String login, User owner, boolean checkOwnership) throws BusinessException {
 		User userToDelete = userRepository.findByLogin(login);
-		boolean isAdmin = owner.getRole().equals(Role.ADMIN);
 		
 		if (userToDelete!=null) {
-			if (userToDelete instanceof Guest) {
-				if (checkOwnership && !isAdmin && !((Guest)userToDelete).getOwner().equals(owner)) {
-					throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + owner.getLogin() 
-							+" cannot delete " + login);
-				} else {
-					doDeleteUser(login, owner, userToDelete);
-				}
+			boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, userToDelete, checkOwnership);
+			
+			logger.debug("As right ? : "+hasRightToDeleteThisUser);
+			
+			if (!hasRightToDeleteThisUser) {
+				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
+						+" cannot be deleted, he is not a guest, or "+ owner.getLogin()+ " is not an admin");
 			} else {
-				if (isAdmin) {
-					doDeleteUser(login, owner, userToDelete);
-				} else {
-					logger.error("The user " + login +" cannot be deleted, he is not a guest");
-					throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
-							+" cannot be deleted, he is not a guest, or "+ owner.getLogin()+ " is not an admin");
-				}
+				doDeleteUser(login, owner, userToDelete);
 			}
 			
-		} else {
-			logger.error("Couldn't find the user " + login +" to be deleted");
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + login +" to be deleted");
 		}
+	}
+
+	private boolean isAdminForThisUser(User owner, User userToAdministrate, boolean checkOwnership) {
+		boolean hasRightToAdministrateThisUser = owner.getRole().equals(Role.SUPERADMIN) 
+			|| owner.getRole().equals(Role.SYSTEM)
+			|| (owner.getRole().equals(Role.ADMIN) && owner.getDomain().getIdentifier().equals(userToAdministrate.getDomain().getIdentifier()))
+			|| (checkOwnership && userToAdministrate instanceof Guest && ((Guest)userToAdministrate).getOwner().equals(owner));
+		
+		return hasRightToAdministrateThisUser;
 	}
 
 	private void doDeleteUser(String login, User owner, User userToDelete)
@@ -295,15 +318,27 @@ public class UserServiceImpl implements UserService {
 			
 			for (Share share : receivedShare) {
 				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
 		        		LogAction.SHARE_DELETE, "Deleting a user-Removing shares", 
 		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
 		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
 				 logEntryRepository.create(logEntry);
 				 documentsToClean.add(share.getDocument());
 			}
 			
-			receivedShare.clear();
+			// clearing sent shares
+			Set<Share> sentShare = userToDelete.getShares();
+			
+			for (Share share : sentShare) {
+				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
+		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
+		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
+		        		userToDelete.getMail(), 
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
+				 logEntryRepository.create(logEntry);
+			}
 			
 			// clearing sent urls
 			Set<SecuredUrl> sentUrls = userToDelete.getSecuredUrls();
@@ -313,27 +348,19 @@ public class UserServiceImpl implements UserService {
 					docs += doc.getName()+";";
 				}
 				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
 		        		LogAction.SHARE_DELETE, "Deleting a user-Removing url shares", 
 		        		docs,null,null,
 		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
-				 logEntryRepository.create(logEntry);
-			}
-			sentUrls.clear();
-			
-			// clearing sent shares
-			Set<Share> sentShare = userToDelete.getShares();
-			
-			for (Share share : sentShare) {
-				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
-		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
-		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
 				 logEntryRepository.create(logEntry);
 			}
 			
 			sentShare.clear();
+			receivedShare.clear();
+			sentUrls.clear();
+			
+			userRepository.update(userToDelete);
 			
 			//clearing user documents
 			Set<Document> documents = userToDelete.getDocuments();
@@ -346,6 +373,7 @@ public class UserServiceImpl implements UserService {
 				fileSystemDao.removeFileByUUID(fileUUID);
 				FileLogEntry logEntry = new FileLogEntry(owner.getMail(), 
 						owner.getFirstName(), owner.getLastName(),
+						owner.getDomainId(),
 						LogAction.USER_DELETE, "User deleted", document.getName(), 
 						document.getSize(), document.getType());
 				logEntryRepository.create(logEntry);
@@ -380,8 +408,9 @@ public class UserServiceImpl implements UserService {
 			userRepository.update(userToDelete);
 			userRepository.delete(userToDelete);
 			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-		        		LogAction.USER_DELETE, "Deleting an user", userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), null);
+					owner.getDomainId(),
+		        	LogAction.USER_DELETE, "Deleting an user", userToDelete.getMail(), 
+		        	userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
       
 		    logEntryRepository.create(logEntry);
 		    
@@ -411,9 +440,15 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
-
+    
 	public List<User> searchUser(String mail, String firstName,
-			String lastName, UserType userType, User currentUser) {
+			String lastName, UserType userType, User currentUser) throws BusinessException {
+		return searchUser(mail, firstName, lastName, userType, currentUser, true);
+	}
+		
+	public List<User> searchUser(String mail, String firstName,
+	    		String lastName, UserType userType, User currentUser,
+	    		boolean multiDomain) throws BusinessException {
 		List<User> users=new ArrayList<User>();
 		
 		if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
@@ -444,8 +479,8 @@ public class UserServiceImpl implements UserService {
 	        users.addAll(guests);
 		}
 		if(null==userType || userType.equals(UserType.INTERNAL)){
-			LdapSearchResult<User> pagedResult = ldapDao.searchUserAnyWhere(mail, firstName, lastName);
-			List<User> internals = pagedResult.getResultList();
+			String domainId = (currentUser.getDomain() == null) ? null : currentUser.getDomain().getIdentifier();
+			List<User> internals = domainService.searchUser(mail, firstName, lastName, domainId, currentUser, multiDomain);
         
 			//need linshare local information for these internals user
 			for (User ldapuser : internals) {
@@ -460,10 +495,20 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void updateGuest(String mail, String firstName, String lastName,
-			Boolean canUpload, Boolean canCreateGuest, UserVo owner)
+			Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo)
 			throws BusinessException {
-        
+		
 		Guest guest = guestRepository.findByLogin(mail);
+		User owner = userRepository.findByMail(ownerVo.getMail());
+		
+		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest, true);
+		
+		if (!hasRightToDeleteThisUser) {
+			logger.error("The user " + mail +" cannot be updated by "+owner.getMail());
+			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
+					+" cannot be deleted, he is not a guest, or "+ owner.getLogin()+ " is not an admin");
+		}
+        
 		guest.setFirstName(firstName);
 		guest.setLastName(lastName);
 		guest.setCanUpload(canUpload);
@@ -471,27 +516,53 @@ public class UserServiceImpl implements UserService {
         guestRepository.update(guest);
 
         UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-        		LogAction.USER_UPDATE, "Update of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), null);
+				owner.getDomainId(),
+        		LogAction.USER_UPDATE, "Update of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), null);
         
         logEntryRepository.create(logEntry);
 
 	}
 
 	
-	public void updateUser(String mail,Role role, UserVo owner) throws BusinessException{
-		
-		//search in database internal user, next in ldap, create it in db if needed
-		User user = findAndCreateUser(mail);
+	public void updateUser(String mail,Role role, UserVo ownerVo) throws BusinessException{
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
+        User user = findAndCreateUserWithoutKnowingDomain(mail, owner);
 		
 		user.setRole(role);
 		userRepository.update(user);
 		
 		
         UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-        		LogAction.USER_UPDATE, "Update role of a user", user.getMail(), user.getFirstName(), user.getLastName(), null);
+				owner.getDomainId(),
+        		LogAction.USER_UPDATE, "Update role of a user", user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
         logEntryRepository.create(logEntry);
 		
+	}
+
+	private Domain guessUserDomain(String mail, User owner) {
+		User foundUser = null;
+		Domain domain = null;
+		try {
+			foundUser = findUserInDB(mail);
+			if (foundUser == null) {
+				List<Domain> domains = domainService.findAllDomains();
+				for (Domain loopedDomain : domains) {
+					List<User> founds = ldapQueryService.searchUser(mail, "", "", loopedDomain, owner);
+					if (founds != null && founds.size() == 1) {
+						foundUser = founds.get(0);
+						domain = foundUser.getDomain();
+						break;
+					}
+				}
+			} else {
+				domain = foundUser.getDomain();
+			}
+		} catch (BusinessException e) {
+			// cannot be because throwed when domain != null
+			logger.error("BusinessException while trying to find the user", e);
+		}
+		return domain;
 	}
 	
 	public void updateUserLocale(String mail, String locale) {
@@ -527,18 +598,18 @@ public class UserServiceImpl implements UserService {
 		
 	}
 	
-	public void changeGuestPassword(String login, String oldPassword, String newPassword) throws BusinessException {
-		Guest guest = guestRepository.findByLogin(login);
-		if (guest == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException {
+		User user = userRepository.findByLogin(login);
+		if (user == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a user with the login " + login);
 		}
 		
-		if (!guest.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes()))) {
+		if (!user.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes()))) {
 			throw new BusinessException(BusinessErrorCode.AUTHENTICATION_ERROR, "The supplied password is invalid");
 		}
 		
-		guest.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
-		guestRepository.update(guest);
+		user.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
+		userRepository.update(user);
 	}
 
 	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException {
@@ -551,7 +622,7 @@ public class UserServiceImpl implements UserService {
         String password = generatePassword();
         String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
         
-        mailContainer = mailElementsFactory.buildMailResetPassword(mailContainer, guest, password);
+        mailContainer = mailElementsFactory.buildMailResetPassword(guest, mailContainer, guest, password);
 
         // Send an email to the guest.
         notifierService.sendNotification(guest.getMail(), guest.getMail(), mailContainer);
@@ -593,7 +664,7 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		try {
-			User contact = findAndCreateUser(contactLogin);
+			User contact = findAndCreateUser(contactLogin, guest.getDomain().getIdentifier());
 			AllowedContact allowedContact = new AllowedContact(guest, contact);
 			allowedContactRepository.create(allowedContact);
 		} catch (IllegalArgumentException e) {
@@ -619,7 +690,7 @@ public class UserServiceImpl implements UserService {
 			}
 			//add new contacts
 			for (String mailContact : mailContacts) {
-				User contact=findAndCreateUser(mailContact);
+				User contact=findAndCreateUser(mailContact, guest.getDomain().getIdentifier());
 				AllowedContact allowedContact = new AllowedContact(guest, contact);
 				allowedContactRepository.create(allowedContact);
 			}
@@ -651,5 +722,40 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		return contactsUsers;
+	}
+	
+	public void updateUserDomain(String mail, String selectedDomain, UserVo ownerVo)
+			throws BusinessException {
+		if (!ownerVo.isSuperAdmin()) {
+			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
+					+" cannot be moved to "+selectedDomain+" domain, "+ ownerVo.getLogin()+ " is not a superadmin");
+		}
+		User owner = userRepository.findByLogin(ownerVo.getLogin());
+        User user = findAndCreateUserWithoutKnowingDomain(mail, owner);
+		
+		Domain newDomain = domainService.retrieveDomain(selectedDomain);
+		user.setDomain(newDomain);
+		userRepository.update(user);
+	}
+
+	public User findAndCreateUserWithoutKnowingDomain(String mail,
+			User owner) throws BusinessException {
+        Domain domain = null;
+        if (owner != null) {
+        	domain = owner.getDomain();
+        }
+		
+		if ((domain == null || domain.getIdentifier() == null) 
+				&& (owner == null || owner.getRole() == Role.SUPERADMIN)) {
+			domain = guessUserDomain(mail, owner);
+		}
+		
+		//search in database internal user, next in ldap, create it in db if needed
+		if (domain == null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find user in db nor in domains " + mail);
+		}
+		
+		User user = findAndCreateUser(mail, domain.getIdentifier());
+		return user;
 	}
 }

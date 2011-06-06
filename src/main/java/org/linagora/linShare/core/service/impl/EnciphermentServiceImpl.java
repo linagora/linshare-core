@@ -86,8 +86,8 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			byte[] res = enc.encryptString();
 			userService.updateUserEnciphermentKey(user.getMail(),res);
 			
-	        UserLogEntry logEntry = new UserLogEntry(user.getMail(), user.getFirstName(), user.getLastName(),
-	        		LogAction.USER_UPDATE, "Generate symetric key (challenge) of a user", user.getMail(), user.getFirstName(), user.getLastName(), null);
+	        UserLogEntry logEntry = new UserLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
+	        		LogAction.USER_UPDATE, "Generate symetric key (challenge) of a user", user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(), null);
 	        
 	        logEntryRepository.create(logEntry);
 			
@@ -115,7 +115,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 	}
 	
 	
-	public boolean checkEnciphermentKey(User user, String password) {
+	public boolean checkEnciphermentKey(User user, String password) throws BusinessException {
 		
 		boolean res = false;
 		SymmetricEnciphermentPBEwithAES enc;
@@ -123,7 +123,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 		try {
 			
 			
-			User userDb = userService.findUser(user.getMail());
+			User userDb = userService.findUser(user.getMail(), user.getDomain().getIdentifier());
 			if(userDb==null) return false;
 			byte[] encryptedChallenge = userDb.getEnciphermentKeyPass();
 			if (encryptedChallenge==null) return false;
@@ -178,11 +178,11 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin());
+			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), false,owner);
 			
-			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(),
+			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.FILE_DECRYPT, "Decrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 	        
 	        logEntryRepository.create(logEntry);
@@ -239,11 +239,11 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin());
+			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), true, owner);
 			
-			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(),
+			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.FILE_ENCRYPT, "Encrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 			
 	        logEntryRepository.create(logEntry);

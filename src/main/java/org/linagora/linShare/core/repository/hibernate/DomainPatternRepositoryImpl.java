@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.repository.DomainPatternRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -19,7 +18,7 @@ public class DomainPatternRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(DomainPattern entity) {
-		DetachedCriteria det = DetachedCriteria.forClass( Document.class )
+		DetachedCriteria det = DetachedCriteria.forClass( DomainPattern.class )
 		.add(Restrictions.eq( "identifier", entity.getIdentifier() ) );
 		return det;
 	}

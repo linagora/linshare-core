@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.view.tapestry.pages.history;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,6 +48,7 @@ import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -198,29 +200,32 @@ public class Index {
 			criteria.setTargetMails(Arrays.asList(targetListMails.split(",")));
 		}
 
-		logEntries = logEntryFacade.findByCriteria(criteria);
+		logEntries = logEntryFacade.findByCriteria(criteria, userVo);
 		displayGrid = true;
 
 		// we stay on the same page, so we don't return anything
 		return null;
 	}
 	
-	
-	/**
-	 * AutoCompletion for name field.
-	 * @param value the value entered by the user
-	 * @return list the list of string matched by value.
-	 */
-	public List<String> onProvideCompletionsFromActorMails(String value){
-		return userFacade.findMails(value);
-	}
 	/**
 	 * AutoCompletion for name field.
 	 * @param value the value entered by the user
 	 * @return list the list of string matched by value.
 	 */
 	public List<String> onProvideCompletionsFromTargetMails(String value){
-		return userFacade.findMails(value);
+		List<String> res = new ArrayList<String>();
+		try {
+			List<UserVo> founds = userFacade.searchUser(value, null, null, userVo, false);
+
+			if (founds != null && founds.size() > 0) {
+				for (UserVo userVo : founds) {
+					res.add(userVo.getMail());
+				}
+			}
+		} catch (BusinessException e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 
 	/* ***********************************************************

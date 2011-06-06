@@ -85,6 +85,15 @@ abstract class GenericUserRepositoryImpl<U extends User> extends AbstractReposit
 	        }
 	}
 	
+	public List<U> findByDomain(String domain) {
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.createAlias("domain", "domain");
+		criteria.add(Restrictions.like("domain.identifier",domain));
+		
+		return getHibernateTemplate().findByCriteria(criteria);
+	}
+	
 	public List<U> findByCriteria(AccountOccupationCriteriaBean accountCriteria) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());

@@ -35,11 +35,13 @@ public class ShareLogEntryVo extends FileLogEntryVo {
 	private final Calendar expirationDate;
 
 	public ShareLogEntryVo(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction,
+			String actorFirstname, String actorLastname, String actorDomain,
+			LogAction logAction,
 			String description, String fileName, Long fileSize,
 			String fileType, String targetMail, String targetFirstname,
 			String targetLastname, final Calendar expirationDate) {
-		super(actionDate, actorMail, actorFirstname, actorLastname, logAction,
+		super(actionDate, actorMail, actorFirstname, actorLastname, actorDomain,
+				logAction,
 				description, fileName, fileSize, fileType);
 		this.targetMail = targetMail;
 		this.targetFirstname = targetFirstname;

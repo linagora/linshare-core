@@ -63,5 +63,9 @@
   	<bean name="ldapConnectionRepository" class="org.linagora.linShare.core.repository.hibernate.LDAPConnectionRepositoryImpl">
     	<constructor-arg ref="hibernateTemplate"/>
 	</bean>
+  	
+  	<bean name="messagesRepository" class="org.linagora.linShare.core.repository.hibernate.MessagesRepositoryImpl">
+    	<constructor-arg ref="hibernateTemplate"/>
+	</bean>
     
 </beans>

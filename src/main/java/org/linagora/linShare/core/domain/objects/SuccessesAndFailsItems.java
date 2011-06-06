@@ -58,6 +58,11 @@ public class SuccessesAndFailsItems<T> {
 	public void setFailsItem(List<T> failsItem) {
 		this.failsItem = failsItem;
 	}
+
+	public void addAll(SuccessesAndFailsItems<T> createSharingWithMail) {
+		this.successesItem.addAll(createSharingWithMail.getSuccessesItem());
+		this.failsItem.addAll(createSharingWithMail.getFailsItem());
+	}
 	
 	
 	

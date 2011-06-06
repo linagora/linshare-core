@@ -85,6 +85,8 @@ public interface UserRepository<T extends User> extends AbstractRepository<T> {
      * Find account occupation by criteria on the user
      */
 	List<T> findByCriteria(AccountOccupationCriteriaBean criteria);
+
+	List<T> findByDomain(String domain);
      
     
 } 

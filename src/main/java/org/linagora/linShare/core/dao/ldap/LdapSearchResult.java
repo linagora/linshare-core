@@ -32,6 +32,7 @@ import org.springframework.ldap.control.PagedResultsCookie;
  * 
  * @author slevesque
  * @param <T> type of one entry in the result
+ * @deprecated not used anymore since domain implementation
  */
 public class LdapSearchResult<T> extends PagedResult{
 

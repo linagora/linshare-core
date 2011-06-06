@@ -10,7 +10,7 @@
             <value>
                    CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
                    PATTERN_TYPE_APACHE_ANT
-                   /=httpSessionIntegrationFilter
+                   /=httpSessionIntegrationFilter,rememberMeProcessingFilter
                    /assets/**=#NONE#
                    /applet/**=#NONE#
                    /css/**=#NONE#
@@ -21,8 +21,9 @@
                    /**/*.js=#NONE#
                    /**/*.css=#NONE#
                    /**/*.swf=#NONE#
-                   /**/en=#NONE#
-                   /**/fr=#NONE#
+                   /**/en=httpSessionIntegrationFilter,rememberMeProcessingFilter
+                   /**/fr=httpSessionIntegrationFilter,rememberMeProcessingFilter
+                   /**/nl=httpSessionIntegrationFilter,rememberMeProcessingFilter
                    /download/**=#NONE#
                    /**/download.passwordpopup.formpassword=#NONE#
                    /download.downloadthemall/**=#NONE#
@@ -34,7 +35,7 @@
                    /sso=httpSessionIntegrationFilter,casExceptionTranslationFilter,filterSecurityInterceptor
                    /j_security_check=httpSessionIntegrationFilter,authenticationProcessingFilter
                    /j_spring_cas_security_check=httpSessionIntegrationFilter,casProcessingFilter
-                   /**=httpSessionIntegrationFilter,exceptionTranslationFilter,filterSecurityInterceptor,casSingleSignOutFilter,logoutFilter
+                   /**=httpSessionIntegrationFilter,exceptionTranslationFilter,casSingleSignOutFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor
             </value>
         </property>
     </bean>
@@ -43,13 +44,19 @@
     <bean id="httpSessionIntegrationFilter"
              class="org.springframework.security.context.HttpSessionContextIntegrationFilter"/>
 
-    <bean id="authenticationProcessingFilter" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
+    <bean id="authenticationProcessingFilter" class="org.linagora.linShare.auth.DomainAuthenticationProcessingFilter">
         <property name="usernameParameter" value="login"/>
         <property name="passwordParameter" value="password"/>
         <property name="defaultTargetUrl" value="/"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="authenticationFailureUrl" value="/?login_error=1"/>
+        <property name="exceptionMappings">
+  			<props>
+    			<prop key="org.linagora.linShare.auth.exceptions.BadDomainException">/?login_error=2</prop>
+  			</props>
+		</property>
         <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="rememberMeServices" ref="rememberMeService"/>
     </bean>
 
     <bean id="exceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
@@ -64,6 +71,7 @@
         <constructor-arg value="/"/>
         <constructor-arg>
             <list>
+				<ref bean="rememberMeService"/>
                 <bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler"/>
             </list>
         </constructor-arg>
@@ -77,11 +85,31 @@
                 CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
                 /**/administration/userconfig*=ROLE_AUTH
+                /**/administration/domains=ROLE_SUPERADMIN
+                /**/administration/domains/**=ROLE_SUPERADMIN
                 /**/administration/**=ROLE_ADMIN
                 /**=ROLE_AUTH
             </value>
         </property>
     </bean>
+
+	<!--         REMEMBER-ME SERVICE DEFINITION           -->
+	 <bean id="rememberMeAuthenticationProvider" class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
+	 	<property name="key" value="springRocks"/>
+	 </bean>
+	 
+	 <bean id="rememberMeService" class="org.linagora.linShare.view.tapestry.services.impl.LinshareRememberMeServices">
+	 	<property name="key" value="springRocks"/>
+	 	<property name="userDetailsService" ref="guestAuthProvider" />  
+	 	<property name="tokenRepository" ref="cookieRepository"/>
+	 	<property name="alwaysRemember" value="false"/>
+	 	<constructor-arg ref="cookieRepository"/>
+	 </bean>
+	
+	<bean id="rememberMeProcessingFilter" class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
+		<property name="rememberMeServices" ref="rememberMeService"/>
+		<property name="authenticationManager" ref="authenticationManager"/>
+	</bean>
 
 
 <!--  REST part / Magic lies there -->
@@ -105,75 +133,20 @@
     <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
         <property name="providers">
             <list>
-                <ref bean="uidLdapAuthenticationProvider"/>
-                <ref bean="ldapAuthenticationProvider"/>
+            	<ref bean="rememberMeAuthenticationProvider" />
                 <ref bean="daoAuthenticationProvider"/>
+                <ref bean="domainAuthenticationProvider"/>
             </list>
         </property>
     </bean>
+    
+     <!-- Domain Authentification -->
 
-       <!-- LDAP Authentication -->
-    <bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-        <constructor-arg value="${ldap.auth.url}/${ldap.auth.base}"/>
-        <property name="userDn" value="${ldap.auth.userDN}"/>
-        <property name="password" value="${ldap.auth.password}"/>
-    </bean>
-    
-    <!-- LDAP Authentication: first provider based on uid-->
-    <bean id="uidLdapAuthenticationProvider" class="org.springframework.security.providers.ldap.LdapAuthenticationProvider">
-        <constructor-arg>
-            <bean class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
-                <constructor-arg ref="contextSource"/>
-                <property name="userSearch">
-                    <bean class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-                        <constructor-arg index="0" value="${ldap.auth.baseDN}"/>
-                        <constructor-arg index="1" value="uid={0}"/>
-                        <constructor-arg index="2" ref="contextSource"/>
-                    </bean>
-                </property>
-            </bean>
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="org.linagora.linShare.auth.LdapAuthorizationsProvider">
-                <constructor-arg index="0" ref="userFacade"/>
-            	<constructor-arg index="1" value="${ldap.auth.attribute}" />
-            </bean>
-        </constructor-arg>
-        <property name="userDetailsContextMapper">
-            <bean class="org.linagora.linShare.auth.LdapUidUserDetailsContextMapper">
-            	<constructor-arg value="${ldap.auth.attribute}" />
-            </bean>
-        </property>
-    </bean>
-    
-    <!-- LDAP Authentication: second provider based on mail-->
-    <bean id="ldapAuthenticationProvider" class="org.springframework.security.providers.ldap.LdapAuthenticationProvider">
-        <constructor-arg>
-            <bean class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
-                <constructor-arg ref="contextSource"/>
-                <property name="userSearch">
-                    <!--  
-                     <bean class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-                      <constructor-arg index="0" value="ou=test,o=linShare"/>
-                      <constructor-arg index="1" value="mail={0}"/>
-                      <constructor-arg index="2" ref="contextSource"/>
-                     </bean>
-                    -->
-                    <bean class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-                        <constructor-arg index="0" value="${ldap.auth.baseDN}"/>
-                        <constructor-arg index="1" value="${ldap.auth.key}"/>
-                        <constructor-arg index="2" ref="contextSource"/>
-                    </bean>
-                </property>
-            </bean>
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="org.linagora.linShare.auth.LdapAuthorizationsProvider">
-                <constructor-arg index="0" ref="userFacade"/>
-            	<constructor-arg index="1" value="${ldap.auth.attribute}" />
-            </bean>
-        </constructor-arg>
-    </bean>
+       <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
+           <property name="ldapQueryService" ref="ldapQueryService"/>
+           <property name="userService" ref="userService"/>
+           <property name="domainService" ref="domainService"/>
+       </bean>
 
        <!-- DAO Authentification -->
        <bean id="guestAuthProvider" class="org.linagora.linShare.auth.DaoAuthProvider">
@@ -181,7 +154,7 @@
        </bean>
 
        <bean id="passwordEncoderFactory" class="org.linagora.linShare.auth.PasswordEncoderFactory">
-           <constructor-arg value="${ldap.hash.algo}"/>
+           <constructor-arg value="SHA"/>
        </bean>
 
        <bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
@@ -206,7 +179,10 @@
        <!-- **** extra configuration CAS sso ***** -->
 
        <bean id="casAuthProvider" class="org.linagora.linShare.auth.DaoCasAuthProvider">
-           <constructor-arg ref="userFacade"/>
+       		<property name="userDetailsProvider" ref="userDetailsProvider"/>
+       </bean>
+       <bean id="userDetailsProvider" class="org.linagora.linShare.auth.UserDetailsProvider">
+       		<property name="userService" ref="userService"/>
        </bean>
        
         <bean id="casAuthenticationProvider"

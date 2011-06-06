@@ -49,20 +49,24 @@ public class FileLogEntry extends LogEntry {
 	}
 	
 	public FileLogEntry(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction, String description,
+			String actorFirstname, String actorLastname, String actorDomain, 
+			LogAction logAction, String description,
 			String fileName, Long fileSize, String fileType) {
 		super(actionDate, actorMail,
-				actorFirstname, actorLastname, logAction, description);
+				actorFirstname, actorLastname, actorDomain,
+				logAction, description);
 		this.fileName = fileName;
 		this.fileSize = fileSize;
 		this.fileType = fileType;
 	}
 
 	public FileLogEntry(String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction, String description,
+			String actorFirstname, String actorLastname, String actorDomain, 
+			LogAction logAction, String description,
 			String fileName, Long fileSize, String fileType) {
 		super(actorMail,
-				actorFirstname, actorLastname, logAction, description);
+				actorFirstname, actorLastname, actorDomain,
+				logAction, description);
 		this.fileName = fileName;
 		this.fileSize = fileSize;
 		this.fileType = fileType;

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.repository.LDAPConnectionRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -19,7 +18,7 @@ public class LDAPConnectionRepositoryImpl extends
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(LDAPConnection entity) {
-		DetachedCriteria det = DetachedCriteria.forClass( Document.class )
+		DetachedCriteria det = DetachedCriteria.forClass( LDAPConnection.class )
 		.add(Restrictions.eq( "identifier", entity.getIdentifier() ) );
 		return det;
 	}

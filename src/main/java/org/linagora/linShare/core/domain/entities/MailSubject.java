@@ -53,6 +53,14 @@ public class MailSubject {
 		this.setMailSubject(object.getMailSubject());
 	}
 
+	public MailSubject(MailSubjectEnum mailSubject, String content,
+			Language language) {
+		super();
+		this.mailSubject = mailSubject;
+		this.content = content;
+		this.language = language;
+	}
+
 	public MailSubjectEnum getMailSubject() {
 		return mailSubject;
 	}

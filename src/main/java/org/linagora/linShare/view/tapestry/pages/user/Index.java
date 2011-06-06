@@ -41,8 +41,12 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.Role;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.components.GuestEditForm;
@@ -81,6 +85,9 @@ public class Index {
     
     @Inject
     private UserFacade userFacade;
+    
+    @Inject
+    private DomainFacade domainFacade;
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -92,6 +99,9 @@ public class Index {
     @SessionState
     @Property
     private UserVo userVo;
+	
+	@Property
+	private boolean userVoExists;
 
     @Environmental
     private RenderSupport renderSupport;
@@ -112,6 +122,10 @@ public class Index {
 	@Inject @Symbol("linshare.users.internal.defaultView.showAll")
 	@Property
 	private boolean showAll;
+	
+	@SuppressWarnings("unused")
+	@Property
+	private boolean superadmin;
 
 
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
@@ -125,6 +139,7 @@ public class Index {
     	if (!shareSessionObjectsExists) {
     		shareSessionObjects = new ShareSessionObjects();
     	}
+		superadmin=(userVoExists && userVo.getRole().equals(Role.SUPERADMIN));
     }
     
     @OnEvent(value="sharePanel")
@@ -173,7 +188,7 @@ public class Index {
     }
     
     @OnEvent(value="resetListUsers")
-    public void resetListUsers(Object[] o1) {
+    public void resetListUsers(Object[] o1) throws BusinessException {
 		inSearch=false;
 		if (showAll || userVo.isRestricted()) {
 			users = userFacade.searchUser("", "", "", userVo);
@@ -190,6 +205,10 @@ public class Index {
     
     public String getUserSearchWindowId() {
     	return userSearchWindow.getJSONId();
+    }
+    
+    public boolean getUserCanCreateGuest() throws BusinessException {
+    	return domainFacade.userCanCreateGuest(userVo);
     }
     
     Object onException(Throwable cause) {

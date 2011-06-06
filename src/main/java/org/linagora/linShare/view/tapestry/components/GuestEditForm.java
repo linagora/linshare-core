@@ -42,9 +42,10 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -78,6 +79,9 @@ public class GuestEditForm {
      ************************************************************ */
     @Inject
     private UserFacade userFacade;
+    
+    @Inject
+    private DomainFacade domainFacade;
 
     @InjectComponent
     private Form guestCreateForm;
@@ -119,11 +123,7 @@ public class GuestEditForm {
 
 //    @Property
 //    private boolean uploadGranted;
-    
-    @Property
-    private boolean createGuestGranted;
 	
-	@Inject @Symbol("linshare.guests.can.create.other")
 	@Property
 	private boolean guestsAllowedToCreateGuest;
     
@@ -154,11 +154,17 @@ public class GuestEditForm {
 	
 	
 	@SetupRender
-	void init() {
+	void init() throws BusinessException {
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
 		
 		if (userLoggedIn.isRestricted()) {
 			restrictedGuest=true;
+		}
+		
+		guestsAllowedToCreateGuest = false;
+		if (userLoggedIn.getDomainIdentifier() != null) {
+			DomainVo domain = domainFacade.retrieveDomain(userLoggedIn.getDomainIdentifier());
+			guestsAllowedToCreateGuest = domain.getParameterVo().getGuestCanCreateOther();
 		}
 	}
 	
@@ -167,7 +173,7 @@ public class GuestEditForm {
 		renderSupport.addScript("initAllowedContacts("+Boolean.toString(restrictedGuest)+");");
 	}
 
-	public List<String> onProvideCompletionsFromRecipientsPatternGuestForm(String input) {
+	public List<String> onProvideCompletionsFromRecipientsPatternGuestForm(String input) throws BusinessException {
 		List<UserVo> searchResults = performSearch(input);
 
 		List<String> elements = new ArrayList<String>();
@@ -184,8 +190,9 @@ public class GuestEditForm {
 	/** Perform a user search using the user search pattern.
 	 * @param input user search pattern.
 	 * @return list of users.
+	 * @throws BusinessException 
 	 */
-	private List<UserVo> performSearch(String input) {
+	private List<UserVo> performSearch(String input) throws BusinessException {
 
 
 		Set<UserVo> userSet = new HashSet<UserVo>();
@@ -217,7 +224,7 @@ public class GuestEditForm {
      *                   Event handlers&processing
      ************************************************************ */
 	
-    public void  onValidateFormFromGuestCreateForm() {
+    public void  onValidateFormFromGuestCreateForm() throws BusinessException {
 
     	if (guestCreateForm.getHasErrors()) {
     		return ;
@@ -227,7 +234,7 @@ public class GuestEditForm {
     		// the message will be handled by Tapestry
     		return ;
     	}
-        if (userFacade.findUser(mail) != null) {
+        if (userFacade.findUser(mail, userLoggedIn.getDomainIdentifier()) != null) {
             guestCreateForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
             userAlreadyExists = true;
             return ;
@@ -265,7 +272,7 @@ public class GuestEditForm {
         	//set uploadGranted always to true for guest
         	boolean uploadGranted = true;
         	
-        	boolean allowedToCreateGuest = (guestsAllowedToCreateGuest && createGuestGranted);
+        	boolean allowedToCreateGuest = guestsAllowedToCreateGuest;
         	
         	userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, 
         			mailContainer,userLoggedIn);

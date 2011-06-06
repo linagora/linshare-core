@@ -12,7 +12,10 @@
     <param name="valueOfMethod">fromInt</param>
   </typedef>
   <class name="Parameter" table="PARAMETER">
-    <id column="PARAMETER_ID" name="id"/>
+    <id column="parameter_id" name="id">
+      <generator class="native"/>
+    </id>
+    <property access="field" column="identifier" index="index_parameter_identifier" name="identifier" not-null="true" unique="true"/>
     <property column="FILE_SIZE_MAX" name="fileSizeMax"/>
     <property column="USER_AVAILABLE_SIZE" name="userAvailableSize"/>
     <property column="GLOBAL_QUOTA" name="globalQuota"/>
@@ -27,6 +30,10 @@
     <property column="CUSTOM_LOGO_URL" name="customLogoUrl"/>
     <property column="DEFAULT_EXPIRY_TIME" name="defaultShareExpiryTime"/>
     <property column="DELETE_DOC_EXPIRY_TIME" name="deleteDocWithShareExpiryTime"/>
+    <property column="CLOSED_DOMAIN" name="closedDomain" type="boolean"/>
+    <property column="RESTRICTED_DOMAIN" name="restrictedDomain" type="boolean"/>
+    <property column="DOMAIN_WITH_GUESTS" name="domainWithGuests" type="boolean"/>
+    <property column="GUEST_CAN_CREATE_OTHER" name="guestCanCreateOther" type="boolean"/>
     
     <property column="DEFAULT_EXPIRY_TIME_UNIT_ID" name="defaultShareExpiryUnit" type="timeUnitEnumType"/>
     <list name="shareExpiryRules" table="SHARE_EXPIRY_RULES">
@@ -41,6 +48,6 @@
     </list>
     <property column="DEFAULT_FILE_EXPIRY_TIME" name="defaultFileExpiryTime"/>
     <property column="DEFAULT_FILE_EXPIRY_TIME_UNIT_ID" name="defaultFileExpiryUnit" type="timeUnitEnumType"/>
-    <many-to-one access="field" cascade="all" class="org.linagora.linShare.core.domain.entities.MessagesConfiguration" name="messagesConfiguration" column="MESSAGES_CONFIGURATION_ID" not-null="true" />
+    <many-to-one cascade="save-update" lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.MessagesConfiguration" name="messagesConfiguration" column="MESSAGES_CONFIGURATION_ID" not-null="true" />
   </class>
 </hibernate-mapping>

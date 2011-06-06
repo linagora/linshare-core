@@ -48,6 +48,7 @@ import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.core.domain.entities.MailContainer;
@@ -71,6 +72,7 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.MimeTypeService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.TimeStampingService;
@@ -82,6 +84,8 @@ import org.semanticdesktop.aperture.util.IOUtil;
 
 
 public class DocumentServiceImpl implements DocumentService {
+	
+	private final DomainService domainService;
 
 	private final DocumentRepository documentRepository;
 
@@ -118,7 +122,8 @@ public class DocumentServiceImpl implements DocumentService {
 			final LogEntryRepository logEntryRepository,
 			final VirusScannerService virusScannerService,
 			final TimeStampingService timeStampingService,
-			final ShareTransformer shareTransformer) {
+			final ShareTransformer shareTransformer,
+			final DomainService domainService) {
 		this.documentRepository = documentRepository;
 		this.fileSystemDao = fileSystemDao;
 		this.userRepository = userRepository;
@@ -130,6 +135,7 @@ public class DocumentServiceImpl implements DocumentService {
 		this.virusScannerService = virusScannerService;
 		this.timeStampingService = timeStampingService;
 		this.shareTransformer = shareTransformer;
+		this.domainService = domainService;
 	}
 
 	/**
@@ -163,6 +169,8 @@ public class DocumentServiceImpl implements DocumentService {
 			String fileName, String mimeType, User owner)
 			throws BusinessException {
 		
+		Domain domain = domainService.retrieveDomain(owner.getDomain().getIdentifier());
+		
 		boolean putwarning =  false;
 		
 
@@ -182,7 +190,7 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 
 		// check if the file MimeType is allowed
-		if (parameterRepository.loadConfig().getActiveMimeType()) {
+		if (domain.getParameter() != null) {
 			// use mimetype filtering
 			if (log.isDebugEnabled()) {
 				log.debug("2)check the type mime:" + mimeType);
@@ -268,7 +276,7 @@ public class DocumentServiceImpl implements DocumentService {
 		
 		boolean aesencrypted = false;
 		//aes encrypt ? check headers
-		if (parameterRepository.loadConfig().getActiveEncipherment()) {
+		if (domain.getParameter().getActiveEncipherment()) {
 			if(fileName.endsWith(".aes")){
 				
 				boolean testheaders = false;
@@ -299,7 +307,8 @@ public class DocumentServiceImpl implements DocumentService {
 				checkStatus = virusScannerService.check(tempFile);
 			} catch (TechnicalException e) {
 				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
-						owner.getLastName(), LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
+						owner.getLastName(), owner.getDomainId(), 
+						LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
 				logEntryRepository.create(logEntry);
 				log.error("File scan failed: antivirus enabled but not available ?");
 				throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED,
@@ -308,7 +317,7 @@ public class DocumentServiceImpl implements DocumentService {
 			// check if the file contains virus
 			if (!checkStatus) {
 				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
-						owner.getLastName(), LogAction.FILE_WITH_VIRUS, fileName);
+						owner.getLastName(), owner.getDomainId(), LogAction.FILE_WITH_VIRUS, fileName);
 				logEntryRepository.create(logEntry);
 				log.warn(owner.getMail()
 						+ " tried to upload a file containing virus:" + fileName);
@@ -322,7 +331,7 @@ public class DocumentServiceImpl implements DocumentService {
 		
 		byte[] timestampToken = null;
 		// want a timestamp on doc ?
-		if (parameterRepository.loadConfig().getActiveDocTimeStamp()) {
+		if (domain.getParameter().getActiveDocTimeStamp()) {
 			
 			FileInputStream fis = null;
 			
@@ -408,14 +417,14 @@ public class DocumentServiceImpl implements DocumentService {
 			userRepository.update(owner);
 
 			FileLogEntry logEntry = new FileLogEntry(owner.getMail(), owner
-					.getFirstName(), owner.getLastName(),
+					.getFirstName(), owner.getLastName(), owner.getDomainId(),
 					LogAction.FILE_UPLOAD, "Creation of a file", docEntity
 							.getName(), docEntity.getSize(), docEntity
 							.getType());
 
 			logEntryRepository.create(logEntry);
 			
-			addDocSizeToGlobalUsedQuota(docEntity);
+			addDocSizeToGlobalUsedQuota(docEntity, domain.getParameter());
 
 		} catch (BusinessException e) {
 			log.error("Could not add  " + fileName + " to user "
@@ -439,9 +448,8 @@ public class DocumentServiceImpl implements DocumentService {
 		return docEntity;
 	}
 
-	private void addDocSizeToGlobalUsedQuota(Document docEntity)
+	private void addDocSizeToGlobalUsedQuota(Document docEntity, Parameter param)
 			throws BusinessException {
-		Parameter param = parameterRepository.loadConfig();
 		long newUsedQuota = param.getUsedQuota() + docEntity.getSize();
 		param.setUsedQuota(newUsedQuota);
 		parameterRepository.update(param);
@@ -624,16 +632,18 @@ public class DocumentServiceImpl implements DocumentService {
 		documentRepository.update(aDoc);
 
 		FileLogEntry logEntry = new FileLogEntry(owner.getMail(), owner
-				.getFirstName(), owner.getLastName(), LogAction.FILE_SIGN,
+				.getFirstName(), owner.getLastName(), owner.getDomainId(), LogAction.FILE_SIGN,
 				"signature of a file", aDoc.getName(), aDoc.getSize(), aDoc
 						.getType());
 
 		logEntryRepository.create(logEntry);
 	}
 
-	public long getAvailableSize(User user) {
+	public long getAvailableSize(User user) throws BusinessException {
 		
-		Parameter param = parameterRepository.loadConfig();
+		Domain domain = domainService.retrieveDomain(user.getDomain().getIdentifier());
+		
+		Parameter param = domain.getParameter();
 		
 		if (param.getGlobalQuotaActive()) {
 			long availableSize = param.getGlobalQuota().longValue() - param.getUsedQuota().longValue();
@@ -660,9 +670,11 @@ public class DocumentServiceImpl implements DocumentService {
 
 	}
 
-	public long getTotalSize(User user) {
+	public long getTotalSize(User user) throws BusinessException {
 		
-		Parameter param = parameterRepository.loadConfig();
+		Domain domain = domainService.retrieveDomain(user.getDomain().getIdentifier());
+		
+		Parameter param = domain.getParameter();
 		
 		if (param.getGlobalQuotaActive()) {
 			return param.getUsedQuota();
@@ -697,7 +709,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 				userRepository.update(owner);
 				
-				removeDocSizeFromGlobalUsedQuota(docSize);
+				removeDocSizeFromGlobalUsedQuota(docSize, owner.getDomain());
 
 				if (!Reason.INCONSISTENCY.equals(causeOfDeletion)) {
 					// If the reason of the delete is inconsistency, the
@@ -712,19 +724,19 @@ public class DocumentServiceImpl implements DocumentService {
 
 				if (Reason.EXPIRY.equals(causeOfDeletion)) {
 					logEntry = new FileLogEntry(actor.getMail(), actor
-							.getFirstName(), actor.getLastName(),
+							.getFirstName(), actor.getLastName(), actor.getDomainId(),
 							LogAction.FILE_EXPIRE, "Expiration of a file", doc
 									.getName(), doc.getSize(), doc.getType());
 				} else if (Reason.INCONSISTENCY.equals(causeOfDeletion)) {
 					logEntry = new FileLogEntry(actor.getMail(), actor
-							.getFirstName(), actor.getLastName(),
+							.getFirstName(), actor.getLastName(), actor.getDomainId(),
 							LogAction.FILE_INCONSISTENCY,
 							"File removed because of inconsistence. "
 									+ "Please contact your administrator.", doc
 									.getName(), doc.getSize(), doc.getType());
 				} else {
 					logEntry = new FileLogEntry(actor.getMail(), actor
-							.getFirstName(), actor.getLastName(),
+							.getFirstName(), actor.getLastName(), actor.getDomainId(),
 							LogAction.FILE_DELETE, "Deletion of a file", doc
 									.getName(), doc.getSize(), doc.getType());
 				}
@@ -740,9 +752,9 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 	}
 
-	private void removeDocSizeFromGlobalUsedQuota(long docSize)
+	private void removeDocSizeFromGlobalUsedQuota(long docSize, Domain domain)
 			throws BusinessException {
-		Parameter param = parameterRepository.loadConfig();
+		Parameter param = domain.getParameter();
 		long newUsedQuota = param.getUsedQuota() - docSize;
 		param.setUsedQuota(newUsedQuota);
 		parameterRepository.update(param);
@@ -838,11 +850,11 @@ public class DocumentServiceImpl implements DocumentService {
 
 		logEntry = new ShareLogEntry(shareToRetrieve.getSender().getMail(),
 				shareToRetrieve.getSender().getFirstName(), shareToRetrieve
-						.getSender().getLastName(),
+						.getSender().getLastName(), shareToRetrieve.getSender().getDomainId(),
 				LogAction.SHARE_DOWNLOAD, "Download of a sharing", doc
 						.getFileName(), doc.getSize(), doc.getType(), actor
 						.getMail(), actor.getFirstName(), actor
-						.getLastName(), null);
+						.getLastName(), actor.getDomainIdentifier(), null);
 		logEntryRepository.create(logEntry);
 		
 		return this.fileSystemDao.getFileContentByUUID(shareToRetrieve
@@ -893,7 +905,7 @@ public class DocumentServiceImpl implements DocumentService {
 		}	
 		
 		FileLogEntry logEntry = new FileLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-				LogAction.FILE_UPDATE, "Update of a file", logText, doc.getSize(), doc.getType());
+				owner.getDomainId(), LogAction.FILE_UPDATE, "Update of a file", logText, doc.getSize(), doc.getType());
 		
 		logEntryRepository.create(logEntry);
 

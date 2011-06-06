@@ -35,7 +35,6 @@ import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
-import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
@@ -54,19 +53,17 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     private final FileSystemDao fileSystemDao;
     private final boolean securedStorageDisallowed;
     private final boolean cronActivated;
-    private final ParameterRepository parameterRepository;
 	private final NotifierService notifierService;
 	private final MailContentBuildingService mailBuilder;
 
     public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentService documentService,
         FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated,
-        ParameterRepository parameterRepository, NotifierService notifierService, MailContentBuildingService mailBuilder) {
+        NotifierService notifierService, MailContentBuildingService mailBuilder) {
         this.documentRepository = documentRepository;
         this.documentService = documentService;
         this.fileSystemDao = fileSystemDao;
         this.securedStorageDisallowed = securedStorageDisallowed;
         this.cronActivated = cronActivated;
-        this.parameterRepository = parameterRepository;
         this.notifierService = notifierService;
         this.mailBuilder = mailBuilder;
     }
@@ -107,19 +104,18 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     	
     	logger.info("Documents cleaner batch launched.");
     	
-    	Parameter param = parameterRepository.loadConfig();
-    	if (param.getDefaultFileExpiryTime() == null || 
-    			param.getDefaultFileExpiryUnit() == null) {
-    		logger.info("Documents cleaner batch launched but no expiration time was defined : stopping.");
-    		return;
-    	}
-    	
     	List<Document> documents = documentRepository.findAll();
     	
     	Calendar now = GregorianCalendar.getInstance();
     	for (Document document : documents) {
 			if (!document.getShared() && !document.getSharedWithGroup()) {
 				if (document.getDeletionDate() == null) {
+			    	Parameter param = document.getOwner().getDomain().getParameter();
+			    	if (param.getDefaultFileExpiryTime() == null || 
+			    			param.getDefaultFileExpiryUnit() == null) {
+			    		logger.info("Documents cleaner batch launched but no expiration time was defined : stopping.");
+			    		break;
+			    	}
 			    	
 			    	Calendar deletionDate = (Calendar)document.getCreationDate().clone();
 					deletionDate.add(param.getDefaultFileExpiryUnit().toCalendarValue(),
@@ -160,7 +156,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
 		MailContainer mailContainerFinal;
 		try {
-			mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedDocument(mailContainer, document, days);
+			mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedDocument(document.getOwner(), mailContainer, document, days);
 			notifierService.sendNotification(null, document.getOwner().getMail(), mailContainerFinal);
 		} catch (BusinessException e) {
 			logger.error("Can't create the email for "+document.getOwner().getMail());

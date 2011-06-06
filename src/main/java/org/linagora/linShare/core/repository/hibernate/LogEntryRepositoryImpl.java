@@ -71,7 +71,7 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 
 	
 	
-	public List<LogEntry> findByCriteria(LogCriteriaBean logCriteria) {
+	public List<LogEntry> findByCriteria(LogCriteriaBean logCriteria, String domainId) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(LogEntry.class);
 		
@@ -91,12 +91,23 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		if ((logCriteria.getActorLastname()!=null) && (logCriteria.getActorLastname().length()>0)) {
 			criteria.add(Restrictions.like("actorLastname", logCriteria.getActorLastname(), MatchMode.START).ignoreCase());
 		}
+		
+		if (domainId != null && domainId.length() > 0) {
+			criteria.add(Restrictions.like("actorDomain", domainId));
+		} else if (logCriteria.getActorDomain() != null && logCriteria.getActorDomain().length() > 0) {
+			criteria.add(Restrictions.like("actorDomain", logCriteria.getActorDomain()));
+		}
+		
 		if ((logCriteria.getTargetFirstname()!=null) && (logCriteria.getTargetFirstname().length()>0)) {
 			criteria.add(Restrictions.like("targetFirstname", logCriteria.getTargetFirstname(), MatchMode.START).ignoreCase());
 		}
 		
 		if ((logCriteria.getTargetLastname()!=null) && (logCriteria.getTargetLastname().length()>0)) {
 			criteria.add(Restrictions.like("targetLastname", logCriteria.getTargetLastname(), MatchMode.START).ignoreCase());
+		}
+		
+		if (logCriteria.getTargetDomain() != null && logCriteria.getTargetDomain().length() > 0) {
+			criteria.add(Restrictions.like("targetDomain", logCriteria.getTargetDomain()));
 		}
 		
 		if ((logCriteria.getLogActions()!=null) && (logCriteria.getLogActions().size()>0)) {

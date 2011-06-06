@@ -29,6 +29,6 @@ import org.linagora.linShare.core.exception.BusinessException;
  *
  */
 public interface ParameterService {
-	public Parameter loadConfig();
-	public void createConfig(Parameter params) throws BusinessException;
+	public Parameter loadConfig(String identifier);
+	public Parameter saveOrUpdate(Parameter params) throws BusinessException;
 }

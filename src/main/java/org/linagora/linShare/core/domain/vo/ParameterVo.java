@@ -37,6 +37,8 @@ public class ParameterVo implements Serializable {
 
 	private static final long serialVersionUID = -3129935137911233245L;
 	
+	private final String identifier;
+	
 	private final Long fileSizeMax;
 	private final Long userAvailableSize;
 	private final Long globalQuota;
@@ -46,6 +48,11 @@ public class ParameterVo implements Serializable {
 	private final Boolean activeSignature;
 	private final Boolean activeEncipherment;
 	private final Boolean activeDocTimeStamp;
+	
+	private final Boolean closedDomain;
+	private final Boolean restrictedDomain;
+	private final Boolean domainWithGuests;
+	private final Boolean guestCanCreateOther;
 	
     private final Integer guestAccountExpiryTime;
     private final TimeUnit guestAccountExpiryUnit;
@@ -64,10 +71,10 @@ public class ParameterVo implements Serializable {
     private Set<MailSubject> mailSubjects;
 
 	public ParameterVo() {
-		this(null, null, null, null, false, false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null);
+		this(null,null, null, null, null, false, false, null,null,null,null, TimeUnit.DAY, null, null, null, null, null, null, null, null, null, null, false, false, false, false);
 	}
 
-	public ParameterVo(Long fileSizeMax, Long userAvailableSize, 
+	public ParameterVo(String identifier, Long fileSizeMax, Long userAvailableSize, 
 		Long globalQuota, Long usedQuota, Boolean globalQuotaActive,
 		Boolean activeMimeType, Boolean activeSignature,
 		Boolean activeEncipherment,Boolean activeDocTimeStamp,Integer guestAccountExpiryTime, 
@@ -75,7 +82,9 @@ public class ParameterVo implements Serializable {
 		TimeUnit defaultShareExpiryUnit, Integer defaultShareExpiryTime,
 		TimeUnit defaultFileExpiryUnit, Integer defaultFileExpiryTime,
         List<ShareExpiryRule> shareExpiryRules, Boolean deleteDocWithShareExpiryTime, 
-        Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects) {
+        Set<WelcomeText> welcomeTexts, Set<MailTemplate> mailTemplates, Set<MailSubject> mailSubjects,
+        Boolean closedDomain, Boolean restrictedDomain, Boolean domainWithGuests, Boolean guestCanCreateOther) {
+		this.identifier = identifier;
 		this.fileSizeMax = fileSizeMax;
 		this.userAvailableSize = userAvailableSize;
 		this.globalQuota = globalQuota;
@@ -97,9 +106,14 @@ public class ParameterVo implements Serializable {
         this.deleteDocWithShareExpiryTime = deleteDocWithShareExpiryTime;
         this.mailTemplates = mailTemplates;
         this.mailSubjects = mailSubjects;
+		this.closedDomain=closedDomain;
+		this.restrictedDomain=restrictedDomain;
+		this.domainWithGuests=domainWithGuests;
+		this.guestCanCreateOther=guestCanCreateOther;
 	}
 
     public ParameterVo(Parameter parameter) {
+    	this.identifier = parameter.getIdentifier();
 		this.fileSizeMax = parameter.getFileSizeMax();
 		this.userAvailableSize = parameter.getUserAvailableSize();
 		this.globalQuota = parameter.getGlobalQuota();
@@ -144,6 +158,10 @@ public class ParameterVo implements Serializable {
         
         this.defaultShareExpiryUnit = parameter.getDefaultShareExpiryUnit();
         this.defaultShareExpiryTime = parameter.getDefaultShareExpiryTime();
+		this.closedDomain=parameter.getClosedDomain();
+		this.restrictedDomain=parameter.getRestrictedDomain();
+		this.domainWithGuests=parameter.getDomainWithGuests();
+		this.guestCanCreateOther=parameter.getGuestCanCreateOther();
     }
 
 	public Long getFileSizeMax() {
@@ -224,6 +242,7 @@ public class ParameterVo implements Serializable {
 
 	public Parameter getParameter() {
         Parameter parameter = new Parameter();
+        parameter.setIdentifier(identifier);
         parameter.setFileSizeMax(fileSizeMax);
         parameter.setUserAvailableSize(userAvailableSize);
         parameter.setGlobalQuota(globalQuota);
@@ -241,6 +260,10 @@ public class ParameterVo implements Serializable {
         parameter.setDefaultShareExpiryUnit(defaultShareExpiryUnit);
         parameter.setDefaultFileExpiryTime(defaultFileExpiryTime);
         parameter.setDefaultFileExpiryUnit(defaultFileExpiryUnit);
+        parameter.setClosedDomain(closedDomain);
+        parameter.setRestrictedDomain(restrictedDomain);
+        parameter.setGuestCanCreateOther(guestCanCreateOther);
+        parameter.setDomainWithGuests(domainWithGuests);
         
         for (ShareExpiryRule shareExpiryRule : shareExpiryRules) {
             parameter.addShareExpiryRules(shareExpiryRule);
@@ -281,5 +304,25 @@ public class ParameterVo implements Serializable {
 
 	public Set<MailSubject> getMailSubjects() {
 		return mailSubjects;
+	}
+	
+	public String getIdentifier() {
+		return identifier;
+	}
+	
+	public Boolean getClosedDomain() {
+		return closedDomain;
+	}
+	
+	public Boolean getDomainWithGuests() {
+		return domainWithGuests;
+	}
+	
+	public Boolean getGuestCanCreateOther() {
+		return guestCanCreateOther;
+	}
+	
+	public Boolean getRestrictedDomain() {
+		return restrictedDomain;
 	}
 }

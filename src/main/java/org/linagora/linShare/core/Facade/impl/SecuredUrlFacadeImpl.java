@@ -124,7 +124,7 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 			docList.add(documentRepository.findById(documentVo.getIdentifier()));
 		}
 		
-		mailContainer = mailElementsFactory.buildMailAnonymousDownload(mailContainer, docList, email, owner);
+		mailContainer = mailElementsFactory.buildMailAnonymousDownload(owner, mailContainer, docList, email, owner);
 		//send a notification by mail to the owner
 		notifierService.sendNotification(null,owner.getMail(), mailContainer);
 	}

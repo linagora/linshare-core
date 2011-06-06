@@ -9,7 +9,6 @@
     <property access="field" column="description" name="description"/>
     <property access="field" column="get_user_command" name="getUserCommand"/>
     <property access="field" column="get_all_domain_users_command" name="getAllDomainUsersCommand"/>
-    <property access="field" column="is_admin_command" name="isAdminCommand"/>
     <property access="field" column="auth_command" name="authCommand"/>
     <property access="field" column="search_user_command" name="searchUserCommand"/>
     <property access="field" column="get_user_result" name="getUserResult"/>

@@ -264,14 +264,20 @@ public class QuickSharePopup{
 			}
 		}
 
-        if (input != null) {
-            userSet.addAll(userFacade.searchUser(input.trim(), null, null, userVo));
-        }
-		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userVo));
-		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, userVo));
-		userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), userVo));
-		
-		return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), userVo);
+		try {
+	        if (input != null) {
+	            userSet.addAll(userFacade.searchUser(input.trim(), null, null, userVo));
+	        }
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userVo));
+
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, userVo));
+			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), userVo));
+			
+			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), userVo);
+		} catch (BusinessException e) {
+			logger.error("Error while searching user in QuickSharePopup",e);
+		}
+		return new ArrayList<UserVo>();
 	}
 	
 	

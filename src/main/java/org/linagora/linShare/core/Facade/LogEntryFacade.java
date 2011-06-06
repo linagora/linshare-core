@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.domain.vo.LogEntryVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
 
 /**
@@ -54,7 +55,8 @@ public interface LogEntryFacade {
 	/**
 	 * Return all the log entries corresponding to the criteria
 	 * @param criteria
+	 * @param userLoggedIn the actor
 	 * @return
 	 */
-	public List<DisplayableLogEntryVo> findByCriteria(LogCriteriaBean criteria);
+	public List<DisplayableLogEntryVo> findByCriteria(LogCriteriaBean criteria, UserVo userLoggedIn);
 }

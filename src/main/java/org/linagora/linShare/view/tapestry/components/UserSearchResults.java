@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
@@ -44,11 +45,14 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
@@ -101,9 +105,16 @@ public class UserSearchResults {
     @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=550", "height=350"})
     private WindowWithEffects userAddToGroupWindow;
+    
+    @SuppressWarnings("unused")
+    @Component(parameters = {"style=bluelighting", "show=false", "width=400", "height=120"})
+    private WindowWithEffects zoneDomainMoveWindow;
 
     @InjectComponent
     private Zone userEditTemplateZone;
+
+    @InjectComponent
+    private Zone zoneDomainFormMove;
 
     @InjectComponent
     private Zone userAddToGroupTemplateZone;
@@ -170,12 +181,22 @@ public class UserSearchResults {
 	@Property
 	@Persist
 	private boolean memberAddShowPopup;
+	
+	@Persist
+	@Property
+	private List<DomainVo> domains;
+	
+	@Persist
+	@Property
+	private DomainVo selectedDomain;
+    @Inject
+    private DomainFacade domainFacade;
     
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
     @SetupRender
-    public void initUserSearch() {
+    public void initUserSearch() throws BusinessException {
         if (selectedUsers == null) {
             selectedUsers = new ArrayList<UserVo>();
         }
@@ -199,6 +220,12 @@ public class UserSearchResults {
 			refreshFlag=false;
 		}
         sorterModel=new UserSorterModel(users);
+        
+        if (userLoggedIn.isSuperAdmin()) {
+    		domains = domainFacade.findAllDomains();
+    	} else {
+    		domains = new ArrayList<DomainVo>();
+    	}
     }
 
 	/**
@@ -247,12 +274,23 @@ public class UserSearchResults {
 		actionbutton = ActionFromBarDocument.NO_ACTION;
     }
 
-    public Zone onActionFromShowUser(String mail) {
+    public Zone onActionFromShowUser(String mail) throws BusinessException {
         return userDetailsDisplayer.getShowUser(mail);
     }
 
     public void onActionFromDelete(String login) {
         this.selectedLogin = login;
+    }
+
+    public Zone onActionFromDomainMove(String login) {
+        this.selectedLogin = login;
+        for (UserVo user : users) {
+			if (user.getLogin().equals(selectedLogin)) {
+				this.selectedDomain = getValueEncoder().toValue(user.getDomainIdentifier());
+				break;
+			}
+		}
+        return zoneDomainFormMove;
     }
     
     public Zone onActionFromEdit(String login) {
@@ -273,9 +311,36 @@ public class UserSearchResults {
     
     public Zone onActionFromAddToGroup(String userLogin) {
     	userAddToGroupsList = new ArrayList<UserVo>();
-    	UserVo user = userFacade.loadUserDetails(userLogin);
+    	UserVo user = userFacade.loadUserDetails(userLogin, userLoggedIn.getDomainIdentifier());
     	userAddToGroupsList.add(user);
         return userAddToGroupTemplateZone;
+    }
+    
+    public ValueEncoder<DomainVo> getValueEncoder() {
+    	return new ValueEncoder<DomainVo>() {
+    		public String toClient(DomainVo value) {
+    			return value.getIdentifier();
+    		}
+    		public DomainVo toValue(String clientValue) {
+    			for (DomainVo domain : domains) {
+    	    		if (domain.getIdentifier().equals(clientValue)) {
+    	    			return domain;
+    	    		}
+    			}
+    			return null;
+    		}
+		};
+    }
+    
+    public Object onSubmitFromUpdateDomain() throws BusinessException {
+    	userFacade.updateUserDomain(selectedLogin, selectedDomain, userLoggedIn);
+        for (UserVo user : users) {
+			if (user.getLogin().equals(selectedLogin)) {
+				user.setDomainIdentifier(selectedDomain.getIdentifier());
+				break;
+			}
+		}
+    	return this;
     }
 
     
@@ -329,8 +394,11 @@ public class UserSearchResults {
      */
     
     public boolean isUserEditable() {
-        
-        if (userLoggedIn.isAdministrator()) {
+
+        if (userLoggedIn.isSuperAdmin()) {
+        	return true;
+        }
+        if (userLoggedIn.isAdministrator() && userLoggedIn.getDomainIdentifier().equals(user.getDomainIdentifier())) {
             return true;
         } else {
             return isOwner();
@@ -347,11 +415,19 @@ public class UserSearchResults {
         if (user.getLogin().trim().equals(userLoggedIn.getLogin().trim())) {
         	return false;
         }
-        if (userLoggedIn.isAdministrator()) {
+        if (userLoggedIn.isSuperAdmin()) {
+        	return true;
+        }
+        if (userLoggedIn.isAdministrator() && userLoggedIn.getDomainIdentifier().equals(user.getDomainIdentifier())) {
         	return true;
         } 
         return isOwner();
     }
+    
+    public boolean isUserDomainMovable() {
+    	return userLoggedIn.isSuperAdmin();
+    }
+    
     /**
      * is the logged in user the owner of the user guest account ?
      * @return
@@ -384,6 +460,9 @@ public class UserSearchResults {
      */
     public boolean isAdmin(){
     	return userLoggedIn.isAdministrator();
+    }
+    public boolean isSuperAdmin(){
+    	return userLoggedIn.isSuperAdmin();
     }
     
     public String getShowUserTooltip() {

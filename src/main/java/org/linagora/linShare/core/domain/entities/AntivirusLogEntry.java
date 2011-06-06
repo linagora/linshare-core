@@ -10,12 +10,13 @@ public class AntivirusLogEntry extends LogEntry {
 	}
 	
 	public AntivirusLogEntry(LogAction logAction, String description) {
-		super(null, null, null, logAction, description);
+		super(null, null, null, null, logAction, description);
 	}
 	
 	public AntivirusLogEntry(String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction, String description) {
-		super(actorMail, actorFirstname, actorLastname, logAction, description);
+			String actorFirstname, String actorLastname, String actorDomain,
+			LogAction logAction, String description) {
+		super(actorMail, actorFirstname, actorLastname, actorDomain, logAction, description);
 	}
 
 }

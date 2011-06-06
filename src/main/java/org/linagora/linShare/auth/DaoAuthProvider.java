@@ -20,14 +20,14 @@
 */
 package org.linagora.linShare.auth;
 
-import java.util.ArrayList;
 import java.util.List;
+
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UserDetailsService;
@@ -50,7 +50,12 @@ public class DaoAuthProvider implements UserDetailsService {
             throw new UsernameNotFoundException("username must not be null");
         }
 
-        UserVo userVo = userFacade.findUser(username);
+        UserVo userVo;
+		try {
+			userVo = userFacade.findUser(username, null);
+		} catch (BusinessException e) {
+			throw new UsernameNotFoundException("Could not load user from DB: "+username, e);
+		}
         String password = userFacade.getPassword(username);
         if (userVo!=null &&  !userVo.isGuest() && password==null) password=""; //si utilisateur ldap
 
@@ -58,15 +63,8 @@ public class DaoAuthProvider implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-        grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_AUTH));
-
-        if (userVo.isUpload()) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
-        }
-        if (userVo.isAdministrator()) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
-        }
+        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(userVo);
+        
         return new User(userVo.getLogin(), password, true, true, true, true,
             grantedAuthorities.toArray(new GrantedAuthority[0]));
     }

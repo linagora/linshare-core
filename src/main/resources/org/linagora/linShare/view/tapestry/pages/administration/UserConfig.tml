@@ -37,7 +37,7 @@
 			
 			<br/>
 
-			<t:if test="userVo.guest">
+			<t:if test="displayChangePassword">
 				<h2>${message:pages.administration.userconfig.changePassword.title}</h2>
 				<div id="top_text">${message:pages.administration.userconfig.changePassword.texte}</div>
 				<br/>

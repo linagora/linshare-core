@@ -53,9 +53,9 @@ import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
-import org.linagora.linShare.core.service.ParameterService;
 import org.linagora.linShare.core.service.SecuredUrlService;
 import org.linagora.linShare.core.service.ShareExpiryDateService;
 import org.linagora.linShare.core.service.ShareService;
@@ -69,7 +69,7 @@ public class ShareServiceImpl implements ShareService{
 	private final UserRepository<User> userRepository;
 	private final ShareRepository shareRepository;
 	private final LogEntryRepository logEntryRepository;
-	private final ParameterService parameterService;
+	private final DomainService domainService;
 	private final SecuredUrlRepository securedUrlRepository;
 	private final DocumentRepository documentRepository;
 	private final SecuredUrlService secureUrlService;
@@ -90,7 +90,7 @@ public class ShareServiceImpl implements ShareService{
 	public ShareServiceImpl(final UserRepository<User> userRepository,
 			final ShareRepository shareRepository,
 			final LogEntryRepository logEntryRepository,
-			final ParameterService parameterService, final SecuredUrlRepository securedUrlRepository,
+			final DomainService domainService, final SecuredUrlRepository securedUrlRepository,
 			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
 			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
@@ -100,7 +100,7 @@ public class ShareServiceImpl implements ShareService{
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
 		this.logEntryRepository=logEntryRepository;
-		this.parameterService = parameterService;
+		this.domainService = domainService;
 		this.securedUrlRepository=securedUrlRepository;
 		this.documentRepository = documentRepository;
         this.secureUrlService = secureUrlService;
@@ -168,9 +168,10 @@ public class ShareServiceImpl implements ShareService{
 		userRepository.update(user);
 		
 		ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
+				actor.getDomainId(),
         		LogAction.SHARE_DELETE, "Remove a received sharing", 
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
-        		user.getMail(), user.getFirstName(), user.getLastName(), null);
+        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
         logEntryRepository.create(logEntry);
 	}
@@ -185,9 +186,10 @@ public class ShareServiceImpl implements ShareService{
 			userRepository.update(user);
 			
 			ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
+					actor.getDomainId(),
 	        		LogAction.SHARE_DELETE, "Remove a received sharing", 
 	        		currentShare.getDocument().getName(), currentShare.getDocument().getSize(), currentShare.getDocument().getType(),
-	        		user.getMail(), user.getFirstName(), user.getLastName(), null);
+	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
 	        
 	        logEntryRepository.create(logEntry);
 		}
@@ -203,9 +205,10 @@ public class ShareServiceImpl implements ShareService{
 		userRepository.update(user);
 		
 		ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
+				actor.getDomainId(),
         		LogAction.SHARE_DELETE, "Cancel a sharing", 
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
-        		user.getMail(), user.getFirstName(), user.getLastName(), null);
+        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
         logEntryRepository.create(logEntry);
         
@@ -221,9 +224,10 @@ public class ShareServiceImpl implements ShareService{
 			userRepository.update(user);
 			
 			ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
+					actor.getDomainId(),
 	        		LogAction.SHARE_DELETE, "Cancel a sharing", 
 	        		currentShare.getDocument().getName(), currentShare.getDocument().getSize(), currentShare.getDocument().getType(),
-	        		user.getMail(), user.getFirstName(), user.getLastName(), null);
+	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
 	        
 	        logEntryRepository.create(logEntry);
 	        
@@ -236,9 +240,10 @@ public class ShareServiceImpl implements ShareService{
 		
 		
 		ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
+				actor.getDomainId(),
         		LogAction.SHARE_DELETE, "Delete a sharing", 
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
-        		share.getReceiver().getMail(), share.getReceiver().getFirstName(), share.getReceiver().getLastName(), null);
+        		share.getReceiver().getMail(), share.getReceiver().getFirstName(), share.getReceiver().getLastName(), share.getReceiver().getDomainId(), null);
         
         logEntryRepository.create(logEntry);
         
@@ -252,17 +257,26 @@ public class ShareServiceImpl implements ShareService{
 			List<User> recipients,String comment, Calendar expiryDate){
 		
 		SuccessesAndFailsItems<Share> returnItems = new SuccessesAndFailsItems<Share>();
-		
-		// get new guest expiry date
-		Calendar guestExpiryDate = Calendar.getInstance();
-        Parameter parameter = parameterService.loadConfig();
-        if (parameter == null) {
-            throw new IllegalStateException("No configuration found for linshare");
-        }
-        guestExpiryDate.add(parameter.getGuestAccountExpiryUnit().toCalendarValue(), parameter.getGuestAccountExpiryTime());
         
 		
 		for (User recipient : recipients) {
+			
+			boolean allowedToShareWithHim = false;
+			
+			try {
+				allowedToShareWithHim = domainService.userIsAllowedToShareWith(sender, recipient);
+				
+			} catch (BusinessException e1) {
+				logger.error("Failed to read domain of sender while sharing documents", e1);
+				allowedToShareWithHim = false;
+			}
+			
+			if (!allowedToShareWithHim) {
+				generateFailItemsForUser(documents, sender, comment, returnItems, recipient);
+				break;
+			}
+			
+			
 			for (Document document : documents) {
 				//Creating a shareDocument
 				
@@ -272,7 +286,7 @@ public class ShareServiceImpl implements ShareService{
 
 					// If the user have not selected an expiration date, compute default date
 					if (expiryDate == null) {
-						expiryDate=shareExpiryDateService.computeShareExpiryDate(document);
+						expiryDate=shareExpiryDateService.computeShareExpiryDate(document, sender);
 					}						 					
 
 		
@@ -292,6 +306,16 @@ public class ShareServiceImpl implements ShareService{
 					
 					// update guest account expiry date
 					if (recipient.getUserType().equals(UserType.GUEST)) {
+						
+						// get new guest expiry date
+						Calendar guestExpiryDate = Calendar.getInstance();
+				        Parameter parameter = recipient.getDomain().getParameter();
+				        if (parameter == null) {
+				            throw new IllegalStateException("No configuration found for linshare for domain "+recipient.getDomain());
+				        }
+				        guestExpiryDate.add(parameter.getGuestAccountExpiryUnit().toCalendarValue(), parameter.getGuestAccountExpiryTime());
+				        
+				        
 						Guest guest = guestRepository.findByLogin(recipient.getLogin());
 						guest.setExpiryDate(guestExpiryDate.getTime());
 						guestRepository.update(guest);
@@ -301,8 +325,9 @@ public class ShareServiceImpl implements ShareService{
 					userRepository.update(sender);
 		
 					ShareLogEntry logEntry = new ShareLogEntry(sender.getMail(), sender.getFirstName(), sender.getLastName(),
-				        		LogAction.FILE_SHARE, "Sharing of a file", document.getName(), document.getSize(), document.getType(),
-				        		recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), expiryDate);
+							sender.getDomainId(),
+				        	LogAction.FILE_SHARE, "Sharing of a file", document.getName(), document.getSize(), document.getType(),
+				        	recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), recipient.getDomainId(), expiryDate);
 				       
 				    logEntryRepository.create(logEntry);
 				        
@@ -322,6 +347,14 @@ public class ShareServiceImpl implements ShareService{
 		return returnItems;
 
 	}
+	private void generateFailItemsForUser(List<Document> documents,
+			User sender, String comment,
+			SuccessesAndFailsItems<Share> returnItems, User recipient) {
+		for (Document doc : documents) {
+			Share failSharing=new Share(sender,recipient,doc,comment,new GregorianCalendar(),true,false);
+			returnItems.addFailItem(failSharing);
+		}
+	}
 	public void deleteAllSharesWithDocument(Document doc, User actor, MailContainer mailContainer)
 			throws BusinessException {
 		
@@ -335,7 +368,7 @@ public class ShareServiceImpl implements ShareService{
 					notifyGroupSharingDeleted(doc, actor, group, mailContainer);
 				}
 				else { //user sharing
-					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(mailContainer, doc, actor, share.getReceiver());
+					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(actor, mailContainer, doc, actor, share.getReceiver());
 					notifierService.sendNotification(null, share.getReceiver().getMail(), mailContainer_);
 				}
 			}
@@ -352,7 +385,7 @@ public class ShareServiceImpl implements ShareService{
 			if (mailContainer!=null) { //if notification is needed
 				List<Contact> recipients = securedUrl.getRecipients();
 				for (Contact contact : recipients) {				
-					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(mailContainer, doc, actor, contact);
+					MailContainer mailContainer_ = mailBuilder.buildMailSharedFileDeleted(actor, mailContainer, doc, actor, contact);
 					notifierService.sendNotification(null, contact.getMail(), mailContainer_);
 				}
 			}
@@ -378,7 +411,7 @@ public class ShareServiceImpl implements ShareService{
 				//we log the deletion of this file with FILE_EXPIRE
 				User systemUser = userRepository.findByLogin("system");
 				FileLogEntry logEntry = new FileLogEntry(systemUser.getMail(), systemUser
-							.getFirstName(), systemUser.getLastName(),
+							.getFirstName(), systemUser.getLastName(), null,
 							LogAction.FILE_EXPIRE, "Deletion of outdated file", doc
 									.getName(), doc.getSize(), doc.getType());
 				
@@ -440,7 +473,6 @@ public class ShareServiceImpl implements ShareService{
         logger.info(securedUrlList.size() + " expired secured Url(s) found to be delete.");
         
         //read the linshare config (we need to know if we need to delete the original doc which was shared to many people)
-        Parameter config =  parameterService.loadConfig();
         
 		for (SecuredUrl securedUrl : securedUrlList) {
 			
@@ -449,7 +481,8 @@ public class ShareServiceImpl implements ShareService{
 				secureUrlService.delete(securedUrl.getAlea(), securedUrl.getUrlPath());
 				
 				for (Document document : docs) {
-					 refreshShareAttributeOfDoc(document,config.getDeleteDocWithShareExpiryTime());
+					Parameter config = document.getOwner().getDomain().getParameter();
+					refreshShareAttributeOfDoc(document,config.getDeleteDocWithShareExpiryTime());
 				}
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove a securedUrl : \n" + ex.toString());
@@ -459,6 +492,7 @@ public class ShareServiceImpl implements ShareService{
         for (Share share : shares) {
             try {
                 Document sharedDocument = share.getDocument();
+				Parameter config = sharedDocument.getOwner().getDomain().getParameter();
                 deleteShare(share, owner);
                 refreshShareAttributeOfDoc(sharedDocument,config.getDeleteDocWithShareExpiryTime());
             } catch (BusinessException ex) {
@@ -509,7 +543,7 @@ public class ShareServiceImpl implements ShareService{
 		for (Contact recipient : securedUrl.getRecipients()) {
 			String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
 			try {
-				MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedSecuredUrl(mailContainer, securedUrl, recipient, days, securedUrlWithParam);
+				MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedSecuredUrl(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam);
 				notifierService.sendNotification(null, recipient.getMail(), mailContainerFinal);
 			} catch (BusinessException e) {
 				logger.error("Error while trying to notify upcoming outdated secured url", e);
@@ -520,7 +554,7 @@ public class ShareServiceImpl implements ShareService{
 	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
 			Share share, Integer days) {
 		try {
-			MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedShare(mailContainer, share, days);
+			MailContainer mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedShare(share.getSender(), mailContainer, share, days);
 			notifierService.sendNotification(null, share.getReceiver().getMail(), mailContainerFinal);
 		} catch (BusinessException e) {
 				logger.error("Error while trying to notify upcoming outdated share", e);
@@ -548,8 +582,9 @@ public class ShareServiceImpl implements ShareService{
 				for (Contact oneContact : recipients) {
 				
 				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
+						owner.getDomainIdentifier(),
 		        		LogAction.FILE_SHARE, "Sharing of a file", doc.getName(), doc.getSize(), doc.getType(),
-		        		oneContact.getMail(), "", "", securedUrl.getExpirationTime());
+		        		oneContact.getMail(), "", "", "", securedUrl.getExpirationTime());
 		       
 				logEntryRepository.create(logEntry);
 			}
@@ -568,19 +603,19 @@ public class ShareServiceImpl implements ShareService{
 	public void logLocalCopyOfDocument(Share share, User user) throws IllegalArgumentException, BusinessException {
 		ShareLogEntry logEntryShare = new ShareLogEntry(share.getSender().getMail(),
 				share.getSender().getFirstName(), share
-						.getSender().getLastName(),
+						.getSender().getLastName(), share.getSender().getDomainId(),
 				LogAction.SHARE_COPY, "Copy of a sharing", share.getDocument()
 						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
 						.getMail(), user.getFirstName(), user
-						.getLastName(), null);
+						.getLastName(), user.getDomainId(), null);
 
 		ShareLogEntry logEntryDelete = new ShareLogEntry(share.getSender().getMail(),
 				share.getSender().getFirstName(), share
-						.getSender().getLastName(),
+						.getSender().getLastName(), share.getSender().getDomainId(),
 				LogAction.SHARE_DELETE, "Copy of a sharing", share.getDocument()
 						.getName(), share.getDocument().getSize(), share.getDocument().getType(), user
 						.getMail(), user.getFirstName(), user
-						.getLastName(), null);
+						.getLastName(), user.getDomainId(), null);
 		
 		logEntryRepository.create(logEntryShare);
 		logEntryRepository.create(logEntryDelete);
@@ -596,11 +631,11 @@ public class ShareServiceImpl implements ShareService{
 		 */
 		String functionalMail = group.getFunctionalEmail();
 		if (functionalMail != null && functionalMail.length() > 0) {
-			MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(mailContainer, manager, group, doc);
+			MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(manager, mailContainer, manager, group, doc);
 			notifierService.sendNotification(manager.getMail(),functionalMail, mailContainer_);
 		} else {
 			for (GroupMember member : group.getMembers()) {
-				MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(mailContainer, manager, member.getUser(), group, doc);
+				MailContainer mailContainer_ = mailBuilder.buildMailGroupSharingDeleted(manager, mailContainer, manager, member.getUser(), group, doc);
 				notifierService.sendNotification(manager.getMail(), member.getUser().getMail(), mailContainer_);
 			}
 		}

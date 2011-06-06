@@ -39,6 +39,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
@@ -88,7 +89,7 @@ public class UserConfig {
 	private UserFacade userFacade;
 	
     @Inject
-    private ParameterFacade parameterFacade;
+    private DomainFacade domainFacade;
 	
 	@Inject
 	private PersistentLocale persistentLocale;
@@ -125,11 +126,6 @@ public class UserConfig {
 	@Persist
 	@Property
 	private SimpleSelectModel<String> model;
-
-	
-    @Property
-    @Persist
-    private Boolean activeEncipherment;
 	 
 	/* ***********************************************************
 	 *                       Phase processing
@@ -151,20 +147,21 @@ public class UserConfig {
 			
 		}
 		
-		ParameterVo p = parameterFacade.loadConfig();
-		activeEncipherment = p.getActiveEncipherment();
-		
 		model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
 
+	}
+	
+	public boolean getDisplayChangePassword() {
+		return userVo.isGuest() || userVo.isSuperAdmin();
 	}
 	
 	/* ***********************************************************
 	 *                   Event handlers&processing
 	 ************************************************************ */
 	
-	void onSuccessFromConfigUserform() {
+	void onSuccessFromConfigUserform() throws BusinessException {
 		userFacade.updateUserLocale(userVo,currentLocale);
-		userVo = userFacade.findUser(userVo.getMail());
+		userVo = userFacade.findUser(userVo.getMail(), userVo.getDomainIdentifier());
 		persistentLocale.set(LocaleUtils.toLocale(currentLocale));
 	}
 	

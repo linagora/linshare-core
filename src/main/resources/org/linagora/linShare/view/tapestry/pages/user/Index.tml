@@ -17,7 +17,7 @@
 		<div id="actionBar">
 			<h4>Actions</h4>
 			<ul>
-				<t:if test="userVo.createGuest">
+				<t:if test="userCanCreateGuest">
 				<li>
 					<a href="#" class="button" onclick="userSearchWindow.showCenter(true);">
 						<span><img src="${asset:context:images/icons/icon-add-users.png}" alt=""/>
@@ -71,9 +71,11 @@
 	<!-- Actions widget -->
 	<t:parameter name="actionsWidget">
 		<t:if test="users.empty" negate="true">
+		<t:if test="superadmin" negate="true">
 			<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
 				<t:actionsBarUser t:formName="results" />
 			</t:widget>
+		</t:if>
 		</t:if>
 	</t:parameter>
 

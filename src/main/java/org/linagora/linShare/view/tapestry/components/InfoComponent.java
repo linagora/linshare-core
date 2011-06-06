@@ -23,14 +23,15 @@ package org.linagora.linShare.view.tapestry.components;
 import java.text.DateFormat;
 import java.util.Locale;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -44,9 +45,9 @@ public class InfoComponent {
 	
 	@Inject
 	private DocumentFacade documentFacade;
-	
+
 	@Inject
-	private ParameterFacade parameterFacade;
+	private DomainFacade domainFacade;
 
 	@Inject
 	private Messages messages;
@@ -58,11 +59,10 @@ public class InfoComponent {
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
 	
-	@ApplicationState
+	@SessionState
 	@Property
 	private UserVo userVo;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean userVoExists;
 	
@@ -80,7 +80,6 @@ public class InfoComponent {
 	@Property
 	private String usedQuota;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private int usedQuotaPercent;
 	
@@ -101,54 +100,60 @@ public class InfoComponent {
 	
 	@SetupRender
 	void setupRender() throws BusinessException {
-		ParameterVo param = parameterFacade.loadConfig();
-		globalQuota = param.getGlobalQuotaActive();
-		canUpload = userVo.isUpload();
-		isGuest = userVo.isGuest();
-
-		// the formater for the displayed date : we hide the timeline date, and add our date in the 
-		// description
-		localisedDateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-		
-		if (canUpload) {
-
-			if (!globalQuota) {
-				long userAvailableQuota = documentFacade.getUserAvailableQuota(userVo);
-				long userTotalQuota = documentFacade.getUserTotalQuota(userVo);
-				long userUsedQuota = userTotalQuota - userAvailableQuota;
-				
-				if(userUsedQuota<0) userUsedQuota = 0;
-				if (userTotalQuota<1) {
-					usedQuotaPercent = 0;
+		if (getDisplayWidget() && userVo != null && userVo.getDomainIdentifier()!=null){
+			DomainVo domain = domainFacade.retrieveDomain(userVo.getDomainIdentifier());
+			ParameterVo param = domain.getParameterVo();
+			globalQuota = param.getGlobalQuotaActive();
+			canUpload = userVo.isUpload();
+			isGuest = userVo.isGuest();
+	
+			// the formater for the displayed date : we hide the timeline date, and add our date in the 
+			// description
+			localisedDateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+			
+			if (canUpload) {
+	
+				if (!globalQuota) {
+					long userAvailableQuota = documentFacade.getUserAvailableQuota(userVo);
+					long userTotalQuota = documentFacade.getUserTotalQuota(userVo);
+					long userUsedQuota = userTotalQuota - userAvailableQuota;
+					
+					if(userUsedQuota<0) userUsedQuota = 0;
+					if (userTotalQuota<1) {
+						usedQuotaPercent = 0;
+					} else {
+						usedQuotaPercent = (int) (100*userUsedQuota / userTotalQuota);
+						if(usedQuotaPercent>100) usedQuotaPercent = 100;
+					}
+					
+					FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(userTotalQuota);
+					usedQuota = FileUtils.getFriendlySize(userUsedQuota, messages, preferedUnity);
+					totalQuota = FileUtils.getFriendlySize(userTotalQuota, messages, preferedUnity);
 				} else {
-					usedQuotaPercent = (int) (100*userUsedQuota / userTotalQuota);
-					if(usedQuotaPercent>100) usedQuotaPercent = 100;
-				}
-				
-				FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(userTotalQuota);
-				usedQuota = FileUtils.getFriendlySize(userUsedQuota, messages, preferedUnity);
-				totalQuota = FileUtils.getFriendlySize(userTotalQuota, messages, preferedUnity);
-			} else {
-				Long usedQuotaB = param.getUsedQuota() == null ? 0L : param.getUsedQuota();
-				Long globalQuotaB = param.getGlobalQuota() == null ? 0L : param.getGlobalQuota();
-				FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(globalQuotaB);
-				usedQuota = FileUtils.getFriendlySize(usedQuotaB, messages, preferedUnity);
-				totalQuota = FileUtils.getFriendlySize(globalQuotaB, messages, preferedUnity);
-				if (usedQuotaB<1) {
-					usedQuotaPercent = 0;
-				} else {
-					usedQuotaPercent = (int) (100*usedQuotaB / globalQuotaB);
-					if(usedQuotaPercent>100) usedQuotaPercent = 100;
+					Long usedQuotaB = param.getUsedQuota() == null ? 0L : param.getUsedQuota();
+					Long globalQuotaB = param.getGlobalQuota() == null ? 0L : param.getGlobalQuota();
+					FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(globalQuotaB);
+					usedQuota = FileUtils.getFriendlySize(usedQuotaB, messages, preferedUnity);
+					totalQuota = FileUtils.getFriendlySize(globalQuotaB, messages, preferedUnity);
+					if (usedQuotaB<1) {
+						usedQuotaPercent = 0;
+					} else {
+						usedQuotaPercent = (int) (100*usedQuotaB / globalQuotaB);
+						if(usedQuotaPercent>100) usedQuotaPercent = 100;
+					}
 				}
 			}
-		}
-		
-		if (isGuest) {
-			expirationDate = localisedDateFormat.format(userVo.getExpirationDate());
+			
+			if (isGuest) {
+				expirationDate = localisedDateFormat.format(userVo.getExpirationDate());
+			}
 		}
 	}
 	
 	public boolean getDisplayWidget() {
+		if (!userVoExists) {
+			return false;
+		}
 		if (isGuest) {
 			return true;
 		}

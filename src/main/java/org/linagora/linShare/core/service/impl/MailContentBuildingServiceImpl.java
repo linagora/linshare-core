@@ -31,6 +31,7 @@ import org.linagora.linShare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linShare.core.domain.constants.MailTemplateEnum;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
@@ -49,11 +50,9 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.service.MailContentBuildingService;
-import org.linagora.linShare.core.service.ParameterService;
 
 
 public class MailContentBuildingServiceImpl implements MailContentBuildingService {
-	private final ParameterService parameterService;
 	private final String pUrlBase;
 	private final String pUrlInternal;
 	private final String mailContentTxt;
@@ -62,10 +61,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
     private final static Log logger = LogFactory.getLog(MailContentBuildingServiceImpl.class);
 
 	
-	public MailContentBuildingServiceImpl(final ParameterService parameterService,
-			final String urlBase, final String urlInternal, final String mailContentTxt,
+	public MailContentBuildingServiceImpl(final String urlBase, 
+			final String urlInternal, final String mailContentTxt,
 			final String mailContentHTML) throws BusinessException {
-		this.parameterService = parameterService;
 		this.pUrlBase = urlBase;
 		this.pUrlInternal = urlInternal;
         this.mailContentTxt = mailContentTxt;
@@ -80,9 +78,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @return the MailSubject object
 	 * @throws BusinessException when no mail subject was found for the given enum key
 	 */
-	private MailSubject getMailSubject(Language language, MailSubjectEnum mailSubject) throws BusinessException {
-		Parameter config = parameterService.loadConfig();
-		Set<MailSubject> subjects = config.getMailSubjects();
+	private MailSubject getMailSubject(User actor, Language language, MailSubjectEnum mailSubject) throws BusinessException {
+		Domain domain = actor.getDomain();
+		Set<MailSubject> subjects = domain.getParameter().getMailSubjects();
 		
 		for (MailSubject mailSubject_ : subjects) {
 			if (mailSubject_.getLanguage().equals(language) && mailSubject_.getMailSubject().equals(mailSubject)) {
@@ -102,8 +100,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @return the MailTemplate object
 	 * @throws BusinessException when no mail template was found for the given enum key
 	 */
-	private MailTemplate getMailTemplate(Language language, MailTemplateEnum mailTemplate) throws BusinessException {
-		Parameter config = parameterService.loadConfig();
+	private MailTemplate getMailTemplate(User actor, Language language, MailTemplateEnum mailTemplate) throws BusinessException {
+		Parameter config = actor.getDomain().getParameter();
 		Set<MailTemplate> templates = config.getMailTemplates();
 		
 		for (MailTemplate mailTemplate_ : templates) {
@@ -128,15 +126,15 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @param personalMessage
 	 * @throws BusinessException
 	 */
-	private MailContainer buildMailContainer(final MailContainer mailContainerInitial, String subject, String bodyTXT, String bodyHTML, User recipient, User owner, String personalMessage) throws BusinessException {
+	private MailContainer buildMailContainer(User actor, final MailContainer mailContainerInitial, String subject, String bodyTXT, String bodyHTML, User recipient, User owner, String personalMessage) throws BusinessException {
 		MailContainer mailContainer = new MailContainer(mailContainerInitial);
-		MailTemplate greetings = buildTemplateGreetings(mailContainer.getLanguage(), recipient);
-		MailTemplate footer = buildTemplateFooter(mailContainer.getLanguage());
+		MailTemplate greetings = buildTemplateGreetings(actor, mailContainer.getLanguage(), recipient);
+		MailTemplate footer = buildTemplateFooter(actor, mailContainer.getLanguage());
 		String contentTXT = this.mailContentTxt;
 		String contentHTML = this.mailContentHTML;
 		
 		if (personalMessage != null && personalMessage.trim().length() > 0) {
-			MailTemplate personalMessageTemplate = buildTemplatePersonalMessage(mailContainer.getLanguage(), owner, personalMessage);
+			MailTemplate personalMessageTemplate = buildTemplatePersonalMessage(actor, mailContainer.getLanguage(), owner, personalMessage);
 
 			contentTXT = StringUtils.replace(contentTXT, "${personalMessage}", personalMessageTemplate.getContentTXT());
 	        contentHTML = StringUtils.replace(contentHTML, "${personalMessage}", personalMessageTemplate.getContentHTML());
@@ -175,8 +173,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template GREETINGS
 	 */
-	private MailTemplate buildTemplateGreetings(Language language, User user) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.GREETINGS);
+	private MailTemplate buildTemplateGreetings(User actor, Language language, User user) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.GREETINGS);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -194,8 +192,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template FOOTER
 	 */
-	private MailTemplate buildTemplateFooter(Language language) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.FOOTER);
+	private MailTemplate buildTemplateFooter(User actor, Language language) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.FOOTER);
         
         return template;
 	}
@@ -203,8 +201,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template CONFIRM_DOWNLOAD_ANONYMOUS
 	 */
-	private MailTemplate buildTemplateConfirmDownloadAnonymous(Language language, List<Document> docs, String email) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.CONFIRM_DOWNLOAD_ANONYMOUS);
+	private MailTemplate buildTemplateConfirmDownloadAnonymous(User actor, Language language, List<Document> docs, String email) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.CONFIRM_DOWNLOAD_ANONYMOUS);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -231,8 +229,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template CONFIRM_DOWNLOAD_REGISTERED
 	 */
-	private MailTemplate buildTemplateConfirmDownloadRegistered(Language language, List<Document> docs, User recipient) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.CONFIRM_DOWNLOAD_REGISTERED);
+	private MailTemplate buildTemplateConfirmDownloadRegistered(User actor, Language language, List<Document> docs, User recipient) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.CONFIRM_DOWNLOAD_REGISTERED);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -261,8 +259,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template DECRYPT_URL
 	 */
-	private MailTemplate buildTemplateDecryptUrl(Language language, boolean hasToBeFilled, String linShareUrlAnonymous, String jwsEncryptUrl) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.DECRYPT_URL);
+	private MailTemplate buildTemplateDecryptUrl(User actor, Language language, boolean hasToBeFilled, String linShareUrlAnonymous, String jwsEncryptUrl) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.DECRYPT_URL);
 		
 		if(hasToBeFilled){
 			String contentTXT = template.getContentTXT();
@@ -284,8 +282,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template PERSONAL_MESSAGE
 	 */
-	private MailTemplate buildTemplatePersonalMessage(Language language, User owner, String message) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.PERSONAL_MESSAGE);
+	private MailTemplate buildTemplatePersonalMessage(User actor, Language language, User owner, String message) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.PERSONAL_MESSAGE);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -305,8 +303,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template GUEST_INVITATION
 	 */
-	private MailTemplate buildTemplateGuestInvitation(Language language, User owner) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.GUEST_INVITATION);
+	private MailTemplate buildTemplateGuestInvitation(User actor, Language language, User owner) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.GUEST_INVITATION);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -324,8 +322,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template LINSHARE_URL
 	 */
-	private MailTemplate buildTemplateLinshareURL(Language language, String linShareUrl) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.LINSHARE_URL);
+	private MailTemplate buildTemplateLinshareURL(User actor, Language language, String linShareUrl) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.LINSHARE_URL);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -341,8 +339,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template ACCOUNT_DESCRIPTION
 	 */
-	private MailTemplate buildTemplateAccountDescription(Language language, User guest, String password) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.ACCOUNT_DESCRIPTION);
+	private MailTemplate buildTemplateAccountDescription(User actor, Language language, User guest, String password) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.ACCOUNT_DESCRIPTION);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -360,8 +358,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template SHARE_NOTIFICATION
 	 */
-	private MailTemplate buildTemplateShareNotification(Language language, List<DocumentVo> docs, User owner) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.SHARE_NOTIFICATION);
+	private MailTemplate buildTemplateShareNotification(User actor, Language language, List<DocumentVo> docs, User owner) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.SHARE_NOTIFICATION);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -394,8 +392,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template FILE_DOWNLOAD_URL
 	 */
-	private MailTemplate buildTemplateFileDownloadURL(Language language, String url, String urlParam) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.FILE_DOWNLOAD_URL);
+	private MailTemplate buildTemplateFileDownloadURL(User actor, Language language, String url, String urlParam) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.FILE_DOWNLOAD_URL);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -413,8 +411,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template PASSWORD_GIVING
 	 */
-	private MailTemplate buildTemplatePasswordGiving(Language language, String password) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.PASSWORD_GIVING);
+	private MailTemplate buildTemplatePasswordGiving(User actor, Language language, String password) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.PASSWORD_GIVING);
 		
 		if (password != null && password.trim().length() > 0) {
 			String contentTXT = template.getContentTXT();
@@ -438,8 +436,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template FILE_UPDATED
 	 */
-	private MailTemplate buildTemplateFileUpdated(Language language, User owner, Document document, String oldDocName, String fileSizeTxt) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.FILE_UPDATED);
+	private MailTemplate buildTemplateFileUpdated(User actor, Language language, User owner, Document document, String oldDocName, String fileSizeTxt) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.FILE_UPDATED);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -467,8 +465,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template GROUP_SHARE_NOTIFICATION
 	 */
-	private MailTemplate buildTemplateGroupShareNotification(Language language, List<ShareDocumentVo> docs, User owner, Group group) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.GROUP_SHARE_NOTIFICATION);
+	private MailTemplate buildTemplateGroupShareNotification(User actor, Language language, List<ShareDocumentVo> docs, User owner, Group group) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.GROUP_SHARE_NOTIFICATION);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
@@ -503,8 +501,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template GROUP_MEMBERSHIP_STATUS
 	 */
-	private MailTemplate buildTemplateGroupMembershipStatus(MailContainer mailContainer, GroupMember newMember, Group group, GroupMembershipStatus status) throws BusinessException {
-		MailTemplate template = getMailTemplate(mailContainer.getLanguage(), MailTemplateEnum.GROUP_MEMBERSHIP_STATUS);
+	private MailTemplate buildTemplateGroupMembershipStatus(User actor, MailContainer mailContainer, GroupMember newMember, Group group, GroupMembershipStatus status) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, mailContainer.getLanguage(), MailTemplateEnum.GROUP_MEMBERSHIP_STATUS);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 		
@@ -528,9 +526,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template GROUP_NEW_MEMBER
 	 */
-	private MailTemplate buildTemplateGroupNewMember(
+	private MailTemplate buildTemplateGroupNewMember(User actor, 
 			MailContainer mailContainer, GroupMember newMember, Group group) throws BusinessException {
-		MailTemplate template = getMailTemplate(mailContainer.getLanguage(), MailTemplateEnum.GROUP_NEW_MEMBER);
+		MailTemplate template = getMailTemplate(actor, mailContainer.getLanguage(), MailTemplateEnum.GROUP_NEW_MEMBER);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 		
@@ -547,8 +545,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template GROUP_SHARE_DELETED
 	 */
-	private MailTemplate buildTemplateGroupSharingDeleted(Language language, Document doc, User manager, Group group) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.GROUP_SHARE_DELETED);
+	private MailTemplate buildTemplateGroupSharingDeleted(User actor, Language language, Document doc, User manager, Group group) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.GROUP_SHARE_DELETED);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 		
@@ -570,8 +568,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template SHARED_FILE_DELETED
 	 */
-	private MailTemplate buildTemplateSharedFileDeleted(Language language, Document doc, User owner) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.SHARED_FILE_DELETED);
+	private MailTemplate buildTemplateSharedFileDeleted(User actor, Language language, Document doc, User owner) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.SHARED_FILE_DELETED);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 		
@@ -591,10 +589,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template SECURED_URL_UPCOMING_OUTDATED
 	 */
-	private MailTemplate buildTemplateUpcomingOutdatedSecuredUrl(
+	private MailTemplate buildTemplateUpcomingOutdatedSecuredUrl(User actor, 
 			Language language, SecuredUrl securedUrl, Contact recipient,
 			Integer days) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.SECURED_URL_UPCOMING_OUTDATED);
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.SECURED_URL_UPCOMING_OUTDATED);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 		
@@ -615,9 +613,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template SHARED_DOC_UPCOMING_OUTDATED
 	 */
-	private MailTemplate buildTemplateUpcomingOutdatedShare(Language language,
+	private MailTemplate buildTemplateUpcomingOutdatedShare(User actor, Language language,
 			Share share, Integer days) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.SHARED_DOC_UPCOMING_OUTDATED);
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.SHARED_DOC_UPCOMING_OUTDATED);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 		
@@ -639,9 +637,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template DOC_UPCOMING_OUTDATED
 	 */
-	private MailTemplate buildTemplateUpcomingOutdatedFile(Language language,
+	private MailTemplate buildTemplateUpcomingOutdatedFile(User actor, Language language,
 			Document document, Integer days) throws BusinessException {
-		MailTemplate template = getMailTemplate(language, MailTemplateEnum.DOC_UPCOMING_OUTDATED);
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.DOC_UPCOMING_OUTDATED);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 		
@@ -659,29 +657,29 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailAnonymousDownload(org.linagora.linShare.core.domain.entities.MailContainer, java.util.List, java.lang.String, org.linagora.linShare.core.domain.entities.User)
 	 */
-	public MailContainer buildMailAnonymousDownload(MailContainer mailContainer, List<Document> docs, String email, User recipient) throws BusinessException {
-		MailTemplate template = buildTemplateConfirmDownloadAnonymous(mailContainer.getLanguage(), docs, email);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.ANONYMOUS_DOWNLOAD);
-		return buildMailContainer(mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null, null);
+	public MailContainer buildMailAnonymousDownload(User actor, MailContainer mailContainer, List<Document> docs, String email, User recipient) throws BusinessException {
+		MailTemplate template = buildTemplateConfirmDownloadAnonymous(actor, mailContainer.getLanguage(), docs, email);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.ANONYMOUS_DOWNLOAD);
+		return buildMailContainer(actor, mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null, null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailRegisteredDownload(org.linagora.linShare.core.domain.entities.MailContainer, java.util.List, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User)
 	 */
-	public MailContainer buildMailRegisteredDownload(MailContainer mailContainer, List<Document> docs, User downloadingUser, User recipient) throws BusinessException {
-		MailTemplate template = buildTemplateConfirmDownloadRegistered(mailContainer.getLanguage(), docs, downloadingUser);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.REGISTERED_DOWNLOAD);
-		return buildMailContainer(mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null, null);
+	public MailContainer buildMailRegisteredDownload(User actor, MailContainer mailContainer, List<Document> docs, User downloadingUser, User recipient) throws BusinessException {
+		MailTemplate template = buildTemplateConfirmDownloadRegistered(actor, mailContainer.getLanguage(), docs, downloadingUser);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.REGISTERED_DOWNLOAD);
+		return buildMailContainer(actor, mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null, null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailNewGuest(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, java.lang.String)
 	 */
-	public MailContainer buildMailNewGuest(MailContainer mailContainer, User owner, User recipient, String password) throws BusinessException {
-		MailTemplate template1 = buildTemplateGuestInvitation(mailContainer.getLanguage(), owner);
-		MailTemplate template2 = buildTemplateLinshareURL(mailContainer.getLanguage(), pUrlBase);
-		MailTemplate template3 = buildTemplateAccountDescription(mailContainer.getLanguage(), recipient, password);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_GUEST);
+	public MailContainer buildMailNewGuest(User actor, MailContainer mailContainer, User owner, User recipient, String password) throws BusinessException {
+		MailTemplate template1 = buildTemplateGuestInvitation(actor, mailContainer.getLanguage(), owner);
+		MailTemplate template2 = buildTemplateLinshareURL(actor, mailContainer.getLanguage(), pUrlBase);
+		MailTemplate template3 = buildTemplateAccountDescription(actor, mailContainer.getLanguage(), recipient, password);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.NEW_GUEST);
 		
 		StringBuffer contentTXT = new StringBuffer();
 		StringBuffer contentHTML = new StringBuffer();
@@ -692,31 +690,31 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template2.getContentHTML() + "<br />");
 		contentHTML.append(template3.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
+		return buildMailContainer(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailResetPassword(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, java.lang.String)
 	 */
-	public MailContainer buildMailResetPassword(MailContainer mailContainer, User recipient, String password) throws BusinessException {
-		MailTemplate template = buildTemplateAccountDescription(mailContainer.getLanguage(), recipient, password);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.RESET_PASSWORD);
+	public MailContainer buildMailResetPassword(User actor, MailContainer mailContainer, User recipient, String password) throws BusinessException {
+		MailTemplate template = buildTemplateAccountDescription(actor, mailContainer.getLanguage(), recipient, password);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.RESET_PASSWORD);
 		
-		return buildMailContainer(mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null, null);
+		return buildMailContainer(actor, mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null, null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.impl.MailContentBuildingService#buildMailNewSharing(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, java.util.List, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
-	public MailContainer buildMailNewSharing(MailContainer mailContainer, User owner, User recipient, List<DocumentVo> docs, String linShareUrl, String linShareUrlParam, String password, boolean hasToDecrypt, String jwsEncryptUrl) throws BusinessException {
-		MailTemplate template1 = buildTemplateShareNotification(mailContainer.getLanguage(), docs, owner);
-		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
-		MailTemplate template3 = buildTemplateDecryptUrl(mailContainer.getLanguage(), hasToDecrypt, linShareUrl, jwsEncryptUrl);
-		MailTemplate template4 = buildTemplatePasswordGiving(mailContainer.getLanguage(), password);
+	public MailContainer buildMailNewSharing(User actor, MailContainer mailContainer, User owner, User recipient, List<DocumentVo> docs, String linShareUrl, String linShareUrlParam, String password, boolean hasToDecrypt, String jwsEncryptUrl) throws BusinessException {
+		MailTemplate template1 = buildTemplateShareNotification(actor, mailContainer.getLanguage(), docs, owner);
+		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
+		MailTemplate template3 = buildTemplateDecryptUrl(actor, mailContainer.getLanguage(), hasToDecrypt, linShareUrl, jwsEncryptUrl);
+		MailTemplate template4 = buildTemplatePasswordGiving(actor, mailContainer.getLanguage(), password);
 		
 		String subjectContent = mailContainer.getSubject();
 		if (subjectContent == null || subjectContent.length() < 1) {
-			MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING);
+			MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING);
 			subjectContent = subject.getContent();
 		}
 		
@@ -731,44 +729,44 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template3.getContentHTML() + "<br />");
 		contentHTML.append(template4.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
+		return buildMailContainer(actor, mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewSharing(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, java.lang.String, java.util.List, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
-	public MailContainer buildMailNewSharing(MailContainer mailContainer,
+	public MailContainer buildMailNewSharing(User actor, MailContainer mailContainer,
 			User owner, String recipientMail, List<DocumentVo> docs,
 			String linShareUrl, String linShareUrlParam, String password, 
 			boolean hasToDecrypt, String jwsEncryptUrl)
 			throws BusinessException {
 		User tempUser = new Guest(recipientMail, recipientMail, "", recipientMail);
-		return buildMailNewSharing(mailContainer, owner, tempUser, docs, linShareUrl, linShareUrlParam, password, hasToDecrypt, jwsEncryptUrl);
+		return buildMailNewSharing(actor, mailContainer, owner, tempUser, docs, linShareUrl, linShareUrlParam, password, hasToDecrypt, jwsEncryptUrl);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailSharedDocUpdated(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, java.lang.String, org.linagora.linShare.core.domain.entities.Document, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer,
+	public MailContainer buildMailSharedDocUpdated(User actor, MailContainer mailContainer,
 			User owner, String recipientMail, Document document,
 			String oldDocName, String fileSizeTxt, String linShareUrl,
 			String linShareUrlParam)
 			throws BusinessException {
 		User tempUser = new Guest(recipientMail, recipientMail, "", recipientMail);
-		return buildMailSharedDocUpdated(mailContainer, owner, tempUser, document, oldDocName, fileSizeTxt, linShareUrl, linShareUrlParam);
+		return buildMailSharedDocUpdated(actor, mailContainer, owner, tempUser, document, oldDocName, fileSizeTxt, linShareUrl, linShareUrlParam);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailSharedDocUpdated(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Document, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public MailContainer buildMailSharedDocUpdated(MailContainer mailContainer, 
+	public MailContainer buildMailSharedDocUpdated(User actor, MailContainer mailContainer, 
 			User owner, User recipient, Document document, 
 			String oldDocName, String fileSizeTxt, 
 			String linShareUrl, String linShareUrlParam) 
 			throws BusinessException {
-		MailTemplate template1 = buildTemplateFileUpdated(mailContainer.getLanguage(), owner, document, oldDocName, fileSizeTxt);
-		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPDATED);
+		MailTemplate template1 = buildTemplateFileUpdated(actor, mailContainer.getLanguage(), owner, document, oldDocName, fileSizeTxt);
+		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPDATED);
 		
 		StringBuffer contentTXT = new StringBuffer();
 		StringBuffer contentHTML = new StringBuffer();
@@ -777,34 +775,34 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		contentHTML.append(template2.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), recipient, null, null);
+		return buildMailContainer(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), recipient, null, null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewGroupSharing(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, java.util.List, java.lang.String, java.lang.String)
 	 */
-	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
+	public MailContainer buildMailNewGroupSharing(User actor, MailContainer mailContainer,
 			User owner, Group group, List<ShareDocumentVo> docs, String linShareUrl,
 			String linShareUrlParam, boolean isOneDocEncrypted, String jwsEncryptUrlString) throws BusinessException {
 		User tempUser = new Guest(group.getFunctionalEmail(), group.getFunctionalEmail(), "", group.getFunctionalEmail());
-		return buildMailNewGroupSharing(mailContainer, owner, tempUser, group, docs, linShareUrl, linShareUrlParam, isOneDocEncrypted, jwsEncryptUrlString);
+		return buildMailNewGroupSharing(actor, mailContainer, owner, tempUser, group, docs, linShareUrl, linShareUrlParam, isOneDocEncrypted, jwsEncryptUrlString);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewGroupSharing(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, java.util.List, java.lang.String, java.lang.String)
 	 */
-	public MailContainer buildMailNewGroupSharing(MailContainer mailContainer,
+	public MailContainer buildMailNewGroupSharing(User actor, MailContainer mailContainer,
 			User owner, User recipient, Group group, List<ShareDocumentVo> docs,
 			String linShareUrl, String linShareUrlParam,
 			boolean isOneDocEncrypted, String jwsEncryptUrlString)
 			throws BusinessException {
-		MailTemplate template1 = buildTemplateGroupShareNotification(mailContainer.getLanguage(), docs, owner, group);
-		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
-		MailTemplate template3 = buildTemplateDecryptUrl(mailContainer.getLanguage(), isOneDocEncrypted, linShareUrl, jwsEncryptUrlString);
+		MailTemplate template1 = buildTemplateGroupShareNotification(actor, mailContainer.getLanguage(), docs, owner, group);
+		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, linShareUrlParam);
+		MailTemplate template3 = buildTemplateDecryptUrl(actor, mailContainer.getLanguage(), isOneDocEncrypted, linShareUrl, jwsEncryptUrlString);
 		
 		String subjectContent = mailContainer.getSubject();
 		if (subjectContent == null || subjectContent.length() < 1) {
-			MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_GROUP_SHARING);
+			MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.NEW_GROUP_SHARING);
 			subjectContent = subject.getContent();
 		}
 		subjectContent = StringUtils.replace(subjectContent, "${groupName}", group.getName());
@@ -818,28 +816,28 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template2.getContentHTML() + "<br />");
 		contentHTML.append(template3.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
+		return buildMailContainer(actor, mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, owner, mailContainer.getPersonalMessage());
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailGroupSharingDeleted(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, org.linagora.linShare.core.domain.entities.Document)
 	 */
-	public MailContainer buildMailGroupSharingDeleted(
+	public MailContainer buildMailGroupSharingDeleted(User actor, 
 			MailContainer mailContainer, User manager, Group group, Document doc)
 			throws BusinessException {
 		User tempUser = new Guest(group.getFunctionalEmail(), group.getFunctionalEmail(), "", group.getFunctionalEmail());
-		return buildMailGroupSharingDeleted(mailContainer, manager, tempUser, group, doc);
+		return buildMailGroupSharingDeleted(actor, mailContainer, manager, tempUser, group, doc);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailGroupSharingDeleted(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.User, org.linagora.linShare.core.domain.entities.Group, org.linagora.linShare.core.domain.entities.Document)
 	 */
-	public MailContainer buildMailGroupSharingDeleted(
+	public MailContainer buildMailGroupSharingDeleted(User actor, 
 			MailContainer mailContainer, User manager, User user, Group group, Document doc)
 			throws BusinessException {
-		MailTemplate template1 = buildTemplateGroupSharingDeleted(mailContainer.getLanguage(), doc, manager, group);
+		MailTemplate template1 = buildTemplateGroupSharingDeleted(actor, mailContainer.getLanguage(), doc, manager, group);
 		
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.GROUP_SHARING_DELETED);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.GROUP_SHARING_DELETED);
 		String subjectContent = StringUtils.replace(subject.getContent(), "${groupName}", group.getName());
 		
 		StringBuffer contentTXT = new StringBuffer();
@@ -847,17 +845,17 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentTXT.append(template1.getContentTXT() + "\n");
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), user, null, null);
+		return buildMailContainer(actor, mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), user, null, null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailGroupMembershipStatus(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.GroupMember, org.linagora.linShare.core.domain.entities.Group, org.linagora.linShare.core.domain.entities.GroupMembershipStatus)
 	 */
-	public MailContainer buildMailGroupMembershipStatus(
+	public MailContainer buildMailGroupMembershipStatus(User actor, 
 			MailContainer mailContainer, GroupMember newMember, Group group, GroupMembershipStatus status)
 			throws BusinessException {
-		MailTemplate template1 = buildTemplateGroupMembershipStatus(mailContainer, newMember, group, status);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.MEMBERSHIP_REQUEST_STATUS);
+		MailTemplate template1 = buildTemplateGroupMembershipStatus(actor, mailContainer, newMember, group, status);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.MEMBERSHIP_REQUEST_STATUS);
 
 		String subjectString = StringUtils.replace(subject.getContent(), "${newMemberFirstName}", newMember.getUser().getFirstName());
 		subjectString = StringUtils.replace(subjectString, "${newMemberLastName}", newMember.getUser().getLastName());
@@ -868,17 +866,17 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentTXT.append(template1.getContentTXT() + "\n");
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subjectString, contentTXT.toString(), contentHTML.toString(), newMember.getOwner(), null, null);
+		return buildMailContainer(actor, mailContainer, subjectString, contentTXT.toString(), contentHTML.toString(), newMember.getOwner(), null, null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.core.service.MailContentBuildingService#buildMailNewGroupMember(org.linagora.linShare.core.domain.entities.MailContainer, org.linagora.linShare.core.domain.entities.GroupMember, org.linagora.linShare.core.domain.entities.Group)
 	 */
-	public MailContainer buildMailNewGroupMember(
+	public MailContainer buildMailNewGroupMember(User actor, 
 			MailContainer mailContainer, GroupMember newMember, Group group) 
 			throws BusinessException {
-		MailTemplate template1 = buildTemplateGroupNewMember(mailContainer, newMember, group);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.NEW_GROUP_MEMBER);
+		MailTemplate template1 = buildTemplateGroupNewMember(actor, mailContainer, newMember, group);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.NEW_GROUP_MEMBER);
 		
 		String subjectString = StringUtils.replace(subject.getContent(), "${groupName}", group.getName());
         
@@ -887,39 +885,39 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentTXT.append(template1.getContentTXT() + "\n");
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subjectString, contentTXT.toString(), contentHTML.toString(), newMember.getUser(), null, null);
+		return buildMailContainer(actor, mailContainer, subjectString, contentTXT.toString(), contentHTML.toString(), newMember.getUser(), null, null);
 	}
 	
-	public MailContainer buildMailSharedFileDeleted(
+	public MailContainer buildMailSharedFileDeleted(User actor, 
 			MailContainer mailContainer, Document doc, User owner,
 			Contact receiver)
 			throws BusinessException {
 		User tempUser = new Guest(receiver.getMail(), receiver.getMail(), "", receiver.getMail());
-		return buildMailSharedFileDeleted(mailContainer, doc, owner, tempUser);
+		return buildMailSharedFileDeleted(actor, mailContainer, doc, owner, tempUser);
 	}
 	
-	public MailContainer buildMailSharedFileDeleted(
+	public MailContainer buildMailSharedFileDeleted(User actor, 
 			MailContainer mailContainer, Document doc, User owner, User receiver) 
 			throws BusinessException {
 
-		MailTemplate template1 = buildTemplateSharedFileDeleted(mailContainer.getLanguage(), doc, owner);
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_DELETED);
+		MailTemplate template1 = buildTemplateSharedFileDeleted(actor, mailContainer.getLanguage(), doc, owner);
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_DELETED);
         
 		StringBuffer contentTXT = new StringBuffer();
 		StringBuffer contentHTML = new StringBuffer();
 		contentTXT.append(template1.getContentTXT() + "\n");
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), receiver, null, null);
+		return buildMailContainer(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), receiver, null, null);
 	}
 	
-	public MailContainer buildMailUpcomingOutdatedSecuredUrl(
+	public MailContainer buildMailUpcomingOutdatedSecuredUrl(User actor, 
 			MailContainer mailContainer, SecuredUrl securedUrl,
 			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException {
 
-		MailTemplate template1 = buildTemplateUpcomingOutdatedSecuredUrl(mailContainer.getLanguage(), securedUrl, recipient, days);
-		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), securedUrlWithParam, "");
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPCOMING_OUTDATED);
+		MailTemplate template1 = buildTemplateUpcomingOutdatedSecuredUrl(actor, mailContainer.getLanguage(), securedUrl, recipient, days);
+		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), securedUrlWithParam, "");
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPCOMING_OUTDATED);
         
 		StringBuffer contentTXT = new StringBuffer();
 		StringBuffer contentHTML = new StringBuffer();
@@ -930,17 +928,17 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		User tempUser = new Guest(recipient.getMail(), recipient.getMail(), "", recipient.getMail());
 		
-		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), tempUser, null, null);
+		return buildMailContainer(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), tempUser, null, null);
 	}
 
-	public MailContainer buildMailUpcomingOutdatedShare(
+	public MailContainer buildMailUpcomingOutdatedShare(User actor, 
 			MailContainer mailContainer, Share share, Integer days) throws BusinessException {
 		
 		String linShareUrl = share.getReceiver().getUserType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
 
-		MailTemplate template1 = buildTemplateUpcomingOutdatedShare(mailContainer.getLanguage(), share, days);
-		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, "");
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPCOMING_OUTDATED);
+		MailTemplate template1 = buildTemplateUpcomingOutdatedShare(actor, mailContainer.getLanguage(), share, days);
+		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPCOMING_OUTDATED);
         
 		StringBuffer contentTXT = new StringBuffer();
 		StringBuffer contentHTML = new StringBuffer();
@@ -949,19 +947,19 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		contentHTML.append(template2.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), share.getReceiver(), null, null);
+		return buildMailContainer(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), share.getReceiver(), null, null);
 
 	}
 	
-	public MailContainer buildMailUpcomingOutdatedDocument(
+	public MailContainer buildMailUpcomingOutdatedDocument(User actor, 
 			MailContainer mailContainer, Document document, Integer days)
 			throws BusinessException {
 		
 		String linShareUrl = document.getOwner().getUserType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
 
-		MailTemplate template1 = buildTemplateUpcomingOutdatedFile(mailContainer.getLanguage(), document, days);
-		MailTemplate template2 = buildTemplateFileDownloadURL(mailContainer.getLanguage(), linShareUrl, "");
-		MailSubject subject = getMailSubject(mailContainer.getLanguage(), MailSubjectEnum.DOC_UPCOMING_OUTDATED);
+		MailTemplate template1 = buildTemplateUpcomingOutdatedFile(actor, mailContainer.getLanguage(), document, days);
+		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.DOC_UPCOMING_OUTDATED);
         
 		StringBuffer contentTXT = new StringBuffer();
 		StringBuffer contentHTML = new StringBuffer();
@@ -970,7 +968,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		contentHTML.append(template2.getContentHTML() + "<br />");
 		
-		return buildMailContainer(mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), document.getOwner(), null, null);
+		return buildMailContainer(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), document.getOwner(), null, null);
 
 	}
 }

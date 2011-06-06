@@ -61,6 +61,8 @@
       </key>
       <one-to-many class="org.linagora.linShare.core.domain.entities.Signature"/>
     </set>
+    <many-to-one access="field" lazy="false" class="org.linagora.linShare.core.domain.entities.Domain" column="domain_id" name="domain" />
+    
   
         
     <subclass discriminator-value="0" name="org.linagora.linShare.core.domain.entities.Internal">

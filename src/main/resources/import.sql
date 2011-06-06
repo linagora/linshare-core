@@ -2,11 +2,19 @@ INSERT INTO linshare_messages_configuration (messages_configuration_id) VALUES (
 
 
 -- adding 40 days in expiry time
-INSERT INTO linshare_parameter(parameter_id, file_size_max, user_available_size, global_quota, global_used_quota, active_global_quota, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time, user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id,messages_configuration_id) VALUES (1,10240000,51200000, 0, 0, 'false','false','false','false','false','40','0', '100', '0', 1);
+INSERT INTO linshare_parameter(parameter_id, identifier, file_size_max, user_available_size, global_quota, global_used_quota, active_global_quota, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time, user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id,messages_configuration_id, closed_domain, restricted_domain, domain_with_guests, guest_can_create_other) VALUES (1, 'baseParam', 10240000,51200000, 0, 0, 'false','false','false','false','false','40','0', '100', '0', 1, 'false', 'false', 'true', 'true');
 
--- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (1, 0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 1, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');
-INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');
+
+INSERT INTO linshare_ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'baseLDAP', 'ldap://localhost:33389', 'anonymous', '', '');
+
+INSERT INTO linshare_domain_pattern(domain_pattern_id, identifier, description, get_user_command, get_all_domain_users_command, auth_command, search_user_command, get_user_result) VALUES (1, 'basePattern', '', 'ldap.entry("uid=" + userId + ",ou=People," + domain, "objectClass=*");', 'ldap.list("ou=People," + domain, "(&(objectClass=*)(mail=*)(givenName=*)(sn=*))");', 'ldap.list("ou=People," + domain, "(&(objectClass=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");', 'ldap.list("ou=People," + domain, "(&(objectClass=*)(mail="+mail+")(givenName="+firstName+")(sn="+lastName+"))");', 'mail givenName sn');
+
+INSERT INTO linshare_domain(domain_id, identifier, differential_key, domain_pattern_id, ldap_connection_id, parameter_id) VALUES (1, 'baseDomain', 'dc=linpki,dc=org', 1, 1, 1);
+
+INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (1, 0, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');
+
+INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 'root@localhost.localdomain', '', '', 'root@localhost.localdomain', '2009-01-01', 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'false','false');
+
 
 -- LOCALE en
 -- Mail subjects
