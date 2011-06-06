@@ -45,11 +45,13 @@
          <constructor-arg ref="documentTransformer" />
          <constructor-arg value="${linshare.info.url.base}" />
          <constructor-arg value="${linshare.info.url.internal}" />
+         <constructor-arg ref="domainService" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linShare.core.Facade.impl.ShareExpiryDateFacadeImpl">
-       	 <constructor-arg ref="shareExpiryDateService"/>
        	 <constructor-arg ref="documentRepository"/>
+       	 <constructor-arg ref="shareExpiryDateService"/>
+       	 <constructor-arg ref="userRepository"/>
    	  </bean>
    	  
    	  <bean name="securedUrlFacade" class="org.linagora.linShare.core.Facade.impl.SecuredUrlFacadeImpl">
@@ -79,6 +81,7 @@
    	  
    	  <bean name="parameterFacade" class="org.linagora.linShare.core.Facade.impl.ParameterFacadeImpl">
        	 <constructor-arg ref="parameterService"/>
+       	 <constructor-arg ref="parameterRepository"/>
    	  </bean>
    	  
    	  <bean name="logEntryFacade" class="org.linagora.linShare.core.Facade.impl.LogEntryFacadeImpl">
@@ -97,6 +100,13 @@
        	 <constructor-arg ref="userService"/>
        	 <constructor-arg ref="groupService"/>
        	 <constructor-arg ref="groupTransformer"/>
+   	  </bean>
+       
+      <bean name="domainFacade" class="org.linagora.linShare.core.Facade.impl.DomainFacadeImpl">
+   	  	 <constructor-arg ref="domainService"/>
+       	 <constructor-arg ref="domainTransformer"/>
+       	 <constructor-arg ref="userService"/>
+         <constructor-arg ref="ldapQueryService"/>
    	  </bean>
        
        
@@ -154,5 +164,12 @@
 	 <bean name="groupTransformer" class="org.linagora.linShare.core.domain.transformers.impl.GroupTransformer" >
 	 	<constructor-arg ref="userTransformer"/>
 	 	<constructor-arg ref="groupRepository"/>
+	 </bean>
+	 
+	 <bean name="domainTransformer" class="org.linagora.linShare.core.domain.transformers.impl.DomainTransformer" >
+	 	<constructor-arg ref="parameterTransformer"/>
+	 </bean>
+	 
+	 <bean name="parameterTransformer" class="org.linagora.linShare.core.domain.transformers.impl.ParameterTransformer" >
 	 </bean>
 </beans>

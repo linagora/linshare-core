@@ -21,10 +21,8 @@
 package org.linagora.linShare.core.repository;
 
 import org.linagora.linShare.core.domain.entities.Parameter;
-import org.linagora.linShare.core.exception.BusinessException;
 
 public interface ParameterRepository extends AbstractRepository<Parameter> {
 	
-	public Parameter loadConfig();
-	public void createConfig(Parameter params) throws  BusinessException;
+	public Parameter loadConfig(String identifier);
 } 

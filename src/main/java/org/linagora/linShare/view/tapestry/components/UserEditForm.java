@@ -30,7 +30,6 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
@@ -38,15 +37,17 @@ import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.view.tapestry.beans.SelectableRole;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
@@ -90,11 +91,11 @@ public class UserEditForm {
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-    @ApplicationState
+    @SessionState
     @Property
     private UserVo userLoggedIn;
 
-    @ApplicationState
+    @SessionState
     private ShareSessionObjects shareSessionObjects;
 
     @Environmental
@@ -116,7 +117,7 @@ public class UserEditForm {
     private boolean createGuestGranted;
 
     @Property
-    private Role role;
+    private SelectableRole role;
     
     @Property
     private UserType usertype;
@@ -140,6 +141,9 @@ public class UserEditForm {
 	@Persist
 	private String intialContacts;
 
+    @Inject
+    private PropertyAccess access;
+    
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
@@ -167,7 +171,7 @@ public class UserEditForm {
 	    		lastName = currentUser.getLastName();
 	    		uploadGranted = currentUser.isUpload();
 	    		createGuestGranted = currentUser.isCreateGuest();
-	    		role = currentUser.getRole();
+	    		role = SelectableRole.fromRole(currentUser.getRole());
 	    		usertype = currentUser.getUserType();
 	    		userGuest = usertype.equals(UserType.GUEST); //to set friendly title on account
 	    		restrictedEditGuest = currentUser.isRestricted();
@@ -199,7 +203,7 @@ public class UserEditForm {
     }
     
     
-	public List<String> onProvideCompletionsFromRecipientsPatternEditForm(String input) {
+	public List<String> onProvideCompletionsFromRecipientsPatternEditForm(String input) throws BusinessException {
 		List<UserVo> searchResults = performSearch(input);
 
 		List<String> elements = new ArrayList<String>();
@@ -234,12 +238,17 @@ public class UserEditForm {
 				}
 			}
 		}
+		
+		try {
 
-        if (input != null) {
-            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userLoggedIn));
-        }
-		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userLoggedIn));
-		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userLoggedIn));
+	        if (input != null) {
+	            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userLoggedIn));
+	        }
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userLoggedIn));
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userLoggedIn));
+		} catch (BusinessException e) {
+			logger.error("Error while trying to perform user search", e);
+		}
 		
 		return new ArrayList<UserVo>(userSet);
 	}
@@ -293,11 +302,11 @@ public class UserEditForm {
     public void onSuccessFromUserForm() {
 
         try {
-        	if(userGuest)        	
-            userFacade.updateGuest(mail, firstName, lastName, uploadGranted,createGuestGranted,userLoggedIn);
-        	else
-        	userFacade.updateUser(mail, role, userLoggedIn);
-        	
+        	if(userGuest) {    	
+        		userFacade.updateGuest(mail, firstName, lastName, uploadGranted,createGuestGranted,userLoggedIn);
+        	} else {
+        		userFacade.updateUser(mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
+        	}
         } catch (BusinessException e) {
             // should never occur.
             logger.error(e.toString());
@@ -306,7 +315,7 @@ public class UserEditForm {
 		if (userGuest) {
 			if (userLoggedIn.isRestricted()) restrictedEditGuest = true; //restricted guests can only manage restricted guests
 			try {
-				UserVo guest = userFacade.findUser(mail);
+				UserVo guest = userFacade.findUser(mail, userLoggedIn.getDomainIdentifier());
 				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
 					userFacade.setGuestContactRestriction(mail, recipientsEmail);
 				}

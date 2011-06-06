@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,17 +31,18 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.enums.DocumentType;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -77,7 +76,9 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 	
 	private final Marshaller xstreamMarshaller;
 
-        private final MailContainerBuilder mailContainerBuilder;
+    private final MailContainerBuilder mailContainerBuilder;
+    
+    private final DomainFacade domainFacade;
 	
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 	
@@ -88,7 +89,8 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			final MyMultipartDecoder myMultipartDecoder,
 			final PropertiesSymbolProvider propertiesSymbolProvider,
 			final Marshaller xstreamMarshaller,
-                        final MailContainerBuilder mailContainerBuilder) {
+            final MailContainerBuilder mailContainerBuilder,
+            final DomainFacade domainFacade) {
 		super();
 		this.applicationStateManager = applicationStateManager;
 		this.searchDocumentFacade = searchDocumentFacade;
@@ -97,7 +99,8 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		this.xstreamMarshaller = xstreamMarshaller;
 		this.myMultipartDecoder = myMultipartDecoder;
 		this.propertiesSymbolProvider = propertiesSymbolProvider;
-                this.mailContainerBuilder = mailContainerBuilder;              
+        this.mailContainerBuilder = mailContainerBuilder;
+        this.domainFacade = domainFacade;        
 	}
 	
 
@@ -259,11 +262,17 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		
 		long maxFileSize = -1;
 		try {
-			maxFileSize = parameterFacade.loadConfig().getFileSizeMax();
+	        ParameterVo parameterVo = domainFacade.retrieveDomain(actor.getDomainIdentifier()).getParameterVo();
+			maxFileSize = parameterVo.getFileSizeMax();
 		} catch (BusinessException e1) {
 			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load parameters");
 		}
-		long userFreeSpace = documentFacade.getUserAvailableQuota(actor);
+		long userFreeSpace = 0;
+		try {
+			userFreeSpace = documentFacade.getUserAvailableQuota(actor);
+		} catch (BusinessException e1) {
+			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load user available quota");
+		}
 		
 		if (maxFileSize > 0 && theFile.getSize() > maxFileSize) {
 			response.sendError(HttpStatus.SC_METHOD_FAILURE, "The file is larger than the maximum allowed");
@@ -484,7 +493,12 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			return;
 		}
 
-        Long freeSpace = documentFacade.getUserAvailableQuota(actor);
+        Long freeSpace = 0L;
+		try {
+			freeSpace = documentFacade.getUserAvailableQuota(actor);
+		} catch (BusinessException e) {
+			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load free space");
+		}
 
 		String xml = xstreamMarshaller.toXml(freeSpace);
 		OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
@@ -496,9 +510,17 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 
 	@RestfulWebMethod
     public void getMaxFileSize(Request request, Response response) throws IOException {
+		UserVo actor = applicationStateManager.getIfExists(UserVo.class);
+
+		if (actor== null) {
+			response.sendError(HttpStatus.SC_UNAUTHORIZED, "You are not authorized to use this service");
+			return;
+		}
+        
         Long maxFileSize = null;
         try {
-            maxFileSize = parameterFacade.loadConfig().getFileSizeMax();
+        	ParameterVo parameterVo = domainFacade.retrieveDomain(actor.getDomainIdentifier()).getParameterVo();
+            maxFileSize = parameterVo.getFileSizeMax();
         } catch (BusinessException ex) {
 			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load parameters");
         }

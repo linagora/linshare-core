@@ -54,6 +54,15 @@ public class MailTemplate {
 		this.mailTemplate = mailTemplate.getMailTemplate();
 	}
 
+	public MailTemplate(MailTemplateEnum mailTemplate, String contentHTML,
+			String contentTXT, Language language) {
+		super();
+		this.mailTemplate = mailTemplate;
+		this.contentTXT = contentTXT;
+		this.contentHTML = contentHTML;
+		this.language = language;
+	}
+
 	public MailTemplateEnum getMailTemplate() {
 		return mailTemplate;
 	}

@@ -39,10 +39,6 @@
 
 			
 			<div class="align-with-number">
-			<t:if test="guestsAllowedToCreateGuest">
-			 	<t:label for="createGuestGranted" class="edit-form-label">${message:pages.user.edit.createGuestGranted}</t:label>
-				<t:checkbox t:id="createGuestGranted" class="edit-form-checkbox"/>
-			</t:if>
 			<t:if test="userLoggedIn.restricted" negate="true">
 				<br/>
 				<t:label for="restrictedGuest" class="edit-form-label">${message:pages.user.edit.restrictedGuest}</t:label>

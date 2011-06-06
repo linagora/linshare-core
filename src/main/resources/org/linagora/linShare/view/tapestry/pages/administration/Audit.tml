@@ -69,6 +69,18 @@
 								<t:textfield t:id="actorLastname" t:value="criteria.actorLastname"/>
 							</td>
 						</tr>
+						<t:if test="superadmin">
+						<tr>
+							<td align="right" valign="top" class="palette" width="150">
+								<span>
+									${message:pages.administration.audit.form.actorDomain}
+								</span>
+							</td>
+							<td>
+								<t:select t:id="actorDomainSelect" t:value="criteria.actorDomain" t:model="domains" />
+							</td>
+						</tr>
+						</t:if>
 					</table>
 				</fieldset>
 
@@ -105,6 +117,18 @@
 								<t:textfield t:id="targetLastname" t:value="criteria.targetLastname"/>
 							</td>
 						</tr>
+						<t:if test="superadmin">
+						<tr>
+							<td align="right" valign="top" class="palette" width="150">
+								<span>
+									${message:pages.administration.audit.form.targetDomain}
+								</span>
+							</td>
+							<td>
+								<t:select t:id="targetDomainSelect" t:value="criteria.targetDomain" t:model="domains" />
+							</td>
+						</tr>
+						</t:if>
 					</table>
 				</fieldset>
 				
@@ -252,6 +276,10 @@
 					</t:parameter>
 					
 					<!-- Grid : Cell -->
+					
+					<t:parameter name="actionDateCell">
+						${actionDate}
+					</t:parameter>
 
 					<t:parameter name="actorMailCell">
 						<span t:type="ck/Tooltip" title="message:pages.administration.audit.result.actorMailTooltip" 

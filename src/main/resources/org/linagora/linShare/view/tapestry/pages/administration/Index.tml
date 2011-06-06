@@ -9,6 +9,7 @@
 		<h1>${message:components.myborderlayout.administration.title}</h1>
 		<!-- Action bar -->
 
+			<t:if test="noDomain" negate="true">
 		<div id="actionBar">
 			<h4>Actions</h4>
 			<ul>
@@ -17,9 +18,14 @@
 				</li>
 			</ul>
 		</div><!-- id="actionBar" -->
+		</t:if>
 		<t:messagePanel />	
 		
 		<div id="pageContent">
+			<t:if test="noDomain">
+				${message:pages.administration.index.noDomain.info}
+			</t:if>
+			<t:if test="noDomain" negate="true">
 
 			<div id="version"><strong>${message:global.version.label} </strong> <code>${version}</code></div>
 				
@@ -155,6 +161,28 @@
 						</tr>
 					</table>
 					<br/>
+					<table class="forForms">
+						<tr>
+							<td colspan="2"><h2>${message:pages.administration.index.domain.title}</h2></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="closedDomain" class="edit-form-label">${message:pages.administration.index.closedDomain}</t:label></td>
+							<td class="input"><t:checkbox t:id="closedDomain" class="edit-form-field"/></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="restrictedDomain" class="edit-form-label">${message:pages.administration.index.restrictedDomain}</t:label></td>
+							<td class="input"><t:checkbox t:id="restrictedDomain" class="edit-form-field"/></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="domainWithGuests" class="edit-form-label">${message:pages.administration.index.domainWithGuests}</t:label></td>
+							<td class="input"><t:checkbox t:id="domainWithGuests" class="edit-form-field" /></td>
+						</tr>
+						<tr>
+							<td class="label"><t:label for="guestsCanCreateOther" class="edit-form-label">${message:pages.administration.index.guestsCanCreateOther}</t:label></td>
+							<td class="input"><t:checkbox t:id="guestsCanCreateOther" class="edit-form-field" /></td>
+						</tr>
+					</table>
+					<br/>
 					<div class="button">
 						<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
 					</div>
@@ -168,9 +196,23 @@
 					</div>
 				</t:if>
 				<br />
-
+		</t:if>
 		</div>
 
 	</div><!-- id="content" -->
+	
+	
+	
+	<!-- Actions widget -->
+	<t:parameter name="actionsWidget">
+		<t:if test="superadmin">
+			<t:widget widgetId="actionsWidget" title="${message:pages.administration.index.domainSelector.title}">
+				<t:form t:id="updateDomain">
+					<t:select t:id="domainSelect" t:value="selectedDomain" t:model="domains" t:encoder="valueEncoder" blankOption="never" />
+					<t:submit value="${message:global.button.validate}"/>
+				</t:form>
+			</t:widget>
+		</t:if>
+	</t:parameter>
 
 </t:MyBorderLayout>

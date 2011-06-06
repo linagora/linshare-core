@@ -54,6 +54,14 @@
 
     <t:parameter name="menuBar">
         <div id="menuBar">
+        	<t:if t:test="superadmin">
+        		 <t:Menu t:title="Navigation"
+                        t:links="user/index;administration/index;administration/domains/index;administration/audit;help/index"
+                        t:labels="${message:components.myborderlayout.user.title};${message:components.myborderlayout.administration.title};${message:components.myborderlayout.administration.domains.title};${message:components.myborderlayout.audit.title};${message:components.myborderlayout.help.title}"
+                        t:alternateStyle="false" t:highlights="user;administration;domains;audit;help" t:currentHighlight="${currentHighlight}" />
+        	
+        	
+        	<t:parameter name="else">
             <t:if t:test="admin">
             	<t:if t:test="securedStorageDisallowed">
                 <t:Menu t:title="Navigation"
@@ -97,6 +105,8 @@
                     </t:if>
                 </t:if>
             </t:if>
+            </t:parameter>
+            </t:if>
         </div>
     </t:parameter>
 
@@ -111,7 +121,9 @@
 	<t:parameter name="right">
 		<div id="sideBar">
 			<t:if t:test="userVoExists">
+				<t:if t:test="superadmin" negate="true">
 				<t:infoComponent />
+				</t:if>
 			</t:if>
 			<t:delegate to="searchWidget" />
 			<t:delegate to="actionsWidget" />

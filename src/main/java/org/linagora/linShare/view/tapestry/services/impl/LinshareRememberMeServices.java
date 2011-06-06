@@ -58,7 +58,7 @@ public class LinshareRememberMeServices extends
 		if (httpCookies != null && httpCookies.length > 0) {
 			for (javax.servlet.http.Cookie cookie : httpCookies) {
 				if (cookie.getName().equals(
-						this.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY)) {
+						SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY)) {
 					httpCookieValue = cookie.getValue();
 					break;
 				}
@@ -67,12 +67,11 @@ public class LinshareRememberMeServices extends
 		if (httpCookieValue != null) {
 			List<Cookie> linshareCookies = null;
 			
-			String userName = authentication.getName();
-			
-			if (userName != null && userName.length() > 0)
-				linshareCookies = cookieRepository.findByUserName(userName);
-			else
+			if (authentication != null && authentication.getName() != null && authentication.getName().length() > 0) {
+				linshareCookies = cookieRepository.findByUserName(authentication.getName());
+			} else {
 				linshareCookies = cookieRepository.findAll();
+			}
 			
 			/*
 			 * A login can match more than one cookie in database

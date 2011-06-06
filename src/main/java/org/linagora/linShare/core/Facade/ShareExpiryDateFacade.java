@@ -24,8 +24,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 
 public interface ShareExpiryDateFacade {
-	public Calendar computeShareExpiryDate(DocumentVo docVo);
-	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo);
+	public Calendar computeShareExpiryDate(DocumentVo docVo, UserVo owner);
+	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo, UserVo owner);
 }

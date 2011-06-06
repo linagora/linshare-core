@@ -33,6 +33,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -60,19 +61,23 @@ public class UserRestServiceImpl implements UserRestService {
 	
 	private final MailContainerBuilder mailContainerBuilder;
 	
+	private final DomainFacade domainFacade;
+	
 	private static final Logger logger = LoggerFactory.getLogger(UserRestServiceImpl.class);
 
 	public UserRestServiceImpl(final ApplicationStateManager applicationStateManager,
 			final UserFacade userFacade,
 			final PropertiesSymbolProvider propertiesSymbolProvider,
 			final Marshaller xstreamMarshaller,
-			final MailContainerBuilder mailContainerBuilder) {
+			final MailContainerBuilder mailContainerBuilder,
+			final DomainFacade domainFacade) {
 		super();
 		this.applicationStateManager = applicationStateManager;
 		this.userFacade = userFacade;
 		this.propertiesSymbolProvider = propertiesSymbolProvider;
 		this.xstreamMarshaller = xstreamMarshaller;
 		this.mailContainerBuilder = mailContainerBuilder;
+		this.domainFacade = domainFacade;
 	}
 
 	@RestfulWebMethod
@@ -87,6 +92,16 @@ public class UserRestServiceImpl implements UserRestService {
 		}
 		
 		if (actor.isGuest()) {
+			response.sendError(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
+			return;
+		}
+		
+		try {
+			if (!domainFacade.userCanCreateGuest(actor)) {
+				response.sendError(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
+				return;
+			}
+		} catch (BusinessException e1) {
 			response.sendError(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
 			return;
 		}
@@ -154,7 +169,15 @@ public class UserRestServiceImpl implements UserRestService {
         	return;
         }
         
-        UserVo user = userFacade.findUser(mail);    
+        UserVo user = null;
+		try {
+			user = userFacade.findUser(mail, actor.getDomainIdentifier());
+		} catch (BusinessException e) {
+        	logger.error(e.toString());
+        	response.setHeader("BusinessError", e.getErrorCode().getCode()+"");
+        	response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load the user " + e.getMessage());
+        	return;
+		}    
         
         String xml = xstreamMarshaller.toXml(user);
 		
@@ -187,7 +210,13 @@ public class UserRestServiceImpl implements UserRestService {
 		}
 		
 		// fetch the target		
-		UserVo user = userFacade.findUser(mail);
+		UserVo user = null;
+		try {
+			user = userFacade.findUser(mail, actor.getDomainIdentifier());
+		} catch (BusinessException e) {
+			response.sendError(HttpStatus.SC_NOT_FOUND, "User not found");
+			return;
+		}
 	
 		if (user == null) {
 			response.sendError(HttpStatus.SC_NOT_FOUND, "User not found");
@@ -234,9 +263,14 @@ public class UserRestServiceImpl implements UserRestService {
 		}
 
 		Set<UserVo> userSet = new HashSet<UserVo>();
-        userSet.addAll(userFacade.searchUser(mail.trim(), null, null, actor));
-		userSet.addAll(userFacade.searchUser(null, firstName, lastName, actor));
-		userSet.addAll(userFacade.searchUser(null, lastName, firstName, actor));
+        try {
+			userSet.addAll(userFacade.searchUser(mail.trim(), null, null, actor));
+			userSet.addAll(userFacade.searchUser(null, firstName, lastName, actor));
+			userSet.addAll(userFacade.searchUser(null, lastName, firstName, actor));
+		} catch (BusinessException e) {
+			response.sendError(HttpStatus.SC_NOT_FOUND, "User domain not found");
+			return;
+		}
 		
 		
 		List<UserVo> listUser =  new ArrayList<UserVo>(userSet);

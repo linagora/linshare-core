@@ -28,6 +28,7 @@ import org.linagora.linShare.core.domain.transformers.impl.DisplayableLogEntryTr
 import org.linagora.linShare.core.domain.transformers.impl.LogEntryTransformer;
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.domain.vo.LogEntryVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
 
@@ -57,8 +58,8 @@ public class LogEntryFacadeImpl implements LogEntryFacade {
 		return logEntryTransformer.disassembleList(logEntryRepository.findByUser(mail));
 	}
 
-	public List<DisplayableLogEntryVo> findByCriteria(LogCriteriaBean criteria) {
-		return displayableLogEntryTransformer.disassembleList(logEntryRepository.findByCriteria(criteria));
+	public List<DisplayableLogEntryVo> findByCriteria(LogCriteriaBean criteria, UserVo actor) {
+		return displayableLogEntryTransformer.disassembleList(logEntryRepository.findByCriteria(criteria, actor.getDomainIdentifier()));
 	}
 
 }

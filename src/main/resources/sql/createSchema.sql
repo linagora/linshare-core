@@ -1,4 +1,10 @@
 
+    create table linshare_messages_configuration (
+        messages_configuration_id int8 not null,
+        primary key (messages_configuration_id)
+    );
+
+
     create table linshare_allowed_mimetype (
         id int8 not null,
         extensions varchar(255),
@@ -51,6 +57,11 @@
         default_file_expiry_time int4,
         default_file_expiry_time_unit_id int4,
         delete_doc_expiry_time bool default false,
+	closed_domain bool default false,
+	restricted_domain bool default false,
+	domain_with_guests bool default true,
+	guest_can_create_other bool default true,
+	messages_configuration_id int8 not null,
         primary key (parameter_id)
     );
 
@@ -119,7 +130,7 @@
         size int8,
         cert_subjectdn varchar(255),
         cert_issuerdn varchar(255),
-        cert_notafter timestamp,
+        cert_notafter timestamp,l
         cert text,
         signer_id int8,
         document_id_fk int8,
@@ -130,6 +141,7 @@
     create table linshare_user (
         user_id int8 not null,
         user_type_id varchar(255) not null,
+	domain_id int8,
         login varchar(255) not null unique,
         first_name varchar(255) not null,
         last_name varchar(255) not null,
@@ -149,7 +161,7 @@
     );
 
     create table linshare_welcome_texts (
-        parameter_id int8 not null,
+        messages_configuration_id int8 not null,
         welcome_text text,
         user_type_id int4,
         language_id int4
@@ -162,6 +174,7 @@
         actor_mail varchar(255) not null,
         actor_firstname varchar(255) not null,
         actor_lastname varchar(255) not null,
+        actor_domain varchar(255),
         log_action varchar(255) not null,
         description varchar(255),
         file_name varchar(255),
@@ -170,6 +183,7 @@
         target_mail varchar(255),
         target_firstname varchar(255),
         target_lastname varchar(255),
+        target_domain varchar(255),
         expiration_date timestamp,
         primary key (id)
     );
@@ -350,11 +364,11 @@
 
     alter table linshare_welcome_texts 
         add constraint FK36A0C738A44B78EB 
-        foreign key (parameter_id) 
-        references linshare_parameter;
+        foreign key (messages_configuration_id) 
+        references linshare_messages_configuration;
         
     create table linshare_mail_templates (
-        parameter_id int8 not null,
+        messages_configuration_id int8 not null,
         template_id int4 not null,
         language_id int4 not null,
         content_html text,
@@ -362,21 +376,75 @@
     );
 
     create table linshare_mail_subjects (
-        parameter_id int8 not null,
+        messages_configuration_id int8 not null,
         subject_id int4 not null,
         language_id int4 not null,
         content text
     );
 
-    alter table linshare_mail_templates 
-        add constraint FDD6A0CABCA44B78EB 
+    create table linshare_ldap_connection (
+	ldap_connection_id int8 not null, 
+	identifier varchar(255) not null unique, 
+	provider_url varchar(255), 
+	security_auth varchar(255), 
+	security_principal varchar(255), 
+	security_credentials varchar(255),
+        primary key (ldap_connection_id)
+    );
+
+    create index index_ldap_connection on linshare_ldap_connection (identifier);
+
+    create table linshare_domain_pattern (
+	domain_pattern_id int8 not null, 
+	identifier varchar(255) not null unique, 
+	description varchar(255), 
+	get_user_command varchar(255), 
+	get_all_domain_users_command varchar(255), 
+	auth_command varchar(255), 
+	search_user_command varchar(255), 
+	get_user_result varchar(255),
+        primary key (domain_pattern_id)
+    );
+
+    create index index_domain_pattern on linshare_domain_pattern (identifier);
+
+    create table linshare_domain (
+	domain_id int8 not null,
+	identifier varchar(255),
+	differential_key varchar(255),
+	domain_pattern_id int8 not null,
+	ldap_connection_id int8 not null,
+	parameter_id int8 not null,
+        primary key (domain_id)
+    );
+
+    create index index_domain on linshare_domain (identifier);
+
+    alter table linshare_domain 
+        add constraint FAA6A0CAAAA44B78EB 
+        foreign key (domain_pattern_id) 
+        references linshare_domain_pattern;
+
+    alter table linshare_domain 
+        add constraint FBB6A0CABBB44B78EB 
+        foreign key (ldap_connection_id) 
+        references linshare_ldap_connection;
+
+    alter table linshare_domain 
+        add constraint FCC6A0CABCACCB78EB 
         foreign key (parameter_id) 
         references linshare_parameter;
+
+
+    alter table linshare_mail_templates 
+        add constraint FDD6A0CABCA44B78EB 
+        foreign key (messages_configuration_id) 
+        references linshare_messages_configuration;
         
     alter table linshare_mail_subjects 
         add constraint FDD6CCCABCA44789EB 
-        foreign key (parameter_id) 
-        references linshare_parameter;
+        foreign key (messages_configuration_id) 
+        references linshare_messages_configuration;
 
     create index index_userlog_entry_target_mail on public.linshare_log_entry (target_mail);
 
@@ -385,6 +453,8 @@
     create index index_log_entry_actor_first_name on public.linshare_log_entry (actor_firstname);
 
     create index index_log_entry_actor_mail on public.linshare_log_entry (actor_mail);
+
+    create index index_log_entry_actor_domain on public.linshare_log_entry (actor_domain);
 
     create index index_log_entry_action_date on public.linshare_log_entry (action_date);
 
@@ -396,6 +466,21 @@
 
     create index index_filelog_entry_file_name on public.linshare_log_entry (file_name);
 
+    
+
+    alter table linshare_user 
+        add constraint FK56DFC97C6F5F97F1 
+        foreign key (domain_id) 
+        references linshare_domain;
+
+
+    alter table linshare_parameter 
+        add constraint FA56DAC97C6F5FA7F1 
+        foreign key (messages_configuration_id) 
+        references linshare_messages_configuration;
+
+
+
     create sequence hibernate_sequence;
 
-    insert into linshare_version (id, description) values (8, 'LinShare version 0.8');
+    insert into linshare_version (id, description) values (9, 'LinShare version 0.9');

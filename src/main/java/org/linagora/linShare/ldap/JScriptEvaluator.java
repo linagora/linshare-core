@@ -148,7 +148,6 @@ public final class JScriptEvaluator {
 	public static Map<String, List<String>> evalToEntryMap(final Domain domain, final String expression,
 					final Map<String, Object> params) {
 		Object result = getInstance(domain).instanceEval(expression, domain, params);
-		System.out.println(result);
 		try {
 			return (Map<String, List<String>>) Context.jsToJava(result, Map.class);
 		} catch (Exception e) {

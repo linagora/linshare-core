@@ -31,6 +31,7 @@ import org.springframework.ldap.core.support.SimpleDirContextAuthenticationStrat
 
 /**
  * This factory returns an instance of DirContextAuthenticationStrategy
+ * @deprecated not used anymore since domain implementation
  */
 public class DirContextAuthenticationStrategyFactory {
 

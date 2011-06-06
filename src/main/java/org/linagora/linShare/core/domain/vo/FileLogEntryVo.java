@@ -33,9 +33,11 @@ public class FileLogEntryVo extends LogEntryVo {
 	private final String fileType;
 
 	public FileLogEntryVo(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, LogAction logAction,
+			String actorFirstname, String actorLastname, String actorDomain,
+			LogAction logAction,
 			String description, String fileName, Long fileSize, String fileType) {
-		super(actionDate, actorMail, actorFirstname, actorLastname, logAction,
+		super(actionDate, actorMail, actorFirstname, actorLastname, actorDomain,
+				logAction,
 				description);
 		this.fileName = fileName;
 		this.fileSize = fileSize;

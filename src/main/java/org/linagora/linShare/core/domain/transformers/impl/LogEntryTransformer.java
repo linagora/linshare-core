@@ -44,6 +44,7 @@ public class LogEntryTransformer implements Transformer<LogEntry, LogEntryVo> {
 		if (entityObject instanceof ShareLogEntry) {
 			return new ShareLogEntryVo(entityObject.getActionDate(), entityObject.getActorMail(),
 					entityObject.getActorFirstname(), entityObject.getActorLastname(),
+					entityObject.getActorDomain(),
 					entityObject.getLogAction(), entityObject.getDescription(),
 					((ShareLogEntry)entityObject).getFileName(), ((ShareLogEntry)entityObject).getFileSize(),
 					((ShareLogEntry)entityObject).getFileType(),
@@ -53,6 +54,7 @@ public class LogEntryTransformer implements Transformer<LogEntry, LogEntryVo> {
 		if (entityObject instanceof FileLogEntry) {
 			return new FileLogEntryVo(entityObject.getActionDate(), entityObject.getActorMail(),
 					entityObject.getActorFirstname(), entityObject.getActorLastname(),
+					entityObject.getActorDomain(),
 					entityObject.getLogAction(), entityObject.getDescription(),
 					((FileLogEntry)entityObject).getFileName(), ((FileLogEntry)entityObject).getFileSize(),
 					((FileLogEntry)entityObject).getFileType());
@@ -60,6 +62,7 @@ public class LogEntryTransformer implements Transformer<LogEntry, LogEntryVo> {
 		if (entityObject instanceof UserLogEntry) {
 			return new UserLogEntryVo(entityObject.getActionDate(), entityObject.getActorMail(),
 					entityObject.getActorFirstname(), entityObject.getActorLastname(),
+					entityObject.getActorDomain(),
 					entityObject.getLogAction(), entityObject.getDescription(),
 					((UserLogEntry)entityObject).getTargetMail(), ((UserLogEntry)entityObject).getTargetFirstname(),
 					((UserLogEntry)entityObject).getTargetLastname(), ((UserLogEntry)entityObject).getExpirationDate());

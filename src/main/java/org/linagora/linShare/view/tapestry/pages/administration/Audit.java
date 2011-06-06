@@ -21,6 +21,7 @@
 package org.linagora.linShare.view.tapestry.pages.administration;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,13 +30,14 @@ import java.util.List;
 
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
@@ -43,11 +45,13 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
-import org.hibernate.criterion.MatchMode;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.LogEntryFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -62,10 +66,12 @@ public class Audit {
 	@Inject 
 	private Logger logger;
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
+    @SessionState
+    private UserVo userLoggedIn;
 	
 	/* ***********************************************************
 	 *                Injected services 
@@ -135,6 +141,17 @@ public class Audit {
 	@Persist
 	private LogCriteriaBean criteria;
 	
+	@Persist
+	@Property
+	private List<String> domains;
+	
+	@Inject
+	private DomainFacade domainFacade;
+	
+	@Property
+	@Persist
+	private boolean superadmin;
+	
 	
 	/* ***********************************************************
 	 *                       Phase processing
@@ -143,6 +160,12 @@ public class Audit {
 	/* ***********************************************************
 	 *                   Event handlers&processing
 	 ************************************************************ */	
+	
+	@SetupRender
+	public void init() throws BusinessException {
+		domains = domainFacade.getAllDomainIdentifiers();
+		superadmin = userLoggedIn.isSuperAdmin();
+	}
 	
 	public void onActivate() {
 		logActionEncoder = new EnumValueEncoder<LogAction>(LogAction.class);
@@ -189,7 +212,7 @@ public class Audit {
 			criteria.setTargetMails(Arrays.asList(targetListMails.split(",")));
 		}
 
-		logEntries = logEntryFacade.findByCriteria(criteria);
+		logEntries = logEntryFacade.findByCriteria(criteria, userLoggedIn);
 		displayGrid = true;
 
 		if (generateCsv) {
@@ -211,7 +234,19 @@ public class Audit {
 	 * @return list the list of string matched by value.
 	 */
 	public List<String> onProvideCompletionsFromActorMails(String value){
-		return userFacade.findMails(value);
+		List<String> res = new ArrayList<String>();
+		try {
+			List<UserVo> founds = userFacade.searchUser(value, null, null, userLoggedIn, userLoggedIn.isSuperAdmin());
+
+			if (founds != null && founds.size() > 0) {
+				for (UserVo userVo : founds) {
+					res.add(userVo.getMail());
+				}
+			}
+		} catch (BusinessException e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 	/**
 	 * AutoCompletion for name field.
@@ -219,7 +254,7 @@ public class Audit {
 	 * @return list the list of string matched by value.
 	 */
 	public List<String> onProvideCompletionsFromTargetMails(String value){
-		return userFacade.findMails(value);
+		return onProvideCompletionsFromActorMails(value);
 	}
 
 	/* ***********************************************************
@@ -299,6 +334,11 @@ public class Audit {
 		if (logEntry.getFileSize()==null)
 			return "";
 		return FileUtils.getFriendlySize(logEntry.getFileSize(), messages);
+	}
+	
+	public String getActionDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(logEntry.getActionDate().getTime());
 	}
 
     public Object onActionFromPersonalHistory() {

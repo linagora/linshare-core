@@ -108,7 +108,7 @@ public interface DocumentService {
 	 * @return 
 	 * 
 	 */
-	public long getAvailableSize(User user);
+	public long getAvailableSize(User user) throws BusinessException;
 	
 	/**
 	 * Return in byte the user quota
@@ -117,7 +117,7 @@ public interface DocumentService {
 	 * @return 
 	 * 
 	 */
-	public long getTotalSize(User user);	
+	public long getTotalSize(User user) throws BusinessException;	
 		
 
 	/**

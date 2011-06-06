@@ -47,7 +47,7 @@ public interface UserService {
      * @throws BusinessException in case of duplicated guest.
      */
     Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment, 
-    		MailContainer mailContainer, String ownerLogin) throws BusinessException;
+    		MailContainer mailContainer, String ownerLogin, String ownerDomain) throws BusinessException;
 
     /**
      * generate the password of a guest (system generated)
@@ -66,7 +66,8 @@ public interface UserService {
      * created by the current User
      * @return a list of matching users.
      */
-    List<User> searchUser(String mail, String firstName, String lastName,UserType userType,User currentUser);
+    List<User> searchUser(String mail, String firstName, String lastName,UserType userType,User currentUser) throws BusinessException;
+    List<User> searchUser(String mail, String firstName, String lastName,UserType userType,User currentUser, boolean multiDomain) throws BusinessException;
     
     
     /** Find a user (based on mail address).
@@ -74,7 +75,10 @@ public interface UserService {
      * @param login user login.
      * @return founded user.
      */
-    public User findUser(String mail);
+    public User findUserInDB(String mail);
+    public List<User> findUsersInDB(String domain);
+    public User findUser(String mail, String domain) throws BusinessException;
+    public User findUser(String mail, String domain, User actor) throws BusinessException;
     
     /** Find a  user (based on mail address).
      * Search first in database, then on ldap if not found.
@@ -84,7 +88,8 @@ public interface UserService {
      * @throws BusinessException if the user could not be found
      * @throws TechnicalError if the user cannot be created
      */
-    public User findAndCreateUser(String mail) throws BusinessException ;
+    public User findAndCreateUser(String mail, String domainId) throws BusinessException ;
+    public User findAndCreateUserWithoutKnowingDomain(String mail, User owner) throws BusinessException;
     
     /**
      * Delete a User (and all the corresponding share )
@@ -129,13 +134,13 @@ public interface UserService {
 	public void updateUserEnciphermentKey(String mail, byte[] challenge);
 	
 	/**
-	 * change a guest password
+	 * change a guest or superadmin password
 	 * @param login
 	 * @param oldPassword
 	 * @param newPassword
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
-	public void changeGuestPassword(String login, String oldPassword, String newPassword) throws BusinessException;
+	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException;
 	
 	/**
 	 * Reset a guest password
@@ -176,5 +181,5 @@ public interface UserService {
 	 */
 	public List<User> fetchGuestContacts(String login) throws BusinessException;
 
-	public User findUserFromLdapwithUid(String uid);
+	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
 }

@@ -26,20 +26,21 @@ import java.io.InputStream;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
@@ -47,9 +48,7 @@ import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linShare.view.tapestry.services.Templating;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
-import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.slf4j.Logger;
 
 
@@ -83,12 +82,9 @@ public class FileUpdateUploader {
 	
     @Inject
     private BusinessMessagesManagementService messagesManagementService;
-    
-    @Inject
-    private ParameterFacade parameterFacade;
 
-    @Inject
-    private BusinessMessagesManagementService businessMessagesManagementService;
+	@Inject
+	private DomainFacade domainFacade;
 
     @Inject
     private Logger logger;
@@ -113,7 +109,7 @@ public class FileUpdateUploader {
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
 	
-	@ApplicationState
+	@SessionState
 	private UserVo userDetails;
 
 	@Persist
@@ -200,7 +196,13 @@ public class FileUpdateUploader {
      ************************************************************ */
 	
     public long getUserFreeSpace() {
-        return documentFacade.getUserAvailableQuota(userDetails);
+    	long res = 0;
+        try {
+			res = documentFacade.getUserAvailableQuota(userDetails);
+		} catch (BusinessException e) {
+            messagesManagementService.notify(e);
+		}
+		return res;
     }
 
 	public void setUuidDocToUpdate(String uuidDocToUpdate) {
@@ -210,17 +212,14 @@ public class FileUpdateUploader {
 	public long getMaxFileSize() {
         long maxFileSize = DEFAULT_MAX_FILE_SIZE;
         try {
-            maxFileSize = parameterFacade.loadConfig().getFileSizeMax();
+    		DomainVo domain = domainFacade.retrieveDomain(userDetails.getDomainIdentifier());
+            maxFileSize = domain.getParameterVo().getFileSizeMax();
         } catch (BusinessException e) {
             // value has not been defined. We use the default value.
         }
         return maxFileSize;
     }
     
-    
-    
-
-    @SuppressWarnings("empty-statement")
     private void readFileStream(UploadedFile file) {
         try {
             // read the complete stream.
