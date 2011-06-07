@@ -131,7 +131,7 @@
         size int8,
         cert_subjectdn varchar(255),
         cert_issuerdn varchar(255),
-        cert_notafter timestamp,l
+        cert_notafter timestamp,
         cert text,
         signer_id int8,
         document_id_fk int8,
