@@ -26,6 +26,11 @@
         primary key (contact_id)
     );
 
+    create table linshare_version (
+        id bigint not null,
+        description varchar(255) not null
+    );
+
     create table linshare_cookie (
         cookie_id bigint not null auto_increment,
         identifier varchar(255) not null unique,
@@ -98,7 +103,7 @@
         subject_id integer not null,
         language_id integer not null,
         content text,
-        primary key (parameter_id, subject_id, language_id)
+        primary key (messages_configuration_id, subject_id, language_id)
     );
 
     create table linshare_mail_templates (
@@ -107,7 +112,7 @@
         language_id integer not null,
         content_html text,
         content_txt text,
-        primary key (parameter_id, template_id, language_id)
+        primary key (messages_configuration_id, template_id, language_id)
     );
 
 
@@ -172,10 +177,10 @@
         default_expiry_time_unit_id integer,
         default_file_expiry_time integer,
         default_file_expiry_time_unit_id integer,
-	closed_domain integer,
-	restricted_domain integer,
-	domain_with_guests integer,
-	guest_can_create_other integer,
+	closed_domain bit,
+	restricted_domain bit,
+	domain_with_guests bit,
+	guest_can_create_other bit,
 	messages_configuration_id bigint not null,
         primary key (parameter_id)
     );
@@ -294,7 +299,7 @@
     );
 
     create table linshare_welcome_texts (
-        messages_configuration bigint not null,
+        messages_configuration_id bigint not null,
         welcome_text text,
         user_type_id integer,
         language_id integer
@@ -387,7 +392,7 @@
         references linshare_messages_configuration (messages_configuration_id);
 
     alter table linshare_mail_templates 
-        add index FKDD1B7F22A44B78EB (parameter_id), 
+        add index FKDD1B7F22A44B78EB (messages_configuration_id), 
         add constraint FKDD1B7F22A44B78EB 
         foreign key (messages_configuration_id) 
         references linshare_messages_configuration (messages_configuration_id);
@@ -497,7 +502,7 @@
         references linshare_user (user_id);
 
     alter table linshare_welcome_texts 
-        add index FK36A0C738A44B78EB (parameter_id), 
+        add index FK36A0C738A44B78EB (messages_configuration_id), 
         add constraint FK36A0C738A44B78EB 
         foreign key (messages_configuration_id) 
         references linshare_messages_configuration (messages_configuration_id);
