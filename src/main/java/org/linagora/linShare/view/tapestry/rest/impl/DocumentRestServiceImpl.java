@@ -45,6 +45,7 @@ import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.rest.DocumentRestService;
 import org.linagora.linShare.view.tapestry.services.MyMultipartDecoder;
@@ -81,7 +82,9 @@ public class DocumentRestServiceImpl implements DocumentRestService {
     private final DomainFacade domainFacade;
 	
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
-	
+
+        private static final int VIRUS_DETECTED_HTTP_STATUS = 451;
+
 	public DocumentRestServiceImpl( final ApplicationStateManager applicationStateManager,
 			final SearchDocumentFacade searchDocumentFacade,
 			final DocumentFacade documentFacade,
@@ -311,10 +314,15 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			writer.close();
 		}  catch (BusinessException e) {
 			logger.error("Could not insert file for user  " +actor.getMail()  + " : " + e.getCause());
-			response.setHeader("BusinessError", e.getErrorCode().getCode()+"");
-			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Error " + e);
-			
-			return;
+                       if (e.getErrorCode().getCode() == BusinessErrorCode.FILE_CONTAINS_VIRUS.getCode()) {
+                        response.setHeader("BusinessError", e.getErrorCode().getCode() + "");
+                        response.sendError(VIRUS_DETECTED_HTTP_STATUS, "Error " + e);
+                    } else {
+                        response.setHeader("BusinessError", e.getErrorCode().getCode() + "");
+                        response.sendError(HttpStatus.SC_METHOD_FAILURE, "Error " + e);
+                    }
+                    return;
+
 		}
 		
 	}
