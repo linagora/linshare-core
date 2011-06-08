@@ -189,7 +189,7 @@ public class DomainServiceImpl implements DomainService {
 		ldapConn.setProviderUrl(ldapConnection.getProviderUrl());
 		ldapConn.setSecurityAuth(ldapConnection.getSecurityAuth());
 		ldapConn.setSecurityCredentials(ldapConnection.getSecurityCredentials());
-		ldapConn.setSecurityPrincipal(ldapConnection.getSecurityCredentials());
+		ldapConn.setSecurityPrincipal(ldapConnection.getSecurityPrincipal());
 		ldapConnectionRepository.update(ldapConn);
 	}
 	
