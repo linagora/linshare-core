@@ -219,8 +219,10 @@ public class MyBorderLayout {
 	@SetupRender
 	public void init() throws BusinessException {
 
-//		ParameterVo config = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
-//        customLogoUrl = config.getCustomLogoUrl();
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			ParameterVo config = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
+			customLogoUrl = config.getCustomLogoUrl();
+		}
 		
 		ie8Css="<!--[if IE 8]><link href='"+ie8CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
 
