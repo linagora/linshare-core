@@ -31,9 +31,6 @@
 			<t:if test="customLogoUrl">
 				<img src="${customLogoUrl}" alt="" />
 			</t:if>
-			<t:if test="customLogoUrl" negate="true">
-				<img src="${asset:context:images/logo-default.png}" alt="" />
-			</t:if>
 		</div>
 		<div id="settings">
 			<div id="configuration">
