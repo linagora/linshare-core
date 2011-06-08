@@ -2,6 +2,8 @@ package org.linagora.linShare.core.domain.entities;
 
 import java.util.Properties;
 
+import javax.naming.Context;
+
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
 
 public class LDAPConnection {
@@ -82,9 +84,11 @@ public class LDAPConnection {
 
 	public Properties toLdapProperties() {
 		Properties ldapProperties = new Properties();
-		ldapProperties.put("java.naming.provider.url", this.providerUrl);
-		ldapProperties.put("java.naming.factory.initial", "com.sun.jndi.ldap.LdapCtxFactory");
-		ldapProperties.put("java.naming.authentication", this.securityAuth);
+		ldapProperties.put(Context.PROVIDER_URL, this.providerUrl);
+		ldapProperties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		ldapProperties.put(Context.SECURITY_AUTHENTICATION, this.securityAuth);
+		ldapProperties.put(Context.SECURITY_PRINCIPAL, this.securityPrincipal);
+		ldapProperties.put(Context.SECURITY_CREDENTIALS, this.securityCredentials);
 		return ldapProperties;
 	}
 
