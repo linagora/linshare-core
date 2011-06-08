@@ -208,9 +208,11 @@ public class UserSearchField {
 		try {
 	        if (input != null) {
 	            userSet.addAll(userFacade.searchUser(input.trim(), null, null, null, userVo));
+	            userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, null, userVo));
+	            userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, null, userVo));
+	        } else {
+	        	userSet.addAll(userFacade.searchUser(null, null, null, null, userVo));
 	        }
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, null, userVo));
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, null, userVo));
 		} catch (BusinessException e) {
 			logger.error("Error while trying to autocomplete", e);
 		}
