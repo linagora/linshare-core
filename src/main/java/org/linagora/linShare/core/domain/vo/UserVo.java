@@ -250,7 +250,7 @@ public class UserVo implements Serializable {
         if (this.createGuest != other.createGuest) {
             return false;
         }
-        if (this.domainIdentifier != other.domainIdentifier) {
+        if ((this.domainIdentifier == null) ? (other.domainIdentifier != null) : !this.domainIdentifier.equals(other.domainIdentifier)) {
             return false;
         }
         return true;

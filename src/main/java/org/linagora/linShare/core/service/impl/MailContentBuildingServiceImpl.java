@@ -57,17 +57,22 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	private final String pUrlInternal;
 	private final String mailContentTxt;
 	private final String mailContentHTML;
+	private final String mailContentHTMLWithoutLogo;
+	private final boolean displayLogo;
 	
     private final static Log logger = LogFactory.getLog(MailContentBuildingServiceImpl.class);
 
 	
 	public MailContentBuildingServiceImpl(final String urlBase, 
 			final String urlInternal, final String mailContentTxt,
-			final String mailContentHTML) throws BusinessException {
+			final String mailContentHTML, final String mailContentHTMLWithoutLogo,
+			final boolean displayLogo) throws BusinessException {
 		this.pUrlBase = urlBase;
 		this.pUrlInternal = urlInternal;
         this.mailContentTxt = mailContentTxt;
         this.mailContentHTML = mailContentHTML;
+        this.mailContentHTMLWithoutLogo = mailContentHTMLWithoutLogo;
+        this.displayLogo = displayLogo;
 	}
 
 	/**
@@ -131,7 +136,12 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		MailTemplate greetings = buildTemplateGreetings(actor, mailContainer.getLanguage(), recipient);
 		MailTemplate footer = buildTemplateFooter(actor, mailContainer.getLanguage());
 		String contentTXT = this.mailContentTxt;
-		String contentHTML = this.mailContentHTML;
+		String contentHTML = null;
+		if (displayLogo) {
+			contentHTML = this.mailContentHTML;
+		} else {
+			contentHTML = this.mailContentHTMLWithoutLogo;
+		}
 		
 		if (personalMessage != null && personalMessage.trim().length() > 0) {
 			MailTemplate personalMessageTemplate = buildTemplatePersonalMessage(actor, mailContainer.getLanguage(), owner, personalMessage);

@@ -71,6 +71,9 @@ public class MailNotifierServiceImpl implements NotifierService {
 
 	/** Mail charset. */
 	private final String charset;
+	
+	/** Display LinShare logo ? */
+	private final boolean displayLogo;
 
 	/** Class logger */
 	private final static Log logger = LogFactory.getLog(MailNotifierServiceImpl.class);
@@ -81,7 +84,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 */
 	public MailNotifierServiceImpl(String smtpServer, int smtpPort,
 			String smtpSender, String smtpUser, String smtpPassword,
-			boolean needsAuth, String charset) {
+			boolean needsAuth, String charset, boolean displayLogo) {
 		this.smtpServer = smtpServer;
 		this.smtpPort = smtpPort;
 		this.smtpSender = smtpSender;
@@ -89,6 +92,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 		this.smtpPassword = smtpPassword;
 		this.needsAuth = needsAuth;
 		this.charset = charset;
+		this.displayLogo = displayLogo;
 	}
 
 	/**
@@ -154,17 +158,19 @@ public class MailNotifierServiceImpl implements NotifierService {
 			html_mp.addBodyPart(rel_bph);
 
 			// inline image ?
-			String cid = "image.part.1@linshare.org";
-			MimeBodyPart rel_bpi = new MimeBodyPart();
+			if (displayLogo) {
+				String cid = "image.part.1@linshare.org";
+				MimeBodyPart rel_bpi = new MimeBodyPart();
 			
-			// Initialize and add the image file to the html body part
-			rel_bpi.setFileName("mail_logo.png");
-			rel_bpi.setText("linshare");
-			rel_bpi.setDataHandler(new DataHandler(getClass().getResource(
+				// Initialize and add the image file to the html body part
+				rel_bpi.setFileName("mail_logo.png");
+				rel_bpi.setText("linshare");
+				rel_bpi.setDataHandler(new DataHandler(getClass().getResource(
 					"/org/linagora/linShare/core/service/mail_logo.png")));
-			rel_bpi.setHeader("Content-ID", "<" + cid + ">");
-			rel_bpi.setDisposition("inline");
-			html_mp.addBodyPart(rel_bpi);
+				rel_bpi.setHeader("Content-ID", "<" + cid + ">");
+				rel_bpi.setDisposition("inline");
+				html_mp.addBodyPart(rel_bpi);
+			}
 
 			// Create the second BodyPart of the multipart/alternative,
 			// set its content to the html multipart, and add the
