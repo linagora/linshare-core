@@ -8,6 +8,9 @@ mail.smtp.password=password
 mail.smtp.auth.needed=false
 mail.smtp.charset=UTF-8
 
+#******************* DATASTORE
+#uncomment this line to encrypt the files
+#linshare.datastore.class=org.linagora.linShare.core.dao.EncDbDataStore
 
 #******************** DATABASE
 ### PostgreSQL
