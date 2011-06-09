@@ -12,23 +12,23 @@ echo "Please enter your ldap credentials (leave userDN and password empty for an
 read -p  "   userDN (was ldap.auth.userDN): " userDN
 read -p  "   password (was ldap.auth.password): " password
 
-#echo "-------------------"
-#echo "Superadmin configuration:"
-#echo "-------------------"
-#echo "Please enter the superadmin password: "
-#read -s superadmin_pass
-#echo "Please confirm the superadmin password: "
-#read -s superadmin_pass_confirm
+echo "-------------------"
+echo "Superadmin configuration:"
+echo "-------------------"
+echo "Please enter the superadmin password: "
+read -s superadmin_pass
+echo "Please confirm the superadmin password: "
+read -s superadmin_pass_confirm
 
-#while [ "$superadmin_pass" != "$superadmin_pass_confirm" ]
-#do
-#echo ""
-#echo "The password does not correspond to the confirmation !"
-#echo "Please enter the superadmin password: "
-#read -s superadmin_pass
-#echo "Please confirm the superadmin password: "
-#read -s superadmin_pass_confirm
-#done
+while [ "$superadmin_pass" != "$superadmin_pass_confirm" ]
+do
+echo ""
+echo "The password does not correspond to the confirmation !"
+echo "Please enter the superadmin password: "
+read -s superadmin_pass
+echo "Please confirm the superadmin password: "
+read -s superadmin_pass_confirm
+done
 echo "-------------------"
 
 hashpass=`echo -ne "$(echo -n $superadmin_pass | sha1sum | cut -f1 -d" " | sed -e 's/\(.\{2\}\)/\\\x\1/g')" | base64`
@@ -42,5 +42,5 @@ echo "INSERT INTO linshare_domain_pattern(domain_pattern_id, identifier, descrip
 
 echo "INSERT INTO linshare_domain(domain_id, identifier, differential_key, domain_pattern_id, ldap_connection_id, parameter_id) VALUES (1, 'baseDomain', '$ldap_base', 1, 1, 1);"
 
-#echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (4, 0, 'root@localhost.localdomain', '', '', 'root@localhost.localdomain', '2009-01-01', 3, '$hashpass', '2019-01-01', 'false','false');"
+echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (4, 0, 'root@localhost.localdomain', '', '', 'root@localhost.localdomain', '2009-01-01', 3, '$hashpass', '2019-01-01', 'false','false');"
 
