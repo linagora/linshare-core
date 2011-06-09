@@ -95,7 +95,12 @@
 		</PersistenceManager>
 	</Versioning>
 
-	<DataStore class="org.apache.jackrabbit.core.data.FileDataStore">
+    <DataStore class="${linshare.datastore.class}">
+        <param name="url" value="jdbc:h2:${rep.home}/repository/db" />
         <param name="path" value="${rep.home}/repository/datastore"/>
-	</DataStore>
+        <param name="user" value="sa" />
+        <param name="password" value="sa" />
+        <param name="databaseType" value="h2" />
+        <param name="driver" value="org.h2.Driver"/>
+    </DataStore>
 </Repository>
