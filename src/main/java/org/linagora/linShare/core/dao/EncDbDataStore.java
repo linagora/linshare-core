@@ -33,7 +33,7 @@ public class EncDbDataStore extends DbDataStore{
             java.util.Arrays.fill(passwd, ' ');
         }
         setUrl(getUrl() + ";CIPHER=AES");
-        setPassword(getPassword() + " "+ password);
+        setPassword(password + " "+ getPassword());
         return super.createNewConnection();
     }
 
