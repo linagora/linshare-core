@@ -420,8 +420,12 @@ public final class JndiServices {
 			String oldPrincipal = (String) bindContext.getEnvironment().get(Context.SECURITY_PRINCIPAL);
 			String oldCredentials = (String) bindContext.getEnvironment().get(Context.SECURITY_CREDENTIALS);
 			authProps.put(Context.SECURITY_AUTHENTICATION, "simple");
-			authProps.put(Context.SECURITY_PRINCIPAL, oldPrincipal);
-			authProps.put(Context.SECURITY_CREDENTIALS, oldCredentials);
+			if (oldPrincipal != null) {
+				authProps.put(Context.SECURITY_PRINCIPAL, oldPrincipal);
+			}
+			if (oldCredentials != null) {
+				authProps.put(Context.SECURITY_CREDENTIALS, oldCredentials);
+			}
 		}
 		try {
 			bindContext.addToEnvironment(Context.SECURITY_AUTHENTICATION, "simple");
