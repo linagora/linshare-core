@@ -87,8 +87,12 @@ public class LDAPConnection {
 		ldapProperties.put(Context.PROVIDER_URL, this.providerUrl);
 		ldapProperties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		ldapProperties.put(Context.SECURITY_AUTHENTICATION, this.securityAuth);
-		ldapProperties.put(Context.SECURITY_PRINCIPAL, this.securityPrincipal);
-		ldapProperties.put(Context.SECURITY_CREDENTIALS, this.securityCredentials);
+		if (this.securityPrincipal != null) {
+			ldapProperties.put(Context.SECURITY_PRINCIPAL, this.securityPrincipal);
+		}
+		if (this.securityCredentials != null) {
+			ldapProperties.put(Context.SECURITY_CREDENTIALS, this.securityCredentials);
+		}
 		return ldapProperties;
 	}
 
