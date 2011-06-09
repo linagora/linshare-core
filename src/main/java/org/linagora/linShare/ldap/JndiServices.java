@@ -290,6 +290,7 @@ public final class JndiServices {
 			} else {
 				rewrittenBase = searchBase;
 			}
+			ctx.reconnect(ctx.getConnectControls());
 			ne = ctx.search(rewrittenBase, searchFilter, sc);
 
 		} catch (NamingException nex) {
@@ -386,6 +387,7 @@ public final class JndiServices {
 		NamingEnumeration<SearchResult> ne = null;
 		sc.setSearchScope(SearchControls.OBJECT_SCOPE);
 		try {
+			ctx.reconnect(ctx.getConnectControls());
 			ne = ctx.search(rewriteBase(base), filter, sc);
 		} catch (NamingException nex) {
 			if (!allowError) {
@@ -468,6 +470,7 @@ public final class JndiServices {
 			sc.setReturningAttributes(new String[]{"1.1"});
 			sc.setSearchScope(scope);
 			sc.setReturningObjFlag(true);
+			ctx.reconnect(ctx.getConnectControls());
 			ne = ctx.search(base, filter, sc);
 			
 			String completedBaseDn = "";
