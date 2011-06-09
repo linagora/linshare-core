@@ -24,14 +24,16 @@
 	<!-- Header -->
 
 	<t:parameter name="header">
-		<div id="logo-linshare">
-			<t:pagelink page="Index"><span><img src="${asset:context:images/logo_linshare.png}" alt="${message:global.appName}" /></span></t:pagelink>
-		</div>
-		<div id="logo-customer">
-			<t:if test="customLogoUrl">
+		<t:if test="linshareLogoVisible">
+			<div id="logo-linshare">
+				<t:pagelink page="Index"><span><img src="${asset:context:images/logo_linshare.png}" alt="${message:global.appName}" /></span></t:pagelink>
+			</div>
+		</t:if>
+		<t:if test="customLogoUrl">
+			<div id="logo-customer">
 				<img src="${customLogoUrl}" alt="" />
-			</t:if>
-		</div>
+			</div>
+		</t:if>
 		<div id="settings">
 			<div id="configuration">
 				<!-- t:pagelink page="help/index" class="link-help">${message:components.myborderlayout.link.help}</t:pagelink> | -->

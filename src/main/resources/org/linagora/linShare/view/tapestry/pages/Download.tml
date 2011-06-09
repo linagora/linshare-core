@@ -12,8 +12,10 @@
 				<t:if test="containsDocuments">
 				<br /><br />
 				<center>
-					<img src="../images/logo_linshare_large.png" alt="LinShare" />
-					<br /><br />
+					<t:if test="linshareLogoVisible">
+						<img src="../images/logo_linshare_large.png" alt="LinShare" />
+						<br /><br />
+					</t:if>
 					<div id="blocDLheader">&nbsp;</div>
 					<div id="blocDL">
 						<ul>

@@ -208,6 +208,11 @@ public class MyBorderLayout {
 	@Inject @Symbol("linshare.secured-storage.disallow")
 	@Property
 	private boolean securedStorageDisallowed;
+
+	@SuppressWarnings("unused")
+	@Inject @Symbol("linshare.logo.webapp.visible")
+	@Property
+	private boolean linshareLogoVisible;
 	
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
 	private static final String groupsLabelKey = "components.myborderlayout.group.title";

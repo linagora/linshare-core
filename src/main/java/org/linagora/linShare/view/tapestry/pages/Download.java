@@ -37,6 +37,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
@@ -111,6 +112,11 @@ public class Download {
 	
 	@Inject
 	private MailContainerBuilder mailContainerBuilder;
+
+	@SuppressWarnings("unused")
+	@Inject @Symbol("linshare.logo.webapp.visible")
+	@Property
+	private boolean linshareLogoVisible;
 	
 	
 	public String[] getContext() {
