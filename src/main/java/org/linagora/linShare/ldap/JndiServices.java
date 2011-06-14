@@ -57,6 +57,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.naming.AuthenticationException;
+import javax.naming.CommunicationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -290,9 +291,11 @@ public final class JndiServices {
 			} else {
 				rewrittenBase = searchBase;
 			}
-			ctx.reconnect(ctx.getConnectControls());
+			
 			ne = ctx.search(rewrittenBase, searchFilter, sc);
-
+		} catch (CommunicationException ce) {
+			ctx.reconnect(ctx.getConnectControls());
+			return getEntry(base, filter, sc, scope);
 		} catch (NamingException nex) {
 			LOGGER.error("Error while looking for {} in {}: {}",
 							new Object[] { searchFilter, searchBase, nex });
@@ -387,8 +390,10 @@ public final class JndiServices {
 		NamingEnumeration<SearchResult> ne = null;
 		sc.setSearchScope(SearchControls.OBJECT_SCOPE);
 		try {
-			ctx.reconnect(ctx.getConnectControls());
 			ne = ctx.search(rewriteBase(base), filter, sc);
+		} catch (CommunicationException ce) {
+			ctx.reconnect(ctx.getConnectControls());
+			return readEntry(base, filter, allowError, sc);
 		} catch (NamingException nex) {
 			if (!allowError) {
 				LOGGER.error("Error while reading entry {}: {}", base, nex);
@@ -474,8 +479,13 @@ public final class JndiServices {
 			sc.setReturningAttributes(new String[]{"1.1"});
 			sc.setSearchScope(scope);
 			sc.setReturningObjFlag(true);
-			ctx.reconnect(ctx.getConnectControls());
-			ne = ctx.search(base, filter, sc);
+			
+			try {
+				ne = ctx.search(base, filter, sc);
+			} catch (CommunicationException ce) {
+				ctx.reconnect(ctx.getConnectControls());
+				return getDnList(base, filter, scope);
+			}
 			
 			String completedBaseDn = "";
 			if (base.length() > 0) {
