@@ -158,7 +158,7 @@
 
 
     create table linshare_parameter (
-        parameter_id bigint not null,
+        parameter_id bigint not null auto_increment,
         identifier varchar(255) not null unique,
 	file_size_max bigint,
         user_available_size bigint,
