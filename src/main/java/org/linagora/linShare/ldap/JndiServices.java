@@ -480,12 +480,7 @@ public final class JndiServices {
 			sc.setSearchScope(scope);
 			sc.setReturningObjFlag(true);
 			
-			try {
-				ne = ctx.search(base, filter, sc);
-			} catch (CommunicationException ce) {
-				ctx.reconnect(ctx.getConnectControls());
-				return getDnList(base, filter, scope);
-			}
+			ne = ctx.search(base, filter, sc);
 			
 			String completedBaseDn = "";
 			if (base.length() > 0) {
@@ -494,11 +489,15 @@ public final class JndiServices {
 			while (ne.hasMoreElements()) {
 				iist.add(((SearchResult) ne.next()).getName() + completedBaseDn);
 			}
+		} catch (CommunicationException ce) {
+			ctx.reconnect(ctx.getConnectControls());
+			return getDnList(base, filter, scope);
 		} catch (NamingException e) {
 			LOGGER.error(e.toString());
 			LOGGER.debug(e.toString(), e);
 			throw e;
 		}
+		
 		return iist;
 	}
 
