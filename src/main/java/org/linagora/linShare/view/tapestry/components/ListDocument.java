@@ -335,7 +335,7 @@ public class ListDocument {
 	 * the active sharings of files
 	 */
 	private void buildTooltipValues() {
-		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.date"));
 
 		tooltipTitle = messages.get("components.listDocument.tooltip.title");
 		tooltipGroupTitle = messages.get("components.listDocument.tooltipGroup.title");

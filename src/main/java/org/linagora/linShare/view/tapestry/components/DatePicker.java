@@ -23,12 +23,14 @@ package org.linagora.linShare.view.tapestry.components;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.IncludeStylesheet;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.slf4j.Logger;
@@ -72,6 +74,9 @@ public class DatePicker {
 	
 	@Inject
 	private PersistentLocale persistentLocale;
+	
+	@Inject
+	private Messages messages;
 
 	private Date datePicked;
 
@@ -85,7 +90,7 @@ public class DatePicker {
 	
 	@SetupRender
 	public void init() {
-		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, persistentLocale.get());
+		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, new Locale(messages.get("components.datePicker.regional")));
 		
 		dateMinD = 0;
 		dateMinM = 0;
