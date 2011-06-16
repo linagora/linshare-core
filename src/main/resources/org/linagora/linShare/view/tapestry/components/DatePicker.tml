@@ -2,7 +2,7 @@
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
 	<div class="datePickerDiv">
-		<p>${message:components.datePicker.label} <t:datefield t:id="datePicked" id="datePicked" /></p>
+		<p>${message:components.datePicker.label} <t:datefield t:id="datePicked" id="datePicked" t:format="message:global.pattern.datePicker" /></p>
 	</div>
 	
 	<script>
