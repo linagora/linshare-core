@@ -28,7 +28,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		Map<String, List<String>> retMap = JScriptEvaluator.evalToEntryMap(domain, command, params);
 		
 		// tableau de correspondance entre attribut LDAP retourné et attribut de l'objet user
-		String[] keys = domain.getPattern().getGetUserResult().split(" ");
+		String[] keys = parseKeys(domain);
 		User user = mapToUser(retMap, keys, domain);
         
         return user;
@@ -62,7 +62,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		// tableau de correspondance entre attribut LDAP retourné et attribut de l'objet user
 		String dn = retList.get(0);
 		if(JScriptEvaluator.auth(userPasswd, dn, domain)) {
-			String[] keys = domain.getPattern().getGetUserResult().split(" ");
+			String[] keys = parseKeys(domain);
 			return dnToUser(domain, keys, dn);
 		}
 		return null;
@@ -97,7 +97,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	private List<User> dnListToUsersList(Domain domain, List<String> ret) {
-		String[] keys = domain.getPattern().getGetUserResult().split(" ");
+		String[] keys = parseKeys(domain);
 		List<User> users = new ArrayList<User>();
 		for (String string : ret) {
 			User user = dnToUser(domain, keys, string);
@@ -117,11 +117,17 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 	private User mapToUser(Map<String, List<String>> retMap, String[] keys, Domain domain) {
 		String mail = (String) retMap.get(keys[0]).get(0);
-        String firstName = (String) retMap.get(keys[1]).get(0);
-        String lastName = (String) retMap.get(keys[2]).get(0);
-        User user = new Internal(mail, firstName, lastName, mail);
+        	String firstName = (String) retMap.get(keys[1]).get(0);
+	        String lastName = (String) retMap.get(keys[2]).get(0);
+	        User user = new Internal(mail, firstName, lastName, mail);
 		user.setDomain(domain);
 		return user;
+	}
+
+	private String[] parseKeys(Domain domain) {
+		String keys = domain.getPattern().getGetUserResult().replaceAll("\\s+", " ").trim();
+		System.out.println("DEBUG : Keys parsed which will be used are <"+keys+">");
+		return keys.split(" "); 
 	}
 
 }
