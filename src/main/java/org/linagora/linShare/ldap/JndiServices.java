@@ -639,7 +639,7 @@ public final class JndiServices {
 					LOGGER.info("Attribute " + attribute.getID() + " for entry " + dn + " contains non literal values (binary, ...) that are not handled !");
 				}
 			}
-			entry.put(attribute.getID(), valuesList);
+			entry.put(attribute.getID().toLowerCase(), valuesList);
 		}
 		
 		return entry;
