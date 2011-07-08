@@ -17,7 +17,7 @@ import org.linagora.linShare.ldap.JScriptEvaluator;
 import org.springframework.ldap.NameNotFoundException;
 
 public class LDAPQueryServiceImpl implements LDAPQueryService {
-
+	
 	@Override
 	public User getUser(String userId, Domain domain, User actor) throws BusinessException {
 		
@@ -125,8 +125,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	private String[] parseKeys(Domain domain) {
-		String keys = domain.getPattern().getGetUserResult().replaceAll("\\s+", " ").trim();
-		System.out.println("DEBUG : Keys parsed which will be used are <"+keys+">");
+		String keys = domain.getPattern().getGetUserResult().replaceAll("\\s+", " ").trim().toLowerCase();
+		/*System.out.println("DEBUG : Keys parsed which will be used are <"+keys+">");*/
 		return keys.split(" "); 
 	}
 
