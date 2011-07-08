@@ -14,10 +14,14 @@ import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.ldap.JScriptEvaluator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.NameNotFoundException;
 
 public class LDAPQueryServiceImpl implements LDAPQueryService {
 	
+	private static final String LOG_INFO_KEY_PARSE = "Keys parsed which will be used in LDAP query are:";
+	private static final Logger LOGGER = LoggerFactory.getLogger(LDAPQueryServiceImpl.class);
 	@Override
 	public User getUser(String userId, Domain domain, User actor) throws BusinessException {
 		
@@ -126,8 +130,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 	private String[] parseKeys(Domain domain) {
 		String keys = domain.getPattern().getGetUserResult().replaceAll("\\s+", " ").trim().toLowerCase();
-		/*System.out.println("DEBUG : Keys parsed which will be used are <"+keys+">");*/
-		return keys.split(" "); 
+		LOGGER.info(LOG_INFO_KEY_PARSE + keys);
+		return keys.split(" ");
 	}
 
 }
