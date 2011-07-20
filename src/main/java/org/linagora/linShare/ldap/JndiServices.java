@@ -46,7 +46,6 @@
 package org.linagora.linShare.ldap;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,7 +55,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.naming.AuthenticationException;
 import javax.naming.CommunicationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -77,8 +75,6 @@ import javax.naming.ldap.StartTlsResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ldap.core.ContextSource;
-import org.springframework.ldap.support.LdapUtils;
 
 import com.unboundid.ldap.sdk.DN;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -107,9 +103,6 @@ public final class JndiServices {
 
 	/** The context base dn. */
 	private DN contextDn;
-
-	/** The instances cache. */
-	private static Map<Properties, JndiServices> cache = new HashMap<Properties, JndiServices>();
 
 	private LDAPURL namingContext;
 
@@ -213,10 +206,7 @@ public final class JndiServices {
 	 * @throws NamingException
 	 */
 	public static JndiServices getInstance(final Properties props) throws NamingException, IOException {
-		if (!cache.containsKey(props)) {
-			cache.put(props, new JndiServices(props));
-		}
-		return (JndiServices) cache.get(props);
+		return new JndiServices(props);
 	}
 
 	/**
