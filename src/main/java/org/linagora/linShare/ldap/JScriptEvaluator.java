@@ -74,9 +74,6 @@ public final class JScriptEvaluator {
 	// Logger
 	private static final Logger LOGGER = LoggerFactory.getLogger(JScriptEvaluator.class);
 
-	/** The private unique instance. */
-	private static Map<String,JScriptEvaluator> instances = new HashMap<String,JScriptEvaluator>();
-
 	/** The precompiled Javascript cache. */
 	private Map<String, Script> cache;
 
@@ -100,19 +97,6 @@ public final class JScriptEvaluator {
 	}
 
 	/**
-	 * Local instance getter.
-	 *
-	 * @return the instance
-	 */
-	public static JScriptEvaluator getInstance(Domain domain) {
-		String threadName = Thread.currentThread().getName();
-		if(instances.get(threadName) == null) {
-			instances.put(threadName, new JScriptEvaluator(domain));
-		}
-		return instances.get(threadName);
-	}
-
-	/**
 	 * Evaluate your Ecma script expression (manage pre-compiled expressions
 	 * cache).
 	 *
@@ -125,7 +109,7 @@ public final class JScriptEvaluator {
 	 */
 	public static String evalToString(final Domain domain, final String expression,
 					final Map<String, Object> params) {
-		Object result = getInstance(domain).instanceEval(expression, domain, params);
+		Object result = new JScriptEvaluator(domain).instanceEval(expression, domain, params);
 
 		if (result == null) {
 			return null;
@@ -147,7 +131,7 @@ public final class JScriptEvaluator {
 	@SuppressWarnings("unchecked")
 	public static Map<String, List<String>> evalToEntryMap(final Domain domain, final String expression,
 					final Map<String, Object> params) {
-		Object result = getInstance(domain).instanceEval(expression, domain, params);
+		Object result = new JScriptEvaluator(domain).instanceEval(expression, domain, params);
 		try {
 			return (Map<String, List<String>>) Context.jsToJava(result, Map.class);
 		} catch (Exception e) {
@@ -159,7 +143,7 @@ public final class JScriptEvaluator {
 	@SuppressWarnings("unchecked")
 	public static List<String> evalToStringList(final Domain domain, final String expression,
 					final Map<String, Object> params) {
-		Object result = getInstance(domain).instanceEval(expression, domain, params);
+		Object result = new JScriptEvaluator(domain).instanceEval(expression, domain, params);
 
 		// First try to convert to Array, else to List, and finally to String
 		try {
@@ -186,7 +170,7 @@ public final class JScriptEvaluator {
 	}
 
 	public static Boolean evalToBoolean(final Domain domain, final String expression, final Map<String, Object> params) {
-		return Context.toBoolean(getInstance(domain).instanceEval(expression, domain, params));
+		return Context.toBoolean(new JScriptEvaluator(domain).instanceEval(expression, domain, params));
 	}
 
 	/**
