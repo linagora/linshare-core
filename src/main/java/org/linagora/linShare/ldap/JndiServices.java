@@ -105,7 +105,7 @@ public final class JndiServices {
 	private DN contextDn;
 
 	private LDAPURL namingContext;
-
+	
 	//	/** Attribute name to sort on. */
 	//	private String sortedBy;
 	/**
@@ -116,7 +116,7 @@ public final class JndiServices {
 	 * @throws NamingException thrown if a directory error is encountered
 	 * @throws IOException thrown if an error occurs negotiating StartTLS operation
 	 */
-	private JndiServices(final Properties connProps) throws NamingException, IOException {
+	public JndiServices(final Properties connProps) throws NamingException, IOException {
 
 		// log new connection with it's details
 		logConnectingTo(connProps);
@@ -199,17 +199,6 @@ public final class JndiServices {
 	}
 
 	/**
-	 * Instance getter. Manage a connections cache and return the good service
-	 * @param props the connection properties
-	 * @return the instance
-	 * @throws IOException
-	 * @throws NamingException
-	 */
-	public static JndiServices getInstance(final Properties props) throws NamingException, IOException {
-		return new JndiServices(props);
-	}
-
-	/**
 	 * Search for an entry.
 	 *
 	 * This method is a simple LDAP search operation with SUBTREE search
@@ -284,6 +273,7 @@ public final class JndiServices {
 			
 			ne = ctx.search(rewrittenBase, searchFilter, sc);
 		} catch (CommunicationException ce) {
+			LOGGER.error("ComunicationException : reconnexion to ,ldap directory");
 			ctx.reconnect(ctx.getConnectControls());
 			return getEntry(base, filter, sc, scope);
 		} catch (NamingException nex) {
@@ -625,8 +615,8 @@ public final class JndiServices {
 				Object value = values.next();
 				if(value instanceof String) {
 					valuesList.add((String)value);
-				} else {
-					LOGGER.info("Attribute " + attribute.getID() + " for entry " + dn + " contains non literal values (binary, ...) that are not handled !");
+//				} else {
+//					LOGGER.info("DEBUG:Attribute " + attribute.getID() + " for entry " + dn + " contains non literal values (binary, ...) that are not handled !");
 				}
 			}
 			entry.put(attribute.getID().toLowerCase(), valuesList);

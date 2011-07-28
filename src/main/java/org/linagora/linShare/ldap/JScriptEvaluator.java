@@ -45,14 +45,11 @@
  */
 package org.linagora.linShare.ldap;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.naming.NamingException;
 
 import org.linagora.linShare.core.domain.entities.Domain;
 import org.mozilla.javascript.Context;
@@ -80,22 +77,23 @@ public final class JScriptEvaluator {
 	/** The local Rhino context. */
 	private Context cx;
 	
-	private String domainId;
-	private Domain domain;
+	private JndiServices jndiService;
 
-	/**
-	 * Default private constructor.
-	 *
-	 * @see #getInstance()
-	 */
-	private JScriptEvaluator(Domain domain) {
-		this.domain = domain;
-		this.domainId = domain.getIdentifier();
+	@SuppressWarnings("deprecation")
+	public JScriptEvaluator() {
 		cache = new HashMap<String, Script>();
 		// When removing 1.5 compatibility prefer enterContext() method
 		cx = new ContextFactory().enter();
 	}
+	
+	public JndiServices getJndiService() {
+		return jndiService;
+	}
 
+	public void setJndiService(JndiServices jndiService) {
+		this.jndiService = jndiService;
+	}
+	
 	/**
 	 * Evaluate your Ecma script expression (manage pre-compiled expressions
 	 * cache).
@@ -107,9 +105,9 @@ public final class JScriptEvaluator {
 	 *                the keys are the name used in the
 	 * @return the evaluation result
 	 */
-	public static String evalToString(final Domain domain, final String expression,
-					final Map<String, Object> params) {
-		Object result = new JScriptEvaluator(domain).instanceEval(expression, domain, params);
+	public String evalToString(Domain domain, String expression,
+					Map<String, Object> params) {
+		Object result = instanceEval(expression, domain, params);
 
 		if (result == null) {
 			return null;
@@ -129,9 +127,9 @@ public final class JScriptEvaluator {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static Map<String, List<String>> evalToEntryMap(final Domain domain, final String expression,
-					final Map<String, Object> params) {
-		Object result = new JScriptEvaluator(domain).instanceEval(expression, domain, params);
+	public Map<String, List<String>> evalToEntryMap(Domain domain, String expression,
+					Map<String, Object> params) {
+		Object result = instanceEval(expression, domain, params);
 		try {
 			return (Map<String, List<String>>) Context.jsToJava(result, Map.class);
 		} catch (Exception e) {
@@ -141,9 +139,9 @@ public final class JScriptEvaluator {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<String> evalToStringList(final Domain domain, final String expression,
-					final Map<String, Object> params) {
-		Object result = new JScriptEvaluator(domain).instanceEval(expression, domain, params);
+	public List<String> evalToStringList(Domain domain, String expression,
+					Map<String, Object> params) {
+		Object result = instanceEval(expression, domain, params);
 
 		// First try to convert to Array, else to List, and finally to String
 		try {
@@ -169,8 +167,8 @@ public final class JScriptEvaluator {
 		return resultsArray;
 	}
 
-	public static Boolean evalToBoolean(final Domain domain, final String expression, final Map<String, Object> params) {
-		return Context.toBoolean(new JScriptEvaluator(domain).instanceEval(expression, domain, params));
+	public Boolean evalToBoolean(Domain domain, String expression, Map<String, Object> params) {
+		return Context.toBoolean(instanceEval(expression, domain, params));
 	}
 
 	/**
@@ -182,8 +180,8 @@ public final class JScriptEvaluator {
 	 *                the keys are the name used in the
 	 * @return the evaluation result
 	 */
-	private Object instanceEval(final String expression, final Domain domain,
-					final Map<String, Object> params) {
+	private Object instanceEval(String expression, Domain domain,
+					Map<String, Object> params) {
 		Script script = null;
 		Scriptable scope = cx.initStandardObjects();
 
@@ -193,30 +191,23 @@ public final class JScriptEvaluator {
 		}
 
 		/* Allow to have shorter names for function in the package org.lsc.utils.directory */
-		String expressionImport =
-						"with (new JavaImporter(Packages.org.linagora.linShare.ldap)) {" + expression + "}";
+		String expressionImport = "with (new JavaImporter(Packages.org.linagora.linShare.ldap)) {" + expression + "}";
 
 		if (cache.containsKey(expressionImport)) {
 			script = cache.get(expressionImport);
+			LOGGER.debug("expressionImport (Cache size: " + cache.size() +"): USING CACHE: " + expressionImport);
 		} else {
 			script = cx.compileString(expressionImport, "<cmd>", 1, null);
 			cache.put(expressionImport, script);
+			LOGGER.debug("expressionImport (Cache size: " + cache.size() +"): CREATION: " + expressionImport);
 		}
+		
 
 		// add LDAP interface for destination if necessary
 		if (expression.contains("ldap.") && !localParams.containsKey("ldap")) {
 			ScriptableJndiServices dstSjs = new ScriptableJndiServices();
-//			dstSjs.setJndiServices(JndiServices.getInstance(DomainService.getLdapProperties(domainId)));
-			try {
-				dstSjs.setJndiServices(JndiServices.getInstance(domain.getLdapConnection().toLdapProperties()));
-				localParams.put("ldap", dstSjs);
-			} catch (NamingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			dstSjs.setJndiServices(jndiService);
+			localParams.put("ldap", dstSjs);
 		}
 
 		for (Entry<String, Object> entry : localParams.entrySet()) {
@@ -240,9 +231,5 @@ public final class JScriptEvaluator {
 		}
 
 		return ret;
-	}
-	
-	public static final boolean auth(final String password, final String dn, final Domain domain) throws NamingException, IOException {
-		return JndiServices.getInstance(domain.getLdapConnection().toLdapProperties()).auth(password, dn);
 	}
 }

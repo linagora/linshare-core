@@ -91,8 +91,6 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final String urlInternal;
     
-    
-	
 	public ShareFacadeImpl(
 			final ShareService shareService,
 			final ShareTransformer shareTransformer,
@@ -124,7 +122,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.urlInternal = urlInternal;
 		this.domainService = domainService;
 	}
-
 	
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents,
 			List<UserVo> recipients, String comment, Calendar expirationDate) throws BusinessException {
