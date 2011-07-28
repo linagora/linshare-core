@@ -83,7 +83,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
-        private static final int VIRUS_DETECTED_HTTP_STATUS = 451;
+    private static final int VIRUS_DETECTED_HTTP_STATUS = 451;
 
 	public DocumentRestServiceImpl( final ApplicationStateManager applicationStateManager,
 			final SearchDocumentFacade searchDocumentFacade,
@@ -213,10 +213,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			response.sendError(HttpStatus.SC_NOT_FOUND, "document not found");
 		}
 	}
-        
-
-	
-	
+        	
 	/* (non-Javadoc)
 	 * @see org.linagora.linShare.view.tapestry.rest.impl.DocumentRestService#uploadfile(org.apache.tapestry5.services.Request, org.apache.tapestry5.services.Response)
 	 */
@@ -433,8 +430,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		
 	}
 
-
-        @RestfulWebMethod
+	@RestfulWebMethod
 	public void getdocumentproperties(Request request, Response response,String uid) throws IOException {
 		UserVo actor = applicationStateManager.getIfExists(UserVo.class);
 
@@ -470,7 +466,6 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		
 
 	}
-
 	
 	/**
 	 * Write all the content on the inputStream to the outputStream, using 4kB blocks

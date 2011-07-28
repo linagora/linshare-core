@@ -22,21 +22,21 @@ msgstr "LinShare - http://linshare.org - Open Source toepassing voor het beveili
 
 # An anonymous user ${email} downloaded the following file(s) you shared via LinShare:<ul>${documentNames}</ul>
 msgid "mail_templates_2_html"
-msgstr "Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare&nbsp;:<ul>${documentNames}</ul>"
+msgstr "Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u aangeboden hebt om te delen via LinShare&nbsp;:<ul>${documentNames}</ul>"
 
 # An anonymous user ${email} downloaded the following file(s) you shared via LinShare:<ul>${documentNames}</ul>
 msgid "mail_templates_2_txt"
-msgstr "Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare :\n${documentNamesTxt}"
+msgstr "Een anonieme gebruiker ${email} heeft het/de bestand(en) gedownload die u aangeboden hebt om te delen via LinShare :\n${documentNamesTxt}"
 
 # Template CONFIRM_DOWNLOAD_REGISTERED
 
 # ${recipientFirstName} ${recipientLastName} downloaded the following file you shared with him via LinShare:<ul>${documentNames}</ul>
 msgid "mail_templates_3_html"
-msgstr "${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare&nbsp;:<ul>${documentNames}</ul>"
+msgstr "${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u aangeboden hebt om te delen via LinShare&nbsp;:<ul>${documentNames}</ul>"
 
 # ${recipientFirstName} ${recipientLastName} downloaded the following file you shared with him via LinShare:<ul>${documentNames}</ul>
 msgid "mail_templates_3_txt"
-msgstr "${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u om te delen aangeboden hebt via LinShare :\n${documentNamesTxt}"
+msgstr "${recipientFirstName} ${recipientLastName} heeft het/de bestand(en) gedownload die u aangeboden hebt om te delen via LinShare :\n${documentNamesTxt}"
 
 # Template LINSHARE_URL
 
@@ -132,11 +132,11 @@ msgstr "${firstName} ${lastName} heeft het gedeelde bestand bijgewerkt ${fileOld
 
 # <strong>${firstName} ${lastName}</strong> has shared ${number} file(s) with the group ${groupName}:<ul>${documentNames}</ul>
 msgid "mail_templates_13_html"
-msgstr "<strong>${firstName} ${lastName}</strong> heeft ${number} bestand(en) te delen aangeboden voor de groep${groupName}&nbsp;:<ul>${documentNames}</ul>"
+msgstr "<strong>${firstName} ${lastName}</strong> heeft ${number} te delen bestand(en) aangeboden voor de groep${groupName}&nbsp;:<ul>${documentNames}</ul>"
 
 # <strong>${firstName} ${lastName}</strong> has shared ${number} file(s) with the group ${groupName}:<ul>${documentNames}</ul>
 msgid "mail_templates_13_txt"
-msgstr "${firstName} ${lastName} heeft ${number} bestand(en) te delen aangeboden voor de groep${groupName} :\n\n${documentNamesTxt}"
+msgstr "${firstName} ${lastName} heeft ${number} te delen bestand(en) aangeboden voor de groep${groupName} :\n\n${documentNamesTxt}"
 
 # Template GROUP_NEW_MEMBER
 
@@ -152,11 +152,11 @@ msgstr "U bent nu lid van de groep ${groupName}."
 
 # Your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName} is ${status}.
 msgid "mail_templates_15_html"
-msgstr "Uw aanvraag tot toetreding van de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}."
+msgstr "Uw aanvraag tot toetreding tot de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}."
 
 # Your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName} is ${status}.
 msgid "mail_templates_15_txt"
-msgstr "Uw aanvraag tot toetreding van de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}."
+msgstr "Uw aanvraag tot toetreding tot de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}."
 
 # Template GROUP_SHARE_DELETED
 
