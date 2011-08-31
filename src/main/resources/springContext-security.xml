@@ -69,7 +69,7 @@
     <bean id="authenticationProcessingFilter" class="org.linagora.linShare.auth.DomainAuthenticationProcessingFilter">
         <property name="usernameParameter" value="login"/>
         <property name="passwordParameter" value="password"/>
-        <property name="defaultTargetUrl" value="/"/>
+        <property name="defaultTargetUrl" value="/startingPage"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="authenticationFailureUrl" value="/?login_error=1"/>
         <property name="exceptionMappings">
