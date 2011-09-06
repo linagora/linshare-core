@@ -95,12 +95,17 @@ public class DomainFacadeImpl implements DomainFacade {
 		if (actor.getRole() != Role.SUPERADMIN) {
 			throw new BusinessException("Cannot delete domain because actor is not super admin");
 		}
+		
+		//check domain identifier
 		Domain domain = domainService.retrieveDomain(identifier);
-		List<User> users = ldapQueryService.getAllDomainUsers(domain, null);
-		for (User user : users) {
-			userService.deleteUser(user.getLogin(), actor, false);
-		}
-		users = userService.findUsersInDB(identifier);
+		
+		//*** disable ldap search in domain before deletion
+		//List<User> users = ldapQueryService.getAllDomainUsers(domain, null);
+		//for (User user : users) {
+		//	userService.deleteUser(user.getLogin(), actor, false);
+		//}
+		
+		List<User> users = userService.findUsersInDB(identifier);
 		for (User user : users) {
 			userService.deleteUser(user.getLogin(), actor, false);
 		}
