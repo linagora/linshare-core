@@ -167,6 +167,10 @@ public class Index {
 	private boolean superadmin;
 	
 	@Property
+	@Persist
+	private boolean admin;
+	
+	@Property
 	private boolean noDomain;
     
 
@@ -179,8 +183,9 @@ public class Index {
     	ParameterVo p = null;
     	
     	superadmin = loginUser.isSuperAdmin();
-    	
-    	if (superadmin) {
+    	admin = loginUser.isAdministrator();
+    	    	    	
+    	if (superadmin||admin) {
     		domains = domainFacade.findAllDomains();
     	}
     	
@@ -196,63 +201,69 @@ public class Index {
 	    		if (!(domains == null || domains.size() < 1)) {
 	    			selectedDomain = domains.get(0);
 	    		}
-	    	} 
+	    	}  
 	    	
 	    	if (selectedDomain != null) {
 				p = domainFacade.retrieveDomain(selectedDomain.getIdentifier()).getParameterVo();
-	    	} else {    		
+	    	} else {    
 	    		p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
 	    	}
+	    	loadADomain(p);
 	
-	        fileSizeMax = p.getFileSizeMax();
-	        userAvailableSize = p.getUserAvailableSize();
-	        globalQuota = p.getGlobalQuota();
-	        activeMimeType = p.getActiveMimeType();
-	        activeSignature = p.getActiveSignature();
-	        activeDocTimeStamp = p.getActiveDocTimeStamp();
-	        activeGlobalQuota = p.getGlobalQuotaActive();
 	        
-	        activeEncipherment = securedStorageDisallowed ? false : p.getActiveEncipherment();
-	        guestAccountExpiryTime = p.getGuestAccountExpiryTime();
-	        guestAccountExpiryUnit = p.getGuestAccountExpiryUnit();
-	        defaultShareExpiryUnit = p.getDefaultShareExpiryUnit();
-	        defaultShareExpiryTime = p.getDefaultShareExpiryTime();
-	        deleteDocWithShareExpiryTime = p.getDeleteDocWithShareExpiryTime();
-	        
-	        closedDomain = p.getClosedDomain();
-	        restrictedDomain = p.getRestrictedDomain();
-	        domainWithGuests = p.getDomainWithGuests();
-	        guestsCanCreateOther = p.getGuestCanCreateOther();
-	        
-	        defaultFileExpiryUnit = p.getDefaultFileExpiryUnit();
-	        defaultFileExpiryTime = p.getDefaultFileExpiryTime();
-	        
-	        shareExpiryRules = p.getShareExpiryRules();
-	        if (shareExpiryRules == null) {
-	            shareExpiryRules = new ArrayList<ShareExpiryRule>();
-	        }
-	
-	        if (fileSizeMax != null) {
-	            fileSizeMax = fileSizeMax / FACTORMULTI;
-	        }
-	        if (userAvailableSize != null) {
-	            userAvailableSize = userAvailableSize / FACTORMULTI;
-	        }
-	        if (globalQuota != null) {
-	        	globalQuota = globalQuota / FACTORMULTI;
-	        }
-	        
-	        //check temp admin account (created by import.sql)
-	        if(needDeleteTempAdmin==null){
-	        	if(loginUser!=null && loginUser.getMail().equals(UserFacade.ADMIN_TEMP_MAIL)) {
-	        		needDeleteTempAdmin =false;
-	        	} else {
-	        		UserVo uservo = userFacade.searchTempAdminUser();
-	            	if(uservo!=null) needDeleteTempAdmin = true;
-	        		else needDeleteTempAdmin=false;
-	        	}
-	        }
+//			This part of code was useful before the 0.9.x release. With multiple domains, you can't delete the superadmin.	        
+//	        //check temp admin account (created by import.sql)
+//	        if(needDeleteTempAdmin==null){
+//	        	if(loginUser!=null && loginUser.getMail().equals(UserFacade.ADMIN_TEMP_MAIL)) {
+//	        		needDeleteTempAdmin =false;
+//	        	} else {
+//	        		UserVo uservo = userFacade.searchTempAdminUser();
+//	            	if(uservo!=null) needDeleteTempAdmin = true;
+//	        		else needDeleteTempAdmin=false;
+//	        	}
+//	        }
     	}
+    }
+    
+    private void loadADomain(ParameterVo p) {
+    	fileSizeMax = p.getFileSizeMax();
+        userAvailableSize = p.getUserAvailableSize();
+        globalQuota = p.getGlobalQuota();
+        activeMimeType = p.getActiveMimeType();
+        activeSignature = p.getActiveSignature();
+        activeDocTimeStamp = p.getActiveDocTimeStamp();
+        activeGlobalQuota = p.getGlobalQuotaActive();
+        
+        activeEncipherment = securedStorageDisallowed ? false : p.getActiveEncipherment();
+        guestAccountExpiryTime = p.getGuestAccountExpiryTime();
+        guestAccountExpiryUnit = p.getGuestAccountExpiryUnit();
+        defaultShareExpiryUnit = p.getDefaultShareExpiryUnit();
+        defaultShareExpiryTime = p.getDefaultShareExpiryTime();
+        deleteDocWithShareExpiryTime = p.getDeleteDocWithShareExpiryTime();
+        
+        closedDomain = p.getClosedDomain();
+        restrictedDomain = p.getRestrictedDomain();
+        domainWithGuests = p.getDomainWithGuests();
+        guestsCanCreateOther = p.getGuestCanCreateOther();
+        
+        defaultFileExpiryUnit = p.getDefaultFileExpiryUnit();
+        defaultFileExpiryTime = p.getDefaultFileExpiryTime();
+        
+        shareExpiryRules = p.getShareExpiryRules();
+        if (shareExpiryRules == null) {
+            shareExpiryRules = new ArrayList<ShareExpiryRule>();
+        }
+
+        if (fileSizeMax != null) {
+        	// fileSizeMax is store in the DB in bytes
+            fileSizeMax = fileSizeMax / FACTORMULTI;
+        }
+        if (userAvailableSize != null) {
+            userAvailableSize = userAvailableSize / FACTORMULTI;
+        }
+        if (globalQuota != null) {
+        	globalQuota = globalQuota / FACTORMULTI;
+        }
     }
     
     public ValueEncoder<DomainVo> getValueEncoder() {
@@ -330,7 +341,7 @@ public class Index {
         if (fileSizeMax != null) {
             fileSizeMax = fileSizeMax * FACTORMULTI;
         }
-        if (userAvailableSize != null) {
+        if (userAvailableSize != null) { 	
             userAvailableSize = userAvailableSize * FACTORMULTI;
         }
         if (globalQuota != null) {
@@ -339,20 +350,31 @@ public class Index {
         
         boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;
 
+        // It seems that a variable initialize in the init method but unused in the ihm, will be null anyway at this point.
+    	// It is typically the case for the superadmin's parameters which are not used in the administration view for simple admin.
+    	// In this case we override current parameters with the database parameters. 
+        if(admin && !superadmin) {
+        	closedDomain = p.getClosedDomain();
+ 	        restrictedDomain = p.getRestrictedDomain();
+        }
+        // In both case this option is disabled.
+	    guestsCanCreateOther = p.getGuestCanCreateOther();
+	        
         ParameterVo params = new ParameterVo(p.getIdentifier(), fileSizeMax, userAvailableSize, globalQuota, p.getUsedQuota(),activeGlobalQuota,activeMimeType, activeSignature,activeEnciph,activeDocTimeStamp,guestAccountExpiryTime,
             guestAccountExpiryUnit, p.getCustomLogoUrl(),defaultShareExpiryUnit,  defaultShareExpiryTime, defaultFileExpiryUnit, defaultFileExpiryTime, shareExpiryRules, deleteDocWithShareExpiryTime,p.getWelcomeTexts(), p.getMailTemplates(), p.getMailSubjects(),
             closedDomain, restrictedDomain, domainWithGuests, guestsCanCreateOther);
+        
         params = parameterFacade.saveOrUpdate(params);
         
         if (selectedDomain != null) {
             selectedDomain.setParameterVo(params);
         }
         
-        //delete admin temp account
-        if(needDeleteTempAdmin && deleteTempAdmin){
-        	userFacade.deleteTempAdminUser();
-        	needDeleteTempAdmin = false;
-        }
+//        //delete admin temp account
+//        if(needDeleteTempAdmin && deleteTempAdmin){
+//        	userFacade.deleteTempAdminUser();
+//        	needDeleteTempAdmin = false;
+//        }
         
     }
     
