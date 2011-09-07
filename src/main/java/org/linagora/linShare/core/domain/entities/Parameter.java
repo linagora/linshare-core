@@ -493,7 +493,7 @@ public class Parameter implements Serializable {
 		Parameter param = new Parameter(identifier, new Long(1024000L), new Long(1024000L), new Long(10240000L), new Long(0L), Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, 
 				Boolean.FALSE, new Integer(100), TimeUnit.DAY, "", TimeUnit.DAY, new Integer(100), TimeUnit.DAY, new Integer(100), 
 				new ArrayList<ShareExpiryRule>(), Boolean.FALSE, new HashSet<WelcomeText>(), 
-				new HashSet<MailTemplate>(), new HashSet<MailSubject>(), Boolean.FALSE, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE);
+				new HashSet<MailTemplate>(), new HashSet<MailSubject>(), Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
 		return param;
 	}
 	

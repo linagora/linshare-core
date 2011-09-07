@@ -51,7 +51,20 @@ public class DomainServiceImpl implements DomainService {
 		LDAPConnection conn = ldapConnectionRepository.findById(domainVo.getLdapConnection().getIdentifier());
 		Parameter param = null;
 		if (domainVo.getParameterVo() == null) {
-			Parameter entity = Parameter.getDefault(domainVo.getIdentifier()+"Param");
+			// Create a new parameter identifier
+			String parameter_identifier = domainVo.getIdentifier()+"Param";
+			Parameter entity;
+			// Get a default parameter from DB
+			Parameter baseVo = parameterRepository.loadConfig("baseParam");
+			if(baseVo == null) {
+				// If null, get hard coded parameter
+				entity = Parameter.getDefault(parameter_identifier);
+			} else {
+				entity = new Parameter(); 
+				entity.updateFrom(baseVo);
+				entity.setIdentifier(parameter_identifier);
+			}
+			
 			MessagesConfiguration defaultMessages = messagesRepository.loadDefault();
 			entity.setMessagesConfiguration(defaultMessages);
 			param = parameterRepository.create(entity);
