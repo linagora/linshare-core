@@ -20,7 +20,7 @@ public class JScriptLdapQuery {
 	/** 	Attributes 		**/
 	
 	// Logger
-	private static final Logger LOGGER = LoggerFactory.getLogger(JScriptEvaluator.class);
+	private static final Logger logger = LoggerFactory.getLogger(JScriptEvaluator.class);
 	private static final String LOG_INFO_KEY_PARSE = "Keys parsed which will be used in LDAP query are:";
 	
 	// Java to JavaScript Translator object
@@ -126,9 +126,14 @@ public class JScriptLdapQuery {
 		params.put("domain", domain.getDifferentialKey());
 		List<String> retList = jScriptEvaluator.evalToStringList(domain, command, params);
 		
+		
 		if (retList == null || retList.size() < 1) {
 			throw new NameNotFoundException("No user found for login: "+login+" and domain: " + domain.getIdentifier());
+		} else if (retList.size() > 1) {
+			logger.error("The authentification query had returned more than one user !!!");
+			return null;
 		}
+		
 		
 		String dn = retList.get(0);
 		if(ldapJndiService.auth(userPasswd, dn)) {
@@ -204,7 +209,7 @@ public class JScriptLdapQuery {
 	 */
 	private String[] parseKeys(Domain domain) {
 		String keys = domain.getPattern().getGetUserResult().replaceAll("\\s+", " ").trim().toLowerCase();
-		LOGGER.info(LOG_INFO_KEY_PARSE + keys);
+		logger.info(LOG_INFO_KEY_PARSE + keys);
 		return keys.split(" ");
 	}
 
