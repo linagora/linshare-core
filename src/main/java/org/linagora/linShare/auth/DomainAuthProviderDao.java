@@ -77,6 +77,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
 		
+		
 		String password = (String)authentication.getCredentials();
 		String domain = null;
 		if (authentication.getDetails() != null && authentication.getDetails() instanceof String) {
@@ -87,15 +88,19 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		
 		// if domain was specified at the connection, we try to authenticate the user on this domain only
 		if (domain != null) {
+			logger.debug("The domain was specified at the connection time : " + domain);
 			try {
 				Domain domainObject = domainService.retrieveDomain(domain);
 				foundUser = ldapQueryService.auth(login, password, domainObject);
 			} catch (NameNotFoundException e) {
+				logger.debug("Can't find the user in the directory. Search in DB.");
 				foundUser = userService.findUserInDB(login);
 				if (foundUser != null && !foundUser.getUserType().equals(UserType.INTERNAL) && domain.equals(foundUser.getDomainId())) {
+					logger.debug("User found in DB but authentification failed");
 					throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
 			          "Bad credentials"), domain);
 				} else {
+					logger.debug("Can't find the user in DB, BadDomainException for : " + domain);
 					throw new BadDomainException(e.getMessage(), domain);
 				}
 			} catch (Exception e) {
@@ -117,8 +122,10 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		 */
 		if (domain == null && login.indexOf("@") != -1) {
 			try {
+				
 				foundUser = userService.findUserInDB(login);
 				if (foundUser == null) {
+					logger.debug("Can't find the user in DB. Searching user in all domains.");
 					List<Domain> domains = domainService.findAllDomains();
 					for (Domain loopedDomain : domains) {
 						try {
@@ -138,6 +145,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 						}
 					}
 				} else {
+					logger.debug("User found in DB.");
 					if(foundUser.getDomain() == null) {
 						// The SUPERADMIN role does not have a domain. Field is null in the database. 
 						if(Role.SUPERADMIN != foundUser.getRole()) {
@@ -149,6 +157,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 					
 					domain = foundUser.getDomain().getIdentifier();
 					try {
+						logger.debug("The user domain stored in DB was : " + domain);
 						foundUser = ldapQueryService.auth(login, password, foundUser.getDomain());
 					} catch (NameNotFoundException e) {
 						throw new BadDomainException("Could not retrieve user : "+login+" in domain : "+domain, e);
