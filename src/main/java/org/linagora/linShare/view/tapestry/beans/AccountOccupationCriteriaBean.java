@@ -30,6 +30,8 @@ public class AccountOccupationCriteriaBean {
 	private String actorFirstname;
 	
 	private String actorLastname;
+	
+	private String actorDomain;
 
 	
 	public AccountOccupationCriteriaBean(){
@@ -67,6 +69,14 @@ public class AccountOccupationCriteriaBean {
 
 	public void setActorLastname(String lastname) {
 		this.actorLastname = lastname;
+	}
+
+	public String getActorDomain() {
+		return actorDomain;
+	}
+
+	public void setActorDomain(String actorDomain) {
+		this.actorDomain = actorDomain;
 	}
 	
 }
