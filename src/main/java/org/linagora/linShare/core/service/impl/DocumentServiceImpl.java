@@ -641,6 +641,8 @@ public class DocumentServiceImpl implements DocumentService {
 
 	public long getAvailableSize(User user) throws BusinessException {
 		
+		//if user is not in one domain = BOUM
+		
 		Domain domain = domainService.retrieveDomain(user.getDomain().getIdentifier());
 		
 		Parameter param = domain.getParameter();

@@ -110,6 +110,12 @@ abstract class GenericUserRepositoryImpl<U extends User> extends AbstractReposit
 			criteria.add(Restrictions.like("lastName", accountCriteria.getActorLastname(), MatchMode.START).ignoreCase());
 		}
 		
+		if ((accountCriteria.getActorDomain()!=null) && (accountCriteria.getActorDomain().length()>0)) {
+			criteria.createAlias("domain", "domain");
+			criteria.add(Restrictions.like("domain.identifier", accountCriteria.getActorDomain()).ignoreCase());
+		}
+		
+		
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
 

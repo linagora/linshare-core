@@ -34,6 +34,7 @@ import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.DocumentFacade;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -63,6 +64,10 @@ public class AccountOccupation {
 
 	@Inject
 	private DocumentFacade documentFacade;
+	
+	
+	@Inject
+	private DomainFacade domainFacade;
 	
 	
 	@Inject
@@ -102,6 +107,12 @@ public class AccountOccupation {
 	@Persist
 	private AccountOccupationCriteriaBean criteria;
 	
+	
+	@Persist
+	@Property
+	private List<String> domains;
+	
+	
 	/* ***********************************************************
 	 *                       Phase processing
 	 ************************************************************ */
@@ -110,7 +121,7 @@ public class AccountOccupation {
 	 *                   Event handlers&processing
 	 ************************************************************ */	
 	
-	public void onActivate() {
+	public void onActivate() throws BusinessException {
 		if(null == criteria) {
 			criteria = new AccountOccupationCriteriaBean();
 		} else {
@@ -121,6 +132,8 @@ public class AccountOccupation {
 				}	
 			}
 		}
+		
+		domains = domainFacade.getAllDomainIdentifiers();
 	}
 	
 	public Object onSuccessFromFormReport() throws BusinessException  {

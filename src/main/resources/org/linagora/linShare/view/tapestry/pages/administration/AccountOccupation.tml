@@ -69,6 +69,17 @@
 								<t:textfield t:id="actorLastname" t:value="criteria.actorLastname"/>
 							</td>
 						</tr>
+						<tr>
+							<td align="right" valign="top" class="palette" width="150">
+								<span>
+									${message:pages.administration.audit.form.targetDomain}
+								</span>
+							</td>
+							<td>
+								<t:select t:id="targetDomainSelect" t:value="criteria.actorDomain" t:model="domains" />
+							</td>
+						</tr>
+						
 					</table>
 				</fieldset>
 
