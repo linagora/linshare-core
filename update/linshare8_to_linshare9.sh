@@ -44,3 +44,6 @@ echo "INSERT INTO linshare_domain(domain_id, identifier, differential_key, domai
 
 echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (4, 0, 'root@localhost.localdomain', '', '', 'root@localhost.localdomain', '2009-01-01', 3, '$hashpass', '2019-01-01', 'false','false');"
 
+# After the migration, you have to set the id domain to all the existing users.
+echo "UPDATE linshare_user SET domain_id=1 WHERE role_id = 0 or role_id = 1;"
+
