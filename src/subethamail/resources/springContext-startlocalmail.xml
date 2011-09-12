@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+   This file is part of Linshare.
+
+   Linshare is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Affero General Public License as
+   published by the Free Software Foundation, either version 3 of
+   the License, or (at your option) any later version.
+
+   Linshare is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Affero General Public License for more details.
+
+   You should have received a copy of the GNU Affero General Public
+   License along with Foobar.  If not, see
+                                    <http://www.gnu.org/licenses/>.
+   (c) 2009-2010 Groupe Linagora - http://linagora.org
+ 
+   This file as been copied from the InterLDAP project under AGPLv3
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+	default-autowire="no">
+
+	<!-- **************************************************************** -->
+	<!--Start localhost mail (to test on localhost)-->
+	<!-- **************************************************************** -->
+	<bean id="localmail" class="org.linagora.subethamail.SmtpServerLocal" init-method="start">
+		<property name="port" value="${mail.smtp.port}"/>
+        <property name="user" value="${mail.smtp.user}"/>
+        <property name="password" value="${mail.smtp.password}"/>
+        <property name="outputDir" value="${LINSHARE_HOME}/var/lib/linshare/mail"/>
+        
+	</bean>
+</beans>
