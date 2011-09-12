@@ -101,10 +101,6 @@ public class MultipleDomainUpdate {
     @Property
     private Boolean domainWithGuests;
     @Property
-    private Boolean guestsCanCreateOther;
-    
-    
-    @Property
     private Boolean activeSignature;
     @Property
     private Boolean activeEncipherment;
@@ -193,8 +189,6 @@ public class MultipleDomainUpdate {
 	@Property
 	private boolean domainWithGuestsChecked;
 	@Property
-	private boolean guestsCanCreateOtherChecked;
-	@Property
 	private boolean defaultShareExpiryTimeChecked;
 	@Property
 	private boolean deleteDocWithShareExpiryTimeChecked;
@@ -243,7 +237,6 @@ public class MultipleDomainUpdate {
         closedDomain = p.getClosedDomain();
         restrictedDomain = p.getRestrictedDomain();
         domainWithGuests = p.getDomainWithGuests();
-        guestsCanCreateOther = p.getGuestCanCreateOther();
         
         defaultFileExpiryUnit = p.getDefaultFileExpiryUnit();
         defaultFileExpiryTime = p.getDefaultFileExpiryTime();
@@ -289,7 +282,6 @@ public class MultipleDomainUpdate {
         closedDomainChecked = false;
         restrictedDomainChecked = false;
         domainWithGuestsChecked = false;
-        guestsCanCreateOtherChecked = false;
         defaultShareExpiryTimeChecked = false;
         deleteDocWithShareExpiryTimeChecked = false;
         customLogoUrlChecked = false;
@@ -339,8 +331,6 @@ public class MultipleDomainUpdate {
     	}
     }
     
-    
-    
     public Object onSuccessFromAdministrationForm() throws BusinessException {
         
         for (DomainVo selected : selectedDomains) {
@@ -388,7 +378,7 @@ public class MultipleDomainUpdate {
 	        		closedDomainChecked ? closedDomain : p.getClosedDomain(), 
 	        		restrictedDomainChecked ? restrictedDomain : p.getRestrictedDomain(), 
 	        		domainWithGuestsChecked ? domainWithGuests : p.getDomainWithGuests(), 
-	        		guestsCanCreateOtherChecked ? guestsCanCreateOther : p.getGuestCanCreateOther());
+	        		p.getGuestCanCreateOther());
 	        params = parameterFacade.saveOrUpdate(params);
 		}
         

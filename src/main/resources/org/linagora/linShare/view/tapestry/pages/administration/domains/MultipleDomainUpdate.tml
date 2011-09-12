@@ -111,11 +111,6 @@
 							<td class="input"><t:checkbox t:id="domainWithGuestsChecked" class="edit-form-field" /></td>
 						</tr>
 						<tr>
-							<td class="input"><t:label for="guestsCanCreateOther" class="edit-form-label">${message:pages.administration.index.guestsCanCreateOther}</t:label></td>
-							<td class="input"><t:checkbox t:id="guestsCanCreateOther" class="edit-form-field" /></td>
-							<td class="input"><t:checkbox t:id="guestsCanCreateOtherChecked" class="edit-form-field" /></td>
-						</tr>
-						<tr>
 							<td class="input"><t:label for="customLogoUrl" class="edit-form-label">${message:pages.administration.index.customLogoUrl}</t:label></td>
 							<td class="input"><t:textfield t:id="customLogoUrl" size="48" class="edit-form-field"/></td>
 							<td class="input"><t:checkbox t:id="customLogoUrlChecked" class="edit-form-field" /></td>
