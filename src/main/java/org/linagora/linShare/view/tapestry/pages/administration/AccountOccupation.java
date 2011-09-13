@@ -37,6 +37,7 @@ import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.DisplayableAccountOccupationEntryVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
@@ -53,6 +54,9 @@ public class AccountOccupation {
 	@SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
+	
+    @SessionState
+    private UserVo userLoggedIn;
 
 	
 	/* ***********************************************************
@@ -112,6 +116,13 @@ public class AccountOccupation {
 	@Property
 	private List<String> domains;
 	
+	@Property
+	@Persist
+	private boolean superadmin;
+	
+	
+	
+	
 	
 	/* ***********************************************************
 	 *                       Phase processing
@@ -134,6 +145,8 @@ public class AccountOccupation {
 		}
 		
 		domains = domainFacade.getAllDomainIdentifiers();
+		superadmin = userLoggedIn.isSuperAdmin();
+		
 	}
 	
 	public Object onSuccessFromFormReport() throws BusinessException  {
