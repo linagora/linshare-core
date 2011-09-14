@@ -41,6 +41,7 @@ import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
+import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.SecuredUrlService;
 import org.linagora.linShare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 	private final SecuredUrlRepository securedUrlRepository;
 	private final ShareExpiryDateServiceImpl shareExpiryDateService;
-	private final LogEntryRepository logEntryRepository;
+	private final LogEntryService logEntryService;
 
 	private final String baseSecuredUrl;
 
@@ -59,12 +60,12 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 	public SecuredUrlServiceImpl(final SecuredUrlRepository securedUrlRepository,
 			final ShareExpiryDateServiceImpl shareExpiryDateService, String pageName,
-			final LogEntryRepository logEntryRepository) {
+			final LogEntryService logEntryService) {
 		this.securedUrlRepository = securedUrlRepository;
 		this.shareExpiryDateService = shareExpiryDateService;
 
 		this.baseSecuredUrl = pageName;
-		this.logEntryRepository = logEntryRepository;
+		this.logEntryService = logEntryService;
 	}
 
 	protected String getBaseSecuredUrl() {
@@ -270,7 +271,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 				.getType(), email!=null?email:"" , "", "" , "",null);
 			
 			try {
-				logEntryRepository.create(logEntry);
+				logEntryService.create(logEntry);
 			} catch (IllegalArgumentException e) {
 				throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE, "Could not log the action" + e);
 			} catch (BusinessException e) {
@@ -286,7 +287,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 						.getType(), email, "", "" , "",null);
 
 				try {
-					logEntryRepository.create(logEntry);
+					logEntryService.create(logEntry);
 				} catch (IllegalArgumentException e) {
 					throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE, "Could not log the action " + e);
 				} catch (BusinessException e) {

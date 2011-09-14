@@ -48,6 +48,7 @@ import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.EnciphermentService;
+import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.UserService;
 import org.linagora.linShare.core.utils.SymmetricEnciphermentPBEwithAES;
 import org.slf4j.Logger;
@@ -61,18 +62,18 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 	private final UserService userService;
 	private final DocumentService documentService;
 	private final DocumentRepository documentRepository;
-    private final LogEntryRepository logEntryRepository;  
+    private final LogEntryService logEntryService;  
 	private final String workingDir;
 	
 	private static Logger log = LoggerFactory.getLogger(EnciphermentServiceImpl.class);
 	
 	
 	
-	public EnciphermentServiceImpl(UserService userService, DocumentService documentService, DocumentRepository documentRepository, LogEntryRepository logEntryRepository,String workingDir) {
+	public EnciphermentServiceImpl(UserService userService, DocumentService documentService, DocumentRepository documentRepository, LogEntryService logEntryService,String workingDir) {
 		this.userService =  userService;
 		this.documentService = documentService;
 		this.documentRepository = documentRepository;
-		this.logEntryRepository = logEntryRepository;
+		this.logEntryService = logEntryService;
 		this.workingDir = workingDir; //linshare.encipherment.tmp.dir
 		
 		File workingDirtest = new File(workingDir);
@@ -89,7 +90,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 	        UserLogEntry logEntry = new UserLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.USER_UPDATE, "Generate symetric key (challenge) of a user", user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(), null);
 	        
-	        logEntryRepository.create(logEntry);
+	        logEntryService.create(logEntry);
 			
 			
 		} catch (InvalidKeyException e) {
@@ -185,7 +186,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.FILE_DECRYPT, "Decrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 	        
-	        logEntryRepository.create(logEntry);
+	        logEntryService.create(logEntry);
 			
 		
 		} catch (InvalidKeyException e) {
@@ -246,7 +247,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.FILE_ENCRYPT, "Encrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 			
-	        logEntryRepository.create(logEntry);
+	        logEntryService.create(logEntry);
 			
 		} catch (InvalidKeyException e) {
 			log.error(e.toString(),e);

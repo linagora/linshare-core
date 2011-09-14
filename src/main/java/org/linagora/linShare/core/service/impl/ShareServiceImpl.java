@@ -54,6 +54,7 @@ import org.linagora.linShare.core.repository.SecuredUrlRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DomainService;
+import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.SecuredUrlService;
@@ -68,7 +69,7 @@ public class ShareServiceImpl implements ShareService{
 	
 	private final UserRepository<User> userRepository;
 	private final ShareRepository shareRepository;
-	private final LogEntryRepository logEntryRepository;
+	private final LogEntryService logEntryService;
 	private final DomainService domainService;
 	private final SecuredUrlRepository securedUrlRepository;
 	private final DocumentRepository documentRepository;
@@ -89,7 +90,7 @@ public class ShareServiceImpl implements ShareService{
 
 	public ShareServiceImpl(final UserRepository<User> userRepository,
 			final ShareRepository shareRepository,
-			final LogEntryRepository logEntryRepository,
+			final LogEntryService logEntryService,
 			final DomainService domainService, final SecuredUrlRepository securedUrlRepository,
 			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
@@ -99,7 +100,7 @@ public class ShareServiceImpl implements ShareService{
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
-		this.logEntryRepository=logEntryRepository;
+		this.logEntryService=logEntryService;
 		this.domainService = domainService;
 		this.securedUrlRepository=securedUrlRepository;
 		this.documentRepository = documentRepository;
@@ -173,7 +174,7 @@ public class ShareServiceImpl implements ShareService{
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
         		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
-        logEntryRepository.create(logEntry);
+        logEntryService.create(logEntry);
 	}
 
 	/**
@@ -191,7 +192,7 @@ public class ShareServiceImpl implements ShareService{
 	        		currentShare.getDocument().getName(), currentShare.getDocument().getSize(), currentShare.getDocument().getType(),
 	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
 	        
-	        logEntryRepository.create(logEntry);
+	        logEntryService.create(logEntry);
 		}
 
 	}
@@ -210,7 +211,7 @@ public class ShareServiceImpl implements ShareService{
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
         		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
-        logEntryRepository.create(logEntry);
+        logEntryService.create(logEntry);
         
 	}
 
@@ -229,7 +230,7 @@ public class ShareServiceImpl implements ShareService{
 	        		currentShare.getDocument().getName(), currentShare.getDocument().getSize(), currentShare.getDocument().getType(),
 	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
 	        
-	        logEntryRepository.create(logEntry);
+	        logEntryService.create(logEntry);
 	        
 		}
 	}
@@ -245,7 +246,7 @@ public class ShareServiceImpl implements ShareService{
         		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
         		share.getReceiver().getMail(), share.getReceiver().getFirstName(), share.getReceiver().getLastName(), share.getReceiver().getDomainId(), null);
         
-        logEntryRepository.create(logEntry);
+        logEntryService.create(logEntry);
         
 	}
 	
@@ -329,7 +330,7 @@ public class ShareServiceImpl implements ShareService{
 				        	LogAction.FILE_SHARE, "Sharing of a file", document.getName(), document.getSize(), document.getType(),
 				        	recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), recipient.getDomainId(), expiryDate);
 				       
-				    logEntryRepository.create(logEntry);
+				    logEntryService.create(logEntry);
 				        
 				    returnItems.addSuccessItem(shareEntity);
 
@@ -427,7 +428,7 @@ public class ShareServiceImpl implements ShareService{
 					}
 				}
 				
-				logEntryRepository.create(logEntry);
+				logEntryService.create(logEntry);
 			
 			} else {
 				doc.setShared(false);
@@ -586,7 +587,7 @@ public class ShareServiceImpl implements ShareService{
 		        		LogAction.FILE_SHARE, "Sharing of a file", doc.getName(), doc.getSize(), doc.getType(),
 		        		oneContact.getMail(), "", "", "", securedUrl.getExpirationTime());
 		       
-				logEntryRepository.create(logEntry);
+				logEntryService.create(logEntry);
 			}
 		}
 		
@@ -617,8 +618,8 @@ public class ShareServiceImpl implements ShareService{
 						.getMail(), user.getFirstName(), user
 						.getLastName(), user.getDomainId(), null);
 		
-		logEntryRepository.create(logEntryShare);
-		logEntryRepository.create(logEntryDelete);
+		logEntryService.create(logEntryShare);
+		logEntryService.create(logEntryDelete);
 	}
 	
 

@@ -73,6 +73,7 @@ import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.DomainService;
+import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MimeTypeService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.TimeStampingService;
@@ -108,7 +109,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 	private final ShareTransformer shareTransformer;
 
-	private final LogEntryRepository logEntryRepository;
+	private final LogEntryService logEntryService;
 
 	private static Log log = LogFactory
 			.getLog(DocumentServiceImpl.class);
@@ -119,7 +120,7 @@ public class DocumentServiceImpl implements DocumentService {
 			final MimeTypeService mimeTypeService,
 			final ParameterRepository parameterRepository,
 			final ShareService shareService,
-			final LogEntryRepository logEntryRepository,
+			final LogEntryService logEntryService,
 			final VirusScannerService virusScannerService,
 			final TimeStampingService timeStampingService,
 			final ShareTransformer shareTransformer,
@@ -131,7 +132,7 @@ public class DocumentServiceImpl implements DocumentService {
 		this.mimeTypeService = mimeTypeService;
 		this.parameterRepository = parameterRepository;
 		this.shareService = shareService;
-		this.logEntryRepository = logEntryRepository;
+		this.logEntryService = logEntryService;
 		this.virusScannerService = virusScannerService;
 		this.timeStampingService = timeStampingService;
 		this.shareTransformer = shareTransformer;
@@ -309,7 +310,7 @@ public class DocumentServiceImpl implements DocumentService {
 				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
 						owner.getLastName(), owner.getDomainId(), 
 						LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
-				logEntryRepository.create(logEntry);
+				logEntryService.create(LogEntryService.ERROR,logEntry);
 				log.error("File scan failed: antivirus enabled but not available ?");
 				throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED,
 					"File scan failed", e);
@@ -318,7 +319,7 @@ public class DocumentServiceImpl implements DocumentService {
 			if (!checkStatus) {
 				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
 						owner.getLastName(), owner.getDomainId(), LogAction.FILE_WITH_VIRUS, fileName);
-				logEntryRepository.create(logEntry);
+				logEntryService.create(LogEntryService.WARN,logEntry);
 				log.warn(owner.getMail()
 						+ " tried to upload a file containing virus:" + fileName);
 				tempFile.delete(); // SOS ! do not keep the file on the system...
@@ -422,7 +423,7 @@ public class DocumentServiceImpl implements DocumentService {
 							.getName(), docEntity.getSize(), docEntity
 							.getType());
 
-			logEntryRepository.create(logEntry);
+			logEntryService.create(logEntry);
 			
 			addDocSizeToGlobalUsedQuota(docEntity, domain.getParameter());
 
@@ -636,7 +637,7 @@ public class DocumentServiceImpl implements DocumentService {
 				"signature of a file", aDoc.getName(), aDoc.getSize(), aDoc
 						.getType());
 
-		logEntryRepository.create(logEntry);
+		logEntryService.create(logEntry);
 	}
 
 	public long getAvailableSize(User user) throws BusinessException {
@@ -723,6 +724,7 @@ public class DocumentServiceImpl implements DocumentService {
 				}
 
 				FileLogEntry logEntry;
+				int level = LogEntryService.INFO;
 
 				if (Reason.EXPIRY.equals(causeOfDeletion)) {
 					logEntry = new FileLogEntry(actor.getMail(), actor
@@ -736,13 +738,14 @@ public class DocumentServiceImpl implements DocumentService {
 							"File removed because of inconsistence. "
 									+ "Please contact your administrator.", doc
 									.getName(), doc.getSize(), doc.getType());
+					level = LogEntryService.WARN;
 				} else {
 					logEntry = new FileLogEntry(actor.getMail(), actor
 							.getFirstName(), actor.getLastName(), actor.getDomainId(),
 							LogAction.FILE_DELETE, "Deletion of a file", doc
 									.getName(), doc.getSize(), doc.getType());
 				}
-				logEntryRepository.create(logEntry);
+				logEntryService.create(level, logEntry);
 
 			} catch (IllegalArgumentException e) {
 				log.error("Could not delete file " + doc.getName()
@@ -857,7 +860,7 @@ public class DocumentServiceImpl implements DocumentService {
 						.getFileName(), doc.getSize(), doc.getType(), actor
 						.getMail(), actor.getFirstName(), actor
 						.getLastName(), actor.getDomainIdentifier(), null);
-		logEntryRepository.create(logEntry);
+		logEntryService.create(logEntry);
 		
 		return this.fileSystemDao.getFileContentByUUID(shareToRetrieve
 				.getDocument().getIdentifier());
@@ -909,7 +912,7 @@ public class DocumentServiceImpl implements DocumentService {
 		FileLogEntry logEntry = new FileLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
 				owner.getDomainId(), LogAction.FILE_UPDATE, "Update of a file", logText, doc.getSize(), doc.getType());
 		
-		logEntryRepository.create(logEntry);
+		logEntryService.create(logEntry);
 
 		return doc;
 		
