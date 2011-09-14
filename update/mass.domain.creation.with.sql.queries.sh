@@ -169,6 +169,7 @@ function get_domain_id ()
 # MAIN
 ################################################
 echo -e "\nThis script is designed to easily create multiple domains using sql queries since  0.9.x LinShare version. 
+Edit the script to custom parameters or uncomment the initGlobalVariables function below. This function will prompt you to set all parameters.
 \n"
 
 #initGlobalVariables
