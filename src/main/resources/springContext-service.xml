@@ -25,10 +25,14 @@
 		class="org.linagora.linShare.core.dao.apperture.MimeTypeMagicNumberImpl">
     </bean>
     
+    <bean id="logEntryService" class="org.linagora.linShare.core.service.impl.LogEntryServiceImpl">
+        <constructor-arg index="0" ref="logEntryRepository" />
+    </bean>
+    
     <bean name="userService" class="org.linagora.linShare.core.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="notifierService"/>
-        <constructor-arg ref="logEntryRepository" />
+        <constructor-arg ref="logEntryService" />
         <constructor-arg ref="guestRepository"/>
         <constructor-arg ref="shareService"/>
         <constructor-arg ref="recipientFavouriteService" />
@@ -61,13 +65,12 @@
         <constructor-arg index="3" ref="mimeTypeService" />
         <constructor-arg index="4" ref="parameterRepository" />
         <constructor-arg index="5" ref="shareService" />
-        <constructor-arg index="6" ref="logEntryRepository" />
+        <constructor-arg index="6" ref="logEntryService" />
         <constructor-arg index="7" ref="clamavVirusScannerService" />
         <constructor-arg index="8" ref="timeStampingService" />
         <constructor-arg index="9" ref="shareTransformer" />
         <constructor-arg index="10" ref="domainService" />
     </bean>
-	     
     
     <bean id="shareExpiryDateService" class="org.linagora.linShare.core.service.impl.ShareExpiryDateServiceImpl">
     </bean>
@@ -77,14 +80,14 @@
     	<constructor-arg ref="securedUrlRepository"/>
     	<constructor-arg ref="shareExpiryDateService"/>
     	<constructor-arg value="download"/>
-    	<constructor-arg ref="logEntryRepository" />
+    	<constructor-arg ref="logEntryService" />
     </bean>
     
    
     <bean id="shareService" class="org.linagora.linShare.core.service.impl.ShareServiceImpl">
         <constructor-arg index="0" ref="userRepository" />
         <constructor-arg index="1" ref="shareRepository"/>
-        <constructor-arg index="2" ref="logEntryRepository" />
+        <constructor-arg index="2" ref="logEntryService" />
         <constructor-arg index="3" ref="domainService" />
         <constructor-arg index="4" ref="securedUrlRepository" />
         <constructor-arg index="5" ref="documentRepository" />
@@ -129,7 +132,7 @@
         <constructor-arg ref="userService"/>
         <constructor-arg ref="documentService"/>
         <constructor-arg ref="documentRepository"/>
-        <constructor-arg ref="logEntryRepository"/>
+        <constructor-arg ref="logEntryService"/>
         <constructor-arg value="${linshare.encipherment.tmp.dir}"/>
     </bean>
     

@@ -28,7 +28,7 @@ import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.entities.UserLogEntry;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.repository.LogEntryRepository;
+import org.linagora.linShare.core.service.LogEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
@@ -43,15 +43,15 @@ public class UserAccessAuthentity  {
 
     private final UserFacade userFacade;
     private final ApplicationStateManager applicationStateManager;
-    private final LogEntryRepository logEntryRepository;
+    private final LogEntryService logEntryService;
     
 	private static final Logger logger = LoggerFactory.getLogger(UserAccessAuthentity.class);
 
     public UserAccessAuthentity(UserFacade userFacade, ApplicationStateManager applicationStateManager,
-    		LogEntryRepository logEntryRepository) {
+    		LogEntryService logEntryService) {
         this.userFacade = userFacade;
         this.applicationStateManager = applicationStateManager;
-        this.logEntryRepository = logEntryRepository;
+        this.logEntryService = logEntryService;
     }
 
     public void processAuth() {
@@ -94,7 +94,7 @@ public class UserAccessAuthentity  {
 				userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
 				LogAction.USER_AUTH, "Successfull authentification", null, null, null, null, null);
 		try {
-			logEntryRepository.create(logEntry);
+			logEntryService.create(logEntry);
 		} catch (IllegalArgumentException e) {
 			logger.error("Error while trying to log user successfull auth", e);
 		} catch (BusinessException e) {

@@ -59,6 +59,7 @@ import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.GroupService;
 import org.linagora.linShare.core.service.LDAPQueryService;
+import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.RecipientFavouriteService;
@@ -86,7 +87,7 @@ public class UserServiceImpl implements UserService {
     
   //  private final SharedDocumentService sharedDocumentService;
     
-    private final LogEntryRepository logEntryRepository;
+    private final LogEntryService logEntryService;
     
     private final ShareService shareService;
     
@@ -109,7 +110,7 @@ public class UserServiceImpl implements UserService {
      */
     public UserServiceImpl(final UserRepository userRepository,
     		final NotifierService notifierService, 
-    		final LogEntryRepository logEntryRepository,
+    		final LogEntryService logEntryService,
     		final GuestRepository guestRepository, 
     		final ShareService shareService,
     		final RecipientFavouriteService recipientFavouriteService,
@@ -121,7 +122,7 @@ public class UserServiceImpl implements UserService {
     		final DomainService domainService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
-        this.logEntryRepository = logEntryRepository;
+        this.logEntryService = logEntryService;
         this.guestRepository = guestRepository;
 		this.shareService = shareService;
 		this.recipientFavouriteService = recipientFavouriteService;
@@ -174,7 +175,7 @@ public class UserServiceImpl implements UserService {
         UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(), owner.getDomainId(),
         		LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), expDate);
         
-        logEntryRepository.create(logEntry);
+        logEntryService.create(logEntry);
         
         mailContainer = mailElementsFactory.buildMailNewGuest(owner, mailContainer, owner, guest, password);
 
@@ -323,7 +324,7 @@ public class UserServiceImpl implements UserService {
 		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
 		        		userToDelete.getMail(), 
 		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-				 logEntryRepository.create(logEntry);
+				 logEntryService.create(logEntry);
 				 documentsToClean.add(share.getDocument());
 			}
 			
@@ -337,7 +338,7 @@ public class UserServiceImpl implements UserService {
 		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
 		        		userToDelete.getMail(), 
 		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-				 logEntryRepository.create(logEntry);
+				 logEntryService.create(logEntry);
 			}
 			
 			// clearing sent urls
@@ -353,7 +354,7 @@ public class UserServiceImpl implements UserService {
 		        		docs,null,null,
 		        		userToDelete.getMail(), 
 		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-				 logEntryRepository.create(logEntry);
+				 logEntryService.create(logEntry);
 			}
 			
 			sentShare.clear();
@@ -376,7 +377,7 @@ public class UserServiceImpl implements UserService {
 						owner.getDomainId(),
 						LogAction.USER_DELETE, "User deleted", document.getName(), 
 						document.getSize(), document.getType());
-				logEntryRepository.create(logEntry);
+				logEntryService.create(logEntry);
 			}
 			
 			//clearing the favorites
@@ -412,7 +413,7 @@ public class UserServiceImpl implements UserService {
 		        	LogAction.USER_DELETE, "Deleting an user", userToDelete.getMail(), 
 		        	userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
       
-		    logEntryRepository.create(logEntry);
+		    logEntryService.create(logEntry);
 		    
 		    for (Document document : documentsToClean) {
 		    	shareService.refreshShareAttributeOfDoc(document);
@@ -519,7 +520,7 @@ public class UserServiceImpl implements UserService {
 				owner.getDomainId(),
         		LogAction.USER_UPDATE, "Update of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), null);
         
-        logEntryRepository.create(logEntry);
+        logEntryService.create(logEntry);
 
 	}
 
@@ -536,7 +537,7 @@ public class UserServiceImpl implements UserService {
 				owner.getDomainId(),
         		LogAction.USER_UPDATE, "Update role of a user", user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
         
-        logEntryRepository.create(logEntry);
+        logEntryService.create(logEntry);
 		
 	}
 

@@ -41,6 +41,7 @@ import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.EnciphermentService;
+import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.UserService;
 import org.linagora.linShare.core.utils.AESCrypt;
 import org.slf4j.Logger;
@@ -53,18 +54,18 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 	private final UserService userService;
 	private final DocumentService documentService;
 	private final DocumentRepository documentRepository;
-    private final LogEntryRepository logEntryRepository;  
+    private final LogEntryService logEntryService;  
 	private final String workingDir;
 	
 	private static Logger log = LoggerFactory.getLogger(EnciphermentServiceAesCryptImpl.class);
 	
 	
 	
-	public EnciphermentServiceAesCryptImpl(UserService userService, DocumentService documentService, DocumentRepository documentRepository, LogEntryRepository logEntryRepository,String workingDir) {
+	public EnciphermentServiceAesCryptImpl(UserService userService, DocumentService documentService, DocumentRepository documentRepository, LogEntryService logEntryService,String workingDir) {
 		this.userService =  userService;
 		this.documentService = documentService;
 		this.documentRepository = documentRepository;
-		this.logEntryRepository = logEntryRepository;
+		this.logEntryService = logEntryService;
 		this.workingDir = workingDir; //linshare.encipherment.tmp.dir
 		
 		//test directory
@@ -105,7 +106,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.FILE_DECRYPT, "Decrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 	        
-	        logEntryRepository.create(logEntry);
+	        logEntryService.create(logEntry);
 			
 		
 		} catch (IOException e) {
@@ -158,7 +159,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
 	        		LogAction.FILE_ENCRYPT, "Encrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 			
-	        logEntryRepository.create(logEntry);
+	        logEntryService.create(logEntry);
 			
 		} catch (IOException e) {
 			log.error(e.toString(),e);
