@@ -159,7 +159,7 @@ else
 	if [ `declare -F $g_main_function|wc -l` -eq 1 ] ; then 
 		$g_main_function
 	else
-		echo "ERROR:$g_main_function is not a valid function"
+		echo "ERROR:$g_main_function is not a valid function : possible choices are : build_classic , build_installer , build_cas , build_sso "
 		exit 1
 	fi
 fi
