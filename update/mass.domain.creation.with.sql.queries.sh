@@ -13,9 +13,9 @@ ldap_baseDN="ou=linshare"
 ldap_auth_attribute="mail"
 userDN="cn=admin,dc=com"
 password="password"
-superadmin_pass="adminlinshare"
 domain_identifier="myDomain"
 sgbd=1
+
 
 
 #################################################
@@ -44,33 +44,13 @@ function initGlobalVariables()
 	echo "Please enter your ldap credentials (leave userDN and password empty for anonymous connection to LDAP):"
 	read -p  "   userDN (was ldap.auth.userDN): " userDN
 	read -p  "   password (was ldap.auth.password): " password
-	
-	echo "-------------------"
-	echo "Superadmin configuration:"
-	echo "-------------------"
-	echo "Please enter the superadmin password: "
-	read -s superadmin_pass
-	echo "Please confirm the superadmin password: "
-	read -s superadmin_pass_confirm
-	
-	while [ "$superadmin_pass" != "$superadmin_pass_confirm" ]
-	do
-	echo ""
-	echo "The password does not correspond to the confirmation !"
-	echo "Please enter the superadmin password: "
-	read -s superadmin_pass
-	echo "Please confirm the superadmin password: "
-	read -s superadmin_pass_confirm
-	done
-	echo "-------------------"
-	
 }
 
 function printGlobalVariables ()
 {
 	echo -e "\nYour parameters : \n"
 	
-	echo "domain name : " $domain_identifier
+	echo "domain name (must be unique) : " $domain_identifier
 	echo "ldap url : " $ldap_url
 	echo "ldap base : " $ldap_base
 	echo "ldap base DN : " $ldap_baseDN
@@ -92,11 +72,6 @@ function printGlobalVariables ()
 	esac
 
 	echo
-}
-
-function encode_admin_pwd ()
-{
-	hashpass=`echo -ne "$(echo -n $superadmin_pass | sha1sum | cut -f1 -d" " | sed -e 's/\(.\{2\}\)/\\\x\1/g')" | base64`
 }
 
 
@@ -191,58 +166,15 @@ function get_domain_id ()
 }
 
 
-## Users
-
-function insert_super_admin_user_mysql ()
-{
-	echo "
-
-INSERT INTO linshare_user(user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)
-        SELECT  0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 3, '$hashpass', '2019-01-01', false,false from linshare_user
- WHERE NOT EXISTS
-        (
-                SELECT 0 from linshare_user where login ='root@localhost.localdomain' 
-			OR mail ='root@localhost.localdomain'
-        );"
-
-}
-
-
-function insert_super_admin_user_postgresql ()
-{
-	echo "INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)
-        SELECT  (SELECT nextVal('hibernate_sequence')), 0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 3, '$hashpass', '2019-01-01', false,false
-        WHERE NOT EXISTS
-        (
-                SELECT 0 from linshare_user where login ='root@localhost.localdomain' 
-			OR mail ='root@localhost.localdomain'
-        );"
-}
-
-function update_domain_users ()
-{
-	# After the migration, you have to set the id domain to all the existing users.
-	echo "UPDATE linshare_user SET domain_id=(`get_domain_id`) WHERE role_id = 0 or role_id = 1;"
-}
-
 ################################################
 # MAIN
 ################################################
-echo -e "\nThis script is designed to convert a 0.8.x LinShare config to a 0.9.x LinShare config. 
-In the 0.8.x version, ldap configuration was stored in a file as properties.
-In the 0.9.x version, you can now store many configurations in the database.
-
-You have to import the Migration* sql script before running this script. It will generate all the sql queries you need.
-
-Migration Scripts are : 
-1) Migration_v08_v09.sql
-2) Migration_v09-3_v09-4.sql if you will use a linshare version >= 0.9.4 \n"
+echo -e "\nThis script is designed to easily create multiple domains using sql queries since  0.9.x LinShare version. 
+\n"
 
 #initGlobalVariables
-encode_admin_pwd
 printGlobalVariables
 read -p "Continue ?"
-
 
 case $sgbd in 
 	2)
@@ -252,8 +184,6 @@ case $sgbd in
 		create_domain_parameter_mysql
 		create_domain_pattern_mysql
 		create_domain_mysql
-	 	update_domain_users
-		insert_super_admin_user_mysql
 	;;
 	1)
 		echo -e "\n\nPlease insert this lines into your postgresql database after the migration sql script :"
@@ -262,8 +192,6 @@ case $sgbd in
 		create_domain_parameter_postgresql
 		create_domain_pattern_postgresql
 		create_domain_postgresql
-		update_domain_users
-		insert_super_admin_user_postgresql
 	;;
 	*)
 		echo "ERROR Sgbd $sgbd is not supported !"
