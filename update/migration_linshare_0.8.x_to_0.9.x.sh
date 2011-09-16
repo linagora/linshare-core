@@ -238,7 +238,7 @@ Migration Scripts are :
 1) Migration_v08_v09.sql
 2) Migration_v09-3_v09-4.sql if you will use a linshare version >= 0.9.4 \n"
 
-#initGlobalVariables
+initGlobalVariables
 encode_admin_pwd
 printGlobalVariables
 read -p "Continue ?"
