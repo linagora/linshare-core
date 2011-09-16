@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
-	<version>0.9.3</version>
+	<version>0.9.4</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
 	<description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
