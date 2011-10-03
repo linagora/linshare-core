@@ -59,6 +59,7 @@ public class JcrGarbageCollectionBatchImpl implements JcrGarbageCollectionBatch 
 		Logger.info("JCR Garbage Collection job start.");
 
 		try {
+			System.gc();
 			SessionImpl session = (SessionImpl) jcrTemplate.getSessionFactory().getSession();
 			GarbageCollector gc = session.createDataStoreGarbageCollector();
 			gc.scan();

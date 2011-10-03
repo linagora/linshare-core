@@ -28,9 +28,9 @@
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->
 	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
-    <!--bean name="jcrGarbageCollectionBatch" class="org.linagora.linShare.core.batches.impl.JcrGarbageCollectionBatchImpl">
+    <bean name="jcrGarbageCollectionBatch" class="org.linagora.linShare.core.batches.impl.JcrGarbageCollectionBatchImpl">
         <constructor-arg ref="jcrTemplate"/>
-    </bean-->
+    </bean>
 
 
     <!-- Transactions declaration. -->

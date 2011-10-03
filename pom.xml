@@ -414,7 +414,7 @@
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-core</artifactId>
-			<version>${jackrabbit-release-version}</version>
+			<version>${jackrabbit-core-version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>derby</artifactId>
@@ -459,6 +459,11 @@
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-ocm-nodemanagement</artifactId>
+			<version>${jackrabbit-release-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jackrabbit</groupId>
+			<artifactId>jackrabbit-spi-commons</artifactId>
 			<version>${jackrabbit-release-version}</version>
 		</dependency>
 
@@ -1374,6 +1379,7 @@
 		<spring-release-version>2.5.5</spring-release-version>
 		<spring-security-release-version>2.0.5.RELEASE</spring-security-release-version>
 		<jackrabbit-release-version>1.4</jackrabbit-release-version>
+		<jackrabbit-core-version>1.4.13-LINAGORA</jackrabbit-core-version>
 		<slf4j-release-version>1.5.6</slf4j-release-version>
 	</properties>
 </project>
