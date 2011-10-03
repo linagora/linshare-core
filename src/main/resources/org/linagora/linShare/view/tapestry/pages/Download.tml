@@ -34,7 +34,7 @@
 					</div>
 					<div id="blocDLfooter">
 						${message:pages.download.footer} <a href="${message:global.companyURL}" title="${message:global.companyName}">${message:global.companyName}</a>
-						 via <a href="http://www.linshare.org/" title="LinShare.org">LinShare</a>
+						 via <a href="${message:global.productUrl}" title="${message:global.appName}">${message:global.appName}</a>
 					</div>
 				</center>
 				<br /><br />
