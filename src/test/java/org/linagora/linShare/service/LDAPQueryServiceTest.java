@@ -28,6 +28,7 @@ import org.linagora.linShare.core.service.DomainService;
 import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.core.service.ParameterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
@@ -78,8 +79,8 @@ public class LDAPQueryServiceTest extends AbstractJUnit4SpringContextTests {
 			param = parameterService.saveOrUpdate(param);
 			
 			Domain domain = new Domain(DOMAIN_IDENTIFIER, "dc=linpki,dc=org", pattern, ldapConn, param);
-			
 			domainRepository.create(domain);
+			
 			initialized = true;
 		}
 	}
@@ -110,6 +111,7 @@ public class LDAPQueryServiceTest extends AbstractJUnit4SpringContextTests {
 	}
 
 	@Test
+	@DirtiesContext
 	public void testSearchUser() throws BusinessException {
 		Domain domain = domainService.retrieveDomain(DOMAIN_IDENTIFIER);
 		List<User> users = ldapQueryService.searchUser("er1", null, null, domain, null);

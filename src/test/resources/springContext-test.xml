@@ -24,6 +24,7 @@
                 <value>classpath:linShare.properties</value>
                 <value>classpath:jackRabbit.properties</value>
                 <value>classpath:linShare-test.properties</value>
+                <value>classpath:CAS.bin.export</value>
             </list>
         </property>
     </bean>
