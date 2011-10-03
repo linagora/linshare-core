@@ -60,7 +60,7 @@
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->
 	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
-    <!--bean id="cleanJcrUnusedFilesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <bean id="cleanJcrUnusedFilesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="org.linagora.linShare.core.job.quartz.CleanJcrUnusedFiles"/>
         <property name="jobDataAsMap">
             <map>
@@ -71,7 +71,7 @@
     <bean id="cleanJcrUnusedFilesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="cleanJcrUnusedFilesJob"/>
         <property name="cronExpression" value="${job.jcrgarbagecollector.cron.expression}"/>
-    </bean-->
+    </bean>
 
     <bean id="cleanOutdatedDocumentsJob" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="org.linagora.linShare.core.job.quartz.CleanOutdatedDocuments"/>
@@ -93,7 +93,7 @@
                 <ref bean="cleanOutdatediSharesJobTrigger"/>
                 <ref bean="notifyOutdatedSharesJobTrigger"/>
                 <ref bean="cleanInconsistentDocumentEntriesJobTrigger"/>
-                <!--ref bean="cleanJcrUnusedFilesJobTrigger"/-->
+                <ref bean="cleanJcrUnusedFilesJobTrigger"/>
                 <ref bean="cleanOutdatedDocumentsJobTrigger"/>
             </list>
         </property>
