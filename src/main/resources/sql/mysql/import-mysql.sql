@@ -1,3 +1,7 @@
+SET NAMES UTF8 COLLATE utf8_general_ci;
+SET CHARACTER SET UTF8;
+
+
 INSERT INTO linshare_messages_configuration (messages_configuration_id) VALUES (1);
 
 INSERT INTO linshare_parameter(parameter_id, identifier, file_size_max, user_available_size, global_quota, global_used_quota, active_global_quota, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time, user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id,messages_configuration_id, closed_domain, restricted_domain, domain_with_guests, guest_can_create_other) VALUES (1, 'baseParam', 10240000,51200000, 0, 0, 0,0,0,0,0,'40','0', '100', '0', 1, 0, 0, 0, 0);
