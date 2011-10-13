@@ -20,13 +20,18 @@
 */
 package org.linagora.linShare.view.tapestry.pages.password;
 
+import java.util.List;
+
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.chenillekit.tapestry.core.components.Kaptcha;
+import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -57,9 +62,6 @@ public class ResetPassword {
 	@SessionState
 	private ShareSessionObjects shareSessionObjects;
 	
-	@SessionState
-	private UserVo userVo;
-
 	@Inject
 	private UserFacade userFacade;
 
@@ -71,6 +73,28 @@ public class ResetPassword {
     
     @Inject
     private MailContainerBuilder mailBuilder;
+    
+	@Inject @Symbol("linshare.domain.visible")
+	@Property
+	private boolean domainVisible;
+	
+    @Inject
+	private DomainFacade domainFacade;
+	
+	@Persist
+	@Property
+	private List<String> availableDomains;
+
+    @Property
+    @Persist
+    private String selectedDomainId;
+        
+    @SetupRender
+	public void init() throws BusinessException {
+		if (domainVisible) {
+			availableDomains = domainFacade.getAllDomainIdentifiers();
+		}
+	}
 
 	public boolean onValidate() {
 		if (mail == null) {
@@ -84,8 +108,10 @@ public class ResetPassword {
 	    	shareSessionObjects.addError(messages.get("pages.password.error.badcaptcha"));
 			return this;
 		}
+		logger.debug("Capsha is valid, finding user in " + selectedDomainId + " ... ");
 		
-		UserVo user = userFacade.findUser(mail, userVo.getDomainIdentifier());
+		UserVo user = userFacade.findUser(mail, selectedDomainId);
+		logger.debug("user found ... ");
 		if (null == user) {
 			shareSessionObjects.addError(messages.get("pages.password.error.badmail"));
 			return this;
