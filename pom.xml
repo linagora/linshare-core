@@ -941,14 +941,26 @@
 		<!-- Adds a report detailing the components, mixins and base classes defined 
 			by this module. -->
 		<plugins>
-			<plugin>
+		  <plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-project-info-reports-plugin</artifactId> 
+		    <version>2.0.1</version>
+		  </plugin>
+		  <plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-javadoc-plugin</artifactId>
+		    <version>1.9</version>
+		  </plugin>
+		<!-- it does not seem to work 
+		  <plugin>
 				<groupId>org.apache.tapestry</groupId>
 				<artifactId>tapestry-component-report</artifactId>
 				<version>${tapestry-release-version}</version>
 				<configuration>
-					<rootPackage>org.linagora.linShare</rootPackage>
+						<rootPackage>org.linagora.linShare.view.tapestry</rootPackage>
 				</configuration>
-			</plugin>
+		  </plugin>
+		-->
 		</plugins>
 	</reporting>
 	<profiles>
@@ -962,6 +974,11 @@
 					<groupId>postgresql</groupId>
 					<artifactId>postgresql</artifactId>
 					<version>8.3-603.jdbc3</version>
+				</dependency>
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>5.1.12</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -1150,19 +1167,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
-
-
-		<profile>
-			<id>mysql</id>
-			<dependencies>
-				<dependency>
-					<groupId>mysql</groupId>
-					<artifactId>mysql-connector-java</artifactId>
-					<version>5.1.12</version>
-				</dependency>
-			</dependencies>
-		</profile>
-
 
 		<profile>
 			<id>distribution</id>

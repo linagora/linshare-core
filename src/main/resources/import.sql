@@ -1,8 +1,6 @@
 INSERT INTO linshare_messages_configuration (messages_configuration_id) VALUES (1);
 
-
--- adding 40 days in expiry time
-INSERT INTO linshare_parameter(parameter_id, identifier, file_size_max, user_available_size, global_quota, global_used_quota, active_global_quota, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time, user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id,messages_configuration_id, closed_domain, restricted_domain, domain_with_guests, guest_can_create_other) VALUES (1, 'baseParam', 10240000,51200000, 0, 0, 'false','false','false','false','false','40','0', '100', '0', 1, 'false', 'false', 'true', 'true');
+INSERT INTO linshare_parameter(parameter_id, identifier, file_size_max, user_available_size, global_quota, global_used_quota, active_global_quota, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time, user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id,messages_configuration_id, closed_domain, restricted_domain, domain_with_guests, guest_can_create_other) VALUES (1, 'baseParam', 10240000,51200000, 0, 0, 'false','false','false','false','false','40','0', '100', '0', 1, 'false', 'false', 'false', 'false');
 
 INSERT INTO linshare_ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'baseLDAP', 'ldap://localhost:33389', 'simple', '', '');
 
@@ -14,9 +12,6 @@ INSERT INTO linshare_domain(domain_id, identifier, differential_key, domain_patt
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
 INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');
 INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (3, 0, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'true','true');
-
---INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (4, 0, 'superadmin@localhost.localdomain', '', '', 'superadmin@localhost.localdomain', '2009-01-01', 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'false','false');
-
 
 -- LOCALE en
 -- Mail subjects
@@ -140,11 +135,11 @@ INSERT INTO linshare_mail_templates (messages_configuration_id, template_id, con
 -- Welcome texts
 
 -- Welcome to LinShare, the Open Source secure files sharing system.
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 0, 0);
+INSERT INTO linshare_welcome_texts (messages_configuration_id, welcome_text, user_type_id, language_id) VALUES (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 0, 0);
 
 
 -- Welcome to LinShare, the Open Source secure files sharing system.
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 1, 0);
+INSERT INTO linshare_welcome_texts (messages_configuration_id, welcome_text, user_type_id, language_id) VALUES (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 1, 0);
 
 
 -- LOCALE fr
@@ -269,11 +264,11 @@ INSERT INTO linshare_mail_templates (messages_configuration_id, template_id, con
 -- Welcome texts
 
 -- Welcome to LinShare, the Open Source secure files sharing system
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 0, 1);
+INSERT INTO linshare_welcome_texts (messages_configuration_id, welcome_text, user_type_id, language_id) VALUES (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 0, 1);
 
 
 -- Welcome to LinShare, the Open Source secure files sharing system.
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 1, 1);
+INSERT INTO linshare_welcome_texts (messages_configuration_id, welcome_text, user_type_id, language_id) VALUES (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 1, 1);
 
 
 -- LOCALE nl
@@ -398,10 +393,10 @@ INSERT INTO linshare_mail_templates (messages_configuration_id, template_id, con
 -- Welcome texts
 
 -- Welcome to LinShare, the Open Source secure files sharing system
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 0, 2);
+INSERT INTO linshare_welcome_texts (messages_configuration_id, welcome_text, user_type_id, language_id) VALUES (1, 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 0, 2);
 
 
 -- Welcome to LinShare, the Open Source secure files sharing system.
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1, 2);
+INSERT INTO linshare_welcome_texts (messages_configuration_id, welcome_text, user_type_id, language_id) VALUES (1, 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1, 2);
 
 
