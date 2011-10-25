@@ -1125,10 +1125,19 @@ a.button:active {
 /* Button : Right background, and Text */
 a.button span {
 	display: block;
+	
+	margin: 0 -15px 0 10px;
+	padding: 7px 15px 0 0;
+	cursor:pointer;
+	
+/*
 	position: relative;
 	right: -15px;
+*/
 	height: 24px;		/* 24px = 30px - 6px - 0px */
+/*
 	padding: 6px 15px 0px 0px;
+*/
 	background: transparent url("../images/theme0/button.png") no-repeat scroll right 0px;
 	text-align: right;
 }
@@ -1166,7 +1175,12 @@ a.button:active {
 /* Button : Special Popups */
 div.dialog a.button span {
 	height: 23px;		/* 23px = 30px - 7px - 0px */
+/*
 	padding: 7px 15px 0px 0px;
+*/
+    margin: 0 -15px 0 10px;
+    padding: 7px 15px 0 0;
+    cursor:pointer;
 }
 div.dialog a.button img {
 	margin: 0px .20em -1px 0px;
@@ -2431,6 +2445,8 @@ div#blocDL ul li {
 #content td.shared a,
 #content td.deleteColumn a {
 	background-color: transparent;		/* KEEP IT */
+	
+	margin: 0 20px 0 30px;
 }
 
 
@@ -2897,11 +2913,19 @@ div.dialog div.description p {
 }
 
 div.dialog div.button {
+/*
 	padding-left: 5em;
+*/
 	text-align: center;
+	
+	margin-left: 2em;
+	padding: 0 10px 0 0;
 }
 div.dialog div.button .button {
+/*
 	margin-left: 2em;
+*/
+	margin: 0 20px 0 30px;
 }
 
 
@@ -3182,7 +3206,7 @@ form#uploadForm .upload-list {
 #createGroupZone .edit-form-select {
 	float: left;
 	margin-top: -1.5em;
-	margin-left: 22em;
+	margin-left: 25em;
 	border: 1px solid #5A93AF;
 }
 
@@ -3198,7 +3222,7 @@ form#uploadForm .upload-list {
 #guestEditFormComponent .edit-form-field,
 #userEditFormComponent .edit-form-field,
 #createGroupZone .edit-form-field {
-	width: 20em;
+	width: 17em;
 }
 #guestEditFormComponent .edit-form-checkbox,
 #userEditFormComponent .edit-form-checkbox,
