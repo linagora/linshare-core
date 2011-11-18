@@ -35,6 +35,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
@@ -106,6 +107,12 @@ public class UserSearchField {
 
     @Inject
     private ComponentResources componentResources;
+    
+	@Inject @Symbol("linshare.autocomplete.minchars")
+	@Property
+	private int autocompleteMin;
+    
+    
 
 	/* ***********************************************************
 	 *                   Event handlers&processing

@@ -42,6 +42,7 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
@@ -151,6 +152,10 @@ public class GuestEditForm {
     
     @Inject
     private MailContainerBuilder mailBuilder;
+    
+    @Inject @Symbol("linshare.autocomplete.minchars")
+    @Property
+    private int autocompleteMin;
 	
 	
 	@SetupRender

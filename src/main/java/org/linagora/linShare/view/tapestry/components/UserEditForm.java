@@ -42,6 +42,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.UserType;
@@ -143,6 +144,11 @@ public class UserEditForm {
 
     @Inject
     private PropertyAccess access;
+    
+	@Inject @Symbol("linshare.autocomplete.minchars")
+	@Property
+	private int autocompleteMin;
+    
     
     /* ***********************************************************
      *                   Event handlers&processing

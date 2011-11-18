@@ -143,6 +143,13 @@ public class QuickSharePopup{
 	
 	@Property(write=false)
 	private float period;
+	
+	
+	@Inject @Symbol("linshare.autocomplete.minchars")
+	@Property
+	private int autocompleteMin;
+	
+	
 
 	/* ***********************************************************
 	 *                      Injected services

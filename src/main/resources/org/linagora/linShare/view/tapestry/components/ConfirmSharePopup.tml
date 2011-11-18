@@ -30,7 +30,7 @@
 			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false"
 				t:subject="${message:components.confirmSharePopup.panelRecipients.subject}">      
 				<t:textarea t:id="recipientsPatternSharePopup" t:value="recipientsSearch" validate="required"
-					t:mixins="autocomplete" t:minChars="2" t:tokens=","
+					t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens=","
 					class="recipientsPattern" 
 					title="${message:components.confirmSharePopup.texarea.recipients.title}" />
 			</div>
