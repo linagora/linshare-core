@@ -40,6 +40,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
@@ -143,6 +144,11 @@ public class Index {
 
 	
 	private boolean reset;
+	
+	
+	@Inject @Symbol("linshare.autocomplete.minchars")
+	@Property
+	private int autocompleteMin;
 	
 	
 	/* ***********************************************************
