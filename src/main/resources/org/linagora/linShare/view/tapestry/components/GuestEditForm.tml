@@ -48,7 +48,7 @@
 				<br/>
 				<t:label for="recipientsPatternGuestForm" class="edit-form-label">${message:pages.user.edit.restrictedGuest.list}</t:label>
 				<t:textarea t:id="recipientsPatternGuestForm" t:value="recipientsSearch"
-					t:mixins="autocomplete" t:minChars="2" t:tokens="," validate="required"
+					t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens="," validate="required"
 					class="recipientsPattern" 
 					title="${message:components.confirmSharePopup.texarea.recipients.title}" />
 			</div>

@@ -42,6 +42,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
@@ -195,7 +196,9 @@ public class SearchFile {
 	@Property
 	private Boolean documentType;
 
-
+	@Inject @Symbol("linshare.autocomplete.minchars")
+	@Property
+	private int autocompleteMin;
 
 
 

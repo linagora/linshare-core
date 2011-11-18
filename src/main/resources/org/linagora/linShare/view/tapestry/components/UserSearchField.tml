@@ -37,7 +37,7 @@
         <t:if t:test="advancedSearch" negate="true">
             <t:form t:id="userSearchForm">
                 <t:label for="userSearchPattern">${message:components.userSearch.slidingField.name} </t:label>
-                <t:textfield t:id="userSearchPattern" t:mixins="autocomplete" t:minChars="2" class="userSearchPattern"
+                <t:textfield t:id="userSearchPattern" t:mixins="autocomplete" t:minChars="${autocompleteMin}" class="userSearchPattern"
                              title="${message:components.userSearch.slidingField.name}"/><br/>
                 <t:submit class="tsubmit" t:id="searchSimple" value="${message:global.button.search}"/>
                 ${message:global.space}

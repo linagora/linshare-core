@@ -56,7 +56,7 @@
 			<div class="number2"></div>
 			<div class="description"><p>${message:components.quickSharePopup.panelRecipients.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false" t:subject="${message:components.quickSharePopup.panelRecipients.subject}">      
-				<t:textarea t:id="recipientsPatternQuickSharePopup" t:value="recipientsSearch" validate="required" t:mixins="autocomplete" t:minChars="2" t:tokens="," class="recipientsPattern" title="${message:components.quickSharePopup.texarea.recipients.title}" />
+				<t:textarea t:id="recipientsPatternQuickSharePopup" t:value="recipientsSearch" validate="required" t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens="," class="recipientsPattern" title="${message:components.quickSharePopup.texarea.recipients.title}" />
 			</div>
 			<div class="clear"></div>
 			

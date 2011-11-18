@@ -46,7 +46,7 @@
 								</span>
 							</td>
 							<td>
-							 	<t:textarea t:id="actorMails" t:value="actorListMails" t:mixins="autoComplete" t:minChars="2" t:tokens="literal:,"/> 
+							 	<t:textarea t:id="actorMails" t:value="actorListMails" t:mixins="autoComplete" t:minChars="${autocompleteMin}" t:tokens="literal:,"/> 
 							</td>
 						</tr>
 						<tr>
@@ -94,7 +94,7 @@
 								</span>
 							</td>
 							<td>
-								<t:textarea t:id="targetMails" t:value="targetListMails" t:mixins="autoComplete" t:minChars="2" t:tokens="literal:,"/>
+								<t:textarea t:id="targetMails" t:value="targetListMails" t:mixins="autoComplete" t:minChars="${autocompleteMin}" t:tokens="literal:,"/>
 							</td>
 						</tr>
 						<tr>

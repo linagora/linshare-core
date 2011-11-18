@@ -33,6 +33,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
@@ -121,7 +122,9 @@ public class AccountOccupation {
 	private boolean superadmin;
 	
 	
-	
+	@Inject @Symbol("linshare.autocomplete.minchars")
+	@Property
+	private int autocompleteMin;
 	
 	
 	/* ***********************************************************

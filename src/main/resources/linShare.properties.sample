@@ -65,6 +65,9 @@ linshare.users.internal.defaultView.showAll=false
 # activate groups tab ?
 linshare.groups.activated=true
 
+#auto complete with minchars (default is 2. Set high value like 100000 to disable ajax auto completion)
+linshare.autocomplete.minchars=2
+
 
 #******************** VIRUS SCANNER
 #uncomment those properties if you want to enable clamav virus scanner feature
