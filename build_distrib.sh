@@ -15,7 +15,8 @@ g_main_function=$1
 
 g_version=`grep -E "<version>(.*)</version>" pom.xml -o|head -n1|sed -r 's/<version>(.*)<\/version>/\1/g'`
 g_logfile=linshare.build.$$.log
-g_mvn_opts="-Dmaven.test.skip"
+#g_mvn_opts="-Dmaven.test.skip"
+g_mvn_opts=""
 g_output_dir="./target"
 g_distribution_dir="./distrib"
 g_ressources="./src/main/resources"
