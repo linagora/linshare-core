@@ -21,6 +21,7 @@
 package org.linagora.linShare.core.service;
 
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Date;
 
 import org.bouncycastle.cms.SignerId;
@@ -40,14 +41,7 @@ public interface TimeStampingService {
 	 * @return TimeStampResponse
 	 * @throws TSPException any problems with the tsa
 	 */
-	public TimeStampResponse getTimeStamp(InputStream inToTimeStamp) throws TSPException;
-	
-	
-	/**
-	 * disabled if no configuration in file properties
-	 * @return
-	 */
-	public boolean isDisabled();
+	public TimeStampResponse getTimeStamp(String urlTSA, InputStream inToTimeStamp) throws TSPException, URISyntaxException ;
 	
 	
     /**

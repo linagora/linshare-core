@@ -41,10 +41,10 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.Role;
-import org.linagora.linShare.core.domain.vo.DomainVo;
+import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalException;
@@ -87,7 +87,7 @@ public class Index {
     private UserFacade userFacade;
     
     @Inject
-    private DomainFacade domainFacade;
+    private AbstractDomainFacade domainFacade;
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -191,7 +191,7 @@ public class Index {
     public void resetListUsers(Object[] o1) throws BusinessException {
 		inSearch=false;
 		if (showAll || userVo.isRestricted()) {
-			users = userFacade.searchUser("", "", "", userVo);
+			users = userFacade.searchUser("", "", "", null, userVo);
 		}
 		else {
 			users = userFacade.searchGuest(userVo.getMail());

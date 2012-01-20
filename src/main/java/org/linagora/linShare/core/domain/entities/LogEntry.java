@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 
 /**
  * Abstract class for the log entry.

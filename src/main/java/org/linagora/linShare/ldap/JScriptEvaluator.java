@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.linagora.linShare.core.domain.entities.Domain;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.EcmaError;
@@ -105,9 +104,9 @@ public final class JScriptEvaluator {
 	 *                the keys are the name used in the
 	 * @return the evaluation result
 	 */
-	public String evalToString(Domain domain, String expression,
+	public String evalToString(String expression,
 					Map<String, Object> params) {
-		Object result = instanceEval(expression, domain, params);
+		Object result = instanceEval(expression, params);
 
 		if (result == null) {
 			return null;
@@ -127,9 +126,9 @@ public final class JScriptEvaluator {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, List<String>> evalToEntryMap(Domain domain, String expression,
+	public Map<String, List<String>> evalToEntryMap(String expression,
 					Map<String, Object> params) {
-		Object result = instanceEval(expression, domain, params);
+		Object result = instanceEval(expression, params);
 		try {
 			return (Map<String, List<String>>) Context.jsToJava(result, Map.class);
 		} catch (Exception e) {
@@ -139,9 +138,9 @@ public final class JScriptEvaluator {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<String> evalToStringList(Domain domain, String expression,
+	public List<String> evalToStringList(String expression,
 					Map<String, Object> params) {
-		Object result = instanceEval(expression, domain, params);
+		Object result = instanceEval(expression, params);
 
 		// First try to convert to Array, else to List, and finally to String
 		try {
@@ -167,8 +166,8 @@ public final class JScriptEvaluator {
 		return resultsArray;
 	}
 
-	public Boolean evalToBoolean(Domain domain, String expression, Map<String, Object> params) {
-		return Context.toBoolean(instanceEval(expression, domain, params));
+	public Boolean evalToBoolean(String expression, Map<String, Object> params) {
+		return Context.toBoolean(instanceEval(expression, params));
 	}
 
 	/**
@@ -180,8 +179,7 @@ public final class JScriptEvaluator {
 	 *                the keys are the name used in the
 	 * @return the evaluation result
 	 */
-	private Object instanceEval(String expression, Domain domain,
-					Map<String, Object> params) {
+	private Object instanceEval(String expression, Map<String, Object> params) {
 		Script script = null;
 		Scriptable scope = cx.initStandardObjects();
 

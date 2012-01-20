@@ -31,7 +31,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.chenillekit.tapestry.core.components.Kaptcha;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -79,7 +79,7 @@ public class ResetPassword {
 	private boolean domainVisible;
 	
     @Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 	
 	@Persist
 	@Property
@@ -110,7 +110,7 @@ public class ResetPassword {
 		}
 		logger.debug("Capsha is valid, finding user in " + selectedDomainId + " ... ");
 		
-		UserVo user = userFacade.findUser(mail, selectedDomainId);
+		UserVo user = userFacade.findUserForResetPassordForm(mail, selectedDomainId);
 		logger.debug("user found ... ");
 		if (null == user) {
 			shareSessionObjects.addError(messages.get("pages.password.error.badmail"));

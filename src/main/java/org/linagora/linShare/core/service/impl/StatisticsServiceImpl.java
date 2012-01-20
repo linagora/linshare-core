@@ -27,12 +27,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.UserRepository;

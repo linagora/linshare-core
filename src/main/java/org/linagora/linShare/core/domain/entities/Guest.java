@@ -22,6 +22,8 @@ package org.linagora.linShare.core.domain.entities;
 
 import java.util.Date;
 
+import org.linagora.linShare.core.domain.constants.UserType;
+
 /** Guest is a user that is not registered in LDAP server.
  */
 public class Guest extends User {

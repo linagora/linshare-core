@@ -33,6 +33,7 @@ public enum TimeUnit {
     private TimeUnit(int value) {
         this.value = value;
     }
+    
 
     public int toInt() {
         return value;
@@ -43,7 +44,7 @@ public enum TimeUnit {
     	case DAY : return Calendar.DATE;
     	case WEEK : return Calendar.WEEK_OF_MONTH;
     	case MONTH : return Calendar.MONTH;
-    	default : throw new IllegalArgumentException("Doesn't match an existing Role");
+    	default : throw new IllegalArgumentException("Doesn't match an existing TimeUnit");
     	}
     }
     public static TimeUnit fromInt(int value) {
@@ -51,7 +52,7 @@ public enum TimeUnit {
             case 0 : return DAY;
             case 1 : return WEEK;
             case 2 : return MONTH;
-            default : throw new IllegalArgumentException("Doesn't match an existing Role");
+            default : throw new IllegalArgumentException("Doesn't match an existing TimeUnit");
         }
     }
 }

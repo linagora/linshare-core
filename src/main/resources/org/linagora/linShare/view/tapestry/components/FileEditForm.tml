@@ -20,7 +20,7 @@
 					<hr />
 					<div class="button">
 						<t:linkSubmit class="button">
-                   		<span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:global.button.edit}</span></t:linkSubmit>
+                   		<span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:global.button.validate}</span></t:linkSubmit>
 						<a href="#" onclick="fileEditWindow.close();return false;" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
 					</div>
 					</t:form>

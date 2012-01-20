@@ -22,7 +22,7 @@ package org.linagora.linShare.core.Facade;
 
 import java.util.List;
 
-import org.linagora.linShare.core.domain.entities.GroupMemberType;
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;

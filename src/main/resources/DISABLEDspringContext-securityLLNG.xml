@@ -159,9 +159,8 @@
        <!-- Domain Authentification -->
 
        <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
-           <property name="ldapQueryService" ref="ldapQueryService"/>
            <property name="userService" ref="userService"/>
-           <property name="domainService" ref="domainService"/>
+           <property name="abstractDomainService" ref="abstractDomainService"/>
        </bean>
 	
        

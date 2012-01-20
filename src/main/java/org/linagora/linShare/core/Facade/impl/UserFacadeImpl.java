@@ -24,18 +24,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
-import org.linagora.linShare.core.domain.vo.DomainVo;
+import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.UserService;
 import org.slf4j.Logger;
@@ -52,6 +53,9 @@ public class UserFacadeImpl implements UserFacade {
 
     /** User service. */
     private UserService userService;
+    
+    /** Domain service. */
+    private AbstractDomainService abstractDomainService;
 
     /** Guest repository. */
     private GuestRepository guestRepository;
@@ -66,11 +70,12 @@ public class UserFacadeImpl implements UserFacade {
      * @param userService service.
      */
     public UserFacadeImpl(UserRepository<User> userRepository, UserService userService,
-    		GuestRepository guestRepository, EnciphermentService enciphermentService) {
+    		GuestRepository guestRepository, EnciphermentService enciphermentService, AbstractDomainService abstractDomainService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.guestRepository = guestRepository;
         this.enciphermentService =enciphermentService;
+        this.abstractDomainService = abstractDomainService;
     }
 
     /** Create a user.
@@ -89,36 +94,13 @@ public class UserFacadeImpl implements UserFacade {
         userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, mailContainer, owner.getLogin(), owner.getDomainIdentifier());
     }
     
-    public void updateGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException{
-    	userService.updateGuest(mail, firstName, lastName, canUpload, canCreateGuest, owner);
+    public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException{
+    	userService.updateGuest(domain,mail, firstName, lastName, canUpload, canCreateGuest, owner);
     }
     
-	public void updateUser(String mail,Role role, UserVo owner) throws BusinessException {
-		userService.updateUser(mail,role, owner);
+	public void updateUserRole(String domain, String mail,Role role, UserVo owner) throws BusinessException {
+		userService.updateUserRole(domain, mail,role, owner);
 	}
-    
-
-    /** Search a user using its mail.
-     * @param mail user mail.
-     * @return founded user.
-     * @throws BusinessException 
-     */
-    public UserVo findUser(String mail, String domain) throws BusinessException {
-    	User user = userService.findUser(mail, domain);
-    	if (user != null) {
-    		return new UserVo(user);
-    	}
-    	return null;
-    }
-    public UserVo findUser(String mail, String domain, UserVo actorVO) throws BusinessException {
-    	User actor = userService.findUser(actorVO.getMail(), actorVO.getDomainIdentifier());
-    	User user = userService.findUser(mail, domain, actor);
-    	if (user != null) {
-    		return new UserVo(user);
-    	}
-    	return null;
-    }
-    
     
 
     /** Search a user.
@@ -132,13 +114,21 @@ public class UserFacadeImpl implements UserFacade {
     	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
     }
-    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser, boolean multiDomain) throws BusinessException {
-    	User owner = userRepository.findByLogin(currentUser.getLogin());
-    	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner, multiDomain);
-        return getUserVoList(users);
-    }
+    
+    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserType userType,UserVo currentUser) throws BusinessException {
+		User owner = userRepository.findByLogin(currentUser.getLogin());
+		return getUserVoList(userService.searchUser(mail, firstName, lastName, userType, owner));
+	}
 
-    /** Get all guests created by a user.
+
+    @Override
+	public List<UserVo> searchUserForRestrictedGuestEditionForm(String mail, String firstName, String lastName, String currentGuestEmail) throws BusinessException {
+    	User guest = userRepository.findByMail(currentGuestEmail);
+    	List<User> users = userService.searchUserForRestrictedGuestEditionForm(mail, firstName, lastName, guest);
+        return getUserVoList(users);
+	}
+
+	/** Get all guests created by a user.
      * @param mail owner mail.
      * @return the list of guests created by their owner.
      */
@@ -176,43 +166,30 @@ public class UserFacadeImpl implements UserFacade {
         return userVOs;
     }
     
-    public void deleteUser(String login, UserVo actor) {
+    public void deleteUser(String login, UserVo actorVo) {
         try {
-        	User owner = userRepository.findByLogin(actor.getLogin());
-            userService.deleteUser(login, owner, true);
+        	User actor = userRepository.findByLogin(actorVo.getLogin());
+            userService.deleteUser(login, actor, true);
         } catch (BusinessException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
 
-    /**
-     * @see UserFacade#searchUser(String, String, String, UserType)
-     */
-	public List<UserVo> searchUser(String mail, String firstName,
-			String lastName, UserType userType,UserVo currentUser) throws BusinessException {
-		User owner = userRepository.findByLogin(currentUser.getLogin());
-		return getUserVoList(userService.searchUser(mail, firstName, lastName, userType, owner));
-	}
-
 	public List<String> findMails(String beginWith) {
 		return userRepository.findMails(beginWith);
 	}
 
-	public void deleteTempAdminUser() throws  BusinessException {
-		User user = userService.findUser(ADMIN_TEMP_MAIL, null);
-		if(user!=null) userRepository.delete(user);
-	}
-
 	public UserVo searchTempAdminUser() throws BusinessException {
-		UserVo user = findUser(ADMIN_TEMP_MAIL, null);
-		if (user.isSuperAdmin()) {
+		User user = userService.findUnkownUserInDB(ADMIN_TEMP_MAIL);
+		UserVo userVo = new UserVo(user);
+		if (userVo.isSuperAdmin()) {
 			return null; // a super admin is not a temp admin, we need to keep this account !
 		}
-		return user;
+		return userVo;
 	}
 
 	public void updateUserLocale(UserVo user, String locale) {
-		userService.updateUserLocale(user.getMail(), locale);
+		userService.updateUserLocale(user.getDomainIdentifier(),user.getMail(), locale);
 	}
 
 
@@ -224,7 +201,7 @@ public class UserFacadeImpl implements UserFacade {
     public UserVo loadUserDetails(String login, String domainId) {
         User user = null;
         try {
-            user = userService.findAndCreateUser(login, domainId);
+            user = userService.findOrCreateUserWithDomainPolicies(login, domainId);
         } catch (BusinessException ex) {
             throw new RuntimeException("User can't be created, please contact your administrator");
         }
@@ -282,7 +259,7 @@ public class UserFacadeImpl implements UserFacade {
 		return null;
 	}
 	
-	public void updateUserDomain(String mail, DomainVo selectedDomain,
+	public void updateUserDomain(String mail, AbstractDomainVo selectedDomain,
 			UserVo userLoggedIn) throws BusinessException {
 		userService.updateUserDomain(mail, selectedDomain.getIdentifier(), userLoggedIn);
 	}
@@ -290,5 +267,83 @@ public class UserFacadeImpl implements UserFacade {
 	public List<UserVo> searchAllBreakedUsers(UserVo userLoggedIn) {
 		User actor = userRepository.findByLogin(userLoggedIn.getLogin());
 		return getUserVoList(userService.searchAllBreakedUsers(actor));
+	}
+
+	@Override
+	public UserVo findUserInDb(String mail, String domain) {
+		User user = userService.findUserInDB(domain, mail);
+		if(user != null) {
+			return new UserVo(user);
+		} else {
+			return null;
+		}
+	}
+	
+	/** Search a user using its mail.
+     * @param mail user mail.
+     * @return founded user.
+     * @throws BusinessException 
+     */
+	@Override
+    public UserVo findUserForAuth(String mail) throws BusinessException {
+    	User user = userService.searchAndCreateUserEntityFromUnkownDirectory(mail);
+    	if (user != null) {
+    		return new UserVo(user);
+    	}
+    	return null;
+    }
+
+	/** Search a user using its mail.
+     * @param mail user mail.
+     * @return found user.
+     * @throws BusinessException 
+     */
+	@Override
+    public UserVo findUser(String domain, String mail) throws BusinessException {
+		User user = userService.findOrCreateUser(mail,domain);
+    	if (user != null) {
+    		return new UserVo(user);
+    	}
+    	return null;
+    }
+
+	@Override
+	public UserVo findUserFromAuthorizedDomainOnly(String domainId, String mail) {
+		List<String> allMyDomainIdentifiers = abstractDomainService.getAllMyDomainIdentifiers(domainId);
+		for (String string : allMyDomainIdentifiers) {
+			User user = userRepository.findByMailAndDomain(string, mail);
+			if(user != null) {
+				return new UserVo(user);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public UserVo findUserForResetPassordForm(String mail, String optionalDomainId) {
+		
+		if(optionalDomainId == null) {
+			List<String> allDomainIdentifiers = abstractDomainService.getAllDomainIdentifiers();
+			for (String domain : allDomainIdentifiers) {
+				User user = userRepository.findByMailAndDomain(domain, mail);
+				if(user != null) {
+					return new UserVo(user);
+				}
+			}
+		} else {
+			User user = userRepository.findByMailAndDomain(mail, optionalDomainId);
+			if(user != null) {
+				return new UserVo(user);
+			}
+		}
+		
+		return null;
+	}
+
+	@Override
+	public boolean isAdminForThisUser(UserVo actorVo, UserVo userToManageVo) throws BusinessException {
+		User actor = userService.findOrCreateUserWithDomainPolicies(actorVo.getMail(), actorVo.getDomainIdentifier());
+		User userToManage = userService.findOrCreateUserWithDomainPolicies(userToManageVo.getMail(), userToManageVo.getDomainIdentifier(), actorVo.getDomainIdentifier());
+		return userService.isAdminForThisUser(actor, userToManage);
 	}
 }

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
-	<version>0.9.7</version>
+	<version>0.10.0-rc2</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
 	<description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -45,40 +45,13 @@
 			</roles>
 		</developer>
 		<developer>
-			<id>sduprey</id>
-			<name>Stefanie Duprey</name>
-			<email>sduprey@linagora.com</email>
+			<id>fmartin</id>
+			<name>Frederic Martin</name>
+			<email>fmartin@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>sbahloul</id>
-			<name>Sebastien Bahloul</name>
-			<email>sbahloul@linagora.com</email>
-			<organization>LINAGORA</organization>
-			<organizationUrl>http://www.linagora.com/</organizationUrl>
-		</developer>
-		<developer>
-			<id>mlaborie</id>
-			<name>Matthieu Laborie</name>
-			<email>mlaborie@linagora.com</email>
-			<organization>LINAGORA</organization>
-			<organizationUrl>http://www.linagora.com/</organizationUrl>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>cvargas</id>
-			<name>Christophe Vargas</name>
-			<email>cvargas@linagora.com</email>
-			<organization>LINAGORA</organization>
-			<organizationUrl>http://www.linagora.com/</organizationUrl>
-			<roles>
-				<role>Developer</role>
+				<role>Manager</role>
 			</roles>
 		</developer>
 	</developers>
@@ -723,7 +696,29 @@
 	</dependencies>
 
 
+
 	<build>
+	  <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.8.1</version>
+                    <configuration>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+	</pluginManagement>
+
 		<finalName>linshare</finalName>
 		<plugins>
 			<plugin>
@@ -1355,7 +1350,7 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>Codehaus</id>
+			<id>Codehaumaven-compiler-plugins</id>
 			<url>http://repository.codehaus.org/</url>
 			<snapshots>
 				<enabled>false</enabled>

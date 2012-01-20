@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.view.tapestry.pages.administration;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -32,14 +33,13 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linShare.core.Facade.DomainFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailSubject;
 import org.linagora.linShare.core.domain.entities.MailTemplate;
+import org.linagora.linShare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linShare.core.domain.entities.WelcomeText;
-import org.linagora.linShare.core.domain.vo.DomainVo;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
+import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -56,6 +56,7 @@ public class Personalization {
     @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
+    
 
     /* ***********************************************************
      *                      Injected services
@@ -64,9 +65,7 @@ public class Personalization {
 	@Inject
 	private Messages messages;
     @Inject
-    private ParameterFacade parameterFacade;
-    @Inject
-    private DomainFacade domainFacade;
+    private AbstractDomainFacade abstractDomainFacade;
     @Inject
     private UserFacade userFacade;
     
@@ -82,9 +81,11 @@ public class Personalization {
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
+	
     @Property
-    private String customLogoUrl;
-
+    @Persist
+    private MessagesConfiguration messagesConfiguration;
+    
     @Property
     @Persist
     private Set<WelcomeText> welcomeTexts;
@@ -99,11 +100,11 @@ public class Personalization {
 	
 	@Persist
 	@Property
-	private List<DomainVo> domains;
+	private String selectedDomain;
 	
 	@Persist
 	@Property
-	private DomainVo selectedDomain;
+	private List<String> domains;
 	
 	@Property
 	@Persist
@@ -116,83 +117,39 @@ public class Personalization {
     @SetupRender
     public void init() throws BusinessException {
     	
-    	ParameterVo p = null;
-    	
-    	superadmin = loginUser.isSuperAdmin();
-    	
-    	if (superadmin && selectedDomain == null) {
-    		domains = domainFacade.findAllDomains();
-    		if (domains == null || domains.size() < 1) {
-    			
-    		} else {
-    			selectedDomain = domains.get(0);
-    		}
-    	} 
-    	
-    	if (selectedDomain != null) {
-			p = selectedDomain.getParameterVo();
-    	} else {    		
-    		p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
-    	}
-
-        customLogoUrl = p.getCustomLogoUrl();
-
-
-        if (welcomeTexts == null) {
-            welcomeTexts = p.getWelcomeTexts();
-        }
-        
-        if (mailTemplates == null) {
-        	mailTemplates = p.getMailTemplates();
-        }
-        
-        if (mailSubjects == null) {
-        	mailSubjects = p.getMailSubjects();
-        }
     }   
     
-    public ValueEncoder<DomainVo> getValueEncoder() {
-    	return new ValueEncoder<DomainVo>() {
-    		public String toClient(DomainVo value) {
-    			return value.getIdentifier();
-    		}
-    		public DomainVo toValue(String clientValue) {
-    			for (DomainVo domain : domains) {
-    	    		if (domain.getIdentifier().equals(clientValue)) {
-    	    			return domain;
-    	    		}
-    			}
-    			return null;
-    		}
-		};
-    }
+	public Object onActivate(String identifier) throws BusinessException {
+		logger.debug("domainIdentifier:" + identifier);
+		selectedDomain = identifier;
+		
+		domains = abstractDomainFacade.getAllDomainIdentifiers(loginUser);
+		if(!domains.contains(selectedDomain)) {
+			shareSessionObjects.addError(messages.get("pages.error.badAuth.message"));
+			return org.linagora.linShare.view.tapestry.pages.administration.Index.class;
+    	}
+		
+		
+		messagesConfiguration  = abstractDomainFacade.getMessages(identifier);
+		welcomeTexts = messagesConfiguration.getWelcomeTexts();
+		mailTemplates = messagesConfiguration.getMailTemplates();
+		mailSubjects = messagesConfiguration.getMailSubjects();
+		return null;
+	}
     
     public Object onSubmitFormUpdateDomain() {
     	return this;
     }
     
     
-    public void onSuccessFromPersonalizationForm() throws BusinessException {
+    public Object onSuccessFromPersonalizationForm() throws BusinessException {
+    	logger.debug("onSuccessFromPersonalizationForm");
     	
-        ParameterVo p = null;
-        
-        if(superadmin) {
-        	p = selectedDomain.getParameterVo();
-        } else {	
-        	p = domainFacade.retrieveDomain(loginUser.getDomainIdentifier()).getParameterVo();
-        }
-
-        ParameterVo params = new ParameterVo(p.getIdentifier(), p.getFileSizeMax(), p.getUserAvailableSize(), p.getGlobalQuota(), p.getUsedQuota(), p.getGlobalQuotaActive(), p.getActiveMimeType(), p.getActiveSignature(),p.getActiveEncipherment(),p.getActiveDocTimeStamp(),p.getGuestAccountExpiryTime(),
-            p.getGuestAccountExpiryUnit(), customLogoUrl,p.getDefaultShareExpiryUnit(),  p.getDefaultShareExpiryTime(), p.getDefaultFileExpiryUnit(), p.getDefaultFileExpiryTime(), p.getShareExpiryRules(), p.getDeleteDocWithShareExpiryTime(),welcomeTexts, mailTemplates, mailSubjects,
-            p.getClosedDomain(), p.getRestrictedDomain(), p.getDomainWithGuests(), p.getGuestCanCreateOther());
-        params = parameterFacade.saveOrUpdate(params);
-        
-        if (selectedDomain != null) {
-            selectedDomain.setParameterVo(params);
-        }
-        
+    	abstractDomainFacade.updateMessages(loginUser, selectedDomain,messagesConfiguration);
+    	
+    	return org.linagora.linShare.view.tapestry.pages.administration.Index.class;
     }
-
+    
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());

@@ -26,24 +26,23 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.linagora.linShare.core.domain.constants.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linShare.core.domain.constants.MailTemplateEnum;
+import org.linagora.linShare.core.domain.constants.UserType;
+import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.Domain;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
-import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MailSubject;
 import org.linagora.linShare.core.domain.entities.MailTemplate;
-import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -84,8 +83,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @throws BusinessException when no mail subject was found for the given enum key
 	 */
 	private MailSubject getMailSubject(User actor, Language language, MailSubjectEnum mailSubject) throws BusinessException {
-		Domain domain = actor.getDomain();
-		Set<MailSubject> subjects = domain.getParameter().getMailSubjects();
+		AbstractDomain domain = actor.getDomain();
+		Set<MailSubject> subjects = domain.getMessagesConfiguration().getMailSubjects();
 		
 		for (MailSubject mailSubject_ : subjects) {
 			if (mailSubject_.getLanguage().equals(language) && mailSubject_.getMailSubject().equals(mailSubject)) {
@@ -106,8 +105,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @throws BusinessException when no mail template was found for the given enum key
 	 */
 	private MailTemplate getMailTemplate(User actor, Language language, MailTemplateEnum mailTemplate) throws BusinessException {
-		Parameter config = actor.getDomain().getParameter();
-		Set<MailTemplate> templates = config.getMailTemplates();
+		Set<MailTemplate> templates = actor.getDomain().getMessagesConfiguration().getMailTemplates();
 		
 		for (MailTemplate mailTemplate_ : templates) {
 			if (mailTemplate_.getLanguage().equals(language) && mailTemplate_.getMailTemplate().equals(mailTemplate)) {

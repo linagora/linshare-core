@@ -35,10 +35,9 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
@@ -85,7 +84,7 @@ public class FileUploader {
     private BusinessMessagesManagementService messagesManagementService;
 
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
@@ -196,8 +195,7 @@ public class FileUploader {
     public long getMaxFileSize() {
         long maxFileSize = DEFAULT_MAX_FILE_SIZE;
         try {
-    		DomainVo domain = domainFacade.retrieveDomain(userDetails.getDomainIdentifier());
-            maxFileSize = domain.getParameterVo().getFileSizeMax();
+            maxFileSize = documentFacade.getUserMaxFileSize(userDetails);
         } catch (BusinessException e) {
             // value has not been defined. We use the default value.
         }

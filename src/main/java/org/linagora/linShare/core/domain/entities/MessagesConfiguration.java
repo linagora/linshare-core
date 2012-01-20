@@ -36,6 +36,22 @@ public class MessagesConfiguration implements Serializable {
 
     public MessagesConfiguration() {
     }
+    
+    public MessagesConfiguration(MessagesConfiguration m) {
+    	
+    	for (MailSubject mailSubject : m.getMailSubjects()) {
+    		addMailSubject(mailSubject);
+    	}
+        	
+    	for (MailTemplate mailTemplate: m.getMailTemplates()) {
+    		addMailTemplate(mailTemplate);
+    	}
+        
+		for (WelcomeText welcomeText: m.getWelcomeTexts()) {
+			addWelcomeText(welcomeText);
+    	}
+    			
+    }
 
 	public Long getId() {
 		return id;

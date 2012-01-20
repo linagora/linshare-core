@@ -51,7 +51,7 @@ public interface GuestRepository extends UserRepository<Guest> {
      * @param ownerLogin login of the user who creates the searched guest(s).
      * @return a list of matching users.
      */
-    List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName, String ownerLogin);
+    List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName);
     
     
 }

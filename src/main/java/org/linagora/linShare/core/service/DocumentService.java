@@ -111,6 +111,13 @@ public interface DocumentService {
 	public long getAvailableSize(User user) throws BusinessException;
 	
 	/**
+	 * Return in byte the max size for an attachment 
+	 * @param user
+	 * @return
+	 */
+	public long getUserMaxFileSize(User user) throws BusinessException;
+	
+	/**
 	 * Return in byte the user quota
 	 * the quota is read from the admin parameter table
 	 * @param user : the user we want to check
@@ -216,5 +223,41 @@ public interface DocumentService {
      * @return true if the thumbnail exists, false otherwise
      */
 	public boolean documentHasThumbnail(String uuid);
+	
+	/**
+	 * return true if the signature functionality is enabled
+	 * @param user
+	 * @return
+	 */
+	public boolean isSignatureActive(User user);
+	/**
+	 * return true if the encipherment functionality is enabled
+	 * @param user
+	 * @return
+	 */
+	public boolean isEnciphermentActive(User user);
+	
+	/**
+	 * return true if the global quota functionality is enabled
+	 * @param user
+	 * @return
+	 * @throws BusinessException
+	 */
+	public boolean isGlobalQuotaActive(User user) throws BusinessException;
 
+	/**
+	 * return true if the user quota functionality is enabled
+	 * @param user
+	 * @return
+	 * @throws BusinessException
+	 */
+	public boolean isUserQuotaActive(User user) throws BusinessException;
+
+	/**
+	 * return the global quota value
+	 * @param user
+	 * @return
+	 * @throws BusinessException
+	 */
+	public Long getGlobalQuota(User user) throws BusinessException;
 }

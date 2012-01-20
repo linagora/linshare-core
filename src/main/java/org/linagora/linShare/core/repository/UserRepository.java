@@ -40,9 +40,17 @@ public interface UserRepository<T extends User> extends AbstractRepository<T> {
 
     /** Find a user using its mail.
      * @param mail
-     * @return founded user (null if no user found).
+     * @return  user, null if not found.
      */
     T findByMail(String mail);
+    
+    /**
+     * Find a user using its mail and domain
+     * @param mail
+     * @param domain
+     * @return user, null if not found.
+     */
+    T findByMailAndDomain(String domain, String mail);
     
     /**
      * authentification
@@ -87,6 +95,8 @@ public interface UserRepository<T extends User> extends AbstractRepository<T> {
 	List<T> findByCriteria(AccountOccupationCriteriaBean criteria);
 
 	List<T> findByDomain(String domain);
+	
+	
      
     
 } 

@@ -40,8 +40,7 @@ import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-abstract class GenericUserRepositoryImpl<U extends User> extends AbstractRepositoryImpl<U> implements
-		UserRepository<U> {
+abstract class GenericUserRepositoryImpl<U extends User> extends AbstractRepositoryImpl<U> implements UserRepository<U> {
 
 	public GenericUserRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -83,6 +82,24 @@ abstract class GenericUserRepositoryImpl<U extends User> extends AbstractReposit
 	        } else {
 	            throw new IllegalStateException("Mail must be unique");
 	        }
+	}
+	
+	@Override
+	public U findByMailAndDomain(String domain, String mail) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.createAlias("domain", "domain");
+		criteria.add(Restrictions.like("domain.identifier",domain));
+		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
+		
+		 List<U> users = findByCriteria(criteria);
+		 
+        if (users == null || users.isEmpty()) {
+            return null;
+        } else if (users.size() == 1) {
+            return users.get(0);
+        } else {
+            throw new IllegalStateException("Mail and domain must be unique");
+        }
 	}
 	
 	public List<U> findByDomain(String domain) {

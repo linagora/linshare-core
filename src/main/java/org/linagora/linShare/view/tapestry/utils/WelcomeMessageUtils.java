@@ -23,7 +23,7 @@ package org.linagora.linShare.view.tapestry.utils;
 import java.util.Locale;
 import java.util.Set;
 import org.linagora.linShare.core.domain.constants.Language;
-import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.WelcomeText;
 
 /** Helpers for Welcome message processing.
@@ -33,7 +33,7 @@ public class WelcomeMessageUtils {
 
     public static WelcomeText getWelcomeText(Set<WelcomeText> welcomeTexts, Language selectedLanguage, UserType userType) {
         for (WelcomeText welcomeText_ : welcomeTexts) {
-            if (selectedLanguage.equals(welcomeText_.getLanguage()) && userType.equals(welcomeText_.getUserType())) {
+            if (selectedLanguage.equals(welcomeText_.getLanguage())) {
                 return welcomeText_;
             }
         }

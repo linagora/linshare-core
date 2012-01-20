@@ -6,9 +6,9 @@
 
 	<div id="content">
 
-		<h1>${message:components.myborderlayout.administration.title}</h1>
-		<!-- Action bar -->
-
+		<h1>${message:pages.administration.index.link.personalization} : ${selectedDomain}</h1>
+		
+		<!-- Action bar 
 		<div id="actionBar">
 			<h4>Actions</h4>
 			<ul>
@@ -16,35 +16,27 @@
 					<t:pagelink t:id="parameters" t:page="administration/Index" class="button"><span><img src="${asset:context:images/icons/tango-applications-system.png}" alt=""/>${message:pages.administration.personalization.link.parameters}</span></t:pagelink>
 				</li>
 			</ul>
-		</div><!-- id="actionBar" -->
+		</div> id="actionBar" -->
 		<t:messagePanel />	
 		<div id="pageContent">
 				<t:mailTemplateConfigurer t:mailTemplates="mailTemplates"/>
 				<t:mailSubjectConfigurer t:mailSubjects="mailSubjects"/>
 				<t:welcomeMessageConfigurer t:welcometexts="welcomeTexts"/>
 				
-				<h2>${message:pages.administration.index.visual.title}</h2>
 				<t:form t:id="personalizationForm">
 					<t:errors t:banner="${message:pages.administration.index.errorBanner}" />
-					<table class="forForms">
-						<tr>
-							<td class="label"><t:label for="customLogoUrl" class="edit-form-label">${message:pages.administration.index.customLogoUrl}</t:label></td>
-							<td class="input"><t:textfield t:id="customLogoUrl" size="48" class="edit-form-field"/></td>
-						</tr>
-					</table>
-					<br/>
-
+					
 					<div class="button">
 						<a href="#" onclick="personalizationForm.submit();" class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></a>
 					</div>
 					<br/>
 				</t:form>
-
+		
 		</div>
 
 	</div><!-- id="content" -->
 	
-	<!-- Actions widget -->
+	<!-- Actions widget
 	<t:parameter name="actionsWidget">
 		<t:if test="superadmin">
 			<t:widget widgetId="actionsWidget" title="${message:pages.administration.index.domainSelector.title}">
@@ -55,5 +47,6 @@
 			</t:widget>
 		</t:if>
 	</t:parameter>
+	 -->
 
 </t:MyBorderLayout>

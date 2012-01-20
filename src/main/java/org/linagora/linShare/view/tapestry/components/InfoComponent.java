@@ -29,10 +29,8 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.DomainFacade;
-import org.linagora.linShare.core.domain.vo.DomainVo;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
@@ -47,7 +45,7 @@ public class InfoComponent {
 	private DocumentFacade documentFacade;
 
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 
 	@Inject
 	private Messages messages;
@@ -101,9 +99,8 @@ public class InfoComponent {
 	@SetupRender
 	void setupRender() throws BusinessException {
 		if (getDisplayWidget() && userVo != null && userVo.getDomainIdentifier()!=null){
-			DomainVo domain = domainFacade.retrieveDomain(userVo.getDomainIdentifier());
-			ParameterVo param = domain.getParameterVo();
-			globalQuota = param.getGlobalQuotaActive();
+//			DomainVo domain = domainFacade.retrieveDomain(userVo.getDomainIdentifier());
+			globalQuota = documentFacade.isGlobalQuotaActive(userVo);
 			canUpload = userVo.isUpload();
 			isGuest = userVo.isGuest();
 	
@@ -130,8 +127,10 @@ public class InfoComponent {
 					usedQuota = FileUtils.getFriendlySize(userUsedQuota, messages, preferedUnity);
 					totalQuota = FileUtils.getFriendlySize(userTotalQuota, messages, preferedUnity);
 				} else {
-					Long usedQuotaB = param.getUsedQuota() == null ? 0L : param.getUsedQuota();
-					Long globalQuotaB = param.getGlobalQuota() == null ? 0L : param.getGlobalQuota();
+					Long usedQuotaB = domainFacade.getUsedSpace(userVo.getDomainIdentifier());
+							
+							
+					Long globalQuotaB = documentFacade.getGlobalQuota(userVo);
 					FileUtils.Unit preferedUnity= FileUtils.getAppropriateUnitSize(globalQuotaB);
 					usedQuota = FileUtils.getFriendlySize(usedQuotaB, messages, preferedUnity);
 					totalQuota = FileUtils.getFriendlySize(globalQuotaB, messages, preferedUnity);

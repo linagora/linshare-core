@@ -42,12 +42,12 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.enums.DocumentType;
+import org.linagora.linShare.core.domain.constants.DocumentType;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -196,10 +196,12 @@ public class SearchFile {
 	@Property
 	private Boolean documentType;
 
-	@Inject @Symbol("linshare.autocomplete.minchars")
+
 	@Property
 	private int autocompleteMin;
-
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
 
 
 	/* ***********************************************************
@@ -210,6 +212,8 @@ public class SearchFile {
 	@SetupRender
 	void setupRender() {
 
+		autocompleteMin = functionalityFacade.completionThreshold(userlogin.getDomainIdentifier());
+		
 		if(isRemoteToggleAdvancedSearch()){
 			advancedSearch = advancedmode;
 		}
@@ -267,7 +271,6 @@ public class SearchFile {
 	 * @throws BusinessException 
 	 */
 	public void onValidateFormFromAdvancedSearchForm()  {
-
 
 
 		if(beginDate!=null && endDate!=null){

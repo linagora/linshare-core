@@ -22,10 +22,13 @@ package org.linagora.linShare.auth;
 
 import java.util.List;
 
-import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Role;
-import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.service.UserService;
+import org.linagora.linShare.core.service.impl.UserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.User;
@@ -38,34 +41,46 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
  */
 public class DaoAuthProvider implements UserDetailsService {
 
-    private final UserFacade userFacade;
+    private final UserService userService;
+    private static Logger logger = LoggerFactory.getLogger(DaoAuthProvider.class);
 
-    public DaoAuthProvider(UserFacade userFacade) {
-        this.userFacade = userFacade;
+    public DaoAuthProvider(UserService userService) {
+        this.userService = userService;
     }
 
+    /*
+     * In this method, we try to load user details from the database.
+     * We are four data types :
+     *  - LdapUser : Just a profile : first name, last name, role, domain_id.
+     *  - Guest : first name, last name, role, domain_id, user_owner, password, expiration date, ...
+     *  - System : useless, we can't login with this account.
+     *  - Root : super admin. His credential are stored in the database.
+     */
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 
         if (username == null || username.length() == 0) {
             throw new UsernameNotFoundException("username must not be null");
         }
+        logger.debug("Trying to load '" + username +"' user detail ...");
 
-        UserVo userVo;
-		try {
-			userVo = userFacade.findUser(username, null);
-		} catch (BusinessException e) {
-			throw new UsernameNotFoundException("Could not load user from DB: "+username, e);
-		}
-        String password = userFacade.getPassword(username);
-        if (userVo!=null &&  !userVo.isGuest() && password==null) password=""; //si utilisateur ldap
-
-        if (userVo == null || password == null || Role.SYSTEM.equals(userVo.getRole())) {
+        org.linagora.linShare.core.domain.entities.User user = userService.findUnkownUserInDB(username);
+        String password = null ;
+        if(user != null) {
+        	logger.debug("User in database found : " + user.getMail());
+        	password = user.getPassword();
+        
+        	// If the password field is not set (only Ldap user), we set it to an empty string.
+        	if (!UserType.GUEST.equals(user) && password==null) password=""; 
+        }
+		
+        if (user == null || password == null || Role.SYSTEM.equals(user.getRole())) {
+        	logger.debug("throw UsernameNotFoundException:User not found");
             throw new UsernameNotFoundException("User not found");
         }
 
-        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(userVo);
-        
-        return new User(userVo.getLogin(), password, true, true, true, true,
+        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
+
+        return new User(user.getLogin(), password, true, true, true, true,
             grantedAuthorities.toArray(new GrantedAuthority[0]));
     }
 

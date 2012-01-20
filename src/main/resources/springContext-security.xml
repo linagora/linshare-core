@@ -109,6 +109,10 @@
                 /**/administration/userconfig*=ROLE_AUTH
                 /**/administration/domains=ROLE_SUPERADMIN
                 /**/administration/domains/**=ROLE_SUPERADMIN
+                /**/administration/activationpolicy/**=ROLE_ADMIN
+                /**/administration/configurationpolicy/**=ROLE_ADMIN
+                /**/administration/parameters/**=ROLE_ADMIN
+                /**/administration/personalization/**=ROLE_ADMIN
                 /**/administration/**=ROLE_ADMIN
                 /**=ROLE_AUTH
             </value>
@@ -145,7 +149,7 @@
 
        <!-- DAO Authentification -->
        <bean id="guestAuthProvider" class="org.linagora.linShare.auth.DaoAuthProvider">
-           <constructor-arg ref="userFacade"/>
+           <constructor-arg ref="userService"/>
        </bean>
 
        <bean id="passwordEncoderFactory" class="org.linagora.linShare.auth.PasswordEncoderFactory">
@@ -162,9 +166,8 @@
        <!-- Domain Authentification -->
 
        <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
-           <property name="ldapQueryService" ref="ldapQueryService"/>
            <property name="userService" ref="userService"/>
-           <property name="domainService" ref="domainService"/>
+           <property name="abstractDomainService" ref="abstractDomainService"/>
        </bean>
 
        <!--     AUTHORIZATIONS MANAGEMENT   -->

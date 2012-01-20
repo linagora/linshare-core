@@ -48,6 +48,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.ShareExpiryDateFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
@@ -107,7 +108,7 @@ public class ConfirmSharePopup{
 	private String textAreaSubjectValue;
 	
 	
-	@Persist("flash")
+//	@Persist("flash")
 	@Property
 	private String recipientsSearch;
 	
@@ -152,11 +153,6 @@ public class ConfirmSharePopup{
 	private boolean warningCryptedFiles;
 	
 	
-	@Inject @Symbol("linshare.autocomplete.minchars")
-	@Property
-	private int autocompleteMin;
-	
-
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */
@@ -185,6 +181,12 @@ public class ConfirmSharePopup{
 	@Inject
 	private MailContainerBuilder mailContainerBuilder;
 
+	@Property
+	private int autocompleteMin;
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+	
 	/* ***********************************************************
 	 *                   Event handlers&processing
 	 ************************************************************ */
@@ -196,8 +198,11 @@ public class ConfirmSharePopup{
 	@SetupRender
 	public void init() {
 		
+		autocompleteMin = functionalityFacade.completionThreshold(userVo.getDomainIdentifier());
+		
 		//init emails list for selected users
 		if(usersVo!=null && usersVo.size()>0){
+			
 			String emails = MailCompletionService.formatList(usersVo);
 			recipientsSearch = emails.substring(0,emails.length()-1); //delete last comma.
 		}

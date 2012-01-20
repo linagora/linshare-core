@@ -54,15 +54,12 @@ import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.chenillekit.image.ChenilleKitImageConstants;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.DomainFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
-import org.linagora.linShare.core.repository.LogEntryRepository;
-import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.utils.PropertyPlaceholderConfigurer;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -136,12 +133,10 @@ public class AppModule
             @Inject @Symbol(SymbolConstants.CHARSET)
             String requestEncoding,
             
-            @InjectService("parameterRepository")
-            ParameterRepository parameterRepository,      		
             PerthreadManager perthreadManager
     	) {
 
-	    	MyMultipartDecoder multipartDecoder = new MyMultipartDecoderImpl(fileItemFactory,maxRequestSize,maxFileSize,requestEncoding,parameterRepository);
+	    	MyMultipartDecoder multipartDecoder = new MyMultipartDecoderImpl(fileItemFactory,maxRequestSize,maxFileSize,requestEncoding);
 			perthreadManager.addThreadCleanupListener(multipartDecoder);
 	    	return multipartDecoder;	
     }
@@ -403,17 +398,16 @@ public class AppModule
     		 @InjectService("SearchDocumentFacade") SearchDocumentFacade searchDocumentFacade,
     		 @InjectService("ShareFacade") ShareFacade shareFacade,
     		 @InjectService("UserFacade") UserFacade userFacade,
-             @InjectService("ParameterFacade") ParameterFacade parameterFacade,
     		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
     		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
     		 @InjectService("ThreadLocale")  ThreadLocale threadLocale,
     		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder,
-    		 @InjectService("DomainFacade")  DomainFacade domainFacade
+    		 @InjectService("AbstractDomainFacade")  AbstractDomainFacade domainFacade
 
     		 )
     {
 
-        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, parameterFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,domainFacade));
+        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
         config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, documentFacade, mailContainerBuilder));
         config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,domainFacade));
     }

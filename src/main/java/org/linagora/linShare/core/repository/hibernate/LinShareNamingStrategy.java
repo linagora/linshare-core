@@ -53,7 +53,7 @@ package org.linagora.linShare.core.repository.hibernate;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.cfg.ImprovedNamingStrategy;
-import org.linagora.linShare.core.LinShareConstants;
+import org.linagora.linShare.core.domain.constants.LinShareConstants;
 
 
 public class LinShareNamingStrategy extends ImprovedNamingStrategy {

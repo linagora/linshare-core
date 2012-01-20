@@ -83,8 +83,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
 	/**
 	 * @see GuestRepository#searchGuestAnyWhere(String, String, String, String)
 	 */
-	public List<Guest> searchGuestAnyWhere(String mail, String firstName,
-			String lastName, String ownerLogin) {
+	public List<Guest> searchGuestAnyWhere(String mail, String firstName, String lastName) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
 		if (mail != null) {
@@ -95,10 +94,6 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
 		}
 		if (lastName != null) {
 			criteria.add(Restrictions.like("lastName", lastName, MatchMode.ANYWHERE).ignoreCase());
-		}
-		if (ownerLogin != null) {
-			User owner = findByLogin(ownerLogin);
-			criteria.add(Restrictions.eq("owner", owner));
 		}
 		return findByCriteria(criteria);
 	}

@@ -37,14 +37,13 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignaturePolicyVo;
 import org.linagora.linShare.core.domain.vo.UserSignature;
@@ -71,7 +70,7 @@ public class SelectPolicy {
 	@Inject
 	private DocumentFacade documentFacade;
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 	@Inject
 	private ShareFacade shareFacade;
 	@Inject
@@ -121,8 +120,7 @@ public class SelectPolicy {
 				DocToSignContext context = DocToSignContext.valueOf((String) docIdentifiers[0]);
 				
 				//signature activation is NOT activated so quit !
-		        ParameterVo p = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
-				if (!p.getActiveSignature()){
+				if (!documentFacade.isSignatureActive(userVo)){
 					if(context.equals(DocToSignContext.DOCUMENT)){
 						return  linkFactory.createPageRenderLink("files/Index");
 					} else if (context.equals(DocToSignContext.SHARED)) {

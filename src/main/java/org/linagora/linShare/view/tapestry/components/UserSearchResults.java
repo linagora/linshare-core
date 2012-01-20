@@ -45,11 +45,12 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.UserType;
-import org.linagora.linShare.core.domain.vo.DomainVo;
+import org.linagora.linShare.core.domain.constants.UserType;
+import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -184,13 +185,13 @@ public class UserSearchResults {
 	
 	@Persist
 	@Property
-	private List<DomainVo> domains;
+	private List<AbstractDomainVo> domains;
 	
 	@Persist
 	@Property
-	private DomainVo selectedDomain;
+	private AbstractDomainVo selectedDomain;
     @Inject
-    private DomainFacade domainFacade;
+    private AbstractDomainFacade domainFacade;
     
     @Property
     @Persist
@@ -227,9 +228,9 @@ public class UserSearchResults {
         sorterModel=new UserSorterModel(users);
         
         if (userLoggedIn.isSuperAdmin()) {
-    		domains = domainFacade.findAllDomains();
+    		domains = domainFacade.findAllTopDomain();
     	} else {
-    		domains = new ArrayList<DomainVo>();
+    		domains = new ArrayList<AbstractDomainVo>();
     	}
     }
 
@@ -332,13 +333,13 @@ public class UserSearchResults {
     	return userLoggedIn.isSuperAdmin();
     }
     
-    public ValueEncoder<DomainVo> getValueEncoder() {
-    	return new ValueEncoder<DomainVo>() {
-    		public String toClient(DomainVo value) {
+    public ValueEncoder<AbstractDomainVo> getValueEncoder() {
+    	return new ValueEncoder<AbstractDomainVo>() {
+    		public String toClient(AbstractDomainVo value) {
     			return value.getIdentifier();
     		}
-    		public DomainVo toValue(String clientValue) {
-    			for (DomainVo domain : domains) {
+    		public AbstractDomainVo toValue(String clientValue) {
+    			for (AbstractDomainVo domain : domains) {
     	    		if (domain.getIdentifier().equals(clientValue)) {
     	    			return domain;
     	    		}
@@ -407,18 +408,18 @@ public class UserSearchResults {
      * an admin can edit any user
      * an simple user can edit only his users (owner of the guest account)
      * @return true if the logged in user on the application can edit the data of one user on the grid
+     * @throws BusinessException 
      */
     
     public boolean isUserEditable() {
-
-        if (userLoggedIn.isSuperAdmin()) {
-        	return true;
-        }
-        if (userLoggedIn.isAdministrator() && userLoggedIn.getDomainIdentifier().equals(user.getDomainIdentifier())) {
-            return true;
-        } else {
-            return isOwner();
-        }
+    	try {
+			return userFacade.isAdminForThisUser(userLoggedIn, user);
+		} catch (BusinessException e) {
+			logger.error(e.getErrorCode().toString());
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
     }
     
     /**
@@ -428,36 +429,20 @@ public class UserSearchResults {
      */
     
     public boolean isUserDeletable() {
-        if (user.getLogin().trim().equals(userLoggedIn.getLogin().trim())) {
-        	return false;
-        }
-        if (userLoggedIn.isSuperAdmin()) {
-        	return true;
-        }
-        if (userLoggedIn.isAdministrator() && userLoggedIn.getDomainIdentifier().equals(user.getDomainIdentifier())) {
-        	return true;
-        } 
-        return isOwner();
+    	try {
+			return userFacade.isAdminForThisUser(userLoggedIn, user);
+		} catch (BusinessException e) {
+			logger.error(e.getErrorCode().toString());
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
     }
     
     public boolean isUserDomainMovable() {
     	return userLoggedIn.isSuperAdmin();
     }
-    
-    /**
-     * is the logged in user the owner of the user guest account ?
-     * @return
-     */
-    private boolean isOwner() {
-        String userLogin = userLoggedIn.getLogin();
-
-        if (UserType.GUEST.equals(user.getUserType()) && userLogin != null) {
-            return userLogin.equals(user.getOwnerLogin());
-        } else {
-            return false;
-        }
-    }
-    
+        
     public boolean isUserGuest() {
     	return user.isGuest();
     }

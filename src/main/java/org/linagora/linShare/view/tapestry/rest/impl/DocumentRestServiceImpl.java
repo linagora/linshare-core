@@ -36,13 +36,10 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.DomainFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
+import org.linagora.linShare.core.domain.constants.DocumentType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.enums.DocumentType;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -69,7 +66,6 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 	private final ApplicationStateManager applicationStateManager; 
 	private final SearchDocumentFacade searchDocumentFacade;
 	private final DocumentFacade documentFacade;
-    private final ParameterFacade parameterFacade;
 
 	private final MyMultipartDecoder myMultipartDecoder;
 	
@@ -78,8 +74,6 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 	private final Marshaller xstreamMarshaller;
 
     private final MailContainerBuilder mailContainerBuilder;
-    
-    private final DomainFacade domainFacade;
 	
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
@@ -88,22 +82,18 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 	public DocumentRestServiceImpl( final ApplicationStateManager applicationStateManager,
 			final SearchDocumentFacade searchDocumentFacade,
 			final DocumentFacade documentFacade,
-            final ParameterFacade parameterFacade,
 			final MyMultipartDecoder myMultipartDecoder,
 			final PropertiesSymbolProvider propertiesSymbolProvider,
 			final Marshaller xstreamMarshaller,
-            final MailContainerBuilder mailContainerBuilder,
-            final DomainFacade domainFacade) {
+            final MailContainerBuilder mailContainerBuilder) {
 		super();
 		this.applicationStateManager = applicationStateManager;
 		this.searchDocumentFacade = searchDocumentFacade;
 		this.documentFacade = documentFacade;
-        this.parameterFacade = parameterFacade;
 		this.xstreamMarshaller = xstreamMarshaller;
 		this.myMultipartDecoder = myMultipartDecoder;
 		this.propertiesSymbolProvider = propertiesSymbolProvider;
         this.mailContainerBuilder = mailContainerBuilder;
-        this.domainFacade = domainFacade;        
 	}
 	
 
@@ -262,8 +252,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		
 		long maxFileSize = -1;
 		try {
-	        ParameterVo parameterVo = domainFacade.retrieveDomain(actor.getDomainIdentifier()).getParameterVo();
-			maxFileSize = parameterVo.getFileSizeMax();
+			maxFileSize = documentFacade.getUserMaxFileSize(actor);
 		} catch (BusinessException e1) {
 			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load parameters");
 		}
@@ -522,8 +511,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
         
         Long maxFileSize = null;
         try {
-        	ParameterVo parameterVo = domainFacade.retrieveDomain(actor.getDomainIdentifier()).getParameterVo();
-            maxFileSize = parameterVo.getFileSizeMax();
+            maxFileSize = documentFacade.getUserMaxFileSize(actor);
         } catch (BusinessException ex) {
 			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load parameters");
         }

@@ -53,14 +53,13 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -139,7 +138,7 @@ public class ListSharedDocument {
 	private ShareFacade shareFacade;
 
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 	
 	@Inject
 	private ComponentResources componentResources; 
@@ -244,9 +243,8 @@ public class ListSharedDocument {
 		listSelected = new ArrayList<ShareDocumentVo>();
 		Collections.sort(shareDocuments);
 		this.componentdocuments = shareDocuments;
-		ParameterVo config = domainFacade.retrieveDomain(user.getDomainIdentifier()).getParameterVo();
-		this.activeSignature = config.getActiveSignature();
-		this.activeEncypher = config.getActiveEncipherment();
+		this.activeSignature = documentFacade.isSignatureActive(user);
+		this.activeEncypher = documentFacade.isEnciphermentActive(user);
 		//if(model==null) // need to redo the model each type, for the config may change 
 		model=initModel();
 		

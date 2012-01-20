@@ -1,10 +1,12 @@
 package org.linagora.linShare.core.service.impl;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.linagora.linShare.core.domain.entities.Domain;
+import org.linagora.linShare.core.domain.entities.DomainPattern;
+import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.LDAPQueryService;
@@ -28,37 +30,35 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
          return threadLocal.get();
      }
 	     
-	     
 	@Override
-	public User getUser(String userId, Domain domain, User actor) throws BusinessException {
+	public User getUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId) throws BusinessException {
 
-		LOGGER.debug("LDAPQueryServiceImpl.getUser("+ userId + ", " + domain.getDifferentialKey());
-		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(), domain);
+		LOGGER.debug("LDAPQueryServiceImpl.getUser("+ userId + ", " + baseDn);
+		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
 		return query.getUser(userId);		
 		
 	}
 
 	@Override
-	public List<User> getAllDomainUsers(Domain domain, User actor) throws BusinessException {
-		
-		LOGGER.debug("LDAPQueryServiceImpl.getAllDomainUsers(" + domain.getDifferentialKey());
-		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(), domain);
+	public List<User> getAllDomainUsers(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern) throws BusinessException {
+		LOGGER.debug("LDAPQueryServiceImpl.getAllDomainUsers(" + baseDn);
+		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
 		return query.getAllDomainUsers();
 	}
 
-	@Override
-	public User auth(String login, String userPasswd, Domain domain) throws BusinessException, NamingException {
-		
-		LOGGER.debug("LDAPQueryServiceImpl.auth: BEGIN:" + login + ", " + domain.getDifferentialKey() );
-		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(), domain);
-		return query.auth(login, userPasswd);
-	}
 
 	@Override
-	public List<User> searchUser(String mail, String firstName,	String lastName, Domain domain, User actor) throws BusinessException {
-		
-		LOGGER.debug("LDAPQueryServiceImpl.searchUser: " + ":"  + mail + ", " + firstName + ", " + lastName + ", " + domain.getDifferentialKey());
-		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(), domain);
+	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userId, String userPasswd) throws BusinessException, NamingException, IOException {
+		LOGGER.debug("LDAPQueryServiceImpl.auth: BEGIN:" + userId + ", " + baseDn );
+		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
+		return query.auth(userId, userPasswd);
+	}
+
+
+	@Override
+	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException {
+		LOGGER.debug("LDAPQueryServiceImpl.searchUser:" + mail + "," + firstName + "," + lastName + "," + baseDn);
+		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
 		return query.searchUser(mail, firstName, lastName);
 	}
 }

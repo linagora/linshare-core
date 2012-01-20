@@ -22,7 +22,7 @@ package org.linagora.linShare.core.domain.vo;
 
 import java.util.Calendar;
 
-import org.linagora.linShare.core.domain.enums.DocumentType;
+import org.linagora.linShare.core.domain.constants.DocumentType;
 
 /**
  * Search document Vo for retrieve documents.

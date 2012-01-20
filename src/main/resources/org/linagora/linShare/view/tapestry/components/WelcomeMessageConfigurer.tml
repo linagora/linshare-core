@@ -3,25 +3,15 @@
     <h2>${message:components.welcomeMessageConfigurer.title}</h2>
     <div id="welcomeMessageConfigurer">
         <t:grid source="welcomeMessageViews" row="welcomeMessageView"
-                include="language, guestWelcomeMessage, internalWelcomeMessage">
+                include="language, welcomeMessage">
             <t:parameter t:name="languageHeader">
                 ${message:components.welcomeMessageConfigurer.grid.language}
             </t:parameter>
-            <t:parameter t:name="guestWelcomeMessageHeader">
-                ${message:components.welcomeMessageConfigurer.grid.guestWelcomeMessage}
-            </t:parameter>
-            <t:parameter t:name="internalWelcomeMessageHeader">
+            <t:parameter t:name="welcomeMessageHeader">
                 ${message:components.welcomeMessageConfigurer.grid.internalWelcomeMessage}
             </t:parameter>
-            <t:parameter t:name="guestWelcomeMessageCell">
-                ${welcomeMessageView.guestWelcomeMessage}
-                <t:actionLink t:id="editGuestMessage" t:zone="welcomeMessageBox" context="welcomeMessageView.language">
-                    <img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
-                    	title="${message:pages.administration.index.welcomeMessageEdition.title}"/>
-                </t:actionLink>
-            </t:parameter>
-            <t:parameter t:name="internalWelcomeMessageCell">
-                ${welcomeMessageView.internalWelcomeMessage}
+            <t:parameter t:name="welcomeMessageCell">
+                ${welcomeMessageView.welcomeMessage}
                 <t:actionLink t:id="editInternalMessage" t:zone="welcomeMessageBox" context="welcomeMessageView.language">
                     <img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
                     	title="${message:pages.administration.index.welcomeMessageEdition.title}"/>

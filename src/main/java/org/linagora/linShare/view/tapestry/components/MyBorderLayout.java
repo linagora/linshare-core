@@ -27,6 +27,7 @@ import java.util.Locale;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.annotations.Property;
@@ -35,11 +36,13 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.apache.tapestry5.services.Response;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.domain.entities.Role;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.view.tapestry.beans.MenuEntry;
 
 
 public class MyBorderLayout {
@@ -127,7 +130,10 @@ public class MyBorderLayout {
 	private Messages messages;
 
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
 
     /* ***********************************************************
 	 *                Properties & injected symbol, ASO, etc
@@ -175,30 +181,8 @@ public class MyBorderLayout {
 	@Property
 	private String defaultCss;
 
-	@Property
-	private String helpLink ="";
-	
-	@Property
-	private String helpLabel ="";
-	
-	@Property
-	private String helpHighlight ="";
-
-	@Property
-	private String groupsLink ="";
-	
-	@Property
-	private String groupsLabel ="";
-	
-	@Property
-	private String groupsHighlight ="";
-
     @Property(write=false)
     private String customLogoUrl;
-    
-	@Inject @Symbol("linshare.groups.activated")
-	@Property
-	private boolean showGroups;
     
 	@Inject @Symbol("linshare.googleChromeFrame.enabled")
 	@Property
@@ -217,6 +201,17 @@ public class MyBorderLayout {
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
 	private static final String groupsLabelKey = "components.myborderlayout.group.title";
 	
+	
+	
+	@SuppressWarnings("unused")
+	@Inject
+	private Response response;
+	
+	@InjectComponent
+	private Menu menu;
+	
+	
+	
 	/* ***********************************************************
 	 *                       Phase processing
 	 ************************************************************ */
@@ -225,8 +220,9 @@ public class MyBorderLayout {
 	public void init() throws BusinessException {
 
 		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
-			ParameterVo config = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
-			customLogoUrl = config.getCustomLogoUrl();
+			if(domainFacade.isCustomLogoActive(userVo)) {
+				customLogoUrl = domainFacade.getCustomLogoUrl(userVo);
+			}
 		}
 		
 		ie8Css="<!--[if IE 8]><link href='"+ie8CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
@@ -237,11 +233,58 @@ public class MyBorderLayout {
 //				+ "<script src='"+ie6DDPNGAsset.toClientURL()+"' ></script><script>DD_belatedPNG.fix('img, h1, a.button, a.button span');</script><![endif]--> ";
 		
 		defaultCss="<link href='"+defaultCssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>";
+		includeLocales=new ArrayList<Locale>();
+		includeLocales.add(Locale.FRENCH);
+		includeLocales.add(Locale.ENGLISH);
 		
+		menu.clearMenuEntry();
+		MenuEntry homeMenu;
+		MenuEntry fileMenu;
+		MenuEntry userMenu;
+		MenuEntry groupMenu;
+		MenuEntry adminMenu;
+		MenuEntry domainMenu;
+		MenuEntry auditMenu;
+		MenuEntry helpMenu;
+		
+		// Menu : Home / File 
+		if(securedStorageDisallowed) {
+			homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.securedStorageDisallowed.home.title"),null,null,"home");
+			fileMenu = new MenuEntry(response.encodeURL("files/index"),messages.get("components.myborderlayout.securedStorageDisallowed.file.title"),null,null,"files");
+		} else {
+			homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
+			fileMenu = new MenuEntry(response.encodeURL("files/index"),messages.get("components.myborderlayout.file.title"),null,null,"files");
+		}
+				
+		// Menu : User
+		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
+		
+		// Menu : Groups
+		groupMenu = new MenuEntry(response.encodeURL("groups/index"),messages.get("components.myborderlayout.group.title"),null,null,"groups");
+		
+		// Menu : Administration
+		adminMenu = new MenuEntry(response.encodeURL("administration/index"),messages.get("components.myborderlayout.administration.title"),null,null,"administration");
+		
+		// Menu : Domains
+		domainMenu = new MenuEntry(response.encodeURL("administration/domains/index"),messages.get("components.myborderlayout.administration.domains.title"),null,null,"domains");
+		
+		// Menu : History / Audit
+		if(superadmin) {
+			auditMenu = new MenuEntry(response.encodeURL("administration/audit"),messages.get("components.myborderlayout.audit.title"),null,null,"audit");
+		} else {
+			auditMenu = new MenuEntry(response.encodeURL("history/index"),messages.get("components.myborderlayout.history.title"),null,null,"history");
+		}
+		
+		// Menu : Help
+		helpMenu = new MenuEntry(response.encodeURL("help/index"),messages.get("components.myborderlayout.help.title"),null,null,"help");
+
+		
+		// home files user groups administration domains audit help
 		if(userVoExists){
 			admin=(userVo.getRole().equals(Role.ADMIN));
 			superadmin=(userVo.getRole().equals(Role.SUPERADMIN));
 			user=(userVo.getRole().equals(Role.SIMPLE));
+			// just home and help page
 			userExt=(userVo.isGuest() && !userVo.isUpload());
 		}else{
 			admin=false;
@@ -249,42 +292,62 @@ public class MyBorderLayout {
 			user=false;
 			userExt=false;
 		}
-		includeLocales=new ArrayList<Locale>();
-		includeLocales.add(Locale.FRENCH);
-		includeLocales.add(Locale.ENGLISH);
-	//	includeLocales.add(Locale.JAPANESE);
-	//	includeLocales.add(Locale.CHINESE);
-		initHelpInfo();
-		initGroupsInfo();
+		
+		if(userVoExists && !userExt){
+			if(!superadmin) {
+				menu.addMenuEntry(homeMenu);
+				menu.addMenuEntry(fileMenu);
+			}
+			if(showUserTab())					menu.addMenuEntry(userMenu);
+			if(showGroupTab() && !superadmin) 		menu.addMenuEntry(groupMenu);
+			
+			if(superadmin||admin) 				menu.addMenuEntry(adminMenu);
+			if(superadmin) 						menu.addMenuEntry(domainMenu);
+			
+			if(showAuditTab())					menu.addMenuEntry(auditMenu);
+			if(showHelpTab())					menu.addMenuEntry(helpMenu);
+		} else {
+			menu.addMenuEntry(homeMenu);
+			if(showHelpTab())					menu.addMenuEntry(helpMenu);
+		}
+	}
+	
+	boolean showUserTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			if(superadmin) {
+				return true;
+			}
+			return functionalityFacade.isEnableUserTab(userVo.getDomainIdentifier());
+		}
+		return false;
 	}
 	
 	
-	/* ***********************************************************
-	 *                          Helpers
-	 ************************************************************ */
+	boolean showAuditTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			if(superadmin) {
+				return true;
+			}
+			return functionalityFacade.isEnableAuditTab(userVo.getDomainIdentifier());
+		}
+		return false;
+	}
 	
-	void initHelpInfo() {
-		String pre = "";
-		if (userVoExists) {
-			pre = ";";
+	boolean showHelpTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			if(superadmin) {
+				return true;
+			}
+			return functionalityFacade.isEnableHelpTab(userVo.getDomainIdentifier());
 		}
-		
-		if ((null!=isHelpPage)&&(isHelpPage)) {
-			helpLink = pre+"help";
-			helpLabel = pre+messages.get(helpLabelKey);
-			helpHighlight = pre+"help";
-		}
-		
+		return false;
 	}
-	void initGroupsInfo() {
-		String pre = ";";
-		
-		if (showGroups) {
-			groupsLink = pre+"groups";
-			groupsLabel = pre+messages.get(groupsLabelKey);
-			groupsHighlight = pre+"groups";
+	
+	boolean showGroupTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			return functionalityFacade.isEnableGroupTab(userVo.getDomainIdentifier());
 		}
-		
+		return false;
 	}
-		
+	
 }

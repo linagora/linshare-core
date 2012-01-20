@@ -22,10 +22,12 @@ package org.linagora.linShare.view.tapestry.pages.administration.domains;
 
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
 public class CreateDomainPattern {
@@ -35,7 +37,10 @@ public class CreateDomainPattern {
 	private DomainPatternVo domainPattern;
 	
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
+	
+	@SessionState
+    private UserVo loginUser;
 	
 	@Persist
 	@Property
@@ -68,9 +73,9 @@ public class CreateDomainPattern {
 	public Object onSubmit() {
 		try {
 			if (inModify) {
-				domainFacade.updateDomainPattern(domainPattern);
+				domainFacade.updateDomainPattern(loginUser, domainPattern);
 			} else {
-				domainFacade.createDomainPattern(domainPattern);
+				domainFacade.createDomainPattern(loginUser, domainPattern);
 			}
 		} catch (BusinessException e) {
 			// TODO Auto-generated catch block

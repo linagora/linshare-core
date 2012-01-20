@@ -42,7 +42,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.GroupMemberType;
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
@@ -361,7 +361,7 @@ public class Index {
 
 			ShareDocumentVo shareddoc = getDocumentByUUIDInList(uuid);
 			if (null != shareddoc) {
-				UserVo groupUser = userFacade.findUser(group.getGroupLogin(), userVo.getDomainIdentifier());
+				UserVo groupUser = userFacade.findUserInDb(group.getGroupLogin(), userVo.getDomainIdentifier());
 				shareFacade.deleteSharing(shareddoc, groupUser);
 				MailContainer mailContainer = mailContainerBuilder
 						.buildMailContainer(userVo, null);

@@ -47,47 +47,39 @@ import org.linagora.linShare.core.service.TimeStampingService;
 
 public class TimeStampingServiceImpl implements TimeStampingService {
 
-	/**
-	 * url to timestamp service
-	 */
-	private URI urlTSA;
-	private boolean disabled = false;
-	
-	
 
-	public TimeStampingServiceImpl(String urlTSA) throws URISyntaxException{
+	public TimeStampingServiceImpl() {
+	}
+	
+	private URI getUriFromUrl(String urlTSA) throws URISyntaxException, TSPException  {
 		
-		this.urlTSA = null;
+		URI uriTSA;
 		
 		if(urlTSA==null||urlTSA.equals("")) {
-			disabled = true; //may be desactivated ! no url in configuration
+			throw new TSPException("no TSA url");
 		} else { 
 			try {
-				this.urlTSA = new URI(urlTSA); //check url syntax
+				uriTSA = new URI(urlTSA); //check url syntax
 			} catch (URISyntaxException e) {
-				disabled =  true;
 				throw e;
 			}
-			disabled =  false;
 		}
+		return uriTSA;
 	}
 	
 	
 	/**
 	 * method to timestamp a file (inputstream)
+	 * @throws URISyntaxException 
 	 */
-	public TimeStampResponse getTimeStamp(InputStream inToTimeStamp) throws TSPException {
-		
-		if(disabled) {
-			return null;
-		} else {
-			byte[] hash = computeDigest(inToTimeStamp);
-			return getTimeStamp(hash);
-		}
+	public TimeStampResponse getTimeStamp(String urlTSA, InputStream inToTimeStamp) throws TSPException, URISyntaxException {
+		URI uriTSA = getUriFromUrl(urlTSA);;
+		byte[] hash = computeDigest(inToTimeStamp);
+		return getTimeStamp(uriTSA, hash);
 	} 
 	
 
-	private TimeStampResponse getTimeStamp(byte[] sha1Digest) throws TSPException {
+	private TimeStampResponse getTimeStamp(URI uriTSA, byte[] sha1Digest) throws TSPException {
 		TimeStampResponse response = null;
 		
 		ByteArrayInputStream bis = null;
@@ -106,7 +98,7 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 
 			byte[] reqData = request.getEncoded();
 			
-			HttpURLConnection conn = (HttpURLConnection) urlTSA.toURL().openConnection();
+			HttpURLConnection conn = (HttpURLConnection) uriTSA.toURL().openConnection();
 			
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
@@ -209,10 +201,4 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 	    TimeStampToken  tsToken = response.getTimeStampToken();
 	    return tsToken.getSID();
 	}
-
-
-	public boolean isDisabled() {
-		return disabled;
-	}
-
 }
