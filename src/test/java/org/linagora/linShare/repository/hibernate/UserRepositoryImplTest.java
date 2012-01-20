@@ -27,11 +27,15 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linShare.core.domain.constants.LinShareConstants;
+import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Guest;
+import org.linagora.linShare.core.domain.entities.Internal;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
@@ -62,12 +66,14 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
     private static final String LAST_NAME3 = "lepoint";
     private static final String MAIL3 = "robert@lepoint.com";
 
+ // default import.sql
+ 	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
     
     private boolean flag=false;
     
 	@Autowired
 	@Qualifier("userRepository")
-	private UserRepository<User> userDao;
+	private UserRepository<User> userRepository;
 
 	@Autowired
 	private ShareRepository shareRepository;
@@ -75,6 +81,9 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	@Autowired
 	private DocumentRepository documentRepository;
 
+	@Autowired
+	private AbstractDomainRepository abstractDomainRepository;
+	
 	
 	@Before
 	public void setUp() throws Exception {
@@ -82,11 +91,11 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());		
 		if(!flag){
 			User u1=new Guest(LOGIN2, FIRST_NAME2, LAST_NAME2, MAIL2,encpassword, true, true,"comment");
-			userDao.create(u1);
+			userRepository.create(u1);
 			
 		
 			User u2=new Guest(LOGIN3, FIRST_NAME3, LAST_NAME3, MAIL3,encpassword, true, true,"comment");
-			userDao.create(u2);
+			userRepository.create(u2);
 			flag=true;
 		}
 		
@@ -99,23 +108,35 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		
 		User u = new Guest(LOGIN, FIRST_NAME, LAST_NAME, MAIL, encpassword, true, true,"comment");
 	
-		userDao.create(u);
+		userRepository.create(u);
 
-		Assert.assertTrue(userDao.exist(LOGIN, encpassword));
-		Assert.assertFalse(userDao.exist(LOGIN, "pass"));
-		Assert.assertFalse(userDao.exist("login90", encpassword));
+		Assert.assertTrue(userRepository.exist(LOGIN, encpassword));
+		Assert.assertFalse(userRepository.exist(LOGIN, "pass"));
+		Assert.assertFalse(userRepository.exist("login90", encpassword));
 		
 	}
 	
-	
+	@Test
+	public void testfindUser() throws BusinessException{
+		AbstractDomain domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
+		
+		User u = new Internal(LOGIN, FIRST_NAME, LAST_NAME, MAIL);
+		u.setDomain(domain);
+		
+		userRepository.create(u);
+		
+		User userFound = userRepository.findByMailAndDomain(DOMAIN_IDENTIFIER,MAIL);
+		Assert.assertNotNull(userFound);
+		Assert.assertEquals(FIRST_NAME,userFound.getFirstName());
+	}
 	
 	@Test
 	public void testShares() throws IllegalArgumentException, BusinessException{
 		
 			
-		User sender=userDao.findByLogin(LOGIN2);
+		User sender=userRepository.findByLogin(LOGIN2);
 		
-		User receiver=userDao.findByLogin(LOGIN3);
+		User receiver=userRepository.findByLogin(LOGIN3);
 		
 		
 		
@@ -138,10 +159,10 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		
 		sender.addShare(share);
 		receiver.addReceivedShare(share);
-		userDao.update(sender);
-		userDao.update(receiver);
-		sender=userDao.findByLogin(sender.getLogin());
-		receiver=userDao.findByLogin(receiver.getLogin());
+		userRepository.update(sender);
+		userRepository.update(receiver);
+		sender=userRepository.findByLogin(sender.getLogin());
+		receiver=userRepository.findByLogin(receiver.getLogin());
 		
 		for(Share currentShare:sender.getShares()){
 			System.out.println("Sender: "+currentShare.getSender().getMail());

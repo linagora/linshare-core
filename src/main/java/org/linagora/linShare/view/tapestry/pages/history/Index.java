@@ -36,17 +36,18 @@ import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.LogEntryFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -145,15 +146,21 @@ public class Index {
 	
 	private boolean reset;
 	
-	
-	@Inject @Symbol("linshare.autocomplete.minchars")
 	@Property
 	private int autocompleteMin;
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
 	
 	
 	/* ***********************************************************
 	 *                       Phase processing
 	 ************************************************************ */
+	
+	@SetupRender
+	public void init() throws BusinessException {
+		autocompleteMin = functionalityFacade.completionThreshold(userVo.getDomainIdentifier());
+	}
 	
 	/* ***********************************************************
 	 *                   Event handlers&processing
@@ -221,8 +228,7 @@ public class Index {
 	public List<String> onProvideCompletionsFromTargetMails(String value){
 		List<String> res = new ArrayList<String>();
 		try {
-			List<UserVo> founds = userFacade.searchUser(value, null, null, userVo, false);
-
+			List<UserVo> founds = userFacade.searchUser(value, null, null, null, userVo);
 			if (founds != null && founds.size() > 0) {
 				for (UserVo userVo : founds) {
 					res.add(userVo.getMail());

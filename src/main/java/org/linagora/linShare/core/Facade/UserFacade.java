@@ -22,10 +22,11 @@ package org.linagora.linShare.core.Facade;
 
 import java.util.List;
 
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
-import org.linagora.linShare.core.domain.entities.UserType;
-import org.linagora.linShare.core.domain.vo.DomainVo;
+import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -57,7 +58,7 @@ public interface UserFacade {
      * @param owner
      * @throws BusinessException
      */
-    public void updateGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
+    public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
     
     /**
      * update an user (only the role)
@@ -66,15 +67,7 @@ public interface UserFacade {
      * @param owner
      * @throws BusinessException
      */
-    public void updateUser(String mail,Role role, UserVo owner) throws BusinessException;
-    
-
-    /** Search a user using its mail.
-     * @param mail user mail.
-     * @return founded user.
-     */
-    UserVo findUser(String mail, String domain) throws BusinessException;
-    UserVo findUser(String mail, String domain, UserVo actorVO) throws BusinessException;
+    public void updateUserRole(String domain, String mail, Role role, UserVo owner) throws BusinessException;
     
 
     /** Search a user.
@@ -84,7 +77,6 @@ public interface UserFacade {
      * @return a list of matching users.
      */
     List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException;
-    List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser, boolean multiDomain) throws BusinessException;
 
     
     /** Search a user.
@@ -101,6 +93,19 @@ public interface UserFacade {
      * @return the list of guests created by their owner.
      */
     List<UserVo> searchGuest(String mail);
+    
+    
+    /**
+     * 
+     * @param mail
+     * @param currentGuest
+     * @return
+     * @throws BusinessException
+     */
+    List<UserVo> searchUserForRestrictedGuestEditionForm(String mail, String firstName, String lastName, String currentGuestEmail) throws BusinessException;
+    
+    
+    
 
     /** Delete a guest, purge an internal user.
      * @param login login of the user to delete.
@@ -111,12 +116,6 @@ public interface UserFacade {
     
     List<String> findMails(String beginWith);
     
-    /**
-     * delete temp admin account which is created by import.sql
-     * key is linshare.admin.temp.mail in linshare.properties
-     * @throws BusinessException
-     */
-	public void deleteTempAdminUser() throws  BusinessException;
 	/**
 	 * search temp admin account which is created by import.sql
 	 * key is linshare.admin.temp.mail in linshare.properties
@@ -198,7 +197,7 @@ public interface UserFacade {
 	 */
 	List<UserVo> fetchGuestContacts(String login) throws BusinessException;
 
-	void updateUserDomain(String mail, DomainVo selectedDomain,
+	void updateUserDomain(String mail, AbstractDomainVo selectedDomain,
 			UserVo userLoggedIn) throws BusinessException;
 
 	/**
@@ -208,4 +207,43 @@ public interface UserFacade {
 	 * @return
 	 */
 	List<UserVo> searchAllBreakedUsers(UserVo userLoggedIn);
+	
+	
+	/**
+	 * This method is design to find an user in the database from its mail and domain. 
+	 * The communication rules are used to determine all authorized domains you are allowed to search in, the domainId parameter is the starting point.
+	 * Usually, we use the domainId from the current logged in user as domainId parameter.
+	 * @param domainId
+	 * @param mail
+	 * @return User entity
+	 */
+	UserVo findUserFromAuthorizedDomainOnly(String domainId, String mail);
+	
+	/**
+	 * This method search a particular guest in the database. The domainId parameter is optional, if it is null, the guest is search in all existing domain except root domain.
+	 * @param mail
+	 * @param optionalDomainId
+	 * @return User entity
+	 */
+	UserVo findUserForResetPassordForm(String mail, String optionalDomainId);
+	
+	
+	 /** Search a user using its mail.
+     * @param mail user mail.
+     * @return founded user.
+     */
+    UserVo findUserInDb(String mail, String domain);
+    UserVo findUserForAuth(String mail) throws BusinessException;
+    UserVo findUser(String domain, String mail) throws BusinessException;
+    
+    
+    /**
+	 * Check if the actorVo is authorized to manage the second user (actorVo).
+	 * @param actorVo
+	 * @param userToManageVo
+	 * @return
+	 */
+	public boolean isAdminForThisUser(UserVo actorVo, UserVo userToManageVo) throws BusinessException ;
+    
+	
 }

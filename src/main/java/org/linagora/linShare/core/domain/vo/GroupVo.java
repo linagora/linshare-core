@@ -24,8 +24,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.GroupMember;
-import org.linagora.linShare.core.domain.entities.GroupMemberType;
 import org.linagora.linShare.core.utils.HashCodeUtil;
 
 public class GroupVo implements Serializable {

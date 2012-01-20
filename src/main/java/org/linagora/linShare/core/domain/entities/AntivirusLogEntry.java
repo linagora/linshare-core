@@ -1,6 +1,6 @@
 package org.linagora.linShare.core.domain.entities;
 
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 
 public class AntivirusLogEntry extends LogEntry {
 

@@ -26,10 +26,10 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
+import org.linagora.linShare.core.domain.constants.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
-import org.linagora.linShare.core.domain.entities.GroupMemberType;
-import org.linagora.linShare.core.domain.entities.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.GroupUser;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;

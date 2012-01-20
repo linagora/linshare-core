@@ -23,10 +23,10 @@ package org.linagora.linShare.core.domain.vo;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
 
 /**
  * @author ncharles

@@ -20,16 +20,19 @@
 */
 package org.linagora.linShare.core.Facade.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linShare.core.Facade.LogEntryFacade;
+import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.core.domain.transformers.impl.DisplayableLogEntryTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.LogEntryTransformer;
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.domain.vo.LogEntryVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.repository.LogEntryRepository;
+import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
 
 public class LogEntryFacadeImpl implements LogEntryFacade {
@@ -40,13 +43,16 @@ public class LogEntryFacadeImpl implements LogEntryFacade {
 	
 	private final DisplayableLogEntryTransformer displayableLogEntryTransformer;
 	
+	private final AbstractDomainService abstractDomainService;
+	
 	
 	public LogEntryFacadeImpl(final LogEntryRepository logEntryRepository,
 			final LogEntryTransformer logEntryTransformer,
-			final DisplayableLogEntryTransformer displayableLogEntryTransformer) {
+			final DisplayableLogEntryTransformer displayableLogEntryTransformer, AbstractDomainService abstractDomainService) {
 		this.logEntryRepository = logEntryRepository;
 		this.logEntryTransformer = logEntryTransformer;
 		this.displayableLogEntryTransformer = displayableLogEntryTransformer;
+		this.abstractDomainService = abstractDomainService;
 	}
 
 	public List<LogEntryVo> findByDate(String mail, Calendar beginDate,
@@ -58,8 +64,15 @@ public class LogEntryFacadeImpl implements LogEntryFacade {
 		return logEntryTransformer.disassembleList(logEntryRepository.findByUser(mail));
 	}
 
-	public List<DisplayableLogEntryVo> findByCriteria(LogCriteriaBean criteria, UserVo actor) {
-		return displayableLogEntryTransformer.disassembleList(logEntryRepository.findByCriteria(criteria, actor.getDomainIdentifier()));
+	public List<DisplayableLogEntryVo> findByCriteria(LogCriteriaBean criteria, UserVo actorVo) {
+		List<LogEntry> list = new ArrayList<LogEntry>();
+		
+		List<String> allMyDomainIdentifiers = abstractDomainService.getAllMyDomainIdentifiers(actorVo.getDomainIdentifier());
+		for (String domainIdentifier: allMyDomainIdentifiers) {
+			list.addAll(logEntryRepository.findByCriteria(criteria, domainIdentifier));
+		}
+		
+		return displayableLogEntryTransformer.disassembleList(list);
 	}
 
 }

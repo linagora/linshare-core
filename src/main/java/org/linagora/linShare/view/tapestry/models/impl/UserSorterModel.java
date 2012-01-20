@@ -25,7 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.view.tapestry.enums.Order;
 import org.linagora.linShare.view.tapestry.models.SorterModel;

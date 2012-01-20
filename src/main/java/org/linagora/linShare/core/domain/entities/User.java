@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -89,7 +90,7 @@ public abstract class User {
     /** If the user is allowed to create guest */
     private Boolean canCreateGuest;
     
-    private Domain domain;
+    private AbstractDomain domain;
 
     protected User() {
     	this.login = null;
@@ -289,11 +290,11 @@ public abstract class User {
 		this.ownSignatures = ownSignatures;
 	}
 	
-	public Domain getDomain() {
+	public AbstractDomain getDomain() {
 		return domain;
 	}
 	
-	public void setDomain(Domain domain) {
+	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
 	}
 	

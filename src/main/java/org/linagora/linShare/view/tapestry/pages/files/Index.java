@@ -43,13 +43,12 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -132,7 +131,7 @@ public class Index {
     private RenderSupport renderSupport;
     
 	@Inject
-    private DomainFacade domainFacade;
+    private AbstractDomainFacade domainFacade;
 	
 	@Inject
 	private MyMultipartDecoder myMultipartDecoder;
@@ -222,12 +221,10 @@ public class Index {
 	 * @throws BusinessException 
 	 */
 	public Object onUploadException(Throwable cause) throws BusinessException {
-		if (cause instanceof
-				FileUploadBase.FileSizeLimitExceededException) {
-	    	
-	        ParameterVo p = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
+		if (cause instanceof FileUploadBase.FileSizeLimitExceededException) {
 			shareSessionObjects.addError(String.format(messages.get("pages.upload.FileSizeLimitExceededException"),
-					FileUtils.getFriendlySize(p.getFileSizeMax(), messages)));
+					FileUtils.getFriendlySize(documentFacade.getUserMaxFileSize(userVo), messages)));
+			
 		}
 		myMultipartDecoder.cleanException();
 		return this;

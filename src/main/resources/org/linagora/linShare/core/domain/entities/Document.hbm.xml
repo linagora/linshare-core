@@ -2,7 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
   <class name="org.linagora.linShare.core.domain.entities.Document" table="DOCUMENT">
-    <id column="document_id" name="persistenceId">
+     <id name="persistenceId" type="long">
+      <column name="document_id" not-null="true" index="index_document_id"/>
       <generator class="native"/>
     </id>
     <property access="field" column="identifier" index="index_document_identifier" name="identifier" not-null="true" unique="true"/>
@@ -17,7 +18,7 @@
     <property access="field" column="size" name="size" type="long"/>
     <property access="field" column="file_comment" name="fileComment"/>
     <property access="field" column="thmb_uuid" name="thmbUUID"/>
-    <property access="field" column="timestamp" name="timeStamp"/>
+    <property access="field" column="timestamp" name="timeStamp" />
     
     <many-to-one access="field" class="org.linagora.linShare.core.domain.entities.User" name="owner" not-null="true">
       <column index="index_document_owner_id" name="owner_id"/>

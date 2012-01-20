@@ -22,13 +22,14 @@ package org.linagora.linShare.core.service;
 
 import java.util.List;
 
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.exception.TechnicalException;
 
 /** Services for User management.
  */
@@ -67,30 +68,16 @@ public interface UserService {
      * @return a list of matching users.
      */
     List<User> searchUser(String mail, String firstName, String lastName,UserType userType,User currentUser) throws BusinessException;
-    List<User> searchUser(String mail, String firstName, String lastName,UserType userType,User currentUser, boolean multiDomain) throws BusinessException;
     
-    
-    /** Find a user (based on mail address).
-     * Search first in database, then on ldap if not found.
-     * @param login user login.
-     * @return founded user.
+    /**
+     * Search available user for editing restricted email list owned by guest.
+     * @param mail
+     * @param currentGuest
+     * @return
+     * @throws BusinessException
      */
-    public User findUserInDB(String mail);
-    public List<User> findUsersInDB(String domain);
-    public User findUser(String mail, String domain) throws BusinessException;
-    public User findUser(String mail, String domain, User actor) throws BusinessException;
-    
-    /** Find a  user (based on mail address).
-     * Search first in database, then on ldap if not found.
-     * If the user isn't found on DB, then it is created from the ldap info
-     * @param mail user mail.
-     * @return founded user.
-     * @throws BusinessException if the user could not be found
-     * @throws TechnicalError if the user cannot be created
-     */
-    public User findAndCreateUser(String mail, String domainId) throws BusinessException ;
-    public User findAndCreateUserWithoutKnowingDomain(String mail, User owner) throws BusinessException;
-    
+    public List<User> searchUserForRestrictedGuestEditionForm(String mail, String firstName, String lastName, User currentGuest) throws BusinessException;
+    	
     /**
      * Delete a User (and all the corresponding share )
      * @param login
@@ -99,7 +86,7 @@ public interface UserService {
      * 			useful for the batch
      * @throws BusinessException 
      */
-    void deleteUser(String login, User owner, boolean checkOwnership) throws BusinessException;
+    void deleteUser(String login, User actor, boolean checkOwnership) throws BusinessException;
 
     /** Clean outdated guest accounts. */
     void cleanExpiredGuestAcccounts();
@@ -113,7 +100,7 @@ public interface UserService {
 	 * @param owner
 	 * @throws BusinessException
 	 */
-    public void updateGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
+    public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
     
 	/**
 	 * update the role of a user (admin, simple)
@@ -122,14 +109,14 @@ public interface UserService {
 	 * @param owner
 	 * @throws BusinessException
 	 */
-	public void updateUser(String mail,Role role, UserVo owner) throws BusinessException;
+	public void updateUserRole(String domain, String mail,Role role, UserVo owner) throws BusinessException;
     
 	/**
 	 * Update a user locale
 	 * @param mail : the user email
 	 * @param locale : the new local
 	 */
-	public void updateUserLocale(String mail, String locale);
+	public void updateUserLocale(String domain, String mail, String locale);
 	
 	public void updateUserEnciphermentKey(String mail, byte[] challenge);
 	
@@ -180,6 +167,8 @@ public interface UserService {
 	 * @return
 	 */
 	public List<User> fetchGuestContacts(String login) throws BusinessException;
+	
+	public List<String> getGuestEmailContacts(String login) throws BusinessException;
 
 	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
 
@@ -190,4 +179,89 @@ public interface UserService {
 	 * @return
 	 */
 	List<User> searchAllBreakedUsers(User actor);
+	
+	/**
+	 * This method create a new user entity from a valid user object, or update an existing one. 
+	 * @param user
+	 * @return user entity created or updated.
+	 */
+	public void saveOrUpdateUser(User user) throws TechnicalException ;
+	
+	/** Find a  user (based on mail address).
+     * Search first in database, then on ldap if not found.
+     * If the user isn't found on DB, then it is created from the ldap info.
+     * If the user isn't found in the ldap, an exception is raised.
+     * @param mail user mail.
+     * @param domainId domain identifier.
+     * @return founded user.
+     * @throws BusinessException if the user could not be found
+     * @throws TechnicalError if the user cannot be created
+     */
+    public User findOrCreateUser(String mail, String domainId) throws BusinessException ;
+    
+    
+	 /** Find a  user (based on mail address).
+     * Search first in database, then on ldap if not found, but only in authorized domains. The starting point of the research is domainId.
+     * If the user isn't found on DB, then it is created from the ldap info. 
+     * @param mail user mail.
+     * @param domainId domain identifier.
+     * @return founded user.
+     * @throws BusinessException if the user could not be found
+     * @throws TechnicalError if the user cannot be created
+     */
+    public User findOrCreateUserWithDomainPolicies(String mail, String domainId) throws BusinessException ;
+    
+    
+    /** Find a  user (based on mail address).
+     * Search first in database, then on ldap if not found, but only in authorized domains. The starting point of the research is domainId.
+     * If the user isn't found on DB, then it is created from the ldap info
+     * @param mail user mail.
+     * @param domainId domain identifier.
+     * @param ActorDomainId domain identifier, it is useful to determine which domains we are authorized to search in. 
+     * if this parameter is null, domainId is used as starting point for the research.
+     * @return founded user.
+     * @throws BusinessException if the user could not be found
+     * @throws TechnicalError if the user cannot be created
+     */
+    public User findOrCreateUserWithDomainPolicies(String mail, String domainId, String ActorDomainId) throws BusinessException ;
+    
+    
+    
+    /** Find a  user (based on mail address).
+     * Search first in database, then on ldap if not found.
+     * If the user isn't found on DB, then it is created from the ldap info
+     * @param mail user mail.
+     * @param domainId domain identifier.
+     * @return founded user.
+     * @throws BusinessException if the user could not be found
+     * @throws TechnicalError if the user cannot be created
+     */
+    public User findOrCreateUserForAuth(String mail, String domainId) throws BusinessException ;
+	
+    public User findUnkownUserInDB( String mail);
+	public User findUserInDB(String domain, String mail);
+    public List<User> findUsersInDB(String domain);
+    
+    /**
+	 * This method is designed to search in all existing domains, and create an user entity in the database if it was a successful research(got one only hit)  
+	 * @param mail : this parameter should be unique in directories
+	 * @return User entity
+	 */
+	public User searchAndCreateUserEntityFromUnkownDirectory(String mail) throws BusinessException;
+
+	/**
+	 * This method is designed to search in a specific domain, and create an user entity in the database if it was a successful research(got one only hit)
+	 * This method is used by the authentication process to guess where a user is stored from his login. 
+	 * @param mail : the mail and domain couple should be unique
+	 * @return User entity
+	 */
+	public User searchAndCreateUserEntityFromDirectory(String domainIdentifier, String mail) throws BusinessException;
+	
+	/**
+	 * Check if the actor is authorized to manage the second user (userToManage).
+	 * @param actor
+	 * @param userToManage
+	 * @return
+	 */
+	public boolean isAdminForThisUser(User actor, User userToManage);
 }

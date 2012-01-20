@@ -2,7 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
   <class name="org.linagora.linShare.core.domain.entities.Cookie" table="COOKIE">
-    <id column="cookie_id" name="persistenceId">
+    <id name="persistenceId" type="long">
+      <column name="cookie_id" not-null="true" index="index_cookie_id"/>
       <generator class="native"/>
     </id>
     <property access="field" column="identifier" index="index_cookie_identifier" name="identifier" not-null="true" unique="true"/>

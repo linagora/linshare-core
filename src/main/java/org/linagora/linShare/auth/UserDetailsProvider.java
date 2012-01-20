@@ -43,7 +43,7 @@ public class UserDetailsProvider {
 	public UserDetails getUserDetails(String userName) {
 		org.linagora.linShare.core.domain.entities.User user;
 		try {
-			user = userService.findAndCreateUserWithoutKnowingDomain(userName, null);
+			user = userService.searchAndCreateUserEntityFromUnkownDirectory(userName);
 		} catch (TechnicalException e) {
 			throw new UsernameNotFoundException("Cannot load user in domains", e.getCause());
 		} catch (BusinessException e) {

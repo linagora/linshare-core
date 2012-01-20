@@ -27,7 +27,7 @@ public class MenuEntry {
 	private final String image;
 	private final String target;
 	private final String highlight;
-	private final Integer id;
+	private Integer id;
 	
 	public MenuEntry( String link,String label, String image,String target, String highlight, Integer id) {
 		super();
@@ -38,6 +38,16 @@ public class MenuEntry {
 		this.highlight = highlight;
 		this.id=id;
 	}
+	
+	public MenuEntry( String link,String label, String image,String target, String highlight) {
+		super();
+		this.label = label;
+		this.link = link;
+		this.image = image;
+		this.target = target;
+		this.highlight = highlight;
+	}
+	
 	public String getLabel() {
 		return label;
 	}
@@ -56,7 +66,8 @@ public class MenuEntry {
 	public String getHighlight() {
 		return highlight;
 	}
-	
-	
-	
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 }

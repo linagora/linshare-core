@@ -30,7 +30,7 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -67,7 +67,9 @@ public class UserDetailsDisplayer {
      *                   Event handlers&processing
      ************************************************************ */
     public Zone getShowUser(String mail) throws BusinessException {
-        detailedUser = userFacade.findUser(mail, userLoggedIn.getDomainIdentifier(), userLoggedIn);
+//        detailedUser = userFacade.findUserFromAuthorizedDomainOnly(userLoggedIn.getDomainIdentifier(), mail);
+        detailedUser = userFacade.loadUserDetails(mail, userLoggedIn.getDomainIdentifier());
+//        detailedUser = userFacade.searchUser(mail, "", "", userLoggedIn);
         return userDetailsTemplateZone;
     }
 

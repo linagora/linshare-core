@@ -57,8 +57,7 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<AllowedContact> searchContact(final String mail, final String firstName,
-			final String lastName, final Guest guest) {
+	public List<AllowedContact> searchContact(final String mail, final String firstName, final String lastName, final Guest guest) {
 		
 		return (List<AllowedContact>)  getHibernateTemplate().executeFind(new HibernateCallback() {
 			public Object doInHibernate(final Session session)

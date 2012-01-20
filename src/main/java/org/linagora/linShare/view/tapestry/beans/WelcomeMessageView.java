@@ -27,34 +27,26 @@ import org.linagora.linShare.core.domain.constants.Language;
  */
 public class WelcomeMessageView implements Serializable {
 
-    private Language language;
+	private static final long serialVersionUID = 3461666783554101573L;
 
-    private String guestWelcomeMessage;
+	private Language language;
 
-    private String internalWelcomeMessage;
+    private String welcomeMessage;
 
     public WelcomeMessageView(Language language) {
         this.language = language;
     }
 
-    public String getGuestWelcomeMessage() {
-        return guestWelcomeMessage;
-    }
-
-    public String getInternalWelcomeMessage() {
-        return internalWelcomeMessage;
+    public String getWelcomeMessage() {
+        return welcomeMessage;
     }
 
     public Language getLanguage() {
         return language;
     }
 
-    public void setGuestWelcomeMessage(String guestWelcomeMessage) {
-        this.guestWelcomeMessage = guestWelcomeMessage;
-    }
-
-    public void setInternalWelcomeMessage(String internalWelcomeMessage) {
-        this.internalWelcomeMessage = internalWelcomeMessage;
+    public void setWelcomeMessage(String welcomeMessage) {
+        this.welcomeMessage = welcomeMessage;
     }
 
     @Override

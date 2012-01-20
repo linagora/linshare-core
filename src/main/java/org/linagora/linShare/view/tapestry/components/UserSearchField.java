@@ -35,10 +35,10 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.enums.UserTypes;
@@ -108,17 +108,21 @@ public class UserSearchField {
     @Inject
     private ComponentResources componentResources;
     
-	@Inject @Symbol("linshare.autocomplete.minchars")
-	@Property
+    @Property
 	private int autocompleteMin;
-    
-    
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+	
+	
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
 	 ************************************************************ */
 	@SetupRender
 	public void initValues(){
+		autocompleteMin = functionalityFacade.completionThreshold(userVo.getDomainIdentifier());
+		
 		if(userType==null) userType=UserTypes.ALL;
 		
 		if(lastName==null) lastName=messages.get("components.userSearch.slidingField.lastName");

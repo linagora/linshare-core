@@ -32,7 +32,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -85,7 +85,7 @@ public class LoginFormComponent {
 	private HttpServletRequest httpServletRequest;
 	
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 	
 	@Persist
 	@Property

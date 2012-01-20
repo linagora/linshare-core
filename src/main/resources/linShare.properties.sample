@@ -53,11 +53,11 @@ javawebstart.decrypt.url.suffixcodebase=applet
 #set to true in tapestry production environnement
 linshare.productionMode=true
 #local work directory to encrypt/decrypt data
-linshare.encipherment.tmp.dir=${LINSHARE_HOME}/var/lib/linshare/tmp
+linshare.encipherment.tmp.dir=/var/lib/linshare/tmp
 #local work directory to sign data
-linshare.signature.tmp.dir=${LINSHARE_HOME}/var/lib/linshare/tmp/linSignDocuments
+linshare.signature.tmp.dir=/var/lib/linshare/tmp/linSignDocuments
 #directory used to store shared files
-linshare.files.directory=${LINSHARE_HOME}/var/lib/linshare/repository
+linshare.files.directory=/var/lib/linshare/repository
 
 # internal user see all other internal user by default in the Users tab ?
 linshare.users.internal.defaultView.showAll=false

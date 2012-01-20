@@ -25,17 +25,20 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 	private static final Logger logger = LoggerFactory.getLogger(ShareExpiryDateServiceImpl.class);
+	private final FunctionalityService functionalityService;
 
-	public ShareExpiryDateServiceImpl() {
+	public ShareExpiryDateServiceImpl(FunctionalityService functionalityService) {
+		this.functionalityService = functionalityService;
 	}
 	
 	/**
@@ -44,34 +47,35 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
      * @return the expiration date
      */
 	public Calendar computeShareExpiryDate(Document doc, User owner) {
-		Parameter param = owner.getDomain().getParameter();
-		List<ShareExpiryRule> shareRules = param.getShareExpiryRules();
-
+		TimeUnitValueFunctionality shareExpirationTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(owner.getDomain());
 		Calendar defaultExpiration = null;
-		// set the default exp time
-		if (param.getDefaultShareExpiryTime() != null) {
-			defaultExpiration = GregorianCalendar.getInstance();
-			defaultExpiration.add(param
-					.getDefaultShareExpiryUnit().toCalendarValue(),
-					param.getDefaultShareExpiryTime());
-		}
-		if ((shareRules == null) || (shareRules.size() == 0)) {
-			return defaultExpiration;
-		}
-
-		// luckily, the shareExpiryRules are ordered according to the size,
-		// increasing
-		for (ShareExpiryRule shareExpiryRule : shareRules) {
-			if (doc.getSize() < shareExpiryRule.getShareSizeUnit()
-					.getPlainSize(shareExpiryRule.getShareSize())) {
-				Calendar expiration = GregorianCalendar.getInstance();
-				expiration.add(shareExpiryRule.getShareExpiryUnit()
-						.toCalendarValue(), shareExpiryRule
-						.getShareExpiryTime());
-				return expiration;
+    	
+		if(shareExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
+				
+			List<ShareExpiryRule> shareRules = owner.getDomain().getShareExpiryRules();
+	
+			// set the default exp time
+			if (shareExpirationTimeFunctionality.getValue() != null) {
+				defaultExpiration = GregorianCalendar.getInstance();
+				defaultExpiration.add(shareExpirationTimeFunctionality.toCalendarValue(), shareExpirationTimeFunctionality.getValue());
+			}
+			if ((shareRules == null) || (shareRules.size() == 0)) {
+				return defaultExpiration;
+			}
+	
+			// luckily, the shareExpiryRules are ordered according to the size,
+			// increasing
+			for (ShareExpiryRule shareExpiryRule : shareRules) {
+				if (doc.getSize() < shareExpiryRule.getShareSizeUnit()
+						.getPlainSize(shareExpiryRule.getShareSize())) {
+					Calendar expiration = GregorianCalendar.getInstance();
+					expiration.add(shareExpiryRule.getShareExpiryUnit()
+							.toCalendarValue(), shareExpiryRule
+							.getShareExpiryTime());
+					return expiration;
+				}
 			}
 		}
-
 		// nothing has been decided
 		return defaultExpiration;
 	}
@@ -99,5 +103,4 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 		}
 		return expiryCalDate;
 	}
-
 }

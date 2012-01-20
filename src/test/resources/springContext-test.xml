@@ -35,4 +35,8 @@
     	<constructor-arg index="1" value="${linshare.test.mail.recipient}"/>
     </bean>
     
+    <bean name="ldapQueryService" class="org.linagora.linShare.core.service.impl.LDAPQueryServiceImpl">
+    </bean>
+    
+    
 </beans>

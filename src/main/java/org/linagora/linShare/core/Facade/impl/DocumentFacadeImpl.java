@@ -28,12 +28,12 @@ import java.util.Set;
 
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.domain.constants.Reason;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.Signature;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linShare.core.domain.transformers.impl.SignatureTransformer;
 import org.linagora.linShare.core.domain.vo.DisplayableAccountOccupationEntryVo;
@@ -205,9 +205,16 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	}
 	
 
+	@Override
 	public Long getUserAvailableQuota(UserVo user) throws BusinessException {
 		User currentUser =  userRepository.findByMail(user.getMail());
 		return documentService.getAvailableSize(currentUser);
+	}
+	
+	@Override
+	public Long getUserMaxFileSize(UserVo user) throws BusinessException {
+		User currentUser =  userRepository.findByMail(user.getMail());
+		return documentService.getUserMaxFileSize(currentUser);
 	}
 	
 	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) throws BusinessException {
@@ -278,4 +285,35 @@ public class DocumentFacadeImpl implements DocumentFacade {
     public boolean documentHasThumbnail(String uuid) {
 		return documentService.documentHasThumbnail(uuid);
     }
+
+	@Override
+	public boolean isSignatureActive(UserVo user) {
+		User currentUser =  userRepository.findByMail(user.getMail());
+		return documentService.isSignatureActive(currentUser);
+	}
+	
+	@Override
+	public boolean isEnciphermentActive(UserVo user) {
+		User currentUser =  userRepository.findByMail(user.getMail());
+		return documentService.isEnciphermentActive(currentUser);
+	}
+
+	@Override
+	public boolean isGlobalQuotaActive(UserVo user) throws BusinessException {
+		User currentUser =  userRepository.findByMail(user.getMail());
+		return documentService.isGlobalQuotaActive(currentUser);
+	}
+
+	@Override
+	public boolean isUserQuotaActive(UserVo user) throws BusinessException {
+		User currentUser =  userRepository.findByMail(user.getMail());
+		return documentService.isUserQuotaActive(currentUser);
+	}
+
+	@Override
+	public Long getGlobalQuota(UserVo user) throws BusinessException {
+		User currentUser =  userRepository.findByMail(user.getMail());
+		return documentService.getGlobalQuota(currentUser);
+	}
+	
 }

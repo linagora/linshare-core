@@ -26,7 +26,7 @@ import java.util.GregorianCalendar;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;

@@ -40,12 +40,12 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.constants.Language;
+import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -69,7 +69,7 @@ public class Index {
     @Inject
     private ShareFacade shareFacade;
     @Inject
-    private DomainFacade domainFacade;
+    private AbstractDomainFacade domainFacade;
 	@Inject
 	private PageRenderLinkSource linkFactory;
     @Inject
@@ -142,7 +142,7 @@ public class Index {
             //    UserType.INTERNAL).getWelcomeText();
 
         } else {
-            ParameterVo parameterVo = domainFacade.retrieveDomain(userVo.getDomainIdentifier()).getParameterVo();
+            AbstractDomainVo domain= domainFacade.retrieveDomain(userVo.getDomainIdentifier());
             
         	Locale userLocale = null;
         	if (((userVo.getLocale())!= null) && (!userVo.getLocale().equals(""))) {
@@ -154,8 +154,8 @@ public class Index {
         	if(!flag){
 	        	shares = shareFacade.getAllSharingReceivedByUser(userVo);
         	}
-            
-            welcomeText = WelcomeMessageUtils.getWelcomeText(parameterVo.getWelcomeTexts(), language,
+        	
+            welcomeText = WelcomeMessageUtils.getWelcomeText(domainFacade.getMessages(domain.getIdentifier()).getWelcomeTexts(), language,
                 userVo.getUserType()).getWelcomeText();
 
         }

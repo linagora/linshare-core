@@ -32,10 +32,6 @@
         <constructor-arg ref="hibernateTemplate"/>
     </bean>
     
-    <bean name="parameterRepository" class="org.linagora.linShare.core.repository.hibernate.ParameterRepositoryImpl">
-    <constructor-arg ref="hibernateTemplate"/>
-	</bean>
-  	
   	<bean name="recipientFavouriteRepository" class="org.linagora.linShare.core.repository.hibernate.RecipientFavouriteRepository">
     <constructor-arg ref="hibernateTemplate"/>
 	</bean>
@@ -56,10 +52,6 @@
     	<constructor-arg ref="hibernateTemplate"/>
 	</bean>
   	
-  	<bean name="domainRepository" class="org.linagora.linShare.core.repository.hibernate.DomainRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
-	</bean>
-  	
   	<bean name="ldapConnectionRepository" class="org.linagora.linShare.core.repository.hibernate.LDAPConnectionRepositoryImpl">
     	<constructor-arg ref="hibernateTemplate"/>
 	</bean>
@@ -67,5 +59,28 @@
   	<bean name="messagesRepository" class="org.linagora.linShare.core.repository.hibernate.MessagesRepositoryImpl">
     	<constructor-arg ref="hibernateTemplate"/>
 	</bean>
-    
+  	<bean name="policyRepository" class="org.linagora.linShare.core.repository.hibernate.PolicyRepositoryImpl">
+    	<constructor-arg ref="hibernateTemplate"/>
+	</bean>
+	<bean name="unitRepository" class="org.linagora.linShare.core.repository.hibernate.UnitRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+	<bean name="abstractDomainRepository" class="org.linagora.linShare.core.repository.hibernate.AbstractDomainRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+	<bean name="functionalityRepository" class="org.linagora.linShare.core.repository.hibernate.FunctionalityRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+	<bean name="userProviderRepository" class="org.linagora.linShare.core.repository.hibernate.UserProviderRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+	<bean name="domainAccessRuleRepository" class="org.linagora.linShare.core.repository.hibernate.DomainAccessRuleRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+	<bean name="domainAccessPolicyRepository" class="org.linagora.linShare.core.repository.hibernate.DomainAccessPolicyRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+	<bean name="domainPolicyRepository" class="org.linagora.linShare.core.repository.hibernate.DomainPolicyRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
 </beans>

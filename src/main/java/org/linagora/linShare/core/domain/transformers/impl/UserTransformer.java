@@ -22,8 +22,8 @@ package org.linagora.linShare.core.domain.transformers.impl;
 
 import java.util.List;
 
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.transformers.Transformer;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.TechnicalException;

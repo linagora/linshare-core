@@ -25,6 +25,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -154,6 +155,20 @@ public interface DocumentFacade {
 	public Long getUserTotalQuota(UserVo user) throws BusinessException;
 	
 	/**
+	 * Return the total space for a given user
+	 * @param user
+	 * @return
+	 */
+	public Long getGlobalQuota(UserVo user) throws BusinessException;
+	
+	/**
+	 * Return in byte the max size for an attachment 
+	 * @param user
+	 * @return
+	 */
+	public Long getUserMaxFileSize(UserVo user) throws BusinessException;
+	
+	/**
 	 * Return the occupation of accounts statistics
 	 * @param criteria
 	 * @return
@@ -201,4 +216,35 @@ public interface DocumentFacade {
      * @return true if the thumbnail exists, false otherwise
      */
     public boolean documentHasThumbnail(String uuid);
+    
+    /**
+	 * return true if the signature functionality is enabled
+	 * @param user
+	 * @return
+	 */
+	public boolean isSignatureActive(UserVo user);
+	/**
+	 * return true if the encipherment functionality is enabled
+	 * @param user
+	 * @return
+	 */
+	public boolean isEnciphermentActive(UserVo user);
+
+	/**
+	 * return true if the global quota functionality is enabled
+	 * @param user
+	 * @return
+	 * @throws BusinessException
+	 */
+	public boolean isGlobalQuotaActive(UserVo user) throws BusinessException;
+
+	/**
+	 * return true if the user quota functionality is enabled
+	 * @param user
+	 * @return
+	 * @throws BusinessException
+	 */
+	public boolean isUserQuotaActive(UserVo user) throws BusinessException;
+	
+	
 }

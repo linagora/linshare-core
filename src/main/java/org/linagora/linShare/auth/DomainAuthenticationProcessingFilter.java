@@ -28,8 +28,7 @@ import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 public class DomainAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 	
 	@Override
-	protected void setDetails(HttpServletRequest request,
-			UsernamePasswordAuthenticationToken authRequest) {
+	protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
 		authRequest.setDetails(request.getParameter("domain"));
 	}
 

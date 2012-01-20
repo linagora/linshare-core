@@ -23,9 +23,7 @@ package org.linagora.linShare.view.tapestry.pages.administration;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
@@ -33,16 +31,13 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
-
 import org.apache.tapestry5.internal.util.LocaleUtils;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linShare.core.Facade.DomainFacade;
-import org.linagora.linShare.core.Facade.ParameterFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.vo.ParameterVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -89,7 +84,7 @@ public class UserConfig {
 	private UserFacade userFacade;
 	
     @Inject
-    private DomainFacade domainFacade;
+    private AbstractDomainFacade domainFacade;
 	
 	@Inject
 	private PersistentLocale persistentLocale;
@@ -161,7 +156,7 @@ public class UserConfig {
 	
 	void onSuccessFromConfigUserform() throws BusinessException {
 		userFacade.updateUserLocale(userVo,currentLocale);
-		userVo = userFacade.findUser(userVo.getMail(), userVo.getDomainIdentifier());
+		userVo = userFacade.findUserInDb(userVo.getMail(), userVo.getDomainIdentifier());
 		persistentLocale.set(LocaleUtils.toLocale(currentLocale));
 	}
 	

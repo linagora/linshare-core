@@ -35,7 +35,7 @@ import java.util.UUID;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
@@ -123,8 +123,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 		
 		try {
 			
-			
-			User userDb = userService.findUser(user.getMail(), user.getDomain().getIdentifier());
+			User userDb = userService.findUserInDB(user.getDomainId(), user.getMail());
 			if(userDb==null) return false;
 			byte[] encryptedChallenge = userDb.getEnciphermentKeyPass();
 			if (encryptedChallenge==null) return false;
@@ -179,7 +178,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
+			User owner = userService.findUserInDB(user.getDomainIdentifier(), user.getLogin());
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), false,owner);
 			
@@ -240,7 +239,7 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
+			User owner = userService.findUserInDB(user.getDomainIdentifier(), user.getLogin());
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), changeDocumentExtension(doc.getFileName()), doc.getType(), true, owner);
 			

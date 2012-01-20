@@ -72,7 +72,7 @@
 			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
 				t:subject="${message:components.quickSharePopup.panelSubject.subject}">  
-				<t:textarea rows="1" value="textAreaSubjectValue"  title="${message:components.quickSharePopup.texarea.message.title}" />
+				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field" validate="required"  title="${message:components.quickSharePopup.texarea.message.title}" />
 			</div>
 			<br />
 			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"

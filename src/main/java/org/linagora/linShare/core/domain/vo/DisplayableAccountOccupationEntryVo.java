@@ -20,7 +20,7 @@
 */
 package org.linagora.linShare.core.domain.vo;
 
-import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.constants.UserType;
 
 
 public class DisplayableAccountOccupationEntryVo implements Comparable<DisplayableAccountOccupationEntryVo>  {

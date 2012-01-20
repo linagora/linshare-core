@@ -4,13 +4,6 @@ SET CHARACTER SET UTF8;
 
 INSERT INTO linshare_messages_configuration (messages_configuration_id) VALUES (1);
 
-INSERT INTO linshare_parameter(parameter_id, identifier, file_size_max, user_available_size, global_quota, global_used_quota, active_global_quota, active_mimetype,active_signature,active_encipherment,active_doc_time_stamp,user_expiry_time, user_expiry_time_unit_id, default_expiry_time,default_expiry_time_unit_id,messages_configuration_id, closed_domain, restricted_domain, domain_with_guests, guest_can_create_other) VALUES (1, 'baseParam', 10240000,51200000, 0, 0, 0,0,0,0,0,'40','0', '100', '0', 1, 0, 0, 0, 0);
-
-INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (1, 0, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 1,1);
-
--- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO linshare_user(user_id, user_type_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', '2009-01-01', 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 0,0);
-
 -- LOCALE en
 -- Mail subjects
 -- Subject ANONYMOUS_DOWNLOAD
@@ -133,11 +126,7 @@ INSERT INTO linshare_mail_templates (messages_configuration_id, template_id, con
 -- Welcome texts
 
 -- Welcome to LinShare, the Open Source secure files sharing system.
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 0, 0);
-
-
--- Welcome to LinShare, the Open Source secure files sharing system.
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 1, 0);
+INSERT INTO linshare_welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, 'Welcome to LinShare, the Open Source secure files sharing system.', 0);
 
 
 -- LOCALE fr
@@ -262,11 +251,7 @@ INSERT INTO linshare_mail_templates (messages_configuration_id, template_id, con
 -- Welcome texts
 
 -- Welcome to LinShare, the Open Source secure files sharing system
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 0, 1);
-
-
--- Welcome to LinShare, the Open Source secure files sharing system.
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 1, 1);
+INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, language_id) VALUES (1, 'Bienvenue dans LinShare, le système Open Source de partage de fichiers sécurisé.', 1);
 
 
 -- LOCALE nl
@@ -391,10 +376,170 @@ INSERT INTO linshare_mail_templates (messages_configuration_id, template_id, con
 -- Welcome texts
 
 -- Welcome to LinShare, the Open Source secure files sharing system
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 0, 2);
+INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, language_id) VALUES (1, 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 2);
 
 
--- Welcome to LinShare, the Open Source secure files sharing system.
-INSERT INTO linshare_welcome_texts (messages_configuration_id , welcome_text, user_type_id, language_id) VALUES (1, 'Welkom bij LinShare, het Open Source-systeem om grote bestanden te delen.', 1, 2);
 
+
+-- default domain policy
+INSERT INTO linshare_domain_access_policy(id) VALUES (1);
+INSERT INTO linshare_domain_access_rule(id, domain_access_rule_type, `regexp`, domain_id, domain_access_policy_id, rule_index) VALUES (1, 0, '', null, 1,0);
+INSERT INTO linshare_domain_policy(id, identifier, domain_access_policy_id) VALUES (1, 'DefaultDomainPolicy', 1);
+
+
+-- Root domain (application domain)
+INSERT INTO linshare_domain_abstract(id, type , identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id) VALUES (1, 0, 'LinShareRootDomain', 'LinShareRootDomain', true, false, 'The root application domain', 3, 'en', 0, null, 1, null, 1);
+
+
+INSERT INTO linshare_user(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, `password`, can_upload, can_create_guest, locale, restricted)   VALUES (1, 0, 1, 'system', '', '', 'system@localhost',  now(), 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 'false','false', 'en', 'false');
+-- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
+INSERT INTO linshare_user(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, `password`, can_upload, can_create_guest, locale, restricted)   VALUES (2, 0, 1, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain',  now(), 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', 'false','false', 'en', 'false');
+
+
+
+-- unit type : TIME(0), SIZE(1)
+-- unit value : FileSizeUnit : KILO(0), MEGA(1), GIGA(2)
+-- unit value : TimeUnit : DAY(0), WEEK(1), MONTH(2)
+-- Policies : MANDATORY(0), ALLOWED(1), FORBIDDEN(2)
+
+
+-- Functionality : FILESIZE_MAX
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (1, false, 'FILESIZE_MAX', 1, 2, 1);
+INSERT INTO linshare_unit(id, unit_type, unit_value) VALUES (1, 1, 1);
+INSERT INTO linshare_functionality_unit(functionality_id, integer_value, unit_id) VALUES (1, 10, 1);
+
+
+-- Functionality : QUOTA_GLOBAL
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (3, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (4, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (2, false, 'QUOTA_GLOBAL', 3, 4, 1);
+INSERT INTO linshare_unit(id, unit_type, unit_value) VALUES (2, 1, 1);
+INSERT INTO linshare_functionality_unit(functionality_id, integer_value, unit_id) VALUES (2, 1, 2);
+
+
+-- Functionality : QUOTA_USER
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (5, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (6, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (3, false, 'QUOTA_USER', 5, 6, 1);
+INSERT INTO linshare_unit(id, unit_type, unit_value) VALUES (3, 1, 1);
+INSERT INTO linshare_functionality_unit(functionality_id, integer_value, unit_id) VALUES (3, 100, 3);
+
+
+-- Functionality : MIME_TYPE
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (7, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (8, false, false, 2, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (4, true, 'MIME_TYPE', 7, 8, 1);
+
+
+-- Functionality : SIGNATURE
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (9, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (10, false, false, 2, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (5, true, 'SIGNATURE', 9, 10, 1);
+
+
+-- Functionality : ENCIPHERMENT
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (11, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (12, false, false, 2, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (6, true, 'ENCIPHERMENT', 11, 12, 1);
+
+
+-- Functionality : TIME_STAMPING
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (13, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (14, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (7, false, 'TIME_STAMPING', 13, 14, 1);
+INSERT INTO linshare_functionality_string(functionality_id, string_value) VALUES (7, 'http://localhost:8080/signserver/tsa?signerId=1');
+
+
+-- Functionality : ANTIVIRUS
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (15, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (16, false, false, 2, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (8, true, 'ANTIVIRUS', 15, 16, 1);
+
+
+-- Functionality : CUSTOM_LOGO
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (17, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (18, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (9, false, 'CUSTOM_LOGO', 17, 18, 1);
+INSERT INTO linshare_functionality_string(functionality_id, string_value) VALUES (9, 'http://localhost/images/logo.png');
+
+
+-- Functionality : ACCOUNT_EXPIRATION (for Guests)
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (19, true, true, 0, true);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (20, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (10, false, 'ACCOUNT_EXPIRATION', 19, 20, 1);
+INSERT INTO linshare_unit(id, unit_type, unit_value) VALUES (4, 0, 2);
+INSERT INTO linshare_functionality_unit(functionality_id, integer_value, unit_id) VALUES (10, 3, 4);
+
+
+-- Functionality : FILE_EXPIRATION
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (21, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (22, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (11, false, 'FILE_EXPIRATION', 21, 22, 1);
+INSERT INTO linshare_unit(id, unit_type, unit_value) VALUES (5, 0, 2);
+INSERT INTO linshare_functionality_unit(functionality_id, integer_value, unit_id) VALUES (11, 3, 5);
+
+
+-- Functionality : SHARE_EXPIRATION
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (23, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (24, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (12, false, 'SHARE_EXPIRATION', 23, 24, 1);
+INSERT INTO linshare_unit(id, unit_type, unit_value) VALUES (6, 0, 2);
+INSERT INTO linshare_functionality_unit_boolean(functionality_id, integer_value, unit_id, boolean_value) VALUES (12, 3, 6, false);
+
+
+-- Functionality : ANONYMOUS_URL
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (25, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (26, false, false, 2, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (13, true, 'ANONYMOUS_URL', 25, 26, 1);
+
+
+-- Functionality : GUESTS
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (27, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (28, false, false, 2, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (14, true, 'GUESTS', 27, 28, 1);
+
+
+-- Functionality : USER_CAN_UPLOAD
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (29, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (30, false, false, 2, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (15, true, 'USER_CAN_UPLOAD', 29, 30, 1);
+
+
+-- Functionality : COMPLETION
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (31, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (32, true, true, 1, false);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (16, false, 'COMPLETION', 31, 32, 1);
+INSERT INTO linshare_functionality_integer(functionality_id, integer_value) VALUES (16, 3);
+
+
+-- Functionality : TAB_HELP
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (33, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (34, false, false, 1, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (17, true, 'TAB_HELP', 33, 34, 1);
+
+
+-- Functionality : TAB_AUDIT
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (35, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (36, false, false, 1, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (18, true, 'TAB_AUDIT', 35, 36, 1);
+
+
+-- Functionality : TAB_USER
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (37, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
+
+
+-- Functionality : TAB_GROUP
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (39, true, true, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (40, false, false, 1, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (20, true, 'TAB_GROUP', 39, 40, 1);
+
+
+
+
+-- LinShare version
+INSERT INTO linshare_version (id,description) VALUES (1,'0.10.0');
 

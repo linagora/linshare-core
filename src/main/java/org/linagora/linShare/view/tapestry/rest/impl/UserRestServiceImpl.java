@@ -33,7 +33,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -61,7 +61,7 @@ public class UserRestServiceImpl implements UserRestService {
 	
 	private final MailContainerBuilder mailContainerBuilder;
 	
-	private final DomainFacade domainFacade;
+	private final AbstractDomainFacade domainFacade;
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserRestServiceImpl.class);
 
@@ -70,7 +70,7 @@ public class UserRestServiceImpl implements UserRestService {
 			final PropertiesSymbolProvider propertiesSymbolProvider,
 			final Marshaller xstreamMarshaller,
 			final MailContainerBuilder mailContainerBuilder,
-			final DomainFacade domainFacade) {
+			final AbstractDomainFacade domainFacade) {
 		super();
 		this.applicationStateManager = applicationStateManager;
 		this.userFacade = userFacade;
@@ -170,14 +170,14 @@ public class UserRestServiceImpl implements UserRestService {
         }
         
         UserVo user = null;
-		try {
-			user = userFacade.findUser(mail, actor.getDomainIdentifier());
-		} catch (BusinessException e) {
-        	logger.error(e.toString());
-        	response.setHeader("BusinessError", e.getErrorCode().getCode()+"");
-        	response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load the user " + e.getMessage());
-        	return;
-		}    
+//		try {
+			user = userFacade.findUserInDb(mail, actor.getDomainIdentifier());
+//		} catch (BusinessException e) {
+//        	logger.error(e.toString());
+//        	response.setHeader("BusinessError", e.getErrorCode().getCode()+"");
+//        	response.sendError(HttpStatus.SC_METHOD_FAILURE, "Couldn't load the user " + e.getMessage());
+//        	return;
+//		}    
         
         String xml = xstreamMarshaller.toXml(user);
 		
@@ -211,12 +211,12 @@ public class UserRestServiceImpl implements UserRestService {
 		
 		// fetch the target		
 		UserVo user = null;
-		try {
-			user = userFacade.findUser(mail, actor.getDomainIdentifier());
-		} catch (BusinessException e) {
-			response.sendError(HttpStatus.SC_NOT_FOUND, "User not found");
-			return;
-		}
+//		try {
+			user = userFacade.findUserInDb(mail, actor.getDomainIdentifier());
+//		} catch (BusinessException e) {
+//			response.sendError(HttpStatus.SC_NOT_FOUND, "User not found");
+//			return;
+//		}
 	
 		if (user == null) {
 			response.sendError(HttpStatus.SC_NOT_FOUND, "User not found");

@@ -24,6 +24,7 @@
         <constructor-arg value="${linshare.secured-storage.disallowed.job.file-cleaner.activate}" />
         <constructor-arg ref="notifierService" />
         <constructor-arg ref="mailContentBuildingService" />
+        <constructor-arg ref="functionalityService" />
     </bean>
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->

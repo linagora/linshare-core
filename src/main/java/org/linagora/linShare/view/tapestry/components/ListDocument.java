@@ -63,18 +63,15 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
-import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.DomainFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
-import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
@@ -168,7 +165,7 @@ public class ListDocument {
 	@Inject
 	private DocumentFacade documentFacade;
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 	
 	@Inject 
 	private ShareFacade shareFacade;
@@ -317,9 +314,8 @@ public class ListDocument {
 		listSelected = new ArrayList<DocumentVo>();
 		userlogin = user.getLogin();
 		actionbutton = ActionFromBarDocument.NO_ACTION;
-		DomainVo domain = domainFacade.retrieveDomain(user.getDomainIdentifier());
-		activeSignature = domain.getParameterVo().getActiveSignature();
-		activeEncipherment = domain.getParameterVo().getActiveEncipherment();
+		activeSignature = documentFacade.isSignatureActive(user);
+		activeEncipherment = documentFacade.isEnciphermentActive(user);
 
 		// if(model==null)
 		initModel();

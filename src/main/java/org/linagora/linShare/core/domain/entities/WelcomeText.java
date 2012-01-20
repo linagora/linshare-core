@@ -22,6 +22,7 @@ package org.linagora.linShare.core.domain.entities;
 
 import java.io.Serializable;
 import org.linagora.linShare.core.domain.constants.Language;
+import org.linagora.linShare.core.domain.constants.UserType;
 
 /** Internationalisable welcome text depending on the user type.
  *
@@ -29,8 +30,6 @@ import org.linagora.linShare.core.domain.constants.Language;
 public class WelcomeText implements Serializable {
 
     private String welcomeText;
-
-    private UserType userType;
 
     private Language language;
 
@@ -40,14 +39,6 @@ public class WelcomeText implements Serializable {
 
     public void setLanguage(Language language) {
         this.language = language;
-    }
-
-    public UserType getUserType() {
-        return userType;
-    }
-
-    public void setUserType(UserType userType) {
-        this.userType = userType;
     }
 
     public String getWelcomeText() {
@@ -67,9 +58,6 @@ public class WelcomeText implements Serializable {
             return false;
         }
         final WelcomeText other = (WelcomeText) obj;
-        if (this.userType != other.userType) {
-            return false;
-        }
         if (this.language != other.language) {
             return false;
         }
@@ -79,7 +67,6 @@ public class WelcomeText implements Serializable {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 71 * hash + (this.userType != null ? this.userType.hashCode() : 0);
         hash = 71 * hash + (this.language != null ? this.language.hashCode() : 0);
         return hash;
     }

@@ -42,10 +42,10 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.entities.UserType;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.SelectableRole;
@@ -126,6 +126,9 @@ public class UserEditForm {
     @Persist
     private boolean userGuest;
     
+    @Persist
+    private String userDomain;
+    
     @Property
     private boolean restrictedEditGuest;
     
@@ -145,10 +148,11 @@ public class UserEditForm {
     @Inject
     private PropertyAccess access;
     
-	@Inject @Symbol("linshare.autocomplete.minchars")
-	@Property
+    @Property
 	private int autocompleteMin;
-    
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
     
     /* ***********************************************************
      *                   Event handlers&processing
@@ -156,7 +160,7 @@ public class UserEditForm {
     
     @SetupRender
     public void init(){
-		
+    	autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
     		 
 		UserVo currentUser=null;
@@ -180,6 +184,7 @@ public class UserEditForm {
 	    		role = SelectableRole.fromRole(currentUser.getRole());
 	    		usertype = currentUser.getUserType();
 	    		userGuest = usertype.equals(UserType.GUEST); //to set friendly title on account
+	    		userDomain = currentUser.getDomainIdentifier();
 	    		restrictedEditGuest = currentUser.isRestricted();
 	    		userRestrictedGuest = currentUser.isRestricted();
 	    		if (currentUser.isGuest()&&currentUser.isRestricted()) {
@@ -309,9 +314,9 @@ public class UserEditForm {
 
         try {
         	if(userGuest) {    	
-        		userFacade.updateGuest(mail, firstName, lastName, uploadGranted,createGuestGranted,userLoggedIn);
+        		userFacade.updateGuest(userDomain, mail, firstName, lastName, uploadGranted,createGuestGranted,userLoggedIn);
         	} else {
-        		userFacade.updateUser(mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
+        		userFacade.updateUserRole(userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
         	}
         } catch (BusinessException e) {
             // should never occur.
@@ -319,16 +324,16 @@ public class UserEditForm {
         }
 		
 		if (userGuest) {
-			if (userLoggedIn.isRestricted()) restrictedEditGuest = true; //restricted guests can only manage restricted guests
 			try {
-				UserVo guest = userFacade.findUser(mail, userLoggedIn.getDomainIdentifier());
+				UserVo guest = userFacade.findUserFromAuthorizedDomainOnly(userLoggedIn.getDomainIdentifier(),mail);
+				
 				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
 					userFacade.setGuestContactRestriction(mail, recipientsEmail);
-				}
-				else if (!restrictedEditGuest && guest.isRestricted()) { //toogle restricted to false
+					
+				} else if (!restrictedEditGuest && guest.isRestricted()) { //toogle restricted to false
 					userFacade.removeGuestContactRestriction(mail);
-				}
-				else if (restrictedEditGuest && guest.isRestricted()) { //maybe user add new contact
+					
+				} else if (restrictedEditGuest && guest.isRestricted()) { //maybe user add new contact
 					if (!intialContacts.equalsIgnoreCase(recipientsSearch)) {
 						userFacade.setGuestContactRestriction(mail, recipientsEmail);
 					}

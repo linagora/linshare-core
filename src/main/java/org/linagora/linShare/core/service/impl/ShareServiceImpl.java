@@ -28,8 +28,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.dao.FileSystemDao;
-import org.linagora.linShare.core.domain.LogAction;
 import org.linagora.linShare.core.domain.constants.Language;
+import org.linagora.linShare.core.domain.constants.LogAction;
+import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
@@ -37,23 +38,22 @@ import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.Parameter;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
+import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.GroupRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
-import org.linagora.linShare.core.repository.LogEntryRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
-import org.linagora.linShare.core.service.DomainService;
+import org.linagora.linShare.core.service.AbstractDomainService;
+import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
@@ -70,7 +70,6 @@ public class ShareServiceImpl implements ShareService{
 	private final UserRepository<User> userRepository;
 	private final ShareRepository shareRepository;
 	private final LogEntryService logEntryService;
-	private final DomainService domainService;
 	private final SecuredUrlRepository securedUrlRepository;
 	private final DocumentRepository documentRepository;
 	private final SecuredUrlService secureUrlService;
@@ -82,6 +81,8 @@ public class ShareServiceImpl implements ShareService{
 	private final GuestRepository guestRepository;
 	private List<Integer> datesForNotifyUpcomingOutdatedShares;
 	private final String urlBase;
+	private final FunctionalityService functionalityService;
+	private final AbstractDomainService abstractDomainService;
 	
 	
 //    private final DocumentService documentService;
@@ -91,17 +92,18 @@ public class ShareServiceImpl implements ShareService{
 	public ShareServiceImpl(final UserRepository<User> userRepository,
 			final ShareRepository shareRepository,
 			final LogEntryService logEntryService,
-			final DomainService domainService, final SecuredUrlRepository securedUrlRepository,
+			final SecuredUrlRepository securedUrlRepository,
 			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
 			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
 			final GroupRepository groupRepository, final GuestRepository guestRepository,
-			final String datesForNotifyUpcomingOutdatedShares, final String urlBase) {
+			final String datesForNotifyUpcomingOutdatedShares, final String urlBase,
+			final FunctionalityService functionalityService,
+			final AbstractDomainService abstractDomainService) {
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
 		this.logEntryService=logEntryService;
-		this.domainService = domainService;
 		this.securedUrlRepository=securedUrlRepository;
 		this.documentRepository = documentRepository;
         this.secureUrlService = secureUrlService;
@@ -117,6 +119,8 @@ public class ShareServiceImpl implements ShareService{
         	this.datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
 		}
         this.urlBase = urlBase;
+        this.functionalityService = functionalityService;
+        this.abstractDomainService = abstractDomainService;
 	}
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
@@ -254,25 +258,25 @@ public class ShareServiceImpl implements ShareService{
 	 * @see org.linagora.linShare.core.service.ShareService#shareDocumentToUser(Document, User, User, String)
 
 	 */
-	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender,
-			List<User> recipients,String comment, Calendar expiryDate){
+	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender, List<User> recipients,String comment, Calendar expiryDate){
 		
 		SuccessesAndFailsItems<Share> returnItems = new SuccessesAndFailsItems<Share>();
         
 		
 		for (User recipient : recipients) {
 			
-			boolean allowedToShareWithHim = false;
+			boolean allowedToShareWithHim = true;
 			
-			try {
-				allowedToShareWithHim = domainService.userIsAllowedToShareWith(sender, recipient);
-				
-			} catch (BusinessException e1) {
-				logger.error("Failed to read domain of sender while sharing documents", e1);
-				allowedToShareWithHim = false;
-			}
+//			try {
+//				allowedToShareWithHim = abstractDomainService.userIsAllowedToShareWith(sender, recipient);
+//				
+//			} catch (BusinessException e1) {
+//				logger.error("Failed to read domain of sender while sharing documents", e1);
+//				allowedToShareWithHim = false;
+//			}
 			
 			if (!allowedToShareWithHim) {
+				logger.debug("The current user is not allowed to share with : " + recipient); 
 				generateFailItemsForUser(documents, sender, comment, returnItems, recipient);
 				break;
 			}
@@ -310,12 +314,8 @@ public class ShareServiceImpl implements ShareService{
 						
 						// get new guest expiry date
 						Calendar guestExpiryDate = Calendar.getInstance();
-				        Parameter parameter = recipient.getDomain().getParameter();
-				        if (parameter == null) {
-				            throw new IllegalStateException("No configuration found for linshare for domain "+recipient.getDomain());
-				        }
-				        guestExpiryDate.add(parameter.getGuestAccountExpiryUnit().toCalendarValue(), parameter.getGuestAccountExpiryTime());
-				        
+						TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(recipient.getDomain());
+				        guestExpiryDate.add(guestFunctionality.toCalendarValue(), guestFunctionality.getValue());
 				        
 						Guest guest = guestRepository.findByLogin(recipient.getLogin());
 						guest.setExpiryDate(guestExpiryDate.getTime());
@@ -482,8 +482,8 @@ public class ShareServiceImpl implements ShareService{
 				secureUrlService.delete(securedUrl.getAlea(), securedUrl.getUrlPath());
 				
 				for (Document document : docs) {
-					Parameter config = document.getOwner().getDomain().getParameter();
-					refreshShareAttributeOfDoc(document,config.getDeleteDocWithShareExpiryTime());
+					TimeUnitValueFunctionality deleteDocWithShareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(document.getOwner().getDomain());
+					refreshShareAttributeOfDoc(document,deleteDocWithShareExpiryTimeFunctionality.getActivationPolicy().getStatus());
 				}
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove a securedUrl : \n" + ex.toString());
@@ -493,9 +493,10 @@ public class ShareServiceImpl implements ShareService{
         for (Share share : shares) {
             try {
                 Document sharedDocument = share.getDocument();
-				Parameter config = sharedDocument.getOwner().getDomain().getParameter();
+				
+                TimeUnitValueFunctionality deleteDocWithShareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(sharedDocument.getOwner().getDomain());
                 deleteShare(share, owner);
-                refreshShareAttributeOfDoc(sharedDocument,config.getDeleteDocWithShareExpiryTime());
+                refreshShareAttributeOfDoc(sharedDocument,deleteDocWithShareExpiryTimeFunctionality.getActivationPolicy().getStatus());
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove a share : \n" + ex.toString());
             }
@@ -641,4 +642,6 @@ public class ShareServiceImpl implements ShareService{
 			}
 		}
 	}
+	
+
 }

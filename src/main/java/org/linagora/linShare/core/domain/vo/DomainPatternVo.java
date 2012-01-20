@@ -11,7 +11,9 @@ public class DomainPatternVo {
 	private String getAllDomainUsersCommand;
 	private String authCommand;
 	private String searchUserCommand;
-	private String getUserResult;
+	private String userMail;
+	private String userFirstName;
+	private String userLastName;
 	
 	public DomainPatternVo() {
 	}
@@ -23,13 +25,15 @@ public class DomainPatternVo {
 		this.getAllDomainUsersCommand = domainPattern.getGetAllDomainUsersCommand();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
-		this.getUserResult = domainPattern.getGetUserResult();
+		this.userMail = domainPattern.getUserMail();
+		this.userFirstName = domainPattern.getUserFirstName();
+		this.userLastName = domainPattern.getUserLastName();
 	}
 
 	public DomainPatternVo(String identifier, String description,
 			String getUserCommand, String getAllDomainUsersCommand,
 			String authCommand,
-			String searchUserCommand, String getUserResult) {
+			String searchUserCommand, String mail, String firstName, String lastName) {
 		super();
 		this.identifier = identifier;
 		this.patternDescription = description;
@@ -37,7 +41,9 @@ public class DomainPatternVo {
 		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 		this.authCommand = authCommand;
 		this.searchUserCommand = searchUserCommand;
-		this.getUserResult = getUserResult;
+		this.userMail = mail;
+		this.userFirstName = firstName;
+		this.userLastName = lastName;
 	}
 
 	
@@ -95,14 +101,32 @@ public class DomainPatternVo {
 	}
 
 	@Validate("required")
-	public String getGetUserResult() {
-		return getUserResult;
+	public String getUserMail() {
+		return userMail;
 	}
 
-	public void setGetUserResult(String getUserResult) {
-		this.getUserResult = getUserResult;
+	public void setUserMail(String userMail) {
+		this.userMail = userMail;
 	}
-	
+
+	@Validate("required")
+	public String getUserFirstName() {
+		return userFirstName;
+	}
+
+	public void setUserFirstName(String userFirstName) {
+		this.userFirstName = userFirstName;
+	}
+
+	@Validate("required")
+	public String getUserLastName() {
+		return userLastName;
+	}
+
+	public void setUserLastName(String userLastName) {
+		this.userLastName = userLastName;
+	}
+
 	@Override
 	public String toString() {
 		return identifier;

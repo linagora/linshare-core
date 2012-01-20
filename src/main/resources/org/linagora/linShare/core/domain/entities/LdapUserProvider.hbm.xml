@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="org.linagora.linShare.core.domain.entities.LdapUserProvider" table="USER_PROVIDER_LDAP">
+    <id name="persistenceId" type="long">
+    	<column name="ID" not-null="true" index="index_ldap_user_provider_id"/>
+        <generator class="native"/>
+    </id>
+
+	<property name="baseDn" column="DIFFERENTIAL_KEY" />
+    <many-to-one lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.DomainPattern" column="DOMAIN_PATTERN_ID" 
+        name="pattern" not-null="true"/>
+   	<many-to-one lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.LDAPConnection" column="LDAP_CONNECTION_ID" 
+	   	name="ldapconnexion" not-null="true"/>
+	</class>
+</hibernate-mapping>

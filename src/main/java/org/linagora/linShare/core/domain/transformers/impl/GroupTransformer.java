@@ -23,9 +23,9 @@ package org.linagora.linShare.core.domain.transformers.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
-import org.linagora.linShare.core.domain.entities.GroupMemberType;
 import org.linagora.linShare.core.domain.transformers.Transformer;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;

@@ -28,8 +28,8 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.linagora.linShare.core.Facade.DomainFacade;
-import org.linagora.linShare.core.domain.vo.DomainVo;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
+import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -64,7 +64,12 @@ public class ActionsBarShare {
 	 ***********************************/
 
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
+	
+	@Inject
+	private DocumentFacade documentFacade;
+	
+	
     
 	/***********************************
 	 * Flags
@@ -93,9 +98,8 @@ public class ActionsBarShare {
 	 */
 	@SetupRender
 	public void initUserlogin() throws BusinessException {
-		DomainVo domain = domainFacade.retrieveDomain(user.getDomainIdentifier());
-		activeSignature = domain.getParameterVo().getActiveSignature();
-		activeEncipherment = domain.getParameterVo().getActiveEncipherment();
+		activeSignature = documentFacade.isSignatureActive(user);
+		activeEncipherment = documentFacade.isEnciphermentActive(user);
 	}
 	
 }

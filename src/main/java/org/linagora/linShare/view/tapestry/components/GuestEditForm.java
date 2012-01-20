@@ -42,11 +42,10 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.vo.DomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -82,7 +81,7 @@ public class GuestEditForm {
     private UserFacade userFacade;
     
     @Inject
-    private DomainFacade domainFacade;
+    private AbstractDomainFacade domainFacade;
 
     @InjectComponent
     private Form guestCreateForm;
@@ -153,9 +152,11 @@ public class GuestEditForm {
     @Inject
     private MailContainerBuilder mailBuilder;
     
-    @Inject @Symbol("linshare.autocomplete.minchars")
     @Property
-    private int autocompleteMin;
+	private int autocompleteMin;
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
 	
 	
 	@SetupRender
@@ -165,12 +166,8 @@ public class GuestEditForm {
 		if (userLoggedIn.isRestricted()) {
 			restrictedGuest=true;
 		}
-		
 		guestsAllowedToCreateGuest = false;
-		if (userLoggedIn.getDomainIdentifier() != null) {
-			DomainVo domain = domainFacade.retrieveDomain(userLoggedIn.getDomainIdentifier());
-			guestsAllowedToCreateGuest = domain.getParameterVo().getGuestCanCreateOther();
-		}
+		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 	}
 	
 	@AfterRender
@@ -215,9 +212,16 @@ public class GuestEditForm {
 			}
 		}
 
-        if (input != null) {
-            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userLoggedIn));
-        }
+//        if (input != null) {
+//            userSet.addAll(userFacade.searchUserForRestrictedGuestEditionForm(input.trim(), null, null, mail));
+//        }
+//		userSet.addAll(userFacade.searchUserForRestrictedGuestEditionForm(null, firstName_, lastName_, mail));
+//		userSet.addAll(userFacade.searchUserForRestrictedGuestEditionForm(null, lastName_, firstName_,  mail));
+		
+		
+		if (input != null) {
+			userSet.addAll(userFacade.searchUser(input.trim(), null, null,userLoggedIn));
+		}
 		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userLoggedIn));
 		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userLoggedIn));
 		
@@ -239,7 +243,7 @@ public class GuestEditForm {
     		// the message will be handled by Tapestry
     		return ;
     	}
-        if (userFacade.findUser(mail, userLoggedIn.getDomainIdentifier()) != null) {
+        if (userFacade.findUserInDb(mail, userLoggedIn.getDomainIdentifier()) != null) {
             guestCreateForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
             userAlreadyExists = true;
             return ;
@@ -269,6 +273,7 @@ public class GuestEditForm {
     }
 
     Object onSuccess() {
+    	
 		
 		MailContainer mailContainer = mailBuilder.buildMailContainer(userLoggedIn, customMessage);
 

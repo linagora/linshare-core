@@ -6,214 +6,71 @@
 
 	<div id="content">
 
-		<h1>${message:components.myborderlayout.administration.title}</h1>
-		<!-- Action bar -->
+		<h1>${message:components.myborderlayout.administration.title} : ${selectedDomain}</h1>
 
-			<t:if test="noDomain" negate="true">
-		<div id="actionBar">
-			<h4>Actions</h4>
-			<ul>
-				<li>
-					<t:pagelink t:id="personalization" t:page="administration/Personalization" class="button"><span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.personalization}</span></t:pagelink>
-				</li>
-			</ul>
-		</div><!-- id="actionBar" -->
-		</t:if>
 		<t:messagePanel />	
 		
 		<div id="pageContent">
 	
 			<t:if test="noDomain">
-		
 				${message:pages.administration.index.noDomain.info}
 			</t:if>
+			
 			<t:if test="noDomain" negate="true">
-		
-			<div id="version"><strong>${message:global.version.label} </strong> <code>${version}</code></div>
-				
-				<t:form t:id="administrationForm">
-				<t:errors t:banner="${message:pages.administration.index.errorBanner}" />
-				<div id="edit-administration-general">
-					<table class="forForms">
-						<tr>
-							<td colspan="2"><h2>${message:pages.administration.index.accounts.title}</h2></td>
-						</tr>
-						<tr>
-							<td class="label"><t:label for="guestAccountExpiryTime" class="edit-form-label">${message:pages.administration.index.guestAccountExpiryTime}</t:label></td>
-							<td class="input"><t:textfield t:id="guestAccountExpiryTime" size="2" class="edit-form-field" validate="required"/>&nbsp;&nbsp;<t:select t:id="guestAccountExpiryUnit" blankoption="never"/></td>
-						</tr>
-						<tr>
-							<td class="label"><t:label for="userAvailableSize" class="edit-form-label">${message:pages.administration.index.userAvailableSize}</t:label></td>
-							<td class="input"><t:textfield t:id="userAvailableSize" size="5" class="edit-form-field" validate="required"/></td>
-						</tr>
-						<t:if test="needDeleteTempAdmin">
-							<tr>
-								<td class="label"><t:label for="deleteTempAdmin" class="edit-form-label">${message:pages.administration.index.deleteTempAdmin}</t:label></td>
-								<td class="input"><t:checkbox t:id="deleteTempAdmin" class="edit-form-field" /></td>
-							</tr>
-						</t:if>
-						<t:if test="fileCleanerActivated">
-						<tr>
-							<td colspan="2"><h2>${message:pages.administration.index.file-cleaner.title}</h2></td>
-						</tr>
-						<tr>
-							<td class="label">
-								<t:label for="defaultFileExpiryTime" class="edit-form-label">
-										${message:pages.administration.index.defaultFileExpiryTime}
-								</t:label>
-							</td> 
-							<td class="input">
-								<t:textfield t:id="defaultFileExpiryTime" size="2"
-									value="defaultFileExpiryTime" class="edit-form-field"
-									validate="required" /> 
-								&nbsp; 
-								<t:select
-									t:id="defaultFileExpiryUnit" blankoption="never"
-									value="defaultFileExpiryUnit" />
-							</td>
-						</tr>
-						</t:if>
-						<tr>
-							<td colspan="2"><h2>${message:pages.administration.index.globalQuota.title}</h2></td>
-						</tr>
-						<tr>
-							<td class="label"><t:label for="activeGlobalQuota" class="edit-form-label">${message:pages.administration.index.activeGlobalQuota}</t:label></td>
-							<td class="input"><t:checkbox t:id="activeGlobalQuota" class="edit-form-field"/></td>
-						</tr>
-						<tr>
-							<td class="label"><t:label for="globalQuota" class="edit-form-label">${message:pages.administration.index.globalQuota}</t:label></td>
-							<td class="input"><t:textfield t:id="globalQuota" size="5" class="edit-form-field" validate="required"/></td>
-						</tr>
-						<tr>
-							<td colspan="2"><h2>${message:pages.administration.index.share.title}</h2></td>
-						</tr>
-						<tr>
-							<td class="label"><t:label for="fileSizeMax" class="edit-form-label">${message:pages.administration.index.fileSizeMax}</t:label></td>
-							<td class="input"><t:textfield t:id="fileSizeMax" size="5" class="edit-form-field" validate="required" /></td>
-						</tr>
-					</table>
-
-					<div id="edit-admin-file-expiry">
-					<h3>${message:pages.administration.index.shareExpiryRules}</h3>
-					
-						<t:label for="deleteDocWithShareExpiryTime" class="edit-form-label">
-							${message:pages.administration.index.deleteDocWithShareExpiryTime}
-						</t:label>
-						<t:checkbox t:id="deleteDocWithShareExpiryTime" class="edit-form-field"/>
-						<br/>
-                
-						<t:label for="defaultShareExpiryTime" class="edit-form-label">
-							${message:pages.administration.index.defaultShareExpiryTime}
-						</t:label>
-						<t:textfield t:id="defaultShareExpiryTime" size="2" value="defaultShareExpiryTime"
-							class="edit-form-field" validate="required" />
-						&nbsp;
-						<t:select t:id="defaultShareExpiryUnit" blankoption="never" value="defaultShareExpiryUnit"/>
-						<br/>
-						
-					<div t:type="ajaxformloop" t:id="shareExpiryRules" source="shareExpiryRules"
-						value="shareExpiryRule" encoder="shareExpiryRuleEncoder">
-						<t:label for="shareExpiryTime" class="edit-form-label">
-							${message:pages.administration.index.shareExpiryTime}
-						</t:label>
-						<t:textfield t:id="shareExpiryTime" size="2" value="shareExpiryRule.shareExpiryTime"
-							class="edit-form-field" validate="required"/>
-						&nbsp;
-						<t:select t:id="shareExpiryUnit" blankoption="never" value="shareExpiryRule.shareExpiryUnit"/>
-						&nbsp;
-						&nbsp;
-						<t:label for="shareSize">
-							${message:pages.administration.index.shareSize}
-						</t:label>
-						&nbsp;
-						<span style="font-weight:bolder">&lt;</span>
-						&nbsp;
-						<t:textfield t:id="shareSize" size="3" value="shareExpiryRule.shareSize" validate="required"/>
-						&nbsp;
-						<t:select t:id="shareSizeUnit" blankoption="never" value="shareExpiryRule.shareSizeUnit"/>
-						&nbsp;
-						<t:removerowlink><img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"/></t:removerowlink>
-						<t:parameter name="addRow">
-							<t:addrowlink>${message:pages.administration.index.shareExpiryRule.addRow}</t:addrowlink>
-						</t:parameter>
-						<br/>
-					</div>
-					
-					</div><!-- id="edit-admin-file-expiry" -->
+				<div id="version">
+					<strong>${message:global.version.label} : </strong> <code>${version}</code>
 					<br/>
-					<table class="forForms">
-						<tr>
-							<td class="label"><t:label for="activeMimeType" class="edit-form-label">${message:pages.administration.index.activeMimeType}</t:label></td>
-							<td class="input"><t:checkbox t:id="activeMimeType" class="edit-form-field"/></td>
-						</tr>
-						<tr>
-							<td colspan="2"><h2>${message:pages.administration.index.security.title}</h2></td>
-						</tr>
-						<tr>
-							<td class="label"><t:label for="activeSignature" class="edit-form-label">${message:pages.administration.index.activeSignature}</t:label></td>
-							<td class="input"><t:checkbox t:id="activeSignature" class="edit-form-field"/></td>
-						</tr>
-						<tr>
-							<td class="label"><t:label for="activeEncipherment" class="edit-form-label">${message:pages.administration.index.activeEncipherment}</t:label></td>
-							<td class="input"><t:checkbox t:disabled="securedStorageDisallowed" t:id="activeEncipherment" class="edit-form-field" /></td>
-						</tr>
-						<tr>
-							<td class="label"><t:label for="activeDocTimeStamp" class="edit-form-label">${message:pages.administration.index.activeDocTimeStamp}</t:label></td>
-							<td class="input"><t:checkbox t:id="activeDocTimeStamp" class="edit-form-field" /></td>
-						</tr>
-					</table>
-					<br/>
-						<table class="forForms">
-							<tr>
-								<td colspan="2"><h2>${message:pages.administration.index.domain.title}</h2></td>
-							</tr>
-							<t:if test="superadmin">
-								<tr>
-									<td class="label"><t:label for="closedDomain" class="edit-form-label">${message:pages.administration.index.closedDomain}</t:label></td>
-									<td class="input"><t:checkbox t:id="closedDomain" class="edit-form-field"/></td>
-								</tr>
-								<tr>
-									<td class="label"><t:label for="restrictedDomain" class="edit-form-label">${message:pages.administration.index.restrictedDomain}</t:label></td>
-									<td class="input"><t:checkbox t:id="restrictedDomain" class="edit-form-field"/></td>
-								</tr>
-							</t:if>
-							<tr>
-								<td class="label"><t:label for="domainWithGuests" class="edit-form-label">${message:pages.administration.index.domainWithGuests}</t:label></td>
-								<td class="input"><t:checkbox t:id="domainWithGuests" class="edit-form-field" /></td>
-							</tr>
-							<!--  
-							<tr>
-								<td class="label"><t:label for="guestsCanCreateOther" class="edit-form-label">${message:pages.administration.index.guestsCanCreateOther}</t:label></td>
-								<td class="input"><t:checkbox t:id="guestsCanCreateOther" class="edit-form-field" /></td>
-							</tr>
-							 -->
-						</table>
-						<br/>
-					<div class="button">
-						<t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
-					</div>
+					<strong>${message:global.mode.label} : </strong> 
+					<code>
+						<t:if test="securedStorageDisallowed">
+							${message:global.mode.deactivated}
+							<t:parameter name="else">
+							${message:global.mode.activated}
+							</t:parameter>
+						</t:if>
+					</code>
 				</div>
-				</t:form>
-
-				<t:if test="${activeMimeType}">
-					<div id="edit-administration-mime">
-						<t:MimeTypeConfigurator	/>
-					</div>
-				</t:if>
-				<br />
-			</t:if> 
+				<p>
+					<t:pagelink t:id="activationPolicy" t:page="administration/ActivationPolicy" context="selectedDomain">
+						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.activationpolicy}</span>
+					</t:pagelink>
+				</p>
+				<p>
+					<t:pagelink t:id="configurationPolicy" t:page="administration/ConfigurationPolicy"  context="selectedDomain">
+						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.configurationpolicy}</span>
+					</t:pagelink>
+				</p>
+				<p>
+					<t:pagelink t:id="parameters" t:page="administration/Parameters"  context="selectedDomain">
+						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.parameters}</span>
+					</t:pagelink>
+				</p>
+				<p>
+					<t:pagelink t:id="personalization" t:page="administration/Personalization"  context="selectedDomain">
+						<span><img src="${asset:context:images/icons/tango-applications-graphics.png}" alt=""/>${message:pages.administration.index.link.personalization}</span>
+					</t:pagelink>
+				</p>
+			</t:if>
 		</div>
+		
+		<t:if test="superadmin" negate="true">
+				
+			</t:if>
+		<t:if test="ShowMimeTypeView">
+			<div id="edit-administration-mime">
+				<t:MimeTypeConfigurator	/>
+			</div>
+		</t:if>
+		
 
 	</div><!-- id="content" -->
 	
-	
-	
 	<!-- Actions widget -->
 	<t:parameter name="actionsWidget">
-		<t:if test="superadmin">
+		<t:if test="admin">
 			<t:widget widgetId="actionsWidget" title="${message:pages.administration.index.domainSelector.title}">
 				<t:form t:id="updateDomain">
-					<t:select t:id="domainSelect" t:value="selectedDomain" t:model="domains" t:encoder="valueEncoder" blankOption="never" />
+					<t:select t:id="domainSelect" t:value="selectedDomain" t:model="domains" blankOption="never" />
 					<t:submit value="${message:global.button.validate}"/>
 				</t:form>
 			</t:widget>

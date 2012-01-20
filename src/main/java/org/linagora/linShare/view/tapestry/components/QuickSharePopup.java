@@ -49,6 +49,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
@@ -145,12 +146,6 @@ public class QuickSharePopup{
 	private float period;
 	
 	
-	@Inject @Symbol("linshare.autocomplete.minchars")
-	@Property
-	private int autocompleteMin;
-	
-	
-
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */
@@ -197,6 +192,12 @@ public class QuickSharePopup{
     @InjectComponent
     @Property
     private Form quickShareForm;
+    
+    @Property
+	private int autocompleteMin;
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
@@ -209,6 +210,7 @@ public class QuickSharePopup{
 	@SetupRender
 	public void init() {
 		documentsVolist = new ArrayList<DocumentVo>();
+		autocompleteMin = functionalityFacade.completionThreshold(userVo.getDomainIdentifier());
 	}
 	/**
 	 * Initialize the JS value
@@ -314,9 +316,8 @@ public class QuickSharePopup{
 		}
     	
     	
-    	if (addedDocuments == null || addedDocuments.size() == 0){
-    		businessMessagesManagementService.notify(
-                new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE, MessageSeverity.ERROR));
+    	if (addedDocuments == null || addedDocuments.size() == 0) {
+    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE, MessageSeverity.ERROR));
 			return;
     	}
     	

@@ -22,8 +22,8 @@ package org.linagora.linShare.core.service;
 
 import java.util.List;
 
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.Group;
-import org.linagora.linShare.core.domain.entities.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;

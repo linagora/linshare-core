@@ -32,10 +32,11 @@ import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.Parameter;
+import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.slf4j.Logger;
@@ -55,10 +56,11 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     private final boolean cronActivated;
 	private final NotifierService notifierService;
 	private final MailContentBuildingService mailBuilder;
+	private final FunctionalityService functionalityService;
 
     public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentService documentService,
         FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated,
-        NotifierService notifierService, MailContentBuildingService mailBuilder) {
+        NotifierService notifierService, MailContentBuildingService mailBuilder, FunctionalityService functionalityService) {
         this.documentRepository = documentRepository;
         this.documentService = documentService;
         this.fileSystemDao = fileSystemDao;
@@ -66,6 +68,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
         this.cronActivated = cronActivated;
         this.notifierService = notifierService;
         this.mailBuilder = mailBuilder;
+        this.functionalityService = functionalityService;
     }
 
     public void removeMissingDocuments() {
@@ -110,16 +113,14 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     	for (Document document : documents) {
 			if (!document.getShared() && !document.getSharedWithGroup()) {
 				if (document.getDeletionDate() == null) {
-			    	Parameter param = document.getOwner().getDomain().getParameter();
-			    	if (param.getDefaultFileExpiryTime() == null || 
-			    			param.getDefaultFileExpiryUnit() == null) {
-			    		logger.info("Documents cleaner batch launched but no expiration time was defined : stopping.");
-			    		break;
-			    	}
+					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(document.getOwner().getDomain());
 			    	
+					if(!fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
+						break;
+					}
+					
 			    	Calendar deletionDate = (Calendar)document.getCreationDate().clone();
-					deletionDate.add(param.getDefaultFileExpiryUnit().toCalendarValue(),
-							param.getDefaultFileExpiryTime());
+					deletionDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
 					
 					document.setDeletionDate(deletionDate);
 					
@@ -163,4 +164,5 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 			e.printStackTrace();
 		}
 	}
+	 
 }

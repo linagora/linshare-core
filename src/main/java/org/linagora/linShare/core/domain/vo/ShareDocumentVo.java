@@ -105,6 +105,11 @@ public class ShareDocumentVo extends DocumentVo {
 		return -this.sharingDate.compareTo(((ShareDocumentVo)arg0).sharingDate);
 	}
 
+	@Override
+	public String toString() {
+		return "ShareDoc:" + this.sender + ":" + this.getFileName() + ":" + receiver; 
+	}
+
 	
 	
 }

@@ -29,7 +29,7 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
@@ -73,7 +73,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 		if(!workingDirtest.exists()) workingDirtest.mkdirs();
 	}
 	
-	public Document decryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException {
+	public Document decryptDocument(DocumentVo doc,UserVo userVo,String password) throws BusinessException {
 		
 		InputStream in =  null;
 		OutputStream out = null; 
@@ -84,7 +84,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 		
 		try {
 			
-			in = documentService.retrieveFileStream(doc, user);
+			in = documentService.retrieveFileStream(doc, userVo);
 			
 			f = new File(workingDir+"/"+UUID.randomUUID());
 			out = new FileOutputStream(f);
@@ -97,17 +97,16 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
+			User owner = userService.findUserInDB(userVo.getDomainIdentifier(), userVo.getLogin());
 			
 			String finalFileName = changeDocumentExtension(doc.getFileName());
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), finalFileName, doc.getType(), false, owner);
 
-			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
+			FileLogEntry logEntry = new FileLogEntry(userVo.getMail(), userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
 	        		LogAction.FILE_DECRYPT, "Decrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 	        
 	        logEntryService.create(logEntry);
-			
 		
 		} catch (IOException e) {
 			log.error(e.toString(),e);
@@ -126,7 +125,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 		return resdoc;
 	}
 
-	public Document encryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException{
+	public Document encryptDocument(DocumentVo doc,UserVo userVo,String password) throws BusinessException{
 		
 		InputStream in =  null;
 		OutputStream out = null; 
@@ -137,7 +136,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 		
 		try {
 			
-			in = documentService.retrieveFileStream(doc, user);
+			in = documentService.retrieveFileStream(doc, userVo);
 			f = new File(workingDir+"/"+UUID.randomUUID());
 			out = new FileOutputStream(f);
 			
@@ -150,13 +149,13 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			
 			res = new FileInputStream(f);
 			
-			User owner = userService.findUser(user.getLogin(), user.getDomainIdentifier());
+			User owner = userService.findUserInDB(userVo.getDomainIdentifier(), userVo.getLogin());
 			
 			String finalFileName =  changeDocumentExtension(doc.getFileName());	
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), finalFileName, doc.getType(), true,owner);
 			
-			FileLogEntry logEntry = new FileLogEntry(user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainIdentifier(),
+			FileLogEntry logEntry = new FileLogEntry(userVo.getMail(), userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
 	        		LogAction.FILE_ENCRYPT, "Encrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
 			
 	        logEntryService.create(logEntry);

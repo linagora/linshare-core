@@ -47,12 +47,16 @@ package org.linagora.linShare.ldap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <P>Simple interface to some methods to access an LDAP directory.</P>
@@ -68,6 +72,9 @@ import javax.naming.directory.SearchResult;
  * @author Sebastien Bahloul &lt;seb@lsc-project.org&gt;
  */
 public class ScriptableJndiServices extends ScriptableObject {
+	
+	protected final Logger logger = LoggerFactory.getLogger(ScriptableJndiServices.class);
+	
 
 	/** Local jndi instance. Used to connect to the right directory. */
 	private JndiServices jndiServices;
@@ -339,14 +346,18 @@ public class ScriptableJndiServices extends ScriptableObject {
 		return cList;
 	}
 	
-	public final Map<String, List<String>> entry(final Object dn, final Object filter)
-			throws NamingException {
+	public final Map<String, List<String>> entry(final Object dn, final Object filter) throws NamingException {
 		return wrapMap("_entry", dn, filter);
 	}
 
-	protected Map<String, List<String>> _entry(final String dn, final String filter)
-			throws NamingException {
-		return jndiServices.entry(dn, filter);
+	protected Map<String, List<String>> _entry(final String dn, final String filter) throws NamingException {
+		Map<String, List<String>> entry = jndiServices.entry(dn, filter);
+		if(entry == null) {
+			// TODO : HOOK : TO be fix.
+			logger.error("jndiServices.entry(dn, filter) is null");
+			entry = new HashMap<String, List<String>>();
+		}
+		return entry;
 	}
 
 	

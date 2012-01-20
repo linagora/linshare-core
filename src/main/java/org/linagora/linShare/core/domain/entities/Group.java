@@ -24,6 +24,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
+
 public class Group implements Serializable {
 	private static final long serialVersionUID = -1126555393767681768L;
 

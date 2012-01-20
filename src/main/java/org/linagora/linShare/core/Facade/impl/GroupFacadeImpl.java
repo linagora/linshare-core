@@ -23,8 +23,8 @@ package org.linagora.linShare.core.Facade.impl;
 import java.util.List;
 
 import org.linagora.linShare.core.Facade.GroupFacade;
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.Group;
-import org.linagora.linShare.core.domain.entities.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.GroupTransformer;
@@ -86,16 +86,14 @@ public class GroupFacadeImpl implements GroupFacade {
 	public void addMember(GroupVo groupVo, UserVo managerVo, UserVo newMemberVo, MailContainer mailContainer) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
 		User manager = userRepository.findByLogin(managerVo.getLogin());
-		User newMember = userService.findAndCreateUser(newMemberVo.getLogin(), managerVo.getDomainIdentifier());
+		User newMember = userService.findOrCreateUserWithDomainPolicies(newMemberVo.getLogin(), newMemberVo.getDomainIdentifier(), managerVo.getDomainIdentifier());
 		groupService.addMember(group, manager, newMember, mailContainer);
 	}
 	
-	public void addMember(GroupVo groupVo, UserVo managerVo, UserVo newMemberVo,
-			GroupMemberType memberType, MailContainer mailContainer) throws BusinessException {
+	public void addMember(GroupVo groupVo, UserVo managerVo, UserVo newMemberVo, GroupMemberType memberType, MailContainer mailContainer) throws BusinessException {
 		Group group = groupTransformer.assemble(groupVo);
 		User manager = userRepository.findByLogin(managerVo.getLogin());
-		User newMember = userService.findAndCreateUser(newMemberVo.getLogin(), managerVo.getDomainIdentifier());
-		groupService.addMember(group, manager, newMember, memberType, mailContainer);
+		User newMember = userService.findOrCreateUserWithDomainPolicies(newMemberVo.getLogin(), newMemberVo.getDomainIdentifier(), managerVo.getDomainIdentifier());		groupService.addMember(group, manager, newMember, memberType, mailContainer);
 	}
 
 	public void removeMember(GroupVo groupVo, UserVo managerVo, UserVo memberVo) throws BusinessException {

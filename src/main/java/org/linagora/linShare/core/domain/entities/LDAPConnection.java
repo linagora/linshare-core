@@ -49,7 +49,7 @@ public class LDAPConnection {
 	public String getIdentifier() {
 		return identifier;
 	}
-
+	
 	public String getProviderUrl() {
 		return providerUrl;
 	}
@@ -94,6 +94,11 @@ public class LDAPConnection {
 			ldapProperties.put(Context.SECURITY_CREDENTIALS, this.securityCredentials);
 		}
 		return ldapProperties;
+	}
+
+	@Override
+	public String toString() {
+		return "LDAPConnection : " + identifier + " : " + providerUrl;
 	}
 
 }

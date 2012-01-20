@@ -33,8 +33,9 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.view.tapestry.beans.MenuEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -50,10 +51,7 @@ import org.linagora.linShare.view.tapestry.beans.MenuEntry;
 @SupportsInformalParameters
 public class Menu implements ClientElement{
 
-	/**
-	 * The delimitor which uses for separate images,labels and links.
-	 */
-	private final static String DELIMITOR=";";
+	private static Logger logger = LoggerFactory.getLogger(Menu.class);
 	
 	/**
 	 * Define if the style of the menu entries can change.
@@ -79,45 +77,6 @@ public class Menu implements ClientElement{
 	private String title;
 	
 	/**
-	 * The links in the menu.
-	 * this parameter is required.
-	 */
-	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
-	private String links;
-	
-	/**
-	 * The targets of the link.
-	 * 
-	 */
-	@Parameter(required=false,defaultPrefix=BindingConstants.LITERAL)
-	private String targets;
-	
-	/**
-	 * The highlighting directory of the link.
-	 * 
-	 */
-	@Parameter(required=false,defaultPrefix=BindingConstants.LITERAL)
-	private String highlights;
-	
-	/**
-	 * The labels displayed in the menu.
-	 * this parameter is not required.
-	 * But if there are only links and no labels and images 
-	 * only the title will be displayed.  
-	 */
-	@Parameter(required=false,value="",defaultPrefix=BindingConstants.LITERAL)
-	private String labels;
-	
-	/**
-	 * The images paths displayed in the menu.
-	 * this parameter is not required.
-	 * But if there are only links and no labels and images 
-	 * only the title will be displayed.  
-	 */
-	@Parameter(required=false,value="",defaultPrefix=BindingConstants.LITERAL)
-	private String images;
-	
-	/**
 	 * The current highlight we want to have
 	 */
 	@Parameter(required=false,value="",defaultPrefix=BindingConstants.LITERAL)
@@ -126,23 +85,16 @@ public class Menu implements ClientElement{
 	@Property
 	private MenuEntry object;
 	
-	
 	@SuppressWarnings("unused")
 	@Inject
 	@Property
 	private Request request;
-	
-	@SuppressWarnings("unused")
-	@Inject
-	private Response response;
-
 	
 	@Environmental
     private RenderSupport renderSupport;
 	
 	@Inject
 	private ComponentResources componentResources;
-	
 	
 	@Property
 	private boolean image=false;
@@ -155,67 +107,16 @@ public class Menu implements ClientElement{
 	@Property
 	private boolean target=false;
 
-	@SuppressWarnings("unused")
 	@Property
 	private boolean highlight=false;
 	
-	private String[] listLinks;
-	
-	private String[] listImages;
-	
-	private String[] listLabels;
-	
-	private String[] listTargets;
-	
-	private String[] listHighlights;
-	
 	@Property
-	private ArrayList<MenuEntry> listMenuEntry;
+	private ArrayList<MenuEntry> listMenuEntry = new ArrayList<MenuEntry>(); ;
+	
+	private Integer cpt = 0;
 	
 	@SetupRender
 	public void initList(){	
-	/*	if (currentHighlight == null) {
-			currentHighlight = "";
-		}
-		*/
-		listMenuEntry=new ArrayList<MenuEntry>();
-		
-		listMenuEntry.clear();
-		
-		listLinks=links.trim().split(DELIMITOR);
-
-		if(null!=images){ 
-
-			listImages=images.trim().split(DELIMITOR);
-			if(null!=listImages && listImages.length>0){
-				image=true;
-			}
-		}
-		if(null!=labels){
-
-
-			listLabels=labels.trim().split(DELIMITOR);
-			if(null!=listLabels && listLabels.length>0){
-				label=true;
-			}
-		}
-		if(null!=targets){
-
-
-			listTargets=targets.trim().split(DELIMITOR);
-			if(null!=listTargets && listTargets.length>0){
-				target=true;
-			}
-		}
-		
-		if((currentHighlight != null) && (null!=highlights)){ // no highlight on the root
-			listHighlights=highlights.trim().split(DELIMITOR);
-			if(null!=listHighlights && listHighlights.length>0){
-				highlight=true;
-			}
-		}
-		
-		initListMenuEntry(listLinks, listLabels, listImages, listTargets, listHighlights);
 	}
 
 	public String getClientId() {
@@ -225,48 +126,26 @@ public class Menu implements ClientElement{
 	
 	public String getStyleValue(){
 		
-		if ((highlight)&&(currentHighlight.equals(object.getHighlight()))) {
+		if ((highlight)&& (currentHighlight!=null) &&(currentHighlight.equals(object.getHighlight()))) {
 			return "highlight";
 		}
 		
 		return (!alternateStyle || object.getId()%2==0)?"0":"1";
 	}
 
-
 	public boolean isImageDisplay(){
 		return null!=object.getImage() && image;
 	}
 
-	private void initListMenuEntry(String[]links,String[]labels,String[]images,String[]targets,String[] highlights){
-
-		
-		for(int i=0;i<links.length;i++){
-			String label=null;
-			String image=null;
-			String target=null;
-			String highlight=null;
-			if(null!=labels && i<labels.length){
-				label=labels[i];
-			}
-			if(null!=images && i<images.length){
-				image=images[i];
-			}
-			if(null!=targets && i<targets.length){
-				target=targets[i];
-			}
-			if(null!=highlights && i<highlights.length){
-				highlight=highlights[i];
-			}
-			String url=response.encodeURL(links[i]);
-			
-			
-			listMenuEntry.add(new MenuEntry(url,label,image,target,highlight,i));
-		}
-		
+	public void clearMenuEntry() {
+		listMenuEntry.clear();
+		label=true;
+		highlight=true;
+		cpt=0;
 	}
-
-	
-
-
-
+	public void addMenuEntry(MenuEntry menu) {
+		cpt++;
+		menu.setId(cpt);
+		listMenuEntry.add(menu);
+	}
 }

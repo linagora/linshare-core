@@ -40,7 +40,6 @@ import org.apache.tapestry5.upload.internal.services.ParametersServletRequestWra
 import org.apache.tapestry5.upload.internal.services.UploadedFileItem;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.apache.tapestry5.upload.services.UploadedFile;
-import org.linagora.linShare.core.repository.ParameterRepository;
 import org.linagora.linShare.view.tapestry.services.MyMultipartDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +61,6 @@ public class MyMultipartDecoderImpl  implements  MyMultipartDecoder
     private final String requestEncoding;
 
     private FileUploadException uploadException;
-    /**
-     * service to read application parameters
-     */
-   
-    private  ParameterRepository parameterRepository;
-
-    
     
     public MyMultipartDecoderImpl(
     		
@@ -81,10 +73,7 @@ public class MyMultipartDecoderImpl  implements  MyMultipartDecoder
             long maxFileSize,
 
             @Inject @Symbol(SymbolConstants.CHARSET)
-            String requestEncoding,
-            
-            @Inject
-            ParameterRepository parameterRepository	)
+            String requestEncoding)
     
     {
 
@@ -92,8 +81,6 @@ public class MyMultipartDecoderImpl  implements  MyMultipartDecoder
         this.maxRequestSize = maxRequestSize;
         this.maxFileSize = maxFileSize;
         this.requestEncoding = requestEncoding;
-        this.parameterRepository = parameterRepository;
-        
     }
 
     public UploadedFile getFileUpload(String parameterName)

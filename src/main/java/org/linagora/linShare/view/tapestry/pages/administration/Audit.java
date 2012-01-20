@@ -42,14 +42,14 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.LogEntryFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 import org.linagora.linShare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -87,6 +87,9 @@ public class Audit {
 	
 	@Inject
 	private UserFacade userFacade;
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
 	
 	@Environmental
 	private FormSupport formSupport;
@@ -147,16 +150,14 @@ public class Audit {
 	private List<String> domains;
 	
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 	
 	@Property
 	@Persist
 	private boolean superadmin;
 	
-	@Inject @Symbol("linshare.autocomplete.minchars")
 	@Property
 	private int autocompleteMin;
-	
 	
 	
 	/* ***********************************************************
@@ -169,8 +170,9 @@ public class Audit {
 	
 	@SetupRender
 	public void init() throws BusinessException {
-		domains = domainFacade.getAllDomainIdentifiers();
+		domains = domainFacade.getAllDomainIdentifiers(userLoggedIn);
 		superadmin = userLoggedIn.isSuperAdmin();
+		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 	}
 	
 	public void onActivate() {
@@ -190,7 +192,6 @@ public class Audit {
 				for (String mail : criteria.getTargetMails()) {
 					targetListMails += mail + ",";
 				}
-				
 			}
 		}
 	}
@@ -242,8 +243,7 @@ public class Audit {
 	public List<String> onProvideCompletionsFromActorMails(String value){
 		List<String> res = new ArrayList<String>();
 		try {
-			List<UserVo> founds = userFacade.searchUser(value, null, null, userLoggedIn, userLoggedIn.isSuperAdmin());
-
+			List<UserVo> founds = userFacade.searchUser(value, null, null, null, userLoggedIn);
 			if (founds != null && founds.size() > 0) {
 				for (UserVo userVo : founds) {
 					res.add(userVo.getMail());

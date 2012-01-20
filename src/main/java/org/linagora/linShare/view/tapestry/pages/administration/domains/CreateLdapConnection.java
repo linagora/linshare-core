@@ -22,20 +22,25 @@ package org.linagora.linShare.view.tapestry.pages.administration.domains;
 
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
 public class CreateLdapConnection {
 	
+	@SessionState
+    private UserVo loginUser;
+    
 	@Property
 	@Persist
 	private LDAPConnectionVo ldapConn;
 	
 	@Inject
-	private DomainFacade domainFacade;
+	private AbstractDomainFacade domainFacade;
 	
 	@Persist
 	@Property
@@ -69,9 +74,9 @@ public class CreateLdapConnection {
 		ldapConn.setSecurityAuth("simple"); //TODO support another auth in the future
 		try {
 			if (inModify) {
-				domainFacade.updateLDAPConnection(ldapConn);
+				domainFacade.updateLDAPConnection(loginUser, ldapConn);
 			} else {
-				domainFacade.createLDAPConnection(ldapConn);
+				domainFacade.createLDAPConnection(loginUser, ldapConn);
 			}
 		} catch (BusinessException e) {
 			// TODO Auto-generated catch block

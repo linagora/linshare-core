@@ -55,7 +55,6 @@ public class LogEntryServiceImpl implements LogEntryService {
 		 builder.append(":"+entity.getActorMail());
 		 builder.append(":"+entity.getDescription());
 
-		 	 
 		 // Add specific test for specific data
 		 if(entity instanceof FileLogEntry) {
 			 builder.append(":");

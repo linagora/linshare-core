@@ -28,13 +28,13 @@ import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.auth.exceptions.BadDomainException;
-import org.linagora.linShare.core.domain.entities.Domain;
+import org.linagora.linShare.core.domain.constants.UserType;
+import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.entities.UserType;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.service.DomainService;
-import org.linagora.linShare.core.service.LDAPQueryService;
+import org.linagora.linShare.core.service.AbstractDomainService;
+import org.linagora.linShare.core.service.UserProviderService;
 import org.linagora.linShare.core.service.UserService;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.Authentication;
@@ -50,58 +50,60 @@ import org.springframework.util.Assert;
 
 public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProvider {
 	
-	private LDAPQueryService ldapQueryService;
 	private UserService userService;
-	private DomainService domainService;
+	private AbstractDomainService abstractDomainService;
 	
     private final static Log logger = LogFactory.getLog(DomainAuthProviderDao.class);
+    
 	
-	public void setLdapQueryService(LDAPQueryService ldapQueryService) {
-		this.ldapQueryService = ldapQueryService;
+	public AbstractDomainService getAbstractDomainService() {
+		return abstractDomainService;
 	}
-	
+
+	public void setAbstractDomainService(AbstractDomainService abstractDomainService) {
+		this.abstractDomainService = abstractDomainService;
+	}
+
+	public UserService getUserService() {
+		return userService;
+	}
+
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
 	
-	public void setDomainService(DomainService domainService) {
-		this.domainService = domainService;
-	}
-
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
 	}
 
-	protected UserDetails retrieveUser(String login,
-			UsernamePasswordAuthenticationToken authentication)
-			throws AuthenticationException {
-		
+	protected UserDetails retrieveUser(String login, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+		logger.debug("Retrieving user detail for ldap authentication : " + login);
 		
 		String password = (String)authentication.getCredentials();
-		String domain = null;
+		String domainIdentifier = null;
 		if (authentication.getDetails() != null && authentication.getDetails() instanceof String) {
-			domain = (String)authentication.getDetails();
+			domainIdentifier = (String)authentication.getDetails();
 		}
 		User user = null;
 		User foundUser = null;		
 		
 		// if domain was specified at the connection, we try to authenticate the user on this domain only
-		if (domain != null) {
-			logger.debug("The domain was specified at the connection time : " + domain);
+		if (domainIdentifier != null) {
+			logger.debug("The domain was specified at the connection time : " + domainIdentifier);
 			try {
-				Domain domainObject = domainService.retrieveDomain(domain);
-				foundUser = ldapQueryService.auth(login, password, domainObject);
+				AbstractDomain domainObject = abstractDomainService.retrieveDomain(domainIdentifier);
+				foundUser = abstractDomainService.auth(domainObject, login, password);
 			} catch (NameNotFoundException e) {
 				logger.debug("Can't find the user in the directory. Search in DB.");
-				foundUser = userService.findUserInDB(login);
-				if (foundUser != null && !foundUser.getUserType().equals(UserType.INTERNAL) && domain.equals(foundUser.getDomainId())) {
+				foundUser = userService.findUserInDB(domainIdentifier,login);
+				if (foundUser != null && !foundUser.getUserType().equals(UserType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
 					logger.debug("User found in DB but authentification failed");
 					throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-			          "Bad credentials"), domain);
+			          "Bad credentials"), domainIdentifier);
 				} else {
-					logger.debug("Can't find the user in DB, BadDomainException for : " + domain);
-					throw new BadDomainException(e.getMessage(), domain);
+					logger.debug("Can't find the user in DB, BadDomainException for : " + domainIdentifier);
+					throw new BadDomainException(e.getMessage(), domainIdentifier);
 				}
 			} catch (Exception e) {
 				throw new AuthenticationServiceException("Could not authenticate user: "+login, e);
@@ -109,7 +111,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			
 			if(foundUser == null) {
 			      throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-			          "Bad credentials"), domain);
+			          "Bad credentials"), domainIdentifier);
 			} 
 		}
 		
@@ -120,19 +122,21 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		 * in the case of invisible domains, the user has to provide
 		 * its email address and not LDAP uid to log in. 
 		 */
-		if (domain == null && login.indexOf("@") != -1) {
+		
+		// TODO : To be check : Why do we test the presence of "@" ?
+		if (domainIdentifier == null && login.indexOf("@") != -1) {
 			try {
 				
-				foundUser = userService.findUserInDB(login);
+				foundUser = userService.findUnkownUserInDB(login);
 				if (foundUser == null) {
 					logger.debug("Can't find the user in DB. Searching user in all domains.");
-					List<Domain> domains = domainService.findAllDomains();
-					for (Domain loopedDomain : domains) {
+					List<AbstractDomain> domains = abstractDomainService.getAllDomains();
+					for (AbstractDomain loopedDomain : domains) {
 						try {
-							foundUser = ldapQueryService.auth(login, password, loopedDomain);
+							foundUser = abstractDomainService.auth(loopedDomain, login, password);
 							if (foundUser != null) {
-								domain = loopedDomain.getIdentifier();
-								logger.debug("User found in domain "+domain);
+								domainIdentifier = loopedDomain.getIdentifier();
+								logger.debug("User found in domain "+domainIdentifier);
 								break;
 							}
 						} catch (NameNotFoundException e) {
@@ -145,49 +149,46 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 						}
 					}
 				} else {
-					logger.debug("User found in DB.");
+					logger.debug("User found in DB : " + foundUser.getMail());
+			
 					if(foundUser.getDomain() == null) {
-						// The SUPERADMIN role does not have a domain. Field is null in the database. 
-						if(Role.SUPERADMIN != foundUser.getRole()) {
-							// Should not happen. every user should have a domain, except superadmin and system accounts. 
-							logger.error("The user found in the database contain a null domain reference.");
-						}
-						throw new BadCredentialsException("Could not retrieve user : "+login+". ");
+						logger.error("The user found in the database contain a null domain reference.");
+						throw new BadCredentialsException("Could not retrieve user : "+login);
 					}
 					
-					domain = foundUser.getDomain().getIdentifier();
+					domainIdentifier = foundUser.getDomain().getIdentifier();
 					try {
-						logger.debug("The user domain stored in DB was : " + domain);
-						foundUser = ldapQueryService.auth(login, password, foundUser.getDomain());
+						logger.debug("The user domain stored in DB was : " + domainIdentifier);
+						foundUser = abstractDomainService.auth(foundUser.getDomain(), login, password);
 					} catch (NameNotFoundException e) {
-						throw new BadDomainException("Could not retrieve user : "+login+" in domain : "+domain, e);
+						throw new BadDomainException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
 					} catch (IOException e) {
-						throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domain, e);
+						throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
 					} catch (NamingException e) {
-						throw new BadCredentialsException("Could not retrieve user : "+login+" in domain : "+domain, e);
+						throw new BadCredentialsException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
 					}
 				}
 			} catch (BusinessException e) {
-				throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domain, e);
+				throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
 			}
 		}
 		
 		// invisible domain and user not found (uid login or found in no domain)
-		if (foundUser == null || domain == null) {
+		if (foundUser == null || domainIdentifier == null) {
 			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-	          "Bad credentials, no domain specified and user found in no domain"), domain);
+	          "Bad credentials, no domain specified and user found in no domain"), domainIdentifier);
 		}
 
 		// invisible domain and user found or visible domain and user found
 		try {
-			user = userService.findAndCreateUser(foundUser.getMail(), domain);
+			user = userService.findOrCreateUserForAuth(foundUser.getMail(), domainIdentifier);
 			
 			// if we already have a guest with the same mail, and then, a domain with
 			// this mail is added in linshare, when the domain user connects he should not
 			// retrieve the guest account. if the two user are in the same domain, we can't
 			// do anything I think...
-			if (!domain.equals(user.getDomainId())) {
-				throw new BadDomainException("User "+user.getLogin()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domain);
+			if (!domainIdentifier.equals(user.getDomainId())) {
+				throw new BadDomainException("User "+user.getLogin()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domainIdentifier);
 			}
 			
 		} catch (BusinessException e) {

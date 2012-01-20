@@ -23,6 +23,8 @@ package org.linagora.linShare.core.domain.entities;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
+
 public class GroupMember implements Serializable {
 	private static final long serialVersionUID = 8977072714137558071L;
 

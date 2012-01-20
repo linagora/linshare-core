@@ -20,6 +20,8 @@
 */
 package org.linagora.linShare.core.domain.entities;
 
+import org.linagora.linShare.core.domain.constants.UserType;
+
 /** Internal user.
  */
 public class GroupUser extends User {

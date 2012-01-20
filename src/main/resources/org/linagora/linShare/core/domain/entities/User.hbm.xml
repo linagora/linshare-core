@@ -7,12 +7,13 @@
     <param name="valueOfMethod">fromInt</param>
   </typedef>
   <typedef class="org.linagora.linShare.core.repository.hibernate.type.GenericEnumType" name="userEnumType">
-    <param name="enumClass">org.linagora.linShare.core.domain.entities.UserType</param>
+    <param name="enumClass">org.linagora.linShare.core.domain.constants.UserType</param>
     <param name="identifierMethod">toInt</param>
     <param name="valueOfMethod">fromInt</param>
   </typedef>
   <class name="User" table="USER">
-    <id column="USER_ID" name="id">
+    <id name="id" type="long">
+      <column name="USER_ID" not-null="true" index="index_user_id"/>
       <generator class="native"/>
     </id>
     <discriminator column="USER_TYPE_ID" type="string"/>
@@ -61,7 +62,7 @@
       </key>
       <one-to-many class="org.linagora.linShare.core.domain.entities.Signature"/>
     </set>
-    <many-to-one access="field" lazy="false" class="org.linagora.linShare.core.domain.entities.Domain" column="domain_id" name="domain" />
+    <many-to-one access="field" lazy="false" class="org.linagora.linShare.core.domain.entities.AbstractDomain" column="domain_id" name="domain" />
     
   
         

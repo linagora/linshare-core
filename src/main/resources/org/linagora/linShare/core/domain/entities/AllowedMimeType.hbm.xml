@@ -7,7 +7,9 @@
     <param name="valueOfMethod">fromInt</param>
   </typedef>
   <class name="AllowedMimeType" table="ALLOWED_MIMETYPE">
-    <id column="ID" name="id"/>
+  	<id name="id" type="long">
+      <column name="ID" not-null="true" index="index_allowed_mime_type_id"/>
+    </id>
     <property column="EXTENSIONS" name="extensions"/>
     <property column="MIMETYPE" name="mimetype"/>
     <property column="STATUS" name="status" type="mimeTypeStatusType" />

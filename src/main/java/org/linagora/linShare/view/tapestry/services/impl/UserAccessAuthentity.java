@@ -24,7 +24,7 @@ import java.util.GregorianCalendar;
 
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 import org.linagora.linShare.core.domain.entities.UserLogEntry;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -62,9 +62,10 @@ public class UserAccessAuthentity  {
         	if (applicationStateManager.getIfExists(UserVo.class) == null) {
         		// fetch user if not existing
 	            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+	            logger.debug("processAuth with " + userDetails.getUsername());
 	            UserVo userVo = null;
 				try {
-					userVo = userFacade.findUser(userDetails.getUsername().toLowerCase(), null);
+					userVo = userFacade.findUserForAuth(userDetails.getUsername().toLowerCase());
 				} catch (BusinessException e) {
 					logger.error("Error while trying to find user details", e);
 				}
@@ -78,7 +79,7 @@ public class UserAccessAuthentity  {
     	            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     	            UserVo userVo = null;
 					try {
-						userVo = userFacade.findUser(userDetails.getUsername().toLowerCase(), null);
+						userVo = userFacade.findUserForAuth(userDetails.getUsername().toLowerCase());
 					} catch (BusinessException e) {
 						logger.error("Error while trying to find user details", e);
 					}

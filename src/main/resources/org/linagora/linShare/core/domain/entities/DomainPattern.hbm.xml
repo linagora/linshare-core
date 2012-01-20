@@ -2,8 +2,9 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
   <class name="org.linagora.linShare.core.domain.entities.DomainPattern" table="DOMAIN_PATTERN">
-    <id column="domain_pattern_id" name="persistenceId">
-      <generator class="native"/>
+    <id name="persistenceId" type="long">
+    	<column name="domain_pattern_id" not-null="true" index="index_domain_pattern_id"/>
+      	<generator class="native"/>
     </id>
     <property access="field" column="identifier" index="index_domain_pattern_identifier" name="identifier" not-null="true" unique="true"/>
     <property access="field" column="description" name="description"/>
@@ -11,6 +12,8 @@
     <property access="field" column="get_all_domain_users_command" name="getAllDomainUsersCommand"/>
     <property access="field" column="auth_command" name="authCommand"/>
     <property access="field" column="search_user_command" name="searchUserCommand"/>
-    <property access="field" column="get_user_result" name="getUserResult"/>
+    <property access="field" column="USER_MAIL" name="userMail"/>
+    <property access="field" column="USER_FIRSTNAME" name="userFirstName"/>
+    <property access="field" column="USER_LASTNAME" name="userLastName"/>
   </class>
 </hibernate-mapping>

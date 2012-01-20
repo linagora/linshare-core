@@ -14,6 +14,7 @@
            <constructor-arg ref="userService"/>
            <constructor-arg ref="guestRepository"/>
            <constructor-arg ref="enciphermentService"/>
+           <constructor-arg ref="abstractDomainService"/>
        </bean>
        
    	  <bean name="documentFacade" class="org.linagora.linShare.core.Facade.impl.DocumentFacadeImpl">
@@ -45,7 +46,7 @@
          <constructor-arg ref="documentTransformer" />
          <constructor-arg value="${linshare.info.url.base}" />
          <constructor-arg value="${linshare.info.url.internal}" />
-         <constructor-arg ref="domainService" />
+         <constructor-arg ref="abstractDomainService" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linShare.core.Facade.impl.ShareExpiryDateFacadeImpl">
@@ -79,15 +80,11 @@
        	 <constructor-arg ref="mimeTypeService"/>
    	  </bean>
    	  
-   	  <bean name="parameterFacade" class="org.linagora.linShare.core.Facade.impl.ParameterFacadeImpl">
-       	 <constructor-arg ref="parameterService"/>
-       	 <constructor-arg ref="parameterRepository"/>
-   	  </bean>
-   	  
    	  <bean name="logEntryFacade" class="org.linagora.linShare.core.Facade.impl.LogEntryFacadeImpl">
        	 <constructor-arg ref="logEntryRepository"/>
        	 <constructor-arg ref="logEntryTransformer"/>
        	 <constructor-arg ref="displayableLogEntryTransformer"/>
+       	 <constructor-arg ref="abstractDomainService"/>
    	  </bean>
        
       <bean name="recipientFavouriteFacade" class="org.linagora.linShare.core.Facade.impl.RecipientFavouriteFacadeImpl">
@@ -100,13 +97,6 @@
        	 <constructor-arg ref="userService"/>
        	 <constructor-arg ref="groupService"/>
        	 <constructor-arg ref="groupTransformer"/>
-   	  </bean>
-       
-      <bean name="domainFacade" class="org.linagora.linShare.core.Facade.impl.DomainFacadeImpl">
-   	  	 <constructor-arg ref="domainService"/>
-       	 <constructor-arg ref="domainTransformer"/>
-       	 <constructor-arg ref="userService"/>
-         <constructor-arg ref="ldapQueryService"/>
    	  </bean>
        
        
@@ -166,10 +156,21 @@
 	 	<constructor-arg ref="groupRepository"/>
 	 </bean>
 	 
-	 <bean name="domainTransformer" class="org.linagora.linShare.core.domain.transformers.impl.DomainTransformer" >
-	 	<constructor-arg ref="parameterTransformer"/>
-	 </bean>
-	 
-	 <bean name="parameterTransformer" class="org.linagora.linShare.core.domain.transformers.impl.ParameterTransformer" >
-	 </bean>
+	 <bean name="abstractDomainFacade" class="org.linagora.linShare.core.Facade.impl.AbstractDomainFacadeImpl">
+	 	<constructor-arg ref="abstractDomainService"/>
+	 	<constructor-arg ref="functionalityService"/>
+	 	<constructor-arg ref="userService"/>
+	 	<constructor-arg ref="userProviderService"/>
+	 	<constructor-arg ref="domainPolicyService"/>
+   	 </bean>
+       
+     <bean name="domainPolicyFacade" class="org.linagora.linShare.core.Facade.impl.DomainPolicyFacadeImpl">
+        <constructor-arg ref="domainPolicyService"/>
+     </bean>
+     
+     <bean name="functionalityFacade" class="org.linagora.linShare.core.Facade.impl.FunctionalityFacadeImpl">
+        <constructor-arg ref="functionalityService"/>
+        <constructor-arg ref="abstractDomainService"/>
+     </bean>
+       
 </beans>

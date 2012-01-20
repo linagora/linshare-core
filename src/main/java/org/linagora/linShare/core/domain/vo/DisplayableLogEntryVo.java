@@ -23,7 +23,7 @@ package org.linagora.linShare.core.domain.vo;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.linagora.linShare.core.domain.LogAction;
+import org.linagora.linShare.core.domain.constants.LogAction;
 
 /**
  * Class to easily display a LogEntry, whichever type it is

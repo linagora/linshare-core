@@ -42,11 +42,11 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 	}
 
 	public void increment(UserVo owner, List<String> recipients) throws LinShareNotSuchElementException, BusinessException {
-		service.increment(userService.findUser(owner.getMail(), owner.getDomainIdentifier()), recipients);
+		service.increment(userService.findOrCreateUserWithDomainPolicies(owner.getMail(), owner.getDomainIdentifier()), recipients);
 	}
 
 	public List<String> allRecipientsOrderedByWeightDesc(UserVo owner) throws BusinessException{
-		return service.recipientsOrderedByWeightDesc(userService.findUser(owner.getMail(), owner.getDomainIdentifier()));
+		return service.recipientsOrderedByWeightDesc(userService.findOrCreateUserWithDomainPolicies(owner.getMail(), owner.getDomainIdentifier()));
 	}
 
 	public List<UserVo> recipientsOrderedByWeightDesc(List<UserVo> recipients,
@@ -54,7 +54,7 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 		
 		if(recipients.size()==0) return recipients;
 		
-		User own=userService.findUser(owner.getMail(), owner.getDomainIdentifier());
+		User own = userService.findOrCreateUserWithDomainPolicies(owner.getMail(), owner.getDomainIdentifier());
 
 		if(own!=null){
 			ArrayList<String> recipientsMail=new ArrayList<String>();
@@ -81,7 +81,7 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 
 	public List<UserVo> findRecipientFavorite(String matchStartWith,UserVo owner) throws BusinessException {
 		
-		User own=userService.findUser(owner.getMail(), owner.getDomainIdentifier());
+		User own = userService.findOrCreateUserWithDomainPolicies(owner.getMail(), owner.getDomainIdentifier());
 		List<String> mails = service.findRecipientFavorite(matchStartWith, own);
 		
 		ArrayList<UserVo> favoriteList=new ArrayList<UserVo>();

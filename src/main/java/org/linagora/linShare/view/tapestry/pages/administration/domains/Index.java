@@ -29,9 +29,10 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linShare.core.Facade.DomainFacade;
+import org.linagora.linShare.core.Facade.AbstractDomainFacade;
+import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
-import org.linagora.linShare.core.domain.vo.DomainVo;
+import org.linagora.linShare.core.domain.vo.GuestDomainVo;
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -49,15 +50,16 @@ public class Index {
     
 	@Inject
 	private Messages messages;
+	
     @Inject
-    private DomainFacade domainFacade;
+    private AbstractDomainFacade domainFacade;
     
     @SessionState
     private UserVo loginUser;
 	
 	@Persist
 	@Property
-	private List<DomainVo> domains;
+	private List<AbstractDomainVo> domains;
 	
 	@Persist
 	@Property
@@ -68,7 +70,7 @@ public class Index {
 	private List<LDAPConnectionVo> ldapConnections;
 	
 	@Property
-	private DomainVo domain;
+	private AbstractDomainVo domain;
 	
 	@Property
 	private DomainPatternVo domainPattern;
@@ -78,7 +80,7 @@ public class Index {
 	
 	@Persist
 	@Property
-	private DomainVo selectedDomain;
+	private AbstractDomainVo selectedDomain;
 	
 	@Property
 	@Persist
@@ -99,7 +101,7 @@ public class Index {
 	@SetupRender
     public void init() throws BusinessException {
     	
-    	domains = domainFacade.findAllDomains();
+    	domains = domainFacade.findAllTopDomain();
     	domainPatterns = domainFacade.findAllDomainPatterns();
     	ldapConnections = domainFacade.findAllLDAPConnections();
     	
@@ -108,13 +110,13 @@ public class Index {
 	@OnEvent(value="domainDeleteEvent")
     public void deleteDomain() throws BusinessException {
 		domainFacade.deleteDomain(domainToDelete, loginUser);
-		domains = domainFacade.findAllDomains();
+		domains = domainFacade.findAllTopDomain();
     }
     
 	@OnEvent(value="patternDeleteEvent")
     public void deletePattern() throws BusinessException {
 		domainFacade.deletePattern(patternToDelete, loginUser);
-		domains = domainFacade.findAllDomains();
+		domains = domainFacade.findAllTopDomain();
     }
     
 	@OnEvent(value="connectionDeleteEvent")
@@ -132,11 +134,11 @@ public class Index {
 	}
 	
 	public String getConnectionIdentifier() {
-		return domain.getLdapConnection().getIdentifier();
+		return domain.getLdapIdentifier();
 	}
 	
 	public String getPatternIdentifier() {
-		return domain.getPattern().getIdentifier();
+		return domain.getPatternIdentifier();
 	}
 
     public void onActionFromDeleteDomain(String domain) {
@@ -158,4 +160,5 @@ public class Index {
     	return this;
     }
 
+    
 }

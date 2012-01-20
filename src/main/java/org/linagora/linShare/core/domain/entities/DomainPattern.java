@@ -14,25 +14,27 @@ public class DomainPattern {
 	private String getAllDomainUsersCommand;
 	private String authCommand;
 	private String searchUserCommand;
-	private String getUserResult;
+	private String userMail;
+	private String userFirstName;
+	private String userLastName;
 	
 	protected DomainPattern() {
 		this.identifier = null;
 	}
 	
-	
-
 	public DomainPattern(String identifier, String description,
 			String getUserCommand, String getAllDomainUsersCommand,
 			String authCommand,
-			String searchUserCommand, String getUserResult) {
+			String searchUserCommand, String mail, String firstName, String lastName) {
 		this.identifier = identifier;
 		this.description = description;
 		this.getUserCommand = getUserCommand;
 		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 		this.authCommand = authCommand;
 		this.searchUserCommand = searchUserCommand;
-		this.getUserResult = getUserResult;
+		this.userMail = mail;
+		this.userFirstName = firstName;
+		this.userLastName = lastName;
 	}
 
 
@@ -44,7 +46,9 @@ public class DomainPattern {
 		this.getAllDomainUsersCommand = domainPatternVo.getGetAllDomainUsersCommand();
 		this.authCommand = domainPatternVo.getAuthCommand();
 		this.searchUserCommand = domainPatternVo.getSearchUserCommand();
-		this.getUserResult = domainPatternVo.getGetUserResult();
+		this.userMail = domainPatternVo.getUserMail();
+		this.userFirstName = domainPatternVo.getUserFirstName();
+		this.userLastName = domainPatternVo.getUserLastName();
 	}
 	
 	public long getPersistenceId() {
@@ -99,12 +103,33 @@ public class DomainPattern {
 		this.searchUserCommand = searchUserCommand;
 	}
 
-	public String getGetUserResult() {
-		return getUserResult;
+	public String getUserMail() {
+		return userMail;
 	}
 
-	public void setGetUserResult(String getUserResult) {
-		this.getUserResult = getUserResult;
+	public void setUserMail(String userMail) {
+		this.userMail = userMail;
+	}
+
+	public String getUserFirstName() {
+		return userFirstName;
+	}
+
+	public void setUserFirstname(String userFirstName) {
+		this.userFirstName = userFirstName;
+	}
+
+	public String getUserLastName() {
+		return userLastName;
+	}
+
+	public void setUserLastName(String userLastName) {
+		this.userLastName = userLastName;
+	}
+
+	@Override
+	public String toString() {
+		return "DomainPattern : " + identifier;
 	}
 
 }

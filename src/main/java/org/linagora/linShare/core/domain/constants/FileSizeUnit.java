@@ -50,7 +50,7 @@ public enum FileSizeUnit {
     	return ret;
     }
 
-    public long getPlainSize(final int size) {       
+    public long getPlainSize(final long size) {       
         long ret = 0L;
         switch (value) {
             case 0 : ret = size * BigInteger.valueOf(2).pow(10).longValue(); break;
