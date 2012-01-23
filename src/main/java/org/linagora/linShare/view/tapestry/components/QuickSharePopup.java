@@ -109,7 +109,7 @@ public class QuickSharePopup{
     @Property
     private DocumentVo documentVo;
 	
-	@Persist
+//	@Persist
 	@Property
 	private String recipientsSearch;
 	
@@ -296,55 +296,66 @@ public class QuickSharePopup{
     	
     	boolean sendErrors = false;
 		
-		List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
-		String badFormatEmail =  "";
-		
-		for (String recipient : recipients) {
-			if (!MailCompletionService.MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
-				badFormatEmail = badFormatEmail + recipient + " ";
-				sendErrors = true;
-			}
-		}
-		
-		if(sendErrors) {
-			businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_BADMAIL,
-                MessageSeverity.ERROR, badFormatEmail));
-			addedDocuments = new ArrayList<DocumentVo>();
-			return;
-		} else {
-			this.recipientsEmail = recipients;
-		}
     	
-    	
-    	if (addedDocuments == null || addedDocuments.size() == 0) {
-    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE, MessageSeverity.ERROR));
-			return;
-    	}
-    	
-		//PROCESS SHARE
-		
-		SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
-		try {
-			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
-			mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
-			sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer);
-		
-		} catch (BusinessException e1) {
-			logger.error("Could not create sharing", e1);
-			businessMessagesManagementService.notify(e1);
-		}
-
-		
-		if (sharing.getFailsItem().size()>0) {
-    		businessMessagesManagementService.notify(new BusinessUserMessage(
-                BusinessUserMessageType.QUICKSHARE_FAILED, MessageSeverity.ERROR));
-		} else {
+    	try{
+	    	
+			List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+			String badFormatEmail =  "";
 			
-			recipientFavouriteFacade.increment(userVo, recipientsEmail);
-			businessMessagesManagementService.notify(new BusinessUserMessage(
-                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
-		}
+			for (String recipient : recipients) {
+				if (!MailCompletionService.MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
+					badFormatEmail = badFormatEmail + recipient + " ";
+					sendErrors = true;
+				}
+			}
+			
+			if(sendErrors) {
+				businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_BADMAIL,
+	                MessageSeverity.ERROR, badFormatEmail));
+				addedDocuments = new ArrayList<DocumentVo>();
+				return;
+			} else {
+				this.recipientsEmail = recipients;
+			}
+	    	
+	    	
+	    	if (addedDocuments == null || addedDocuments.size() == 0) {
+	    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE, MessageSeverity.ERROR));
+				return;
+	    	}
+	    	
+	
+	    	
+			//PROCESS SHARE
+			
+			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
+			try {
+				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
+				mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
+				sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer);
+			
+			} catch (BusinessException e1) {
+				logger.error("Could not create sharing", e1);
+				businessMessagesManagementService.notify(e1);
+			}
+	
+			
+			if (sharing.getFailsItem().size()>0) {
+	    		businessMessagesManagementService.notify(new BusinessUserMessage(
+	                BusinessUserMessageType.QUICKSHARE_FAILED, MessageSeverity.ERROR));
+			} else {
+				
+				recipientFavouriteFacade.increment(userVo, recipientsEmail);
+				businessMessagesManagementService.notify(new BusinessUserMessage(
+	                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
+			}
 
+    	}catch (NullPointerException e3) {
+    		logger.error("No Email in textarea", e3);
+    		businessMessagesManagementService.notify(new BusinessUserMessage(
+                    BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
+		}		
+		
         // reset list of documents
         addedDocuments = new ArrayList<DocumentVo>();
 	}
