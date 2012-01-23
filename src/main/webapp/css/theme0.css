@@ -411,6 +411,13 @@ strong {
 	color: #222;
 }
 
+#sideBar .widget .t-error li{
+    margin-left: 5px;
+    width: 260px;
+    list-style-type: square ;
+    list-style-position: inside;
+}
+
 
 /*--------------------------------------------------------------------------
 * FOOTER > Content
