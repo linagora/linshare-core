@@ -8,10 +8,15 @@
         }
 
         function sendFiles() {
-        	document.body.style.cursor="wait";
-            var link = document.getElementById('quickshare_send_link');
-            link.onclick = "";
-            launchUpload('flexUpload');
+        	var textarea_size = document.getElementById('recipientsPatternQuickSharePopup').value.length;
+        	if(textarea_size != 0){
+            	document.body.style.cursor="wait";
+                var link = document.getElementById('quickshare_send_link');
+                link.onclick = "";
+                launchUpload('flexUpload');        		
+        	}else{
+        		document.getElementById('recipientsPatternQuickSharePopup').className += " t-error ";
+        	}
         }
 
         function submitShare() {
@@ -19,8 +24,15 @@
             if (link)
                 link.click();
         }
-    </script>
+        
+        function rm_errorclass(){
+        	document.getElementById('recipientsPatternQuickSharePopup').className = 
+        		   document.getElementById('recipientsPatternQuickSharePopup').className.replace
+        		      ( /(?:^|\s)t-error(?!\S)/ , '' );
 
+        }
+        
+    </script>
 	
 	<div t:id="quickShareWindow">
 		<div class="confirmPopup">
@@ -56,7 +68,7 @@
 			<div class="number2"></div>
 			<div class="description"><p>${message:components.quickSharePopup.panelRecipients.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false" t:subject="${message:components.quickSharePopup.panelRecipients.subject}">      
-				<t:textarea t:id="recipientsPatternQuickSharePopup" t:value="recipientsSearch" validate="required" t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens="," class="recipientsPattern" title="${message:components.quickSharePopup.texarea.recipients.title}" />
+				<t:textarea t:id="recipientsPatternQuickSharePopup" t:value="recipientsSearch" t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens="," class="recipientsPattern" title="${message:components.quickSharePopup.texarea.recipients.title}" onchange="rm_errorclass();"/>
 			</div>
 			<div class="clear"></div>
 			
@@ -72,7 +84,7 @@
 			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
 				t:subject="${message:components.quickSharePopup.panelSubject.subject}">  
-				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field" validate="required"  title="${message:components.quickSharePopup.texarea.message.title}" />
+				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field"  title="${message:components.quickSharePopup.texarea.message.title}" />
 			</div>
 			<br />
 			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
