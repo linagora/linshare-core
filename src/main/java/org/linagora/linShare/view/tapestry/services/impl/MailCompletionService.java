@@ -25,13 +25,16 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.view.tapestry.components.QuickSharePopup;
+import org.slf4j.LoggerFactory;
+
+import common.Logger;
 
 /**
  * Generic mail completion methods
  *
  */
-public class MailCompletionService {
-	
+public class MailCompletionService {	
 	/**
 	 * Regular expression to validate mails
 	 */
@@ -79,8 +82,9 @@ public class MailCompletionService {
 	 * @return
 	 */
 	public static List<String> parseEmails(final String recipientsList){
+			 	
 		
-		String[] recipients = recipientsList.split(",");
+		String[] recipients = recipientsList.replaceAll(";", ",").split(",");
 		ArrayList<String> emails = new ArrayList<String> ();
 		
 		for (String oneUser : recipients) {
