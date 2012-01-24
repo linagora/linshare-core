@@ -35,7 +35,7 @@ public class MailCompletionService {
 	/**
 	 * Regular expression to validate mails
 	 */
-	public static final Pattern MAILREGEXP = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$");
+	public static final Pattern MAILREGEXP = Pattern.compile("^[A-Z0-9'._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$");
 	
 	/**
 	 * Returns the formated label for a user, i.e. "Michael georges" <michael@yoursociety.com>
