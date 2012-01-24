@@ -202,6 +202,8 @@ public class UserSearchResults {
      ************************************************************ */
     @SetupRender
     public void initUserSearch() throws BusinessException {
+    	
+    	
         if (selectedUsers == null) {
             selectedUsers = new ArrayList<UserVo>();
         }
@@ -397,7 +399,12 @@ public class UserSearchResults {
     }
 
     @AfterRender
-    public void finish() {
+    public void finish() throws BusinessException {
+    	if(showAll){
+    		users = userFacade.searchUser("", "", "", userLoggedIn);
+    	}else{
+    		users = new ArrayList<UserVo>();
+    	}
     }
     
     /* ***********************************************************
