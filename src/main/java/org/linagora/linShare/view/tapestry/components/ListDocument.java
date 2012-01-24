@@ -60,13 +60,13 @@ import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.constants.UserType;
@@ -150,7 +150,6 @@ public class ListDocument {
 	@Property
 	private String tooltipGroupTitle;
 	
-	@Inject @Symbol("linshare.groups.activated")
 	@Property
 	private boolean showGroups;
 	
@@ -173,6 +172,9 @@ public class ListDocument {
 	@Inject
 	private SecuredUrlFacade securedUrlFacade;
 
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+	
 	@Inject
 	private ComponentResources componentResources;  
 	
@@ -308,6 +310,11 @@ public class ListDocument {
 	 */
 	@SetupRender
 	public void initUserlogin() throws BusinessException {
+		showGroups = false;
+		if (user.getDomainIdentifier() != null && user.getDomainIdentifier().length() > 0) {
+			showGroups = functionalityFacade.isEnableGroupTab(user.getDomainIdentifier());
+		}
+		
 		
 		Collections.sort(documents);
 

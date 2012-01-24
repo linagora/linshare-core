@@ -62,13 +62,6 @@ linshare.files.directory=/var/lib/linshare/repository
 # internal user see all other internal user by default in the Users tab ?
 linshare.users.internal.defaultView.showAll=false
 
-# activate groups tab ?
-linshare.groups.activated=true
-
-#auto complete with minchars (default is 2. Set high value like 100000 to disable ajax auto completion)
-linshare.autocomplete.minchars=2
-
-
 #******************** VIRUS SCANNER
 #uncomment those properties if you want to enable clamav virus scanner feature
 #virusscanner.clamav.host=localhost
