@@ -3240,8 +3240,8 @@ form#uploadForm .upload-list {
 #guestEditFormComponent img.t-error-icon,
 #userEditFormComponent img.t-error-icon,
 #createGroupZone img.t-error-icon {
-	float: left;
-	margin: -1.50em 0em 1.25em 20.25em;
+	float: right;
+	margin: -1.5em 5em 1.0em 20.25em;
 }
 
 #guestEditFormComponent #commentMessageBlock label,
