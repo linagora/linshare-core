@@ -37,8 +37,14 @@
 		<t:grid source="users" row="user" include="mail"
 				add="picture, action, selectedValue" reorder="mail, picture" rowsPerPage="10">
 
-			<t:parameter t:name="empty">
-				${message:components.userSearch.grid.empty}
+			<t:parameter t:name="empty">	
+			
+				<t:if test="inSearch">
+					${message:components.userSearch.grid.empty}
+				</t:if>					
+				<t:if test="inSearch" negate="true">
+					${message:components.userSearch.grid.nosearch}
+				</t:if>			
 			</t:parameter>
 
 
