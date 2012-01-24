@@ -25,10 +25,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.linagora.linShare.core.domain.vo.UserVo;
-import org.linagora.linShare.view.tapestry.components.QuickSharePopup;
-import org.slf4j.LoggerFactory;
-
-import common.Logger;
 
 /**
  * Generic mail completion methods
