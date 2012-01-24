@@ -30,6 +30,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -68,6 +69,9 @@ public class ActionsBarDocument {
 	
 	@Inject
 	private DocumentFacade documentFacade;
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
     
 	/***********************************
 	 * Flags
@@ -80,7 +84,7 @@ public class ActionsBarDocument {
 	@Property
 	private boolean activeEncipherment;
     
-	@Inject @Symbol("linshare.groups.activated")
+	@SuppressWarnings("unused")
 	@Property
 	private boolean showGroups;
 	
@@ -98,6 +102,10 @@ public class ActionsBarDocument {
 	public void initUserlogin() throws BusinessException {
 		activeSignature = documentFacade.isSignatureActive(user);
 		activeEncipherment = documentFacade.isEnciphermentActive(user);
+		if (user.getDomainIdentifier() != null && user.getDomainIdentifier().length() > 0) {
+			showGroups = functionalityFacade.isEnableGroupTab(user.getDomainIdentifier());
+		}
+		showGroups = false;
 	}
 	
 	
@@ -111,6 +119,4 @@ public class ActionsBarDocument {
 	public void onActionFromEncyphermentSubmit() {
 		//ActionFromBarDocument actionbutton = ActionFromBarDocument.ENCYPHERMENT_ACTION;
 	}
-	
-	
 }

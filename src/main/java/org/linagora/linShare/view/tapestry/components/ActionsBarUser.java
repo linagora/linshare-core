@@ -24,9 +24,13 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
+import org.linagora.linShare.core.domain.vo.UserVo;
 
 
 @SupportsInformalParameters
@@ -36,7 +40,21 @@ public class ActionsBarUser {
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	private String formName;
 	
-	@Inject @Symbol("linshare.groups.activated")
 	@Property
 	private boolean showGroups;
+	
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+	
+	@SessionState
+	@Property
+	private UserVo userVo;
+	
+	@SetupRender	
+	void init() {
+		showGroups = false;
+		if (userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			showGroups = functionalityFacade.isEnableGroupTab(userVo.getDomainIdentifier());
+		}
+	}
 }
