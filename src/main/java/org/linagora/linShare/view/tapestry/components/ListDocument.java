@@ -419,7 +419,14 @@ public class ListDocument {
 			String lastName, String mail, String expiration) {
 		templateRowParams.put("${firstname}", firstName);
 		templateRowParams.put("${lastname}", lastName);
-		templateRowParams.put("${mail}", mail);
+		
+		String tmp_mail = mail; 
+		
+		if(mail.length() > 30){
+			tmp_mail = mail.substring(0,27);
+			tmp_mail += "...";
+		}
+		templateRowParams.put("${mail}", tmp_mail);
 		templateRowParams.put("${expiration}", expiration);
 	}
 	
