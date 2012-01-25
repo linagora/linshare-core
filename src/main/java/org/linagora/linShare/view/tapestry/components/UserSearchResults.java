@@ -400,11 +400,6 @@ public class UserSearchResults {
 
     @AfterRender
     public void finish() throws BusinessException {
-    	if(showAll){
-    		users = userFacade.searchUser("", "", "", userLoggedIn);
-    	}else{
-    		users = new ArrayList<UserVo>();
-    	}
     }
     
     /* ***********************************************************
