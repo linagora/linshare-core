@@ -3460,12 +3460,10 @@ DIV.t-error UL {
 * Misc
 */
 
-
-/* Tooltip */
-
 div.ck_tooltip {
 	width: 380px !important;
 }
+
 .tooltipTableDescription {
 	text-align: justified !important;
 	padding: 10px;
