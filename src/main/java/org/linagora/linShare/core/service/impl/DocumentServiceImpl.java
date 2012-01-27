@@ -64,6 +64,7 @@ import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
@@ -676,7 +677,7 @@ public class DocumentServiceImpl implements DocumentService {
 			}
 			return userQuota;
 		}
-		return Long.MAX_VALUE;
+		return LinShareConstants.defaultMaxFileSize;
 	}
 	
 	public long getUserMaxFileSize(User user) throws BusinessException {
@@ -696,7 +697,7 @@ public class DocumentServiceImpl implements DocumentService {
 			}
 			return maxSize;
 		}
-		return 0;
+		return LinShareConstants.defaultMaxFileSize;
 	}
 	
 	
