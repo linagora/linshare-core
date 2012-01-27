@@ -677,7 +677,7 @@ public class DocumentServiceImpl implements DocumentService {
 			}
 			return userQuota;
 		}
-		return LinShareConstants.defaultMaxFileSize;
+		return LinShareConstants.defaultFreeSpace;
 	}
 	
 	public long getUserMaxFileSize(User user) throws BusinessException {
