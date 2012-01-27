@@ -47,4 +47,10 @@ public class LinShareConstants {
 	 */
 	public static Long defaultMaxFileSize = Long.MAX_VALUE;	
 	
+	/**
+	 * Default max available size
+	 */
+	public static Long defaultFreeSpace = Long.MAX_VALUE;		
+	
+	
 }
