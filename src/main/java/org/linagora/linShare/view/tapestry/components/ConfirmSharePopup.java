@@ -63,6 +63,11 @@ import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
+import org.owasp.validator.html.PolicyException;
+import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,6 +161,9 @@ public class ConfirmSharePopup{
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */
+	
+	@Inject
+	private Policy antiSamyPolicy;
 	
 	@Inject
 	private ShareFacade shareFacade;
@@ -378,6 +386,29 @@ public class ConfirmSharePopup{
 		else dateExpiry.setTime(dateSelected);
 
 		//PROCESS SHARE
+		
+		AntiSamy as = new AntiSamy();
+    	CleanResults cr = null;
+       
+        try {
+        	 if(textAreaSubjectValue != null) {
+				cr = as.scan(textAreaSubjectValue, antiSamyPolicy);
+				textAreaSubjectValue = cr.getCleanHTML().trim();
+				logger.debug("getCleanHTML:textAreaSubjectValue:'" + textAreaSubjectValue + "'");
+        	 }
+        	 
+        	 if(textAreaValue != null) {
+				cr = as.scan(textAreaValue, antiSamyPolicy);
+				textAreaValue = cr.getCleanHTML().trim();
+				logger.debug("getCleanHTML:textAreaValue:'" + textAreaValue + "'");
+         	 }
+		} catch (ScanException e) {
+			logger.error("Antisany is not able to scan the subject field");
+			e.printStackTrace();
+		} catch (PolicyException e) {
+			logger.error("Antisany is not able to get the antiSamy policy");
+			e.printStackTrace();
+		}
 		
 		SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 		try {
