@@ -141,7 +141,6 @@ public class Index {
 	@InjectComponent
 	private CreateGroupPopup createGroupPopup;
     
-	@Inject @Symbol("linshare.groups.activated")
 	@Property
 	private boolean showGroups;
 

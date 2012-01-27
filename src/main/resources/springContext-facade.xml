@@ -172,5 +172,13 @@
         <constructor-arg ref="functionalityService"/>
         <constructor-arg ref="abstractDomainService"/>
      </bean>
+     
+     <bean name="antiSamyPolicy" class="org.owasp.validator.html.Policy" factory-method="getInstance">
+	    <!-- type needed because there is also a getInstance(String) method -->
+	    <constructor-arg value="classpath:antisamy.xml" type="java.io.InputStream" />
+	
+	</bean>
+
+
        
 </beans>
