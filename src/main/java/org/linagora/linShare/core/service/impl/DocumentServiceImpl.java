@@ -436,9 +436,8 @@ public class DocumentServiceImpl implements DocumentService {
 
 		}
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("*****end process insertFile");
-		}
+		if (logger.isDebugEnabled())	logger.debug("*****end process insertFile");
+		
 
 		if(putwarning){
             String[] extras = {fileName};
@@ -677,7 +676,7 @@ public class DocumentServiceImpl implements DocumentService {
 			}
 			return userQuota;
 		}
-		return 0;
+		return Long.MAX_VALUE;
 	}
 	
 	public long getUserMaxFileSize(User user) throws BusinessException {
