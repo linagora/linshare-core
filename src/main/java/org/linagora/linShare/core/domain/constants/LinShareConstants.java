@@ -42,4 +42,9 @@ public class LinShareConstants {
 	 */
 	public static Integer completionThresholdConstantForDeactivation = 999999999;
 	
+	/**
+	 * Default max size for an upload 
+	 */
+	public static Long defaultMaxFileSize = Long.MAX_VALUE;	
+	
 }
