@@ -48,7 +48,10 @@ public class DomainPatternVo {
 
 	
 	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+		if(identifier != null)
+			this.identifier = identifier.trim();
+		else		
+			this.identifier = identifier;
 	}
 
 	@Validate("required")
@@ -61,7 +64,10 @@ public class DomainPatternVo {
 	}
 
 	public void setPatternDescription(String description) {
-		this.patternDescription = description;
+		if(patternDescription != null)
+			this.patternDescription = patternDescription.trim();
+		else		
+			this.patternDescription = description;
 	}
 
 	@Validate("required")
@@ -70,7 +76,10 @@ public class DomainPatternVo {
 	}
 
 	public void setGetUserCommand(String getUserCommand) {
-		this.getUserCommand = getUserCommand;
+		if(getUserCommand != null)
+			this.getUserCommand = getUserCommand.trim();
+		else		
+			this.getUserCommand = getUserCommand;
 	}
 
 	@Validate("required")
@@ -79,7 +88,10 @@ public class DomainPatternVo {
 	}
 
 	public void setGetAllDomainUsersCommand(String getAllDomainUsersCommand) {
-		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
+		if(getAllDomainUsersCommand != null)
+			this.getAllDomainUsersCommand = getAllDomainUsersCommand.trim();
+		else				
+			this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 	}
 
 	@Validate("required")
@@ -88,7 +100,10 @@ public class DomainPatternVo {
 	}
 
 	public void setAuthCommand(String authCommand) {
-		this.authCommand = authCommand;
+		if(authCommand != null)
+			this.authCommand = authCommand.trim();
+		else		
+			this.authCommand = authCommand;
 	}
 
 	@Validate("required")
@@ -97,7 +112,10 @@ public class DomainPatternVo {
 	}
 
 	public void setSearchUserCommand(String searchUserCommand) {
-		this.searchUserCommand = searchUserCommand;
+		if(searchUserCommand != null)
+			this.searchUserCommand = searchUserCommand.trim();
+		else			
+			this.searchUserCommand = searchUserCommand;
 	}
 
 	@Validate("required")
@@ -106,7 +124,10 @@ public class DomainPatternVo {
 	}
 
 	public void setUserMail(String userMail) {
-		this.userMail = userMail;
+		if(userMail != null)
+			this.userMail = userMail.trim();
+		else		
+			this.userMail = userMail;
 	}
 
 	@Validate("required")
@@ -115,7 +136,10 @@ public class DomainPatternVo {
 	}
 
 	public void setUserFirstName(String userFirstName) {
-		this.userFirstName = userFirstName;
+		if(userFirstName != null)
+			this.userFirstName = userFirstName.trim();
+		else
+			this.userFirstName = userFirstName;
 	}
 
 	@Validate("required")
@@ -124,7 +148,10 @@ public class DomainPatternVo {
 	}
 
 	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
+		if(userLastName != null)
+			this.userLastName = userLastName.trim();
+		else
+			this.userLastName = userLastName;
 	}
 
 	@Override
