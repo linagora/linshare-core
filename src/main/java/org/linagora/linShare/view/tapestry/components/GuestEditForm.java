@@ -255,9 +255,6 @@ public class GuestEditForm {
             guestCreateForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
             userAlreadyExists = true;
             return ;
-        }else{
-        	
-        	
         }
         
 		
