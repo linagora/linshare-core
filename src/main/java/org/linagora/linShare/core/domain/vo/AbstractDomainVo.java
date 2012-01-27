@@ -92,7 +92,8 @@ public class AbstractDomainVo {
 	}
 
 	public void setDifferentialKey(String differentialKey) {
-		this.differentialKey = differentialKey;
+		if(differentialKey != null)
+		this.differentialKey = differentialKey.trim();
 	}
 
 	@Override
@@ -106,7 +107,8 @@ public class AbstractDomainVo {
 	}
 
 	public void setDefaultLocale(String defaultLocale) {
-		this.defaultLocale = defaultLocale;
+		if(defaultLocale != null)
+		this.defaultLocale = defaultLocale.trim();
 	}
 
 //	@Validate("required")
@@ -124,7 +126,8 @@ public class AbstractDomainVo {
 	}
 
 	public void setDomainDescription(String domainDescription) {
-		this.domainDescription = domainDescription;
+		if(domainDescription != null)
+		this.domainDescription = domainDescription.trim();
 	}
 
 	public boolean isTemplate() {
@@ -148,7 +151,8 @@ public class AbstractDomainVo {
 	}
 
 	public void setPolicyIdentifier(String policyIdentifier) {
-		this.policyIdentifier = policyIdentifier;
+		if(policyIdentifier != null)
+		this.policyIdentifier = policyIdentifier.trim();
 	}
 
 	public Long getUsedSpace() {
@@ -164,7 +168,8 @@ public class AbstractDomainVo {
 	}
 
 	public void setPatternIdentifier(String patternIdentifier) {
-		this.patternIdentifier = patternIdentifier;
+		if(patternIdentifier != null)
+		this.patternIdentifier = patternIdentifier.trim();
 	}
 
 	public String getLdapIdentifier() {
@@ -172,7 +177,8 @@ public class AbstractDomainVo {
 	}
 
 	public void setLdapIdentifier(String ldapIdentifier) {
-		this.ldapIdentifier = ldapIdentifier;
+		if(ldapIdentifier != null)
+		this.ldapIdentifier = ldapIdentifier.trim();
 	}
 
 }
