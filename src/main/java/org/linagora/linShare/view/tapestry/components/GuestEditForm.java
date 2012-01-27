@@ -45,9 +45,13 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.entities.GuestDomain;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.vo.GuestDomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.service.AbstractDomainService;
+import org.linagora.linShare.core.service.impl.AbstractDomainServiceImpl;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.pages.user.Index;
 import org.linagora.linShare.view.tapestry.services.Templating;
@@ -243,10 +247,17 @@ public class GuestEditForm {
     		// the message will be handled by Tapestry
     		return ;
     	}
-        if (userFacade.findUserInDb(mail, userLoggedIn.getDomainIdentifier()) != null) {
+    	
+    	    	
+    	GuestDomainVo guests = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
+    	
+        if (userFacade.findUserInDb(mail, userLoggedIn.getDomainIdentifier()) != null || userFacade.findUserInDb(mail, guests.getIdentifier()) != null ) {
             guestCreateForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
             userAlreadyExists = true;
             return ;
+        }else{
+        	
+        	
         }
         
 		
