@@ -68,8 +68,7 @@ public class DomainPattern {
 	}
 	
 	public void setDescription(String description) {
-		if(description != null)
-		this.description = description.trim();
+		this.description = description;
 	}
 
 	public String getGetUserCommand() {
@@ -77,8 +76,7 @@ public class DomainPattern {
 	}
 
 	public void setGetUserCommand(String getUserCommand) {
-		if(getUserCommand != null)
-		this.getUserCommand = getUserCommand.trim();
+		this.getUserCommand = getUserCommand;
 	}
 
 	public String getGetAllDomainUsersCommand() {
@@ -86,8 +84,7 @@ public class DomainPattern {
 	}
 
 	public void setGetAllDomainUsersCommand(String getAllDomainUsersCommand) {
-		if(getAllDomainUsersCommand != null)
-		this.getAllDomainUsersCommand = getAllDomainUsersCommand.trim();
+		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 	}
 
 	public String getAuthCommand() {
@@ -95,8 +92,7 @@ public class DomainPattern {
 	}
 
 	public void setAuthCommand(String authCommand) {
-		if(authCommand != null)
-		this.authCommand = authCommand.trim();
+		this.authCommand = authCommand;
 	}
 
 	public String getSearchUserCommand() {
@@ -104,8 +100,7 @@ public class DomainPattern {
 	}
 
 	public void setSearchUserCommand(String searchUserCommand) {
-		if(authCommand != null)
-		this.searchUserCommand = searchUserCommand.trim();
+		this.searchUserCommand = searchUserCommand;
 	}
 
 	public String getUserMail() {
@@ -113,8 +108,7 @@ public class DomainPattern {
 	}
 
 	public void setUserMail(String userMail) {
-		if(userMail != null)
-		this.userMail = userMail.trim();
+		this.userMail = userMail;
 	}
 
 	public String getUserFirstName() {
@@ -122,8 +116,7 @@ public class DomainPattern {
 	}
 
 	public void setUserFirstname(String userFirstName) {
-		if(userFirstName != null)
-		this.userFirstName = userFirstName.trim();
+		this.userFirstName = userFirstName;
 	}
 
 	public String getUserLastName() {
@@ -131,8 +124,7 @@ public class DomainPattern {
 	}
 
 	public void setUserLastName(String userLastName) {
-		if(userLastName != null)
-		this.userLastName = userLastName.trim();
+		this.userLastName = userLastName;
 	}
 
 	@Override

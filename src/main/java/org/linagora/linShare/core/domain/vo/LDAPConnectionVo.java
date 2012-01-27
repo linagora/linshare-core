@@ -32,7 +32,9 @@ public class LDAPConnectionVo {
 	
 	public void setIdentifier(String identifier) {
 		if(identifier!=null)
-		this.identifier = identifier.trim();
+			this.identifier = identifier.trim();
+		else
+			this.identifier = identifier;			
 	}
 	
 	@Validate("required")
@@ -47,7 +49,9 @@ public class LDAPConnectionVo {
 
 	public void setProviderUrl(String providerUrl) {
 		if(providerUrl!=null)
-		this.providerUrl = providerUrl.trim();
+			this.providerUrl = providerUrl.trim();
+		else
+			this.providerUrl = providerUrl;			
 	}
 
 	@Validate("required")
@@ -57,7 +61,9 @@ public class LDAPConnectionVo {
 
 	public void setSecurityAuth(String securityAuth) {
 		if(securityAuth!=null)
-		this.securityAuth = securityAuth.trim();
+			this.securityAuth = securityAuth.trim();
+		else
+			this.securityAuth = securityAuth;				
 	}
 
 	public String getSecurityPrincipal() {
@@ -66,7 +72,9 @@ public class LDAPConnectionVo {
 
 	public void setSecurityPrincipal(String securityPrincipal) {
 		if(securityPrincipal!=null)
-		this.securityPrincipal = securityPrincipal.trim();
+			this.securityPrincipal = securityPrincipal.trim();
+		else
+			this.securityPrincipal = securityPrincipal;		
 	}
 
 	public String getSecurityCredentials() {
@@ -75,7 +83,9 @@ public class LDAPConnectionVo {
 
 	public void setSecurityCredentials(String securityCredentials) {
 		if(securityCredentials!=null)
-		this.securityCredentials = securityCredentials.trim();
+			this.securityCredentials = securityCredentials.trim();
+		else
+			this.securityCredentials = securityCredentials;
 	}
 	
 	@Override
