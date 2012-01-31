@@ -20,13 +20,16 @@
  */
 package org.linagora.linShare.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -38,9 +41,13 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
+import org.linagora.linShare.core.exception.BusinessErrorCode;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.service.NotifierService;
+import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 
 /**
  * This class builds an email notification and sends the email.
@@ -106,7 +113,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 *            content.
 	 */
 	public void sendNotification(String fromUser, String recipient,
-			String subject, String htmlContent, String textContent) {
+			String subject, String htmlContent, String textContent) throws SendFailedException{
 
 		// get the mail session
 		Session session = getMailSession();
@@ -200,6 +207,9 @@ public class MailNotifierServiceImpl implements NotifierService {
 				// Send message
 				Transport.send(messageMim);
 			}
+		} catch (SendFailedException e) {
+			logger.error("Error sending notification on " + smtpServer + " port " + smtpPort +"to"+ recipient, e);
+			throw e;
 		} catch (MessagingException e) {
 			logger.error("Error sending notification on " + smtpServer + " port " + smtpPort, e);
 			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification", e);
@@ -240,10 +250,34 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 * Send notification giving a mailContainer object.
 	 */
 	public void sendNotification(String fromUser, String recipient,
-			MailContainer mailContainer) {
+			MailContainer mailContainer) throws SendFailedException{
 		sendNotification(fromUser, recipient, mailContainer.getSubject(),
 				mailContainer.getContentHTML(), mailContainer.getContentTXT());
 
+	}
+
+	
+	/**
+	 * Send multiple notifications giving a mailContainerWithRecipient object.
+	 */	
+	@Override
+	public void sendAllNotifications(String fromUser,
+			List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
+		
+		List<String> unknownRecipients = new ArrayList<String>();	
+		
+		for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
+			try {
+				sendNotification(fromUser,mailContainer.getRecipient(),mailContainer);
+			} catch (SendFailedException e) {
+				unknownRecipients.add(mailContainer.getRecipient());
+			}			
+		}
+		
+		if(!unknownRecipients.isEmpty()){
+			logger.error("Addresses unreachables : " + unknownRecipients.toString());
+			throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
+		}
 	}
 
 }

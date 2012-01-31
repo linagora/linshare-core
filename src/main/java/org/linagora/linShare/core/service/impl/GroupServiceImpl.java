@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.GroupUser;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -186,8 +188,16 @@ public class GroupServiceImpl implements GroupService {
 		
 		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, newGroupMember, groupPersistant, status);
 		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(manager, mailContainer, newGroupMember, groupPersistant);
-		notifierService.sendNotification(null, newGroupMember.getOwner().getMail(), mailContainerOwner);
-		notifierService.sendNotification(null, newGroupMember.getUser().getMail(), mailContainerNewMember);
+		
+		
+		
+		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		
+		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainerOwner, newGroupMember.getOwner().getMail()));
+		
+		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainerNewMember, newGroupMember.getUser().getMail()));
+		
+		notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
 	}
 
 	public void removeMember(Group group, User manager, User member) throws BusinessException {
@@ -258,8 +268,16 @@ public class GroupServiceImpl implements GroupService {
 		
 		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.ACCEPTED);
 		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(manager, mailContainer, groupMemberToUpdate, groupPersistant);
-		notifierService.sendNotification(null, groupMemberToUpdate.getOwner().getMail(), mailContainerOwner);
-		notifierService.sendNotification(null, groupMemberToUpdate.getUser().getMail(), mailContainerNewMember);
+		
+		
+		
+		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		
+		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainerOwner, groupMemberToUpdate.getOwner().getMail()));
+		
+		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainerNewMember, groupMemberToUpdate.getUser().getMail()));
+		
+		notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
 	}
 	
 	public void rejectNewMember(Group group, User manager, User memberToReject, MailContainer mailContainer) throws BusinessException {
@@ -279,7 +297,13 @@ public class GroupServiceImpl implements GroupService {
 			mailContainer = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.REJECTED);
 			removeMember(group, manager, memberToReject);
 			if (ownerMail != null) {
-				notifierService.sendNotification(null, ownerMail, mailContainer);
+				
+				
+				List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+
+				mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainer, ownerMail));			
+				
+				notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
 			}
 		}
 	}

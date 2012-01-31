@@ -58,6 +58,7 @@ import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
@@ -360,6 +361,8 @@ public class QuickSharePopup{
 	    	
 			//PROCESS SHARE
 			
+	    	Boolean errorOnAddress = false;
+	    	
 			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 			try {
 				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
@@ -367,16 +370,34 @@ public class QuickSharePopup{
 				sharing = shareFacade.createSharingWithMailUsingRecipientsEmail(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer);
 			
 			} catch (BusinessException e1) {
-				logger.error("Could not create sharing", e1);
-				businessMessagesManagementService.notify(e1);
+				
+				// IF RELAY IS DISABLE ON SMTP SERVER 
+				if(e1.getErrorCode() == BusinessErrorCode.RELAY_HOST_NOT_ENABLE){
+					logger.error("Could not create sharing, relay host is disable : ", e1);
+					
+					String buffer =  "";
+					String sep = "";
+					for (String extra : e1.getExtras()) {
+						buffer = buffer + sep + extra;
+						sep = ", ";
+					}
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+			                BusinessUserMessageType.UNREACHABLE_MAIL_ADDRESS, MessageSeverity.ERROR, buffer));
+					errorOnAddress = true;
+				} else {
+					logger.error("Could not create sharing, unkown BusinessException : ", e1);
+				}
 			}
 	
 			
 			if (sharing.getFailsItem().size()>0) {
 	    		businessMessagesManagementService.notify(new BusinessUserMessage(
 	                BusinessUserMessageType.QUICKSHARE_FAILED, MessageSeverity.ERROR));
-			} else {
-				
+			} else if (errorOnAddress) {
+				recipientFavouriteFacade.increment(userVo, recipientsEmail);
+				businessMessagesManagementService.notify(new BusinessUserMessage(
+	                BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
+			} else{
 				recipientFavouriteFacade.increment(userVo, recipientsEmail);
 				businessMessagesManagementService.notify(new BusinessUserMessage(
 	                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));

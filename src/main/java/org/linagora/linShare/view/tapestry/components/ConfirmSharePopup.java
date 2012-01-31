@@ -58,9 +58,14 @@ import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.utils.FileUtils;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.owasp.validator.html.AntiSamy;
@@ -179,6 +184,9 @@ public class ConfirmSharePopup{
 
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
+	
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;		
 	
     @Environmental
     private RenderSupport renderSupport;
@@ -410,6 +418,9 @@ public class ConfirmSharePopup{
 			e.printStackTrace();
 		}
 		
+        
+        Boolean errorOnAddress = false;
+        
 		SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 		try {
 			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
@@ -418,14 +429,32 @@ public class ConfirmSharePopup{
 
 		
 		} catch (BusinessException e1) {
-			logger.error("Could not create sharing", e1);
-			throw e1;
+			// IF RELAY IS DISABLE ON SMTP SERVER 
+			if(e1.getErrorCode() == BusinessErrorCode.RELAY_HOST_NOT_ENABLE){
+				logger.error("Could not create sharing, relay host is disable : ", e1);
+				
+				String buffer =  "";
+				String sep = "";
+				for (String extra : e1.getExtras()) {
+					buffer = buffer + sep + extra;
+					sep = ", ";
+				}
+				businessMessagesManagementService.notify(new BusinessUserMessage(
+		                BusinessUserMessageType.UNREACHABLE_MAIL_ADDRESS, MessageSeverity.ERROR, buffer));
+				errorOnAddress = true;
+			} else {
+				logger.error("Could not create sharing, unkown BusinessException : ", e1);
+			}
 		}
 
 		
 		shareSessionObjects=new ShareSessionObjects();
 		if (sharing.getFailsItem().size()>0) {
 			shareSessionObjects.addError(messages.get("components.confirmSharePopup.fail"));
+		} else if (errorOnAddress) {
+			recipientFavouriteFacade.increment(userVo, recipientsEmail);
+			businessMessagesManagementService.notify(new BusinessUserMessage(
+                BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
 		} else {
 			recipientFavouriteFacade.increment(userVo, recipientsEmail);
 			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));

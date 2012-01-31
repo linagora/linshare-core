@@ -20,27 +20,44 @@
 */
 package org.linagora.linShare.core.service;
 
+import java.util.List;
+
+import javax.mail.SendFailedException;
+
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
+import org.linagora.linShare.core.exception.BusinessException;
 
 /** Provides notification services.
  *
  */
 public interface NotifierService {
 	
-/**
- * Send notification to a recipient.
- * @param fromUser user who send the mail. can be null. if null put generic Linshare account.
- * @param recipient
- * @param subject
- * @param textContent alternative mail with text content
- * @param htmlContent html mail content
- */
-    public void sendNotification(String fromUser,String recipient, String subject, String htmlContent,String textContent);
+	/**
+	 * Send notification to a recipient.
+	 * @param fromUser user who send the mail. can be null. if null put generic Linshare account.
+	 * @param recipient
+	 * @param subject
+	 * @param textContent alternative mail with text content
+	 * @param htmlContent html mail content
+	 * @throws SendFailedException 
+	 */
+    public void sendNotification(String fromUser,String recipient, String subject, String htmlContent,String textContent) throws SendFailedException;
     
     /**
      * @param fromUser user who send the mail. can be null. if null put generic Linshare account.
      * @param recipient the recipient mail
      * @param mailContainer the mail container
+     * @throws SendFailedException 
      */
-    public void sendNotification(String fromUser,String recipient, MailContainer mailContainer);
+    public void sendNotification(String fromUser,String recipient, MailContainer mailContainer) throws SendFailedException;
+    
+    
+    /**
+     * @param fromUser user who send the mail. can be null. if null put generic Linshare account.
+     * @param mailContainerWithRecipient list of mail containers attached to recipients
+     * @throws BusinessException 
+     */
+    public void sendAllNotifications(String fromUser,List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException;
+    
 }
