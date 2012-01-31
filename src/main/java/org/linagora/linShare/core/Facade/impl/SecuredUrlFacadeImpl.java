@@ -30,6 +30,7 @@ import org.linagora.linShare.core.Facade.SecuredUrlFacade;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentAdapter;
@@ -124,9 +125,12 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 			docList.add(documentRepository.findById(documentVo.getIdentifier()));
 		}
 		
-		mailContainer = mailElementsFactory.buildMailAnonymousDownload(owner, mailContainer, docList, email, owner);
+		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		
+		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailAnonymousDownload(owner, mailContainer, docList, email, owner), owner.getMail()));		
+
 		//send a notification by mail to the owner
-		notifierService.sendNotification(null,owner.getMail(), mailContainer);
+		notifierService.sendAllNotifications(null,mailContainerWithRecipient_);
 	}
 	
 	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {

@@ -21,6 +21,7 @@
 package org.linagora.linShare.core.batches.impl;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -32,6 +33,7 @@ import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
@@ -155,10 +157,12 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
 	private void sendUpcomingDeletionNotification(Document document, Integer days) {
 		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
-		MailContainer mailContainerFinal;
 		try {
-			mailContainerFinal = mailBuilder.buildMailUpcomingOutdatedDocument(document.getOwner(), mailContainer, document, days);
-			notifierService.sendNotification(null, document.getOwner().getMail(), mailContainerFinal);
+
+			List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailBuilder.buildMailUpcomingOutdatedDocument(document.getOwner(), mailContainer, document, days), document.getOwner().getMail()));				
+						
+			notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
 		} catch (BusinessException e) {
 			logger.error("Can't create the email for "+document.getOwner().getMail());
 			e.printStackTrace();

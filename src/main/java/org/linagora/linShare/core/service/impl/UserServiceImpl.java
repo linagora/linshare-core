@@ -42,6 +42,7 @@ import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.GuestDomain;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
@@ -218,10 +219,13 @@ public class UserServiceImpl implements UserService {
 			
 			logEntryService.create(logEntry);
 			
-			mailContainer = mailElementsFactory.buildMailNewGuest(owner, mailContainer, owner, guest, password);
+			
+			
+			List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailNewGuest(owner, mailContainer, owner, guest, password), mail));		
 			
 			// Send an email to the guest.
-			notifierService.sendNotification(owner.getMail(), mail, mailContainer);
+			notifierService.sendAllNotifications(owner.getMail(), mailContainerWithRecipient_);
 			logger.info("Guest " + mail + " was successfully created.");
 			return guest;
 		} else {
@@ -662,10 +666,13 @@ public class UserServiceImpl implements UserService {
         String password = generatePassword();
         String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
         
-        mailContainer = mailElementsFactory.buildMailResetPassword(guest, mailContainer, guest, password);
-
+        
+        
+		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailResetPassword(guest, mailContainer, guest, password), guest.getMail()));
+        
         // Send an email to the guest.
-        notifierService.sendNotification(guest.getMail(), guest.getMail(), mailContainer);
+        notifierService.sendAllNotifications(guest.getMail(), mailContainerWithRecipient_);
         
 		guest.setPassword(hashedPassword);
 		guestRepository.update(guest);

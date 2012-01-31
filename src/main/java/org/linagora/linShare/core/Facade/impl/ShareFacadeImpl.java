@@ -35,6 +35,7 @@ import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
@@ -168,13 +169,21 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		User owner_ = userRepository.findByLogin(owner.getLogin());
+		
+		
+		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		
+		
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLogin(userVo.getLogin());
 			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
-			MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString);
-			notifierService.sendNotification(owner.getMail(),userVo.getMail(), mailContainer_);
+			
+			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailNewSharing(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString), userVo.getMail()));
+
 		}
+		
+		notifierService.sendAllNotifications(owner.getMail(),mailContainerWithRecipient_);
 		logger.debug("createSharingWithMail:End");
 		return result;
 	}
@@ -364,15 +373,18 @@ public class ShareFacadeImpl implements ShareFacade {
 				//securedUrl must be ended with a "/" if no parameter (see urlparam)
 				String linShareUrl = httpUrlBase.toString();
 				
-				
+				List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+
 				for (Contact oneContact : unKnownRecipientsEmail) {
 					
 					//give email as a parameter, useful to quickly know who is here
 					String linShareUrlParam = "?email=" + oneContact.getMail();
 					User owner_ = userRepository.findByLogin(ownerVo.getLogin());
-					MailContainer mailContainer_ = mailElementsFactory.buildMailNewSharing(owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, password, isOneDocEncrypted, jwsEncryptUrlString);
-					notifierService.sendNotification(ownerVo.getMail(), oneContact.getMail(), mailContainer_);
+					
+					mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailNewSharing(owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, password, isOneDocEncrypted, jwsEncryptUrlString), oneContact.getMail()));	
 				}
+				
+				notifierService.sendAllNotifications(ownerVo.getMail(), mailContainerWithRecipient_);
 			
 			} else {
 				for (DocumentVo doc : documents) {
@@ -402,8 +414,10 @@ public class ShareFacadeImpl implements ShareFacade {
 		List<Document> docList = new ArrayList<Document>();
 		docList.add(doc);
 		
-		mailContainer = mailElementsFactory.buildMailRegisteredDownload(owner, mailContainer, docList, user, owner);
-		notifierService.sendNotification(currentUser.getMail(),owner.getMail(), mailContainer);
+		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailRegisteredDownload(owner, mailContainer, docList, user, owner), owner.getMail()));
+		
+		notifierService.sendAllNotifications(currentUser.getMail(),mailContainerWithRecipient_);
     }
     
     public void sendSharedUpdateDocNotification(DocumentVo currentDoc,
@@ -427,21 +441,30 @@ public class ShareFacadeImpl implements ShareFacade {
 			sUrlDownload = sUrlBase.concat(securedUrl.getUrlPath()+"/");
 			sUrlDownload = sUrlDownload.concat(securedUrl.getAlea());
 			
-    		for (Contact contact : recipients) {
+    		
+			List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+
+			
+			for (Contact contact : recipients) {
     			String urlparam = "?email="+contact.getMail();
-    			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(user, mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, sUrlDownload, urlparam);
-    			notifierService.sendNotification(currentUser.getMail(),contact.getMail(), mailContainer_);
+    			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailSharedDocUpdated(user, mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, sUrlDownload, urlparam), contact.getMail()));
 			}
+    		
+    		notifierService.sendAllNotifications(currentUser.getMail(),mailContainerWithRecipient_);
 		}
 		
     	//2) normal share, notification to guest and internal user
 		List<Share> listShare = shareService.getSharesLinkedToDocument(doc);
+			
+		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
 		
 		for (Share share : listShare) {
 			sUrlDownload = share.getReceiver().getUserType().equals(UserType.GUEST) ? urlBase : urlInternal;
-			MailContainer mailContainer_ = mailElementsFactory.buildMailSharedDocUpdated(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, "");
-			notifierService.sendNotification(currentUser.getMail(),share.getReceiver().getMail(), mailContainer_);
+			
+			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailSharedDocUpdated(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, ""), share.getReceiver().getMail()));
 		}
+		notifierService.sendAllNotifications(currentUser.getMail(),mailContainerWithRecipient_);
+
     	
     }
     
@@ -500,12 +523,23 @@ public class ShareFacadeImpl implements ShareFacade {
 				String functionalMail = group.getFunctionalEmail();
 				if (functionalMail != null && functionalMail.length() > 0) {
 					mailContainer = mailElementsFactory.buildMailNewGroupSharing(owner, mailContainer, owner, group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString);
-					notifierService.sendNotification(owner.getMail(),functionalMail, mailContainer);
+					
+					
+					List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+					mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainer, functionalMail));
+	
+					notifierService.sendAllNotifications(owner.getMail(),mailContainerWithRecipient_);
 				} else {
+					
+					List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+
+			    	
 					for (GroupMember member : group.getMembers()) {
-						MailContainer mailContainer_ = mailElementsFactory.buildMailNewGroupSharing(owner, mailContainer, owner, member.getUser(), group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString);
-						notifierService.sendNotification(owner.getMail(), member.getUser().getMail(), mailContainer_);
+						
+						mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailNewGroupSharing(owner, mailContainer, owner, member.getUser(), group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString), member.getUser().getMail()));
+						
 					}
+					notifierService.sendAllNotifications(owner.getMail(), mailContainerWithRecipient_);
 				}
 			}
 		}
