@@ -141,9 +141,6 @@ public class Index {
 	@InjectComponent
 	private CreateGroupPopup createGroupPopup;
     
-	@Property
-	private boolean showGroups;
-
 	@Component(parameters = { "style=bluelighting", "show=false", "width=500",
 			"height=100" })
 	private WindowWithEffects windowConfirmDeleteMembership;
@@ -163,44 +160,42 @@ public class Index {
 
 	@SetupRender
 	public void setupRender() {
-		if (showGroups) {
-			if (shareSessionObjects.isReloadGroupsNeeded()) {
-				groups = null;
-				group = null;
-				shareSessionObjects.setReloadGroupsNeeded(false);
+		if (shareSessionObjects.isReloadGroupsNeeded()) {
+			groups = null;
+			group = null;
+			shareSessionObjects.setReloadGroupsNeeded(false);
+		}
+
+		if (groups == null) { // first display of the page for the session
+			groups = groupFacade.findByUser(userVo.getLogin());
+			if (groups != null && groups.size() > 0) {
+				group = groups.get(0); // display the first group of the list
 			}
-	
-			if (groups == null) { // first display of the page for the session
-				groups = groupFacade.findByUser(userVo.getLogin());
-				if (groups != null && groups.size() > 0) {
-					group = groups.get(0); // display the first group of the list
-				}
-				blockIds = new ArrayList<String>(); // tabset titles
-				for (GroupVo groupForBlock : groups) {
-					blockIds.add(groupForBlock.getName());
+			blockIds = new ArrayList<String>(); // tabset titles
+			for (GroupVo groupForBlock : groups) {
+				blockIds.add(groupForBlock.getName());
+			}
+		}
+
+		if (group != null) {// at least one group membership for this user
+			documents = shareFacade.getAllSharingReceivedByUser(group
+					.getGroupUser());
+
+			List<GroupMemberVo> groupMembers = new ArrayList<GroupMemberVo>(
+					group.getMembers());
+			members = new ArrayList<GroupMemberVo>();
+			waitingForApprovalMembers = new ArrayList<GroupMemberVo>();
+
+			for (GroupMemberVo groupMemberVo : groupMembers) {
+				if (groupMemberVo.isWaitingForApproval()) {
+					waitingForApprovalMembers.add(groupMemberVo);
+				} else {
+					members.add(groupMemberVo);
 				}
 			}
-	
-			if (group != null) {// at least one group membership for this user
-				documents = shareFacade.getAllSharingReceivedByUser(group
-						.getGroupUser());
-	
-				List<GroupMemberVo> groupMembers = new ArrayList<GroupMemberVo>(
-						group.getMembers());
-				members = new ArrayList<GroupMemberVo>();
-				waitingForApprovalMembers = new ArrayList<GroupMemberVo>();
-	
-				for (GroupMemberVo groupMemberVo : groupMembers) {
-					if (groupMemberVo.isWaitingForApproval()) {
-						waitingForApprovalMembers.add(groupMemberVo);
-					} else {
-						members.add(groupMemberVo);
-					}
-				}
-	
-				sorterModel = new MemberSorterModel(members);
-				memberConnected = group.findMember(userVo.getLogin());
-			}
+
+			sorterModel = new MemberSorterModel(members);
+			memberConnected = group.findMember(userVo.getLogin());
 		}
 	}
 

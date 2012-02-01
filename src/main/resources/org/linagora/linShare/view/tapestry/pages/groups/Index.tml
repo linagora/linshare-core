@@ -2,8 +2,6 @@
 <t:MyBorderLayout t:title="message:pages.groups.index.title" t:identifier="groups" t:currentHighlight="groups"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-<t:if test="${showGroups}">
-
 	<div id="content">
 
 		<h1>${message:components.myborderlayout.group.title}</h1>
@@ -205,18 +203,11 @@
 	</div>
 	
 	
-<t:parameter name="else">
-	<div id="content">
-		<p>${message:pages.groups.message.notActivated}</p>
-	</div>
-</t:parameter>
-</t:if>
-	
 	<!-- Actions widget -->
 	<t:parameter name="actionsWidget">
 		<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
 			<ul>
-				<t:if test="${showGroups}">
+				
 				<li>
 					<t:actionLink t:id="createGroup" t:zone="createGroupZone">
 					<span onclick="createGroupWindow.showCenter(true);">
@@ -224,7 +215,6 @@
 					</span>
 					</t:actionLink>
 				</li>
-				</t:if>
 				<t:if test="${haveAtLeastOneGroup}">
 					<t:if test="memberConnected.allowedToManageGroup">
 					<li>
