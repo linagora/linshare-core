@@ -364,7 +364,7 @@ public class ShareServiceImpl implements ShareService{
 		List<Share> listShare = shareRepository.getSharesLinkedToDocument(doc);
 		
 		
-		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
 
 			
 		for (Share share : listShare) {
@@ -375,35 +375,37 @@ public class ShareServiceImpl implements ShareService{
 				}
 				else { //user sharing
 					
-					mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailBuilder.buildMailSharedFileDeleted(actor, mailContainer, doc, actor, share.getReceiver()), share.getReceiver().getMail()));
+					mailContainerWithRecipient.add(mailBuilder.buildMailSharedFileDeletedWithRecipient(actor, mailContainer, doc, actor, share.getReceiver()));
 					
-					notifierService.sendAllNotifications(null,mailContainerWithRecipient_);
 				}
 			}
 			deleteShare(share, actor);
 		}
+		
+		notifierService.sendAllNotifications(null,mailContainerWithRecipient);
+
 		
 		doc.setShared(false);
 		doc.setSharedWithGroup(false);
 		
 		//2)delete secure url if we need
 		
+		mailContainerWithRecipient.clear();
+		
 		List<SecuredUrl> listSecuredUrl = securedUrlRepository.getSecureUrlLinkedToDocument(doc);
 		for (SecuredUrl securedUrl : listSecuredUrl) {
 			if (mailContainer!=null) { //if notification is needed
 				List<Contact> recipients = securedUrl.getRecipients();
-				
-				List<MailContainerWithRecipient> mailContainerWithRecipient__ = new ArrayList<MailContainerWithRecipient>();
-
-				
+								
 				for (Contact contact : recipients) {	
-					mailContainerWithRecipient__.add(new MailContainerWithRecipient(mailBuilder.buildMailSharedFileDeleted(actor, mailContainer, doc, actor, contact), contact.getMail()));
+					mailContainerWithRecipient.add(mailBuilder.buildMailSharedFileDeletedWithRecipient(actor, mailContainer, doc, actor, contact));
 				}
-				notifierService.sendAllNotifications(null, mailContainerWithRecipient__);
 			}
 			
 			securedUrlRepository.delete(securedUrl);
 		}
+		notifierService.sendAllNotifications(null, mailContainerWithRecipient);
+
 	}
 	
 	
@@ -553,30 +555,31 @@ public class ShareServiceImpl implements ShareService{
 		//securedUrl must be ended with a "/" if no parameter (see urlparam)
 		String securedUrlBase = httpUrlBase.toString();
 		
-		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
 
+		try {
 		
-		for (Contact recipient : securedUrl.getRecipients()) {
-			String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
-			try {
+			for (Contact recipient : securedUrl.getRecipients()) {
+				String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
 				
-				mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailBuilder.buildMailUpcomingOutdatedSecuredUrl(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam), recipient.getMail()));
-				
-				notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
-			} catch (BusinessException e) {
-				logger.error("Error while trying to notify upcoming outdated secured url", e);
+				mailContainerWithRecipient.add(mailBuilder.buildMailUpcomingOutdatedSecuredUrlWithRecipient(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam));
 			}
+			notifierService.sendAllNotifications(null, mailContainerWithRecipient);
+		
+		} catch (BusinessException e) {
+			logger.error("Error while trying to notify upcoming outdated secured url", e);
 		}
+
 	}
 	
 	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
 			Share share, Integer days) {
 		try {
 			
-			List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
-			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailBuilder.buildMailUpcomingOutdatedShare(share.getSender(), mailContainer, share, days), share.getReceiver().getMail()));
+			List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
+			mailContainerWithRecipient.add(mailBuilder.buildMailUpcomingOutdatedShareWithRecipient(share.getSender(), mailContainer, share, days));
 
-			notifierService.sendAllNotifications(null,mailContainerWithRecipient_);
+			notifierService.sendAllNotifications(null,mailContainerWithRecipient);
 		} catch (BusinessException e) {
 				logger.error("Error while trying to notify upcoming outdated share", e);
 		}
@@ -653,21 +656,21 @@ public class ShareServiceImpl implements ShareService{
 		String functionalMail = group.getFunctionalEmail();
 		
 		
-		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
 		
 		if (functionalMail != null && functionalMail.length() > 0) {
 			
-			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailBuilder.buildMailGroupSharingDeleted(manager, mailContainer, manager, group, doc), functionalMail));
+			mailContainerWithRecipient.add(mailBuilder.buildMailGroupSharingDeletedWithRecipient(manager, mailContainer, manager, group, doc));
 			
-			notifierService.sendAllNotifications(manager.getMail(),mailContainerWithRecipient_);
 		} else {
 			
 			for (GroupMember member : group.getMembers()) {
 				
-				mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailBuilder.buildMailGroupSharingDeleted(manager, mailContainer, manager, member.getUser(), group, doc), member.getUser().getMail()));
-				notifierService.sendAllNotifications(manager.getMail(),mailContainerWithRecipient_);
+				mailContainerWithRecipient.add(mailBuilder.buildMailGroupSharingDeletedWithRecipient(manager, mailContainer, manager, member.getUser(), group, doc));
+				
 			}
 		}
+		notifierService.sendAllNotifications(manager.getMail(),mailContainerWithRecipient);
 	}
 	
 

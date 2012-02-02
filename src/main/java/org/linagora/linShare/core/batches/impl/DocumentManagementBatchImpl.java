@@ -158,11 +158,8 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	private void sendUpcomingDeletionNotification(Document document, Integer days) {
 		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
 		try {
-
-			List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
-			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailBuilder.buildMailUpcomingOutdatedDocument(document.getOwner(), mailContainer, document, days), document.getOwner().getMail()));				
 						
-			notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
+			notifierService.sendAllNotifications(null, mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient(document.getOwner(), mailContainer, document, days));
 		} catch (BusinessException e) {
 			logger.error("Can't create the email for "+document.getOwner().getMail());
 			e.printStackTrace();
