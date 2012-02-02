@@ -363,6 +363,9 @@ public interface MailContentBuildingService {
 			MailContainer mailContainer, Share share, Integer days) 
 			throws BusinessException;
 	
+	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedShareWithOneRecipient(User actor,
+			MailContainer mailContainer, Share share, Integer days) 
+			throws BusinessException;	
 
 	/**
 	 * Notify a user that an outdated document will be soon deleted (secured storage disabled)

@@ -126,7 +126,7 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		}
 		
 		//send a notification by mail to the owner
-		notifierService.sendAllNotifications(null,mailElementsFactory.buildMailAnonymousDownloadWithOneRecipient(owner, mailContainer, docList, email, owner));
+		notifierService.sendAllNotifications(mailElementsFactory.buildMailAnonymousDownloadWithOneRecipient(owner, mailContainer, docList, email, owner));
 	}
 	
 	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {

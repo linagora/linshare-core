@@ -159,7 +159,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
 		try {
 						
-			notifierService.sendAllNotifications(null, mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient(document.getOwner(), mailContainer, document, days));
+			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient(document.getOwner(), mailContainer, document, days));
 		} catch (BusinessException e) {
 			logger.error("Can't create the email for "+document.getOwner().getMail());
 			e.printStackTrace();

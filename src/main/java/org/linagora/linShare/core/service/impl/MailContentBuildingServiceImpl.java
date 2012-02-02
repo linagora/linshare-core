@@ -131,8 +131,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @param personalMessage
 	 * @throws BusinessException
 	 */
-	private MailContainer buildMailContainer(User actor, final MailContainer mailContainerInitial, String subject, String bodyTXT, String bodyHTML, User recipient, User owner, String personalMessage) throws BusinessException {
-		MailContainer mailContainer = new MailContainer(mailContainerInitial);
+	private void buildMailContainerSetProperties(User actor, MailContainer mailContainer, String subject, String bodyTXT, String bodyHTML, User recipient, User owner, String personalMessage) throws BusinessException {
 		MailTemplate greetings = buildTemplateGreetings(actor, mailContainer.getLanguage(), recipient);
 		MailTemplate footer = buildTemplateFooter(actor, mailContainer.getLanguage());
 		String contentTXT = this.mailContentTxt;
@@ -176,8 +175,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         mailContainer.setContentTXT(contentTXT);
         mailContainer.setContentHTML(contentHTML);
         mailContainer.setSubject(subject);
-        
-        return mailContainer;
+        	
 	}
 	
 	/**
@@ -192,52 +190,27 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @param personalMessage
 	 * @throws BusinessException
 	 */
+	private MailContainer buildMailContainer(User actor, final MailContainer mailContainerInitial, String subject, String bodyTXT, String bodyHTML, User recipient, User owner, String personalMessage) throws BusinessException {
+		MailContainer mailContainer = new MailContainer(mailContainerInitial);
+		buildMailContainerSetProperties(actor, mailContainer, subject,  bodyTXT,  bodyHTML,  recipient,  owner,  personalMessage);
+		return mailContainer;
+	}
+	
+	/**
+	 * Build the final mail content with recipient.
+	 * 
+	 * @param mailContainer
+	 * @param subject
+	 * @param bodyTXT
+	 * @param bodyHTML
+	 * @param recipient
+	 * @param owner
+	 * @param personalMessage
+	 * @throws BusinessException
+	 */
 	private MailContainerWithRecipient buildMailContainerWithRecipient(User actor, final MailContainer mailContainerInitial, String subject, String bodyTXT, String bodyHTML, User recipient, User owner, String personalMessage) throws BusinessException {
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(mailContainerInitial,recipient.getMail());
-		MailTemplate greetings = buildTemplateGreetings(actor, mailContainer.getLanguage(), recipient);
-		MailTemplate footer = buildTemplateFooter(actor, mailContainer.getLanguage());
-		String contentTXT = this.mailContentTxt;
-		String contentHTML = null;
-		if (displayLogo) {
-			contentHTML = this.mailContentHTML;
-		} else {
-			contentHTML = this.mailContentHTMLWithoutLogo;
-		}
-		
-		if (personalMessage != null && personalMessage.trim().length() > 0) {
-			MailTemplate personalMessageTemplate = buildTemplatePersonalMessage(actor, mailContainer.getLanguage(), owner, personalMessage);
-
-			contentTXT = StringUtils.replace(contentTXT, "${personalMessage}", personalMessageTemplate.getContentTXT());
-	        contentHTML = StringUtils.replace(contentHTML, "${personalMessage}", personalMessageTemplate.getContentHTML());
-			contentTXT = StringUtils.replace(contentTXT, "%{personalMessage}", personalMessageTemplate.getContentTXT());
-	        contentHTML = StringUtils.replace(contentHTML, "%{personalMessage}", personalMessageTemplate.getContentHTML());
-		}
-		else {
-			contentTXT = StringUtils.replace(contentTXT, "${personalMessage}", "");
-	        contentHTML = StringUtils.replace(contentHTML, "${personalMessage}", "");
-			contentTXT = StringUtils.replace(contentTXT, "%{personalMessage}", "");
-	        contentHTML = StringUtils.replace(contentHTML, "%{personalMessage}", "");
-		}
-		
-        contentTXT = StringUtils.replace(contentTXT, "${greetings}", greetings.getContentTXT());
-        contentTXT = StringUtils.replace(contentTXT, "${footer}", footer.getContentTXT());
-        contentTXT = StringUtils.replace(contentTXT, "${body}", bodyTXT);
-        contentHTML = StringUtils.replace(contentHTML, "${greetings}", greetings.getContentHTML());
-        contentHTML = StringUtils.replace(contentHTML, "${footer}", footer.getContentHTML());
-        contentHTML = StringUtils.replace(contentHTML, "${body}", bodyHTML);
-        contentHTML = StringUtils.replace(contentHTML, "${mailSubject}", subject);
-        contentTXT = StringUtils.replace(contentTXT, "%{greetings}", greetings.getContentTXT());
-        contentTXT = StringUtils.replace(contentTXT, "%{footer}", footer.getContentTXT());
-        contentTXT = StringUtils.replace(contentTXT, "%{body}", bodyTXT);
-        contentHTML = StringUtils.replace(contentHTML, "%{greetings}", greetings.getContentHTML());
-        contentHTML = StringUtils.replace(contentHTML, "%{footer}", footer.getContentHTML());
-        contentHTML = StringUtils.replace(contentHTML, "%{body}", bodyHTML);
-        contentHTML = StringUtils.replace(contentHTML, "%{mailSubject}", subject);
-        
-        mailContainer.setContentTXT(contentTXT);
-        mailContainer.setContentHTML(contentHTML);
-        mailContainer.setSubject(subject);
-        
+        buildMailContainerSetProperties(actor, mailContainer, subject,  bodyTXT,  bodyHTML,  recipient,  owner,  personalMessage);;
         return mailContainer;
 	}	
 	
@@ -1353,6 +1326,30 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return buildMailContainerWithRecipient(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), share.getReceiver(), null, null);
 
 	}	
+	
+	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedShareWithOneRecipient(User actor, 
+			MailContainer mailContainer, Share share, Integer days) throws BusinessException {
+		
+		String linShareUrl = share.getReceiver().getUserType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
+
+		MailTemplate template1 = buildTemplateUpcomingOutdatedShare(actor, mailContainer.getLanguage(), share, days);
+		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");
+		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPCOMING_OUTDATED);
+        
+		StringBuffer contentTXT = new StringBuffer();
+		StringBuffer contentHTML = new StringBuffer();
+		contentTXT.append(template1.getContentTXT() + "\n");
+		contentTXT.append(template2.getContentTXT() + "\n");
+		contentHTML.append(template1.getContentHTML() + "<br />");
+		contentHTML.append(template2.getContentHTML() + "<br />");
+		
+		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
+
+		mailContainerWithRecipient.add(buildMailContainerWithRecipient(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), share.getReceiver(), null, null));
+		
+		return mailContainerWithRecipient;
+
+	}		
 	
 	public MailContainer buildMailUpcomingOutdatedDocument(User actor, 
 			MailContainer mailContainer, Document document, Integer days)
