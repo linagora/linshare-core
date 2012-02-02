@@ -125,12 +125,8 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 			docList.add(documentRepository.findById(documentVo.getIdentifier()));
 		}
 		
-		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
-		
-		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailAnonymousDownload(owner, mailContainer, docList, email, owner), owner.getMail()));		
-
 		//send a notification by mail to the owner
-		notifierService.sendAllNotifications(null,mailContainerWithRecipient_);
+		notifierService.sendAllNotifications(null,mailElementsFactory.buildMailAnonymousDownloadWithOneRecipient(owner, mailContainer, docList, email, owner));
 	}
 	
 	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {

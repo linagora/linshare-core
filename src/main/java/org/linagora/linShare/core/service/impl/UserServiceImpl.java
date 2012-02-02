@@ -220,12 +220,8 @@ public class UserServiceImpl implements UserService {
 			logEntryService.create(logEntry);
 			
 			
-			
-			List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
-			mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailNewGuest(owner, mailContainer, owner, guest, password), mail));		
-			
 			// Send an email to the guest.
-			notifierService.sendAllNotifications(owner.getMail(), mailContainerWithRecipient_);
+			notifierService.sendAllNotifications(owner.getMail(), mailElementsFactory.buildMailNewGuestWithOneRecipient(owner, mailContainer, owner, guest, password));
 			logger.info("Guest " + mail + " was successfully created.");
 			return guest;
 		} else {
@@ -667,12 +663,8 @@ public class UserServiceImpl implements UserService {
         String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
         
         
-        
-		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
-		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailElementsFactory.buildMailResetPassword(guest, mailContainer, guest, password), guest.getMail()));
-        
         // Send an email to the guest.
-        notifierService.sendAllNotifications(guest.getMail(), mailContainerWithRecipient_);
+        notifierService.sendAllNotifications(guest.getMail(), mailElementsFactory.buildMailResetPasswordWithOneRecipient(guest, mailContainer, guest, password));
         
 		guest.setPassword(hashedPassword);
 		guestRepository.update(guest);

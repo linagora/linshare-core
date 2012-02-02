@@ -28,6 +28,7 @@ import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
@@ -50,7 +51,7 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailAnonymousDownload(User actor,
 			MailContainer mailContainer, List<Document> docs, String email,
 			User recipient) throws BusinessException;
-
+	
 	/**
 	 * Notify a user that shared files has been downloaded
 	 * by a registered user
@@ -58,6 +59,7 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailRegisteredDownload(User actor,
 			MailContainer mailContainer, List<Document> docs,
 			User downloadingUser, User recipient) throws BusinessException;
+	
 
 	/**
 	 * Notify somebody that his linshare account has been created
@@ -65,6 +67,7 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailNewGuest(User actor,MailContainer mailContainer,
 			User owner, User recipient, String password)
 			throws BusinessException;
+
 
 	/**
 	 * Notify a guest user of his new password
@@ -141,7 +144,8 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailGroupSharingDeleted(User actor,
 			MailContainer mailContainer, User manager, User user, Group group, Document doc)
 			throws BusinessException;
-
+	
+	
 	/**
 	 * Notify sbdy who request the membership of another user for a group
 	 * of the status of his request
@@ -167,6 +171,7 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailSharedFileDeleted(User actor,
 			MailContainer mailContainer, Document doc, User owner, Contact receiver)
 			throws BusinessException;
+	
 
 	/**
 	 * Notify a user that received a share that the share will soon be deleted
@@ -178,10 +183,197 @@ public interface MailContentBuildingService {
 	public MailContainer buildMailUpcomingOutdatedShare(User actor,
 			MailContainer mailContainer, Share share, Integer days) 
 			throws BusinessException;
+	
 
 	/**
 	 * Notify a user that an outdated document will be soon deleted (secured storage disabled)
 	 */
 	public MailContainer buildMailUpcomingOutdatedDocument(User actor,
 			MailContainer mailContainer, Document document, Integer days) throws BusinessException;
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * WithRecipicient Functions
+	 */
+	
+	
+	
+	
+	/**
+	 * Notify a user that shared files has been downloaded
+	 * by an anonymous user
+	 */
+	public MailContainerWithRecipient buildMailAnonymousDownloadWithRecipient(User actor,
+			MailContainer mailContainer, List<Document> docs, String email,
+			User recipient) throws BusinessException;
+
+	public List<MailContainerWithRecipient> buildMailAnonymousDownloadWithOneRecipient(User actor,
+			MailContainer mailContainer, List<Document> docs, String email,
+			User recipient) throws BusinessException;	
+	
+	/**
+	 * Notify a user that shared files has been downloaded
+	 * by a registered user
+	 */
+	public MailContainerWithRecipient buildMailRegisteredDownloadWithRecipient(User actor,
+			MailContainer mailContainer, List<Document> docs,
+			User downloadingUser, User recipient) throws BusinessException;
+	
+
+	public List<MailContainerWithRecipient> buildMailRegisteredDownloadWithOneRecipient(User actor,
+			MailContainer mailContainer, List<Document> docs,
+			User downloadingUser, User recipient) throws BusinessException;
+	
+	/**
+	 * Notify somebody that his linshare account has been created
+	 */
+	public MailContainerWithRecipient buildMailNewGuestWithRecipient(User actor,MailContainer mailContainer,
+			User owner, User recipient, String password)
+			throws BusinessException;
+
+	public List<MailContainerWithRecipient> buildMailNewGuestWithOneRecipient(User actor,MailContainer mailContainer,
+			User owner, User recipient, String password)
+			throws BusinessException;
+
+	/**
+	 * Notify a guest user of his new password
+	 */
+	public MailContainerWithRecipient buildMailResetPasswordWithRecipient(User actor,MailContainer mailContainer,
+			User recipient, String password) throws BusinessException;
+
+	public List<MailContainerWithRecipient> buildMailResetPasswordWithOneRecipient(User actor,MailContainer mailContainer,
+			User recipient, String password) throws BusinessException;
+
+	/**
+	 * Notify a user that he received new sharing
+	 */
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer,
+			User owner, User recipient, List<DocumentVo> docs,
+			String linShareUrl, String linShareUrlParam, String password, 
+			boolean hasToDecrypt, String jwsEncryptUrl)
+			throws BusinessException;
+
+	/**
+	 * Notify a user that he received new sharing
+	 */
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer,
+			User owner, String recipientMail, List<DocumentVo> docs, String linShareUrl,
+			String linShareUrlParam, String password, 
+			boolean hasToDecrypt, String jwsEncryptUrl)
+			throws BusinessException;
+
+	/**
+	 * Notify a user that some shared files has been updated
+	 * by the sender
+	 */
+	public MailContainerWithRecipient buildMailSharedDocUpdatedWithRecipient(User actor,MailContainer mailContainer,
+			User owner, User recipient, Document document, String oldDocName,
+			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
+			throws BusinessException;
+
+	/**
+	 * Notify a user that some shared files has been updated
+	 * by the sender
+	 */
+	public MailContainerWithRecipient buildMailSharedDocUpdatedWithRecipient(User actor,MailContainer mailContainer,
+			User owner, String recipientMail, Document document, String oldDocName,
+			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
+			throws BusinessException;
+
+	/**
+	 * Notify a user that the group received new sharing
+	 */
+	public MailContainerWithRecipient buildMailNewGroupSharingWithRecipient(User actor,MailContainer mailContainer,
+			User owner, User recipient, Group group, List<ShareDocumentVo> docs,
+			String linShareUrl, String linShareUrlParam,
+			boolean isOneDocEncrypted, String jwsEncryptUrlString)
+			throws BusinessException;
+
+	/**
+	 * Notify a group (functional email) for a new sharing
+	 * @param jwsEncryptUrlString 
+	 * @param isOneDocEncrypted 
+	 */
+	public MailContainerWithRecipient buildMailNewGroupSharingWithRecipient(User actor,MailContainer mailContainer,
+			User owner, Group group, List<ShareDocumentVo> docs,
+			String linShareUrl, String linShareUrlParam,
+			boolean isOneDocEncrypted, String jwsEncryptUrlString)
+			throws BusinessException;
+
+	/**
+	 * Notify a group (functional email) that a sharing has been deleted
+	 */
+	public MailContainerWithRecipient buildMailGroupSharingDeletedWithRecipient(User actor,
+			MailContainer mailContainer, User manager, Group group, Document doc)
+			throws BusinessException;
+
+	/**
+	 * Notify user that a group sharing has been deleted
+	 */
+	public MailContainerWithRecipient buildMailGroupSharingDeletedWithRecipient(User actor,
+			MailContainer mailContainer, User manager, User user, Group group, Document doc)
+			throws BusinessException;
+	
+	
+	/**
+	 * Notify sbdy who request the membership of another user for a group
+	 * of the status of his request
+	 */
+	public MailContainerWithRecipient buildMailGroupMembershipStatusWithRecipient(User actor,MailContainer mailContainer, 
+			GroupMember newMember, Group group, GroupMembershipStatus status)
+			throws BusinessException;
+	
+	public List<MailContainerWithRecipient> buildMailGroupMembershipStatusWithOneRecipient(User actor,MailContainer mailContainer, 
+			GroupMember newMember, Group group, GroupMembershipStatus status)
+			throws BusinessException;	
+	
+	/**
+	 * Notify a user that he is now member of one group
+	 */
+	public MailContainerWithRecipient buildMailNewGroupMemberWithRecipient(User actor,
+			MailContainer mailContainer, GroupMember newMember, Group group) 
+			throws BusinessException;
+
+	/**
+	 * Notify a user that a received shared file is about to be deleted by its owner.
+	 */
+	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(User actor,
+			MailContainer mailContainer, Document doc, User owner, User receiver)
+			throws BusinessException;
+
+	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(User actor,
+			MailContainer mailContainer, Document doc, User owner, Contact receiver)
+			throws BusinessException;
+	
+
+	/**
+	 * Notify a user that received a share that the share will soon be deleted
+	 */
+	public MailContainerWithRecipient buildMailUpcomingOutdatedSecuredUrlWithRecipient(User actor,
+			MailContainer mailContainer, SecuredUrl securedUrl,
+			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
+
+	public MailContainerWithRecipient buildMailUpcomingOutdatedShareWithRecipient(User actor,
+			MailContainer mailContainer, Share share, Integer days) 
+			throws BusinessException;
+	
+
+	/**
+	 * Notify a user that an outdated document will be soon deleted (secured storage disabled)
+	 */
+	public MailContainerWithRecipient buildMailUpcomingOutdatedDocumentWithRecipient(User actor,
+			MailContainer mailContainer, Document document, Integer days) throws BusinessException;
+
+	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedDocumentWithOneRecipient(User actor, 
+			MailContainer mailContainer, Document document, Integer days)
+			throws BusinessException;
+	
+	
+	
 }

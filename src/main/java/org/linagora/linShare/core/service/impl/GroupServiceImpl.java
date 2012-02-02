@@ -184,20 +184,15 @@ public class GroupServiceImpl implements GroupService {
 					+ manager.getLogin() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't add Member to the group " + group.getName());
 		}
-
-		
-		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, newGroupMember, groupPersistant, status);
-		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(manager, mailContainer, newGroupMember, groupPersistant);
 		
 		
+		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
 		
-		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		mailContainerWithRecipient.add(mailElementsFactory.buildMailGroupMembershipStatusWithRecipient(manager, mailContainer, newGroupMember, groupPersistant, status));
 		
-		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainerOwner, newGroupMember.getOwner().getMail()));
+		mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupMemberWithRecipient(manager, mailContainer, newGroupMember, groupPersistant));
 		
-		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainerNewMember, newGroupMember.getUser().getMail()));
-		
-		notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
+		notifierService.sendAllNotifications(null, mailContainerWithRecipient);
 	}
 
 	public void removeMember(Group group, User manager, User member) throws BusinessException {
@@ -266,18 +261,14 @@ public class GroupServiceImpl implements GroupService {
 			}
 		}
 		
-		MailContainer mailContainerOwner = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.ACCEPTED);
-		MailContainer mailContainerNewMember = mailElementsFactory.buildMailNewGroupMember(manager, mailContainer, groupMemberToUpdate, groupPersistant);
 		
+		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
 		
+		mailContainerWithRecipient.add(mailElementsFactory.buildMailGroupMembershipStatusWithRecipient(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.ACCEPTED));
 		
-		List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
+		mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupMemberWithRecipient(manager, mailContainer, groupMemberToUpdate, groupPersistant));
 		
-		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainerOwner, groupMemberToUpdate.getOwner().getMail()));
-		
-		mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainerNewMember, groupMemberToUpdate.getUser().getMail()));
-		
-		notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
+		notifierService.sendAllNotifications(null, mailContainerWithRecipient);
 	}
 	
 	public void rejectNewMember(Group group, User manager, User memberToReject, MailContainer mailContainer) throws BusinessException {
@@ -294,16 +285,10 @@ public class GroupServiceImpl implements GroupService {
 			}
 		}
 		if (groupMemberToUpdate!=null) {
-			mailContainer = mailElementsFactory.buildMailGroupMembershipStatus(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.REJECTED);
 			removeMember(group, manager, memberToReject);
-			if (ownerMail != null) {
+			if (ownerMail != null) {		
 				
-				
-				List<MailContainerWithRecipient> mailContainerWithRecipient_ = new ArrayList<MailContainerWithRecipient>();
-
-				mailContainerWithRecipient_.add(new MailContainerWithRecipient(mailContainer, ownerMail));			
-				
-				notifierService.sendAllNotifications(null, mailContainerWithRecipient_);
+				notifierService.sendAllNotifications(null, mailElementsFactory.buildMailGroupMembershipStatusWithOneRecipient(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.REJECTED));
 			}
 		}
 	}

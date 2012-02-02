@@ -444,6 +444,7 @@ public class ConfirmSharePopup{
 				errorOnAddress = true;
 			} else {
 				logger.error("Could not create sharing, unkown BusinessException : ", e1);
+				throw e1;
 			}
 		}
 
