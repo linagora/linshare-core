@@ -60,4 +60,11 @@ public interface NotifierService {
      */
     public void sendAllNotifications(String fromUser,List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException;
     
+    
+    /**
+     * @param mailContainerWithRecipient list of mail containers attached to recipients
+     * @throws BusinessException 
+     */
+    public void sendAllNotifications(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException;
+  
 }

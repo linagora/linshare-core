@@ -192,7 +192,7 @@ public class GroupServiceImpl implements GroupService {
 		
 		mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupMemberWithRecipient(manager, mailContainer, newGroupMember, groupPersistant));
 		
-		notifierService.sendAllNotifications(null, mailContainerWithRecipient);
+		notifierService.sendAllNotifications( mailContainerWithRecipient);
 	}
 
 	public void removeMember(Group group, User manager, User member) throws BusinessException {
@@ -268,7 +268,7 @@ public class GroupServiceImpl implements GroupService {
 		
 		mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupMemberWithRecipient(manager, mailContainer, groupMemberToUpdate, groupPersistant));
 		
-		notifierService.sendAllNotifications(null, mailContainerWithRecipient);
+		notifierService.sendAllNotifications( mailContainerWithRecipient);
 	}
 	
 	public void rejectNewMember(Group group, User manager, User memberToReject, MailContainer mailContainer) throws BusinessException {
@@ -288,7 +288,7 @@ public class GroupServiceImpl implements GroupService {
 			removeMember(group, manager, memberToReject);
 			if (ownerMail != null) {		
 				
-				notifierService.sendAllNotifications(null, mailElementsFactory.buildMailGroupMembershipStatusWithOneRecipient(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.REJECTED));
+				notifierService.sendAllNotifications(mailElementsFactory.buildMailGroupMembershipStatusWithOneRecipient(manager, mailContainer, groupMemberToUpdate, groupPersistant, GroupMembershipStatus.REJECTED));
 			}
 		}
 	}

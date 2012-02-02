@@ -382,7 +382,7 @@ public class ShareServiceImpl implements ShareService{
 			deleteShare(share, actor);
 		}
 		
-		notifierService.sendAllNotifications(null,mailContainerWithRecipient);
+		notifierService.sendAllNotifications(mailContainerWithRecipient);
 
 		
 		doc.setShared(false);
@@ -404,7 +404,7 @@ public class ShareServiceImpl implements ShareService{
 			
 			securedUrlRepository.delete(securedUrl);
 		}
-		notifierService.sendAllNotifications(null, mailContainerWithRecipient);
+		notifierService.sendAllNotifications( mailContainerWithRecipient);
 
 	}
 	
@@ -564,7 +564,7 @@ public class ShareServiceImpl implements ShareService{
 				
 				mailContainerWithRecipient.add(mailBuilder.buildMailUpcomingOutdatedSecuredUrlWithRecipient(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam));
 			}
-			notifierService.sendAllNotifications(null, mailContainerWithRecipient);
+			notifierService.sendAllNotifications( mailContainerWithRecipient);
 		
 		} catch (BusinessException e) {
 			logger.error("Error while trying to notify upcoming outdated secured url", e);
@@ -575,11 +575,8 @@ public class ShareServiceImpl implements ShareService{
 	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
 			Share share, Integer days) {
 		try {
-			
-			List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-			mailContainerWithRecipient.add(mailBuilder.buildMailUpcomingOutdatedShareWithRecipient(share.getSender(), mailContainer, share, days));
 
-			notifierService.sendAllNotifications(null,mailContainerWithRecipient);
+			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedShareWithOneRecipient(share.getSender(), mailContainer, share, days));
 		} catch (BusinessException e) {
 				logger.error("Error while trying to notify upcoming outdated share", e);
 		}
