@@ -45,10 +45,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations = { 
-		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
-		"classpath:springContext-service-test.xml"		
+		"classpath:springContext-service.xml",
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-facade.xml",
+		"classpath:springContext-startopends.xml",
+		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-test.xml"
 		})
 public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTests{
 	
@@ -66,7 +70,6 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 	
 	
 	@Before
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		
@@ -123,7 +126,6 @@ public class DomainPolicyServiceImplTest extends AbstractJUnit4SpringContextTest
 	}
 
 	@After
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		logger.debug("End tearDown");

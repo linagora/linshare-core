@@ -72,7 +72,6 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 	
 	
 	@Before
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		policy = new DomainAccessPolicy();
@@ -82,7 +81,6 @@ public class DomainAccessRuleRepositoryImplTest extends AbstractJUnit4SpringCont
 	}
 
 	@After
-	@Transactional (propagation=Propagation.SUPPORTS)
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		domainAccessPolicyRepository.delete(policy);

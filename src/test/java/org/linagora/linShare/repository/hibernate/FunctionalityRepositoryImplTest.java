@@ -87,7 +87,6 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 	
 	
 	@Before
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		defaultPolicy = new DomainPolicy(domainePolicyName0, new DomainAccessPolicy());
@@ -103,7 +102,6 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 	}
 
 	@After
-	@Transactional (propagation=Propagation.SUPPORTS)
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		abstractDomainRepository.delete(currentDomain);
@@ -731,16 +729,4 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 		domainPolicyRepository.delete(policy);
 		
 	}	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

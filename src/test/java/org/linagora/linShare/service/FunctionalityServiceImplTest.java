@@ -46,10 +46,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations = { 
-		"classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
-		"classpath:springContext-service-test.xml"		
+		"classpath:springContext-service.xml",
+		"classpath:springContext-dao.xml",
+		"classpath:springContext-facade.xml",
+		"classpath:springContext-startopends.xml",
+		"classpath:springContext-jackRabbit.xml",
+		"classpath:springContext-test.xml"
 		})
 public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTests{
 	
@@ -71,7 +75,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	private DomainPolicyRepository domainPolicyRepository;
 	
 	@Before
-	@Transactional (propagation=Propagation.REQUIRED)
+//	@Transactional (propagation=Propagation.REQUIRED)
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository);
@@ -80,7 +84,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	}
 
 	@After
-	@Transactional (propagation=Propagation.REQUIRED)
+//	@Transactional (propagation=Propagation.REQUIRED)
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		datas.deleteDatas();

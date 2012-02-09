@@ -65,7 +65,6 @@ public class UserProviderRepositoryImplTest extends AbstractJUnit4SpringContextT
 	
 	
 	@Before
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		
@@ -82,7 +81,6 @@ public class UserProviderRepositoryImplTest extends AbstractJUnit4SpringContextT
 	}
 
 	@After
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
 		ldapConnectionRepository.delete(ldapconnexion);

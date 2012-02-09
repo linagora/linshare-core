@@ -99,27 +99,6 @@
        	 <constructor-arg ref="groupTransformer"/>
    	  </bean>
        
-       
-    <aop:config>
-		<aop:pointcut id="linshareCoreServiceFacadeMethods" expression="execution(* org.linagora.linShare.core.Facade.*.*(..))" />
-
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="linshareCoreServiceFacadeMethods" />
-	 	<aop:advisor advice-ref="txAdviceJackRabbit" pointcut-ref="linshareCoreServiceFacadeMethods" />
-	</aop:config>
-
-	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRES_NEW"/>
-		</tx:attributes>
-	</tx:advice>
-
-	<tx:advice id="txAdviceJackRabbit"  transaction-manager="transactionJackRabbit">
-		<tx:attributes>
-			<tx:method name="*" propagation="REQUIRES_NEW"/>
-		</tx:attributes>
-	</tx:advice>
-
-
 
 	<!-- 
 		Definition of the transformers
@@ -179,6 +158,4 @@
 	
 	</bean>
 
-
-       
 </beans>

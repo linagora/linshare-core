@@ -31,15 +31,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
@@ -57,20 +54,14 @@ import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 
 
 /*
  * This all class was disable because of a huge spring context problem
- * 
+ * */
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -81,9 +72,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
-@RunWith( SpringJUnit4ClassRunner.class) 
-@TransactionConfiguration(transactionManager="transactionManager", defaultRollback=false)
-public class DocumentServiceTest{
+public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
 	private InputStream inputStream;
 	
@@ -111,27 +100,35 @@ public class DocumentServiceTest{
 	@Autowired
 	private FileSystemDao fileRepository;
 	
-	private TransactionTemplate transactionTemplate;
-	
-	@Resource(name = "transactionManager")
-	private HibernateTransactionManager tx;
-	
 	private String inputStreamUuid;
 	private User John;
 	private User Jane;
 	private Document aDocument;
 	
 	// default import.sql
-	private static final String DOMAIN_IDENTIFIER = "LinShareRootDomain";
+	private static final String DOMAIN_IDENTIFIER = "MySubDomain";
 	
 	@Before
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void setUp() throws Exception {
+		logger.debug("begin");
 		
-		John = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
+		try {
+			John = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
+			Jane = userService.findOrCreateUser("user2@linpki.org", DOMAIN_IDENTIFIER);
+		} catch (BusinessException e1) {
+			try {
+				John = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
+				Jane = userService.findOrCreateUser("user2@linpki.org", DOMAIN_IDENTIFIER);
+			} catch (BusinessException e2) {
+				logger.error("Can't create default user for test environnement.");
+				e2.printStackTrace();
+			}
+			
+//			logger.error("Can't create default user for test environnement.");
+//			e1.printStackTrace();
+		}
 		
-		Jane = userService.findOrCreateUser("user2@linpki.org", DOMAIN_IDENTIFIER);
-
+		
 		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		inputStreamUuid = fileRepository.insertFile(Jane.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
 				
@@ -154,13 +151,16 @@ public class DocumentServiceTest{
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}
+		
+		logger.debug("end");
 	}
 
 	@After
-	@Transactional (propagation=Propagation.SUPPORTS)
 	public void tearDown() throws Exception {
+		logger.debug("begin");
 		documentRepository.delete(aDocument);
 		fileRepository.removeFileByUUID(aDocument.getIdentifier());
+		logger.debug("end");
 	}
 
 	@Test
@@ -178,8 +178,6 @@ public class DocumentServiceTest{
 	}
 
 	@Test
-	@DirtiesContext
-	@Transactional (propagation=Propagation.SUPPORTS)
 	public void testInsertFile() {
 		InputStream tmp = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		try {
@@ -197,8 +195,6 @@ public class DocumentServiceTest{
 
 	@Ignore
 	@Test
-	@DirtiesContext
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void testUpdateFileContent() {
 
 				try {				
@@ -235,7 +231,6 @@ public class DocumentServiceTest{
 	}
 
 	@Test
-	@DirtiesContext
 	// TODO : tester si la signature est bien dans jackrabbit et la bd.
 	public void testInsertSignatureFile() {
 		try {		
@@ -266,14 +261,14 @@ public class DocumentServiceTest{
 	}
 
 	@Test
-	@DirtiesContext
 	// TODO : if param.getGlobalQuotaActive()
 	public void testGetAvailableSize() {
 		try {
-			long expected = 51200000; // default max size : baseParam in import-mysql.sql
+			long expected = 104857600; // default max size : baseParam in import-mysql.sql
 			long actual = documentService.getAvailableSize(John);
+			logger.debug("actual : "+ actual );
+			logger.debug("expected : "+ expected );
 			Assert.assertTrue(actual == expected);
-			
 			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 			documentService.insertFile(John.getLogin(),
 					inputStream, 20000,
@@ -293,7 +288,7 @@ public class DocumentServiceTest{
 
 	@Test
 	public void testGetTotalSize() {
-		long expected = 1024000000; // default max size : import.sql
+		long expected = 104857600; // default max size : import.sql
 		long actual;
 		
 		try {
@@ -309,8 +304,6 @@ public class DocumentServiceTest{
 	}
 
 	@Test
-	@DirtiesContext
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void testDeleteFile() {
 	
 		try {
@@ -380,8 +373,6 @@ public class DocumentServiceTest{
 	}
 
 	@Test
-	@DirtiesContext
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void testDuplicateDocument() {
 		try {
 			String expected = IOUtils.toString(fileRepository.getFileContentByUUID(aDocument.getIdentifier()));
@@ -410,13 +401,12 @@ public class DocumentServiceTest{
 	@Ignore
 	@Test
 	public void testUpdateDocumentContent() {
-		fail("Not yet implemented"); // 
 	}
 
 	@Test
-	@DirtiesContext
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void testRenameFile() {
+		logger.debug("begin");
+
 		String expected = "toto.txt";
 		
 		try {		
@@ -430,19 +420,20 @@ public class DocumentServiceTest{
 			
 			documentService.renameFile(aNewDoc.getIdentifier(), expected);
 
-			String actual = aNewDoc.getName();
+			String actual = documentRepository.findById(aNewDoc.getIdentifier()).getName();
 			Assert.assertEquals(expected, actual);
 			// TODO Assert.assertEquals(expected, fileRepository.getFileInfoByUUID(aNewDoc.getIdentifier()).getName());
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}	
+		
+		logger.debug("end");
 	}
 
 	@Test
-	@DirtiesContext
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void testUpdateFileProperties() {
+		logger.debug("begin");
 		String expected = "a file";
 		try{
 			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
@@ -457,10 +448,11 @@ public class DocumentServiceTest{
 			String actual = aNewDoc.getFileComment();
 			Assert.assertEquals(expected, actual);	
 		} catch (BusinessException e) {
+			logger.error("documentService.updateFileProperties failed!");
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}	
+		logger.debug("end");
 	}
 	
 }
-/**/

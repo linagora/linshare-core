@@ -24,7 +24,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Internal;
 import org.linagora.linShare.core.domain.entities.User;
@@ -37,17 +36,10 @@ import org.linagora.linShare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-//@ContextConfiguration(locations = { 
-//		"classpath:springContext-test.xml",
-//		"classpath:springContext-datasource.xml",
-//		"classpath:springContext-repository.xml",
-//		"classpath:springContext-service.xml"		
-//		})
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
@@ -58,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
-public class UserServiceImplTest extends AbstractJUnit4SpringContextTests{
+public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
 	private static Logger logger = LoggerFactory.getLogger(UserServiceImplTest.class);
 	
@@ -77,28 +69,26 @@ public class UserServiceImplTest extends AbstractJUnit4SpringContextTests{
 	private DomainPolicyRepository domainPolicyRepository;
 	
 	
+	private static final String INTERNAL_USER_DOMAIN_IDENTIFIER = "MySubDomain";
+	private static final String GUEST_DOMAIN_IDENTIFIER = "GuestDomain";
 	
 	@Before
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
-//		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository);
-//		datas.loadDatas();
 		logger.debug("End setUp");
 	}
 
 	@After
-	@Transactional (propagation=Propagation.REQUIRED)
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
-//		datas.deleteDatas();
 		logger.debug("End tearDown");
 	}
 	
 	@Test
+	@Rollback(true)
 	public void testSaveOrUpdateUser() {
-		
-		AbstractDomain domain = abstractDomainRepository.findById(LinShareConstants.rootDomainIdentifier);
+		logger.info("running test ...");
+		AbstractDomain domain = abstractDomainRepository.findById(INTERNAL_USER_DOMAIN_IDENTIFIER);
 		
 		Internal user = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
 		
@@ -109,7 +99,7 @@ public class UserServiceImplTest extends AbstractJUnit4SpringContextTests{
 		} catch (TechnicalException e) {
 			logger.debug("TechnicalException raise as planned.");
 		}
-		
+		logger.info("Trying to create a user : .");
 		logger.debug("user id : " + user.getId());
 		user.setDomain(domain);
 		userService.saveOrUpdateUser(user);
@@ -118,7 +108,7 @@ public class UserServiceImplTest extends AbstractJUnit4SpringContextTests{
 		user.setCanUpload(false);
 		userService.saveOrUpdateUser(user);
 		Assert.assertFalse(user.getCanUpload());
-		
+		logger.debug("end");
 	}
 	
 	@Test
@@ -128,7 +118,7 @@ public class UserServiceImplTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			logger.debug("Trying to find john doe: should create this user");
-			User user = userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LinShareConstants.rootDomainIdentifier);
+			User user = userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
 			id_user= user.getId();
@@ -140,7 +130,7 @@ public class UserServiceImplTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			logger.debug("Trying to find john doe: should return this user");
-			User user = userService.findOrCreateUser("user1@linpki.org", LinShareConstants.rootDomainIdentifier);
+			User user = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
 			// Should be the same user, not a new one.
@@ -154,7 +144,7 @@ public class UserServiceImplTest extends AbstractJUnit4SpringContextTests{
 		
 		try {
 			logger.debug("Trying to find john doe: should return this user");
-			User user = userService.findOrCreateUser("user1@linpki.org", LinShareConstants.rootDomainIdentifier);
+			User user = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
 			// Should be the same user, not a new one.
