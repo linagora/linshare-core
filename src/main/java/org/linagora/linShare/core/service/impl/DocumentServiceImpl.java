@@ -945,6 +945,15 @@ public class DocumentServiceImpl implements DocumentService {
         fileSystemDao.renameFile(uuid, newName);
         Document document = documentRepository.findById(uuid);
         document.setName(newName);
+        try {
+			documentRepository.update(document);
+		} catch (IllegalArgumentException e) {
+			logger.error("can't rename a document");
+			e.printStackTrace();
+		} catch (BusinessException e) {
+			logger.error("can't rename a document");
+			e.printStackTrace();
+		}
     }
     
     public void updateFileProperties(String uuid, String newName, String fileComment){

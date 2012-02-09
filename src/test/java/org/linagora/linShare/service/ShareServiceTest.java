@@ -27,25 +27,32 @@ import javax.annotation.Resource;
 
 import junit.framework.Assert;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.linagora.linShare.common.service.LinShareMessageHandler;
 import org.linagora.linShare.common.service.MailTestRetriever;
 import org.linagora.linShare.core.domain.constants.Language;
+import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.domain.constants.Reason;
+import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.transaction.TransactionStatus;
@@ -64,6 +71,7 @@ import org.subethamail.smtp.server.SMTPServer;
 		"classpath:springContext-test.xml"
 		})
 public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
+//	public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private User sender;
 
@@ -91,6 +99,12 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 
 	@Autowired
 	private ShareRepository shareRepository;
+	
+	@Autowired
+	private FunctionalityService functionalityService;
+
+	@Autowired
+	private AbstractDomainRepository abstractDomainRepository;
 
 	@Autowired
 	private MailTestRetriever mailTestRetriever;
@@ -98,36 +112,39 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	@Resource(name = "transactionManager")
 	private HibernateTransactionManager tx;
 	
-	private static final String DOMAIN_IDENTIFIER = "baseDomain";
+	private static final String INTERNAL_USER_DOMAIN_IDENTIFIER = "MySubDomain";
+	private static final String GUEST_DOMAIN_IDENTIFIER = "GuestDomain";
 
 	private SMTPServer wiser;
-
+	private User owner;
+	private Document myDocForTest;
+	private boolean guestFuncStatus;
+	
+	
 	public ShareServiceTest() {
 		super();
-//		wiser = new SMTPServer(new LinShareMessageHandler());
-//		wiser.setPort(2525);
-		
+		wiser = new SMTPServer(new LinShareMessageHandler());
+		wiser.setPort(2525);
 		
 	}
 
-//	@Before
+	@Before
 	public void setUp() throws Exception {
-		
+		logger.debug("begin");
 		wiser.start();
 		
-		this.transactionTemplate = new TransactionTemplate(tx);
+		AbstractDomain rootDomain = abstractDomainRepository.findById(LinShareConstants.rootDomainIdentifier);
+		Functionality guestFunctionality = functionalityService.getGuestFunctionality(rootDomain);
+		guestFuncStatus = guestFunctionality.getActivationPolicy().getStatus();
+		guestFunctionality.getActivationPolicy().setStatus(true);
+		functionalityService.update(rootDomain, guestFunctionality);
 
-		/**
-		 * Creating the stream for testing.
-		 */
-		this.transactionTemplate
-				.execute(new TransactionCallbackWithoutResult() {
-					public void doInTransactionWithoutResult(
-							TransactionStatus status) {
-						User owner = null;
+		this.transactionTemplate = new TransactionTemplate(tx);
+		this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			public void doInTransactionWithoutResult(TransactionStatus status) {
 						try {
 							owner = userService
-									.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
+									.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
 							
 							Assert.assertNotNull(owner);
 							
@@ -135,33 +152,21 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 									.getContextClassLoader()
 									.getResourceAsStream("linShare-default.properties");
 
-							if (userService.searchUser(
-									mailTestRetriever.getSenderMail(),
-									"sender", "senderName", null, owner).size() == 0) {
-								MailContainer mailContainer = new MailContainer("", Language.DEFAULT);
-								sender = userService.createGuest(
+																		
+							MailContainer mailContainer = new MailContainer("", Language.DEFAULT);
+							sender = userService.createGuest(
 										mailTestRetriever.getSenderMail(),
 										"sender", "senderName",
 										mailTestRetriever.getSenderMail(),
 										true, true, "comment", mailContainer,
-										owner.getLogin(), DOMAIN_IDENTIFIER);
-							} else {
-								sender = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), DOMAIN_IDENTIFIER);
-							}
-							if (userService.searchUser(
+										owner.getLogin(), owner.getDomainId());
+								
+							recipient = userService.createGuest(
 									mailTestRetriever.getRecipientMail(),
-									"receiver", "receiverName", null, owner)
-									.size() == 0) {
-								MailContainer mailContainer = new MailContainer("", Language.DEFAULT);
-								recipient = userService.createGuest(
-										mailTestRetriever.getRecipientMail(),
-										"receiver", "receiverName",
-										mailTestRetriever.getRecipientMail(),
-										true, true, "comment", mailContainer,
-										owner.getLogin(), DOMAIN_IDENTIFIER);
-							} else {
-								recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), DOMAIN_IDENTIFIER);
-							}
+									"receiver", "receiverName",
+									mailTestRetriever.getRecipientMail(),
+									true, true, "comment", mailContainer,
+									owner.getLogin(), owner.getDomainId());
 
 						} catch (BusinessException e1) {
 							e1.printStackTrace();
@@ -178,7 +183,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 							}
 							if (documentRepository.findAll().size() == 0) {
 								logger.info("inserting a new file for tests");
-								documentService.insertFile(sender.getLogin(),
+								myDocForTest = documentService.insertFile(sender.getLogin(),
 										inputStream, 20000,
 										"linShare.properties", documentService
 												.getMimeType(inputStream,
@@ -189,18 +194,46 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 							e.printStackTrace();
 							Assert.assertTrue(false);
 						}
+			} // end of method doInTransactionWithoutResult
+		} // end of class 
+		); // end of method execute
 
-					}
-				});
 		wiser.stop();
+		logger.debug("end");
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		logger.debug("tearDown:begin");
+		this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			public void doInTransactionWithoutResult(TransactionStatus status) {
+				try {
+					documentService.deleteFile(mailTestRetriever.getSenderMail(), myDocForTest.getIdentifier(),Reason.NONE);
+					User root = userService.findUserInDB(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
+					userService.deleteUser(sender.getLogin(), root, true);
+					userService.deleteUser(recipient.getLogin(), root, true);
+					userService.deleteUser(owner.getLogin(), root, true);
+				} catch (BusinessException e) {
+					logger.error("can'delete users during tearDown method !");
+					e.printStackTrace();
+				}
+			} // end of method doInTransactionWithoutResult
+		} // end of class 
+		); // end of method execute
+		
+		AbstractDomain rootDomain = abstractDomainRepository.findById(LinShareConstants.rootDomainIdentifier);
+		Functionality guestFunctionality = functionalityService.getGuestFunctionality(rootDomain);
+		guestFunctionality.getActivationPolicy().setStatus(guestFuncStatus);
+		functionalityService.update(rootDomain, guestFunctionality);
+		
+		
+		logger.debug("tearDown:end");
+	}
+	
 	/**
 	 * Create and drop a share directly.
 	 */
-	@Ignore
 	@Test
-	@DirtiesContext
 	public void createAndDropAShare() {
 
 		this.transactionTemplate
@@ -210,8 +243,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						User sender = null;
 						User recipient = null;
 						try {
-							sender = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), DOMAIN_IDENTIFIER);
-							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), DOMAIN_IDENTIFIER);
+							sender = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), GUEST_DOMAIN_IDENTIFIER);
+							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), GUEST_DOMAIN_IDENTIFIER);
 						} catch (BusinessException e) {
 							Assert.assertFalse(true);
 						}
@@ -219,12 +252,10 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						ArrayList<Document> documents = new ArrayList<Document>();
 						documents.add(document);
 
-						ArrayList<User> users = new ArrayList<User>();
-						users.add(recipient);
+						ArrayList<User> recipients = new ArrayList<User>();
+						recipients.add(recipient);
 
-						SuccessesAndFailsItems<Share> shares = shareService
-								.shareDocumentsToUser(documents, sender, users,
-										"plop", null);
+						SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
 
 						Share finalShare = null;
 						/**
@@ -232,11 +263,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						 * recipient.
 						 */
 						for (Share successShare : shares.getSuccessesItem()) {
-							if (successShare.getSender().equals(sender)
-									&& successShare.getReceiver().equals(
-											recipient)
-									&& successShare.getDocument().equals(
-											document)) {
+							if (successShare.getSender().equals(sender) && successShare.getReceiver().equals(recipient)
+																		&& successShare.getDocument().equals(document)) {
 								Assert.assertTrue(true);
 								finalShare = successShare;
 							} else {
@@ -248,40 +276,37 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						 * check if the recipient has the share as received.
 						 */
 
-						Assert.assertTrue(recipient.getReceivedShares()
-								.contains(finalShare)
-								&& sender.getShares().contains(finalShare));
-
+						Assert.assertTrue(recipient.getReceivedShares().contains(finalShare));
+						Assert.assertTrue(sender.getShares().contains(finalShare));
+						documents.clear();
+						recipients.clear();
 					}
 				});
 
-		this.transactionTemplate
-				.execute(new TransactionCallbackWithoutResult() {
-					public void doInTransactionWithoutResult(
-							TransactionStatus status) {
-						/**
-						 * Now we have our Shares for each user. We will test to
-						 * remove theses shares.
-						 */
-						User retriever = null;
-						try {
-							shareService.deleteShare(shareRepository.findAll().get(0), sender);
-
-							retriever = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), DOMAIN_IDENTIFIER);
-						} catch (BusinessException e) {
-							Assert.assertFalse(true);
-							e.printStackTrace();
-						}
-						Assert
-								.assertTrue(retriever.getReceivedShares()
-										.size() == 0);
-						Assert
-								.assertTrue(shareRepository.findAll().size() == 0);
-
-						// Assert.assertFalse(sender.getShares().contains(share)
-						// || recipient.getReceivedShares().contains(share));
-					}
-				});
+//		this.transactionTemplate
+//				.execute(new TransactionCallbackWithoutResult() {
+//					public void doInTransactionWithoutResult(
+//							TransactionStatus status) {
+//						/**
+//						 * Now we have our Shares for each user. We will test to
+//						 * remove theses shares.
+//						 */
+//						User retriever = null;
+//						try {
+//							shareService.deleteShare(shareRepository.findAll().get(0), sender);
+//
+//							retriever = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), GUEST_DOMAIN_IDENTIFIER);
+//						} catch (BusinessException e) {
+//							Assert.assertFalse(true);
+//							e.printStackTrace();
+//						}
+//						Assert.assertEquals(0, retriever.getReceivedShares().size());
+//						Assert.assertEquals(0, shareRepository.findAll().size());
+//
+//						// Assert.assertFalse(sender.getShares().contains(share)
+//						// || recipient.getReceivedShares().contains(share));
+//					}
+//				});
 
 	}
 
@@ -290,18 +315,18 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Ignore
 	@Test
-	@DirtiesContext
+//	@DirtiesContext
 	public void createAndDropAShareByRemoveUser() {
 
-		this.transactionTemplate
-				.execute(new TransactionCallbackWithoutResult() {
-					public void doInTransactionWithoutResult(
-							TransactionStatus status) {
+//		this.transactionTemplate
+//				.execute(new TransactionCallbackWithoutResult() {
+//					public void doInTransactionWithoutResult(
+//							TransactionStatus status) {
 						User owner = null;
 						User recipient = null;
 						try {
-							owner = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
-							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), DOMAIN_IDENTIFIER);
+							owner = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
+							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);
 						} catch (BusinessException e) {
 							e.printStackTrace();
 							Assert.assertTrue(false);
@@ -342,13 +367,13 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						Assert.assertTrue(recipient.getReceivedShares()
 								.contains(finalShare)
 								&& owner.getShares().contains(finalShare));
-					}
-				});
-
-		this.transactionTemplate
-				.execute(new TransactionCallbackWithoutResult() {
-					public void doInTransactionWithoutResult(
-							TransactionStatus status) {
+//					}
+//				});
+//
+//		this.transactionTemplate
+//				.execute(new TransactionCallbackWithoutResult() {
+//					public void doInTransactionWithoutResult(
+//							TransactionStatus status) {
 
 						/**
 						 * Now we have our Shares for each user. We will test to
@@ -356,13 +381,13 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						 */
 
 						try {
-							User owner = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);;
+							owner = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);;
 							userService.deleteUser(mailTestRetriever
 									.getRecipientMail(), owner, true);
 
 							
 							sender = userService.findOrCreateUser(mailTestRetriever
-									.getSenderMail(), DOMAIN_IDENTIFIER);
+									.getSenderMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);
 						} catch (BusinessException e) {
 							e.printStackTrace();
 							Assert.assertFalse(true);
@@ -371,8 +396,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						Assert
 								.assertTrue(shareRepository.findAll().size() == 0);
 
-					}
-				});
+//					}
+//				});
 
 	}
 
@@ -381,18 +406,17 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Ignore
 	@Test
-	@DirtiesContext
 	public void createAndDropAShareByRemoveDocument() {
 
-		this.transactionTemplate
-				.execute(new TransactionCallbackWithoutResult() {
-					public void doInTransactionWithoutResult(
-							TransactionStatus status) {
+//		this.transactionTemplate
+//				.execute(new TransactionCallbackWithoutResult() {
+//					public void doInTransactionWithoutResult(
+//							TransactionStatus status) {
 						User owner = null;
 						User recipient = null;
 						try {
-							owner = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);;
-							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), DOMAIN_IDENTIFIER);;
+							owner = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);;
+							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);;
 						} catch (BusinessException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -435,13 +459,13 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						Assert.assertTrue(recipient.getReceivedShares()
 								.contains(finalShare)
 								&& owner.getShares().contains(finalShare));
-					}
-				});
-
-		this.transactionTemplate
-				.execute(new TransactionCallbackWithoutResult() {
-					public void doInTransactionWithoutResult(
-							TransactionStatus status) {
+//					}
+//				});
+//
+//		this.transactionTemplate
+//				.execute(new TransactionCallbackWithoutResult() {
+//					public void doInTransactionWithoutResult(
+//							TransactionStatus status) {
 
 						/**
 						 * Now we have our Shares for each user. We will test to
@@ -450,8 +474,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 
 						try {
 
-							User recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), DOMAIN_IDENTIFIER);
-							User sender = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), DOMAIN_IDENTIFIER);
+							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);
+							User sender = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);
 							
 							documentService.deleteFile(mailTestRetriever
 									.getSenderMail(), documentRepository
@@ -469,8 +493,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 							e.printStackTrace();
 						}
 
-					}
-				});
+//					}
+//				});
 
 	}
 
