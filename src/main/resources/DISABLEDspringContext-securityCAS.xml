@@ -149,7 +149,7 @@
 
        <!-- DAO Authentification -->
        <bean id="guestAuthProvider" class="org.linagora.linShare.auth.DaoAuthProvider">
-           <constructor-arg ref="userFacade"/>
+           <constructor-arg ref="userService"/>
        </bean>
 
        <bean id="passwordEncoderFactory" class="org.linagora.linShare.auth.PasswordEncoderFactory">
