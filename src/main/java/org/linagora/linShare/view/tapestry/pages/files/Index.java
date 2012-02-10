@@ -474,6 +474,11 @@ public class Index {
 		
 		DocumentVo doc;
 		
+		if(shareSessionObjects.isComeFromSharePopup() == true){
+			shareSessionObjects.getDocuments().clear();
+			shareSessionObjects.setComeFromSharePopup(false);
+		}
+		
 		for(Object currentObject:object){
 			doc = (DocumentVo)currentObject;
 			
@@ -529,6 +534,7 @@ public class Index {
 		if(null!=documentVoTemp){
 				//enable direct sharing on this document
 				flagFinishShare=true;
+				shareSessionObjects.setComeFromSharePopup(true);
 				shareSessionObjects.getDocuments().clear(); //delete all other doc
 				shareSessionObjects.addDocument(documentVoTemp);
 				shareSessionObjects.setMultipleSharing(false);
@@ -538,6 +544,10 @@ public class Index {
 	
 	@OnEvent(value="eventShareWithGroupUniqueFromListDocument")
 	public void shareUniqueWithGroupFromListDocument(Object[] object) throws BusinessException {
+		
+//		if(groupFacade.findByUser(user.getLogin()) == null){
+//			
+//		}
 		DocumentVo documentVoTemp=null;
 
 		for(DocumentVo currentDocumentVo:this.listDocumentsVo){
@@ -549,6 +559,7 @@ public class Index {
 		if(null!=documentVoTemp){
 				//enable direct sharing on this document
 				flagGroupShare=true;
+				shareSessionObjects.setComeFromSharePopup(true);
 				shareSessionObjects.getDocuments().clear(); //delete all other doc
 				shareSessionObjects.addDocument(documentVoTemp);
 				shareSessionObjects.setMultipleSharing(false);

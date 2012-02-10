@@ -11,12 +11,19 @@
 					</h2>
 		
 					<hr />
-				        
-				            <t:label for="fileName" class="edit-form-label">${message:component.fileEditForm.newName}</t:label> :
-				            <t:textfield t:id="fileName" t:validate="required, regexp" size="32" class="edit-form-field"/>
-				            <br/>
-				            <t:label for="fileComment" class="edit-form-label">${message:component.fileEditForm.fileComment}</t:label> :
-				            <t:textarea t:id="fileComment" class="edit-form-field"/>
+						<ul>
+							<li>
+							 	<t:label for="fileName" class="edit-form-label">${message:component.fileEditForm.newName}</t:label> :
+			          		 	<t:textfield t:id="fileName" t:validate="required, regexp" size="32" class="edit-form-field"/>			           
+							</li>
+						
+							<li>
+								<t:label for="fileComment" class="edit-form-label">${message:component.fileEditForm.fileComment}</t:label> :
+	           					<t:textarea t:id="fileComment" class="edit-form-field"/>
+							</li>
+						
+						</ul>
+
 					<hr />
 					<div class="button">
 						<t:linkSubmit class="button">

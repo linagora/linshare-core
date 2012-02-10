@@ -102,6 +102,7 @@ public abstract class User {
     	this.receivedShares=new HashSet<Share>();
     	this.securedUrls=new HashSet<SecuredUrl>();
     	this.domain = null;
+    	this.ownSignatures=new HashSet<Signature>();
     }
     /** Default constructor.
      * @param login login.
@@ -124,6 +125,7 @@ public abstract class User {
         this.canCreateGuest = canCreateGuest;
         this.enciphermentKeyPass=null;
     	this.domain = null;
+    	this.ownSignatures=new HashSet<Signature>();
 	}
 	
 	@Override

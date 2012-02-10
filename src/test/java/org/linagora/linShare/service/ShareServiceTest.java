@@ -210,9 +210,9 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 				try {
 					documentService.deleteFile(mailTestRetriever.getSenderMail(), myDocForTest.getIdentifier(),Reason.NONE);
 					User root = userService.findUserInDB(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
-					userService.deleteUser(sender.getLogin(), root, true);
-					userService.deleteUser(recipient.getLogin(), root, true);
-					userService.deleteUser(owner.getLogin(), root, true);
+					userService.deleteUser(sender.getLogin(), root);
+					userService.deleteUser(recipient.getLogin(), root);
+					userService.deleteUser(owner.getLogin(), root);
 				} catch (BusinessException e) {
 					logger.error("can'delete users during tearDown method !");
 					e.printStackTrace();
@@ -383,7 +383,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 						try {
 							owner = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);;
 							userService.deleteUser(mailTestRetriever
-									.getRecipientMail(), owner, true);
+									.getRecipientMail(), owner);
 
 							
 							sender = userService.findOrCreateUser(mailTestRetriever

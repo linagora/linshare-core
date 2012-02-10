@@ -36,6 +36,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -145,7 +146,14 @@ public class UserAddToGroupForm {
 		    			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userLoggedIn, null);
 						groupFacade.addMember(groupVo, userLoggedIn, user, mailContainer);
 						shareSessionObjects.setReloadGroupsNeeded(true);
-						shareSessionObjects.addMessage(messages.format("components.userAddToGroup.success", user.getFirstName(), user.getLastName(), groupVo.getName()));
+						
+						if((groupFacade.retreiveMemberType(groupVo, userLoggedIn) == GroupMemberType.MANAGER)|| (groupFacade.retreiveMemberType(groupVo, userLoggedIn) == GroupMemberType.OWNER)){
+							shareSessionObjects.addMessage(messages.format("components.userAddToGroup.successManager", user.getFirstName(), user.getLastName(), groupVo.getName()));
+						}else{
+							shareSessionObjects.addMessage(messages.format("components.userAddToGroup.successMember", user.getFirstName(), user.getLastName(), groupVo.getName()));
+						}
+						
+						
 					}
 		    	}
 	    	}

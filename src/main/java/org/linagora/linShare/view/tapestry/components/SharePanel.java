@@ -137,7 +137,7 @@ public class SharePanel {
 		}
 		indexObject=-1;
 
-		if ((listObject!=null) && (listObject.size()>0)) {
+		if (listObject.size()>0) {
 			columnList = columns.split(",");
 			
 			for (int i=0; i<columnList.length; i++) {

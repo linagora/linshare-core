@@ -137,6 +137,22 @@ public class GroupServiceImpl implements GroupService {
 			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't update the group " + group.getName());
 		}
 	}
+	
+	public GroupMember retreiveMember(Group group,User member){
+		
+		Group groupPersistant = groupRepository.findByName(group.getName());
+		Set<GroupMember> members = groupPersistant.getMembers();
+		
+		GroupMember memberRequesting = null;
+		if (member != null) {
+			for (GroupMember groupMember : members) {
+				if (member.equals(groupMember.getUser())) {
+					memberRequesting = groupMember;
+				}
+			}
+		}
+		return memberRequesting;
+	}
 
 	public void addMember(Group group, User manager, User newMember, MailContainer mailContainer) throws BusinessException {
 		addMember(group, manager, newMember, GroupMemberType.MEMBER, mailContainer);
@@ -151,15 +167,7 @@ public class GroupServiceImpl implements GroupService {
 			memberType=GroupMemberType.MEMBER;
 		}
 		
-		Set<GroupMember> members = groupPersistant.getMembers();
-		GroupMember memberRequesting = null;
-		if (manager != null) {
-			for (GroupMember groupMember : members) {
-				if (manager.equals(groupMember.getUser())) {
-					memberRequesting = groupMember;
-				}
-			}
-		}
+		GroupMember memberRequesting = retreiveMember(group,manager);
 		
 		if (memberRequesting != null && 
 				(memberRequesting.getType().equals(GroupMemberType.MANAGER) 

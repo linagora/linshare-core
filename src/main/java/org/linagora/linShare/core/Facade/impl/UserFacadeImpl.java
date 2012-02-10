@@ -169,7 +169,7 @@ public class UserFacadeImpl implements UserFacade {
     public void deleteUser(String login, UserVo actorVo) {
         try {
         	User actor = userRepository.findByLogin(actorVo.getLogin());
-            userService.deleteUser(login, actor, true);
+            userService.deleteUser(login, actor);
         } catch (BusinessException e) {
             throw new IllegalArgumentException(e.getMessage());
         }

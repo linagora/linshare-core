@@ -2935,6 +2935,20 @@ div.dialog div.button .button {
 	margin: 0 20px 0 30px;
 }
 
+/*--------------------------------------------------------------------------
+* Popups > Update file 
+*/
+
+div.form-upload-container div#formUpdateUpload form#formUpload div.change-uploader{
+	display:none;
+}
+
+
+div.form-upload-container div#formUpdateUpload div.upload-list{
+	margin-left:40px;
+}
+
+
 
 /*--------------------------------------------------------------------------
 * Popups > Common : Panel Upload  (Quick share, Files upload)
@@ -3094,6 +3108,26 @@ div.closeUploadPopup {
 	margin-top: 5px;
 }
 
+
+/*--------------------------------------------------------------------------
+* Popups > Properties
+*/
+
+div#fileEditFormComponent ul li{
+	float:left;
+	margin-left:40px;
+	margin-top:5px;
+}
+
+div#fileEditFormComponent ul{
+	overflow:auto;
+}
+
+div#fileEditFormComponent li textarea{
+	
+	min-width:243px;
+	vertical-align:top;
+}
 
 /*--------------------------------------------------------------------------
 * Popups > Quick share

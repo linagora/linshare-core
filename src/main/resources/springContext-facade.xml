@@ -138,7 +138,7 @@
 	 <bean name="abstractDomainFacade" class="org.linagora.linShare.core.Facade.impl.AbstractDomainFacadeImpl">
 	 	<constructor-arg ref="abstractDomainService"/>
 	 	<constructor-arg ref="functionalityService"/>
-	 	<constructor-arg ref="userService"/>
+	 	<constructor-arg ref="userAndDomainMultiService"/>
 	 	<constructor-arg ref="userProviderService"/>
 	 	<constructor-arg ref="domainPolicyService"/>
    	 </bean>
