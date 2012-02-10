@@ -42,4 +42,12 @@ public interface GroupFacade {
 	public boolean nameAlreadyExists(String groupName);
 	public void acceptNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToAcceptVo, MailContainer mailContainer) throws BusinessException;
 	public void rejectNewMember(GroupVo groupVo, GroupMemberVo managerVo, GroupMemberVo memberToRejectVo, MailContainer mailContainer) throws BusinessException;
+
+	/**
+	 * Return the type of group member
+	 * @param groupVo
+	 * @param memberVo
+	 * @return
+	 */
+	public GroupMemberType retreiveMemberType(GroupVo groupVo, UserVo memberVo);
 }

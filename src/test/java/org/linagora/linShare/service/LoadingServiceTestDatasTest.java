@@ -27,9 +27,12 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.linagora.linShare.core.repository.FunctionalityRepository;
+import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
-public class LoadingServiceTestDatasTest extends AbstractJUnit4SpringContextTests {
+public class LoadingServiceTestDatasTest extends AbstractTransactionalJUnit4SpringContextTests {
 	
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
@@ -53,6 +56,13 @@ public class LoadingServiceTestDatasTest extends AbstractJUnit4SpringContextTest
 	
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
+	
+	@Qualifier("userRepository")
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private UserService userService;
 	
 	private LoadingServiceTestDatas datas;
 	
@@ -72,8 +82,21 @@ public class LoadingServiceTestDatasTest extends AbstractJUnit4SpringContextTest
 	
 	@Test
 	public  void test() throws BusinessException {
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository);
+		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
 		datas.loadDatas();
 		datas.deleteDatas();
 	}
+	
+	
+	@Test
+	public  void testUser() throws BusinessException {
+		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
+		datas.loadDatas();
+		datas.loadUsers();
+		datas.deleteUsers();
+		datas.deleteDatas();
+	}
+	
+	
+	
 }

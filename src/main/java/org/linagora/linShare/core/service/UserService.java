@@ -81,12 +81,21 @@ public interface UserService {
     /**
      * Delete a User (and all the corresponding share )
      * @param login
-     * @param owner : the intended owner
+     * @param actor 
      * @param checkOwnership : if true, check that the owner is the creator of the user
      * 			useful for the batch
      * @throws BusinessException 
      */
-    void deleteUser(String login, User actor, boolean checkOwnership) throws BusinessException;
+    void deleteUser(String login, User actor) throws BusinessException;
+    
+    /**
+     * Delete all users from domain (and all the related data )
+     * @param actor
+     * @param domainIdentifier
+     * @throws BusinessException
+     */
+    void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException;
+
 
     /** Clean outdated guest accounts. */
     void cleanExpiredGuestAcccounts();
@@ -224,19 +233,6 @@ public interface UserService {
      * @throws TechnicalError if the user cannot be created
      */
     public User findOrCreateUserWithDomainPolicies(String mail, String domainId, String ActorDomainId) throws BusinessException ;
-    
-    
-    
-    /** Find a  user (based on mail address).
-     * Search first in database, then on ldap if not found.
-     * If the user isn't found on DB, then it is created from the ldap info
-     * @param mail user mail.
-     * @param domainId domain identifier.
-     * @return founded user.
-     * @throws BusinessException if the user could not be found
-     * @throws TechnicalError if the user cannot be created
-     */
-    public User findOrCreateUserForAuth(String mail, String domainId) throws BusinessException ;
 	
     public User findUnkownUserInDB( String mail);
 	public User findUserInDB(String domain, String mail);

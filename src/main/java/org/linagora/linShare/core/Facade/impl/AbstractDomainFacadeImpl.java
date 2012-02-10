@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.domain.constants.DomainType;
-import org.linagora.linShare.core.domain.constants.FunctionalityNames;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.DomainPolicy;
@@ -28,7 +27,6 @@ import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.DomainPatternVo;
 import org.linagora.linShare.core.domain.vo.GuestDomainVo;
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
-import org.linagora.linShare.core.domain.vo.ShareExpiryRuleVo;
 import org.linagora.linShare.core.domain.vo.SubDomainVo;
 import org.linagora.linShare.core.domain.vo.TopDomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -37,8 +35,8 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.DomainPolicyService;
 import org.linagora.linShare.core.service.FunctionalityService;
+import org.linagora.linShare.core.service.UserAndDomainMultiService;
 import org.linagora.linShare.core.service.UserProviderService;
-import org.linagora.linShare.core.service.UserService;
 import org.linagora.linShare.core.utils.AESCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,26 +45,26 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 	
 	private final AbstractDomainService abstractDomainService;
 	private final FunctionalityService functionalityService;
-	private final UserService userService;
+	private final UserAndDomainMultiService userAndDomainMultiService;
 	private final UserProviderService userProviderService;
 	private final DomainPolicyService domainPolicyService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
 	public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityService functionalityService,
-			UserService userService, UserProviderService userProviderService, DomainPolicyService domainPolicyService) {
+			UserProviderService userProviderService, DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService) {
 		super();
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
-		this.userService = userService;
 		this.userProviderService = userProviderService;
 		this.domainPolicyService = domainPolicyService;
+		this.userAndDomainMultiService = userAndDomainMultiService;
 	}
 	
 	
-	private boolean isAuthorized(UserVo actorVo) {
+	private boolean isAuthorized(UserVo actorVo) throws BusinessException {
 		if(actorVo !=null) {
-			User actor = userService.findUserInDB(actorVo.getDomainIdentifier(),actorVo.getMail());
+			User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
 			if(actor != null) {
 				if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.ADMIN)) {
 					return true;
@@ -183,7 +181,10 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 	@Override
 	public void deleteDomain(String identifier, UserVo actorVo) throws BusinessException {
 		if(isAuthorized(actorVo)) {
-			abstractDomainService.deleteDomain(identifier);
+			
+			User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+			
+			userAndDomainMultiService.deleteDomainAndUsers(actor, identifier);
 		}
 	}
 
@@ -193,11 +194,11 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 	}
 
 	@Override
-	public boolean userCanCreateGuest(UserVo userVo) throws BusinessException {
-		User user = userService.findUserInDB(userVo.getDomainIdentifier(),userVo.getMail());
-		if(user != null) {
-			logger.debug("user found : " + user.getMail());
-			return abstractDomainService.userCanCreateGuest(user);
+	public boolean userCanCreateGuest(UserVo actorVo) throws BusinessException {
+		User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
+		if(actor != null) {
+			logger.debug("user found : " + actor.getMail());
+			return abstractDomainService.userCanCreateGuest(actor);
 		}
 		return false;
 	}
@@ -395,15 +396,15 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 	}
 
 	@Override
-	public boolean isCustomLogoActive(UserVo actor) throws BusinessException {
-		User user = userService.findUserInDB(actor.getDomainIdentifier(), actor.getMail());
-		return functionalityService.getCustomLogoFunctionality(user.getDomain()).getActivationPolicy().getStatus();
+	public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException {
+		User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
+		return functionalityService.getCustomLogoFunctionality(actor.getDomain()).getActivationPolicy().getStatus();
 	}
 
 	@Override
-	public String getCustomLogoUrl(UserVo actor) throws BusinessException {
-		User user = userService.findUserInDB(actor.getDomainIdentifier(),actor.getMail());
-		return functionalityService.getCustomLogoFunctionality(user.getDomain()).getValue();
+	public String getCustomLogoUrl(UserVo actorVo) throws BusinessException {
+		User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
+		return functionalityService.getCustomLogoFunctionality(actor.getDomain()).getValue();
 	}
 
 	@Override

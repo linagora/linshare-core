@@ -40,6 +40,18 @@ cn: Smith, Jane
 userPassword: password2
 mail: user2@linpki.org
 
+dn: uid=user3,ou=People,dc=linpki,dc=org
+uid: user3
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Foo
+givenName: Bar
+cn: Foo, Bar
+userPassword: password3
+mail: user3@linpki.org
+
 dn: uid=test1,ou=People,dc=linpki,dc=org
 uid: test1
 objectClass: inetOrgPerson

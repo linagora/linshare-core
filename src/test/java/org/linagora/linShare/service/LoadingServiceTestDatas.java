@@ -21,22 +21,33 @@
 package org.linagora.linShare.service;
 
 import org.linagora.linShare.core.domain.constants.FileSizeUnit;
+import org.linagora.linShare.core.domain.constants.FunctionalityNames;
+import org.linagora.linShare.core.domain.constants.Language;
+import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linShare.core.domain.entities.DomainPolicy;
 import org.linagora.linShare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linShare.core.domain.entities.Functionality;
+import org.linagora.linShare.core.domain.entities.Guest;
+import org.linagora.linShare.core.domain.entities.GuestDomain;
+import org.linagora.linShare.core.domain.entities.Internal;
+import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Policy;
 import org.linagora.linShare.core.domain.entities.RootDomain;
 import org.linagora.linShare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linShare.core.domain.entities.SubDomain;
 import org.linagora.linShare.core.domain.entities.TopDomain;
 import org.linagora.linShare.core.domain.entities.UnitValueFunctionality;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.linagora.linShare.core.repository.FunctionalityRepository;
+import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.AbstractDomainService;
+import org.linagora.linShare.core.service.UserService;
 import org.linagora.linShare.core.service.impl.FunctionalityServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +60,21 @@ public class LoadingServiceTestDatas {
 	private AbstractDomainRepository abstractDomainRepository;
 	private DomainPolicyRepository domainPolicyRepository;
 	
-	public static String rootDomaineName = "TEST_Domain-0";
-	public static String topDomaineName = "TEST_Domain-0-1";
-	public static String topDomaineName2 = "TEST_Domain-0-2";
-	public static String subDomaineName1 = "TEST_Domain-0-1-1";
-	public static String subDomaineName2 = "TEST_Domain-0-1-2";
+	private UserService userService;
+	private UserRepository<User> userRepository;
+	
+	public static String rootDomainName = "TEST_Domain-0";
+	public static String topDomainName = "TEST_Domain-0-1";
+	public static String topDomainName2 = "TEST_Domain-0-2";
+	public static String subDomainName1 = "TEST_Domain-0-1-1";
+	public static String subDomainName2 = "TEST_Domain-0-1-2";
+	public static String guestDomainName1 = "guestDomainName1";
+	
+//	public static String myRootDomain = "LinShareRootDomain";
+//	public static String myDomain = "MyDomain";
+//	public static String mySubDomain = "MySubDomain";
+//	public static String myGuestDomain = "MyGuestDomain";
+	
 	
 	public static String TEST_TIME_STAMPING="TEST_TIME_STAMPING";
 	public static String FILESIZE_MAX="TEST_FILESIZE_MAX";
@@ -72,27 +93,55 @@ public class LoadingServiceTestDatas {
 	public static String timeStampingUrl = "http://server/service";
 	
 	private RootDomain rootDomain;
+
+
 	private DomainPolicy defaultPolicy;
+	
+	
+	private User user1;  /* John Doe */
+	private User user2;	 /* Jane Smith */
+	private User user3;	 /* Foo Bar */
+	
+	private Guest guest1;
 	
 
 	public LoadingServiceTestDatas(
 			FunctionalityRepository functionalityRepository,
 			AbstractDomainRepository abstractDomainRepository,
-			DomainPolicyRepository domainPolicyRepository) {
+			DomainPolicyRepository domainPolicyRepository, 
+			UserRepository userRepository,
+			UserService userService) {
 		super();
 		this.functionalityRepository = functionalityRepository;
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyRepository = domainPolicyRepository;
+		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 	public RootDomain getRootDomain() {
 		return rootDomain;
 	}
-
+	
 	public  void deleteDatas() throws BusinessException {
 		abstractDomainRepository.delete(getRootDomain());
 		domainPolicyRepository.delete(defaultPolicy);
 	}
+	
+	
+	public  void deleteUsers() throws BusinessException {
+		User root = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
+		
+//		userService.deleteUser(getGuest1().getLogin(), getUser1());
+		
+		userService.deleteUser(getUser1().getLogin(), root);
+		userService.deleteUser(getUser2().getLogin(), root);
+		userService.deleteUser(getUser3().getLogin(), root);
+		
+		abstractDomainRepository.delete(getRootDomain());
+		domainPolicyRepository.delete(defaultPolicy);
+	
+	}	
 		
 		
 	public  void loadDatas() throws BusinessException {
@@ -100,31 +149,42 @@ public class LoadingServiceTestDatas {
 		defaultPolicy = new DomainPolicy(domainePolicyName0, new DomainAccessPolicy());
 		domainPolicyRepository.create(defaultPolicy);
 		
-		rootDomain= new RootDomain(rootDomaineName,rootDomaineName);
+		rootDomain= new RootDomain(rootDomainName,rootDomainName);
 		rootDomain.setPolicy(defaultPolicy);
 		abstractDomainRepository.create(rootDomain);
 		logger.debug("Current AbstractDomain object: " + rootDomain.toString());
 		
-		TopDomain topDomain = new TopDomain(topDomaineName,topDomaineName,rootDomain);
+		TopDomain topDomain = new TopDomain(topDomainName,topDomainName,rootDomain);
 		topDomain.setPolicy(defaultPolicy);
 		abstractDomainRepository.create(topDomain);
 		rootDomain.addSubdomain(topDomain);
 		abstractDomainRepository.update(rootDomain);
 		logger.debug("Current TopDomain object: " + topDomain.toString());
 
-		SubDomain subDomain1 = new SubDomain(subDomaineName1,subDomaineName1,topDomain);
+		SubDomain subDomain1 = new SubDomain(subDomainName1,subDomainName1,topDomain);
 		subDomain1.setPolicy(defaultPolicy);
 		abstractDomainRepository.create(subDomain1);
 		topDomain.addSubdomain(subDomain1);
 		abstractDomainRepository.update(topDomain);
 		logger.debug("Current SubDomain object: " + subDomain1.toString());
 		
-		SubDomain subDomain2 = new SubDomain(subDomaineName2,subDomaineName2,topDomain);
+		SubDomain subDomain2 = new SubDomain(subDomainName2,subDomainName2,topDomain);
 		subDomain2.setPolicy(defaultPolicy);
 		abstractDomainRepository.create(subDomain2);
 		topDomain.addSubdomain(subDomain2);
 		abstractDomainRepository.update(topDomain);
 		logger.debug("Current SubDomain object: " + subDomain2.toString());
+		
+		
+		GuestDomain userGuestDomain = new GuestDomain(guestDomainName1,guestDomainName1);
+		userGuestDomain.setParentDomain(topDomain);
+		userGuestDomain.setPolicy(defaultPolicy);
+		abstractDomainRepository.create(userGuestDomain);
+		
+		topDomain.addSubdomain(userGuestDomain);
+		abstractDomainRepository.update(topDomain);	
+		
+		
 		
 		createTimeStampingFunctionality(rootDomain);
 		createMaxFileSizeFunctionality(rootDomain,200);
@@ -146,20 +206,70 @@ public class LoadingServiceTestDatas {
 		createQuotaUserFunctionality(subDomain2,125);
 		
 		
-		
-		
-		
-		TopDomain topDomain2 = new TopDomain(topDomaineName2,topDomaineName2,rootDomain);
+		TopDomain topDomain2 = new TopDomain(topDomainName2,topDomainName2,rootDomain);
 		topDomain2.setPolicy(defaultPolicy);
 		abstractDomainRepository.create(topDomain2);
 		rootDomain.addSubdomain(topDomain2);
 		abstractDomainRepository.update(rootDomain);
 		logger.debug("Current topDomain2 object: " + topDomain2.toString());
 		
+	}
+	
+	
+	public  void loadUsers() throws BusinessException {
+		
+		defaultPolicy = new DomainPolicy(domainePolicyName0, new DomainAccessPolicy());
+		domainPolicyRepository.create(defaultPolicy);
+		
+		rootDomain= new RootDomain(rootDomainName,rootDomainName);
+		rootDomain.setPolicy(defaultPolicy);
+		abstractDomainRepository.create(rootDomain);
+		logger.debug("Current AbstractDomain object: " + rootDomain.toString());
+		
+		TopDomain topDomain = new TopDomain(topDomainName,topDomainName,rootDomain);
+		topDomain.setPolicy(defaultPolicy);
+		abstractDomainRepository.create(topDomain);
+		rootDomain.addSubdomain(topDomain);
+		abstractDomainRepository.update(rootDomain);
+		logger.debug("Current TopDomain object: " + topDomain.toString());
+
+		SubDomain subDomain1 = new SubDomain(subDomainName1,subDomainName1,topDomain);
+		subDomain1.setPolicy(defaultPolicy);
+		abstractDomainRepository.create(subDomain1);
+		topDomain.addSubdomain(subDomain1);
+		abstractDomainRepository.update(topDomain);
+		logger.debug("Current SubDomain object: " + subDomain1.toString());
+		
+		SubDomain subDomain2 = new SubDomain(subDomainName2,subDomainName2,topDomain);
+		subDomain2.setPolicy(defaultPolicy);
+		abstractDomainRepository.create(subDomain2);
+		topDomain.addSubdomain(subDomain2);
+		abstractDomainRepository.update(topDomain);
+		logger.debug("Current SubDomain object: " + subDomain2.toString());
+		
+		
+		GuestDomain userGuestDomain = new GuestDomain(guestDomainName1,guestDomainName1);
+		userGuestDomain.setParentDomain(topDomain);
+		userGuestDomain.setPolicy(defaultPolicy);
+		abstractDomainRepository.create(userGuestDomain);
+		
+		topDomain.addSubdomain(userGuestDomain);
+		abstractDomainRepository.update(topDomain);	
+		
+		
+		user1 = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
+		user2 = new Internal("user2@linpki.org","Jane","Smith","user2@linpki.org");
+		user3 = new Internal("user3@linpki.org","Foo","Bar","user3@linpki.org");
+		
+		user1.setDomain(abstractDomainRepository.findById(topDomainName));
+		user2.setDomain(abstractDomainRepository.findById(subDomainName1));
+		user3.setDomain(abstractDomainRepository.findById(guestDomainName1));
+		
+		userRepository.create(user1);		
+		userRepository.create(user2);
+		userRepository.create(user3);
 		
 	}
-
-	
 	
 	private void createTimeStampingFunctionality(AbstractDomain currentDomain) throws BusinessException {
 		
@@ -310,6 +420,24 @@ public class LoadingServiceTestDatas {
 	}
 	
 	
+
+
+	public Guest getGuest1() {
+		return guest1;
+	}
+
+	public User getUser1() {
+		return user1;
+	}
+
+	public User getUser2() {
+		return user2;
+	}
+
+	public User getUser3() {
+		return user3;
+	}
+
 	public int getAvailableFunctionalitiesForTopDomain2() {
 		// three have their activation policy dedicated to the root domain (forbidden or mandatory): -3 : (FUNC1,FUNC2,FUNC3)
 		return TOTAL_COUNT_FUNC -3 ;

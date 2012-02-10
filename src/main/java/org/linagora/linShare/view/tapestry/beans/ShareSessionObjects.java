@@ -50,6 +50,8 @@ public class ShareSessionObjects {
     
     private boolean reloadGroupsNeeded;
     
+    private boolean comeFromSharePopup;
+    
     
     public ShareSessionObjects() {
     	users = new ArrayList<UserVo>();
@@ -164,6 +166,14 @@ public class ShareSessionObjects {
 
 	public boolean isReloadGroupsNeeded() {
 		return reloadGroupsNeeded;
+	}
+
+	public boolean isComeFromSharePopup() {
+		return comeFromSharePopup;
+	}
+
+	public void setComeFromSharePopup(boolean comeFromSharePopup) {
+		this.comeFromSharePopup = comeFromSharePopup;
 	}
 	
 	

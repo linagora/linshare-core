@@ -181,7 +181,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 
 		// invisible domain and user found or visible domain and user found
 		try {
-			user = userService.findOrCreateUserForAuth(foundUser.getMail(), domainIdentifier);
+			user = userService.findOrCreateUser(foundUser.getMail(), domainIdentifier);
 			
 			// if we already have a guest with the same mail, and then, a domain with
 			// this mail is added in linshare, when the domain user connects he should not

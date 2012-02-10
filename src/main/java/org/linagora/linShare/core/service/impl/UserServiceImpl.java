@@ -274,11 +274,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-	public void deleteUser(String login, User actor, boolean checkOwnership) throws BusinessException {
+	public void deleteUser(String login, User actor) throws BusinessException {
 		User userToDelete = userRepository.findByLogin(login);
 		
 		if (userToDelete!=null) {
-			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete, checkOwnership);
+			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete);
 			
 			logger.debug("As right ? : "+hasRightToDeleteThisUser);
 			
@@ -286,20 +286,31 @@ public class UserServiceImpl implements UserService {
 				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
 						+" cannot be deleted, he is not a guest, or "+ actor.getLogin()+ " is not an admin");
 			} else {
-				doDeleteUser(login, actor, userToDelete);
+				doDeleteUser( actor, userToDelete);
 			}
 			
+		}else{
+			logger.debug("User not found in DB : " + login);
 		}
 	}
     
-    
-
-    public boolean isAdminForThisUser(User actor, User userToManage) {
-    	return isAdminForThisUser(actor, userToManage, true);
+    @Override
+	public void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException {
+    	logger.debug("deleteAllUsersFromDomain: begin");
+    	
+    	List<User> users = userRepository.findByDomain(domainIdentifier);
+    	
+		logger.info("Delete all user from domain " + domainIdentifier + ", count: "+ users.size() );
+    	
+    	for (User user : users) {
+    		doDeleteUser( actor, user);
+		}
+    	
+    	logger.debug("deleteAllUsersFromDomain: end");
     }
+        
     
-    
-	private boolean isAdminForThisUser(User actor, User userToManage, boolean checkOwnership) {
+	public boolean isAdminForThisUser(User actor, User userToManage) {
 		if(actor.getRole().equals(Role.SUPERADMIN)) {
 			return true;
 		} else if(actor.getRole().equals(Role.SYSTEM)) {
@@ -311,15 +322,13 @@ public class UserServiceImpl implements UserService {
 					return true;
 				}
 			}
-		} else if(checkOwnership) {
-			if(userToManage instanceof Guest && ((Guest)userToManage).getOwner().equals(actor)) {
+		} else if(userToManage instanceof Guest && ((Guest)userToManage).getOwner().equals(actor)) {
 				return true;
 			}
-		}
 		return false;
 	}
 
-	private void doDeleteUser(String login, User actor, User userToDelete) throws BusinessException {
+	private void doDeleteUser(User actor, User userToDelete) throws BusinessException {
 		try {
 			// The list of all document that were in the received shares
 			Set<Document> documentsToClean = new HashSet<Document>();
@@ -431,8 +440,8 @@ public class UserServiceImpl implements UserService {
 				
 			}
 		} catch (IllegalArgumentException e) {
-			logger.error("Couldn't find the user " + login +" to be deleted", e);
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + login +" to be deleted");
+			logger.error("Couldn't find the user " + userToDelete.getLogin() +" to be deleted", e);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + userToDelete.getLogin() +" to be deleted");
 		}
 	}
 
@@ -446,7 +455,7 @@ public class UserServiceImpl implements UserService {
         logger.info(guests.size() + " guest(s) have been found to be removed");
         for (User guest : guests) {
             try {
-                deleteUser(guest.getLogin(), owner, false);
+                deleteUser(guest.getLogin(), owner);
                 logger.info("Removed expired user : " + guest.getLogin());
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove expired user : " + guest.getLogin() + "\n" + ex.toString());
@@ -554,7 +563,7 @@ public class UserServiceImpl implements UserService {
 		Guest guest = guestRepository.findByLogin(mail);
 		User owner = userRepository.findByMail(ownerVo.getMail());
 		
-		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest, true);
+		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest);
 		
 		if (!hasRightToDeleteThisUser) {
 			logger.error("The user " + mail +" cannot be updated by "+owner.getMail());
@@ -944,24 +953,6 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public User findOrCreateUser(String mail, String domainId) throws BusinessException {
-        User user = userRepository.findByMailAndDomain(domainId, mail);
-        
-        if (user == null) {
-            List<User> users = abstractDomainService.searchUserRecursivelyWithoutRestriction(domainId, mail, "", "");
-            if (users!=null && users.size()==1) {
-            	user = users.get(0);
-        		saveOrUpdateUser(user);
-            } else {
-            	logger.error("Could not find the user " + mail +" in the database nor in the LDAP");
-            	// this should really not happened
-            	throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user could not be found in the DB nor in the LDAP");
-            }
-        }
-        return user;
-    }
-    
-    @Override
-    public User findOrCreateUserForAuth(String mail, String domainId) throws BusinessException {
         User user = userRepository.findByMailAndDomain(domainId, mail);
         
         if (user == null) {
