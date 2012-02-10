@@ -32,37 +32,15 @@
                    /userrestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
                    /sharerestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
                    /index.form=httpSessionIntegrationFilter
+                   /sso=httpSessionIntegrationFilter,casExceptionTranslationFilter,filterSecurityInterceptor
                    /j_security_check=httpSessionIntegrationFilter,authenticationProcessingFilter
-                   /**=httpSessionIntegrationFilter,exceptionTranslationFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor
+                   /j_spring_cas_security_check=httpSessionIntegrationFilter,casProcessingFilter
+                   /**=httpSessionIntegrationFilter,exceptionTranslationFilter,casSingleSignOutFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor
             </value>
         </property>
     </bean>
-    
-    <bean id="authenticationProcessingFilterEntryPoint"
-		class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-		<property name="loginFormUrl" value="/pages/login.jsf" />
-		<property name="forceHttps" value="false" />
-	</bean>
-    
-	 <!--         REMEMBER-ME SERVICE DEFINITION           -->
-	 <bean id="rememberMeAuthenticationProvider" class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
-	 	<property name="key" value="springRocks"/>
-	 </bean>
-	 
-	 <bean id="rememberMeService" class="org.linagora.linShare.view.tapestry.services.impl.LinshareRememberMeServices">
-	 	<property name="key" value="springRocks"/>
-	 	<property name="userDetailsService" ref="guestAuthProvider" />  
-	 	<property name="tokenRepository" ref="cookieRepository"/>
-	 	<property name="alwaysRemember" value="false"/>
-	 	<constructor-arg ref="cookieRepository"/>
-	 </bean>
-	
-	<bean id="rememberMeProcessingFilter" class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
-		<property name="rememberMeServices" ref="rememberMeService"/>
-		<property name="authenticationManager" ref="authenticationManager"/>
-	</bean>
 
-    <!--         FILTERS DEFINITION           -->
+       <!--         FILTERS DEFINITION           -->
     <bean id="httpSessionIntegrationFilter"
              class="org.springframework.security.context.HttpSessionContextIntegrationFilter"/>
 
@@ -77,7 +55,7 @@
     			<prop key="org.linagora.linShare.auth.exceptions.BadDomainException">/?login_error=2</prop>
   			</props>
 		</property>
-        <property name="authenticationManager" ref="authenticationManager"/>		
+        <property name="authenticationManager" ref="authenticationManager"/>
         <property name="rememberMeServices" ref="rememberMeService"/>
     </bean>
 
@@ -109,18 +87,32 @@
                 /**/administration/userconfig*=ROLE_AUTH
                 /**/administration/domains=ROLE_SUPERADMIN
                 /**/administration/domains/**=ROLE_SUPERADMIN
-                /**/administration/activationpolicy/**=ROLE_ADMIN
-                /**/administration/configurationpolicy/**=ROLE_ADMIN
-                /**/administration/parameters/**=ROLE_ADMIN
-                /**/administration/personalization/**=ROLE_ADMIN
                 /**/administration/**=ROLE_ADMIN
                 /**=ROLE_AUTH
             </value>
         </property>
     </bean>
 
+	<!--         REMEMBER-ME SERVICE DEFINITION           -->
+	 <bean id="rememberMeAuthenticationProvider" class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
+	 	<property name="key" value="springRocks"/>
+	 </bean>
+	 
+	 <bean id="rememberMeService" class="org.linagora.linShare.view.tapestry.services.impl.LinshareRememberMeServices">
+	 	<property name="key" value="springRocks"/>
+	 	<property name="userDetailsService" ref="guestAuthProvider" />  
+	 	<property name="tokenRepository" ref="cookieRepository"/>
+	 	<property name="alwaysRemember" value="false"/>
+	 	<constructor-arg ref="cookieRepository"/>
+	 </bean>
+	
+	<bean id="rememberMeProcessingFilter" class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
+		<property name="rememberMeServices" ref="rememberMeService"/>
+		<property name="authenticationManager" ref="authenticationManager"/>
+	</bean>
 
-	<!--  REST part / Magic lies there -->
+
+<!--  REST part / Magic lies there -->
 		<bean id="basicProcessingFilter" class="org.springframework.security.ui.basicauth.BasicProcessingFilter">
         	<property name="authenticationManager"><ref bean="authenticationManager"/></property>
         	<property name="authenticationEntryPoint"><ref bean="restAuthenticationEntryPoint"/></property>
@@ -134,6 +126,7 @@
 		<bean id="basicExceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
 			<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint"/>
 		</bean>
+<!--  -->
 
        <!--       AUTHENTICATION MANAGEMENT      -->
        <!-- Authentication manager -->
@@ -146,6 +139,13 @@
             </list>
         </property>
     </bean>
+    
+     <!-- Domain Authentification -->
+
+       <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
+           <property name="userService" ref="userService"/>
+           <property name="abstractDomainService" ref="abstractDomainService"/>
+       </bean>
 
        <!-- DAO Authentification -->
        <bean id="guestAuthProvider" class="org.linagora.linShare.auth.DaoAuthProvider">
@@ -162,13 +162,6 @@
                <bean factory-bean="passwordEncoderFactory" factory-method="getInstance"/>
            </property>
        </bean>
-       
-       <!-- Domain Authentification -->
-
-       <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
-           <property name="userService" ref="userService"/>
-           <property name="abstractDomainService" ref="abstractDomainService"/>
-       </bean>
 
        <!--     AUTHORIZATIONS MANAGEMENT   -->
        <bean id="accessDecisionManager" class="org.springframework.security.vote.UnanimousBased">
@@ -180,4 +173,71 @@
        </bean>
 
        <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
+       
+       
+       <!-- **** extra configuration CAS sso ***** -->
+
+       <bean id="casAuthProvider" class="org.linagora.linShare.auth.DaoCasAuthProvider">
+       		<property name="userDetailsProvider" ref="userDetailsProvider"/>
+       </bean>
+       <bean id="userDetailsProvider" class="org.linagora.linShare.auth.UserDetailsProvider">
+       		<property name="userService" ref="userService"/>
+       </bean>
+       
+        <bean id="casAuthenticationProvider"
+       	class="org.springframework.security.providers.cas.CasAuthenticationProvider">
+       	<property name="userDetailsService" ref="casAuthProvider" />
+       	<property name="serviceProperties" ref="serviceProperties" />
+       	<property name="ticketValidator">
+       		<bean
+       			class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+       			<constructor-arg index="0"
+       				value="${sso.cas.url}" />
+       		</bean>
+       	</property>
+       	<property name="key" value="cas_id_auth_provider_linshare" />
+       </bean>
+       
+        <bean id="casAuthenticationManager"
+       	class="org.springframework.security.providers.ProviderManager">
+       	<property name="providers">
+       		<list>
+       			<ref bean="casAuthenticationProvider" />
+       		</list>
+       	</property>
+       </bean>
+
+       <bean id="casExceptionTranslationFilter"
+       	class="org.springframework.security.ui.ExceptionTranslationFilter">
+       	<property name="authenticationEntryPoint"
+       		ref="casProcessingFilterEntryPoint" />
+       </bean>
+       
+        <bean id="casProcessingFilterEntryPoint"
+       	class="org.springframework.security.ui.cas.CasProcessingFilterEntryPoint">
+       	<property name="loginUrl"
+       		value="${sso.cas.url.login}" />
+       	<property name="serviceProperties" ref="serviceProperties" />
+       </bean>
+       
+        <bean id="serviceProperties"
+       	class="org.springframework.security.ui.cas.ServiceProperties">
+       	<property name="service"
+       		value="${sso.cas.url.serviceId}" />
+       	<property name="sendRenew" value="false" />
+       </bean>
+
+       <bean id="casProcessingFilter"
+       	class="org.springframework.security.ui.cas.CasProcessingFilter">
+       	<property name="authenticationManager"
+       		ref="casAuthenticationManager" />
+       	<property name="authenticationFailureUrl"
+       		value="/sso?login_error=1" />
+       	<property name="defaultTargetUrl" value="/cas" />
+       </bean>
+       
+       <!-- add this to handle a logout request from the CAS server -->
+       <bean id="casSingleSignOutFilter"
+       	class="org.jasig.cas.client.session.SingleSignOutFilter" />
+
 </beans>
