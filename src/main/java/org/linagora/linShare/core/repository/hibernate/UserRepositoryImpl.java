@@ -23,9 +23,7 @@ package org.linagora.linShare.core.repository.hibernate;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.linagora.linShare.core.domain.entities.User;
-
 import org.linagora.linShare.core.repository.UserRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 

@@ -20,19 +20,6 @@
 */
 package org.linagora.linShare.dao.jackrabbit;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.linagora.linShare.core.dao.FileSystemDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /*
  * This all class was disable because of a huge spring context problem

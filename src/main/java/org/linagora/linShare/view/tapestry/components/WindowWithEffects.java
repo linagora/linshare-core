@@ -21,9 +21,7 @@
 package org.linagora.linShare.view.tapestry.components;
 
 
-import java.util.Date;
 import java.util.UUID;
-
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.Parameter;

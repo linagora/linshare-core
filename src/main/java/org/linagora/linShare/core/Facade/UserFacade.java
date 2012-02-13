@@ -25,7 +25,6 @@ import java.util.List;
 import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Role;
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;

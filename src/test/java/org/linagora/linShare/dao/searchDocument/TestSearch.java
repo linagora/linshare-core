@@ -21,31 +21,6 @@
 package org.linagora.linShare.dao.searchDocument;
 
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.linagora.linShare.core.Facade.SearchDocumentFacade;
-import org.linagora.linShare.core.dao.FileSystemDao;
-import org.linagora.linShare.core.domain.constants.DocumentType;
-import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.objects.FileInfo;
-import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
-import org.linagora.linShare.core.domain.vo.UserVo;
-import org.linagora.linShare.core.repository.DocumentRepository;
-import org.linagora.linShare.core.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /*
  * This all class was disable because of a huge spring context problem

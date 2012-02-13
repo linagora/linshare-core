@@ -2,10 +2,6 @@ package org.linagora.linShare.core.Facade;
 
 import java.util.List;
 
-import org.linagora.linShare.core.domain.entities.AbstractDomain;
-import org.linagora.linShare.core.domain.entities.Functionality;
-import org.linagora.linShare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.vo.FunctionalityVo;
 import org.linagora.linShare.core.domain.vo.PolicyVo;
 import org.linagora.linShare.core.domain.vo.UserVo;

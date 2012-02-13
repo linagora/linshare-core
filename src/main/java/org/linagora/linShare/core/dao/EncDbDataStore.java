@@ -6,8 +6,9 @@
 package org.linagora.linShare.core.dao;
 
 import java.io.Console;
+
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.core.data.DataStoreException;
+
 import org.apache.jackrabbit.core.data.db.DbDataStore;
 import org.apache.jackrabbit.core.persistence.bundle.util.ConnectionRecoveryManager;
 

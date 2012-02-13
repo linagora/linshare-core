@@ -21,6 +21,7 @@
 package org.linagora.linShare.view.tapestry.beans;
 
 import java.io.Serializable;
+
 import org.linagora.linShare.core.domain.constants.Language;
 
 /** This class will be used for welcome message management.

@@ -24,14 +24,11 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.hibernate.classic.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linShare.core.domain.constants.FileSizeUnit;
-import org.linagora.linShare.core.domain.constants.FunctionalityNames;
-import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.constants.TimeUnit;
 import org.linagora.linShare.core.domain.constants.UnitType;
@@ -55,8 +52,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations={"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",

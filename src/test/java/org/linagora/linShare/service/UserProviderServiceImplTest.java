@@ -20,8 +20,6 @@
  */
 package org.linagora.linShare.service;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,8 +32,6 @@ import org.linagora.linShare.core.service.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",

@@ -33,7 +33,6 @@ import org.linagora.linShare.core.domain.entities.DenyDomain;
 import org.linagora.linShare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linShare.core.domain.entities.DomainAccessRule;
 import org.linagora.linShare.core.domain.entities.DomainPolicy;
-import org.linagora.linShare.core.domain.entities.Policy;
 import org.linagora.linShare.core.domain.entities.RootDomain;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
@@ -43,8 +42,6 @@ import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations={"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",

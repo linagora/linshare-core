@@ -3,8 +3,6 @@ package org.linagora.linShare.core.domain.vo;
 
 import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.entities.Policy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * this class is designed to handle the 'enable/disable' status of a particular functionality.

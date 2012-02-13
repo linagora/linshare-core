@@ -21,8 +21,8 @@
 package org.linagora.linShare.core.domain.entities;
 
 import java.io.Serializable;
+
 import org.linagora.linShare.core.domain.constants.Language;
-import org.linagora.linShare.core.domain.constants.UserType;
 
 /** Internationalisable welcome text depending on the user type.
  *

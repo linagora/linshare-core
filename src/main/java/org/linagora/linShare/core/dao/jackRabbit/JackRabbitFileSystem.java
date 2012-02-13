@@ -37,8 +37,8 @@ import javax.jcr.query.Query;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.util.ISO9075;
-import org.linagora.linShare.core.domain.objects.FileInfo;
 import org.linagora.linShare.core.dao.FileSystemDao;
+import org.linagora.linShare.core.domain.objects.FileInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springmodules.jcr.JcrCallback;

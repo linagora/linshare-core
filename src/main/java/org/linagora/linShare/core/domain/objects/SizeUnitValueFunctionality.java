@@ -3,8 +3,6 @@ package org.linagora.linShare.core.domain.objects;
 
 import org.linagora.linShare.core.domain.entities.FileSizeUnitClass;
 import org.linagora.linShare.core.domain.entities.UnitValueFunctionality;
-import org.linagora.linShare.core.domain.vo.FunctionalityVo;
-import org.linagora.linShare.core.domain.vo.SizeValueFunctionalityVo;
 /**
  * This class is just for easy use. It is not an entity
  * @author fred

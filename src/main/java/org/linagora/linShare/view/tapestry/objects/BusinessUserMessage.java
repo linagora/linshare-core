@@ -23,6 +23,7 @@ package org.linagora.linShare.view.tapestry.objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 
 /** Defines the severity of a message.

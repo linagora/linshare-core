@@ -21,6 +21,7 @@
 package org.linagora.linShare.view.tapestry.services;
 
 import java.util.List;
+
 import org.apache.tapestry5.ioc.Messages;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.objects.BusinessUserMessage;

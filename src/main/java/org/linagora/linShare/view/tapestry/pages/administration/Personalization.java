@@ -20,11 +20,9 @@
 */
 package org.linagora.linShare.view.tapestry.pages.administration;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -39,7 +37,6 @@ import org.linagora.linShare.core.domain.entities.MailSubject;
 import org.linagora.linShare.core.domain.entities.MailTemplate;
 import org.linagora.linShare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linShare.core.domain.entities.WelcomeText;
-import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
