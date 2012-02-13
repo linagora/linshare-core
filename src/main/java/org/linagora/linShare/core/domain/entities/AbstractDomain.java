@@ -191,6 +191,10 @@ public abstract class AbstractDomain {
 		this.subdomain.add(subdomain);
 	}
 
+	public void addFunctionality(Functionality functionality) {
+		this.functionalities.add(functionality);
+	}
+	
 	public String getLabel() {
 		return label;
 	}

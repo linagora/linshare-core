@@ -20,6 +20,8 @@
  */
 package org.linagora.linShare.service;
 
+import java.util.Set;
+
 import org.linagora.linShare.core.domain.constants.FileSizeUnit;
 import org.linagora.linShare.core.domain.constants.FunctionalityNames;
 import org.linagora.linShare.core.domain.constants.Language;
@@ -54,7 +56,7 @@ import org.slf4j.LoggerFactory;
 
 public class LoadingServiceTestDatas {
 	
-	protected Logger logger = LoggerFactory.getLogger(FunctionalityServiceImpl.class);
+	protected Logger logger = LoggerFactory.getLogger(LoadingServiceTestDatas.class);
 	
 	private FunctionalityRepository functionalityRepository;
 	private AbstractDomainRepository abstractDomainRepository;
@@ -70,10 +72,10 @@ public class LoadingServiceTestDatas {
 	public static String subDomainName2 = "TEST_Domain-0-1-2";
 	public static String guestDomainName1 = "guestDomainName1";
 	
-//	public static String myRootDomain = "LinShareRootDomain";
-//	public static String myDomain = "MyDomain";
-//	public static String mySubDomain = "MySubDomain";
-//	public static String myGuestDomain = "MyGuestDomain";
+	public static String sqlRootDomain = "LinShareRootDomain";
+	public static String sqlDomain = "MyDomain";
+	public static String sqlSubDomain = "MySubDomain";
+	public static String sqlGuestDomain = "MyGuestDomain";
 	
 	
 	public static String TEST_TIME_STAMPING="TEST_TIME_STAMPING";
@@ -197,13 +199,17 @@ public class LoadingServiceTestDatas {
 		createFunc4Functionality(rootDomain);
 		createFunc5Functionality(rootDomain);
 		
+		abstractDomainRepository.update(rootDomain);	
+		
 		
 		createMaxFileSizeFunctionality(topDomain,100);
 		createQuotaUserFunctionality(topDomain,250);
+		abstractDomainRepository.update(topDomain);
 		
 		createMaxFileSizeFunctionality(subDomain1,50);
-		
 		createQuotaUserFunctionality(subDomain2,125);
+		abstractDomainRepository.update(subDomain1);
+		abstractDomainRepository.update(subDomain2);
 		
 		
 		TopDomain topDomain2 = new TopDomain(topDomainName2,topDomainName2,rootDomain);
@@ -282,6 +288,7 @@ public class LoadingServiceTestDatas {
 						timeStampingUrl);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	
@@ -294,6 +301,7 @@ public class LoadingServiceTestDatas {
 				currentDomain);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	
@@ -309,6 +317,7 @@ public class LoadingServiceTestDatas {
 				);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	private void createQuotaUserFunctionality(AbstractDomain currentDomain,Integer value) throws BusinessException{
@@ -323,6 +332,7 @@ public class LoadingServiceTestDatas {
 				);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	private void createQuotaGlobalFunctionality(AbstractDomain currentDomain) throws BusinessException{
@@ -338,6 +348,7 @@ public class LoadingServiceTestDatas {
 				);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	
@@ -353,6 +364,7 @@ public class LoadingServiceTestDatas {
 				);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	
@@ -368,6 +380,7 @@ public class LoadingServiceTestDatas {
 				);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 
@@ -383,6 +396,7 @@ public class LoadingServiceTestDatas {
 				);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	
@@ -400,6 +414,7 @@ public class LoadingServiceTestDatas {
 		fonc.getConfigurationPolicy().setSystem(true);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	
@@ -416,6 +431,7 @@ public class LoadingServiceTestDatas {
 		fonc.getConfigurationPolicy().setSystem(true);
 		
 		functionalityRepository.create(fonc);
+		currentDomain.addFunctionality(fonc);
 		logger.debug("Current object: " + fonc.toString());
 	}
 	

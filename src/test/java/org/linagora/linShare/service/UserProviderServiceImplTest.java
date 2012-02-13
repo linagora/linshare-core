@@ -26,6 +26,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -65,18 +66,20 @@ public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTest
 	
 	@Before
 	public void setUp() throws Exception {
-//		logger.debug("Begin setUp");
-//		logger.debug("End setUp");
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-//		logger.debug("Begin tearDown");
-//		logger.debug("End tearDown");
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
 	public void testCreateLDAPConnection() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
 		
 		LDAPConnection ldapconnexion  = new LDAPConnection(identifier, providerUrl, securityAuth);
 		try {
@@ -86,12 +89,16 @@ public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTest
 			Assert.fail("Can't create connection.");
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	
 	@Test
 	public void testCreateDomainPattern() {
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
 		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname");
 		try {
 			userProviderService.createDomainPattern(domainPattern);
@@ -100,11 +107,14 @@ public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTest
 			Assert.fail("Can't create domain pattern.");
 		}
 		logger.debug("Current pattern object: " + domainPattern.toString());
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testCreateDeleteLDAPConnection() {
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
 		LDAPConnection ldapconnexion  = new LDAPConnection(identifier +"2", providerUrl, securityAuth);
 		try {
 			userProviderService.createLDAPConnection(ldapconnexion);
@@ -121,12 +131,14 @@ public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTest
 			e.printStackTrace();
 			Assert.fail("Can't delete connection.");
 		}
-		
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testCreateDeleteDomainPattern() {
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
 		
 		DomainPattern domainPattern = new DomainPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname");
 		try {
@@ -143,5 +155,7 @@ public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTest
 			e.printStackTrace();
 			Assert.fail("Can't delete pattern.");
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 }

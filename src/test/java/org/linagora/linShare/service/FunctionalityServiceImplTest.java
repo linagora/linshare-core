@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Functionality;
@@ -39,6 +40,8 @@ import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.linagora.linShare.core.repository.FunctionalityRepository;
 import org.linagora.linShare.core.service.FunctionalityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -58,6 +61,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTests{
 	
 	
+	private static Logger logger = LoggerFactory.getLogger(FunctionalityServiceImplTest.class);
+	
 	private LoadingServiceTestDatas datas;
 	
 	private int TOTAL_COUNT_FUNC=LoadingServiceTestDatas.TOTAL_COUNT_FUNC;
@@ -76,23 +81,25 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	
 	@Before
 	public void setUp() throws Exception {
-		logger.debug("Begin setUp");
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,null, null);
 		datas.loadDatas();
-		logger.debug("End setUp");
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("Begin tearDown");
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		datas.deleteDatas();
-		logger.debug("End tearDown");
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
 	
 
 	@Test
 	public void testGetAllFunctionalityForRootDomain() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.rootDomainName);
 		Assert.assertNotNull(domain);
 		
@@ -101,10 +108,13 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		Assert.assertNotNull(list);
 		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testGetAllFunctionalityForTopDomain() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName);
 		Assert.assertNotNull(domain);
 		
@@ -113,10 +123,13 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		Assert.assertNotNull(list);
 		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testGetAllFunctionalityForSubDomain() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 		
@@ -126,10 +139,13 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		Assert.assertNotNull(list);
 		Assert.assertEquals(TOTAL_COUNT_FUNC, list.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testGetFunctionalityByIdentifiers() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 		
@@ -150,13 +166,14 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		Assert.assertNotSame(domain.getIdentifier(), fonc3.getDomain().getIdentifier());
 		Assert.assertNotSame(domain.getParentDomain().getIdentifier() , fonc3.getDomain().getIdentifier());
 		Assert.assertEquals(domain.getParentDomain().getParentDomain().getIdentifier() , fonc3.getDomain().getIdentifier());
-		
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testGetAllAvailableFunctionalities() {
 		
-		logger.debug("Begin testGetAllAvailableFunctionalities : ");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName2);
 		Assert.assertNotNull(domain);
 		
@@ -168,11 +185,13 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		}
 		
 		Assert.assertEquals(datas.getAvailableFunctionalitiesForTopDomain2(), list.size());
-		logger.debug("End testGetAllAvailableFunctionalities : ");
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testGetAllAlterableFunctionalities() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName2);
 		Assert.assertNotNull(domain);
@@ -181,11 +200,13 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		Assert.assertNotNull(list);
 		logger.debug("Nb func : " + list.size());
 		Assert.assertEquals(datas.getAlterableFunctionalitiesForTopDomain2(), list.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testGetAllEditableFunctionalities() {
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.topDomainName2);
 		Assert.assertNotNull(domain);
 		
@@ -193,6 +214,8 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		Assert.assertNotNull(list);
 		logger.debug("Nb func : " + list.size());
 		Assert.assertEquals(datas.getEditableFunctionalitiesForTopDomain2(), list.size());
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	
@@ -200,7 +223,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	@Test
 	public void testUpdateUnitValueFunctionality1() throws BusinessException {
 		// This test is designed to check a simple functionality modification.
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 		
@@ -215,13 +238,15 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		for (Functionality it : domain.getFunctionalities()) {
 			Assert.assertEquals(25, ((UnitValueFunctionality)it).getValue().intValue());
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	
 	@Test
 	public void testUpdateUnitValueFunctionality2() throws BusinessException {
 		// This test is designed to check a simple update without modification.
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 		
@@ -235,12 +260,14 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		for (Functionality it : domain.getFunctionalities()) {
 			Assert.assertEquals(50, ((UnitValueFunctionality)it).getValue().intValue());
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testUpdateUnitValueFunctionality2bis() throws BusinessException {
 		// This test is designed to check a simple update without modification.
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertNotNull(domain);
 		
@@ -251,6 +278,8 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		
 		domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName1);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	
 	}
 	
@@ -259,7 +288,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	@Test
 	public void testUpdateUnitValueFunctionality3() throws BusinessException {
 		// This test is designed to check when a functionality is set up with the same parameters as its ancestor, it should be deleted.
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName2);
 		Assert.assertNotNull(domain);
 		Assert.assertEquals(1, domain.getFunctionalities().size());
@@ -290,13 +319,14 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		Assert.assertEquals(250,func.getValue().intValue());
 		
 		Assert.assertTrue(func.getDomain().getIdentifier().equals(domain.getParentDomain().getIdentifier()));
-		
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testUpdateUnitValueFunctionality4() throws BusinessException {
 		// This test is designed to check when we modify a functionality from its ancestor, it should create a new entity.
-		
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName2);
 		Assert.assertNotNull(domain);
 		
@@ -324,13 +354,15 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func2 = (StringValueFunctionality)functionalityService.getFunctionalityByIdentifiers(domain.getIdentifier(), LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		Assert.assertTrue(func2.getDomain().getIdentifier().equals(domain.getIdentifier()));
 		Assert.assertTrue(func.getId() !=func2.getId());
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	
 	
 	@Test
 	public void testUpdateActivationPolicyFunctionality1() throws BusinessException {
-		logger.debug("Begin testUpdateActivationPolicyFunctionality1");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName2);
 		Assert.assertNotNull(domain);
@@ -357,12 +389,13 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 			}
 		}
 		
-		logger.debug("End testUpdateActivationPolicyFunctionality1");
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testUpdateActivationPolicyFunctionality2() throws BusinessException {
-		logger.debug("Begin testUpdateActivationPolicyFunctionality2");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.subDomainName2);
 		Assert.assertNotNull(domain);
@@ -384,12 +417,13 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 //			e.printStackTrace();
 		}
 		
-		logger.debug("End testUpdateActivationPolicyFunctionality2");
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testUpdateRootDomainFunctionality() throws BusinessException {
-		logger.debug("Begin testUpdateRootDomainFunctionality");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.rootDomainName);
 		Assert.assertNotNull(domain);
@@ -400,7 +434,8 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		func.getActivationPolicy().setPolicy(Policies.FORBIDDEN);
 		functionalityService.update(domain, func);
 		
-		logger.debug("End testUpdateRootDomainFunctionality");
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 
 	
@@ -434,7 +469,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	
 	@Test
 	public void testUpdateActivationPolicyFunctionality3() throws BusinessException {
-		logger.debug("Begin testUpdateActivationPolicyFunctionality3");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String rootDomainId = LoadingServiceTestDatas.rootDomainName;
 		
 		Assert.assertEquals(1, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
@@ -465,12 +500,13 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		Assert.assertEquals(1, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
 	
 		
-		logger.debug("End testUpdateActivationPolicyFunctionality3");
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	@Test
 	public void testUpdateConfigurationPolicyFunctionality1() throws BusinessException {
-		logger.debug("Begin testUpdateConfigurationPolicyFunctionality1");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String rootDomainId = LoadingServiceTestDatas.rootDomainName;
 		
 		Assert.assertEquals(1, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
@@ -505,13 +541,14 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		logger.debug("func4.getConfigurationPolicy().getPolicy() : " + func4.getConfigurationPolicy().getPolicy());
 		Assert.assertTrue(func4.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY));
 		
-		logger.debug("End testUpdateConfigurationPolicyFunctionality1");
+		logger.debug(LinShareTestConstants.END_TEST);
+
 	}
 	
 	
 	@Test
 	public void testUpdateConfigurationPolicyFunctionality2() throws BusinessException {
-		logger.debug("Begin testUpdateConfigurationPolicyFunctionality2");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String rootDomainId = LoadingServiceTestDatas.rootDomainName;
 		String valueFromTop="value from top";
 		String valueFromSub="value from sub";
@@ -555,12 +592,12 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		logger.debug("func4.getValue()" + func4.getValue());
 		Assert.assertEquals(LoadingServiceTestDatas.timeStampingUrl, func4.getValue());
 		
-		logger.debug("End testUpdateConfigurationPolicyFunctionality2");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 	@Test
 	public void testUpdateConfigurationPolicyFunctionality3() throws BusinessException {
-		logger.debug("Begin testUpdateConfigurationPolicyFunctionality3");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String rootDomainId = LoadingServiceTestDatas.rootDomainName;
 		
 		Assert.assertEquals(1, countFunctionality(rootDomainId, LoadingServiceTestDatas.TEST_TIME_STAMPING));
@@ -594,7 +631,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		StringValueFunctionality func4 = (StringValueFunctionality)functionalityService.getFunctionalityByIdentifiers(LoadingServiceTestDatas.subDomainName1, LoadingServiceTestDatas.TEST_TIME_STAMPING);
 		Assert.assertTrue(func4.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY));
 		
-		logger.debug("End testUpdateConfigurationPolicyFunctionality3");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 }

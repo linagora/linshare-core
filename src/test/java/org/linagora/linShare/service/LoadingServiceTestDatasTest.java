@@ -23,18 +23,19 @@ package org.linagora.linShare.service;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.linagora.linShare.core.repository.FunctionalityRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -47,6 +48,8 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-test.xml"
 		})
 public class LoadingServiceTestDatasTest extends AbstractTransactionalJUnit4SpringContextTests {
+	
+	private static Logger logger = LoggerFactory.getLogger(LoadingServiceTestDatasTest.class);
 	
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
@@ -68,33 +71,35 @@ public class LoadingServiceTestDatasTest extends AbstractTransactionalJUnit4Spri
 	
 	@Before
 	public void setUp() throws Exception {
-		logger.debug("Begin setUp");
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
-		logger.debug("End setUp");
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("Begin tearDown");
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		
-		logger.debug("End tearDown");
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
 	@Test
 	public  void test() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
 		datas.loadDatas();
 		datas.deleteDatas();
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 	
 	@Test
 	public  void testUser() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-		datas.loadDatas();
 		datas.loadUsers();
 		datas.deleteUsers();
-		datas.deleteDatas();
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 	

@@ -35,6 +35,7 @@ import org.linagora.linShare.common.service.LinShareMessageHandler;
 import org.linagora.linShare.common.service.MailTestRetriever;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.LinShareConstants;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Document;
@@ -51,6 +52,8 @@ import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
@@ -73,6 +76,9 @@ import org.subethamail.smtp.server.SMTPServer;
 public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 //	public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
+	private static Logger logger = LoggerFactory.getLogger(ShareServiceTest.class);
+
+	
 	private User sender;
 
 	@SuppressWarnings("unused")
@@ -130,7 +136,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 
 	@Before
 	public void setUp() throws Exception {
-		logger.debug("begin");
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
 		
 		AbstractDomain rootDomain = abstractDomainRepository.findById(LinShareConstants.rootDomainIdentifier);
@@ -199,12 +205,14 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 		); // end of method execute
 
 		wiser.stop();
-		logger.debug("end");
+		logger.debug(LinShareTestConstants.END_SETUP);
+
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("tearDown:begin");
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+
 		this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			public void doInTransactionWithoutResult(TransactionStatus status) {
 				try {
@@ -227,15 +235,18 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 		functionalityService.update(rootDomain, guestFunctionality);
 		
 		
-		logger.debug("tearDown:end");
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
+
 	}
 	
 	/**
 	 * Create and drop a share directly.
 	 */
 	@Test
-	public void createAndDropAShare() {
+	public void testCreateAndDropAShare() {
 
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
 		this.transactionTemplate
 				.execute(new TransactionCallbackWithoutResult() {
 					public void doInTransactionWithoutResult(
@@ -307,7 +318,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 //						// || recipient.getReceivedShares().contains(share));
 //					}
 //				});
-
+		
+		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	/**
@@ -316,7 +328,9 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	@Ignore
 	@Test
 //	@DirtiesContext
-	public void createAndDropAShareByRemoveUser() {
+	public void testCreateAndDropAShareByRemoveUser() {
+
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 //		this.transactionTemplate
 //				.execute(new TransactionCallbackWithoutResult() {
@@ -399,6 +413,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 //					}
 //				});
 
+		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 	/**
@@ -406,7 +421,9 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	 */
 	@Ignore
 	@Test
-	public void createAndDropAShareByRemoveDocument() {
+	public void testCreateAndDropAShareByRemoveDocument() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
 
 //		this.transactionTemplate
 //				.execute(new TransactionCallbackWithoutResult() {
@@ -495,7 +512,7 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 
 //					}
 //				});
-
+		logger.info(LinShareTestConstants.END_TEST);
 	}
 
 }
