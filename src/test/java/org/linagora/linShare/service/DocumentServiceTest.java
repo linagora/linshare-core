@@ -38,6 +38,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linShare.core.dao.FileSystemDao;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Document;
@@ -52,6 +53,8 @@ import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -73,6 +76,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-test.xml"
 		})
 public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContextTests{
+	
+	private static Logger logger = LoggerFactory.getLogger(DocumentServiceTest.class);
 	
 	private InputStream inputStream;
 	
@@ -110,7 +115,7 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 	
 	@Before
 	public void setUp() throws Exception {
-		logger.debug("begin");
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
 		try {
 			John = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
@@ -152,19 +157,20 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			Assert.assertFalse(true);
 		}
 		
-		logger.debug("end");
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("begin");
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		documentRepository.delete(aDocument);
 		fileRepository.removeFileByUUID(aDocument.getIdentifier());
-		logger.debug("end");
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
 	@Test
 	public void testGetMimeType() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		InputStream tmp = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		String expected = "text/plain";
 		String actual = null;
@@ -175,10 +181,12 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			Assert.assertFalse(true);
 		}
 		Assert.assertEquals(expected, actual);
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testInsertFile() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		InputStream tmp = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		try {
 			Document aNewDoc = documentService.insertFile(John.getLogin(), tmp, tmp.available(), "linShare-default.properties", "text/plain", John);
@@ -191,48 +199,51 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Ignore
 	@Test
 	public void testUpdateFileContent() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		try {				
+			InputStream update = Thread.currentThread().getContextClassLoader().getResourceAsStream("jackRabbit.properties");
+			InputStream updatedFile = null;
+			String expected = IOUtils.toString(update, "UTF-8");
+			String actual = null;
+			
+			updatedFile = fileRepository.getFileContentByUUID(aDocument.getIdentifier());
+			
+			documentService.updateFileContent(aDocument.getIdentifier(), update, 
+					update.available(), aDocument.getName(), 
+					aDocument.getType(), aDocument.getEncrypted(), aDocument.getOwner());
+			
+			updatedFile = fileRepository.getFileContentByUUID(aDocument.getIdentifier());
 
-				try {				
-					InputStream update = Thread.currentThread().getContextClassLoader().getResourceAsStream("jackRabbit.properties");
-					InputStream updatedFile = null;
-					String expected = IOUtils.toString(update, "UTF-8");
-					String actual = null;
-					
-					updatedFile = fileRepository.getFileContentByUUID(aDocument.getIdentifier());
-					
-					documentService.updateFileContent(aDocument.getIdentifier(), update, 
-							update.available(), aDocument.getName(), 
-							aDocument.getType(), aDocument.getEncrypted(), aDocument.getOwner());
-					
-					updatedFile = fileRepository.getFileContentByUUID(aDocument.getIdentifier());
-
-					IOUtils.closeQuietly(update);				
-					actual = IOUtils.toString(updatedFile, "UTF-8");
-					
-					System.out.println("==============================================");
-					System.out.println(actual);
-					System.out.println("==============================================");
-					
-					IOUtils.closeQuietly(updatedFile);
-					
-					Assert.assertEquals(expected, actual);			
-				} catch (BusinessException e) {
-					e.printStackTrace();
-					Assert.assertFalse(true);
-				} catch (IOException e) {
-					e.printStackTrace();
-					Assert.assertFalse(true);
-				}
+			IOUtils.closeQuietly(update);				
+			actual = IOUtils.toString(updatedFile, "UTF-8");
+			
+			System.out.println("==============================================");
+			System.out.println(actual);
+			System.out.println("==============================================");
+			
+			IOUtils.closeQuietly(updatedFile);
+			
+			Assert.assertEquals(expected, actual);			
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assert.assertFalse(true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.assertFalse(true);
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	// TODO : tester si la signature est bien dans jackrabbit et la bd.
 	public void testInsertSignatureFile() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {		
 			InputStream signatureFile = Thread.currentThread().getContextClassLoader().getResourceAsStream("CAS.bin.export");
 			CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -258,11 +269,13 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 				
 		List<Signature> signatures = aDocument.getSignatures();
 		Assert.assertTrue(signatures.size() == 1);
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	// TODO : if param.getGlobalQuotaActive()
 	public void testGetAvailableSize() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
 			long expected = 104857600; // default max size : baseParam in import-mysql.sql
 			long actual = documentService.getAvailableSize(John);
@@ -284,10 +297,12 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testGetTotalSize() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		long expected = 104857600; // default max size : import.sql
 		long actual;
 		
@@ -301,11 +316,12 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testDeleteFile() {
-	
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
 			System.out.println(John.getDocuments().size());
 			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
@@ -323,6 +339,7 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Ignore
@@ -333,25 +350,31 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 
 	@Test
 	public void testGetDocument() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Document expected = aDocument;
 		Document actual = documentService.getDocument(inputStreamUuid);
 		
 		Assert.assertEquals(expected, actual);
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	// test : a Document with a thumbnailUuid not null
 	public void testGetDocumentThumbnail() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		InputStream expected = null;
 		InputStream actual = documentService.getDocumentThumbnail(aDocument.getIdentifier());
 		
 		Assert.assertEquals(expected, actual);
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	// test if a doc actually has a thumbnail
 	public void testDocumentHasThumbnail() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Assert.assertFalse(documentService.documentHasThumbnail(aDocument.getIdentifier()));
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Ignore
@@ -374,6 +397,7 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 
 	@Test
 	public void testDuplicateDocument() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
 			String expected = IOUtils.toString(fileRepository.getFileContentByUUID(aDocument.getIdentifier()));
 			String actual = null;
@@ -390,6 +414,7 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Ignore
@@ -405,7 +430,7 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 
 	@Test
 	public void testRenameFile() {
-		logger.debug("begin");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		String expected = "toto.txt";
 		
@@ -428,12 +453,12 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			Assert.assertFalse(true);
 		}	
 		
-		logger.debug("end");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void testUpdateFileProperties() {
-		logger.debug("begin");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		String expected = "a file";
 		try{
 			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
@@ -452,7 +477,7 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 			e.printStackTrace();
 			Assert.assertFalse(true);
 		}	
-		logger.debug("end");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 }

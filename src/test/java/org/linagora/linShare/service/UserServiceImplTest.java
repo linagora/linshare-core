@@ -24,14 +24,13 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Internal;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
-import org.linagora.linShare.core.repository.DomainPolicyRepository;
-import org.linagora.linShare.core.repository.FunctionalityRepository;
 import org.linagora.linShare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,41 +53,29 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	
 	private static Logger logger = LoggerFactory.getLogger(UserServiceImplTest.class);
 	
-	private LoadingServiceTestDatas datas;
-	
 	@Autowired
 	private UserService userService;
 	
 	@Autowired
-	private FunctionalityRepository functionalityRepository;
-	
-	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
-	
-	@Autowired
-	private DomainPolicyRepository domainPolicyRepository;
-	
-	
-	private static final String INTERNAL_USER_DOMAIN_IDENTIFIER = "MySubDomain";
-	private static final String GUEST_DOMAIN_IDENTIFIER = "GuestDomain";
 	
 	@Before
 	public void setUp() throws Exception {
-		logger.debug("Begin setUp");
-		logger.debug("End setUp");
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("Begin tearDown");
-		logger.debug("End tearDown");
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
 	@Test
 	@Rollback(true)
 	public void testSaveOrUpdateUser() {
-		logger.info("running test ...");
-		AbstractDomain domain = abstractDomainRepository.findById(INTERNAL_USER_DOMAIN_IDENTIFIER);
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
 		
 		Internal user = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
 		
@@ -108,17 +95,17 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		user.setCanUpload(false);
 		userService.saveOrUpdateUser(user);
 		Assert.assertFalse(user.getCanUpload());
-		logger.debug("end");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 	@Test
 	public void testFindOrCreateUser() {
-		logger.debug("Trying to find or create a user");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		long id_user=0;
 		
 		try {
 			logger.debug("Trying to find john doe: should create this user");
-			User user = userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
+			User user = userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
 			id_user= user.getId();
@@ -130,7 +117,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		try {
 			logger.debug("Trying to find john doe: should return this user");
-			User user = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
+			User user = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
 			// Should be the same user, not a new one.
@@ -144,7 +131,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		try {
 			logger.debug("Trying to find john doe: should return this user");
-			User user = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
+			User user = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 			Assert.assertEquals("John", user.getFirstName());
 			Assert.assertEquals("Doe", user.getLastName());
 			// Should be the same user, not a new one.
@@ -155,6 +142,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 			logger.error("userService can not find an user ");
 			logger.error(e.toString());
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 		
 		

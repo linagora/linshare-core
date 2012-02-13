@@ -25,6 +25,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linShare.core.domain.constants.LinShareConstants;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.DomainPolicy;
@@ -34,6 +35,8 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.UserProviderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -51,6 +54,9 @@ import org.springframework.transaction.annotation.Transactional;
 		"classpath:springContext-test.xml"
 		})
 public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTests{
+	
+	private static Logger logger = LoggerFactory.getLogger(AbstractDomainServiceImplTest.class);
+
 	
 	public static String topDomaineName = "TEST_ADST_Domain-0-1";
 	
@@ -70,14 +76,12 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
 	
-	
-	
 	private LDAPConnection ldapconnexion;
 	private DomainPattern domainPattern;
 	
 	@Before
 	public void setUp() throws Exception {
-		logger.debug("Begin setUp");
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		ldapconnexion  = new LDAPConnection(identifier, providerUrl, securityAuth);
 		try {
 			userProviderService.createLDAPConnection(ldapconnexion);
@@ -94,21 +98,22 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 		}
 		logger.debug("Current pattern object: " + domainPattern.toString());
 		
-		logger.debug("End setUp");
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("Begin tearDown");
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		userProviderService.deleteConnection(ldapconnexion.getIdentifier());
 		userProviderService.deletePattern(domainPattern.getIdentifier());
-		logger.debug("End tearDown");
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
 	
 
 	@Test
 	public void testCreateTopDomain() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		TopDomain topDomain = new TopDomain(topDomaineName,"label",ldapconnexion,domainPattern,baseDn);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
@@ -123,11 +128,13 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 			e.printStackTrace();
 			Assert.fail("Can't create top domain.");
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 	
 	@Test
 	public void testCreateTopDomain2() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		LDAPConnection myldapconnexion = null;
 		DomainPattern mydomainPattern = null;
@@ -157,7 +164,7 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 			e.printStackTrace();
 			Assert.fail("Can't delete top domain.");
 		}
-		
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 		
 }

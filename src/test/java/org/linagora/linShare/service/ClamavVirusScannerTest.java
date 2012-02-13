@@ -29,18 +29,26 @@ import junit.framework.Assert;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.service.VirusScannerService;
 import org.linagora.linShare.core.service.impl.ClamavVirusScannerServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClamavVirusScannerTest {
 
+	private static Logger logger = LoggerFactory.getLogger(ClamavVirusScannerTest.class);
+	
 	private static VirusScannerService virusScannerService;
+
 	private static String fileNameToCheck;
 
 	@BeforeClass
 	public static void setUp() throws Exception {
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
+		
 		Properties properties = new Properties();
 		try {
 			InputStream is = ClamavVirusScannerTest.class.getResourceAsStream("/linShare-test.properties");
@@ -54,10 +62,12 @@ public class ClamavVirusScannerTest {
 		Integer clamavPort = new Integer((String) properties.get("test.virusscanner.clamav.port"));
 		fileNameToCheck = (String) properties.getProperty("test.virusscanner.clamav.filetocheck");
 		virusScannerService = new ClamavVirusScannerServiceImpl(clamavHost,clamavPort.intValue());
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@Test
 	public void checkCommunicationFailed() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		boolean hasFailed=false;
 		try {
 			VirusScannerService wrongVirusScannerService = new ClamavVirusScannerServiceImpl("localhost",1234);
@@ -66,12 +76,13 @@ public class ClamavVirusScannerTest {
 			hasFailed = true;
 		}
 		Assert.assertTrue(hasFailed);
-
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 
 	@Test
 	public void checkSteam() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try{
 
 			boolean flag=virusScannerService.check(this.getClass().getResourceAsStream("/linShare-test.properties"));
@@ -83,13 +94,13 @@ public class ClamavVirusScannerTest {
 				Assert.assertTrue("WARNING ! The communication to the virus scanner is failed", true);
 			}
 		}
-
+		logger.debug(LinShareTestConstants.END_TEST);
 
 	}
 
 	@Test
 	public void checkFile() {
-
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		try{
 			File f = new File(fileNameToCheck);
@@ -107,10 +118,13 @@ public class ClamavVirusScannerTest {
 					Assert.assertTrue("WARNING ! The communication to the virus scanner is failed", true);
 				}
 		}
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	@Test
 	public void checkStreamWhenDisabled() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
 		boolean hasFailed=false;
 		try {
 			VirusScannerService disabledVirusScannerService = new ClamavVirusScannerServiceImpl("",1234);
@@ -120,6 +134,7 @@ public class ClamavVirusScannerTest {
 				hasFailed = true;
 		}
 		Assert.assertTrue(hasFailed);	
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 }

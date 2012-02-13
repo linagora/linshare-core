@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linShare.core.domain.constants.LinShareConstants;
+import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
@@ -68,28 +69,28 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 	
 	@Before
 	public void setUp() throws Exception {
-		logger.debug("Begin setUp");
+		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
 		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
 		
 		datas.loadUsers();
 		
-		logger.debug("End setUp");
+		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("Begin tearDown");
+		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 	
 		datas.deleteUsers();
 		
-		logger.debug("End tearDown");
+		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
 	
 	@Test
 	public void testDeleteUserInSubDomain() {
-		logger.info("testDeleteUserInSubdomain: begin");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		User actor = datas.getUser1(); 
 		
@@ -116,13 +117,12 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 		tmpUser = userRepository.findByMailAndDomain(LoadingServiceTestDatas.guestDomainName1, user3Login);
 		Assert.assertNotNull(tmpUser);	
 	
-		logger.debug("testDeleteUserInSubdomain: end");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-//	testDeleteGuestInSubDomain
 	@Test
 	public void testDeleteGuestInGuestDomain() throws BusinessException {
-		logger.info("testDeleteGuestInGuestDomain: begin");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		User actor = datas.getUser1(); 
 		
@@ -151,12 +151,12 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 		tmpUser = userRepository.findByMail(user3Login);
 		Assert.assertNull(tmpUser);
 		
-		logger.debug("testDeleteGuestInGuestDomain: end");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}	
 	
 	@Test
 	public void testDeleteUserInTopDomainWithSubDomainUser() throws BusinessException {
-		logger.info("testDeleteUserInTopDomainWithSubDomainUser: begin");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		User actor = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
 		
@@ -184,14 +184,14 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 		tmpUser = userRepository.findByMailAndDomain(LoadingServiceTestDatas.guestDomainName1, user3Login);
 		Assert.assertNull(tmpUser);
 			
-		logger.debug("testDeleteUserInTopDomain: end");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 	
 	
 	@Test
 	public void testDeleteDomain() throws BusinessException {
-		logger.info("testDeleteUserInTopDomain: begin");
+		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		User actor = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
 		
@@ -213,7 +213,7 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 			logger.error("Test success top and sub domain don't exist");
 		}
 		
-		logger.debug("testDeleteUserInTopDomain: end");
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 }
