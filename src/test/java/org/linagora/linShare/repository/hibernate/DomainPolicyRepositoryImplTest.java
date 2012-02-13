@@ -23,12 +23,9 @@ package org.linagora.linShare.repository.hibernate;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linShare.core.domain.entities.DomainPolicy;
-import org.linagora.linShare.core.domain.entities.RootDomain;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

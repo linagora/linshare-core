@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;

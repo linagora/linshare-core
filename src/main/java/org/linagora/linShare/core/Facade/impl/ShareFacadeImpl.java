@@ -28,7 +28,6 @@ import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.constants.UserType;
-import org.linagora.linShare.core.domain.entities.AllowedContact;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Group;

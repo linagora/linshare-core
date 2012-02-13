@@ -24,9 +24,7 @@ import java.util.List;
 
 import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Role;
-import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.UserService;
-import org.linagora.linShare.core.service.impl.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;

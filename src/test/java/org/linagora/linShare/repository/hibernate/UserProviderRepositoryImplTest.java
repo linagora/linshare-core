@@ -35,8 +35,6 @@ import org.linagora.linShare.core.repository.UserProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations={"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",

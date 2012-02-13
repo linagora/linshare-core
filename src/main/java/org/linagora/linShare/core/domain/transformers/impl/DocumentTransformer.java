@@ -24,7 +24,6 @@ package org.linagora.linShare.core.domain.transformers.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.transformers.Transformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;

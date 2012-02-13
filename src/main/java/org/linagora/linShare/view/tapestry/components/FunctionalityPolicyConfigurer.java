@@ -26,16 +26,12 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.vo.PolicyVo;
-import org.linagora.linShare.core.domain.vo.UserVo;
-import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 
 @IncludeJavaScriptLibrary(value = {"FunctionalityPolicyConfigurer.js"})

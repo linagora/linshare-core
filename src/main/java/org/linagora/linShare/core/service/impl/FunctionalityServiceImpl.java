@@ -1,7 +1,6 @@
 package org.linagora.linShare.core.service.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -10,12 +9,10 @@ import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.IntegerValueFunctionality;
-import org.linagora.linShare.core.domain.entities.Policy;
 import org.linagora.linShare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linShare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linShare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
-import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;

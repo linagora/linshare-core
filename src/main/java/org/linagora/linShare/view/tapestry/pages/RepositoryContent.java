@@ -28,8 +28,8 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linShare.core.domain.objects.FileInfo;
 import org.linagora.linShare.core.dao.FileSystemDao;
+import org.linagora.linShare.core.domain.objects.FileInfo;
 import org.linagora.linShare.view.tapestry.objects.CustomStreamResponse;
 
 public class RepositoryContent {

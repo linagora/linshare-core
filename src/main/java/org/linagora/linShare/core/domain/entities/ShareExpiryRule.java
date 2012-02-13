@@ -21,6 +21,7 @@
 package org.linagora.linShare.core.domain.entities;
 
 import java.io.Serializable;
+
 import org.linagora.linShare.core.domain.constants.FileSizeUnit;
 import org.linagora.linShare.core.domain.constants.TimeUnit;
 

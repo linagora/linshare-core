@@ -16,7 +16,6 @@ import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.LDAPQueryService;
-import org.linagora.linShare.core.service.impl.FunctionalityServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

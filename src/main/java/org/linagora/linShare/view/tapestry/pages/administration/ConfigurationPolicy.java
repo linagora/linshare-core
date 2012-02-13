@@ -22,12 +22,8 @@ package org.linagora.linShare.view.tapestry.pages.administration;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -38,11 +34,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
-import org.linagora.linShare.core.domain.constants.Policies;
-import org.linagora.linShare.core.domain.entities.MailSubject;
-import org.linagora.linShare.core.domain.entities.MailTemplate;
-import org.linagora.linShare.core.domain.entities.WelcomeText;
-import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.PolicyVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;

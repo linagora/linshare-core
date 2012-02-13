@@ -25,12 +25,10 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignatureVo;
-
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;

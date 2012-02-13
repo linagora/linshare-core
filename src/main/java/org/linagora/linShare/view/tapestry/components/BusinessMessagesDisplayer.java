@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;

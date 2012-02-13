@@ -1,7 +1,6 @@
 package org.linagora.linShare.core.domain.entities;
 
 import org.linagora.linShare.core.domain.constants.DomainType;
-import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linShare.core.domain.vo.TopDomainVo;
 
 public class TopDomain extends AbstractDomain {

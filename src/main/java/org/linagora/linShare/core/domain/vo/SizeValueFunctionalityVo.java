@@ -2,7 +2,6 @@ package org.linagora.linShare.core.domain.vo;
 
 import org.linagora.linShare.core.domain.constants.FileSizeUnit;
 import org.linagora.linShare.core.domain.constants.FunctionalityType;
-import org.linagora.linShare.core.domain.constants.UnitType;
 
 public class SizeValueFunctionalityVo extends FunctionalityVo {
 

@@ -24,10 +24,8 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
-
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
-
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**

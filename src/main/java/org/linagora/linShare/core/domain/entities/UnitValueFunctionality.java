@@ -2,7 +2,6 @@
 package org.linagora.linShare.core.domain.entities;
 
 import org.linagora.linShare.core.domain.constants.FunctionalityType;
-import org.linagora.linShare.core.domain.constants.UnitType;
 import org.linagora.linShare.core.domain.vo.FunctionalityVo;
 import org.linagora.linShare.core.domain.vo.SizeValueFunctionalityVo;
 import org.linagora.linShare.core.domain.vo.TimeValueFunctionalityVo;

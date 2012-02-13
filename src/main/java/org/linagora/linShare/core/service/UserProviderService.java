@@ -9,7 +9,6 @@ import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.LDAPConnection;
 import org.linagora.linShare.core.domain.entities.LdapUserProvider;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
 public interface UserProviderService {

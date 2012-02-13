@@ -7,7 +7,6 @@ import javax.naming.NamingException;
 
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.GuestDomain;
-import org.linagora.linShare.core.domain.entities.LdapUserProvider;
 import org.linagora.linShare.core.domain.entities.RootDomain;
 import org.linagora.linShare.core.domain.entities.SubDomain;
 import org.linagora.linShare.core.domain.entities.TopDomain;

@@ -31,9 +31,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
-import org.linagora.linShare.core.domain.entities.User;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 

@@ -47,7 +47,6 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.service.NotifierService;
-import org.linagora.linShare.view.tapestry.enums.BusinessUserMessageType;
 
 /**
  * This class builds an email notification and sends the email.

@@ -22,7 +22,6 @@ package org.linagora.linShare.core.repository;
 
 import java.util.List;
 
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.LinShareNotSuchElementException;
 

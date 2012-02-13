@@ -20,11 +20,7 @@
  */
 package org.linagora.linShare.service;
 
-import java.util.Set;
-
 import org.linagora.linShare.core.domain.constants.FileSizeUnit;
-import org.linagora.linShare.core.domain.constants.FunctionalityNames;
-import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
@@ -35,7 +31,6 @@ import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.GuestDomain;
 import org.linagora.linShare.core.domain.entities.Internal;
-import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Policy;
 import org.linagora.linShare.core.domain.entities.RootDomain;
 import org.linagora.linShare.core.domain.entities.StringValueFunctionality;
@@ -48,9 +43,7 @@ import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.linagora.linShare.core.repository.FunctionalityRepository;
 import org.linagora.linShare.core.repository.UserRepository;
-import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.UserService;
-import org.linagora.linShare.core.service.impl.FunctionalityServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.utils;
 
 import java.util.Locale;
 import java.util.Set;
+
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.WelcomeText;

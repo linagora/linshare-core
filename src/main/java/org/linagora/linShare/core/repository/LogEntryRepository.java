@@ -22,6 +22,7 @@ package org.linagora.linShare.core.repository;
 
 import java.util.Calendar;
 import java.util.List;
+
 import org.linagora.linShare.core.domain.entities.LogEntry;
 import org.linagora.linShare.view.tapestry.beans.LogCriteriaBean;
 

@@ -1,7 +1,5 @@
 package org.linagora.linShare.core.service.impl;
 
-import java.util.List;
-
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;

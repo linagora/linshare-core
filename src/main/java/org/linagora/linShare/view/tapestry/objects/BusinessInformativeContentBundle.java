@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.objects;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.linagora.linShare.core.exception.BusinessException;
 
 /** Stores business error messages.
