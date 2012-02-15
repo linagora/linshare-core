@@ -17,7 +17,6 @@
 			<p><t:pageLink page="administration/domains/subdomains/CreateDomain" context="currentTopDomain.identifier" 
 			>${message:pages.administration.domains.subdomains.index.addDomain}</t:pageLink></p>
 
-			<t:if test="guestDomainAllowed">
 				<t:if test="canCreateGuestDomain">
 					<p>
 					<t:pageLink page="administration/domains/subdomains/CreateGuestDomain" context="currentTopDomain.identifier">
@@ -33,7 +32,6 @@
 						</p>
 					</t:parameter>
 				</t:if>			
-			</t:if>			
 			
 			
 			<h2>${message:pages.administration.domains.subdomains.index.domains}</h2>

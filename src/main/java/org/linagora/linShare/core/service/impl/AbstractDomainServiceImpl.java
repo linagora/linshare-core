@@ -485,8 +485,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public boolean canCreateGuestDomain(AbstractDomain domain) {
 
     	if (domain != null) {
-    		Functionality func = functionalityService.getGuestFunctionality(domain);
-    		if(func.getActivationPolicy().getStatus()) {
     			
     			// search GuestDomain among subdomains
     			if(domain.getSubdomain() != null) {
@@ -498,9 +496,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
     				}
     			}
     			return true;
-    		} else {
-    			logger.debug("Guest functionality is disable.");
-    		}
     	}
     	return false;
 	}
