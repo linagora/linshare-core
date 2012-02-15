@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.entities.Document;
@@ -85,7 +86,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
-	
+	@Ignore
 	@Test
 	public void testChangeDocumentExtension() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -102,6 +103,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
+	@Ignore
 	@Test
 	public void testisDocumentEncrypted() throws UnsupportedEncodingException, GeneralSecurityException, BusinessException {
 		String password=new String("password");
