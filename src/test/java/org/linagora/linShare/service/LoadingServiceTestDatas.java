@@ -68,7 +68,7 @@ public class LoadingServiceTestDatas {
 	public static String sqlRootDomain = "LinShareRootDomain";
 	public static String sqlDomain = "MyDomain";
 	public static String sqlSubDomain = "MySubDomain";
-	public static String sqlGuestDomain = "MyGuestDomain";
+	public static String sqlGuestDomain = "GuestDomain";
 	
 	
 	public static String TEST_TIME_STAMPING="TEST_TIME_STAMPING";
