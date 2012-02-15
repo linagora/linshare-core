@@ -313,6 +313,7 @@ public class UserServiceImpl implements UserService {
 			return true;
 		} else if(actor.getRole().equals(Role.ADMIN)) {
 			List<String> allMyDomain = abstractDomainService.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());
+			userToManage.getDomain();
 			for (String domain : allMyDomain) {
 				if(domain.equals(userToManage.getDomain().getIdentifier())) {
 					return true;
@@ -876,9 +877,9 @@ public class UserServiceImpl implements UserService {
 		} else {
 			String msg;
 			if(user != null) {
-				msg = "Attempt to create or update an user entity failed : User object is null.";
-			} else {
 				msg = "Attempt to create or update an user entity failed : User domain object is null." ;
+			} else {
+				msg = "Attempt to create or update an user entity failed : User object is null.";
 			}
 					
 			logger.debug(msg);
