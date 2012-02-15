@@ -41,8 +41,11 @@ import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
+import org.linagora.linShare.core.domain.entities.AllowDomain;
 import org.linagora.linShare.core.domain.entities.AllowedContact;
+import org.linagora.linShare.core.domain.entities.DenyAllDomain;
 import org.linagora.linShare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linShare.core.domain.entities.DomainAccessRule;
 import org.linagora.linShare.core.domain.entities.DomainPolicy;
 import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.Guest;
@@ -57,6 +60,8 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.AllowedContactRepository;
+import org.linagora.linShare.core.repository.DomainAccessPolicyRepository;
+import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.linagora.linShare.core.repository.FunctionalityRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.UserRepository;
@@ -97,6 +102,11 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	@Autowired
 	private GuestRepository guestRepository;
 	
+	@Autowired
+	private DomainPolicyRepository domainPolicyRepository;
+	
+	@Autowired
+	private DomainAccessPolicyRepository domainAccessPolicyRepository;
 	
 	@Autowired
 	private AllowedContactRepository allowedContactRepository;
@@ -720,39 +730,49 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	/*
+	
 	@Test
-	public void testFindOrCreateUserWithDomainPolicies(){
-		new DomainPolicy("DomainPolicy", new DomainAccessPolicy());
-		
-		
-		domainPolicyRepository.create(defaultPolicy);
-	}
-	*/
-	@Test
-	@Rollback(true)
-	public void testSaveOrUpdateUser() {
+	public void testFindOrCreateUserWithDomainPolicies() throws IllegalArgumentException, BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
 		
-		Internal user = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
+		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
+		user1.setDomain(rootDomain);
 		
-		logger.info("Trying to create a user without domain : should fail.");
-		try {
-			userService.saveOrUpdateUser(user);
-			Assert.fail("It should fail before this message.");
-		} catch (TechnicalException e) {
-			logger.debug("TechnicalException raise as planned.");
+		userService.saveOrUpdateUser(user1);
+		
+		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		Internal user2 = new Internal("user2@linpki.org","Jane","Smith","user2@linpki.org");
+		user2.setDomain(subDomain);
+		
+		userService.saveOrUpdateUser(user2);
+		
+		Assert.assertEquals(user1, userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LoadingServiceTestDatas.sqlRootDomain, LoadingServiceTestDatas.sqlSubDomain));
+
+		
+		DomainPolicy domainPolicy = new DomainPolicy("domainPolicy", new DomainAccessPolicy());
+		domainPolicyRepository.create(domainPolicy);
+		
+		DomainAccessRule endRule = new DenyAllDomain();
+		domainPolicy.getDomainAccessPolicy().addRule(endRule);
+		subDomain.setPolicy(domainPolicy);
+		
+		domainPolicyRepository.update(domainPolicy);
+		
+		abstractDomainRepository.update(subDomain);		
+		
+		try{
+			userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LoadingServiceTestDatas.sqlRootDomain, LoadingServiceTestDatas.sqlSubDomain);
+			
+			logger.error("Test shouldn't go here because findOrCreateUserWithDomainPolicies should rise a exception");
+			Assert.fail();
+		}catch(BusinessException e){
+			logger.debug("Test succeed"); 
 		}
-		logger.info("Trying to create a user : .");
-		logger.debug("user id : " + user.getId());
-		user.setDomain(domain);
-		userService.saveOrUpdateUser(user);
-		logger.debug("user id : " + user.getId());
-		Assert.assertTrue(user.getCanUpload());
-		user.setCanUpload(false);
-		userService.saveOrUpdateUser(user);
-		Assert.assertFalse(user.getCanUpload());
+		
+		User foundUser = userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LoadingServiceTestDatas.sqlRootDomain, null);
+		Assert.assertEquals(foundUser, user1);
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -802,6 +822,70 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+	
+	
+	@Test
+	public void testSearchAndCreateUserEntityFromUnkownDirectory() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
+		user1.setDomain(rootDomain);
+		
+		Assert.assertNull(userService.findUnkownUserInDB("user1@linpki.org"));
+		
+		userService.searchAndCreateUserEntityFromUnkownDirectory("user1@linpki.org");
+		
+		Assert.assertNotNull(userService.findUnkownUserInDB("user1@linpki.org"));
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test 
+	public void testSearchAndCreateUserEntityFromDirectory() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
+		Internal user1 = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
+		user1.setDomain(rootDomain);
+		
+		Assert.assertNull(userService.findUnkownUserInDB("user1@linpki.org"));
+		
+		userService.searchAndCreateUserEntityFromDirectory(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org");
+
+		Assert.assertNotNull(userService.findUnkownUserInDB("user1@linpki.org"));
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	@Rollback(true)
+	public void testSaveOrUpdateUser() {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
+		
+		Internal user = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
+		
+		logger.info("Trying to create a user without domain : should fail.");
+		try {
+			userService.saveOrUpdateUser(user);
+			Assert.fail("It should fail before this message.");
+		} catch (TechnicalException e) {
+			logger.debug("TechnicalException raise as planned.");
+		}
+		logger.info("Trying to create a user : .");
+		logger.debug("user id : " + user.getId());
+		user.setDomain(domain);
+		userService.saveOrUpdateUser(user);
+		logger.debug("user id : " + user.getId());
+		Assert.assertTrue(user.getCanUpload());
+		user.setCanUpload(false);
+		userService.saveOrUpdateUser(user);
+		Assert.assertFalse(user.getCanUpload());
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+
 		
 	
 	
