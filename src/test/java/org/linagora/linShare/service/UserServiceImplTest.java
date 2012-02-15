@@ -705,7 +705,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
 		Internal user1 = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
 		user1.setDomain(rootDomain);
-		user1.setRole(Role.SYSTEM);
+		user1.setRole(Role.SUPERADMIN);
 		
 		userService.saveOrUpdateUser(user1);
 		UserVo userVo = new UserVo(user1);
