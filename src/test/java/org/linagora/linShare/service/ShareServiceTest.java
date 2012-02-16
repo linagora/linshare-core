@@ -21,7 +21,12 @@
 package org.linagora.linShare.service;
 
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -33,21 +38,27 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linShare.common.service.LinShareMessageHandler;
 import org.linagora.linShare.common.service.MailTestRetriever;
+import org.linagora.linShare.core.domain.constants.FunctionalityNames;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.constants.Reason;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
+import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.Policy;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DocumentRepository;
+import org.linagora.linShare.core.repository.FunctionalityRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
+import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.ShareService;
@@ -55,11 +66,10 @@ import org.linagora.linShare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.subethamail.smtp.server.SMTPServer;
 
@@ -73,20 +83,17 @@ import org.subethamail.smtp.server.SMTPServer;
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
-public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
-//	public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static Logger logger = LoggerFactory.getLogger(ShareServiceTest.class);
 
 	
 	private User sender;
 
-	@SuppressWarnings("unused")
 	private User recipient;
 
 	private InputStream inputStream;
 
-	@SuppressWarnings("unused")
 	private Document document;
 
 	private TransactionTemplate transactionTemplate;
@@ -107,6 +114,9 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	private ShareRepository shareRepository;
 	
 	@Autowired
+	private FunctionalityRepository functionalityRepository;
+	
+	@Autowired
 	private FunctionalityService functionalityService;
 
 	@Autowired
@@ -118,9 +128,6 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	@Resource(name = "transactionManager")
 	private HibernateTransactionManager tx;
 	
-	private static final String INTERNAL_USER_DOMAIN_IDENTIFIER = "MySubDomain";
-	private static final String GUEST_DOMAIN_IDENTIFIER = "GuestDomain";
-
 	private SMTPServer wiser;
 	private User owner;
 	private Document myDocForTest;
@@ -145,64 +152,58 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 		guestFunctionality.getActivationPolicy().setStatus(true);
 		functionalityService.update(rootDomain, guestFunctionality);
 
-		this.transactionTemplate = new TransactionTemplate(tx);
-		this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-			public void doInTransactionWithoutResult(TransactionStatus status) {
-						try {
-							owner = userService
-									.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
-							
-							Assert.assertNotNull(owner);
-							
-							inputStream = Thread.currentThread()
-									.getContextClassLoader()
-									.getResourceAsStream("linShare-default.properties");
+		try {
+			owner = userService
+					.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			
+			Assert.assertNotNull(owner);
+			
+			inputStream = Thread.currentThread()
+					.getContextClassLoader()
+					.getResourceAsStream("linShare-default.properties");
 
-																		
-							MailContainer mailContainer = new MailContainer("", Language.DEFAULT);
-							sender = userService.createGuest(
-										mailTestRetriever.getSenderMail(),
-										"sender", "senderName",
-										mailTestRetriever.getSenderMail(),
-										true, true, "comment", mailContainer,
-										owner.getLogin(), owner.getDomainId());
-								
-							recipient = userService.createGuest(
-									mailTestRetriever.getRecipientMail(),
-									"receiver", "receiverName",
-									mailTestRetriever.getRecipientMail(),
-									true, true, "comment", mailContainer,
-									owner.getLogin(), owner.getDomainId());
+														
+			MailContainer mailContainer = new MailContainer("", Language.DEFAULT);
+			sender = userService.createGuest(
+						mailTestRetriever.getSenderMail(),
+						"sender", "senderName",
+						mailTestRetriever.getSenderMail(),
+						true, true, "comment", mailContainer,
+						owner.getLogin(), owner.getDomainId());
+				
+			recipient = userService.createGuest(
+					mailTestRetriever.getRecipientMail(),
+					"receiver", "receiverName",
+					mailTestRetriever.getRecipientMail(),
+					true, true, "comment", mailContainer,
+					owner.getLogin(), owner.getDomainId());
 
-						} catch (BusinessException e1) {
-							e1.printStackTrace();
-							Assert.assertTrue(false);
-						}
+		} catch (BusinessException e1) {
+			e1.printStackTrace();
+			Assert.assertTrue(false);
+		}
 
-						/**
-						 * Creating documents for testing.
-						 */
-						try {
-							Assert.assertNotNull(owner);
-							if (documentRepository.findAll().size() > 1) {
-								Assert.fail("Too much doc in the repository");
-							}
-							if (documentRepository.findAll().size() == 0) {
-								logger.info("inserting a new file for tests");
-								myDocForTest = documentService.insertFile(sender.getLogin(),
-										inputStream, 20000,
-										"linShare.properties", documentService
-												.getMimeType(inputStream,
-														"linShare.properties"),
-										owner);
-							}
-						} catch (BusinessException e) {
-							e.printStackTrace();
-							Assert.assertTrue(false);
-						}
-			} // end of method doInTransactionWithoutResult
-		} // end of class 
-		); // end of method execute
+		/**
+		 * Creating documents for testing.
+		 */
+		try {
+			Assert.assertNotNull(owner);
+			if (documentRepository.findAll().size() > 1) {
+				Assert.fail("Too much doc in the repository");
+			}
+			if (documentRepository.findAll().size() == 0) {
+				logger.info("inserting a new file for tests");
+				myDocForTest = documentService.insertFile(sender.getLogin(),
+						inputStream, 20000,
+						"linShare.properties", documentService
+								.getMimeType(inputStream,
+										"linShare.properties"),
+						owner);
+			}
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assert.assertTrue(false);
+		}
 
 		wiser.stop();
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -213,8 +214,8 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 
-		this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-			public void doInTransactionWithoutResult(TransactionStatus status) {
+//		this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+//			public void doInTransactionWithoutResult(TransactionStatus status) {
 				try {
 					documentService.deleteFile(mailTestRetriever.getSenderMail(), myDocForTest.getIdentifier(),Reason.NONE);
 					User root = userService.findUserInDB(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
@@ -225,9 +226,9 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 					logger.error("can'delete users during tearDown method !");
 					e.printStackTrace();
 				}
-			} // end of method doInTransactionWithoutResult
-		} // end of class 
-		); // end of method execute
+//			} // end of method doInTransactionWithoutResult
+//		} // end of class 
+//		); // end of method execute
 		
 		AbstractDomain rootDomain = abstractDomainRepository.findById(LinShareConstants.rootDomainIdentifier);
 		Functionality guestFunctionality = functionalityService.getGuestFunctionality(rootDomain);
@@ -239,181 +240,410 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 
 	}
 	
-	/**
-	 * Create and drop a share directly.
-	 */
+	
 	@Test
-	public void testCreateAndDropAShare() {
-
+	public void testGetReceivedDocumentsByUser() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
-		this.transactionTemplate
-				.execute(new TransactionCallbackWithoutResult() {
-					public void doInTransactionWithoutResult(
-							TransactionStatus status) {
-						User sender = null;
-						User recipient = null;
-						try {
-							sender = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), GUEST_DOMAIN_IDENTIFIER);
-							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), GUEST_DOMAIN_IDENTIFIER);
-						} catch (BusinessException e) {
-							Assert.assertFalse(true);
-						}
-						Document document = documentRepository.findAll().get(0);
-						ArrayList<Document> documents = new ArrayList<Document>();
-						documents.add(document);
-
-						ArrayList<User> recipients = new ArrayList<User>();
-						recipients.add(recipient);
-
-						SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
-
-						Share finalShare = null;
-						/**
-						 * Check if the success share contains sender and
-						 * recipient.
-						 */
-						for (Share successShare : shares.getSuccessesItem()) {
-							if (successShare.getSender().equals(sender) && successShare.getReceiver().equals(recipient)
-																		&& successShare.getDocument().equals(document)) {
-								Assert.assertTrue(true);
-								finalShare = successShare;
-							} else {
-								Assert.assertFalse(true);
-							}
-						}
-						/**
-						 * Check if the sender contains the share as sent. And
-						 * check if the recipient has the share as received.
-						 */
-
-						Assert.assertTrue(recipient.getReceivedShares().contains(finalShare));
-						Assert.assertTrue(sender.getShares().contains(finalShare));
-						documents.clear();
-						recipients.clear();
-					}
-				});
-
-//		this.transactionTemplate
-//				.execute(new TransactionCallbackWithoutResult() {
-//					public void doInTransactionWithoutResult(
-//							TransactionStatus status) {
-//						/**
-//						 * Now we have our Shares for each user. We will test to
-//						 * remove theses shares.
-//						 */
-//						User retriever = null;
-//						try {
-//							shareService.deleteShare(shareRepository.findAll().get(0), sender);
-//
-//							retriever = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), GUEST_DOMAIN_IDENTIFIER);
-//						} catch (BusinessException e) {
-//							Assert.assertFalse(true);
-//							e.printStackTrace();
-//						}
-//						Assert.assertEquals(0, retriever.getReceivedShares().size());
-//						Assert.assertEquals(0, shareRepository.findAll().size());
-//
-//						// Assert.assertFalse(sender.getShares().contains(share)
-//						// || recipient.getReceivedShares().contains(share));
-//					}
-//				});
+		User sender = null;
+		User recipient = null;
+		sender = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), LoadingServiceTestDatas.sqlGuestDomain);
+		recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), LoadingServiceTestDatas.sqlGuestDomain);
 		
-		logger.info(LinShareTestConstants.END_TEST);
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		
+		List<Document> documentsReceived=shareService.getReceivedDocumentsByUser(recipient);
+		
+		Assert.assertTrue(documentsReceived.contains(document));
+		
+		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+		sender.deleteShare(shares.getSuccessesItem().get(0));
+		//no need to delete share, it will be delete automatically by hibernate
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testGetSentDocumentsByUser() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		
+		List<Document> documentsSent=shareService.getSentDocumentsByUser(sender);
+		
+		Assert.assertTrue(documentsSent.contains(document));
+		
+		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+		sender.deleteShare(shares.getSuccessesItem().get(0));
+		//no need to delete share, it will be delete automatically by hibernate
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testGetReceivedSharesByUser() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		
+		Set<Share> sharesReceived=shareService.getReceivedSharesByUser(recipient);
+		
+		Assert.assertTrue(sharesReceived.contains(shares.getSuccessesItem().get(0)));
+		
+		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+		sender.deleteShare(shares.getSuccessesItem().get(0));
+		//no need to delete share, it will be delete automatically by hibernate
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testGetSentSharesByUser() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		
+		Set<Share> sharesSent=shareService.getSentSharesByUser(sender);
+		
+		Assert.assertTrue(sharesSent.contains(shares.getSuccessesItem().get(0)));
+		
+		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+		sender.deleteShare(shares.getSuccessesItem().get(0));
+		//no need to delete share, it will be delete automatically by hibernate
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	
+	@Test
+	public void testRemoveReceivedShareForUser() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		
+		sender.deleteShare(shares.getSuccessesItem().get(0));
+		shareService.removeReceivedShareForUser(shares.getSuccessesItem().get(0), recipient, recipient);
+		
+		Assert.assertTrue(recipient.getReceivedShares().isEmpty());
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	
+	@Test
+	public void testRemoveSentShareForUser() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		
+		
+		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+		shareService.removeSentShareForUser(shares.getSuccessesItem().get(0), sender, sender);
+		
+		Assert.assertTrue(sender.getShares().isEmpty());
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testDeleteShare() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		
+		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+		sender.deleteShare(shares.getSuccessesItem().get(0));
+		//no need to delete share, it will be delete automatically by hibernate
+		Assert.assertTrue(recipient.getReceivedShares().isEmpty());
+		Assert.assertTrue(sender.getShares().isEmpty());
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testShareDocumentsToUser() throws BusinessException, ParseException {
+
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+	
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+
+		Share finalShare = null;
+		/**
+		 * Check if the success share contains sender and
+		 * recipient.
+		 */
+		for (Share successShare : shares.getSuccessesItem()) {
+			if (successShare.getSender().equals(sender) && 
+					successShare.getReceiver().equals(recipient) && 
+						successShare.getDocument().equals(document)) {
+				Assert.assertTrue(true);
+				finalShare = successShare;
+			} else {
+				Assert.assertFalse(true);
+			}
+		}
+		/**
+		 * Check if the sender contains the share as sent. And
+		 * check if the recipient has the share as received.
+		 */
+
+		Assert.assertTrue(recipient.getReceivedShares().contains(finalShare));
+		Assert.assertTrue(sender.getShares().contains(finalShare));
+		documents.clear();
+		recipients.clear();
+		
+		
+		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+		sender.deleteShare(shares.getSuccessesItem().get(0));
+		//no need to delete share, it will be delete automatically by hibernate
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Ignore
+	@Test
+	public void testDeleteAllSharesWithDocument() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+				
+		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+		shareService.deleteAllSharesWithDocument(document, sender,  new MailContainer("", Language.DEFAULT));
+		
+		userService.saveOrUpdateUser(recipient);
+		userService.saveOrUpdateUser(sender);
+
+		
+		//sender.deleteShare(shares.getSuccessesItem().get(0));
+//		//cleaning share
+//		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+//		
+//		//no need to delete share, it will be delete automatically by hibernate
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testRefreshShareAttributeOfDoc() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		
+		
+        // remove the share :
+		sender.deleteShare(shares.getSuccessesItem().get(0));
+        shareService.removeReceivedShareForUser(shares.getSuccessesItem().get(0), recipient, recipient);
+		
+		Assert.assertTrue(document.getShared());
+        shareService.refreshShareAttributeOfDoc(document);
+        
+        Assert.assertFalse(document.getShared());
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Ignore
+	@Test
+	public void testCleanOutdatedShares()throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		AbstractDomain domain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
+		
+		Functionality functionality = functionalityRepository.findById(domain, FunctionalityNames.SHARE_EXPIRATION);
+		functionality .getActivationPolicy().setStatus(true);
+		functionalityRepository.update(functionality);
+		
+		sender.setDomain(domain);
+		recipient.setDomain(domain);
+		
+		userService.saveOrUpdateUser(recipient);
+		userService.saveOrUpdateUser(sender);
+
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+	
+		
+		Calendar cldr = Calendar.getInstance();
+		
+		//Subtract 2 years from the actual date
+		cldr.add(Calendar.YEAR, -2);
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", cldr );		
+		
+		//recipient.getReceivedShares().remove(shares.getSuccessesItem().get(0));
+		//sender.getShares().remove(shares.getSuccessesItem().get(0));
+		
+		shareService.cleanOutdatedShares();
+		
+		Assert.assertTrue(shareService.getSharesLinkedToDocument(document).isEmpty());
+		
+		functionality .getActivationPolicy().setStatus(false);
+		functionalityRepository.update(functionality);
+		
+		logger.error(shareService.getSharesLinkedToDocument(document).toString());
+		
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	@Ignore
+	@Test
+	public void testShareDocumentsWithSecuredUrlToUser(){
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		List<Contact> mailrecipients;
+		
+		//ailrecipients.
+		
+		
+		//shareService.shareDocumentsWithSecuredUrlToUser(owner, docList, "password", mailrecipients, expiryDate);
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
 	/**
 	 * Create and drop a share directly.
 	 */
 	@Ignore
 	@Test
-//	@DirtiesContext
 	public void testCreateAndDropAShareByRemoveUser() {
 
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-//		this.transactionTemplate
-//				.execute(new TransactionCallbackWithoutResult() {
-//					public void doInTransactionWithoutResult(
-//							TransactionStatus status) {
-						User owner = null;
-						User recipient = null;
-						try {
-							owner = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);
-							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);
-						} catch (BusinessException e) {
-							e.printStackTrace();
-							Assert.assertTrue(false);
-						}
-						Document document = documentRepository.findAll().get(0);
-						ArrayList<Document> documents = new ArrayList<Document>();
-						documents.add(document);
+		User owner = null;
+		User recipient = null;
+		try {
+			owner = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlDomain);
+			recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), LoadingServiceTestDatas.sqlSubDomain);
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
 
-						ArrayList<User> users = new ArrayList<User>();
-						users.add(recipient);
+		ArrayList<User> users = new ArrayList<User>();
+		users.add(recipient);
 
-						SuccessesAndFailsItems<Share> shares = shareService
-								.shareDocumentsToUser(documents, owner, users,
-										"plop", null);
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, owner, users,"plop", null);
 
-						Share finalShare = null;
-						/**
-						 * Check if the success share contains sender and
-						 * recipient.
-						 */
-						for (Share successShare : shares.getSuccessesItem()) {
-							if (successShare.getSender().equals(owner)
-									&& successShare.getReceiver().equals(
-											recipient)
-									&& successShare.getDocument().equals(
-											document)) {
-								Assert.assertTrue(true);
-								finalShare = successShare;
-							} else {
-								Assert.assertFalse(true);
-							}
-						}
-						/**
-						 * Check if the sender contains the share as sent. And
-						 * check if the recipient has the share as received.
-						 */
+		Share finalShare = null;
+		/**
+		 * Check if the success share contains sender and
+		 * recipient.
+		 */
+		for (Share successShare : shares.getSuccessesItem()) {
+				
+			Assert.assertEquals(successShare.getSender(), owner);
+			Assert.assertEquals(successShare.getReceiver(), recipient);
+			Assert.assertEquals(successShare.getDocument(), document);
+		
+			finalShare = successShare;
+		}
 
-						Assert.assertTrue(recipient.getReceivedShares()
-								.contains(finalShare)
-								&& owner.getShares().contains(finalShare));
-//					}
-//				});
+		/**
+		 * Check if the sender contains the share as sent. And
+		 * check if the recipient has the share as received.
+		 */
+
+		Assert.assertTrue(recipient.getReceivedShares().contains(finalShare));
+		Assert.assertTrue(owner.getShares().contains(finalShare));
+
+
+//		/**
+//		 * Now we have our Shares for each user. We will test to
+//		 * remove theses shares.
+//		 */
 //
-//		this.transactionTemplate
-//				.execute(new TransactionCallbackWithoutResult() {
-//					public void doInTransactionWithoutResult(
-//							TransactionStatus status) {
+//		try {
+//			owner = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);;
+//			userService.deleteUser(mailTestRetriever.getRecipientMail(), owner);
+//			
+//			sender = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), LoadingServiceTestDatas.sqlSubDomain);
+//		} catch (BusinessException e) {
+//			e.printStackTrace();
+//			Assert.assertFalse(true);
+//		}
+//		Assert.assertTrue(sender.getShares().size() == 0);
+//		Assert.assertTrue(shareRepository.findAll().size() == 0);
 
-						/**
-						 * Now we have our Shares for each user. We will test to
-						 * remove theses shares.
-						 */
 
-						try {
-							owner = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);;
-							userService.deleteUser(mailTestRetriever
-									.getRecipientMail(), owner);
-
-							
-							sender = userService.findOrCreateUser(mailTestRetriever
-									.getSenderMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);
-						} catch (BusinessException e) {
-							e.printStackTrace();
-							Assert.assertFalse(true);
-						}
-						Assert.assertTrue(sender.getShares().size() == 0);
-						Assert
-								.assertTrue(shareRepository.findAll().size() == 0);
-
-//					}
-//				});
-
-		logger.info(LinShareTestConstants.END_TEST);
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 	/**
@@ -423,96 +653,81 @@ public class ShareServiceTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testCreateAndDropAShareByRemoveDocument() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		User owner = null;
+		User recipient = null;
+		try {
+			owner = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), LoadingServiceTestDatas.sqlSubDomain);;
+		} catch (BusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+		// User sender=userService.findUser(MAILSENDER);
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
 
-//		this.transactionTemplate
-//				.execute(new TransactionCallbackWithoutResult() {
-//					public void doInTransactionWithoutResult(
-//							TransactionStatus status) {
-						User owner = null;
-						User recipient = null;
-						try {
-							owner = userService.findOrCreateUser("user1@linpki.org", INTERNAL_USER_DOMAIN_IDENTIFIER);;
-							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);;
-						} catch (BusinessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+		ArrayList<User> users = new ArrayList<User>();
+		users.add(recipient);
 
-						// User sender=userService.findUser(MAILSENDER);
-						Document document = documentRepository.findAll().get(0);
-						ArrayList<Document> documents = new ArrayList<Document>();
-						documents.add(document);
+		SuccessesAndFailsItems<Share> shares = shareService
+				.shareDocumentsToUser(documents, owner, users,
+						"plop", null);
 
-						ArrayList<User> users = new ArrayList<User>();
-						users.add(recipient);
+		Share finalShare = null;
+		/**
+		 * Check if the success share contains sender and
+		 * recipient.
+		 */
+		for (Share successShare : shares.getSuccessesItem()) {
+			if (successShare.getSender().equals(owner)
+					&& successShare.getReceiver().equals(
+							recipient)
+					&& successShare.getDocument().equals(
+							document)) {
+				Assert.assertTrue(true);
+				finalShare = successShare;
+			} else {
+				Assert.assertFalse(true);
+			}
+		}
+		/**
+		 * Check if the sender contains the share as sent. And
+		 * check if the recipient has the share as received.
+		 */
 
-						SuccessesAndFailsItems<Share> shares = shareService
-								.shareDocumentsToUser(documents, owner, users,
-										"plop", null);
+		Assert.assertTrue(recipient.getReceivedShares()
+				.contains(finalShare)
+				&& owner.getShares().contains(finalShare));
 
-						Share finalShare = null;
-						/**
-						 * Check if the success share contains sender and
-						 * recipient.
-						 */
-						for (Share successShare : shares.getSuccessesItem()) {
-							if (successShare.getSender().equals(owner)
-									&& successShare.getReceiver().equals(
-											recipient)
-									&& successShare.getDocument().equals(
-											document)) {
-								Assert.assertTrue(true);
-								finalShare = successShare;
-							} else {
-								Assert.assertFalse(true);
-							}
-						}
-						/**
-						 * Check if the sender contains the share as sent. And
-						 * check if the recipient has the share as received.
-						 */
+		/**
+		 * Now we have our Shares for each user. We will test to
+		 * remove theses shares.
+		 */
 
-						Assert.assertTrue(recipient.getReceivedShares()
-								.contains(finalShare)
-								&& owner.getShares().contains(finalShare));
-//					}
-//				});
-//
-//		this.transactionTemplate
-//				.execute(new TransactionCallbackWithoutResult() {
-//					public void doInTransactionWithoutResult(
-//							TransactionStatus status) {
+		try {
 
-						/**
-						 * Now we have our Shares for each user. We will test to
-						 * remove theses shares.
-						 */
+			recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), LoadingServiceTestDatas.sqlSubDomain);
+			User sender = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), LoadingServiceTestDatas.sqlSubDomain);
+			
+			documentService.deleteFile(mailTestRetriever
+					.getSenderMail(), documentRepository
+					.findAll().get(0).getIdentifier(),
+					Reason.NONE);
+			Assert
+					.assertTrue(shareRepository.findAll()
+							.size() == 0);
+			Assert.assertTrue(recipient.getReceivedShares()
+					.size() == 0);
+			Assert.assertTrue(sender.getShares().size() == 0);
 
-						try {
+		} catch (BusinessException e) {
+			Assert.assertFalse(true);
+			e.printStackTrace();
+		}
 
-							recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);
-							User sender = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), INTERNAL_USER_DOMAIN_IDENTIFIER);
-							
-							documentService.deleteFile(mailTestRetriever
-									.getSenderMail(), documentRepository
-									.findAll().get(0).getIdentifier(),
-									Reason.NONE);
-							Assert
-									.assertTrue(shareRepository.findAll()
-											.size() == 0);
-							Assert.assertTrue(recipient.getReceivedShares()
-									.size() == 0);
-							Assert.assertTrue(sender.getShares().size() == 0);
-
-						} catch (BusinessException e) {
-							Assert.assertFalse(true);
-							e.printStackTrace();
-						}
-
-//					}
-//				});
-		logger.info(LinShareTestConstants.END_TEST);
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
 }

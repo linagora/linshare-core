@@ -20,12 +20,10 @@
  */
 package org.linagora.linShare.service;
 
-import java.security.acl.Owner;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -41,7 +39,6 @@ import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
-import org.linagora.linShare.core.domain.entities.AllowDomain;
 import org.linagora.linShare.core.domain.entities.AllowedContact;
 import org.linagora.linShare.core.domain.entities.DenyAllDomain;
 import org.linagora.linShare.core.domain.entities.DomainAccessPolicy;
@@ -49,7 +46,6 @@ import org.linagora.linShare.core.domain.entities.DomainAccessRule;
 import org.linagora.linShare.core.domain.entities.DomainPolicy;
 import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.Guest;
-import org.linagora.linShare.core.domain.entities.GuestDomain;
 import org.linagora.linShare.core.domain.entities.Internal;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Policy;
@@ -71,7 +67,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.AssertThrows;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;

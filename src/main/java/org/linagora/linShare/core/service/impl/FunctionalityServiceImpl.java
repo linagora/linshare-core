@@ -10,8 +10,10 @@ import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linShare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linShare.core.domain.entities.UnitBooleanValueFunctionality;
 import org.linagora.linShare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linShare.core.domain.objects.SizeUnitValueFunctionality;
+import org.linagora.linShare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
@@ -564,8 +566,8 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public TimeUnitValueFunctionality getDefaultShareExpiryTimeFunctionality(AbstractDomain domain) {
-		return new TimeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SHARE_EXPIRATION));
+	public TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality(AbstractDomain domain) {
+		return new TimeUnitBooleanValueFunctionality((UnitBooleanValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SHARE_EXPIRATION));
 	}
 
 	@Override
