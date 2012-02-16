@@ -7,6 +7,7 @@ import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.IntegerValueFunctionality;
 import org.linagora.linShare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linShare.core.domain.objects.SizeUnitValueFunctionality;
+import org.linagora.linShare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -100,7 +101,7 @@ public interface FunctionalityService {
 	public SizeUnitValueFunctionality getGlobalQuotaFunctionality (AbstractDomain domain);
     public SizeUnitValueFunctionality getUserQuotaFunctionality (AbstractDomain domain);
     public SizeUnitValueFunctionality getUserMaxFileSizeFunctionality (AbstractDomain domain);
-	public TimeUnitValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
+	public TimeUnitBooleanValueFunctionality getDefaultShareExpiryTimeFunctionality (AbstractDomain domain);
 	public TimeUnitValueFunctionality getDefaultFileExpiryTimeFunctionality (AbstractDomain domain);
 	
 	public Functionality getGuestFunctionality (AbstractDomain domain);

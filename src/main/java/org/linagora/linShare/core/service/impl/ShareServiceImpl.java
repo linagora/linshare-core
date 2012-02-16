@@ -44,6 +44,7 @@ import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.ShareLogEntry;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
+import org.linagora.linShare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -242,6 +243,7 @@ public class ShareServiceImpl implements ShareService{
 	
 	
 	public void deleteShare(Share share, User actor) throws BusinessException {
+		
 		shareRepository.delete(share);
 		
 		
@@ -495,8 +497,8 @@ public class ShareServiceImpl implements ShareService{
 				secureUrlService.delete(securedUrl.getAlea(), securedUrl.getUrlPath());
 				
 				for (Document document : docs) {
-					TimeUnitValueFunctionality deleteDocWithShareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(document.getOwner().getDomain());
-					refreshShareAttributeOfDoc(document,deleteDocWithShareExpiryTimeFunctionality.getActivationPolicy().getStatus());
+					TimeUnitBooleanValueFunctionality deleteDocWithShareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(document.getOwner().getDomain());
+					refreshShareAttributeOfDoc(document,deleteDocWithShareExpiryTimeFunctionality.isBool());
 				}
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove a securedUrl : \n" + ex.toString());
@@ -507,9 +509,9 @@ public class ShareServiceImpl implements ShareService{
             try {
                 Document sharedDocument = share.getDocument();
 				
-                TimeUnitValueFunctionality deleteDocWithShareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(sharedDocument.getOwner().getDomain());
+                TimeUnitBooleanValueFunctionality deleteDocWithShareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(sharedDocument.getOwner().getDomain());
                 deleteShare(share, owner);
-                refreshShareAttributeOfDoc(sharedDocument,deleteDocWithShareExpiryTimeFunctionality.getActivationPolicy().getStatus());
+                refreshShareAttributeOfDoc(sharedDocument,deleteDocWithShareExpiryTimeFunctionality.isBool());
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove a share : \n" + ex.toString());
             }

@@ -27,6 +27,7 @@ import java.util.List;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.entities.User;
+import org.linagora.linShare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.ShareExpiryDateService;
@@ -47,7 +48,7 @@ public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
      * @return the expiration date
      */
 	public Calendar computeShareExpiryDate(Document doc, User owner) {
-		TimeUnitValueFunctionality shareExpirationTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(owner.getDomain());
+		TimeUnitBooleanValueFunctionality shareExpirationTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(owner.getDomain());
 		Calendar defaultExpiration = null;
     	
 		if(shareExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
