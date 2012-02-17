@@ -1,3 +1,6 @@
+# In order to use an external configuration file for linshare, use this key for JAVA_OPS
+# JAVA_OPTS="${JAVA_OPTS} -Dlinshare.config.path=file:/etc/linshare/"
+
 #******************** MAIL CONFIGURATION TO SEND MAIL INFORMATION TO USER
 
 mail.smtp.host=smtp.yourdomain.com
