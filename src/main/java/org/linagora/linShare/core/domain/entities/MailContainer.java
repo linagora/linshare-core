@@ -68,6 +68,7 @@ public class MailContainer {
 		this.subject = subject;
 		this.contentTXT = contentTxt;
 		this.contentHTML = contentHTML;
+		this.data = new HashMap<String, String>();
 	}
 
 	/**

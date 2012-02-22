@@ -53,12 +53,11 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 		this.documentAdapter = documentAdapter;
 	}
 	
-	public Set<Document> retrieveDocument(UserVo user) {
+	public Set<Document> retrieveDocument(User user) {
 		return userRepository.findByLogin(user.getLogin()).getDocuments();
 	}
 
-	public List<DocumentVo> retrieveDocumentContainsCriterion(
-			SearchDocumentCriterion searchDocumentCriterion) {
+	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
 		
 		List<Document> docs= searchDocumentDao.retrieveUserDocumentWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
 		
@@ -72,11 +71,10 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 		return userRepository.findByLogin(login).getDocuments();
 	}
 
-	public List<DocumentVo> retrieveDocuments(UserVo user) {
-		User owner = userRepository.findByLogin(user.getLogin());
+	public List<DocumentVo> retrieveDocuments(User user) {
 		
-		List<Document> docs= new ArrayList<Document>(owner.getDocuments());
-		List<Share> shares = new ArrayList<Share>(owner.getReceivedShares());
+		List<Document> docs= new ArrayList<Document>(user.getDocuments());
+		List<Share> shares = new ArrayList<Share>(user.getReceivedShares());
 		
 		return documentAdapter.disassembleList(docs, shares);
 	}

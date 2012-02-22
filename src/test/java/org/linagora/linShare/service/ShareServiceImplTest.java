@@ -50,10 +50,13 @@ import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.Policy;
+import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
+import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.FunctionalityRepository;
@@ -83,9 +86,9 @@ import org.subethamail.smtp.server.SMTPServer;
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
-public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-	private static Logger logger = LoggerFactory.getLogger(ShareServiceTest.class);
+	private static Logger logger = LoggerFactory.getLogger(ShareServiceImplTest.class);
 
 	
 	private User sender;
@@ -134,7 +137,7 @@ public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTe
 	private boolean guestFuncStatus;
 	
 	
-	public ShareServiceTest() {
+	public ShareServiceImplTest() {
 		super();
 		wiser = new SMTPServer(new LinShareMessageHandler());
 		wiser.setPort(2525);
@@ -451,7 +454,6 @@ public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	@Ignore
 	@Test
 	public void testDeleteAllSharesWithDocument() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -463,19 +465,18 @@ public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTe
 		recipients.add(recipient);
 		
 		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
-				
-		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
+			
+		Assert.assertTrue(recipient.getReceivedShares().contains(shares.getSuccessesItem().get(0)));
+		Assert.assertTrue(sender.getShares().contains(shares.getSuccessesItem().get(0)));
+		
+		try{
 		shareService.deleteAllSharesWithDocument(document, sender,  new MailContainer("", Language.DEFAULT));
+		}catch(TechnicalException e){
+			logger.debug("Test succeed, but throw exception on notification");
+		}
 		
-		userService.saveOrUpdateUser(recipient);
-		userService.saveOrUpdateUser(sender);
-
-		
-		//sender.deleteShare(shares.getSuccessesItem().get(0));
-//		//cleaning share
-//		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
-//		
-//		//no need to delete share, it will be delete automatically by hibernate
+		Assert.assertFalse(recipient.getReceivedShares().contains(shares.getSuccessesItem().get(0)));
+		Assert.assertFalse(sender.getShares().contains(shares.getSuccessesItem().get(0)));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -505,7 +506,7 @@ public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTe
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	@Ignore
+	
 	@Test
 	public void testCleanOutdatedShares()throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -553,9 +554,10 @@ public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTe
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	@Ignore
+	
+	
 	@Test
-	public void testShareDocumentsWithSecuredUrlToUser(){
+	public void testShareDocumentsWithSecuredUrlToUser() throws IllegalArgumentException, BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		Document document = documentRepository.findAll().get(0);
@@ -565,15 +567,65 @@ public class ShareServiceTest extends AbstractTransactionalJUnit4SpringContextTe
 		ArrayList<User> recipients = new ArrayList<User>();
 		recipients.add(recipient);
 		
-		List<Contact> mailrecipients;
+		List<Contact> contactList = new ArrayList<Contact>();
+		contactList.add(new Contact(recipient.getMail()));
 		
-		//ailrecipients.
+		UserVo senderVo = new UserVo(sender);
 		
+		SecuredUrl shares = shareService.shareDocumentsWithSecuredUrlToUser(senderVo, documents, "password", contactList, null);
 		
-		//shareService.shareDocumentsWithSecuredUrlToUser(owner, docList, "password", mailrecipients, expiryDate);
+		Assert.assertTrue(shares.getSender().equals(sender));
+		
+		Assert.assertTrue(shares.getDocuments().contains(document));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+	
+	@Test
+	public void testGetSecureUrlLinkedToDocument() throws IllegalArgumentException, BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		List<Contact> contactList = new ArrayList<Contact>();
+		contactList.add(new Contact(recipient.getMail()));
+		
+		UserVo senderVo = new UserVo(sender);
+		
+		SecuredUrl shares = shareService.shareDocumentsWithSecuredUrlToUser(senderVo, documents, "password", contactList, null);
+		
+		Assert.assertTrue(shareService.getSecureUrlLinkedToDocument(document).contains(shares));
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	
+	@Test
+	public void testGetSharesLinkedToDocument() throws IllegalArgumentException, BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document document = documentRepository.findAll().get(0);
+		ArrayList<Document> documents = new ArrayList<Document>();
+		documents.add(document);
+
+		ArrayList<User> recipients = new ArrayList<User>();
+		recipients.add(recipient);
+		
+		List<Contact> contactList = new ArrayList<Contact>();
+		contactList.add(new Contact(recipient.getMail()));
+		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null );		
+		
+		Assert.assertTrue(shareService.getSharesLinkedToDocument(document).contains(shares.getSuccessesItem().get(0)));
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
 	
 	/**
 	 * Create and drop a share directly.

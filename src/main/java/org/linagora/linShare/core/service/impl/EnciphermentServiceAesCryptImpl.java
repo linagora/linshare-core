@@ -56,7 +56,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
     private final LogEntryService logEntryService;  
 	private final String workingDir;
 	
-	private static Logger log = LoggerFactory.getLogger(EnciphermentServiceAesCryptImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(EnciphermentServiceAesCryptImpl.class);
 	
 	
 	
@@ -108,10 +108,10 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 	        logEntryService.create(logEntry);
 		
 		} catch (IOException e) {
-			log.error(e.toString(),e);
+			logger.error(e.toString(),e);
 			throw new BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not decrypt document "+ doc.getIdentifier());
 		} catch (GeneralSecurityException e) {
-			log.error(e.toString(),e);
+			logger.error(e.toString(),e);
 			throw new BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not decrypt document "+ doc.getIdentifier());
 		} finally {
 			
@@ -160,10 +160,10 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 	        logEntryService.create(logEntry);
 			
 		} catch (IOException e) {
-			log.error(e.toString(),e);
+			logger.error(e.toString(),e);
 			throw new BusinessException(BusinessErrorCode.CANNOT_ENCRYPT_DOCUMENT,"can not encrypt document "+ doc.getIdentifier());
 		} catch (GeneralSecurityException e) {
-			log.error(e.toString(),e);
+			logger.error(e.toString(),e);
 			throw new BusinessException(BusinessErrorCode.CANNOT_ENCRYPT_DOCUMENT,"can not encrypt document "+ doc.getIdentifier());
 		} finally {
 			

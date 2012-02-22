@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -53,14 +54,14 @@ public interface SearchDocumentService {
 	 * @param user
 	 * @return all document for an user.
 	 */
-	public Set<Document> retrieveDocument(UserVo user);
+	public Set<Document> retrieveDocument(User user);
 	
 	/**
 	 * Retrieve all document (owned or received) for an user.
 	 * @param user : the user we wish to return docs from
 	 * @return a list of DocumentVo (which may contains SharedDocumentVo)
 	 */
-	public List<DocumentVo> retrieveDocuments(UserVo user);
+	public List<DocumentVo> retrieveDocuments(User user);
 	
 	/**
 	 * Retrieve all document corresponding to criterion using matching (contains).
