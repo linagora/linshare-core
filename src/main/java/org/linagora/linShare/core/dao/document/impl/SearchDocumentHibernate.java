@@ -127,8 +127,7 @@ public class SearchDocumentHibernate implements SearchDocumentDao{
 	 * @param matcher
 	 * @return
 	 */
-	public List<Document> retrieveUserDocumentWithMatchCriterion(
-			final SearchDocumentCriterion searchDocumentCriterion, final int matcher) {
+	public List<Document> retrieveUserDocumentWithMatchCriterion(final SearchDocumentCriterion searchDocumentCriterion, final int matcher) {
 		
 		final QueryParameter queryParameter = buildQuery(searchDocumentCriterion, matcher);
 		

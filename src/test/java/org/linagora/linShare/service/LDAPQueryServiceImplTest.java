@@ -27,9 +27,9 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-test.xml",
 		"classpath:springContext-startopends.xml"
 		})
-public class LDAPQueryServiceTest extends AbstractJUnit4SpringContextTests {
+public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	
-	protected Logger logger = LoggerFactory.getLogger(LDAPQueryServiceTest.class);
+	protected Logger logger = LoggerFactory.getLogger(LDAPQueryServiceImplTest.class);
 
 	
 	@Autowired

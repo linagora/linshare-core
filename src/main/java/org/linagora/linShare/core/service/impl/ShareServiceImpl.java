@@ -244,7 +244,12 @@ public class ShareServiceImpl implements ShareService{
 	
 	public void deleteShare(Share share, User actor) throws BusinessException {
 		
+		
 		shareRepository.delete(share);
+		share.getReceiver().deleteReceivedShare(share);
+		share.getSender().deleteShare(share);
+		
+		
 		
 		
 		ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),

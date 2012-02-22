@@ -75,9 +75,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
-public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContextTests{
+public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
-	private static Logger logger = LoggerFactory.getLogger(DocumentServiceTest.class);
+	private static Logger logger = LoggerFactory.getLogger(DocumentServiceImplTest.class);
 	
 	private InputStream inputStream;
 	
@@ -110,20 +110,17 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 	private User Jane;
 	private Document aDocument;
 	
-	// default import.sql
-	private static final String DOMAIN_IDENTIFIER = "MySubDomain";
-	
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
 		try {
-			John = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
-			Jane = userService.findOrCreateUser("user2@linpki.org", DOMAIN_IDENTIFIER);
+			John = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			Jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 		} catch (BusinessException e1) {
 			try {
-				John = userService.findOrCreateUser("user1@linpki.org", DOMAIN_IDENTIFIER);
-				Jane = userService.findOrCreateUser("user2@linpki.org", DOMAIN_IDENTIFIER);
+				John = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+				Jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 			} catch (BusinessException e2) {
 				logger.error("Can't create default user for test environnement.");
 				e2.printStackTrace();
@@ -307,7 +304,7 @@ public class DocumentServiceTest extends AbstractTransactionalJUnit4SpringContex
 		long actual;
 		
 		try {
-			AbstractDomain domain = abstractDomainService.retrieveDomain(DOMAIN_IDENTIFIER);
+			AbstractDomain domain = abstractDomainService.retrieveDomain(LoadingServiceTestDatas.sqlSubDomain);
 			SizeUnitValueFunctionality func = functionalityService.getUserQuotaFunctionality(domain);
 			
 			actual = func.getPlainSize();

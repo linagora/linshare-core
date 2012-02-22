@@ -37,9 +37,9 @@ import org.linagora.linShare.core.service.impl.ClamavVirusScannerServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClamavVirusScannerTest {
+public class ClamavVirusScannerServiceImplTest {
 
-	private static Logger logger = LoggerFactory.getLogger(ClamavVirusScannerTest.class);
+	private static Logger logger = LoggerFactory.getLogger(ClamavVirusScannerServiceImplTest.class);
 	
 	private static VirusScannerService virusScannerService;
 
@@ -51,7 +51,7 @@ public class ClamavVirusScannerTest {
 		
 		Properties properties = new Properties();
 		try {
-			InputStream is = ClamavVirusScannerTest.class.getResourceAsStream("/linShare-test.properties");
+			InputStream is = ClamavVirusScannerServiceImplTest.class.getResourceAsStream("/linShare-test.properties");
 			if (is ==  null)
 				throw new Exception("Impossible to parse linShare-test.properties");
 			properties.load(is);

@@ -26,7 +26,9 @@ import java.util.List;
 
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
+import org.linagora.linShare.core.domain.transformers.impl.UserTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -40,16 +42,19 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	private SearchDocumentService searchDocumentService;
 	private DocumentService documentService;
 	private DocumentTransformer documentTransformer;
+	private UserTransformer userTransformer;
 	
 	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, 
 			DocumentTransformer documentTransformer,
-			DocumentService documentService){
+			DocumentService documentService,UserTransformer userTransformer){
 		this.searchDocumentService=searchDocumentService;
 		this.documentTransformer=documentTransformer;
 		this.documentService = documentService;
+		this.userTransformer = userTransformer;
 	}
 	
-	public List<DocumentVo> retrieveDocument(UserVo user) {
+	public List<DocumentVo> retrieveDocument(UserVo userVo) {
+		User user = userTransformer.assemble(userVo);
 		return documentTransformer.disassembleList(new ArrayList<Document>(this.searchDocumentService.retrieveDocument(user)));
 	}
 /*
