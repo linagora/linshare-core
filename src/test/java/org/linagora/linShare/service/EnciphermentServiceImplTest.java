@@ -78,7 +78,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	
 	private InputStream inputStream;
 	private String inputStreamUuid;
-	private User Jane;
+	private User jane;
 	private Document aDocument;
 	
 	private LoadingServiceTestDatas datas;
@@ -90,10 +90,10 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
 		datas.loadUsers();
 		
-		Jane = datas.getUser2();
+		jane = datas.getUser2();
 		
 		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-		inputStreamUuid = fileRepository.insertFile(Jane.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
+		inputStreamUuid = fileRepository.insertFile(jane.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
 				
 		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
 		
@@ -101,14 +101,14 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		Calendar exp=inputStreamInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, Jane,false,false,false,new Long(10000));
+		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,false,new Long(10000));
 		List<Signature> signatures = new ArrayList<Signature>();
 		aDocument.setSignatures(signatures);
 		
 		try {
 			documentRepository.create(aDocument);
-			Jane.addDocument(aDocument);
-			userRepository.update(Jane);
+			jane.addDocument(aDocument);
+			userRepository.update(jane);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			Assert.fail();
@@ -127,11 +127,11 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		
 		logger.debug("aDocument.getIdentifier : " + aDocument.getIdentifier());
-		printDocs(Jane);
+		printDocs(jane);
 		documentRepository.delete(aDocument);
 //		Jane.deleteDocument(aDocument);
-		Jane.getDocuments().clear();
-		userRepository.update(Jane);
+		jane.getDocuments().clear();
+		userRepository.update(jane);
 		fileRepository.removeFileByUUID(aDocument.getIdentifier());
 		datas.deleteUsers();
 		
@@ -186,17 +186,17 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("inputStreamUuid : " + inputStreamUuid);
 		logger.debug("aDocument.getIdentifier : " + aDocument.getIdentifier());
 
-		DocumentVo docVo = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",Jane.getLogin(),false,false,false,(long) 10);
+		DocumentVo docVo = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,false,(long) 10);
 		
-		UserVo userVo = new UserVo(Jane);
-		printDocs(Jane);
+		UserVo userVo = new UserVo(jane);
+		printDocs(jane);
 		
 		Document encryptedDoc = enciphermentService.encryptDocument(docVo, userVo, "password");
 		logger.debug("encryptedDoc.getIdentifier : " + encryptedDoc.getIdentifier());
 		logger.debug("aDocument.getIdentifier : " + aDocument.getIdentifier());
 		logger.debug("inputStreamUuid : " + inputStreamUuid);
 		
-		printDocs(Jane);		
+		printDocs(jane);		
 		
 		aDocument = encryptedDoc;
 		
@@ -223,16 +223,16 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		// Add 2 years from the actual date
 		expirationDate.add(Calendar.YEAR, -2);
 
-		DocumentVo doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",Jane.getLogin(),false,false,false,(long) 10);
+		DocumentVo doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,false,(long) 10);
 
-		UserVo userVo = new UserVo(Jane);
+		UserVo userVo = new UserVo(jane);
 		
 		Document encryptedDoc = enciphermentService.encryptDocument(doc, userVo, "password");
 		Assert.assertTrue(aDocument.getEncrypted());
 		
 		
 		// Instantiate new DocumentVo encrypted
-		doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",Jane.getLogin(),false,false,false,(long) 10);
+		doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,false,(long) 10);
 		
 		Document decryptedDoc = enciphermentService.decryptDocument(doc, userVo, "password");
 		Assert.assertFalse(aDocument.getEncrypted());

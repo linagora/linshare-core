@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.core.domain.constants.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.MailSubjectEnum;
@@ -51,6 +49,8 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.service.MailContentBuildingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MailContentBuildingServiceImpl implements MailContentBuildingService {
@@ -61,9 +61,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	private final String mailContentHTMLWithoutLogo;
 	private final boolean displayLogo;
 	
-    private final static Log logger = LogFactory.getLog(MailContentBuildingServiceImpl.class);
+	private final static Logger logger = LoggerFactory.getLogger(MailContentBuildingServiceImpl.class);
 
-	
 	public MailContentBuildingServiceImpl(final String urlBase, 
 			final String urlInternal, final String mailContentTxt,
 			final String mailContentHTML, final String mailContentHTMLWithoutLogo,

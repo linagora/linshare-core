@@ -162,7 +162,7 @@ public interface SecuredUrlService {
 	 * @return true if the secured url is password protected
 	 * @throws LinShareNotSuchElementException 
 	 */
-	boolean isPasswordProtected(String alea, String urlPath) throws LinShareNotSuchElementException;
+	boolean isProtectedByPassword(String alea, String urlPath) throws LinShareNotSuchElementException;
 
 	/**
 	 * Remove all outdated secured url.

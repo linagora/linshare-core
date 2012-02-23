@@ -53,6 +53,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.subethamail.smtp.server.SMTPServer;
+import org.subethamail.wiser.Wiser;
 
 /*
  * This all class was disable because of a huge spring context problem
@@ -92,13 +93,12 @@ public class GroupServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 	
 	private static String groupName = "testGroup";
 	
-	private SMTPServer wiser;
+	private Wiser wiser;
 	
 	
 	public GroupServiceImplTest() {
 		super();
-		wiser = new SMTPServer(new LinShareMessageHandler());
-		wiser.setPort(2525);
+        wiser = new Wiser(2525);
 		
 	}
 	
@@ -107,6 +107,7 @@ public class GroupServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
+//        MailTestUtils.reconfigureMailSenders(applicationContext, 2500);
 		
 		owner = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 		

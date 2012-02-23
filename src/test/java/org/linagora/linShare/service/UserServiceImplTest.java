@@ -71,6 +71,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.subethamail.smtp.server.SMTPServer;
+import org.subethamail.wiser.Wiser;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -113,12 +114,12 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	private AbstractDomainRepository abstractDomainRepository;
 	
 	
-	private SMTPServer wiser;
+	private Wiser wiser;
 	
 	public UserServiceImplTest() {
 		super();
-		wiser = new SMTPServer(new LinShareMessageHandler());
-		wiser.setPort(2525);
+		wiser = new Wiser(2525);
+
 	}
 	
 	
@@ -126,6 +127,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
+//        MailTestUtils.reconfigureMailSenders(applicationContext, 2500);
 
 		
 		logger.debug(LinShareTestConstants.END_SETUP);
@@ -523,7 +525,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	
 	
 	@Test
-	public void testaddGuestContactRestriction() throws BusinessException{
+	public void testAddGuestContactRestriction() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
 		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);

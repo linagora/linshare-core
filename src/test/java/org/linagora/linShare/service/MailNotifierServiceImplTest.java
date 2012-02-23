@@ -48,11 +48,20 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     
     private static String LINSHARE_MAIL = "linShare@yourdomain.com"; 
 
+	public MailNotifierServiceImplTest() {
+		super();
+		wiser = new Wiser(2525);
+
+		
+	}
+    
     @Before
     public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-        wiser = new Wiser(2525);
-        wiser.start();
+		wiser.start();
+//        MailTestUtils.reconfigureMailSenders(applicationContext, 2500);
+
+        
 		logger.debug(LinShareTestConstants.END_SETUP);
     }
 
@@ -61,6 +70,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 
         wiser.stop();
+        
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 
     }
