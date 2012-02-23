@@ -75,6 +75,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.subethamail.smtp.server.SMTPServer;
+import org.subethamail.wiser.Wiser;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -131,7 +132,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 	@Resource(name = "transactionManager")
 	private HibernateTransactionManager tx;
 	
-	private SMTPServer wiser;
+	private Wiser wiser;
 	private User owner;
 	private Document myDocForTest;
 	private boolean guestFuncStatus;
@@ -139,15 +140,16 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 	
 	public ShareServiceImplTest() {
 		super();
-		wiser = new SMTPServer(new LinShareMessageHandler());
-		wiser.setPort(2525);
-		
+		wiser = new Wiser(2525);
+
 	}
 
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
+//        MailTestUtils.reconfigureMailSenders(applicationContext, 2500);
+
 		
 		AbstractDomain rootDomain = abstractDomainRepository.findById(LinShareConstants.rootDomainIdentifier);
 		Functionality guestFunctionality = functionalityService.getGuestFunctionality(rootDomain);
@@ -208,7 +210,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 			Assert.assertTrue(false);
 		}
 
-		wiser.stop();
+		
 		logger.debug(LinShareTestConstants.END_SETUP);
 
 	}
@@ -238,7 +240,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		guestFunctionality.getActivationPolicy().setStatus(guestFuncStatus);
 		functionalityService.update(rootDomain, guestFunctionality);
 		
-		
+		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 
 	}
@@ -548,9 +550,6 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		
 		functionality .getActivationPolicy().setStatus(false);
 		functionalityRepository.update(functionality);
-		
-		logger.error(shareService.getSharesLinkedToDocument(document).toString());
-		
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

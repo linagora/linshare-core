@@ -59,6 +59,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.subethamail.smtp.server.SMTPServer;
+import org.subethamail.wiser.Wiser;
 
 /*
  * This all class was disable because of a huge spring context problem
@@ -113,18 +114,20 @@ public class SearchDocumentServiceImplTest extends AbstractTransactionalJUnit4Sp
 
 	private LoadingServiceTestDatas datas;
 
-	private SMTPServer wiser;
+	private Wiser wiser;
 	
 	public SearchDocumentServiceImplTest() {
 		super();
-		wiser = new SMTPServer(new LinShareMessageHandler());
-		wiser.setPort(2525);
+		wiser = new Wiser(2525);
+
 	}
 	
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
+//        MailTestUtils.reconfigureMailSenders(applicationContext, 2500);
+
 		
 		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
 		datas.loadUsers();

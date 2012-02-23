@@ -95,7 +95,7 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 	}
 
 	public boolean isPasswordProtected(String alea, String urlPath) throws LinShareNotSuchElementException {
-		return securedUrlService.isPasswordProtected(alea, urlPath);
+		return securedUrlService.isProtectedByPassword(alea, urlPath);
 	}
 
 	public boolean isValid(String alea, String urlPath) {

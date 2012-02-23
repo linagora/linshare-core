@@ -106,8 +106,8 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	private FileSystemDao fileRepository;
 	
 	private String inputStreamUuid;
-	private User John;
-	private User Jane;
+	private User john;
+	private User jane;
 	private Document aDocument;
 	
 	@Before
@@ -115,12 +115,12 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
 		try {
-			John = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-			Jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			john = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 		} catch (BusinessException e1) {
 			try {
-				John = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-				Jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+				john = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+				jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 			} catch (BusinessException e2) {
 				logger.error("Can't create default user for test environnement.");
 				e2.printStackTrace();
@@ -132,7 +132,7 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		
 		
 		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-		inputStreamUuid = fileRepository.insertFile(Jane.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
+		inputStreamUuid = fileRepository.insertFile(jane.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
 				
 		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
 		
@@ -140,7 +140,7 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		Calendar exp=inputStreamInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, Jane,false,false,false,new Long(10000));
+		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,false,new Long(10000));
 		List<Signature> signatures = new ArrayList<Signature>();
 		aDocument.setSignatures(signatures);
 		
@@ -186,9 +186,9 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		InputStream tmp = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		try {
-			Document aNewDoc = documentService.insertFile(John.getLogin(), tmp, tmp.available(), "linShare-default.properties", "text/plain", John);
+			Document aNewDoc = documentService.insertFile(john.getLogin(), tmp, tmp.available(), "linShare-default.properties", "text/plain", john);
 			
-			Assert.assertTrue(John.getDocuments().contains(aNewDoc));
+			Assert.assertTrue(john.getDocuments().contains(aNewDoc));
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.assertFalse(true);
@@ -249,7 +249,7 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 			//Assert.assertTrue(aDocument.getSignatures().size() == 0);
 			
 			documentService.insertSignatureFile(signatureFile, (long)10000,
-						"cert", "text/plain", Jane, aDocument,
+						"cert", "text/plain", jane, aDocument,
 						(X509Certificate)c);
 				
 			signatureFile.close();				 
@@ -275,19 +275,19 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
 			long expected = 104857600; // default max size : baseParam in import-mysql.sql
-			long actual = documentService.getAvailableSize(John);
+			long actual = documentService.getAvailableSize(john);
 			logger.debug("actual : "+ actual );
 			logger.debug("expected : "+ expected );
 			Assert.assertTrue(actual == expected);
 			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-			documentService.insertFile(John.getLogin(),
+			documentService.insertFile(john.getLogin(),
 					inputStream, 20000,
 					"linShare.properties", documentService
 							.getMimeType(inputStream,
 									"linShare.properties"),
-					John);		
+					john);		
 			
-			long afterInsert = documentService.getAvailableSize(John);
+			long afterInsert = documentService.getAvailableSize(john);
 			Assert.assertEquals(afterInsert, expected - 20000);
 			
 		} catch (BusinessException e) {
@@ -320,17 +320,17 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	public void testDeleteFile() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
-			System.out.println(John.getDocuments().size());
+			System.out.println(john.getDocuments().size());
 			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-			Document aDoc = documentService.insertFile(John.getLogin(),
+			Document aDoc = documentService.insertFile(john.getLogin(),
 					inputStream, 20000,
 					"linShare.properties", documentService
 							.getMimeType(inputStream,
 									"linShare.properties"),
-					John);	
-			Assert.assertFalse(John.getDocuments().isEmpty());
-			documentService.deleteFile(John.getLogin(), aDoc.getIdentifier(), Reason.EXPIRY);
-			Assert.assertTrue(John.getDocuments().size() == 0);
+					john);	
+			Assert.assertFalse(john.getDocuments().isEmpty());
+			documentService.deleteFile(john.getLogin(), aDoc.getIdentifier(), Reason.EXPIRY);
+			Assert.assertTrue(john.getDocuments().size() == 0);
 			Assert.assertNull(fileRepository.getFileContentByUUID(aDoc.getIdentifier()));
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -398,12 +398,12 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		try {
 			String expected = IOUtils.toString(fileRepository.getFileContentByUUID(aDocument.getIdentifier()));
 			String actual = null;
-			Document aNewDoc = documentService.duplicateDocument(aDocument, John);
+			Document aNewDoc = documentService.duplicateDocument(aDocument, john);
 			
 			actual = IOUtils.toString(fileRepository.getFileContentByUUID(aNewDoc.getIdentifier()));
 			
 			Assert.assertEquals(expected, actual);
-			Assert.assertTrue(John.getDocuments().contains(aNewDoc));
+			Assert.assertTrue(john.getDocuments().contains(aNewDoc));
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.assertFalse(true);
@@ -433,12 +433,12 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		
 		try {		
 			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-			Document aNewDoc = documentService.insertFile(John.getLogin(),
+			Document aNewDoc = documentService.insertFile(john.getLogin(),
 					inputStream, 20000,
 					"linShare.properties", documentService
 							.getMimeType(inputStream,
 									"linShare.properties"),
-					John);
+					john);
 			
 			documentService.renameFile(aNewDoc.getIdentifier(), expected);
 
@@ -459,12 +459,12 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		String expected = "a file";
 		try{
 			inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-			Document aNewDoc = documentService.insertFile(John.getLogin(),
+			Document aNewDoc = documentService.insertFile(john.getLogin(),
 					inputStream, 20000,
 					"linShare.properties", documentService
 							.getMimeType(inputStream,
 									"linShare.properties"),
-					John);
+					john);
 			documentService.updateFileProperties(aNewDoc.getIdentifier(), null, expected);
 			
 			String actual = aNewDoc.getFileComment();
