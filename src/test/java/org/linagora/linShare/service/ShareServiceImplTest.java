@@ -148,7 +148,6 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-//        MailTestUtils.reconfigureMailSenders(applicationContext, 2500);
 
 		
 		AbstractDomain rootDomain = abstractDomainRepository.findById(LinShareConstants.rootDomainIdentifier);

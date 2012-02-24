@@ -59,7 +59,6 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     public void setUp() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-//        MailTestUtils.reconfigureMailSenders(applicationContext, 2500);
 
         
 		logger.debug(LinShareTestConstants.END_SETUP);

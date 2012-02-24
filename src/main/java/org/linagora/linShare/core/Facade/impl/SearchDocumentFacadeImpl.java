@@ -36,25 +36,26 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.DocumentService;
 import org.linagora.linShare.core.service.SearchDocumentService;
+import org.linagora.linShare.core.service.UserService;
 
 public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 
 	private SearchDocumentService searchDocumentService;
 	private DocumentService documentService;
 	private DocumentTransformer documentTransformer;
-	private UserTransformer userTransformer;
+	private UserService userService;
 	
 	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, 
 			DocumentTransformer documentTransformer,
-			DocumentService documentService,UserTransformer userTransformer){
+			DocumentService documentService,UserService userService){
 		this.searchDocumentService=searchDocumentService;
 		this.documentTransformer=documentTransformer;
 		this.documentService = documentService;
-		this.userTransformer = userTransformer;
+		this.userService = userService;
 	}
 	
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
-		User user = userTransformer.assemble(userVo);
+		User user = userService.findUnkownUserInDB(userVo.getMail());
 		return documentTransformer.disassembleList(new ArrayList<Document>(this.searchDocumentService.retrieveDocument(user)));
 	}
 /*

@@ -127,7 +127,6 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-//        MailTestUtils.reconfigureMailSenders(applicationContext, 2500);
 
 		
 		logger.debug(LinShareTestConstants.END_SETUP);
