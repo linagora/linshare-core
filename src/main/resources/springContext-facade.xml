@@ -30,7 +30,7 @@
        	 <constructor-arg ref="searchDocumentService"/>
        	 <constructor-arg ref="documentTransformer"/>
        	 <constructor-arg ref="documentService"/>
-       	 <constructor-arg ref="userTransformer"/>
+       	 <constructor-arg ref="userService"/>
    	  </bean>
  
  	<bean name="shareFacade" class="org.linagora.linShare.core.Facade.impl.ShareFacadeImpl">
