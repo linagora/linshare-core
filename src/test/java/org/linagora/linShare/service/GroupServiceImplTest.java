@@ -58,95 +58,95 @@ import org.subethamail.wiser.Wiser;
 /*
  * This all class was disable because of a huge spring context problem
  * */
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-dao.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopends.xml",
 		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
-		})
-public class GroupServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
-	
-	private static Logger logger = LoggerFactory.getLogger(GroupServiceImplTest.class);
-	
+		"classpath:springContext-test.xml" })
+public class GroupServiceImplTest extends
+		AbstractTransactionalJUnit4SpringContextTests {
+
+	private static Logger logger = LoggerFactory
+			.getLogger(GroupServiceImplTest.class);
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private GroupService groupService;
-	
+
 	@Autowired
 	private ShareService shareService;
-	
+
 	@Autowired
 	@Qualifier("groupRepository")
 	private GroupRepository groupRepository;
-	
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<GroupUser> userRepository;
-	
-	private User owner; 
-	
+
+	private User owner;
+
 	private static String groupName = "testGroup";
-	
+
 	private Wiser wiser;
-	
-	
+
 	public GroupServiceImplTest() {
 		super();
-        wiser = new Wiser(2525);
-		
+		wiser = new Wiser(2525);
+
 	}
-	
-	
+
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		wiser.start();
-		
-		owner = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		
-		
+
+		owner = userService.findOrCreateUser("user1@linpki.org",
+				LoadingServiceTestDatas.sqlSubDomain);
+
 		// Create group
 		Group group = new Group();
-		
-		GroupUser groupUser = new GroupUser(groupName.toLowerCase()+"@linshare.groups", "", groupName, groupName.toLowerCase()+"@linshare.groups");
+
+		GroupUser groupUser = new GroupUser(groupName.toLowerCase()
+				+ "@linshare.groups", "", groupName, groupName.toLowerCase()
+				+ "@linshare.groups");
 		groupUser = userRepository.create(groupUser);
-		
-		//Set owner
+
+		// Set owner
 		GroupMember groupOwner = new GroupMember();
 		groupOwner.setType(GroupMemberType.OWNER);
 		groupOwner.setUser(owner);
 		groupOwner.setMembershipDate(GregorianCalendar.getInstance());
-		
+
 		group.addMember(groupOwner);
 		group.setName(groupName);
 		group.setGroupUser(groupUser);
-		
+
 		groupRepository.create(group);
-		
+
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
-	
-	
+
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		
+
 		Group groupPersistant = groupRepository.findByName("testGroup");
-		
+
 		// if this group is not already delete
-		if(groupPersistant!=null){
+		if (groupPersistant != null) {
 			// clearing received shares
-			Set<Share> receivedShare = groupPersistant.getGroupUser().getReceivedShares();
-		
+			Set<Share> receivedShare = groupPersistant.getGroupUser()
+					.getReceivedShares();
+
 			// delete group and groupUser
-			groupRepository.delete(groupPersistant);		
-		
+			groupRepository.delete(groupPersistant);
+
 			// refresh share attribute
 			for (Share share : receivedShare) {
 				shareService.refreshShareAttributeOfDoc(share.getDocument());
@@ -156,211 +156,231 @@ public class GroupServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-	
+
 	@Test
-	public void testCreate() throws BusinessException{
+	public void testCreate() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User owner2 = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		
-		groupService.create(owner2, "testGroup2", "", "functionalEmail@email.com");
-		
+
+		User owner2 = userService.findOrCreateUser("user2@linpki.org",
+				LoadingServiceTestDatas.sqlSubDomain);
+
+		groupService.create(owner2, "testGroup2", "",
+				"functionalEmail@email.com");
+
 		Assert.assertNotNull(groupRepository.findByName("testGroup2"));
-		
+
 		Group group = new Group();
 		group.setName("testGroup2");
-		
+
 		groupRepository.delete(group);
-		
+
 		Assert.assertNull(groupRepository.findByName("testGroup2"));
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
-	public void testDelete() throws BusinessException{
+	public void testDelete() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
+
 		groupService.delete(groupRepository.findByName(groupName), owner);
-		
+
 		Assert.assertNull(groupRepository.findByName(groupName));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
-	public void testUpdate() throws BusinessException{
+	public void testUpdate() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
+
 		Group group = groupRepository.findByName(groupName);
-		
+
 		group.setName("fooBar");
 		groupService.update(group, owner);
-		
+
 		Assert.assertNull(groupRepository.findByName(groupName));
 		Assert.assertNotNull(groupRepository.findByName("fooBar"));
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
-	public void testRetreiveMember() throws BusinessException{
+	public void testRetreiveMember() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
+
 		Group group = groupRepository.findByName(groupName);
-		
+
 		GroupMember member = new GroupMember();
 
-		User user = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		
+		User user = userService.findOrCreateUser("user2@linpki.org",
+				LoadingServiceTestDatas.sqlSubDomain);
+
 		member.setOwner(owner);
 		member.setUser(user);
-		
+
 		group.addMember(member);
-		
+
 		groupService.update(group, owner);
-		
+
 		GroupMember groupMember = groupService.retreiveMember(group, user);
-		
+
 		Assert.assertTrue(groupMember.equals(member));
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
-	}	
+	}
 
 	@Test
-	public void testAddMember() throws BusinessException{
+	public void testAddMember() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
+
 		Group group = groupRepository.findByName(groupName);
-		
-		User newMember = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		
-		groupService.addMember(group, owner, newMember, new MailContainer("", Language.DEFAULT));
-		
+
+		User newMember = userService.findOrCreateUser("user2@linpki.org",
+				LoadingServiceTestDatas.sqlSubDomain);
+
+		groupService.addMember(group, owner, newMember, new MailContainer("",
+				Language.DEFAULT));
+
 		// test on user
 		Assert.assertTrue(groupService.findByUser(newMember).contains(group));
-		
-		
-		//test on group
+
+		// test on group
 		Set<GroupMember> members = group.getMembers();
-		
+
 		boolean haveNewMember = false;
-		
+
 		for (GroupMember groupMember : members) {
-			if(groupMember.getUser().equals(newMember))
+			if (groupMember.getUser().equals(newMember))
 				haveNewMember = true;
 		}
 		Assert.assertTrue(haveNewMember);
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
-	}	
+	}
 
 	@Test
-	public void testRemoveMember() throws BusinessException{
+	public void testRemoveMember() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
+
 		Group group = groupRepository.findByName(groupName);
-		
-		User newMember = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		
-		groupService.addMember(group, owner, newMember, new MailContainer("", Language.DEFAULT));
-		
+
+		User newMember = userService.findOrCreateUser("user2@linpki.org",
+				LoadingServiceTestDatas.sqlSubDomain);
+
+		groupService.addMember(group, owner, newMember, new MailContainer("",
+				Language.DEFAULT));
+
 		groupService.removeMember(group, owner, newMember);
-		
+
 		// test on user
 		Assert.assertFalse(groupService.findByUser(newMember).contains(group));
-		
-		
-		//test on group
+
+		// test on group
 		Set<GroupMember> members = group.getMembers();
-		
+
 		for (GroupMember groupMember : members) {
 			Assert.assertFalse(groupMember.getUser().equals(newMember));
 		}
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
-	}	
-	
+	}
+
 	@Test
-	public void testUpdateMember() throws BusinessException{
+	public void testUpdateMember() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Group group = groupRepository.findByName(groupName);
-		
-		User newMember = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		
-		groupService.addMember(group, owner, newMember, new MailContainer("", Language.DEFAULT));
-		
-		groupService.updateMember(group, owner, newMember, GroupMemberType.MEMBER);
-		
-		Assert.assertTrue(groupService.retreiveMember(group, newMember).getType().equals(GroupMemberType.MEMBER));
-		
-		groupService.updateMember(group, owner, newMember, GroupMemberType.MANAGER);
-		
-		Assert.assertTrue(groupService.retreiveMember(group, newMember).getType().equals(GroupMemberType.MANAGER));
-		
+
+		User newMember = userService.findOrCreateUser("user2@linpki.org",
+				LoadingServiceTestDatas.sqlSubDomain);
+
+		groupService.addMember(group, owner, newMember, new MailContainer("",
+				Language.DEFAULT));
+
+		groupService.updateMember(group, owner, newMember,
+				GroupMemberType.MEMBER);
+
+		Assert.assertTrue(groupService.retreiveMember(group, newMember)
+				.getType().equals(GroupMemberType.MEMBER));
+
+		groupService.updateMember(group, owner, newMember,
+				GroupMemberType.MANAGER);
+
+		Assert.assertTrue(groupService.retreiveMember(group, newMember)
+				.getType().equals(GroupMemberType.MANAGER));
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
-	
+
 	@Test
-	public void testAcceptNewMember() throws BusinessException{
+	public void testAcceptNewMember() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User newMember = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+
+		User newMember = userService.findOrCreateUser("user2@linpki.org",
+				LoadingServiceTestDatas.sqlSubDomain);
 
 		Group group = groupService.findByName(groupName);
-		
+
 		GroupMember groupMember = new GroupMember();
-		
+
 		groupMember.setUser(newMember);
 		groupMember.setType(GroupMemberType.WAITING_APPROVAL);
 		groupMember.setMembershipDate(GregorianCalendar.getInstance());
 		groupMember.setOwner(owner);
 
 		group.addMember(groupMember);
-		
-		groupService.acceptNewMember(group, owner, newMember,new MailContainer("", Language.DEFAULT));
-		
+
+		groupService.acceptNewMember(group, owner, newMember,
+				new MailContainer("", Language.DEFAULT));
+
 		Assert.assertTrue(groupMember.getType().equals(GroupMemberType.MEMBER));
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
-	public void testRejectNewMember() throws BusinessException{
+	public void testRejectNewMember() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User newMember = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+		int tryFindOrCreateUser = 0;
+
+		User newMember = null;
+		do {
+			newMember = userService.findOrCreateUser("user2@linpki.org",
+					LoadingServiceTestDatas.sqlSubDomain);
+		} while (++tryFindOrCreateUser < 3 && newMember == null);
+		Assert.assertNotNull(newMember);
 
 		Group group = groupService.findByName(groupName);
-		
+
 		GroupMember groupMember = new GroupMember();
-		
+
 		groupMember.setUser(newMember);
 		groupMember.setType(GroupMemberType.WAITING_APPROVAL);
 		groupMember.setMembershipDate(GregorianCalendar.getInstance());
 		groupMember.setOwner(owner);
 
 		group.addMember(groupMember);
-		
-		groupService.rejectNewMember(group, owner, newMember,new MailContainer("", Language.DEFAULT));
-		
-		Assert.assertTrue(groupMember.getType().equals(GroupMemberType.WAITING_APPROVAL));
-		
+
+		groupService.rejectNewMember(group, owner, newMember,
+				new MailContainer("", Language.DEFAULT));
+
+		Assert.assertTrue(groupMember.getType().equals(
+				GroupMemberType.WAITING_APPROVAL));
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
-	public void testDeleteAllMembershipOfUser() throws BusinessException{
+	public void testDeleteAllMembershipOfUser() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
+
 		Group group = groupService.findByName(groupName);
-		
+
 		groupService.deleteAllMembershipOfUser(owner);
-		
+
 		Assert.assertTrue(group.getMembers().isEmpty());
-		
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 }
