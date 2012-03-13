@@ -56,7 +56,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
 
 		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
 		if (mail != null) {
-			criteria.add(Restrictions.like("login", mail, MatchMode.START).ignoreCase());
+			criteria.add(Restrictions.like("mail", mail, MatchMode.START).ignoreCase());
 		}
 		if (firstName != null) {
 			criteria.add(Restrictions.like("firstName", firstName, MatchMode.START).ignoreCase());
@@ -87,7 +87,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
 		if (mail != null) {
-			criteria.add(Restrictions.like("login", mail, MatchMode.ANYWHERE).ignoreCase());
+			criteria.add(Restrictions.like("mail", mail, MatchMode.ANYWHERE).ignoreCase());
 		}
 		if (firstName != null) {
 			criteria.add(Restrictions.like("firstName", firstName, MatchMode.ANYWHERE).ignoreCase());
