@@ -28,6 +28,7 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
@@ -37,8 +38,18 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
+import org.linagora.linShare.view.tapestry.utils.XSSFilter;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
+import org.owasp.validator.html.PolicyException;
+import org.owasp.validator.html.ScanException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateGroupPopup {
+	private static final Logger logger = LoggerFactory.getLogger(CreateGroupPopup.class);
+	
     @ApplicationState
     private UserVo userLoggedIn;
 
@@ -67,7 +78,8 @@ public class CreateGroupPopup {
     // The block that contains the action to be thrown on failure
 	@Inject
 	private Block onFailureCreateGroup;
-    
+
+	
     @Property
     @Persist
     private String groupName;
@@ -80,16 +92,24 @@ public class CreateGroupPopup {
     @Persist
     private boolean groupAlreadyExists;
     
+    private XSSFilter filter;
+
+	@Inject
+	private Policy antiSamyPolicy;
+
+    
     @CleanupRender
     void cleanupRender() {
     	createGroupForm.clearErrors();
     }
     
     public void onValidateFormFromCreateGroupForm() {
-    	if (groupName==null) {
-    		// the message will be handled by Tapestry
-    		return ;
-    	}
+    	filter = new XSSFilter(shareSessionObjects, createGroupForm, antiSamyPolicy, messages);
+    	
+		if ((groupName = filter.clean(groupName)) == null) {
+    		return;
+		}
+		
         if (groupFacade.nameAlreadyExists(groupName)) {
             createGroupForm.recordError(messages.get("pages.group.create.error.alreadyExist"));
         	shareSessionObjects.addError(messages.get("pages.group.create.error.alreadyExist"));

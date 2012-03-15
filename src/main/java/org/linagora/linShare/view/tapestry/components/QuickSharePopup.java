@@ -45,6 +45,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.upload.services.UploadedFile;
@@ -67,6 +68,7 @@ import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
+import org.linagora.linShare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
@@ -156,9 +158,6 @@ public class QuickSharePopup{
 	 *                      Injected services
 	 ************************************************************ */
 	
-	@Inject
-	private Policy antiSamyPolicy;
-
 	
 	@Inject
 	private DocumentFacade documentFacade;
@@ -207,6 +206,16 @@ public class QuickSharePopup{
 	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
+	
+	
+	private XSSFilter filter;
+
+    @Inject
+    private Messages messages;
+	
+	@Inject
+	private Policy antiSamyPolicy;
+
 
 	/* ***********************************************************
 	 *                   Event handlers&processing
@@ -302,29 +311,6 @@ public class QuickSharePopup{
     public void onSuccessFromQuickShareForm() throws BusinessException {
 
     	//VALIDATE
-    	
-    	AntiSamy as = new AntiSamy();
-    	CleanResults cr = null;
-       
-        try {
-        	 if(textAreaSubjectValue != null) {
-				cr = as.scan(textAreaSubjectValue, antiSamyPolicy);
-				textAreaSubjectValue = cr.getCleanHTML().trim();
-				logger.debug("getCleanHTML:textAreaSubjectValue:'" + textAreaSubjectValue + "'");
-        	 }
-        	 
-        	 if(textAreaValue != null) {
-				cr = as.scan(textAreaValue, antiSamyPolicy);
-				textAreaValue = cr.getCleanHTML().trim();
-				logger.debug("getCleanHTML:textAreaValue:'" + textAreaValue + "'");
-         	 }
-		} catch (ScanException e) {
-			logger.error("Antisany is not able to scan the subject field");
-			e.printStackTrace();
-		} catch (PolicyException e) {
-			logger.error("Antisany is not able to get the antiSamy policy");
-			e.printStackTrace();
-		}
         
 
     	boolean sendErrors = false;
@@ -420,8 +406,21 @@ public class QuickSharePopup{
 	 * @throws BusinessException 
 	 */
     public void onValidateFromFile(UploadedFile aFile)  {
-        if (aFile==null)
-            return;
+		filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
+    	
+		if ((textAreaSubjectValue = filter.clean(textAreaSubjectValue)) == null) {
+			// the message will be handled by Tapestry
+        	return;
+		}
+        if ((textAreaValue = filter.clean(textAreaValue)) == null) {
+        	// the message will be handled by Tapestry
+        	return;
+        }
+        if (aFile == null) {
+        	// the message will be handled by Tapestry
+        	return;
+        }
+
         String mimeType;
         try {
             mimeType = documentFacade.getMimeType(aFile.getStream(), aFile.getFilePath()); //get mime type with apperture

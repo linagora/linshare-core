@@ -55,6 +55,12 @@ import org.linagora.linShare.view.tapestry.services.Templating;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
+import org.linagora.linShare.view.tapestry.utils.XSSFilter;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
+import org.owasp.validator.html.PolicyException;
+import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 
 /** This component is used to create a new user.
@@ -98,6 +104,7 @@ public class GuestEditForm {
 
 	@Inject
 	private Templating templating;
+
 
 
 	/* ***********************************************************
@@ -160,10 +167,16 @@ public class GuestEditForm {
 	private FunctionalityFacade functionalityFacade;
 	
 	
+	private XSSFilter filter;
+
+	@Inject
+	private Policy antiSamyPolicy;
+	
+	
 	@SetupRender
 	void init() throws BusinessException {
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
-		
+
 		if (userLoggedIn.isRestricted()) {
 			restrictedGuest=true;
 		}
@@ -239,13 +252,22 @@ public class GuestEditForm {
     	if (guestCreateForm.getHasErrors()) {
     		return ;
     	}
-    	
-    	if (mail==null) {
+
+		filter = new XSSFilter(shareSessionObjects, guestCreateForm, antiSamyPolicy, messages);
+
+    	if ((mail = filter.clean(mail)) == null) {
     		// the message will be handled by Tapestry
-    		return ;
+    		return;
     	}
-    	
-    	    	
+    	if ((firstName = filter.clean(mail)) == null) {
+    		// the message will be handled by Tapestry
+    		return;
+    	}
+    	if ((lastName = filter.clean(mail)) == null) {
+    		// the message will be handled by Tapestry
+    		return;
+    	}
+
     	GuestDomainVo guests = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
     	
         if (userFacade.findUserInDb(mail, userLoggedIn.getDomainIdentifier()) != null || userFacade.findUserInDb(mail, guests.getIdentifier()) != null ) {
@@ -281,13 +303,12 @@ public class GuestEditForm {
     	
 		
 		MailContainer mailContainer = mailBuilder.buildMailContainer(userLoggedIn, customMessage);
+  
+		try {
+			// set uploadGranted always to true for guest
+			boolean uploadGranted = true;
 
-        try {
-            
-        	//set uploadGranted always to true for guest
-        	boolean uploadGranted = true;
-        	
-        	boolean allowedToCreateGuest = guestsAllowedToCreateGuest;
+			boolean allowedToCreateGuest = guestsAllowedToCreateGuest;
         	
         	userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, 
         			mailContainer,userLoggedIn);
