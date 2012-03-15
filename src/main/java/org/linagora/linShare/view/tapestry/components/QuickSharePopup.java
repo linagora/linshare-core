@@ -311,7 +311,16 @@ public class QuickSharePopup{
     public void onSuccessFromQuickShareForm() throws BusinessException {
 
     	//VALIDATE
-        
+    	filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
+
+    	if ((textAreaSubjectValue = filter.clean(textAreaSubjectValue)) == null) {
+    		// the message will be handled by Tapestry
+    		return;
+    	}
+    	if ((textAreaValue = filter.clean(textAreaValue)) == null) {
+    		// the message will be handled by Tapestry
+    		return;
+    	}
 
     	boolean sendErrors = false;
 		
@@ -406,16 +415,7 @@ public class QuickSharePopup{
 	 * @throws BusinessException 
 	 */
     public void onValidateFromFile(UploadedFile aFile)  {
-		filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
-    	
-		if ((textAreaSubjectValue = filter.clean(textAreaSubjectValue)) == null) {
-			// the message will be handled by Tapestry
-        	return;
-		}
-        if ((textAreaValue = filter.clean(textAreaValue)) == null) {
-        	// the message will be handled by Tapestry
-        	return;
-        }
+		
         if (aFile == null) {
         	// the message will be handled by Tapestry
         	return;

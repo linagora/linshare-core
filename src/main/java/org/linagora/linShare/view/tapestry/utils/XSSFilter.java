@@ -36,6 +36,7 @@ public class XSSFilter {
 		this.antiSamyPolicy = antiSamyPolicy;
 		this.shareSessionObjects = shareSessionObjects;
 		this.form = form;
+		this.messages = messages;
 	}
 
 	/**	 
@@ -44,8 +45,9 @@ public class XSSFilter {
 	public XSSFilter(Policy antiSamyPolicy, Messages messages) {
 		super();
 		this.antiSamyPolicy = antiSamyPolicy;
-		shareSessionObjects = null;
-		form = null;
+		this.messages = messages;
+		this.shareSessionObjects = null;
+		this.form = null;
 	}
 	
 	/**
@@ -61,6 +63,9 @@ public class XSSFilter {
 		
 		if (value == null)
 			return null;
+		
+		// FIXME
+		logger.error("antiSamyPolicy = " + (antiSamyPolicy == null ? "NULL." : "Ok."));
 		
 		try {
 			cr = as.scan(value, antiSamyPolicy);

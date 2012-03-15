@@ -28,6 +28,7 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linShare.common.service.LinShareMessageHandler;
 import org.linagora.linShare.core.domain.constants.GroupMemberType;
@@ -66,6 +67,7 @@ import org.subethamail.wiser.Wiser;
 		"classpath:springContext-startopends.xml",
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml" })
+@Ignore
 public class GroupServiceImplTest extends
 		AbstractTransactionalJUnit4SpringContextTests {
 
