@@ -134,26 +134,24 @@
 		<tag name="textarea" action="remove" />
 
 		<!--  Truncate  -->
-		<tag name="br" action="truncate" />
-
-		<!--  Validate -->
-
-		<tag name="p" action="validate">
+		<tag name="br" action="remove" />	
+		<tag name="i" action="remove" />				
+		<tag name="b" action="remove" />
+		
+		<tag name="p" action="remove">
 			<attribute name="align" />
 		</tag>
-		<tag name="div" action="validate" />
-		<tag name="span" action="validate" />
-		<tag name="i" action="validate" />
-		<tag name="b" action="validate" />
-		<tag name="strong" action="validate" />
-		<tag name="s" action="validate" />
-		<tag name="strike" action="validate" />
-		<tag name="u" action="validate" />
-		<tag name="em" action="validate" />
-		<tag name="blockquote" action="validate" />
-		<tag name="tt" action="truncate" />
+		<tag name="div" action="remove" />
+		<tag name="span" action="remove" />
+		<tag name="strong" action="remove" />
+		<tag name="s" action="remove" />
+		<tag name="strike" action="remove" />
+		<tag name="u" action="remove" />
+		<tag name="em" action="remove" />
+		<tag name="blockquote" action="remove" />
+		<tag name="tt" action="remove" />
 
-		<tag name="a" action="validate">
+		<tag name="a" action="remove">
 			<attribute name="href" onInvalid="filterTag" />
 
 			<attribute name="nohref">
@@ -174,12 +172,14 @@
 
 		<!--  List tags
 		-->
-		<tag name="ul" action="validate" />
-		<tag name="ol" action="validate" />
-		<tag name="li" action="validate" />
-		<tag name="dl" action="validate" />
-		<tag name="dt" action="validate" />
-		<tag name="dd" action="validate" />
+		<tag name="ul" action="remove" />
+		<tag name="ol" action="remove" />
+		<tag name="li" action="remove" />
+		<tag name="dl" action="remove" />
+		<tag name="dt" action="remove" />
+		<tag name="dd" action="remove" />
+				
+		<!--  Validate -->
 	</tag-rules>
 
 	<css-rules>
