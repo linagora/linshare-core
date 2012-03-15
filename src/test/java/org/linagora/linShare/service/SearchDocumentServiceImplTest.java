@@ -76,7 +76,7 @@ import org.subethamail.wiser.Wiser;
 		})
 public class SearchDocumentServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
-	private static Logger logger = LoggerFactory.getLogger(GroupServiceImplTest.class);
+	private static Logger logger = LoggerFactory.getLogger(SearchDocumentServiceImplTest.class);
 	
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
