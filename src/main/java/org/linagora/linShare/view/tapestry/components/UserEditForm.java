@@ -51,6 +51,12 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.SelectableRole;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
+import org.linagora.linShare.view.tapestry.utils.XSSFilter;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
+import org.owasp.validator.html.PolicyException;
+import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 
 /** This component is used to edit an user.
@@ -87,6 +93,8 @@ public class UserEditForm {
 
     @Inject
     private ComponentResources componentResources;
+
+
 
 
 	/* ***********************************************************
@@ -153,6 +161,14 @@ public class UserEditForm {
 	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
+	
+	
+	
+	private XSSFilter filter;
+
+	@Inject
+	private Policy antiSamyPolicy;
+	
     
     /* ***********************************************************
      *                   Event handlers&processing
@@ -160,6 +176,7 @@ public class UserEditForm {
     
     @SetupRender
     public void init(){
+
     	autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
     		 
@@ -282,11 +299,22 @@ public class UserEditForm {
     		return false;
     	}
     	
-    	if (mail==null) {
+    	filter = new XSSFilter(shareSessionObjects, userForm, antiSamyPolicy, messages);
+
+    	if ((mail = filter.clean(mail)) == null) {
     		// the message will be handled by Tapestry
     		return false;
     	}
-		
+    	if ((firstName = filter.clean(firstName)) == null) {
+
+    		// the message will be handled by Tapestry
+    		return false;
+    	}
+    	if ((lastName = filter.clean(lastName)) == null) {
+    		// the message will be handled by Tapestry
+    		return false;
+    	}
+
     	if (restrictedEditGuest || userLoggedIn.isRestricted()) {
         	boolean sendErrors = false;
         	
