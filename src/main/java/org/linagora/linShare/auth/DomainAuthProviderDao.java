@@ -79,6 +79,12 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		logger.debug("Retrieving user detail for ldap authentication : " + login);
 		
 		String password = (String)authentication.getCredentials();
+		if(password == "") {
+			logger.debug("User password is empty, authentification failed");
+			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+		}
+		
+		
 		String domainIdentifier = null;
 		if (authentication.getDetails() != null && authentication.getDetails() instanceof String) {
 			domainIdentifier = (String)authentication.getDetails();
@@ -97,8 +103,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 				foundUser = userService.findUserInDB(domainIdentifier,login);
 				if (foundUser != null && !foundUser.getUserType().equals(UserType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
 					logger.debug("User found in DB but authentification failed");
-					throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-			          "Bad credentials"), domainIdentifier);
+					throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), domainIdentifier);
 				} else {
 					logger.debug("Can't find the user in DB, BadDomainException for : " + domainIdentifier);
 					throw new BadDomainException(e.getMessage(), domainIdentifier);
