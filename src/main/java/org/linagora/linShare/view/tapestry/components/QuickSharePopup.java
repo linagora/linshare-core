@@ -311,16 +311,6 @@ public class QuickSharePopup{
     public void onSuccessFromQuickShareForm() throws BusinessException {
 
     	//VALIDATE
-    	filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
-
-    	if ((textAreaSubjectValue = filter.clean(textAreaSubjectValue)) == null) {
-    		// the message will be handled by Tapestry
-    		return;
-    	}
-    	if ((textAreaValue = filter.clean(textAreaValue)) == null) {
-    		// the message will be handled by Tapestry
-    		return;
-    	}
 
     	boolean sendErrors = false;
 		
@@ -441,7 +431,25 @@ public class QuickSharePopup{
     }
 	
 	
-    
+    /**
+	 * This is the onValidate for the QuickSharePopup Form
+	 */
+    public void onValidateFormFromQuickShareForm()  {
+    	filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
+
+    	if (textAreaSubjectValue != null) {
+    		if ((textAreaSubjectValue = filter.clean(textAreaSubjectValue)) == null) {
+    			// the message will be handled by Tapestry
+    			return;
+    		}
+    	}
+    	if (textAreaValue != null) {
+    		if ((textAreaValue = filter.clean(textAreaValue)) == null) {
+        		// the message will be handled by Tapestry
+        		return;
+        	}
+    	}
+    }    
     
 
 	public String getJSONId() {
