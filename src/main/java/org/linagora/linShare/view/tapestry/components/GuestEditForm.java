@@ -259,14 +259,16 @@ public class GuestEditForm {
     		// the message will be handled by Tapestry
     		return;
     	}
-    	if ((firstName = filter.clean(mail)) == null) {
+    	if ((firstName = filter.clean(firstName)) == null) {
     		// the message will be handled by Tapestry
     		return;
     	}
-    	if ((lastName = filter.clean(mail)) == null) {
+    	if ((lastName = filter.clean(lastName)) == null) {
     		// the message will be handled by Tapestry
     		return;
     	}
+    	comment = filter.clean(comment);
+    	customMessage = filter.clean(customMessage);
 
     	GuestDomainVo guests = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
     	
