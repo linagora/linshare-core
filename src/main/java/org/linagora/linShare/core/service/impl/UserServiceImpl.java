@@ -313,15 +313,18 @@ public class UserServiceImpl implements UserService {
 			return true;
 		} else if(actor.getRole().equals(Role.ADMIN)) {
 			List<String> allMyDomain = abstractDomainService.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());
-			userToManage.getDomain();
 			for (String domain : allMyDomain) {
 				if(domain.equals(userToManage.getDomain().getIdentifier())) {
 					return true;
 				}
 			}
-		} else if(userToManage instanceof Guest && ((Guest)userToManage).getOwner().equals(actor)) {
+		} else if(userToManage instanceof Guest) {
+			// At this point the actor object could be an entity or a proxy. No idea why it happens. 
+			// That is why we compare IDs.
+			if(actor.getId() == ((Guest)userToManage).getOwner().getId()) {
 				return true;
 			}
+		}
 		return false;
 	}
 
@@ -811,24 +814,23 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<User> searchAllBreakedUsers(User actor) {
-//		List<User> users = userRepository.findAll();
+		List<User> users = userRepository.findAll();
 		List<User> internalsBreaked = new ArrayList<User>();
 		
-		// TODO : FRED : To be fix
-//		for (User user : users) {
-//			if (user.getUserType().equals(UserType.INTERNAL)) {
-//				if (!(user.getRole().equals(Role.SYSTEM) || user.getRole().equals(Role.SUPERADMIN))) { //hide these accounts
-//					try {
-//						List<User> found = abstractDomainService.searchUser(user.getMail(), null, null, user.getDomainId(), actor, false);
-//						if (found == null || found.size() != 1) {
-//							internalsBreaked.add(user);
-//						}
-//					} catch (BusinessException e) {
-//						logger.error("Error while searching inconsistent users", e);
-//					}
-//				}
-//			}
-//		}
+		for (User user : users) {
+			if (user.getUserType().equals(UserType.INTERNAL)) {
+				if (!(user.getRole().equals(Role.SYSTEM) || user.getRole().equals(Role.SUPERADMIN))) { //hide these accounts
+					try {
+						List<User> found = abstractDomainService.searchUserWithoutRestriction(user.getDomain(), user.getMail(), null, null);
+						if (found == null || found.size() != 1) {
+							internalsBreaked.add(user);
+						}
+					} catch (BusinessException e) {
+						logger.error("Error while searching inconsistent users", e);
+					}
+				}
+			}
+		}
 		return internalsBreaked;
 	}
 
