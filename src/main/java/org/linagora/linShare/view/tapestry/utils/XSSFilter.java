@@ -63,10 +63,7 @@ public class XSSFilter {
 		
 		if (value == null)
 			return null;
-		
-		// FIXME
-		logger.error("antiSamyPolicy = " + (antiSamyPolicy == null ? "NULL." : "Ok."));
-		
+				
 		try {
 			cr = as.scan(value, antiSamyPolicy);
 			cleaned = cr.getCleanHTML().trim();
