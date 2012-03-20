@@ -266,7 +266,11 @@ public class UserFacadeImpl implements UserFacade {
 	
 	public List<UserVo> searchAllBreakedUsers(UserVo userLoggedIn) {
 		User actor = userRepository.findByLogin(userLoggedIn.getLogin());
-		return getUserVoList(userService.searchAllBreakedUsers(actor));
+		if(actor.getRole().equals(Role.SUPERADMIN)) {
+			return getUserVoList(userService.searchAllBreakedUsers(actor));
+		} else {
+			return new ArrayList<UserVo>();
+		}
 	}
 
 	@Override
