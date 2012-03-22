@@ -287,7 +287,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		Internal user2 = new Internal("user2@linpki.org","Jane","Smith","user2@linpki.org");
 		user2.setDomain(subDomain);
 		
-		Assert.assertTrue(userService.isAdminForThisUser(user1, user2));
+		Assert.assertTrue(userService.isAdminForThisUser(user1, user2.getDomainId(),user2.getMail()));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

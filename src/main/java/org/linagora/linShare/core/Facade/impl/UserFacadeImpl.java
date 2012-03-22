@@ -346,8 +346,7 @@ public class UserFacadeImpl implements UserFacade {
 
 	@Override
 	public boolean isAdminForThisUser(UserVo actorVo, UserVo userToManageVo) throws BusinessException {
-		User actor = userService.findOrCreateUserWithDomainPolicies(actorVo.getMail(), actorVo.getDomainIdentifier());
-		User userToManage = userService.findOrCreateUserWithDomainPolicies(userToManageVo.getMail(), userToManageVo.getDomainIdentifier(), actorVo.getDomainIdentifier());
-		return userService.isAdminForThisUser(actor, userToManage);
+		User actor = userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+		return userService.isAdminForThisUser(actor, userToManageVo.getDomainIdentifier(), userToManageVo.getMail());
 	}
 }

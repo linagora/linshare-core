@@ -256,8 +256,9 @@ public interface UserService {
 	/**
 	 * Check if the actor is authorized to manage the second user (userToManage).
 	 * @param actor
-	 * @param userToManage
+	 * @param userDomainToManage
+	 * @param userMailToManage 
 	 * @return
 	 */
-	public boolean isAdminForThisUser(User actor, User userToManage);
+	public boolean isAdminForThisUser(User actor, String userDomainToManage, String userMailToManage);
 }
