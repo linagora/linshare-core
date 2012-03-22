@@ -54,7 +54,7 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 		
 		if(recipients.size()==0) return recipients;
 		
-		User own = userService.findOrCreateUserWithDomainPolicies(owner.getMail(), owner.getDomainIdentifier());
+		User own = userService.findOrCreateUser(owner.getMail(), owner.getDomainIdentifier());
 
 		if(own!=null){
 			ArrayList<String> recipientsMail=new ArrayList<String>();
@@ -81,7 +81,7 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 
 	public List<UserVo> findRecipientFavorite(String matchStartWith,UserVo owner) throws BusinessException {
 		
-		User own = userService.findOrCreateUserWithDomainPolicies(owner.getMail(), owner.getDomainIdentifier());
+		User own = userService.findOrCreateUser(owner.getMail(), owner.getDomainIdentifier());
 		List<String> mails = service.findRecipientFavorite(matchStartWith, own);
 		
 		ArrayList<UserVo> favoriteList=new ArrayList<UserVo>();

@@ -274,7 +274,7 @@ public class UserServiceImpl implements UserService {
 		User userToDelete = userRepository.findByLogin(login);
 		
 		if (userToDelete!=null) {
-			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete);
+			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());
 			
 			logger.debug("As right ? : "+hasRightToDeleteThisUser);
 			
@@ -306,7 +306,7 @@ public class UserServiceImpl implements UserService {
     }
         
     
-	public boolean isAdminForThisUser(User actor, User userToManage) {
+	public boolean isAdminForThisUser(User actor, String userDomainToManage, String userMailToManage) {
 		if(actor.getRole().equals(Role.SUPERADMIN)) {
 			return true;
 		} else if(actor.getRole().equals(Role.SYSTEM)) {
@@ -314,14 +314,17 @@ public class UserServiceImpl implements UserService {
 		} else if(actor.getRole().equals(Role.ADMIN)) {
 			List<String> allMyDomain = abstractDomainService.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());
 			for (String domain : allMyDomain) {
-				if(domain.equals(userToManage.getDomain().getIdentifier())) {
+				if(domain.equals(userDomainToManage)) {
 					return true;
 				}
 			}
-		} else if(userToManage instanceof Guest) {
+		}
+		
+		User user = findUserInDB(userDomainToManage, userMailToManage);
+		if(user instanceof Guest) {
 			// At this point the actor object could be an entity or a proxy. No idea why it happens. 
 			// That is why we compare IDs.
-			if(actor.getId() == ((Guest)userToManage).getOwner().getId()) {
+			if(actor.getId() == ((Guest)user).getOwner().getId()) {
 				return true;
 			}
 		}
@@ -556,14 +559,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateGuest(String domain, String mail, String firstName, String lastName,
-			Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo)
-			throws BusinessException {
+	public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
 		
 		Guest guest = guestRepository.findByLogin(mail);
 		User owner = userRepository.findByMail(ownerVo.getMail());
 		
-		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest);
+		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest.getDomainId(), guest.getMail());
 		
 		if (!hasRightToDeleteThisUser) {
 			logger.error("The user " + mail +" cannot be updated by "+owner.getMail());
