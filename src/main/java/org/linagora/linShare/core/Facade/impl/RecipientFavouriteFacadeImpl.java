@@ -42,11 +42,11 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 	}
 
 	public void increment(UserVo owner, List<String> recipients) throws LinShareNotSuchElementException, BusinessException {
-		service.increment(userService.findOrCreateUserWithDomainPolicies(owner.getMail(), owner.getDomainIdentifier()), recipients);
+		service.increment(userService.findOrCreateUser(owner.getMail(), owner.getDomainIdentifier()), recipients);
 	}
 
 	public List<String> allRecipientsOrderedByWeightDesc(UserVo owner) throws BusinessException{
-		return service.recipientsOrderedByWeightDesc(userService.findOrCreateUserWithDomainPolicies(owner.getMail(), owner.getDomainIdentifier()));
+		return service.recipientsOrderedByWeightDesc(userService.findOrCreateUser(owner.getMail(), owner.getDomainIdentifier()));
 	}
 
 	public List<UserVo> recipientsOrderedByWeightDesc(List<UserVo> recipients,
