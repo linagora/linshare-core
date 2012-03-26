@@ -1,5 +1,6 @@
 package org.linagora.linShare.view.tapestry.utils;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -67,6 +68,9 @@ public class XSSFilter {
 		try {
 			cr = as.scan(value, antiSamyPolicy);
 			cleaned = cr.getCleanHTML().trim();
+
+            // AntiSamy (> 1.4) encodes intl chars as html entities
+            cleaned = StringEscapeUtils.unescapeHtml(cleaned);
 		} catch (ScanException e) {
 			failed = true;
 			logger.error("Antisany is not able to scan the subject field");
