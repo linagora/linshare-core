@@ -265,7 +265,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			throws BusinessException {
     	
     	// Find the owner
-    	User owner = userService.findOrCreateUserWithDomainPolicies(ownerVo.getMail(), ownerVo.getDomainIdentifier());
+    	User owner = userService.findOrCreateUser(ownerVo.getMail(), ownerVo.getDomainIdentifier());
 		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
 		List<UserVo> knownRecipients = new ArrayList<UserVo>();
 		List<Contact> unKnownRecipientsEmail = new ArrayList<Contact>();
