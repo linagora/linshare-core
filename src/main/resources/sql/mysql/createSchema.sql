@@ -1,3 +1,4 @@
+SET storage_engine=INNODB;
 
     create table linshare_allowed_contact (
         id bigint not null auto_increment,
