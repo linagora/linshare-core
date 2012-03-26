@@ -67,6 +67,7 @@ import org.linagora.linShare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
+import org.linagora.linShare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
@@ -201,6 +202,9 @@ public class ConfirmSharePopup{
 	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
+	
+	   
+	private XSSFilter filter;
 	
 	/* ***********************************************************
 	 *                   Event handlers&processing
@@ -394,29 +398,9 @@ public class ConfirmSharePopup{
 
 		//PROCESS SHARE
 		
-		AntiSamy as = new AntiSamy();
-    	CleanResults cr = null;
-       
-        try {
-        	 if(textAreaSubjectValue != null) {
-				cr = as.scan(textAreaSubjectValue, antiSamyPolicy);
-				textAreaSubjectValue = cr.getCleanHTML().trim();
-				logger.debug("getCleanHTML:textAreaSubjectValue:'" + textAreaSubjectValue + "'");
-        	 }
-        	 
-        	 if(textAreaValue != null) {
-				cr = as.scan(textAreaValue, antiSamyPolicy);
-				textAreaValue = cr.getCleanHTML().trim();
-				logger.debug("getCleanHTML:textAreaValue:'" + textAreaValue + "'");
-         	 }
-		} catch (ScanException e) {
-			logger.error("Antisany is not able to scan the subject field");
-			e.printStackTrace();
-		} catch (PolicyException e) {
-			logger.error("Antisany is not able to get the antiSamy policy");
-			e.printStackTrace();
-		}
-		
+		filter = new XSSFilter(shareSessionObjects, confirmshare, antiSamyPolicy, messages);
+		textAreaSubjectValue = filter.clean(textAreaSubjectValue);
+		textAreaValue = filter.clean(textAreaValue);
         
         Boolean errorOnAddress = false;
         
