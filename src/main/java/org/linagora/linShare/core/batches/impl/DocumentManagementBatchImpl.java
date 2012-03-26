@@ -94,6 +94,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     }
     
     public void cleanOldDocuments() {
+    	logger.debug("cleanOldDocuments : begin");
     	
     	if (!securedStorageDisallowed) {
     		logger.info("Documents cleaner batch launched but secured storage not disallowed : stopping.");
