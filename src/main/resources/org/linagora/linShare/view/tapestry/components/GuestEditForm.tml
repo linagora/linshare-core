@@ -3,9 +3,7 @@
     <div id="guestEditFormComponent">
 
         
-       <t:zone t:id="guestFormZone" t:update="show" >
-        <t:form t:id="guestCreateForm" t:zone="guestFormZone">
-
+        <t:form t:id="guestCreateForm">
 			<h2>${message:pages.user.edit.guestAccount.creation}</h2>
         	<t:errors  banner="message:pages.user.edit.errorBanner"  />
 
@@ -72,7 +70,6 @@
 			<div class="clear"></div>
 			</div>
 
-
 			<hr />
 
 			<div class="button">
@@ -82,7 +79,6 @@
 			</div>
 
 		</t:form>
-       </t:zone>
         
     </div>
 </t:container>

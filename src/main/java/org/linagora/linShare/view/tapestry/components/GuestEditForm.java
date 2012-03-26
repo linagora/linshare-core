@@ -172,7 +172,7 @@ public class GuestEditForm {
 	@Inject
 	private Policy antiSamyPolicy;
 	
-	
+
 	@SetupRender
 	void init() throws BusinessException {
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
@@ -274,6 +274,7 @@ public class GuestEditForm {
     	
         if (userFacade.findUserInDb(mail, userLoggedIn.getDomainIdentifier()) != null || userFacade.findUserInDb(mail, guests.getIdentifier()) != null ) {
             guestCreateForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
+            shareSessionObjects.addError(messages.get("pages.user.edit.error.alreadyExist"));
             userAlreadyExists = true;
             return ;
         }
