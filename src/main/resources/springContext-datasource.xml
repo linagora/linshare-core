@@ -35,8 +35,11 @@
         <property name="password" value="${linshare.db.password}"/>
         <property name="maxActive" value="${linshare.db.pool.maxactive}"/>
         <property name="maxWait" value="${linshare.db.pool.maxwait}"/>
+        <property name="maxIdle" value="${linshare.db.pool.maxidle}"/>
         <property name="poolPreparedStatements" value="true"/>
         <property name="defaultAutoCommit" value="true"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${linshare.db.pool.timebetweenevictionrunsmillis}" />
     </bean>
     
     
