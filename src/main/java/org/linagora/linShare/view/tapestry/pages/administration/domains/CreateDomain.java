@@ -103,7 +103,6 @@ public class CreateDomain {
 	
 	
 	public void onActivate(String identifier) throws BusinessException {
-		logger.error("domainIdentifier:");
 		logger.debug("domainIdentifier:" + identifier);
 		if (identifier != null) {
 			inModify = true;
