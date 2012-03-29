@@ -60,7 +60,7 @@ public class MyMessageHandlerFactory implements MessageHandlerFactory {
         	File out = new File(dirout,"message_"+now.getTime()+".eml");
         	FileOutputStream fo = new FileOutputStream(out);
         	fo.write(this.convertStreamToString(data).getBytes());
-        	logger.info("mail file is:"+out);
+        	logger.info("mail file is :" + out);
         	fo.flush();
         	fo.close();
         }
