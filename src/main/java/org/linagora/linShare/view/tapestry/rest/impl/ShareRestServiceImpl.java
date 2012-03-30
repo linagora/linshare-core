@@ -126,6 +126,58 @@ public class ShareRestServiceImpl implements ShareRestService {
 		response.setStatus(HttpStatus.SC_OK);
 
 	}
+	
+	@RestfulWebMethod
+	public void sharedocumenttogroup(Request request, Response response, String targetGroupID, String uuid) throws IOException {
+		UserVo actorVo = applicationStateManager.getIfExists(UserVo.class);
+		
+		if (actorVo== null) {
+			response.sendError(HttpStatus.SC_UNAUTHORIZED, "You are not authorized to use this service");
+			return;
+		}
+		
+		if ((actorVo.isGuest() && !actorVo.isUpload())) {
+			response.sendError(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
+			return;
+		}
+		
+		
+		// fetch the document
+		DocumentVo docVo = documentFacade.getDocument(actorVo.getLogin(), uuid);
+
+		if (docVo == null) {
+			response.sendError(HttpStatus.SC_NOT_FOUND, "Document not found");
+			return;
+		}
+		
+		List<DocumentVo> listDoc = new ArrayList<DocumentVo>();
+		listDoc.add(docVo);
+		
+		SuccessesAndFailsItems<ShareDocumentVo> successes;
+
+		try {
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(actorVo, null);
+			successes = shareFacade.createSharingWithGroup(actorVo, listDoc, targetGroupID, mailContainer);
+			
+		} catch (BusinessException e) {
+			logger.error("could not share the document " + docVo.getIdentifier() + " to group " + targetGroupID + " by user " + actorVo.getMail() + " reason : " + e.getMessage());
+			response.setHeader("BusinessError", e.getErrorCode().getCode()+"");
+			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Could not share the document");
+			return;
+		}
+		
+		if ( (successes.getSuccessesItem()==null) || ((successes.getFailsItem()!=null) && (successes.getFailsItem().size()>0))) {
+			logger.error("could not share the document " + docVo.getIdentifier() + " to group " + targetGroupID + " by user " + actorVo.getMail());
+			response.sendError(HttpStatus.SC_METHOD_FAILURE, "Could not share the document");
+			return;
+		}
+		
+		logger.debug("Shared the document " + docVo.getIdentifier() + " to group " + targetGroupID + " by user " + actorVo.getMail());
+		response.setStatus(HttpStatus.SC_OK);
+
+	}
+	
+	
 
 	@RestfulWebMethod
 	public void multiplesharedocuments(Request request, Response response)

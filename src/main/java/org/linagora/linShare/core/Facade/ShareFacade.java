@@ -167,6 +167,16 @@ public interface ShareFacade {
 	 * @throws BusinessException
 	 */
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException;
+	/**
+	 * Share some documents with a group.
+	 * 
+	 * @param owner the user sharing the documents
+	 * @param documents the documents to share
+	 * @param targetGroupID the group id
+	 * @param mailContainer the informations to build the notification
+	 * @throws BusinessException
+	 */
+	 public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroup(UserVo ownerVo, List<DocumentVo> documents, String targetGroupID, MailContainer mailContainer) throws BusinessException;
 
 	/**
 	 * Notify a group that a sharing was deleted
