@@ -139,16 +139,11 @@ public class ShareFacadeImpl implements ShareFacade {
 			}
 		}
 		
-		List<Document> docList = new ArrayList<Document>();
-		for (DocumentVo documentVo : documents) {
-			docList.add(documentRepository.findById(documentVo.getIdentifier()));
-		}
+		List<Document> docList = getDocumentEntitiesFromVo(documents);
 		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, userRepository.findByLogin(owner.getLogin()), recipientsList, comment, expirationDate);
 		
 		
-		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
-		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));
-		results.setSuccessesItem(shareTransformer.disassembleList(successAndFails.getSuccessesItem()));
+		SuccessesAndFailsItems<ShareDocumentVo> results = disassembleShareResultList(successAndFails);
 		logger.debug("createSharing:End");
 		return results;
 	}
@@ -298,15 +293,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			if(oneDoc.getEncrypted()==true) isOneDocEncrypted = true;
 		}
 		
-		//if one document is encrypted include message html or txt asset for "crypted" in the final message
-		String jwsEncryptUrlString = "";
-		if(isOneDocEncrypted){
-			StringBuffer jwsEncryptUrl = new StringBuffer();
-			jwsEncryptUrl.append(urlBase);
-			if(!urlBase.endsWith("/")) jwsEncryptUrl.append("/");
-			jwsEncryptUrl.append("localDecrypt");
-			jwsEncryptUrlString = jwsEncryptUrl.toString();
-		}
+		String jwsEncryptUrlString = getJwsEncryptUrlString(isOneDocEncrypted);
 		
 		// find known and unknown recipients of the share
 		User tempRecipient = null;
@@ -344,10 +331,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 			if (hasRightsToShareWithExternals) {
 			
-				List<Document> docList = new ArrayList<Document>();
-				for (DocumentVo documentVo : documents) {
-					docList.add(documentRepository.findById(documentVo.getIdentifier()));
-				}
+				List<Document> docList = getDocumentEntitiesFromVo(documents);
 				
 				SecuredUrl securedUrl =  null;
 				String password = null;
@@ -463,34 +447,76 @@ public class ShareFacadeImpl implements ShareFacade {
     	
     }
     
-    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(
-    		UserVo ownerVo, List<DocumentVo> documents, List<GroupVo> recipients,
-    		MailContainer mailContainer)
-    		throws BusinessException {
-		User owner = userRepository.findByLogin(ownerVo.getLogin());
+    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo ownerVo, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException {
+		
+    	logger.debug("ownerVo.getMail():" + ownerVo.getMail());
+    	logger.debug("ownerVo.getDomainIdentifier():" + ownerVo.getDomainIdentifier());
+    	
+		User owner = userRepository.findByMailAndDomain(ownerVo.getDomainIdentifier(), ownerVo.getMail());
+		
     	List<User> groupUserObjectsList = new ArrayList<User>();
     	List<Group> groupList = new ArrayList<Group>();
 		
 		for (GroupVo groupVo : recipients) {
-			try {
-				groupUserObjectsList.add(userService.findOrCreateUserWithDomainPolicies(groupVo.getGroupLogin(), ownerVo.getDomainIdentifier()));
-				groupList.add(groupRepository.findByName(groupVo.getName()));
-			} catch (BusinessException e) {
-				logger.error("Could not find the recipient " + groupVo.getGroupLogin() + " in the database");
-				throw e;
-			}
+			groupUserObjectsList.add(userService.findUnkownUserInDB(groupVo.getGroupLogin()));
+			groupList.add(groupRepository.findByName(groupVo.getName()));
 		}
+		
+		// Convert DocVo to Doc Entities
+		List<Document> docList = getDocumentEntitiesFromVo(documents);
+		
+		// Share docs to groups.
+		SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems = disassembleShareResultList(shareService.shareDocumentsToUser(docList,owner, groupUserObjectsList, "", null));
+		
+		// Check if at least one doc is encrypted.
+		boolean oneDocIsEncrypted = oneDocIsEncrypted(docList);
+		
+		// Send success notifications id needed
+	 	groupNotification(mailContainer, owner, groupList, oneDocIsEncrypted, successesAndFailsItems);
+		
+		return successesAndFailsItems;
+    }
+    
+    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroup(UserVo ownerVo, List<DocumentVo> documents, String targetGroupID, MailContainer mailContainer) throws BusinessException {
+		
+    	logger.debug("ownerVo.getMail():" + ownerVo.getMail());
+    	logger.debug("ownerVo.getDomainIdentifier():" + ownerVo.getDomainIdentifier());
+    	
+		User owner = userRepository.findByMailAndDomain(ownerVo.getDomainIdentifier(), ownerVo.getMail());
+		
+    	List<User> groupUserObjectsList = new ArrayList<User>();
+    	List<Group> groupList = new ArrayList<Group>();
+		
+		groupUserObjectsList.add(userService.findUnkownUserInDB(targetGroupID));
+		String groupName = targetGroupID.split("@",targetGroupID.length())[0];
+		logger.debug("groupName : " +groupName);
+		
+		groupList.add(groupRepository.findByName(groupName));
+		
+		// Convert DocVo to Doc Entities
+		List<Document> docList = getDocumentEntitiesFromVo(documents);
+		
+		// Share docs to groups.
+		SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems = disassembleShareResultList(shareService.shareDocumentsToUser(docList,owner, groupUserObjectsList, "", null));
+		
+		// Check if at least one doc is encrypted.
+		boolean oneDocIsEncrypted = oneDocIsEncrypted(docList);
+		
+		// Send success notifications id needed
+	 	groupNotification(mailContainer, owner, groupList, oneDocIsEncrypted, successesAndFailsItems);
+		
+		return successesAndFailsItems;
+    }
 
-		
-		boolean isOneDocEncrypted = false;
-		
-		List<Document> docList = new ArrayList<Document>();
-		for (DocumentVo documentVo : documents) {
-			if(documentVo.getEncrypted()==true) isOneDocEncrypted = true;
-			docList.add(documentRepository.findById(documentVo.getIdentifier()));
-		}
-		
-		//if one document is encrypted include message html or txt asset for "crypted" in the final message
+
+	private SuccessesAndFailsItems<ShareDocumentVo> disassembleShareResultList(SuccessesAndFailsItems<Share> successAndFails) {
+		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
+		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));
+		results.setSuccessesItem(shareTransformer.disassembleList(successAndFails.getSuccessesItem()));
+		return results;
+	}
+
+	private String getJwsEncryptUrlString(boolean isOneDocEncrypted) {
 		String jwsEncryptUrlString = "";
 		if(isOneDocEncrypted){
 			StringBuffer jwsEncryptUrl = new StringBuffer();
@@ -499,44 +525,59 @@ public class ShareFacadeImpl implements ShareFacade {
 			jwsEncryptUrl.append("localDecrypt");
 			jwsEncryptUrlString = jwsEncryptUrl.toString();
 		}
-		
-		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, 
-				userRepository.findByLogin(owner.getLogin()),
-				groupUserObjectsList, "", null);
-		
-		
-		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
-		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));
-		results.setSuccessesItem(shareTransformer.disassembleList(successAndFails.getSuccessesItem()));
-		
-		/**
-		 * Send notification ; if a functional mailBox is given, to this mailBox, 
-		 * otherwise to each group member.
-		 */
-		if (results.getSuccessesItem() != null && results.getSuccessesItem().size() > 0) {
+		return jwsEncryptUrlString;
+	}
+
+	private boolean oneDocIsEncrypted(List<Document> docList) {
+		boolean isOneDocEncrypted = false;
+		for(Document doc : docList) {
+			if(doc.getEncrypted()==true) isOneDocEncrypted = true;
+		}
+		return isOneDocEncrypted;
+	}
+
+	private List<Document> getDocumentEntitiesFromVo(List<DocumentVo> documents) {
+		List<Document> docList = new ArrayList<Document>();
+		for (DocumentVo documentVo : documents) {
+			docList.add(documentRepository.findById(documentVo.getIdentifier()));
+		}
+		return docList;
+	}
+
+	/**
+	 * 	Send success notification only to the functional mailBox if it is given, otherwise notification is sent to each group member.
+	 * @param mailContainer
+	 * @param owner
+	 * @param groupList
+	 * @param isOneDocEncrypted
+	 * @param successesAndFailsItems
+	 * @throws BusinessException
+	 */
+	private void groupNotification(MailContainer mailContainer, User owner,	List<Group> groupList, boolean oneDocIsEncrypted, SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems) throws BusinessException {
+		if (successesAndFailsItems.getSuccessesItem() != null && successesAndFailsItems.getSuccessesItem().size() > 0) {
 			
-			
+			//if one document is encrypted include message html or txt asset for "crypted" in the final message
+			String jwsEncryptUrlString = getJwsEncryptUrlString(oneDocIsEncrypted);
+
 			List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
 			
 			for (Group group : groupList) {
 				String functionalMail = group.getFunctionalEmail();
 				if (functionalMail != null && functionalMail.length() > 0) {
 					
-					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupSharingWithRecipient(owner, mailContainer, owner, group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString));
+					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupSharingWithRecipient(owner, mailContainer, owner, group, successesAndFailsItems.getSuccessesItem(), urlBase, "groups", oneDocIsEncrypted, jwsEncryptUrlString));
 		
 				} else {
 				
 					for (GroupMember member : group.getMembers()) {	
-						mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupSharingWithRecipient(owner, mailContainer, owner, member.getUser(), group, results.getSuccessesItem(), urlBase, "groups", isOneDocEncrypted, jwsEncryptUrlString));
+						mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupSharingWithRecipient(owner, mailContainer, owner, member.getUser(), group, successesAndFailsItems.getSuccessesItem(), urlBase, "groups", oneDocIsEncrypted, jwsEncryptUrlString));
 						
 					}
 				}
 			}
 			notifierService.sendAllNotifications(owner.getMail(),mailContainerWithRecipient);
 		}
-		
-		return results;
-    }
+	}
 	
 	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo managerVo,
 			GroupVo groupVo, MailContainer mailContainer)
