@@ -83,6 +83,7 @@ import org.linagora.restmarshaller.ConfigureOmitFieldMarshaller;
 import org.linagora.restmarshaller.Marshaller;
 import org.linagora.restmarshaller.StringClasse;
 import org.linagora.restmarshaller.xstream.impl.XstreamMarshaller;
+import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 
 
@@ -402,12 +403,13 @@ public class AppModule
     		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
     		 @InjectService("ThreadLocale")  ThreadLocale threadLocale,
     		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder,
+    		 @InjectService("antiSamyPolicy")  Policy antiSamyPolicy,
     		 @InjectService("AbstractDomainFacade")  AbstractDomainFacade domainFacade
 
     		 )
     {
 
-        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder));
+        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,antiSamyPolicy));
         config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, documentFacade, mailContainerBuilder));
         config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,domainFacade));
     }

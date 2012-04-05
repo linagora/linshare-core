@@ -48,7 +48,9 @@ import org.linagora.linShare.view.tapestry.rest.DocumentRestService;
 import org.linagora.linShare.view.tapestry.services.MyMultipartDecoder;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
+import org.linagora.linShare.view.tapestry.utils.XSSFilter;
 import org.linagora.restmarshaller.Marshaller;
+import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +76,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 	private final Marshaller xstreamMarshaller;
 
     private final MailContainerBuilder mailContainerBuilder;
+    private final Policy antiSamyPolicy;
 	
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
@@ -85,7 +88,8 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			final MyMultipartDecoder myMultipartDecoder,
 			final PropertiesSymbolProvider propertiesSymbolProvider,
 			final Marshaller xstreamMarshaller,
-            final MailContainerBuilder mailContainerBuilder) {
+            final MailContainerBuilder mailContainerBuilder,
+            final Policy antiSamyPolicy) {
 		super();
 		this.applicationStateManager = applicationStateManager;
 		this.searchDocumentFacade = searchDocumentFacade;
@@ -94,6 +98,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		this.myMultipartDecoder = myMultipartDecoder;
 		this.propertiesSymbolProvider = propertiesSymbolProvider;
         this.mailContainerBuilder = mailContainerBuilder;
+        this.antiSamyPolicy = antiSamyPolicy;
 	}
 	
 
@@ -218,25 +223,34 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		}
 		
 		if (!"POST".equals(request.getMethod())) {
-			response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED, "Method not allowed");
+			String msg= "Method not allowed";
+			logger.error(msg);
+			response.sendError(HttpStatus.SC_METHOD_NOT_ALLOWED, msg );
 			response.setHeader("Allow", "POST");
 			return;
 
 		}
 
+		logger.debug("request.getParameterNames() : " + request.getParameterNames());
 		if (request.getParameterNames().size()<1) {
-			response.sendError(HttpStatus.SC_BAD_REQUEST, "Not enough parameters");
+			String msg= "Not enough parameters";
+			logger.error(msg);
+			response.sendError(HttpStatus.SC_BAD_REQUEST, msg);
 			return;
 		}
 
 		if (!request.getParameterNames().contains("file")) {
-			response.sendError(HttpStatus.SC_BAD_REQUEST, "Missing parameter file");
+			String msg= "Missing parameter file";
+			logger.error(msg);
+			response.sendError(HttpStatus.SC_BAD_REQUEST, msg);
 			return;
 
 		}
 		
 		if ((actor.isGuest() && !actor.isUpload())) {
-			response.sendError(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
+			String msg= "You are not authorized to use this service";
+			logger.error(msg);
+			response.sendError(HttpStatus.SC_FORBIDDEN, msg);
 			return;
 		}
 		
@@ -248,6 +262,12 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			response.sendError(HttpStatus.SC_BAD_REQUEST, "The file is not provided");
 			return;
 
+		}
+		
+		String fileComment = null;
+		if (request.getParameterNames().contains("comment")) {
+			fileComment = request.getParameter("comment");
+			logger.debug("comment : " + fileComment);
 		}
 		
 		long maxFileSize = -1;
@@ -283,7 +303,14 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		}
                 
 		try {
-			DocumentVo doc = documentFacade.insertFile(theFile.getStream(), theFile.getSize(), theFile.getFileName(), mimeType, actor );
+			XSSFilter filter = new XSSFilter(antiSamyPolicy, null);
+			String fileName = filter.clean(theFile.getFileName());
+			DocumentVo doc = documentFacade.insertFile(theFile.getStream(), theFile.getSize(), fileName, mimeType, actor );
+			
+			if(fileComment != null) {
+				fileComment = filter.clean(fileComment);
+				documentFacade.updateFileProperties(doc.getIdentifier(), fileName, fileComment);
+			}
 			
 			
 			OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");

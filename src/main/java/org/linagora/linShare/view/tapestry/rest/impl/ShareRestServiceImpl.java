@@ -130,7 +130,7 @@ public class ShareRestServiceImpl implements ShareRestService {
 	@RestfulWebMethod
 	public void sharedocumenttogroup(Request request, Response response, String targetGroupID, String uuid) throws IOException {
 		UserVo actorVo = applicationStateManager.getIfExists(UserVo.class);
-		
+		logger.debug("sharing file " + uuid +  " with group : " + targetGroupID);
 		if (actorVo== null) {
 			response.sendError(HttpStatus.SC_UNAUTHORIZED, "You are not authorized to use this service");
 			return;
