@@ -164,17 +164,17 @@ public class UserProviderServiceImpl implements UserProviderService {
 	}
 
 	@Override
-	public List<User> searchUser(LdapUserProvider userProvider, String mail) throws BusinessException {
+	public List<User> searchUser(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException {
 		return searchUser(userProvider, mail, "", "");
 	}
 
 	@Override
-	public List<User> searchUser(LdapUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException {
+	public List<User> searchUser(LdapUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException {
 		return ldapQueryService.searchUser(userProvider.getLdapconnexion(), userProvider.getBaseDn(), userProvider.getPattern(), mail, firstName, lastName);
 	}
 
 	@Override
-	public User getUser(LdapUserProvider userProvider, String mail) throws BusinessException {
+	public User getUser(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException {
 		LdapUserProvider p = (LdapUserProvider)userProvider;
 		return ldapQueryService.getUser(p.getLdapconnexion(), p.getBaseDn(), p.getPattern(), mail);
 	}
@@ -182,7 +182,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 	@Override
 	public User auth(LdapUserProvider userProvider, String mail, String userPasswd)	throws BusinessException, NamingException, IOException {
 		LdapUserProvider p = (LdapUserProvider)userProvider;
-		if(p==null) {
+		if(p == null) {
 			return null;
 		}
 		return ldapQueryService.auth(p.getLdapconnexion(), p.getBaseDn(), p.getPattern(), mail,userPasswd);

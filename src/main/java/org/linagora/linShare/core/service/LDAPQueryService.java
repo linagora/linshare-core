@@ -12,10 +12,9 @@ import org.linagora.linShare.core.exception.BusinessException;
 
 public interface LDAPQueryService {
 	
-	public User getUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId) throws BusinessException;
-	public List<User> getAllDomainUsers(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern) throws BusinessException;
+	public User getUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId) throws BusinessException, NamingException, IOException;
+	public List<User> getAllDomainUsers(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern) throws BusinessException, NamingException, IOException;
 	public User auth(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId, String userPasswd) throws BusinessException, NamingException, IOException;
-	public List<User> searchUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String mail, String firstName, 
-			String lastName) throws BusinessException;
+	public List<User> searchUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException;
 	
 }

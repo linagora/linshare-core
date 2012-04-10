@@ -31,16 +31,16 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
      }
 	     
 	@Override
-	public User getUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId) throws BusinessException {
+	public User getUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId) throws BusinessException, NamingException, IOException {
 
 		LOGGER.debug("LDAPQueryServiceImpl.getUser("+ userId + ", " + baseDn);
 		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
-		return query.getUser(userId);		
+		return query.getUser(userId);
 		
 	}
 
 	@Override
-	public List<User> getAllDomainUsers(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern) throws BusinessException {
+	public List<User> getAllDomainUsers(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern) throws BusinessException, NamingException, IOException {
 		LOGGER.debug("LDAPQueryServiceImpl.getAllDomainUsers(" + baseDn);
 		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
 		return query.getAllDomainUsers();
@@ -56,7 +56,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 
 	@Override
-	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException {
+	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException {
 		LOGGER.debug("LDAPQueryServiceImpl.searchUser:" + mail + "," + firstName + "," + lastName + "," + baseDn);
 		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
 		return query.searchUser(mail, firstName, lastName);

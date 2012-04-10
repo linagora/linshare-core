@@ -303,13 +303,21 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		List<User> users = new ArrayList<User>();
 		
 		if(domain.getUserProvider() != null) {
-			List<User> list = userProviderService.searchUser(domain.getUserProvider(),mail,firstName,lastName);
-			// For each user, we set the domain which he came from.
-			for (User user : list) {
-				user.setDomain(domain);
-				user.setRole(user.getDomain().getDefaultRole());
+			try {
+				List<User> list = userProviderService.searchUser(domain.getUserProvider(),mail,firstName,lastName);
+				// For each user, we set the domain which he came from.
+				for (User user : list) {
+					user.setDomain(domain);
+					user.setRole(user.getDomain().getDefaultRole());
+				}
+				users.addAll(list);
+			} catch (NamingException e) {
+				logger.error("Error while searching for a user in domain {}", domain.getIdentifier());
+				logger.error(e.toString());
+			} catch (IOException e) {
+				logger.error("Error while searching for a user in domain {}", domain.getIdentifier());
+				logger.error(e.toString());
 			}
-			users.addAll(list);
 		} else {
 			logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
 		}
@@ -338,13 +346,21 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		for (AbstractDomain d : allAuthorizedDomain) {
 			
 			if(d.getUserProvider() != null) {
-				List<User> list = userProviderService.searchUser(d.getUserProvider(),mail,firstName,lastName);
-				// For each user, we set the domain which he came from.
-				for (User user : list) {
-					user.setDomain(d);
-					user.setRole(d.getDefaultRole());
+				try {
+					List<User> list = userProviderService.searchUser(d.getUserProvider(),mail,firstName,lastName);
+					// For each user, we set the domain which he came from.
+					for (User user : list) {
+						user.setDomain(d);
+						user.setRole(d.getDefaultRole());
+					}
+					users.addAll(list);
+				} catch (NamingException e) {
+					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
+					logger.error(e.toString());
+				} catch (IOException e) {
+					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
+					logger.error(e.toString());
 				}
-				users.addAll(list);
 			} else {
 				logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
 			}
@@ -436,8 +452,17 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public User auth(AbstractDomain domain, String login, String password)	throws BusinessException, NamingException, IOException {
-		User user = userProviderService.auth(domain.getUserProvider(), login, password);
-		if (user!= null) {
+		User user = null;
+		try {
+			user = userProviderService.auth(domain.getUserProvider(), login, password);
+		} catch (NamingException e) {
+			logger.error("Error while authentificating a user in domain {}", domain.getIdentifier());
+			logger.error(e.toString());
+		} catch (IOException e) {
+			logger.error("Error while authentificating a user in domain {}", domain.getIdentifier());
+			logger.error(e.toString());
+		}
+		if (user != null) {
 			user.setDomain(domain);
 		}
 		return user;

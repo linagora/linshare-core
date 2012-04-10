@@ -62,7 +62,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 
 	@Ignore
 	@Test
-	public void testGetUser() throws BusinessException {
+	public void testGetUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		User user = ldapQueryService.getUser(ldapConn, baseDn, pattern, "user1");
 		Assert.assertEquals("user1@linpki.org", user.getMail());
@@ -71,7 +71,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 
 	@Ignore
 	@Test
-	public void testGetAllDomainUsers() throws BusinessException {
+	public void testGetAllDomainUsers() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<User> users = ldapQueryService.getAllDomainUsers(ldapConn, baseDn, pattern);
 		Assert.assertEquals(2, users.size());
@@ -93,7 +93,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 
 	@Ignore
 	@Test
-	public void testSearchUser() throws BusinessException {
+	public void testSearchUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		List<User> users = ldapQueryService.searchUser(ldapConn, baseDn, pattern, "er1", null, null);
 		Assert.assertEquals(1, users.size());
