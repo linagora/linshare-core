@@ -136,8 +136,17 @@ public final class JndiServices {
 			localConnProps.remove(Context.SECURITY_CREDENTIALS);
 
 			/* open the connection */
-			ctx = new InitialLdapContext(localConnProps, null);
 
+			try {
+				ctx = new InitialLdapContext(localConnProps, null);
+			} catch (NamingException e) {
+				LOGGER.error("Error while connecting to {}", localConnProps.getProperty(Context.PROVIDER_URL));
+				LOGGER.error(e.toString());
+				if (!(e instanceof javax.naming.ServiceUnavailableException)) {
+					LOGGER.debug(e.getMessage());
+				}
+				throw e;
+			}
 			/* initiate the STARTTLS extended operation */
 			try {
 				tlsResponse = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
@@ -159,7 +168,16 @@ public final class JndiServices {
 
 		} else {
 			/* don't start TLS, just connect normally (this can be on ldap:// or ldaps://) */
-			ctx = new InitialLdapContext(connProps, null);
+			try {
+				ctx = new InitialLdapContext(connProps, null);
+			} catch (NamingException e) {
+				LOGGER.error("Error while connecting to {}", connProps.getProperty(Context.PROVIDER_URL));
+				LOGGER.error(e.toString());
+				if (!(e instanceof javax.naming.ServiceUnavailableException)) {
+					LOGGER.debug(e.getMessage());
+				}
+				throw e;
+			}
 		}
 
 		/* get LDAP naming context */

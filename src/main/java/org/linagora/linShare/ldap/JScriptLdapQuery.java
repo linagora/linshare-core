@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.naming.ServiceUnavailableException;
 
 import org.linagora.linShare.core.domain.entities.DomainPattern;
 import org.linagora.linShare.core.domain.entities.Internal;
@@ -44,7 +46,7 @@ public class JScriptLdapQuery {
 	 * @param baseDn
 	 * @param domainPattern
 	 */
-	public JScriptLdapQuery(JScriptEvaluator jScriptEvaluator, JndiServices ldapJndiService, LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern) {
+	public JScriptLdapQuery(JScriptEvaluator jScriptEvaluator, JndiServices ldapJndiService, LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern) throws NamingException, IOException {
 		super();
 		this.jScriptEvaluator = jScriptEvaluator;
 		this.ldapJndiService = ldapJndiService;
@@ -56,19 +58,25 @@ public class JScriptLdapQuery {
 			try {
 				this.ldapJndiService = new JndiServices(ldapConnection.toLdapProperties());
 			} catch (NamingException e) {
-				// TODO Auto-generated catch block
-//				e.printStackTrace();
+				logger.error("Error while connecting to {}", ldapConnection.getProviderUrl());
+				logger.error(e.toString());
+				if (!(e instanceof ServiceUnavailableException)) {
+					logger.debug(e.getMessage());
+				}
+				throw e;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-//				e.printStackTrace();
-			}	
+				logger.error("Error while connecting to {}", ldapConnection.getProviderUrl());
+				logger.error(e.toString());
+				logger.debug(e.getMessage());
+				throw e;
+			}
 		} else {
 			this.ldapJndiService = ldapJndiService;	
 		}
 		this.jScriptEvaluator.setJndiService(this.ldapJndiService);
 	}
 	
-	public JScriptLdapQuery(JScriptEvaluator jScriptEvaluator, LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern) {
+	public JScriptLdapQuery(JScriptEvaluator jScriptEvaluator, LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern) throws NamingException, IOException {
 			this(jScriptEvaluator, null, ldapConnection, baseDn, domainPattern);
 	}
 

@@ -31,9 +31,9 @@ public interface UserProviderService {
 	public void delete(LdapUserProvider userProvider) throws BusinessException;
 	public void update(LdapUserProvider userProvider) throws BusinessException;
 
-	public List<User> searchUser(LdapUserProvider userProvider, String mail) throws BusinessException;
-	public List<User> searchUser(LdapUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException;
-	public User getUser(LdapUserProvider userProvider, String mail) throws BusinessException;
+	public List<User> searchUser(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException;
+	public List<User> searchUser(LdapUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException;
+	public User getUser(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException;
 	public User auth(LdapUserProvider userProvider,	String mail, String userPasswd) throws BusinessException, NamingException, IOException;
 
 	public boolean patternIsDeletable(String patternToDelete);
