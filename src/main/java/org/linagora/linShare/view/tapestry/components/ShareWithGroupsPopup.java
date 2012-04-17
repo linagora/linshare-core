@@ -48,6 +48,7 @@ import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,9 @@ public class ShareWithGroupsPopup{
 
 	@Inject
 	private Messages messages;
+	
+	@Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
 	
 	
     // The block that contains the action to be thrown on success 
@@ -180,8 +184,9 @@ public class ShareWithGroupsPopup{
 
 		
 		} catch (BusinessException e1) {
-			logger.error("Could not create sharing", e1);
-			throw e1;
+			logger.error("Could not create sharing, caught a BusinessException.");
+			logger.error(e1.getMessage());
+			businessMessagesManagementService.notify(e1);
 		}
 
 		

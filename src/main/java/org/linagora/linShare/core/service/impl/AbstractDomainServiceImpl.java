@@ -314,9 +314,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			} catch (NamingException e) {
 				logger.error("Error while searching for a user in domain {}", domain.getIdentifier());
 				logger.error(e.toString());
+				throw new BusinessException(BusinessErrorCode.DIRECTORY_UNAVAILABLE, "Couldn't connect to the directory.");
 			} catch (IOException e) {
 				logger.error("Error while searching for a user in domain {}", domain.getIdentifier());
 				logger.error(e.toString());
+				throw new BusinessException(BusinessErrorCode.DIRECTORY_UNAVAILABLE, "Couldn't connect to the directory.");
 			}
 		} else {
 			logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
@@ -330,7 +332,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private  List<User> searchUserRecursivelyWithoutRestriction(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		
-		users.addAll(searchUserWithoutRestriction(domain, mail, firstName, lastName));
+		try {
+			users.addAll(searchUserWithoutRestriction(domain, mail, firstName, lastName));
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+		}
 
 		for (AbstractDomain subDomain : domain.getSubdomain()) {
 			users.addAll(searchUserRecursivelyWithoutRestriction(subDomain, mail, firstName, lastName));

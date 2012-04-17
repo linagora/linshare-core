@@ -46,6 +46,7 @@ import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalErrorCode;
 import org.linagora.linShare.core.exception.TechnicalException;
@@ -297,21 +298,18 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		// find known and unknown recipients of the share
 		User tempRecipient = null;
-		for (String mail : recipientsEmail) {
-			
+		for (String mail : recipientsEmail) {			
 			try {
 				tempRecipient= userService.findOrCreateUserWithDomainPolicies(mail, owner.getDomainId());
 				knownRecipients.add(new UserVo(tempRecipient));
 			} catch (BusinessException e) {
-				unKnownRecipientsEmail.add(new Contact(mail));
+				if (e.getErrorCode() == BusinessErrorCode.USER_NOT_FOUND) {					
+					logger.debug("unKnownRecipientsEmail  : adding a new contact : " + mail.toString());
+					unKnownRecipientsEmail.add(new Contact(mail));
+				}
+				else
+					throw e;
 			}
-			
-//			if(tempRecipient!=null){
-//				knownRecipients.add(new UserVo(tempRecipient));
-//			}
-//			else {
-//				unKnownRecipientsEmail.add(new Contact(mail));
-//			}
 		}
 		
 		logger.debug("knownRecipients size : " + knownRecipients.size());
