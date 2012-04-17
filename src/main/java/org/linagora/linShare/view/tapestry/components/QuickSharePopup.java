@@ -370,20 +370,25 @@ public class QuickSharePopup{
 			                BusinessUserMessageType.UNREACHABLE_MAIL_ADDRESS, MessageSeverity.ERROR, buffer));
 					errorOnAddress = true;
 				} else {
-					logger.error("Could not create sharing, unkown BusinessException : ", e1);
-					throw e1;
+					logger.error("Could not create sharing, caught a BusinessException.");
+					logger.error(e1.getMessage());
+					businessMessagesManagementService.notify(e1);
+					
+			        // reset list of documents
+			        addedDocuments = new ArrayList<DocumentVo>();
+			        return;
 				}
 			}
 	
 			
-			if (sharing.getFailsItem().size()>0) {
+			if (sharing.getFailsItem().size() > 0) {
 	    		businessMessagesManagementService.notify(new BusinessUserMessage(
 	                BusinessUserMessageType.QUICKSHARE_FAILED, MessageSeverity.ERROR));
 			} else if (errorOnAddress) {
 				recipientFavouriteFacade.increment(userVo, recipientsEmail);
 				businessMessagesManagementService.notify(new BusinessUserMessage(
 	                BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
-			} else{
+			} else {
 				recipientFavouriteFacade.increment(userVo, recipientsEmail);
 				businessMessagesManagementService.notify(new BusinessUserMessage(
 	                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));

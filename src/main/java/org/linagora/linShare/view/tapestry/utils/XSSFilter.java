@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class XSSFilter {
 	
-	private static final String MESSAGE_KEY = "error.code.XSSFilter.scan_failed";
+	private static final String MESSAGE_KEY = "error.code.xssfilter_scan_failed";
 	
 	private static final Logger logger = LoggerFactory.getLogger(XSSFilter.class);
 

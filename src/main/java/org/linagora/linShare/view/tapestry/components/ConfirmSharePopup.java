@@ -426,8 +426,11 @@ public class ConfirmSharePopup{
 		                BusinessUserMessageType.UNREACHABLE_MAIL_ADDRESS, MessageSeverity.ERROR, buffer));
 				errorOnAddress = true;
 			} else {
-				logger.error("Could not create sharing, unkown BusinessException : ", e1);
-				throw e1;
+				logger.error("Could not create sharing, caught a BusinessException.");
+				logger.error(e1.getMessage());
+				businessMessagesManagementService.notify(e1);
+				
+		        return onSuccess;
 			}
 		}
 
