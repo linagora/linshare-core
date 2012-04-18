@@ -44,6 +44,7 @@ public interface AbstractDomainFacade {
 	
 	public List<AbstractDomainVo> findAllDomain();
 	public List<AbstractDomainVo> findAllTopDomain();
+	public List<AbstractDomainVo> findAllTopAndSubDomain();
 	public List<AbstractDomainVo> findAllSubDomainWithoutGuestDomain(String topDomainIdentifier);
 	public GuestDomainVo findGuestDomain(String topDomainIdentifier);
 	public void updateDomain(UserVo actorVo, AbstractDomainVo domain) throws BusinessException;

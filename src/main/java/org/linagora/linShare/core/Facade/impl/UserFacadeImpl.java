@@ -310,6 +310,17 @@ public class UserFacadeImpl implements UserFacade {
     	}
     	return null;
     }
+	
+	@Override
+	public UserVo findGuestWithMailAndUserLoggedIn(UserVo userLoggedIn, String mail) {
+		Guest guest = guestRepository.findByMail(mail);
+		if (guest == null)
+			return null;
+		if (guest.getOwner().getLogin().equals(userLoggedIn.getLogin())) {
+			return new UserVo(guest);
+		}
+		return null;
+	}
 
 	@Override
 	public UserVo findUserFromAuthorizedDomainOnly(String domainId, String mail) {
