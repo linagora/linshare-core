@@ -229,7 +229,7 @@ public class UserSearchResults {
         sorterModel=new UserSorterModel(users);
         
         if (userLoggedIn.isSuperAdmin()) {
-    		domains = domainFacade.findAllTopDomain();
+    		domains = domainFacade.findAllTopAndSubDomain();
     	} else {
     		domains = new ArrayList<AbstractDomainVo>();
     	}

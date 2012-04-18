@@ -32,6 +32,7 @@ public interface AbstractDomainService {
 	 * @throws BusinessException
 	 */
 	public List<AbstractDomain> getAllDomains();
+	public List<AbstractDomain> getAllTopAndSubDomain();
 	public List<AbstractDomain> getAllTopDomain();
 	public List<AbstractDomain> getAllSubDomain();
 	public GuestDomain getGuestDomain(String topDomainIdentifier);

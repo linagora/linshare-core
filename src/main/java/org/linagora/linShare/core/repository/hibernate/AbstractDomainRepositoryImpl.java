@@ -64,6 +64,20 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 					}
 				});
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AbstractDomain> findAllTopAndSubDomain() {
+		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
+				new HibernateCallback() {
+					public Object doInHibernate(final Session session)
+							throws HibernateException, SQLException {
+						final Query query = session.createQuery("select d from AbstractDomain d where TYPE = " + DomainType.TOPDOMAIN.toInt()
+								+ " or TYPE = " + DomainType.SUBDOMAIN.toInt());
+						return query.setCacheable(true).list();
+					}
+				});
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

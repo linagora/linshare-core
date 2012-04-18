@@ -209,6 +209,17 @@ public interface UserFacade {
 	
 	
 	/**
+	 * Search a guest with his mail and the user logged in if he's his owner.
+	 * 
+	 * @param userLoggedIn
+	 * @param mail
+	 * @return User entity
+	 */
+	UserVo findGuestWithMailAndUserLoggedIn(UserVo userLoggedIn, String mail);
+
+	
+	
+	/**
 	 * This method is design to find an user in the database from its mail and domain. 
 	 * The communication rules are used to determine all authorized domains you are allowed to search in, the domainId parameter is the starting point.
 	 * Usually, we use the domainId from the current logged in user as domainId parameter.

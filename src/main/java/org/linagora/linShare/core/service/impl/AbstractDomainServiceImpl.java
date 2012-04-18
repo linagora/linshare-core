@@ -218,6 +218,11 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public List<AbstractDomain> getAllDomains(){
 		return abstractDomainRepository.findAllDomain();
 	}
+	
+	@Override
+	public List<AbstractDomain> getAllTopAndSubDomain(){
+		return abstractDomainRepository.findAllTopAndSubDomain();
+	}
 
 	@Override
 	public List<AbstractDomain> getAllTopDomain(){

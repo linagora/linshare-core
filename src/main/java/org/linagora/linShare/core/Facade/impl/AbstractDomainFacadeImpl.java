@@ -245,7 +245,15 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 		}
 		return res;
 	}
-
+	
+	@Override
+	public List<AbstractDomainVo> findAllTopAndSubDomain() {
+		List<AbstractDomainVo> res = new ArrayList<AbstractDomainVo>();
+		for (AbstractDomain abstractDomain : abstractDomainService.getAllTopAndSubDomain()) {
+				res.add(new AbstractDomainVo(abstractDomain));
+		}
+		return res;
+	}
 	
 	@Override
 	public List<AbstractDomainVo> findAllSubDomainWithoutGuestDomain(String topDomainIdentifier) {
