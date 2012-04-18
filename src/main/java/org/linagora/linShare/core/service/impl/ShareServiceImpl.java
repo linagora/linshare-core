@@ -302,9 +302,24 @@ public class ShareServiceImpl implements ShareService{
 						expiryDate=shareExpiryDateService.computeShareExpiryDate(document, sender);
 					}						 					
 
-		
-					Share share=new Share(sender,recipient,document,comment,expiryDate,true,false);
-					Share shareEntity=shareRepository.create(share);
+					
+					// We test if the share already exists :
+					Share shareEntity;
+					Share current_share = shareRepository.getShare(document, sender, recipient);
+					if(current_share == null) {
+						// if not, we create one
+						logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
+						Share share=new Share(sender,recipient,document,comment,expiryDate,true,false);
+						shareEntity=shareRepository.create(share);
+					} else {
+						// if it does, we update the expiration date
+						logger.debug("The share (" + document.getIdentifier() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
+						shareEntity = current_share; 
+						shareEntity.setExpirationDate(expiryDate);
+						shareRepository.update(shareEntity);
+					}
+					
+
 		
 		
 					recipient.addReceivedShare(shareEntity);
