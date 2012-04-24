@@ -539,10 +539,16 @@ INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (
 INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (20, true, 'TAB_GROUP', 39, 40, 1);
 
 
+-- Functionality : SECURE_URL
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
+INSERT INTO linshare_policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
+INSERT INTO linshare_functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
+
+
 
 
 -- LinShare version
-INSERT INTO linshare_version (id,description) VALUES (1,'0.10.0');
+INSERT INTO linshare_version (id,description) VALUES (1,'0.11.0');
 
 -- Sequence for hibernate
 SELECT setval('hibernate_sequence', 100);

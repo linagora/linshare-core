@@ -22,8 +22,9 @@ SET storage_engine=INNODB;
     );
 
     create table linshare_version (
-        id bigint not null,
-        description varchar(255) not null
+        id bigint not null auto_increment,
+        description varchar(255) not null unique,
+        primary key (id)
     );
 
     create table linshare_cookie (
@@ -47,9 +48,9 @@ SET storage_engine=INNODB;
         shared bit,
         shared_with_group bit,
         size bigint,
-        file_comment varchar(255),
+        file_comment text,
         thmb_uuid varchar(255),
-        timestamp tinyblob,
+        timestamp blob,
         owner_id bigint,
         primary key (document_id)
     );
