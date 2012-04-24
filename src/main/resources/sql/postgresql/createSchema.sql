@@ -74,7 +74,7 @@ CREATE TABLE linshare_document (
     shared boolean,
     shared_with_group boolean,
     size bigint,
-    file_comment character varying(255),
+    file_comment text,
     thmb_uuid character varying(255),
     "timestamp" bytea,
     owner_id bigint
@@ -410,6 +410,9 @@ CREATE TABLE linshare_welcome_texts (
 ALTER TABLE ONLY linshare_version
     ADD CONSTRAINT linshare_allowed_contact_pkey PRIMARY KEY (id);
 
+ALTER TABLE ONLY linshare_version
+    ADD CONSTRAINT linshare_version_descrition_pkey UNIQUE (description);
+    
 
 
 ALTER TABLE ONLY linshare_allowed_contact
