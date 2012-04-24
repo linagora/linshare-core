@@ -214,13 +214,6 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	}
 	
 	@Test
-	public void testGeneratePassword(){
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Assert.assertNotNull(userService.generatePassword());
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
 	public void testDeleteUser() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);

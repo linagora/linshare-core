@@ -621,6 +621,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
+	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SECURED_ANONYMOUS_URL);
+	}
+	
+	@Override
 	public SizeUnitValueFunctionality getUserMaxFileSizeFunctionality(AbstractDomain domain) {
 		return new SizeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.FILESIZE_MAX));
 	}
@@ -664,4 +669,5 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public Functionality getGroupTabFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_GROUP);
 	}
+	
 }

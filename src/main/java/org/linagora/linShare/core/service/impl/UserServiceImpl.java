@@ -64,6 +64,7 @@ import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
+import org.linagora.linShare.core.service.PasswordService;
 import org.linagora.linShare.core.service.RecipientFavouriteService;
 import org.linagora.linShare.core.service.ShareService;
 import org.linagora.linShare.core.service.UserService;
@@ -75,7 +76,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UserServiceImpl implements UserService {
 
-	private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	final private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
     /** User repository. */
     private final UserRepository<User> userRepository;
@@ -105,6 +106,7 @@ public class UserServiceImpl implements UserService {
     private final AbstractDomainService abstractDomainService;
     
     private final FunctionalityService functionalityService;
+    private final PasswordService passwordService;
 
     /** Constructor.
      * @param userRepository repository.
@@ -123,7 +125,8 @@ public class UserServiceImpl implements UserService {
     		final FileSystemDao fileSystemDao,
     		final LDAPQueryService ldapQueryService,
     		final FunctionalityService functionalityService,
-    		final AbstractDomainService abstractDomainService) {
+    		final AbstractDomainService abstractDomainService,
+    		final PasswordService passwordService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.logEntryService = logEntryService;
@@ -137,6 +140,7 @@ public class UserServiceImpl implements UserService {
 		this.ldapQueryService = ldapQueryService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
+		this.passwordService = passwordService;
 		
     }
 
@@ -184,7 +188,7 @@ public class UserServiceImpl implements UserService {
 			logger.debug("We can create guest, all checks are ok.");
 			logger.debug("guest mail :" + mail);
 			// generate a password.
-			String password = generatePassword();
+			String password = passwordService.generatePassword();
 			
 			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
 			
@@ -254,21 +258,6 @@ public class UserServiceImpl implements UserService {
         return expiryDate.getTime();
     }
     
-    /** Generate a password for guest user. */
-    @Override
-    public String generatePassword() {
-
-   		SecureRandom sr = null;
-        try {
-            sr = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
-        	logger.error("Algorithm \"SHA1PRNG\" not supported");
-            throw new TechnicalException("Algorithm \"SHA1PRNG\" not supported");
-        }
-
-        return Long.toString(sr.nextLong() & Long.MAX_VALUE , 36 );
-    }
-
     @Override
 	public void deleteUser(String login, User actor) throws BusinessException {
 		User userToDelete = userRepository.findByLogin(login);
@@ -669,7 +658,7 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		// generate a password.
-        String password = generatePassword();
+        String password = passwordService.generatePassword();
         String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
         
         
@@ -800,8 +789,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void updateUserDomain(String mail, String selectedDomain, UserVo ownerVo)
-			throws BusinessException {
+	public void updateUserDomain(String mail, String selectedDomain, UserVo ownerVo) throws BusinessException {
 		if (!ownerVo.isSuperAdmin()) {
 			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
 					+" cannot be moved to "+selectedDomain+" domain, "+ ownerVo.getLogin()+ " is not a superadmin");
@@ -817,8 +805,8 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		AbstractDomain newDomain = abstractDomainService.retrieveDomain(selectedDomain);
-		user.setDomain(newDomain);
-		userRepository.update(user);
+    	user.setDomain(newDomain);
+    	userRepository.update(user);
 	}
 
 	@Override

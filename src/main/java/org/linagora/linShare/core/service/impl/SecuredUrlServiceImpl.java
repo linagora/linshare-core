@@ -54,8 +54,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 	private final String baseSecuredUrl;
 
-	private static final Logger logger = LoggerFactory
-	.getLogger(SecuredUrlServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(SecuredUrlServiceImpl.class);
 
 	public SecuredUrlServiceImpl(final SecuredUrlRepository securedUrlRepository,
 			final ShareExpiryDateServiceImpl shareExpiryDateService, String pageName,

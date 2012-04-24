@@ -121,6 +121,10 @@ public class QuickSharePopup{
 	@Property
 	private boolean secureSharing;
 	
+	@Persist
+	@Property
+	private boolean showSecureSharingCheckBox;
+	
 	@Property
 	private int index;
 	
@@ -225,6 +229,9 @@ public class QuickSharePopup{
 	public void init() {
 		documentsVolist = new ArrayList<DocumentVo>();
 		autocompleteMin = functionalityFacade.completionThreshold(userVo.getDomainIdentifier());
+		showSecureSharingCheckBox = shareFacade.isVisibleSecuredAnonymousUrlCheckBox(userVo.getDomainIdentifier());
+		if(showSecureSharingCheckBox) 
+			secureSharing = shareFacade.getDefaultSecuredAnonymousUrlCheckBoxValue(userVo.getDomainIdentifier());
 	}
 	/**
 	 * Initialize the JS value

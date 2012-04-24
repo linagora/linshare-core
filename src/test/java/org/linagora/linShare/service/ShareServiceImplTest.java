@@ -25,7 +25,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -50,7 +49,6 @@ import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
-import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;
@@ -134,7 +132,6 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 	public ShareServiceImplTest() {
 		super();
 		wiser = new Wiser(2525);
-
 	}
 
 	@Before
@@ -236,105 +233,6 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 
 	}
-	
-	
-	@Test
-	public void testGetReceivedDocumentsByUser() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User sender = null;
-		User recipient = null;
-		sender = userService.findOrCreateUser(mailTestRetriever.getSenderMail(), LoadingServiceTestDatas.sqlGuestDomain);
-		recipient = userService.findOrCreateUser(mailTestRetriever.getRecipientMail(), LoadingServiceTestDatas.sqlGuestDomain);
-		
-		Document document = documentRepository.findAll().get(0);
-		ArrayList<Document> documents = new ArrayList<Document>();
-		documents.add(document);
-
-		ArrayList<User> recipients = new ArrayList<User>();
-		recipients.add(recipient);
-		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
-		
-		List<Document> documentsReceived=shareService.getReceivedDocumentsByUser(recipient);
-		
-		Assert.assertTrue(documentsReceived.contains(document));
-		
-		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
-		sender.deleteShare(shares.getSuccessesItem().get(0));
-		//no need to delete share, it will be delete automatically by hibernate
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void testGetSentDocumentsByUser() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		Document document = documentRepository.findAll().get(0);
-		ArrayList<Document> documents = new ArrayList<Document>();
-		documents.add(document);
-
-		ArrayList<User> recipients = new ArrayList<User>();
-		recipients.add(recipient);
-		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
-		
-		List<Document> documentsSent=shareService.getSentDocumentsByUser(sender);
-		
-		Assert.assertTrue(documentsSent.contains(document));
-		
-		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
-		sender.deleteShare(shares.getSuccessesItem().get(0));
-		//no need to delete share, it will be delete automatically by hibernate
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void testGetReceivedSharesByUser() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		Document document = documentRepository.findAll().get(0);
-		ArrayList<Document> documents = new ArrayList<Document>();
-		documents.add(document);
-
-		ArrayList<User> recipients = new ArrayList<User>();
-		recipients.add(recipient);
-		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
-		
-		Set<Share> sharesReceived=shareService.getReceivedSharesByUser(recipient);
-		
-		Assert.assertTrue(sharesReceived.contains(shares.getSuccessesItem().get(0)));
-		
-		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
-		sender.deleteShare(shares.getSuccessesItem().get(0));
-		//no need to delete share, it will be delete automatically by hibernate
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void testGetSentSharesByUser() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		Document document = documentRepository.findAll().get(0);
-		ArrayList<Document> documents = new ArrayList<Document>();
-		documents.add(document);
-
-		ArrayList<User> recipients = new ArrayList<User>();
-		recipients.add(recipient);
-		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
-		
-		Set<Share> sharesSent=shareService.getSentSharesByUser(sender);
-		
-		Assert.assertTrue(sharesSent.contains(shares.getSuccessesItem().get(0)));
-		
-		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
-		sender.deleteShare(shares.getSuccessesItem().get(0));
-		//no need to delete share, it will be delete automatically by hibernate
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
 	
 	@Test
 	public void testRemoveReceivedShareForUser() throws BusinessException{
@@ -561,9 +459,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		List<Contact> contactList = new ArrayList<Contact>();
 		contactList.add(new Contact(recipient.getMail()));
 		
-		UserVo senderVo = new UserVo(sender);
-		
-		SecuredUrl shares = shareService.shareDocumentsWithSecuredUrlToUser(senderVo, documents, "password", contactList, null);
+		SecuredUrl shares = shareService.shareDocumentsWithSecuredAnonymousUrlToUser(sender, documents, true, contactList, null);
 		
 		Assert.assertTrue(shares.getSender().equals(sender));
 		
@@ -586,9 +482,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		List<Contact> contactList = new ArrayList<Contact>();
 		contactList.add(new Contact(recipient.getMail()));
 		
-		UserVo senderVo = new UserVo(sender);
-		
-		SecuredUrl shares = shareService.shareDocumentsWithSecuredUrlToUser(senderVo, documents, "password", contactList, null);
+		SecuredUrl shares = shareService.shareDocumentsWithSecuredAnonymousUrlToUser(sender, documents, true, contactList, null);
 		
 		Assert.assertTrue(shareService.getSecureUrlLinkedToDocument(document).contains(shares));
 		

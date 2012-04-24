@@ -27,9 +27,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.constants.UserType;
+import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
+import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.Guest;
@@ -55,6 +58,7 @@ import org.linagora.linShare.core.repository.GroupRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.DocumentService;
+import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
 import org.linagora.linShare.core.service.ShareService;
@@ -89,6 +93,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final DocumentTransformer documentTransformer;
 	
 	private final AbstractDomainService abstractDomainService;
+	private final FunctionalityService functionalityService;
 	
 	private final String urlBase;
 	
@@ -108,7 +113,8 @@ public class ShareFacadeImpl implements ShareFacade {
 			final DocumentTransformer documentTransformer,
 			final String urlBase,
 			final String urlInternal,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final FunctionalityService functionalityService) {
 		super();
 		this.shareService = shareService;
 		this.shareTransformer = shareTransformer;
@@ -124,6 +130,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.urlBase = urlBase;
 		this.urlInternal = urlInternal;
 		this.abstractDomainService = abstractDomainService;
+		this.functionalityService = functionalityService;
 	}
 	
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, String comment, Calendar expirationDate) throws BusinessException {
@@ -199,7 +206,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
 		
-		Set<Share> shares = shareService.getSentSharesByUser(userSender);
+		Set<Share> shares = userSender.getShares();
 
 		List<Share> sharingsOfDocument = new ArrayList<Share>();
 		for (Share share : shares) {			
@@ -245,20 +252,13 @@ public class ShareFacadeImpl implements ShareFacade {
 
 
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
-			UserVo ownerVo, List<DocumentVo> documents,
-			List<String> recipientsEmail,
-			boolean secureSharing, MailContainer mailContainer)
-			throws BusinessException {
+    		UserVo ownerVo, List<DocumentVo> documents, List<String> recipientsEmail, boolean secureSharing, MailContainer mailContainer) throws BusinessException {
 		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(ownerVo, documents, recipientsEmail, secureSharing, mailContainer,null);
 	}
 
 
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
-			UserVo ownerVo, List<DocumentVo> documents,
-			List<String> recipientsEmailInput,
-			boolean secureSharing, MailContainer mailContainer,
-			Calendar expiryDateSelected)
-			throws BusinessException {
+			UserVo ownerVo, List<DocumentVo> documents, List<String> recipientsEmailInput, boolean secureSharing, MailContainer mailContainer, Calendar expiryDateSelected) throws BusinessException {
     	
     	// Find the owner
     	User owner = userService.findOrCreateUser(ownerVo.getMail(), ownerVo.getDomainIdentifier());
@@ -331,17 +331,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 				List<Document> docList = getDocumentEntitiesFromVo(documents);
 				
-				SecuredUrl securedUrl =  null;
-				String password = null;
-				
-				if(secureSharing) {
-					//generate password for this sharing 
-					password = userService.generatePassword();
-				} 
-				
-				//password is null for unprotected secured url
-				securedUrl = shareService.shareDocumentsWithSecuredUrlToUser(ownerVo, docList, password, unKnownRecipientsEmail, expiryDateSelected);
-				
+				SecuredUrl securedUrl = shareService.shareDocumentsWithSecuredAnonymousUrlToUser(owner, docList, secureSharing, unKnownRecipientsEmail, expiryDateSelected);
 				
 				//compose the secured url to give in mail
 				StringBuffer httpUrlBase = new StringBuffer();
@@ -362,7 +352,8 @@ public class ShareFacadeImpl implements ShareFacade {
 					String linShareUrlParam = "?email=" + oneContact.getMail();
 					User owner_ = userRepository.findByLogin(ownerVo.getLogin());
 					
-					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, password, isOneDocEncrypted, jwsEncryptUrlString));	
+					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(
+							owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, securedUrl.getPassword(), isOneDocEncrypted, jwsEncryptUrlString));	
 				}
 				
 				notifierService.sendAllNotifications(ownerVo.getMail(), mailContainerWithRecipient);
@@ -577,6 +568,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 	}
 	
+	
+	@Override
 	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo managerVo,
 			GroupVo groupVo, MailContainer mailContainer)
 			throws BusinessException {
@@ -585,5 +578,29 @@ public class ShareFacadeImpl implements ShareFacade {
 		User manager = userRepository.findByLogin(managerVo.getLogin());
 		
 		shareService.notifyGroupSharingDeleted(doc, manager, group, mailContainer);
+	}
+	
+	@Override
+	public boolean isVisibleSecuredAnonymousUrlCheckBox(String domainIdentifier) {
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			return shareService.isSauAllowed(domain);
+		} catch (BusinessException e) {
+			logger.error("Can't find domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+
+	@Override
+	public boolean getDefaultSecuredAnonymousUrlCheckBoxValue(String domainIdentifier) {
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			return shareService.getDefaultSauValue(domain);
+		} catch (BusinessException e) {
+			logger.error("Can't find domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
 	}
 }

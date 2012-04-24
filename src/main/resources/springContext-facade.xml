@@ -48,6 +48,7 @@
          <constructor-arg value="${linshare.info.url.base}" />
          <constructor-arg value="${linshare.info.url.internal}" />
          <constructor-arg ref="abstractDomainService" />
+         <constructor-arg ref="functionalityService" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linShare.core.Facade.impl.ShareExpiryDateFacadeImpl">

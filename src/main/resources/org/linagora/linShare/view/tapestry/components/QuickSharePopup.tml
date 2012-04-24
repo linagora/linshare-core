@@ -72,13 +72,14 @@
 			</div>
 			<div class="clear"></div>
 			
-			<t:label for="secureSharing" class="edit-form-label">
-				${message:components.confirmSharePopup.secureSharing}
-			</t:label>
-			<t:checkbox t:id="secureSharing" class="edit-form-field checkbox" />
-
-
+			<t:if test="showSecureSharingCheckBox">
+				<t:label for="secureSharing" class="edit-form-label">
+					${message:components.confirmSharePopup.secureSharing}
+				</t:label>
+				<t:checkbox t:id="secureSharing" class="edit-form-field checkbox" />
+			</t:if>
 			<hr />
+
 
 			<div class="number3"></div>
 			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>

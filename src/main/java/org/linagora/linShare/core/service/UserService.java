@@ -50,13 +50,6 @@ public interface UserService {
     Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment, 
     		MailContainer mailContainer, String ownerLogin, String ownerDomain) throws BusinessException;
 
-    /**
-     * generate the password of a guest (system generated)
-     * or password for a secure URL
-     * @return password in plain text
-     */
-    public String generatePassword();
-    
     
     /** Search a user.
      * @param mail user email.
