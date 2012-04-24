@@ -57,6 +57,7 @@ import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.enums.ActionFromBarDocument;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.UserSorterModel;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 
 /** This component gives ability to search users.
@@ -97,6 +98,9 @@ public class UserSearchResults {
     private Messages messages;
     @InjectComponent
     private UserDetailsDisplayer userDetailsDisplayer;
+    
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
     
     @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=550", "height=400"})
@@ -351,7 +355,14 @@ public class UserSearchResults {
     }
     
     public Object onSubmitFromUpdateDomain() throws BusinessException {
-    	userFacade.updateUserDomain(selectedLogin, selectedDomain, userLoggedIn);
+    	try {
+    		userFacade.updateUserDomain(selectedLogin, selectedDomain, userLoggedIn);
+    	} catch (BusinessException e) {
+    		logger.error(e.getMessage());
+			logger.debug(e.toString());
+			businessMessagesManagementService.notify(e);
+			return this;
+    	}
         for (UserVo user : users) {
 			if (user.getLogin().equals(selectedLogin)) {
 				user.setDomainIdentifier(selectedDomain.getIdentifier());

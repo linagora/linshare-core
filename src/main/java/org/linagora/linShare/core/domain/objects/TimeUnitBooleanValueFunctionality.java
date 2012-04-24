@@ -3,7 +3,6 @@ package org.linagora.linShare.core.domain.objects;
 
 import org.linagora.linShare.core.domain.entities.TimeUnitClass;
 import org.linagora.linShare.core.domain.entities.UnitBooleanValueFunctionality;
-import org.linagora.linShare.core.domain.entities.UnitValueFunctionality;
 
 /**
  * This class is just for easy use. It is not an entity

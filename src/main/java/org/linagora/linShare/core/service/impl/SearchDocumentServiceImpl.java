@@ -32,7 +32,6 @@ import org.linagora.linShare.core.domain.transformers.impl.DocumentAdapter;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
-import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.SearchDocumentService;
 

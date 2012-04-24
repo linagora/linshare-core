@@ -50,13 +50,10 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.SelectableRole;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.utils.XSSFilter;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
-import org.owasp.validator.html.PolicyException;
-import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 
 /** This component is used to edit an user.
@@ -93,7 +90,9 @@ public class UserEditForm {
 
     @Inject
     private ComponentResources componentResources;
-
+	
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
 
 
 
@@ -298,19 +297,7 @@ public class UserEditForm {
     	if (userForm.getHasErrors()) {
     		return false;
     	}
-    	
-    	filter = new XSSFilter(shareSessionObjects, userForm, antiSamyPolicy, messages);
-
-    	if ((mail = filter.clean(mail)) == null) {
-    		// the message will be handled by Tapestry
-    		return false;
-    	}
-    	if ((firstName = filter.clean(firstName)) == null) {
-
-    		// the message will be handled by Tapestry
-    		return false;
-    	}
-    	if ((lastName = filter.clean(lastName)) == null) {
+    	if (mail == null | firstName == null | lastName == null) {
     		// the message will be handled by Tapestry
     		return false;
     	}
@@ -339,6 +326,20 @@ public class UserEditForm {
     }
 
     public void onSuccessFromUserForm() {
+    	filter = new XSSFilter(shareSessionObjects, userForm, antiSamyPolicy, messages);
+    	try {
+    		mail = filter.clean(mail);
+    		firstName = filter.clean(firstName);
+    		lastName = filter.clean(lastName);
+    		if (filter.hasError()) {
+    			logger.debug("XSSFilter found some tags and striped them.");
+    			businessMessagesManagementService.notify(filter.getWarningMessage());
+    		}
+    	} catch (BusinessException e) {
+    		businessMessagesManagementService.notify(e);
+    		logger.error(e.toString());
+    		return;
+    	}
 
         try {
         	if(userGuest) {    	
@@ -353,7 +354,7 @@ public class UserEditForm {
 		
 		if (userGuest) {
 			try {
-				UserVo guest = userFacade.findUserFromAuthorizedDomainOnly(userLoggedIn.getDomainIdentifier(),mail);
+				UserVo guest = userFacade.findGuestWithMailAndUserLoggedIn(userLoggedIn, mail);
 				
 				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
 					userFacade.setGuestContactRestriction(mail, recipientsEmail);
@@ -370,7 +371,7 @@ public class UserEditForm {
 			} catch (BusinessException e) {
 				shareSessionObjects.addError(messages.get("components.guestEditForm.action.update.guestRestriction.badUser"));
 			}
-    	}
+		}
 
 		componentResources.triggerEvent("resetListUsers", null, null);
     }

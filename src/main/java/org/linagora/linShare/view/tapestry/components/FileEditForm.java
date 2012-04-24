@@ -32,7 +32,6 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.Retain;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
@@ -40,13 +39,11 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
+import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.utils.XSSFilter;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
-import org.owasp.validator.html.PolicyException;
-import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 
 /** This component is used to edit properties of a file.
@@ -77,7 +74,9 @@ public class FileEditForm {
 
 	@Inject
 	private ComponentResources componentResources;
-
+	
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
 
 
 	/* ***********************************************************
@@ -143,14 +142,9 @@ public class FileEditForm {
     		return false;
     	}
 
-    	filter = new XSSFilter(shareSessionObjects, editForm, antiSamyPolicy, messages);
-    	
-		if ((fileComment = filter.clean(fileComment)) == null) {
-			return false;
-		}
-		if ((fileName = filter.clean(fileName)) == null) {
-			return false;
-		}
+    	if (fileName == null) {
+    		return false;
+    	}
     	
         return true;
     }
@@ -160,7 +154,17 @@ public class FileEditForm {
      }
 
 	public void onSuccessFromEditForm() {
-		
+		filter = new XSSFilter(shareSessionObjects, editForm, antiSamyPolicy, messages);
+		try {
+			fileComment = filter.clean(fileComment);
+			fileName = filter.clean(fileName);
+			if (filter.hasError()) {
+				logger.debug("XSSFilter found some tags and striped them.");
+				businessMessagesManagementService.notify(filter.getWarningMessage());
+			}
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(e);
+		}
 		if(reset) return;
 
         documentFacade.updateFileProperties(editFileWithUuid, fileName, fileComment);

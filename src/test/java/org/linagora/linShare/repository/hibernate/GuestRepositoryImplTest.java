@@ -1,6 +1,9 @@
 package org.linagora.linShare.repository.hibernate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -8,15 +11,10 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Guest;
@@ -30,7 +28,6 @@ import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.utils.HashUtils;
-import org.linagora.linShare.service.UserAndDomainMultiServiceImplTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

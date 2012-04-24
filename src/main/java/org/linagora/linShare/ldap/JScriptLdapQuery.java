@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.ServiceUnavailableException;
 

@@ -28,7 +28,6 @@ import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.TimeUnitBooleanValueFunctionality;
-import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;

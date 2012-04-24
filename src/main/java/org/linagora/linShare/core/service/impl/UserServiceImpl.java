@@ -806,9 +806,17 @@ public class UserServiceImpl implements UserService {
 			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
 					+" cannot be moved to "+selectedDomain+" domain, "+ ownerVo.getLogin()+ " is not a superadmin");
 		}
-        User user = userRepository.findByMail(mail);
-		
-        AbstractDomain newDomain = abstractDomainService.retrieveDomain(selectedDomain);
+		User user = null;
+        // Seek user in base. If not found, try again but in directories
+		if ((user = userRepository.findByMail(mail)) == null) {
+			try {
+				user = findOrCreateUser(mail, ownerVo.getDomainIdentifier());
+			} catch (BusinessException e) {
+				logger.error(e.toString());
+				throw e;
+			}
+		}
+		AbstractDomain newDomain = abstractDomainService.retrieveDomain(selectedDomain);
 		user.setDomain(newDomain);
 		userRepository.update(user);
 	}

@@ -51,16 +51,13 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.pages.user.Index;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.Templating;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.linShare.view.tapestry.utils.XSSFilter;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
-import org.owasp.validator.html.PolicyException;
-import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 
 /** This component is used to create a new user.
@@ -104,7 +101,9 @@ public class GuestEditForm {
 
 	@Inject
 	private Templating templating;
-
+	
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
 
 
 	/* ***********************************************************
@@ -248,27 +247,15 @@ public class GuestEditForm {
      ************************************************************ */
 	
     public void  onValidateFormFromGuestCreateForm() throws BusinessException {
-
+    	
     	if (guestCreateForm.getHasErrors()) {
     		return ;
     	}
-
-		filter = new XSSFilter(shareSessionObjects, guestCreateForm, antiSamyPolicy, messages);
-
-    	if ((mail = filter.clean(mail)) == null) {
+    	
+    	if (mail == null | firstName == null | lastName == null) {
     		// the message will be handled by Tapestry
     		return;
     	}
-    	if ((firstName = filter.clean(firstName)) == null) {
-    		// the message will be handled by Tapestry
-    		return;
-    	}
-    	if ((lastName = filter.clean(lastName)) == null) {
-    		// the message will be handled by Tapestry
-    		return;
-    	}
-    	comment = filter.clean(comment);
-    	customMessage = filter.clean(customMessage);
 
     	GuestDomainVo guests = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
     	
@@ -303,7 +290,22 @@ public class GuestEditForm {
     }
 
     Object onSuccess() {
-    	
+		filter = new XSSFilter(shareSessionObjects, guestCreateForm, antiSamyPolicy, messages);
+		try {
+			mail = filter.clean(mail);
+			firstName = filter.clean(firstName);
+			lastName = filter.clean(lastName);
+			comment = filter.clean(comment);
+			customMessage = filter.clean(customMessage);
+			if (filter.hasError()) {
+				logger.debug("XSSFilter found some tags and striped them.");
+		    	// FIXME aucun message affiche
+				businessMessagesManagementService.notify(filter.getWarningMessage());
+			}
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(e);
+			return Index.class;
+		}
 		
 		MailContainer mailContainer = mailBuilder.buildMailContainer(userLoggedIn, customMessage);
   

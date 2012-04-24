@@ -28,7 +28,6 @@ import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
-import org.linagora.linShare.core.domain.vo.UserVo;
 
 /**
  * This service ables to retrieve documents for an user with using SearchDocumentCriterion.
