@@ -138,6 +138,7 @@ public class FileEditForm {
 
     
     public boolean onValidateFormFromEditForm() {
+    	logger.debug("onValidateFormFromEditForm");
     	if (editForm.getHasErrors()) {
     		return false;
     	}
@@ -175,6 +176,7 @@ public class FileEditForm {
     public void onFailure() {
     	 shareSessionObjects.addError(messages.get("components.fileEditForm.action.update.error"));
     }
+    
     
     @CleanupRender
     public void cleanupRender(){

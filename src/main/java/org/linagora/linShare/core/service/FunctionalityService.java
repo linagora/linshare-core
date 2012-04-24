@@ -113,6 +113,7 @@ public interface FunctionalityService {
 	public Functionality getEnciphermentFunctionality(AbstractDomain domain);
 	public Functionality getAntivirusFunctionality(AbstractDomain domain);
 	public Functionality getAnonymousUrlFunctionality(AbstractDomain domain);
+	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain);
 	public Functionality getSignatureFunctionality(AbstractDomain domain);
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
@@ -123,5 +124,6 @@ public interface FunctionalityService {
 	public Functionality getAuditTabFunctionality(AbstractDomain domain);
 	public Functionality getHelpTabFunctionality(AbstractDomain domain);
 	public Functionality getGroupTabFunctionality(AbstractDomain domain);
+	
 	
 }

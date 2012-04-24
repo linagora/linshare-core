@@ -15,6 +15,7 @@ public interface FunctionalityNames {
 	public static final String FILE_EXPIRATION = "FILE_EXPIRATION";
 	public static final String SHARE_EXPIRATION = "SHARE_EXPIRATION";
 	public static final String ANONYMOUS_URL = "ANONYMOUS_URL";
+	public static final String SECURED_ANONYMOUS_URL= "SECURED_ANONYMOUS_URL";
 	public static final String GUESTS = "GUESTS";
 	public static final String USER_CAN_UPLOAD = "USER_CAN_UPLOAD";
 	public static final String COMPLETION = "COMPLETION";

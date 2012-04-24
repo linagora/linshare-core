@@ -29,6 +29,9 @@
         <constructor-arg index="0" ref="logEntryRepository" />
     </bean>
     
+    <bean name="passwordService" class="org.linagora.linShare.core.service.impl.PasswordServiceImpl">
+    </bean>
+    
     <bean name="userService" class="org.linagora.linShare.core.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="notifierService"/>
@@ -43,6 +46,7 @@
         <constructor-arg ref="ldapQueryService" />
         <constructor-arg ref="functionalityService" />
         <constructor-arg ref="abstractDomainService" />
+        <constructor-arg ref="passwordService" />
     </bean>
     
     <bean id="clamavVirusScannerService" class="org.linagora.linShare.core.service.impl.ClamavVirusScannerServiceImpl">
@@ -101,7 +105,7 @@
     	<constructor-arg index="12" value="${job.outdatedshares.beforedate.sendnotification}"/>
     	<constructor-arg index="13" value="${linshare.info.url.base}"/>
     	<constructor-arg index="14" ref="functionalityService" />
-    	<constructor-arg index="15" ref="abstractDomainService" />
+    	<constructor-arg index="15" ref="passwordService" />
     </bean>
 
 	   

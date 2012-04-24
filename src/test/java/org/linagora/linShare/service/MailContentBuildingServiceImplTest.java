@@ -96,7 +96,13 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		//datas.loadUsers();
 		
 		john = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+		
+		try  {
+			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);			
+		} catch (BusinessException e) {
+			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+		}
+		
 		
 		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
 		inputStreamUuid = fileRepository.insertFile(john.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");

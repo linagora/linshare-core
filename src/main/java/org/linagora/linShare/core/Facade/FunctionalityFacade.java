@@ -24,4 +24,5 @@ public interface FunctionalityFacade {
 	public boolean isEnableHelpTab(String domainIdentifier);
 	public boolean isEnableGroupTab(String domainIdentifier);
 	
+	
 }

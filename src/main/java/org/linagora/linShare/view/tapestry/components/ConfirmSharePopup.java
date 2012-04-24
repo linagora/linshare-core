@@ -122,6 +122,15 @@ public class ConfirmSharePopup{
 	@Property
 	private boolean secureSharing;
 	
+	@Persist
+	@Property
+	private boolean showSecureSharingCheckBox;
+	
+	@Persist
+	@Property
+	private int cssClassNumberCpt;
+	
+	
 	
 	@Persist("flash")
 	private List<String> recipientsEmail;
@@ -212,7 +221,7 @@ public class ConfirmSharePopup{
 	 */
 	@SetupRender
 	public void init() {
-		
+		cssClassNumberCpt = 0;
 		autocompleteMin = functionalityFacade.completionThreshold(userVo.getDomainIdentifier());
 		
 		//init emails list for selected users
@@ -225,6 +234,10 @@ public class ConfirmSharePopup{
 		computePickerDates();
 		buildTooltipValue();
 		this.warningCryptedFiles = checkCryptedFiles();
+		
+		showSecureSharingCheckBox = shareFacade.isVisibleSecuredAnonymousUrlCheckBox(userVo.getDomainIdentifier());
+		if(showSecureSharingCheckBox) 
+			secureSharing = shareFacade.getDefaultSecuredAnonymousUrlCheckBoxValue(userVo.getDomainIdentifier());
 		
 	}
 	
@@ -458,6 +471,11 @@ public class ConfirmSharePopup{
 
 	public String getJSONId() {
 		return confirmWindow.getJSONId();
+	}
+	
+	public String getCssClassNumber() {
+		cssClassNumberCpt+=1;
+		return "number" + Integer.toString(cssClassNumberCpt);
 	}
 
 

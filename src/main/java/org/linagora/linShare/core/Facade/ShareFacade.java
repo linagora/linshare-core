@@ -187,4 +187,16 @@ public interface ShareFacade {
 	 * @throws BusinessException
 	 */
 	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo manager, GroupVo group, MailContainer mailContainer) throws BusinessException;
+	/**
+	 * This method returns true if we can enable or disable manually on the IHM the checkbox 'Secured Anonymous URL'.    
+	 * @param user domain identifier
+	 * @return
+	 */
+	public boolean isVisibleSecuredAnonymousUrlCheckBox(String domainIdentifier);
+	/**
+	 * This method returns true if we the functionality is enabled or not.
+	 * @param domainIdentifier
+	 * @return
+	 */
+	public boolean getDefaultSecuredAnonymousUrlCheckBoxValue(String domainIdentifier);
 }

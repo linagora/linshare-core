@@ -30,10 +30,13 @@ import java.util.Set;
 import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.LogAction;
+import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.constants.UserType;
+import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
+import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.Guest;
@@ -46,7 +49,6 @@ import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
-import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
 import org.linagora.linShare.core.repository.GroupRepository;
@@ -59,6 +61,7 @@ import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
 import org.linagora.linShare.core.service.NotifierService;
+import org.linagora.linShare.core.service.PasswordService;
 import org.linagora.linShare.core.service.SecuredUrlService;
 import org.linagora.linShare.core.service.ShareExpiryDateService;
 import org.linagora.linShare.core.service.ShareService;
@@ -84,10 +87,7 @@ public class ShareServiceImpl implements ShareService{
 	private List<Integer> datesForNotifyUpcomingOutdatedShares;
 	private final String urlBase;
 	private final FunctionalityService functionalityService;
-	private final AbstractDomainService abstractDomainService;
-	
-	
-//    private final DocumentService documentService;
+	private final PasswordService passwordService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ShareServiceImpl.class);
 
@@ -101,7 +101,7 @@ public class ShareServiceImpl implements ShareService{
 			final GroupRepository groupRepository, final GuestRepository guestRepository,
 			final String datesForNotifyUpcomingOutdatedShares, final String urlBase,
 			final FunctionalityService functionalityService,
-			final AbstractDomainService abstractDomainService) {
+			final PasswordService passwordService) {
 		
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
@@ -122,54 +122,11 @@ public class ShareServiceImpl implements ShareService{
 		}
         this.urlBase = urlBase;
         this.functionalityService = functionalityService;
-        this.abstractDomainService = abstractDomainService;
-	}
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
-	 */
-	public List<Document> getReceivedDocumentsByUser(User user) {
-
-		Set<Share> shares=user.getReceivedShares();
-		ArrayList<Document> sharesDocument=new ArrayList<Document>();
-		for(Share share:shares){
-			sharesDocument.add(share.getDocument());
-		}
-
-		return sharesDocument;
-	}
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#getSentDocumentsByUser(User)
-
-	 */
-	public List<Document> getSentDocumentsByUser(User user) {
-		Set<Share> shares=user.getShares();
-		ArrayList<Document> sharesDocument=new ArrayList<Document>();
-		for(Share share:shares){
-			sharesDocument.add(share.getDocument());
-		}
-		return sharesDocument;
-	}
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#getReceivedSharesByUser(User)
-
-	 */
-	public Set<Share> getReceivedSharesByUser(User user) {
-		return user.getReceivedShares();
+        this.passwordService = passwordService;
 	}
 
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#getReceivedSharesByUser(User)
-
-	 */
-	public Set<Share> getSentSharesByUser(User user) {
-		return user.getShares();
-	}
-
-
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#getReceivedSharesByUser(User)
-
-	 */
+	
+	@Override
 	public void removeReceivedShareForUser(Share share, User user, User actor) throws BusinessException {
 		user.deleteReceivedShare(share);
 		userRepository.update(user);
@@ -183,10 +140,8 @@ public class ShareServiceImpl implements ShareService{
         logEntryService.create(logEntry);
 	}
 
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#removeReceivedSharesForUser(List, User)
-
-	 */
+	
+	@Override
 	public void removeReceivedSharesForUser(List<Share> shares, User user, User actor) throws BusinessException {
 		for(Share currentShare:shares){
 			user.deleteReceivedShare(currentShare);
@@ -203,10 +158,8 @@ public class ShareServiceImpl implements ShareService{
 
 	}
 
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#removeSentShareForUser(Share, User)
 
-	 */
+	@Override
 	public void removeSentShareForUser(Share share, User user, User actor) throws BusinessException {
 		user.deleteShare(share);
 		userRepository.update(user);
@@ -221,10 +174,8 @@ public class ShareServiceImpl implements ShareService{
         
 	}
 
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#removeSentSharesForUser(List, User)
 
-	 */
+	@Override
 	public void removeSentSharesForUser(List<Share> shares, User user, User actor)  throws BusinessException{
 		for(Share currentShare:shares){
 			user.deleteShare(currentShare);
@@ -242,15 +193,12 @@ public class ShareServiceImpl implements ShareService{
 	}
 	
 	
+	@Override
 	public void deleteShare(Share share, User actor) throws BusinessException {
-		
 		
 		shareRepository.delete(share);
 		share.getReceiver().deleteReceivedShare(share);
 		share.getSender().deleteShare(share);
-		
-		
-		
 		
 		ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
 				actor.getDomainId(),
@@ -262,33 +210,13 @@ public class ShareServiceImpl implements ShareService{
         
 	}
 	
-	/**
-	 * @see org.linagora.linShare.core.service.ShareService#shareDocumentToUser(Document, User, User, String)
 
-	 */
+	@Override
 	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender, List<User> recipients,String comment, Calendar expiryDate){
 		
 		SuccessesAndFailsItems<Share> returnItems = new SuccessesAndFailsItems<Share>();
-        
 		
 		for (User recipient : recipients) {
-			
-			boolean allowedToShareWithHim = true;
-			
-//			try {
-//				allowedToShareWithHim = abstractDomainService.userIsAllowedToShareWith(sender, recipient);
-//				
-//			} catch (BusinessException e1) {
-//				logger.error("Failed to read domain of sender while sharing documents", e1);
-//				allowedToShareWithHim = false;
-//			}
-			
-			if (!allowedToShareWithHim) {
-				logger.debug("The current user is not allowed to share with : " + recipient); 
-				generateFailItemsForUser(documents, sender, comment, returnItems, recipient);
-				break;
-			}
-			
 			
 			for (Document document : documents) {
 				//Creating a shareDocument
@@ -371,14 +299,9 @@ public class ShareServiceImpl implements ShareService{
 		return returnItems;
 
 	}
-	private void generateFailItemsForUser(List<Document> documents,
-			User sender, String comment,
-			SuccessesAndFailsItems<Share> returnItems, User recipient) {
-		for (Document doc : documents) {
-			Share failSharing=new Share(sender,recipient,doc,comment,new GregorianCalendar(),true,false);
-			returnItems.addFailItem(failSharing);
-		}
-	}
+
+	
+	@Override
 	public void deleteAllSharesWithDocument(Document doc, User actor, MailContainer mailContainer)
 			throws BusinessException {
 		
@@ -491,6 +414,8 @@ public class ShareServiceImpl implements ShareService{
 		}
 	}
 
+	
+	@Override
 	public void refreshShareAttributeOfDoc(Document doc) {
 		try {
 			refreshShareAttributeOfDoc(doc,false);
@@ -498,9 +423,10 @@ public class ShareServiceImpl implements ShareService{
             logger.warn("Unable to refresh share attribute for document: \n" + ex.toString());
         }
 	}
-	
+
 	
     /** Clean all outdated shares. */
+	@Override
     public void cleanOutdatedShares() {
         User owner = userRepository.findByLogin("system");
         List<Share> shares = shareRepository.getOutdatedShares();
@@ -539,6 +465,8 @@ public class ShareServiceImpl implements ShareService{
         
     }
     
+	
+	@Override
     public void notifyUpcomingOutdatedShares() {
 		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
         
@@ -604,45 +532,19 @@ public class ShareServiceImpl implements ShareService{
 		}
 	}
 	
-	public SecuredUrl shareDocumentsWithSecuredUrlToUser(
-			UserVo owner, List<Document> docList, String password,
-			List<Contact> recipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException {
-
-		
-		SecuredUrl securedUrl =  null;
-		
-		User sender = userRepository.findByLogin(owner.getLogin());
-		//set the password associated with this secured url in mail
-		//can be null for unsecure url
-		securedUrl = secureUrlService.create(docList, sender, password, recipients, expiryDate);
 	
-			
-		for (Document doc : docList) {
-				
-				doc.setShared(true);
-				documentRepository.update(doc);
-			
-				for (Contact oneContact : recipients) {
-				
-				ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-						owner.getDomainIdentifier(),
-		        		LogAction.FILE_SHARE, "Sharing of a file", doc.getName(), doc.getSize(), doc.getType(),
-		        		oneContact.getMail(), "", "", "", securedUrl.getExpirationTime());
-		       
-				logEntryService.create(logEntry);
-			}
-		}
-		
-		return securedUrl;
-		
-	}
-	
+	@Override
 	public List<SecuredUrl> getSecureUrlLinkedToDocument(Document doc) throws BusinessException {
 		 return securedUrlRepository.getSecureUrlLinkedToDocument(doc);
 	}
+	
+	
+	@Override
 	public List<Share> getSharesLinkedToDocument(Document doc) {
 		 return shareRepository.getSharesLinkedToDocument(doc);
 	}
+	
+	@Override
 	public void logLocalCopyOfDocument(Share share, User user) throws IllegalArgumentException, BusinessException {
 		ShareLogEntry logEntryShare = new ShareLogEntry(share.getSender().getMail(),
 				share.getSender().getFirstName(), share
@@ -665,6 +567,7 @@ public class ShareServiceImpl implements ShareService{
 	}
 	
 
+	@Override
 	public void notifyGroupSharingDeleted(Document doc, User manager, Group group,
 			MailContainer mailContainer) throws BusinessException {
 
@@ -692,5 +595,96 @@ public class ShareServiceImpl implements ShareService{
 		notifierService.sendAllNotifications(manager.getMail(),mailContainerWithRecipient);
 	}
 	
+	
+	/**
+	 * Log file sharing action.
+	 * @param sender
+	 * @param recipients
+	 * @param securedUrl
+	 * @param doc
+	 * @throws BusinessException
+	 */
+	private void logFileSharing(User sender, List<Contact> recipients, SecuredUrl securedUrl, Document doc) throws BusinessException {
+		for (Contact oneContact : recipients) {
+			ShareLogEntry logEntry = new ShareLogEntry(sender.getMail(), sender.getFirstName(), sender.getLastName(),sender.getDomainId(), 
+				LogAction.FILE_SHARE, "Sharing of a file", doc.getName(), doc.getSize(), doc.getType(), oneContact.getMail(), "", "", "", securedUrl.getExpirationTime());
+			logEntryService.create(logEntry);
+		}
+	}
+	
+	
+	/**
+	 * This method create a share using anonymous url and log it.
+	 * @param sender
+	 * @param docList
+	 * @param password
+	 * @param recipients
+	 * @param expiryDate
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws BusinessException
+	 */
+	private SecuredUrl shareDocumentsWithSecuredAnonymousUrlToUser(User sender, List<Document> docList, String password, List<Contact> recipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException {
+		
+		// Secured Url creation
+		SecuredUrl securedUrl = secureUrlService.create(docList, sender, password, recipients, expiryDate);
+			
+		for (Document doc : docList) {
+			
+			// We need to update this field only if it is not already set to true.
+			if(!doc.getShared()) {
+				doc.setShared(true);
+				documentRepository.update(doc);
+			}
+			// log this action.
+			logFileSharing(sender, recipients, securedUrl, doc);
+		}
 
+		return securedUrl;
+	}
+
+	
+	@Override
+	public boolean isSauAllowed(AbstractDomain domain) { 
+		
+		Functionality funcAU = functionalityService.getAnonymousUrlFunctionality(domain);
+		// We chekc if Anonymous Url are activated.
+		if(funcAU.getActivationPolicy().getStatus()) {
+			Functionality funcSAU = functionalityService.getSecuredAnonymousUrlFunctionality(domain);
+			return funcSAU.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
+		}
+		return false;
+	}
+	
+
+	public boolean isSauMadatory(AbstractDomain domain) { 
+		Functionality func = functionalityService.getSecuredAnonymousUrlFunctionality(domain);
+		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
+	}
+	
+	
+	@Override
+	public boolean getDefaultSauValue(AbstractDomain domain) {
+		Functionality func = functionalityService.getSecuredAnonymousUrlFunctionality(domain);
+		return func.getActivationPolicy().getStatus();
+	}
+	
+	
+	@Override
+	public SecuredUrl shareDocumentsWithSecuredAnonymousUrlToUser(
+			User sender, List<Document> docList, boolean secured, List<Contact> recipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException {
+		
+		// if we need to secure the url, we generate a password, otherwise we will persist a null password. 
+		String password = null;
+		
+		if(isSauMadatory(sender.getDomain())) {
+			password = passwordService.generatePassword();
+		} else if(isSauAllowed(sender.getDomain())) {
+			if (secured) {
+				password = passwordService.generatePassword();
+			}
+		}
+		
+		return shareDocumentsWithSecuredAnonymousUrlToUser(sender, docList, password, recipients, expiryDate);
+	}
 }
