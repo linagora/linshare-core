@@ -39,6 +39,6 @@ ALTER TABLE `linshare_document` CHANGE `timestamp` `timestamp` BLOB NULL DEFAULT
 ALTER TABLE `linshare_version` ADD PRIMARY KEY(`id`) ;
 ALTER TABLE `linshare_version` CHANGE `id` `id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
 ALTER TABLE `linshare_version` ADD UNIQUE(`description`) ;
-INSERT INTO linshare_version (id,description) VALUES ('0.11.0');
+INSERT INTO linshare_version (description) VALUES ('0.11.0');
 
 
