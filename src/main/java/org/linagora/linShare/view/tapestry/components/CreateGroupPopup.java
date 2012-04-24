@@ -28,7 +28,6 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
@@ -37,13 +36,10 @@ import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.utils.XSSFilter;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
-import org.owasp.validator.html.PolicyException;
-import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +63,9 @@ public class CreateGroupPopup {
 	
     @Inject
     private Messages messages;
+	
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
 
     @InjectComponent
     private Form createGroupForm;
@@ -104,11 +103,10 @@ public class CreateGroupPopup {
     }
     
     public void onValidateFormFromCreateGroupForm() {
-    	filter = new XSSFilter(shareSessionObjects, createGroupForm, antiSamyPolicy, messages);
-    	
-		if ((groupName = filter.clean(groupName)) == null) {
+    	if (groupName == null) {
     		return;
 		}
+
 		
         if (groupFacade.nameAlreadyExists(groupName)) {
             createGroupForm.recordError(messages.get("pages.group.create.error.alreadyExist"));
@@ -132,6 +130,18 @@ public class CreateGroupPopup {
     }
     
     void onSuccess() {
+    	filter = new XSSFilter(shareSessionObjects, createGroupForm, antiSamyPolicy, messages);
+		try {
+			groupName = filter.clean(groupName);
+			groupDescription = filter.clean(groupDescription);
+			groupFunctionalEmail = filter.clean(groupFunctionalEmail);
+			if (filter.hasError()) {
+				logger.debug("XSSFilter found some tags and striped them.");
+				businessMessagesManagementService.notify(filter.getWarningMessage());
+			}
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(e);
+		}
     	boolean exist = groupFacade.nameAlreadyExists(groupName);
     	if (exist) {
     		shareSessionObjects.addError(messages.get("pages.user.edit.error.alreadyExist"));

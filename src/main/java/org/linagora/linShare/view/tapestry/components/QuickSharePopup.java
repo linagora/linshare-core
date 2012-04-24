@@ -69,11 +69,7 @@ import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementSe
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.utils.XSSFilter;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
-import org.owasp.validator.html.PolicyException;
-import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,12 +305,21 @@ public class QuickSharePopup{
 	
 	
     public void onSuccessFromQuickShareForm() throws BusinessException {
-
+    	filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
+    	try {
+    		textAreaSubjectValue = filter.clean(textAreaSubjectValue);
+    		textAreaValue = filter.clean(textAreaValue);
+    		if (filter.hasError()) {
+    			logger.debug("XSSFilter found some tags and striped them.");
+    			businessMessagesManagementService.notify(filter.getWarningMessage());
+    		}
+    	} catch (BusinessException e) {
+    		businessMessagesManagementService.notify(e);
+    	}
     	//VALIDATE
 
     	boolean sendErrors = false;
-		
-    	
+		  	
     	try{
 	    	
 			List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
@@ -409,8 +414,7 @@ public class QuickSharePopup{
 	 * @param aFile
 	 * @throws BusinessException 
 	 */
-    public void onValidateFromFile(UploadedFile aFile)  {
-		
+    public void onValidateFromFile(UploadedFile aFile)  {  	
         if (aFile == null) {
         	// the message will be handled by Tapestry
         	return;
@@ -440,21 +444,8 @@ public class QuickSharePopup{
 	 * This is the onValidate for the QuickSharePopup Form
 	 */
     public void onValidateFormFromQuickShareForm()  {
-    	filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
-
-    	if (textAreaSubjectValue != null) {
-    		if ((textAreaSubjectValue = filter.clean(textAreaSubjectValue)) == null) {
-    			// the message will be handled by Tapestry
-    			return;
-    		}
-    	}
-    	if (textAreaValue != null) {
-    		if ((textAreaValue = filter.clean(textAreaValue)) == null) {
-        		// the message will be handled by Tapestry
-        		return;
-        	}
-    	}
-    }    
+    	
+    }
     
 
 	public String getJSONId() {

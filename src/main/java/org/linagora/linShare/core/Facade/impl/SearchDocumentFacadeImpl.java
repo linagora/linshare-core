@@ -28,7 +28,6 @@ import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.transformers.impl.DocumentTransformer;
-import org.linagora.linShare.core.domain.transformers.impl.UserTransformer;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;

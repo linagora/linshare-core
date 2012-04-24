@@ -68,11 +68,7 @@ import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementSe
 import org.linagora.linShare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linShare.view.tapestry.utils.XSSFilter;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
-import org.owasp.validator.html.PolicyException;
-import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -354,8 +350,7 @@ public class ConfirmSharePopup{
 	
 	
 	public void onValidateFormFromConfirmshare() throws BusinessException {
-		
-    	if (confirmshare.getHasErrors()) {
+		if (confirmshare.getHasErrors()) {
     		return ;
     	}
     	
@@ -385,6 +380,18 @@ public class ConfirmSharePopup{
 	
 	
     public Block onSuccess() throws BusinessException {
+		filter = new XSSFilter(shareSessionObjects, confirmshare, antiSamyPolicy, messages);
+		try {
+			textAreaSubjectValue = filter.clean(textAreaSubjectValue);	
+			textAreaValue = filter.clean(textAreaValue);
+			if (filter.hasError()) {
+				logger.debug("XSSFilter found some tags and striped them.");
+				businessMessagesManagementService.notify(filter.getWarningMessage());
+			}
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(e);
+		}
+    	
     	/** 
 		 * verify the value of the expiration date selected
 		 * 
@@ -397,10 +404,6 @@ public class ConfirmSharePopup{
 		else dateExpiry.setTime(dateSelected);
 
 		//PROCESS SHARE
-		
-		filter = new XSSFilter(shareSessionObjects, confirmshare, antiSamyPolicy, messages);
-		textAreaSubjectValue = filter.clean(textAreaSubjectValue);
-		textAreaValue = filter.clean(textAreaValue);
         
         Boolean errorOnAddress = false;
         

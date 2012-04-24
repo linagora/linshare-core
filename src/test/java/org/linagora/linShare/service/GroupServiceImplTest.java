@@ -21,7 +21,6 @@
 
 package org.linagora.linShare.service;
 
-import java.security.acl.Owner;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
@@ -30,7 +29,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.linagora.linShare.common.service.LinShareMessageHandler;
 import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
@@ -38,7 +36,6 @@ import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.GroupUser;
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -53,7 +50,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.subethamail.smtp.server.SMTPServer;
 import org.subethamail.wiser.Wiser;
 
 /*

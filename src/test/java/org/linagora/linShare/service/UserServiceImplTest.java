@@ -32,7 +32,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.linagora.linShare.common.service.LinShareMessageHandler;
 import org.linagora.linShare.core.domain.constants.FunctionalityNames;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
@@ -70,7 +69,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-import org.subethamail.smtp.server.SMTPServer;
 import org.subethamail.wiser.Wiser;
 
 @ContextConfiguration(locations = { 
