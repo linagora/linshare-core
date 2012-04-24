@@ -16,9 +16,9 @@
     <property access="field" column="shared" name="shared"/>
     <property access="field" column="shared_with_group" name="sharedWithGroup"/>
     <property access="field" column="size" name="size" type="long"/>
-    <property access="field" column="file_comment" name="fileComment"/>
+    <property access="field" column="file_comment" name="fileComment" type="text"/>
     <property access="field" column="thmb_uuid" name="thmbUUID"/>
-    <property access="field" column="timestamp" name="timeStamp" />
+    <property access="field" column="timestamp" name="timeStamp" type="binary" length="65535"/>
     
     <many-to-one access="field" class="org.linagora.linShare.core.domain.entities.User" name="owner" not-null="true">
       <column index="index_document_owner_id" name="owner_id"/>
