@@ -9,17 +9,11 @@ SET default_with_oids = false;
 -- First Modification :
 -- later linshare_document table to modify the file_comment field type (varchar to text)
  
--- Add new column
-ALTER TABLE linshare_document  ADD comment TEXT;
-
--- Copy datas
-UPDATE linshare_document set comment=file_comment ;
-
 -- drop old column
 ALTER TABLE linshare_document DROP file_comment;
 
--- rename new field with old name
-ALTER TABLE linshare_document RENAME COLUMN comment  TO file_comment;
+-- Add new column
+ALTER TABLE linshare_document  ADD file_comment TEXT;
 
 
 
@@ -36,8 +30,16 @@ VALUES ((SELECT nextVal('hibernate_sequence')), true, 'SECURED_ANONYMOUS_URL',
 
 
 -- Third Modification : 
+ALTER TABLE linshare_domain_abstract  ADD auth_show_order bigint;
+UPDATE linshare_domain_abstract SET auth_show_order=1;
+
+-- Forth Modification : 
 -- Update schema version
 ALTER TABLE linshare_version ADD UNIQUE(description);
 INSERT INTO linshare_version (id,description) VALUES ((SELECT nextVal('hibernate_sequence')),'0.11.0');
+
+
+
+
 
 

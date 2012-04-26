@@ -3,19 +3,12 @@
 
 -- First Modification :
 -- later linshare_document table to modify the file_comment field type (varchar to text)
- 
--- Add new column
-ALTER TABLE `linshare_document`  ADD `comment` TEXT AFTER `file_comment`;
-
--- Copy datas
-UPDATE linshare_document set comment=file_comment ;
 
 -- drop old column
 ALTER TABLE `linshare_document` DROP `file_comment` ;
 
--- rename new field with old name
-ALTER TABLE `linshare_document` CHANGE `comment` `file_comment` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ;
-
+-- Add new column
+ALTER TABLE `linshare_document`  ADD `file_comment` TEXT AFTER `size`;
 
 
 
@@ -33,6 +26,9 @@ INSERT INTO linshare_functionality(system, identifier, policy_activation_id, pol
 -- Fix time stamping type field for mysql only
 ALTER TABLE `linshare_document` CHANGE `timestamp` `timestamp` BLOB NULL DEFAULT NULL;
 
+-- Forth Modification : 
+ALTER TABLE `linshare_domain_abstract`  ADD `auth_show_order` bigint ;
+UPDATE linshare_domain_abstract SET auth_show_order=1;
 
 -- Last Modification : 
 -- Update schema version
