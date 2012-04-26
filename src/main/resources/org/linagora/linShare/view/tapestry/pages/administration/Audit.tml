@@ -2,6 +2,7 @@
 <t:MyBorderLayout t:title="message:pages.administration.audit.title" t:identifier="audit" t:currentHighlight="audit"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
+<t:if test="${showAudit}">
 	<!-- Main content -->
 
 	<div id="content">
@@ -317,4 +318,10 @@
 
 	</div><!-- id="content" -->
 
+    <t:parameter name="else">
+        <div id="content">
+            <p>${message:pages.administration.audit.message.notActivated}</p>
+        </div>
+    </t:parameter>
+</t:if>
 </t:MyBorderLayout>

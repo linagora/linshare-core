@@ -134,4 +134,8 @@ public class ConfigurationPolicy {
     	return this;
     }
     
+    public Object onActionFromCancel() {
+		configurationPolicies = null;
+		return org.linagora.linShare.view.tapestry.pages.administration.Index.class;
+	}
 }

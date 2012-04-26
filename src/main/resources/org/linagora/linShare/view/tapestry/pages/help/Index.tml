@@ -2,6 +2,7 @@
 <t:MyBorderLayout t:title="message:pages.help.title" t:identifier="help" t:currentHighlight="help"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
+<t:if test="${showHelp}">
 	<!-- Main content -->
 
 	<div id="content">
@@ -102,4 +103,10 @@
 		</div>
 	</div><!-- id="content" -->
 	
+    <t:parameter name="else">
+        <div id="content">
+            <p>${message:pages.help.message.notActivated}</p>
+        </div>
+    </t:parameter>
+</t:if>
 </t:MyBorderLayout>

@@ -420,6 +420,10 @@ public class Parameters {
     }
     
     
+    public Object onActionFromCancel() {
+		functionalities = null;
+		return org.linagora.linShare.view.tapestry.pages.administration.Index.class;
+	}
 //    
 //    public void onValidateFormFromAdministrationForm() {
 //        boolean activeEnciph = securedStorageDisallowed ? false : activeEncipherment;

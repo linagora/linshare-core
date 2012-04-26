@@ -24,6 +24,9 @@
 				<t:FunctionalityPolicyConfigurer t:policies="activationPolicies"/>
 				<div class="button">
 					<a href="#" onclick="policyForm.submit();" class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></a>
+                    <span> </span>
+                    <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
+
 				</div>
 			</form>
 		</div>

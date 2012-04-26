@@ -2,6 +2,7 @@
 <t:MyBorderLayout t:title="message:pages.user.index.title" t:identifier="users" t:currentHighlight="user"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
+<t:if test="${showUser}">
 	<!-- Main content -->
 
 	<div id="content">
@@ -90,4 +91,10 @@
 	</t:parameter>
 
 
+    <t:parameter name="else">
+        <div id="content">
+            <p>${message:pages.user.message.notActivated}</p>
+        </div>
+    </t:parameter>
+</t:if>
 </t:MyBorderLayout>

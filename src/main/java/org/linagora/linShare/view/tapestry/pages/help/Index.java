@@ -25,6 +25,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linShare.view.tapestry.objects.HelpsASO;
@@ -60,8 +61,15 @@ public class Index {
 	@Inject
 	private Messages messages;
 	
+    @Inject
+    private FunctionalityFacade functionalityFacade;
+    
+    @Property
+    private boolean showHelp;
+    
 	@SetupRender
 	public void init(){
+		showHelp = userVo.isSuperAdmin() | functionalityFacade.isEnableGroupTab(userVo.getDomainIdentifier());
 		helpsASO=null;
 	}
 	

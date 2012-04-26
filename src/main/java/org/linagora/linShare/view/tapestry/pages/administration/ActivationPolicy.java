@@ -38,6 +38,7 @@ import org.linagora.linShare.core.domain.vo.PolicyVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linShare.view.tapestry.pages.administration.domains.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,4 +135,9 @@ public class ActivationPolicy {
     	cause.printStackTrace();
     	return this;
     }
+    
+    public Object onActionFromCancel() {
+		activationPolicies = null;
+		return org.linagora.linShare.view.tapestry.pages.administration.Index.class;
+	}
 }

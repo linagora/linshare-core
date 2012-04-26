@@ -42,6 +42,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
+import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -87,6 +88,10 @@ public class Index {
     
     @Inject
     private AbstractDomainFacade domainFacade;
+    
+    @Inject
+    private FunctionalityFacade functionalityFacade;
+
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -125,6 +130,9 @@ public class Index {
 	@SuppressWarnings("unused")
 	@Property
 	private boolean superadmin;
+	   
+    @Property
+    private boolean showUser;
 
 
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
@@ -135,10 +143,11 @@ public class Index {
      ************************************************************ */
     @SetupRender
     public void initList(){
+    	showUser = userVo.isSuperAdmin() | functionalityFacade.isEnableGroupTab(userVo.getDomainIdentifier());
     	if (!shareSessionObjectsExists) {
     		shareSessionObjects = new ShareSessionObjects();
     	}
-		superadmin=(userVoExists && userVo.getRole().equals(Role.SUPERADMIN));
+    	superadmin=(userVoExists && userVo.getRole().equals(Role.SUPERADMIN));
     }
     
     @OnEvent(value="sharePanel")
