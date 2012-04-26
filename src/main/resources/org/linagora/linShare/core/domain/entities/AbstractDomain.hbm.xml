@@ -26,6 +26,7 @@
 		<property access="field" column="DEFAULT_ROLE" name="defaultRole" type="roleEnumType" />
 		<property access="field" column="DEFAULT_LOCALE" name="defaultLocale" />
 		<property access="field" column="USED_SPACE" name="usedSpace" not-null="true"/>
+		<property access="field" column="auth_show_order" name="authShowOrder" />
 		
 		<many-to-one name="userProvider" class="org.linagora.linShare.core.domain.entities.LdapUserProvider" 
 			column="USER_PROVIDER_ID" unique="true" lazy="false" cascade="delete" />

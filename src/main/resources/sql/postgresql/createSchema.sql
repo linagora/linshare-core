@@ -96,6 +96,7 @@ CREATE TABLE linshare_domain_abstract (
     user_provider_id bigint,
     domain_policy_id bigint NOT NULL,
     parent_id bigint,
+    auth_show_order bigint,
     messages_configuration_id bigint
 );
 

@@ -50,6 +50,8 @@ public abstract class AbstractDomain {
 	
 	protected Long usedSpace;
 	
+	protected Long authShowOrder;
+	
 	protected AbstractDomain() {
 		this.identifier = null;
 	}
@@ -71,6 +73,7 @@ public abstract class AbstractDomain {
 		this.shareExpiryRules=new ArrayList<ShareExpiryRule>();
 		this.messagesConfiguration = new MessagesConfiguration();
 		this.policy=null;
+		this.authShowOrder=new Long(1);
 	}
 	
 	public AbstractDomain(AbstractDomainVo d) {
@@ -90,6 +93,7 @@ public abstract class AbstractDomain {
 		this.usedSpace=d.getUsedSpace();
 		this.shareExpiryRules=new ArrayList<ShareExpiryRule>();
 		this.policy=null;
+		this.authShowOrder=new Long(1);
 	}
 	
 
@@ -258,5 +262,12 @@ public abstract class AbstractDomain {
 		AbstractDomain d =(AbstractDomain)arg0;
 		return this.getIdentifier().equals(d.getIdentifier());
 	}
-	
+
+	public Long getAuthShowOrder() {
+		return authShowOrder;
+	}
+
+	public void setAuthShowOrder(Long authShowOrder) {
+		this.authShowOrder = authShowOrder;
+	}
 }

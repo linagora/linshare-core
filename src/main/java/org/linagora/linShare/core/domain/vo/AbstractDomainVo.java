@@ -28,6 +28,9 @@ public class AbstractDomainVo {
 	@NonVisual 
 	protected Long usedSpace = new Long(0);
 	
+	@NonVisual 
+	protected Long authShowOrder = new Long(1);
+	
 	protected String differentialKey;
 	
 	protected String patternIdentifier;
@@ -56,6 +59,7 @@ public class AbstractDomainVo {
 		this.setLabel(entity.getLabel());
 		this.setTemplate(entity.isTemplate());
 		this.setUsedSpace(entity.getUsedSpace());
+		this.setAuthShowOrder(entity.getAuthShowOrder());
 	}
 
 	public AbstractDomainVo(String identifier, String differentialKey,
@@ -191,6 +195,14 @@ public class AbstractDomainVo {
 			this.ldapIdentifier = ldapIdentifier.trim();
 		else
 			this.ldapIdentifier = ldapIdentifier;
+	}
+
+	public Long getAuthShowOrder() {
+		return authShowOrder;
+	}
+
+	public void setAuthShowOrder(Long authShowOrder) {
+		this.authShowOrder = authShowOrder;
 	}
 
 }

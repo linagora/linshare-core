@@ -69,6 +69,7 @@ SET storage_engine=INNODB;
         user_provider_id bigint unique,
         domain_policy_id bigint not null,
         parent_id bigint,
+        auth_show_order bigint,
         messages_configuration_id bigint,
         primary key (id)
     );
