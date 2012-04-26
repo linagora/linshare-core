@@ -154,4 +154,8 @@ public class Personalization {
     	return this;
     }
     
+    public Object onActionFromCancel() {
+        messagesConfiguration = null;
+		return org.linagora.linShare.view.tapestry.pages.administration.Index.class;
+	}
 }

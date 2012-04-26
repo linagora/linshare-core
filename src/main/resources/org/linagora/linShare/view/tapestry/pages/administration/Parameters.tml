@@ -176,6 +176,7 @@
 				</div> 	
 				<div class="button">
 					<a href="#" onclick="parameterForm.submit();" class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></a>
+                    <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
 				</div>
 			</form>
 			

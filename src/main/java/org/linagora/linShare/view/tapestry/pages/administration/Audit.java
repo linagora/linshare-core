@@ -158,6 +158,9 @@ public class Audit {
 	
 	@Property
 	private int autocompleteMin;
+    
+    @Property
+    private boolean showAudit;
 	
 	
 	/* ***********************************************************
@@ -170,9 +173,10 @@ public class Audit {
 	
 	@SetupRender
 	public void init() throws BusinessException {
-		domains = domainFacade.getAllDomainIdentifiers(userLoggedIn);
-		superadmin = userLoggedIn.isSuperAdmin();
-		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
+        showAudit = userLoggedIn.isSuperAdmin() | functionalityFacade.isEnableGroupTab(userLoggedIn.getDomainIdentifier());
+        domains = domainFacade.getAllDomainIdentifiers(userLoggedIn);
+        superadmin = userLoggedIn.isSuperAdmin();
+        autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 	}
 	
 	public void onActivate() {
