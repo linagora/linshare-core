@@ -19,7 +19,7 @@ function countUserCheckbox() {
 function checkAll(){
 
 	var chkboxelements = $$('input[type="checkbox"][id^="selected"]').findAll(function(el)
-		{ return true });
+		{ return true; });
 	if(	document.getElementById('selectAll').checked ){
 		for(i=0;i<chkboxelements.length;i++){
 			chkboxelements[i].checked=true;
