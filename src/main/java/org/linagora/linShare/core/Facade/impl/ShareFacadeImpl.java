@@ -133,13 +133,14 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.functionalityService = functionalityService;
 	}
 	
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, String comment, Calendar expirationDate) throws BusinessException {
+	
+	@Override
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, Calendar expirationDate) throws BusinessException {
 		logger.debug("createSharing:Begin");
 		List<User> recipientsList = new ArrayList<User>();
 		
 		for (UserVo userVo : recipients) {
 			try {
-//				recipientsList.add(userService.findOrCreateUser(userVo.getMail(), userVo.getDomainIdentifier()));
 				recipientsList.add(userService.findOrCreateUserWithDomainPolicies(userVo.getMail(), owner.getDomainIdentifier()));
 			} catch (BusinessException e) {
 				logger.error("Could not find the recipient " + userVo.getMail() + " in the database nor in the ldap");
@@ -148,17 +149,18 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		List<Document> docList = getDocumentEntitiesFromVo(documents);
-		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, userRepository.findByLogin(owner.getLogin()), recipientsList, comment, expirationDate);
-		
+		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, userRepository.findByLogin(owner.getLogin()), recipientsList, expirationDate);
 		
 		SuccessesAndFailsItems<ShareDocumentVo> results = disassembleShareResultList(successAndFails);
 		logger.debug("createSharing:End");
 		return results;
 	}
 
+	
+	@Override
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, MailContainer mailContainer, Calendar expirationDate, boolean isOneDocEncrypted, String jwsEncryptUrlString) throws BusinessException {
 		logger.debug("createSharingWithMail:Begin");
-		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, mailContainer.getPersonalMessage(), expirationDate);
+		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, expirationDate);
 		
 		//Sending the mails
 		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
@@ -190,16 +192,18 @@ public class ShareFacadeImpl implements ShareFacade {
 		return result;
 	}
 	
-
+	
+	@Override
 	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipient) {
 		User userRecipient = userRepository.findByLogin(recipient.getLogin());
 		if (userRecipient==null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
-		
 		return shareTransformer.disassembleList(new ArrayList<Share>(userRecipient.getReceivedShares()));		
 	}
 
+	
+	@Override
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document) {
 		User userSender = userRepository.findByLogin(sender.getLogin());
 		if (userSender==null) {
@@ -218,6 +222,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		return shareTransformer.disassembleList(sharingsOfDocument);
 	}
 
+	
+	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException {
 		User actorUser = userRepository.findByLogin(actor.getLogin());
 		
@@ -229,6 +235,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 	}
 
+	
+	@Override
     public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException {
         Share share = shareTransformer.assemble(shareDocumentVo);
 		User user = userRepository.findByLogin(userVo.getLogin());
@@ -251,12 +259,14 @@ public class ShareFacadeImpl implements ShareFacade {
     }
 
 
+	@Override
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
     		UserVo ownerVo, List<DocumentVo> documents, List<String> recipientsEmail, boolean secureSharing, MailContainer mailContainer) throws BusinessException {
 		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(ownerVo, documents, recipientsEmail, secureSharing, mailContainer,null);
 	}
 
 
+	@Override
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
 			UserVo ownerVo, List<DocumentVo> documents, List<String> recipientsEmailInput, boolean secureSharing, MailContainer mailContainer, Calendar expiryDateSelected) throws BusinessException {
     	
@@ -362,7 +372,7 @@ public class ShareFacadeImpl implements ShareFacade {
 				for (DocumentVo doc : documents) {
 					for (Contact oneContact : unKnownRecipientsEmail) {
 						UserVo recipient = new UserVo(oneContact.getMail(), "", "", oneContact.getMail(), null);
-						ShareDocumentVo failSharing=new ShareDocumentVo(doc, ownerVo, recipient, new GregorianCalendar(), false, "", new GregorianCalendar());
+						ShareDocumentVo failSharing=new ShareDocumentVo(doc, ownerVo, recipient, new GregorianCalendar(), false, "", new GregorianCalendar(),0);
 						result.addFailItem(failSharing);
 					}
 				}
@@ -375,6 +385,7 @@ public class ShareFacadeImpl implements ShareFacade {
     }
     
     
+	@Override
     public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, MailContainer mailContainer) throws BusinessException {
 		
 		UserVo ownerVo = sharedDocument.getSender();
@@ -389,6 +400,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		notifierService.sendAllNotifications(currentUser.getMail(),mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(owner, mailContainer, docList, user, owner));
     }
     
+	
+	@Override
     public void sendSharedUpdateDocNotification(DocumentVo currentDoc,
     		UserVo currentUser, String fileSizeTxt, String oldFileName,
     		MailContainer mailContainer) throws BusinessException {
@@ -436,6 +449,8 @@ public class ShareFacadeImpl implements ShareFacade {
     	
     }
     
+	
+	@Override
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo ownerVo, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException {
 		
     	logger.debug("ownerVo.getMail():" + ownerVo.getMail());
@@ -455,7 +470,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		List<Document> docList = getDocumentEntitiesFromVo(documents);
 		
 		// Share docs to groups.
-		SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems = disassembleShareResultList(shareService.shareDocumentsToUser(docList,owner, groupUserObjectsList, "", null));
+		SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems = disassembleShareResultList(shareService.shareDocumentsToUser(docList,owner, groupUserObjectsList, null));
 		
 		// Check if at least one doc is encrypted.
 		boolean oneDocIsEncrypted = oneDocIsEncrypted(docList);
@@ -466,6 +481,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		return successesAndFailsItems;
     }
     
+	
+	@Override
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroup(UserVo ownerVo, List<DocumentVo> documents, String targetGroupID, MailContainer mailContainer) throws BusinessException {
 		
     	logger.debug("ownerVo.getMail():" + ownerVo.getMail());
@@ -486,7 +503,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		List<Document> docList = getDocumentEntitiesFromVo(documents);
 		
 		// Share docs to groups.
-		SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems = disassembleShareResultList(shareService.shareDocumentsToUser(docList,owner, groupUserObjectsList, "", null));
+		SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems = disassembleShareResultList(shareService.shareDocumentsToUser(docList, owner, groupUserObjectsList));
 		
 		// Check if at least one doc is encrypted.
 		boolean oneDocIsEncrypted = oneDocIsEncrypted(docList);
@@ -580,6 +597,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		shareService.notifyGroupSharingDeleted(doc, manager, group, mailContainer);
 	}
 	
+	
 	@Override
 	public boolean isVisibleSecuredAnonymousUrlCheckBox(String domainIdentifier) {
 		try {
@@ -592,6 +610,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		return false;
 	}
 
+	
 	@Override
 	public boolean getDefaultSecuredAnonymousUrlCheckBoxValue(String domainIdentifier) {
 		try {
@@ -602,5 +621,21 @@ public class ShareFacadeImpl implements ShareFacade {
 			logger.debug(e.getMessage());
 		}
 		return false;
+	}
+
+	
+	@Override
+	public ShareDocumentVo getShareDocumentVoById(long persistenceId) {
+		return shareTransformer.disassemble(shareService.getShare(persistenceId));		
+	}
+
+	
+	@Override
+	public void updateShareComment(String persistenceId, String comment) throws IllegalArgumentException, BusinessException {
+		logger.debug("updateShareComment:" + String.valueOf(persistenceId));
+		Share share = shareService.getShare(Long.valueOf(persistenceId));
+		share.setComment(comment);
+		logger.debug("comment : " + comment);
+		shareService.updateShare(share);
 	}
 }

@@ -210,9 +210,15 @@ public class ShareServiceImpl implements ShareService{
         
 	}
 	
+	
+	@Override
+	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender, List<User> recipients) {
+		return shareDocumentsToUser(documents, sender, recipients,null);
+	}
+
 
 	@Override
-	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender, List<User> recipients,String comment, Calendar expiryDate){
+	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender, List<User> recipients,Calendar expiryDate){
 		
 		SuccessesAndFailsItems<Share> returnItems = new SuccessesAndFailsItems<Share>();
 		
@@ -221,7 +227,7 @@ public class ShareServiceImpl implements ShareService{
 			for (Document document : documents) {
 				//Creating a shareDocument
 				
-				Share failSharing=new Share(sender,recipient,document,comment,new GregorianCalendar(),true,false);
+				Share failSharing=new Share(sender,recipient, document, document.getFileComment(), new GregorianCalendar(),true,false);
 			
 				try{
 
@@ -237,7 +243,7 @@ public class ShareServiceImpl implements ShareService{
 					if(current_share == null) {
 						// if not, we create one
 						logger.debug("Creation of a new share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
-						Share share=new Share(sender,recipient,document,comment,expiryDate,true,false);
+						Share share=new Share(sender,recipient,document,document.getFileComment(),expiryDate,true,false);
 						shareEntity=shareRepository.create(share);
 					} else {
 						// if it does, we update the expiration date
@@ -246,7 +252,6 @@ public class ShareServiceImpl implements ShareService{
 						shareEntity.setExpirationDate(expiryDate);
 						shareRepository.update(shareEntity);
 					}
-					
 
 		
 		
@@ -687,4 +692,19 @@ public class ShareServiceImpl implements ShareService{
 		
 		return shareDocumentsWithSecuredAnonymousUrlToUser(sender, docList, password, recipients, expiryDate);
 	}
+
+
+	@Override
+	public Share getShare(long persistenceId) {
+		return shareRepository.getShare(persistenceId);
+	}
+
+
+	@Override
+	public void updateShare(Share share) throws IllegalArgumentException, BusinessException {
+		shareRepository.update(share);
+	}
+	
+	
+	
 }

@@ -50,7 +50,7 @@ public class DocumentAdapter {
 					share.getDocument().getType(), share.getDocument().getOwner().getLogin(), share.getDocument().getEncrypted(),
 					share.getDocument().getShared(),share.getDocument().getSharedWithGroup(),share.getDocument().getSize(),
 					new UserVo(share.getSender()), new UserVo(share.getReceiver()),share.getExpirationDate(),
-			share.getDownloaded(), share.getComment(), share.getSharingDate());
+			share.getDownloaded(), share.getComment(), share.getSharingDate(),share.getPersistenceId());
 		}else{	
 			return null;
 		}

@@ -47,10 +47,8 @@ public class ShareRepositoryImpl extends AbstractRepositoryImpl<Share> implement
 		return det;
 	}
 
-	public Share getShare(Document shareDocument, User sender,
-			User recipient) {
+	public Share getShare(Document shareDocument, User sender, User recipient) {
 			
-
 		List<Share> results = findByCriteria(Restrictions.eq("document", shareDocument),Restrictions.eq("sender", sender),Restrictions.eq("receiver", recipient));
 		if (results == null || results.isEmpty()) {
             return null;
@@ -79,4 +77,15 @@ public class ShareRepositoryImpl extends AbstractRepositoryImpl<Share> implement
     	return findByCriteria(Restrictions.lt("expirationDate", calMax), Restrictions.gt("expirationDate", calMin));
     }
 
+	@Override
+	public Share getShare(long persistenceId) {
+		List<Share> results = findByCriteria(Restrictions.eq("persistenceId", persistenceId));
+		if (results == null || results.isEmpty()) {
+            return null;
+        } else if (results.size() == 1) {
+            return results.get(0);
+        } else {
+            throw new IllegalStateException("Sharing must be unique");
+        }
+	}
 }
