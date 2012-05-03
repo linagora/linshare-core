@@ -36,8 +36,8 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.domain.vo.DocumentVo;
+import org.linagora.linShare.core.Facade.ShareFacade;
+import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 
 /** This component is used to edit properties of a file.
  */
-public class FileEditForm {
+public class ShareEditForm {
 
 	/* ***********************************************************
      *                         Parameters
@@ -61,7 +61,7 @@ public class FileEditForm {
      *                      Injected services
      ************************************************************ */
 	@Inject
-	private DocumentFacade documentFacade;
+	private ShareFacade shareFacade;
 
     @InjectComponent
     private Form editForm;
@@ -86,10 +86,10 @@ public class FileEditForm {
 	
 	@SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=400", "height=200"})
-    private WindowWithEffectsComponent fileEditWindow;
+    private WindowWithEffectsComponent shareEditWindow;
     
     @InjectComponent
-    private Zone fileEditTemplateZone;
+    private Zone shareEditTemplateZone;
     
     @Retain
     private String _assignedZoneClientId;
@@ -106,9 +106,8 @@ public class FileEditForm {
     
     
     @Persist
-    private String editFileWithUuid;
-    
-    
+    private String editShareWithId;
+
     @ApplicationState
     @Property
     private UserVo userLoggedIn;
@@ -120,7 +119,7 @@ public class FileEditForm {
     private String fileName;
 
     @Property
-    private String fileComment;
+    private String shareComment;
     
     
     private boolean reset = false;
@@ -143,10 +142,6 @@ public class FileEditForm {
     		return false;
     	}
 
-    	if (fileName == null) {
-    		return false;
-    	}
-    	
         return true;
     }
     
@@ -155,10 +150,10 @@ public class FileEditForm {
      }
 
 	public void onSuccessFromEditForm() {
+		logger.debug("onSuccessFromEditForm");
 		filter = new XSSFilter(shareSessionObjects, editForm, antiSamyPolicy, messages);
 		try {
-			fileComment = filter.clean(fileComment);
-			fileName = filter.clean(fileName);
+			shareComment = filter.clean(shareComment);
 			if (filter.hasError()) {
 				logger.debug("XSSFilter found some tags and striped them.");
 				businessMessagesManagementService.notify(filter.getWarningMessage());
@@ -168,13 +163,20 @@ public class FileEditForm {
 		}
 		if(reset) return;
 
-        documentFacade.updateFileProperties(editFileWithUuid, fileName, fileComment);
-        shareSessionObjects.addMessage(messages.get("component.fileEditForm.action.update.confirm"));
-        componentResources.triggerEvent("resetListFiles", null, null);
+		try {
+			shareFacade.updateShareComment(editShareWithId, shareComment);
+			shareSessionObjects.addMessage(messages.get("component.shareEditForm.action.update.confirm"));
+			componentResources.triggerEvent("resetListFiles", null, null);
+		} catch (IllegalArgumentException e) {
+			onFailure();
+		} catch (BusinessException e) {
+			onFailure();
+		}
+		
 	}
 
     public void onFailure() {
-    	 shareSessionObjects.addError(messages.get("component.fileEditForm.action.update.error"));
+    	 shareSessionObjects.addError(messages.get("component.shareEditForm.action.update.error"));
     }
     
     
@@ -184,11 +186,11 @@ public class FileEditForm {
     }
     
     public Zone getShowPopupWindow() {
-        return fileEditTemplateZone;
+        return shareEditTemplateZone;
     }
     
     public String getJSONId(){
-    	return fileEditWindow.getJSONId();
+    	return shareEditWindow.getJSONId();
     }
     
     /**
@@ -197,7 +199,7 @@ public class FileEditForm {
      * @return client id
      */
     public String getJavascriptOpenPopup(){
-    	return fileEditWindow.getJavascriptOpenPopup();
+    	return shareEditWindow.getJavascriptOpenPopup();
     }
     
     public String getZoneClientId()
@@ -208,18 +210,15 @@ public class FileEditForm {
     	return _assignedZoneClientId;
     }
 
-
-	public void setUuidDocToedit(String uuid) {
-		this.editFileWithUuid = uuid;
+	public void setEditShareWithId(String editShareWithId) {
+		this.editShareWithId = editShareWithId;
 		initFormToEdit();
 	}
 	
     private void initFormToEdit(){
-		 
-		if(editFileWithUuid!=null){
-		    	DocumentVo doc =  documentFacade.getDocument(userLoggedIn.getLogin(), editFileWithUuid);
-		    	fileName = doc.getFileName();
-		    	fileComment = doc.getFileComment();
+		if(editShareWithId!=null){
+		    	ShareDocumentVo share =  shareFacade.getShareDocumentVoById(Long.valueOf(editShareWithId));
+		    	shareComment = share.getFileComment();
 		}
     }
 }

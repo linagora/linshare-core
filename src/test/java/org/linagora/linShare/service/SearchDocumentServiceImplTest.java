@@ -386,7 +386,7 @@ public class SearchDocumentServiceImplTest extends AbstractTransactionalJUnit4Sp
 	    List<User> recipient = new ArrayList<User>();
 	    recipient.add(Jane);
 	    
-	    SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(shareDocuments, John, recipient, "",cldr );
+	    SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(shareDocuments, John, recipient, cldr );
 		
 		// User criterion
 		SearchDocumentCriterion searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null, null, null, null, null, null, null, null, null);

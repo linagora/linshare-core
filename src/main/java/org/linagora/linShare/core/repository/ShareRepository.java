@@ -38,6 +38,13 @@ public interface ShareRepository extends AbstractRepository<Share> {
 	public Share getShare(Document shareDocument,User sender,User recipient);
 	
 	/**
+	 * get a share using its unique persistenceId
+	 * @param persistenceId
+	 * @return
+	 */
+	public Share getShare(long persistenceId);
+	
+	/**
 	 * Get all the shares linked to a document
 	 * @param doc
 	 * @return

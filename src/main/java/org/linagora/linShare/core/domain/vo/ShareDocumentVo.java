@@ -44,11 +44,14 @@ public class ShareDocumentVo extends DocumentVo {
 	/** The comment when the share is done. */
 	private final String comment;
 	
+	/** The share persistenceID. */
+	private final long persistenceId;
+	
 	public ShareDocumentVo(String identifier, String name, String fileComment,
 			Calendar creationDate, Calendar expirationDate, String type,
 			String ownerLogin, Boolean encrypted, Boolean shared, Boolean sharedWithGroup,
 			Long size, UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
-			Boolean downloaded, String comment, Calendar sharingDate) {
+			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
 		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin,
 				encrypted, shared, sharedWithGroup, size);
 		
@@ -58,11 +61,12 @@ public class ShareDocumentVo extends DocumentVo {
 		this.downloaded = downloaded;
 		this.comment = comment;
 		this.sharingDate = sharingDate;
+		this.persistenceId = persistenceId;
 	}
 	
 	public ShareDocumentVo(DocumentVo doc,
 			UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
-			Boolean downloaded, String comment, Calendar sharingDate) {
+			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
 		
 		super(doc.getIdentifier(),doc.getFileName(),doc.getFileComment(),doc.getCreationDate(),doc.getExpirationDate(),doc.getType(), doc.getOwnerLogin(),
 				doc.getEncrypted(),doc.getShared(),doc.getSharedWithGroup(),doc.getSize());
@@ -74,6 +78,7 @@ public class ShareDocumentVo extends DocumentVo {
 		this.downloaded = downloaded;
 		this.comment = comment;
 		this.sharingDate = sharingDate;
+		this.persistenceId = persistenceId;
 	}
 
 	public UserVo getSender() {
@@ -110,6 +115,7 @@ public class ShareDocumentVo extends DocumentVo {
 		return "ShareDoc:" + this.sender + ":" + this.getFileName() + ":" + receiver; 
 	}
 
-	
-	
+	public long getPersistenceId() {
+		return persistenceId;
+	}
 }

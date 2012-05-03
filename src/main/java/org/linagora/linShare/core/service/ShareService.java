@@ -87,12 +87,19 @@ public interface ShareService {
 
 	/**
 	 * Share a document from an user to other.
+	 * @param documents the document to share.
+	 * @param sender the sender of the document.
+	 * @param recipients the recipient of the document.
+	 */
+	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender, List<User> recipients);
+	
+	/**
+	 * Share a document from an user to other.
 	 * @param document the document to share.
 	 * @param sender the sender of the document.
 	 * @param recipient the recipient of the document.
-	 * @param comment the comment for the share.
 	 */
-	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> document, User sender, List<User> recipient, String comment, Calendar expirationDate);
+	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> document, User sender, List<User> recipient, Calendar expirationDate);
 
 	/**
 	 * Share a document from an user to other with secured Url.
@@ -153,4 +160,17 @@ public interface ShareService {
 	 * @return
 	 */
 	public boolean getDefaultSauValue(AbstractDomain domain);
+	
+	/**
+	 * get a share using its unique persistenceId
+	 * @param persistenceId
+	 * @return
+	 */
+	public Share getShare(long persistenceId);
+	
+	/**
+	 * This method is desinged to update an existing share entity
+	 * @param share
+	 */
+	public void updateShare(Share share) throws IllegalArgumentException, BusinessException ;
 }

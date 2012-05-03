@@ -245,7 +245,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		ArrayList<User> recipients = new ArrayList<User>();
 		recipients.add(recipient);
 		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, null);
 		
 		sender.deleteShare(shares.getSuccessesItem().get(0));
 		shareService.removeReceivedShareForUser(shares.getSuccessesItem().get(0), recipient, recipient);
@@ -267,7 +267,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		ArrayList<User> recipients = new ArrayList<User>();
 		recipients.add(recipient);
 		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, null);
 		
 		
 		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
@@ -289,7 +289,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		ArrayList<User> recipients = new ArrayList<User>();
 		recipients.add(recipient);
 		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, null);
 		
 		recipient.deleteReceivedShare(shares.getSuccessesItem().get(0));
 		sender.deleteShare(shares.getSuccessesItem().get(0));
@@ -312,7 +312,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		ArrayList<User> recipients = new ArrayList<User>();
 		recipients.add(recipient);
 		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, null);
 
 		Share finalShare = null;
 		/**
@@ -356,7 +356,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		ArrayList<User> recipients = new ArrayList<User>();
 		recipients.add(recipient);
 		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, null);
 			
 		Assert.assertTrue(recipient.getReceivedShares().contains(shares.getSuccessesItem().get(0)));
 		Assert.assertTrue(sender.getShares().contains(shares.getSuccessesItem().get(0)));
@@ -383,7 +383,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		ArrayList<User> recipients = new ArrayList<User>();
 		recipients.add(recipient);
 		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null);
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, null);
 		
 		
         // remove the share :
@@ -429,7 +429,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		//Subtract 2 years from the actual date
 		cldr.add(Calendar.YEAR, -2);
 		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", cldr );		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, cldr );		
 		
 		//recipient.getReceivedShares().remove(shares.getSuccessesItem().get(0));
 		//sender.getShares().remove(shares.getSuccessesItem().get(0));
@@ -504,7 +504,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		List<Contact> contactList = new ArrayList<Contact>();
 		contactList.add(new Contact(recipient.getMail()));
 		
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, "plop", null );		
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, sender, recipients, null );		
 		
 		Assert.assertTrue(shareService.getSharesLinkedToDocument(document).contains(shares.getSuccessesItem().get(0)));
 		
@@ -537,7 +537,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 		ArrayList<User> users = new ArrayList<User>();
 		users.add(recipient);
 
-		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, owner, users,"plop", null);
+		SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(documents, owner, users,null);
 
 		Share finalShare = null;
 		/**
@@ -610,7 +610,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 
 		SuccessesAndFailsItems<Share> shares = shareService
 				.shareDocumentsToUser(documents, owner, users,
-						"plop", null);
+						null);
 
 		Share finalShare = null;
 		/**

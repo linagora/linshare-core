@@ -20,16 +20,21 @@
 */
 package org.linagora.linShare.core.Facade;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.entities.Share;
+import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
+import org.linagora.linShare.core.exception.TechnicalErrorCode;
+import org.linagora.linShare.core.exception.TechnicalException;
 
 public interface ShareFacade {
 
@@ -42,7 +47,7 @@ public interface ShareFacade {
 	 * @param recipients : the recipients list
 	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
 	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, String comment, Calendar expiryDate) throws BusinessException;
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, Calendar expiryDate) throws BusinessException;
 	
 	
 	/**
@@ -199,4 +204,19 @@ public interface ShareFacade {
 	 * @return
 	 */
 	public boolean getDefaultSecuredAnonymousUrlCheckBoxValue(String domainIdentifier);
+	
+	/**
+	 * Get a ShareDocumentVo by the share persistenceId
+	 * @param persistenceId
+	 * @return
+	 */
+	public ShareDocumentVo getShareDocumentVoById(long persistenceId);
+	
+	/**
+	 * This method is desinged to update only share comment.
+	 * @param persistenceId TODO
+	 * @param comment TODO
+	 */
+	public void updateShareComment(String persistenceId, String comment) throws IllegalArgumentException, BusinessException ;
+	
 }

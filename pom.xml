@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
-	<version>0.10.6</version>
+	<version>0.11.0</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
 	<description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -905,7 +905,7 @@
 			</plugin>
 
 		</plugins><!-- <extensions> <extension> <groupId>postgresql</groupId> <artifactId>postgresql</artifactId> 
-			<version>8.3-603.jdbc3</version> </extension> </extensions> -->
+			<version>9.1-901.jdbc4</version> </extension> </extensions> -->
 		<resources>
 			<resource>
 				<filtering>false</filtering>
@@ -970,7 +970,7 @@
 				<dependency>
 					<groupId>postgresql</groupId>
 					<artifactId>postgresql</artifactId>
-					<version>8.3-603.jdbc3</version>
+					<version>9.1-901.jdbc4</version>
 				</dependency>
 				<dependency>
 					<groupId>mysql</groupId>

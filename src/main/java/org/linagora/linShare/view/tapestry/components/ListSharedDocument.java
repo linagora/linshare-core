@@ -229,6 +229,12 @@ public class ListSharedDocument {
 	@Persist
 	private SorterModel<ShareDocumentVo> sorterModel;
 	
+
+	@Property
+	@InjectComponent
+	private ShareEditForm shareEditForm;
+	
+	
 	
 	/*********************************
 	 * Phase render
@@ -640,20 +646,20 @@ public class ListSharedDocument {
 
     	model.add("fileProperties",null);
     	model.add("expirationDate",null);
+    	model.add("shareEdit",null);
 		model.add("selectedValue", null);
 //    	model.add("actions",null);
-    	
     	
     	if(activeSignature && activeEncypher){
         	model.add("signed",null);
     		model.add("encryptedAdd", null);
-        	model.reorder("fileProperties","expirationDate","signed","encryptedAdd", "selectedValue");
+        	model.reorder("fileProperties","expirationDate","shareEdit","signed","encryptedAdd", "selectedValue");
     	} else if (activeSignature){
         	model.add("signed",null);
-        	model.reorder("fileProperties","expirationDate","signed", "selectedValue");
+        	model.reorder("fileProperties","expirationDate","shareEdit","signed", "selectedValue");
     	} else {
     		model.add("encryptedAdd", null);
-        	model.reorder("fileProperties","expirationDate","encryptedAdd", "selectedValue");
+        	model.reorder("fileProperties","expirationDate","shareEdit","encryptedAdd", "selectedValue");
     	}
         return model;
     }
@@ -714,5 +720,20 @@ public class ListSharedDocument {
 			}
 
 		}
+	}
+	
+	/**
+	 * remove all carriage retrun for chenille kit tool tip
+	 * @return
+	 */
+	public String getFormatedComment() {
+		String result = shareDocument.getFileComment().replaceAll("\r","");
+		result = result.replaceAll("\n", " ");
+		return result;
+	}
+	
+	public Zone onActionFromShareEditProperties(String persistenceId) throws BusinessException {
+		shareEditForm.setEditShareWithId(persistenceId);
+	    return shareEditForm.getShowPopupWindow();
 	}
 }
