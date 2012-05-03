@@ -69,7 +69,7 @@ public class Index {
     
 	@SetupRender
 	public void init(){
-		showHelp = userVo.isSuperAdmin() | functionalityFacade.isEnableGroupTab(userVo.getDomainIdentifier());
+		showHelp = userVo.isSuperAdmin() | functionalityFacade.isEnableHelpTab(userVo.getDomainIdentifier());
 		helpsASO=null;
 	}
 	

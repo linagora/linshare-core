@@ -173,7 +173,7 @@ public class Audit {
 	
 	@SetupRender
 	public void init() throws BusinessException {
-        showAudit = userLoggedIn.isSuperAdmin() | functionalityFacade.isEnableGroupTab(userLoggedIn.getDomainIdentifier());
+        showAudit = userLoggedIn.isSuperAdmin() | functionalityFacade.isEnableAuditTab(userLoggedIn.getDomainIdentifier());
         domains = domainFacade.getAllDomainIdentifiers(userLoggedIn);
         superadmin = userLoggedIn.isSuperAdmin();
         autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());

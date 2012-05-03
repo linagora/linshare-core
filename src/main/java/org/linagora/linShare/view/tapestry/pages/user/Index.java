@@ -143,7 +143,7 @@ public class Index {
      ************************************************************ */
     @SetupRender
     public void initList(){
-    	showUser = userVo.isSuperAdmin() | functionalityFacade.isEnableGroupTab(userVo.getDomainIdentifier());
+    	showUser = userVo.isSuperAdmin() | functionalityFacade.isEnableUserTab(userVo.getDomainIdentifier());
     	if (!shareSessionObjectsExists) {
     		shareSessionObjects = new ShareSessionObjects();
     	}
