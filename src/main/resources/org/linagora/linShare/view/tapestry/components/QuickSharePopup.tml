@@ -85,7 +85,7 @@
 			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
 				t:subject="${message:components.quickSharePopup.panelSubject.subject}">  
-				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field"  title="${message:components.quickSharePopup.texarea.message.title}" />
+				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field"  title="${message:components.quickSharePopup.texarea.message.title}" onkeypress="if (event.keyCode == 13) return false;"/>
 			</div>
 			<br />
 			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
