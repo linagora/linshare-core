@@ -111,7 +111,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 * @param content
 	 *            content.
 	 */
-	public void sendNotification(String fromUser, String recipient,
+	@Override
+	public void sendNotification(String replyTo, String recipient,
 			String subject, String htmlContent, String textContent) throws SendFailedException{
 
 		// get the mail session
@@ -123,9 +124,9 @@ public class MailNotifierServiceImpl implements NotifierService {
 		try {
 			messageMim.setFrom(new InternetAddress(smtpSender));
 
-			if (fromUser != null) {
+			if (replyTo != null) {
 				InternetAddress reply[] = new InternetAddress[1];
-				reply[0] = new InternetAddress(fromUser);
+				reply[0] = new InternetAddress(replyTo);
 				messageMim.setReplyTo(reply);
 			}
 
@@ -248,41 +249,17 @@ public class MailNotifierServiceImpl implements NotifierService {
 	/**
 	 * Send notification giving a mailContainer object.
 	 */
-	public void sendNotification(String fromUser, String recipient,
+	@Override
+	public void sendNotification(String replyTo, String recipient,
 			MailContainer mailContainer) throws SendFailedException{
-		sendNotification(fromUser, recipient, mailContainer.getSubject(),
+		sendNotification(replyTo, recipient, mailContainer.getSubject(),
 				mailContainer.getContentHTML(), mailContainer.getContentTXT());
 
 	}
-
-	
-	/**
-	 * Send multiple notifications giving a mailContainerWithRecipient object.
-	 */	
-	@Override
-	public void sendAllNotifications(String fromUser,
-			List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
-		
-		List<String> unknownRecipients = new ArrayList<String>();	
-		
-		for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
-			try {
-				sendNotification(fromUser,mailContainer.getRecipient(),mailContainer);
-			} catch (SendFailedException e) {
-				unknownRecipients.add(mailContainer.getRecipient());
-			}			
-		}
-		
-		if(!unknownRecipients.isEmpty()){
-			logger.error("Addresses unreachables : " + unknownRecipients.toString());
-			throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
-		}
-	}
 	
 	
 	/**
 	 * Send multiple notifications giving a mailContainerWithRecipient object.
-	 * Notifications have with no user reply.
 	 */	
 	@Override
 	public void sendAllNotifications(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
@@ -291,10 +268,10 @@ public class MailNotifierServiceImpl implements NotifierService {
 		
 		for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
 			try {
-				sendNotification(null,mailContainer.getRecipient(),mailContainer);
+				sendNotification(mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
 			} catch (SendFailedException e) {
 				unknownRecipients.add(mailContainer.getRecipient());
-			}			
+			}
 		}
 		
 		if(!unknownRecipients.isEmpty()){

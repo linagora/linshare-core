@@ -34,6 +34,8 @@ import org.linagora.linShare.core.domain.constants.Language;
 public class MailContainerWithRecipient extends MailContainer {
 	
 	private String recipient;
+	private String replyTo;
+
 
 	/**
 	 * Copy constructor
@@ -77,4 +79,11 @@ public class MailContainerWithRecipient extends MailContainer {
 		this.recipient = recipient;
 	}	
 
+	public String getReplyTo() {
+		return replyTo;
+	}
+
+	public void setReplyTo(String replyTo) {
+		this.replyTo = replyTo;
+	}
 }
