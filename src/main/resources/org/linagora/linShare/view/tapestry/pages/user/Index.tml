@@ -45,6 +45,13 @@
 	</div><!-- id="content" -->
 
 
+    <t:parameter name="else">
+        <div id="content">
+            <p>${message:pages.user.message.notActivated}</p>
+        </div>
+    </t:parameter>
+</t:if>
+
 
 	<!-- Popups -->
 
@@ -90,11 +97,4 @@
 		</t:if>
 	</t:parameter>
 
-
-    <t:parameter name="else">
-        <div id="content">
-            <p>${message:pages.user.message.notActivated}</p>
-        </div>
-    </t:parameter>
-</t:if>
 </t:MyBorderLayout>
