@@ -597,7 +597,7 @@ public class ShareServiceImpl implements ShareService{
 				
 			}
 		}
-		notifierService.sendAllNotifications(manager.getMail(),mailContainerWithRecipient);
+		notifierService.sendAllNotifications(mailContainerWithRecipient);
 	}
 	
 	

@@ -146,7 +146,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 		mailContainerWithRecipientList.add(mailContainerWithRecipient);
 		mailContainerWithRecipientList.add(mailContainerWithRecipient2);
 		
-		mailNotifierService.sendAllNotifications(fromUser,mailContainerWithRecipientList);
+		mailNotifierService.sendAllNotifications(mailContainerWithRecipientList);
     	
     	
         if (wiser.getMessages().size() > 0) {

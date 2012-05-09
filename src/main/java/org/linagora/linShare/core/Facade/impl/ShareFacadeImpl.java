@@ -187,7 +187,7 @@ public class ShareFacadeImpl implements ShareFacade {
 
 		}
 		
-		notifierService.sendAllNotifications(owner.getMail(),mailContainerWithRecipient);
+		notifierService.sendAllNotifications(mailContainerWithRecipient);
 		logger.debug("createSharingWithMail:End");
 		return result;
 	}
@@ -366,7 +366,7 @@ public class ShareFacadeImpl implements ShareFacade {
 							owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, securedUrl.getPassword(), isOneDocEncrypted, jwsEncryptUrlString));	
 				}
 				
-				notifierService.sendAllNotifications(ownerVo.getMail(), mailContainerWithRecipient);
+				notifierService.sendAllNotifications(mailContainerWithRecipient);
 			
 			} else {
 				for (DocumentVo doc : documents) {
@@ -397,7 +397,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		List<Document> docList = new ArrayList<Document>();
 		docList.add(doc);
 		
-		notifierService.sendAllNotifications(currentUser.getMail(),mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(owner, mailContainer, docList, user, owner));
+		notifierService.sendAllNotifications(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(owner, mailContainer, docList, user, owner));
     }
     
 	
@@ -432,7 +432,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			}
 		}
 		
-    	notifierService.sendAllNotifications(currentUser.getMail(),mailContainerWithRecipient);
+    	notifierService.sendAllNotifications(mailContainerWithRecipient);
     	
     	//2) normal share, notification to guest and internal user
 		List<Share> listShare = shareService.getSharesLinkedToDocument(doc);
@@ -444,7 +444,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 			mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, ""));
 		}
-		notifierService.sendAllNotifications(currentUser.getMail(),mailContainerWithRecipient);
+		notifierService.sendAllNotifications(mailContainerWithRecipient);
 
     	
     }
@@ -581,7 +581,7 @@ public class ShareFacadeImpl implements ShareFacade {
 					}
 				}
 			}
-			notifierService.sendAllNotifications(owner.getMail(),mailContainerWithRecipient);
+			notifierService.sendAllNotifications(mailContainerWithRecipient);
 		}
 	}
 	

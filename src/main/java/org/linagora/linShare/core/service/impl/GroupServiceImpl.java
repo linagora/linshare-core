@@ -68,14 +68,17 @@ public class GroupServiceImpl implements GroupService {
 		this.notifierService = notifierService;
 	}
 	
+	@Override
 	public Group findByName(String name) {
 		return groupRepository.findByName(name);
 	}
 	
+	@Override
 	public List<Group> findByUser(User user) {
 		return groupRepository.findByUser(user);
 	}
 
+	@Override
 	public Group create(User owner, String name, String description, String functionalEmail)
 			throws BusinessException {
 		Group group = new Group();
@@ -104,6 +107,7 @@ public class GroupServiceImpl implements GroupService {
 		return group;
 	}
 
+	@Override
 	public void delete(Group group, User user) throws BusinessException {
 		Group groupPersistant = groupRepository.findByName(group.getName());
 		try {
@@ -126,6 +130,7 @@ public class GroupServiceImpl implements GroupService {
 		}
 	}
 
+	@Override
 	public void update(Group group, User user) throws BusinessException {
 		Group persistentGroup = groupRepository.load(group);
 		persistentGroup.setDescription(group.getDescription());
@@ -138,6 +143,7 @@ public class GroupServiceImpl implements GroupService {
 		}
 	}
 	
+	@Override
 	public GroupMember retreiveMember(Group group,User member){
 		
 		Group groupPersistant = groupRepository.findByName(group.getName());
@@ -154,10 +160,12 @@ public class GroupServiceImpl implements GroupService {
 		return memberRequesting;
 	}
 
+	@Override
 	public void addMember(Group group, User manager, User newMember, MailContainer mailContainer) throws BusinessException {
 		addMember(group, manager, newMember, GroupMemberType.MEMBER, mailContainer);
 	}
 	
+	@Override
 	public void addMember(Group group, User manager, User newMember, GroupMemberType memberType, MailContainer mailContainer) throws BusinessException {
 		Group groupPersistant = groupRepository.findByName(group.getName());
 		GroupMember newGroupMember = new GroupMember();
@@ -203,6 +211,7 @@ public class GroupServiceImpl implements GroupService {
 		notifierService.sendAllNotifications( mailContainerWithRecipient);
 	}
 
+	@Override
 	public void removeMember(Group group, User manager, User member) throws BusinessException {
 		Group groupPersistant = groupRepository.findByName(group.getName());
 		GroupMember memberToDelete = null;
@@ -224,6 +233,7 @@ public class GroupServiceImpl implements GroupService {
 		}
 	}
 
+	@Override
 	public void updateMember(Group group, User manager, User member, GroupMemberType type) throws BusinessException {
 		Group groupPersistant = groupRepository.findByName(group.getName());
 		boolean toUpdate = false;
@@ -245,6 +255,7 @@ public class GroupServiceImpl implements GroupService {
 		}
 	}
 	
+	@Override
 	public void acceptNewMember(Group group, User manager, User memberToAccept, MailContainer mailContainer)
 			throws BusinessException {
 		Group groupPersistant = groupRepository.findByName(group.getName());
@@ -276,9 +287,10 @@ public class GroupServiceImpl implements GroupService {
 		
 		mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupMemberWithRecipient(manager, mailContainer, groupMemberToUpdate, groupPersistant));
 		
-		notifierService.sendAllNotifications( mailContainerWithRecipient);
+		notifierService.sendAllNotifications(mailContainerWithRecipient);
 	}
 	
+	@Override
 	public void rejectNewMember(Group group, User manager, User memberToReject, MailContainer mailContainer) throws BusinessException {
 
 		Group groupPersistant = groupRepository.findByName(group.getName());
@@ -301,6 +313,7 @@ public class GroupServiceImpl implements GroupService {
 		}
 	}
 	
+	@Override
 	public void deleteAllMembershipOfUser(User userToDelete)
 			throws BusinessException {
 		List<Group> groups = groupRepository.findByUser(userToDelete);
@@ -314,5 +327,4 @@ public class GroupServiceImpl implements GroupService {
 			groupRepository.update(group);
 		}
 	}
-
 }

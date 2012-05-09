@@ -221,7 +221,7 @@ public class UserServiceImpl implements UserService {
 			
 			
 			// Send an email to the guest.
-			notifierService.sendAllNotifications(owner.getMail(), mailElementsFactory.buildMailNewGuestWithOneRecipient(owner, mailContainer, owner, guest, password));
+			notifierService.sendAllNotifications(mailElementsFactory.buildMailNewGuestWithOneRecipient(owner, mailContainer, owner, guest, password));
 			logger.info("Guest " + mail + " was successfully created.");
 			return guest;
 		} else {
@@ -663,7 +663,7 @@ public class UserServiceImpl implements UserService {
         
         
         // Send an email to the guest.
-        notifierService.sendAllNotifications(guest.getMail(), mailElementsFactory.buildMailResetPasswordWithOneRecipient(guest, mailContainer, guest, password));
+        notifierService.sendAllNotifications(mailElementsFactory.buildMailResetPasswordWithOneRecipient(guest, mailContainer, guest, password));
         
 		guest.setPassword(hashedPassword);
 		guestRepository.update(guest);
