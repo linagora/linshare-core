@@ -1,8 +1,11 @@
 package org.linagora.linShare.integration.selenium;
 
+import org.junit.Ignore;
+
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.SeleneseTestCase;
 
+@Ignore
 public abstract class AbstractLinshareSeleneseTestCase  extends SeleneseTestCase {
 	
 	public void setUp() throws Exception {

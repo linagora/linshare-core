@@ -158,7 +158,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
             assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
             assertEquals("'To' address did not match", recipient,
                 msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", fromUser,
+            assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
                     msg.getReplyTo()[0].toString());
             
             wMsg = wiser.getMessages().get(1);
@@ -169,7 +169,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
             assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
             assertEquals("'To' address did not match", recipient2,
                 msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", fromUser,
+            assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
                     msg.getReplyTo()[0].toString());
             
         }else{
@@ -177,6 +177,8 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
         	Assert.fail();
         }
         
+        mailContainerWithRecipientList.get(0).setReplyTo(fromUser);
+        mailContainerWithRecipientList.get(1).setReplyTo(fromUser);
 		mailNotifierService.sendAllNotifications(mailContainerWithRecipientList);
     	
     	
@@ -189,7 +191,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
             assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
             assertEquals("'To' address did not match", recipient,
                 msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
+            assertEquals("'ReplyTo' address did not match", fromUser,
                     msg.getReplyTo()[0].toString());
             
             wMsg = wiser.getMessages().get(3);
@@ -200,7 +202,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
             assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
             assertEquals("'To' address did not match", recipient2,
                 msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
+            assertEquals("'ReplyTo' address did not match", fromUser,
                     msg.getReplyTo()[0].toString());
             
         }else{

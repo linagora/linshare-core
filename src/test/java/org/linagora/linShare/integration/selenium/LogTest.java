@@ -1,5 +1,8 @@
 package org.linagora.linShare.integration.selenium;
 
+import org.junit.Ignore;
+
+@Ignore
 public class LogTest extends AbstractLinshareSeleneseTestCase {
 
 	public void testLog() throws Exception {
