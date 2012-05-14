@@ -2,7 +2,9 @@ package org.linagora.linShare.integration.selenium;
 
 import java.io.File;
 
+import org.junit.Ignore;
 
+@Ignore
 public class AdministrationTest extends AbstractLinshareSeleneseTestCase {
 	
 	

@@ -2,7 +2,9 @@ package org.linagora.linShare.integration.selenium;
 
 import java.io.File;
 
+import org.junit.Ignore;
 
+@Ignore
 public class AddFilesTest extends AbstractLinshareSeleneseTestCase {
 	
 	public void testAddFiles() throws Exception {

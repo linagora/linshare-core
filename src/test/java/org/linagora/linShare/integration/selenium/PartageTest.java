@@ -5,7 +5,7 @@ import java.io.File;
 import org.junit.Ignore;
 
 
-
+@Ignore
 public class PartageTest extends AbstractLinshareSeleneseTestCase {
 	
 	@Ignore
