@@ -638,7 +638,7 @@ public class Index {
     }
     
     public boolean isDisplayUploadButton() {
-    	return ( (!securedStorageDisallowed) && userVo.isUpload() );
+    	return (userVo.isUpload());
     }
     
     public String getPageTitle() {
