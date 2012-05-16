@@ -397,7 +397,10 @@ public class ShareServiceImpl implements ShareService{
 				doc.setShared(false);
 				doc.setSharedWithGroup(false);
 			}
-		} else { //there is some shares and/or secured url
+		} else {
+			//there is some shares and/or secured url
+			doc.setDeletionDate(null);
+			
 			if (listShare!=null && listShare.size()>0) { //there is some shares, test if it is with groups or user
 				List<Share> listShareToGroup = new ArrayList<Share>(); //shares with groups
 				for (Share share : listShare) {
