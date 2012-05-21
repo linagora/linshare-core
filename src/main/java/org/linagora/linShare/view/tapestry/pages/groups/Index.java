@@ -22,6 +22,7 @@ package org.linagora.linShare.view.tapestry.pages.groups;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.tapestry5.RenderSupport;
@@ -44,6 +45,7 @@ import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
+import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -57,6 +59,7 @@ import org.linagora.linShare.view.tapestry.components.CreateGroupPopup;
 import org.linagora.linShare.view.tapestry.components.UserDetailsDisplayer;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
+import org.linagora.linShare.view.tapestry.models.impl.FileSorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.MemberSorterModel;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
@@ -120,6 +123,11 @@ public class Index {
 	@Property
 	@Persist
 	private List<GroupMemberVo> members;
+	
+	@Property
+	@Persist
+	private List<GroupMemberVo> mbrs;
+	
 	@Property
 	@Persist
 	private List<GroupMemberVo> waitingForApprovalMembers;
@@ -127,6 +135,9 @@ public class Index {
 	@Property
 	@Persist
 	private List<ShareDocumentVo> documents;
+	
+	@Persist
+	private boolean refreshFlag;
 
 	private GroupMemberType memberToChangeType;
 
@@ -200,7 +211,11 @@ public class Index {
                     members.add(groupMemberVo);
                 }
             }
-
+            
+            if (refreshFlag == true) {
+    			members = mbrs;
+    			refreshFlag = false;
+    		}
             sorterModel = new MemberSorterModel(members);
             memberConnected = group.findMember(userVo.getLogin());
         }
@@ -333,6 +348,16 @@ public class Index {
 			}
 		}
 		return this;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@OnEvent(value="eventReorderList")
+	public void reorderList(Object[] o1){
+		if(o1!=null && o1.length>0){
+			this.mbrs=(List<GroupMemberVo>)Arrays.copyOf(o1,1)[0];
+			this.sorterModel=new MemberSorterModel(this.mbrs);
+			refreshFlag=true;
+		}
 	}
 
 	private GroupVo getGroupVoFromName(String groupName) {
