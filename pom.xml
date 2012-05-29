@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
@@ -445,16 +445,16 @@
 			<artifactId>jcr</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>com.aparzev</groupId>
-			<artifactId>commons</artifactId>
-			<version>0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.aparzev</groupId>
-			<artifactId>doka</artifactId>
-			<version>0.1</version>
-		</dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.aparzev</groupId>-->
+            <!--<artifactId>commons</artifactId>-->
+            <!--<version>0.2</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.aparzev</groupId>-->
+            <!--<artifactId>doka</artifactId>-->
+            <!--<version>0.1</version>-->
+        <!--</dependency>-->
 		<dependency>
 			<groupId>org.safehaus.jug</groupId>
 			<artifactId>jug</artifactId>
@@ -485,7 +485,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>aspectj</groupId>
+			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.5.4</version>
 		</dependency>
@@ -1300,7 +1300,7 @@
 
 		<repository>
 			<id>IBiblio-mirror</id>
-			<url>http://www.ibiblio.org/maven/mule/dependencies/maven2/</url>
+            <url>http://www.ibiblio.org/pub/mirrors/maven/mule/dependencies/maven2/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -1340,7 +1340,7 @@
 		</repository>
 		<repository>
 			<id>Maven Central Repository</id>
-			<url>http://repo1.maven.org/maven2/</url>
+            <url>http://repo1.maven.org/maven2</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
