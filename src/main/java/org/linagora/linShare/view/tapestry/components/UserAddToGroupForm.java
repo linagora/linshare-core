@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
@@ -81,11 +81,11 @@ public class UserAddToGroupForm {
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-    @ApplicationState
+    @SessionState
     @Property
     private UserVo userLoggedIn;
 
-    @ApplicationState
+    @SessionState
     private ShareSessionObjects shareSessionObjects;
     
 	@Property

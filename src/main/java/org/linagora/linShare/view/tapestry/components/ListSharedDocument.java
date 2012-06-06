@@ -36,7 +36,7 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.StreamResponse;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
 
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = { "ListDocument.js"})
+@Import(library = { "ListDocument.js"})
 public class ListSharedDocument {
 
 	private static final Logger logger = LoggerFactory.getLogger(ListSharedDocument.class);
@@ -643,9 +643,9 @@ public class ListSharedDocument {
     	// Another native TML in HTML was: 
 		// exclude="identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment"
 		// add="friendlySize,createDate,expirationDate,signed,sharedBy,actions"
-
+	
     	model.add("fileProperties",null);
-    	model.add("expirationDate",null);
+        //model.add("expirationDate",null);
     	model.add("shareEdit",null);
 		model.add("selectedValue", null);
 //    	model.add("actions",null);

@@ -20,8 +20,8 @@
 */
 package org.linagora.linShare.view.tapestry.pages.help;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -40,7 +40,7 @@ public class Index {
 	@Inject 
 	private Logger logger;
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
@@ -49,12 +49,12 @@ public class Index {
 	 ************************************************************ */
 
 	@SuppressWarnings("unused")
-	@ApplicationState
+	@SessionState
 	private HelpsASO helpsASO;
 	
 	
 	@SuppressWarnings("unused")
-	@ApplicationState(create=false)
+	@SessionState(create=false)
 	private UserVo userVo;
 	
 	@SuppressWarnings("unused") // used in tml

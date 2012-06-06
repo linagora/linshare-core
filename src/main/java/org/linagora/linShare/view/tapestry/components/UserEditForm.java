@@ -28,11 +28,10 @@ import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
@@ -43,6 +42,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.UserType;
@@ -58,7 +58,7 @@ import org.slf4j.Logger;
 
 /** This component is used to edit an user.
  */
-@IncludeJavaScriptLibrary(value = {"UserEditForm.js"})
+@Import(library = {"UserEditForm.js"})
 public class UserEditForm {
 
 	/* ***********************************************************
@@ -107,7 +107,7 @@ public class UserEditForm {
     private ShareSessionObjects shareSessionObjects;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 
     @Property
     private String mail;

@@ -51,7 +51,7 @@
 					</t:pageLink>
 					<t:actionLink t:id="deleteDomain" context="domain.identifier" t:zone="zoneConfirmDelete"
 						title="${message:pages.administration.domains.index.domain.delete.button}">
-						<span onClick="window_confirm.showCenter(true)">
+						<span onclick="window_confirm.showCenter(true)">
 							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
 						</span>
 					</t:actionLink>

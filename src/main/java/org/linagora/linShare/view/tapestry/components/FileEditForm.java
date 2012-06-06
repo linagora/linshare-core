@@ -22,8 +22,6 @@ package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
@@ -32,10 +30,12 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.Retain;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -95,7 +95,7 @@ public class FileEditForm {
     private String _assignedZoneClientId;
     
     @Environmental
-    private RenderSupport _pageRenderSupport;
+    private JavaScriptSupport _pageRenderSupport;
     
     /**
      * set explicitly the id for the component
@@ -109,11 +109,11 @@ public class FileEditForm {
     private String editFileWithUuid;
     
     
-    @ApplicationState
+    @SessionState
     @Property
     private UserVo userLoggedIn;
 
-    @ApplicationState
+    @SessionState
     private ShareSessionObjects shareSessionObjects;
 
     @Property

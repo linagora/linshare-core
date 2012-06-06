@@ -21,7 +21,7 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -35,7 +35,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = {"ActionsBarDocument.js"})
+@Import(library={"ActionsBarDocument.js"})
 public class ActionsBarDocument {
 
 

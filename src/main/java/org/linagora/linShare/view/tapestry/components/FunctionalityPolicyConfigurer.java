@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -34,7 +34,7 @@ import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.vo.PolicyVo;
 import org.slf4j.Logger;
 
-@IncludeJavaScriptLibrary(value = {"FunctionalityPolicyConfigurer.js"})
+@Import(library = {"FunctionalityPolicyConfigurer.js"})
 public class FunctionalityPolicyConfigurer {
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property

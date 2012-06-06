@@ -22,7 +22,7 @@ package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.annotations.IncludeStylesheet;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -51,7 +51,7 @@ import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
 /*IncludeStylesheet({"context:css/fonts-min.css","context:css/reset-min.css", "context:css/grids.css"})*/
 
-@IncludeStylesheet({"context:css/reset-fonts-grids.css"})
+@Import(stylesheet={"context:css/reset-fonts-grids.css"})
 @SupportsInformalParameters
 public class BorderLayout {
 

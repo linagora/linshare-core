@@ -20,8 +20,8 @@
 */
 package org.linagora.linShare.view.tapestry.pages.help;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -36,7 +36,7 @@ public class FAQ {
 	@Inject 
 	private Logger logger;
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 

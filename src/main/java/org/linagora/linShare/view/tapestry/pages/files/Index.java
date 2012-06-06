@@ -26,12 +26,11 @@ import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -43,6 +42,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
@@ -88,7 +88,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  * @author ncharles
  *
  */
-@IncludeJavaScriptLibrary("Index.js")
+@Import(library={"Index.js"})
 public class Index {
 
 	public final static Logger Logger=LoggerFactory.getLogger(Index.class);
@@ -128,7 +128,7 @@ public class Index {
     private Response response;
     
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
     
 	@Inject
     private AbstractDomainFacade domainFacade;

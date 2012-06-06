@@ -26,18 +26,18 @@ import java.util.List;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
@@ -53,14 +53,14 @@ import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@IncludeJavaScriptLibrary(value = {"SizeOfPopup.js"})
+@Import(library = {"SizeOfPopup.js"})
 public class ShareWithGroupsPopup{
 	private static final Logger logger = LoggerFactory.getLogger(ShareWithGroupsPopup.class);
 	
-	@ApplicationState
+	@SessionState
 	private UserVo userVo;
 
-	@ApplicationState
+	@SessionState
 	private ShareSessionObjects shareSessionObjects;
 	
 	@Persist
@@ -118,7 +118,7 @@ public class ShareWithGroupsPopup{
 	private GroupFacade groupFacade;
 	
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 
 	@Inject
 	private ComponentResources componentResources;

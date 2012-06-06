@@ -27,7 +27,6 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.json.JSONObject;
-import org.chenillekit.tapestry.core.components.Window;
 import org.linagora.linShare.view.tapestry.objects.JSONRaw;
 
 /**

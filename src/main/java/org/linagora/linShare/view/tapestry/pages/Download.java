@@ -39,6 +39,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.SecuredUrlFacade;
 import org.linagora.linShare.core.domain.entities.MailContainer;
@@ -102,7 +103,7 @@ public class Download {
 	private DocumentFacade documentFacade;
 
 	@Inject
-	private RenderSupport renderSupport;
+	private JavaScriptSupport renderSupport;
 
 	@Inject
 	private BusinessMessagesManagementService messagesManagementService;

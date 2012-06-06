@@ -21,7 +21,7 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -33,7 +33,7 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = {"ActionsBarDocument.js"})
+@Import(library = {"ActionsBarDocument.js"})
 public class ActionsBarUser {
 	@Property(read=true)
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)

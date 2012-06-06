@@ -42,11 +42,10 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -63,6 +62,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
@@ -93,7 +93,7 @@ import org.slf4j.LoggerFactory;
 
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = { "ListDocument.js"})
+@Import(library= { "ListDocument.js"})
 public class ListDocument {
 
 	/***************************************************************************
@@ -159,7 +159,7 @@ public class ListDocument {
 	 **************************************************************************/
 
 	@Environmental
-	private RenderSupport renderSupport;
+	private JavaScriptSupport renderSupport;
 
 	@Inject
 	private DocumentFacade documentFacade;

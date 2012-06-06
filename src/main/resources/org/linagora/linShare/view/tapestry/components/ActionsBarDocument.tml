@@ -26,7 +26,7 @@
 		<!-- Action > Delete -->
 		<li>
 			<a href="#"
-				class="listDocument" onClick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)">
+				class="listDocument" onclick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)">
 				<img src="${asset:context:images/icons/delete-small.png}" alt=""/>
 				${message:components.listDocument.action.delete}
 				</a>
@@ -45,12 +45,12 @@
 		<!-- Action > Encrypt/Decrypt -->
 		<t:if t:test="activeEncipherment">
 		<li>
-			<a href="#" class="listDocument" onClick="setFormWithAction('${formName}','CRYPT_ACTION');window_passwordCryptPopupSubmit.showCenter(true)">
+			<a href="#" class="listDocument" onclick="setFormWithAction('${formName}','CRYPT_ACTION');window_passwordCryptPopupSubmit.showCenter(true)">
 			<img src="${asset:context:images/icons/encrypt-small.png}"/> ${message:components.listDocument.action.crypt}
 			</a>
 		</li>
 		<li>
-			<a href="#" class="listDocument" onClick="setFormWithAction('${formName}','DECRYPT_ACTION');window_passwordDecryptPopupSubmit.showCenter(true)">
+			<a href="#" class="listDocument" onclick="setFormWithAction('${formName}','DECRYPT_ACTION');window_passwordDecryptPopupSubmit.showCenter(true)">
 			<img src="${asset:context:images/icons/encrypt-small.png}"/> ${message:components.listDocument.action.decrypt}
 			</a>
 		</li>

@@ -31,10 +31,9 @@ import java.util.StringTokenizer;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -48,6 +47,7 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
@@ -76,7 +76,7 @@ import org.slf4j.LoggerFactory;
 
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = {"QuickSharePopup.js", "SizeOfPopup.js"})
+@Import(library = {"QuickSharePopup.js", "SizeOfPopup.js"})
 public class QuickSharePopup{
 	private static final Logger logger = LoggerFactory.getLogger(QuickSharePopup.class);
 
@@ -163,7 +163,7 @@ public class QuickSharePopup{
 	private DocumentFacade documentFacade;
 	
 	@Inject
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 	
 	@Inject
 	private ShareFacade shareFacade;

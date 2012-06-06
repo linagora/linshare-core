@@ -22,12 +22,12 @@ package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
@@ -46,10 +46,10 @@ import org.slf4j.LoggerFactory;
 public class CreateGroupPopup {
 	private static final Logger logger = LoggerFactory.getLogger(CreateGroupPopup.class);
 	
-    @ApplicationState
+    @SessionState
     private UserVo userLoggedIn;
 
-    @ApplicationState
+    @SessionState
     private ShareSessionObjects shareSessionObjects;
     @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=600", "height=260"})
