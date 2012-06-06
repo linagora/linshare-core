@@ -40,7 +40,7 @@
 			
 	<t:if test="memberConnected.allowedToManageUser">
 		<h2>${message:pages.groups.waitingForApprovalMembers.heading}</h2>
-		<t:grid source="waitingForApprovalMembers" row="waitingForApprovalMember" include="mail" add="membershipDate, moderation" rowsPerPage="5">
+		<t:grid source="waitingForApprovalMembers" row="waitingForApprovalMember" include="mail" add="moderation" rowsPerPage="5">
 			<t:parameter t:name="mailHeader">
 				${message:pages.groups.waitingForApprovalMembers.grid.user}
 			</t:parameter>
