@@ -170,6 +170,10 @@ public class ShareWithGroupsPopup{
 	
 	
     public Block onSuccess() throws BusinessException {
+        if (selectedGroups == null) {
+            return null;
+        }
+
         for (GroupVo groupVo : selectedGroups) {
             if (!groupsVo.contains(groupVo)) {
             	groupsVo.add(groupVo);
@@ -189,8 +193,8 @@ public class ShareWithGroupsPopup{
 			businessMessagesManagementService.notify(e1);
 		}
 
-		
 		shareSessionObjects=new ShareSessionObjects();
+
 		if (sharing.getFailsItem().size()>0) {
 			shareSessionObjects.addError(messages.get("components.confirmSharePopup.fail"));
 		} else {
