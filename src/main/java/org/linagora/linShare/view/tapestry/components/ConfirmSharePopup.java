@@ -32,11 +32,10 @@ import java.util.StringTokenizer;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
@@ -47,6 +46,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linShare.core.Facade.ShareExpiryDateFacade;
@@ -72,7 +72,7 @@ import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@IncludeJavaScriptLibrary("SizeOfPopup.js")
+@Import(library={"SizeOfPopup.js"})
 public class ConfirmSharePopup{
 	private static final Logger logger = LoggerFactory.getLogger(ConfirmSharePopup.class);
 	
@@ -194,7 +194,7 @@ public class ConfirmSharePopup{
     private BusinessMessagesManagementService businessMessagesManagementService;		
 	
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 
 	@Inject
 	private ComponentResources componentResources;

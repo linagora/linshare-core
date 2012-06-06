@@ -61,12 +61,13 @@ public class AssetProtectionDispatcher implements Dispatcher {
 
 		//we only protect assets, and don't examine any other url's.
 		String path = request.getPath();
+
 		if (!path.startsWith(RequestConstants.ASSET_PATH_PREFIX)) {
 			return false;
 		}
 		
 		String resourcePath = assetAliasManager.toResourcePath(path);
-
+		
 		for(Pattern p : patterns) {
 			if(p.matcher(resourcePath).matches()) {
 				//the resource is authorized

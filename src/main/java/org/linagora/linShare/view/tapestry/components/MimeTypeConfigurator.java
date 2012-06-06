@@ -22,22 +22,23 @@ package org.linagora.linShare.view.tapestry.components;
 
 import java.util.List;
 
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.MimeTypeFacade;
 import org.linagora.linShare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linShare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linShare.core.exception.BusinessException;
 
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = { "MimeTypeConfigurator.js" })
+@Import(library = { "MimeTypeConfigurator.js" })
+
 public class MimeTypeConfigurator {
 	/* ***********************************************************
      *                         Parameters
@@ -53,7 +54,7 @@ public class MimeTypeConfigurator {
     
     
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */

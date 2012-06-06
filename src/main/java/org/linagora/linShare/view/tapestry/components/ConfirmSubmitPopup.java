@@ -27,6 +27,7 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Used to confirm in a form
@@ -63,7 +64,7 @@ public class ConfirmSubmitPopup {
      ************************************************************ */
 		
 	@Inject
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 	
 	
 	

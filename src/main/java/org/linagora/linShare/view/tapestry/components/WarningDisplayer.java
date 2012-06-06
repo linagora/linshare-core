@@ -29,6 +29,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * display a warning in a popup
@@ -61,7 +62,7 @@ public class WarningDisplayer {
     private String _assignedZoneClientId;
     
     @Environmental
-    private RenderSupport _pageRenderSupport;
+    private JavaScriptSupport _pageRenderSupport;
     
     
     /**

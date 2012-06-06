@@ -25,11 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -41,6 +40,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
@@ -55,7 +55,7 @@ import org.linagora.linShare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@IncludeJavaScriptLibrary("../../components/SizeOfPopup.js")
+@Import(library={"../../components/SizeOfPopup.js"})
 public class Index {
 
     /* ***********************************************************
@@ -108,7 +108,7 @@ public class Index {
 	private boolean userVoExists;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 
     @Persist
     private boolean flagFinishShare;

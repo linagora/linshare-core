@@ -21,10 +21,10 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.linagora.linShare.core.domain.vo.HelpVO;
 import org.linagora.linShare.view.tapestry.enums.HelpType;
@@ -40,7 +40,7 @@ import org.linagora.linShare.view.tapestry.pages.help.ManualVideo;
  */
 public class HelpLauncher {
 
-	@ApplicationState
+	@SessionState
 	private HelpsASO helpASO;
 
 	

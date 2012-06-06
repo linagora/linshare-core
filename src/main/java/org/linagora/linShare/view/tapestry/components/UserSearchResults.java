@@ -27,24 +27,24 @@ import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
@@ -64,7 +64,7 @@ import org.slf4j.Logger;
  *
  */
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = {"UserSearchResults.js"})
+@Import(library = {"UserSearchResults.js"})
 public class UserSearchResults {
 
     /* ***********************************************************
@@ -127,7 +127,7 @@ public class UserSearchResults {
     private ComponentResources componentResources;
     
 	@Environmental
-	private RenderSupport renderSupport;
+	private JavaScriptSupport renderSupport;
     
     
 	@Inject @Symbol("linshare.users.internal.defaultView.showAll")
@@ -137,9 +137,9 @@ public class UserSearchResults {
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-    @ApplicationState
+    @SessionState
     private UserVo userLoggedIn;
-    @ApplicationState
+    @SessionState
     private ShareSessionObjects shareSessionObjects;
     @Property
     private UserVo user;

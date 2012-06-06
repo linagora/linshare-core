@@ -29,13 +29,13 @@ import java.util.List;
 
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.TextArea;
@@ -65,7 +65,7 @@ import org.slf4j.Logger;
  */
 public class Index {
 
-    @ApplicationState
+    @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
 
@@ -139,7 +139,7 @@ public class Index {
 	@Persist
 	private LogCriteriaBean criteria;
 	
-	@ApplicationState
+	@SessionState
 	@Property
 	private UserVo userVo;
 

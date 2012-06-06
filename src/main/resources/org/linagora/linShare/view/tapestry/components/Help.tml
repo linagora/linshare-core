@@ -20,12 +20,12 @@
 			<t:loop source="subsections" value="subsection">
 				<t:if t:test="current">
 				<li class="current" id="subsectionMenu${subsection.index}">
-					<a href="#subsection${subsection.index}" onClick="changeStyle('${subsectionLength}','${subsection.index}','subsection','${classContent}','${classContentHover}'); return changeStyle('${subsectionLength}','${subsection.index}','subsectionMenu','${classNavigation}','${classNavigationHover}')"><span>${subsection.name}</span></a>
+					<a href="#subsection${subsection.index}" onclick="changeStyle('${subsectionLength}','${subsection.index}','subsection','${classContent}','${classContentHover}'); return changeStyle('${subsectionLength}','${subsection.index}','subsectionMenu','${classNavigation}','${classNavigationHover}')"><span>${subsection.name}</span></a>
 				</li>
 				</t:if>
 				<t:if t:test="current" negate="true">
 				<li class="" id="subsectionMenu${subsection.index}">
-					<a href="#subsection${subsection.index}" onClick="changeStyle('${subsectionLength}','${subsection.index}','subsection','${classContent}','${classContentHover}'); return changeStyle('${subsectionLength}','${subsection.index}','subsectionMenu','${classNavigation}','${classNavigationHover}')"><span>${subsection.name}</span></a>
+					<a href="#subsection${subsection.index}" onclick="changeStyle('${subsectionLength}','${subsection.index}','subsection','${classContent}','${classContentHover}'); return changeStyle('${subsectionLength}','${subsection.index}','subsectionMenu','${classNavigation}','${classNavigationHover}')"><span>${subsection.name}</span></a>
 				</li>
 				</t:if>
 			</t:loop>

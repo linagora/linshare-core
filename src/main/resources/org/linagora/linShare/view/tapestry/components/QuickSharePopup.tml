@@ -10,10 +10,13 @@
         function sendFiles() {
         	var textarea_size = document.getElementById('recipientsPatternQuickSharePopup').value.length;
         	if(textarea_size != 0){
+        		
             	document.body.style.cursor="wait";
                 var link = document.getElementById('quickshare_send_link');
+                
                 link.onclick = "";
-                launchUpload('flexUpload');        		
+                launchUpload('flexUpload');
+                
         	}else{
         		document.getElementById('recipientsPatternQuickSharePopup').className += " t-error ";
         	}
@@ -98,10 +101,19 @@
 			
 
 			<div class="button">
+			
+					<input name="submitQuickShare" id="submitQuickShare" type="submit" style="display:none"/>
+					
+				    <a id="quickshare_send_link" href="#" class="button" onclick="sendFiles();">
+                   		<span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
+               		</a>
+					
+					<!-- 
                		<t:submit name="submitQuickShare" id="submitQuickShare" style="display:none" />
                		<a id="quickshare_send_link" href="#" class="button" onclick="sendFiles();">
-                    <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
+                    	<span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
                 	</a>
+                	-->
 					<t:actionlink t:id="cancelQuickShare" class="button">
                     	<span onclick='Windows.close("${JSONId}")'><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span>
 					</t:actionlink>

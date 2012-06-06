@@ -28,20 +28,20 @@ import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
@@ -63,7 +63,7 @@ import org.slf4j.Logger;
 /** This component is used to create a new user.
  */
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary(value = {"GuestEditForm.js"})
+@Import(library = {"GuestEditForm.js"})
 public class GuestEditForm {
 
 	/* ***********************************************************
@@ -109,15 +109,15 @@ public class GuestEditForm {
 	/* ***********************************************************
      *                Properties & injected symbol, ASO, etc
      ************************************************************ */
-    @ApplicationState
+    @SessionState
     @Property
     private UserVo userLoggedIn;
 
-    @ApplicationState
+    @SessionState
     private ShareSessionObjects shareSessionObjects;
     
 	@Environmental
-	private RenderSupport renderSupport;
+	private JavaScriptSupport renderSupport;
 
     @Property
     private String mail;

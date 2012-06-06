@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -39,7 +39,7 @@ import org.linagora.linShare.core.exception.BusinessException;
 /**
  *
  */
-@IncludeJavaScriptLibrary(value = {"LoginFormComponent.js"})
+@Import(library = {"LoginFormComponent.js"})
 public class LoginFormComponent {
 
 	/* ***********************************************************

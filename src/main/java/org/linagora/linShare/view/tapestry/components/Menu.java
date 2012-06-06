@@ -33,6 +33,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.view.tapestry.beans.MenuEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,7 @@ public class Menu implements ClientElement{
 	private Request request;
 	
 	@Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 	
 	@Inject
 	private ComponentResources componentResources;

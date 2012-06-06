@@ -25,10 +25,10 @@ import java.util.List;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.annotations.ApplicationState;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.internal.services.ContextResource;
 import org.apache.tapestry5.ioc.Messages;
@@ -54,12 +54,12 @@ import org.linagora.linShare.view.tapestry.services.BusinessMessagesManagementSe
  *
  */
 
-@IncludeJavaScriptLibrary(value = {"Help.js"})
+@Import(library = {"Help.js"})
 public class Help {
 
 
 
-	@ApplicationState
+	@SessionState
 	private HelpsASO helpsASO;
 	
 

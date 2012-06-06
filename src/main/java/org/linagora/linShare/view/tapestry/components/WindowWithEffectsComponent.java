@@ -30,7 +30,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.json.JSONObject;
-import org.chenillekit.tapestry.core.components.Window;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.view.tapestry.objects.JSONRaw;
 
 /**
@@ -85,7 +85,7 @@ public class WindowWithEffectsComponent extends Window {
     
 
     @Environmental
-    private RenderSupport _pageRenderSupport;
+    private JavaScriptSupport _pageRenderSupport;
 
 	
 	

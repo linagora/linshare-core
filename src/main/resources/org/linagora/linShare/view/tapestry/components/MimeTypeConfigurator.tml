@@ -16,9 +16,9 @@
 		</div>
 
 		<div id="mimetypeActions">
-			<a onClick="setAllAuthorised()">${message:components.mimetypeconfigurator.authorised.all}</a>&nbsp;
-			<a onClick="setAllDenied()">${message:components.mimetypeconfigurator.denied.all}</a>&nbsp;
-			<a onClick="setAllWarn()">${message:components.mimetypeconfigurator.warn.all}</a>
+			<a onclick="setAllAuthorised()">${message:components.mimetypeconfigurator.authorised.all}</a>&nbsp;
+			<a onclick="setAllDenied()">${message:components.mimetypeconfigurator.denied.all}</a>&nbsp;
+			<a onclick="setAllWarn()">${message:components.mimetypeconfigurator.warn.all}</a>
 		</div>
 
 		<t:grid source="supportedMimeType" exclude="extensions,mimetype,id,status" row="allowedMimeTypeVO" add="actions" reorder="actions,label" rowsPerPage="${numberOfRow}">

@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
@@ -45,7 +45,7 @@ import org.linagora.linShare.view.tapestry.models.SorterModel;
  *
  * @param <T> the type of the list.
  */
-@IncludeJavaScriptLibrary(value = {"Sorter.js"})
+@Import(library = {"Sorter.js"})
 public class Sorter<T> {
 
 	private final static String SEPARATOR=",";

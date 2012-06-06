@@ -148,7 +148,7 @@
 				<t:if test="userDomainMovable">
 					<t:actionLink t:id="domainMove" context="user.login" t:zone="zoneDomainFormMove"
 						title="${message:components.userSearch.action.domainMove.title}">
-						<span onClick="zoneDomainMoveWindow.showCenter(true)">
+						<span onclick="zoneDomainMoveWindow.showCenter(true)">
 							<img src="${asset:context:images/icons/update.png}" alt="${message:components.userSearch.action.domainMove.title}" />
 						</span>
 					</t:actionLink>
@@ -156,7 +156,7 @@
 				<t:if test="userEditable">
 					<t:actionLink t:id="edit" context="user.login" t:zone="userEditFormZone"
 						title="${message:components.userSearch.action.edit.title}">
-						<span onClick="userEditWindow.showCenter(true)">
+						<span onclick="userEditWindow.showCenter(true)">
 							<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
 						</span>
 					</t:actionLink>
@@ -164,7 +164,7 @@
 				<t:if test="userDeletable">
 					<t:actionLink t:id="delete" context="user.login" t:zone="zoneConfirmDelete"
 						title="${message:components.userSearch.action.delete.title}">
-						<span onClick="window_confirm.showCenter(true)">
+						<span onclick="window_confirm.showCenter(true)">
 							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
 						</span>
 					</t:actionLink>

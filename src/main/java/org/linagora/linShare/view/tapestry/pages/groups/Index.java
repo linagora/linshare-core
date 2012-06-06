@@ -25,9 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -39,13 +37,13 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.GroupMemberType;
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupMemberVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
@@ -59,7 +57,6 @@ import org.linagora.linShare.view.tapestry.components.CreateGroupPopup;
 import org.linagora.linShare.view.tapestry.components.UserDetailsDisplayer;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linShare.view.tapestry.models.SorterModel;
-import org.linagora.linShare.view.tapestry.models.impl.FileSorterModel;
 import org.linagora.linShare.view.tapestry.models.impl.MemberSorterModel;
 import org.linagora.linShare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
@@ -142,8 +139,8 @@ public class Index {
 	private GroupMemberType memberToChangeType;
 
 	@Environmental
-	private RenderSupport renderSupport;
-	@ApplicationState
+	private JavaScriptSupport renderSupport;
+	@SessionState
 	private ShareSessionObjects shareSessionObjects;
 	@Inject
 	private Messages messages;

@@ -42,6 +42,7 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.domain.vo.UserSignature;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
@@ -83,7 +84,7 @@ public class SelectKeystore {
 	private UserSignature userSignature;
 	
 	@Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport renderSupport;
 	
 	@Inject
 	private PersistentLocale persistentLocale;
