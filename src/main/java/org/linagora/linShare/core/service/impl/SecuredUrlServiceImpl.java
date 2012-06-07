@@ -110,8 +110,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 		// Hash the password
 		if (password != null) {
-			String hashedPassword = HashUtils.hashSha1withBase64(password
-					.getBytes());
+			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
 			securedUrl.setPassword(hashedPassword);
 		}
 		// save the securedurl

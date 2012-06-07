@@ -45,6 +45,9 @@ public class SecuredUrl {
 	private List<Document> documents;
 
 	private String password;
+	
+	// very nasty fix 
+	private String temporaryPlainTextpassword;
 
 	// for hibernate
 	protected SecuredUrl() {
@@ -165,6 +168,14 @@ public class SecuredUrl {
 
 	public List<Contact> getRecipients() {
 		return Collections.unmodifiableList(recipients);
+	}
+
+	public String getTemporaryPlainTextpassword() {
+		return temporaryPlainTextpassword;
+	}
+
+	public void setTemporaryPlainTextpassword(String temporaryPlainTextpassword) {
+		this.temporaryPlainTextpassword = temporaryPlainTextpassword;
 	}
 
 }
