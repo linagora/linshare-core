@@ -363,7 +363,7 @@ public class ShareFacadeImpl implements ShareFacade {
 					User owner_ = userRepository.findByLogin(ownerVo.getLogin());
 					
 					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(
-							owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, securedUrl.getPassword(), isOneDocEncrypted, jwsEncryptUrlString));	
+							owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, securedUrl.getTemporaryPlainTextpassword(), isOneDocEncrypted, jwsEncryptUrlString));	
 				}
 				
 				notifierService.sendAllNotifications(mailContainerWithRecipient);

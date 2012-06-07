@@ -692,8 +692,10 @@ public class ShareServiceImpl implements ShareService{
 				password = passwordService.generatePassword();
 			}
 		}
-		
-		return shareDocumentsWithSecuredAnonymousUrlToUser(sender, docList, password, recipients, expiryDate);
+		SecuredUrl url= shareDocumentsWithSecuredAnonymousUrlToUser(sender, docList, password, recipients, expiryDate);
+		// Nasty fix : we need to store the plain text password for mail notification
+		url.setTemporaryPlainTextpassword(password);
+		return url;
 	}
 
 
