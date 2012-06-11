@@ -32,7 +32,7 @@
         </form>
 		
 		<t:if t:test="ssoButtonHide" t:negate="true">
-		<t:pagelink page="sso"><form><input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel.internal}"/></form></t:pagelink>
+		<form><t:pagelink page="sso"><input type="submit" class="loginSubmit" value="${message:pages.login.form.logLabel.internal}"/></t:pagelink></form>
         </t:if>
         
         <t:if t:test="badCredentials">
