@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.naming.Context;
 
 import org.linagora.linShare.core.domain.vo.LDAPConnectionVo;
+import org.linagora.linShare.core.utils.MySSLSocketFactory;
 
 public class LDAPConnection {
 	/**
@@ -17,7 +18,7 @@ public class LDAPConnection {
 	private String securityAuth;
 	private String securityPrincipal;
 	private String securityCredentials;
-	
+
 	public LDAPConnection(LDAPConnectionVo ldapConn) {
 		this.identifier = ldapConn.getIdentifier();
 		this.providerUrl = ldapConn.getProviderUrl();
@@ -81,7 +82,7 @@ public class LDAPConnection {
 	public void setSecurityCredentials(String securityCredentials) {
 		this.securityCredentials = securityCredentials;
 	}
-
+	
 	public Properties toLdapProperties() {
 		Properties ldapProperties = new Properties();
 		ldapProperties.put(Context.PROVIDER_URL, this.providerUrl);
@@ -92,6 +93,10 @@ public class LDAPConnection {
 		}
 		if (this.securityCredentials != null) {
 			ldapProperties.put(Context.SECURITY_CREDENTIALS, this.securityCredentials);
+		}
+		if (this.providerUrl.contains("ldaps://")) {
+			ldapProperties.put(Context.SECURITY_PROTOCOL, "ssl");
+			ldapProperties.put("java.naming.ldap.factory.socket", "org.linagora.linShare.core.utils.MySSLSocketFactory");
 		}
 		return ldapProperties;
 	}
