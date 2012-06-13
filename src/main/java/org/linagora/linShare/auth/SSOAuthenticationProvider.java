@@ -21,12 +21,12 @@
  */
 package org.linagora.linShare.auth;
 
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationException;
-import org.springframework.security.providers.AuthenticationProvider;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.userdetails.UserDetails;
-
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 public class SSOAuthenticationProvider implements AuthenticationProvider {
 	
@@ -49,6 +49,6 @@ public class SSOAuthenticationProvider implements AuthenticationProvider {
 
 	@SuppressWarnings("rawtypes")
 	public boolean supports(Class authentication) {
-		return (org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationToken.class).isAssignableFrom(authentication);
+		return (PreAuthenticatedAuthenticationToken.class).isAssignableFrom(authentication);
 	}
 }

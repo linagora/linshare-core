@@ -31,9 +31,9 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.LogEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  *  Populates the UserVo ASO if user is authentified via Spring Security.

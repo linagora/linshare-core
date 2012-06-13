@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.linagora.linShare.core.domain.entities.Cookie;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.CookieRepository;
-import org.springframework.security.Authentication;
-import org.springframework.security.ui.rememberme.PersistentTokenBasedRememberMeServices;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 
 /**
  * Service extending PersistentTokenBasedRememberMeServices to allow linshare

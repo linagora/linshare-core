@@ -22,9 +22,7 @@ package org.linagora.linShare.auth;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.naming.NamingException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linShare.auth.exceptions.BadDomainException;
@@ -35,16 +33,20 @@ import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.UserService;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationException;
-import org.springframework.security.AuthenticationServiceException;
-import org.springframework.security.BadCredentialsException;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.providers.dao.AbstractUserDetailsAuthenticationProvider;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
+import org.linagora.linShare.core.domain.entities.Role;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+
+
+
 
 public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProvider {
 	
@@ -201,7 +203,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 
         List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
 
-		return new org.springframework.security.userdetails.User(user.getLogin(), "", true, true, true, true,
+		return new org.springframework.security.core.userdetails.User(user.getLogin(), "", true, true, true, true,
 		                grantedAuthorities.toArray(new GrantedAuthority[0]));
 	}
 	

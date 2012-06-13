@@ -1,100 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+  xmlns:sec="http://www.springframework.org/schema/security"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+          http://www.springframework.org/schema/security
+          http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
 
-    <bean id="filterChainProxy" class="org.springframework.security.util.FilterChainProxy">
-        <property name="filterInvocationDefinitionSource">
-            <value>
-                   CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
-                   PATTERN_TYPE_APACHE_ANT
-                   /=httpSessionIntegrationFilter,rememberMeProcessingFilter
-                   /assets/**=#NONE#
-                   /applet/**=#NONE#
-                   /css/**=#NONE#
-                   /images/**=#NONE#
-                   /videos/**=#NONE#
-                   /**/help/**=#NONE#
-                   /**/password/**=#NONE#
-                   /**/*.js=#NONE#
-                   /**/*.css=#NONE#
-                   /**/*.swf=#NONE#
-                   /**/en=httpSessionIntegrationFilter,rememberMeProcessingFilter
-                   /**/fr=httpSessionIntegrationFilter,rememberMeProcessingFilter
-                   /**/nl=httpSessionIntegrationFilter,rememberMeProcessingFilter
-                   /download/**=#NONE#
-                   /**/download.passwordpopup.formpassword=#NONE#
-                   /download.downloadthemall/**=#NONE#
-                   /localDecrypt/**=#NONE#
-                   /documentrestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
-                   /userrestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
-                   /sharerestservice/**=httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor
-                   /index.form=httpSessionIntegrationFilter
-                   /sso=httpSessionIntegrationFilter,casExceptionTranslationFilter,filterSecurityInterceptor
-                   /j_security_check=httpSessionIntegrationFilter,authenticationProcessingFilter
-                   /j_spring_cas_security_check=httpSessionIntegrationFilter,casProcessingFilter
-                   /**=httpSessionIntegrationFilter,exceptionTranslationFilter,casSingleSignOutFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor
-            </value>
-        </property>
+
+    <bean id="springSecurityFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+    
+	    <sec:filter-chain-map path-type="ant" >
+        <sec:filter-chain pattern="/" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter"/>
+	    <sec:filter-chain pattern="/assets/**" filters="none"/>
+	    <sec:filter-chain pattern="/css/**" filters="none"/>
+	    <sec:filter-chain pattern="/images/**" filters="none"/>
+	    <sec:filter-chain pattern="/videos/**" filters="none"/>
+
+	    <sec:filter-chain pattern="/**/help/**" filters="none"/>
+	    <sec:filter-chain pattern="/**/password/**" filters="none"/>
+	    <sec:filter-chain pattern="/**/*.js" filters="none"/>
+	    <sec:filter-chain pattern="/**/*.css" filters="none"/>
+	    <sec:filter-chain pattern="/**/*.swf" filters="none"/>
+	    
+	    
+	    <sec:filter-chain pattern="/**/en" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter"/>
+	    <sec:filter-chain pattern="/**/fr" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter"/>
+	    <sec:filter-chain pattern="/**/nl" filters="httpSessionIntegrationFilter,rememberMeProcessingFilter"/>
+	    
+	    <sec:filter-chain pattern="/download/**" filters="none"/>
+	    <sec:filter-chain pattern="/**/download.passwordpopup.formpassword" filters="none"/>
+	    <sec:filter-chain pattern="/download.downloadthemall/**" filters="none"/>
+	    <sec:filter-chain pattern="/localDecrypt/**" filters="none"/>
+	    
+	    
+	    <sec:filter-chain pattern="/documentrestservice/**" filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor"/>
+	    <sec:filter-chain pattern="/userrestservice/**" filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor"/>
+	    <sec:filter-chain pattern="/sharerestservice/**" filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor"/>
+	    <sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter"/>
+	    <sec:filter-chain pattern="/sso" filters="httpSessionIntegrationFilter,casExceptionTranslationFilter,filterSecurityInterceptor"/>
+	    <sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter"/>
+	    <sec:filter-chain pattern="/j_spring_cas_security_check" filters="httpSessionIntegrationFilter,casProcessingFilter"/>
+	    <sec:filter-chain pattern="/**" filters="httpSessionIntegrationFilter,exceptionTranslationFilter,casSingleSignOutFilter,logoutFilter,rememberMeProcessingFilter,filterSecurityInterceptor"/>
+	    </sec:filter-chain-map>
+	    
     </bean>
-
-       <!--         FILTERS DEFINITION           -->
-    <bean id="httpSessionIntegrationFilter"
-             class="org.springframework.security.context.HttpSessionContextIntegrationFilter"/>
-
-    <bean id="authenticationProcessingFilter" class="org.linagora.linShare.auth.DomainAuthenticationProcessingFilter">
-        <property name="usernameParameter" value="login"/>
-        <property name="passwordParameter" value="password"/>
-        <property name="defaultTargetUrl" value="/startingPage"/>
-        <property name="filterProcessesUrl" value="/j_security_check"/>
-        <property name="authenticationFailureUrl" value="/?login_error=1"/>
-        <property name="exceptionMappings">
-  			<props>
-    			<prop key="org.linagora.linShare.auth.exceptions.BadDomainException">/?login_error=2</prop>
-  			</props>
-		</property>
-        <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="rememberMeServices" ref="rememberMeService"/>
-    </bean>
-
-    <bean id="exceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
-        <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
-    </bean>
-
-    <bean id="authenticationEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-        <property name="loginFormUrl" value="/"/>
-    </bean>
-
-    <bean id="logoutFilter" class="org.springframework.security.ui.logout.LogoutFilter">
-        <constructor-arg value="/"/>
-        <constructor-arg>
-            <list>
-				<ref bean="rememberMeService"/>
-                <bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler"/>
-            </list>
-        </constructor-arg>
-    </bean>
-
-    <bean id="filterSecurityInterceptor" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
-        <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="accessDecisionManager" ref="accessDecisionManager"/>
-        <property name="objectDefinitionSource">
-            <value>
-                CONVERT_URL_TO_LOWER_CASE_BEFORE_COMPARISON
-                PATTERN_TYPE_APACHE_ANT
-                /**/administration/userconfig*=ROLE_AUTH
-                /**/administration/domains=ROLE_SUPERADMIN
-                /**/administration/domains/**=ROLE_SUPERADMIN
-                /**/administration/**=ROLE_ADMIN
-                /**=ROLE_AUTH
-            </value>
-        </property>
-    </bean>
-
-	<!--         REMEMBER-ME SERVICE DEFINITION           -->
-	 <bean id="rememberMeAuthenticationProvider" class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
+    
+    <bean id="authenticationProcessingFilterEntryPoint"
+		class="org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint">
+		<property name="loginFormUrl" value="/pages/login.jsf" />
+		<property name="forceHttps" value="false" />
+	</bean>
+    
+	 <!--         REMEMBER-ME SERVICE DEFINITION           -->
+	 <bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
 	 	<property name="key" value="springRocks"/>
 	 </bean>
 	 
@@ -106,31 +66,101 @@
 	 	<constructor-arg ref="cookieRepository"/>
 	 </bean>
 	
-	<bean id="rememberMeProcessingFilter" class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
+	<bean id="rememberMeProcessingFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
 		<property name="rememberMeServices" ref="rememberMeService"/>
 		<property name="authenticationManager" ref="authenticationManager"/>
 	</bean>
 
+    <!--         FILTERS DEFINITION           -->
+    <bean id="httpSessionIntegrationFilter"
+             class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter"/>
 
-<!--  REST part / Magic lies there -->
-		<bean id="basicProcessingFilter" class="org.springframework.security.ui.basicauth.BasicProcessingFilter">
+
+	<bean id="authenticationProcessingFilter" class="org.linagora.linShare.auth.DomainAuthenticationProcessingFilter">
+
+		<property name="authenticationFailureHandler" ref="failureHandler" />
+		<property name="authenticationSuccessHandler" ref="successHandler" />
+		<property name="filterProcessesUrl" value="/j_security_check" />
+		<property name="usernameParameter" value="login"/>
+        <property name="passwordParameter" value="password"/>
+		<property name="allowSessionCreation" value="true" />
+		<property name="sessionAuthenticationStrategy" ref="sas" />
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="rememberMeServices" ref="rememberMeService"/>
+		
+	</bean>
+
+	<bean id="successHandler"
+		class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<property name="defaultTargetUrl" value="/" /> <!-- which is the default value -->
+	</bean>
+	<bean id="failureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+		<property name="defaultFailureUrl" value="/?login_error=1" />
+		 <property name="exceptionMappings">
+            <props>
+                <prop key="org.linagora.linShare.auth.exceptions.BadDomainException">/?login_error=2</prop>
+            </props>
+        </property>
+	</bean>
+	<bean id="sas"
+		class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+		<property name="migrateSessionAttributes" value="true" />
+	</bean>
+
+    <bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+        <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+    </bean>
+
+    <bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint">
+        <property name="loginFormUrl" value="/"/>
+    </bean>
+
+    <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg value="/"/>
+        <constructor-arg>
+            <list>
+				<ref bean="rememberMeService"/>
+                <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+            </list>
+        </constructor-arg>
+    </bean>
+    
+
+    <bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="accessDecisionManager"/>
+
+		<property name="securityMetadataSource">
+			<sec:filter-security-metadata-source>
+				<sec:intercept-url pattern="/**/administration/userconfig*" access="ROLE_AUTH" />
+				<sec:intercept-url pattern="/**/administration/domains" access="ROLE_SUPERADMIN" />
+				<sec:intercept-url pattern="/**/administration/domains/**" access="ROLE_SUPERADMIN" />
+				<sec:intercept-url pattern="/**/administration/" access="ROLE_ADMIN" />
+				<sec:intercept-url pattern="/**" access="ROLE_AUTH" />
+			</sec:filter-security-metadata-source>
+		</property>
+    </bean>
+    
+		
+
+	<!--  REST part / Magic lies there -->
+		<bean id="basicProcessingFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
         	<property name="authenticationManager"><ref bean="authenticationManager"/></property>
         	<property name="authenticationEntryPoint"><ref bean="restAuthenticationEntryPoint"/></property>
         </bean>
         
         <bean id="restAuthenticationEntryPoint"
-        class="org.springframework.security.ui.basicauth.BasicProcessingFilterEntryPoint">
+        class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
         	<property name="realmName"><value>Name Of Your Realm</value></property>
         </bean>
         
-		<bean id="basicExceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
+		<bean id="basicExceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
 			<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint"/>
 		</bean>
-<!--  -->
 
        <!--       AUTHENTICATION MANAGEMENT      -->
        <!-- Authentication manager -->
-    <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
+    <bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
         <property name="providers">
             <list>
             	<ref bean="rememberMeAuthenticationProvider" />
@@ -139,13 +169,6 @@
             </list>
         </property>
     </bean>
-    
-     <!-- Domain Authentification -->
-
-       <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
-           <property name="userService" ref="userService"/>
-           <property name="abstractDomainService" ref="abstractDomainService"/>
-       </bean>
 
        <!-- DAO Authentification -->
        <bean id="guestAuthProvider" class="org.linagora.linShare.auth.DaoAuthProvider">
@@ -156,15 +179,22 @@
            <constructor-arg value="SHA"/>
        </bean>
 
-       <bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
+       <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
            <property name="userDetailsService" ref="guestAuthProvider"/>
            <property name="passwordEncoder">
                <bean factory-bean="passwordEncoderFactory" factory-method="getInstance"/>
            </property>
        </bean>
+       
+       <!-- Domain Authentification -->
+
+       <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
+           <property name="userService" ref="userService"/>
+           <property name="abstractDomainService" ref="abstractDomainService"/>
+       </bean>
 
        <!--     AUTHORIZATIONS MANAGEMENT   -->
-       <bean id="accessDecisionManager" class="org.springframework.security.vote.UnanimousBased">
+       <bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
            <property name="decisionVoters">
                <list>
                    <ref bean="roleVoter"/>
@@ -172,7 +202,10 @@
            </property>
        </bean>
 
-       <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
+       <bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter"/>
+
+
+
        
        
        <!-- **** extra configuration CAS sso ***** -->

@@ -27,10 +27,10 @@ import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.service.UserService;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.User;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class UserDetailsProvider {
 	

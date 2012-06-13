@@ -22,8 +22,9 @@ package org.linagora.linShare.auth;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.web.authentication.AuthenticationProcessingFilter;
+
 
 public class DomainAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 	

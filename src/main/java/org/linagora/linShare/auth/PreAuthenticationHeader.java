@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.ui.preauth.header.RequestHeaderPreAuthenticatedProcessingFilter;
+import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import org.springframework.util.Assert;
 
 /**
@@ -35,8 +35,7 @@ import org.springframework.util.Assert;
  * against a LemonLDAP::NG Web Single Sign On
  * @author Clement Oudot &lt;coudot@linagora.com&gt;
  */
-public class PreAuthenticationHeader extends
-		RequestHeaderPreAuthenticatedProcessingFilter {
+public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 
 	/** */
 	private String principalRequestHeader;

@@ -20,7 +20,7 @@
 */
 package org.linagora.linShare.auth.exceptions;
 
-import org.springframework.security.BadCredentialsException;
+import org.springframework.security.authentication.BadCredentialsException;
 
 public class BadDomainException extends BadCredentialsException {
 

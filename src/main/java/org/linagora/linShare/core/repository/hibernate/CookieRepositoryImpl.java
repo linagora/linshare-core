@@ -31,8 +31,8 @@ import org.linagora.linShare.core.domain.entities.Cookie;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.CookieRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.security.ui.rememberme.PersistentRememberMeToken;
-import org.springframework.security.ui.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 public class CookieRepositoryImpl extends AbstractRepositoryImpl<Cookie>
 		implements CookieRepository, PersistentTokenRepository {

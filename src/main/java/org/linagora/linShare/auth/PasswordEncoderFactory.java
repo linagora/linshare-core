@@ -20,10 +20,10 @@
 */
 package org.linagora.linShare.auth;
 
-import org.springframework.security.providers.encoding.Md5PasswordEncoder;
-import org.springframework.security.providers.encoding.PasswordEncoder;
-import org.springframework.security.providers.encoding.PlaintextPasswordEncoder;
-import org.springframework.security.providers.encoding.ShaPasswordEncoder;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.authentication.encoding.PlaintextPasswordEncoder;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 
 /** 
  * Returns an instance of password encoder.
