@@ -727,7 +727,7 @@ public class ListSharedDocument {
 	 * @return
 	 */
 	public String getFormatedComment() {
-		String result = shareDocument.getFileComment().replaceAll("\r","");
+		String result = shareDocument.getComment().replaceAll("\r","");
 		result = result.replaceAll("\n", " ");
 		return result;
 	}
