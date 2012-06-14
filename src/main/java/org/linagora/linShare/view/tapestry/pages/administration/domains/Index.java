@@ -96,6 +96,7 @@ public class Index {
     @Property
     @Persist(value="flash")
 	private String connectionToDelete;
+    
 	
 	@SetupRender
     public void init() throws BusinessException {
@@ -105,7 +106,7 @@ public class Index {
     	ldapConnections = domainFacade.findAllLDAPConnections();
     	
 	}
-    
+	
 	@OnEvent(value="domainDeleteEvent")
     public void deleteDomain() throws BusinessException {
 		domainFacade.deleteDomain(domainToDelete, loginUser);

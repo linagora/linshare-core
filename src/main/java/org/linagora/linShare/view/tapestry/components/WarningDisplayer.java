@@ -21,7 +21,6 @@
 package org.linagora.linShare.view.tapestry.components;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;

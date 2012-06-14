@@ -22,7 +22,6 @@ package org.linagora.linShare.core.service;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Contact;

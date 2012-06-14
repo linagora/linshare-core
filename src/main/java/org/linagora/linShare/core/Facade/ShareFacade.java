@@ -20,21 +20,16 @@
 */
 package org.linagora.linShare.core.Facade;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.Share;
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
 import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 
 public interface ShareFacade {
 

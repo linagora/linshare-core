@@ -86,7 +86,6 @@ tsa.url=http://localhost:8080/signserver/tsa?signerId=1
 
 
 #******** Secured storage
-linshare.secured-storage.disallow=false
 linshare.secured-storage.disallowed.job.file-cleaner.activate=false
 linshare.secured-storage.disallowed.job.file-cleaner.cron=0 0 0 1 1 ?
 

@@ -6,7 +6,6 @@ import java.util.List;
 import org.linagora.linShare.core.Facade.FunctionalityFacade;
 import org.linagora.linShare.core.domain.constants.FunctionalityType;
 import org.linagora.linShare.core.domain.constants.LinShareConstants;
-import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.constants.UnitType;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.FileSizeUnitClass;
@@ -27,7 +26,6 @@ import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.FunctionalityService;
-import org.omg.CORBA.PolicyTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
