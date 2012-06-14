@@ -1,6 +1,16 @@
 <t:container
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 	
+	<!--[if IE 9]> 
+		<style>
+			div.t-autocomplete-menu{
+				position: absolute !important;
+				top: 378px !important;
+				left: 72px !important;
+			}
+		</style>
+    <![endif]-->
+	
 	<div t:id="confirmWindow" >
 	<div class="confirmPopup">
 
