@@ -236,7 +236,8 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public void updateDomain(AbstractDomain domain) throws BusinessException {
-
+		logger.debug("Update domain :" + domain.getIdentifier());
+		
 		if(domain.getIdentifier()== null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"This domain has no current identifier.");
 		}
@@ -262,6 +263,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		if(policy == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,"This new domain has a wrong domain policy identifier.");
 		}
+		
 		entity.updateDomainWith(domain);
 		entity.setPolicy(policy);
 		
@@ -302,6 +304,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			}
 		}
 	}
+	
 	
 	@Override
 	public List<User> searchUserWithoutRestriction(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
@@ -565,4 +568,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		return findGuestDomain(top);
 	}
+
+
 }

@@ -27,12 +27,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linShare.core.Facade.ShareFacade;
-import org.linagora.linShare.core.domain.constants.Policies;
 import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.Functionality;
 import org.linagora.linShare.core.domain.entities.Group;
 import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.Guest;

@@ -20,7 +20,6 @@
         <constructor-arg ref="documentRepository"/>
         <constructor-arg ref="documentService"/>
         <constructor-arg ref="jackRabbitRepository"/>
-        <constructor-arg value="${linshare.secured-storage.disallow}" />
         <constructor-arg value="${linshare.secured-storage.disallowed.job.file-cleaner.activate}" />
         <constructor-arg ref="notifierService" />
         <constructor-arg ref="mailContentBuildingService" />

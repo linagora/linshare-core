@@ -50,6 +50,16 @@ public interface AbstractDomainFacade {
 	public void updateDomain(UserVo actorVo, AbstractDomainVo domain) throws BusinessException;
 	
 	
+	/**
+	 * Update the display order of all domain.
+	 * @param actorVo
+	 * @param domainsVo
+	 * @throws BusinessException
+	 */
+	public void updateAllDomainForAuthShowOrder(UserVo actorVo,List<AbstractDomainVo> domainsVo) throws BusinessException;
+
+	
+	public List<String> findAllDomainIdentifiers();
 	public List<String> findAllDomainPatternIdentifiers();
 	public List<DomainPatternVo> findAllDomainPatterns() throws BusinessException ;
 	public DomainPatternVo createDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException ;
@@ -95,6 +105,6 @@ public interface AbstractDomainFacade {
 	 * @param domainIdentifier
 	 * @return
 	 */
-	public boolean isMimeTypeFilterEnableFor(String domainIdentifier, UserVo actorVo); 
+	public boolean isMimeTypeFilterEnableFor(String domainIdentifier, UserVo actorVo);
 	
 }

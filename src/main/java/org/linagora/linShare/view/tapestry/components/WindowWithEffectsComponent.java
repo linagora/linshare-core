@@ -24,7 +24,6 @@ package org.linagora.linShare.view.tapestry.components;
 import java.util.UUID;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Retain;

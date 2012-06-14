@@ -73,7 +73,7 @@ public abstract class AbstractDomain {
 		this.shareExpiryRules=new ArrayList<ShareExpiryRule>();
 		this.messagesConfiguration = new MessagesConfiguration();
 		this.policy=null;
-		this.authShowOrder=new Long(1);
+		this.authShowOrder=new Long(Long.MAX_VALUE);
 	}
 	
 	public AbstractDomain(AbstractDomainVo d) {
@@ -93,7 +93,7 @@ public abstract class AbstractDomain {
 		this.usedSpace=d.getUsedSpace();
 		this.shareExpiryRules=new ArrayList<ShareExpiryRule>();
 		this.policy=null;
-		this.authShowOrder=new Long(1);
+		this.authShowOrder=d.getAuthShowOrder();
 	}
 	
 
@@ -104,6 +104,7 @@ public abstract class AbstractDomain {
 		this.defaultLocale=d.getDefaultLocale();
 		this.enable=d.isEnable();
 		this.template=d.isTemplate();
+		this.authShowOrder=d.getAuthShowOrder();
 	}
 
 	public String getDefaultLocale() {

@@ -29,7 +29,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Persist;

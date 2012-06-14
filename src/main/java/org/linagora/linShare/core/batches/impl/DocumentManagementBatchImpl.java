@@ -52,19 +52,17 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     private final DocumentRepository documentRepository;
     private final DocumentService documentService;
     private final FileSystemDao fileSystemDao;
-    private final boolean securedStorageDisallowed;
     private final boolean cronActivated;
 	private final NotifierService notifierService;
 	private final MailContentBuildingService mailBuilder;
 	private final FunctionalityService functionalityService;
 
     public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentService documentService,
-        FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated,
+        FileSystemDao fileSystemDao, boolean cronActivated,
         NotifierService notifierService, MailContentBuildingService mailBuilder, FunctionalityService functionalityService) {
         this.documentRepository = documentRepository;
         this.documentService = documentService;
         this.fileSystemDao = fileSystemDao;
-        this.securedStorageDisallowed = securedStorageDisallowed;
         this.cronActivated = cronActivated;
         this.notifierService = notifierService;
         this.mailBuilder = mailBuilder;
@@ -95,11 +93,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     
     public void cleanOldDocuments() {
     	logger.debug("cleanOldDocuments : begin");
-    	
-    	if (!securedStorageDisallowed) {
-    		logger.info("Documents cleaner batch launched but secured storage not disallowed : stopping.");
-    		return;
-    	}
+
     	
     	if (!cronActivated) {
     		logger.info("Documents cleaner batch launched but was told to be unactivated : stopping.");

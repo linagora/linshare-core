@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.domain.constants.Language;
@@ -56,7 +55,6 @@ import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
-import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
