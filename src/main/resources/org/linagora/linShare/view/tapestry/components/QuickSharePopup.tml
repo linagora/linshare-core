@@ -36,6 +36,16 @@
         }
         
     </script>
+    
+    <!--[if IE 9]> 
+		<style>
+			div.t-autocomplete-menu{
+				position: absolute !important;
+				top: 378px !important;
+				left: 72px !important;
+			}
+		</style>
+    <![endif]-->
 	
 	<div t:id="quickShareWindow">
 		<div class="confirmPopup">
