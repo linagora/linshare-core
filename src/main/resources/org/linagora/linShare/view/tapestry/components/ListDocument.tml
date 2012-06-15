@@ -6,15 +6,6 @@
 		This zone is used to contains the destination of the submit; to prevent a full page reloading
 	</t:block>
 	<t:zone t:id="zoneTest" />
-
-	<style>
-		.thumbnail{
-			z-index: 2 !important;
-			display : inline;
-		}
-	
-	</style>
-	
 	
 	<div id="list">
 
@@ -92,23 +83,17 @@
 						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 					</t:linkit.Comment>
 					<t:if t:test="${thumbnailExists}">
-						<div class="thumbnail">
-							${document.fileName}
-							<div class="thumbnail_content">
-								<img src="${thumbnailPath}" />
-								<p>${document.fileName}</p>
-							</div>
+					
+						<div t:type="chenillekit/Tooltip" title="${document.fileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
+							${document.fileName}											<!--  <img src="${thumbnailPath}" /> -->
 						</div>
+						
 						<t:parameter name="else">
-							<div class="thumbnail">
+						
+							<div t:type="chenillekit/Tooltip" title="${document.fileName}" value="${message:components.listDocument.noThumb}">
 								${document.fileName}
-								<div class="thumbnail_content">
-									<p class="noThmbMsg">
-										${message:components.listDocument.noThumb}
-									</p>
-									<p>${document.fileName}</p>
-								</div>
 							</div>
+
 						</t:parameter>
 					</t:if>
 				</t:actionLink>
