@@ -20,15 +20,6 @@
 				<div id="version">
 					<strong>${message:global.version.label} : </strong> <code>${version}</code>
 					<br/>
-					<strong>${message:global.mode.label} : </strong> 
-					<code>
-						<t:if test="securedStorageDisallowed">
-							${message:global.mode.deactivated}
-							<t:parameter name="else">
-							${message:global.mode.activated}
-							</t:parameter>
-						</t:if>
-					</code>
 				</div>
 				<p>
 					<t:pagelink t:id="activationPolicy" t:page="administration/ActivationPolicy" context="selectedDomain">
