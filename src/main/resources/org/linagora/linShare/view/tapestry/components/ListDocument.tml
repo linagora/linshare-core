@@ -7,6 +7,14 @@
 	</t:block>
 	<t:zone t:id="zoneTest" />
 
+	<style>
+		.thumbnail{
+			z-index: 2 !important;
+			display : inline;
+		}
+	
+	</style>
+	
 	
 	<div id="list">
 
@@ -84,15 +92,15 @@
 						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 					</t:linkit.Comment>
 					<t:if t:test="${thumbnailExists}">
-						<span class="thumbnail">
+						<div class="thumbnail">
 							${document.fileName}
 							<div class="thumbnail_content">
 								<img src="${thumbnailPath}" />
 								<p>${document.fileName}</p>
 							</div>
-						</span>
+						</div>
 						<t:parameter name="else">
-							<span class="thumbnail">
+							<div class="thumbnail">
 								${document.fileName}
 								<div class="thumbnail_content">
 									<p class="noThmbMsg">
@@ -100,7 +108,7 @@
 									</p>
 									<p>${document.fileName}</p>
 								</div>
-							</span>
+							</div>
 						</t:parameter>
 					</t:if>
 				</t:actionLink>
