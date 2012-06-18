@@ -21,6 +21,7 @@
 package org.linagora.linShare.view.tapestry.pages.administration;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -118,7 +119,7 @@ public class ActivationPolicy {
     	}
 		
 		activationPolicies = functionalityFacade.getAllActivationPolicy(identifier);
-		Collections.sort(activationPolicies);
+		
 		return null;
 	}
     

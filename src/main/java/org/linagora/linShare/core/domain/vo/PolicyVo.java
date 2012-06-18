@@ -13,6 +13,8 @@ public class PolicyVo implements Comparable{
 	
 	private String functionalityIdentifier;
 	
+	private String name;
+
 	/**
 	 * enable/disable the policy
 	 */
@@ -88,6 +90,14 @@ public class PolicyVo implements Comparable{
 
 	public void setDomainIdentifier(String domainIdentifier) {
 		this.domainIdentifier = domainIdentifier;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

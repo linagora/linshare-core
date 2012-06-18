@@ -20,6 +20,8 @@
 */
 package org.linagora.linShare.view.tapestry.components;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
@@ -59,6 +61,16 @@ public class FunctionalityPolicyConfigurer {
 //    
     @SetupRender
     void setupRender() {
+		for (PolicyVo policy : policies) {
+			policy.setName(messages.get("pages.administration.functionality."+ policy.getFunctionalityIdentifier().toLowerCase()));
+		}
+		
+		Collections.sort(policies, new Comparator<PolicyVo>() {
+			@Override
+			public int compare(PolicyVo o1, PolicyVo o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
     }
     
     public Policies getAllowedPolicy() { 
