@@ -123,7 +123,5 @@ public interface FunctionalityService {
 	public Functionality getUserTabFunctionality(AbstractDomain domain);
 	public Functionality getAuditTabFunctionality(AbstractDomain domain);
 	public Functionality getHelpTabFunctionality(AbstractDomain domain);
-	public Functionality getGroupTabFunctionality(AbstractDomain domain);
-	
 	
 }

@@ -23,7 +23,7 @@ package org.linagora.linShare.core.domain.vo;
 /**
  */
 public enum DocToSignContext {
-    DOCUMENT(0), SHARED(1), GROUP_SHARED(2);
+    DOCUMENT(0), SHARED(1);
 
     private int value;
 
@@ -39,7 +39,6 @@ public enum DocToSignContext {
         switch(value) {
             case 0 : return DOCUMENT; //list of simple documents
             case 1 : return SHARED; //shared documents
-            case 2 : return GROUP_SHARED; //shared documents with group
             default : throw new IllegalArgumentException("not a valid context, check the type of document");
         }
     }

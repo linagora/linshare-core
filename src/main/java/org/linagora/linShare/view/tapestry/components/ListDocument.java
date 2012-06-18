@@ -150,10 +150,6 @@ public class ListDocument {
 	@Property
 	private String tooltipGroupTitle;
 	
-	@Property
-	private boolean showGroups;
-	
-	
 	/***************************************************************************
 	 * Service injection
 	 **************************************************************************/
@@ -310,11 +306,6 @@ public class ListDocument {
 	 */
 	@SetupRender
 	public void initUserlogin() throws BusinessException {
-		showGroups = false;
-		if (user.getDomainIdentifier() != null && user.getDomainIdentifier().length() > 0) {
-			showGroups = functionalityFacade.isEnableGroupTab(user.getDomainIdentifier());
-		}
-		
 		
 		Collections.sort(documents);
 
@@ -327,10 +318,6 @@ public class ListDocument {
 		// if(model==null)
 		initModel();
 		buildTooltipValues();
-		
-		if (!showGroups) {
-			documentGrid.getDataModel().exclude("sharedWithGroup");
-		}
 	}
 
 	/**
@@ -358,7 +345,7 @@ public class ListDocument {
 			int i=0;
 			for (DocumentVo docVo : documents) {
 				
-				if (docVo.getShared()||docVo.getSharedWithGroup()) {
+				if (docVo.getShared()) {
 					StringBuffer tempBuf = new StringBuffer();
 					StringBuffer tempBufGroup = new StringBuffer();
 					Map<String,String> templateParams=new HashMap<String, String>();
@@ -370,15 +357,8 @@ public class ListDocument {
 
 					for (ShareDocumentVo share : shares) {
 						UserVo receiver = share.getReceiver();
-						if (receiver.getUserType().equals(UserType.GROUP)) {
-							filleGroupRowParams(templateRowParams, receiver.getLastName(), formatter.format(share.getShareExpirationDate().getTime()));
-							tempBufGroup.append(templating.getMessage(templateGroupRow, templateRowParams));
-							
-						}
-						else {
-							fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), formatter.format(share.getShareExpirationDate().getTime()));
-							tempBuf.append(templating.getMessage(templateRow, templateRowParams));
-						}
+						fillRowParams(templateRowParams, receiver.getFirstName(), receiver.getLastName(), receiver.getMail(), formatter.format(share.getShareExpirationDate().getTime()));
+						tempBuf.append(templating.getMessage(templateRow, templateRowParams));
 					}
 					Set<Entry<String, Calendar>> set = securedUrls.entrySet();
 					for (Entry<String, Calendar> entry : set) {
@@ -866,7 +846,6 @@ public class ListDocument {
 		reorderlist.add("updateDoc");
         reorderlist.add("fileEdit");
 		reorderlist.add("shared");
-		reorderlist.add("sharedWithGroup");
 
 		if (activeSignature) {
 			model.add("signed", null);

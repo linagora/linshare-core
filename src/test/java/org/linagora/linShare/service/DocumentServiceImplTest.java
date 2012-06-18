@@ -140,7 +140,7 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		Calendar exp=inputStreamInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,false,new Long(10000));
+		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,new Long(10000));
 		List<Signature> signatures = new ArrayList<Signature>();
 		aDocument.setSignatures(signatures);
 		

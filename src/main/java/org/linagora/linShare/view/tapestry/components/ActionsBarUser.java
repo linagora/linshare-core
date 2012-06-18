@@ -39,9 +39,6 @@ public class ActionsBarUser {
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	private String formName;
 	
-	@Property
-	private boolean showGroups;
-	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 	
@@ -51,9 +48,5 @@ public class ActionsBarUser {
 	
 	@SetupRender	
 	void init() {
-		showGroups = false;
-		if (userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
-			showGroups = functionalityFacade.isEnableGroupTab(userVo.getDomainIdentifier());
-		}
 	}
 }

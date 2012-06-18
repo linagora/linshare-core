@@ -22,18 +22,14 @@ package org.linagora.linShare.core.service;
 
 import java.util.List;
 
-import org.linagora.linShare.core.domain.constants.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.Group;
-import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.exception.BusinessException;
 
 /**
@@ -111,55 +107,6 @@ public interface MailContentBuildingService {
 			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
 			throws BusinessException;
 
-	/**
-	 * Notify a user that the group received new sharing
-	 */
-	public MailContainer buildMailNewGroupSharing(User actor,MailContainer mailContainer,
-			User owner, User recipient, Group group, List<ShareDocumentVo> docs,
-			String linShareUrl, String linShareUrlParam,
-			boolean isOneDocEncrypted, String jwsEncryptUrlString)
-			throws BusinessException;
-
-	/**
-	 * Notify a group (functional email) for a new sharing
-	 * @param jwsEncryptUrlString 
-	 * @param isOneDocEncrypted 
-	 */
-	public MailContainer buildMailNewGroupSharing(User actor,MailContainer mailContainer,
-			User owner, Group group, List<ShareDocumentVo> docs,
-			String linShareUrl, String linShareUrlParam,
-			boolean isOneDocEncrypted, String jwsEncryptUrlString)
-			throws BusinessException;
-
-	/**
-	 * Notify a group (functional email) that a sharing has been deleted
-	 */
-	public MailContainer buildMailGroupSharingDeleted(User actor,
-			MailContainer mailContainer, User manager, Group group, Document doc)
-			throws BusinessException;
-
-	/**
-	 * Notify user that a group sharing has been deleted
-	 */
-	public MailContainer buildMailGroupSharingDeleted(User actor,
-			MailContainer mailContainer, User manager, User user, Group group, Document doc)
-			throws BusinessException;
-	
-	
-	/**
-	 * Notify sbdy who request the membership of another user for a group
-	 * of the status of his request
-	 */
-	public MailContainer buildMailGroupMembershipStatus(User actor,MailContainer mailContainer, 
-			GroupMember newMember, Group group, GroupMembershipStatus status)
-			throws BusinessException;
-	
-	/**
-	 * Notify a user that he is now member of one group
-	 */
-	public MailContainer buildMailNewGroupMember(User actor,
-			MailContainer mailContainer, GroupMember newMember, Group group) 
-			throws BusinessException;
 
 	/**
 	 * Notify a user that a received shared file is about to be deleted by its owner.
@@ -284,60 +231,6 @@ public interface MailContentBuildingService {
 	public MailContainerWithRecipient buildMailSharedDocUpdatedWithRecipient(User actor,MailContainer mailContainer,
 			User owner, String recipientMail, Document document, String oldDocName,
 			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
-			throws BusinessException;
-
-	/**
-	 * Notify a user that the group received new sharing
-	 */
-	public MailContainerWithRecipient buildMailNewGroupSharingWithRecipient(User actor,MailContainer mailContainer,
-			User owner, User recipient, Group group, List<ShareDocumentVo> docs,
-			String linShareUrl, String linShareUrlParam,
-			boolean isOneDocEncrypted, String jwsEncryptUrlString)
-			throws BusinessException;
-
-	/**
-	 * Notify a group (functional email) for a new sharing
-	 * @param jwsEncryptUrlString 
-	 * @param isOneDocEncrypted 
-	 */
-	public MailContainerWithRecipient buildMailNewGroupSharingWithRecipient(User actor,MailContainer mailContainer,
-			User owner, Group group, List<ShareDocumentVo> docs,
-			String linShareUrl, String linShareUrlParam,
-			boolean isOneDocEncrypted, String jwsEncryptUrlString)
-			throws BusinessException;
-
-	/**
-	 * Notify a group (functional email) that a sharing has been deleted
-	 */
-	public MailContainerWithRecipient buildMailGroupSharingDeletedWithRecipient(User actor,
-			MailContainer mailContainer, User manager, Group group, Document doc)
-			throws BusinessException;
-
-	/**
-	 * Notify user that a group sharing has been deleted
-	 */
-	public MailContainerWithRecipient buildMailGroupSharingDeletedWithRecipient(User actor,
-			MailContainer mailContainer, User manager, User user, Group group, Document doc)
-			throws BusinessException;
-	
-	
-	/**
-	 * Notify sbdy who request the membership of another user for a group
-	 * of the status of his request
-	 */
-	public MailContainerWithRecipient buildMailGroupMembershipStatusWithRecipient(User actor,MailContainer mailContainer, 
-			GroupMember newMember, Group group, GroupMembershipStatus status)
-			throws BusinessException;
-	
-	public List<MailContainerWithRecipient> buildMailGroupMembershipStatusWithOneRecipient(User actor,MailContainer mailContainer, 
-			GroupMember newMember, Group group, GroupMembershipStatus status)
-			throws BusinessException;	
-	
-	/**
-	 * Notify a user that he is now member of one group
-	 */
-	public MailContainerWithRecipient buildMailNewGroupMemberWithRecipient(User actor,
-			MailContainer mailContainer, GroupMember newMember, Group group) 
 			throws BusinessException;
 
 	/**

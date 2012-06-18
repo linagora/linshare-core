@@ -49,11 +49,11 @@ public class ShareDocumentVo extends DocumentVo {
 	
 	public ShareDocumentVo(String identifier, String name, String fileComment,
 			Calendar creationDate, Calendar expirationDate, String type,
-			String ownerLogin, Boolean encrypted, Boolean shared, Boolean sharedWithGroup,
+			String ownerLogin, Boolean encrypted, Boolean shared, 
 			Long size, UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
 			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
 		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin,
-				encrypted, shared, sharedWithGroup, size);
+				encrypted, shared, size);
 		
 		this.sender = sender; 
 		this.receiver = receiver; 
@@ -69,7 +69,7 @@ public class ShareDocumentVo extends DocumentVo {
 			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
 		
 		super(doc.getIdentifier(),doc.getFileName(),doc.getFileComment(),doc.getCreationDate(),doc.getExpirationDate(),doc.getType(), doc.getOwnerLogin(),
-				doc.getEncrypted(),doc.getShared(),doc.getSharedWithGroup(),doc.getSize());
+				doc.getEncrypted(),doc.getShared(),doc.getSize());
 		
 		
 		this.sender = sender; 

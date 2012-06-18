@@ -299,7 +299,6 @@ public class MyBorderLayout {
 				menu.addMenuEntry(fileMenu);
 			}
 			if(showUserTab())					menu.addMenuEntry(userMenu);
-			if(showGroupTab() && !superadmin) 		menu.addMenuEntry(groupMenu);
 			
 			if(superadmin||admin) 				menu.addMenuEntry(adminMenu);
 			if(superadmin) 						menu.addMenuEntry(domainMenu);
@@ -342,12 +341,4 @@ public class MyBorderLayout {
 		}
 		return false;
 	}
-	
-	boolean showGroupTab() {
-		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
-			return functionalityFacade.isEnableGroupTab(userVo.getDomainIdentifier());
-		}
-		return false;
-	}
-	
 }

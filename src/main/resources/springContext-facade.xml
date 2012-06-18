@@ -38,12 +38,10 @@
        	 <constructor-arg ref="shareTransformer"/>
        	 <constructor-arg ref="userRepository"/>
        	 <constructor-arg ref="documentRepository"/>
-       	 <constructor-arg ref="groupRepository"/>
        	 <constructor-arg ref="notifierService"/>
        	 <constructor-arg ref="userService"/>
          <constructor-arg ref="documentService"/>
          <constructor-arg ref="mailContentBuildingService" />
-         <constructor-arg ref="groupTransformer" />
          <constructor-arg ref="documentTransformer" />
          <constructor-arg value="${linshare.info.url.base}" />
          <constructor-arg value="${linshare.info.url.internal}" />
@@ -94,14 +92,6 @@
        	 <constructor-arg ref="recipientFavouriteService"/>
    	  </bean>
        
-      <bean name="groupFacade" class="org.linagora.linShare.core.Facade.impl.GroupFacadeImpl">
-   	  	<constructor-arg ref="userRepository"/>
-       	 <constructor-arg ref="userService"/>
-       	 <constructor-arg ref="groupService"/>
-       	 <constructor-arg ref="groupTransformer"/>
-   	  </bean>
-       
-
 	<!-- 
 		Definition of the transformers
 	 -->
@@ -130,11 +120,6 @@
 	 
 	 <bean name="userTransformer" class="org.linagora.linShare.core.domain.transformers.impl.UserTransformer" >
 	 	<constructor-arg ref="guestRepository"/>
-	 </bean>
-	 
-	 <bean name="groupTransformer" class="org.linagora.linShare.core.domain.transformers.impl.GroupTransformer" >
-	 	<constructor-arg ref="userTransformer"/>
-	 	<constructor-arg ref="groupRepository"/>
 	 </bean>
 	 
 	 <bean name="abstractDomainFacade" class="org.linagora.linShare.core.Facade.impl.AbstractDomainFacadeImpl">

@@ -104,7 +104,7 @@ public class SecuredUrlServiceImplTest extends AbstractTransactionalJUnit4Spring
 		Calendar exp=inputStreamInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,false,new Long(10000));
+		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,new Long(10000));
 		List<Signature> signatures = new ArrayList<Signature>();
 		aDocument.setSignatures(signatures);
 		
@@ -451,7 +451,7 @@ public class SecuredUrlServiceImplTest extends AbstractTransactionalJUnit4Spring
 		SecuredUrl securedUrl = securedUrlService.create(documents, john, password,testUrl, recipients, expirationDate);
 		
 		
-		DocumentVo documentVo = new DocumentVo(aDocument.getIdentifier(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), aDocument.getOwner().getLogin(), aDocument.getEncrypted(), aDocument.getShared(), aDocument.getSharedWithGroup(), aDocument.getSize());
+		DocumentVo documentVo = new DocumentVo(aDocument.getIdentifier(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), aDocument.getOwner().getLogin(), aDocument.getEncrypted(), aDocument.getShared(), aDocument.getSize());
 		
 		List<SecuredUrl> urlsByMailAndFile = securedUrlService.getUrlsByMailAndFile(john, documentVo);
 		

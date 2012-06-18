@@ -69,11 +69,6 @@ public class DocumentVo implements Serializable, Comparable {
 	private final Boolean shared;
 	
 	/**
-	 * if the document is shared.
-	 */
-	private final Boolean sharedWithGroup;
-	
-	/**
 	 * the mime type of document
 	 */
 	private final String type;
@@ -84,7 +79,7 @@ public class DocumentVo implements Serializable, Comparable {
 	
 	public DocumentVo(String identifier,String name, String fileComment, Calendar creationDate,
 			Calendar expirationDate,String type, String ownerLogin, Boolean encrypted,
-			Boolean shared,Boolean sharedWithGroup,Long size) {
+			Boolean shared,Long size) {
 		super();
 		this.identifier=identifier;
 		this.fileName = name;
@@ -93,7 +88,6 @@ public class DocumentVo implements Serializable, Comparable {
 		this.ownerLogin = ownerLogin;
 		this.encrypted = encrypted;
 		this.shared = shared;
-		this.sharedWithGroup = sharedWithGroup;
 		this.type=type;
 		this.size=size;
 		this.fileComment = fileComment;
@@ -129,12 +123,6 @@ public class DocumentVo implements Serializable, Comparable {
 	public boolean getShared() {
 		return shared;
 	}
-
-	public Boolean getSharedWithGroup() {
-		return sharedWithGroup;
-	}
-
-
 
 	public String getOwnerLogin() {
 		return ownerLogin;

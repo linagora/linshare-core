@@ -46,11 +46,9 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
-import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.UserFacade;
 import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.vo.AbstractDomainVo;
-import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.ShareSessionObjects;
@@ -73,10 +71,6 @@ public class UserSearchResults {
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     private List<UserVo> userShareList;
     
-    @Property
-    @Persist
-    private List<UserVo> userAddToGroupsList;
-
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
     private List<UserVo> users;
@@ -90,8 +84,6 @@ public class UserSearchResults {
      ************************************************************ */
     @Inject
     private UserFacade userFacade;
-    @Inject
-    private GroupFacade groupFacade;
     @Inject
     private Logger logger;
     @Inject
@@ -107,10 +99,6 @@ public class UserSearchResults {
     private WindowWithEffects userEditWindow;
     
     @SuppressWarnings("unused")
-    @Component(parameters = {"style=bluelighting", "show=false", "width=550", "height=350"})
-    private WindowWithEffects userAddToGroupWindow;
-    
-    @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=400", "height=120"})
     private WindowWithEffects zoneDomainMoveWindow;
 
@@ -119,9 +107,6 @@ public class UserSearchResults {
 
     @InjectComponent
     private Zone zoneDomainFormMove;
-
-    @InjectComponent
-    private Zone userAddToGroupTemplateZone;
 
     @Inject
     private ComponentResources componentResources;
@@ -180,10 +165,6 @@ public class UserSearchResults {
 	
 	@Property
 	@Persist
-	private List<GroupVo> groups;
-	
-	@Property
-	@Persist
 	private boolean memberAddShowPopup;
 	
 	@Persist
@@ -210,9 +191,6 @@ public class UserSearchResults {
         if (selectedUsers == null) {
             selectedUsers = new ArrayList<UserVo>();
         }
-        if (userAddToGroupsList == null) {
-        	userAddToGroupsList = new ArrayList<UserVo>();
-        }
         if (users == null || users.size() == 0) {
         	if (userLoggedIn.isSuperAdmin() && showBreakedUsers) {
     			users = userFacade.searchAllBreakedUsers(userLoggedIn);
@@ -224,8 +202,7 @@ public class UserSearchResults {
         		}
         	}
     	}
-        groups = groupFacade.findByUser(userLoggedIn.getLogin());
-        
+
         if(refreshFlag==true){
 			users=usr;
 			refreshFlag=false;
@@ -266,16 +243,6 @@ public class UserSearchResults {
                 }
             }
             selectedUsers = new ArrayList<UserVo>();
-			break;
-		case MEMBER_ADD_ACTION:
-			userAddToGroupsList = new ArrayList<UserVo>();
-            for (UserVo userVo : selectedUsers) {
-                if (!userAddToGroupsList.contains(userVo)) {
-                	userAddToGroupsList.add(userVo);
-                }
-            }
-            selectedUsers = new ArrayList<UserVo>();
-            memberAddShowPopup=true;
 			break;
 		case NO_ACTION:
 		default:
@@ -318,13 +285,6 @@ public class UserSearchResults {
             userShareList.add(user_);
         }
         shareSessionObjects.setMultipleSharing(true);
-    }
-    
-    public Zone onActionFromAddToGroup(String userLogin) {
-    	userAddToGroupsList = new ArrayList<UserVo>();
-    	UserVo user = userFacade.loadUserDetails(userLogin, userLoggedIn.getDomainIdentifier());
-    	userAddToGroupsList.add(user);
-        return userAddToGroupTemplateZone;
     }
     
     public Object onActionFromBreakedUsers() {

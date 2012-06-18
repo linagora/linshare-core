@@ -14,7 +14,6 @@
     <property access="field" column="type" name="type"/>
     <property access="field" column="encrypted" name="encrypted"/>
     <property access="field" column="shared" name="shared"/>
-    <property access="field" column="shared_with_group" name="sharedWithGroup"/>
     <property access="field" column="size" name="size" type="long"/>
     <property access="field" column="file_comment" name="fileComment" type="text"/>
     <property access="field" column="thmb_uuid" name="thmbUUID"/>

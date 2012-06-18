@@ -135,16 +135,6 @@
 			</t:parameter>
 
 			<t:parameter name="actionCell">
-				<!-- t:actionLink t:id="share" t:context="user.login" title="${message:components.userSearch.action.share.title}">
-					<img src="${asset:context:images/icons/share-on.png}" alt="${message:global.button.share}"/>
-				</t:actionLink-->
-				<!--t:actionLink t:id="addToGroup" context="user.login" t:zone="userAddToGroupFormZone"
-						title="${message:components.userSearch.action.addToGroup.title}">
-						<span onClick="userAddToGroupWindow.showCenter(true)">
-							<img src="${asset:context:images/icons/add-member.png}" alt="${message:global.button.edit}"/>
-						</span>
-							
-				</t:actionLink-->
 				<t:if test="userDomainMovable">
 					<t:actionLink t:id="domainMove" context="user.login" t:zone="zoneDomainFormMove"
 						title="${message:components.userSearch.action.domainMove.title}">
@@ -207,22 +197,10 @@
         </t:zone>
     </div>
 
-    <div style="display:none">
-        <t:zone t:id="userAddToGroupTemplateZone">
-            <t:userAddToGroupForm groups="groups" newMemberList="userAddToGroupsList"/>
-        </t:zone>
-    </div>
-
     <div t:id="userEditWindow">
         <t:zone id="userEditFormZone" update="show"/>
     </div>
-
-    <div t:id="userAddToGroupWindow">
-        <t:zone id="userAddToGroupFormZone" update="show">
-            <t:userAddToGroupForm groups="groups" newMemberList="userAddToGroupsList"/>
-        </t:zone>
-    </div>
-
+    
     <div t:id="zoneDomainMoveWindow">
         <t:zone t:id="zoneDomainFormMove" update="show">
         	<h2>${message:components.userSearch.action.domainMove.info}</h2>

@@ -20,21 +20,15 @@
 */
 package org.linagora.linShare.core.Facade;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.entities.MailContainer;
-import org.linagora.linShare.core.domain.entities.Share;
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.linagora.linShare.core.exception.BusinessException;
-import org.linagora.linShare.core.exception.TechnicalErrorCode;
-import org.linagora.linShare.core.exception.TechnicalException;
 
 public interface ShareFacade {
 
@@ -162,36 +156,6 @@ public interface ShareFacade {
      */
     public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String fileSizeTxt,String oldFileName, MailContainer mailContainer) throws BusinessException;
     
-	/**
-	 * Share some documents with some groups.
-	 * 
-	 * @param owner the user sharing the documents
-	 * @param documents the documents to share
-	 * @param recipients the recipient groups
-	 * @param mailContainer the informations to build the notification
-	 * @throws BusinessException
-	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo owner, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException;
-	/**
-	 * Share some documents with a group.
-	 * 
-	 * @param owner the user sharing the documents
-	 * @param documents the documents to share
-	 * @param targetGroupID the group id
-	 * @param mailContainer the informations to build the notification
-	 * @throws BusinessException
-	 */
-	 public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroup(UserVo ownerVo, List<DocumentVo> documents, String targetGroupID, MailContainer mailContainer) throws BusinessException;
-
-	/**
-	 * Notify a group that a sharing was deleted
-	 * @param shareddoc
-	 * @param manager
-	 * @param group
-	 * @param mailContainer
-	 * @throws BusinessException
-	 */
-	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo manager, GroupVo group, MailContainer mailContainer) throws BusinessException;
 	/**
 	 * This method returns true if we can enable or disable manually on the IHM the checkbox 'Secured Anonymous URL'.    
 	 * @param user domain identifier

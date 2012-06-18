@@ -214,16 +214,4 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		return false;
 	}
 	
-	@Override
-	public boolean isEnableGroupTab(String domainIdentifier) {
-		try {
-			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
-			Functionality groupTabFunctionality = functionalityService.getGroupTabFunctionality(domain);
-			return groupTabFunctionality.getActivationPolicy().getStatus();
-		} catch (BusinessException e) {
-			logger.error("Can't find group tab functionality for domain : " + domainIdentifier);
-			logger.debug(e.getMessage());
-		}
-		return false;
-	}
 }

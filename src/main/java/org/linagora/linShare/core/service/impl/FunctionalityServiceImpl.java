@@ -664,10 +664,4 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public Functionality getHelpTabFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_HELP);
 	}
-	
-	@Override
-	public Functionality getGroupTabFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_GROUP);
-	}
-	
 }

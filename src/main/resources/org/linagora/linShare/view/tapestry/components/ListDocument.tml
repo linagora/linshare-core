@@ -56,10 +56,6 @@
 				<abbr title="${message:components.listDocument.grid.shared}">${message:components.listDocument.grid.shared.abbr}</abbr>
 			</t:parameter>
 
-			<t:parameter t:name="SharedWithGroupHeader">
-				<abbr title="${message:components.listDocument.grid.sharedWithGroup}">${message:components.listDocument.grid.sharedWithGroup.abbr}</abbr>
-			</t:parameter>
-				
 			<t:parameter t:name="SignedHeader">
 				<abbr title="${message:components.listDocument.grid.signed}">${message:components.listDocument.grid.signed.abbr}</abbr>
 			</t:parameter>
@@ -146,20 +142,6 @@
 							<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.shareoff.title}" />
 						</t:if>
 					</t:actionLink>
-			</t:parameter>
-
-			<t:parameter t:name="sharedWithGroupCell">
-				<t:actionLink t:id="uniqueShareWithGroupLinkBis"
-					context="${document.identifier}">
-					<t:if t:test="${document.sharedWithGroup}">
-						<span t:type="chenillekit/Tooltip" title="${tooltipGroupTitle}" value="${toolTipGroupValue}" effect="appear">
-							<img src="${asset:context:images/icons/share-group-on.png}" alt="" title="${message:components.listDocument.picture.sharegroupon.title}" />
-						</span>
-					</t:if>
-					<t:if t:test="${document.sharedWithGroup}" negate="true">
-						<img src="${asset:context:images/icons/share-off.png}" alt="" title="${message:components.listDocument.picture.sharegroupoff.title}" />
-					</t:if>
-				</t:actionLink>
 			</t:parameter>
 
 			<t:parameter t:name="signedCell">

@@ -38,7 +38,7 @@
 		
 			<h2>${message:pages.signature.signdocument.currentdocumenttosign}</h2>
 			<div id="tbsFiles">
-				<t:grid source="documents" row="document" reorder="filename,friendlySize,createDate" add="friendlySize,createDate" exclude="type,size,encrypted,identifier,shared,ownerLogin,fileComment,sharedWithGroup">
+				<t:grid source="documents" row="document" reorder="filename,friendlySize,createDate" add="friendlySize,createDate" exclude="type,size,encrypted,identifier,shared,ownerLogin,fileComment">
 					<t:parameter t:name="filenameHeader">${message:pages.signature.signdocument.grid.filenameHeader}</t:parameter>
 					<t:parameter t:name="createDateHeader">${message:pages.signature.signdocument.grid.createDateHeader}</t:parameter>
 					<t:parameter t:name="friendlySizeHeader">${message:pages.signature.signdocument.grid.sizeHeader}</t:parameter>

@@ -310,10 +310,6 @@ public class ListSharedDocument {
 		if(null==shareddoc){
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		}else{
-			// context is shared with group document
-			if (shareddoc.getReceiver().getUserType().equals(UserType.GROUP)) {
-				return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", new Object[]{DocToSignContext.GROUP_SHARED.toString(),shareddoc.getReceiver().getLastName(),shareddoc.getIdentifier()});
-			}
 			// context is shared document
 			return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
 		}

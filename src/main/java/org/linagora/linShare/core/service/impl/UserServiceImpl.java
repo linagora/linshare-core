@@ -20,8 +20,6 @@
 */
 package org.linagora.linShare.core.service.impl;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -59,7 +57,6 @@ import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.FunctionalityService;
-import org.linagora.linShare.core.service.GroupService;
 import org.linagora.linShare.core.service.LDAPQueryService;
 import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
@@ -97,8 +94,6 @@ public class UserServiceImpl implements UserService {
     
     private final MailContentBuildingService mailElementsFactory;
     
-    private final GroupService groupService;
-    
     private final FileSystemDao fileSystemDao;
     
     private final LDAPQueryService ldapQueryService;
@@ -121,7 +116,6 @@ public class UserServiceImpl implements UserService {
     		final RecipientFavouriteService recipientFavouriteService,
     		final AllowedContactRepository allowedContactRepository,
     		final MailContentBuildingService mailElementsFactory,
-    		final GroupService groupService,
     		final FileSystemDao fileSystemDao,
     		final LDAPQueryService ldapQueryService,
     		final FunctionalityService functionalityService,
@@ -135,7 +129,6 @@ public class UserServiceImpl implements UserService {
 		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
 		this.mailElementsFactory = mailElementsFactory;
-		this.groupService = groupService;
 		this.fileSystemDao = fileSystemDao;
 		this.ldapQueryService = ldapQueryService;
 		this.abstractDomainService = abstractDomainService;
@@ -397,9 +390,6 @@ public class UserServiceImpl implements UserService {
 			
 			//clearing allowed contacts
 			allowedContactRepository.deleteAllByUserBothSides(userToDelete);
-			
-			//clearing groups memberships
-			groupService.deleteAllMembershipOfUser(userToDelete);
 			
 			// clearing all signatures
 			Set<Signature> ownSignatures = userToDelete.getOwnSignatures();

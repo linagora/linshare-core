@@ -112,7 +112,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     	
     	Calendar now = GregorianCalendar.getInstance();
     	for (Document document : documents) {
-			if (!document.getShared() && !document.getSharedWithGroup()) {
+			if (!document.getShared()) {
 				if (document.getDeletionDate() == null) {
 					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(document.getOwner().getDomain());
 			    	

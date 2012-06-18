@@ -157,7 +157,7 @@ public class GuestRepositoryImplTest extends
 		 */
 		Document document = new Document("document1", "hop.txt", "txt",
 				GregorianCalendar.getInstance(),
-				GregorianCalendar.getInstance(), sender, false, true, false,
+				GregorianCalendar.getInstance(), sender, false, true,
 				new Long(100000));
 
 		documentRepository.create(document);

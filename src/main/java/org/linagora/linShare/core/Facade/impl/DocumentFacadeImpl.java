@@ -222,7 +222,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		
 		List<User> users = userRepository.findByCriteria(criteria);
 		for (User user : users) {
-			if (user.getUserType() != UserType.GROUP && user.getDomain() !=null) {
+			if (user.getDomain() !=null) {
 				//user needs to be in a domain to compute quotas
 				DisplayableAccountOccupationEntryVo accountOccupation = getAccountStats(user);
 				result.add(accountOccupation);

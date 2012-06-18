@@ -40,10 +40,6 @@
     	<constructor-arg ref="hibernateTemplate"/>
 	</bean>
   	
-  	<bean name="groupRepository" class="org.linagora.linShare.core.repository.hibernate.GroupRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
-	</bean>
-  	
   	<bean name="allowedContactRepository" class="org.linagora.linShare.core.repository.hibernate.AllowedContactRepositoryImpl">
     	<constructor-arg ref="hibernateTemplate"/>
 	</bean>

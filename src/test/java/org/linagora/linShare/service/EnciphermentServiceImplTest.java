@@ -101,7 +101,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		Calendar exp=inputStreamInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,false,new Long(10000));
+		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,new Long(10000));
 		List<Signature> signatures = new ArrayList<Signature>();
 		aDocument.setSignatures(signatures);
 		
@@ -163,7 +163,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		// Add 2 years from the actual date
 		expirationDate.add(Calendar.YEAR, 2);
 		
-		DocumentVo doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc","user1@linpki.org",false,false,false,(long) 10);
+		DocumentVo doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc","user1@linpki.org",false,false,(long) 10);
 
 		Assert.assertFalse(enciphermentService.isDocumentEncrypted(doc));
 		
@@ -186,7 +186,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("inputStreamUuid : " + inputStreamUuid);
 		logger.debug("aDocument.getIdentifier : " + aDocument.getIdentifier());
 
-		DocumentVo docVo = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,false,(long) 10);
+		DocumentVo docVo = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
 		
 		UserVo userVo = new UserVo(jane);
 		printDocs(jane);
@@ -223,7 +223,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		// Add 2 years from the actual date
 		expirationDate.add(Calendar.YEAR, -2);
 
-		DocumentVo doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,false,(long) 10);
+		DocumentVo doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
 
 		UserVo userVo = new UserVo(jane);
 		
@@ -232,7 +232,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		
 		
 		// Instantiate new DocumentVo encrypted
-		doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,false,(long) 10);
+		doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
 		
 		Document decryptedDoc = enciphermentService.decryptDocument(doc, userVo, "password");
 		Assert.assertFalse(aDocument.getEncrypted());

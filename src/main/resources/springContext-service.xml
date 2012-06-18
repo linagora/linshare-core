@@ -41,7 +41,6 @@
         <constructor-arg ref="recipientFavouriteService" />
         <constructor-arg ref="allowedContactRepository" />
         <constructor-arg ref="mailContentBuildingService" />
-        <constructor-arg ref="groupService" />
         <constructor-arg ref="jackRabbitRepository" />
         <constructor-arg ref="ldapQueryService" />
         <constructor-arg ref="functionalityService" />
@@ -100,12 +99,11 @@
     	<constructor-arg index="7" ref="shareExpiryDateService"/>
         <constructor-arg index="8" ref="notifierService" />
     	<constructor-arg index="9" ref="mailContentBuildingService"/>
-    	<constructor-arg index="10" ref="groupRepository"/>
-    	<constructor-arg index="11" ref="guestRepository"/>
-    	<constructor-arg index="12" value="${job.outdatedshares.beforedate.sendnotification}"/>
-    	<constructor-arg index="13" value="${linshare.info.url.base}"/>
-    	<constructor-arg index="14" ref="functionalityService" />
-    	<constructor-arg index="15" ref="passwordService" />
+    	<constructor-arg index="10" ref="guestRepository"/>
+    	<constructor-arg index="11" value="${job.outdatedshares.beforedate.sendnotification}"/>
+    	<constructor-arg index="12" value="${linshare.info.url.base}"/>
+    	<constructor-arg index="13" ref="functionalityService" />
+    	<constructor-arg index="14" ref="passwordService" />
     </bean>
 
 	   
@@ -145,14 +143,6 @@
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="documentRepository"/>
         <constructor-arg ref="logEntryRepository"/>
-    </bean>
-    
-    <bean name="groupService" class="org.linagora.linShare.core.service.impl.GroupServiceImpl">
-        <constructor-arg ref="groupRepository"/>
-        <constructor-arg ref="userRepository"/>
-        <constructor-arg ref="shareService"/>
-        <constructor-arg ref="mailContentBuildingService" />
-        <constructor-arg ref="notifierService"/>
     </bean>
     
     <bean name="mailContentBuildingService" class="org.linagora.linShare.core.service.impl.MailContentBuildingServiceImpl">

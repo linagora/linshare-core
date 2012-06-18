@@ -55,7 +55,6 @@ public class DocumentRepositoryImplTest  extends AbstractTransactionalJUnit4Spri
     private final String type = "doctype";
     private final Boolean encrypted = false;
     private final Boolean shared = false;
-    private final Boolean sharedWithGroup = false;
     private final long fileSize = 1l;
     
 	@Autowired
@@ -71,7 +70,7 @@ public class DocumentRepositoryImplTest  extends AbstractTransactionalJUnit4Spri
 		
 		userDao.create(u);
 		
-		Document doc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, sharedWithGroup, fileSize);
+		Document doc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, fileSize);
 		
 		documentRepository.create(doc);
 		
@@ -89,7 +88,7 @@ public class DocumentRepositoryImplTest  extends AbstractTransactionalJUnit4Spri
 	
 		userDao.create(u);
 
-		Document aDoc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, sharedWithGroup, fileSize);
+		Document aDoc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, fileSize);
 		
 		u.addDocument(aDoc);
 		
@@ -113,7 +112,7 @@ public class DocumentRepositoryImplTest  extends AbstractTransactionalJUnit4Spri
 	
 		userDao.create(u);
 
-		Document aDoc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, sharedWithGroup, fileSize);
+		Document aDoc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, fileSize);
 		
 		try {
 			u.addDocument(aDoc);

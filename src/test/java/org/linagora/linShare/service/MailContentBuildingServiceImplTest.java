@@ -10,17 +10,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linShare.core.dao.FileSystemDao;
-import org.linagora.linShare.core.domain.constants.GroupMemberType;
-import org.linagora.linShare.core.domain.constants.GroupMembershipStatus;
 import org.linagora.linShare.core.domain.constants.Language;
 import org.linagora.linShare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.Group;
-import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
-import org.linagora.linShare.core.domain.entities.SecuredUrl;
 import org.linagora.linShare.core.domain.entities.Signature;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.objects.FileInfo;
@@ -113,7 +107,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		Calendar exp=inputStreamInfo.getLastModified();
 		exp.add(Calendar.HOUR, 4);
 		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,false,new Long(10000));
+		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,new Long(10000));
 		List<Signature> signatures = new ArrayList<Signature>();
 		aDocument.setSignatures(signatures);
 		
@@ -306,7 +300,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
 		mailContainer.setLanguage(Language.FRENCH);
 		List<DocumentVo> docsVo = new ArrayList<DocumentVo>();
-		docsVo.add(new DocumentVo(aDocument.getIdentifier(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), john.getLogin(), false, false, false, aDocument.getSize()));
+		docsVo.add(new DocumentVo(aDocument.getIdentifier(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), john.getLogin(), false, false, aDocument.getSize()));
 		
 		
 		User recipient = jane;
@@ -340,100 +334,6 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 
 		// buildMailSharedDocUpdatedWithRecipient
 		MailContainerWithRecipient mailContainerWithRecipientBuild = mailContentBuildingService.buildMailSharedDocUpdatedWithRecipient(actor, mailContainer, john, recipient.getMail(), aDocument, "oldDocName", " "+ aDocument.getSize(), "linShareUrl", "linShareUrlParam");
-		testMailGenerate(mailContainerWithRecipientBuild);
-		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(recipient.getMail()));
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void testBuildMailGroupSharingDeleted() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		
-		Group group = new Group();
-		group.setName("group test");
-		
-		// buildMailGroupSharingDeleted
-		MailContainer mailContainerBuild = mailContentBuildingService.buildMailGroupSharingDeleted(actor, mailContainer, john, group, aDocument);
-		testMailGenerate(mailContainerBuild);
-
-		// buildMailGroupSharingDeletedWithRecipient
-		MailContainerWithRecipient mailContainerWithRecipientBuild = mailContentBuildingService.buildMailGroupSharingDeletedWithRecipient(actor, mailContainerBuild, john, group, aDocument);
-		testMailGenerate(mailContainerWithRecipientBuild);
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void testBuildMailGroupMembershipStatus() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		
-		User recipient = jane;
-		
-		Group group = new Group();
-		group.setName("group test");
-		
-		GroupMember newMember = new GroupMember();
-		newMember.setUser(recipient);
-		newMember.setMembershipDate(Calendar.getInstance());
-		newMember.setType(GroupMemberType.MEMBER);
-		newMember.setOwner(john);
-		
-		// buildMailGroupMembershipStatus
-		MailContainer mailContainerBuild = mailContentBuildingService.buildMailGroupMembershipStatus(actor, mailContainer, newMember, group, GroupMembershipStatus.ACCEPTED);
-		testMailGenerate(mailContainerBuild);
-
-		// buildMailGroupMembershipStatusWithRecipient
-		MailContainerWithRecipient mailContainerWithRecipientBuild = mailContentBuildingService.buildMailGroupMembershipStatusWithRecipient(actor, mailContainerBuild, newMember, group, GroupMembershipStatus.ACCEPTED);
-		testMailGenerate(mailContainerWithRecipientBuild);
-		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(actor.getMail()));
-
-		//buildMailGroupMembershipStatusWithOneRecipient
-		List<MailContainerWithRecipient> mailContainerBuildList = mailContentBuildingService.buildMailGroupMembershipStatusWithOneRecipient(actor, mailContainerBuild, newMember, group, GroupMembershipStatus.ACCEPTED);
-		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
-			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(actor.getMail()));
-			testMailGenerate(mailContainerWithRecipient);
-		}
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void testBuildMailUpcomingOutdatedSecuredUrl() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		
-		User recipient = jane;
-		
-		Group group = new Group();
-		group.setName("group test");
-		
-		GroupMember newMember = new GroupMember();
-		newMember.setUser(recipient);
-		newMember.setMembershipDate(Calendar.getInstance());
-		newMember.setType(GroupMemberType.MEMBER);
-		newMember.setOwner(john);
-		
-		List<Contact> recipients = new ArrayList<Contact>();
-		recipients.add(new Contact(jane.getMail()));
-		
-		// buildMailUpcomingOutdatedSecuredUrl
-		MailContainer mailContainerBuild = mailContentBuildingService.buildMailUpcomingOutdatedSecuredUrl(actor, mailContainer, new SecuredUrl("urlPath", "alea", aDocument.getExpirationDate(), john, recipients), new Contact(recipient.getMail()), 5, "");
-		testMailGenerate(mailContainerBuild);
-
-		// buildMailUpcomingOutdatedSecuredUrl
-		MailContainerWithRecipient mailContainerWithRecipientBuild = mailContentBuildingService.buildMailUpcomingOutdatedSecuredUrlWithRecipient(actor, mailContainer, new SecuredUrl("urlPath", "alea", aDocument.getExpirationDate(), john, recipients), new Contact(recipient.getMail()), 5, "");
 		testMailGenerate(mailContainerWithRecipientBuild);
 		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(recipient.getMail()));
 		

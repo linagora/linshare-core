@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
-	<version>0.11.1</version>
+	<version>dev</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
 	<description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -148,7 +148,6 @@
 			plugin (which runs the tests) will fail, preventing Maven from packaging 
 			the WAR. Tapestry includes a large number of testing facilities designed 
 			for use with TestNG (http://testng.org/), so it's recommended. -->
-
 
 		<dependency>
 			<groupId>org.hibernate</groupId>

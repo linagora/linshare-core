@@ -404,7 +404,7 @@ public class DocumentServiceImpl implements DocumentService {
 		try {
 			Document aDoc = new Document(uuid, fileName, mimeType,
 					new GregorianCalendar(), new GregorianCalendar(), owner,
-					aesencrypted, false, false, size);
+					aesencrypted, false, size);
 			aDoc.setThmbUUID(uuidThmb);
 			if(timestampToken!=null) aDoc.setTimeStamp(timestampToken);
 

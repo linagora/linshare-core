@@ -147,7 +147,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		 */
 		Document document=new Document("document1","hop.txt", "txt", GregorianCalendar.getInstance(),
 				GregorianCalendar.getInstance(), sender, false,
-				true, false, new Long(100000));		
+				true, new Long(100000));		
 		
 		documentRepository.create(document);
 		

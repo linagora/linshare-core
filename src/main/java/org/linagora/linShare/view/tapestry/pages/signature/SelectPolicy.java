@@ -39,11 +39,9 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
-import org.linagora.linShare.core.Facade.GroupFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
 import org.linagora.linShare.core.domain.vo.DocToSignContext;
 import org.linagora.linShare.core.domain.vo.DocumentVo;
-import org.linagora.linShare.core.domain.vo.GroupVo;
 import org.linagora.linShare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linShare.core.domain.vo.SignaturePolicyVo;
 import org.linagora.linShare.core.domain.vo.UserSignature;
@@ -73,8 +71,6 @@ public class SelectPolicy {
 	private AbstractDomainFacade domainFacade;
 	@Inject
 	private ShareFacade shareFacade;
-	@Inject
-	private GroupFacade groupFacade;
 	
     
 	@Persist
@@ -125,8 +121,6 @@ public class SelectPolicy {
 						return  linkFactory.createPageRenderLink("files/Index");
 					} else if (context.equals(DocToSignContext.SHARED)) {
 						return  linkFactory.createPageRenderLink("Index");
-					} else if (context.equals(DocToSignContext.GROUP_SHARED)) {
-						return  linkFactory.createPageRenderLink("groups/Index");
 					} else return null;
 				}
 				
@@ -150,27 +144,7 @@ public class SelectPolicy {
 								docTosign.add(doc);
 							}
 						}
-					} else if (context.equals(DocToSignContext.GROUP_SHARED)) {
-						GroupVo group = groupFacade.findByName(docIdentifiers[1].toString());
-						List<ShareDocumentVo> docVos = shareFacade.getAllSharingReceivedByUser(group.getGroupUser());
-						for (int i = 2; i < docIdentifiers.length; i++) {
-							DocumentVo doc =documentFacade.getDocument(group.getGroupUser().getLogin(), (String) docIdentifiers[i]);
-							ShareDocumentVo shareddoc = null;
-							for (ShareDocumentVo shareDocumentVo : docVos) {
-								if (shareDocumentVo.getIdentifier().equals(doc.getIdentifier())) {
-									shareddoc = shareDocumentVo;
-									break;
-								}
-							}
-							if (shareddoc != null) {
-								//want to sign only one time (moreover we do not want to sign encrypted doc)
-								if(!documentFacade.isSignedDocumentByCurrentUser(userVo, doc) && !doc.getEncrypted()){
-									docTosign.add(shareddoc);
-								}
-							}
-						}
-					}
-					else {
+					} else {
 						for (int i = 1; i < docIdentifiers.length; i++) {
 							DocumentVo doc =documentFacade.getDocument(userVo.getLogin(), (String) docIdentifiers[i]);
 //							ShareDocumentVo shareddoc = new ShareDocumentVo(doc,userVo,userVo,null,null,null);
@@ -197,8 +171,6 @@ public class SelectPolicy {
 							return  linkFactory.createPageRenderLink("files/Index");
 						} else if (context.equals(DocToSignContext.SHARED)) {
 							return  linkFactory.createPageRenderLink("Index");
-						} else if (context.equals(DocToSignContext.GROUP_SHARED)) {
-							return  linkFactory.createPageRenderLink("groups/Index");
 						} else return null;
 					}
 					

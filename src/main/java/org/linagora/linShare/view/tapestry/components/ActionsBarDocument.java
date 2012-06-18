@@ -83,11 +83,6 @@ public class ActionsBarDocument {
 	@Property
 	private boolean activeEncipherment;
     
-	@SuppressWarnings("unused")
-	@Property
-	private boolean showGroups;
-	
-	
 	
 	/*********************************
 	 * Phase render
@@ -101,10 +96,6 @@ public class ActionsBarDocument {
 	public void initUserlogin() throws BusinessException {
 		activeSignature = documentFacade.isSignatureActive(user);
 		activeEncipherment = documentFacade.isEnciphermentActive(user);
-		if (user.getDomainIdentifier() != null && user.getDomainIdentifier().length() > 0) {
-			showGroups = functionalityFacade.isEnableGroupTab(user.getDomainIdentifier());
-		}
-		showGroups = false;
 	}
 	
 	

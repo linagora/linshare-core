@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linShare.core.dao.FileSystemDao;
 import org.linagora.linShare.core.domain.constants.Language;
@@ -37,8 +36,6 @@ import org.linagora.linShare.core.domain.entities.Contact;
 import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.FileLogEntry;
 import org.linagora.linShare.core.domain.entities.Functionality;
-import org.linagora.linShare.core.domain.entities.Group;
-import org.linagora.linShare.core.domain.entities.GroupMember;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.MailContainer;
 import org.linagora.linShare.core.domain.entities.MailContainerWithRecipient;
@@ -51,12 +48,10 @@ import org.linagora.linShare.core.domain.objects.TimeUnitBooleanValueFunctionali
 import org.linagora.linShare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.DocumentRepository;
-import org.linagora.linShare.core.repository.GroupRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.SecuredUrlRepository;
 import org.linagora.linShare.core.repository.ShareRepository;
 import org.linagora.linShare.core.repository.UserRepository;
-import org.linagora.linShare.core.service.AbstractDomainService;
 import org.linagora.linShare.core.service.FunctionalityService;
 import org.linagora.linShare.core.service.LogEntryService;
 import org.linagora.linShare.core.service.MailContentBuildingService;
@@ -82,7 +77,6 @@ public class ShareServiceImpl implements ShareService{
 	private final ShareExpiryDateService shareExpiryDateService;
 	private final NotifierService notifierService;
 	private final MailContentBuildingService mailBuilder;
-	private final GroupRepository groupRepository;
 	private final GuestRepository guestRepository;
 	private List<Integer> datesForNotifyUpcomingOutdatedShares;
 	private final String urlBase;
@@ -98,7 +92,7 @@ public class ShareServiceImpl implements ShareService{
 			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
 			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
-			final GroupRepository groupRepository, final GuestRepository guestRepository,
+			final GuestRepository guestRepository,
 			final String datesForNotifyUpcomingOutdatedShares, final String urlBase,
 			final FunctionalityService functionalityService,
 			final PasswordService passwordService) {
@@ -113,7 +107,6 @@ public class ShareServiceImpl implements ShareService{
         this.shareExpiryDateService = shareExpiryDateService;
         this.notifierService = notifierService;
         this.mailBuilder = mailBuilder;
-        this.groupRepository = groupRepository;
         this.guestRepository = guestRepository;
         this.datesForNotifyUpcomingOutdatedShares = new ArrayList<Integer>();
         String[] dates = datesForNotifyUpcomingOutdatedShares.split(",");
@@ -258,12 +251,7 @@ public class ShareServiceImpl implements ShareService{
 					recipient.addReceivedShare(shareEntity);
 					sender.addShare(shareEntity);
 					
-					if (recipient.getUserType().equals(UserType.GROUP)) {
-						document.setSharedWithGroup(true);
-					}
-					else {
-						document.setShared(true);
-					}
+					document.setShared(true);
 					
 					// update guest account expiry date
 					if (recipient.getUserType().equals(UserType.GUEST)) {
@@ -319,15 +307,7 @@ public class ShareServiceImpl implements ShareService{
 			
 		for (Share share : listShare) {
 			if (mailContainer!=null) { //if notification is needed
-				if (share.getReceiver().getUserType().equals(UserType.GROUP)) { //group sharing
-					Group group = groupRepository.findByName(share.getReceiver().getLastName());
-					notifyGroupSharingDeleted(doc, actor, group, mailContainer);
-				}
-				else { //user sharing
-					
-					mailContainerWithRecipient.add(mailBuilder.buildMailSharedFileDeletedWithRecipient(actor, mailContainer, doc, actor, share.getReceiver()));
-					
-				}
+				mailContainerWithRecipient.add(mailBuilder.buildMailSharedFileDeletedWithRecipient(actor, mailContainer, doc, actor, share.getReceiver()));
 			}
 			deleteShare(share, actor);
 		}
@@ -336,7 +316,6 @@ public class ShareServiceImpl implements ShareService{
 
 		
 		doc.setShared(false);
-		doc.setSharedWithGroup(false);
 		
 		//2)delete secure url if we need
 		
@@ -395,30 +374,10 @@ public class ShareServiceImpl implements ShareService{
 			
 			} else {
 				doc.setShared(false);
-				doc.setSharedWithGroup(false);
 			}
 		} else {
 			//there is some shares and/or secured url
 			doc.setDeletionDate(null);
-			
-			if (listShare!=null && listShare.size()>0) { //there is some shares, test if it is with groups or user
-				List<Share> listShareToGroup = new ArrayList<Share>(); //shares with groups
-				for (Share share : listShare) {
-					if (share.getReceiver().getUserType().equals(UserType.GROUP)) {
-						listShareToGroup.add(share);
-					}
-				}
-
-				if (listShareToGroup!=null && listShareToGroup.size()>0) { //there is shares with groups
-					int nbSharedNotToGroup = listShare.size()-listShareToGroup.size();
-					if (nbSharedNotToGroup < 1) { //there is shares only with groups
-						doc.setShared(false);
-					} //else: shared with groups and user
-				}
-				else { //shared but not with group
-					doc.setSharedWithGroup(false);
-				}
-			}
 		}
 	}
 
@@ -575,35 +534,6 @@ public class ShareServiceImpl implements ShareService{
 	}
 	
 
-	@Override
-	public void notifyGroupSharingDeleted(Document doc, User manager, Group group,
-			MailContainer mailContainer) throws BusinessException {
-
-		/**
-		 * Send notification ; if a functional mailBox is given, to this mailBox, 
-		 * otherwise to each group member.
-		 */
-		String functionalMail = group.getFunctionalEmail();
-		
-		
-		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-		
-		if (functionalMail != null && functionalMail.length() > 0) {
-			
-			mailContainerWithRecipient.add(mailBuilder.buildMailGroupSharingDeletedWithRecipient(manager, mailContainer, manager, group, doc));
-			
-		} else {
-			
-			for (GroupMember member : group.getMembers()) {
-				
-				mailContainerWithRecipient.add(mailBuilder.buildMailGroupSharingDeletedWithRecipient(manager, mailContainer, manager, member.getUser(), group, doc));
-				
-			}
-		}
-		notifierService.sendAllNotifications(mailContainerWithRecipient);
-	}
-	
-	
 	/**
 	 * Log file sharing action.
 	 * @param sender
