@@ -44,7 +44,7 @@ public class RoleProvider {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_SUPERADMIN));
 		}
 		
-		if (!user.getUserType().equals(UserType.GUEST)) {
+		if (!user.getAccountType().equals(UserType.GUEST)) {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_INTERNAL));
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
 		} else if (user.getCanUpload()) {

@@ -59,9 +59,9 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 	
 	@Before
 	public void setUp(){
-		Guest robert=new Guest("robert.lechat@linagora.com", "robert", "lechat", "robert.lechat@linagora.com","secret", true, true,"comment");
-		Guest jean=new Guest("jean.lechat@linagora.com", "jean", "lechat", "jean.lechat@linagora.com","secret", true, true,"comment");
-		Guest pierre=new Guest("pierre.lechat@linagora.com", "pierre", "lechat", "pierre.lechat@linagora.com","secret", true, true,"comment");
+		Guest robert=new Guest( "robert", "lechat", "robert.lechat@linagora.com","secret", true, "comment");
+		Guest jean=new Guest("jean", "lechat", "jean.lechat@linagora.com","secret", true, "comment");
+		Guest pierre=new Guest("pierre", "lechat", "pierre.lechat@linagora.com","secret", true,"comment");
 		
 		try {
 			userRepo.create(robert);

@@ -30,40 +30,170 @@ import org.linagora.linShare.core.exception.BusinessException;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 
-public abstract class User {
 
-    /** Surrogate key. */
-    private long id;
-
-	/** the name of the user. */
-	private final String login;
+public abstract class User extends Account {
 	
-	/** the lastName of the user. */
-	private String lastName;
 	
-	/** the first name of the user. */
-	private String firstName;
+	public User() {
+	}
 	
-	/** the mail of the user. */
-	private final String mail;
+	public User(String firstName, String lastName, String mail) { 
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mail = mail;
+		this.lsUid = "fred"; // TODO :  TBD : lsUid generation
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+		this.role = Role.SIMPLE;
+		this.enable = true;
+		this.destroyed = false;
+		this.comment = "";
+		this.canUpload = true;
+		this.restricted = false;
+		this.enciphermentKeyPass = null;
+	}
+
+	protected String firstName;
 	
-    /** User first login date. */
-	private Date creationDate;
+	protected String lastName;
+	
+	protected String mail;
+	
+	protected byte[] enciphermentKeyPass;
+	
+	protected Date notAfter;
+	
+	protected Date notBefore;
+	
+	protected Date expirationDate;
+	
+	protected String ldapUid;
+	
+	protected boolean canUpload;
+	
+	protected String comment;
+	
+	protected boolean restricted;
+	
+	protected TechnicalAccountPermission technicalAccountPermission;
+	
+	public void setFirstName(String value) {
+		this.firstName = value;
+	}
+	
+	public String getFirstName() {
+		return firstName;
+	}
+	
+	public void setLastName(String value) {
+		this.lastName = value;
+	}
+	
+	public String getLastName() {
+		return lastName;
+	}
+	
+	public void setMail(String value) {
+		this.mail = value;
+	}
+	
+	public String getMail() {
+		return mail;
+	}
+	
+	public String getLogin() {
+		return mail;
+	}
+	
+	public byte[] getEnciphermentKeyPass() {
+		return enciphermentKeyPass;
+	}
+	public void setEnciphermentKeyPass(byte[] enciphermentKeyPass) {
+		this.enciphermentKeyPass = Arrays.copyOf(enciphermentKeyPass, enciphermentKeyPass.length);
+	}
+	
+	public void setNotAfter(Date value) {
+		this.notAfter = value;
+	}
+	
+	public Date getNotAfter() {
+		return notAfter;
+	}
+	
+	public void setNotBefore(Date value) {
+		this.notBefore = value;
+	}
+	
+	public Date getNotBefore() {
+		return notBefore;
+	}
+	
+	public void setExpirationDate(Date value) {
+		this.expirationDate = value;
+	}
+	
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+	
+	public String getLdapUid() {
+		return ldapUid;
+	}
 
-    /** User role. */
-    private Role role = Role.SIMPLE;
-    
-    /** User default language */
-    private String locale;
-    
-    /** User encipherment challenge (pbe) */
-    private byte[] enciphermentKeyPass;
+	public void setLdapUid(String ldapUid) {
+		this.ldapUid = ldapUid;
+	}
 
-    /** User password (if applicable). */
-    private String password;
+	public void setCanUpload(boolean value) {
+		this.canUpload = value;
+	}
+	
+	public boolean getCanUpload() {
+		return canUpload;
+	}
+	
+	public void setComment(String value) {
+		this.comment = value;
+	}
+	
+	public String getComment() {
+		return comment;
+	}
+	
+	public void setRestricted(boolean value) {
+		this.restricted = value;
+	}
+	
+	public boolean isRestricted() {
+		return restricted;
+	}
+	
+	public void setTechnicalAccountPermission(TechnicalAccountPermission value) {
+		this.technicalAccountPermission = value;
+	}
+	
+	public TechnicalAccountPermission getTechnicalAccountPermission() {
+		return technicalAccountPermission;
+	}
+	
+	
+	
+	
+	
+	// ----------------------------------------------------------
+	
+	  /** If the user is allowed to create guest */
+    private Boolean canCreateGuest;
 
-    
-    /** User's document */
+	public Boolean getCanCreateGuest() {
+		return canCreateGuest;
+	}
+	public void setCanCreateGuest(Boolean canCreateGuest) {
+		this.canCreateGuest = canCreateGuest;
+	}
+	
+	
+	/** User's document */
     private Set<Document> documents;
     
     /** Shares that user has shared to other */
@@ -84,127 +214,8 @@ public abstract class User {
     private Set<Signature> ownSignatures;
     
     
-    /** If the user is allowed to upload file */
-    private Boolean canUpload;
     
-    /** If the user is allowed to create guest */
-    private Boolean canCreateGuest;
     
-    private AbstractDomain domain;
-
-    protected User() {
-    	this.login = null;
-		this.firstName = null;
-		this.lastName= null;
-		this.mail = null;
-    	this.documents = new HashSet<Document>();
-    	this.shares=new HashSet<Share>();
-    	this.receivedShares=new HashSet<Share>();
-    	this.securedUrls=new HashSet<SecuredUrl>();
-    	this.domain = null;
-    	this.ownSignatures=new HashSet<Signature>();
-    }
-    /** Default constructor.
-     * @param login login.
-     * @param firstName first name.
-     * @param lastName last name.
-     * @param mail email.
-     * @param userType user type.
-     */
-	protected User(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest) {
-		this.login = login;
-		this.firstName = firstName;
-		this.lastName= lastName;
-		this.mail = mail;
-        this.role = Role.SIMPLE;
-        this.documents = new HashSet<Document>();
-    	this.shares=new HashSet<Share>();
-    	this.receivedShares=new HashSet<Share>();
-    	this.securedUrls=new HashSet<SecuredUrl>();
-        this.canUpload = canUpload;
-        this.canCreateGuest = canCreateGuest;
-        this.enciphermentKeyPass=null;
-    	this.domain = null;
-    	this.ownSignatures=new HashSet<Signature>();
-	}
-	
-	@Override
-	public boolean equals(Object o1){
-		if(o1 instanceof User && o1 != null) {
-			return this.login.equals(((User)o1).login);
-		}else{
-			return false;
-		}
-	}
-	
-	@Override
-	public int hashCode(){
-		return this.login.hashCode();
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getMail() {
-		return mail;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public abstract UserType getUserType();
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-	public String getLocale() {
-		return locale;
-	}
-
-	public void setLocale(String locale) {
-		this.locale = locale;
-	}
-
-
-	public Boolean getCanUpload() {
-		return canUpload;
-	}
-	public void setCanUpload(Boolean canUpload) {
-		this.canUpload = canUpload;
-	}
-	
-	public Boolean getCanCreateGuest() {
-		return canCreateGuest;
-	}
-	public void setCanCreateGuest(Boolean canCreateGuest) {
-		this.canCreateGuest = canCreateGuest;
-	}
-	
 	public Set<Document> getDocuments() {
 		return documents;
 	}
@@ -265,42 +276,11 @@ public abstract class User {
 	public void setReceivedShares(Set<Share> receivedShares) {
 		this.receivedShares = receivedShares;
 	}
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	public byte[] getEnciphermentKeyPass() {
-		return enciphermentKeyPass;
-	}
-	public void setEnciphermentKeyPass(byte[] enciphermentKeyPass) {
-		this.enciphermentKeyPass = Arrays.copyOf(enciphermentKeyPass, enciphermentKeyPass.length);
-	}
-	
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+		
 	public Set<Signature> getOwnSignatures() {
 		return ownSignatures;
 	}
 	public void setOwnSignatures(Set<Signature> ownSignatures) {
 		this.ownSignatures = ownSignatures;
-	}
-	
-	public AbstractDomain getDomain() {
-		return domain;
-	}
-	
-	public void setDomain(AbstractDomain domain) {
-		this.domain = domain;
-	}
-	
-	public String getDomainId() {
-		return ( (this.domain == null) ? null : this.domain.getIdentifier() );
 	}
 }

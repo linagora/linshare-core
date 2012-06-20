@@ -49,7 +49,7 @@ public class UserTransformer implements Transformer<User, UserVo> {
 	}
 
 	public UserVo disassemble(User entityObject) {
-		if (UserType.GUEST.equals(entityObject.getUserType())) {
+		if (UserType.GUEST.equals(entityObject.getAccountType())) {
 			return new UserVo(guestRepository.findByMail(entityObject.getMail()));
 		} else  {
 			return new UserVo(entityObject);

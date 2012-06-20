@@ -53,7 +53,7 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 	}
 	
 	public Set<Document> retrieveDocument(User user) {
-		return userRepository.findByLogin(user.getLogin()).getDocuments();
+		return userRepository.findByMail(user.getLogin()).getDocuments();
 	}
 
 	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
@@ -67,7 +67,7 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 	}
 
 	public Set<Document> retrieveDocument(String login) {
-		return userRepository.findByLogin(login).getDocuments();
+		return userRepository.findByMail(login).getDocuments();
 	}
 
 	public List<DocumentVo> retrieveDocuments(User user) {

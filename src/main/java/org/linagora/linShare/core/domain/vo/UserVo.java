@@ -52,19 +52,21 @@ public class UserVo implements Serializable {
     private String domainIdentifier;
 
     public UserVo(User user) {
-        this.login = user.getLogin();
+        this.login = user.getMail();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.mail = user.getMail();
-        this.userType = user.getUserType();
+        this.userType = user.getAccountType();
         this.role = user.getRole();
         this.upload= user.getCanUpload();
-        this.createGuest=user.getCanCreateGuest();
+//        this.createGuest=user.getCanCreateGuest();
+        this.createGuest=false;
+        
         this.locale = user.getLocale();
         if (user instanceof Guest) {
             Guest guest = (Guest) user;
-            ownerLogin = guest.getOwner().getLogin();
-            expirationDate = (Date)guest.getExpiryDate().clone();
+            ownerLogin = ((User)guest.getOwner()).getMail();
+            expirationDate = (Date)guest.getExpirationDate().clone();
             this.comment = guest.getComment();
             this.restricted = guest.isRestricted();
         }
@@ -74,16 +76,16 @@ public class UserVo implements Serializable {
     }
 	
     public UserVo(Guest user) {
-        this.login = user.getLogin();
+        this.login = user.getMail();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.mail = user.getMail();
-        this.userType = user.getUserType();
+        this.userType = user.getAccountType();
         this.role = user.getRole();
         this.upload= user.getCanUpload();
         this.createGuest=user.getCanCreateGuest();
-        this.ownerLogin = user.getOwner().getLogin();
-        this.expirationDate = (Date)user.getExpiryDate().clone();
+        this.ownerLogin = ((User)user.getOwner()).getMail(); 
+        this.expirationDate = (Date)user.getExpirationDate().clone();
         this.comment = user.getComment();
         this.locale = user.getLocale();
         this.restricted = user.isRestricted();

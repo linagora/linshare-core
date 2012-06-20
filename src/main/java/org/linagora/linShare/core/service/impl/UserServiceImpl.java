@@ -185,9 +185,9 @@ public class UserServiceImpl implements UserService {
 			
 			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
 			
-			User owner = userRepository.findByLogin(ownerLogin);
+			User owner = userRepository.findByMail(ownerLogin);
 			
-			Guest guest = new Guest(login, firstName, lastName, mail, hashedPassword, canUpload, canCreateGuest, comment);
+			Guest guest = new Guest(firstName, lastName, mail, hashedPassword, canUpload, comment);
 			guest.setDomain(guestDomain);
 			guest.setOwner(owner);
 			guest.setComment(comment);
@@ -200,13 +200,13 @@ public class UserServiceImpl implements UserService {
 			
 			guest.setCreationDate(new Date());
 			guest.setLocale(guestDomain.getDefaultLocale());
-			guest.setExpiryDate(calculateUserExpiryDate(guestDomain));
+			guest.setExpirationDate(calculateUserExpiryDate(guestDomain));
 			
 			
 			guestRepository.create(guest);
 			
 			Calendar expDate = new GregorianCalendar();
-			expDate.setTime(guest.getExpiryDate());
+			expDate.setTime(guest.getExpirationDate());
 			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(), owner.getDomainId(),
 					LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), expDate);
 			
@@ -253,7 +253,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
 	public void deleteUser(String login, User actor) throws BusinessException {
-		User userToDelete = userRepository.findByLogin(login);
+		User userToDelete = userRepository.findByMail(login);
 		
 		if (userToDelete!=null) {
 			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());
@@ -262,7 +262,7 @@ public class UserServiceImpl implements UserService {
 			
 			if (!hasRightToDeleteThisUser) {
 				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
-						+" cannot be deleted, he is not a guest, or "+ actor.getLogin()+ " is not an admin");
+						+" cannot be deleted, he is not a guest, or "+ actor.getMail()+ " is not an admin");
 			} else {
 				doDeleteUser( actor, userToDelete);
 			}
@@ -403,7 +403,7 @@ public class UserServiceImpl implements UserService {
 				guest.setOwner(actor);
 				guestRepository.update(guest);
 				if (guest.isRestricted()) { //if restricted guest, needs to have the new owner as contact
-					addGuestContactRestriction(guest.getLogin(), actor.getLogin());
+					addGuestContactRestriction(guest.getMail(), actor.getMail());
 				}
 			}
 			
@@ -422,8 +422,8 @@ public class UserServiceImpl implements UserService {
 				
 			}
 		} catch (IllegalArgumentException e) {
-			logger.error("Couldn't find the user " + userToDelete.getLogin() +" to be deleted", e);
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + userToDelete.getLogin() +" to be deleted");
+			logger.error("Couldn't find the user " + userToDelete.getMail() +" to be deleted", e);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + userToDelete.getMail() +" to be deleted");
 		}
 	}
 
@@ -432,15 +432,15 @@ public class UserServiceImpl implements UserService {
      */
 	   @Override
     public void cleanExpiredGuestAcccounts() {
-        User owner = userRepository.findByLogin("system");
+        User owner = userRepository.findByMail("system");
         List<Guest> guests = guestRepository.findOutdatedGuests();
         logger.info(guests.size() + " guest(s) have been found to be removed");
         for (User guest : guests) {
             try {
-                deleteUser(guest.getLogin(), owner);
-                logger.info("Removed expired user : " + guest.getLogin());
+                deleteUser(guest.getMail(), owner);
+                logger.info("Removed expired user : " + guest.getMail());
             } catch (BusinessException ex) {
-                logger.warn("Unable to remove expired user : " + guest.getLogin() + "\n" + ex.toString());
+                logger.warn("Unable to remove expired user : " + guest.getMail() + "\n" + ex.toString());
             }
         }
     }
@@ -451,8 +451,8 @@ public class UserServiceImpl implements UserService {
 		logger.debug("special search for restricted guest ");
 		List<AllowedContact> contacts = allowedContactRepository.searchContact(mail, firstName, lastName, currentGuest);
 		for (AllowedContact allowedContact : contacts) {
-			if (allowedContact.getContact().getUserType().equals(UserType.GUEST)) {
-				Guest guest = guestRepository.findByLogin(allowedContact.getContact().getLogin());
+			if (allowedContact.getContact().getAccountType().equals(UserType.GUEST)) {
+				Guest guest = guestRepository.findByMail(allowedContact.getContact().getMail());
 				users.add(guest);
 			}
 			else {
@@ -506,8 +506,8 @@ public class UserServiceImpl implements UserService {
 		logger.debug("Begin searchUser");
 		List<User> users=new ArrayList<User>();
 	
-		if (currentUser !=null && currentUser.getUserType()==UserType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
-			Guest currentGuest = guestRepository.findByLogin(currentUser.getLogin());
+		if (currentUser !=null && currentUser.getAccountType()==UserType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
+			Guest currentGuest = guestRepository.findByMail(currentUser.getMail());
 			if (currentGuest.isRestricted() == true) {
 				return completionSearchForRestrictedGuest(mail,firstName,lastName,currentGuest);
 			}
@@ -540,7 +540,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
 		
-		Guest guest = guestRepository.findByLogin(mail);
+		Guest guest = guestRepository.findByMail(mail);
 		User owner = userRepository.findByMail(ownerVo.getMail());
 		
 		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest.getDomainId(), guest.getMail());
@@ -548,7 +548,7 @@ public class UserServiceImpl implements UserService {
 		if (!hasRightToDeleteThisUser) {
 			logger.error("The user " + mail +" cannot be updated by "+owner.getMail());
 			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
-					+" cannot be deleted, he is not a guest, or "+ owner.getLogin()+ " is not an admin");
+					+" cannot be deleted, he is not a guest, or "+ owner.getMail()+ " is not an admin");
 		}
         
 		guest.setFirstName(firstName);
@@ -578,7 +578,7 @@ public class UserServiceImpl implements UserService {
 		if(user == null) {
 			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user : " + mail + " in domain : " + domain);
 		} else {
-			User owner = userRepository.findByLogin(ownerVo.getLogin());
+			User owner = userRepository.findByMail(ownerVo.getMail());
 			user.setRole(role);
 			userRepository.update(user);
 			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
@@ -627,7 +627,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException {
-		User user = userRepository.findByLogin(login);
+		User user = userRepository.findByMail(login);
 		if (user == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a user with the login " + login);
 		}
@@ -642,7 +642,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException {
-		Guest guest = guestRepository.findByLogin(login);
+		Guest guest = guestRepository.findByMail(login);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
 		}
@@ -661,7 +661,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void removeGuestContactRestriction(String login) throws BusinessException {
-		Guest guest = guestRepository.findByLogin(login);
+		Guest guest = guestRepository.findByMail(login);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
 		}
@@ -687,13 +687,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException {
 
-		Guest guest = guestRepository.findByLogin(ownerLogin);
+		Guest guest = guestRepository.findByMail(ownerLogin);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + ownerLogin);
 		}
 		
 		try {
-//			Guest currentGuest = guestRepository.findByLogin(currentUser.getLogin());
+//			Guest currentGuest = guestRepository.findByMail(currentUser.getMail());
 			User contact = findOrCreateUserWithDomainPolicies(contactLogin, guest.getDomain().getIdentifier());
 			AllowedContact allowedContact = new AllowedContact(guest, contact);
 			allowedContactRepository.create(allowedContact);
@@ -706,7 +706,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException {
-		Guest guest = guestRepository.findByLogin(login);
+		Guest guest = guestRepository.findByMail(login);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
 		}
@@ -745,7 +745,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public List<User> fetchGuestContacts(String login) throws BusinessException {
-		Guest guest = guestRepository.findByLogin(login);
+		Guest guest = guestRepository.findByMail(login);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
 		}
@@ -763,7 +763,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public List<String> getGuestEmailContacts(String login) throws BusinessException {
-		Guest guest = guestRepository.findByLogin(login);
+		Guest guest = guestRepository.findByMail(login);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
 		}
@@ -782,7 +782,7 @@ public class UserServiceImpl implements UserService {
 	public void updateUserDomain(String mail, String selectedDomain, UserVo ownerVo) throws BusinessException {
 		if (!ownerVo.isSuperAdmin()) {
 			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
-					+" cannot be moved to "+selectedDomain+" domain, "+ ownerVo.getLogin()+ " is not a superadmin");
+					+" cannot be moved to "+selectedDomain+" domain, "+ ownerVo.getMail()+ " is not a superadmin");
 		}
 		User user = null;
         // Seek user in base. If not found, try again but in directories
@@ -805,7 +805,7 @@ public class UserServiceImpl implements UserService {
 		List<User> internalsBreaked = new ArrayList<User>();
 		
 		for (User user : users) {
-			if (user.getUserType().equals(UserType.INTERNAL)) {
+			if (user.getAccountType().equals(UserType.INTERNAL)) {
 				if (!(user.getRole().equals(Role.SYSTEM) || user.getRole().equals(Role.SUPERADMIN))) { //hide these accounts
 					try {
 						List<User> found = abstractDomainService.searchUserWithoutRestriction(user.getDomain(), user.getMail(), null, null);
@@ -836,10 +836,10 @@ public class UserServiceImpl implements UserService {
 				try {
 					userRepository.update(user);
 				} catch (IllegalArgumentException e) {
-					logger.error("Could not update the user " + user.getLogin() +" in the database ", e);
+					logger.error("Could not update the user " + user.getMail() +" in the database ", e);
 					throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user could not be update in the DB " + e);
 				} catch (BusinessException e) {
-					logger.error("Could not update the user " + user.getLogin()+" in the database ", e);
+					logger.error("Could not update the user " + user.getMail()+" in the database ", e);
 					throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user could not be update in the DB " + e);
 				}
 			} else {
@@ -856,10 +856,10 @@ public class UserServiceImpl implements UserService {
 				try {
 					userRepository.create(user);
 				} catch (IllegalArgumentException e) {
-					logger.error("Could not create the user " + user.getLogin() +" in the database ", e);
+					logger.error("Could not create the user " + user.getMail() +" in the database ", e);
 					throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user could not be created in the DB " + e);
 				} catch (BusinessException e) {
-					logger.error("Could not create the user " + user.getLogin()+" in the database ", e);
+					logger.error("Could not create the user " + user.getMail()+" in the database ", e);
 					throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user could not be created in the DB " + e);
 				}
 			}

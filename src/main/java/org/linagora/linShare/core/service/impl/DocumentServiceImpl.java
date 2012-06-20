@@ -729,7 +729,7 @@ public class DocumentServiceImpl implements DocumentService {
 			throws BusinessException {
 		Document doc = documentRepository.findById(uuid);
 		User owner = doc.getOwner();
-		User actor = userRepository.findByLogin(login);
+		User actor = userRepository.findByMail(login);
 		if (null != doc) {
 			try {
 

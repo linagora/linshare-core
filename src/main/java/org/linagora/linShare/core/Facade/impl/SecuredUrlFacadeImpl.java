@@ -129,7 +129,7 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 	}
 	
 	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {
-		User sender = userRepository.findByLogin(senderVo.getLogin());
+		User sender = userRepository.findByMail(senderVo.getLogin());
 
 		List<SecuredUrl> secUrls = securedUrlService.getUrlsByMailAndFile(sender, document);
 

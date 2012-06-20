@@ -134,7 +134,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		List<Document> docList = getDocumentEntitiesFromVo(documents);
-		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, userRepository.findByLogin(owner.getLogin()), recipientsList, expirationDate);
+		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, userRepository.findByMail(owner.getLogin()), recipientsList, expirationDate);
 		
 		SuccessesAndFailsItems<ShareDocumentVo> results = disassembleShareResultList(successAndFails);
 		logger.debug("createSharing:End");
@@ -157,7 +157,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 		}
 		
-		User owner_ = userRepository.findByLogin(owner.getLogin());
+		User owner_ = userRepository.findByMail(owner.getLogin());
 		
 		
 		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
@@ -165,7 +165,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
-			User recipient = userRepository.findByLogin(userVo.getLogin());
+			User recipient = userRepository.findByMail(userVo.getLogin());
 			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
 			
 			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString));
@@ -180,7 +180,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
 	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipient) {
-		User userRecipient = userRepository.findByLogin(recipient.getLogin());
+		User userRecipient = userRepository.findByMail(recipient.getLogin());
 		if (userRecipient==null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
@@ -190,7 +190,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document) {
-		User userSender = userRepository.findByLogin(sender.getLogin());
+		User userSender = userRepository.findByMail(sender.getLogin());
 		if (userSender==null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
@@ -210,7 +210,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException {
-		User actorUser = userRepository.findByLogin(actor.getLogin());
+		User actorUser = userRepository.findByMail(actor.getLogin());
 		
 		Share shareToDelete = shareTransformer.assemble(share);
 	
@@ -224,7 +224,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
     public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException {
         Share share = shareTransformer.assemble(shareDocumentVo);
-		User user = userRepository.findByLogin(userVo.getLogin());
+		User user = userRepository.findByMail(userVo.getLogin());
         
         // create a copy of the document :
         Document copyDoc = documentService.duplicateDocument(share.getDocument(), user);
@@ -264,7 +264,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		logger.debug("The current user is : " + owner.getMail());
 		logger.debug("recipientsEmailInput size : " + recipientsEmailInput.size());
 		List<String> recipientsEmail = new ArrayList<String>();
-		if(owner.getUserType().equals(UserType.GUEST) && ((Guest)owner).isRestricted()) {
+		if(owner.getAccountType().equals(UserType.GUEST) && ((Guest)owner).isRestricted()) {
 			List<String> guestAllowedContacts= userService.getGuestEmailContacts(owner.getLogin());
 			logger.debug("guestAllowedContacts size : " + guestAllowedContacts.size());
 			for (String mailInput : recipientsEmailInput) {
@@ -345,7 +345,7 @@ public class ShareFacadeImpl implements ShareFacade {
 					
 					//give email as a parameter, useful to quickly know who is here
 					String linShareUrlParam = "?email=" + oneContact.getMail();
-					User owner_ = userRepository.findByLogin(ownerVo.getLogin());
+					User owner_ = userRepository.findByMail(ownerVo.getLogin());
 					
 					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(
 							owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, securedUrl.getTemporaryPlainTextpassword(), isOneDocEncrypted, jwsEncryptUrlString));	
@@ -375,8 +375,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		UserVo ownerVo = sharedDocument.getSender();
 
-		User user = userRepository.findByLogin(currentUser.getLogin());
-		User owner = userRepository.findByLogin(ownerVo.getLogin());
+		User user = userRepository.findByMail(currentUser.getLogin());
+		User owner = userRepository.findByMail(ownerVo.getLogin());
 		
 		Document doc = documentRepository.findById(sharedDocument.getIdentifier());
 		List<Document> docList = new ArrayList<Document>();
@@ -393,7 +393,7 @@ public class ShareFacadeImpl implements ShareFacade {
     	
     	//1) share with secured url, notification to users.
 
-		User user = userRepository.findByLogin(currentUser.getLogin());
+		User user = userRepository.findByMail(currentUser.getLogin());
     	Document doc = documentRepository.findById(currentDoc.getIdentifier());
     	
     	List<SecuredUrl> urls = shareService.getSecureUrlLinkedToDocument(doc);
@@ -425,7 +425,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		mailContainerWithRecipient.clear();
 		
 		for (Share share : listShare) {
-			sUrlDownload = share.getReceiver().getUserType().equals(UserType.GUEST) ? urlBase : urlInternal;
+			sUrlDownload = share.getReceiver().getAccountType().equals(UserType.GUEST) ? urlBase : urlInternal;
 			
 			mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, ""));
 		}
@@ -577,7 +577,7 @@ public class ShareFacadeImpl implements ShareFacade {
 //			throws BusinessException {
 //		Group group = groupTransformer.assemble(groupVo);
 //		Document doc = documentRepository.findById(shareddoc.getIdentifier());
-//		User manager = userRepository.findByLogin(managerVo.getLogin());
+//		User manager = userRepository.findByMail(managerVo.getLogin());
 //		
 //		shareService.notifyGroupSharingDeleted(doc, manager, group, mailContainer);
 //	}

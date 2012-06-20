@@ -6,6 +6,7 @@
       <column name="id" not-null="true" index="index_allowed_contact_id"/>
       <generator class="native"/>
     </id>
+    <!-- 
     <many-to-one access="field" class="org.linagora.linShare.core.domain.entities.User" name="owner" not-null="true">
       <column index="index_allowed_contact_user_id" name="user_id"/>
     </many-to-one>
@@ -13,5 +14,6 @@
     <many-to-one access="field" class="org.linagora.linShare.core.domain.entities.User" name="contact" not-null="true">
       <column index="index_allowed_contact_contact_id" name="contact_id"/>
     </many-to-one>
+     -->
   </class>
 </hibernate-mapping>

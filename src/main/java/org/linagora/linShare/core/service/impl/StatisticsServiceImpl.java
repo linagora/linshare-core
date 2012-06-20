@@ -138,7 +138,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		int count=0;
 		
 		for (User user : allUsers) {
-			if (user.getUserType().equals(UserType.GUEST)) {
+			if (user.getAccountType().equals(UserType.GUEST)) {
 				count++;
 			}
 		}
@@ -162,7 +162,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		int count=0;
 		
 		for (User user : allUsers) {
-			if (user.getUserType().equals(UserType.INTERNAL)) {
+			if (user.getAccountType().equals(UserType.INTERNAL)) {
 				count++;
 			}
 		}

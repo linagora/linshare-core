@@ -129,9 +129,9 @@ public class LoadingServiceTestDatas {
 		
 //		userService.deleteUser(getGuest1().getLogin(), getUser1());
 		
-		userService.deleteUser(getUser1().getLogin(), root);
-		userService.deleteUser(getUser2().getLogin(), root);
-		userService.deleteUser(getUser3().getLogin(), root);
+		userService.deleteUser(getUser1().getMail(), root);
+		userService.deleteUser(getUser2().getMail(), root);
+		userService.deleteUser(getUser3().getMail(), root);
 		
 		abstractDomainRepository.delete(getRootDomain());
 		domainPolicyRepository.delete(defaultPolicy);
@@ -256,9 +256,9 @@ public class LoadingServiceTestDatas {
 		abstractDomainRepository.update(topDomain);	
 		
 		
-		user1 = new Internal("user1@linpki.org","John","Doe","user1@linpki.org");
-		user2 = new Internal("user2@linpki.org","Jane","Smith","user2@linpki.org");
-		user3 = new Internal("user3@linpki.org","Foo","Bar","user3@linpki.org");
+		user1 = new Internal("John","Doe","user1@linpki.org");
+		user2 = new Internal("Jane","Smith","user2@linpki.org");
+		user3 = new Internal("Foo","Bar","user3@linpki.org");
 		
 		user1.setDomain(abstractDomainRepository.findById(topDomainName));
 		user2.setDomain(abstractDomainRepository.findById(subDomainName1));

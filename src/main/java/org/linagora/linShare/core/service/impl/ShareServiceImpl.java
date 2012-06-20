@@ -254,15 +254,15 @@ public class ShareServiceImpl implements ShareService{
 					document.setShared(true);
 					
 					// update guest account expiry date
-					if (recipient.getUserType().equals(UserType.GUEST)) {
+					if (recipient.getAccountType().equals(UserType.GUEST)) {
 						
 						// get new guest expiry date
 						Calendar guestExpiryDate = Calendar.getInstance();
 						TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(recipient.getDomain());
 				        guestExpiryDate.add(guestFunctionality.toCalendarValue(), guestFunctionality.getValue());
 				        
-						Guest guest = guestRepository.findByLogin(recipient.getLogin());
-						guest.setExpiryDate(guestExpiryDate.getTime());
+						Guest guest = guestRepository.findByMail(recipient.getLogin());
+						guest.setExpirationDate(guestExpiryDate.getTime());
 						guestRepository.update(guest);
 					}
 	
@@ -352,7 +352,7 @@ public class ShareServiceImpl implements ShareService{
 				String thumbnailUUID = doc.getThmbUUID();
 				
 				//we log the deletion of this file with FILE_EXPIRE
-				User systemUser = userRepository.findByLogin("system");
+				User systemUser = userRepository.findByMail("system");
 				FileLogEntry logEntry = new FileLogEntry(systemUser.getMail(), systemUser
 							.getFirstName(), systemUser.getLastName(), null,
 							LogAction.FILE_EXPIRE, "Deletion of outdated file", doc
@@ -395,7 +395,7 @@ public class ShareServiceImpl implements ShareService{
     /** Clean all outdated shares. */
 	@Override
     public void cleanOutdatedShares() {
-        User owner = userRepository.findByLogin("system");
+        User owner = userRepository.findByMail("system");
         List<Share> shares = shareRepository.getOutdatedShares();
         logger.info(shares.size() + " expired share(s) found to be delete.");
         List<SecuredUrl> securedUrlList = securedUrlRepository.getOutdatedSecuredUrl();

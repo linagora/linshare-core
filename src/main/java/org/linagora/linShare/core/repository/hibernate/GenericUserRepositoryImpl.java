@@ -21,9 +21,7 @@
 package org.linagora.linShare.core.repository.hibernate;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -31,8 +29,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linShare.core.domain.entities.Document;
-import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.UserRepository;
@@ -40,39 +36,14 @@ import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-abstract class GenericUserRepositoryImpl<U extends User> extends AbstractRepositoryImpl<U> implements UserRepository<U> {
+abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountRepositoryImpl<U> implements UserRepository<U> {
 
 	public GenericUserRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 	
-	public boolean exist(String login, String encPassword) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("login", login));
-		criteria.add(Restrictions.eq("password", encPassword));
-		List<U> users = null;
-		users = findByCriteria(criteria);
 
-		if (users == null || users.isEmpty()) {
-			return false;
-		} else if (users.size() == 1) {
-			return true;
-		} else {
-			throw new IllegalStateException("Login must be unique");
-		}
-	}
-
-	public U findByLogin(String login) {
-		 List<U> users = findByCriteria(Restrictions.eq("login", login).ignoreCase());
-	        if (users == null || users.isEmpty()) {
-	            return null;
-	        } else if (users.size() == 1) {
-	            return users.get(0);
-	        } else {
-	            throw new IllegalStateException("Login must be unique");
-	        }
-	}
-
+	@Override
 	public U findByMail(String mail) {
 		 List<U> users = findByCriteria(Restrictions.eq("mail", mail).ignoreCase());
 	        if (users == null || users.isEmpty()) {
@@ -102,6 +73,8 @@ abstract class GenericUserRepositoryImpl<U extends User> extends AbstractReposit
         }
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<U> findByDomain(String domain) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
@@ -111,6 +84,9 @@ abstract class GenericUserRepositoryImpl<U extends User> extends AbstractReposit
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<U> findByCriteria(AccountOccupationCriteriaBean accountCriteria) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
@@ -135,61 +111,65 @@ abstract class GenericUserRepositoryImpl<U extends User> extends AbstractReposit
 		
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
-
-	public void removeOwnerDocumentForUser(String login, String uuid)
-			throws BusinessException {
-		U user=findByLogin(login);
-		
-		Set<Document> documents=user.getDocuments();
-				
-		Document documentTemp=null;
-		for(Document document:documents){
-			if(document.getIdentifier().equals(uuid)){
-				documentTemp=document;
-				break;
-			}
-		}
-		user.deleteDocument(documentTemp);
-		
-		update(user);
-
-	}
-
-	public void removeReceivedDocument(String login, String uuid)
-			throws BusinessException {
-		U user=findByLogin(login);
-		
-		List<Share> shares=new ArrayList<Share>(user.getReceivedShares());
-				
-		for(Share currentShare:shares){
-			if(currentShare.getDocument().getIdentifier().equals(uuid)){
-				user.deleteReceivedShare(currentShare);
-				break;
-			}
-		}
-		
-		update(user);
-
-	}
-
-	public void removeSentDocument(String login, String uuid)
-			throws BusinessException {
-		
-		U user=findByLogin(login);
-		
-		List<Share> shares=new ArrayList<Share>(user.getShares());
-				
-		for(Share currentShare:shares){
-			if(currentShare.getDocument().getIdentifier().equals(uuid)){
-				user.deleteShare(currentShare);
-			}
-		}
-		
-		update(user);
-
-	}
+	
+	
+//
+//	public void removeOwnerDocumentForUser(String login, String uuid)
+//			throws BusinessException {
+//		U user=findByLogin(login);
+//		
+//		Set<Document> documents=user.getDocuments();
+//				
+//		Document documentTemp=null;
+//		for(Document document:documents){
+//			if(document.getIdentifier().equals(uuid)){
+//				documentTemp=document;
+//				break;
+//			}
+//		}
+//		user.deleteDocument(documentTemp);
+//		
+//		update(user);
+//
+//	}
+//
+//	public void removeReceivedDocument(String login, String uuid)
+//			throws BusinessException {
+//		U user=findByLogin(login);
+//		
+//		List<Share> shares=new ArrayList<Share>(user.getReceivedShares());
+//				
+//		for(Share currentShare:shares){
+//			if(currentShare.getDocument().getIdentifier().equals(uuid)){
+//				user.deleteReceivedShare(currentShare);
+//				break;
+//			}
+//		}
+//		
+//		update(user);
+//
+//	}
+//
+//	public void removeSentDocument(String login, String uuid)
+//			throws BusinessException {
+//		
+//		U user=findByLogin(login);
+//		
+//		List<Share> shares=new ArrayList<Share>(user.getShares());
+//				
+//		for(Share currentShare:shares){
+//			if(currentShare.getDocument().getIdentifier().equals(uuid)){
+//				user.deleteShare(currentShare);
+//			}
+//		}
+//		
+//		update(user);
+//
+//	}
+	
 	
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<String> findMails(final String beginWith) {
 		
 		return (List<String>)getHibernateTemplate().executeFind(new HibernateCallback() {
@@ -209,5 +189,4 @@ abstract class GenericUserRepositoryImpl<U extends User> extends AbstractReposit
 		});
 				
 	}
-
 }

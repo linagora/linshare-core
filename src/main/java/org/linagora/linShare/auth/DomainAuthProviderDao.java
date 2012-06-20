@@ -103,7 +103,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			} catch (NameNotFoundException e) {
 				logger.debug("Can't find the user in the directory. Search in DB.");
 				foundUser = userService.findUserInDB(domainIdentifier,login);
-				if (foundUser != null && !foundUser.getUserType().equals(UserType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
+				if (foundUser != null && !foundUser.getAccountType().equals(UserType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
 					logger.debug("User found in DB but authentification failed");
 					throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), domainIdentifier);
 				} else {
@@ -193,7 +193,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			// retrieve the guest account. if the two user are in the same domain, we can't
 			// do anything I think...
 			if (!domainIdentifier.equals(user.getDomainId())) {
-				throw new BadDomainException("User "+user.getLogin()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domainIdentifier);
+				throw new BadDomainException("User "+user.getMail()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domainIdentifier);
 			}
 			
 		} catch (BusinessException e) {
@@ -203,7 +203,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 
         List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
 
-		return new org.springframework.security.core.userdetails.User(user.getLogin(), "", true, true, true, true,
+		return new org.springframework.security.core.userdetails.User(user.getMail(), "", true, true, true, true,
 		                grantedAuthorities.toArray(new GrantedAuthority[0]));
 	}
 	

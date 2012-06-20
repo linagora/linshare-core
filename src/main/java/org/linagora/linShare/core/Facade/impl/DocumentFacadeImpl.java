@@ -83,7 +83,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	public DocumentVo insertFile(InputStream file, long size, String fileName,
 			String mimeType, UserVo owner) throws BusinessException {
-		User docOwner =  userRepository.findByLogin(owner.getLogin());
+		User docOwner =  userRepository.findByMail(owner.getLogin());
 		return documentTransformer.disassemble(documentService.insertFile(docOwner.getLogin(), file, size, fileName, mimeType, docOwner));
 	}
 
@@ -95,7 +95,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 			// if this document is a sharedocumentVo, it means we received the document
 			// and we delete the sharing (for us)
 
-			User receiver = userRepository.findByLogin(actor.getLogin());
+			User receiver = userRepository.findByMail(actor.getLogin());
 			
 			if (receiver == null) {
 				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
@@ -145,7 +145,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	public void insertSignatureFile(InputStream file, long size,
 			String fileName, String mimeType, UserVo owner, DocumentVo document, X509Certificate signerCertificate)
 			throws BusinessException {
-		User docOwner =  userRepository.findByLogin(owner.getLogin());
+		User docOwner =  userRepository.findByMail(owner.getLogin());
 		Document doc = documentService.getDocument(document.getIdentifier());
 		
 		documentService.insertSignatureFile(file, size, fileName, mimeType, docOwner, doc, signerCertificate);
@@ -153,7 +153,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo document){
 		
-		User currentSignerDoc =  userRepository.findByLogin(currentSigner.getLogin());
+		User currentSignerDoc =  userRepository.findByMail(currentSigner.getLogin());
 		
 		Document doc = documentService.getDocument(document.getIdentifier());
 		List<Signature> signatures = doc.getSignatures();
@@ -184,7 +184,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	}
 
 	public SignatureVo getSignature(UserVo currentSigner,DocumentVo document) {
-		User currentSignerDoc =  userRepository.findByLogin(currentSigner.getLogin());
+		User currentSignerDoc =  userRepository.findByMail(currentSigner.getLogin());
 		
 		Document doc = documentService.getDocument(document.getIdentifier());
 		List<Signature> signatures = doc.getSignatures();
@@ -240,7 +240,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 			userUsedSize += doc.getSize();
 		}
 		DisplayableAccountOccupationEntryVo accountOccupation = new DisplayableAccountOccupationEntryVo(user.getFirstName(), 
-				user.getLastName(), user.getMail(), user.getUserType(), 
+				user.getLastName(), user.getMail(), user.getAccountType(), 
 				userAvailableQuota, userTotalQuota, userUsedSize);
 		return accountOccupation;
 	}
@@ -267,7 +267,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	public DocumentVo updateDocumentContent(String currentFileUUID,
 			InputStream file, long size, String fileName, String mimeType,
 			UserVo owner) throws BusinessException {
-		User currentUser =  userRepository.findByLogin(owner.getLogin());
+		User currentUser =  userRepository.findByMail(owner.getLogin());
 		return documentTransformer.disassemble(documentService.updateDocumentContent(currentFileUUID, file, size, fileName, mimeType, currentUser)); 
 	}
 

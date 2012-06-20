@@ -110,13 +110,13 @@ public class UserFacadeImpl implements UserFacade {
      * @return a list of matching users.
      */
     public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException {
-    	User owner = userRepository.findByLogin(currentUser.getLogin());
+    	User owner = userRepository.findByMail(currentUser.getLogin());
     	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
     }
     
     public List<UserVo> searchUser(String mail, String firstName, String lastName, UserType userType,UserVo currentUser) throws BusinessException {
-		User owner = userRepository.findByLogin(currentUser.getLogin());
+		User owner = userRepository.findByMail(currentUser.getLogin());
 		return getUserVoList(userService.searchUser(mail, firstName, lastName, userType, owner));
 	}
 
@@ -133,9 +133,9 @@ public class UserFacadeImpl implements UserFacade {
      * @return the list of guests created by their owner.
      */
     public List<UserVo> searchGuest(String mail) {
-        User owner = userRepository.findByLogin(mail);
+        User owner = userRepository.findByMail(mail);
         if (owner == null) { // owner is not an internal -> probably a guest
-            owner = guestRepository.findByLogin(mail);
+            owner = guestRepository.findByMail(mail);
         }
         List<Guest> users = guestRepository.searchGuest(null, null, null, owner);
         return getUserVoListFromGuest(users);
@@ -168,7 +168,7 @@ public class UserFacadeImpl implements UserFacade {
     
     public void deleteUser(String login, UserVo actorVo) {
         try {
-        	User actor = userRepository.findByLogin(actorVo.getLogin());
+        	User actor = userRepository.findByMail(actorVo.getLogin());
             userService.deleteUser(login, actor);
         } catch (BusinessException e) {
             throw new IllegalArgumentException(e.getMessage());
@@ -213,7 +213,7 @@ public class UserFacadeImpl implements UserFacade {
      * @return password or null if empty or null.
      */
     public String getPassword(String login) {
-        User user = userRepository.findByLogin(login);
+        User user = userRepository.findByMail(login);
         if (user == null || user.getPassword() == null || user.getPassword().length() == 0) {
             return null;
         } else {
@@ -265,7 +265,7 @@ public class UserFacadeImpl implements UserFacade {
 	}
 	
 	public List<UserVo> searchAllBreakedUsers(UserVo userLoggedIn) {
-		User actor = userRepository.findByLogin(userLoggedIn.getLogin());
+		User actor = userRepository.findByMail(userLoggedIn.getLogin());
 		if(actor.getRole().equals(Role.SUPERADMIN)) {
 			return getUserVoList(userService.searchAllBreakedUsers(actor));
 		} else {
@@ -316,7 +316,7 @@ public class UserFacadeImpl implements UserFacade {
 		Guest guest = guestRepository.findByMail(mail);
 		if (guest == null)
 			return null;
-		if (guest.getOwner().getLogin().equals(userLoggedIn.getLogin())) {
+		if (((User)guest.getOwner()).getLogin().equals(userLoggedIn.getLogin())) {
 			return new UserVo(guest);
 		}
 		return null;

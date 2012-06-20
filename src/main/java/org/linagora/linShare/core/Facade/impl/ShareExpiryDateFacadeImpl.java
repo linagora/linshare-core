@@ -49,7 +49,7 @@ public class ShareExpiryDateFacadeImpl implements ShareExpiryDateFacade {
 	}
 
 	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo, UserVo ownerVo) {
-		User owner = userRepository.findByLogin(ownerVo.getLogin());
+		User owner = userRepository.findByMail(ownerVo.getLogin());
 		
 		List<Document> docList = new ArrayList<Document>();
 		for (DocumentVo documentVo : docsVo) {
@@ -59,7 +59,7 @@ public class ShareExpiryDateFacadeImpl implements ShareExpiryDateFacade {
 	}
 
 	public Calendar computeShareExpiryDate(DocumentVo docVo, UserVo ownerVo) {
-		User owner = userRepository.findByLogin(ownerVo.getLogin());
+		User owner = userRepository.findByMail(ownerVo.getLogin());
 		Document document = documentRepository.findById(docVo.getIdentifier());
 		return shareExpiryDateService.computeShareExpiryDate(document, owner);
 	}

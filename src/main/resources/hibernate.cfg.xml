@@ -26,8 +26,9 @@
     <mapping resource="org/linagora/linShare/core/domain/entities/DomainAccessPolicy.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/DomainPolicy.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/MessagesConfiguration.hbm.xml"/>
+    <mapping resource="org/linagora/linShare/core/domain/entities/Account.hbm.xml"/>
     
-	<!-- -->
+	<!-- 
 	<mapping resource="org/linagora/linShare/core/domain/entities/User.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/Document.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/Share.hbm.xml"/>
@@ -37,8 +38,6 @@
     <mapping resource="org/linagora/linShare/core/domain/entities/SecuredUrl.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/RecipientFavourite.hbm.xml"/>
     <mapping resource="org/linagora/linShare/core/domain/entities/Cookie.hbm.xml"/>
-    <!-- 
-    <mapping resource="org/linagora/linShare/core/domain/entities/Group.hbm.xml"/> 
     
      -->
   </session-factory>

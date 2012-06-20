@@ -23,19 +23,21 @@ package org.linagora.linShare.core.repository.hibernate;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linShare.core.domain.entities.Account;
 import org.linagora.linShare.core.domain.entities.User;
-import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.repository.AccountRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class UserRepositoryImpl extends GenericUserRepositoryImpl<User> implements UserRepository<User> {
+public class AccountRepositoryImpl extends GenericAccountRepositoryImpl<Account> implements AccountRepository<Account> {
 
-    public UserRepositoryImpl(HibernateTemplate hibernateTemplate) {
+    public AccountRepositoryImpl(HibernateTemplate hibernateTemplate) {
         super(hibernateTemplate);
     }
 
     @Override
-    protected DetachedCriteria getNaturalKeyCriteria(User user) {
-        DetachedCriteria det = DetachedCriteria.forClass(User.class).add(Restrictions.eq("lsUid", user.getLsUid()));
+    protected DetachedCriteria getNaturalKeyCriteria(Account account) {
+        DetachedCriteria det = DetachedCriteria.forClass(Account.class).add(Restrictions.eq("lsUid", account.getLsUid()));
         return det;
     }
+
 } 

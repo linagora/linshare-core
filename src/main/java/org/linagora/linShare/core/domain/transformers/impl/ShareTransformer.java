@@ -53,8 +53,8 @@ public class ShareTransformer implements Transformer<Share, ShareDocumentVo> {
 	public Share assemble(ShareDocumentVo shareDocumentVo) {
 		
 		Share theShare = shareRepository.getShare(documentTransformer.assemble(shareDocumentVo), 
-				userRepository.findByLogin(shareDocumentVo.getSender().getLogin()),
-				userRepository.findByLogin(shareDocumentVo.getReceiver().getLogin()));
+				userRepository.findByMail(shareDocumentVo.getSender().getLogin()),
+				userRepository.findByMail(shareDocumentVo.getReceiver().getLogin()));
 		
 		return theShare;
 	

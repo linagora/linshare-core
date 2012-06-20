@@ -27,16 +27,7 @@ import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.view.tapestry.beans.AccountOccupationCriteriaBean;
 
-public interface UserRepository<T extends User> extends AbstractRepository<T> {
-
-	
-	
-    /** 
-     * Find a user using its login.
-     * @param login
-     * @return founded user (null if no user found).
-     */
-    T findByLogin(String login);
+public interface UserRepository<T extends User> extends AccountRepository<T> {
 
     /** Find a user using its mail.
      * @param mail
@@ -53,48 +44,39 @@ public interface UserRepository<T extends User> extends AbstractRepository<T> {
     T findByMailAndDomain(String domain, String mail);
     
     /**
-     * authentification
-     * @param login the login of the user.
-     * @param password the password of the user.
-     * @return true if the user is matched else false.
-     */
-    boolean exist(String login, String encPassword);
-
-   
-    /**
      * Return a list of mails beginning with the text
      * @param beginWith
      * @return
      */
     List<String> findMails(String beginWith);
     
-    /**
-     * Remove the document represented by its uuid for the user 
-     * @param login of user
-     * @param uuid of document
-     */
-    public void removeOwnerDocumentForUser(String login,String uuid) throws BusinessException;
-    
-    /**
-     * Remove a file sent by the user matches by his login.
-     * @param login the login of the user.
-     * @param uuid the uuid of the document.
-     */
-    public void removeSentDocument(String login,String uuid) throws BusinessException;
-    
-    /**
-     * Remove a file received by the user matches by his login.
-     * @param login the login of the user.
-     * @param uuid the uuid of the document.
-     */
-    public void removeReceivedDocument(String login,String uuid) throws BusinessException;
-
-    /**
-     * Find account occupation by criteria on the user
-     */
+//    /**
+//     * Remove the document represented by its uuid for the user 
+//     * @param login of user
+//     * @param uuid of document
+//     */
+//    public void removeOwnerDocumentForUser(String login,String uuid) throws BusinessException;
+//    
+//    /**
+//     * Remove a file sent by the user matches by his login.
+//     * @param login the login of the user.
+//     * @param uuid the uuid of the document.
+//     */
+//    public void removeSentDocument(String login,String uuid) throws BusinessException;
+//    
+//    /**
+//     * Remove a file received by the user matches by his login.
+//     * @param login the login of the user.
+//     * @param uuid the uuid of the document.
+//     */
+//    public void removeReceivedDocument(String login,String uuid) throws BusinessException;
+//
+//    /**
+//     * Find account occupation by criteria on the user
+//     */
 	List<T> findByCriteria(AccountOccupationCriteriaBean criteria);
-
-	List<T> findByDomain(String domain);
+//
+//	List<T> findByDomain(String domain);
 	
 	
      

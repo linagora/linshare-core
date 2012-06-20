@@ -405,12 +405,22 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 
 
+INSERT INTO account(id, account_type, ls_uid, owner_ls_uid, creation_date, modification_date, role_id, locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', null, null,null, 3, 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+
+-- INSERT INTO users(1, First_name, Last_name, Mail, Encipherment_key_pass, Not_after, Not_before, Expiration_date, Ldap_uid, Can_upload, Comment, Restricted, technical_account_permissionid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO user(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   VALUES (2, 0, 1, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', null, 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'false','false');
-INSERT INTO user(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest) VALUES (3, 0, 1, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', null, 'false','false');
+
+-- INSERT INTO users(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   
+-- VALUES (2, 0, 1, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', null, 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'false','false');
+-- INSERT INTO user(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest) VALUES (3, 0, 1, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', null, 'false','false');
 
 
+
+-- ID  	ACCOUNT_TYPE  	LS_UID  	OWNER_LS_UID  	CREATION_DATE  	MODIFICATION_DATE  	ROLE_ID  	LOCALE  	ENABLE  	PASSWORD  	DESTROYED  	DOMAIN_ID  
+-- 1	2	fred	null	2012-06-20 12:26:20.058	2012-06-20 12:26:19.872	0	en	TRUE	null	FALSE	3
 
 
 -- unit type : TIME(0), SIZE(1)
@@ -549,9 +559,9 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 
 -- Functionality : TAB_GROUP
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (39, true, true, 1, false);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (40, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (20, true, 'TAB_GROUP', 39, 40, 1);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (39, true, true, 1, false);
+-- INSERT INTO policy(id, status, default_status, policy, system) VALUES (40, false, false, 1, true);
+-- INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (20, true, 'TAB_GROUP', 39, 40, 1);
 
 
 -- Functionality : SECURE_URL

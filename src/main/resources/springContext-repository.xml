@@ -4,6 +4,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+	<bean name="accountRepository" class="org.linagora.linShare.core.repository.hibernate.AccountRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+    
     <bean name="userRepository" class="org.linagora.linShare.core.repository.hibernate.UserRepositoryImpl">
         <constructor-arg ref="hibernateTemplate"/>
     </bean>

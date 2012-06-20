@@ -22,7 +22,10 @@ package org.linagora.linShare.core.domain.constants;
 
 public enum UserType {
 
-	INTERNAL(0), GUEST(1), GROUP(2);
+	// 0 Account
+	// 1 USER
+	// 
+	INTERNAL(2), GUEST(3), TECHNICALACCOUNT(4), THREAD(5), ROOT(6);
 
 	private int value;
 
@@ -36,9 +39,11 @@ public enum UserType {
 
 	public static UserType fromInt(int value) {
         switch (value) {
-            case 0: return UserType.INTERNAL;
-            case 1: return UserType.GUEST;
-            case 2: return UserType.GROUP;
+            case 2: return UserType.INTERNAL;
+            case 3: return UserType.GUEST;
+            case 4: return UserType.TECHNICALACCOUNT;
+            case 5: return UserType.THREAD;
+            case 6: return UserType.ROOT;
             default : throw new IllegalArgumentException("Doesn't match an existing UserType");
         }
 	}

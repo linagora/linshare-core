@@ -18,32 +18,21 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linShare.core.domain.entities;
+package org.linagora.linShare.core.repository;
 
-import org.linagora.linShare.core.domain.constants.UserType;
 
-/** Internal user.
- */
-public class Internal extends User {
+import java.util.List;
 
-    /** Default constructor for hibernate. */
-    @SuppressWarnings("unused")
-	private Internal() {
-        super();
-    }
+import org.linagora.linShare.core.domain.entities.Account;
 
-    /** Constructor.
-     * @param firstName first name.
-     * @param lastName last name.
-     * @param mail email.
-     */
-    public Internal(String firstName, String lastName, String mail) {
-        super(firstName, lastName, mail);
-    }
+public interface AccountRepository<U extends Account> extends AbstractRepository<U> {
 
-	@Override
-	public UserType getAccountType() {
-		return UserType.INTERNAL;
-	}
+	
+    U findByLsUid(String lsUid);
+    
+    boolean exist(String lsUid);
 
-}
+	List<U> findByDomain(String domain);
+
+    
+} 

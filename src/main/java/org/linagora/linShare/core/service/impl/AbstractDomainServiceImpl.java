@@ -493,7 +493,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public boolean userCanCreateGuest(User user) {
 		
-		if (user.getUserType()==UserType.GUEST) {
+		if (user.getAccountType()==UserType.GUEST) {
 			return false;
 		}
 

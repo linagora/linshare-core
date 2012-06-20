@@ -40,7 +40,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(Guest user) {
-		DetachedCriteria det = DetachedCriteria.forClass(Guest.class).add(Restrictions.eq("login", user.getLogin()));
+		DetachedCriteria det = DetachedCriteria.forClass(Guest.class).add(Restrictions.eq("lsUid", user.getLsUid()));
 		return det;
 	}
 
@@ -76,7 +76,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
      */
     public List<Guest> findOutdatedGuests() {
         DetachedCriteria criteria = DetachedCriteria.forClass(Guest.class);
-        criteria.add(Restrictions.lt("expiryDate", new Date()));
+        criteria.add(Restrictions.lt("expirationDate", new Date()));
         return findByCriteria(criteria);
     }
 
