@@ -27,22 +27,6 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- LinShare: An user has updated a shared file
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare: An user has updated a shared file', 0);
 
--- Subject NEW_GROUP_SHARING
--- LinShare: A user deposited files in sharing for the group ${groupName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 6, 'LinShare: A user deposited files in sharing for the group ${groupName}', 0);
-
--- Subject MEMBERSHIP_REQUEST_STATUS
--- LinShare: Status of your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 7, 'LinShare: Status of your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName}', 0);
-
--- Subject NEW_GROUP_MEMBER
--- LinShare: You are now member of the group ${groupName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 8, 'LinShare: You are now member of the group ${groupName}', 0);
-
--- Subject GROUP_SHARING_DELETED
--- LinShare: A file shared with the group ${groupName} has been deleted.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 9, 'LinShare: A file shared with the group ${groupName} has been deleted.', 0);
-
 -- Subject SHARED_DOC_DELETED
 -- LinShare: An user has deleted a shared file
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 10, 'LinShare: An user has deleted a shared file', 0);
@@ -95,18 +79,6 @@ INSERT INTO mail_templates (messages_configuration_id, template_id, content_html
 -- Template FILE_UPDATED
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 12, '<strong>${firstName} ${lastName}</strong> has updated the shared file <strong>${fileOldName}</strong>:<ul><li>New file name: ${fileName}</li><li>File size: ${fileSize}</li><li>MIME type: <code>${mimeType}</code></li></ul>', '${firstName} ${lastName} has updated the shared file ${fileOldName}:\n- New file name: ${fileName}\n- File size: ${fileSize}\n- MIME type: ${mimeType}\n', 0);
 
--- Template GROUP_SHARE_NOTIFICATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 13, '<strong>${firstName} ${lastName}</strong> has shared ${number} file(s) with the group ${groupName}:<ul>${documentNames}</ul>', '${firstName} ${lastName} has shared ${number} file(s) with the group ${groupName}:\n\n${documentNamesTxt}', 0);
-
--- Template GROUP_NEW_MEMBER
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 14, 'You are now member of the group ${groupName}.', 'You are now member of the group ${groupName}.', 0);
-
--- Template GROUP_MEMBERSHIP_STATUS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 15, 'Your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName} is ${status}.', 'Your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName} is ${status}.', 0);
-
--- Template GROUP_SHARE_DELETED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 16, '${firstName} ${lastName} has deleted the file <strong>${documentName}</strong> shared with the group <strong>${groupName}</strong>.', '${firstName} ${lastName} has deleted the file ${documentName} shared with the group ${groupName}.', 0);
-
 -- Template SHARED_FILE_DELETED
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 17, '<strong>${firstName} ${lastName}</strong> has deleted the shared file <strong>${documentName}</strong>.', '${firstName} ${lastName} has deleted the shared file ${documentName}.', 0);
 
@@ -151,22 +123,6 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare : Un utilisateur a mis à jour un fichier dans vos partages', 1);
-
--- Subject NEW_GROUP_SHARING
--- LinShare: A user deposited files in sharing for the group ${groupName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 6, 'LinShare : Un utilisateur a déposé des fichiers en partage pour le groupe ${groupName}', 1);
-
--- Subject MEMBERSHIP_REQUEST_STATUS
--- LinShare: Status of your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 7, 'LinShare : Statut de votre demande d''adhésion au groupe ${groupName} concernant ${newMemberFirstName} ${newMemberLastName}', 1);
-
--- Subject NEW_GROUP_MEMBER
--- LinShare: You are now member of the group ${groupName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 8, 'LinShare : Vous appartenez maintenant au groupe ${groupName}', 1);
-
--- Subject GROUP_SHARING_DELETED
--- LinShare: A file shared with the group ${groupName} has been deleted.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 9, 'LinShare : Un fichier partagé avec le groupe ${groupName} a été supprimé', 1);
 
 -- Subject SHARED_DOC_DELETED
 -- LinShare: An user has deleted a shared file
@@ -220,18 +176,6 @@ INSERT INTO mail_templates (messages_configuration_id, template_id, content_html
 -- Template FILE_UPDATED
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 12, '<strong>${firstName} ${lastName}</strong> a mis à jour le fichier partagé <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nom du nouveau fichier&nbsp;: ${fileName}</li><li>Taille du fichier&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>', '${firstName} ${lastName} a mis à jour le fichier partagé ${fileOldName} : \n- nom du nouveau fichier : ${fileName}\n- taille du fichier : ${fileSize}\n- type MIME : ${mimeType}\n', 1);
 
--- Template GROUP_SHARE_NOTIFICATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 13, '<strong>${firstName} ${lastName}</strong> a mis en partage ${number} fichier(s) pour le groupe ${groupName}&nbsp;:<ul>${documentNames}</ul>', '${firstName} ${lastName} a mis en partage ${number} fichier(s) pour le groupe ${groupName} :\n\n${documentNamesTxt}', 1);
-
--- Template GROUP_NEW_MEMBER
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 14, 'Vous appartenez maintenant au groupe ${groupName}.', 'Vous appartenez maintenant au groupe ${groupName}.', 1);
-
--- Template GROUP_MEMBERSHIP_STATUS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 15, 'Votre demande d''adhésion au groupe ${groupName} concernant ${newMemberFirstName} ${newMemberLastName} est ${status}.', 'Votre demande d''adhésion au groupe ${groupName} concernant ${newMemberFirstName} ${newMemberLastName} est ${status}.', 1);
-
--- Template GROUP_SHARE_DELETED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 16, '${firstName} ${lastName} a supprimé le fichier <strong>${documentName}</strong> partagé avec le groupe <strong>${groupName}</strong>.', '${firstName} ${lastName} a supprimé le fichier ${documentName} partagé avec le groupe ${groupName}.', 1);
-
 -- Template SHARED_FILE_DELETED
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 17, '<strong>${firstName} ${lastName}</strong> a supprimé le fichier partagé <strong>${documentName}</strong>.', '${firstName} ${lastName} a supprimé le fichier partagé ${documentName}.', 1);
 
@@ -276,22 +220,6 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'LinShare : Een gebruiker heeft een gedeeld bestand bijgewerkt', 2);
-
--- Subject NEW_GROUP_SHARING
--- LinShare: A user deposited files in sharing for the group ${groupName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 6, 'LinShare : Een gebruiker heeft te delen bestanden klaargezet voor de groep ${groupName}', 2);
-
--- Subject MEMBERSHIP_REQUEST_STATUS
--- LinShare: Status of your membership request for the group ${groupName} and the user ${newMemberFirstName} ${newMemberLastName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 7, 'LinShare : Status van uw aanvraag tot toetreding tot de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName}', 2);
-
--- Subject NEW_GROUP_MEMBER
--- LinShare: You are now member of the group ${groupName}
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 8, 'LinShare : U bent nu lid van de groep ${groupName}', 2);
-
--- Subject GROUP_SHARING_DELETED
--- LinShare: A file shared with the group ${groupName} has been deleted.
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 9, 'LinShare : Een bestand gedeeld met de groep ${groupName} werd gewist', 2);
 
 -- Subject SHARED_DOC_DELETED
 -- LinShare: An user has deleted a shared file
@@ -345,18 +273,6 @@ INSERT INTO mail_templates (messages_configuration_id, template_id, content_html
 -- Template FILE_UPDATED
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 12, '<strong>${firstName} ${lastName}</strong> heeft het gedeelde bestand bijgewerkt <strong>${fileOldName}</strong>&nbsp;:<ul><li>Nieuwe bestandsnaam&nbsp;: ${fileName}</li><li>Grootte van het bestand&nbsp;: ${fileSize}</li><li>Type MIME&nbsp;: <code>${mimeType}</code></li></ul>', '${firstName} ${lastName} heeft het gedeelde bestand bijgewerkt ${fileOldName} :\n- Nieuwe bestandsnaam : ${fileName}\n- Grootte van het bestand : ${fileSize}\n- Type MIME : ${mimeType}\n', 2);
 
--- Template GROUP_SHARE_NOTIFICATION
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 13, '<strong>${firstName} ${lastName}</strong> heeft ${number} bestand(en) te delen aangeboden voor de groep${groupName}&nbsp;:<ul>${documentNames}</ul>', '${firstName} ${lastName} heeft ${number} bestand(en) te delen aangeboden voor de groep${groupName} :\n\n${documentNamesTxt}', 2);
-
--- Template GROUP_NEW_MEMBER
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 14, 'U bent nu lid van de groep ${groupName}.', 'U bent nu lid van de groep ${groupName}.', 2);
-
--- Template GROUP_MEMBERSHIP_STATUS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 15, 'Uw aanvraag tot toetreding van de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}.', 'Uw aanvraag tot toetreding van de groep ${groupName} en de gebruiker ${newMemberFirstName} ${newMemberLastName} is ${status}.', 2);
-
--- Template GROUP_SHARE_DELETED
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 16, '${firstName} ${lastName} heeft het bestand <strong>${documentName}</strong> dat gedeeld werd met de groep <strong>${groupName}</strong> gewist.', '${firstName} ${lastName} heeft het bestand ${documentName} dat gedeeld werd met de groep ${groupName} gewist.', 2);
-
 -- Template SHARED_FILE_DELETED
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 17, '<strong>${firstName} ${lastName}</strong> heeft het gedeelde bestand <strong>${documentName}</strong> gewist.', '${firstName} ${lastName} heeft het gedeelde bestand ${documentName} gewist.', 2);
 
@@ -369,7 +285,6 @@ INSERT INTO mail_templates (messages_configuration_id, template_id, content_html
 -- Template DOC_UPCOMING_OUTDATED
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 20, 'Het bestand <strong>${documentName}</strong> zal verlopen binnen ${nbDays} dagen.', 'Het bestand ${documentName} zal verlopen binnen ${nbDays} dagen.', 2);
 
--- Welcome texts
 -- Welcome texts
 
 -- Welcome to LinShare, the Open Source secure files sharing system
@@ -405,26 +320,12 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 
 
+-- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
 INSERT INTO account(id, account_type, ls_uid, owner_ls_uid, creation_date, modification_date, role_id, locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', null, current_date(),current_date(), 3, 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false);
-
-
-
-
---INSERT INTO users(account_id, First_name, Last_name, Mail, Encipherment_key_pass, Not_after, Not_before, Expiration_date, Ldap_uid, Can_upload, Comment, Restricted, technical_account_permissionid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-
-
-
--- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-
--- INSERT INTO users(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest)   
--- VALUES (2, 0, 1, 'root@localhost.localdomain', 'Administrator', 'LinShare', 'root@localhost.localdomain', null, 3, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', '2019-01-01', 'false','false');
+-- system account : usefull ? it could be ... :(
 -- INSERT INTO user(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest) VALUES (3, 0, 1, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', null, 'false','false');
 
-
-
--- ID  	ACCOUNT_TYPE  	LS_UID  	OWNER_LS_UID  	CREATION_DATE  	MODIFICATION_DATE  	ROLE_ID  	LOCALE  	ENABLE  	PASSWORD  	DESTROYED  	DOMAIN_ID  
--- 1	2	fred	null	2012-06-20 12:26:20.058	2012-06-20 12:26:19.872	0	en	TRUE	null	FALSE	3
 
 
 -- unit type : TIME(0), SIZE(1)
@@ -560,12 +461,6 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (37, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
-
-
--- Functionality : TAB_GROUP
--- INSERT INTO policy(id, status, default_status, policy, system) VALUES (39, true, true, 1, false);
--- INSERT INTO policy(id, status, default_status, policy, system) VALUES (40, false, false, 1, true);
--- INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (20, true, 'TAB_GROUP', 39, 40, 1);
 
 
 -- Functionality : SECURE_URL

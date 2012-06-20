@@ -31,18 +31,11 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public Account findUserInDB(String uid) {
 		Account acc = accountRepository.findByLsUid(uid);
+		// TODO : Remove this : Temporary hook for compatibility
 		if (acc == null) {
 			acc = userRepository.findByMail(uid);
 		}
 		return acc;
 	}
-
-
-	@Override
-	public Account findUserInDB(String domain, String uid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }

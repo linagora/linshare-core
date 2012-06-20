@@ -20,8 +20,10 @@
 */
 package org.linagora.linShare.core.domain.entities;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.linagora.linShare.core.domain.constants.UserType;
@@ -41,7 +43,7 @@ public abstract class User extends Account {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.mail = mail;
-		this.lsUid = "fred"; // TODO :  TBD : lsUid generation
+		this.lsUid = null;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.role = Role.SIMPLE;
@@ -51,6 +53,14 @@ public abstract class User extends Account {
 		this.canUpload = true;
 		this.restricted = false;
 		this.enciphermentKeyPass = null;
+		
+		// TODO: To be deleted:
+//		Set<Share>
+		
+		this.documents = new HashSet<Document>();
+		this.shares = new HashSet<Share>();
+		this.securedUrls = new HashSet<SecuredUrl>();
+		this.receivedShares = new HashSet<Share>();
 	}
 
 	protected String firstName;

@@ -60,6 +60,7 @@ import org.linagora.linShare.core.repository.DomainPolicyRepository;
 import org.linagora.linShare.core.repository.FunctionalityRepository;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.UserRepository;
+import org.linagora.linShare.core.service.AccountService;
 import org.linagora.linShare.core.service.UserService;
 import org.linagora.linShare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -84,6 +85,9 @@ import org.subethamail.wiser.Wiser;
 public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
 	private static Logger logger = LoggerFactory.getLogger(UserServiceImplTest.class);
+	
+	@Autowired
+	private AccountService accountService;
 	
 	@Autowired
 	private UserService userService;
