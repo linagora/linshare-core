@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.domain.entities.Role;
-import org.linagora.linShare.core.service.UserService;
+import org.linagora.linShare.core.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -41,14 +41,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public class DaoAuthProvider implements UserDetailsService {
 
-    private final UserService userService;
+    private final AccountService accountService;
     private static Logger logger = LoggerFactory.getLogger(DaoAuthProvider.class);
 
-    public DaoAuthProvider(UserService userService) {
-        this.userService = userService;
-    }
 
-    /*
+    public DaoAuthProvider(AccountService accountService) {
+		super();
+		this.accountService = accountService;
+	}
+
+
+	/*
      * In this method, we try to load user details from the database.
      * We are four data types :
      *  - LdapUser : Just a profile : first name, last name, role, domain_id.
@@ -61,26 +64,26 @@ public class DaoAuthProvider implements UserDetailsService {
         if (username == null || username.length() == 0) {
             throw new UsernameNotFoundException("username must not be null");
         }
-        logger.debug("Trying to load '" + username +"' user detail ...");
+        logger.debug("Trying to load '" + username +"' account detail ...");
 
-        org.linagora.linShare.core.domain.entities.User user = userService.findUnkownUserInDB(username);
+        org.linagora.linShare.core.domain.entities.Account account = accountService.findUserInDB(username);
         String password = null ;
-        if(user != null) {
-        	logger.debug("User in database found : " + user.getMail());
-        	password = user.getPassword();
+        if(account != null) {
+        	logger.debug("Account in database found : " + account.getLsUid());
+        	password = account.getPassword();
         
         	// If the password field is not set (only Ldap user), we set it to an empty string.
-        	if (!UserType.GUEST.equals(user) && password==null) password=""; 
+        	if (!UserType.INTERNAL.equals(account) && password==null) password=""; 
         }
 		
-        if (user == null || password == null || Role.SYSTEM.equals(user.getRole())) {
-        	logger.debug("throw UsernameNotFoundException:User not found");
-            throw new UsernameNotFoundException("User not found");
+        if (account == null || password == null || Role.SYSTEM.equals(account.getRole())) {
+        	logger.debug("throw UsernameNotFoundException: Account not found");
+            throw new UsernameNotFoundException("Account not found");
         }
 
-        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
+        List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(account);
 
-        return new User(user.getLogin(), password, true, true, true, true,
+        return new User(account.getLsUid(), password, true, true, true, true,
             grantedAuthorities.toArray(new GrantedAuthority[0]));
     }
 

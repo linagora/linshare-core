@@ -405,9 +405,13 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 
 
-INSERT INTO account(id, account_type, ls_uid, owner_ls_uid, creation_date, modification_date, role_id, locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', null, null,null, 3, 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO account(id, account_type, ls_uid, owner_ls_uid, creation_date, modification_date, role_id, locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', null, current_date(),current_date(), 3, 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false);
 
--- INSERT INTO users(1, First_name, Last_name, Mail, Encipherment_key_pass, Not_after, Not_before, Expiration_date, Ldap_uid, Can_upload, Comment, Restricted, technical_account_permissionid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+
+
+--INSERT INTO users(account_id, First_name, Last_name, Mail, Encipherment_key_pass, Not_after, Not_before, Expiration_date, Ldap_uid, Can_upload, Comment, Restricted, technical_account_permissionid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 
 

@@ -169,8 +169,9 @@
     </bean>
 
        <!-- DAO Authentification -->
+       <!-- database accounts : guests, root, technical accounts, ... -->
        <bean id="guestAuthProvider" class="org.linagora.linShare.auth.DaoAuthProvider">
-           <constructor-arg ref="userService"/>
+           <constructor-arg ref="accountService"/>
        </bean>
 
        <bean id="passwordEncoderFactory" class="org.linagora.linShare.auth.PasswordEncoderFactory">

@@ -116,25 +116,12 @@ public interface UserFacade {
     List<String> findMails(String beginWith);
     
 	/**
-	 * search temp admin account which is created by import.sql
-	 * key is linshare.admin.temp.mail in linshare.properties
-	 * @return
-	 */
-	public UserVo searchTempAdminUser() throws BusinessException;
-	
-	/**
 	 * Update a user locale
 	 * @param user
 	 * @param locale
 	 */
 	public void updateUserLocale(UserVo user, String locale);
 	
-	
-	/**
-	 * temporary admin user (import.sql)
-	 * edit this constant if you change default temp admin account in import.sql
-	 */
-    public static final String ADMIN_TEMP_MAIL= "root@localhost.localdomain";
 	
     /** Load a User.
      * If the user doesn't exist in database, search informations in LDAP and create a user entry before returning it.
@@ -243,7 +230,6 @@ public interface UserFacade {
      * @return founded user.
      */
     UserVo findUserInDb(String mail, String domain);
-    UserVo findUserForAuth(String mail) throws BusinessException;
     UserVo findUser(String domain, String mail) throws BusinessException;
     
     

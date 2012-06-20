@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.linagora.linShare.core.domain.constants.UserType;
+import org.linagora.linShare.core.domain.entities.Account;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.Role;
 import org.linagora.linShare.core.domain.entities.User;
@@ -51,8 +52,24 @@ public class UserVo implements Serializable {
     private boolean restricted;
     private String domainIdentifier;
 
+    public UserVo(Account user) {
+        this.login = user.getLsUid();
+        this.firstName = user.getLsUid();
+        this.lastName = "";
+        this.mail = user.getLsUid();
+        this.userType = user.getAccountType();
+        this.role = user.getRole();
+        this.upload= false;
+        this.createGuest=false;
+        this.locale = user.getLocale();
+        if (user.getDomain() != null) {
+        	this.domainIdentifier = user.getDomain().getIdentifier();
+        }
+    }
+    
+    
     public UserVo(User user) {
-        this.login = user.getMail();
+        this.login = user.getLsUid();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.mail = user.getMail();
@@ -76,7 +93,7 @@ public class UserVo implements Serializable {
     }
 	
     public UserVo(Guest user) {
-        this.login = user.getMail();
+    	this.login = user.getLsUid();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.mail = user.getMail();

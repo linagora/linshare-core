@@ -31,6 +31,12 @@
     
     <bean name="passwordService" class="org.linagora.linShare.core.service.impl.PasswordServiceImpl">
     </bean>
+
+
+    <bean name="accountService" class="org.linagora.linShare.core.service.impl.AccountServiceImpl">
+    	<constructor-arg ref="accountRepository"/>
+    	<constructor-arg ref="userRepository"/>
+    </bean>
     
     <bean name="userService" class="org.linagora.linShare.core.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository"/>

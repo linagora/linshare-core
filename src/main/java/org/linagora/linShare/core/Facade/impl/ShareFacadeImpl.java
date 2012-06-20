@@ -134,7 +134,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		List<Document> docList = getDocumentEntitiesFromVo(documents);
-		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, userRepository.findByMail(owner.getLogin()), recipientsList, expirationDate);
+		SuccessesAndFailsItems<Share> successAndFails = shareService.shareDocumentsToUser(docList, userRepository.findByLsUid(owner.getLogin()), recipientsList, expirationDate);
 		
 		SuccessesAndFailsItems<ShareDocumentVo> results = disassembleShareResultList(successAndFails);
 		logger.debug("createSharing:End");
@@ -157,7 +157,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 		}
 		
-		User owner_ = userRepository.findByMail(owner.getLogin());
+		User owner_ = userRepository.findByLsUid(owner.getLogin());
 		
 		
 		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
@@ -165,7 +165,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
-			User recipient = userRepository.findByMail(userVo.getLogin());
+			User recipient = userRepository.findByLsUid(userVo.getLogin());
 			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
 			
 			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString));
@@ -180,17 +180,18 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
 	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipient) {
-		User userRecipient = userRepository.findByMail(recipient.getLogin());
+		User userRecipient = userRepository.findByLsUid(recipient.getLogin());
 		if (userRecipient==null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
-		return shareTransformer.disassembleList(new ArrayList<Share>(userRecipient.getReceivedShares()));		
+//		TODO: return shareTransformer.disassembleList(new ArrayList<Share>(userRecipient.getReceivedShares()));		
+		return shareTransformer.disassembleList(new ArrayList<Share>());
 	}
 
 	
 	@Override
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document) {
-		User userSender = userRepository.findByMail(sender.getLogin());
+		User userSender = userRepository.findByLsUid(sender.getLogin());
 		if (userSender==null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
@@ -210,7 +211,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException {
-		User actorUser = userRepository.findByMail(actor.getLogin());
+		User actorUser = userRepository.findByLsUid(actor.getLogin());
 		
 		Share shareToDelete = shareTransformer.assemble(share);
 	
@@ -224,7 +225,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
     public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException {
         Share share = shareTransformer.assemble(shareDocumentVo);
-		User user = userRepository.findByMail(userVo.getLogin());
+		User user = userRepository.findByLsUid(userVo.getLogin());
         
         // create a copy of the document :
         Document copyDoc = documentService.duplicateDocument(share.getDocument(), user);
@@ -345,7 +346,7 @@ public class ShareFacadeImpl implements ShareFacade {
 					
 					//give email as a parameter, useful to quickly know who is here
 					String linShareUrlParam = "?email=" + oneContact.getMail();
-					User owner_ = userRepository.findByMail(ownerVo.getLogin());
+					User owner_ = userRepository.findByLsUid(ownerVo.getLogin());
 					
 					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(
 							owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, securedUrl.getTemporaryPlainTextpassword(), isOneDocEncrypted, jwsEncryptUrlString));	
@@ -375,8 +376,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		UserVo ownerVo = sharedDocument.getSender();
 
-		User user = userRepository.findByMail(currentUser.getLogin());
-		User owner = userRepository.findByMail(ownerVo.getLogin());
+		User user = userRepository.findByLsUid(currentUser.getLogin());
+		User owner = userRepository.findByLsUid(ownerVo.getLogin());
 		
 		Document doc = documentRepository.findById(sharedDocument.getIdentifier());
 		List<Document> docList = new ArrayList<Document>();
@@ -393,7 +394,7 @@ public class ShareFacadeImpl implements ShareFacade {
     	
     	//1) share with secured url, notification to users.
 
-		User user = userRepository.findByMail(currentUser.getLogin());
+		User user = userRepository.findByLsUid(currentUser.getLogin());
     	Document doc = documentRepository.findById(currentDoc.getIdentifier());
     	
     	List<SecuredUrl> urls = shareService.getSecureUrlLinkedToDocument(doc);
@@ -434,70 +435,6 @@ public class ShareFacadeImpl implements ShareFacade {
     	
     }
     
-//	
-//	@Override
-//    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroups(UserVo ownerVo, List<DocumentVo> documents, List<GroupVo> recipients, MailContainer mailContainer) throws BusinessException {
-//		
-//    	logger.debug("ownerVo.getMail():" + ownerVo.getMail());
-//    	logger.debug("ownerVo.getDomainIdentifier():" + ownerVo.getDomainIdentifier());
-//    	
-//		User owner = userRepository.findByMailAndDomain(ownerVo.getDomainIdentifier(), ownerVo.getMail());
-//		
-//    	List<User> groupUserObjectsList = new ArrayList<User>();
-//    	List<Group> groupList = new ArrayList<Group>();
-//		
-//		for (GroupVo groupVo : recipients) {
-//			groupUserObjectsList.add(userService.findUnkownUserInDB(groupVo.getGroupLogin()));
-//			groupList.add(groupRepository.findByName(groupVo.getName()));
-//		}
-//		
-//		// Convert DocVo to Doc Entities
-//		List<Document> docList = getDocumentEntitiesFromVo(documents);
-//		
-//		// Share docs to groups.
-//		SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems = disassembleShareResultList(shareService.shareDocumentsToUser(docList,owner, groupUserObjectsList, null));
-//		
-//		// Check if at least one doc is encrypted.
-//		boolean oneDocIsEncrypted = oneDocIsEncrypted(docList);
-//		
-//		// Send success notifications id needed
-//	 	groupNotification(mailContainer, owner, groupList, oneDocIsEncrypted, successesAndFailsItems);
-//		
-//		return successesAndFailsItems;
-//    }
-//    
-//	
-//	@Override
-//    public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithGroup(UserVo ownerVo, List<DocumentVo> documents, String targetGroupID, MailContainer mailContainer) throws BusinessException {
-//		
-//    	logger.debug("ownerVo.getMail():" + ownerVo.getMail());
-//    	logger.debug("ownerVo.getDomainIdentifier():" + ownerVo.getDomainIdentifier());
-//    	
-//		User owner = userRepository.findByMailAndDomain(ownerVo.getDomainIdentifier(), ownerVo.getMail());
-//		
-//    	List<User> groupUserObjectsList = new ArrayList<User>();
-//    	List<Group> groupList = new ArrayList<Group>();
-//		
-//		groupUserObjectsList.add(userService.findUnkownUserInDB(targetGroupID));
-//		String groupName = targetGroupID.split("@",targetGroupID.length())[0];
-//		logger.debug("groupName : " +groupName);
-//		
-//		groupList.add(groupRepository.findByName(groupName));
-//		
-//		// Convert DocVo to Doc Entities
-//		List<Document> docList = getDocumentEntitiesFromVo(documents);
-//		
-//		// Share docs to groups.
-//		SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems = disassembleShareResultList(shareService.shareDocumentsToUser(docList, owner, groupUserObjectsList));
-//		
-//		// Check if at least one doc is encrypted.
-//		boolean oneDocIsEncrypted = oneDocIsEncrypted(docList);
-//		
-//		// Send success notifications id needed
-//	 	groupNotification(mailContainer, owner, groupList, oneDocIsEncrypted, successesAndFailsItems);
-//		
-//		return successesAndFailsItems;
-//    }
 
 
 	private SuccessesAndFailsItems<ShareDocumentVo> disassembleShareResultList(SuccessesAndFailsItems<Share> successAndFails) {
@@ -535,53 +472,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		return docList;
 	}
 
-//	/**
-//	 * 	Send success notification only to the functional mailBox if it is given, otherwise notification is sent to each group member.
-//	 * @param mailContainer
-//	 * @param owner
-//	 * @param groupList
-//	 * @param isOneDocEncrypted
-//	 * @param successesAndFailsItems
-//	 * @throws BusinessException
-//	 */
-//	private void groupNotification(MailContainer mailContainer, User owner,	List<Group> groupList, boolean oneDocIsEncrypted, SuccessesAndFailsItems<ShareDocumentVo> successesAndFailsItems) throws BusinessException {
-//		if (successesAndFailsItems.getSuccessesItem() != null && successesAndFailsItems.getSuccessesItem().size() > 0) {
-//			
-//			//if one document is encrypted include message html or txt asset for "crypted" in the final message
-//			String jwsEncryptUrlString = getJwsEncryptUrlString(oneDocIsEncrypted);
-//
-//			List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-//			
-//			for (Group group : groupList) {
-//				String functionalMail = group.getFunctionalEmail();
-//				if (functionalMail != null && functionalMail.length() > 0) {
-//					
-//					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupSharingWithRecipient(owner, mailContainer, owner, group, successesAndFailsItems.getSuccessesItem(), urlBase, "groups", oneDocIsEncrypted, jwsEncryptUrlString));
-//		
-//				} else {
-//				
-//					for (GroupMember member : group.getMembers()) {	
-//						mailContainerWithRecipient.add(mailElementsFactory.buildMailNewGroupSharingWithRecipient(owner, mailContainer, owner, member.getUser(), group, successesAndFailsItems.getSuccessesItem(), urlBase, "groups", oneDocIsEncrypted, jwsEncryptUrlString));
-//						
-//					}
-//				}
-//			}
-//			notifierService.sendAllNotifications(mailContainerWithRecipient);
-//		}
-//	}
-//	
-	
-//	@Override
-//	public void notifyGroupSharingDeleted(ShareDocumentVo shareddoc, UserVo managerVo,
-//			GroupVo groupVo, MailContainer mailContainer)
-//			throws BusinessException {
-//		Group group = groupTransformer.assemble(groupVo);
-//		Document doc = documentRepository.findById(shareddoc.getIdentifier());
-//		User manager = userRepository.findByMail(managerVo.getLogin());
-//		
-//		shareService.notifyGroupSharingDeleted(doc, manager, group, mailContainer);
-//	}
-//	
 	
 	@Override
 	public boolean isVisibleSecuredAnonymousUrlCheckBox(String domainIdentifier) {

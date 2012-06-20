@@ -23,7 +23,7 @@ package org.linagora.linShare.view.tapestry.services.impl;
 import java.util.GregorianCalendar;
 
 import org.apache.tapestry5.services.ApplicationStateManager;
-import org.linagora.linShare.core.Facade.UserFacade;
+import org.linagora.linShare.core.Facade.AccountFacade;
 import org.linagora.linShare.core.domain.constants.LogAction;
 import org.linagora.linShare.core.domain.entities.UserLogEntry;
 import org.linagora.linShare.core.domain.vo.UserVo;
@@ -41,15 +41,15 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class UserAccessAuthentity  {
 
-    private final UserFacade userFacade;
+    private final AccountFacade accountFacade;
     private final ApplicationStateManager applicationStateManager;
     private final LogEntryService logEntryService;
     
 	private static final Logger logger = LoggerFactory.getLogger(UserAccessAuthentity.class);
 
-    public UserAccessAuthentity(UserFacade userFacade, ApplicationStateManager applicationStateManager,
+    public UserAccessAuthentity(AccountFacade accountFacade, ApplicationStateManager applicationStateManager,
     		LogEntryService logEntryService) {
-        this.userFacade = userFacade;
+        this.accountFacade = accountFacade;
         this.applicationStateManager = applicationStateManager;
         this.logEntryService = logEntryService;
     }
@@ -65,7 +65,7 @@ public class UserAccessAuthentity  {
 	            logger.debug("processAuth with " + userDetails.getUsername());
 	            UserVo userVo = null;
 				try {
-					userVo = userFacade.findUserForAuth(userDetails.getUsername().toLowerCase());
+					userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
 				} catch (BusinessException e) {
 					logger.error("Error while trying to find user details", e);
 				}
@@ -79,7 +79,7 @@ public class UserAccessAuthentity  {
     	            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     	            UserVo userVo = null;
 					try {
-						userVo = userFacade.findUserForAuth(userDetails.getUsername().toLowerCase());
+						userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
 					} catch (BusinessException e) {
 						logger.error("Error while trying to find user details", e);
 					}
@@ -91,7 +91,7 @@ public class UserAccessAuthentity  {
     }
 
 	private void generateAuthLogEntry(UserVo userVo) {
-		UserLogEntry logEntry = new UserLogEntry(new GregorianCalendar(), userVo.getMail(), 
+		UserLogEntry logEntry = new UserLogEntry(new GregorianCalendar(), userVo.getLogin(), 
 				userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
 				LogAction.USER_AUTH, "Successfull authentification", null, null, null, null, null);
 		try {

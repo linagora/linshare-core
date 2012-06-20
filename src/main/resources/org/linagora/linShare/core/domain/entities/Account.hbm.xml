@@ -36,7 +36,7 @@
 			<one-to-many class="org.linagora.linShare.core.domain.entities.thread_member"/>
 		</set>
 		 -->
-		<subclass name="org.linagora.linShare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>
+		<!-- <subclass name="org.linagora.linShare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>-->
 		<subclass name="org.linagora.linShare.core.domain.entities.User" discriminator-value="1" lazy="false">
 		 <!-- 
 			<many-to-one name="technical_account_permission" column="technical_account_permissionid" class="org.linagora.linShare.core.domain.entities.technical_account_permission" cascade="save-update,lock" unique="true" not-null="false" lazy="no-proxy" access="field">
@@ -64,6 +64,7 @@
 			</subclass>
 			<subclass name="org.linagora.linShare.core.domain.entities.Guest" discriminator-value="3" lazy="false">
 			</subclass>
+			<subclass name="org.linagora.linShare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>
 			<!-- 
 			<subclass name="org.linagora.linShare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
 			</subclass>

@@ -25,30 +25,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linShare.core.domain.constants.UserType;
+import org.linagora.linShare.core.domain.entities.Account;
+import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.Role;
-import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.domain.vo.UserVo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 public class RoleProvider {
 
-	public static final List<GrantedAuthority> getRoles(User user) {
+	public static final List<GrantedAuthority> getRoles(Account account) {
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
         grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_AUTH));
 
-		if (user.getRole() == Role.ADMIN) {
+		if (account.getRole() == Role.ADMIN) {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
-		} else if (user.getRole() == Role.SUPERADMIN) {
+		} else if (account.getRole() == Role.SUPERADMIN) {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_ADMIN));
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_SUPERADMIN));
 		}
 		
-		if (!user.getAccountType().equals(UserType.GUEST)) {
+		if (!account.getAccountType().equals(UserType.GUEST)) {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_INTERNAL));
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
-		} else if (user.getCanUpload()) {
+		} else if (account.getAccountType().equals(UserType.GUEST)){
+			Guest guest =(Guest)account;
+			if(guest.getCanUpload()) {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
+			}
 		}
 		
 		return grantedAuthorities;
@@ -69,6 +73,7 @@ public class RoleProvider {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_INTERNAL));
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
 		} else if (user.isUpload()) {
+			// TODO : Fix this when we will have AccountVo
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
 		}
 		

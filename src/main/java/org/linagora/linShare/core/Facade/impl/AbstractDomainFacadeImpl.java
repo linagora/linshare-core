@@ -405,8 +405,8 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
 	@Override
 	public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException {
-		User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
-		return functionalityService.getCustomLogoFunctionality(actor.getDomain()).getActivationPolicy().getStatus();
+		AbstractDomain domain = abstractDomainService.retrieveDomain(actorVo.getDomainIdentifier());
+		return functionalityService.getCustomLogoFunctionality(domain).getActivationPolicy().getStatus();
 	}
 
 	@Override

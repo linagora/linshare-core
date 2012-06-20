@@ -9,12 +9,19 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
        default-autowire="no">
        
+       
+       <bean name="accountFacade" class="org.linagora.linShare.core.Facade.impl.AccountFacadeImpl">
+           <constructor-arg ref="accountService"/>
+       </bean>
+       
+       
        <bean name="userFacade" class="org.linagora.linShare.core.Facade.impl.UserFacadeImpl">
            <constructor-arg ref="userRepository"/>
            <constructor-arg ref="userService"/>
            <constructor-arg ref="guestRepository"/>
            <constructor-arg ref="enciphermentService"/>
            <constructor-arg ref="abstractDomainService"/>
+           <constructor-arg ref="accountService"/>
        </bean>
        
    	  <bean name="documentFacade" class="org.linagora.linShare.core.Facade.impl.DocumentFacadeImpl">

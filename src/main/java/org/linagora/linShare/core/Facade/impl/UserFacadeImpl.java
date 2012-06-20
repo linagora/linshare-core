@@ -37,6 +37,7 @@ import org.linagora.linShare.core.exception.TechnicalException;
 import org.linagora.linShare.core.repository.GuestRepository;
 import org.linagora.linShare.core.repository.UserRepository;
 import org.linagora.linShare.core.service.AbstractDomainService;
+import org.linagora.linShare.core.service.AccountService;
 import org.linagora.linShare.core.service.EnciphermentService;
 import org.linagora.linShare.core.service.UserService;
 import org.slf4j.Logger;
@@ -53,6 +54,9 @@ public class UserFacadeImpl implements UserFacade {
 
     /** User service. */
     private UserService userService;
+
+    private AccountService accountService;
+    
     
     /** Domain service. */
     private AbstractDomainService abstractDomainService;
@@ -70,12 +74,13 @@ public class UserFacadeImpl implements UserFacade {
      * @param userService service.
      */
     public UserFacadeImpl(UserRepository<User> userRepository, UserService userService,
-    		GuestRepository guestRepository, EnciphermentService enciphermentService, AbstractDomainService abstractDomainService) {
+    		GuestRepository guestRepository, EnciphermentService enciphermentService, AbstractDomainService abstractDomainService,AccountService accountService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.guestRepository = guestRepository;
         this.enciphermentService =enciphermentService;
         this.abstractDomainService = abstractDomainService;
+        this.accountService = accountService;
     }
 
     /** Create a user.
@@ -110,7 +115,8 @@ public class UserFacadeImpl implements UserFacade {
      * @return a list of matching users.
      */
     public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException {
-    	User owner = userRepository.findByMail(currentUser.getLogin());
+    	User owner =  (User)accountService.findUserInDB(currentUser.getLogin());
+    	
     	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
     }
@@ -177,15 +183,6 @@ public class UserFacadeImpl implements UserFacade {
 
 	public List<String> findMails(String beginWith) {
 		return userRepository.findMails(beginWith);
-	}
-
-	public UserVo searchTempAdminUser() throws BusinessException {
-		User user = userService.findUnkownUserInDB(ADMIN_TEMP_MAIL);
-		UserVo userVo = new UserVo(user);
-		if (userVo.isSuperAdmin()) {
-			return null; // a super admin is not a temp admin, we need to keep this account !
-		}
-		return userVo;
 	}
 
 	public void updateUserLocale(UserVo user, String locale) {
@@ -283,19 +280,6 @@ public class UserFacadeImpl implements UserFacade {
 		}
 	}
 	
-	/** Search a user using its mail.
-     * @param mail user mail.
-     * @return founded user.
-     * @throws BusinessException 
-     */
-	@Override
-    public UserVo findUserForAuth(String mail) throws BusinessException {
-    	User user = userService.searchAndCreateUserEntityFromUnkownDirectory(mail);
-    	if (user != null) {
-    		return new UserVo(user);
-    	}
-    	return null;
-    }
 
 	/** Search a user using its mail.
      * @param mail user mail.
@@ -357,7 +341,9 @@ public class UserFacadeImpl implements UserFacade {
 
 	@Override
 	public boolean isAdminForThisUser(UserVo actorVo, UserVo userToManageVo) throws BusinessException {
-		User actor = userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+		User actor = userRepository.findByLsUid(actorVo.getLogin());
+//		User actor = userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+		
 		return userService.isAdminForThisUser(actor, userToManageVo.getDomainIdentifier(), userToManageVo.getMail());
 	}
 }

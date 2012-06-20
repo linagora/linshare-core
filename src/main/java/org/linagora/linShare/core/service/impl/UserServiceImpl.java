@@ -191,6 +191,8 @@ public class UserServiceImpl implements UserService {
 			guest.setDomain(guestDomain);
 			guest.setOwner(owner);
 			guest.setComment(comment);
+			guest.setLsUid(generateGuestLsUid(guestDomain,mail));
+			
 			
 			// Guest must not be able to create other guests.
 			guest.setCanCreateGuest(false);
@@ -820,6 +822,26 @@ public class UserServiceImpl implements UserService {
 		}
 		return internalsBreaked;
 	}
+	
+	private String generateGuestLsUid(AbstractDomain domain, String mail) {
+		StringBuffer uid = new StringBuffer("g");
+		long cpt = domain.getPersistenceId();
+		if (cpt <= 9) 			uid.append("00");
+		else if (cpt <= 99) 	uid.append("0");
+		uid.append(cpt);
+		uid.append(mail);
+		return uid.toString();
+	}
+	
+	private String generateInternalLsUid(AbstractDomain domain, String ldapUid) {
+		StringBuffer uid = new StringBuffer("i");
+		long cpt = domain.getPersistenceId();
+		if (cpt <= 9) 			uid.append("00");
+		else if (cpt <= 99) 	uid.append("0");
+		uid.append(cpt);
+		uid.append(ldapUid);
+		return uid.toString();
+	}
 
 	@Override
 	public void  saveOrUpdateUser(User user) throws TechnicalException {
@@ -852,6 +874,8 @@ public class UserServiceImpl implements UserService {
 				user.setCanUpload(userCanUploadFunc.getActivationPolicy().getStatus());
 				
 				user.setCreationDate(new Date());
+				user.setLsUid(generateInternalLsUid(user.getDomain(),user.getLdapUid()));
+				
 				user.setLocale(user.getDomain().getDefaultLocale());
 				try {
 					userRepository.create(user);

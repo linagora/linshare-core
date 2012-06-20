@@ -55,6 +55,7 @@ import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.chenillekit.image.ChenilleKitImageConstants;
 import org.linagora.linShare.core.Facade.AbstractDomainFacade;
+import org.linagora.linShare.core.Facade.AccountFacade;
 import org.linagora.linShare.core.Facade.DocumentFacade;
 import org.linagora.linShare.core.Facade.SearchDocumentFacade;
 import org.linagora.linShare.core.Facade.ShareFacade;
@@ -258,10 +259,10 @@ public class AppModule
 
     /** This service that loads user informations in session. */
     public static UserAccessAuthentity buildUserAccessAuthentity(
-        @InjectService("UserFacade") UserFacade userFacade,
+        @InjectService("AccountFacade") AccountFacade accountFacade,
         @InjectService("LogEntryService") LogEntryService logEntryService,
         ApplicationStateManager applicationStateManager) {
-        return new UserAccessAuthentity(userFacade, applicationStateManager, logEntryService);
+        return new UserAccessAuthentity(accountFacade, applicationStateManager, logEntryService);
     }
 
     public static RequestFilter buildUserAccessAuthentityFilter(
