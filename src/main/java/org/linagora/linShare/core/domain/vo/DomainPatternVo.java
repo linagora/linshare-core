@@ -14,6 +14,7 @@ public class DomainPatternVo {
 	private String userMail;
 	private String userFirstName;
 	private String userLastName;
+    private String ldapUid;
 	
 	public DomainPatternVo() {
 	}
@@ -28,12 +29,13 @@ public class DomainPatternVo {
 		this.userMail = domainPattern.getUserMail();
 		this.userFirstName = domainPattern.getUserFirstName();
 		this.userLastName = domainPattern.getUserLastName();
+        this.ldapUid = domainPattern.getLdapUid();
 	}
 
 	public DomainPatternVo(String identifier, String description,
 			String getUserCommand, String getAllDomainUsersCommand,
 			String authCommand,
-			String searchUserCommand, String mail, String firstName, String lastName) {
+			String searchUserCommand, String mail, String firstName, String lastName, String ldapUid) {
 		super();
 		this.identifier = identifier;
 		this.patternDescription = description;
@@ -44,6 +46,7 @@ public class DomainPatternVo {
 		this.userMail = mail;
 		this.userFirstName = firstName;
 		this.userLastName = lastName;
+        this.ldapUid = ldapUid;
 	}
 
 	
@@ -152,6 +155,18 @@ public class DomainPatternVo {
 			this.userLastName = userLastName.trim();
 		else
 			this.userLastName = userLastName;
+	}
+
+	@Validate("required")
+	public String getLdapUid() {
+		return ldapUid;
+	}
+
+	public void setLdapUid(String ldapUid) {
+		if(ldapUid != null)
+			this.ldapUid = ldapUid.trim();
+		else
+			this.ldapUid = ldapUid;
 	}
 
 	@Override

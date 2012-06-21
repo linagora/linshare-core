@@ -15,5 +15,6 @@
     <property access="field" column="USER_MAIL" name="userMail"/>
     <property access="field" column="USER_FIRSTNAME" name="userFirstName"/>
     <property access="field" column="USER_LASTNAME" name="userLastName"/>
+    <property access="field" column="USER_LDAP" name="ldapUid"/>
   </class>
 </hibernate-mapping>

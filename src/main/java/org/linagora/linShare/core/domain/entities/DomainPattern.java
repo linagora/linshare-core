@@ -17,6 +17,7 @@ public class DomainPattern {
 	private String userMail;
 	private String userFirstName;
 	private String userLastName;
+    private String ldapUid;
 	
 	protected DomainPattern() {
 		this.identifier = null;
@@ -25,7 +26,7 @@ public class DomainPattern {
 	public DomainPattern(String identifier, String description,
 			String getUserCommand, String getAllDomainUsersCommand,
 			String authCommand,
-			String searchUserCommand, String mail, String firstName, String lastName) {
+			String searchUserCommand, String mail, String firstName, String lastName, String ldapUid) {
 		this.identifier = identifier;
 		this.description = description;
 		this.getUserCommand = getUserCommand;
@@ -35,6 +36,7 @@ public class DomainPattern {
 		this.userMail = mail;
 		this.userFirstName = firstName;
 		this.userLastName = lastName;
+		this.ldapUid = ldapUid;
 	}
 
 
@@ -49,6 +51,7 @@ public class DomainPattern {
 		this.userMail = domainPatternVo.getUserMail();
 		this.userFirstName = domainPatternVo.getUserFirstName();
 		this.userLastName = domainPatternVo.getUserLastName();
+		this.ldapUid = domainPatternVo.getLdapUid();
 	}
 	
 	public long getPersistenceId() {
@@ -125,6 +128,14 @@ public class DomainPattern {
 
 	public void setUserLastName(String userLastName) {
 		this.userLastName = userLastName;
+	}
+
+	public String getLdapUid() {
+		return ldapUid;
+	}
+
+	public void setLdapUid(String ldapUid) {
+		this.ldapUid = ldapUid;
 	}
 
 	@Override
