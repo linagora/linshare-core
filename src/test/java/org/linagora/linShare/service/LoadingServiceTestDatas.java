@@ -256,9 +256,9 @@ public class LoadingServiceTestDatas {
 		abstractDomainRepository.update(topDomain);	
 		
 		
-		user1 = new Internal("John","Doe","user1@linpki.org");
-		user2 = new Internal("Jane","Smith","user2@linpki.org");
-		user3 = new Internal("Foo","Bar","user3@linpki.org");
+		user1 = new Internal("John","Doe","user1@linpki.org", null);
+		user2 = new Internal("Jane","Smith","user2@linpki.org", null);
+		user3 = new Internal("Foo","Bar","user3@linpki.org", null);
 		
 		user1.setDomain(abstractDomainRepository.findById(topDomainName));
 		user2.setDomain(abstractDomainRepository.findById(subDomainName1));

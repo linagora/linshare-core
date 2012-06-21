@@ -88,7 +88,7 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 		}
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
-		domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname");
+		domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname", "firstname.lastname");
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {

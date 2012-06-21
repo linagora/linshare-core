@@ -305,7 +305,7 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 
 INSERT INTO ldap_connection(ldap_connection_id, identifier, provider_url, security_auth, security_principal, security_credentials) VALUES (1, 'baseLDAP', 'ldap://localhost:33389', 'simple', '', '');
-INSERT INTO domain_pattern(domain_pattern_id, identifier, description, get_user_command, get_all_domain_users_command, auth_command, search_user_command, user_mail, user_firstname , user_lastname) VALUES (1, 'basePattern', '', 'ldap.entry("uid=" + userId + ",ou=People," + domain, "objectClass=*");', 'ldap.list("ou=People," + domain, "(&(objectClass=*)(mail=*)(givenName=*)(sn=*))");', 'ldap.list("ou=People," + domain, "(&(objectClass=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");', 'ldap.list("ou=People," + domain, "(&(objectClass=*)(mail="+mail+")(givenName="+firstName+")(sn="+lastName+"))");', 'mail', 'givenName', 'sn');
+INSERT INTO domain_pattern(domain_pattern_id, identifier, description, auth_command, search_user_command, user_mail, user_firstname , user_lastname, user_uid) VALUES (1, 'basePattern', '', 'ldap.list("ou=People," + domain, "(&(objectClass=*)(givenName=*)(sn=*)(|(mail="+login+")(uid="+login+")))");', 'ldap.list("ou=People," + domain, "(&(objectClass=*)(mail="+mail+")(givenName="+firstName+")(sn="+lastName+"))");', 'mail', 'givenName', 'sn', 'uid');
 
 INSERT INTO user_provider_ldap(id, differential_key, domain_pattern_id, ldap_connection_id) VALUES (1, 'dc=linpki,dc=org', 1, 1);
 -- Top domain (example domain)

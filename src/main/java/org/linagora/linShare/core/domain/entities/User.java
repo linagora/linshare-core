@@ -147,9 +147,7 @@ public abstract class User extends Account {
 	}
 	
 	public String getLdapUid() {
-		// TODO : To be synchronized
-//		return ldapUid;
-		return mail;
+		return ldapUid;
 	}
 
 	public void setLdapUid(String ldapUid) {

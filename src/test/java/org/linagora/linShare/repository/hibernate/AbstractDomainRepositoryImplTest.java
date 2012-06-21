@@ -192,7 +192,7 @@ public class AbstractDomainRepositoryImplTest extends AbstractJUnit4SpringContex
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
 		
-		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname");
+		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname", "firstname.lastname");
 		domainPatternRepository.create(domainPattern);
 		logger.debug("Current pattern object: " + domainPattern.toString());
 

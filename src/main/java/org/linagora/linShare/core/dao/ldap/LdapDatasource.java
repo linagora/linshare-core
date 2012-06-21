@@ -346,7 +346,7 @@ public class LdapDatasource implements LdapDao {
             	firstName = (String) attributes.get("givenName").get();
             }
             String lastName = (String) attributes.get("sn").get();
-            return new Internal(firstName, lastName, mail);
+            return new Internal(firstName, lastName, mail, null);
         }
 
     }

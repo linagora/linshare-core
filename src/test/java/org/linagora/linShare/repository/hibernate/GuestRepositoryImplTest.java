@@ -195,7 +195,7 @@ public class GuestRepositoryImplTest extends
 
 		List<Guest> results = null;
 
-		User owner = new Internal(O_FIRST_NAME, O_LAST_NAME, O_MAIL);
+		User owner = new Internal(O_FIRST_NAME, O_LAST_NAME, O_MAIL, null);
 		owner.setDomain(abstractDomainRepository.findById(topDomainName));
 		userRepository.create(owner);
 

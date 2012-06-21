@@ -224,8 +224,13 @@ public class JScriptLdapQuery {
 		String mail = (String) retMap.get(getUserMail()).get(0);
     	String firstName = (String) retMap.get(getUserFirstName()).get(0);
         String lastName = (String) retMap.get(getUserLastName()).get(0);
-        User user = new Internal(firstName, lastName, mail);
+        String ldapUid = (String) retMap.get(getLdapUid()).get(0);
+        User user = new Internal(firstName, lastName, mail, ldapUid);
 		return user;
+	}
+
+	private Object getLdapUid() {
+		return domainPattern.getLdapUid().trim().toLowerCase();
 	}
 
 	private String getUserMail(){

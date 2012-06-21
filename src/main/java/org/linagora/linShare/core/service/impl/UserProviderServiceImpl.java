@@ -145,6 +145,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 		pattern.setUserFirstname(domainPattern.getUserFirstName());
 		pattern.setUserLastName(domainPattern.getUserLastName());
 		pattern.setUserMail(domainPattern.getUserMail());
+		pattern.setLdapUid(domainPattern.getLdapUid());
 		domainPatternRepository.update(pattern);
 	}
 

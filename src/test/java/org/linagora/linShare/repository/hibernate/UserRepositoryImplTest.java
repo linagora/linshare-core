@@ -120,7 +120,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	public void testfindUser() throws BusinessException{
 		AbstractDomain domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
-		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL);
+		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL, null);
 		u.setDomain(domain);
 		
 		userRepository.create(u);

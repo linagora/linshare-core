@@ -71,7 +71,7 @@ public class UserProviderRepositoryImplTest extends AbstractJUnit4SpringContextT
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
 		
-		pattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname");
+		pattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname", "firstname.lastname");
 		domainPatternRepository.create(pattern);
 		logger.debug("Current pattern object: " + pattern.toString());
 		

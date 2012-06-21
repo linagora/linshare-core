@@ -50,7 +50,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");", 
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
-				"mail", "givenName", "sn");
+				"mail", "givenName", "sn", "givenName.sn");
 		baseDn = "dc=linpki,dc=org";
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
