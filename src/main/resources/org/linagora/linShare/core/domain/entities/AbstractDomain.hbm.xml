@@ -53,11 +53,6 @@
 		<many-to-one cascade="save-update" lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.MessagesConfiguration" 
 			name="messagesConfiguration" column="MESSAGES_CONFIGURATION_ID" not-null="false" />
 
-<!-- 
- 		<many-to-one cascade="save-update" lazy="false" access="field" class="org.linagora.linShare.core.domain.entities.MessagesConfiguration" 
-			name="messagesConfiguration" column="MESSAGES_CONFIGURATION_ID" not-null="true" />
- -->
-			
 		<list name="shareExpiryRules" table="SHARE_EXPIRY_RULES" lazy="false">
       		<key>
 	     		<column name="DOMAIN_ID" not-null="true" index="index_share_expiry_rule_id"/>

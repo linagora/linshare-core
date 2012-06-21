@@ -824,22 +824,19 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	private String generateGuestLsUid(AbstractDomain domain, String mail) {
-		StringBuffer uid = new StringBuffer("g");
-		long cpt = domain.getPersistenceId();
-		if (cpt <= 9) 			uid.append("00");
-		else if (cpt <= 99) 	uid.append("0");
-		uid.append(cpt);
+		StringBuffer uid = new StringBuffer();
+		// TODO: To be fix : replace mail by name.firstname.cpt
 		uid.append(mail);
+		uid.append("/");
+		uid.append(domain.getIdentifier());
 		return uid.toString();
 	}
 	
 	private String generateInternalLsUid(AbstractDomain domain, String ldapUid) {
-		StringBuffer uid = new StringBuffer("i");
-		long cpt = domain.getPersistenceId();
-		if (cpt <= 9) 			uid.append("00");
-		else if (cpt <= 99) 	uid.append("0");
-		uid.append(cpt);
+		StringBuffer uid = new StringBuffer();
 		uid.append(ldapUid);
+		uid.append("/");
+		uid.append(domain.getIdentifier());
 		return uid.toString();
 	}
 

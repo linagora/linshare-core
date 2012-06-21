@@ -23,6 +23,22 @@ public class DomainPattern {
 		this.identifier = null;
 	}
 	
+	// TODO : TO be removed.
+	public DomainPattern(String identifier, String description,
+			String getUserCommand, String getAllDomainUsersCommand,
+			String authCommand,
+			String searchUserCommand, String mail, String firstName, String lastName) {
+		this.identifier = identifier;
+		this.description = description;
+		this.getUserCommand = getUserCommand;
+		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
+		this.authCommand = authCommand;
+		this.searchUserCommand = searchUserCommand;
+		this.userMail = mail;
+		this.userFirstName = firstName;
+		this.userLastName = lastName;
+	}
+	
 	public DomainPattern(String identifier, String description,
 			String getUserCommand, String getAllDomainUsersCommand,
 			String authCommand,

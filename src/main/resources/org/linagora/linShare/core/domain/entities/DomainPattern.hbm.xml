@@ -8,13 +8,11 @@
     </id>
     <property access="field" column="identifier" index="index_domain_pattern_identifier" name="identifier" not-null="true" unique="true"/>
     <property access="field" column="description" name="description"/>
-    <property access="field" column="get_user_command" name="getUserCommand"/>
-    <property access="field" column="get_all_domain_users_command" name="getAllDomainUsersCommand"/>
     <property access="field" column="auth_command" name="authCommand"/>
     <property access="field" column="search_user_command" name="searchUserCommand"/>
     <property access="field" column="USER_MAIL" name="userMail"/>
     <property access="field" column="USER_FIRSTNAME" name="userFirstName"/>
     <property access="field" column="USER_LASTNAME" name="userLastName"/>
-    <property access="field" column="USER_LDAP" name="ldapUid"/>
+    <property access="field" column="USER_UID" name="ldapUid"/>
   </class>
 </hibernate-mapping>
