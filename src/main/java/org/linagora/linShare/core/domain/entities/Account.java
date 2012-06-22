@@ -1,16 +1,12 @@
 package org.linagora.linShare.core.domain.entities;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.linagora.linShare.core.domain.constants.UserType;
 
 public abstract class Account {
-	public Account() {
-	}
-	
-	
-//	private java.util.Set ORM_members = new java.util.HashSet(); // THREADDS
-	
+
 	protected long id;
 	
 	protected String lsUid;
@@ -25,7 +21,7 @@ public abstract class Account {
 	
 	protected boolean enable;
 	
-	protected UserType accountType;
+//	protected UserType accountType;
 	
 	protected String password;
 	
@@ -34,6 +30,12 @@ public abstract class Account {
 	protected AbstractDomain domain;
 	
 	protected Account owner;
+	
+	
+	public Account() {
+		setCreationDate(new Date());
+		setModificationDate(new Date());
+	}
 
 	public long getId() {
 		return id;
@@ -128,5 +130,5 @@ public abstract class Account {
 	}
 	
     public abstract UserType getAccountType();
-	
+
 }

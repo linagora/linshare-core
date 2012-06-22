@@ -22,23 +22,18 @@
 		<property name="password" column="password" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="destroyed" column="destroyed" type="boolean" not-null="true" lazy="false"/>
 		
-		<!--  
-		 <many-to-one name="owner" column="owner_id" class="org.linagora.linShare.core.domain.entities.Account" access="field" />
-		 -->
 		<many-to-one name="owner" column="owner_id" class="org.linagora.linShare.core.domain.entities.Account" />
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linShare.core.domain.entities.AbstractDomain" not-null="true" lazy="false" access="field"></many-to-one>
     
-		<!-- 
-		<set name="ORM_Threads" lazy="true" cascade="save-update,lock" inverse="true">
-			<key column="account_id" not-null="true"/>
-			<one-to-many class="org.linagora.linShare.core.domain.entities.thread_member"/>
-		</set>
-		 -->
 		<subclass name="org.linagora.linShare.core.domain.entities.User" discriminator-value="1" lazy="false">
 		 <!-- 
 			<many-to-one name="technical_account_permission" column="technical_account_permissionid" class="org.linagora.linShare.core.domain.entities.technical_account_permission" cascade="save-update,lock" unique="true" not-null="false" lazy="no-proxy" access="field">
 			</many-to-one>
 		  -->
+		  	<set name="myThreads" lazy="true" cascade="save-update,lock" inverse="true">
+				<key column="user_id" not-null="true"/>
+				<one-to-many class="org.linagora.linShare.core.domain.entities.ThreadMember"/>
+			</set>
 			<join table="users">
 				<key>
 					<column name="account_id"/>
@@ -62,16 +57,14 @@
 			<subclass name="org.linagora.linShare.core.domain.entities.Guest" discriminator-value="3" lazy="false">
 			</subclass>
 			<subclass name="org.linagora.linShare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>
-			<!-- 
 			<subclass name="org.linagora.linShare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
 			</subclass>
-			 -->
 		</subclass>
-		<!-- 
-		<subclass name="org.linagora.linShare.core.domain.entities.thread" discriminator-value="5" lazy="false">
-			<set name="ORM_Thread_members" lazy="true" cascade="save-update,lock" inverse="true">
+		
+		<subclass name="org.linagora.linShare.core.domain.entities.Thread" discriminator-value="5" lazy="false">
+			<set name="myMembers" lazy="true" cascade="save-update,lock" inverse="true">
 				<key column="thread_id" not-null="true"/>
-				<one-to-many class="org.linagora.linShare.core.domain.entities.thread_member"/>
+				<one-to-many class="org.linagora.linShare.core.domain.entities.ThreadMember"/>
 			</set>
 			<join table="thread">
 				<key>
@@ -80,6 +73,5 @@
 				<property name="name" column="Name" type="string" length="255" not-null="true" lazy="false"/>
 			</join>
 		</subclass>
-		 -->
 	</class>
 </hibernate-mapping>

@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -73,6 +74,12 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		} else {
 			throw new IllegalStateException("lsUid must be unique");
 		}
+	}
+
+	@Override
+	public U update(U entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
 	}
 
 }

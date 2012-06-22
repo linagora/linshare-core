@@ -20,8 +20,6 @@
 */
 package org.linagora.linShare.repository.hibernate;
 
-import java.util.GregorianCalendar;
-
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -29,10 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linShare.core.domain.constants.LinShareConstants;
 import org.linagora.linShare.core.domain.entities.AbstractDomain;
-import org.linagora.linShare.core.domain.entities.Document;
 import org.linagora.linShare.core.domain.entities.Guest;
 import org.linagora.linShare.core.domain.entities.Internal;
-import org.linagora.linShare.core.domain.entities.Share;
 import org.linagora.linShare.core.domain.entities.User;
 import org.linagora.linShare.core.exception.BusinessException;
 import org.linagora.linShare.core.repository.AbstractDomainRepository;

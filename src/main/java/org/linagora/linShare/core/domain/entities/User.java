@@ -20,13 +20,10 @@
 */
 package org.linagora.linShare.core.domain.entities;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import org.linagora.linShare.core.domain.constants.UserType;
 import org.linagora.linShare.core.exception.BusinessErrorCode;
 import org.linagora.linShare.core.exception.BusinessException;
 
@@ -34,6 +31,32 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 
 
 public abstract class User extends Account {
+	
+	protected Set<ThreadMember> myThreads = new java.util.HashSet<ThreadMember>();
+	
+	protected String firstName;
+	
+	protected String lastName;
+	
+	protected String mail;
+	
+	protected byte[] enciphermentKeyPass;
+	
+	protected Date notAfter;
+	
+	protected Date notBefore;
+	
+	protected Date expirationDate;
+	
+	protected String ldapUid;
+	
+	protected boolean canUpload;
+	
+	protected String comment;
+	
+	protected boolean restricted;
+	
+	protected TechnicalAccountPermission technicalAccountPermission;
 	
 	
 	public User() {
@@ -63,29 +86,6 @@ public abstract class User extends Account {
 		this.receivedShares = new HashSet<Share>();
 	}
 
-	protected String firstName;
-	
-	protected String lastName;
-	
-	protected String mail;
-	
-	protected byte[] enciphermentKeyPass;
-	
-	protected Date notAfter;
-	
-	protected Date notBefore;
-	
-	protected Date expirationDate;
-	
-	protected String ldapUid;
-	
-	protected boolean canUpload;
-	
-	protected String comment;
-	
-	protected boolean restricted;
-	
-	protected TechnicalAccountPermission technicalAccountPermission;
 	
 	public void setFirstName(String value) {
 		this.firstName = value;
@@ -292,5 +292,13 @@ public abstract class User extends Account {
 	}
 	public void setOwnSignatures(Set<Signature> ownSignatures) {
 		this.ownSignatures = ownSignatures;
+	}
+
+	public Set<ThreadMember> getMyThreads() {
+		return myThreads;
+	}
+
+	public void setMyThreads(Set<ThreadMember> myThreads) {
+		this.myThreads = myThreads;
 	}
 }

@@ -8,8 +8,22 @@ public class Thread extends Account {
 
 	protected String name;
 	
-	protected Set<ThreadMember> threadMembers = new java.util.HashSet<ThreadMember>();
+	protected Set<ThreadMember> myMembers = new java.util.HashSet<ThreadMember>();
+
+	public Thread() {
+		super();
+	}
+
 	
+	public Thread(AbstractDomain domain, Account owner , String name) {
+		super();
+		this.name = name;
+		this.domain = domain;
+		this.enable = true;
+		this.destroyed = false;
+		this.owner = owner;
+	}
+
 	public void setName(String value) {
 		this.name = value;
 	}
@@ -18,17 +32,17 @@ public class Thread extends Account {
 		return name;
 	}
 	
-	public Set<ThreadMember> getThreadMembers() {
-		return threadMembers;
-	}
-
-	public void setThreadMembers(Set<ThreadMember> threadMembers) {
-		this.threadMembers = threadMembers;
-	}
-
 	@Override
 	public UserType getAccountType() {
 		return UserType.THREAD;
+	}
+
+	public Set<ThreadMember> getMyMembers() {
+		return myMembers;
+	}
+
+	public void setMyMembers(Set<ThreadMember> myMembers) {
+		this.myMembers = myMembers;
 	}
 
 }
