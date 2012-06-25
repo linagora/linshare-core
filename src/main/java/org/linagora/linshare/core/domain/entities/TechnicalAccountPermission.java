@@ -1,14 +1,18 @@
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Set;
+
 public class TechnicalAccountPermission {
 
 	private long id;
 	
 	private boolean write;
 	
-	private java.util.Set<User> users = new java.util.HashSet<User>();
+	private boolean all;
 	
-	private java.util.Set<AbstractDomain> domains = new java.util.HashSet<AbstractDomain>();
+	private Set<Account> accounts = new java.util.HashSet<Account>();
+	
+	private Set<AbstractDomain> domains = new java.util.HashSet<AbstractDomain>();
 
 	public long getId() {
 		return id;
@@ -26,19 +30,27 @@ public class TechnicalAccountPermission {
 		this.write = write;
 	}
 
-	public java.util.Set<User> getUsers() {
-		return users;
+	public boolean isAll() {
+		return all;
 	}
 
-	public void setUsers(java.util.Set<User> users) {
-		this.users = users;
+	public void setAll(boolean all) {
+		this.all = all;
+	}
+
+	public Set<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(Set<Account> accounts) {
+		this.accounts = accounts;
 	}
 
 	public java.util.Set<AbstractDomain> getDomains() {
 		return domains;
 	}
 
-	public void setDomains(java.util.Set<AbstractDomain> domains) {
+	public void setDomains(Set<AbstractDomain> domains) {
 		this.domains = domains;
 	}
 }

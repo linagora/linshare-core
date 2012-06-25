@@ -27,6 +27,29 @@ import java.util.List;
 
 public class Document implements Serializable {
 	
+	/*
+	 * 
+	 * 
+	private long document_id;
+	
+	private String identifier;
+	
+	private java.util.Date creationDate;
+	
+	private String type;
+	
+	private long size;
+	
+	private String thmbUuid;
+	
+	private java.sql.Blob timestamp;
+	
+	private java.util.Set threadEntries = new java.util.HashSet();
+	
+	private java.util.Set documentEntries = new java.util.HashSet();
+	
+	
+	 */
 
 	private static final long serialVersionUID = 2877902686906612071L;
 

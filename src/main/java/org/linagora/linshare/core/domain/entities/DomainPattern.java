@@ -18,6 +18,8 @@ public class DomainPattern {
 	private String userFirstName;
 	private String userLastName;
     private String ldapUid;
+    
+    private java.util.Set<LdapAttribute> attributes = new java.util.HashSet<LdapAttribute>();
 	
 	protected DomainPattern() {
 		this.identifier = null;
@@ -144,4 +146,11 @@ public class DomainPattern {
 		return "DomainPattern : " + identifier;
 	}
 
+	public java.util.Set<LdapAttribute> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(java.util.Set<LdapAttribute> attributes) {
+		this.attributes = attributes;
+	}
 }

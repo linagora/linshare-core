@@ -21,6 +21,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 

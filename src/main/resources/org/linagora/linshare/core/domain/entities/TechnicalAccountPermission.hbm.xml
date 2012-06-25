@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" table="technical_account_permission" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<property name="write" column="write" type="boolean" not-null="true" lazy="false"/>
+		<property name="all" column="`all`" type="boolean" not-null="true" lazy="false"/>
+		<set name="accounts" table="technical_account_permission_account" lazy="true" cascade="save-update,lock">
+			<key column="permission_id" not-null="true"/>
+			<many-to-many column="account_id" class="org.linagora.linshare.core.domain.entities.Account">
+			</many-to-many>
+		</set>
+		<set name="domains" table="technical_account_permission_abstract" lazy="true" cascade="save-update,lock">
+			<key column="permission_id" not-null="true"/>
+			<many-to-many column="domain_abstract_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain">
+			</many-to-many>
+		</set>
+	</class>
+</hibernate-mapping>

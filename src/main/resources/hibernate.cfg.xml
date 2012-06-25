@@ -28,6 +28,8 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/MessagesConfiguration.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/Account.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/ThreadMember.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/LdapAttribute.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/TechnicalAccountPermission.hbm.xml"/>
     
     
 	<!-- 

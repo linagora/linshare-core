@@ -1,7 +1,8 @@
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Set;
+import java.util.GregorianCalendar;
 
 import org.linagora.linshare.core.domain.constants.UserType;
 

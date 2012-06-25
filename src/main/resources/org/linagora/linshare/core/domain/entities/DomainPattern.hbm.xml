@@ -14,5 +14,9 @@
     <property access="field" column="USER_FIRSTNAME" name="userFirstName"/>
     <property access="field" column="USER_LASTNAME" name="userLastName"/>
     <property access="field" column="USER_UID" name="ldapUid"/>
+    <set name="attributes" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="domain_pattern_id" not-null="false"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.LdapAttribute"/>
+	</set>
   </class>
 </hibernate-mapping>
