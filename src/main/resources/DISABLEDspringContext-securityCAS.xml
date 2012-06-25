@@ -58,7 +58,7 @@
 	 	<property name="key" value="springRocks"/>
 	 </bean>
 	 
-	 <bean id="rememberMeService" class="org.linagora.linShare.view.tapestry.services.impl.LinshareRememberMeServices">
+	 <bean id="rememberMeService" class="org.linagora.linshare.view.tapestry.services.impl.LinshareRememberMeServices">
 	 	<property name="key" value="springRocks"/>
 	 	<property name="userDetailsService" ref="guestAuthProvider" />  
 	 	<property name="tokenRepository" ref="cookieRepository"/>
@@ -76,7 +76,7 @@
              class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter"/>
 
 
-	<bean id="authenticationProcessingFilter" class="org.linagora.linShare.auth.DomainAuthenticationProcessingFilter">
+	<bean id="authenticationProcessingFilter" class="org.linagora.linshare.auth.DomainAuthenticationProcessingFilter">
 
 		<property name="authenticationFailureHandler" ref="failureHandler" />
 		<property name="authenticationSuccessHandler" ref="successHandler" />
@@ -98,7 +98,7 @@
 		<property name="defaultFailureUrl" value="/?login_error=1" />
 		 <property name="exceptionMappings">
             <props>
-                <prop key="org.linagora.linShare.auth.exceptions.BadDomainException">/?login_error=2</prop>
+                <prop key="org.linagora.linshare.auth.exceptions.BadDomainException">/?login_error=2</prop>
             </props>
         </property>
 	</bean>
@@ -171,11 +171,11 @@
     </bean>
 
        <!-- DAO Authentification -->
-       <bean id="guestAuthProvider" class="org.linagora.linShare.auth.DaoAuthProvider">
+       <bean id="guestAuthProvider" class="org.linagora.linshare.auth.DaoAuthProvider">
            <constructor-arg ref="userService"/>
        </bean>
 
-       <bean id="passwordEncoderFactory" class="org.linagora.linShare.auth.PasswordEncoderFactory">
+       <bean id="passwordEncoderFactory" class="org.linagora.linshare.auth.PasswordEncoderFactory">
            <constructor-arg value="SHA"/>
        </bean>
 
@@ -188,7 +188,7 @@
        
        <!-- Domain Authentification -->
 
-       <bean id="domainAuthenticationProvider" class="org.linagora.linShare.auth.DomainAuthProviderDao">
+       <bean id="domainAuthenticationProvider" class="org.linagora.linshare.auth.DomainAuthProviderDao">
            <property name="userService" ref="userService"/>
            <property name="abstractDomainService" ref="abstractDomainService"/>
        </bean>
@@ -210,10 +210,10 @@
        
        <!-- **** extra configuration CAS sso ***** -->
 
-       <bean id="casAuthProvider" class="org.linagora.linShare.auth.DaoCasAuthProvider">
+       <bean id="casAuthProvider" class="org.linagora.linshare.auth.DaoCasAuthProvider">
        		<property name="userDetailsProvider" ref="userDetailsProvider"/>
        </bean>
-       <bean id="userDetailsProvider" class="org.linagora.linShare.auth.UserDetailsProvider">
+       <bean id="userDetailsProvider" class="org.linagora.linshare.auth.UserDetailsProvider">
        		<property name="userService" ref="userService"/>
        </bean>
        

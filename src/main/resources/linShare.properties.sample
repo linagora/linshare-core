@@ -13,7 +13,7 @@ mail.smtp.charset=UTF-8
 
 #******************* DATASTORE
 #uncomment this line to encrypt the files
-#linshare.datastore.class=org.linagora.linShare.core.dao.EncDbDataStore
+#linshare.datastore.class=org.linagora.linshare.core.dao.EncDbDataStore
 
 #******************** DATABASE
 ### PostgreSQL

@@ -8,15 +8,15 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
        default-autowire="no">
 
-    <bean name="userManagementBatch" class="org.linagora.linShare.core.batches.impl.UserManagementBatchImpl">
+    <bean name="userManagementBatch" class="org.linagora.linshare.core.batches.impl.UserManagementBatchImpl">
         <constructor-arg ref="userService"/>
     </bean>
 
-    <bean name="shareManagementBatch" class="org.linagora.linShare.core.batches.impl.ShareManagementBatchImpl">
+    <bean name="shareManagementBatch" class="org.linagora.linshare.core.batches.impl.ShareManagementBatchImpl">
         <constructor-arg ref="shareService"/>
     </bean>
 
-    <bean name="documentManagementBatch" class="org.linagora.linShare.core.batches.impl.DocumentManagementBatchImpl">
+    <bean name="documentManagementBatch" class="org.linagora.linshare.core.batches.impl.DocumentManagementBatchImpl">
         <constructor-arg ref="documentRepository"/>
         <constructor-arg ref="documentService"/>
         <constructor-arg ref="jackRabbitRepository"/>
@@ -29,14 +29,14 @@
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->
 	<!-- https://issues.apache.org/jira/browse/JCR-2492 -->
-    <bean name="jcrGarbageCollectionBatch" class="org.linagora.linShare.core.batches.impl.JcrGarbageCollectionBatchImpl">
+    <bean name="jcrGarbageCollectionBatch" class="org.linagora.linshare.core.batches.impl.JcrGarbageCollectionBatchImpl">
         <constructor-arg ref="jcrTemplate"/>
     </bean>
 
 
     <!-- Transactions declaration. -->
     <aop:config>
-		<aop:pointcut id="linshareCoreBatchMethods" expression="execution(* org.linagora.linShare.core.batches.*.*(..))" />
+		<aop:pointcut id="linshareCoreBatchMethods" expression="execution(* org.linagora.linshare.core.batches.*.*(..))" />
 
 		<aop:advisor advice-ref="txBatchAdvice" pointcut-ref="linshareCoreBatchMethods" />
 	 	<aop:advisor advice-ref="txBatchAdviceJackRabbit" pointcut-ref="linshareCoreBatchMethods" />

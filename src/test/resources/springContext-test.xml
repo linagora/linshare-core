@@ -9,7 +9,7 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
        default-autowire="no">
     
-      <bean id="propertyPlaceholder" class="org.linagora.linShare.core.utils.PropertyPlaceholderConfigurer">
+      <bean id="propertyPlaceholder" class="org.linagora.linshare.core.utils.PropertyPlaceholderConfigurer">
     	<property name="ignoreResourceNotFound" value="true"/>
     	<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
     	
@@ -36,12 +36,12 @@
     
     
     
-    <bean id="mailTestRetriever" class="org.linagora.linShare.common.service.impl.MailTestRetrieverImpl">
+    <bean id="mailTestRetriever" class="org.linagora.linshare.common.service.impl.MailTestRetrieverImpl">
     	<constructor-arg index="0" value="${linshare.test.mail.sender}"/>
     	<constructor-arg index="1" value="${linshare.test.mail.recipient}"/>
     </bean>
     
-     <bean name="ldapQueryService" class="org.linagora.linShare.core.service.impl.LDAPQueryServiceImpl">
+     <bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
      </bean>
     
 </beans>

@@ -22,7 +22,7 @@
 		<!-- The only significant configuration for Tapestry 5, this informs Tapestry
 			of where to look for pages, components and mixins. -->
 		<param-name>tapestry.app-package</param-name>
-		<param-value>org.linagora.linShare.view.tapestry</param-value>
+		<param-value>org.linagora.linshare.view.tapestry</param-value>
 	</context-param>
 
     <context-param>

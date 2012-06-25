@@ -5,20 +5,20 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
 	default-autowire="no">
 	
-    <bean id="searchDocumentDao" class="org.linagora.linShare.core.dao.document.impl.SearchDocumentHibernate">
+    <bean id="searchDocumentDao" class="org.linagora.linshare.core.dao.document.impl.SearchDocumentHibernate">
         <constructor-arg index="0" ref="hibernateTemplate" />
     </bean>
 
     <!-- LDAP DAO. -->
 
     <!-- bean id="dirContextAuthenticationStrategyFactory" 
-        class="org.linagora.linShare.core.dao.ldap.DirContextAuthenticationStrategyFactory">
+        class="org.linagora.linshare.core.dao.ldap.DirContextAuthenticationStrategyFactory">
             <constructor-arg value="${ldap.auth.strategy}"/>
             <constructor-arg value="${ldap.auth.ssl.trustore.file}"/>
             <constructor-arg value="${ldap.auth.ssl.trustore.password}"/>
     </bean-->
 
-    <!-- bean id="LdapDao" class="org.linagora.linShare.core.dao.ldap.LdapDatasource">
+    <!-- bean id="LdapDao" class="org.linagora.linshare.core.dao.ldap.LdapDatasource">
         <constructor-arg ref="ldapContextSource"/>
         <constructor-arg ref="ldapTemplate" />
         <constructor-arg value="${ldap.auth.baseDN}" />

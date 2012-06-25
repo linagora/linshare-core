@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+  <typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="roleEnumType">
+    <param name="enumClass">org.linagora.linshare.core.domain.entities.Role</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  <typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="userEnumType">
+    <param name="enumClass">org.linagora.linshare.core.domain.constants.UserType</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  <class name="User" table="USER">
+    <id name="id" type="long">
+      <column name="USER_ID" not-null="true" index="index_user_id"/>
+      <generator class="native"/>
+    </id>
+    <discriminator column="USER_TYPE_ID" type="string"/>
+    <property access="field" column="LOGIN" index="index_user_login" name="login" not-null="true" unique="true"/>
+    <property access="field" column="FIRST_NAME" index="index_user_first_name" name="firstName" not-null="true"/>
+    <property access="field" column="LAST_NAME" index="index_user_last_name" name="lastName" not-null="true"/>
+    <property access="field" column="ENCIPHERMENT_KEY_PASS" name="enciphermentKeyPass"/>
+    <property column="MAIL" index="index_user_mail" name="mail" not-null="true" unique="true"/>
+    <property access="field" column="CREATION_DATE" name="creationDate"/>
+    <!--property column="USER_TYPE" name="userType" type="userEnumType"/-->
+    <property access="field" column="ROLE_ID" name="role" not-null="true" type="roleEnumType"/>
+    <property access="field" column="CAN_UPLOAD" name="canUpload" type="boolean"/>
+    <property access="field" column="CAN_CREATE_GUEST" name="canCreateGuest" type="boolean"/>
+    <property column="PASSWORD" name="password"/>
+    <property name="locale" type="string">
+      <column name="locale"/>
+    </property>
+    <set access="field" cascade="all,delete-orphan" name="documents" order-by="CREATION_DATE desc">
+      <key>
+        <column name="owner_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.linagora.linshare.core.domain.entities.Document"/>
+    </set>
+    <set access="field" cascade="all,delete-orphan" name="shares">
+      <key>
+        <column name="sender_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.linagora.linshare.core.domain.entities.Share"/>
+    </set>
+    <set access="field" cascade="all,delete-orphan" name="securedUrls">
+      <key>
+        <column name="sender_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.linagora.linshare.core.domain.entities.SecuredUrl"/>
+    </set>
+    <set access="field" cascade="all,delete-orphan" name="receivedShares">
+      <key>
+        <column name="recipient_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.linagora.linshare.core.domain.entities.Share"/>
+    </set>
+     
+     <set access="field" cascade="all,delete-orphan" name="ownSignatures" inverse="true">
+      <key>
+        <column name="signer_id" not-null="true"/>
+      </key>
+      <one-to-many class="org.linagora.linshare.core.domain.entities.Signature"/>
+    </set>
+    <many-to-one access="field" lazy="false" class="org.linagora.linshare.core.domain.entities.AbstractDomain" column="domain_id" name="domain" />
+    
+  
+        
+    <subclass discriminator-value="0" name="org.linagora.linshare.core.domain.entities.Internal">
+        </subclass>
+    <subclass discriminator-value="1" name="org.linagora.linshare.core.domain.entities.Guest">
+      <property column="EXPIRY_DATE" name="expiryDate"/>
+      <property access="field" column="comment" name="comment" type="text"/>
+      <property access="field" column="restricted" name="restricted" type="boolean"/>
+      <many-to-one class="User" column="OWNER_ID" name="owner"/>
+    </subclass>
+  </class>
+</hibernate-mapping>

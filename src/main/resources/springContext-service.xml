@@ -17,28 +17,28 @@
 		=============================================================================================================== 
 	-->
 
-	<bean id="templating" class="org.linagora.linShare.view.tapestry.services.impl.MailTemplating">
+	<bean id="templating" class="org.linagora.linshare.view.tapestry.services.impl.MailTemplating">
     </bean>
 
     <!-- aperture  -->
     <bean id="mimeTypeMagicNumberDao"
-		class="org.linagora.linShare.core.dao.apperture.MimeTypeMagicNumberImpl">
+		class="org.linagora.linshare.core.dao.apperture.MimeTypeMagicNumberImpl">
     </bean>
     
-    <bean id="logEntryService" class="org.linagora.linShare.core.service.impl.LogEntryServiceImpl">
+    <bean id="logEntryService" class="org.linagora.linshare.core.service.impl.LogEntryServiceImpl">
         <constructor-arg index="0" ref="logEntryRepository" />
     </bean>
     
-    <bean name="passwordService" class="org.linagora.linShare.core.service.impl.PasswordServiceImpl">
+    <bean name="passwordService" class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
     </bean>
 
 
-    <bean name="accountService" class="org.linagora.linShare.core.service.impl.AccountServiceImpl">
+    <bean name="accountService" class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
     	<constructor-arg ref="accountRepository"/>
     	<constructor-arg ref="userRepository"/>
     </bean>
     
-    <bean name="userService" class="org.linagora.linShare.core.service.impl.UserServiceImpl">
+    <bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="notifierService"/>
         <constructor-arg ref="logEntryService" />
@@ -54,20 +54,20 @@
         <constructor-arg ref="passwordService" />
     </bean>
     
-    <bean id="clamavVirusScannerService" class="org.linagora.linShare.core.service.impl.ClamavVirusScannerServiceImpl">
+    <bean id="clamavVirusScannerService" class="org.linagora.linshare.core.service.impl.ClamavVirusScannerServiceImpl">
     	<constructor-arg index="0" value="${virusscanner.clamav.host}"/>
     	<constructor-arg index="1" value="${virusscanner.clamav.port}"/>
     </bean>
     
-    <bean id="timeStampingService" class="org.linagora.linShare.core.service.impl.TimeStampingServiceImpl">
+    <bean id="timeStampingService" class="org.linagora.linshare.core.service.impl.TimeStampingServiceImpl">
     </bean>
     
-    <bean id="mimeTypeService" class="org.linagora.linShare.core.service.impl.MimeTypeServiceImpl">
+    <bean id="mimeTypeService" class="org.linagora.linshare.core.service.impl.MimeTypeServiceImpl">
         <constructor-arg index="0" ref="allowedMimeTypeRepository" />
         <constructor-arg index="1" ref="mimeTypeMagicNumberDao" />
     </bean>
 
-   	<bean id="documentService" class="org.linagora.linShare.core.service.impl.DocumentServiceImpl">
+   	<bean id="documentService" class="org.linagora.linshare.core.service.impl.DocumentServiceImpl">
         <constructor-arg index="0" ref="documentRepository" />
         <constructor-arg index="1" ref="jackRabbitRepository"/>
         <constructor-arg index="2" ref="userRepository" />
@@ -81,12 +81,12 @@
         <constructor-arg index="10" ref="functionalityService" />
     </bean>
     
-    <bean id="shareExpiryDateService" class="org.linagora.linShare.core.service.impl.ShareExpiryDateServiceImpl">
+    <bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">
     	<constructor-arg ref="functionalityService"/>
     </bean>
 	     
    
-    <bean id="securedUrlService" class="org.linagora.linShare.core.service.impl.SecuredUrlServiceImpl">
+    <bean id="securedUrlService" class="org.linagora.linshare.core.service.impl.SecuredUrlServiceImpl">
     	<constructor-arg ref="securedUrlRepository"/>
     	<constructor-arg ref="shareExpiryDateService"/>
     	<constructor-arg value="download"/>
@@ -94,7 +94,7 @@
     </bean>
     
    
-    <bean id="shareService" class="org.linagora.linShare.core.service.impl.ShareServiceImpl">
+    <bean id="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
         <constructor-arg index="0" ref="userRepository" />
         <constructor-arg index="1" ref="shareRepository"/>
         <constructor-arg index="2" ref="logEntryService" />
@@ -113,14 +113,14 @@
     </bean>
 
 	   
-    <bean id="searchDocumentService" class="org.linagora.linShare.core.service.impl.SearchDocumentServiceImpl">
+    <bean id="searchDocumentService" class="org.linagora.linshare.core.service.impl.SearchDocumentServiceImpl">
         <constructor-arg ref="searchDocumentDao" />
         <constructor-arg ref="userRepository" />
  		<constructor-arg ref="documentAdapter"/>
     </bean>
     
     
-    <bean name="notifierService" class="org.linagora.linShare.core.service.impl.MailNotifierServiceImpl">
+    <bean name="notifierService" class="org.linagora.linshare.core.service.impl.MailNotifierServiceImpl">
         <constructor-arg index="0" value="${mail.smtp.host}"/>
         <constructor-arg index="1" value="${mail.smtp.port}" />
         <constructor-arg index="2" value="${mail.smtp.sender}"/>
@@ -131,9 +131,9 @@
         <constructor-arg index="7" value="${linshare.logo.mails.visible}"/>
     </bean>
     
-    <!-- <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceImpl">  -->
+    <!-- <bean name="enciphermentService" class="org.linagora.linshare.core.service.impl.EnciphermentServiceImpl">  -->
     
-    <bean name="enciphermentService" class="org.linagora.linShare.core.service.impl.EnciphermentServiceAesCryptImpl">
+    <bean name="enciphermentService" class="org.linagora.linshare.core.service.impl.EnciphermentServiceAesCryptImpl">
         <constructor-arg ref="userService"/>
         <constructor-arg ref="documentService"/>
         <constructor-arg ref="documentRepository"/>
@@ -141,17 +141,17 @@
         <constructor-arg value="${linshare.encipherment.tmp.dir}"/>
     </bean>
     
-    <bean name="recipientFavouriteService" class="org.linagora.linShare.core.service.impl.RecipientFavouriteServiceImpl">
+    <bean name="recipientFavouriteService" class="org.linagora.linshare.core.service.impl.RecipientFavouriteServiceImpl">
         <constructor-arg ref="recipientFavouriteRepository"/>
     </bean>
     
-    <bean name="statisticsService" class="org.linagora.linShare.core.service.impl.StatisticsServiceImpl">
+    <bean name="statisticsService" class="org.linagora.linshare.core.service.impl.StatisticsServiceImpl">
         <constructor-arg ref="userRepository"/>
         <constructor-arg ref="documentRepository"/>
         <constructor-arg ref="logEntryRepository"/>
     </bean>
     
-    <bean name="mailContentBuildingService" class="org.linagora.linShare.core.service.impl.MailContentBuildingServiceImpl">
+    <bean name="mailContentBuildingService" class="org.linagora.linshare.core.service.impl.MailContentBuildingServiceImpl">
         <constructor-arg value="${linshare.info.url.base}"/>
         <constructor-arg value="${linshare.info.url.internal}"/>
     	<constructor-arg value="${linshare.mails.txt.container}"/>
@@ -160,27 +160,27 @@
         <constructor-arg value="${linshare.logo.mails.visible}"/>
     </bean>
     
-    <bean name="ldapQueryService" class="org.linagora.linShare.core.service.impl.LDAPQueryServiceImpl">
+    <bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
     </bean>
     
-    <bean name="userProviderService" class="org.linagora.linShare.core.service.impl.UserProviderServiceImpl">
+    <bean name="userProviderService" class="org.linagora.linshare.core.service.impl.UserProviderServiceImpl">
         <constructor-arg ref="userProviderRepository"/>
         <constructor-arg ref="domainPatternRepository"/>
         <constructor-arg ref="ldapConnectionRepository"/>
         <constructor-arg ref="ldapQueryService"/>
     </bean>
     
-    <bean name="functionalityService" class="org.linagora.linShare.core.service.impl.FunctionalityServiceImpl">
+    <bean name="functionalityService" class="org.linagora.linshare.core.service.impl.FunctionalityServiceImpl">
         <constructor-arg ref="functionalityRepository"/>
         <constructor-arg ref="abstractDomainRepository"/>
     </bean>
     
     
-    <bean name="domainPolicyService" class="org.linagora.linShare.core.service.impl.DomainPolicyServiceImpl">
+    <bean name="domainPolicyService" class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
         <constructor-arg ref="domainPolicyRepository"/>
     </bean>
     
-    <bean name="abstractDomainService" class="org.linagora.linShare.core.service.impl.AbstractDomainServiceImpl">
+    <bean name="abstractDomainService" class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
         <constructor-arg ref="functionalityService"/>
         <constructor-arg ref="abstractDomainRepository"/>
         <constructor-arg ref="domainPolicyService"/>
@@ -188,7 +188,7 @@
         <constructor-arg ref="messagesRepository"/>
     </bean>
       
-    <bean name="userAndDomainMultiService" class="org.linagora.linShare.core.service.impl.UserAndDomainMultiServiceImpl">
+    <bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
         <constructor-arg ref="abstractDomainService"/>
         <constructor-arg ref="userService"/>
     </bean> 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="org.linagora.linshare.core.domain.entities.LDAPConnection" table="LDAP_CONNECTION">
+    <id name="persistenceId" type="long">
+      <column name="ldap_connection_id" not-null="true" index="index_ldap_connection_id"/>
+      <generator class="native"/>
+    </id>
+    <property access="field" column="identifier" index="index_ldap_connection_identifier" name="identifier" not-null="true" unique="true"/>
+    <property access="field" column="provider_url" name="providerUrl"/>
+    <property access="field" column="security_auth" name="securityAuth"/>
+    <property access="field" column="security_principal" name="securityPrincipal"/>
+    <property access="field" column="security_credentials" name="securityCredentials"/>
+  </class>
+</hibernate-mapping>

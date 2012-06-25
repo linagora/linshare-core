@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="org.linagora.linshare.core.domain.entities.SecuredUrl" table="SECURED_URL">
+    <id name="persistenceId" type="long">
+      <column name="secured_url_id" not-null="true" index="index_secured_url_id"/>
+      <generator class="native"/>
+    </id>
+    <property access="field" column="URL_PATH" index="idx_secured_url" unique-key="uk_secured_url" name="urlPath" not-null="true" />
+    <property access="field" column="ALEA" index="idx_secured_url"  unique-key="uk_secured_url" name="alea" not-null="true"  />
+    <property access="field" column="EXPIRATION_DATE" name="expirationTime" not-null="true" type="calendar"/>
+    <property access="field" column="PASSWORD" name="password"/>
+
+    
+    <list access="field" cascade="all" name="recipients">
+      <key>
+        <column name="contact_id" not-null="true" index="index_secured_url_contact_id"/>
+      </key>
+      <list-index column="contact_index"/>
+      <many-to-many class="org.linagora.linshare.core.domain.entities.Contact"/>
+    </list>
+    
+    <list access="field" name="documents">
+      <key>
+        <column name="secured_url_id" not-null="true" index="index_secured_url_secured_url_id"/>
+      </key>
+      <list-index column="document_index"/>
+      <many-to-many class="org.linagora.linshare.core.domain.entities.Document"/>
+    </list>
+    <many-to-one access="field" class="org.linagora.linshare.core.domain.entities.User" name="sender" not-null="true">
+      <column index="index_securedurl_sender_id" name="sender_id"/>
+    </many-to-one>
+  </class>
+</hibernate-mapping>

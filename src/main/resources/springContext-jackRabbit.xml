@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
 	default-autowire="no">
 
-  <bean id="repository" class="org.linagora.linShare.core.dao.jackRabbit.BetterRepositoryFactoryBean" destroy-method="destroy"   >
+  <bean id="repository" class="org.linagora.linshare.core.dao.jackRabbit.BetterRepositoryFactoryBean" destroy-method="destroy"   >
     <property name="configuration" value="classpath:repository.xml"/>
     <property name="homeDir" value="${home.directory}"/>
   	<property name="propertyPlaceholderConfigurer" ref="propertyPlaceholder" />
@@ -36,7 +36,7 @@
     <property name="allowCreate" value="true"/>
   </bean>	
 
-  <bean id="jackRabbitRepository" class="org.linagora.linShare.core.dao.jackRabbit.JackRabbitFileSystem">
+  <bean id="jackRabbitRepository" class="org.linagora.linshare.core.dao.jackRabbit.JackRabbitFileSystem">
 	  <property name="jcrTemplate" ref="jcrTemplate"/>
   </bean>	
 	

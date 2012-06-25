@@ -111,7 +111,7 @@
 		
 	<!--  specific cache for the config parameters. Since they are few, don't change often
 	 	  and are read a lot, it's a good idea to keep them eternal -->
-	 <cache name="org.linagora.linShare.core.domain.entities.Parameter"
+	 <cache name="org.linagora.linshare.core.domain.entities.Parameter"
            maxElementsInMemory="100"
            eternal="true"
            overflowToDisk="false"

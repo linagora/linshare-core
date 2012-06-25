@@ -24,7 +24,7 @@
         </property>
         <!-- 
         <property name="namingStrategy">
-			<bean id="namingStrategy" class="org.linagora.linShare.core.repository.hibernate.LinShareNamingStrategy"/>
+			<bean id="namingStrategy" class="org.linagora.linshare.core.repository.hibernate.LinShareNamingStrategy"/>
 		</property>
          -->
     </bean>

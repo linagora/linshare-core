@@ -830,7 +830,7 @@
 						<update>false</update>
 						<export>false</export>
 						<format>true</format>
-						<namingstrategy>org.linagora.linShare.core.repository.hibernate.LinShareNamingStrategy</namingstrategy>
+						<namingstrategy>org.linagora.linshare.core.repository.hibernate.LinShareNamingStrategy</namingstrategy>
 						<configurationfile>src/main/resources/hibernate.cfg.xml</configurationfile>
 						<propertyfile>src/main/resources/reference-database.properties</propertyfile>
 						<outputfilename>createSchema.sql</outputfilename>
@@ -962,7 +962,7 @@
 				<artifactId>tapestry-component-report</artifactId>
 				<version>${tapestry-release-version}</version>
 				<configuration>
-						<rootPackage>org.linagora.linShare.view.tapestry</rootPackage>
+						<rootPackage>org.linagora.linshare.view.tapestry</rootPackage>
 				</configuration>
 		  </plugin>
 		-->
