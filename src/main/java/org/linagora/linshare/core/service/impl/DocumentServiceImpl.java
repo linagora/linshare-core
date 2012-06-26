@@ -191,33 +191,7 @@ public class DocumentServiceImpl implements DocumentService {
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
 		if(mimeFunctionality.getActivationPolicy().getStatus()) {
-			// use mimetype filtering
-			if (logger.isDebugEnabled()) {
-				logger.debug("2)check the type mime:" + mimeType);
-			}
-
-				// if we refuse some type of mime type
-				if (mimeType != null) {
-					MimeTypeStatus status = mimeTypeService.giveStatus(mimeType);
-
-					if (status==MimeTypeStatus.DENIED) {
-						if (logger.isDebugEnabled())
-							logger.debug("mimetype not allowed: " + mimeType);
-                        String[] extras = {fileName};
-						throw new BusinessException(
-								BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
-								"This kind of file is not allowed: " + mimeType, extras);
-					} else if(status==MimeTypeStatus.WARN){
-						if (logger.isInfoEnabled())
-							logger.info("mimetype warning: " + mimeType + "for user: "+owner.getMail());
-						putwarning = true;
-					}
-				} else {
-					//type mime is null ?
-                    String[] extras = {fileName};
-					throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
-                        "type mime is empty for this file" + mimeType, extras);
-				}
+			checkFileMimeType(fileName, mimeType, owner, putwarning);
 		}
 		
 		
@@ -405,7 +379,7 @@ public class DocumentServiceImpl implements DocumentService {
 			Document aDoc = new Document(uuid, fileName, mimeType,
 					new GregorianCalendar(), new GregorianCalendar(), owner,
 					aesencrypted, false, size);
-			aDoc.setThmbUUID(uuidThmb);
+			aDoc.setThmbUuid(uuidThmb);
 			if(timestampToken!=null) aDoc.setTimeStamp(timestampToken);
 
 			if (logger.isDebugEnabled()) {
@@ -446,6 +420,35 @@ public class DocumentServiceImpl implements DocumentService {
 		}
 		
 		return docEntity;
+	}
+
+	private void checkFileMimeType(String fileName, String mimeType, User owner, boolean putwarning) throws BusinessException {
+		// use mimetype filtering
+		if (logger.isDebugEnabled()) {
+			logger.debug("2)check the type mime:" + mimeType);
+		}
+
+		// if we refuse some type of mime type
+		if (mimeType != null) {
+			MimeTypeStatus status = mimeTypeService.giveStatus(mimeType);
+
+			if (status==MimeTypeStatus.DENIED) {
+				if (logger.isDebugEnabled())
+					logger.debug("mimetype not allowed: " + mimeType);
+                String[] extras = {fileName};
+				throw new BusinessException(
+						BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
+						"This kind of file is not allowed: " + mimeType, extras);
+			} else if(status==MimeTypeStatus.WARN){
+				if (logger.isInfoEnabled())
+					logger.info("mimetype warning: " + mimeType + "for user: "+owner.getMail());
+			}
+		} else {
+			//type mime is null ?
+            String[] extras = {fileName};
+			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
+                "type mime is empty for this file" + mimeType, extras);
+		}
 	}
 
 	private void addDocSizeToGlobalUsedQuota(Document docEntity, AbstractDomain domain) throws BusinessException {
@@ -577,7 +580,7 @@ public class DocumentServiceImpl implements DocumentService {
 			}
 
 			// delete old thumbnail in JCR
-			String oldThumbUuid = aDoc.getThmbUUID();
+			String oldThumbUuid = aDoc.getThmbUuid();
 			if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
 				fileSystemDao.removeFileByUUID(oldThumbUuid);
 			}
@@ -588,7 +591,7 @@ public class DocumentServiceImpl implements DocumentService {
 			aDoc.setName(fileName);
 			aDoc.setType(mimeType);
 			aDoc.setSize(size);
-			aDoc.setThmbUUID(uuidThmb);
+			aDoc.setThmbUuid(uuidThmb);
 			aDoc.setEncrypted(encrypted);
 			aDoc = documentRepository.update(aDoc);
 			
@@ -736,7 +739,7 @@ public class DocumentServiceImpl implements DocumentService {
 				shareService.deleteAllSharesWithDocument(doc, actor, mailContainer);
 				
 				String fileUUID = uuid;
-				String thumbnailUUID = doc.getThmbUUID();
+				String thumbnailUUID = doc.getThmbUuid();
 				long docSize = doc.getSize();
 
 				owner.deleteDocument(doc);
@@ -794,7 +797,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 	public InputStream getDocumentThumbnail(String uuid) {
 		Document doc = documentRepository.findById(uuid);
-		String thmbUUID = doc.getThmbUUID();
+		String thmbUUID = doc.getThmbUuid();
 
 		if (thmbUUID!=null && thmbUUID.length()>0) {
 			InputStream stream = fileSystemDao.getFileContentByUUID(thmbUUID);
@@ -805,7 +808,7 @@ public class DocumentServiceImpl implements DocumentService {
 	
 	public boolean documentHasThumbnail(String uuid) {
 		Document doc = documentRepository.findById(uuid);
-		String thmbUUID = doc.getThmbUUID();
+		String thmbUUID = doc.getThmbUuid();
 
 		return (thmbUUID!=null && thmbUUID.length()>0);
 	}

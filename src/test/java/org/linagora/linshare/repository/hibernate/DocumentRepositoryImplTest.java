@@ -21,20 +21,14 @@
 package org.linagora.linshare.repository.hibernate;
 
 
-import java.util.GregorianCalendar;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
@@ -42,85 +36,28 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
 public class DocumentRepositoryImplTest  extends AbstractTransactionalJUnit4SpringContextTests{
-
-    private static final String LOGIN = "login";
-    private static final String FIRST_NAME = "first name";
-    private static final String LAST_NAME = "last name";
-    private static final String MAIL = "mail";
-    private static final String PASSWORD = "password";
-
     
     private final String identifier = "docId";
-    private final String name ="docName";
     private final String type = "doctype";
-    private final Boolean encrypted = false;
-    private final Boolean shared = false;
     private final long fileSize = 1l;
     
-	@Autowired
-	@Qualifier("userRepository")
-	private UserRepository<User> userDao;
-
+    
+    // Services
 	@Autowired
 	private DocumentRepository documentRepository;
 	
-//	@Test
-//	public void testExistDocument() throws BusinessException{
-//		User u = new Guest(FIRST_NAME, LAST_NAME, MAIL, PASSWORD, true, "comment");
-//		
-//		userDao.create(u);
-//		
-//		Document doc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, fileSize);
-//		
-//		documentRepository.create(doc);
-//		
-//		Assert.assertTrue(documentRepository.findById(identifier)!=null);
-//		Assert.assertFalse(documentRepository.findById(identifier+"dummy")!=null);
-//		Assert.assertFalse(userDao.exist("login2", PASSWORD));
-//		
-//		
-//		documentRepository.delete(doc);
-//	}
 	
 	@Test
-	public void testUserDocument() throws BusinessException{
-		User u = new Guest(FIRST_NAME, LAST_NAME, MAIL, PASSWORD, true,"comment");
-	
-		userDao.create(u);
+	public void testCreateDocument() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		Document doc = new Document(identifier, type, fileSize);
+		documentRepository.create(doc);
 
-		Document aDoc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, fileSize);
-		
-		u.addDocument(aDoc);
-		
-		userDao.update(u);
-		
-		User u1 = userDao.findByMail(LOGIN);
-		Assert.assertTrue(u1.getDocuments()!=null);
-		Document document=u1.getDocuments().iterator().next();
-		
-		Assert.assertTrue(document!=null);
-		Assert.assertTrue(document.getIdentifier()==identifier);
-
-		u = null;
-		userDao.delete(u1);
+		Assert.assertTrue(documentRepository.findById(identifier)!=null);
+		Assert.assertFalse(documentRepository.findById(identifier+"dummy")!=null);
+		documentRepository.delete(doc);
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	
-	@Test
-	public void testUserCannotAddDocument() throws IllegalArgumentException, BusinessException {
-		User u = new Guest(FIRST_NAME, LAST_NAME, MAIL, PASSWORD, true,"comment");
-	
-		userDao.create(u);
-
-		Document aDoc = new Document(identifier, name, type, new GregorianCalendar(), new GregorianCalendar(), u, encrypted, shared, fileSize);
-		
-		try {
-			u.addDocument(aDoc);
-		} catch (BusinessException e) {
-			Assert.assertTrue(e.getErrorCode().equals(BusinessErrorCode.USER_CANNOT_UPLOAD));
-		}
-		
-		
-		userDao.delete(u);
-	}
 }

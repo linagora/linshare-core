@@ -1,8 +1,8 @@
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.UserType;
 
@@ -32,6 +32,7 @@ public abstract class Account {
 	
 	protected Account owner;
 	
+	private Set<Entry> entries = new HashSet<Entry>();
 	
 	public Account() {
 		setCreationDate(new Date());
@@ -130,6 +131,14 @@ public abstract class Account {
 		return ( (this.domain == null) ? null : this.domain.getIdentifier() );
 	}
 	
-    public abstract UserType getAccountType();
+    public Set<Entry> getEntries() {
+		return entries;
+	}
+
+	public void setEntries(Set<Entry> entries) {
+		this.entries = entries;
+	}
+
+	public abstract UserType getAccountType();
 
 }

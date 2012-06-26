@@ -23,37 +23,15 @@ package org.linagora.linshare.core.domain.entities;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class Document implements Serializable {
 	
-	/*
-	 * 
-	 * 
-	private long document_id;
-	
-	private String identifier;
-	
-	private java.util.Date creationDate;
-	
-	private String type;
-	
-	private long size;
-	
-	private String thmbUuid;
-	
-	private java.sql.Blob timestamp;
-	
-	private java.util.Set threadEntries = new java.util.HashSet();
-	
-	private java.util.Set documentEntries = new java.util.HashSet();
-	
-	
-	 */
-
 	private static final long serialVersionUID = 2877902686906612071L;
 
-	private long persistenceId;
+	private long id;
 	
 	/**
 	 * the identifier of the document.
@@ -114,7 +92,7 @@ public class Document implements Serializable {
 	/**
 	 * UUID of the thumbnail file
 	 */
-	private String thmbUUID;
+	private String thmbUuid;
 	
 	
 	/**
@@ -122,25 +100,35 @@ public class Document implements Serializable {
 	 */
 	private byte[] timeStamp;
 	
+	private java.util.Set<DocumentEntry> threadEntries = new java.util.HashSet<DocumentEntry>();
+
+	private java.util.Set<ThreadEntry> documentEntries = new java.util.HashSet<ThreadEntry>();
 	
+	
+	
+	
+	/* Constructors */
 	public Document(String identifier,String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
 			Boolean shared,Long size) {
 		super();
 		this.identifier=identifier;
-		this.name = name;
-		this.type = type;
 		this.creationDate = creationDate;
-		this.expirationDate = expirationDate;
+		this.type = type;
+		this.size = size;
+		this.timeStamp = null;
+		this.thmbUuid = null;
+		
+		// to be delete
+		this.name = name;
 		this.owner = owner;
 		this.encrypted = encrypted;
 		this.shared = shared;
-		this.size = size;
 		this.signatures = null;
-		this.thmbUUID = null;
-		this.timeStamp = null;
 		this.deletionDate = null;
+		this.expirationDate = expirationDate;
 	}
+	
 	/**
 	 * modifying from protected to public for using BeanUtils without construct 
 	 * a document with null in parameters
@@ -148,6 +136,16 @@ public class Document implements Serializable {
 	public Document(){
 		super();
 	}
+	
+	public Document(String identifier, String type, Long size) {
+		super();
+		this.identifier=identifier;
+		this.type = type;
+		this.creationDate = new GregorianCalendar();
+		this.size = size;
+		this.timeStamp = null;
+		this.thmbUuid = null;
+	}	
 	
 	@Override
 	public boolean equals(Object o1){
@@ -163,13 +161,13 @@ public class Document implements Serializable {
 		return this.identifier.hashCode();
 	}
 
-	public Long getPersistenceId() {
-		return persistenceId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setPersistenceId(Long id) {
-		if(null == id) this.persistenceId = 0;
-		else this.persistenceId = id;
+	public void setId(Long id) {
+		if(null == id) this.id = 0;
+		else this.id = id;
 	}
 	
 	public String getIdentifier() {
@@ -257,23 +255,42 @@ public class Document implements Serializable {
 	public void setSignatures(List<Signature> signatures) {
 		this.signatures = signatures;
 	}
-	public void setThmbUUID(String thmbUUID) {
-		this.thmbUUID = thmbUUID;
+	public void setThmbUuid(String thmbUUID) {
+		this.thmbUuid = thmbUUID;
 	}
-	public String getThmbUUID() {
-		return thmbUUID;
+	public String getThmbUuid() {
+		return thmbUuid;
 	}
 	public byte[] getTimeStamp() {
 		return timeStamp;
 	}
 	public void setTimeStamp(byte[] timeStamp) {
-		this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
+//		this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
+		this.timeStamp = timeStamp;
 	}
 	public void setDeletionDate(Calendar deletionDate) {
 		this.deletionDate = deletionDate;
 	}
 	public Calendar getDeletionDate() {
 		return deletionDate;
+	}
+	public java.util.Set<DocumentEntry> getThreadEntries() {
+		return threadEntries;
+	}
+	public void setThreadEntries(java.util.Set<DocumentEntry> threadEntries) {
+		this.threadEntries = threadEntries;
+	}
+	public java.util.Set<ThreadEntry> getDocumentEntries() {
+		return documentEntries;
+	}
+	public void setDocumentEntries(java.util.Set<ThreadEntry> documentEntries) {
+		this.documentEntries = documentEntries;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public void setSize(Long size) {
+		this.size = size;
 	}
 	
 }

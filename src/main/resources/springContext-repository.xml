@@ -24,6 +24,10 @@
     <bean name="documentRepository" class="org.linagora.linshare.core.repository.hibernate.DocumentRepositoryImpl">
         <constructor-arg ref="hibernateTemplate"/>
     </bean>
+    
+    <bean name="documentEntryRepository" class="org.linagora.linshare.core.repository.hibernate.DocumentEntryRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
 
     <bean name="logEntryRepository" class="org.linagora.linshare.core.repository.hibernate.LogEntryRepositoryImpl">
     	<constructor-arg ref="hibernateTemplate"/>

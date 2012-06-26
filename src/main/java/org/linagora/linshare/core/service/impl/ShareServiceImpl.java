@@ -349,7 +349,7 @@ public class ShareServiceImpl implements ShareService{
 			
 				User owner  = doc.getOwner();
 				String fileUUID = doc.getIdentifier();
-				String thumbnailUUID = doc.getThmbUUID();
+				String thumbnailUUID = doc.getThmbUuid();
 				
 				//we log the deletion of this file with FILE_EXPIRE
 				User systemUser = userRepository.findByMail("system");

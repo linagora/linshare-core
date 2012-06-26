@@ -59,6 +59,8 @@ public abstract class User extends Account {
 	
 	protected TechnicalAccountPermission technicalAccountPermission;
 	
+	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
+	
 	
 	public User() {
 	}
@@ -301,5 +303,13 @@ public abstract class User extends Account {
 
 	public void setMyThreads(Set<ThreadMember> myThreads) {
 		this.myThreads = myThreads;
+	}
+
+	public Set<ShareEntry> getShareEntries() {
+		return shareEntries;
+	}
+
+	public void setShareEntries(Set<ShareEntry> shareEntries) {
+		this.shareEntries = shareEntries;
 	}
 }

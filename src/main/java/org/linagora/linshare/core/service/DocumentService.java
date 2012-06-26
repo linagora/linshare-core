@@ -42,6 +42,7 @@ import org.linagora.linshare.core.exception.BusinessException;
  */
 public interface DocumentService {
 
+	// TODO: To be deleted
 	/**
 	 * Compute the MimeType from a file input stream 
 	 * @param theFileStream
@@ -52,7 +53,7 @@ public interface DocumentService {
 	
 
 	
-	
+	// TODO: To be deleted	
 	/**
 	 * Insert a file in the path identifiable by its filename.
 	 * @param path the path inside the repository.

@@ -24,6 +24,10 @@
 		
 		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" />
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="false" access="field"></many-to-one>
+		<set name="entries" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="owner_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Entry"/>
+		</set>
     
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
 		 <!-- 

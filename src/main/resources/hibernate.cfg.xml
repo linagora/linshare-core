@@ -30,12 +30,11 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/ThreadMember.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/LdapAttribute.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/TechnicalAccountPermission.hbm.xml"/>
-    
+
+	<mapping resource="org/linagora/linshare/core/domain/entities/Entry.hbm.xml"/>    
+    <mapping resource="org/linagora/linshare/core/domain/entities/Document.hbm.xml"/>
     
 	<!-- 
-	<mapping resource="org/linagora/linshare/core/domain/entities/User.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Document.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Share.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/AllowedMimeType.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/Signature.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/Contact.hbm.xml"/>  
@@ -46,3 +45,4 @@
      -->
   </session-factory>
 </hibernate-configuration>
+

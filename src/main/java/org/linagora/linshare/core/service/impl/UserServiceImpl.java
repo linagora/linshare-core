@@ -374,7 +374,7 @@ public class UserServiceImpl implements UserService {
 			Set<Document> documents = userToDelete.getDocuments();
 			for (Document document : documents) {
 				String fileUUID = document.getIdentifier();
-				String thumbnailUUID = document.getThmbUUID();
+				String thumbnailUUID = document.getThmbUuid();
 				if (thumbnailUUID != null && thumbnailUUID.length()>0) {
 					fileSystemDao.removeFileByUUID(thumbnailUUID);
 				}
