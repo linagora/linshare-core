@@ -13,13 +13,17 @@ public class DocumentEntry extends Entry {
 	
 	protected Set<AnonymousShareEntry> anonymousShareEntries = new HashSet<AnonymousShareEntry>();
 	
-//	protected Set signature = new HashSet();
-	
 	public DocumentEntry() {
 	}
 	
 	public DocumentEntry(Account entryOwner, String name, String comment, Document document) {
 		super(entryOwner, name, comment);
+		this.document = document;
+		this.ciphered = false;
+	}
+	
+	public DocumentEntry(Account entryOwner, String name, Document document) {
+		super(entryOwner, name, "");
 		this.document = document;
 		this.ciphered = false;
 	}
@@ -56,4 +60,12 @@ public class DocumentEntry extends Entry {
 	public void setCiphered(Boolean ciphered) {
 		this.ciphered = ciphered;
 	}
+	
+	public Boolean isShared() {
+		if(getAnonymousShareEntries().size() > 0 || getShareEntries().size() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
 }

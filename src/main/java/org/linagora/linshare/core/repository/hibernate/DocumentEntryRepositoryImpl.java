@@ -26,7 +26,11 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.Share;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -59,6 +63,20 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Entry> i
             throw new IllegalStateException("Id must be unique");
         }
     }
+
+	
+//	
+//	@Override
+//	public Entry findByOwnerAndUuid(Account account, String uuid) {
+//		List<Entry> entries = findByCriteria(Restrictions.eq("entryOwner", account),Restrictions.eq("document.identifier", uuid));
+//        if (entries == null || entries.isEmpty()) {
+//            return null;
+//        } else if (entries.size() == 1) {
+//            return entries.get(0);
+//        } else {
+//            throw new IllegalStateException("Id must be unique");
+//        }
+//	}
 
 	@Override
 	public Entry create(Entry entity) throws BusinessException {

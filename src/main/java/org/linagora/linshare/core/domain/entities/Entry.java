@@ -19,8 +19,6 @@ public class Entry {
 	
 	protected String comment;
 	
-//	private Set tagAssociations = new HashSet();
-	
 	public Entry() {
 	}
 	

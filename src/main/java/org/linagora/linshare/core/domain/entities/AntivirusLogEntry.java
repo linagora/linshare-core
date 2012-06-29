@@ -18,5 +18,9 @@ public class AntivirusLogEntry extends LogEntry {
 			LogAction logAction, String description) {
 		super(actorMail, actorFirstname, actorLastname, actorDomain, logAction, description);
 	}
+	
+	public AntivirusLogEntry(Account actor, LogAction logAction, String description) {
+		super(actor.getLsUid(), null, null, actor.getDomain().getIdentifier(), logAction, description);
+	}
 
 }

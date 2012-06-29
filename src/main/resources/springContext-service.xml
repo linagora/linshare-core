@@ -68,6 +68,7 @@
     </bean>
 
    	<bean id="documentService" class="org.linagora.linshare.core.service.impl.DocumentServiceImpl">
+   	<!-- 
         <constructor-arg index="0" ref="documentRepository" />
         <constructor-arg index="1" ref="jackRabbitRepository"/>
         <constructor-arg index="2" ref="userRepository" />
@@ -79,6 +80,7 @@
         <constructor-arg index="8" ref="shareTransformer" />
         <constructor-arg index="9" ref="abstractDomainService" />
         <constructor-arg index="10" ref="functionalityService" />
+   	 -->
     </bean>
     
     <bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">

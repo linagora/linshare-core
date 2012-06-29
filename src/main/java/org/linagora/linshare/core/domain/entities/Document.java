@@ -100,9 +100,9 @@ public class Document implements Serializable {
 	 */
 	private byte[] timeStamp;
 	
-	private java.util.Set<DocumentEntry> threadEntries = new java.util.HashSet<DocumentEntry>();
+	private DocumentEntry threadEntry ;
 
-	private java.util.Set<ThreadEntry> documentEntries = new java.util.HashSet<ThreadEntry>();
+	private ThreadEntry documentEntry ;
 	
 	
 	
@@ -246,51 +246,63 @@ public class Document implements Serializable {
 	public String getFileComment() {
 		return fileComment;
 	}
+	
 	public void setFileComment(String fileComment) {
 		this.fileComment = fileComment;
 	}
+	
 	public List<Signature> getSignatures() {
 		return signatures;
 	}
+	
 	public void setSignatures(List<Signature> signatures) {
 		this.signatures = signatures;
 	}
+	
 	public void setThmbUuid(String thmbUUID) {
 		this.thmbUuid = thmbUUID;
 	}
+	
 	public String getThmbUuid() {
 		return thmbUuid;
 	}
+	
 	public byte[] getTimeStamp() {
 		return timeStamp;
 	}
+	
 	public void setTimeStamp(byte[] timeStamp) {
-//		this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
-		this.timeStamp = timeStamp;
+		this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
 	}
 	public void setDeletionDate(Calendar deletionDate) {
 		this.deletionDate = deletionDate;
 	}
+	
 	public Calendar getDeletionDate() {
 		return deletionDate;
 	}
-	public java.util.Set<DocumentEntry> getThreadEntries() {
-		return threadEntries;
-	}
-	public void setThreadEntries(java.util.Set<DocumentEntry> threadEntries) {
-		this.threadEntries = threadEntries;
-	}
-	public java.util.Set<ThreadEntry> getDocumentEntries() {
-		return documentEntries;
-	}
-	public void setDocumentEntries(java.util.Set<ThreadEntry> documentEntries) {
-		this.documentEntries = documentEntries;
-	}
+	
 	public void setId(long id) {
 		this.id = id;
 	}
 	public void setSize(Long size) {
 		this.size = size;
+	}
+
+	public DocumentEntry getThreadEntry() {
+		return threadEntry;
+	}
+
+	public void setThreadEntry(DocumentEntry threadEntry) {
+		this.threadEntry = threadEntry;
+	}
+
+	public ThreadEntry getDocumentEntry() {
+		return documentEntry;
+	}
+
+	public void setDocumentEntry(ThreadEntry documentEntry) {
+		this.documentEntry = documentEntry;
 	}
 	
 }

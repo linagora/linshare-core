@@ -51,8 +51,7 @@
 				<one-to-many class="org.linagora.linshare.core.domain.entities.Signature"/>
 			</set>
 			 -->
-			<many-to-one name="document" cascade="lock" column="document_id" class="org.linagora.linshare.core.domain.entities.Document" not-null="true" lazy="no-proxy"/>
-			
+			<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document" cascade="save-update,lock" unique="true" not-null="true" lazy="no-proxy"/>
 		</joined-subclass>
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.ShareEntry" table="share_entry" lazy="false">
 			<key>
@@ -68,6 +67,7 @@
 			<key>
 				<column name="entry_id"/>
 			</key>
+			<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document" cascade="save-update,lock" unique="true" not-null="true" lazy="no-proxy"/>
 		</joined-subclass>
 	</class>
 </hibernate-mapping>

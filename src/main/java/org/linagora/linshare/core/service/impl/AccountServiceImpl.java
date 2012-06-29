@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
@@ -12,8 +13,7 @@ public class AccountServiceImpl implements AccountService {
 	@SuppressWarnings("unused")
 	final private static Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 	
-    @SuppressWarnings("rawtypes")
-	private final AccountRepository accountRepository;
+	private final AccountRepository<Account> accountRepository;
     
     @SuppressWarnings("rawtypes")
     private final UserRepository userRepository;
@@ -36,6 +36,12 @@ public class AccountServiceImpl implements AccountService {
 			acc = userRepository.findByMail(uid);
 		}
 		return acc;
+	}
+
+
+	@Override
+	public Account update(Account account) throws BusinessException {
+		return (Account) accountRepository.update(account);
 	}
 
 }

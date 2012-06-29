@@ -59,14 +59,19 @@ public class FileLogEntry extends LogEntry {
 		this.fileSize = fileSize;
 		this.fileType = fileType;
 	}
+	
+	public FileLogEntry(String actorMail, String actorFirstname, String actorLastname, String actorDomain, LogAction logAction, String description, String fileName, Long fileSize, String fileType) {
+			super(actorMail, actorFirstname, actorLastname, actorDomain,
+			logAction, description);
+			this.fileName = fileName;
+			this.fileSize = fileSize;
+			this.fileType = fileType;
+	}
 
-	public FileLogEntry(String actorMail,
-			String actorFirstname, String actorLastname, String actorDomain, 
-			LogAction logAction, String description,
-			String fileName, Long fileSize, String fileType) {
-		super(actorMail,
-				actorFirstname, actorLastname, actorDomain,
-				logAction, description);
+			
+	
+	public FileLogEntry(Account actor, LogAction logAction, String description, String fileName, Long fileSize, String fileType) {
+		super(actor.getLsUid(), null, null, actor.getDomain().getIdentifier(), logAction, description);
 		this.fileName = fileName;
 		this.fileSize = fileSize;
 		this.fileType = fileType;
