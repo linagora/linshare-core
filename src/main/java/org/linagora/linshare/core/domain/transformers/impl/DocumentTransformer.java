@@ -64,7 +64,7 @@ public class DocumentTransformer implements Transformer<Document, DocumentVo>{
 		
 		if(null!=entityObject){
 			
-			return new DocumentVo(entityObject.getIdentifier(),entityObject.getName(), entityObject.getFileComment() ,entityObject.getCreationDate(),entityObject.getExpirationDate(),
+			return new DocumentVo(entityObject.getUuid(),entityObject.getName(), entityObject.getFileComment() ,entityObject.getCreationDate(),entityObject.getExpirationDate(),
 					entityObject.getType(), entityObject.getOwner().getLogin(), entityObject.getEncrypted(),
 					entityObject.getShared(),entityObject.getSize());
 		}else{	

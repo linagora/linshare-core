@@ -23,14 +23,11 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.Share;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -44,7 +41,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Entry> i
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(Entry aDoc) {
 		DetachedCriteria det = DetachedCriteria.forClass(Entry.class)
-		.add(Restrictions.eq( "id", aDoc.getId() ) );
+		.add(Restrictions.eq( "uuid", aDoc.getUuid()) );
 		return det;
 	}
 	
@@ -53,8 +50,8 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Entry> i
      * @return found document (null if no document found).
      */
 	@Override
-    public Entry findById(Long id) {
-        List<Entry> entries = findByCriteria(Restrictions.eq("id", id));
+    public Entry findById(String uuid) {
+        List<Entry> entries = findByCriteria(Restrictions.eq("uuid", uuid));
         if (entries == null || entries.isEmpty()) {
             return null;
         } else if (entries.size() == 1) {
@@ -65,23 +62,11 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Entry> i
     }
 
 	
-//	
-//	@Override
-//	public Entry findByOwnerAndUuid(Account account, String uuid) {
-//		List<Entry> entries = findByCriteria(Restrictions.eq("entryOwner", account),Restrictions.eq("document.identifier", uuid));
-//        if (entries == null || entries.isEmpty()) {
-//            return null;
-//        } else if (entries.size() == 1) {
-//            return entries.get(0);
-//        } else {
-//            throw new IllegalStateException("Id must be unique");
-//        }
-//	}
-
 	@Override
 	public Entry create(Entry entity) throws BusinessException {
 		entity.setCreationDate(new GregorianCalendar());
 		entity.setModificationDate(new GregorianCalendar());
+		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
 

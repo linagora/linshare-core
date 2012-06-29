@@ -29,11 +29,11 @@ public interface DocumentEntryService {
 	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, Long size, String fileName) throws BusinessException;
 	
 	
-	public DocumentEntry updateDocumentEntry(Account actor, Long currentDocEntryId, InputStream stream, Long size, String fileName) throws BusinessException ;
+	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
 	
-	public DocumentEntry duplicateDocumentEntry(Account actor, Long currentDocEntryId) throws BusinessException;
+	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException;
 	
-	public void deleteDocumentEntry(Account actor, Long currentDocEntryId, Reason causeOfDeletion) throws BusinessException;
+	public void deleteDocumentEntry(Account actor, String docEntryUuid, Reason causeOfDeletion) throws BusinessException;
 	
 	public long getUserMaxFileSize(Account account) throws BusinessException;
 	
@@ -44,19 +44,19 @@ public interface DocumentEntryService {
 	
 	 /**
      * Thumbnail of the document exists ?
-     * @param uuid the identifier of the document
+     * @param docUuid the identifier of the document
      * @return true if the thumbnail exists, false otherwise
      */
-	public boolean documentHasThumbnail(Account owner, String uuid);
+	public boolean documentHasThumbnail(Account owner, String docUuid);
 	
 	 /**
      * Get the thumbnail (InputStream) of the document
-     * @param uuid the identifier of the document
+     * @param docUuid the identifier of the document
      * @return InputStream of the thumbnail
      */
-    public InputStream getDocumentThumbnail(Account owner, String uuid);
+    public InputStream getDocumentThumbnail(Account owner, String docUuid);
     
-    public InputStream getDocument(Account owner, String uuid);
+    public InputStream getDocument(Account owner, String docUuid);
 
 	/**
 	 * return true if the signature functionality is enabled
@@ -95,10 +95,10 @@ public interface DocumentEntryService {
 	 */
 	public Long getGlobalQuota(Account account) throws BusinessException;
 	
-	public DocumentEntry findById(Account actor, Long id) throws BusinessException; 
+	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException; 
 	
-	public void renameDocumentEntry(Account actor, Long id, String newName) throws BusinessException ;
+	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException ;
 	
-	public void updateFileProperties(Account actor, Long id, String newName, String fileComment) throws BusinessException;
+	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException;
 	
 }

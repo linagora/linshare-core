@@ -161,7 +161,7 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		documentRepository.delete(aDocument);
-		fileRepository.removeFileByUUID(aDocument.getIdentifier());
+		fileRepository.removeFileByUUID(aDocument.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 
@@ -209,13 +209,13 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 			String expected = IOUtils.toString(update, "UTF-8");
 			String actual = null;
 			
-			updatedFile = fileRepository.getFileContentByUUID(aDocument.getIdentifier());
+			updatedFile = fileRepository.getFileContentByUUID(aDocument.getUuid());
 			
-			documentService.updateFileContent(aDocument.getIdentifier(), update, 
+			documentService.updateFileContent(aDocument.getUuid(), update, 
 					update.available(), aDocument.getName(), 
 					aDocument.getType(), aDocument.getEncrypted(), aDocument.getOwner());
 			
-			updatedFile = fileRepository.getFileContentByUUID(aDocument.getIdentifier());
+			updatedFile = fileRepository.getFileContentByUUID(aDocument.getUuid());
 
 			IOUtils.closeQuietly(update);				
 			actual = IOUtils.toString(updatedFile, "UTF-8");
@@ -329,9 +329,9 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 									"linShare.properties"),
 					john);	
 			Assert.assertFalse(john.getDocuments().isEmpty());
-			documentService.deleteFile(john.getLogin(), aDoc.getIdentifier(), Reason.EXPIRY);
+			documentService.deleteFile(john.getLogin(), aDoc.getUuid(), Reason.EXPIRY);
 			Assert.assertTrue(john.getDocuments().size() == 0);
-			Assert.assertNull(fileRepository.getFileContentByUUID(aDoc.getIdentifier()));
+			Assert.assertNull(fileRepository.getFileContentByUUID(aDoc.getUuid()));
 		} catch (BusinessException e) {
 			e.printStackTrace();
 			Assert.assertFalse(true);
@@ -360,7 +360,7 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	public void testGetDocumentThumbnail() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		InputStream expected = null;
-		InputStream actual = documentService.getDocumentThumbnail(aDocument.getIdentifier());
+		InputStream actual = documentService.getDocumentThumbnail(aDocument.getUuid());
 		
 		Assert.assertEquals(expected, actual);
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -370,7 +370,7 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	// test if a doc actually has a thumbnail
 	public void testDocumentHasThumbnail() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Assert.assertFalse(documentService.documentHasThumbnail(aDocument.getIdentifier()));
+		Assert.assertFalse(documentService.documentHasThumbnail(aDocument.getUuid()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
@@ -396,11 +396,11 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	public void testDuplicateDocument() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
-			String expected = IOUtils.toString(fileRepository.getFileContentByUUID(aDocument.getIdentifier()));
+			String expected = IOUtils.toString(fileRepository.getFileContentByUUID(aDocument.getUuid()));
 			String actual = null;
 			Document aNewDoc = documentService.duplicateDocument(aDocument, john);
 			
-			actual = IOUtils.toString(fileRepository.getFileContentByUUID(aNewDoc.getIdentifier()));
+			actual = IOUtils.toString(fileRepository.getFileContentByUUID(aNewDoc.getUuid()));
 			
 			Assert.assertEquals(expected, actual);
 			Assert.assertTrue(john.getDocuments().contains(aNewDoc));
@@ -440,9 +440,9 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 									"linShare.properties"),
 					john);
 			
-			documentService.renameFile(aNewDoc.getIdentifier(), expected);
+			documentService.renameFile(aNewDoc.getUuid(), expected);
 
-			String actual = documentRepository.findById(aNewDoc.getIdentifier()).getName();
+			String actual = documentRepository.findById(aNewDoc.getUuid()).getName();
 			Assert.assertEquals(expected, actual);
 			// TODO Assert.assertEquals(expected, fileRepository.getFileInfoByUUID(aNewDoc.getIdentifier()).getName());
 		} catch (BusinessException e) {
@@ -465,7 +465,7 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 							.getMimeType(inputStream,
 									"linShare.properties"),
 					john);
-			documentService.updateFileProperties(aNewDoc.getIdentifier(), null, expected);
+			documentService.updateFileProperties(aNewDoc.getUuid(), null, expected);
 			
 			String actual = aNewDoc.getFileComment();
 			Assert.assertEquals(expected, actual);	

@@ -310,7 +310,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		List<SecuredUrl> byDocUrl = new ArrayList<SecuredUrl>();
 		for (SecuredUrl securedUrl : allUrl) {
 			for (Document doc : securedUrl.getDocuments()) {
-				if (document.getIdentifier().equalsIgnoreCase(doc.getIdentifier())) {
+				if (document.getIdentifier().equalsIgnoreCase(doc.getUuid())) {
 					byDocUrl.add(securedUrl);
 					break;
 				}

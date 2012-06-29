@@ -77,16 +77,16 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
         logger.info("Remove missing documents batch launched.");
 
         for (Document document : documents) {
-            InputStream stream = fileSystemDao.getFileContentByUUID(document.getIdentifier());
+            InputStream stream = fileSystemDao.getFileContentByUUID(document.getUuid());
 
             if (stream == null) {
                 try {
-                    logger.info("Removing file with UID = {} because of inconsistency", document.getIdentifier());
-                    documentService.deleteFile(document.getOwner().getLogin(), document.getIdentifier(),
+                    logger.info("Removing file with UID = {} because of inconsistency", document.getUuid());
+                    documentService.deleteFile(document.getOwner().getLogin(), document.getUuid(),
                         Reason.INCONSISTENCY);
                 } catch (BusinessException ex) {
                     logger.error("Error when processing cleaning of document whith UID = {} during consistency check " +
-                        "process", document.getIdentifier());
+                        "process", document.getUuid());
                 }
             }
         }
@@ -139,7 +139,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 				} else {
 					if (document.getDeletionDate().before(now)) {
 						try {
-							documentService.deleteFile("system", document.getIdentifier(), Reason.EXPIRY);
+							documentService.deleteFile("system", document.getUuid(), Reason.EXPIRY);
 							logger.info("Documents cleaner batch has removed a file.");
 						} catch (BusinessException e) {
 							logger.error("Documents cleaner batch error when deleting expired file : "+e.getMessage());

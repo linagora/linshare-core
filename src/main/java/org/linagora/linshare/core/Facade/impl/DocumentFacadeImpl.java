@@ -106,7 +106,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 			Share shareToRemove = null;
 			
 			for (Share share : listShare) {
-				if (share.getDocument().getIdentifier().equals(document.getIdentifier())) {
+				if (share.getDocument().getUuid().equals(document.getIdentifier())) {
 					shareToRemove = share;
 					break;
 				}
@@ -247,12 +247,12 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	public DocumentVo encryptDocument(DocumentVo doc,UserVo user, String password) throws BusinessException{
 		Document docenc = enciphermentService.encryptDocument(doc, user, password);
-		return documentTransformer.disassemble(documentService.getDocument(docenc.getIdentifier()));
+		return documentTransformer.disassemble(documentService.getDocument(docenc.getUuid()));
 	}
 
 	public DocumentVo decryptDocument(DocumentVo doc, UserVo user,String password) throws BusinessException {
 		Document docenc = enciphermentService.decryptDocument(doc, user, password);
-		return documentTransformer.disassemble(documentService.getDocument(docenc.getIdentifier()));
+		return documentTransformer.disassemble(documentService.getDocument(docenc.getUuid()));
 	}
 	
 	public boolean isDocumentEncrypted(DocumentVo doc) {

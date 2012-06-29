@@ -169,7 +169,7 @@ public class SearchDocumentServiceImplTest extends AbstractTransactionalJUnit4Sp
 		documentRepository.delete(aDocument);
 		Jane.deleteDocument(aDocument);
 		userRepository.update(Jane);
-		fileRepository.removeFileByUUID(aDocument.getIdentifier());
+		fileRepository.removeFileByUUID(aDocument.getUuid());
 		datas.deleteUsers();
 		
 		wiser.stop();

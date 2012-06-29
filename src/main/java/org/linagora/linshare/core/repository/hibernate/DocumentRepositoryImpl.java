@@ -41,7 +41,7 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(Document aDoc) {
 		DetachedCriteria det = DetachedCriteria.forClass( Document.class )
-		.add(Restrictions.eq( "identifier", aDoc.getIdentifier() ) );
+		.add(Restrictions.eq( "uuid", aDoc.getUuid() ) );
 		return det;
 	}
 	
@@ -51,7 +51,7 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
      * @return found document (null if no document found).
      */
     public Document findById(String identifier) {
-        List<Document> documents = findByCriteria(Restrictions.eq("identifier", identifier));
+        List<Document> documents = findByCriteria(Restrictions.eq("uuid", identifier));
         if (documents == null || documents.isEmpty()) {
             return null;
         } else if (documents.size() == 1) {

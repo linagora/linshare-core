@@ -87,7 +87,7 @@ public class SecuredUrlRepositoryImpl extends
 				String queryString = "select s from SecuredUrl s join s.documents as docs where docs.identifier= :docid";
 				Query query = session.createQuery(queryString);
 				
-			    query.setParameter("docid", doc.getIdentifier());
+			    query.setParameter("docid", doc.getUuid());
 				
 				return query.setCacheable(false).list();
 			}

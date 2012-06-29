@@ -211,7 +211,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 //		this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 //			public void doInTransactionWithoutResult(TransactionStatus status) {
 				try {
-					documentService.deleteFile(mailTestRetriever.getSenderMail(), myDocForTest.getIdentifier(),Reason.NONE);
+					documentService.deleteFile(mailTestRetriever.getSenderMail(), myDocForTest.getUuid(),Reason.NONE);
 					User root = userService.findUserInDB(LinShareConstants.rootDomainIdentifier, "root@localhost.localdomain");
 					userService.deleteUser(sender.getLogin(), root);
 					userService.deleteUser(recipient.getLogin(), root);
@@ -650,7 +650,7 @@ public class ShareServiceImplTest extends AbstractTransactionalJUnit4SpringConte
 			
 			documentService.deleteFile(mailTestRetriever
 					.getSenderMail(), documentRepository
-					.findAll().get(0).getIdentifier(),
+					.findAll().get(0).getUuid(),
 					Reason.NONE);
 			Assert
 					.assertTrue(shareRepository.findAll()

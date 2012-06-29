@@ -126,13 +126,13 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		
-		logger.debug("aDocument.getIdentifier : " + aDocument.getIdentifier());
+		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
 		printDocs(jane);
 		documentRepository.delete(aDocument);
 //		Jane.deleteDocument(aDocument);
 		jane.getDocuments().clear();
 		userRepository.update(jane);
-		fileRepository.removeFileByUUID(aDocument.getIdentifier());
+		fileRepository.removeFileByUUID(aDocument.getUuid());
 		datas.deleteUsers();
 		
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -163,7 +163,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		// Add 2 years from the actual date
 		expirationDate.add(Calendar.YEAR, 2);
 		
-		DocumentVo doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc","user1@linpki.org",false,false,(long) 10);
+		DocumentVo doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc","user1@linpki.org",false,false,(long) 10);
 
 		Assert.assertFalse(enciphermentService.isDocumentEncrypted(doc));
 		
@@ -184,16 +184,16 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		expirationDate.add(Calendar.YEAR, -2);
 		
 		logger.debug("inputStreamUuid : " + inputStreamUuid);
-		logger.debug("aDocument.getIdentifier : " + aDocument.getIdentifier());
+		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
 
-		DocumentVo docVo = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
+		DocumentVo docVo = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
 		
 		UserVo userVo = new UserVo(jane);
 		printDocs(jane);
 		
 		Document encryptedDoc = enciphermentService.encryptDocument(docVo, userVo, "password");
-		logger.debug("encryptedDoc.getIdentifier : " + encryptedDoc.getIdentifier());
-		logger.debug("aDocument.getIdentifier : " + aDocument.getIdentifier());
+		logger.debug("encryptedDoc.getIdentifier : " + encryptedDoc.getUuid());
+		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
 		logger.debug("inputStreamUuid : " + inputStreamUuid);
 		
 		printDocs(jane);		
@@ -209,7 +209,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	private void printDocs(User user) {
 		logger.debug("begin : " + user.getLogin());
 		for (Document doc : user.getDocuments()) {
-			logger.debug("doc : " + doc.getIdentifier());
+			logger.debug("doc : " + doc.getUuid());
 			
 		}
 		logger.debug("end");
@@ -223,7 +223,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		// Add 2 years from the actual date
 		expirationDate.add(Calendar.YEAR, -2);
 
-		DocumentVo doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
+		DocumentVo doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
 
 		UserVo userVo = new UserVo(jane);
 		
@@ -232,7 +232,7 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		
 		
 		// Instantiate new DocumentVo encrypted
-		doc = new DocumentVo(aDocument.getIdentifier(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
+		doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
 		
 		Document decryptedDoc = enciphermentService.decryptDocument(doc, userVo, "password");
 		Assert.assertFalse(aDocument.getEncrypted());

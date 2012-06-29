@@ -157,7 +157,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		documentRepository.delete(aDocument);
 		john.getDocuments().clear();
 		userRepository.update(john);
-		fileRepository.removeFileByUUID(aDocument.getIdentifier());
+		fileRepository.removeFileByUUID(aDocument.getUuid());
 		
 //		datas.deleteUsers();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
@@ -300,7 +300,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
 		mailContainer.setLanguage(Language.FRENCH);
 		List<DocumentVo> docsVo = new ArrayList<DocumentVo>();
-		docsVo.add(new DocumentVo(aDocument.getIdentifier(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), john.getLogin(), false, false, aDocument.getSize()));
+		docsVo.add(new DocumentVo(aDocument.getUuid(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), john.getLogin(), false, false, aDocument.getSize()));
 		
 		
 		User recipient = jane;

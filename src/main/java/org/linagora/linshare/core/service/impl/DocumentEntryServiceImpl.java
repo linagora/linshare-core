@@ -115,8 +115,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 	
 	@Override
-	public DocumentEntry updateDocumentEntry(Account actor, Long currentDocEntryId, InputStream stream, Long size, String fileName) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(currentDocEntryId);
+	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
 		if (!documentEntry.getEntryOwner().equals(actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
 		}
@@ -173,8 +173,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 	
 	@Override
-	public DocumentEntry duplicateDocumentEntry(Account actor, Long currentDocEntryId) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(currentDocEntryId);
+	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
 		// TODO : Check the current doc entry id is shared with the actor (if not, you should not have the right to duplicate it)
 //		if (!documentEntry.getEntryOwner().equals(actor)) {
 //			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
@@ -203,8 +203,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 	
 	@Override
-	public void deleteDocumentEntry(Account actor, Long currentDocEntryId, Reason causeOfDeletion) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(currentDocEntryId);
+	public void deleteDocumentEntry(Account actor, String docEntryUuid, Reason causeOfDeletion) throws BusinessException {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
 		try {
 			
 			
@@ -318,23 +318,23 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 	
 	@Override
-	public boolean documentHasThumbnail(Account owner, String uuid) {
+	public boolean documentHasThumbnail(Account owner, String docUuid) {
 		// TODO: Check if we own the document
-		Document doc = documentRepository.findById(uuid);
+		Document doc = documentRepository.findById(docUuid);
 		String thmbUUID = doc.getThmbUuid();
 		return (thmbUUID!=null && thmbUUID.length()>0);
 	}
 
 	@Override
-	public InputStream getDocumentThumbnail(Account owner, String uuid) {
+	public InputStream getDocumentThumbnail(Account owner, String docUuid) {
 		// TODO: Check if we own the document
-		return documentEntryBusinessService.getDocumentThumbnail(uuid);
+		return documentEntryBusinessService.getDocumentThumbnail(docUuid);
 	}
 	
 	@Override
-	public InputStream getDocument(Account owner, String uuid) {
-		// TODO Auto-generated method stub
-		return null;
+	public InputStream getDocument(Account owner, String docUuid) {
+		// TODO: Check if we own the document
+		return documentEntryBusinessService.getDocument(docUuid);
 	}
 
 
@@ -366,8 +366,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 	
 	@Override
-	public DocumentEntry findById(Account actor, Long id) throws BusinessException {
-		DocumentEntry entry = documentEntryBusinessService.findById(id);
+	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException {
+		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
 		if (!entry.getEntryOwner().equals(actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
 		}
@@ -376,8 +376,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 
 	@Override
-	public void renameDocumentEntry(Account actor, Long id, String newName) throws BusinessException {
-		DocumentEntry entry = documentEntryBusinessService.findById(id);
+	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException {
+		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
 		if (!entry.getEntryOwner().equals(actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to rename this document.");
 		}
@@ -386,8 +386,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	
 	@Override
-	public void updateFileProperties(Account actor, Long id, String newName, String fileComment) throws BusinessException {
-		DocumentEntry entry = documentEntryBusinessService.findById(id);
+	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException {
+		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
 		if (!entry.getEntryOwner().equals(actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to rename this document.");
 		}

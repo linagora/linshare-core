@@ -117,6 +117,7 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		DocumentEntry d = new DocumentEntry(user, "name", "comment", document);
 		documentEntryRepository.create(d);
+		documentEntryRepository.delete(d);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -125,12 +126,14 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		DocumentEntry doc = new DocumentEntry(user, "name", "comment", document);
 		documentEntryRepository.create(doc);
-		logger.debug("documentEntry id : " + doc.getId());
+		logger.debug("documentEntry id : " + doc.getUuid());
 		
 		ShareEntry share = new ShareEntry(user, "my share", "comment", user, doc);
 		documentEntryRepository.create(share);
-		logger.debug("shareEntry id : " + share.getId());
+		logger.debug("shareEntry id : " + share.getUuid());
 		
+		documentEntryRepository.delete(share);
+		documentEntryRepository.delete(doc);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

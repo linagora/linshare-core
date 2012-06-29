@@ -35,7 +35,7 @@ public class DocumentAdapter {
 	public DocumentVo disassemble(Document doc) {
 		if(null!=doc){
 			
-			return new DocumentVo(doc.getIdentifier(),doc.getName(), doc.getFileComment(), doc.getCreationDate(),doc.getExpirationDate(),
+			return new DocumentVo(doc.getUuid(),doc.getName(), doc.getFileComment(), doc.getCreationDate(),doc.getExpirationDate(),
 					doc.getType(), doc.getOwner().getLogin(), doc.getEncrypted(),
 					doc.getShared(),doc.getSize());
 		}else{	
@@ -46,7 +46,7 @@ public class DocumentAdapter {
 	public ShareDocumentVo disassemble(Share share) {
 		if(null!=share){
 			
-			return new ShareDocumentVo(share.getDocument().getIdentifier(),share.getDocument().getName(),share.getDocument().getFileComment() ,share.getDocument().getCreationDate(),share.getDocument().getExpirationDate(),
+			return new ShareDocumentVo(share.getDocument().getUuid(),share.getDocument().getName(),share.getDocument().getFileComment() ,share.getDocument().getCreationDate(),share.getDocument().getExpirationDate(),
 					share.getDocument().getType(), share.getDocument().getOwner().getLogin(), share.getDocument().getEncrypted(),
 					share.getDocument().getShared(),share.getDocument().getSize(),
 					new UserVo(share.getSender()), new UserVo(share.getReceiver()),share.getExpirationDate(),

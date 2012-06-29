@@ -36,7 +36,7 @@ public class Document implements Serializable {
 	/**
 	 * the identifier of the document.
 	 */
-	private String identifier;
+	private String uuid;
 	
 	/**
 	 * the name of the document.
@@ -108,11 +108,11 @@ public class Document implements Serializable {
 	
 	
 	/* Constructors */
-	public Document(String identifier,String name, String type, Calendar creationDate,
+	public Document(String uuid, String name, String type, Calendar creationDate,
 			Calendar expirationDate, User owner, Boolean encrypted,
 			Boolean shared,Long size) {
 		super();
-		this.identifier=identifier;
+		this.uuid=uuid;
 		this.creationDate = creationDate;
 		this.type = type;
 		this.size = size;
@@ -137,9 +137,9 @@ public class Document implements Serializable {
 		super();
 	}
 	
-	public Document(String identifier, String type, Long size) {
+	public Document(String uuid, String type, Long size) {
 		super();
-		this.identifier=identifier;
+		this.uuid=uuid;
 		this.type = type;
 		this.creationDate = new GregorianCalendar();
 		this.size = size;
@@ -150,7 +150,7 @@ public class Document implements Serializable {
 	@Override
 	public boolean equals(Object o1){
 		if(o1 instanceof Document){
-			return this.identifier.equals(((Document)o1).identifier);
+			return this.uuid.equals(((Document)o1).uuid);
 		}else{
 			return false;
 		}
@@ -158,7 +158,7 @@ public class Document implements Serializable {
 	
 	@Override
 	public int hashCode(){
-		return this.identifier.hashCode();
+		return this.uuid.hashCode();
 	}
 
 	public Long getId() {
@@ -170,8 +170,8 @@ public class Document implements Serializable {
 		else this.id = id;
 	}
 	
-	public String getIdentifier() {
-		return identifier;
+	public String getUuid() {
+		return uuid;
 	}
 
 	public String getName() {
@@ -195,8 +195,8 @@ public class Document implements Serializable {
 		return shared;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public void setName(String name) {

@@ -240,7 +240,7 @@ public class ShareServiceImpl implements ShareService{
 						shareEntity=shareRepository.create(share);
 					} else {
 						// if it does, we update the expiration date
-						logger.debug("The share (" + document.getIdentifier() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
+						logger.debug("The share (" + document.getUuid() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
 						shareEntity = current_share; 
 						shareEntity.setExpirationDate(expiryDate);
 						shareRepository.update(shareEntity);
@@ -280,11 +280,11 @@ public class ShareServiceImpl implements ShareService{
 
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not create the sharing for owner " + sender.getLogin() + " to user " + recipient.getLogin() +
-								" of doc " + document.getIdentifier(), e);
+								" of doc " + document.getUuid(), e);
 					returnItems.addFailItem(failSharing);
 				} catch (BusinessException e) {
 					logger.error("Could not create the sharing for owner " + sender.getLogin() + " to user " + recipient.getLogin() +
-						" of doc " + document.getIdentifier(), e);
+						" of doc " + document.getUuid(), e);
 					returnItems.addFailItem(failSharing);
 				}
 			}
@@ -348,7 +348,7 @@ public class ShareServiceImpl implements ShareService{
 				//we delete the original file if all its shares are outdated.
 			
 				User owner  = doc.getOwner();
-				String fileUUID = doc.getIdentifier();
+				String fileUUID = doc.getUuid();
 				String thumbnailUUID = doc.getThmbUuid();
 				
 				//we log the deletion of this file with FILE_EXPIRE

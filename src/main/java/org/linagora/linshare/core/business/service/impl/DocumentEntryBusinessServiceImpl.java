@@ -221,8 +221,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	
 	@Override
-	public InputStream getDocumentThumbnail(String uuid) {
-		Document doc = documentRepository.findById(uuid);
+	public InputStream getDocumentThumbnail(String docUuid) {
+		Document doc = documentRepository.findById(docUuid);
 		String thmbUUID = doc.getThmbUuid();
 
 		if (thmbUUID!=null && thmbUUID.length()>0) {
@@ -234,9 +234,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	
 	@Override
-	public InputStream getDocument(String uuid) {
-		Document doc = documentRepository.findById(uuid);
-		String UUID = doc.getIdentifier();
+	public InputStream getDocument(String docUuid) {
+		Document doc = documentRepository.findById(docUuid);
+		String UUID = doc.getUuid();
 
 		if (UUID!=null && UUID.length()>0) {
 			InputStream stream = fileSystemDao.getFileContentByUUID(UUID);
@@ -247,14 +247,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 
 	@Override
-	public DocumentEntry findById(Long id) {
-		return (DocumentEntry)documentEntryRepository.findById(id);
+	public DocumentEntry findById(String docEntryUuid) {
+		return (DocumentEntry)documentEntryRepository.findById(docEntryUuid);
 	}
 
 	
 	@Override
 	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException {
-		String uuid = entry.getDocument().getIdentifier();
+		String uuid = entry.getDocument().getUuid();
 		fileSystemDao.renameFile(uuid, newName);
 		entry.setName(newName);
         documentEntryRepository.update(entry);
@@ -263,7 +263,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException {
-			String uuid = entry.getDocument().getIdentifier();
+			String uuid = entry.getDocument().getUuid();
 			fileSystemDao.renameFile(uuid, newName);
 			entry.setName(newName);
 			entry.setComment(fileComment);
@@ -280,7 +280,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		
 		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUid(), myFile);
 		
-		Document oldDocument = documentRepository.findById(docEntry.getDocument().getIdentifier());
+		Document oldDocument = documentRepository.findById(docEntry.getDocument().getUuid());
 		
 		// want a timestamp on doc ? if timeStamping url is null, time stamp will be null
 		byte[] timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
@@ -315,7 +315,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl ) throws BusinessException {
-		InputStream stream = getDocument(originalEntry.getDocument().getIdentifier());
+		InputStream stream = getDocument(originalEntry.getDocument().getUuid());
 		File tempFile = getFileFromStream(stream, originalEntry.getName());
 		
 		DocumentEntry documentEntry = createDocumentEntry(owner, tempFile , originalEntry.getDocument().getSize(), 
@@ -329,7 +329,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException {
 		if(documentEntry.isShared()) {
-			logger.error("Could not delete docEntry " + documentEntry.getName()+ " (" + documentEntry.getId() + " own by " + documentEntry.getEntryOwner().getLsUid() + ", reason : it is still shared. ");
+			logger.error("Could not delete docEntry " + documentEntry.getName()+ " (" + documentEntry.getUuid() + " own by " + documentEntry.getEntryOwner().getLsUid() + ", reason : it is still shared. ");
 			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_SHARED_DOCUMENT, "Can't delete a shared document. Delete all shares first.");
 		}
 		Account owner = documentEntry.getEntryOwner();
@@ -351,7 +351,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		
 		// remove old document in JCR
-		fileSystemDao.removeFileByUUID(document.getIdentifier());
+		fileSystemDao.removeFileByUUID(document.getUuid());
 		
 		// remove old document from database
 		documentRepository.delete(document);

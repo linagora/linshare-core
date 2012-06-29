@@ -200,7 +200,7 @@ public class ShareFacadeImpl implements ShareFacade {
 
 		List<Share> sharingsOfDocument = new ArrayList<Share>();
 		for (Share share : shares) {			
-			if (share.getDocument().getIdentifier().equalsIgnoreCase(document.getIdentifier())) {
+			if (share.getDocument().getUuid().equalsIgnoreCase(document.getIdentifier())) {
 				sharingsOfDocument.add(share);
 			}
 		}

@@ -26,11 +26,11 @@ public interface DocumentEntryBusinessService {
 	
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 	
-	public InputStream getDocumentThumbnail(String uuid) ;
+	public InputStream getDocumentThumbnail(String docUuid) ;
 	
-	public InputStream getDocument(String uuid) ;
+	public InputStream getDocument(String docUuid) ;
 	
-	public DocumentEntry findById(Long id);
+	public DocumentEntry findById(String docEntryUuid);
 	
 	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException;
 	

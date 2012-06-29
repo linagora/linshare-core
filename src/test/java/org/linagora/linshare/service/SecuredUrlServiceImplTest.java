@@ -130,7 +130,7 @@ public class SecuredUrlServiceImplTest extends AbstractTransactionalJUnit4Spring
 		documentRepository.delete(aDocument);
 		john.getDocuments().clear();
 		userRepository.update(john);
-		fileRepository.removeFileByUUID(aDocument.getIdentifier());
+		fileRepository.removeFileByUUID(aDocument.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
@@ -451,7 +451,7 @@ public class SecuredUrlServiceImplTest extends AbstractTransactionalJUnit4Spring
 		SecuredUrl securedUrl = securedUrlService.create(documents, john, password,testUrl, recipients, expirationDate);
 		
 		
-		DocumentVo documentVo = new DocumentVo(aDocument.getIdentifier(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), aDocument.getOwner().getLogin(), aDocument.getEncrypted(), aDocument.getShared(), aDocument.getSize());
+		DocumentVo documentVo = new DocumentVo(aDocument.getUuid(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), aDocument.getOwner().getLogin(), aDocument.getEncrypted(), aDocument.getShared(), aDocument.getSize());
 		
 		List<SecuredUrl> urlsByMailAndFile = securedUrlService.getUrlsByMailAndFile(john, documentVo);
 		
