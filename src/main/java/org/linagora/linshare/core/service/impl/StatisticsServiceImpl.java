@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.LogEntry;
@@ -138,7 +138,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		int count=0;
 		
 		for (User user : allUsers) {
-			if (user.getAccountType().equals(UserType.GUEST)) {
+			if (user.getAccountType().equals(AccountType.GUEST)) {
 				count++;
 			}
 		}
@@ -162,7 +162,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 		int count=0;
 		
 		for (User user : allUsers) {
-			if (user.getAccountType().equals(UserType.INTERNAL)) {
+			if (user.getAccountType().equals(AccountType.INTERNAL)) {
 				count++;
 			}
 		}

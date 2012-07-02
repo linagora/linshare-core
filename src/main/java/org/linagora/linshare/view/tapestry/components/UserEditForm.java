@@ -45,7 +45,7 @@ import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.Facade.FunctionalityFacade;
 import org.linagora.linshare.core.Facade.UserFacade;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.SelectableRole;
@@ -128,7 +128,7 @@ public class UserEditForm {
     private SelectableRole role;
     
     @Property
-    private UserType usertype;
+    private AccountType usertype;
 
     @Persist
     private boolean userGuest;
@@ -199,7 +199,7 @@ public class UserEditForm {
 	    		createGuestGranted = currentUser.isCreateGuest();
 	    		role = SelectableRole.fromRole(currentUser.getRole());
 	    		usertype = currentUser.getUserType();
-	    		userGuest = usertype.equals(UserType.GUEST); //to set friendly title on account
+	    		userGuest = usertype.equals(AccountType.GUEST); //to set friendly title on account
 	    		userDomain = currentUser.getDomainIdentifier();
 	    		restrictedEditGuest = currentUser.isRestricted();
 	    		userRestrictedGuest = currentUser.isRestricted();

@@ -9,7 +9,7 @@ import javax.naming.NamingException;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
@@ -493,7 +493,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public boolean userCanCreateGuest(User user) {
 		
-		if (user.getAccountType()==UserType.GUEST) {
+		if (user.getAccountType()==AccountType.GUEST) {
 			return false;
 		}
 

@@ -38,7 +38,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.Facade.FunctionalityFacade;
 import org.linagora.linshare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.Facade.UserFacade;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.enums.UserTypes;
@@ -234,14 +234,14 @@ public class UserSearchField {
 
 	public List<UserVo> performAnyWhereSearch() {
 		Set<UserVo> userSet = new HashSet<UserVo>();
-		UserType type=null;
+		AccountType type=null;
 		
 		switch (userType) {
 		case GUEST:
-			type=UserType.GUEST;
+			type=AccountType.GUEST;
 			break;
 		case INTERNAL:
-			type=UserType.INTERNAL;
+			type=AccountType.INTERNAL;
 			break;
 		default:
 			break; //null => ALL

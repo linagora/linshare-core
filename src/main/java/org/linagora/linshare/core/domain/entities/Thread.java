@@ -2,7 +2,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 
 public class Thread extends Account {
 
@@ -33,8 +33,8 @@ public class Thread extends Account {
 	}
 	
 	@Override
-	public UserType getAccountType() {
-		return UserType.THREAD;
+	public AccountType getAccountType() {
+		return AccountType.THREAD;
 	}
 
 	public Set<ThreadMember> getMyMembers() {

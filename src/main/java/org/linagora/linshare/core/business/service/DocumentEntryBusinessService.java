@@ -26,9 +26,9 @@ public interface DocumentEntryBusinessService {
 	
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 	
-	public InputStream getDocumentThumbnail(String docUuid) ;
+	public InputStream getDocumentThumbnailStream(DocumentEntry entry) ;
 	
-	public InputStream getDocument(String docUuid) ;
+	public InputStream getDocumentStream(DocumentEntry entry) ;
 	
 	public DocumentEntry findById(String docEntryUuid);
 	

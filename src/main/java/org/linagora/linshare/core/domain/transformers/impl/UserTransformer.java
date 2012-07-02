@@ -22,7 +22,7 @@ package org.linagora.linshare.core.domain.transformers.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.Transformer;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -49,7 +49,7 @@ public class UserTransformer implements Transformer<User, UserVo> {
 	}
 
 	public UserVo disassemble(User entityObject) {
-		if (UserType.GUEST.equals(entityObject.getAccountType())) {
+		if (AccountType.GUEST.equals(entityObject.getAccountType())) {
 			return new UserVo(guestRepository.findByMail(entityObject.getMail()));
 		} else  {
 			return new UserVo(entityObject);

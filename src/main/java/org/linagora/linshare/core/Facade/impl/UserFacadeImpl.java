@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.Facade.UserFacade;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
@@ -121,7 +121,7 @@ public class UserFacadeImpl implements UserFacade {
         return getUserVoList(users);
     }
     
-    public List<UserVo> searchUser(String mail, String firstName, String lastName, UserType userType,UserVo currentUser) throws BusinessException {
+    public List<UserVo> searchUser(String mail, String firstName, String lastName, AccountType userType,UserVo currentUser) throws BusinessException {
 		User owner = userRepository.findByMail(currentUser.getLogin());
 		return getUserVoList(userService.searchUser(mail, firstName, lastName, userType, owner));
 	}
@@ -219,7 +219,7 @@ public class UserFacadeImpl implements UserFacade {
     }
     
     public void changePassword(UserVo user, String oldPassword, String newPassword) throws BusinessException {
-    	if (!(user.getUserType().equals(UserType.GUEST) ||
+    	if (!(user.getUserType().equals(AccountType.GUEST) ||
     			user.getRole().equals(Role.SUPERADMIN))) {
     		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Only a guest or superadmin may change its password");
     	}
@@ -229,7 +229,7 @@ public class UserFacadeImpl implements UserFacade {
     }
 
 	public void resetPassword(UserVo user, MailContainer mailContainer) throws BusinessException {
-		if (!user.getUserType().equals(UserType.GUEST)) {
+		if (!user.getUserType().equals(AccountType.GUEST)) {
     		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user type is wrong, only a guest may change its password");
     	}
     	

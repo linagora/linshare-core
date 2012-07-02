@@ -21,8 +21,10 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.constants.AccountType;
 
 /**
  * Log class for uploading/deleting/expiring files
@@ -67,11 +69,19 @@ public class FileLogEntry extends LogEntry {
 			this.fileSize = fileSize;
 			this.fileType = fileType;
 	}
-
-			
 	
 	public FileLogEntry(Account actor, LogAction logAction, String description, String fileName, Long fileSize, String fileType) {
-		super(actor.getLsUid(), null, null, actor.getDomain().getIdentifier(), logAction, description);
+		if(actor.getAccountType().equals(AccountType.INTERNAL)||actor.getAccountType().equals(AccountType.GUEST)) {
+			User u = (User)actor;
+			this.actorMail = u.getMail();
+			this.actorFirstname = u.getFirstName();
+			this.actorLastname = u.getLastName();
+			this.actorDomain = u.getDomainId();
+		}
+//		this.actionDate = (Calendar)actionDate.clone();
+		this.actionDate = new GregorianCalendar();
+		this.logAction = logAction;
+		this.description = description;
 		this.fileName = fileName;
 		this.fileSize = fileSize;
 		this.fileType = fileType;

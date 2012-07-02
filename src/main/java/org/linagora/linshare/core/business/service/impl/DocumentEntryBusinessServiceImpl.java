@@ -34,6 +34,7 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
 import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
+import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 import org.semanticdesktop.aperture.util.IOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +53,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final AccountRepository<Account> accountRepository; 
 	
 	
-	public DocumentEntryBusinessServiceImpl(MimeTypeIdentifier mimeTypeIdentifier, FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, AccountRepository<Account> accountRepository) {
+	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, AccountRepository<Account> accountRepository) {
 		super();
-		this.mimeTypeIdentifier = mimeTypeIdentifier;
+		this.mimeTypeIdentifier = new MagicMimeTypeIdentifier();
 		this.fileSystemDao = fileSystemDao;
 		this.timeStampingService = timeStampingService;
 		this.documentEntryRepository = documentEntryRepository;
@@ -221,8 +222,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	
 	@Override
-	public InputStream getDocumentThumbnail(String docUuid) {
-		Document doc = documentRepository.findById(docUuid);
+	public InputStream getDocumentThumbnailStream(DocumentEntry entry) {
+		Document doc = documentRepository.findById(entry.getDocument().getUuid());
 		String thmbUUID = doc.getThmbUuid();
 
 		if (thmbUUID!=null && thmbUUID.length()>0) {
@@ -234,10 +235,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	
 	@Override
-	public InputStream getDocument(String docUuid) {
-		Document doc = documentRepository.findById(docUuid);
-		String UUID = doc.getUuid();
-
+	public InputStream getDocumentStream(DocumentEntry entry) {
+		
+		String UUID = entry.getDocument().getUuid();
 		if (UUID!=null && UUID.length()>0) {
 			InputStream stream = fileSystemDao.getFileContentByUUID(UUID);
 			return stream;
@@ -315,7 +315,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl ) throws BusinessException {
-		InputStream stream = getDocument(originalEntry.getDocument().getUuid());
+		InputStream stream = getDocumentStream(originalEntry);
 		File tempFile = getFileFromStream(stream, originalEntry.getName());
 		
 		DocumentEntry documentEntry = createDocumentEntry(owner, tempFile , originalEntry.getDocument().getSize(), 
@@ -338,8 +338,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 		deleteDocument(documentEntry.getDocument());
 		documentEntryRepository.delete(documentEntry);
-//		actor
-//		
 	}
 
 	

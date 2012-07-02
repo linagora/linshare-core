@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 
 public abstract class Account {
 
@@ -139,6 +139,6 @@ public abstract class Account {
 		this.entries = entries;
 	}
 
-	public abstract UserType getAccountType();
+	public abstract AccountType getAccountType();
 
 }

@@ -25,7 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.view.tapestry.enums.Order;
 import org.linagora.linshare.view.tapestry.models.SorterModel;
@@ -78,13 +78,13 @@ public class UserSorterModel implements SorterModel<UserVo>{
 					/*
 					 * internal compareTo guest.
 					 */
-					if(o1.getUserType().equals(UserType.INTERNAL) && o2.getUserType().equals(UserType.GUEST)){
+					if(o1.getUserType().equals(AccountType.INTERNAL) && o2.getUserType().equals(AccountType.GUEST)){
 						return 1;
 					}
 					/*
 					 * guest compareTo internal.
 					 */
-					if(o1.getUserType().equals(UserType.GUEST) && o2.getUserType().equals(UserType.INTERNAL)){
+					if(o1.getUserType().equals(AccountType.GUEST) && o2.getUserType().equals(AccountType.INTERNAL)){
 						return -1;
 					}
 						

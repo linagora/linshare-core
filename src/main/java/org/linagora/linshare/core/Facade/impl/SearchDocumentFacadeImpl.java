@@ -23,16 +23,21 @@ package org.linagora.linshare.core.Facade.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.Facade.SearchDocumentFacade;
-import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.constants.EntryType;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentService;
 import org.linagora.linshare.core.service.SearchDocumentService;
 import org.linagora.linshare.core.service.UserService;
@@ -41,21 +46,35 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 
 	private SearchDocumentService searchDocumentService;
 	private DocumentService documentService;
-	private DocumentTransformer documentTransformer;
-	private UserService userService;
+	private DocumentEntryTransformer documentEntryTransformer;
+	private AccountService accountService;
 	
 	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, 
-			DocumentTransformer documentTransformer,
-			DocumentService documentService,UserService userService){
-		this.searchDocumentService=searchDocumentService;
-		this.documentTransformer=documentTransformer;
+			DocumentEntryTransformer documentEntryTransformer,
+			DocumentService documentService,
+			AccountService accountService){
+		this.searchDocumentService = searchDocumentService;
+		this.documentEntryTransformer = documentEntryTransformer;
 		this.documentService = documentService;
-		this.userService = userService;
+		this.accountService = accountService;
 	}
 	
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
-		User user = userService.findUnkownUserInDB(userVo.getMail());
-		return documentTransformer.disassembleList(new ArrayList<Document>(this.searchDocumentService.retrieveDocument(user)));
+		User user = (User) accountService.findUserInDB(userVo.getLsUid());
+		ArrayList<DocumentVo> documents = new ArrayList<DocumentVo>();
+
+//		return documentTransformer.disassembleList(new ArrayList<Document>(this.searchDocumentService.retrieveDocument(user)));
+		
+		// TODO : Fix documents list
+		Set<Entry> entries = user.getEntries();
+		for (Entry entry : entries) {
+			if(entry.getEntryType().equals(EntryType.DOCUMENT)) {
+				documents.add(documentEntryTransformer.disassemble((DocumentEntry) entry));
+			}
+		}
+		
+		return documents;
+		
 	}
 /*
 	public List<DocumentVo> retrieveDocumentWithCriterion(

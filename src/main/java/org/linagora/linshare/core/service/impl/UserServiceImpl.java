@@ -30,7 +30,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -191,7 +191,6 @@ public class UserServiceImpl implements UserService {
 			guest.setDomain(guestDomain);
 			guest.setOwner(owner);
 			guest.setComment(comment);
-			guest.setLsUid(generateGuestLsUid(guestDomain,mail));
 			
 			
 			// Guest must not be able to create other guests.
@@ -453,7 +452,7 @@ public class UserServiceImpl implements UserService {
 		logger.debug("special search for restricted guest ");
 		List<AllowedContact> contacts = allowedContactRepository.searchContact(mail, firstName, lastName, currentGuest);
 		for (AllowedContact allowedContact : contacts) {
-			if (allowedContact.getContact().getAccountType().equals(UserType.GUEST)) {
+			if (allowedContact.getContact().getAccountType().equals(AccountType.GUEST)) {
 				Guest guest = guestRepository.findByMail(allowedContact.getContact().getMail());
 				users.add(guest);
 			}
@@ -503,22 +502,22 @@ public class UserServiceImpl implements UserService {
 	}
     
 	@Override
-	public List<User> searchUser(String mail, String firstName, String lastName, UserType userType, User currentUser) throws BusinessException {
+	public List<User> searchUser(String mail, String firstName, String lastName, AccountType userType, User currentUser) throws BusinessException {
 		
 		logger.debug("Begin searchUser");
 		List<User> users=new ArrayList<User>();
 	
-		if (currentUser !=null && currentUser.getAccountType()==UserType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
+		if (currentUser !=null && currentUser.getAccountType()==AccountType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
 			Guest currentGuest = guestRepository.findByMail(currentUser.getMail());
 			if (currentGuest.isRestricted() == true) {
 				return completionSearchForRestrictedGuest(mail,firstName,lastName,currentGuest);
 			}
 		}
 		
-		if(null==userType || userType.equals(UserType.GUEST)){
+		if(null==userType || userType.equals(AccountType.GUEST)){
         	users.addAll(completionSearchForGuest(mail,firstName,lastName,currentUser));
 		}
-		if(null==userType || userType.equals(UserType.INTERNAL)){
+		if(null==userType || userType.equals(AccountType.INTERNAL)){
 			users.addAll(completionSearchInternal(mail,firstName,lastName,currentUser));
 		}
 
@@ -807,7 +806,7 @@ public class UserServiceImpl implements UserService {
 		List<User> internalsBreaked = new ArrayList<User>();
 		
 		for (User user : users) {
-			if (user.getAccountType().equals(UserType.INTERNAL)) {
+			if (user.getAccountType().equals(AccountType.INTERNAL)) {
 				if (!(user.getRole().equals(Role.SYSTEM) || user.getRole().equals(Role.SUPERADMIN))) { //hide these accounts
 					try {
 						List<User> found = abstractDomainService.searchUserWithoutRestriction(user.getDomain(), user.getMail(), null, null);
@@ -823,22 +822,6 @@ public class UserServiceImpl implements UserService {
 		return internalsBreaked;
 	}
 	
-	private String generateGuestLsUid(AbstractDomain domain, String mail) {
-		StringBuffer uid = new StringBuffer();
-		// TODO: To be fix : replace mail by name.firstname.cpt
-		uid.append(mail);
-		uid.append("/");
-		uid.append(domain.getIdentifier());
-		return uid.toString();
-	}
-	
-	private String generateInternalLsUid(AbstractDomain domain, String ldapUid) {
-		StringBuffer uid = new StringBuffer();
-		uid.append(ldapUid);
-		uid.append("/");
-		uid.append(domain.getIdentifier());
-		return uid.toString();
-	}
 
 	@Override
 	public void  saveOrUpdateUser(User user) throws TechnicalException {
@@ -871,7 +854,6 @@ public class UserServiceImpl implements UserService {
 				user.setCanUpload(userCanUploadFunc.getActivationPolicy().getStatus());
 				
 				user.setCreationDate(new Date());
-				user.setLsUid(generateInternalLsUid(user.getDomain(),user.getLdapUid()));
 				
 				user.setLocale(user.getDomain().getDefaultLocale());
 				try {

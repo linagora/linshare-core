@@ -84,7 +84,11 @@ public class DocumentVo implements Serializable, Comparable {
 		this.identifier=identifier;
 		this.fileName = name;
 		this.creationDate = (Calendar)creationDate.clone();
-		this.expirationDate = (Calendar)expirationDate.clone();
+		if(expirationDate !=null) {
+			this.expirationDate = (Calendar)expirationDate.clone();
+		} else {
+			this.expirationDate = null;
+		}
 		this.ownerLogin = ownerLogin;
 		this.encrypted = encrypted;
 		this.shared = shared;

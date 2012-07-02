@@ -100,10 +100,9 @@ public class Document implements Serializable {
 	 */
 	private byte[] timeStamp;
 	
-	private DocumentEntry threadEntry ;
+	private DocumentEntry documentEntry ;
 
-	private ThreadEntry documentEntry ;
-	
+//	private ThreadEntry threadEntry ;
 	
 	
 	
@@ -272,7 +271,9 @@ public class Document implements Serializable {
 	}
 	
 	public void setTimeStamp(byte[] timeStamp) {
-		this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
+		if(timeStamp!=null) {
+			this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
+		}
 	}
 	public void setDeletionDate(Calendar deletionDate) {
 		this.deletionDate = deletionDate;
@@ -289,20 +290,11 @@ public class Document implements Serializable {
 		this.size = size;
 	}
 
-	public DocumentEntry getThreadEntry() {
-		return threadEntry;
-	}
-
-	public void setThreadEntry(DocumentEntry threadEntry) {
-		this.threadEntry = threadEntry;
-	}
-
-	public ThreadEntry getDocumentEntry() {
+	public DocumentEntry getDocumentEntry() {
 		return documentEntry;
 	}
 
-	public void setDocumentEntry(ThreadEntry documentEntry) {
+	public void setDocumentEntry(DocumentEntry documentEntry) {
 		this.documentEntry = documentEntry;
 	}
-	
 }

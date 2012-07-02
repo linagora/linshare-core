@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.core.domain.constants.EntryType;
+
 public class AnonymousShareEntry extends Entry{
 
 	private String mail;
@@ -9,6 +11,12 @@ public class AnonymousShareEntry extends Entry{
 	private DocumentEntry documentEntry;
 	
 	private SecuredUrl securedUrl;
+
+	
+	@Override
+	public EntryType getEntryType() {
+		return EntryType.ANONYMOUS_SHARE;
+	}
 
 	public String getMail() {
 		return mail;

@@ -47,7 +47,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.Facade.UserFacade;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -129,7 +129,7 @@ public class UserSearchResults {
     @Property
     private UserVo user;
     @Property
-    private UserVo detailedUser = new UserVo("", "", "", "", UserType.GUEST);
+    private UserVo detailedUser = new UserVo("", "", "", "", AccountType.GUEST);
 
     @SuppressWarnings("unused")
 	@Property

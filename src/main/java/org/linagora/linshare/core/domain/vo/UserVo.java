@@ -23,7 +23,7 @@ package org.linagora.linshare.core.domain.vo;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Role;
@@ -41,7 +41,7 @@ public class UserVo implements Serializable {
 	private final String firstName;
 	private final String lastName;
 	private final String mail;
-	private final UserType userType;
+	private final AccountType userType;
 	private final Role role;
 	private final boolean upload;
 	private final boolean createGuest; 
@@ -59,7 +59,7 @@ public class UserVo implements Serializable {
         this.mail = user.getLsUid();
         this.userType = user.getAccountType();
         this.role = user.getRole();
-        this.upload= false;
+        this.upload = true;
         this.createGuest=false;
         this.locale = user.getLocale();
         if (user.getDomain() != null) {
@@ -83,7 +83,7 @@ public class UserVo implements Serializable {
         if (user instanceof Guest) {
             Guest guest = (Guest) user;
             ownerLogin = ((User)guest.getOwner()).getMail();
-            expirationDate = (Date)guest.getExpirationDate().clone();
+            expirationDate = (Date)guest.getExpirationDate().clone();	
             this.comment = guest.getComment();
             this.restricted = guest.isRestricted();
         }
@@ -111,7 +111,7 @@ public class UserVo implements Serializable {
         }
     }
 	public UserVo(String login, String firstName, String lastName,
-			String mail, UserType userType) {
+			String mail, AccountType userType) {
 		super();
 		this.login = login;
 		this.firstName = firstName;
@@ -127,7 +127,7 @@ public class UserVo implements Serializable {
 	}
 	
 	public UserVo(String login, String firstName, String lastName,
-			String mail, Role role,UserType userType) {
+			String mail, Role role,AccountType userType) {
 		super();
 		this.login = login;
 		this.firstName = firstName;
@@ -142,7 +142,7 @@ public class UserVo implements Serializable {
 	}
 	
 	public UserVo(String login, String firstName, String lastName,
-			String mail, Role role,UserType userType, String locale) {
+			String mail, Role role,AccountType userType, String locale) {
 		super();
 		this.login = login;
 		this.firstName = firstName;
@@ -158,6 +158,10 @@ public class UserVo implements Serializable {
 	}
 
 	public String getLogin() {
+		return login;
+	}
+	
+	public String getLsUid() {
 		return login;
 	}
 
@@ -177,7 +181,7 @@ public class UserVo implements Serializable {
 	public String getMail() {
 		return mail;
 	}
-	public UserType getUserType() {
+	public AccountType getUserType() {
 		return userType;
 	}
 	public Role getRole() {
@@ -193,7 +197,7 @@ public class UserVo implements Serializable {
 	}
 
     public boolean isGuest() {
-        return UserType.GUEST.equals(userType);
+        return AccountType.GUEST.equals(userType);
     }
 
 	public boolean isUpload() {

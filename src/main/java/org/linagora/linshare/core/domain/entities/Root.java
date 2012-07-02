@@ -1,12 +1,12 @@
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 
 public class Root extends User {
 
 	@Override
-	public UserType getAccountType() {
-		return UserType.ROOT;
+	public AccountType getAccountType() {
+		return AccountType.ROOT;
 	}
 
 }

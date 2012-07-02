@@ -20,7 +20,7 @@
 */
 package org.linagora.linshare.core.domain.vo;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 
 
 public class DisplayableAccountOccupationEntryVo implements Comparable<DisplayableAccountOccupationEntryVo>  {
@@ -31,7 +31,7 @@ public class DisplayableAccountOccupationEntryVo implements Comparable<Displayab
 	
 	private final String actorMail;
 	
-	private final UserType actorType;
+	private final AccountType actorType;
 	
 	private final Long userUsedQuota;
 	
@@ -40,7 +40,7 @@ public class DisplayableAccountOccupationEntryVo implements Comparable<Displayab
 	private final Long userTotalQuota;
 
 	public DisplayableAccountOccupationEntryVo(String actorFirstname,
-			String actorLastname, String actorMail, UserType actorType,
+			String actorLastname, String actorMail, AccountType actorType,
 			Long userAvailableQuota, Long userTotalQuota, Long userUsedQuota) {
 		this.actorFirstname = actorFirstname;
 		this.actorLastname = actorLastname;
@@ -63,7 +63,7 @@ public class DisplayableAccountOccupationEntryVo implements Comparable<Displayab
 		return actorLastname;
 	}
 	
-	public UserType getActorType() {
+	public AccountType getActorType() {
 		return actorType;
 	}
 

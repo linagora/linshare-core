@@ -30,7 +30,7 @@ import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.Policies;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -254,7 +254,7 @@ public class ShareServiceImpl implements ShareService{
 					document.setShared(true);
 					
 					// update guest account expiry date
-					if (recipient.getAccountType().equals(UserType.GUEST)) {
+					if (recipient.getAccountType().equals(AccountType.GUEST)) {
 						
 						// get new guest expiry date
 						Calendar guestExpiryDate = Calendar.getInstance();

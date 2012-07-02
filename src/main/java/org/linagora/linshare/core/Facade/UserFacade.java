@@ -22,7 +22,7 @@ package org.linagora.linshare.core.Facade;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
@@ -85,7 +85,7 @@ public interface UserFacade {
      * @param userType the type of the user.
      * @return a list of matching users.
      */
-    List<UserVo> searchUser(String mail, String firstName, String lastName,UserType userType, UserVo currentUser) throws BusinessException;
+    List<UserVo> searchUser(String mail, String firstName, String lastName,AccountType userType, UserVo currentUser) throws BusinessException;
 
     /** Get all guests created by a user.
      * @param mail owner mail.

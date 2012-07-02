@@ -28,12 +28,14 @@ import java.util.Set;
 
 import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.domain.constants.Reason;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.SignatureTransformer;
 import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
@@ -44,10 +46,15 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.DocumentService;
 import org.linagora.linshare.core.service.EnciphermentService;
 import org.linagora.linshare.core.service.ShareService;
+import org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class DocumentFacadeImpl implements DocumentFacade {
@@ -63,10 +70,20 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	private final ShareService shareService;
 	
+	private final DocumentEntryService documentEntryService;
+	
+	private final AccountService accountService;
+	
+	private final DocumentEntryTransformer documentEntryTransformer;
+	
+	private static final Logger logger = LoggerFactory.getLogger(DocumentFacadeImpl.class);
+	
+	
+	
 	public DocumentFacadeImpl(DocumentService documentService,
 			UserRepository<User> userRepository,
 			final DocumentTransformer documentTransformer,
-			final ShareService shareService,final SignatureTransformer signatureTransformer,EnciphermentService enciphermentService) {
+			final ShareService shareService,final SignatureTransformer signatureTransformer,EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService, DocumentEntryTransformer documentEntryTransformer) {
 		super();
 		this.documentService = documentService;
 		this.userRepository = userRepository;
@@ -74,149 +91,198 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		this.shareService = shareService;
 		this.signatureTransformer=signatureTransformer;
 		this.enciphermentService = enciphermentService;
+		this.documentEntryService = documentEntryService;
+		this.accountService = accountService;
+		this.documentEntryTransformer = documentEntryTransformer;
 	}
-
-	public String getMimeType(InputStream theFileStream, String theFilePath)
-			throws BusinessException {
-		return documentService.getMimeType(theFileStream, theFilePath);
-	}
-
-	public DocumentVo insertFile(InputStream file, long size, String fileName,
-			String mimeType, UserVo owner) throws BusinessException {
-		User docOwner =  userRepository.findByLsUid(owner.getLogin());
-		return documentTransformer.disassemble(documentService.insertFile(docOwner.getLogin(), file, size, fileName, mimeType, docOwner));
-	}
-
 
 	
-	public void removeDocument(UserVo actor, DocumentVo document, MailContainer mailContainer)
-		throws BusinessException {
-		if (document instanceof ShareDocumentVo) {
-			// if this document is a sharedocumentVo, it means we received the document
-			// and we delete the sharing (for us)
-
-			User receiver = userRepository.findByLsUid(actor.getLogin());
-			
-			if (receiver == null) {
-				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
-			}
-			
-			// must find the share
-			Set<Share> listShare = receiver.getReceivedShares();
-			Share shareToRemove = null;
-			
-			for (Share share : listShare) {
-				if (share.getDocument().getUuid().equals(document.getIdentifier())) {
-					shareToRemove = share;
-					break;
-				}
-			}
-			
-			if (shareToRemove!=null) {
-				shareService.removeReceivedShareForUser(shareToRemove, receiver, receiver);				
-			} else {
-				throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "The sharing couldn't be found");
-			}
-		} else {
-			documentService.deleteFileWithNotification(actor.getLogin(),document.getIdentifier(), Reason.NONE, mailContainer);
-		}
+	@Override
+	public String getMimeType(InputStream theFileStream, String theFilePath) throws BusinessException {
+		return documentEntryService.getMimeType(theFileStream);
 	}
 
+	
+	@Override
+	public DocumentVo insertFile(InputStream file, long size, String fileName, String mimeType, UserVo owner) throws BusinessException {
+		Account actor = accountService.findUserInDB(owner.getLsUid());
+		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, file, size, fileName);
+		return documentEntryTransformer.disassemble(createDocumentEntry);
+	}
+
+
+	@Override
+	public void removeDocument(UserVo actor, DocumentVo document, MailContainer mailContainer) throws BusinessException {
+//		TODO : Fix removeDocument
+//		if (document instanceof ShareDocumentVo) {
+//			// if this document is a sharedocumentVo, it means we received the document
+//			// and we delete the sharing (for us)
+//
+//			User receiver = userRepository.findByLsUid(actor.getLogin());
+//			
+//			if (receiver == null) {
+//				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
+//			}
+//			
+//			// must find the share
+//			Set<Share> listShare = receiver.getReceivedShares();
+//			Share shareToRemove = null;
+//			
+//			for (Share share : listShare) {
+//				if (share.getDocument().getUuid().equals(document.getIdentifier())) {
+//					shareToRemove = share;
+//					break;
+//				}
+//			}
+//			
+//			if (shareToRemove!=null) {
+//				shareService.removeReceivedShareForUser(shareToRemove, receiver, receiver);				
+//			} else {
+//				throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "The sharing couldn't be found");
+//			}
+//		} else {
+//			documentService.deleteFileWithNotification(actor.getLogin(),document.getIdentifier(), Reason.NONE, mailContainer);
+//		}
+	}
+
+	
+	@Override
 	public DocumentVo getDocument(String login, String uuid) {
-		return documentTransformer.disassemble(documentService.getDocument(uuid));
+		Account actor = accountService.findUserInDB(login);
+		if(actor != null) {
+			DocumentEntry entry;
+			try {
+				entry = documentEntryService.findById(actor, uuid);
+				return documentEntryTransformer.disassemble(entry);
+			} catch (BusinessException e) {
+				logger.error("can't get document : " + e.getMessage());
+			}
+		}
+		return null;
 	}
 	
-	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor) throws BusinessException {
-		return documentService.downloadSharedDocument(doc, actor);
+	
+	@Override
+	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actorVo) throws BusinessException {
+//		Account actor = accountService.findUserInDB(actorVo.getLsUid());
+//		
+//		return documentEntryService.getDocumentStream(actor, doc.getIdentifier());
+//		TODO : Fix downloadSharedDocument
+		return documentService.downloadSharedDocument(doc, actorVo);
 	}
 	
-	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException {
-		return documentService.retrieveFileStream(doc, actor);
+	
+	@Override
+	public InputStream retrieveFileStream(DocumentVo doc, String lsUid) throws BusinessException {
+		Account actor = accountService.findUserInDB(lsUid);
+		return documentEntryService.getDocumentStream(actor, doc.getIdentifier());
 	}
 	
 	
-	
+	@Override
+	public InputStream retrieveFileStream(DocumentVo doc, UserVo actorVo) throws BusinessException {
+		return retrieveFileStream(doc, actorVo.getLsUid());
+	}
 
-	public InputStream retrieveFileStream(DocumentVo doc, String actor)
-			throws BusinessException {
-		return documentService.retrieveFileStream(doc, actor);
-	}
-
-	public void insertSignatureFile(InputStream file, long size,
-			String fileName, String mimeType, UserVo owner, DocumentVo document, X509Certificate signerCertificate)
-			throws BusinessException {
-		User docOwner =  userRepository.findByLsUid(owner.getLogin());
-		Document doc = documentService.getDocument(document.getIdentifier());
-		
-		documentService.insertSignatureFile(file, size, fileName, mimeType, docOwner, doc, signerCertificate);
+	
+	@Override
+	public void insertSignatureFile(InputStream file, long size, String fileName, String mimeType, UserVo owner, DocumentVo document, X509Certificate signerCertificate) throws BusinessException {
+//		TODO : Fix signature 
+//		User docOwner =  userRepository.findByLsUid(owner.getLogin());
+//		Document doc = documentService.getDocument(document.getIdentifier());
+//		
+//		documentService.insertSignatureFile(file, size, fileName, mimeType, docOwner, doc, signerCertificate);
 	}
 	
+	
+	@Override
 	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo document){
-		
-		User currentSignerDoc =  userRepository.findByLsUid(currentSigner.getLogin());
-		
-		Document doc = documentService.getDocument(document.getIdentifier());
-		List<Signature> signatures = doc.getSignatures();
-		
-		boolean res = false;
-		
-		for (Signature signature : signatures) {
-			if (signature.getSigner().equals(currentSignerDoc)) {
-				res = true;
-				break;
-			}
-		}
-		
-		return res;
+//		TODO : Fix signature 
+//		User currentSignerDoc =  userRepository.findByLsUid(currentSigner.getLogin());
+//		
+//		Document doc = documentService.getDocument(document.getIdentifier());
+//		List<Signature> signatures = doc.getSignatures();
+//		
+//		boolean res = false;
+//		
+//		for (Signature signature : signatures) {
+//			if (signature.getSigner().equals(currentSignerDoc)) {
+//				res = true;
+//				break;
+//			}
+//		}
+//		
+//		return res;
+		return false;
 	}
 	
+	
+	@Override
 	public boolean isSignedDocument(DocumentVo document){
-		Document doc = documentService.getDocument(document.getIdentifier());
-		List<Signature> signatures = doc.getSignatures();
-		boolean res = false;
-		if(signatures!=null && signatures.size()>0) res = true;
-		return res;
+//		TODO : Fix signature 
+//		Document doc = documentService.getDocument(document.getIdentifier());
+//		List<Signature> signatures = doc.getSignatures();
+//		boolean res = false;
+//		if(signatures!=null && signatures.size()>0) res = true;
+//		return res;
+		return false;
 	}
 	
+	
+	@Override
 	public List<SignatureVo> getAllSignatures(DocumentVo document){
-		Document doc = documentService.getDocument(document.getIdentifier());
-		return signatureTransformer.disassembleList(doc.getSignatures());
+//		TODO : Fix signature 
+//		Document doc = documentService.getDocument(document.getIdentifier());
+//		return signatureTransformer.disassembleList(doc.getSignatures());
+		return null;
 	}
 
+	
+	@Override
 	public SignatureVo getSignature(UserVo currentSigner,DocumentVo document) {
-		User currentSignerDoc =  userRepository.findByLsUid(currentSigner.getLogin());
+//		TODO : Fix signature 
 		
-		Document doc = documentService.getDocument(document.getIdentifier());
-		List<Signature> signatures = doc.getSignatures();
+//		User currentSignerDoc =  userRepository.findByLsUid(currentSigner.getLogin());
+//		
+//		Document doc = documentService.getDocument(document.getIdentifier());
+//		List<Signature> signatures = doc.getSignatures();
+//		
+//		SignatureVo res = null;
+//		
+//		for (Signature signature : signatures) {
+//			if (signature.getSigner().equals(currentSignerDoc)) {
+//				res = signatureTransformer.disassemble(signature);
+//				break;
+//			}
+//		}
+//		return res;
 		
-		SignatureVo res = null;
-		
-		for (Signature signature : signatures) {
-			if (signature.getSigner().equals(currentSignerDoc)) {
-				res = signatureTransformer.disassemble(signature);
-				break;
-			}
-		}
-		return res;
+		return null;
 	}
 	
+	
+	@Override
 	public InputStream retrieveSignatureFileStream(SignatureVo signaturedoc){
-		return documentService.retrieveSignatureFileStream(signaturedoc);
+//		return documentService.retrieveSignatureFileStream(signaturedoc);
+//		TODO : Fix signature 
+		return null;
 	}
 	
 
 	@Override
-	public Long getUserAvailableQuota(UserVo user) throws BusinessException {
-		User currentUser =  userRepository.findByLsUid(user.getLogin());
-		return documentService.getAvailableSize(currentUser);
+	public Long getUserAvailableQuota(UserVo userVo) throws BusinessException {
+		Account account = accountService.findUserInDB(userVo.getLsUid());
+		return documentEntryService.getAvailableSize(account);
 	}
 	
 	@Override
-	public Long getUserMaxFileSize(UserVo user) throws BusinessException {
-		User currentUser =  userRepository.findByLsUid(user.getLogin());
-		return documentService.getUserMaxFileSize(currentUser);
+	public Long getUserMaxFileSize(UserVo userVo) throws BusinessException {
+		Account account = accountService.findUserInDB(userVo.getLsUid());
+		return documentEntryService.getUserMaxFileSize(account);
 	}
 	
+	
+	@Override
 	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) throws BusinessException {
 		List<DisplayableAccountOccupationEntryVo> result = new ArrayList<DisplayableAccountOccupationEntryVo>();
 		
@@ -232,9 +298,10 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		return result;
 	}
 
+	
 	private DisplayableAccountOccupationEntryVo getAccountStats(User user) throws BusinessException {
-		Long userAvailableQuota = documentService.getAvailableSize(user);
-		Long userTotalQuota = documentService.getTotalSize(user);
+		Long userAvailableQuota = documentEntryService.getAvailableSize(user);
+		Long userTotalQuota = documentEntryService.getTotalSize(user);
 		Long userUsedSize = 0L;
 		for (Document doc : user.getDocuments()) {
 			userUsedSize += doc.getSize();
@@ -245,75 +312,131 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		return accountOccupation;
 	}
 
+	
+	@Override
 	public DocumentVo encryptDocument(DocumentVo doc,UserVo user, String password) throws BusinessException{
-		Document docenc = enciphermentService.encryptDocument(doc, user, password);
-		return documentTransformer.disassemble(documentService.getDocument(docenc.getUuid()));
+		// TODO : Fix enciphermentService
+		return null;
+//		Document docenc = enciphermentService.encryptDocument(doc, user, password);
+//		return documentTransformer.disassemble(documentService.getDocument(docenc.getUuid()));
 	}
 
+	
+	@Override
 	public DocumentVo decryptDocument(DocumentVo doc, UserVo user,String password) throws BusinessException {
-		Document docenc = enciphermentService.decryptDocument(doc, user, password);
-		return documentTransformer.disassemble(documentService.getDocument(docenc.getUuid()));
+		// TODO : Fix enciphermentService
+		return null;
+//		Document docenc = enciphermentService.decryptDocument(doc, user, password);
+//		return documentTransformer.disassemble(documentService.getDocument(docenc.getUuid()));
 	}
 	
+	
+	@Override
 	public boolean isDocumentEncrypted(DocumentVo doc) {
-		return enciphermentService.isDocumentEncrypted(doc);
+		// TODO : Fix enciphermentService
+		return false;
+//		return enciphermentService.isDocumentEncrypted(doc);
 	}
 
-	public Long getUserTotalQuota(UserVo user) throws BusinessException {
-		User currentUser =  userRepository.findByLsUid(user.getLogin());
-		return documentService.getTotalSize(currentUser);
+	
+	@Override
+	public Long getUserTotalQuota(UserVo userVo) throws BusinessException {
+		Account account = accountService.findUserInDB(userVo.getLsUid());
+		return documentEntryService.getTotalSize(account);
+	}
+	
+	@Override
+	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, String mimeType, UserVo ownerVo) throws BusinessException {
+		Account actor = accountService.findUserInDB(ownerVo.getLsUid());
+		return documentEntryTransformer.disassemble(documentEntryService.updateDocumentEntry(actor, currentFileUUID, file, size, fileName));
 	}
 
-	public DocumentVo updateDocumentContent(String currentFileUUID,
-			InputStream file, long size, String fileName, String mimeType,
-			UserVo owner) throws BusinessException {
-		User currentUser =  userRepository.findByLsUid(owner.getLogin());
-		return documentTransformer.disassemble(documentService.updateDocumentContent(currentFileUUID, file, size, fileName, mimeType, currentUser)); 
-	}
-
-    public void renameFile(String uuid, String newName) {
-        documentService.renameFile(uuid, newName);
+	
+	@Override
+    public void renameFile(String userlogin, String docEntryUuid, String newName) {
+		Account actor = accountService.findUserInDB(userlogin);
+        try {
+			documentEntryService.renameDocumentEntry(actor, docEntryUuid, newName);
+		} catch (BusinessException e) {
+			logger.error("Can't rename document : " + docEntryUuid + " : " + e.getMessage());
+		}
     }
-    public void  updateFileProperties(String uuid, String newName, String comment){
-        documentService.updateFileProperties(uuid, newName,comment);
+	
+	
+	@Override
+    public void  updateFileProperties(String userlogin, String docEntryUuid, String newName, String comment){
+		Account actor = accountService.findUserInDB(userlogin);
+		if(comment == null) {
+			comment = "";
+		}
+        try {
+			documentEntryService.updateFileProperties(actor, docEntryUuid, newName, comment);
+		} catch (BusinessException e) {
+			logger.error("Can't update file properties document : " + docEntryUuid + " : " + e.getMessage());
+		}
     }
     
-    public InputStream getDocumentThumbnail(String uuid) {
-    	return documentService.getDocumentThumbnail(uuid);
+	
+	@Override
+    public InputStream getDocumentThumbnail(String login, String docEntryUuid) {
+		Account actor = accountService.findUserInDB(login);
+
+		try {
+			return documentEntryService.getDocumentThumbnailStream(actor, docEntryUuid);
+		} catch (BusinessException e) {
+			logger.error("Can't update file properties document : " + docEntryUuid + " : " + e.getMessage());
+		}
+		
+    	return null;
     }
 
-    public boolean documentHasThumbnail(String uuid) {
-		return documentService.documentHasThumbnail(uuid);
+	
+	@Override
+    public boolean documentHasThumbnail(String login, String docEntryUuid) {
+		Account actor = accountService.findUserInDB(login);
+		if(actor == null) {
+			logger.error("Can't find logged user.");
+			return false;
+		}
+		return documentEntryService.documentHasThumbnail(actor, docEntryUuid);
     }
 
+	
 	@Override
 	public boolean isSignatureActive(UserVo user) {
-		User currentUser =  userRepository.findByLsUid(user.getLogin());
-		return documentService.isSignatureActive(currentUser);
+//		User currentUser =  userRepository.findByLsUid(user.getLogin());
+//		return documentService.isSignatureActive(currentUser);
+		// TODO : Fix enciphermentService
+		return false;
 	}
+	
 	
 	@Override
 	public boolean isEnciphermentActive(UserVo user) {
-		User currentUser =  userRepository.findByLsUid(user.getLogin());
-		return documentService.isEnciphermentActive(currentUser);
+//		User currentUser =  userRepository.findByLsUid(user.getLogin());
+//		return documentService.isEnciphermentActive(currentUser);
+		// TODO : Fix enciphermentService
+		return false;
+	}
+	
+
+	@Override
+	public boolean isGlobalQuotaActive(UserVo userVo) throws BusinessException {
+		Account actor = accountService.findUserInDB(userVo.getLsUid());
+		return documentEntryService.isGlobalQuotaActive(actor);
 	}
 
 	@Override
-	public boolean isGlobalQuotaActive(UserVo user) throws BusinessException {
-		User currentUser =  userRepository.findByLsUid(user.getLogin());
-		return documentService.isGlobalQuotaActive(currentUser);
+	public boolean isUserQuotaActive(UserVo userVo) throws BusinessException {
+		Account actor = accountService.findUserInDB(userVo.getLsUid());
+		return documentEntryService.isUserQuotaActive(actor);
 	}
 
+	
 	@Override
-	public boolean isUserQuotaActive(UserVo user) throws BusinessException {
-		User currentUser =  userRepository.findByLsUid(user.getLogin());
-		return documentService.isUserQuotaActive(currentUser);
-	}
-
-	@Override
-	public Long getGlobalQuota(UserVo user) throws BusinessException {
-		User currentUser =  userRepository.findByLsUid(user.getLogin());
-		return documentService.getGlobalQuota(currentUser);
+	public Long getGlobalQuota(UserVo userVo) throws BusinessException {
+		Account actor = accountService.findUserInDB(userVo.getLsUid());
+		return documentEntryService.getGlobalQuota(actor);
 	}
 	
 }

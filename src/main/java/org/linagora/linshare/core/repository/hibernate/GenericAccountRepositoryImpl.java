@@ -22,6 +22,7 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -82,4 +83,11 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		return super.update(entity);
 	}
 
+	@Override
+	public U create(U entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setLsUid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
 }

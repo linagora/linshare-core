@@ -56,7 +56,7 @@ import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.Facade.ShareFacade;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -674,7 +674,7 @@ public class ListSharedDocument {
 	}
 	
 	public boolean getThumbnailExists() {
-		return documentFacade.documentHasThumbnail(shareDocument.getIdentifier());
+		return documentFacade.documentHasThumbnail(null, shareDocument.getIdentifier());
 	}
 	
 	public String getTypeCSSClass() {
@@ -689,7 +689,7 @@ public class ListSharedDocument {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(componentdocuments,
 				docID);
-			stream = documentFacade.getDocumentThumbnail(currentDocumentVo.getIdentifier());
+			stream = documentFacade.getDocumentThumbnail(user.getLsUid(), currentDocumentVo.getIdentifier());
 			if (stream==null) return;
 		OutputStream os = null;
 			response.setDateHeader("Expires", 0);

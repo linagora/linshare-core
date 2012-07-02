@@ -22,7 +22,7 @@ package org.linagora.linshare.auth;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
@@ -73,7 +73,7 @@ public class DaoAuthProvider implements UserDetailsService {
         	password = account.getPassword();
         
         	// If the password field is not set (only Ldap user), we set it to an empty string.
-        	if (!UserType.INTERNAL.equals(account) && password==null) password=""; 
+        	if (!AccountType.INTERNAL.equals(account) && password==null) password=""; 
         }
 		
         if (account == null || password == null || Role.SYSTEM.equals(account.getRole())) {

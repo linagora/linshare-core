@@ -17,17 +17,7 @@ public interface DocumentEntryService {
 	 */
 	public String getMimeType(InputStream theFileStream)  throws BusinessException;
 
-	/**
-	 * Insert a file in the path identifiable by its filename.
-	 * @param fileName the name of the file which permits to identify it.
-	 * @param owner : the user who uploads the document
-	 * @param path the path inside the repository.
-	 * @param file the stream content file.
-	 * @return uuid the uuid of the inserted file.
-	 * @throws BusinessException : FILE_TOO_LARGE if the file is too large to fit in user's space
-	 */
 	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, Long size, String fileName) throws BusinessException;
-	
 	
 	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
 	
@@ -51,12 +41,12 @@ public interface DocumentEntryService {
 	
 	 /**
      * Get the thumbnail (InputStream) of the document
-     * @param docUuid the identifier of the document
+     * @param docEntryUuid the identifier of the document
      * @return InputStream of the thumbnail
      */
-    public InputStream getDocumentThumbnail(Account owner, String docUuid);
+    public InputStream getDocumentThumbnailStream(Account owner, String docEntryUuid) throws BusinessException;
     
-    public InputStream getDocument(Account owner, String docUuid);
+    public InputStream getDocumentStream(Account owner, String docEntryUuid) throws BusinessException;
 
 	/**
 	 * return true if the signature functionality is enabled

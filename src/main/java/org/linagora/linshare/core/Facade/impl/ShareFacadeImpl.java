@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.Facade.ShareFacade;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -265,7 +265,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		logger.debug("The current user is : " + owner.getMail());
 		logger.debug("recipientsEmailInput size : " + recipientsEmailInput.size());
 		List<String> recipientsEmail = new ArrayList<String>();
-		if(owner.getAccountType().equals(UserType.GUEST) && ((Guest)owner).isRestricted()) {
+		if(owner.getAccountType().equals(AccountType.GUEST) && ((Guest)owner).isRestricted()) {
 			List<String> guestAllowedContacts= userService.getGuestEmailContacts(owner.getLogin());
 			logger.debug("guestAllowedContacts size : " + guestAllowedContacts.size());
 			for (String mailInput : recipientsEmailInput) {
@@ -426,7 +426,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		mailContainerWithRecipient.clear();
 		
 		for (Share share : listShare) {
-			sUrlDownload = share.getReceiver().getAccountType().equals(UserType.GUEST) ? urlBase : urlInternal;
+			sUrlDownload = share.getReceiver().getAccountType().equals(AccountType.GUEST) ? urlBase : urlInternal;
 			
 			mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, ""));
 		}

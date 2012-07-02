@@ -94,7 +94,6 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		logger.debug("Begin setUp");
 		rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
 		user = new Guest(FIRST_NAME, LAST_NAME, MAIL, PASSWORD, true, "comment");
-		user.setLsUid(MAIL);
 		user.setDomain(rootDomain);
 		userRepository.create(user);
 		

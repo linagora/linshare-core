@@ -41,19 +41,19 @@ public abstract class LogEntry implements Serializable {
 
 	private Long persistenceId;
 
-	private final Calendar actionDate;
+	protected Calendar actionDate;
 	
-	private final String actorMail;
+	protected String actorMail;
 
-	private final String actorFirstname;
+	protected String actorFirstname;
 	
-	private final String actorLastname;
+	protected String actorLastname;
 	
-	private final String actorDomain;
+	protected String actorDomain;
 	
-	private final LogAction logAction;
+	protected LogAction logAction;
 	
-	private String description;
+	protected String description;
 	
 	/**
 	 * This field must be protected because of hibernate which need absolutly a

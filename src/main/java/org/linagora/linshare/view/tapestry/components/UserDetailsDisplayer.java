@@ -30,7 +30,7 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.Facade.UserFacade;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -61,7 +61,7 @@ public class UserDetailsDisplayer {
      ************************************************************ */
     @SuppressWarnings("unused")
     @Property
-    private UserVo detailedUser = new UserVo("", "", "", "", UserType.GUEST);
+    private UserVo detailedUser = new UserVo("", "", "", "", AccountType.GUEST);
 
     /* ***********************************************************
      *                   Event handlers&processing

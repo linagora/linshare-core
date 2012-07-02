@@ -62,8 +62,6 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.debug("Begin setUp");
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		internal = new Internal( FIRST_NAME, LAST_NAME, MAIL, UID);
-		String uid = UID + "/" + DOMAIN_IDENTIFIER;
-		internal.setLsUid(uid);
 		internal.setDomain(domain);
 		
 		accountRepository.create(internal);
@@ -82,8 +80,6 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 	public void testCreateThread() throws BusinessException{
 		
 		Thread t = new Thread(domain, internal, "myThread");
-		String uid = UID + "/" + DOMAIN_IDENTIFIER + "/myThread";
-		t.setLsUid(uid);
 		threadRepository.create(t);
 	}
 	
@@ -92,8 +88,6 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 	public void testCreateThreadAndMember() throws BusinessException{
 		
 		Thread t = new Thread(domain, internal, "myThread");
-		String uid = UID + "/" + DOMAIN_IDENTIFIER + "/myThread";
-		t.setLsUid(uid);
 		threadRepository.create(t);
 		
 		ThreadMember m = new ThreadMember(true,true,internal,t);

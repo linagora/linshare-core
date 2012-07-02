@@ -43,10 +43,7 @@ public class AccountRepositoryImplTest extends AbstractTransactionalJUnit4Spring
 		AbstractDomain domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
 		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL, UID);
-		String uid = UID + "/" + DOMAIN_IDENTIFIER;
-		u.setLsUid(uid);
 		u.setDomain(domain);
-		
 		accountRepository.create(u);
 	}
 	

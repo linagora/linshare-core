@@ -1,9 +1,10 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Calendar;
-import java.util.Date;
 
-public class Entry {
+import org.linagora.linshare.core.domain.constants.EntryType;
+
+public abstract class Entry {
 
 	protected long id;
 	
@@ -29,6 +30,8 @@ public class Entry {
 		this.name = name;
 		this.comment = comment;
 	}
+	
+	public abstract EntryType getEntryType();
 	
 	public String getUuid() {
 		return uuid;

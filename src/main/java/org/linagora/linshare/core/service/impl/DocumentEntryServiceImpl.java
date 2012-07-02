@@ -47,12 +47,11 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final MimeTypeService mimeTypeService;
 	private final AccountService accountService;
 	private final VirusScannerService virusScannerService;
-	private final DocumentRepository documentRepository; 
 	
 	
 	
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, DocumentRepository documentRepository) {
+			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -61,7 +60,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		this.mimeTypeService = mimeTypeService;
 		this.accountService = accountService;
 		this.virusScannerService = virusScannerService;
-		this.documentRepository = documentRepository;
 	}
 
 
@@ -318,23 +316,31 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 	
 	@Override
-	public boolean documentHasThumbnail(Account owner, String docUuid) {
-		// TODO: Check if we own the document
-		Document doc = documentRepository.findById(docUuid);
-		String thmbUUID = doc.getThmbUuid();
-		return (thmbUUID!=null && thmbUUID.length()>0);
+	public boolean documentHasThumbnail(Account owner, String docEntryUuid) {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+		if (documentEntry.getEntryOwner().equals(owner)) {
+			String thmbUUID = documentEntry.getDocument().getThmbUuid();
+			return (thmbUUID!=null && thmbUUID.length()>0);
+		}
+		return false;
 	}
 
 	@Override
-	public InputStream getDocumentThumbnail(Account owner, String docUuid) {
-		// TODO: Check if we own the document
-		return documentEntryBusinessService.getDocumentThumbnail(docUuid);
+	public InputStream getDocumentThumbnailStream(Account owner, String docEntryUuid) throws BusinessException {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+		if (!documentEntry.getEntryOwner().equals(owner)) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
+		}
+		return documentEntryBusinessService.getDocumentThumbnailStream(documentEntry);
 	}
 	
 	@Override
-	public InputStream getDocument(Account owner, String docUuid) {
-		// TODO: Check if we own the document
-		return documentEntryBusinessService.getDocument(docUuid);
+	public InputStream getDocumentStream(Account owner, String docEntryUuid) throws BusinessException {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+		if (!documentEntry.getEntryOwner().equals(owner)) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
+		}
+		return documentEntryBusinessService.getDocumentStream(documentEntry);
 	}
 
 

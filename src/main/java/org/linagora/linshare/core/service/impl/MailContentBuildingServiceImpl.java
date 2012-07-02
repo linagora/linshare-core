@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linshare.core.domain.constants.MailTemplateEnum;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -957,7 +957,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	public MailContainer buildMailUpcomingOutdatedShare(User actor, 
 			MailContainer mailContainer, Share share, Integer days) throws BusinessException {
 		
-		String linShareUrl = share.getReceiver().getAccountType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
+		String linShareUrl = share.getReceiver().getAccountType().equals(AccountType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
 
 		MailTemplate template1 = buildTemplateUpcomingOutdatedShare(actor, mailContainer.getLanguage(), share, days);
 		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");
@@ -977,7 +977,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	public MailContainerWithRecipient buildMailUpcomingOutdatedShareWithRecipient(User actor, 
 			MailContainer mailContainer, Share share, Integer days) throws BusinessException {
 		
-		String linShareUrl = share.getReceiver().getAccountType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
+		String linShareUrl = share.getReceiver().getAccountType().equals(AccountType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
 
 		MailTemplate template1 = buildTemplateUpcomingOutdatedShare(actor, mailContainer.getLanguage(), share, days);
 		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");
@@ -997,7 +997,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedShareWithOneRecipient(User actor, 
 			MailContainer mailContainer, Share share, Integer days) throws BusinessException {
 		
-		String linShareUrl = share.getReceiver().getAccountType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
+		String linShareUrl = share.getReceiver().getAccountType().equals(AccountType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
 
 		MailTemplate template1 = buildTemplateUpcomingOutdatedShare(actor, mailContainer.getLanguage(), share, days);
 		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");
@@ -1023,7 +1023,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 			MailContainer mailContainer, Document document, Integer days)
 			throws BusinessException {
 		
-		String linShareUrl = document.getOwner().getAccountType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
+		String linShareUrl = document.getOwner().getAccountType().equals(AccountType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
 
 		MailTemplate template1 = buildTemplateUpcomingOutdatedFile(actor, mailContainer.getLanguage(), document, days);
 		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");
@@ -1045,7 +1045,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 			MailContainer mailContainer, Document document, Integer days)
 			throws BusinessException {
 		
-		String linShareUrl = document.getOwner().getAccountType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
+		String linShareUrl = document.getOwner().getAccountType().equals(AccountType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
 
 		MailTemplate template1 = buildTemplateUpcomingOutdatedFile(actor, mailContainer.getLanguage(), document, days);
 		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");
@@ -1066,7 +1066,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 			MailContainer mailContainer, Document document, Integer days)
 			throws BusinessException {
 		
-		String linShareUrl = document.getOwner().getAccountType().equals(UserType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
+		String linShareUrl = document.getOwner().getAccountType().equals(AccountType.INTERNAL) ? this.pUrlInternal : this.pUrlBase;
 
 		MailTemplate template1 = buildTemplateUpcomingOutdatedFile(actor, mailContainer.getLanguage(), document, days);
 		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl, "");

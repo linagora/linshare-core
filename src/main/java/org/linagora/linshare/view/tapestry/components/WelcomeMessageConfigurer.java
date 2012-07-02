@@ -31,7 +31,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.WelcomeText;
 import org.linagora.linshare.view.tapestry.beans.WelcomeMessageView;
 import org.linagora.linshare.view.tapestry.utils.WelcomeMessageUtils;
@@ -65,7 +65,7 @@ public class WelcomeMessageConfigurer {
     private Set<WelcomeMessageView> welcomeMessageViews;
 
     @Persist
-    private UserType selectedUserType;
+    private AccountType selectedUserType;
 
 
     /* ***********************************************************
@@ -78,14 +78,14 @@ public class WelcomeMessageConfigurer {
 
     public Zone onActionFromEditGuestMessage(Language language) {
         selectedLanguage = language;
-        selectedUserType = UserType.GUEST;
+        selectedUserType = AccountType.GUEST;
         welcomeMessage = WelcomeMessageUtils.getWelcomeText(welcomeTexts, selectedLanguage, selectedUserType).getWelcomeText();
         return welcomeMessageBoxZone;
     }
 
     public Zone onActionFromEditInternalMessage(Language language) {
         selectedLanguage = language;
-        selectedUserType = UserType.INTERNAL;
+        selectedUserType = AccountType.INTERNAL;
         welcomeMessage = WelcomeMessageUtils.getWelcomeText(welcomeTexts, selectedLanguage, selectedUserType).getWelcomeText();
         return welcomeMessageBoxZone;
     }

@@ -22,7 +22,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
@@ -60,7 +60,7 @@ public interface UserService {
      * created by the current User
      * @return a list of matching users.
      */
-    List<User> searchUser(String mail, String firstName, String lastName,UserType userType,User currentUser) throws BusinessException;
+    List<User> searchUser(String mail, String firstName, String lastName,AccountType userType,User currentUser) throws BusinessException;
     
     /**
      * Search available user for editing restricted email list owned by guest.

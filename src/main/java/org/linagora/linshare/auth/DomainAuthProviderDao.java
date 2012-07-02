@@ -28,7 +28,7 @@ import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.exceptions.BadDomainException;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -105,7 +105,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 				logger.debug("Can't find the user in the directory. Search in DB.");
 				
 				foundUser = userService.findUserInDB(domainIdentifier,login);
-				if (foundUser != null && !foundUser.getAccountType().equals(UserType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
+				if (foundUser != null && !foundUser.getAccountType().equals(AccountType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
 					logger.debug("User found in DB but authentification failed");
 					throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), domainIdentifier);
 				} else {

@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.core.domain.constants.EntryType;
+
 /**
  * @author fred
  *
@@ -22,6 +24,11 @@ public class ShareEntry extends Entry{
 		this.recipient = recipient;
 		this.documentEntry = documentEntry;
 		this.downloaded = new Long(0);
+	}
+
+	@Override
+	public EntryType getEntryType() {
+		return EntryType.SHARE;
 	}
 
 	public User getRecipient() {

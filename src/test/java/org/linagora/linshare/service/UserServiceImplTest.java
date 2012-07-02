@@ -36,7 +36,7 @@ import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
@@ -336,7 +336,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
 		user2.setDomain(subDomain);
 		
-		Assert.assertTrue(userService.searchUser(user2.getMail(), user2.getFirstName(), user2.getLastName(), UserType.INTERNAL, user1).contains(user2));
+		Assert.assertTrue(userService.searchUser(user2.getMail(), user2.getFirstName(), user2.getLastName(), AccountType.INTERNAL, user1).contains(user2));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	

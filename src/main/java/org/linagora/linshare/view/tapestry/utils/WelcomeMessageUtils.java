@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.WelcomeText;
 
 /** Helpers for Welcome message processing.
@@ -32,7 +32,7 @@ import org.linagora.linshare.core.domain.entities.WelcomeText;
  */
 public class WelcomeMessageUtils {
 
-    public static WelcomeText getWelcomeText(Set<WelcomeText> welcomeTexts, Language selectedLanguage, UserType userType) {
+    public static WelcomeText getWelcomeText(Set<WelcomeText> welcomeTexts, Language selectedLanguage, AccountType userType) {
         for (WelcomeText welcomeText_ : welcomeTexts) {
             if (selectedLanguage.equals(welcomeText_.getLanguage())) {
                 return welcomeText_;

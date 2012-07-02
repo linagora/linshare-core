@@ -69,7 +69,7 @@ import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.Facade.FunctionalityFacade;
 import org.linagora.linshare.core.Facade.SecuredUrlFacade;
 import org.linagora.linshare.core.Facade.ShareFacade;
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -597,7 +597,7 @@ public class ListDocument {
 
 
     public void onActionFromRenameFile(String newName) {
-        documentFacade.renameFile(currentUuid, newName);
+        documentFacade.renameFile(userlogin, currentUuid, newName);
     }
 
 	/***************************************************************************
@@ -954,14 +954,14 @@ public class ListDocument {
 	}
 	
 	public boolean getThumbnailExists() {
-		return documentFacade.documentHasThumbnail(document.getIdentifier());
+		return documentFacade.documentHasThumbnail(userlogin, document.getIdentifier());
 	}
 	
 	public void onThumbnail(String docID) {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,
 				docID);
-			stream = documentFacade.getDocumentThumbnail(currentDocumentVo.getIdentifier());
+			stream = documentFacade.getDocumentThumbnail(userlogin, currentDocumentVo.getIdentifier());
 			if (stream==null) return;
 		OutputStream os = null;
 			response.setDateHeader("Expires", 0);

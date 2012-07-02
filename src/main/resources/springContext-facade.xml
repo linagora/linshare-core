@@ -25,19 +25,24 @@
        </bean>
        
    	  <bean name="documentFacade" class="org.linagora.linshare.core.Facade.impl.DocumentFacadeImpl">
-       	 <constructor-arg ref="documentService"/>
-       	 <constructor-arg ref="userRepository"/>
-       	 <constructor-arg ref="documentTransformer"/>
-       	 <constructor-arg ref="shareService"/>
-       	  <constructor-arg ref="signatureTransformer"/>
-       	  <constructor-arg ref="enciphermentService"/>
+		<constructor-arg ref="documentService"/>
+		<constructor-arg ref="userRepository"/>
+		<constructor-arg ref="documentTransformer"/>
+		<constructor-arg ref="shareService"/>
+		<constructor-arg ref="signatureTransformer"/>
+		<constructor-arg ref="enciphermentService"/>
+		
+		<constructor-arg ref="documentEntryService"/>
+		<constructor-arg ref="accountService"/>
+		<constructor-arg ref="documentEntryTransformer"/>
+	
    	  </bean>
    	  
    	  <bean name="searchDocumentFacade" class="org.linagora.linshare.core.Facade.impl.SearchDocumentFacadeImpl">
        	 <constructor-arg ref="searchDocumentService"/>
-       	 <constructor-arg ref="documentTransformer"/>
+       	 <constructor-arg ref="documentEntryTransformer"/>
        	 <constructor-arg ref="documentService"/>
-       	 <constructor-arg ref="userService"/>
+       	 <constructor-arg ref="accountService"/>
    	  </bean>
  
  	<bean name="shareFacade" class="org.linagora.linshare.core.Facade.impl.ShareFacadeImpl">
@@ -105,6 +110,10 @@
 	 
 	 <bean name="documentTransformer" class="org.linagora.linshare.core.domain.transformers.impl.DocumentTransformer" >
 	 	<constructor-arg ref="documentRepository"/>
+	 </bean>
+	 
+	 <bean name="documentEntryTransformer" class="org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer" >
+	 	<constructor-arg ref="documentEntryRepository"/>
 	 </bean>
 	 
 	 <bean name="signatureTransformer" class="org.linagora.linshare.core.domain.transformers.impl.SignatureTransformer" >

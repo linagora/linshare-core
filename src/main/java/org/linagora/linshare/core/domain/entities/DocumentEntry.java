@@ -3,6 +3,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.EntryType;
+
 public class DocumentEntry extends Entry {
 
 	protected Document document;
@@ -16,6 +18,11 @@ public class DocumentEntry extends Entry {
 	public DocumentEntry() {
 	}
 	
+	@Override
+	public EntryType getEntryType() {
+		return EntryType.DOCUMENT;
+	}
+
 	public DocumentEntry(Account entryOwner, String name, String comment, Document document) {
 		super(entryOwner, name, comment);
 		this.document = document;

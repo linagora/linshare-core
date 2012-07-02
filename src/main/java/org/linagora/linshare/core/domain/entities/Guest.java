@@ -20,7 +20,7 @@
 */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 
 /** Guest is a user that is not registered in LDAP server.
  */
@@ -47,8 +47,8 @@ public class Guest extends User {
     }
 
 	@Override
-	public UserType getAccountType() {
-		return UserType.GUEST;
+	public AccountType getAccountType() {
+		return AccountType.GUEST;
 	}
     
 }

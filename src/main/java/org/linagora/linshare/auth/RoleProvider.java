@@ -24,7 +24,7 @@ package org.linagora.linshare.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Role;
@@ -45,10 +45,10 @@ public class RoleProvider {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_SUPERADMIN));
 		}
 		
-		if (!account.getAccountType().equals(UserType.GUEST)) {
+		if (!account.getAccountType().equals(AccountType.GUEST)) {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_INTERNAL));
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));
-		} else if (account.getAccountType().equals(UserType.GUEST)){
+		} else if (account.getAccountType().equals(AccountType.GUEST)){
 			Guest guest =(Guest)account;
 			if(guest.getCanUpload()) {
 			grantedAuthorities.add(new GrantedAuthorityImpl(AuthRole.ROLE_UPLOAD));

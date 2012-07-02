@@ -25,9 +25,10 @@ import java.util.List;
 public interface Transformer<ENTITY, VO> {
 	VO disassemble(ENTITY entityObject);
 
+	List<VO> disassembleList(List<ENTITY> entityObjectList);
+	
 	ENTITY assemble(VO valueObject);
 
 	List<ENTITY> assembleList(List<VO> valueObjectList);
 	
-	List<VO> disassembleList(List<ENTITY> entityObjectList);
 }

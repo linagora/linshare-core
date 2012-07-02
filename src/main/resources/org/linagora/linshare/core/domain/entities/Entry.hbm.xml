@@ -64,11 +64,13 @@
 			<many-to-one name="documentEntry" cascade="lock" column="document_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry" not-null="true" lazy="no-proxy">
 			</many-to-one>
 		</joined-subclass>
+		<!-- 
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.ThreadEntry" table="thread_entry" lazy="false">
 			<key>
 				<column name="entry_id"/>
 			</key>
 			<many-to-one name="document" column="document_id" class="org.linagora.linshare.core.domain.entities.Document" cascade="save-update,lock" unique="true" not-null="true" lazy="no-proxy"/>
 		</joined-subclass>
+		 -->
 	</class>
 </hibernate-mapping>

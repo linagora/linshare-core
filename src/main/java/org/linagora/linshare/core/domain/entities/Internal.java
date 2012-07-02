@@ -20,7 +20,7 @@
 */
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.UserType;
+import org.linagora.linshare.core.domain.constants.AccountType;
 
 /** Internal user.
  */
@@ -44,8 +44,8 @@ public class Internal extends User {
     }
 
 	@Override
-	public UserType getAccountType() {
-		return UserType.INTERNAL;
+	public AccountType getAccountType() {
+		return AccountType.INTERNAL;
 	}
 
 }

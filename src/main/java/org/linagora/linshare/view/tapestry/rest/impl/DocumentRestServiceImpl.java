@@ -309,7 +309,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			
 			if(fileComment != null) {
 				fileComment = filter.clean(fileComment);
-				documentFacade.updateFileProperties(doc.getIdentifier(), fileName, fileComment);
+				documentFacade.updateFileProperties(actor.getLsUid(), doc.getIdentifier(), fileName, fileComment);
 			}
 			
 			

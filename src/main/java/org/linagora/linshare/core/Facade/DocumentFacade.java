@@ -197,23 +197,25 @@ public interface DocumentFacade {
      * @param uuid the uuid that identifies the file.
      * @param newName the new name for the file.
      */
-	public void renameFile(String uuid, String newName);
+	public void renameFile(String userlogin, String docEntryUuid, String newName);
     
-    public void  updateFileProperties(String uuid, String newName, String fileComment);
+    public void  updateFileProperties(String userlogin, String docEntryUuid, String newName, String comment);
 
     /**
      * Get the thumbnail (InputStream) of the document
+     * @param login TODO
      * @param uuid the identifier of the document
      * @return InputStream of the thumbnail
      */
-    public InputStream getDocumentThumbnail(String uuid);
+    public InputStream getDocumentThumbnail(String login, String docEntryUuid);
     
     /**
      * Thumbnail of the document exists ?
+     * @param login TODO
      * @param uuid the identifier of the document
      * @return true if the thumbnail exists, false otherwise
      */
-    public boolean documentHasThumbnail(String uuid);
+    public boolean documentHasThumbnail(String login, String docEntryUuid);
     
     /**
 	 * return true if the signature functionality is enabled
