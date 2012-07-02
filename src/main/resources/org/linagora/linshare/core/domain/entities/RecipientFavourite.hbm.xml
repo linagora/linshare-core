@@ -9,7 +9,7 @@
     <many-to-one access="field" class="org.linagora.linshare.core.domain.entities.User" name="owner" not-null="true">
       <column index="index_favourite_recipient_id" name="user_id"/>
     </many-to-one>
-    <property access="field" column="recipient" name="recipient" type="string"/>
+    <property access="field" column="recipient_mail" name="recipient" type="string"/>
     <property access="field" column="weight" name="weight" type="long"/>
   </class>
 </hibernate-mapping>

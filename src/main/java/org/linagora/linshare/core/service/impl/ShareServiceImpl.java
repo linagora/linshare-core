@@ -226,8 +226,9 @@ public class ShareServiceImpl implements ShareService{
 
 					// If the user have not selected an expiration date, compute default date
 					if (expiryDate == null) {
-						expiryDate=shareExpiryDateService.computeShareExpiryDate(document, sender);
+						// TODo : to be fix for sharing
 					}						 					
+//						expiryDate=shareExpiryDateService.computeShareExpiryDate(document, sender);
 
 					
 					// We test if the share already exists :

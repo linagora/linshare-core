@@ -23,10 +23,11 @@ package org.linagora.linshare.core.service;
 import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 
 public interface ShareExpiryDateService {
-	public Calendar computeShareExpiryDate(Document doc, User owner);
-	public Calendar computeMinShareExpiryDateOfList(List<Document> docs, User owner);
+	public Calendar computeShareExpiryDate(DocumentEntry document, Account owner);
+	public Calendar computeMinShareExpiryDateOfList(List<DocumentEntry> documents, Account owner);
 }

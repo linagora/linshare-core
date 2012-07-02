@@ -91,36 +91,36 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		return create(documents, sender, password, null,recipients, expiryDate);
 	}
 
-	public SecuredUrl create(List<Document> documents, User sender, String password,
-			String urlPath,List<Contact> recipients, Calendar expiryDate) {
-		// Generate an alea
-		String alea = generateAlea();
-
-		// Get the defaultUrl if urlPath is null
-		String url = urlPath == null ? getBaseSecuredUrl() : urlPath;
-
-		// If the user have not selected an expiration date, compute default date
-		
-		// create the sercured url
-		SecuredUrl securedUrl = new SecuredUrl(url, alea,
-				expiryDate!=null? expiryDate :
-				shareExpiryDateService.computeMinShareExpiryDateOfList(documents, sender)
-				, sender, recipients);
-		securedUrl.addDocuments(documents);
-
-		// Hash the password
-		if (password != null) {
-			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
-			securedUrl.setPassword(hashedPassword);
-		}
-		// save the securedurl
-		try {
-			securedUrl = securedUrlRepository.create(securedUrl);
-		} catch (BusinessException e) {
-			logger.error("Impossible to create secure url : " + e.toString());
-		}
-
-		return securedUrl;
+	public SecuredUrl create(List<Document> documents, User sender, String password, String urlPath,List<Contact> recipients, Calendar expiryDate) {
+		// TODO : Fix SecureUrl
+		return null;
+//		// Generate an alea
+//		String alea = generateAlea();
+//
+//		// Get the defaultUrl if urlPath is null
+//		String url = urlPath == null ? getBaseSecuredUrl() : urlPath;
+//
+//		// If the user have not selected an expiration date, compute default date
+//		
+//		// create the sercured url
+//		SecuredUrl securedUrl = new SecuredUrl(url, alea,
+//				expiryDate!=null? expiryDate :shareExpiryDateService.computeMinShareExpiryDateOfList(documents, sender)
+//				, sender, recipients);
+//		securedUrl.addDocuments(documents);
+//
+//		// Hash the password
+//		if (password != null) {
+//			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+//			securedUrl.setPassword(hashedPassword);
+//		}
+//		// save the securedurl
+//		try {
+//			securedUrl = securedUrlRepository.create(securedUrl);
+//		} catch (BusinessException e) {
+//			logger.error("Impossible to create secure url : " + e.toString());
+//		}
+//
+//		return securedUrl;
 	}
 
 	public void delete(String alea, String urlPath) {

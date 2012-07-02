@@ -25,43 +25,78 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.Facade.ShareExpiryDateFacade;
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ShareExpiryDateFacadeImpl implements ShareExpiryDateFacade {
 
-	private final DocumentRepository documentRepository;
+	private final DocumentEntryService documentEntryService;
 	private final ShareExpiryDateService shareExpiryDateService;
-	private final UserRepository<User> userRepository;
+	private final AccountService accountService;
 	
-	public ShareExpiryDateFacadeImpl(final DocumentRepository documentRepository,
+	private static final Logger logger = LoggerFactory.getLogger(ShareExpiryDateFacadeImpl.class);
+	
+	public ShareExpiryDateFacadeImpl(final DocumentEntryService documentEntryService,
 			final ShareExpiryDateService shareExpiryDateService,
-			final UserRepository<User> userRepository) {
+			final AccountService accountService) {
 		super();
-		this.documentRepository = documentRepository;
+		this.documentEntryService = documentEntryService;
 		this.shareExpiryDateService = shareExpiryDateService;
-		this.userRepository = userRepository;
+		this.accountService = accountService;
 	}
 
 	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo, UserVo ownerVo) {
-		User owner = userRepository.findByMail(ownerVo.getLogin());
-		
-		List<Document> docList = new ArrayList<Document>();
-		for (DocumentVo documentVo : docsVo) {
-			docList.add(documentRepository.findById(documentVo.getIdentifier()));
+		if(ownerVo.getLsUid() == null) {
+			logger.error("Can't find user with null parametter.");
+			return null;
 		}
-		return shareExpiryDateService.computeMinShareExpiryDateOfList(docList, owner);
+		
+		Account account = accountService.findUserInDB(ownerVo.getLsUid());
+		if(account == null) {
+			logger.error("Can't find logged user.");
+			return null;
+		}
+		
+		List<DocumentEntry> docList = new ArrayList<DocumentEntry>();
+		for (DocumentVo documentVo : docsVo) {
+			try {
+				docList.add(documentEntryService.findById(account, documentVo.getIdentifier()));
+			} catch (BusinessException e) {
+				logger.error("document "  + documentVo.getIdentifier() + " not found : " + e.getMessage());
+			}
+		}
+		return shareExpiryDateService.computeMinShareExpiryDateOfList(docList, account);
 	}
 
-	public Calendar computeShareExpiryDate(DocumentVo docVo, UserVo ownerVo) {
-		User owner = userRepository.findByMail(ownerVo.getLogin());
-		Document document = documentRepository.findById(docVo.getIdentifier());
-		return shareExpiryDateService.computeShareExpiryDate(document, owner);
+	public Calendar computeShareExpiryDate(DocumentVo documentVo, UserVo ownerVo) {
+		
+		if(ownerVo.getLsUid() == null) {
+			logger.error("Can't find user with null parametter.");
+			return null;
+		}
+		
+		Account account = accountService.findUserInDB(ownerVo.getLsUid());
+		if(account == null) {
+			logger.error("Can't find logged user.");
+			return null;
+		}
+		
+		DocumentEntry doc;
+		try {
+			doc = documentEntryService.findById(account, documentVo.getIdentifier());
+			return shareExpiryDateService.computeShareExpiryDate(doc, account);
+		} catch (BusinessException e) {
+			logger.error("document "  + documentVo.getIdentifier() + " not found : " + e.getMessage());
+		}
+		return null;
 	}
 
 }

@@ -52,6 +52,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -236,6 +237,11 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
+	public User findByLsUid(String lsUid) {
+    	return userRepository.findByLsUid(lsUid);
+	}
+
+	@Override
     public List<User> findUsersInDB(String domain) {
     	return userRepository.findByDomain(domain);
     }
@@ -942,6 +948,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public User findOrCreateUser(String mail, String domainId) throws BusinessException {
+//    	AccountRepository<Account>
         User user = userRepository.findByMailAndDomain(domainId, mail);
         
         if (user == null) {

@@ -227,7 +227,10 @@ public interface UserService {
      */
     public User findOrCreateUserWithDomainPolicies(String mail, String domainId, String ActorDomainId) throws BusinessException ;
 	
-    public User findUnkownUserInDB( String mail);
+    public User findUnkownUserInDB(String mail);
+    
+    public User findByLsUid(String lsUid);
+    
 	public User findUserInDB(String domain, String mail);
     public List<User> findUsersInDB(String domain);
     

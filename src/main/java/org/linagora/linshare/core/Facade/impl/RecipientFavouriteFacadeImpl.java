@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.Facade.RecipientFavouriteFacade;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.RecipientFavouriteService;
 import org.linagora.linshare.core.service.UserService;
 
@@ -41,29 +43,35 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 		this.userService=userService;
 	}
 
-	public void increment(UserVo owner, List<String> recipients) throws LinShareNotSuchElementException, BusinessException {
-		service.increment(userService.findOrCreateUser(owner.getMail(), owner.getDomainIdentifier()), recipients);
+	
+	@Override
+	public void increment(UserVo ownerVo, List<String> recipients) throws LinShareNotSuchElementException, BusinessException {
+		User owner = userService.findByLsUid(ownerVo.getLsUid());
+		service.increment(owner, recipients);
 	}
+	
 
-	public List<String> allRecipientsOrderedByWeightDesc(UserVo owner) throws BusinessException{
-		return service.recipientsOrderedByWeightDesc(userService.findOrCreateUser(owner.getMail(), owner.getDomainIdentifier()));
+	@Override
+	public List<String> allRecipientsOrderedByWeightDesc(UserVo ownerVo) throws BusinessException{
+		User owner = userService.findByLsUid(ownerVo.getLsUid());
+		return service.recipientsOrderedByWeightDesc(owner);
 	}
+	
 
-	public List<UserVo> recipientsOrderedByWeightDesc(List<UserVo> recipients,
-			UserVo owner) throws BusinessException {
+	@Override
+	public List<UserVo> recipientsOrderedByWeightDesc(List<UserVo> recipients, UserVo ownerVo) throws BusinessException {
 		
 		if(recipients.size()==0) return recipients;
 		
-		User own = userService.findOrCreateUser(owner.getMail(), owner.getDomainIdentifier());
-
-		if(own!=null){
+		User owner = userService.findByLsUid(ownerVo.getLsUid());
+		if(owner!=null){
 			ArrayList<String> recipientsMail=new ArrayList<String>();
 
 			for(UserVo user: recipients){
 				recipientsMail.add(user.getMail());
 			}
 			
-			List<String> reorder=service.reorderRecipientsByWeightDesc(recipientsMail, own);
+			List<String> reorder=service.reorderRecipientsByWeightDesc(recipientsMail, owner);
 			ArrayList<UserVo> reorderUserList=new ArrayList<UserVo>();
 			for(String mail:reorder){
 				for(UserVo user:recipients){
@@ -79,21 +87,16 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 		}
 	}
 
-	public List<UserVo> findRecipientFavorite(String matchStartWith,UserVo owner) throws BusinessException {
-		
-		User own = userService.findOrCreateUser(owner.getMail(), owner.getDomainIdentifier());
-		List<String> mails = service.findRecipientFavorite(matchStartWith, own);
-		
+	
+	@Override
+	public List<UserVo> findRecipientFavorite(String matchStartWith,UserVo ownerVo) throws BusinessException {
+		User owner = userService.findByLsUid(ownerVo.getLsUid());
+		List<String> mails = service.findRecipientFavorite(matchStartWith, owner);
 		ArrayList<UserVo> favoriteList=new ArrayList<UserVo>();
 		for (String email : mails) {
 			favoriteList.add(new UserVo(email,null,null,email,null));
 		}
 		return favoriteList;
 	}
-
-
-
-
-
 
 }

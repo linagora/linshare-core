@@ -248,6 +248,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmail(
     		UserVo ownerVo, List<DocumentVo> documents, List<String> recipientsEmail, boolean secureSharing, MailContainer mailContainer) throws BusinessException {
+		
+		logger.debug("createSharingWithMailUsingRecipientsEmail");
 		return createSharingWithMailUsingRecipientsEmailAndExpiryDate(ownerVo, documents, recipientsEmail, secureSharing, mailContainer,null);
 	}
 
@@ -255,7 +257,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
     public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMailUsingRecipientsEmailAndExpiryDate(
 			UserVo ownerVo, List<DocumentVo> documents, List<String> recipientsEmailInput, boolean secureSharing, MailContainer mailContainer, Calendar expiryDateSelected) throws BusinessException {
-    	
+    	logger.debug("createSharingWithMailUsingRecipientsEmail");
     	// Find the owner
     	User owner = userService.findOrCreateUser(ownerVo.getMail(), ownerVo.getDomainIdentifier());
 		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
