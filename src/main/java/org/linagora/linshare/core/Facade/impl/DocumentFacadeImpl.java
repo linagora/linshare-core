@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.Facade.DocumentFacade;
-import org.linagora.linshare.core.domain.constants.Reason;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -97,12 +96,15 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	}
 
 	
+	
 	@Override
 	public String getMimeType(InputStream theFileStream, String theFilePath) throws BusinessException {
-		return documentEntryService.getMimeType(theFileStream);
+		// TODO To be removed 
+		return null;
 	}
 
-	
+
+
 	@Override
 	public DocumentVo insertFile(InputStream file, long size, String fileName, String mimeType, UserVo owner) throws BusinessException {
 		Account actor = accountService.findUserInDB(owner.getLsUid());
@@ -112,7 +114,23 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 
 	@Override
-	public void removeDocument(UserVo actor, DocumentVo document, MailContainer mailContainer) throws BusinessException {
+	public void removeDocument(UserVo actorVo, DocumentVo document, MailContainer mailContainer) throws BusinessException {
+		Account actor = accountService.findUserInDB(actorVo.getLsUid());
+		if(actor != null) {
+			if (document instanceof ShareDocumentVo) {
+				
+			} else if (document instanceof DocumentVo) {
+				// old method : 
+//				documentService.deleteFileWithNotification(actor.getLsUid(),document.getIdentifier(), Reason.NONE, mailContainer);
+				documentEntryService.deleteDocumentEntry(actor, document.getIdentifier());
+			} else {
+				logger.warn("Unsuccessful attempt to delete a weird document : " + document.getIdentifier());
+			}
+		} else {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
+		}
+		
+		
 //		TODO : Fix removeDocument
 //		if (document instanceof ShareDocumentVo) {
 //			// if this document is a sharedocumentVo, it means we received the document
@@ -175,6 +193,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	@Override
 	public InputStream retrieveFileStream(DocumentVo doc, String lsUid) throws BusinessException {
 		Account actor = accountService.findUserInDB(lsUid);
+		
 		return documentEntryService.getDocumentStream(actor, doc.getIdentifier());
 	}
 	
@@ -379,20 +398,33 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	@Override
     public InputStream getDocumentThumbnail(String login, String docEntryUuid) {
+		if(login == null) {
+			logger.error("Can't find user with null parametter.");
+			return null;
+		}
+		
 		Account actor = accountService.findUserInDB(login);
-
+		if(actor == null) {
+			logger.error("Can't find logged user.");
+			return null;
+		}
+		
 		try {
 			return documentEntryService.getDocumentThumbnailStream(actor, docEntryUuid);
 		} catch (BusinessException e) {
-			logger.error("Can't update file properties document : " + docEntryUuid + " : " + e.getMessage());
+			logger.error("Can't get document thumbnail : " + docEntryUuid + " : " + e.getMessage());
 		}
-		
     	return null;
     }
 
 	
 	@Override
     public boolean documentHasThumbnail(String login, String docEntryUuid) {
+		if(login == null) {
+			logger.error("Can't find user with null parametter.");
+			return false;
+		}
+		
 		Account actor = accountService.findUserInDB(login);
 		if(actor == null) {
 			logger.error("Can't find logged user.");

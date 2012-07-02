@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,19 +66,24 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	
 	@Override
-	public String getMimeType(InputStream theFileStream)
-			throws BusinessException {
+	public String getMimeType(BufferedInputStream theFileStream) throws BusinessException {
 		byte[] bytes;
+		theFileStream.mark(mimeTypeIdentifier.getMinArrayLength()+1);
 		try {
-			bytes = IOUtil.readBytes(theFileStream, mimeTypeIdentifier
-					.getMinArrayLength());
+			bytes = IOUtil.readBytes(theFileStream, mimeTypeIdentifier.getMinArrayLength());
+			theFileStream.reset();
 		} catch (IOException e) {
 			logger.error("Could not read the uploaded file !", e);
 			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND, "Could not read the uploaded file.");
 		}
 
 		// let the MimeTypeIdentifier determine the MIME type of this file
-		return mimeTypeIdentifier.identify(bytes, null, null);
+		String mimeType = mimeTypeIdentifier.identify(bytes, null, null);
+		logger.debug("Mime type found : " + mimeType);
+		if(mimeType == null) {
+			mimeType = "data";
+		}
+		return mimeType;
 	}
 	
 
@@ -165,7 +171,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	
 	@Override
-	public File getFileFromStream(InputStream stream, String fileName) {
+	public File getFileFromBufferedInputStream(BufferedInputStream stream, String fileName) {
 		// Copy the input stream to a temporary file for safe use
 		File tempFile = null;
 		BufferedOutputStream bof = null;
@@ -192,6 +198,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			int len;
 			while ((len = stream.read(buf)) > 0) {
 				bof.write(buf, 0, len);
+				logger.debug("len buf : " + len);
 			}
 
 			bof.flush();
@@ -207,6 +214,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				try {
 					stream.close();
 				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -214,6 +222,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 				try {
 					bof.close();
 				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -236,9 +245,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public InputStream getDocumentStream(DocumentEntry entry) {
-		
 		String UUID = entry.getDocument().getUuid();
 		if (UUID!=null && UUID.length()>0) {
+			logger.debug("retrieve from jackrabbity : " + UUID);
 			InputStream stream = fileSystemDao.getFileContentByUUID(UUID);
 			return stream;
 		}
@@ -316,7 +325,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl ) throws BusinessException {
 		InputStream stream = getDocumentStream(originalEntry);
-		File tempFile = getFileFromStream(stream, originalEntry.getName());
+		BufferedInputStream bufStream = new BufferedInputStream(stream);
+		File tempFile = getFileFromBufferedInputStream(bufStream, originalEntry.getName());
 		
 		DocumentEntry documentEntry = createDocumentEntry(owner, tempFile , originalEntry.getDocument().getSize(), 
 				originalEntry.getName(), originalEntry.getCiphered(), timeStampingUrl, originalEntry.getDocument().getType());
@@ -336,8 +346,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		owner.getEntries().remove(documentEntry);
 		accountRepository.update(owner);
 
-		deleteDocument(documentEntry.getDocument());
+		Document doc = documentEntry.getDocument(); 
 		documentEntryRepository.delete(documentEntry);
+		doc.setDocumentEntry(null);
+		documentRepository.update(doc);
+		deleteDocument(doc);
 	}
 
 	
@@ -345,10 +358,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		// delete old thumbnail in JCR
 		String oldThumbUuid = document.getThmbUuid(); 
 		if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
+			logger.debug("suppresion of Thumb, Uuid : " + oldThumbUuid);
 			fileSystemDao.removeFileByUUID(oldThumbUuid);
 		}
 		
 		// remove old document in JCR
+		logger.debug("suppresion of doc, Uuid : " + document.getUuid());
 		fileSystemDao.removeFileByUUID(document.getUuid());
 		
 		// remove old document from database
@@ -415,7 +430,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			fis = new FileInputStream(tempFile);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("insert of the document in jack rabbit:" + fileName);
+				logger.debug("insert of the document in jack rabbit:" + fileName + ", size:"+ size + ", path:" + path + " , type: " + mimeType);
 			}
 
 			uuid = fileSystemDao.insertFile(path, fis, size, fileName, mimeType);
@@ -425,10 +440,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		} finally {
 
 			try {
+				logger.debug("closing FileInputStream ");
 				if (fis != null)
 					fis.close();
 			} catch (IOException e) {
 				// Do nothing Happy java :)
+				logger.error("IO exception : should not happen ! ");
 			}
 
 		}

@@ -2,7 +2,6 @@ package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
 
-import org.linagora.linshare.core.domain.constants.Reason;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -15,7 +14,7 @@ public interface DocumentEntryService {
 	 * @param theFileStream
 	 * @return
 	 */
-	public String getMimeType(InputStream theFileStream)  throws BusinessException;
+//	public String getMimeType(InputStream theFileStream)  throws BusinessException;
 
 	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, Long size, String fileName) throws BusinessException;
 	
@@ -23,7 +22,28 @@ public interface DocumentEntryService {
 	
 	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException;
 	
-	public void deleteDocumentEntry(Account actor, String docEntryUuid, Reason causeOfDeletion) throws BusinessException;
+	/**
+	 * Document suppression due to user action. 
+	 * @param actor
+	 * @param docEntryUuid
+	 * @throws BusinessException
+	 */
+	public void deleteDocumentEntry(Account actor, String docEntryUuid) throws BusinessException;
+	
+	/**
+	 * This method is designed inconsistent document, the document exists into the database only (no on the file system) 
+	 * @param docEntryUuid
+	 * @throws BusinessException
+	 */
+	public void deleteInconsistentDocumentEntry(String docEntryUuid) throws BusinessException;
+	
+
+	/**
+	 * This method is designed to delete expired documents (batches). 
+	 * @param docEntryUuid
+	 * @throws BusinessException
+	 */
+	public void deleteExpiratedDocumentEntry(String docEntryUuid) throws BusinessException;
 	
 	public long getUserMaxFileSize(Account account) throws BusinessException;
 	

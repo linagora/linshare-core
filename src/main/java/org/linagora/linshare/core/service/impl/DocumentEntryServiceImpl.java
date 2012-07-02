@@ -1,20 +1,17 @@
 package org.linagora.linshare.core.service.impl;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.Reason;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
@@ -25,7 +22,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -64,18 +60,13 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 
 	@Override
-	public String getMimeType(InputStream theFileStream) throws BusinessException {
-		return documentEntryBusinessService.getMimeType(theFileStream);
-	}
-
-
-	@Override
 	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, Long size, String fileName) throws BusinessException {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 		
-		String mimeType = getMimeType(stream);
+		BufferedInputStream bufStream = new BufferedInputStream(stream);
+		String mimeType = documentEntryBusinessService.getMimeType(bufStream);
 		checkSpace(size, fileName, actor);
-		File tempFile = documentEntryBusinessService.getFileFromStream(stream, fileName);
+		File tempFile = documentEntryBusinessService.getFileFromBufferedInputStream(bufStream, fileName);
 
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
@@ -122,9 +113,10 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 		String logText = documentEntry.getName(); //old name of the doc
 		long oldDocSize = documentEntry.getDocument().getSize();
-		String mimeType = getMimeType(stream);
+		BufferedInputStream bufStream = new BufferedInputStream(stream);
+		String mimeType = documentEntryBusinessService.getMimeType(bufStream);
 		checkSpace(size, fileName, actor);
-		File tempFile = documentEntryBusinessService.getFileFromStream(stream, fileName);
+		File tempFile = documentEntryBusinessService.getFileFromBufferedInputStream(bufStream, fileName);
 
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
@@ -200,33 +192,72 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 	
 	
+	
 	@Override
-	public void deleteDocumentEntry(Account actor, String docEntryUuid, Reason causeOfDeletion) throws BusinessException {
+	public void deleteInconsistentDocumentEntry(String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+		Account owner = documentEntry.getEntryOwner();
 		try {
 			
+			if (documentEntry.getShareEntries().size() > 0) {
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
+			}
 			
+			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
+			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
+			
+			FileLogEntry logEntry  = new FileLogEntry(owner, LogAction.FILE_INCONSISTENCY, "File removed because of inconsistence. Please contact your administrator.",  documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
+			logEntryService.create(LogEntryService.WARN, logEntry);
+			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+		} catch (IllegalArgumentException e) {
+			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUid() + ", reason : ", e);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
+		}
+	}
+
+	
+
+	@Override
+	public void deleteExpiratedDocumentEntry(String docEntryUuid) throws BusinessException {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+		Account owner = documentEntry.getEntryOwner();
+		try {
+			
+			if (documentEntry.getShareEntries().size() > 0) {
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
+			}
+			
+			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
+			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
+			
+			FileLogEntry logEntry  = new FileLogEntry(owner, LogAction.FILE_EXPIRE, "Expiration of a file",  documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
+			logEntryService.create(LogEntryService.INFO, logEntry);
+			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+		} catch (IllegalArgumentException e) {
+			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUid() + ", reason : ", e);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
+		}
+	}
+
+
+	@Override
+	public void deleteDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+		try {
 			if (!documentEntry.getEntryOwner().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+			}
+			
+			if (documentEntry.getShareEntries().size() > 0) {
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
 			}
 			
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
 			
 			
-			FileLogEntry logEntry;
-			int level = LogEntryService.INFO;
-	
-			if (Reason.EXPIRY.equals(causeOfDeletion)) {
-				logEntry = new FileLogEntry(actor, LogAction.FILE_EXPIRE, "Expiration of a file",  documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
-			} else if (Reason.INCONSISTENCY.equals(causeOfDeletion)) {
-				logEntry = new FileLogEntry(actor, LogAction.FILE_INCONSISTENCY, "File removed because of inconsistence. Please contact your administrator.",  documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
-				level = LogEntryService.WARN;
-			} else {
-				logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
-			}
-			logEntryService.create(level, logEntry);
-			
+			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
+			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + documentEntry.getName()

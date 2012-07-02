@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.business.service;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 
@@ -14,7 +15,7 @@ public interface DocumentEntryBusinessService {
 	 * @param theFileStream
 	 * @return
 	 */
-	public String getMimeType(InputStream theFileStream)  throws BusinessException;
+	public String getMimeType(BufferedInputStream theFileStream)  throws BusinessException;
 	
 	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
 	
@@ -22,7 +23,7 @@ public interface DocumentEntryBusinessService {
 	
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException ;
 	
-	public File getFileFromStream(InputStream stream, String fileName);
+	public File getFileFromBufferedInputStream(BufferedInputStream stream, String fileName);
 	
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 	

@@ -138,17 +138,6 @@ public interface DocumentService {
 	public void deleteFile(String login, String uuid, Reason causeOfDeletion) throws BusinessException;
 
 	/**
-	 * Delete a file and send a notification for users having a sharing of this file.
-	 * @param login
-	 * @param identifier
-	 * @param causeOfDeletion
-	 * @param mailContainer
-	 * @throws BusinessException
-	 */
-	public void deleteFileWithNotification(String login, String identifier, Reason causeOfDeletion,
-			MailContainer mailContainer) throws BusinessException;
-	
-	/**
 	 * Find a doc by its uuid
 	 * @param uuid
 	 * @return

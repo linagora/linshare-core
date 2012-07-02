@@ -86,12 +86,6 @@ public class DocumentServiceImpl implements DocumentService {
 	}
 
 	@Override
-	public void deleteFileWithNotification(String login, String identifier, Reason causeOfDeletion, MailContainer mailContainer) throws BusinessException {
-		
-		
-	}
-
-	@Override
 	public Document getDocument(String uuid) {
 		
 		return null;

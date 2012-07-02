@@ -467,8 +467,7 @@ public class ListDocument {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,
 					"invalid uuid for this user");
 		} else {
-				InputStream stream = documentFacade.retrieveFileStream(
-						currentDocumentVo, user);
+				InputStream stream = documentFacade.retrieveFileStream(currentDocumentVo, user);
 				return new FileStreamResponse(currentDocumentVo, stream);
 		}
 
@@ -961,7 +960,7 @@ public class ListDocument {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,
 				docID);
-			stream = documentFacade.getDocumentThumbnail(userlogin, currentDocumentVo.getIdentifier());
+			stream = documentFacade.getDocumentThumbnail(user.getLsUid(), currentDocumentVo.getIdentifier());
 			if (stream==null) return;
 		OutputStream os = null;
 			response.setDateHeader("Expires", 0);
