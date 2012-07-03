@@ -78,6 +78,7 @@ public abstract class User extends Account {
 		this.destroyed = false;
 		this.comment = "";
 		this.canUpload = true;
+		this.canCreateGuest = true ;
 		this.restricted = false;
 		this.enciphermentKeyPass = null;
 		
@@ -209,79 +210,14 @@ public abstract class User extends Account {
 	
 	// ----------------------------------------------------------
 	
-//	/** User's document */
-//    private Set<Document> documents;
-//    
-//    /** Shares that user has shared to other */
-//    private Set<Share> shares;
-//    
     /** Secured URL that user has shared to other */
     private Set<SecuredUrl> securedUrls;
     
-//    /**
-//     * Shares that user has received from other user
-//     */
-//    private Set<Share> receivedShares;
-//    
      /**
      * signatures made by this user on documents
      */
 
     private Set<Signature> ownSignatures;
-    
-    
-    
-    
-//	public Set<Document> getDocuments() {
-//		return documents;
-//	}
-//
-//	public void setDocuments(Set<Document> documentList) {
-//		this.documents = documentList;
-//	}
-//    
-//	
-//	public void addShare(Share share) throws BusinessException {
-//		if (this.canUpload)
-//			this.shares.add(share);
-//		else 
-//			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
-//	}
-//	
-//	public void deleteShare(Share share) throws BusinessException {
-//		if (this.canUpload)
-//			this.shares.remove(share);
-//		else 
-//			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
-//	}
-//	
-//	
-//	public void deleteReceivedShare(Share share) {
-//			this.receivedShares.remove(share);
-//	}
-//	
-//	public void addReceivedShare(Share share){
-//			this.receivedShares.add(share);
-//	}
-//	
-//	public void addDocument(Document aDoc) throws BusinessException {
-//		if (this.canUpload)
-//			this.documents.add(aDoc);
-//		else 
-//			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
-//	}
-//
-//	public void deleteDocument(Document aDoc) {
-//		this.documents.remove(aDoc);
-//	}
-//	
-//	
-//	public Set<Share> getShares() {
-//		return shares;
-//	}
-//	public void setShares(Set<Share> shares) {
-//		this.shares = shares;
-//	}
     
 	public Set<SecuredUrl> getSecuredUrls() {
 		return securedUrls;
@@ -289,12 +225,6 @@ public abstract class User extends Account {
 	public void setSecuredUrls(Set<SecuredUrl> securedUrls) {
 		this.securedUrls = securedUrls;
 	}
-//	public Set<Share> getReceivedShares() {
-//		return receivedShares;
-//	}
-//	public void setReceivedShares(Set<Share> receivedShares) {
-//		this.receivedShares = receivedShares;
-//	}
 		
 	public Set<Signature> getOwnSignatures() {
 		return ownSignatures;

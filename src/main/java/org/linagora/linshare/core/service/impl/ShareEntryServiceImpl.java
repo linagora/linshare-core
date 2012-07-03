@@ -77,7 +77,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			expirationDate = shareExpiryDateService.computeShareExpiryDate(documentEntry, sender);
 		}
 		
-		shareEntryBusinessService.createShare(documentEntry, sender, recipient, expirationDate);
+		ShareEntry createShare = shareEntryBusinessService.createShare(documentEntry, sender, recipient, expirationDate);
 		if (recipient.getAccountType().equals(AccountType.GUEST)) {
 			updateGuestExpirationDate(recipient);
 		}
@@ -89,10 +89,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	       
 	    logEntryService.create(logEntry);
 	    
-//	    mailElementsFactory.buildMailNewSharingWithRecipient(actor, mailContainer, owner, recipientMail, docs, linShareUrl, linShareUrlParam, password, hasToDecrypt, jwsEncryptUrl)
-//	    mailElementsFactory.buildMailNewSharingWithRecipient(actor, mailContainer, owner, recipient, docs, linShareUrl, linShareUrlParam, password, hasToDecrypt, jwsEncryptUrl)
-	    
-		return null;
+		return createShare;
 	}
 
 

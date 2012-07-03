@@ -126,68 +126,67 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	
 //	@Override
-//	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo actorVo, List<DocumentVo> documents, List<UserVo> recipientsVo, Calendar expirationDate) throws BusinessException {
-//		logger.debug("createSharing:Begin");
-//		
-//		User actor = userService.findByLsUid(actorVo.getLsUid());
-//		
-//		List<User> recipients = new ArrayList<User>();
-//		
-//		for (UserVo userVo : recipientsVo) {
-//			try {
-//				recipients.add(userService.findOrCreateUserWithDomainPolicies(userVo.getMail(), actorVo.getDomainIdentifier()));
-//			} catch (BusinessException e) {
-//				logger.error("Could not find the recipient " + userVo.getMail() + " in the database nor in the ldap");
-//				throw e;
-//			}
-//		}
-//		
-//		List<DocumentEntry> documentEntries = documentEntryTransformer.assembleList(documents);
-//		
-//		SuccessesAndFailsItems<ShareEntry> successAndFails = shareEntryService.createShare(documentEntries, actor, recipients, expirationDate);
-//		
-//		SuccessesAndFailsItems<ShareDocumentVo> results = disassembleShareResultList(successAndFails);
-//		
-//		
-//		logger.debug("createSharing:End");
-//		return results;
-//	}
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo actorVo, List<DocumentVo> documents, List<UserVo> recipientsVo, Calendar expirationDate) throws BusinessException {
+		logger.debug("createSharing:Begin");
+		
+		User actor = userService.findByLsUid(actorVo.getLsUid());
+		
+		List<User> recipients = new ArrayList<User>();
+		
+		for (UserVo userVo : recipientsVo) {
+			try {
+				recipients.add(userService.findOrCreateUserWithDomainPolicies(userVo.getMail(), actorVo.getDomainIdentifier()));
+			} catch (BusinessException e) {
+				logger.error("Could not find the recipient " + userVo.getMail() + " in the database nor in the ldap");
+				throw e;
+			}
+		}
+		
+		List<DocumentEntry> documentEntries = documentEntryTransformer.assembleList(documents);
+		
+		SuccessesAndFailsItems<ShareEntry> successAndFails = shareEntryService.createShare(documentEntries, actor, recipients, expirationDate);
+		
+		SuccessesAndFailsItems<ShareDocumentVo> results = disassembleShareResultList(successAndFails);
+		
+		
+		logger.debug("createSharing:End");
+		return results;
+	}
 
-	
 //	@Override
-//	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, MailContainer mailContainer, Calendar expirationDate, boolean isOneDocEncrypted, String jwsEncryptUrlString) throws BusinessException {
-//		logger.debug("createSharingWithMail:Begin");
-//		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, expirationDate);
-//		
-//		//Sending the mails
-//		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
-//		for (ShareDocumentVo successfullSharing : result.getSuccessesItem()) {
-//			logger.debug("share:result:" + result);
-//			if (!successfullRecipient.contains(successfullSharing.getReceiver())) {
-//				successfullRecipient.add(successfullSharing.getReceiver());
-//			}
-//			
-//		}
-//		
-//		User owner_ = userRepository.findByLsUid(owner.getLogin());
-//		
-//		
-//		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-//		
-//		
-//		for(UserVo userVo : successfullRecipient){
-//			logger.debug("Sending sharing notification to user " + userVo.getLogin());
-//			User recipient = userRepository.findByLsUid(userVo.getLogin());
-//			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
-//			
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, MailContainer mailContainer, Calendar expirationDate, boolean isOneDocEncrypted, String jwsEncryptUrlString) throws BusinessException {
+		logger.debug("createSharingWithMail:Begin");
+		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, expirationDate);
+		
+		//Sending the mails
+		List<UserVo> successfullRecipient = new ArrayList<UserVo>();
+		for (ShareDocumentVo successfullSharing : result.getSuccessesItem()) {
+			logger.debug("share:result:" + result);
+			if (!successfullRecipient.contains(successfullSharing.getReceiver())) {
+				successfullRecipient.add(successfullSharing.getReceiver());
+			}
+			
+		}
+		
+		User owner_ = userRepository.findByLsUid(owner.getLogin());
+		
+		
+		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
+		
+		
+		for(UserVo userVo : successfullRecipient){
+			logger.debug("Sending sharing notification to user " + userVo.getLogin());
+			User recipient = userRepository.findByLsUid(userVo.getLogin());
+			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
+			
 //			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString));
-//
-//		}
-//		
+
+		}
+		
 //		notifierService.sendAllNotifications(mailContainerWithRecipient);
-//		logger.debug("createSharingWithMail:End");
-//		return result;
-//	}
+		logger.debug("createSharingWithMail:End");
+		return result;
+	}
 	
 	
 	@Override
@@ -249,78 +248,79 @@ public class ShareFacadeImpl implements ShareFacade {
 			UserVo actorVo, List<DocumentVo> documents, List<String> recipientsEmailInput, boolean secureSharing, MailContainer mailContainer, Calendar expiryDateSelected) throws BusinessException {
     	logger.debug("createSharingWithMailUsingRecipientsEmail");
     	
-//    	User actor = userService.findByLsUid(actorVo.getLsUid());
-//    	
-//		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
-//
-//		List<UserVo> knownRecipients = new ArrayList<UserVo>();
-//		List<Contact> unKnownRecipientsEmail = new ArrayList<Contact>();
-//		
-//		logger.debug("The current user is : " + actor.getAccountReprentation());
-//		logger.debug("recipientsEmailInput size : " + recipientsEmailInput.size());
-//		List<String> recipientsEmail = new ArrayList<String>();
-//		if(actor.getAccountType().equals(AccountType.GUEST) && ((Guest)actor).isRestricted()) {
-//			List<String> guestAllowedContacts= userService.getGuestEmailContacts(actor.getLogin());
-//			logger.debug("guestAllowedContacts size : " + guestAllowedContacts.size());
-//			for (String mailInput : recipientsEmailInput) {
-//				if(guestAllowedContacts.contains(mailInput)) {
-//					logger.debug("The current user is allowed to share with : " + mailInput);
-//					recipientsEmail.add(mailInput);
-//				} else {
-//					logger.info("The current user is not allowed to share with : " + mailInput);
-//					unKnownRecipientsEmail.add(new Contact(mailInput));
-//				}
-//			}
-//			logger.debug("Only " + recipientsEmail.size() + " contacts are authorized for " + owner.getMail());
-//		} else {
-//			recipientsEmail.addAll(recipientsEmailInput);
-//		}
-//		logger.debug("recipientsEmail size : " + recipientsEmail.size());
-//		logger.debug("unKnownRecipientsEmail size : " + unKnownRecipientsEmail.size());
-//		logger.debug("unKnownRecipientsEmail  : " + unKnownRecipientsEmail.toString());
-//    	
-//    	boolean isOneDocEncrypted = false;
-//		for (DocumentVo oneDoc : documents) {
-//			if(oneDoc.getEncrypted()==true) isOneDocEncrypted = true;
-//		}
-//		
-//		String jwsEncryptUrlString = getJwsEncryptUrlString(isOneDocEncrypted);
-//		
-//		// find known and unknown recipients of the share
-//		User tempRecipient = null;
-//		for (String mail : recipientsEmail) {			
-//			try {
-//				tempRecipient= userService.findOrCreateUserWithDomainPolicies(mail, owner.getDomainId());
-//				knownRecipients.add(new UserVo(tempRecipient));
-//			} catch (BusinessException e) {
-//				if (e.getErrorCode() == BusinessErrorCode.USER_NOT_FOUND) {					
-//					logger.debug("unKnownRecipientsEmail  : adding a new contact : " + mail.toString());
-//					unKnownRecipientsEmail.add(new Contact(mail));
-//				}
-//				else
-//					throw e;
-//			}
-//		}
-//		
-//		logger.debug("knownRecipients size : " + knownRecipients.size());
-//		logger.debug("knownRecipients  : " + knownRecipients.toString());
-//		logger.debug("unKnownRecipientsEmail size : " + unKnownRecipientsEmail.size());
-//		logger.debug("unKnownRecipientsEmail  : " + unKnownRecipientsEmail.toString());
-//		
-//		if(unKnownRecipientsEmail.size()>0){ //secureUrl for these users (no need to have an account to activate sharing)
-//			
-//			boolean hasRightsToShareWithExternals = false;
-//			
-//			try {
-//				hasRightsToShareWithExternals = abstractDomainService.hasRightsToShareWithExternals(owner);
-//			} catch (BusinessException e) {
-//				logger.error("Could not retrieve domain of sender while sharing to externals: "+owner.getMail());
-//			}
-//			
-//			if (hasRightsToShareWithExternals) {
-//			
-//				List<Document> docList = getDocumentEntitiesFromVo(documents);
-//				
+    	User actor = userService.findByLsUid(actorVo.getLsUid());
+    	
+		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
+
+		List<UserVo> knownRecipients = new ArrayList<UserVo>();
+		List<Contact> unKnownRecipientsEmail = new ArrayList<Contact>();
+		
+		logger.debug("The current user is : " + actor.getAccountReprentation());
+		logger.debug("recipientsEmailInput size : " + recipientsEmailInput.size());
+		List<String> recipientsEmail = new ArrayList<String>();
+		if(actor.getAccountType().equals(AccountType.GUEST) && ((Guest)actor).isRestricted()) {
+			List<String> guestAllowedContacts= userService.getGuestEmailContacts(actor.getMail());
+			logger.debug("guestAllowedContacts size : " + guestAllowedContacts.size());
+			for (String mailInput : recipientsEmailInput) {
+				if(guestAllowedContacts.contains(mailInput)) {
+					logger.debug("The current user is allowed to share with : " + mailInput);
+					recipientsEmail.add(mailInput);
+				} else {
+					logger.info("The current user is not allowed to share with : " + mailInput);
+					unKnownRecipientsEmail.add(new Contact(mailInput));
+				}
+			}
+			logger.debug("Only " + recipientsEmail.size() + " contacts are authorized for " + actor.getMail());
+		} else {
+			recipientsEmail.addAll(recipientsEmailInput);
+		}
+		logger.debug("recipientsEmail size : " + recipientsEmail.size());
+		logger.debug("unKnownRecipientsEmail size : " + unKnownRecipientsEmail.size());
+		logger.debug("unKnownRecipientsEmail  : " + unKnownRecipientsEmail.toString());
+    	
+    	boolean isOneDocEncrypted = false;
+		for (DocumentVo oneDoc : documents) {
+			if(oneDoc.getEncrypted()==true) isOneDocEncrypted = true;
+		}
+		
+		String jwsEncryptUrlString = getJwsEncryptUrlString(isOneDocEncrypted);
+		
+		// find known and unknown recipients of the share
+		User tempRecipient = null;
+		for (String mail : recipientsEmail) {
+			try {
+				tempRecipient= userService.findOrCreateUserWithDomainPolicies(mail, actor.getDomainId());
+				knownRecipients.add(new UserVo(tempRecipient));
+			} catch (BusinessException e) {
+				if (e.getErrorCode() == BusinessErrorCode.USER_NOT_FOUND) {					
+					logger.debug("unKnownRecipientsEmail  : adding a new contact : " + mail.toString());
+					unKnownRecipientsEmail.add(new Contact(mail));
+				}
+				else
+					throw e;
+			}
+		}
+		
+		logger.debug("knownRecipients size : " + knownRecipients.size());
+		logger.debug("knownRecipients  : " + knownRecipients.toString());
+		logger.debug("unKnownRecipientsEmail size : " + unKnownRecipientsEmail.size());
+		logger.debug("unKnownRecipientsEmail  : " + unKnownRecipientsEmail.toString());
+		
+		if(unKnownRecipientsEmail.size()>0){ //secureUrl for these users (no need to have an account to activate sharing)
+			
+			boolean hasRightsToShareWithExternals = false;
+			
+			try {
+				hasRightsToShareWithExternals = abstractDomainService.hasRightsToShareWithExternals(actor);
+			} catch (BusinessException e) {
+				logger.error("Could not retrieve domain of sender while sharing to externals: "+actor.getAccountReprentation());
+			}
+			
+			if (hasRightsToShareWithExternals) {
+			
+				List<DocumentEntry> documentEntries = documentEntryTransformer.assembleList(documents);
+				
+				// TODO : Fix Anonymous Url
 //				SecuredUrl securedUrl = shareService.shareDocumentsWithSecuredAnonymousUrlToUser(owner, docList, secureSharing, unKnownRecipientsEmail, expiryDateSelected);
 //				
 //				//compose the secured url to give in mail
@@ -347,22 +347,22 @@ public class ShareFacadeImpl implements ShareFacade {
 //				}
 //				
 //				notifierService.sendAllNotifications(mailContainerWithRecipient);
-//			
-//			} else {
-//				for (DocumentVo doc : documents) {
-//					for (Contact oneContact : unKnownRecipientsEmail) {
-//						UserVo recipient = new UserVo(oneContact.getMail(), "", "", oneContact.getMail(), null);
-//						ShareDocumentVo failSharing=new ShareDocumentVo(doc, ownerVo, recipient, new GregorianCalendar(), false, "", new GregorianCalendar(),0);
-//						result.addFailItem(failSharing);
-//					}
-//				}
-//			}
-//		}
-//		
-//		//keep old method to share with user referenced in db
-//		result.addAll(createSharingWithMail(ownerVo, documents, knownRecipients, mailContainer, expiryDateSelected, isOneDocEncrypted, jwsEncryptUrlString));
-//		return result;
-    	return null;
+			
+			} else {
+				// Building all failed items for unkown recipients. 
+				for (DocumentVo doc : documents) {
+					for (Contact oneContact : unKnownRecipientsEmail) {
+						UserVo recipient = new UserVo(oneContact.getMail(), "", "", oneContact.getMail(), null);
+						ShareDocumentVo failSharing=new ShareDocumentVo(doc, actorVo, recipient);
+						result.addFailItem(failSharing);
+					}
+				}
+			}
+		}
+		
+		//keep old method to share with user referenced in db
+		result.addAll(createSharingWithMail(actorVo, documents, knownRecipients, mailContainer, expiryDateSelected, isOneDocEncrypted, jwsEncryptUrlString));
+		return result;
     }
     
     
