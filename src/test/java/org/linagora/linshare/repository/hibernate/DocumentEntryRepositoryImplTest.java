@@ -41,7 +41,10 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl;
 import org.linagora.linshare.service.LoadingServiceTestDatas;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -52,6 +55,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-repository.xml"})
 public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit4SpringContextTests{
 
+	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryRepositoryImplTest.class);
+	
+	
     private static final String LOGIN = "login";
     private static final String FIRST_NAME = "first name";
     private static final String LAST_NAME = "last name";
@@ -127,11 +133,11 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		documentEntryRepository.create(doc);
 		logger.debug("documentEntry id : " + doc.getUuid());
 		
-		ShareEntry share = new ShareEntry(user, "my share", "comment", user, doc);
-		documentEntryRepository.create(share);
-		logger.debug("shareEntry id : " + share.getUuid());
-		
-		documentEntryRepository.delete(share);
+//		ShareEntry share = new ShareEntry(user, "my share", "comment", user, doc);
+//		documentEntryRepository.create(share);
+//		logger.debug("shareEntry id : " + share.getUuid());
+//		
+//		documentEntryRepository.delete(share);
 		documentEntryRepository.delete(doc);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

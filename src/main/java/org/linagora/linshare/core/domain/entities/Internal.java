@@ -47,5 +47,11 @@ public class Internal extends User {
 	public AccountType getAccountType() {
 		return AccountType.INTERNAL;
 	}
+	
+	@Override
+	public String getAccountReprentation() {
+		return this.firstName + " " + this.lastName + "(" + lsUid + ", " + this.ldapUid + ")";
+	}
+
 
 }

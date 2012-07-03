@@ -52,10 +52,6 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 		this.documentAdapter = documentAdapter;
 	}
 	
-	public Set<Document> retrieveDocument(User user) {
-		return userRepository.findByMail(user.getLogin()).getDocuments();
-	}
-
 	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
 		
 		List<Document> docs= searchDocumentDao.retrieveUserDocumentWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
@@ -66,23 +62,40 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 		return documentAdapter.disassembleDocList(docs);
 	}
 
-	public Set<Document> retrieveDocument(String login) {
-		return userRepository.findByMail(login).getDocuments();
-	}
 
-	public List<DocumentVo> retrieveDocuments(User user) {
-		
-		List<Document> docs= new ArrayList<Document>(user.getDocuments());
-		List<Share> shares = new ArrayList<Share>(user.getReceivedShares());
-		
-		return documentAdapter.disassembleList(docs, shares);
-	}
+//	public List<DocumentVo> retrieveDocuments(User user) {
+//		
+//		List<Document> docs= new ArrayList<Document>(user.getDocuments());
+//		List<Share> shares = new ArrayList<Share>(user.getReceivedShares());
+//		
+//		return documentAdapter.disassembleList(docs, shares);
+//	}
 
 
 	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(
 			SearchDocumentCriterion searchDocumentCriterion) {
 		List<Share> shares = searchDocumentDao.retrieveUserReceivedSharedDocWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
-		return documentAdapter.disassembleShareList(shares);
+		// TODO : To be fix
+//		return documentAdapter.disassembleShareList(shares);
+		return  new ArrayList<ShareDocumentVo>();
+	}
+
+	@Override
+	public Set<Document> retrieveDocument(String login) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<Document> retrieveDocument(User user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<DocumentVo> retrieveDocuments(User user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

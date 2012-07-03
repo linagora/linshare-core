@@ -89,36 +89,37 @@ public class SecuredUrlServiceImplTest extends AbstractTransactionalJUnit4Spring
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-		datas.loadUsers();
 		
-		john = datas.getUser1();
-		jane = datas.getUser2();
-		
-		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-		inputStreamUuid = fileRepository.insertFile(john.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
-				
-		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
-		
-		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
-		Calendar exp=inputStreamInfo.getLastModified();
-		exp.add(Calendar.HOUR, 4);
-		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,new Long(10000));
-		List<Signature> signatures = new ArrayList<Signature>();
-		aDocument.setSignatures(signatures);
-		
-		try {
-			documentRepository.create(aDocument);
-			john.addDocument(aDocument);
-			userRepository.update(john);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			Assert.fail();
-		} catch (BusinessException e) {
-			e.printStackTrace();
-			Assert.fail();
-		}
+//		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
+//		datas.loadUsers();
+//		
+//		john = datas.getUser1();
+//		jane = datas.getUser2();
+//		
+//		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
+//		inputStreamUuid = fileRepository.insertFile(john.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
+//				
+//		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
+//		
+//		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
+//		Calendar exp=inputStreamInfo.getLastModified();
+//		exp.add(Calendar.HOUR, 4);
+//		
+//		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,new Long(10000));
+//		List<Signature> signatures = new ArrayList<Signature>();
+//		aDocument.setSignatures(signatures);
+//		
+//		try {
+//			documentRepository.create(aDocument);
+//			john.addDocument(aDocument);
+//			userRepository.update(john);
+//		} catch (IllegalArgumentException e) {
+//			e.printStackTrace();
+//			Assert.fail();
+//		} catch (BusinessException e) {
+//			e.printStackTrace();
+//			Assert.fail();
+//		}
 		
 		logger.debug(LinShareTestConstants.END_SETUP);
 
@@ -127,10 +128,10 @@ public class SecuredUrlServiceImplTest extends AbstractTransactionalJUnit4Spring
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		documentRepository.delete(aDocument);
-		john.getDocuments().clear();
-		userRepository.update(john);
-		fileRepository.removeFileByUUID(aDocument.getUuid());
+//		documentRepository.delete(aDocument);
+//		john.getDocuments().clear();
+//		userRepository.update(john);
+//		fileRepository.removeFileByUUID(aDocument.getUuid());
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	

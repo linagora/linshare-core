@@ -51,4 +51,9 @@ public class Guest extends User {
 		return AccountType.GUEST;
 	}
     
+	@Override
+	public String getAccountReprentation() {
+		return this.firstName + " " + this.lastName + "(" + lsUid + ")";
+	}
+
 }

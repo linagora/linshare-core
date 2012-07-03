@@ -41,8 +41,15 @@ public class Thread extends Account {
 		return myMembers;
 	}
 
+
 	public void setMyMembers(Set<ThreadMember> myMembers) {
 		this.myMembers = myMembers;
+	}
+
+
+	@Override
+	public String getAccountReprentation() {
+		return name + "(" + lsUid + ")";
 	}
 
 }

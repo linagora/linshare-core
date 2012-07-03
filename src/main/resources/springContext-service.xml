@@ -122,6 +122,18 @@
     	<constructor-arg index="13" ref="functionalityService" />
     	<constructor-arg index="14" ref="passwordService" />
     </bean>
+    
+    
+    <bean id="shareEntryService" class="org.linagora.linshare.core.service.impl.ShareEntryServiceImpl">
+    	<constructor-arg ref="guestRepository"/>
+    	<constructor-arg ref="functionalityService"/>
+    	<constructor-arg ref="shareEntryBusinessService"/>
+    	<constructor-arg ref="shareExpiryDateService"/>
+    	<constructor-arg ref="logEntryService"/>
+    	<constructor-arg ref="documentEntryService"/>
+    	<constructor-arg ref="notifierService"/>
+    	<constructor-arg ref="mailContentBuildingService"/>
+    </bean>
 
 	   
     <bean id="searchDocumentService" class="org.linagora.linshare.core.service.impl.SearchDocumentServiceImpl">

@@ -124,4 +124,26 @@ public interface FunctionalityService {
 	public Functionality getAuditTabFunctionality(AbstractDomain domain);
 	public Functionality getHelpTabFunctionality(AbstractDomain domain);
 	
+	
+	/**
+	 * Check if SecuredAnonymousUrl (SAU) is mandatory
+	 * @param domain : the current domain identifier
+	 * @return 
+	 */
+	public boolean isSauMadatory(String domainIdentifier);
+	
+	/**
+	 * Check if SecuredAnonymousUrl (SAU) is allowed
+	 * @param domain : the current domain identifier
+	 * @return 
+	 */
+	public boolean isSauAllowed(String domainIdentifier);
+
+	/**
+	 * return the default value for SecuredAnonymousUrl (SAU)
+	 * @param domain : the current domain identifier
+	 * @return
+	 */
+	public boolean getDefaultSauValue(String domainIdentifier);
+	
 }

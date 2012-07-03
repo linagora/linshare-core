@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -33,38 +34,38 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface ShareFacade {
 
 	
-	/**
-	 * Create a whole set of sharing
-	 * The expiration date will be defined in the config
-	 * @param owner : the document owner
-	 * @param documents : the list of documents to be shared
-	 * @param recipients : the recipients list
-	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
-	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, Calendar expiryDate) throws BusinessException;
-	
-	
-	/**
-	 * Create a whole set of shared documents
-	 * The expiration date will be defined in the config
-	 * Send the email only to the recipients who really received an email
-	 * @param owner : the document owner
-	 * @param documents : the list of documents to be shared
-	 * @param recipients : the recipients list
-	 * @param mailContainer : the information to build notifications
-	 * @param expirationDate : the expiration date selected by user
-	 * @param docsEncrypted : if there is encrypted documents
-	 * @param jwsEncryptUrlString : the url for jws service
-	 * @return SuccessesAndFailsItems<SharedDocumentVo> : the list of sharing that succedded and failed
-	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
-	 */
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, 
-			List<UserVo> recipients, MailContainer mailContainer,
-			Calendar expirationDate, boolean docsEncrypted, String jwsEncryptUrlString) 
-			throws BusinessException;
-
-	
-	
+//	/**
+//	 * Create a whole set of sharing
+//	 * The expiration date will be defined in the config
+//	 * @param owner : the document owner
+//	 * @param documents : the list of documents to be shared
+//	 * @param recipients : the recipients list
+//	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
+//	 */
+//	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, Calendar expiryDate) throws BusinessException;
+//	
+//	
+//	/**
+//	 * Create a whole set of shared documents
+//	 * The expiration date will be defined in the config
+//	 * Send the email only to the recipients who really received an email
+//	 * @param owner : the document owner
+//	 * @param documents : the list of documents to be shared
+//	 * @param recipients : the recipients list
+//	 * @param mailContainer : the information to build notifications
+//	 * @param expirationDate : the expiration date selected by user
+//	 * @param docsEncrypted : if there is encrypted documents
+//	 * @param jwsEncryptUrlString : the url for jws service
+//	 * @return SuccessesAndFailsItems<SharedDocumentVo> : the list of sharing that succedded and failed
+//	 * @throws BusinessException if a recipient cannot be found in the db nor in the ldap 
+//	 */
+//	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, 
+//			List<UserVo> recipients, MailContainer mailContainer,
+//			Calendar expirationDate, boolean docsEncrypted, String jwsEncryptUrlString) 
+//			throws BusinessException;
+//
+//	
+//	
 	/**
 	 * same function as createSharingWithMail() BUT we give Recipients Emails which can be found or NOT FOUND in database.
 	 * @param owner
@@ -174,13 +175,13 @@ public interface ShareFacade {
 	 * @param persistenceId
 	 * @return
 	 */
-	public ShareDocumentVo getShareDocumentVoById(long persistenceId);
+	public ShareDocumentVo getShareDocumentVoByUuid(UserVo actorVo, String uuid ) throws BusinessException;
 	
 	/**
 	 * This method is desinged to update only share comment.
 	 * @param persistenceId TODO
 	 * @param comment TODO
 	 */
-	public void updateShareComment(String persistenceId, String comment) throws IllegalArgumentException, BusinessException ;
+	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException ;
 	
 }

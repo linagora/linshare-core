@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Calendar;
+
 import org.linagora.linshare.core.domain.constants.EntryType;
 
 /**
@@ -19,11 +21,12 @@ public class ShareEntry extends Entry{
 		super();
 	}
 
-	public ShareEntry(Account entryOwner, String name, String comment, User recipient, DocumentEntry documentEntry) {
+	public ShareEntry(Account entryOwner, String name, String comment, User recipient, DocumentEntry documentEntry, Calendar expirationDate) {
 		super(entryOwner, name, comment);
 		this.recipient = recipient;
 		this.documentEntry = documentEntry;
 		this.downloaded = new Long(0);
+		this.expirationDate = expirationDate;
 	}
 
 	@Override
@@ -54,6 +57,15 @@ public class ShareEntry extends Entry{
 	public void setDownloaded(Long downloaded) {
 		this.downloaded = downloaded;
 	}
+
 	
+	/* usefull getters */
+	public long getSize() {
+		return documentEntry.getSize();
+	}
+	
+	public String getType() {
+		return documentEntry.getType();
+	}
 	
 }

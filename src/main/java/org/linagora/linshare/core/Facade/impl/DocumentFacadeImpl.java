@@ -27,9 +27,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.Facade.DocumentFacade;
+import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.Signature;
@@ -118,7 +120,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		Account actor = accountService.findUserInDB(actorVo.getLsUid());
 		if(actor != null) {
 			if (document instanceof ShareDocumentVo) {
-				
+				// TODO : to be done : delete a shared document
 			} else if (document instanceof DocumentVo) {
 				// old method : 
 //				documentService.deleteFileWithNotification(actor.getLsUid(),document.getIdentifier(), Reason.NONE, mailContainer);
@@ -322,8 +324,10 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		Long userAvailableQuota = documentEntryService.getAvailableSize(user);
 		Long userTotalQuota = documentEntryService.getTotalSize(user);
 		Long userUsedSize = 0L;
-		for (Document doc : user.getDocuments()) {
-			userUsedSize += doc.getSize();
+		for (Entry entry : user.getEntries()) {
+			if(entry.getEntryType().equals(EntryType.DOCUMENT)) {
+				userUsedSize += ((DocumentEntry)entry).getSize();
+			}
 		}
 		DisplayableAccountOccupationEntryVo accountOccupation = new DisplayableAccountOccupationEntryVo(user.getFirstName(), 
 				user.getLastName(), user.getMail(), user.getAccountType(), 

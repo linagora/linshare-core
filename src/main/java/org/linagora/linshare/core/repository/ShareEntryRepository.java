@@ -20,13 +20,20 @@
 */
 package org.linagora.linshare.core.repository;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.User;
 
-public interface DocumentEntryRepository extends AbstractRepository<DocumentEntry>{
+public interface ShareEntryRepository extends AbstractRepository<ShareEntry>{
 	
-	 /** Find a document using its uuid.
+	 /** Find a Share using its uuid.
      * @param  uuid
      * @return found document (null if no document found).
      */
-	public DocumentEntry findById(String uuid);
+	public ShareEntry findById(String uuid);
+	
+	
+	public ShareEntry getShareEntry(DocumentEntry documentEntry, User sender, User recipient);
+	
 }

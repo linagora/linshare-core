@@ -131,39 +131,6 @@ public interface ShareService {
 
 	public List<Share> getSharesLinkedToDocument(Document doc);
 
-	/**
-	 * Do the log entries for a local copy
-	 * @param doc
-	 * @param share
-	 */
-	public void logLocalCopyOfDocument(Share share, User user) throws IllegalArgumentException, BusinessException;
-
 	public void notifyUpcomingOutdatedShares();
 
-	/**
-	 * Check if SecuredAnonymousUrl (SAU) is allowed
-	 * @param domain : the current domain
-	 * @return 
-	 */
-	public boolean isSauAllowed(AbstractDomain domain);
-
-	/**
-	 * return the default value for SecuredAnonymousUrl (SAU)
-	 * @param domain : the current domain
-	 * @return
-	 */
-	public boolean getDefaultSauValue(AbstractDomain domain);
-	
-	/**
-	 * get a share using its unique persistenceId
-	 * @param persistenceId
-	 * @return
-	 */
-	public Share getShare(long persistenceId);
-	
-	/**
-	 * This method is desinged to update an existing share entity
-	 * @param share
-	 */
-	public void updateShare(Share share) throws IllegalArgumentException, BusinessException ;
 }

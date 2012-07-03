@@ -52,13 +52,14 @@
        	 <constructor-arg ref="documentRepository"/>
        	 <constructor-arg ref="notifierService"/>
        	 <constructor-arg ref="userService"/>
-         <constructor-arg ref="documentService"/>
+         <constructor-arg ref="shareEntryService"/>
          <constructor-arg ref="mailContentBuildingService" />
-         <constructor-arg ref="documentTransformer" />
+         <constructor-arg ref="documentEntryTransformer" />
          <constructor-arg value="${linshare.info.url.base}" />
          <constructor-arg value="${linshare.info.url.internal}" />
          <constructor-arg ref="abstractDomainService" />
          <constructor-arg ref="functionalityService" />
+         <constructor-arg ref="documentEntryService" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linshare.core.Facade.impl.ShareExpiryDateFacadeImpl">

@@ -87,37 +87,37 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		
-		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-		datas.loadUsers();
-		
-		jane = datas.getUser2();
-		
-		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-		inputStreamUuid = fileRepository.insertFile(jane.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
-				
-		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
-		
-		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
-		Calendar exp=inputStreamInfo.getLastModified();
-		exp.add(Calendar.HOUR, 4);
-		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,new Long(10000));
-		List<Signature> signatures = new ArrayList<Signature>();
-		aDocument.setSignatures(signatures);
-		
-		try {
-			documentRepository.create(aDocument);
-			jane.addDocument(aDocument);
-			userRepository.update(jane);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			Assert.fail();
-		} catch (BusinessException e) {
-			e.printStackTrace();
-			Assert.fail();
-		}
-		
-		
+//		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
+//		datas.loadUsers();
+//		
+//		jane = datas.getUser2();
+//		
+//		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
+//		inputStreamUuid = fileRepository.insertFile(jane.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
+//				
+//		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
+//		
+//		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
+//		Calendar exp=inputStreamInfo.getLastModified();
+//		exp.add(Calendar.HOUR, 4);
+//		
+//		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, jane,false,false,new Long(10000));
+//		List<Signature> signatures = new ArrayList<Signature>();
+//		aDocument.setSignatures(signatures);
+//		
+//		try {
+//			documentRepository.create(aDocument);
+//			jane.addDocument(aDocument);
+//			userRepository.update(jane);
+//		} catch (IllegalArgumentException e) {
+//			e.printStackTrace();
+//			Assert.fail();
+//		} catch (BusinessException e) {
+//			e.printStackTrace();
+//			Assert.fail();
+//		}
+//		
+//		
 		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -126,14 +126,14 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		
-		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
-		printDocs(jane);
-		documentRepository.delete(aDocument);
-//		Jane.deleteDocument(aDocument);
-		jane.getDocuments().clear();
-		userRepository.update(jane);
-		fileRepository.removeFileByUUID(aDocument.getUuid());
-		datas.deleteUsers();
+//		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
+//		printDocs(jane);
+//		documentRepository.delete(aDocument);
+////		Jane.deleteDocument(aDocument);
+//		jane.getDocuments().clear();
+//		userRepository.update(jane);
+//		fileRepository.removeFileByUUID(aDocument.getUuid());
+//		datas.deleteUsers();
 		
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
@@ -208,10 +208,10 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 	
 	private void printDocs(User user) {
 		logger.debug("begin : " + user.getLogin());
-		for (Document doc : user.getDocuments()) {
-			logger.debug("doc : " + doc.getUuid());
-			
-		}
+//		for (Document doc : user.getDocuments()) {
+//			logger.debug("doc : " + doc.getUuid());
+//			
+//		}
 		logger.debug("end");
 	}
 	

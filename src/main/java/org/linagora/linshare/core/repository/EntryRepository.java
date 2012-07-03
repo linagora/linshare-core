@@ -20,13 +20,13 @@
 */
 package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 
-public interface DocumentEntryRepository extends AbstractRepository<DocumentEntry>{
+public interface EntryRepository extends AbstractRepository<Entry>{
 	
 	 /** Find a document using its uuid.
      * @param  uuid
      * @return found document (null if no document found).
      */
-	public DocumentEntry findById(String uuid);
+	public Entry findById(String uuid);
 }

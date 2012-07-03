@@ -41,45 +41,52 @@ public class ShareDocumentVo extends DocumentVo {
 	/** is the document has been downloaded */
 	private final Boolean downloaded;
 	
-	/** The comment when the share is done. */
-	private final String comment;
 	
-	/** The share persistenceID. */
-	private final long persistenceId;
 	
-	public ShareDocumentVo(String identifier, String name, String fileComment,
-			Calendar creationDate, Calendar expirationDate, String type,
-			String ownerLogin, Boolean encrypted, Boolean shared, 
-			Long size, UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
-			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
-		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin,
-				encrypted, shared, size);
-		
-		this.sender = sender; 
-		this.receiver = receiver; 
+	
+	public ShareDocumentVo(String identifier, String name, String fileComment, Calendar creationDate, Calendar expirationDate, String type, String ownerLogin, Boolean encrypted, Boolean shared,
+			Long size, UserVo sender, UserVo receiver, Calendar shareExpirationDate, Calendar sharingDate, Boolean downloaded) {
+		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin, encrypted, shared, size);
+		this.sender = sender;
+		this.receiver = receiver;
 		this.shareExpirationDate = shareExpirationDate;
-		this.downloaded = downloaded;
-		this.comment = comment;
 		this.sharingDate = sharingDate;
-		this.persistenceId = persistenceId;
-	}
-	
-	public ShareDocumentVo(DocumentVo doc,
-			UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
-			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
-		
-		super(doc.getIdentifier(),doc.getFileName(),doc.getFileComment(),doc.getCreationDate(),doc.getExpirationDate(),doc.getType(), doc.getOwnerLogin(),
-				doc.getEncrypted(),doc.getShared(),doc.getSize());
-		
-		
-		this.sender = sender; 
-		this.receiver = receiver; 
-		this.shareExpirationDate = shareExpirationDate;
 		this.downloaded = downloaded;
-		this.comment = comment;
-		this.sharingDate = sharingDate;
-		this.persistenceId = persistenceId;
 	}
+
+//	public ShareDocumentVo(String identifier, String name, String fileComment,
+//			Calendar creationDate, Calendar expirationDate, String type,
+//			String ownerLogin, Boolean encrypted, Boolean shared, 
+//			Long size, UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
+//			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
+//		super(identifier, name, fileComment, creationDate, expirationDate, type, ownerLogin,
+//				encrypted, shared, size);
+//		
+//		this.sender = sender; 
+//		this.receiver = receiver; 
+//		this.shareExpirationDate = shareExpirationDate;
+//		this.downloaded = downloaded;
+//		this.comment = comment;
+//		this.sharingDate = sharingDate;
+//		this.persistenceId = persistenceId;
+//	}
+//	
+//	public ShareDocumentVo(DocumentVo doc,
+//			UserVo sender, UserVo receiver,  Calendar shareExpirationDate,
+//			Boolean downloaded, String comment, Calendar sharingDate, long persistenceId) {
+//		
+//		super(doc.getIdentifier(),doc.getFileName(),doc.getFileComment(),doc.getCreationDate(),doc.getExpirationDate(),doc.getType(), doc.getOwnerLogin(),
+//				doc.getEncrypted(),doc.getShared(),doc.getSize());
+//		
+//		
+//		this.sender = sender; 
+//		this.receiver = receiver; 
+//		this.shareExpirationDate = shareExpirationDate;
+//		this.downloaded = downloaded;
+//		this.comment = comment;
+//		this.sharingDate = sharingDate;
+//		this.persistenceId = persistenceId;
+//	}
 
 	public UserVo getSender() {
 		return sender;
@@ -97,10 +104,6 @@ public class ShareDocumentVo extends DocumentVo {
 		return downloaded;
 	}
 
-	public String getComment() {
-		return comment;
-	}
-
 	public Calendar getSharingDate() {
 		return sharingDate;
 	}
@@ -113,9 +116,5 @@ public class ShareDocumentVo extends DocumentVo {
 	@Override
 	public String toString() {
 		return "ShareDoc:" + this.sender + ":" + this.getFileName() + ":" + receiver; 
-	}
-
-	public long getPersistenceId() {
-		return persistenceId;
 	}
 }

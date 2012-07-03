@@ -8,5 +8,12 @@ public class TechnicalAccount extends User {
 	public AccountType getAccountType() {
 		return AccountType.TECHNICALACCOUNT;
 	}
+	
+	@Override
+	public String getAccountReprentation() {
+//		return this.firstName + " " + this.lastName + "(" + lsUid + ")";
+		return lsUid ;
+	}
+
 
 }

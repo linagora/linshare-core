@@ -106,7 +106,7 @@ public class ShareEditForm {
     
     
     @Persist
-    private String editShareWithId;
+    private String editShareWithUuid;
 
     @SessionState
     @Property
@@ -164,7 +164,7 @@ public class ShareEditForm {
 		if(reset) return;
 
 		try {
-			shareFacade.updateShareComment(editShareWithId, shareComment);
+			shareFacade.updateShareComment(userLoggedIn, editShareWithUuid, shareComment);
 			shareSessionObjects.addMessage(messages.get("component.shareEditForm.action.update.confirm"));
 			componentResources.triggerEvent("resetListFiles", null, null);
 		} catch (IllegalArgumentException e) {
@@ -211,14 +211,19 @@ public class ShareEditForm {
     }
 
 	public void setEditShareWithId(String editShareWithId) {
-		this.editShareWithId = editShareWithId;
+		this.editShareWithUuid = editShareWithId;
 		initFormToEdit();
 	}
 	
     private void initFormToEdit(){
-		if(editShareWithId!=null){
-		    	ShareDocumentVo share =  shareFacade.getShareDocumentVoById(Long.valueOf(editShareWithId));
-		    	shareComment = share.getFileComment();
+		if(editShareWithUuid!=null){
+		    	ShareDocumentVo share;
+				try {
+					share = shareFacade.getShareDocumentVoByUuid(userLoggedIn, editShareWithUuid);
+					shareComment = share.getFileComment();
+				} catch (BusinessException e) {
+					logger.error("share not found : " + editShareWithUuid);
+				}
 		}
     }
 }

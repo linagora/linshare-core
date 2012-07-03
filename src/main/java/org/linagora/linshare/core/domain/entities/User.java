@@ -59,8 +59,9 @@ public abstract class User extends Account {
 	
 	protected TechnicalAccountPermission technicalAccountPermission;
 	
-	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
-	
+	/** If the user is allowed to create guest */
+	protected Boolean canCreateGuest;
+
 	
 	public User() {
 	}
@@ -83,10 +84,10 @@ public abstract class User extends Account {
 		// TODO: To be deleted:
 //		Set<Share>
 		
-		this.documents = new HashSet<Document>();
-		this.shares = new HashSet<Share>();
-		this.securedUrls = new HashSet<SecuredUrl>();
-		this.receivedShares = new HashSet<Share>();
+//		this.documents = new HashSet<Document>();
+//		this.shares = new HashSet<Share>();
+//		this.securedUrls = new HashSet<SecuredUrl>();
+//		this.receivedShares = new HashSet<Share>();
 	}
 
 	
@@ -189,37 +190,39 @@ public abstract class User extends Account {
 		return technicalAccountPermission;
 	}
 	
-	
-	
-	
-	
-	// ----------------------------------------------------------
-	
-	  /** If the user is allowed to create guest */
-    private Boolean canCreateGuest;
+	public Set<ThreadMember> getMyThreads() {
+		return myThreads;
+	}
 
+	public void setMyThreads(Set<ThreadMember> myThreads) {
+		this.myThreads = myThreads;
+	}
+	
 	public Boolean getCanCreateGuest() {
 		return canCreateGuest;
 	}
+	
 	public void setCanCreateGuest(Boolean canCreateGuest) {
 		this.canCreateGuest = canCreateGuest;
 	}
 	
 	
-	/** User's document */
-    private Set<Document> documents;
-    
-    /** Shares that user has shared to other */
-    private Set<Share> shares;
-    
+	// ----------------------------------------------------------
+	
+//	/** User's document */
+//    private Set<Document> documents;
+//    
+//    /** Shares that user has shared to other */
+//    private Set<Share> shares;
+//    
     /** Secured URL that user has shared to other */
     private Set<SecuredUrl> securedUrls;
     
-    /**
-     * Shares that user has received from other user
-     */
-    private Set<Share> receivedShares;
-    
+//    /**
+//     * Shares that user has received from other user
+//     */
+//    private Set<Share> receivedShares;
+//    
      /**
      * signatures made by this user on documents
      */
@@ -229,87 +232,74 @@ public abstract class User extends Account {
     
     
     
-	public Set<Document> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(Set<Document> documentList) {
-		this.documents = documentList;
-	}
+//	public Set<Document> getDocuments() {
+//		return documents;
+//	}
+//
+//	public void setDocuments(Set<Document> documentList) {
+//		this.documents = documentList;
+//	}
+//    
+//	
+//	public void addShare(Share share) throws BusinessException {
+//		if (this.canUpload)
+//			this.shares.add(share);
+//		else 
+//			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
+//	}
+//	
+//	public void deleteShare(Share share) throws BusinessException {
+//		if (this.canUpload)
+//			this.shares.remove(share);
+//		else 
+//			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
+//	}
+//	
+//	
+//	public void deleteReceivedShare(Share share) {
+//			this.receivedShares.remove(share);
+//	}
+//	
+//	public void addReceivedShare(Share share){
+//			this.receivedShares.add(share);
+//	}
+//	
+//	public void addDocument(Document aDoc) throws BusinessException {
+//		if (this.canUpload)
+//			this.documents.add(aDoc);
+//		else 
+//			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
+//	}
+//
+//	public void deleteDocument(Document aDoc) {
+//		this.documents.remove(aDoc);
+//	}
+//	
+//	
+//	public Set<Share> getShares() {
+//		return shares;
+//	}
+//	public void setShares(Set<Share> shares) {
+//		this.shares = shares;
+//	}
     
-	
-	public void addShare(Share share) throws BusinessException {
-		if (this.canUpload)
-			this.shares.add(share);
-		else 
-			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
-	}
-	
-	public void deleteShare(Share share) throws BusinessException {
-		if (this.canUpload)
-			this.shares.remove(share);
-		else 
-			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
-	}
-	
-	
-	public void deleteReceivedShare(Share share) {
-			this.receivedShares.remove(share);
-	}
-	
-	public void addReceivedShare(Share share){
-			this.receivedShares.add(share);
-	}
-	
-	public void addDocument(Document aDoc) throws BusinessException {
-		if (this.canUpload)
-			this.documents.add(aDoc);
-		else 
-			throw new BusinessException(BusinessErrorCode.USER_CANNOT_UPLOAD , "User is not allow to upload file");
-	}
-
-	public void deleteDocument(Document aDoc) {
-		this.documents.remove(aDoc);
-	}
-	public Set<Share> getShares() {
-		return shares;
-	}
-	public void setShares(Set<Share> shares) {
-		this.shares = shares;
-	}
 	public Set<SecuredUrl> getSecuredUrls() {
 		return securedUrls;
 	}
 	public void setSecuredUrls(Set<SecuredUrl> securedUrls) {
 		this.securedUrls = securedUrls;
 	}
-	public Set<Share> getReceivedShares() {
-		return receivedShares;
-	}
-	public void setReceivedShares(Set<Share> receivedShares) {
-		this.receivedShares = receivedShares;
-	}
+//	public Set<Share> getReceivedShares() {
+//		return receivedShares;
+//	}
+//	public void setReceivedShares(Set<Share> receivedShares) {
+//		this.receivedShares = receivedShares;
+//	}
 		
 	public Set<Signature> getOwnSignatures() {
 		return ownSignatures;
 	}
 	public void setOwnSignatures(Set<Signature> ownSignatures) {
 		this.ownSignatures = ownSignatures;
-	}
-
-	public Set<ThreadMember> getMyThreads() {
-		return myThreads;
-	}
-
-	public void setMyThreads(Set<ThreadMember> myThreads) {
-		this.myThreads = myThreads;
-	}
-
-	public Set<ShareEntry> getShareEntries() {
-		return shareEntries;
-	}
-
-	public void setShareEntries(Set<ShareEntry> shareEntries) {
-		this.shareEntries = shareEntries;
 	}
 }

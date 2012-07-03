@@ -9,4 +9,9 @@ public class Root extends User {
 		return AccountType.ROOT;
 	}
 
+	@Override
+	public String getAccountReprentation() {
+		return this.firstName + " " + this.lastName;
+	}
+
 }

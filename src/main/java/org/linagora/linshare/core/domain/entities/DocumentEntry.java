@@ -75,4 +75,15 @@ public class DocumentEntry extends Entry {
 		return false;
 	}
 	
+	
+	
+	/* usefull getters */
+	public long getSize() {
+		return document.getSize();
+	}
+	
+	public String getType() {
+		return document.getType();
+	}
+	
 }

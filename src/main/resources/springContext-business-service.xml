@@ -18,4 +18,12 @@
 		<constructor-arg ref="documentRepository"/>
 		<constructor-arg ref="accountRepository"/>
    	</bean>
+
+
+	<bean id="shareEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.ShareEntryBusinessServiceImpl">
+		<constructor-arg ref="shareEntryRepository"/>
+		<constructor-arg ref="accountService"/>
+		<constructor-arg ref="documentEntryRepository"/>
+   	</bean>
+   	
 </beans>

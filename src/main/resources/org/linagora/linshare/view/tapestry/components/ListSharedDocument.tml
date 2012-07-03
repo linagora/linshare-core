@@ -27,7 +27,7 @@
 		<t:errors />
 
 		<t:grid source="shareDocuments" row="shareDocument" model="model"
-			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment, actions, persistenceId, creationDate, shareExpirationDate, sharingDate"
+			exclude="fileName, fileComment, identifier, size, encrypted, ownerLogin, shared, type, shareActive, downloaded, comment, actions, creationDate, shareExpirationDate, sharingDate"
 			rowsPerPage="10">
 
 
@@ -126,7 +126,7 @@
 
 			
 			<t:parameter t:name="shareEditCell">
-				<t:actionLink t:id="shareEditProperties" t:zone="${shareEditForm.zoneClientId}" context="${shareDocument.persistenceId}">
+				<t:actionLink t:id="shareEditProperties" t:zone="${shareEditForm.zoneClientId}" context="${shareDocument.identifier}">
 					<span onclick="literal:${shareEditForm.javascriptOpenPopup}">
 						<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
 					</span>

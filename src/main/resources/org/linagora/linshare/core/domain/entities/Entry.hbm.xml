@@ -59,7 +59,7 @@
 				<column name="entry_id"/>
 			</key>
 			<property name="downloaded" column="downloaded" type="long" not-null="true" lazy="false"/>
-			<many-to-one name="recipient" cascade="lock" column="user_id" class="org.linagora.linshare.core.domain.entities.User" not-null="true" lazy="no-proxy">
+			<many-to-one name="recipient" cascade="lock" column="recipient_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="no-proxy">
 			</many-to-one>
 			<many-to-one name="documentEntry" cascade="lock" column="document_entry_id" class="org.linagora.linshare.core.domain.entities.DocumentEntry" not-null="true" lazy="no-proxy">
 			</many-to-one>

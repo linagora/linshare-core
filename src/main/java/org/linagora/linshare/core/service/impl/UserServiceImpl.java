@@ -325,72 +325,74 @@ public class UserServiceImpl implements UserService {
 			// The list of all document that were in the received shares
 			Set<Document> documentsToClean = new HashSet<Document>();
 			
-			
-			// clearing received shares
-			Set<Share> receivedShare = userToDelete.getReceivedShares();
-			
-			for (Share share : receivedShare) {
-				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-						actor.getDomainId(),
-		        		LogAction.SHARE_DELETE, "Deleting a user-Removing shares", 
-		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
-		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-				 logEntryService.create(logEntry);
-				 documentsToClean.add(share.getDocument());
-			}
-			
-			// clearing sent shares
-			Set<Share> sentShare = userToDelete.getShares();
-			
-			for (Share share : sentShare) {
-				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-						actor.getDomainId(),
-		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
-		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
-		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-				 logEntryService.create(logEntry);
-			}
-			
-			// clearing sent urls
-			Set<SecuredUrl> sentUrls = userToDelete.getSecuredUrls();
-			for (SecuredUrl url : sentUrls) {
-				String docs = "";
-				for (Document doc : url.getDocuments()) {
-					docs += doc.getName()+";";
-				}
-				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-						actor.getDomainId(),
-		        		LogAction.SHARE_DELETE, "Deleting a user-Removing url shares", 
-		        		docs,null,null,
-		        		userToDelete.getMail(), 
-		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-				 logEntryService.create(logEntry);
-			}
-			
-			sentShare.clear();
-			receivedShare.clear();
-			sentUrls.clear();
-			
-			userRepository.update(userToDelete);
-			
-			//clearing user documents
-			Set<Document> documents = userToDelete.getDocuments();
-			for (Document document : documents) {
-				String fileUUID = document.getUuid();
-				String thumbnailUUID = document.getThmbUuid();
-				if (thumbnailUUID != null && thumbnailUUID.length()>0) {
-					fileSystemDao.removeFileByUUID(thumbnailUUID);
-				}
-				fileSystemDao.removeFileByUUID(fileUUID);
-				FileLogEntry logEntry = new FileLogEntry(actor.getMail(), 
-						actor.getFirstName(), actor.getLastName(),
-						actor.getDomainId(),
-						LogAction.USER_DELETE, "User deleted", document.getName(), 
-						document.getSize(), document.getType());
-				logEntryService.create(logEntry);
-			}
+			// TODO : fix clearing user documents
+			// TODO: fix  clearing  shares	
+//			// clearing received shares
+//			Set<Share> receivedShare = userToDelete.getReceivedShares();
+//			
+//			for (Share share : receivedShare) {
+//				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
+//						actor.getDomainId(),
+//		        		LogAction.SHARE_DELETE, "Deleting a user-Removing shares", 
+//		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
+//		        		userToDelete.getMail(), 
+//		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
+//				 logEntryService.create(logEntry);
+//				 documentsToClean.add(share.getDocument());
+//			}
+//			
+//			
+//			// clearing sent shares
+//			Set<Share> sentShare = userToDelete.getShares();
+//			
+//			for (Share share : sentShare) {
+//				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
+//						actor.getDomainId(),
+//		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
+//		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
+//		        		userToDelete.getMail(), 
+//		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
+//				 logEntryService.create(logEntry);
+//			}
+//			
+//			// clearing sent urls
+//			Set<SecuredUrl> sentUrls = userToDelete.getSecuredUrls();
+//			for (SecuredUrl url : sentUrls) {
+//				String docs = "";
+//				for (Document doc : url.getDocuments()) {
+//					docs += doc.getName()+";";
+//				}
+//				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
+//						actor.getDomainId(),
+//		        		LogAction.SHARE_DELETE, "Deleting a user-Removing url shares", 
+//		        		docs,null,null,
+//		        		userToDelete.getMail(), 
+//		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
+//				 logEntryService.create(logEntry);
+//			}
+//			
+//			sentShare.clear();
+//			receivedShare.clear();
+//			sentUrls.clear();
+//			
+//			userRepository.update(userToDelete);
+//			
+//			//clearing user documents
+//			Set<Document> documents = userToDelete.getDocuments();
+//			for (Document document : documents) {
+//				String fileUUID = document.getUuid();
+//				String thumbnailUUID = document.getThmbUuid();
+//				if (thumbnailUUID != null && thumbnailUUID.length()>0) {
+//					fileSystemDao.removeFileByUUID(thumbnailUUID);
+//				}
+//				fileSystemDao.removeFileByUUID(fileUUID);
+//				FileLogEntry logEntry = new FileLogEntry(actor.getMail(), 
+//						actor.getFirstName(), actor.getLastName(),
+//						actor.getDomainId(),
+//						LogAction.USER_DELETE, "User deleted", document.getName(), 
+//						document.getSize(), document.getType());
+//				logEntryService.create(logEntry);
+//			}
 			
 			//clearing the favorites
 			recipientFavouriteService.deleteFavoritesOfUser(userToDelete);

@@ -84,82 +84,77 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		
-		
-//		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-		//datas.loadUsers();
-		
-		john = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		
-		try  {
-			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);			
-		} catch (BusinessException e) {
-			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-		}
-		
-		
-		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
-		inputStreamUuid = fileRepository.insertFile(john.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
-				
-		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
-		
-		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
-		Calendar exp=inputStreamInfo.getLastModified();
-		exp.add(Calendar.HOUR, 4);
-		
-		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,new Long(10000));
-		List<Signature> signatures = new ArrayList<Signature>();
-		aDocument.setSignatures(signatures);
-		
-		try {
-			documentRepository.create(aDocument);
-			john.addDocument(aDocument);
-			userRepository.update(john);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			Assert.fail();
-		} catch (BusinessException e) {
-			e.printStackTrace();
-			Assert.fail();
-		}
-		/*
-		MessagesConfiguration messagesConfiguration = new MessagesConfiguration();
-		
-		MailTemplate mailTemplate = new MailTemplate();
-		mailTemplate.setLanguage(Language.FRENCH);
-				
-		MailSubject mailSubject = new MailSubject();
-		mailSubject.setMailSubject(MailSubjectEnum.ANONYMOUS_DOWNLOAD);
-		mailSubject.setLanguage(Language.FRENCH);
-		
-		// Add all mailTemplates
-		for (MailTemplateEnum mailTemplateEnum : MailTemplateEnum.values()) {
-			mailTemplate.setMailTemplate(mailTemplateEnum);
-			messagesConfiguration.addMailTemplate(mailTemplate);
-			messagesConfiguration.addMailSubject(mailSubject);
-		}
-	
-		
-//		datas.getRootDomain().setMessagesConfiguration(messagesConfiguration);
-		john.getDomain().setMessagesConfiguration(messagesConfiguration);
-		
-		abstractDomainRepository.update(john.getDomain());
-		
-		userRepository.update(john);
-*/
-		
+//		
+//		john = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+//		
+//		try  {
+//			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);			
+//		} catch (BusinessException e) {
+//			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
+//		}
+//		
+//		
+//		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
+//		inputStreamUuid = fileRepository.insertFile(john.getLogin(), inputStream, 10000, "linShare-default.properties", "text/plain");
+//				
+//		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
+//		
+//		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
+//		Calendar exp=inputStreamInfo.getLastModified();
+//		exp.add(Calendar.HOUR, 4);
+//		
+//		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,new Long(10000));
+//		List<Signature> signatures = new ArrayList<Signature>();
+//		aDocument.setSignatures(signatures);
+//		
+//		try {
+//			documentRepository.create(aDocument);
+//			john.addDocument(aDocument);
+//			userRepository.update(john);
+//		} catch (IllegalArgumentException e) {
+//			e.printStackTrace();
+//			Assert.fail();
+//		} catch (BusinessException e) {
+//			e.printStackTrace();
+//			Assert.fail();
+//		}
+//		/*
+//		MessagesConfiguration messagesConfiguration = new MessagesConfiguration();
+//		
+//		MailTemplate mailTemplate = new MailTemplate();
+//		mailTemplate.setLanguage(Language.FRENCH);
+//				
+//		MailSubject mailSubject = new MailSubject();
+//		mailSubject.setMailSubject(MailSubjectEnum.ANONYMOUS_DOWNLOAD);
+//		mailSubject.setLanguage(Language.FRENCH);
+//		
+//		// Add all mailTemplates
+//		for (MailTemplateEnum mailTemplateEnum : MailTemplateEnum.values()) {
+//			mailTemplate.setMailTemplate(mailTemplateEnum);
+//			messagesConfiguration.addMailTemplate(mailTemplate);
+//			messagesConfiguration.addMailSubject(mailSubject);
+//		}
+//	
+//		
+////		datas.getRootDomain().setMessagesConfiguration(messagesConfiguration);
+//		john.getDomain().setMessagesConfiguration(messagesConfiguration);
+//		
+//		abstractDomainRepository.update(john.getDomain());
+//		
+//		userRepository.update(john);
+//*/
+//		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		documentRepository.delete(aDocument);
-		john.getDocuments().clear();
-		userRepository.update(john);
-		fileRepository.removeFileByUUID(aDocument.getUuid());
+//		documentRepository.delete(aDocument);
+//		john.getDocuments().clear();
+//		userRepository.update(john);
+//		fileRepository.removeFileByUUID(aDocument.getUuid());
 		
-//		datas.deleteUsers();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	

@@ -655,13 +655,45 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_USER);
 	}
 
+	
 	@Override
 	public Functionality getAuditTabFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_AUDIT);
 	}
 
+	
 	@Override
 	public Functionality getHelpTabFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_HELP);
+	}
+	
+	
+	@Override
+	public boolean isSauAllowed(String domainIdentifier) { 
+		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
+		Functionality funcAU = getAnonymousUrlFunctionality(domain);
+		// We check if Anonymous Url are activated.
+		if(funcAU.getActivationPolicy().getStatus()) {
+			Functionality funcSAU = getSecuredAnonymousUrlFunctionality(domain);
+			return funcSAU.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
+		}
+		return false;
+	}
+	
+
+	@Override
+	public boolean isSauMadatory(String domainIdentifier) { 
+		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
+		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
+		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
+	}
+	
+	
+	
+	@Override
+	public boolean getDefaultSauValue(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
+		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
+		return func.getActivationPolicy().getStatus();
 	}
 }

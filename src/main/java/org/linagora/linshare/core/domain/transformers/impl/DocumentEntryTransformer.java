@@ -23,11 +23,9 @@ public class DocumentEntryTransformer implements Transformer<DocumentEntry, Docu
 	public DocumentVo disassemble(DocumentEntry entityObject) {
 
 		if(null!=entityObject){
-//			if(entityObject.getEntryType().equals(EntryType.DOCUMENT)) {
 				return new DocumentVo(entityObject.getUuid(),entityObject.getName(), entityObject.getComment() ,entityObject.getCreationDate(),entityObject.getExpirationDate(),
 					entityObject.getDocument().getType(), entityObject.getEntryOwner().getLsUid(), entityObject.getCiphered(),
 					entityObject.isShared(),entityObject.getDocument().getSize());
-//			}
 		}
 			
 		return null;
