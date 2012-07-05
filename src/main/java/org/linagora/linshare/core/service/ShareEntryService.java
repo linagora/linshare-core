@@ -1,9 +1,11 @@
 package org.linagora.linshare.core.service;
 
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
@@ -37,5 +39,11 @@ public interface ShareEntryService {
 	  
 
 	public void updateShareComment(User actor, String uuid, String comment) throws BusinessException;
+	
+	public boolean shareHasThumbnail(User actor, String shareEntryUuid);
+	
+	public InputStream getShareThumbnailStream(User actor, String shareEntryUuid) throws BusinessException;
+	
+	public InputStream getShareStream(User actor, String shareEntryUuid) throws BusinessException;
 	
 }

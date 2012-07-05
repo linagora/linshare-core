@@ -20,6 +20,7 @@
 */
 package org.linagora.linshare.core.Facade;
 
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
@@ -183,5 +184,11 @@ public interface ShareFacade {
 	 * @param comment TODO
 	 */
 	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException ;
+
 	
+	public boolean shareHasThumbnail(UserVo actorVo, String shareEntryUuid);
+	
+	public InputStream getShareThumbnailStream(UserVo actorVo, String shareEntryUuid);
+	
+	public InputStream getShareStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
 }

@@ -349,7 +349,9 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public boolean documentHasThumbnail(Account owner, String docEntryUuid) {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
-		if (documentEntry.getEntryOwner().equals(owner)) {
+		if(documentEntry == null) {
+			logger.error("Can't find document entry, are you sure it is not a share ? : " + docEntryUuid);
+		} else if (documentEntry.getEntryOwner().equals(owner)) {
 			String thmbUUID = documentEntry.getDocument().getThmbUuid();
 			return (thmbUUID!=null && thmbUUID.length()>0);
 		}
@@ -359,19 +361,27 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public InputStream getDocumentThumbnailStream(Account owner, String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
-		if (!documentEntry.getEntryOwner().equals(owner)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
+		if(documentEntry == null) {
+			logger.error("Can't find document entry, are you sure it is not a share ? : " + docEntryUuid);
+			return null;
+		} else if (!documentEntry.getEntryOwner().equals(owner)) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this document.");
+		} else {
+			return documentEntryBusinessService.getDocumentThumbnailStream(documentEntry);
 		}
-		return documentEntryBusinessService.getDocumentThumbnailStream(documentEntry);
 	}
 	
 	@Override
 	public InputStream getDocumentStream(Account owner, String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
-		if (!documentEntry.getEntryOwner().equals(owner)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
+		if(documentEntry == null) {
+			logger.error("Can't find document entry, are you sure it is not a share ? : " + docEntryUuid);
+			return null;
+		} else if (!documentEntry.getEntryOwner().equals(owner)) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
+		} else {
+			return documentEntryBusinessService.getDocumentStream(documentEntry);
 		}
-		return documentEntryBusinessService.getDocumentStream(documentEntry);
 	}
 
 

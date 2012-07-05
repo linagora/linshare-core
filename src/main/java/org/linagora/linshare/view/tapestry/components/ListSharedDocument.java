@@ -276,7 +276,7 @@ public class ListSharedDocument {
 		}else{
 			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
 			
-			InputStream stream=documentFacade.downloadSharedDocument(currentSharedDocumentVo, user);
+			InputStream stream = shareFacade.getShareStream(user, currentSharedDocumentVo.getIdentifier());
 			
 			//send an email to the owner if it is the first time the document is downloaded
 			if (!alreadyDownloaded) {
@@ -674,7 +674,7 @@ public class ListSharedDocument {
 	}
 	
 	public boolean getThumbnailExists() {
-		return documentFacade.documentHasThumbnail(null, shareDocument.getIdentifier());
+		return shareFacade.shareHasThumbnail(user, shareDocument.getIdentifier());
 	}
 	
 	public String getTypeCSSClass() {
@@ -689,7 +689,7 @@ public class ListSharedDocument {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(componentdocuments,
 				docID);
-			stream = documentFacade.getDocumentThumbnail(user.getLsUid(), currentDocumentVo.getIdentifier());
+			stream = shareFacade.getShareThumbnailStream(user, currentDocumentVo.getIdentifier());
 			if (stream==null) return;
 		OutputStream os = null;
 			response.setDateHeader("Expires", 0);

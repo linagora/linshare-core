@@ -28,6 +28,12 @@
 			<key column="owner_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.Entry"/>
 		</set>
+		
+		<set name="shareEntries" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="recipient_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.ShareEntry"/>
+		</set>
+    
     
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
 		 <!-- 

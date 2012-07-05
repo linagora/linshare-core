@@ -133,6 +133,7 @@
     	<constructor-arg ref="documentEntryService"/>
     	<constructor-arg ref="notifierService"/>
     	<constructor-arg ref="mailContentBuildingService"/>
+    	<constructor-arg ref="documentEntryBusinessService"/>
     </bean>
 
 	   

@@ -20,6 +20,7 @@
  */
 package org.linagora.linshare.core.service.impl;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -112,8 +113,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 *            content.
 	 */
 	@Override
-	public void sendNotification(String replyTo, String recipient,
-			String subject, String htmlContent, String textContent) throws SendFailedException{
+	public void sendNotification(String replyTo, String recipient, String subject, String htmlContent, String textContent) throws SendFailedException{
 
 		// get the mail session
 		Session session = getMailSession();
@@ -172,8 +172,12 @@ public class MailNotifierServiceImpl implements NotifierService {
 				// Initialize and add the image file to the html body part
 				rel_bpi.setFileName("mail_logo.png");
 				rel_bpi.setText("linshare");
-				rel_bpi.setDataHandler(new DataHandler(getClass().getResource(
-					"/org/linagora/linShare/core/service/mail_logo.png")));
+				URL resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo.png");
+				if(resource == null) {
+					logger.error("Embedded logo was not found.");
+					throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification : embedded logo was not found.");
+				}
+				rel_bpi.setDataHandler(new DataHandler(resource));
 				rel_bpi.setHeader("Content-ID", "<" + cid + ">");
 				rel_bpi.setDisposition("inline");
 				html_mp.addBodyPart(rel_bpi);

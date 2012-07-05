@@ -1,15 +1,14 @@
 package org.linagora.linshare.core.service.impl;
 
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.constants.Policies;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
@@ -43,6 +42,8 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	
 	private final DocumentEntryService documentEntryService ;
 	
+	private final DocumentEntryBusinessService documentEntryBusinessService ;
+	
 	private final NotifierService notifierService;
     
     private final MailContentBuildingService mailElementsFactory;
@@ -56,7 +57,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityService functionalityService, ShareEntryBusinessService shareEntryBusinessService,
 		ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, DocumentEntryService documentEntryService, NotifierService notifierService,
-		MailContentBuildingService mailElementsFactory) {
+		MailContentBuildingService mailElementsFactory, DocumentEntryBusinessService documentEntryBusinessService) {
 	super();
 	this.guestRepository = guestRepository;
 	this.functionalityService = functionalityService;
@@ -66,6 +67,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	this.documentEntryService = documentEntryService;
 	this.notifierService = notifierService;
 	this.mailElementsFactory = mailElementsFactory;
+	this.documentEntryBusinessService = documentEntryBusinessService;
 }
 
 
@@ -273,4 +275,51 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		
 	}
 
+
+	@Override
+	public boolean shareHasThumbnail(User actor, String shareEntryUuid) {
+		try {
+			ShareEntry shareEntry = findById(actor, shareEntryUuid);
+			if (shareEntry.getRecipient().equals(actor)) {
+				String thmbUUID = shareEntry.getDocumentEntry().getDocument().getThmbUuid();
+				return (thmbUUID!=null && thmbUUID.length()>0);
+			} else {
+				logger.error("You don't own this share : " + shareEntryUuid);
+			}
+		} catch (BusinessException e) {
+			logger.error("Can't fin share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());
+		}
+		return false;
+	}
+
+
+	@Override
+	public InputStream getShareThumbnailStream(User actor, String shareEntryUuid) throws BusinessException {
+		try {
+			ShareEntry shareEntry = findById(actor, shareEntryUuid);
+			if (!shareEntry.getRecipient().equals(actor)) {
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this share.");
+			}
+			return documentEntryBusinessService.getDocumentThumbnailStream(shareEntry.getDocumentEntry());
+		} catch (BusinessException e) {
+			logger.error("Can't find share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());
+			throw e;
+		}
+	}
+
+
+
+	@Override
+	public InputStream getShareStream(User actor, String shareEntryUuid) throws BusinessException {
+		try {
+			ShareEntry shareEntry = findById(actor, shareEntryUuid);
+			if (!shareEntry.getRecipient().equals(actor)) {
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share.");
+			}
+			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
+		} catch (BusinessException e) {
+			logger.error("Can't find share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());
+			throw e;
+		}
+	}
 }

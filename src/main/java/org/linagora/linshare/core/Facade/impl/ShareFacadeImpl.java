@@ -20,6 +20,7 @@
 */
 package org.linagora.linshare.core.Facade.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.Facade.ShareFacade;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -179,11 +181,11 @@ public class ShareFacadeImpl implements ShareFacade {
 			User recipient = userRepository.findByLsUid(userVo.getLogin());
 			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
 			
-//			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString));
+			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString));
 
 		}
 		
-//		notifierService.sendAllNotifications(mailContainerWithRecipient);
+		notifierService.sendAllNotifications(mailContainerWithRecipient);
 		logger.debug("createSharingWithMail:End");
 		return result;
 	}
@@ -196,7 +198,9 @@ public class ShareFacadeImpl implements ShareFacade {
 		if (actor == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
-		return shareTransformer.disassembleList(new ArrayList<ShareEntry>(actor.getShareEntries()));		
+		ArrayList<ShareEntry> arrayList = new ArrayList<ShareEntry>(actor.getShareEntries());
+		logger.debug("AllSharingReceived size : " + arrayList.size());
+		return shareTransformer.disassembleList(arrayList);		
 	}
 
 	
@@ -431,7 +435,6 @@ public class ShareFacadeImpl implements ShareFacade {
     }
     
 
-
 	private SuccessesAndFailsItems<ShareDocumentVo> disassembleShareResultList(SuccessesAndFailsItems<ShareEntry> successAndFails) {
 		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
 		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));
@@ -439,6 +442,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		return results;
 	}
 
+	
 	private String getJwsEncryptUrlString(boolean isOneDocEncrypted) {
 		String jwsEncryptUrlString = "";
 		if(isOneDocEncrypted){
@@ -450,6 +454,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		return jwsEncryptUrlString;
 	}
+	
 
 	private boolean oneDocIsEncrypted(List<Document> docList) {
 		boolean isOneDocEncrypted = false;
@@ -488,5 +493,69 @@ public class ShareFacadeImpl implements ShareFacade {
 		shareEntry.setComment(comment);
 		logger.debug("comment : " + comment);
 		shareEntryService.updateShareComment(actor, uuid, comment);
+	}
+	
+	
+	@Override
+    public boolean shareHasThumbnail(UserVo actorVo, String shareEntryUuid) {
+		String lsUid = actorVo.getLsUid();
+		if(lsUid == null) {
+			logger.error("Can't find user with null parameter.");
+			return false;
+		}
+		
+		User actor = userService.findByLsUid(lsUid);
+		if(actor == null) {
+			logger.error("Can't find logged user.");
+			return false;
+		}
+		return shareEntryService.shareHasThumbnail(actor, shareEntryUuid);
+    }
+	
+	
+	@Override
+    public InputStream getShareThumbnailStream(UserVo actorVo, String shareEntryUuid) {
+		String lsUid = actorVo.getLsUid();
+		if(lsUid == null) {
+			logger.error("Can't find user with null parametter.");
+			return null;
+		}
+		
+		User actor = userService.findByLsUid(lsUid);
+		if(actor == null) {
+			logger.error("Can't find logged user.");
+			return null;
+		}
+		
+		try {
+			return shareEntryService.getShareThumbnailStream(actor, shareEntryUuid);
+		} catch (BusinessException e) {
+			logger.error("Can't get document thumbnail : " + shareEntryUuid + " : " + e.getMessage());
+		}
+    	return null;
+    }
+	
+
+	@Override
+	public InputStream getShareStream(UserVo actorVo, String shareEntryUuid) throws BusinessException {
+		logger.debug("downloading share : " + shareEntryUuid);
+		String lsUid = actorVo.getLsUid();
+		if(lsUid == null) {
+			logger.error("Can't find user with null parametter.");
+			return null;
+		}
+		
+		User actor = userService.findByLsUid(lsUid);
+		if(actor == null) {
+			logger.error("Can't find logged user.");
+			return null;
+		}
+		
+		try {
+			return shareEntryService.getShareStream(actor, shareEntryUuid);
+		} catch (BusinessException e) {
+			logger.error("Can't get document thumbnail : " + shareEntryUuid + " : " + e.getMessage());
+			throw e;
+		}
 	}
 }
