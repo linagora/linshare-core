@@ -165,11 +165,6 @@ public interface SecuredUrlService {
 	boolean isProtectedByPassword(String alea, String urlPath) throws LinShareNotSuchElementException;
 
 	/**
-	 * Remove all outdated secured url.
-	 */
-	void removeOutdatedSecuredUrl();
-
-	/**
 	 * Check that the given URL exists
 	 * @param alea
 	 *            a share identifier

@@ -353,7 +353,7 @@ public class ListDocument {
 					filleHeaderParams(templateParams);
 					
 					List<ShareDocumentVo> shares = shareFacade.getSharingsByUserAndFile(user, docVo);
-					Map<String, Calendar> securedUrls = securedUrlFacade.getSharingsByMailAndFile(user, docVo);
+					Map<String, Calendar> securedUrls = shareFacade.getAnonymousSharingsByUserAndFile(user, docVo);
 
 					for (ShareDocumentVo share : shares) {
 						UserVo receiver = share.getReceiver();

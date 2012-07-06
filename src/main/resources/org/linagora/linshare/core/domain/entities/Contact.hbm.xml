@@ -3,9 +3,9 @@
 <hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
   <class name="Contact" table="CONTACT">
   	<id name="persistenceId" type="long">
-      <column name="contact_id" not-null="true" index="index_contact_id"/>
+      <column name="id" not-null="true" index="index_contact_id"/>
       <generator class="native"/>
     </id>
-    <property column="MAIL" name="mail" not-null="true" />
+    <property name="mail" column="mail" unique="true" type="string" length="255" not-null="true" lazy="false"/>
   </class>
 </hibernate-mapping>

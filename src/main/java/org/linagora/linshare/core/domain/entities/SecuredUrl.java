@@ -32,7 +32,7 @@ public class SecuredUrl {
 	private Long persistenceId;
 
 	final private String urlPath;
-	final private String alea;
+	final private String salt;
 
 	/** the document's owner */
 	private User sender;
@@ -52,7 +52,7 @@ public class SecuredUrl {
 	// for hibernate
 	protected SecuredUrl() {
 		this.urlPath = null;
-		this.alea = null;
+		this.salt = null;
 		recipients = null;
 	}
 
@@ -62,7 +62,7 @@ public class SecuredUrl {
 					"The UrlPath is mandatory for the SecuredUrl.");
 		}
 		this.urlPath = urlPath.toLowerCase();
-		this.alea = alea;
+		this.salt = alea;
 		this.expirationTime = expiration;
 		this.documents = new ArrayList<Document>();
 		this.sender = sender;
@@ -76,12 +76,12 @@ public class SecuredUrl {
 			return false;
 		}
 		SecuredUrl other = (SecuredUrl) obj;
-		return (this.urlPath.equals(other.getUrlPath()) && this.alea.equals(other.getAlea()));
+		return (this.urlPath.equals(other.getUrlPath()) && this.salt.equals(other.getSalt()));
 	}
 
 	@Override
 	public int hashCode() {
-		return (this.urlPath+this.alea).hashCode();
+		return (this.urlPath+this.salt).hashCode();
 		//return new StringBuilder(this.urlPath.hashCode()).append(this.alea.hashCode()).hashCode();
 	}
 
@@ -154,8 +154,8 @@ public class SecuredUrl {
 		return Collections.unmodifiableList(documents);
 	}
 
-	public String getAlea() {
-		return alea;
+	public String getSalt() {
+		return salt;
 	}
 
 	public User getSender() {

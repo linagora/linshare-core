@@ -23,6 +23,7 @@ package org.linagora.linshare.core.Facade;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.User;
@@ -119,6 +120,15 @@ public interface ShareFacade {
 	
 	
 	/**
+	 * Retrieve all the sharing urls of a file by a user (email)
+	 * @param sender the user
+	 * @param document
+	 * @return a list of couples : the mail of the recipient and the expiration of the url
+	 */
+	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(UserVo senderVo, DocumentVo documentVo);
+	
+	
+	/**
 	 * Delete a sharing
 	 * @param share
 	 * @param actor
@@ -180,8 +190,11 @@ public interface ShareFacade {
 	
 	/**
 	 * This method is desinged to update only share comment.
-	 * @param persistenceId TODO
-	 * @param comment TODO
+	 * @param actorVo
+	 * @param uuid : share uuid
+	 * @param comment
+	 * @throws IllegalArgumentException
+	 * @throws BusinessException
 	 */
 	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException ;
 

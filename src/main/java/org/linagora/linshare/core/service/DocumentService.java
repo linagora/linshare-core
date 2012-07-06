@@ -146,7 +146,6 @@ public interface DocumentService {
 	
 	
 	/**
-	 * TODO : finish it when the domain will be changed
 	 * Return a file stream by its uuid and actor
 	 * if the DocumentVo isn't a share, we enforce that actor is the document owner
 	 * @param doc the DocumentVo we want to download, or a SharedDocumentVo 

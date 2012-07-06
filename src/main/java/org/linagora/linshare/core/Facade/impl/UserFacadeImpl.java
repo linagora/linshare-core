@@ -115,7 +115,7 @@ public class UserFacadeImpl implements UserFacade {
      * @return a list of matching users.
      */
     public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException {
-    	User owner =  (User)accountService.findUserInDB(currentUser.getLogin());
+    	User owner =  (User)accountService.findByLsUid(currentUser.getLogin());
     	
     	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);

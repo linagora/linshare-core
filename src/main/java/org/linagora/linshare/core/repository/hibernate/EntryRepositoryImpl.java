@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
@@ -7,6 +8,7 @@ import java.util.UUID;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.EntryRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -52,5 +54,10 @@ public class EntryRepositoryImpl extends AbstractRepositoryImpl<Entry> implement
 	public Entry update(Entry entity) throws BusinessException {
 		entity.setModificationDate(new GregorianCalendar());
 		return super.update(entity);
+	}
+	
+	@Override
+	public List<Entry> getOutdatedEntry() {
+		return findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
 	}
 }

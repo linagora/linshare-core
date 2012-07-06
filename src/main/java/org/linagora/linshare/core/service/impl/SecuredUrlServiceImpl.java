@@ -39,7 +39,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.repository.SecuredUrlRepository;
+import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SecuredUrlService;
 import org.linagora.linshare.core.utils.HashUtils;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 public class SecuredUrlServiceImpl implements SecuredUrlService {
 
-	private final SecuredUrlRepository securedUrlRepository;
+	private final AnonymousUrlRepository anonymousUrlRepository;
 	private final ShareExpiryDateServiceImpl shareExpiryDateService;
 	private final LogEntryService logEntryService;
 
@@ -56,10 +56,10 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecuredUrlServiceImpl.class);
 
-	public SecuredUrlServiceImpl(final SecuredUrlRepository securedUrlRepository,
+	public SecuredUrlServiceImpl(final AnonymousUrlRepository securedUrlRepository,
 			final ShareExpiryDateServiceImpl shareExpiryDateService, String pageName,
 			final LogEntryService logEntryService) {
-		this.securedUrlRepository = securedUrlRepository;
+		this.anonymousUrlRepository = securedUrlRepository;
 		this.shareExpiryDateService = shareExpiryDateService;
 
 		this.baseSecuredUrl = pageName;
@@ -70,9 +70,10 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		return baseSecuredUrl;
 	}
 
-	protected SecuredUrl getSecuredUrl(String shareId, String url)
-	throws LinShareNotSuchElementException {
-		return securedUrlRepository.find(shareId, url);
+	protected SecuredUrl getSecuredUrl(String shareId, String url)	throws LinShareNotSuchElementException {
+//		return securedUrlRepository.findByUuid(shareId);
+		// FIXME : fix anonymous url
+		return null;
 	}
 
 	protected String generateAlea() {
@@ -126,7 +127,9 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 	public void delete(String alea, String urlPath) {
 		try {
 			SecuredUrl securedUrl = getSecuredUrl(alea, urlPath);
-			securedUrlRepository.delete(securedUrl);
+			
+			// FIXME 
+//			securedUrlRepository.delete(securedUrl);
 		} catch (BusinessException e) {
 			logger.warn("Impossible to delete securedUrl :" + e.toString());
 		}
@@ -216,18 +219,6 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		return !StringUtils.isEmpty(securedUrl.getPassword());
 	}
 
-	public void removeOutdatedSecuredUrl() {
-		List<SecuredUrl> securedUrlList = securedUrlRepository
-		.getOutdatedSecuredUrl();
-		logger.info(securedUrlList.size()
-				+ " expired secured url(s) found to be delete.");
-
-		for (SecuredUrl securedUrl : securedUrlList) {
-			delete(securedUrl.getAlea(), securedUrl.getUrlPath());
-		}
-
-	}
-
 	public boolean exists(String alea, String urlPath) {
 		try {
 			getSecuredUrl(alea, urlPath);
@@ -305,17 +296,19 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 	}
 	
 	public List<SecuredUrl> getUrlsByMailAndFile(User sender, DocumentVo document) {
-		List<SecuredUrl> allUrl = securedUrlRepository.findBySender(sender);
-
-		List<SecuredUrl> byDocUrl = new ArrayList<SecuredUrl>();
-		for (SecuredUrl securedUrl : allUrl) {
-			for (Document doc : securedUrl.getDocuments()) {
-				if (document.getIdentifier().equalsIgnoreCase(doc.getUuid())) {
-					byDocUrl.add(securedUrl);
-					break;
-				}
-			}
-		}
-		return byDocUrl;
+		// FIXME 
+		return null;
+//		List<SecuredUrl> allUrl = securedUrlRepository.findBySender(sender);
+//
+//		List<SecuredUrl> byDocUrl = new ArrayList<SecuredUrl>();
+//		for (SecuredUrl securedUrl : allUrl) {
+//			for (Document doc : securedUrl.getDocuments()) {
+//				if (document.getIdentifier().equalsIgnoreCase(doc.getUuid())) {
+//					byDocUrl.add(securedUrl);
+//					break;
+//				}
+//			}
+//		}
+//		return byDocUrl;
 	}
 }

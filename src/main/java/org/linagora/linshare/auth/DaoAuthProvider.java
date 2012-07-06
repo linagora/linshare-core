@@ -66,7 +66,7 @@ public class DaoAuthProvider implements UserDetailsService {
         }
         logger.debug("Trying to load '" + username +"' account detail ...");
 
-        org.linagora.linshare.core.domain.entities.Account account = accountService.findUserInDB(username);
+        org.linagora.linshare.core.domain.entities.Account account = accountService.findByLsUid(username);
         String password = null ;
         if(account != null) {
         	logger.debug("Account in database found : " + account.getLsUid());

@@ -89,7 +89,9 @@ public class UserServiceImpl implements UserService {
     
     private final LogEntryService logEntryService;
     
-    private final ShareService shareService;
+//    private final ShareService shareService;
+    // to be deleted 
+    private ShareService shareService;
     
     private final RecipientFavouriteService recipientFavouriteService;
     
@@ -113,7 +115,7 @@ public class UserServiceImpl implements UserService {
     		final NotifierService notifierService, 
     		final LogEntryService logEntryService,
     		final GuestRepository guestRepository, 
-    		final ShareService shareService,
+//    		final ShareService shareService,
     		final RecipientFavouriteService recipientFavouriteService,
     		final AllowedContactRepository allowedContactRepository,
     		final MailContentBuildingService mailElementsFactory,
@@ -126,7 +128,7 @@ public class UserServiceImpl implements UserService {
         this.notifierService = notifierService;
         this.logEntryService = logEntryService;
         this.guestRepository = guestRepository;
-		this.shareService = shareService;
+//		this.shareService = shareService;
 		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
 		this.mailElementsFactory = mailElementsFactory;

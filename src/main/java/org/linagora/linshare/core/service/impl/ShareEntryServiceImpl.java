@@ -140,7 +140,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	@Override
 	public void deleteShare(String shareUuid, User actor) throws BusinessException {
-		ShareEntry share = shareEntryBusinessService.findById(shareUuid);
+		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
@@ -185,7 +185,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException {
 		
-		ShareEntry share = shareEntryBusinessService.findById(shareUuid);
+		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
@@ -243,8 +243,8 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public ShareEntry findById(User actor, String shareUuid) throws BusinessException {
-		ShareEntry share = shareEntryBusinessService.findById(shareUuid);
+	public ShareEntry findByUuid(User actor, String shareUuid) throws BusinessException {
+		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
@@ -253,7 +253,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share, it does not belong to you.");
 		}
 	}
 
@@ -261,7 +261,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	@Override
 	public void updateShareComment(User actor, String shareUuid, String comment) throws BusinessException {
-		ShareEntry share = shareEntryBusinessService.findById(shareUuid);
+		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
@@ -279,7 +279,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public boolean shareHasThumbnail(User actor, String shareEntryUuid) {
 		try {
-			ShareEntry shareEntry = findById(actor, shareEntryUuid);
+			ShareEntry shareEntry = findByUuid(actor, shareEntryUuid);
 			if (shareEntry.getRecipient().equals(actor)) {
 				String thmbUUID = shareEntry.getDocumentEntry().getDocument().getThmbUuid();
 				return (thmbUUID!=null && thmbUUID.length()>0);
@@ -296,7 +296,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public InputStream getShareThumbnailStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
-			ShareEntry shareEntry = findById(actor, shareEntryUuid);
+			ShareEntry shareEntry = findByUuid(actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this share.");
 			}
@@ -312,7 +312,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	@Override
 	public InputStream getShareStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
-			ShareEntry shareEntry = findById(actor, shareEntryUuid);
+			ShareEntry shareEntry = findByUuid(actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share.");
 			}

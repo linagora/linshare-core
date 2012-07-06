@@ -69,7 +69,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	private final EnciphermentService enciphermentService;
 	
-	private final ShareService shareService;
+	// to be deleted
+	private ShareService shareService;
 	
 	private final DocumentEntryService documentEntryService;
 	
@@ -84,12 +85,11 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	public DocumentFacadeImpl(DocumentService documentService,
 			UserRepository<User> userRepository,
 			final DocumentTransformer documentTransformer,
-			final ShareService shareService,final SignatureTransformer signatureTransformer,EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService, DocumentEntryTransformer documentEntryTransformer) {
+			final SignatureTransformer signatureTransformer,EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService, DocumentEntryTransformer documentEntryTransformer) {
 		super();
 		this.documentService = documentService;
 		this.userRepository = userRepository;
 		this.documentTransformer = documentTransformer;
-		this.shareService = shareService;
 		this.signatureTransformer=signatureTransformer;
 		this.enciphermentService = enciphermentService;
 		this.documentEntryService = documentEntryService;
@@ -109,7 +109,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public DocumentVo insertFile(InputStream file, long size, String fileName, String mimeType, UserVo owner) throws BusinessException {
-		Account actor = accountService.findUserInDB(owner.getLsUid());
+		Account actor = accountService.findByLsUid(owner.getLsUid());
 		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, file, size, fileName);
 		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}
@@ -117,7 +117,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public void removeDocument(UserVo actorVo, DocumentVo document, MailContainer mailContainer) throws BusinessException {
-		Account actor = accountService.findUserInDB(actorVo.getLsUid());
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		if(actor != null) {
 			if (document instanceof ShareDocumentVo) {
 				// TODO : to be done : delete a shared document
@@ -168,7 +168,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	@Override
 	public DocumentVo getDocument(String login, String uuid) {
-		Account actor = accountService.findUserInDB(login);
+		Account actor = accountService.findByLsUid(login);
 		if(actor != null) {
 			DocumentEntry entry;
 			try {
@@ -194,7 +194,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	@Override
 	public InputStream retrieveFileStream(DocumentVo doc, String lsUid) throws BusinessException {
-		Account actor = accountService.findUserInDB(lsUid);
+		Account actor = accountService.findByLsUid(lsUid);
 		
 		return documentEntryService.getDocumentStream(actor, doc.getIdentifier());
 	}
@@ -292,13 +292,13 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public Long getUserAvailableQuota(UserVo userVo) throws BusinessException {
-		Account account = accountService.findUserInDB(userVo.getLsUid());
+		Account account = accountService.findByLsUid(userVo.getLsUid());
 		return documentEntryService.getAvailableSize(account);
 	}
 	
 	@Override
 	public Long getUserMaxFileSize(UserVo userVo) throws BusinessException {
-		Account account = accountService.findUserInDB(userVo.getLsUid());
+		Account account = accountService.findByLsUid(userVo.getLsUid());
 		return documentEntryService.getUserMaxFileSize(account);
 	}
 	
@@ -364,20 +364,20 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	@Override
 	public Long getUserTotalQuota(UserVo userVo) throws BusinessException {
-		Account account = accountService.findUserInDB(userVo.getLsUid());
+		Account account = accountService.findByLsUid(userVo.getLsUid());
 		return documentEntryService.getTotalSize(account);
 	}
 	
 	@Override
 	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, String mimeType, UserVo ownerVo) throws BusinessException {
-		Account actor = accountService.findUserInDB(ownerVo.getLsUid());
+		Account actor = accountService.findByLsUid(ownerVo.getLsUid());
 		return documentEntryTransformer.disassemble(documentEntryService.updateDocumentEntry(actor, currentFileUUID, file, size, fileName));
 	}
 
 	
 	@Override
     public void renameFile(String userlogin, String docEntryUuid, String newName) {
-		Account actor = accountService.findUserInDB(userlogin);
+		Account actor = accountService.findByLsUid(userlogin);
         try {
 			documentEntryService.renameDocumentEntry(actor, docEntryUuid, newName);
 		} catch (BusinessException e) {
@@ -388,7 +388,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	@Override
     public void  updateFileProperties(String userlogin, String docEntryUuid, String newName, String comment){
-		Account actor = accountService.findUserInDB(userlogin);
+		Account actor = accountService.findByLsUid(userlogin);
 		if(comment == null) {
 			comment = "";
 		}
@@ -401,13 +401,13 @@ public class DocumentFacadeImpl implements DocumentFacade {
     
 	
 	@Override
-    public InputStream getDocumentThumbnail(String login, String docEntryUuid) {
-		if(login == null) {
-			logger.error("Can't find user with null parametter.");
+    public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid) {
+		if(actorUuid == null) {
+			logger.error("Can't find user with null parameter.");
 			return null;
 		}
 		
-		Account actor = accountService.findUserInDB(login);
+		Account actor = accountService.findByLsUid(actorUuid);
 		if(actor == null) {
 			logger.error("Can't find logged user.");
 			return null;
@@ -423,13 +423,13 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	
 	@Override
-    public boolean documentHasThumbnail(String login, String docEntryUuid) {
-		if(login == null) {
-			logger.error("Can't find user with null parametter.");
+    public boolean documentHasThumbnail(String actorUuid, String docEntryUuid) {
+		if(actorUuid == null) {
+			logger.error("Can't find user with null parameter.");
 			return false;
 		}
 		
-		Account actor = accountService.findUserInDB(login);
+		Account actor = accountService.findByLsUid(actorUuid);
 		if(actor == null) {
 			logger.error("Can't find logged user.");
 			return false;
@@ -458,20 +458,20 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public boolean isGlobalQuotaActive(UserVo userVo) throws BusinessException {
-		Account actor = accountService.findUserInDB(userVo.getLsUid());
+		Account actor = accountService.findByLsUid(userVo.getLsUid());
 		return documentEntryService.isGlobalQuotaActive(actor);
 	}
 
 	@Override
 	public boolean isUserQuotaActive(UserVo userVo) throws BusinessException {
-		Account actor = accountService.findUserInDB(userVo.getLsUid());
+		Account actor = accountService.findByLsUid(userVo.getLsUid());
 		return documentEntryService.isUserQuotaActive(actor);
 	}
 
 	
 	@Override
 	public Long getGlobalQuota(UserVo userVo) throws BusinessException {
-		Account actor = accountService.findUserInDB(userVo.getLsUid());
+		Account actor = accountService.findByLsUid(userVo.getLsUid());
 		return documentEntryService.getGlobalQuota(actor);
 	}
 	

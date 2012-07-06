@@ -203,19 +203,19 @@ public interface DocumentFacade {
 
     /**
      * Get the thumbnail (InputStream) of the document
-     * @param login TODO
-     * @param uuid the identifier of the document
+     * @param actorUuid : user uuid
+     * @param actorUuid the identifier of the document
      * @return InputStream of the thumbnail
      */
-    public InputStream getDocumentThumbnail(String login, String docEntryUuid);
+    public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid);
     
     /**
      * Thumbnail of the document exists ?
-     * @param login TODO
+     * @param actorUuid : user uuid
      * @param uuid the identifier of the document
      * @return true if the thumbnail exists, false otherwise
      */
-    public boolean documentHasThumbnail(String login, String docEntryUuid);
+    public boolean documentHasThumbnail(String actorUuid, String docEntryUuid);
     
     /**
 	 * return true if the signature functionality is enabled

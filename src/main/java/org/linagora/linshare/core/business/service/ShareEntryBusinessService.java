@@ -14,7 +14,7 @@ public interface ShareEntryBusinessService {
 	
 	public void deleteShare(ShareEntry share) throws BusinessException;
 	
-	public ShareEntry findById(String uuid);
+	public ShareEntry findByUuid(String uuid);
 
 	public void updateShareComment(ShareEntry share, String comment) throws BusinessException;
 	

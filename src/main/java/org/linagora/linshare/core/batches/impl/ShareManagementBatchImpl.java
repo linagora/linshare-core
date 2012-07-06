@@ -29,9 +29,10 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 
     private ShareService shareService;
 
-    public ShareManagementBatchImpl(ShareService shareService) {
-        this.shareService = shareService;
-    }
+    // TODO : fix batches
+//    public ShareManagementBatchImpl(ShareService shareService) {
+//        this.shareService = shareService;
+//    }
 
     public void cleanOutdatedShares() {
         shareService.cleanOutdatedShares();

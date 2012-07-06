@@ -59,7 +59,7 @@ public class ShareExpiryDateFacadeImpl implements ShareExpiryDateFacade {
 			return null;
 		}
 		
-		Account account = accountService.findUserInDB(ownerVo.getLsUid());
+		Account account = accountService.findByLsUid(ownerVo.getLsUid());
 		if(account == null) {
 			logger.error("Can't find logged user.");
 			return null;
@@ -83,7 +83,7 @@ public class ShareExpiryDateFacadeImpl implements ShareExpiryDateFacade {
 			return null;
 		}
 		
-		Account account = accountService.findUserInDB(ownerVo.getLsUid());
+		Account account = accountService.findByLsUid(ownerVo.getLsUid());
 		if(account == null) {
 			logger.error("Can't find logged user.");
 			return null;

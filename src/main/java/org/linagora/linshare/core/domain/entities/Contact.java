@@ -59,9 +59,11 @@ public class Contact {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "Contact is : " + this.mail;
 	}
-	
+
+	public long getPersistenceId() {
+		return persistenceId;
+	}
 	
 }

@@ -32,7 +32,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 
 	@Override
-	public ShareEntry findById(String uuid) {
+	public ShareEntry findByUuid(String uuid) {
 		return shareEntryRepository.findById(uuid);
 	}
 
@@ -79,7 +79,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		recipient.getShareEntries().remove(share);
 		
 		Account sender = share.getEntryOwner();
-		recipient.getEntries().remove(share);
+		sender.getEntries().remove(share);
 		
 		documentEntryRepository.update(documentEntry);
 		accountService.update(recipient);

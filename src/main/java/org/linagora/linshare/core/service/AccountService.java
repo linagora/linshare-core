@@ -30,7 +30,7 @@ public interface AccountService {
      * @param uid user identifier, should be lsUid (or mail for compatibility, but this will be remove asap.)
      * @return
      */
-    public Account findUserInDB(String uid);
+    public Account findByLsUid(String uid);
  
     public Account update(Account account) throws BusinessException;
     

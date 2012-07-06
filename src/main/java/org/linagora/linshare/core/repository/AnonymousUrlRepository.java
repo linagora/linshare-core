@@ -20,18 +20,9 @@
 */
 package org.linagora.linshare.core.repository;
 
-import java.util.List;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.SecuredUrl;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
+public interface AnonymousUrlRepository extends AbstractRepository<AnonymousUrl> {
 
-public interface SecuredUrlRepository extends AbstractRepository<SecuredUrl> {
-
-	SecuredUrl find(String shareId, String url) throws LinShareNotSuchElementException;
-	List<SecuredUrl> findBySender(User sender);
-	List<SecuredUrl> getOutdatedSecuredUrl();
-	List<SecuredUrl> getSecureUrlLinkedToDocument(Document doc) throws LinShareNotSuchElementException;
-	List<SecuredUrl> getUpcomingOutdatedSecuredUrl(Integer date);
+	public AnonymousUrl findByUuid(String uuid);
 }

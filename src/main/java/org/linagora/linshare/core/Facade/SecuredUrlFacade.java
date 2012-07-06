@@ -154,14 +154,5 @@ public interface SecuredUrlFacade {
 	 * @param email of the user who has downloaded the documents
 	 */
 	void sendEmailNotification(String alea, String urlPath, MailContainer mailContainer, List<DocumentVo> docs, String email) throws BusinessException;
-
-
 	
-	/**
-	 * Retrieve all the sharing urls of a file by a user (email)
-	 * @param sender the user
-	 * @param document
-	 * @return a list of couples : the mail of the recipient and the expiration of the url
-	 */
-	public Map<String, Calendar> getSharingsByMailAndFile(UserVo sender, DocumentVo document);
 }

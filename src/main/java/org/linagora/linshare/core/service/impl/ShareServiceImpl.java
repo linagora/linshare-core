@@ -42,7 +42,7 @@ import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionali
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.repository.SecuredUrlRepository;
+import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.repository.ShareRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -63,9 +63,8 @@ public class ShareServiceImpl implements ShareService{
 	private final UserRepository<User> userRepository;
 	private final ShareRepository shareRepository;
 	private final LogEntryService logEntryService;
-	private final SecuredUrlRepository securedUrlRepository;
 	private final DocumentRepository documentRepository;
-	private final SecuredUrlService secureUrlService;
+	private  SecuredUrlService secureUrlService;
 	private final FileSystemDao fileSystemDao;
 	private final ShareExpiryDateService shareExpiryDateService;
 	private final NotifierService notifierService;
@@ -81,8 +80,8 @@ public class ShareServiceImpl implements ShareService{
 	public ShareServiceImpl(final UserRepository<User> userRepository,
 			final ShareRepository shareRepository,
 			final LogEntryService logEntryService,
-			final SecuredUrlRepository securedUrlRepository,
-			final DocumentRepository documentRepository, final SecuredUrlService secureUrlService, 
+			final AnonymousUrlRepository securedUrlRepository,
+			final DocumentRepository documentRepository,  
 			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
 			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
 			final GuestRepository guestRepository,
@@ -93,9 +92,7 @@ public class ShareServiceImpl implements ShareService{
 		this.userRepository=userRepository;
 		this.shareRepository=shareRepository;
 		this.logEntryService=logEntryService;
-		this.securedUrlRepository=securedUrlRepository;
 		this.documentRepository = documentRepository;
-        this.secureUrlService = secureUrlService;
         this.fileSystemDao = fileSystemDao;
         this.shareExpiryDateService = shareExpiryDateService;
         this.notifierService = notifierService;
@@ -342,7 +339,7 @@ public class ShareServiceImpl implements ShareService{
 		if(!urlBase.endsWith("/")) httpUrlBase.append("/");
 		httpUrlBase.append(securedUrl.getUrlPath());
 		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
-		httpUrlBase.append(securedUrl.getAlea());
+		httpUrlBase.append(securedUrl.getSalt());
 		
 		//securedUrl must be ended with a "/" if no parameter (see urlparam)
 		String securedUrlBase = httpUrlBase.toString();

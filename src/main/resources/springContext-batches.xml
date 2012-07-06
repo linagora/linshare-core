@@ -13,7 +13,7 @@
     </bean>
 
     <bean name="shareManagementBatch" class="org.linagora.linshare.core.batches.impl.ShareManagementBatchImpl">
-        <constructor-arg ref="shareService"/>
+<!--         <constructor-arg ref="shareService"/> -->
     </bean>
 
     <bean name="documentManagementBatch" class="org.linagora.linshare.core.batches.impl.DocumentManagementBatchImpl">

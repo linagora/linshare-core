@@ -28,10 +28,8 @@
 		<constructor-arg ref="documentService"/>
 		<constructor-arg ref="userRepository"/>
 		<constructor-arg ref="documentTransformer"/>
-		<constructor-arg ref="shareService"/>
 		<constructor-arg ref="signatureTransformer"/>
 		<constructor-arg ref="enciphermentService"/>
-		
 		<constructor-arg ref="documentEntryService"/>
 		<constructor-arg ref="accountService"/>
 		<constructor-arg ref="documentEntryTransformer"/>
@@ -46,20 +44,20 @@
    	  </bean>
  
  	<bean name="shareFacade" class="org.linagora.linshare.core.Facade.impl.ShareFacadeImpl">
-       	 <constructor-arg ref="shareService"/>
        	 <constructor-arg ref="shareTransformer"/>
        	 <constructor-arg ref="userRepository"/>
        	 <constructor-arg ref="documentRepository"/>
        	 <constructor-arg ref="notifierService"/>
+       	 <constructor-arg ref="mailContentBuildingService"/>
        	 <constructor-arg ref="userService"/>
          <constructor-arg ref="shareEntryService"/>
-         <constructor-arg ref="mailContentBuildingService" />
          <constructor-arg ref="documentEntryTransformer" />
-         <constructor-arg value="${linshare.info.url.base}" />
-         <constructor-arg value="${linshare.info.url.internal}" />
+         <constructor-arg ref="documentEntryService" />
          <constructor-arg ref="abstractDomainService" />
          <constructor-arg ref="functionalityService" />
-         <constructor-arg ref="documentEntryService" />
+         <constructor-arg ref="anonymousShareEntryService" />
+         <constructor-arg value="${linshare.info.url.base}" />
+         <constructor-arg value="${linshare.info.url.internal}" />
    	  </bean>
  
  	<bean name="shareExpiryDateFacade" class="org.linagora.linshare.core.Facade.impl.ShareExpiryDateFacadeImpl">

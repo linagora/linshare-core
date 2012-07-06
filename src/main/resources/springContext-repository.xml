@@ -33,16 +33,19 @@
     	<constructor-arg ref="hibernateTemplate"/>
 	</bean>    
 	
-   <bean name="shareRepository"
-		class="org.linagora.linshare.core.repository.hibernate.ShareRepositoryImpl">
+   <bean name="shareRepository"	class="org.linagora.linshare.core.repository.hibernate.ShareRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 	
-	 <bean name="shareEntryRepository" class="org.linagora.linshare.core.repository.hibernate.ShareEntryRepositoryImpl">
+	<bean name="shareEntryRepository" class="org.linagora.linshare.core.repository.hibernate.ShareEntryRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+    
+    <bean name="anonymousShareEntryRepository" class="org.linagora.linshare.core.repository.hibernate.AnonymousShareEntryRepositoryImpl">
         <constructor-arg ref="hibernateTemplate"/>
     </bean>
 
-    <bean name="securedUrlRepository" class="org.linagora.linshare.core.repository.hibernate.SecuredUrlRepositoryImpl">
+    <bean name="anonymousUrlRepository" class="org.linagora.linshare.core.repository.hibernate.AnonymousUrlRepositoryImpl">
     	<constructor-arg ref="hibernateTemplate"/>
     </bean>
     
@@ -95,6 +98,9 @@
         <constructor-arg ref="hibernateTemplate"/>
     </bean>
 	<bean name="domainPolicyRepository" class="org.linagora.linshare.core.repository.hibernate.DomainPolicyRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+    <bean name="contactRepository" class="org.linagora.linshare.core.repository.hibernate.ContactRepositoryImpl">
         <constructor-arg ref="hibernateTemplate"/>
     </bean>
 </beans>

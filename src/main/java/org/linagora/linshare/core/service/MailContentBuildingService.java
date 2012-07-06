@@ -22,6 +22,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailContainer;
@@ -197,23 +198,25 @@ public interface MailContentBuildingService {
 	public List<MailContainerWithRecipient> buildMailResetPasswordWithOneRecipient(User actor,MailContainer mailContainer,
 			User recipient, String password) throws BusinessException;
 
+	
+	
+	
+	
 	/**
 	 * Notify a user that he received new sharing
 	 */
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer,
-			User owner, User recipient, List<DocumentVo> docs,
-			String linShareUrl, String linShareUrlParam, String password, 
-			boolean hasToDecrypt, String jwsEncryptUrl)
-			throws BusinessException;
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer, User recipient, List<String> docNames, String linShareUrl,
+			String linShareUrlParam, String password, boolean hasToDecrypt) throws BusinessException;
+	
+	// Made by fred ;)
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor, MailContainer mailContainer, User recipient, List<String> docNames) throws BusinessException;
+	
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor, MailContainer mailContainer, Contact recipient, List<String> docNames, AnonymousUrl anonymousUrl, boolean hasToDecrypt) throws BusinessException;
 
-	/**
-	 * Notify a user that he received new sharing
-	 */
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer,
-			User owner, String recipientMail, List<DocumentVo> docs, String linShareUrl,
-			String linShareUrlParam, String password, 
-			boolean hasToDecrypt, String jwsEncryptUrl)
-			throws BusinessException;
+	
+	
+	
+	
 
 	/**
 	 * Notify a user that some shared files has been updated

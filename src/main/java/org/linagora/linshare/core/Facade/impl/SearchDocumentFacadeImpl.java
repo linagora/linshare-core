@@ -60,7 +60,7 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	}
 	
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
-		User user = (User) accountService.findUserInDB(userVo.getLsUid());
+		User user = (User) accountService.findByLsUid(userVo.getLsUid());
 		ArrayList<DocumentVo> documents = new ArrayList<DocumentVo>();
 
 //		return documentTransformer.disassembleList(new ArrayList<Document>(this.searchDocumentService.retrieveDocument(user)));

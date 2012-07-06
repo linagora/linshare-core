@@ -36,7 +36,7 @@ public class Internal extends User {
      * @param firstName first name.
      * @param lastName last name.
      * @param mail email.
-     * @param ldapUid TODO
+     * @param ldapUid 
      */
     public Internal(String firstName, String lastName, String mail, String ldapUid) {
         super(firstName, lastName, mail);

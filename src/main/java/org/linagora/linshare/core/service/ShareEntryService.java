@@ -19,7 +19,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareEntryService {
 	
-	public ShareEntry findById(User actor, String uuid)  throws BusinessException ;
+	public ShareEntry findByUuid(User actor, String uuid)  throws BusinessException ;
 
 	
 	public ShareEntry createShare(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException;

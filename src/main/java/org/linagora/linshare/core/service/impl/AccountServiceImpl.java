@@ -29,7 +29,7 @@ public class AccountServiceImpl implements AccountService {
 
 
 	@Override
-	public Account findUserInDB(String uid) {
+	public Account findByLsUid(String uid) {
 		Account acc = accountRepository.findByLsUid(uid);
 		// TODO : Remove this : Temporary hook for compatibility
 		if (acc == null) {

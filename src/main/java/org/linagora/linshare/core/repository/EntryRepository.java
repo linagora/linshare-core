@@ -20,7 +20,10 @@
 */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.SecuredUrl;
 
 public interface EntryRepository extends AbstractRepository<Entry>{
 	
@@ -29,4 +32,6 @@ public interface EntryRepository extends AbstractRepository<Entry>{
      * @return found document (null if no document found).
      */
 	public Entry findById(String uuid);
+	
+	public List<Entry> getOutdatedEntry();
 }

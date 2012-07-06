@@ -74,48 +74,58 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		this.mailElementsFactory = mailElementsFactory;
 	}
 
+	@Override
 	public DocumentVo getDocument(String alea, String urlPath,
 			Integer documentId) throws BusinessException {
 		return  documentAdapter.disassemble(securedUrlService.getDocument(alea, urlPath, documentId));
 	}
 
+	@Override
 	public DocumentVo getDocument(String alea, String urlPath, String password,
 			Integer documentId) throws BusinessException {
 		return documentAdapter.disassemble(securedUrlService.getDocument(alea, urlPath, password, documentId));
 	}
 
+	@Override
 	public List<DocumentVo> getDocuments(String alea, String urlPath)
 			throws BusinessException {
 		return documentAdapter.disassembleDocList(securedUrlService.getDocuments(alea, urlPath));
 	}
 
+	@Override
 	public List<DocumentVo> getDocuments(String alea, String urlPath,
 			String password) throws BusinessException {
 		return documentAdapter.disassembleDocList(securedUrlService.getDocuments(alea, urlPath, password));
 	}
 
+	@Override
 	public boolean isPasswordProtected(String alea, String urlPath) throws LinShareNotSuchElementException {
 		return securedUrlService.isProtectedByPassword(alea, urlPath);
 	}
 
+	@Override
 	public boolean isValid(String alea, String urlPath) {
 		return securedUrlService.isValid(alea, urlPath);
 	}
 
+	@Override
 	public boolean isValid(String alea, String urlPath, String password) {
 		return securedUrlService.isValid(alea, urlPath, password);
 	}
 
+	@Override
 	public boolean exists(String alea, String urlPath) {
 		return securedUrlService.exists(alea,urlPath);
 	}
 	
 	
+	@Override
 	public void logDownloadedDocument(String alea, String urlPath, String password,
 			Integer documentId, String email) {
 		securedUrlService.logDownloadedDocument(alea, urlPath, password, documentId, email) ;
 	}
 
+	@Override
 	public void sendEmailNotification(String alea, String urlPath, MailContainer mailContainer, List<DocumentVo> docs, String email) throws BusinessException {
 		
 		User owner = securedUrlService.getSecuredUrlOwner(alea, urlPath);
@@ -128,17 +138,4 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		notifierService.sendAllNotifications(mailElementsFactory.buildMailAnonymousDownloadWithOneRecipient(owner, mailContainer, docList, email, owner));
 	}
 	
-	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {
-		User sender = userRepository.findByMail(senderVo.getLogin());
-
-		List<SecuredUrl> secUrls = securedUrlService.getUrlsByMailAndFile(sender, document);
-
-		Map<String, Calendar> res = new HashMap<String, Calendar>();
-		for (SecuredUrl securedUrl : secUrls) {
-			for (Contact recipient : securedUrl.getRecipients()) {
-				res.put(recipient.getMail(), securedUrl.getExpirationTime());
-			}
-		}
-		return res;
-	}
 }

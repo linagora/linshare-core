@@ -23,12 +23,13 @@ package org.linagora.linshare.core.Facade.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.linagora.linshare.core.Facade.ShareFacade;
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -52,6 +53,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
@@ -66,7 +68,8 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareFacadeImpl.class);
 	
-	private final ShareService shareService;
+	// to be deleted
+	private ShareService shareService;
 	
 	private final ShareTransformer shareTransformer;
 	
@@ -90,44 +93,37 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final FunctionalityService functionalityService;
 	
+	private final AnonymousShareEntryService anonymousShareEntryService;
+	
 	private final String urlBase;
 	
 	private final String urlInternal;
     
-	public ShareFacadeImpl(
-			final ShareService shareService,
-			final ShareTransformer shareTransformer,
-			final UserRepository<User> userRepository,
-			final DocumentRepository documentRepository,
-			final NotifierService mailNotifierService,
-			final UserService userService,
-            final ShareEntryService shareEntryService,
-    		final MailContentBuildingService mailElementsFactory,
-			final DocumentEntryTransformer documentEntryTransformer,
-			final String urlBase,
-			final String urlInternal,
-			final AbstractDomainService abstractDomainService,
-			final FunctionalityService functionalityService,
-			final DocumentEntryService documentEntryService) {
+	
+	public ShareFacadeImpl(ShareTransformer shareTransformer, UserRepository<User> userRepository, DocumentRepository documentRepository, NotifierService notifierService,
+			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
+			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
+			String urlBase, String urlInternal) {
 		super();
-		this.shareService = shareService;
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
 		this.documentRepository = documentRepository;
-		this.notifierService=mailNotifierService;
-		this.userService = userService;
-        this.shareEntryService = shareEntryService;
+		this.notifierService = notifierService;
 		this.mailElementsFactory = mailElementsFactory;
+		this.userService = userService;
+		this.shareEntryService = shareEntryService;
 		this.documentEntryTransformer = documentEntryTransformer;
-		this.urlBase = urlBase;
-		this.urlInternal = urlInternal;
+		this.documentEntryService = documentEntryService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
-		this.documentEntryService = documentEntryService;
+		this.anonymousShareEntryService = anonymousShareEntryService;
+		this.urlBase = urlBase;
+		this.urlInternal = urlInternal;
 	}
 	
 	
-//	@Override
+
+	//	@Override
 	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo actorVo, List<DocumentVo> documents, List<UserVo> recipientsVo, Calendar expirationDate) throws BusinessException {
 		logger.debug("createSharing:Begin");
 		
@@ -156,7 +152,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	}
 
 //	@Override
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, MailContainer mailContainer, Calendar expirationDate, boolean isOneDocEncrypted, String jwsEncryptUrlString) throws BusinessException {
+	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, MailContainer mailContainer, Calendar expirationDate, boolean isOneDocEncrypted) throws BusinessException {
 		logger.debug("createSharingWithMail:Begin");
 		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, expirationDate);
 		
@@ -175,13 +171,17 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
 		
+		List<String> documentNames = new ArrayList<String>();
+		for (DocumentVo documentVo : documents) {
+			documentNames.add(documentVo.getFileName());
+		}
 		
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLsUid(userVo.getLogin());
 			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
 			
-			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, owner_, recipient, documents, linshareUrl, "", null, isOneDocEncrypted, jwsEncryptUrlString));
+			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, documentNames, linshareUrl, "", null, isOneDocEncrypted));
 
 		}
 		
@@ -221,8 +221,51 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		return new ArrayList<ShareDocumentVo>();
 	}
+	
+//	@Override
+//	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {
+//		User sender = userRepository.findByMail(senderVo.getLogin());
+//
+//		List<SecuredUrl> secUrls = securedUrlService.getUrlsByMailAndFile(sender, document);
+//
+//		Map<String, Calendar> res = new HashMap<String, Calendar>();
+//		
+//		// FIXME : fix anonymous url
+////		for (SecuredUrl securedUrl : secUrls) {
+////			for (Contact recipient : securedUrl.getRecipients()) {
+////				res.put(recipient.getMail(), securedUrl.getExpirationTime());
+////			}
+////		}
+//		return res;
+//	}
 
 	
+	
+	@Override
+	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(UserVo senderVo, DocumentVo documentVo) {
+		
+		User actor = userService.findByLsUid(senderVo.getLsUid());
+		if (actor==null) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
+		}
+		
+		Map<String, Calendar> res = new HashMap<String, Calendar>();
+		DocumentEntry documentEntry;
+		try {
+			documentEntry = documentEntryService.findById(actor, documentVo.getIdentifier());
+			
+			
+			for (AnonymousShareEntry entry : documentEntry.getAnonymousShareEntries()) {
+				res.put(entry.getContact().getMail(), entry.getExpirationDate());
+			}
+		} catch (BusinessException e) {
+			logger.error("Document " + documentVo.getIdentifier() + " was not found ! " + e.getMessage() );
+		}
+		return res;
+	}
+
+
+
 	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actorVo) throws BusinessException {
 		User actor = userService.findByLsUid(actorVo.getLsUid());
@@ -252,18 +295,18 @@ public class ShareFacadeImpl implements ShareFacade {
 			UserVo actorVo, List<DocumentVo> documents, List<String> recipientsEmailInput, boolean secureSharing, MailContainer mailContainer, Calendar expiryDateSelected) throws BusinessException {
     	logger.debug("createSharingWithMailUsingRecipientsEmail");
     	
-    	User actor = userService.findByLsUid(actorVo.getLsUid());
+    	User sender = userService.findByLsUid(actorVo.getLsUid());
     	
 		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
 
 		List<UserVo> knownRecipients = new ArrayList<UserVo>();
 		List<Contact> unKnownRecipientsEmail = new ArrayList<Contact>();
 		
-		logger.debug("The current user is : " + actor.getAccountReprentation());
+		logger.debug("The current user is : " + sender.getAccountReprentation());
 		logger.debug("recipientsEmailInput size : " + recipientsEmailInput.size());
 		List<String> recipientsEmail = new ArrayList<String>();
-		if(actor.getAccountType().equals(AccountType.GUEST) && ((Guest)actor).isRestricted()) {
-			List<String> guestAllowedContacts= userService.getGuestEmailContacts(actor.getMail());
+		if(sender.getAccountType().equals(AccountType.GUEST) && ((Guest)sender).isRestricted()) {
+			List<String> guestAllowedContacts= userService.getGuestEmailContacts(sender.getMail());
 			logger.debug("guestAllowedContacts size : " + guestAllowedContacts.size());
 			for (String mailInput : recipientsEmailInput) {
 				if(guestAllowedContacts.contains(mailInput)) {
@@ -274,7 +317,7 @@ public class ShareFacadeImpl implements ShareFacade {
 					unKnownRecipientsEmail.add(new Contact(mailInput));
 				}
 			}
-			logger.debug("Only " + recipientsEmail.size() + " contacts are authorized for " + actor.getMail());
+			logger.debug("Only " + recipientsEmail.size() + " contacts are authorized for " + sender.getMail());
 		} else {
 			recipientsEmail.addAll(recipientsEmailInput);
 		}
@@ -282,18 +325,15 @@ public class ShareFacadeImpl implements ShareFacade {
 		logger.debug("unKnownRecipientsEmail size : " + unKnownRecipientsEmail.size());
 		logger.debug("unKnownRecipientsEmail  : " + unKnownRecipientsEmail.toString());
     	
-    	boolean isOneDocEncrypted = false;
-		for (DocumentVo oneDoc : documents) {
-			if(oneDoc.getEncrypted()==true) isOneDocEncrypted = true;
-		}
+		boolean isOneDocEncrypted = oneDocIsEncrypted(documents);
 		
-		String jwsEncryptUrlString = getJwsEncryptUrlString(isOneDocEncrypted);
+		
 		
 		// find known and unknown recipients of the share
 		User tempRecipient = null;
 		for (String mail : recipientsEmail) {
 			try {
-				tempRecipient= userService.findOrCreateUserWithDomainPolicies(mail, actor.getDomainId());
+				tempRecipient= userService.findOrCreateUserWithDomainPolicies(mail, sender.getDomainId());
 				knownRecipients.add(new UserVo(tempRecipient));
 			} catch (BusinessException e) {
 				if (e.getErrorCode() == BusinessErrorCode.USER_NOT_FOUND) {					
@@ -315,43 +355,19 @@ public class ShareFacadeImpl implements ShareFacade {
 			boolean hasRightsToShareWithExternals = false;
 			
 			try {
-				hasRightsToShareWithExternals = abstractDomainService.hasRightsToShareWithExternals(actor);
+				hasRightsToShareWithExternals = abstractDomainService.hasRightsToShareWithExternals(sender);
 			} catch (BusinessException e) {
-				logger.error("Could not retrieve domain of sender while sharing to externals: "+actor.getAccountReprentation());
+				logger.error("Could not retrieve domain of sender while sharing to externals: "+sender.getAccountReprentation());
 			}
 			
 			if (hasRightsToShareWithExternals) {
 			
 				List<DocumentEntry> documentEntries = documentEntryTransformer.assembleList(documents);
 				
-				// TODO : Fix Anonymous Url
-//				SecuredUrl securedUrl = shareService.shareDocumentsWithSecuredAnonymousUrlToUser(owner, docList, secureSharing, unKnownRecipientsEmail, expiryDateSelected);
-//				
-//				//compose the secured url to give in mail
-//				StringBuffer httpUrlBase = new StringBuffer();
-//				httpUrlBase.append(urlBase);
-//				if(!urlBase.endsWith("/")) httpUrlBase.append("/");
-//				httpUrlBase.append(securedUrl.getUrlPath());
-//				if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
-//				httpUrlBase.append(securedUrl.getAlea());
-//				
-//				//securedUrl must be ended with a "/" if no parameter (see urlparam)
-//				String linShareUrl = httpUrlBase.toString();
-//				
-//				List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-//
-//				for (Contact oneContact : unKnownRecipientsEmail) {
-//					
-//					//give email as a parameter, useful to quickly know who is here
-//					String linShareUrlParam = "?email=" + oneContact.getMail();
-//					User owner_ = userRepository.findByLsUid(ownerVo.getLogin());
-//					
-//					mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(
-//							owner_, mailContainer, owner_, oneContact.getMail(), documents, linShareUrl, linShareUrlParam, securedUrl.getTemporaryPlainTextpassword(), isOneDocEncrypted, jwsEncryptUrlString));	
-//				}
-//				
-//				notifierService.sendAllNotifications(mailContainerWithRecipient);
-			
+				for (Contact recipient : unKnownRecipientsEmail) {
+					anonymousShareEntryService.createAnonymousShare(documentEntries, sender, recipient, expiryDateSelected, secureSharing, mailContainer);
+					
+				}
 			} else {
 				// Building all failed items for unkown recipients. 
 				for (DocumentVo doc : documents) {
@@ -365,7 +381,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		
 		//keep old method to share with user referenced in db
-		result.addAll(createSharingWithMail(actorVo, documents, knownRecipients, mailContainer, expiryDateSelected, isOneDocEncrypted, jwsEncryptUrlString));
+		result.addAll(createSharingWithMail(actorVo, documents, knownRecipients, mailContainer, expiryDateSelected, isOneDocEncrypted));
 		return result;
     }
     
@@ -409,7 +425,7 @@ public class ShareFacadeImpl implements ShareFacade {
     	for (SecuredUrl securedUrl : urls) {
 			List<Contact> recipients = securedUrl.getRecipients();
 			sUrlDownload = sUrlBase.concat(securedUrl.getUrlPath()+"/");
-			sUrlDownload = sUrlDownload.concat(securedUrl.getAlea());
+			sUrlDownload = sUrlDownload.concat(securedUrl.getSalt());
 			
 			for (Contact contact : recipients) {
     			String urlparam = "?email="+contact.getMail();
@@ -443,22 +459,9 @@ public class ShareFacadeImpl implements ShareFacade {
 	}
 
 	
-	private String getJwsEncryptUrlString(boolean isOneDocEncrypted) {
-		String jwsEncryptUrlString = "";
-		if(isOneDocEncrypted){
-			StringBuffer jwsEncryptUrl = new StringBuffer();
-			jwsEncryptUrl.append(urlBase);
-			if(!urlBase.endsWith("/")) jwsEncryptUrl.append("/");
-			jwsEncryptUrl.append("localDecrypt");
-			jwsEncryptUrlString = jwsEncryptUrl.toString();
-		}
-		return jwsEncryptUrlString;
-	}
-	
-
-	private boolean oneDocIsEncrypted(List<Document> docList) {
+	private boolean oneDocIsEncrypted(List<DocumentVo> docList) {
 		boolean isOneDocEncrypted = false;
-		for(Document doc : docList) {
+		for(DocumentVo doc : docList) {
 			if(doc.getEncrypted()==true) isOneDocEncrypted = true;
 		}
 		return isOneDocEncrypted;
@@ -481,7 +484,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public ShareDocumentVo getShareDocumentVoByUuid(UserVo actorVo, String uuid) throws BusinessException {
 		User actor = userService.findByLsUid(actorVo.getLsUid());
-		return shareTransformer.disassemble(shareEntryService.findById(actor, uuid));
+		return shareTransformer.disassemble(shareEntryService.findByUuid(actor, uuid));
 	}
 
 
@@ -489,7 +492,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException {
 		logger.debug("updateShareComment:" + uuid);
 		User actor = userService.findByLsUid(actorVo.getLsUid());
-		ShareEntry shareEntry = shareEntryService.findById(actor, uuid);
+		ShareEntry shareEntry = shareEntryService.findByUuid(actor, uuid);
 		shareEntry.setComment(comment);
 		logger.debug("comment : " + comment);
 		shareEntryService.updateShareComment(actor, uuid, comment);
