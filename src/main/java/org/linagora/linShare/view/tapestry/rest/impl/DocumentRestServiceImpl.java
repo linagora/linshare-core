@@ -307,10 +307,12 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			String fileName = null ;
 			if (request.getParameterNames().contains("filename")) {
 				fileName = request.getParameter("filename");
-			} else {
+			} 
+			if(fileName == null) {
 				fileName = theFile.getFileName();
 			}
 			fileName = filter.clean(fileName);
+			
 			logger.debug("fileName : " + fileName);
 			DocumentVo doc = documentFacade.insertFile(theFile.getStream(), theFile.getSize(), fileName, mimeType, actor );
 			
@@ -319,9 +321,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 				documentFacade.updateFileProperties(doc.getIdentifier(), fileName, fileComment);
 			}
 			
-			
 			OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
-			
 			
 			response.setStatus(HttpStatus.SC_CREATED);
 			
