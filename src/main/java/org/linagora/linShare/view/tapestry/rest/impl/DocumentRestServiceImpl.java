@@ -304,7 +304,14 @@ public class DocumentRestServiceImpl implements DocumentRestService {
                 
 		try {
 			XSSFilter filter = new XSSFilter(antiSamyPolicy, null);
-			String fileName = filter.clean(theFile.getFileName());
+			String fileName = null ;
+			if (request.getParameterNames().contains("filename")) {
+				fileName = request.getParameter("filename");
+			} else {
+				fileName = theFile.getFileName();
+			}
+			fileName = filter.clean(fileName);
+			logger.debug("fileName : " + fileName);
 			DocumentVo doc = documentFacade.insertFile(theFile.getStream(), theFile.getSize(), fileName, mimeType, actor );
 			
 			if(fileComment != null) {
