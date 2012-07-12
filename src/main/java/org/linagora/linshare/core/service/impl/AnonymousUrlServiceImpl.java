@@ -15,16 +15,4 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 		this.anonymousUrlBusinessService = anonymousUrlBusinessService;
 	}
 
-
-//	@Override
-//	public AnonymousUrl findByUuid(String uuid) {
-//		return anonymousUrlBusinessService.findByUuid(uuid);
-//	}
-//
-//
-//	@Override
-//	public AnonymousUrl create(Boolean passwordProtected) throws BusinessException {
-//		return anonymousUrlBusinessService.create(passwordProtected);
-//	}	
-	
 }

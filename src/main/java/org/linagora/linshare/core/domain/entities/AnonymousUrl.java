@@ -7,10 +7,6 @@ import java.util.HashSet;
  * @author fred
  *
  */
-/**
- * @author fred
- *
- */
 public class AnonymousUrl {
 
 	private Long id;

@@ -40,7 +40,7 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 		AnonymousUrl anonymousUrl = new AnonymousUrl(baseSecuredUrl);
 		if(passwordProtected) {
 			String password = passwordService.generatePassword();
-			// We store it temporay it this object for mail notification.
+			// We store it temporary in this object for mail notification.
 			anonymousUrl.setTemporaryPlainTextPassword(password);
 			anonymousUrl.setPassword(HashUtils.hashSha1withBase64(password.getBytes()));
 		}

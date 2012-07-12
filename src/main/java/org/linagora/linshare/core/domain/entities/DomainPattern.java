@@ -18,6 +18,9 @@ public class DomainPattern {
 	private String userFirstName;
 	private String userLastName;
     private String ldapUid;
+    private String autoCompleteCommand;
+    private Boolean system;
+    
     
     private java.util.Set<LdapAttribute> attributes = new java.util.HashSet<LdapAttribute>();
 	
@@ -153,4 +156,25 @@ public class DomainPattern {
 	public void setAttributes(java.util.Set<LdapAttribute> attributes) {
 		this.attributes = attributes;
 	}
+
+
+	public String getAutoCompleteCommand() {
+		return autoCompleteCommand;
+	}
+
+
+	public void setAutoCompleteCommand(String autoCompleteCommand) {
+		this.autoCompleteCommand = autoCompleteCommand;
+	}
+
+
+	public Boolean getSystem() {
+		return system;
+	}
+
+
+	public void setSystem(Boolean system) {
+		this.system = system;
+	}
+	
 }

@@ -22,8 +22,6 @@ public abstract class Account {
 	
 	protected boolean enable;
 	
-//	protected UserType accountType;
-	
 	protected String password;
 	
 	protected boolean destroyed;

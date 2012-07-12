@@ -10,6 +10,8 @@
     <property access="field" column="description" name="description"/>
     <property access="field" column="auth_command" name="authCommand"/>
     <property access="field" column="search_user_command" name="searchUserCommand"/>
+    <property access="field" column="auto_complete_command" name="autoCompleteCommand"/>
+    <property access="field" column="system" name="system"/>
     <property access="field" column="USER_MAIL" name="userMail"/>
     <property access="field" column="USER_FIRSTNAME" name="userFirstName"/>
     <property access="field" column="USER_LASTNAME" name="userLastName"/>
