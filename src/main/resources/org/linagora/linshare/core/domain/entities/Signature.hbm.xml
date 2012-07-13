@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-  <class name="org.linagora.linshare.core.domain.entities.Signature" table="SIGNATURE">
-    <id name="persistenceId" type="long">
- 	  <column name="signature_id" not-null="true" index="index_signature_id"/>
-      <generator class="native"/>
-    </id>
-    <property access="field" column="identifier" name="identifier" not-null="true" unique="true"/>
-    <property access="field" column="name" name="name" not-null="true"/>
-    <property access="field" column="creation_date" name="creationDate" not-null="true" type="calendar"/>
-    <property access="field" column="type" name="type"/>
-    <property access="field" column="size" name="size" type="long"/>
-    <property access="field" column="cert_subjectdn" name="certSubjectDn"/>
-    <property access="field" column="cert_issuerdn" name="certIssuerDn"/>
-    <property access="field" column="cert_notafter" name="certNotAfter"/>
-    <property access="field" column="cert" name="cert" type="text"/>
-    <many-to-one access="field" class="org.linagora.linshare.core.domain.entities.User" name="signer" not-null="true">
-      <column index="index_signature_signer_id" name="signer_id"/>
-    </many-to-one>
-    <many-to-one access="field" class="org.linagora.linshare.core.domain.entities.Document" column="document_id_fk" name="document" not-null="false"/>
-  </class>
+  <class name="org.linagora.linshare.core.domain.entities.Signature" table="signature" lazy="false">
+		<id name="id" type="long" unsaved-value="0">
+			<column name="id" not-null="true" index="index_signature_id"/>
+			<generator class="native">
+			</generator>
+		</id>
+		<many-to-one name="signer" cascade="lock" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<many-to-one name="document" cascade="lock" column="document_id" class="org.linagora.linshare.core.domain.entities.Document" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<property name="uuid" column="uuid" index="signature2" type="string" length="255" not-null="true" lazy="false"  unique="true"/>
+		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="creationDate" column="creation_date" type="timestamp" length="29" not-null="true" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false"/>
+		<property name="type" column="type" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="size" column="size" type="long" not-null="false" lazy="false"/>
+		<property name="certSubjectDn" column="cert_subject_dn" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="certIssuerDn" column="cert_issuer_dn" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="certNotAfter" column="cert_not_after" type="timestamp" length="29" not-null="false" lazy="false"/>
+		<property name="cert" column="cert" type="text" not-null="false" lazy="false"/>
+		<property name="sortOrder" column="sort_order" type="integer" not-null="false" lazy="false"/>
+	</class>
+	
+	
 </hibernate-mapping>

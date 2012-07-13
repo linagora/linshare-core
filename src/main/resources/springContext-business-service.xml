@@ -16,6 +16,7 @@
 		<constructor-arg ref="timeStampingService"/>
 		<constructor-arg ref="documentEntryRepository"/>
 		<constructor-arg ref="documentRepository"/>
+		<constructor-arg ref="signatureBusinessService"/>
 		<constructor-arg ref="accountRepository"/>
    	</bean>
 
@@ -40,6 +41,14 @@
 		<constructor-arg ref="anonymousUrlRepository"/>
 		<constructor-arg value="download"/>
 		<constructor-arg ref="passwordService"/>
+   	</bean>
+   	
+   	
+   	<bean id="signatureBusinessService" class="org.linagora.linshare.core.business.service.impl.SignatureBusinessServiceImpl">
+		<constructor-arg ref="jackRabbitRepository"/>
+		<constructor-arg ref="signatureRepository"/>
+		<constructor-arg ref="documentRepository"/>
+		<constructor-arg ref="accountRepository"/>
    	</bean>
    	
 </beans>

@@ -37,52 +37,11 @@ import org.linagora.linshare.core.service.DocumentService;
 
 public class DocumentServiceImpl implements DocumentService {
 
-	@Override
-	public String getMimeType(InputStream theFileStream, String theFilePath) throws BusinessException {
-		
-		return null;
-	}
-
-	@Override
-	public Document insertFile(String path, InputStream file, long size, String fileName, String mimeType, User owner) throws BusinessException {
-		
-		return null;
-	}
 
 	@Override
 	public Document updateFileContent(String currentFileUUID, InputStream file, long size, String fileName, String mimeType, boolean encrypted, User owner) throws BusinessException {
 		
 		return null;
-	}
-
-	@Override
-	public Document updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, String mimeType, User owner) throws BusinessException {
-		
-		return null;
-	}
-
-	@Override
-	public long getAvailableSize(User user) throws BusinessException {
-		
-		return 0;
-	}
-
-	@Override
-	public long getUserMaxFileSize(User user) throws BusinessException {
-		
-		return 0;
-	}
-
-	@Override
-	public long getTotalSize(User user) throws BusinessException {
-		
-		return 0;
-	}
-
-	@Override
-	public void deleteFile(String login, String uuid, Reason causeOfDeletion) throws BusinessException {
-		
-		
 	}
 
 	@Override
@@ -93,12 +52,6 @@ public class DocumentServiceImpl implements DocumentService {
 
 	@Override
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException {
-		
-		return null;
-	}
-
-	@Override
-	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor) throws BusinessException {
 		
 		return null;
 	}

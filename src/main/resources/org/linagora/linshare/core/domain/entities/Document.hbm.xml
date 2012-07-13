@@ -21,6 +21,11 @@
 		  <one-to-one name="threadEntry" class="org.linagora.linshare.core.domain.entities.ThreadEntry" cascade="save-update,lock" property-ref="document" lazy="no-proxy"/>
 		  -->
 		 <one-to-one name="documentEntry" class="org.linagora.linshare.core.domain.entities.DocumentEntry" cascade="save-update,lock" property-ref="document" lazy="no-proxy"/>
+		 
+		 <set name="signatures" lazy="true" inverse="true">
+			<key column="document_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Signature"/>
+		</set>
 	</class>
 	
 </hibernate-mapping>

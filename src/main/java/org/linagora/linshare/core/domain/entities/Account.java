@@ -34,6 +34,8 @@ public abstract class Account {
 	
 	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
 	
+	protected Set<Signature> signatures = new  HashSet<Signature>();
+	
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
@@ -147,6 +149,14 @@ public abstract class Account {
 		this.shareEntries = shareEntries;
 	}
 	
+	public Set<Signature> getSignatures() {
+		return signatures;
+	}
+
+	public void setSignatures(Set<Signature> signatures) {
+		this.signatures = signatures;
+	}
+
 	public abstract AccountType getAccountType();
 	
 	public abstract String getAccountReprentation();

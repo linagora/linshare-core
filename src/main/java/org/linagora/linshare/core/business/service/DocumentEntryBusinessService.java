@@ -38,5 +38,5 @@ public interface DocumentEntryBusinessService {
 	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException;
 	
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl) throws BusinessException;
-
+	
 }

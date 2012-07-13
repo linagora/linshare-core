@@ -24,17 +24,13 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.Share;
-import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentTransformer;
@@ -51,8 +47,8 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.DocumentService;
 import org.linagora.linshare.core.service.EnciphermentService;
+import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
-import org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +70,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	private final DocumentEntryService documentEntryService;
 	
+	private final ShareEntryService shareEntryService;
+	
 	private final AccountService accountService;
 	
 	private final DocumentEntryTransformer documentEntryTransformer;
@@ -82,23 +80,25 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	
 	
-	public DocumentFacadeImpl(DocumentService documentService,
-			UserRepository<User> userRepository,
-			final DocumentTransformer documentTransformer,
-			final SignatureTransformer signatureTransformer,EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService, DocumentEntryTransformer documentEntryTransformer) {
+	
+	public DocumentFacadeImpl(DocumentService documentService, UserRepository<User> userRepository, DocumentTransformer documentTransformer, SignatureTransformer signatureTransformer,
+			EnciphermentService enciphermentService, ShareService shareService, DocumentEntryService documentEntryService, ShareEntryService shareEntryService, AccountService accountService,
+			DocumentEntryTransformer documentEntryTransformer) {
 		super();
 		this.documentService = documentService;
 		this.userRepository = userRepository;
 		this.documentTransformer = documentTransformer;
-		this.signatureTransformer=signatureTransformer;
+		this.signatureTransformer = signatureTransformer;
 		this.enciphermentService = enciphermentService;
+		this.shareService = shareService;
 		this.documentEntryService = documentEntryService;
+		this.shareEntryService = shareEntryService;
 		this.accountService = accountService;
 		this.documentEntryTransformer = documentEntryTransformer;
 	}
 
-	
-	
+
+
 	@Override
 	public String getMimeType(InputStream theFileStream, String theFilePath) throws BusinessException {
 		// TODO To be removed 
@@ -184,18 +184,14 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	@Override
 	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actorVo) throws BusinessException {
-//		Account actor = accountService.findUserInDB(actorVo.getLsUid());
-//		
-//		return documentEntryService.getDocumentStream(actor, doc.getIdentifier());
-//		TODO : Fix downloadSharedDocument
-		return documentService.downloadSharedDocument(doc, actorVo);
+		User actor = (User) accountService.findByLsUid(actorVo.getLsUid());
+		return shareEntryService.getShareStream(actor, doc.getIdentifier());
 	}
 	
 	
 	@Override
 	public InputStream retrieveFileStream(DocumentVo doc, String lsUid) throws BusinessException {
 		Account actor = accountService.findByLsUid(lsUid);
-		
 		return documentEntryService.getDocumentStream(actor, doc.getIdentifier());
 	}
 	

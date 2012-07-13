@@ -131,7 +131,7 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 		User owner = securedUrlService.getSecuredUrlOwner(alea, urlPath);
 		List<Document> docList = new ArrayList<Document>();
 		for (DocumentVo documentVo : docs) {
-			docList.add(documentRepository.findById(documentVo.getIdentifier()));
+			docList.add(documentRepository.findByUuid(documentVo.getIdentifier()));
 		}
 		
 		//send a notification by mail to the owner

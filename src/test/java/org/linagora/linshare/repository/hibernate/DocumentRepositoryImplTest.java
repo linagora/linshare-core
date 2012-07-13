@@ -54,8 +54,8 @@ public class DocumentRepositoryImplTest  extends AbstractTransactionalJUnit4Spri
 		Document doc = new Document(identifier, type, fileSize);
 		documentRepository.create(doc);
 
-		Assert.assertTrue(documentRepository.findById(identifier)!=null);
-		Assert.assertFalse(documentRepository.findById(identifier+"dummy")!=null);
+		Assert.assertTrue(documentRepository.findByUuid(identifier)!=null);
+		Assert.assertFalse(documentRepository.findByUuid(identifier+"dummy")!=null);
 		documentRepository.delete(doc);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}

@@ -36,11 +36,11 @@ public class FileLogEntry extends LogEntry {
 	
 	private static final long serialVersionUID = -7747367540741943254L;
 
-	private final String fileName;
+	protected String fileName;
 	
-	private final Long fileSize;
+	protected Long fileSize;
 	
-	private final String fileType;
+	protected String fileType;
 
 
 	protected FileLogEntry() {

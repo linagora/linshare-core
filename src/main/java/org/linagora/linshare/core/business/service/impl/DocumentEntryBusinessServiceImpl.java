@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -21,10 +22,12 @@ import org.linagora.LinThumbnail.FileResourceFactory;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.LinThumbnail.utils.ImageUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.SignatureBusinessService;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -52,9 +55,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final DocumentEntryRepository documentEntryRepository;
 	private final DocumentRepository documentRepository;
 	private final AccountRepository<Account> accountRepository; 
+	private final SignatureBusinessService signatureBusinessService;
 	
 	
-	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, AccountRepository<Account> accountRepository) {
+	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, 
+			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService) {
 		super();
 		this.mimeTypeIdentifier = new MagicMimeTypeIdentifier();
 		this.fileSystemDao = fileSystemDao;
@@ -62,6 +67,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.documentEntryRepository = documentEntryRepository;
 		this.documentRepository = documentRepository;
 		this.accountRepository = accountRepository;
+		this.signatureBusinessService = signatureBusinessService;
 	}
 
 	
@@ -232,7 +238,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry) {
-		Document doc = documentRepository.findById(entry.getDocument().getUuid());
+		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
 		String thmbUUID = doc.getThmbUuid();
 
 		if (thmbUUID!=null && thmbUUID.length()>0) {
@@ -289,7 +295,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		
 		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUid(), myFile);
 		
-		Document oldDocument = documentRepository.findById(docEntry.getDocument().getUuid());
+		Document oldDocument = documentRepository.findByUuid(docEntry.getDocument().getUuid());
 		
 		// want a timestamp on doc ? if timeStamping url is null, time stamp will be null
 		byte[] timestampToken = getTimeStamp(fileName, myFile, timeStampingUrl);
@@ -365,6 +371,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		// remove old document in JCR
 		logger.debug("suppresion of doc, Uuid : " + document.getUuid());
 		fileSystemDao.removeFileByUUID(document.getUuid());
+		
+		//clean all signatures ...
+		Set<Signature> signatures = document.getSignatures();
+		for (Signature signature : signatures) {
+			signatureBusinessService.deleteSignature(signature);
+		}
+		signatures.clear();
+		documentRepository.update(document);
 		
 		// remove old document from database
 		documentRepository.delete(document);
@@ -471,29 +485,4 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		return testheaders;
 	}
 	
-//
-//	public void insertSignatureFile(InputStream file, long size,
-//			String fileName, String mimeType, User owner, Document aDoc,
-//			X509Certificate signerCertificate) throws BusinessException {
-//
-//		// insert signature in jack rabbit
-//		String uuid = fileSystemDao.insertFile(owner.getLogin(), null, file,
-//				size, mimeType);
-//		// create signature in db
-//		Signature sign = new Signature(uuid, fileName, new GregorianCalendar(),
-//				owner, size, signerCertificate);
-//		// link it to document
-//		List<Signature> signatures = aDoc.getSignatures();
-//		signatures.add(sign);
-//		aDoc.setSignatures(signatures);
-//
-//		documentRepository.update(aDoc);
-//
-//		FileLogEntry logEntry = new FileLogEntry(owner.getMail(), owner
-//				.getFirstName(), owner.getLastName(), owner.getDomainId(), LogAction.FILE_SIGN,
-//				"signature of a file", aDoc.getName(), aDoc.getSize(), aDoc
-//						.getType());
-//
-//		logEntryService.create(logEntry);
-//	}
 }

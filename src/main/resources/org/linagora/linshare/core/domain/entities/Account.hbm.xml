@@ -34,6 +34,11 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ShareEntry"/>
 		</set>
     
+    	<set name="signatures" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="owner_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Signature"/>
+		</set>
+		
     
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
 		 <!-- 
@@ -68,6 +73,7 @@
 			<subclass name="org.linagora.linshare.core.domain.entities.Guest" discriminator-value="3" lazy="false">
 			</subclass>
 			<subclass name="org.linagora.linshare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>
+			
 			<subclass name="org.linagora.linshare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
 			</subclass>
 		</subclass>

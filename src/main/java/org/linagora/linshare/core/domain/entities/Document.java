@@ -23,9 +23,9 @@ package org.linagora.linshare.core.domain.entities;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 
 public class Document implements Serializable {
 	
@@ -84,7 +84,7 @@ public class Document implements Serializable {
 	private Long size;
 	
 	
-	private List<Signature> signatures;
+	private Set<Signature> signatures;
 	
 	
 	private String fileComment;
@@ -250,14 +250,14 @@ public class Document implements Serializable {
 		this.fileComment = fileComment;
 	}
 	
-	public List<Signature> getSignatures() {
+	public Set<Signature> getSignatures() {
 		return signatures;
 	}
-	
-	public void setSignatures(List<Signature> signatures) {
+
+	public void setSignatures(Set<Signature> signatures) {
 		this.signatures = signatures;
 	}
-	
+
 	public void setThmbUuid(String thmbUUID) {
 		this.thmbUuid = thmbUUID;
 	}

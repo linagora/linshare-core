@@ -394,7 +394,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		User user = userRepository.findByLsUid(currentUser.getLogin());
 		User owner = userRepository.findByLsUid(ownerVo.getLogin());
 		
-		Document doc = documentRepository.findById(sharedDocument.getIdentifier());
+		Document doc = documentRepository.findByUuid(sharedDocument.getIdentifier());
 		List<Document> docList = new ArrayList<Document>();
 		docList.add(doc);
 		
@@ -410,7 +410,7 @@ public class ShareFacadeImpl implements ShareFacade {
     	//1) share with secured url, notification to users.
 
 		User user = userRepository.findByLsUid(currentUser.getLogin());
-    	Document doc = documentRepository.findById(currentDoc.getIdentifier());
+    	Document doc = documentRepository.findByUuid(currentDoc.getIdentifier());
     	
     	List<SecuredUrl> urls = shareService.getSecureUrlLinkedToDocument(doc);
     	

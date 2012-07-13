@@ -29,8 +29,7 @@ import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> implements
-		DocumentRepository {
+public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> implements DocumentRepository {
 
 	
 	
@@ -50,7 +49,7 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
      * @param id
      * @return found document (null if no document found).
      */
-    public Document findById(String identifier) {
+    public Document findByUuid(String identifier) {
         List<Document> documents = findByCriteria(Restrictions.eq("uuid", identifier));
         if (documents == null || documents.isEmpty()) {
             return null;

@@ -308,7 +308,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	}
 
 
-
 	@Override
 	public InputStream getShareStream(User actor, String shareEntryUuid) throws BusinessException {
 		try {
@@ -316,6 +315,8 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			if (!shareEntry.getRecipient().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share.");
 			}
+			ShareLogEntry logEntry = new ShareLogEntry(actor, shareEntry, LogAction.SHARE_DOWNLOAD, "Download of a sharing");
+			logEntryService.create(logEntry);
 			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
 		} catch (BusinessException e) {
 			logger.error("Can't find share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());

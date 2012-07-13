@@ -32,11 +32,11 @@ import org.linagora.linshare.core.domain.entities.Document;
  */
 public interface DocumentRepository extends AbstractRepository<Document>{
 	
-	 /** Find a document using its id.
+	 /** Find a document using its uuid.
      * @param id
      * @return found document (null if no document found).
      */
-	public Document findById(String identifier);
+	public Document findByUuid(String identifier);
 	  
 	
 }

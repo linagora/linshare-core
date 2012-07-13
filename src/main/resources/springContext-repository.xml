@@ -25,6 +25,10 @@
         <constructor-arg ref="hibernateTemplate"/>
     </bean>
     
+     <bean name="signatureRepository" class="org.linagora.linshare.core.repository.hibernate.SignatureRepositoryImpl">
+        <constructor-arg ref="hibernateTemplate"/>
+    </bean>
+    
     <bean name="documentEntryRepository" class="org.linagora.linshare.core.repository.hibernate.DocumentEntryRepositoryImpl">
         <constructor-arg ref="hibernateTemplate"/>
     </bean>

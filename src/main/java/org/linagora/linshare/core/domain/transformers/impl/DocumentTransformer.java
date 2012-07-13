@@ -42,7 +42,7 @@ public class DocumentTransformer implements Transformer<Document, DocumentVo>{
 				
 		if(null!=valueObject){
 			
-			Document document=documentRepository.findById(valueObject.getIdentifier());
+			Document document=documentRepository.findByUuid(valueObject.getIdentifier());
 			
 			
 			return document;

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Signature;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.Transformer;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -53,7 +54,7 @@ public class SignatureTransformer implements Transformer<Signature, SignatureVo>
 		
 		if(null!=entityObject){
 			res = new SignatureVo();
-			res.setIdentifier(entityObject.getIdentifier());
+			res.setIdentifier(entityObject.getUuid());
 			res.setCreationDate(entityObject.getCreationDate());
 			res.setCertIssuerDn(entityObject.getCertIssuerDn());
 			res.setCertSubjectDn(entityObject.getCertSubjectDn());
@@ -61,9 +62,9 @@ public class SignatureTransformer implements Transformer<Signature, SignatureVo>
 			res.setCert(entityObject.getCert());
 			res.setSize(entityObject.getSize());
 			res.setName(entityObject.getName());
-			res.setPersistenceId(entityObject.getPersistenceId());
+			res.setPersistenceId(entityObject.getId());
 			
-			UserVo signer = userTransformer.disassemble(entityObject.getSigner());
+			UserVo signer = userTransformer.disassemble((User)entityObject.getSigner());
 			res.setSigner(signer);	
 		}
 		return res;

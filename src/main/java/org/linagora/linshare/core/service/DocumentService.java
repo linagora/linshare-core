@@ -42,30 +42,6 @@ import org.linagora.linshare.core.exception.BusinessException;
  */
 public interface DocumentService {
 
-	// TODO: To be deleted
-	/**
-	 * Compute the MimeType from a file input stream 
-	 * @param theFileStream
-	 * @param theFilePath
-	 * @return
-	 */
-	public String getMimeType(InputStream theFileStream, String theFilePath)  throws BusinessException;
-	
-
-	
-	// TODO: To be deleted	
-	/**
-	 * Insert a file in the path identifiable by its filename.
-	 * @param path the path inside the repository.
-	 * @param file the stream content file.
-	 * @param fileName the name of the file which permits to identify it.
-	 * @param mimeType the mimeType of the file.
-	 * @param owner : the user who uploads the document
-	 * @return uuid the uuid of the inserted file.
-	 * @throws BusinessException : FILE_TOO_LARGE if the file is too large to fit in user's space
-	 */
-	public Document insertFile(String path,InputStream file,long size,String fileName,String mimeType, User owner) throws BusinessException;
-	
 	
 	/**
 	 * update file content (put new file in jackrabbit and change uuid of the file in database)
@@ -85,57 +61,6 @@ public interface DocumentService {
 	
 	
 	
-	/**
-	 * update file / document content BUT also add log, send mail update of shared documents to users 
-	 * @see updateFileContent
-	 * 
-	 * @param currentFileUUID
-	 * @param file
-	 * @param size
-	 * @param fileName
-	 * @param mimeType
-	 * @param owner
-	 * @return
-	 * @throws BusinessException
-	 */
-	public Document updateDocumentContent(String currentFileUUID, InputStream file, long size,
-			String fileName, String mimeType, User owner) throws BusinessException;
-	
-	
-	/**
-	 * Return in byte the available size in the user quota
-	 * the quota is read from tha admin parameter table
-	 * @param user : the user we want to check
-	 * @return 
-	 * 
-	 */
-	public long getAvailableSize(User user) throws BusinessException;
-	
-	/**
-	 * Return in byte the max size for an attachment 
-	 * @param user
-	 * @return
-	 */
-	public long getUserMaxFileSize(User user) throws BusinessException;
-	
-	/**
-	 * Return in byte the user quota
-	 * the quota is read from the admin parameter table
-	 * @param user : the user we want to check
-	 * @return 
-	 * 
-	 */
-	public long getTotalSize(User user) throws BusinessException;	
-		
-
-	/**
-	 * Delete a file by its uuid, and delete all the sharing linked to the document
-	 * @param login
-	 * @param uuid
-	 * @param causeOfDeletion
-	 * @throws BusinessException
-	 */
-	public void deleteFile(String login, String uuid, Reason causeOfDeletion) throws BusinessException;
 
 	/**
 	 * Find a doc by its uuid
@@ -155,7 +80,6 @@ public interface DocumentService {
 	 */
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException;
 	
-	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor) throws BusinessException;
 	
 	
 	/**
