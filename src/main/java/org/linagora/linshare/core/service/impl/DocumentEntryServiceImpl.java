@@ -29,6 +29,7 @@ import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.VirusScannerService;
+import org.linagora.linshare.core.utils.DocumentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +67,10 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		BufferedInputStream bufStream = new BufferedInputStream(stream);
 		String mimeType = documentEntryBusinessService.getMimeType(bufStream);
 		checkSpace(size, fileName, actor);
-		File tempFile = documentEntryBusinessService.getFileFromBufferedInputStream(bufStream, fileName);
-
+		
+		DocumentUtils util = new DocumentUtils();
+		File tempFile =  util.getFileFromBufferedInputStream(bufStream, fileName);
+		
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
 		if(mimeFunctionality.getActivationPolicy().getStatus()) {
@@ -116,8 +119,10 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		BufferedInputStream bufStream = new BufferedInputStream(stream);
 		String mimeType = documentEntryBusinessService.getMimeType(bufStream);
 		checkSpace(size, fileName, actor);
-		File tempFile = documentEntryBusinessService.getFileFromBufferedInputStream(bufStream, fileName);
-
+		
+		DocumentUtils util = new DocumentUtils();
+		File tempFile =  util.getFileFromBufferedInputStream(bufStream, fileName);
+		
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
 		if(mimeFunctionality.getActivationPolicy().getStatus()) {

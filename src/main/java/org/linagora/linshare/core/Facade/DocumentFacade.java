@@ -89,15 +89,6 @@ public interface DocumentFacade {
 	public InputStream retrieveFileStream(DocumentVo doc, String actor) throws BusinessException;
 	
 	/**
-	 * Download the shared document
-	 * @param doc
-	 * @param actor
-	 * @return
-	 * @throws BusinessException
-	 */
-	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actor) throws BusinessException;
-	
-	/**
 	 * insert a signature file in repository
 	 * @param file inputstream of the xml signature file
 	 * @param size size of the file

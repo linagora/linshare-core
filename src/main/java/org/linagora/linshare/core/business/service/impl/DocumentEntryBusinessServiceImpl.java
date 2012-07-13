@@ -37,6 +37,7 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
+import org.linagora.linshare.core.utils.DocumentUtils;
 import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
 import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
 import org.semanticdesktop.aperture.util.IOUtil;
@@ -177,66 +178,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	
 	@Override
-	public File getFileFromBufferedInputStream(BufferedInputStream stream, String fileName) {
-		// Copy the input stream to a temporary file for safe use
-		File tempFile = null;
-		BufferedOutputStream bof = null;
-		int splitIdx = fileName.lastIndexOf('.');
-		String extension = "";
-		if(splitIdx>-1){
-			extension = fileName.substring(splitIdx, fileName.length());
-		}
-		
-		logger.debug("Found extension :"+extension);
-
-		try {
-			tempFile = File.createTempFile("linshare", extension); //we need to keep the extension for the thumbnail generator
-			tempFile.deleteOnExit();
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("createTempFile:" + tempFile);
-			}
-
-			bof = new BufferedOutputStream(new FileOutputStream(tempFile));
-
-			// Transfer bytes from in to out
-			byte[] buf = new byte[20480];
-			int len;
-			while ((len = stream.read(buf)) > 0) {
-				bof.write(buf, 0, len);
-				logger.debug("len buf : " + len);
-			}
-
-			bof.flush();
-
-		} catch (IOException e) {
-			if (tempFile != null && tempFile.exists())
-				tempFile.delete();
-			throw new TechnicalException(TechnicalErrorCode.GENERIC,
-					"couldn't create a temporary file");
-		} finally {
-
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (bof != null) {
-				try {
-					bof.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return tempFile;
-	}
-	
-	
-	@Override
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry) {
 		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
 		String thmbUUID = doc.getThmbUuid();
@@ -332,7 +273,9 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl ) throws BusinessException {
 		InputStream stream = getDocumentStream(originalEntry);
 		BufferedInputStream bufStream = new BufferedInputStream(stream);
-		File tempFile = getFileFromBufferedInputStream(bufStream, originalEntry.getName());
+		
+		DocumentUtils util = new DocumentUtils();
+		File tempFile = util.getFileFromBufferedInputStream(bufStream, originalEntry.getName());
 		
 		DocumentEntry documentEntry = createDocumentEntry(owner, tempFile , originalEntry.getDocument().getSize(), 
 				originalEntry.getName(), originalEntry.getCiphered(), timeStampingUrl, originalEntry.getDocument().getType());

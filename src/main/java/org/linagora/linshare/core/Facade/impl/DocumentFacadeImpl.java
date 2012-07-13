@@ -70,7 +70,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	private final DocumentEntryService documentEntryService;
 	
-	private final ShareEntryService shareEntryService;
+//	private final ShareEntryService shareEntryService;
 	
 	private final AccountService accountService;
 	
@@ -82,7 +82,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	
 	public DocumentFacadeImpl(DocumentService documentService, UserRepository<User> userRepository, DocumentTransformer documentTransformer, SignatureTransformer signatureTransformer,
-			EnciphermentService enciphermentService, ShareService shareService, DocumentEntryService documentEntryService, ShareEntryService shareEntryService, AccountService accountService,
+			EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService,
 			DocumentEntryTransformer documentEntryTransformer) {
 		super();
 		this.documentService = documentService;
@@ -92,7 +92,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		this.enciphermentService = enciphermentService;
 		this.shareService = shareService;
 		this.documentEntryService = documentEntryService;
-		this.shareEntryService = shareEntryService;
+//		this.shareEntryService = shareEntryService;
 		this.accountService = accountService;
 		this.documentEntryTransformer = documentEntryTransformer;
 	}
@@ -179,13 +179,6 @@ public class DocumentFacadeImpl implements DocumentFacade {
 			}
 		}
 		return null;
-	}
-	
-	
-	@Override
-	public InputStream downloadSharedDocument(ShareDocumentVo doc, UserVo actorVo) throws BusinessException {
-		User actor = (User) accountService.findByLsUid(actorVo.getLsUid());
-		return shareEntryService.getShareStream(actor, doc.getIdentifier());
 	}
 	
 	

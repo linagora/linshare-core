@@ -81,14 +81,6 @@ public interface DocumentService {
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException;
 	
 	
-	
-	/**
-	 * allow to anyone to download a signature
-	 * @param signaturedoc
-	 * @return inputstream form jcr
-	 */
-	public InputStream retrieveSignatureFileStream(SignatureVo signaturedoc);
-	
 	/**
 	 * Retrieve a stream of a Document 
 	 * @param doc the documentVo (or SharedDocumentVo)

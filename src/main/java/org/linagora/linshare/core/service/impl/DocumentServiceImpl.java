@@ -57,12 +57,6 @@ public class DocumentServiceImpl implements DocumentService {
 	}
 
 	@Override
-	public InputStream retrieveSignatureFileStream(SignatureVo signaturedoc) {
-		
-		return null;
-	}
-
-	@Override
 	public InputStream retrieveFileStream(DocumentVo doc, String actor) {
 		
 		return null;
@@ -70,7 +64,6 @@ public class DocumentServiceImpl implements DocumentService {
 
 	@Override
 	public void insertSignatureFile(InputStream file, long size, String fileName, String mimeType, User owner, Document aDoc, X509Certificate signerCertificate) throws BusinessException {
-		
 		
 	}
 

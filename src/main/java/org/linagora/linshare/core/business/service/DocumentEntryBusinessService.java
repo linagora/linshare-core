@@ -23,8 +23,6 @@ public interface DocumentEntryBusinessService {
 	
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException ;
 	
-	public File getFileFromBufferedInputStream(BufferedInputStream stream, String fileName);
-	
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException;
 	
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry) ;
