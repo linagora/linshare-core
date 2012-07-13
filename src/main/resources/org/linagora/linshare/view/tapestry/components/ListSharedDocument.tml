@@ -84,38 +84,28 @@
 						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 					</t:linkit.Comment>
 					<t:if t:test="${thumbnailExists}">
-						<span class="thumbnail">
-							${shareDocument.fileName}
-							<div class="thumbnail_content">
-								<img src="${thumbnailPath}" />
-								<p>${shareDocument.fileName}</p>
-							</div>
-						</span>
++						<div t:type="chenillekit/Tooltip" title="${shareDocument.fileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
++							${shareDocument.fileName}										<!--  <img src="${thumbnailPath}" /> -->
++						</div>
 						<t:parameter name="else">
-							<span class="thumbnail">
++							<div t:type="chenillekit/Tooltip" title="${shareDocument.fileName}" value="${message:components.listDocument.noThumb}">
 								${shareDocument.fileName}
-								<div class="thumbnail_content">
-									<p class="noThmbMsg">
-										${message:components.listDocument.noThumb}
-									</p>
-									<p>${shareDocument.fileName}</p>
-								</div>
-							</span>
++							</div>
 						</t:parameter>
 					</t:if>
 				</t:actionLink>
 
-				
+
 				<br/>
 				<t:if t:test="${shareDocument.fileComment}">
 					<div t:type="ck/Tooltip" title="${message:components.listDocument.picture.tooltip.title}" value="${formatedComment}">
 					<img src="${asset:context:images/icons/pin.png}" />
 					</div>
 				</t:if>
-				
+
 				<!--span class="creationDate">${creationDate},</span>${message:global.space}-->
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
-				<span class="sharedBy">${message:components.listSharedDocument.grid.sharedBy} 
+				<span class="sharedBy">${message:components.listSharedDocument.grid.sharedBy}
 					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.login">
 						<span onclick="userDetailsWindow.showCenter(true);">${sharedBy}</span>
 					</t:actionlink>
@@ -124,16 +114,16 @@
 			</div>
 			</t:parameter>
 
-			
+
 			<t:parameter t:name="shareEditCell">
 				<t:actionLink t:id="shareEditProperties" t:zone="${shareEditForm.zoneClientId}" context="${shareDocument.identifier}">
 					<span onclick="literal:${shareEditForm.javascriptOpenPopup}">
 						<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
 					</span>
-						
+
 				</t:actionLink>
 			</t:parameter>
-			
+
 			<t:parameter t:name="expirationDateCell">
 				 ${expirationDate}
 			</t:parameter>
@@ -156,26 +146,26 @@
 						<img src="${asset:context:images/icons/stamp-off.png}" alt="" title="${message:components.listDocument.picture.signatureoff.title}" />
 					</t:parameter>
 				</t:if>
-			</t:parameter>  
+			</t:parameter>
 
- 			<t:parameter t:name="encryptedAddCell">
+			<t:parameter t:name="encryptedAddCell">
 
- 				<t:if t:test="${shareDocument.encrypted}">
- 					<t:actionLink t:id="decryptIcon"
+				<t:if t:test="${shareDocument.encrypted}">
+					<t:actionLink t:id="decryptIcon"
  						context="${shareDocument.identifier}" t:zone="zoneTest"
  						class="listDocument">
- 						<span onclick="window_passwordDecryptPopup.showCenter(true);">
- 							<img src="${asset:context:images/icons/encrypt-on.png}" alt=""
+						<span onclick="window_passwordDecryptPopup.showCenter(true);">
+							<img src="${asset:context:images/icons/encrypt-on.png}" alt=""
  								title="${message:components.listSharedDocument.picture.encrypton.title}" />
- 						</span>
- 							
- 					</t:actionLink>
- 					<t:parameter name="else">
- 						<img src="${asset:context:images/icons/encrypt-off.png}" alt=""
+						</span>
+
+					</t:actionLink>
+					<t:parameter name="else">
+						<img src="${asset:context:images/icons/encrypt-off.png}" alt=""
  							title="${message:components.listSharedDocument.picture.encryptoff.title}" />
- 					</t:parameter>
- 				</t:if>
- 			</t:parameter>
+					</t:parameter>
+				</t:if>
+			</t:parameter>
 
 			<!--t:parameter t:name="actionsCell">
 				<t:if t:test="disableDeletion" negate="true">	
@@ -205,18 +195,18 @@
 				</t:if>
 			</t:parameter-->
 
- 			<t:parameter t:name="selectedValueCell">
+			<t:parameter t:name="selectedValueCell">
 				<t:checkbox t:id="filesSelected" onclick="countCheckbox();" />
 			</t:parameter>
 
 		</t:grid>
 	</t:form>
- 
+
 	</div><!-- id="list" -->
 
 
 	<!-- Popups -->
-	
+
 	<t:shareEditForm t:id="shareEditForm" />
 
 	<t:confirmPopup t:messageLabel="${message:components.listDocument.messageConfirm}" t:eventName="listDocumentEvent" />
@@ -229,8 +219,8 @@
 	<t:passwordDecryptPopup t:id="passwordDecryptPopup" t:title="${message:components.listDocument.passwordDecryptPopup.title}" t:content="${message:components.listDocument.passwordDecryptPopup.content.onindex}" t:errorBanner="${message:components.listDocument.passwordDecryptPopup.errorBanner}" />
 
 	<t:passwordDecryptPopupSubmit t:id="passwordDecryptPopupSubmit" t:formId="search" t:title="${message:components.listDocument.passwordDecryptPopup.title}" t:content="${message:components.listDocument.passwordDecryptPopup.content}" t:errorBanner="${message:components.listDocument.passwordDecryptPopup.errorBanner}" />
-		
- 	<t:userDetailsDisplayer />
+
+	<t:userDetailsDisplayer />
 
 		<t:signatureDetailsDisplayer />
 

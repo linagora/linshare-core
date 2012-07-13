@@ -41,15 +41,23 @@ public interface AbstractDomainFacade {
 	public boolean userCanCreateGuest(UserVo userVo) throws BusinessException;
 	public boolean canCreateGuestDomain(String domainIdentifier) throws BusinessException;
 	public boolean guestDomainAllowed(String domainIdentifier) throws BusinessException;
-	
+
 	public List<AbstractDomainVo> findAllDomain();
 	public List<AbstractDomainVo> findAllTopDomain();
 	public List<AbstractDomainVo> findAllTopAndSubDomain();
 	public List<AbstractDomainVo> findAllSubDomainWithoutGuestDomain(String topDomainIdentifier);
 	public GuestDomainVo findGuestDomain(String topDomainIdentifier);
 	public void updateDomain(UserVo actorVo, AbstractDomainVo domain) throws BusinessException;
-	
-	
+
+	/**
+	 * Update the display order of all domain.
+	 * @param actorVo
+	 * @param domainsVo
+	 * @throws BusinessException
+	 */
+	public void updateAllDomainForAuthShowOrder(UserVo actorVo,List<AbstractDomainVo> domainsVo) throws BusinessException;
+
+	public List<String> findAllDomainIdentifiers();
 	public List<String> findAllDomainPatternIdentifiers();
 	public List<DomainPatternVo> findAllDomainPatterns() throws BusinessException ;
 	public DomainPatternVo createDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException ;
@@ -57,8 +65,8 @@ public interface AbstractDomainFacade {
 	public void updateDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException ;
 	public void deletePattern(String patternToDelete, UserVo actorVo) throws BusinessException ;
 	public boolean patternIsDeletable(String patternToDelete, UserVo actor) ;
-	
-	
+
+
 	public List<String> findAllLDAPConnectionIdentifiers();
 	public List<LDAPConnectionVo> findAllLDAPConnections() throws BusinessException ;
 	public LDAPConnectionVo createLDAPConnection(UserVo actorVo, LDAPConnectionVo ldapConnectionVo) throws BusinessException ;
@@ -75,7 +83,7 @@ public interface AbstractDomainFacade {
 	
 	public List<ShareExpiryRule> getShareExpiryRules(String domainIdentifier) throws BusinessException;
 	public void updateShareExpiryRules(UserVo actorVo, String domainIdentifier, List<ShareExpiryRule> shareExpiryRules) throws BusinessException;
-	
+
 	/**
 	 * return the current used space of this domain
 	 * @param domainIdentifier
@@ -89,12 +97,12 @@ public interface AbstractDomainFacade {
 	 * just do a call to crypt function.
 	 */
 	public boolean checkPlatformEncryptSupportedAlgo() ;
-	
+
 	/**
 	 * This method return true if the current domain support type Mime type filter.
 	 * @param domainIdentifier
 	 * @return
 	 */
-	public boolean isMimeTypeFilterEnableFor(String domainIdentifier, UserVo actorVo); 
-	
+	public boolean isMimeTypeFilterEnableFor(String domainIdentifier, UserVo actorVo);
+
 }

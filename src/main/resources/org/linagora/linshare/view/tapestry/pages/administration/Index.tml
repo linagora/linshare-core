@@ -8,27 +8,18 @@
 
 		<h1>${message:components.myborderlayout.administration.title} : ${selectedDomain}</h1>
 
-		<t:messagePanel />	
-		
+		<t:messagePanel />
+
 		<div id="pageContent">
-	
+
 			<t:if test="noDomain">
 				${message:pages.administration.index.noDomain.info}
 			</t:if>
-			
+
 			<t:if test="noDomain" negate="true">
 				<div id="version">
 					<strong>${message:global.version.label} : </strong> <code>${version}</code>
 					<br/>
-					<strong>${message:global.mode.label} : </strong> 
-					<code>
-						<t:if test="securedStorageDisallowed">
-							${message:global.mode.deactivated}
-							<t:parameter name="else">
-							${message:global.mode.activated}
-							</t:parameter>
-						</t:if>
-					</code>
 				</div>
 				<p>
 					<t:pagelink t:id="activationPolicy" t:page="administration/ActivationPolicy" context="selectedDomain">
@@ -52,19 +43,19 @@
 				</p>
 			</t:if>
 		</div>
-		
+
 		<t:if test="superadmin" negate="true">
-				
+
 			</t:if>
 		<t:if test="ShowMimeTypeView">
 			<div id="edit-administration-mime">
 				<t:MimeTypeConfigurator	/>
 			</div>
 		</t:if>
-		
+
 
 	</div><!-- id="content" -->
-	
+
 	<!-- Actions widget -->
 	<t:parameter name="actionsWidget">
 		<t:if test="admin">

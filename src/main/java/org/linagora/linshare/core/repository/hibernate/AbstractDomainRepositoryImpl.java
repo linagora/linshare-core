@@ -46,7 +46,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 				new HibernateCallback() {
 					public Object doInHibernate(final Session session)
 							throws HibernateException, SQLException {
-						final Query query = session.createQuery("select d.identifier from AbstractDomain d ");
+						final Query query = session.createQuery("select d.identifier from AbstractDomain d order by d.authShowOrder asc");
 						return query.setCacheable(true).list();
 					}
 				});
@@ -59,7 +59,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 				new HibernateCallback() {
 					public Object doInHibernate(final Session session)
 							throws HibernateException, SQLException {
-						final Query query = session.createQuery("select d from AbstractDomain d ");
+						final Query query = session.createQuery("select d from AbstractDomain d order by d.authShowOrder asc");
 						return query.setCacheable(true).list();
 					}
 				});

@@ -10,9 +10,11 @@ import org.linagora.linshare.core.domain.entities.Policy;
 public class PolicyVo implements Comparable{
 
 	private String domainIdentifier;
-	
+
 	private String functionalityIdentifier;
-	
+
+    private String name;
+
 	/**
 	 * enable/disable the policy
 	 */
@@ -84,6 +86,14 @@ public class PolicyVo implements Comparable{
 
 	public String getDomainIdentifier() {
 		return domainIdentifier;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setDomainIdentifier(String domainIdentifier) {

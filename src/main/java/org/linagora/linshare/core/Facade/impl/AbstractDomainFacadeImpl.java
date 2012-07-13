@@ -42,13 +42,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
-	
+
 	private final AbstractDomainService abstractDomainService;
 	private final FunctionalityService functionalityService;
 	private final UserAndDomainMultiService userAndDomainMultiService;
 	private final UserProviderService userProviderService;
 	private final DomainPolicyService domainPolicyService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
 	public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityService functionalityService,
@@ -60,8 +60,8 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 		this.domainPolicyService = domainPolicyService;
 		this.userAndDomainMultiService = userAndDomainMultiService;
 	}
-	
-	
+
+
 	private boolean isAuthorized(UserVo actorVo) throws BusinessException {
 		if(actorVo !=null) {
 			User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
@@ -85,13 +85,40 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 			createOrUpdateDomain(domainVo, true);
 		}
 	}
-	
+
 	@Override
 	public void updateDomain(UserVo actorVo, AbstractDomainVo domainVo) throws BusinessException {
 		if(isAuthorized(actorVo)) {
 			createOrUpdateDomain(domainVo, false);
 		}
 	}
+
+
+	@Override
+	public void updateAllDomainForAuthShowOrder(UserVo actorVo,List<AbstractDomainVo> domainsVo) throws BusinessException{
+		if(isAuthorized(actorVo)) {
+			for (AbstractDomainVo domainVo : domainsVo) {
+				updateDomainForAuthShowOrder(domainVo);
+			}
+		}		
+	}
+
+	/**
+	 * Update one domain display order value.
+	 * @param domainVo
+	 * @throws BusinessException
+	 */
+	private void updateDomainForAuthShowOrder(AbstractDomainVo domainVo) throws BusinessException{
+		AbstractDomain abstractDomain = abstractDomainService.retrieveDomain(domainVo.getIdentifier());
+		
+		if(abstractDomain == null ) {
+            throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"The domain : " + domainVo.getIdentifier() + " has no existing id.");
+        }
+		
+		logger.debug("Change domain order, Domain :" + domainVo.getIdentifier() + " old order value :" + abstractDomain.getAuthShowOrder() + ", new order value" + domainVo.getAuthShowOrder());
+		abstractDomain.setAuthShowOrder(domainVo.getAuthShowOrder());
+		abstractDomainService.updateDomain(abstractDomain);
+	}	
 		
 	private void createOrUpdateDomain(AbstractDomainVo domainVo, boolean create) throws BusinessException {
 		logger.debug("domainVo class:" + domainVo.getClass().toString());
@@ -116,8 +143,10 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 			}
 			topDomain.setPolicy(policy);
 			if(create){
+				logger.debug("Create linshare Top Domain : " + topDomain.getIdentifier());
 				abstractDomainService.createTopDomain(topDomain);
 			} else {
+				logger.debug("Update linshare Top Domain : " + topDomain.getIdentifier());
 				abstractDomainService.updateDomain(topDomain);
 			}
 			
@@ -137,11 +166,13 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 			subDomain.setPolicy(policy);
 
 			if(create){
+				logger.debug("Create linshare Sub Domain : " + subDomain.getIdentifier());
 				abstractDomainService.createSubDomain(subDomain);
 			} else {
+				logger.debug("Update linshare Sub Domain : " + subDomain.getIdentifier());
 				abstractDomainService.updateDomain(subDomain);
 			}
-			
+
 		} else if(domainVo instanceof GuestDomainVo) {
 			AbstractDomain topDomain = abstractDomainService.retrieveDomain(((GuestDomainVo) domainVo).getParentDomainIdentifier());
 			if(topDomain == null ) {
@@ -149,20 +180,33 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 			}
 
 			GuestDomain guestDomain = new GuestDomain((GuestDomainVo)domainVo);
-			
+
 			guestDomain.setParentDomain(topDomain);
 			guestDomain.setPolicy(policy);
 
 			if(create){
+				logger.debug("Create linshare Guest Domain : " + guestDomain.getIdentifier());
 				abstractDomainService.createGuestDomain(guestDomain);
 			} else {
+				logger.debug("Update linshare Guest Domain : " + guestDomain.getIdentifier());
 				abstractDomainService.updateDomain(guestDomain);
 			}
 		} else {
-			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,"Wrong type of domain : only TopDomain, SubDomain and GuestDomain");
-		}
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainVo.getIdentifier());
+
+			if(domain == null ) {
+				throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"The domain : " + domainVo.getIdentifier() + " has no existing id.");
+			}
+
+			if(domain.getDomainType().equals(DomainType.ROOTDOMAIN)){
+				logger.debug("Update linshare Root Domain : " + domain.getIdentifier());
+				abstractDomainService.updateDomain(domain);
+			}else{
+				throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE,"Wrong type of domain : not TopDomain, SubDomain, GuestDomain and rootDomain");
+			}
+        }
 	}
-	
+
 
 	@Override
 	public AbstractDomainVo retrieveDomain(String identifier) throws BusinessException {
@@ -291,7 +335,12 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 			return new GuestDomainVo (abstractDomainService.getGuestDomain(topDomainIdentifier));
 		}
 	}
-	
+
+	@Override
+	public List<String> findAllDomainIdentifiers(){
+		return abstractDomainService.getAllDomainIdentifiers();
+	}
+
 	@Override
 	public List<String> findAllDomainPatternIdentifiers() {
 		return userProviderService.findAllDomainPatternIdentifiers();

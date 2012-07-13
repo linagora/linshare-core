@@ -236,15 +236,15 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 	@Override
 	public void updateDomain(AbstractDomain domain) throws BusinessException {
-
+		logger.debug("Update domain :" + domain.getIdentifier());
 		if(domain.getIdentifier()== null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"This domain has no current identifier.");
 		}
-		AbstractDomain entity = abstractDomainRepository.findById(domain.getIdentifier()) ; 
+		AbstractDomain entity = abstractDomainRepository.findById(domain.getIdentifier());
 		if(entity == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_ALREADY_EXISTS,"This domain identifier does not exist.");
 		}
-		
+
 		if(domain.getPolicy() == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,"This domain has no domain policy.");
 		}
@@ -256,9 +256,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				throw new BusinessException(BusinessErrorCode.DOMAIN_PATTERN_NOT_FOUND,"This domain has no domain pattern.");
 			}
 		}
-		
+
 		DomainPolicy policy = domainPolicyService.findById(domain.getPolicy().getIdentifier());
-		
+
 		if(policy == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,"This new domain has a wrong domain policy identifier.");
 		}

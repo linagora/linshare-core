@@ -64,21 +64,21 @@ import us.antera.t5restfulws.RestfulWebMethod;
  *
  */
 public class DocumentRestServiceImpl implements DocumentRestService {
-	
-	private final ApplicationStateManager applicationStateManager; 
-	private final SearchDocumentFacade searchDocumentFacade;
-	private final DocumentFacade documentFacade;
 
-	private final MyMultipartDecoder myMultipartDecoder;
-	
-	private final PropertiesSymbolProvider propertiesSymbolProvider;
-	
-	private final Marshaller xstreamMarshaller;
+    private final ApplicationStateManager applicationStateManager;
+    private final SearchDocumentFacade searchDocumentFacade;
+    private final DocumentFacade documentFacade;
+
+    private final MyMultipartDecoder myMultipartDecoder;
+
+    private final PropertiesSymbolProvider propertiesSymbolProvider;
+
+    private final Marshaller xstreamMarshaller;
 
     private final MailContainerBuilder mailContainerBuilder;
     private final Policy antiSamyPolicy;
-	
-	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
     private static final int VIRUS_DETECTED_HTTP_STATUS = 451;
 
@@ -100,7 +100,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
         this.mailContainerBuilder = mailContainerBuilder;
         this.antiSamyPolicy = antiSamyPolicy;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.linagora.linshare.view.tapestry.rest.impl.DocumentRestService#getdocumentlist(org.apache.tapestry5.services.Request, org.apache.tapestry5.services.Response)
@@ -114,26 +114,26 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			response.sendError(HttpStatus.SC_UNAUTHORIZED, "You are not authorized to use this service");
 			return;
 		}
-		
+
 		logger.debug("Showing " + actor.getMail() + " document list");
 		List<DocumentVo> list = searchDocumentFacade.retrieveDocument(actor);
-		
+
 		if (list == null) {
 			response.sendError(HttpStatus.SC_NOT_FOUND, "No such document");
 			return;
 		}
-	
-		
+
+
 		String xml = xstreamMarshaller.toXml(list);
-		
+
                 OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
 		response.setStatus(HttpStatus.SC_OK);
 		writer.append(xml);
 		writer.flush();
 		writer.close();
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.linagora.linshare.view.tapestry.rest.impl.DocumentRestService#getdocument(org.apache.tapestry5.services.Request, org.apache.tapestry5.services.Response, java.lang.String)
 	 */
@@ -145,12 +145,10 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			response.sendError(HttpStatus.SC_UNAUTHORIZED, "You are not authorized to use this service");
 			return;
 		}
-		
-		DocumentVo docVo = documentFacade.getDocument(actor.getLogin(), uuid);
 
-		if (docVo!= null ) {
-			
+        DocumentVo docVo = documentFacade.getDocument(actor.getLogin(), uuid);
 
+        if (docVo!= null ) {
 			InputStream myStream;
 			try {
 				myStream = documentFacade.retrieveFileStream(docVo, actor);
@@ -162,7 +160,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 				response.setHeader("Pragma","no-cache");
 				response.setHeader("Cache-Control","must-revalidate, post-check=0, pre-check=0, public");
 				response.setIntHeader("Expires", 0);
-				
+
 				writeToOutputStream(myStream, outer);
 				outer.flush();
 				outer.close();
@@ -301,26 +299,30 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		} catch (BusinessException e) {
 			mimeType = theFile.getContentType();
 		}
-                
+
 		try {
 			XSSFilter filter = new XSSFilter(antiSamyPolicy, null);
-			String fileName = filter.clean(theFile.getFileName());
+			String fileName = null ;
+            if (request.getParameterNames().contains("filename")) {
+                fileName = request.getParameter("filename");
+            }
+			if(fileName == null) {
+                fileName = theFile.getFileName();
+            }
+			fileName = filter.clean(fileName);
+			logger.debug("fileName : " + fileName);
 			DocumentVo doc = documentFacade.insertFile(theFile.getStream(), theFile.getSize(), fileName, mimeType, actor );
-			
+
 			if(fileComment != null) {
 				fileComment = filter.clean(fileComment);
 				documentFacade.updateFileProperties(actor.getLsUid(), doc.getIdentifier(), fileName, fileComment);
 			}
-			
-			
-			OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
-			
-			
+            OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream("text/xml"),"UTF-8");
 			response.setStatus(HttpStatus.SC_CREATED);
-			
+
 			String url = propertiesSymbolProvider.valueForSymbol("linshare.info.url.base");
 			response.setHeader("Location", url +"documentrestservice/getdocument/" + doc.getIdentifier());
-			
+
 			String xml = xstreamMarshaller.toXml(doc);
 			writer.append(xml);
 			writer.flush();

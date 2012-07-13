@@ -20,6 +20,8 @@
 */
 package org.linagora.linshare.view.tapestry.components;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.BindingConstants;
@@ -59,39 +61,47 @@ public class FunctionalityPolicyConfigurer {
 //    
     @SetupRender
     void setupRender() {
+		for (PolicyVo policy : policies) {
+			policy.setName(messages.get("pages.administration.functionality."+ policy.getFunctionalityIdentifier().toLowerCase()));
+		}
+		Collections.sort(policies, new Comparator<PolicyVo>() {
+			@Override
+			public int compare(PolicyVo o1, PolicyVo o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
     }
-    
-    public Policies getAllowedPolicy() { 
-    	return Policies.ALLOWED; 
+
+    public Policies getAllowedPolicy() {
+        return Policies.ALLOWED;
+    }
+
+    public Policies getForbiddenPolicy() {
+        return Policies.FORBIDDEN;
 	}
-    
-    public Policies getForbiddenPolicy() { 
-    	return Policies.FORBIDDEN; 
-	}
-    
-    public Policies getMandatoryPolicy() { 
-    	return Policies.MANDATORY; 
-	}
-    
+
+    public Policies getMandatoryPolicy() {
+        return Policies.MANDATORY;
+    }
+
     public boolean getReadOnlyStatus() {
-    	if(policyRow.getPolicy().equals(Policies.ALLOWED)) {
-    		return false; 
-    	}
-    	return true;
+        if(policyRow.getPolicy().equals(Policies.ALLOWED)) {
+            return false;
+        }
+        return true;
     }
-    
+
 
     public String getFunctionalityIdentifierLabel() {
-    	return messages.get("pages.administration.functionality." + policyRow.getFunctionalityIdentifier());
+        return messages.get("pages.administration.functionality." + policyRow.getFunctionalityIdentifier());
     }
-    
-    
+
+
     @Property
 	private PolicyEncoder policyEncoder;
 
     private List<PolicyVo> policyEdited;
 
-    
     private class PolicyEncoder implements ValueEncoder<PolicyVo> {
 
 		@Override

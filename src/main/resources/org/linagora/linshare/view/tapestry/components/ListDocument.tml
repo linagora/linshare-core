@@ -7,7 +7,6 @@
 	</t:block>
 	<t:zone t:id="zoneTest" />
 
-	
 	<div id="list">
 
 	<t:if test="inSearch">
@@ -80,23 +79,13 @@
 						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 					</t:linkit.Comment>
 					<t:if t:test="${thumbnailExists}">
-						<span class="thumbnail">
-							${document.fileName}
-							<div class="thumbnail_content">
-								<img src="${thumbnailPath}" />
-								<p>${document.fileName}</p>
-							</div>
-						</span>
++						<div t:type="chenillekit/Tooltip" title="${document.fileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
++							${document.fileName}											<!--  <img src="${thumbnailPath}" /> -->
+						</div>
 						<t:parameter name="else">
-							<span class="thumbnail">
++							<div t:type="chenillekit/Tooltip" title="${document.fileName}" value="${message:components.listDocument.noThumb}">
 								${document.fileName}
-								<div class="thumbnail_content">
-									<p class="noThmbMsg">
-										${message:components.listDocument.noThumb}
-									</p>
-									<p>${document.fileName}</p>
-								</div>
-							</span>
+							</div>
 						</t:parameter>
 					</t:if>
 				</t:actionLink>

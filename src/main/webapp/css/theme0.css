@@ -3549,11 +3549,11 @@ input[type="submit"] {
 }
 
 /* Thumbnail view */
-span.thumbnail .thumbnail_content {
+div.thumbnail .thumbnail_content {
 	display:none;
 }
 
-span.thumbnail:hover .thumbnail_content {
+div.thumbnail:hover .thumbnail_content {
 	display:block;	
 	position: absolute;
 	margin-left: 200px;
@@ -3564,7 +3564,7 @@ span.thumbnail:hover .thumbnail_content {
 	z-index: 15;
 }
 
-span.thumbnail:hover .thumbnail_content p {
+div.thumbnail:hover .thumbnail_content p {
 	color: #fff;
 	font-size: small;
 	text-align: center !important;
@@ -3572,7 +3572,7 @@ span.thumbnail:hover .thumbnail_content p {
 	background-color: #444;
 }
 
-span.thumbnail:hover .thumbnail_content img {
+div.thumbnail:hover .thumbnail_content img {
 	background-color: #fff;
 	border: 1px solid #777;
 }

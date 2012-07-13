@@ -54,6 +54,26 @@
 			</roles>
 		</developer>
 	</developers>
+    <developer>
+        <id>ctjhoa</id>
+        <name>Camille Tjhoa</name>
+        <email>ctjhoa@linagora.com</email>
+        <organization>LINAGORA</organization>
+        <organizationUrl>http://www.linagora.com/</organizationUrl>
+        <roles>
+            <role>Developer</role>
+        </roles>
+    </developer>
+    <developer>
+        <id>nbertrand</id>
+        <name>Nicolas Bertrand</name>
+        <email>nbertrand@linagora.com</email>
+        <organization>LINAGORA</organization>
+        <organizationUrl>http://www.linagora.com/</organizationUrl>
+        <roles>
+            <role>Developer</role>
+        </roles>
+    </developer>
 	<mailingLists>
 		<mailingList>
 			<name>Users List</name>

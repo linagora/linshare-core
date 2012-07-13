@@ -21,6 +21,7 @@
 package org.linagora.linshare.view.tapestry.pages.administration;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -104,8 +105,8 @@ public class ActivationPolicy {
     public void init() throws BusinessException {
     	superadmin = loginUser.isSuperAdmin();
     	admin = loginUser.isAdministrator();
-    }   
-    
+    }
+
 
 	@SuppressWarnings("unchecked")
 	public Object onActivate(String identifier) throws BusinessException {
@@ -116,13 +117,13 @@ public class ActivationPolicy {
 		if(!domains.contains(selectedDomain)) {
 			shareSessionObjects.addError(messages.get("pages.error.badAuth.message"));
 			return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
-    	}
-		
+        }
+
 		activationPolicies = functionalityFacade.getAllActivationPolicy(identifier);
-		Collections.sort(activationPolicies);
+
 		return null;
 	}
-    
+
 	public Object onSuccessFromPolicyForm() throws BusinessException {
 		logger.debug("onSuccessFromPolicyForm");
 		functionalityFacade.updateActivationPolicies(loginUser, activationPolicies);
