@@ -61,6 +61,7 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +96,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final AnonymousShareEntryService anonymousShareEntryService;
 	
+	private final MailContainerBuilder mailContainerBuilder;
+	
 	private final String urlBase;
 	
 	private final String urlInternal;
@@ -103,7 +106,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	public ShareFacadeImpl(ShareTransformer shareTransformer, UserRepository<User> userRepository, DocumentRepository documentRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
 			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
-			String urlBase, String urlInternal) {
+			String urlBase, String urlInternal, MailContainerBuilder mailContainerBuilder) {
 		super();
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
@@ -119,6 +122,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.urlBase = urlBase;
 		this.urlInternal = urlInternal;
+		this.mailContainerBuilder = mailContainerBuilder;
 	}
 	
 	
@@ -269,7 +273,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actorVo) throws BusinessException {
 		User actor = userService.findByLsUid(actorVo.getLsUid());
-		shareEntryService.deleteShare(share.getIdentifier(), actor);
+		MailContainer mailContainer = mailContainerBuilder.buildMailContainer(actorVo, null);
+		shareEntryService.deleteShare(share.getIdentifier(), actor, mailContainer);
 	}
 
 	

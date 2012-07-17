@@ -264,6 +264,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+			
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + documentEntry.getName()
 					+ " of user " + actor.getLsUid() + ", reason : ", e);

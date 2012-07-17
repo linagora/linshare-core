@@ -56,7 +56,6 @@ import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.Facade.ShareFacade;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -723,7 +722,7 @@ public class ListSharedDocument {
 	 * @return
 	 */
 	public String getFormatedComment() {
-		String result = shareDocument.getComment().replaceAll("\r","");
+		String result = shareDocument.getFileComment().replaceAll("\r","");
 		result = result.replaceAll("\n", " ");
 		return result;
 	}

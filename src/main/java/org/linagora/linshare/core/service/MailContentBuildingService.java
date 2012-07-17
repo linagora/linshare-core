@@ -22,6 +22,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -29,6 +30,7 @@ import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.domain.entities.Share;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -108,18 +110,6 @@ public interface MailContentBuildingService {
 			String fileSizeTxt, String linShareUrl, String linShareUrlParam) 
 			throws BusinessException;
 
-
-	/**
-	 * Notify a user that a received shared file is about to be deleted by its owner.
-	 */
-	public MailContainer buildMailSharedFileDeleted(User actor,
-			MailContainer mailContainer, Document doc, User owner, User receiver)
-			throws BusinessException;
-
-	public MailContainer buildMailSharedFileDeleted(User actor,
-			MailContainer mailContainer, Document doc, User owner, Contact receiver)
-			throws BusinessException;
-	
 
 	/**
 	 * Notify a user that received a share that the share will soon be deleted
@@ -238,15 +228,9 @@ public interface MailContentBuildingService {
 
 	/**
 	 * Notify a user that a received shared file is about to be deleted by its owner.
+	 * @param actor TODO
 	 */
-	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(User actor,
-			MailContainer mailContainer, Document doc, User owner, User receiver)
-			throws BusinessException;
-
-	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(User actor,
-			MailContainer mailContainer, Document doc, User owner, Contact receiver)
-			throws BusinessException;
-	
+	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(MailContainer mailContainer, ShareEntry share, Account actor) throws BusinessException;
 
 	/**
 	 * Notify a user that received a share that the share will soon be deleted

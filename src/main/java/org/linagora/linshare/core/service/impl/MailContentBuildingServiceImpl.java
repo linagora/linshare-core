@@ -25,11 +25,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linshare.core.domain.constants.MailTemplateEnum;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -40,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.MailSubject;
 import org.linagora.linshare.core.domain.entities.MailTemplate;
 import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.domain.entities.Share;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -543,7 +545,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template SHARED_FILE_DELETED
 	 */
-	private MailTemplate buildTemplateSharedFileDeleted(User actor, Language language, Document doc, User owner) throws BusinessException {
+	private MailTemplate buildTemplateSharedFileDeleted(User actor, Language language, ShareEntry doc, User owner) throws BusinessException {
 		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.SHARED_FILE_DELETED);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
@@ -980,52 +982,19 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return buildMailContainerWithRecipient(actor, actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), recipient, null);
 	}	
 	
-	public MailContainer buildMailSharedFileDeleted(User actor, 
-			MailContainer mailContainer, Document doc, User owner,
-			Contact receiver)
-			throws BusinessException {
-		User tempUser = new Guest(receiver.getMail(),  "", receiver.getMail());
-		return buildMailSharedFileDeleted(actor, mailContainer, doc, owner, tempUser);
-	}
-	
-	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(User actor, 
-			MailContainer mailContainer, Document doc, User owner,
-			Contact receiver)
-			throws BusinessException {
-		User tempUser = new Guest(receiver.getMail(),  "", receiver.getMail());
-		return buildMailSharedFileDeletedWithRecipient(actor, mailContainer, doc, owner, tempUser);
-	}	
-	
-	@Override
-	public MailContainer buildMailSharedFileDeleted(User actor, 
-			MailContainer mailContainer, Document doc, User owner, User receiver) 
-			throws BusinessException {
 
-		MailTemplate template1 = buildTemplateSharedFileDeleted(actor, mailContainer.getLanguage(), doc, owner);
-		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_DELETED);
+	@Override
+	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(MailContainer mailContainer, ShareEntry share, Account actor) throws BusinessException {
+
+		MailTemplate template1 = buildTemplateSharedFileDeleted((User)actor, mailContainer.getLanguage(), share, (User)share.getEntryOwner());
+		MailSubject subject = getMailSubject((User)actor, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_DELETED);
         
 		StringBuffer contentTXT = new StringBuffer();
 		StringBuffer contentHTML = new StringBuffer();
 		contentTXT.append(template1.getContentTXT() + "\n");
 		contentHTML.append(template1.getContentHTML() + "<br />");
 		
-		return buildMailContainer(actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), receiver, null, null);
-	}
-	
-	@Override
-	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(User actor, 
-			MailContainer mailContainer, Document doc, User owner, User receiver) 
-			throws BusinessException {
-
-		MailTemplate template1 = buildTemplateSharedFileDeleted(actor, mailContainer.getLanguage(), doc, owner);
-		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_DELETED);
-        
-		StringBuffer contentTXT = new StringBuffer();
-		StringBuffer contentHTML = new StringBuffer();
-		contentTXT.append(template1.getContentTXT() + "\n");
-		contentHTML.append(template1.getContentHTML() + "<br />");
-		
-		return buildMailContainerWithRecipient(actor, actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), receiver, null);
+		return buildMailContainerWithRecipient((User)actor, (User)actor, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), share.getRecipient(), null);
 	}	
 	
 	@Override
@@ -1199,5 +1168,6 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		mailContainerWithRecipient.add(buildMailContainerWithRecipient(actor, null, mailContainer, subject.getContent(), contentTXT.toString(), contentHTML.toString(), document.getOwner(), null));
 		
 		return mailContainerWithRecipient;
-	}	
+	}
+
 }

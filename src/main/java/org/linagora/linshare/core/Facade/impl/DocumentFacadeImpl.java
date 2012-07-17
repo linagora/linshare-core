@@ -70,7 +70,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	private final DocumentEntryService documentEntryService;
 	
-//	private final ShareEntryService shareEntryService;
+	private final ShareEntryService shareEntryService;
 	
 	private final AccountService accountService;
 	
@@ -83,16 +83,16 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	public DocumentFacadeImpl(DocumentService documentService, UserRepository<User> userRepository, DocumentTransformer documentTransformer, SignatureTransformer signatureTransformer,
 			EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService,
-			DocumentEntryTransformer documentEntryTransformer) {
+			DocumentEntryTransformer documentEntryTransformer, ShareEntryService shareEntryService) {
 		super();
 		this.documentService = documentService;
 		this.userRepository = userRepository;
 		this.documentTransformer = documentTransformer;
 		this.signatureTransformer = signatureTransformer;
 		this.enciphermentService = enciphermentService;
-		this.shareService = shareService;
+//		this.shareService = shareService;
 		this.documentEntryService = documentEntryService;
-//		this.shareEntryService = shareEntryService;
+		this.shareEntryService = shareEntryService;
 		this.accountService = accountService;
 		this.documentEntryTransformer = documentEntryTransformer;
 	}
@@ -117,52 +117,12 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public void removeDocument(UserVo actorVo, DocumentVo document, MailContainer mailContainer) throws BusinessException {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		User actor = (User) accountService.findByLsUid(actorVo.getLsUid());
 		if(actor != null) {
-			if (document instanceof ShareDocumentVo) {
-				// TODO : to be done : delete a shared document
-			} else if (document instanceof DocumentVo) {
-				// old method : 
-//				documentService.deleteFileWithNotification(actor.getLsUid(),document.getIdentifier(), Reason.NONE, mailContainer);
-				documentEntryService.deleteDocumentEntry(actor, document.getIdentifier());
-			} else {
-				logger.warn("Unsuccessful attempt to delete a weird document : " + document.getIdentifier());
-			}
+			shareEntryService.deleteAllShareEntriesWithDocumentEntries(document.getIdentifier(), actor, mailContainer);
 		} else {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
 		}
-		
-		
-//		TODO : Fix removeDocument
-//		if (document instanceof ShareDocumentVo) {
-//			// if this document is a sharedocumentVo, it means we received the document
-//			// and we delete the sharing (for us)
-//
-//			User receiver = userRepository.findByLsUid(actor.getLogin());
-//			
-//			if (receiver == null) {
-//				throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
-//			}
-//			
-//			// must find the share
-//			Set<Share> listShare = receiver.getReceivedShares();
-//			Share shareToRemove = null;
-//			
-//			for (Share share : listShare) {
-//				if (share.getDocument().getUuid().equals(document.getIdentifier())) {
-//					shareToRemove = share;
-//					break;
-//				}
-//			}
-//			
-//			if (shareToRemove!=null) {
-//				shareService.removeReceivedShareForUser(shareToRemove, receiver, receiver);				
-//			} else {
-//				throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "The sharing couldn't be found");
-//			}
-//		} else {
-//			documentService.deleteFileWithNotification(actor.getLogin(),document.getIdentifier(), Reason.NONE, mailContainer);
-//		}
 	}
 
 	

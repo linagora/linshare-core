@@ -166,6 +166,7 @@ public class Index {
     @OnEvent(value = "eventDeleteUniqueFromListDocument")
     private void deleteFromList(Object[] object) throws BusinessException {
         String uuid = (String) object[0];
+        
         ShareDocumentVo shareddoc = searchShareVoByUUid(uuid);
         shareFacade.deleteSharing(shareddoc, userVo);
         resetListFiles(null);

@@ -31,11 +31,11 @@ public interface ShareEntryService {
 	public SuccessesAndFailsItems<ShareEntry> createShare(List<DocumentEntry> documentEntries, User sender, List<User> recipients, Calendar expirationDate);
 		
 
-	public void deleteShare(String shareUuid, User actor) throws BusinessException;
+	public void deleteShare(String shareUuid, User actor, MailContainer mailContainer) throws BusinessException;
 
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException; 
 	
-	public void deleteAllShareEntriesWithDocumentEntries(String docEntryUuid, User actor);
+	public void deleteAllShareEntriesWithDocumentEntries(String docEntryUuid, User actor, MailContainer mailContainer);
 	  
 
 	public void updateShareComment(User actor, String uuid, String comment) throws BusinessException;

@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -46,7 +49,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	
 	private final NotifierService notifierService;
     
-    private final MailContentBuildingService mailElementsFactory;
+    private final MailContentBuildingService mailContentBuildingService;
 
 	
 	
@@ -66,7 +69,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	this.logEntryService = logEntryService;
 	this.documentEntryService = documentEntryService;
 	this.notifierService = notifierService;
-	this.mailElementsFactory = mailElementsFactory;
+	this.mailContentBuildingService = mailElementsFactory;
 	this.documentEntryBusinessService = documentEntryBusinessService;
 }
 
@@ -139,18 +142,18 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public void deleteShare(String shareUuid, User actor) throws BusinessException {
+	public void deleteShare(String shareUuid, User actor, MailContainer mailContainer) throws BusinessException {
 		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		deleteShare(share, actor);
+		deleteShare(share, actor, mailContainer);
 	}
 
 
 
-	private void deleteShare(ShareEntry share, User actor) throws BusinessException {
+	private void deleteShare(ShareEntry share, User actor, MailContainer mailContainer) throws BusinessException {
 		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor)) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
 					actor.getDomainId(),
@@ -163,7 +166,11 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	        logger.info("delete share : " + share.getUuid());
 	        
 	        shareEntryBusinessService.deleteShare(share);
-			
+	        
+	        List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
+	        mailContainerWithRecipient.add(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(mailContainer, share, actor));
+	        notifierService.sendAllNotifications(mailContainerWithRecipient);
+	        
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
@@ -227,11 +234,11 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public void deleteAllShareEntriesWithDocumentEntries(String docEntryUuid, User actor) {
+	public void deleteAllShareEntriesWithDocumentEntries(String docEntryUuid, User actor, MailContainer mailContainer) {
 		try {
 			DocumentEntry entry = documentEntryService.findById(actor, docEntryUuid);
 			for (ShareEntry share : entry.getShareEntries()) {
-				deleteShare(share, actor);
+				deleteShare(share, actor, mailContainer);
 			}
 			documentEntryService.deleteDocumentEntry(actor, entry.getUuid());
 			
