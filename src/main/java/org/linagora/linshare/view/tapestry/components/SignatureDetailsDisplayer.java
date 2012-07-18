@@ -109,7 +109,7 @@ public class SignatureDetailsDisplayer {
 		isSignedByCurrentUser = documentFacade.isSignedDocumentByCurrentUser(userVo, currentdoc);
 		userOwnsignature = documentFacade.getSignature(userVo, currentdoc);
 		
-		signatures = documentFacade.getAllSignatures(currentdoc);
+		signatures = documentFacade.getAllSignatures(userVo, currentdoc);
 		
 	    return signatureDetailsTemplateZone;
 	}

@@ -556,7 +556,7 @@ public class ListSharedDocument {
 	}
 	
 	public boolean isDocumentSigned(){
-		return documentFacade.isSignedDocument(shareDocument);
+		return shareFacade.isSignedShare(user, shareDocument);
 	}
 
 	/**

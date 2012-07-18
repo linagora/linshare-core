@@ -70,6 +70,7 @@ import org.linagora.linshare.core.Facade.FunctionalityFacade;
 import org.linagora.linshare.core.Facade.SecuredUrlFacade;
 import org.linagora.linshare.core.Facade.ShareFacade;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -738,7 +739,7 @@ public class ListDocument {
 	}
 
 	public boolean isDocumentSigned() {
-		return documentFacade.isSignedDocument(document);
+		return documentFacade.isSignedDocument(userlogin, document);
 	}
 
 	/**

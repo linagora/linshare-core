@@ -36,23 +36,13 @@ import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 public interface DocumentFacade {
 		
 	/**
-	 * Compute the MimeType from a file input stream 
-	 * @param theFileStream
-	 * @param theFilePath
-	 * @return
-	 */
-	public String getMimeType(InputStream theFileStream, String theFilePath)  throws BusinessException;
-	
-	
-	/**
 	 * Insert a file in the path identifiable by its filename.
 	 * @param file the stream content file.
 	 * @param fileName the name of the file which permits to identify it.
-	 * @param mimeType the mimeType of the file.
 	 * @return DocumentVo : the created document
 	 * @throws BusinessException  FILE_TOO_LARGE if the file is too large to fit in user's space
 	 */
-	public DocumentVo insertFile(InputStream file,long size,String fileName,String mimeType, UserVo owner) throws BusinessException;
+	public DocumentVo insertFile(InputStream file,long size, String fileName,UserVo owner) throws BusinessException;
 		
 	/**
 	 * Retrieve a DocumentVo given the user login and the id of the doc
@@ -93,13 +83,12 @@ public interface DocumentFacade {
 	 * @param file inputstream of the xml signature file
 	 * @param size size of the file
 	 * @param fileName name of the file
-	 * @param mimeType mime type  (application/xml)
 	 * @param owner owner of the file (the signer)
 	 * @param document which is associated with this signature
 	 * @param signerCertificate signer certificate (additional information will be put in database)
 	 * @throws BusinessException
 	 */
-	public void insertSignatureFile(InputStream file,long size,String fileName,String mimeType, UserVo owner, DocumentVo document, X509Certificate signerCertificate) throws  BusinessException;
+	public void insertSignatureFile(InputStream file,long size,String fileName,UserVo owner, DocumentVo document, X509Certificate signerCertificate) throws  BusinessException;
 	
 	/**
 	 * check if the current user is the signer of the document.
@@ -110,16 +99,18 @@ public interface DocumentFacade {
 	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo document);
 	/**
 	 * check if the document is already signed by someone.
+	 * @param userlogin TODO
 	 * @param document the doc to check
 	 * @return false if no signature at all.
 	 */
-	public boolean isSignedDocument(DocumentVo document);
+	public boolean isSignedDocument(String userLsUuid, DocumentVo document);
 	/**
 	 * get the list of signatures (co signature)
+	 * @param userVo TODO
 	 * @param document the document to get the signatures
 	 * @return list of signature
 	 */
-	public List<SignatureVo> getAllSignatures(DocumentVo document);
+	public List<SignatureVo> getAllSignatures(UserVo userVo, DocumentVo document);
 	/**
 	 * get a signature for a given document and a given document
 	 * @param currentSigner the signer
@@ -170,12 +161,11 @@ public interface DocumentFacade {
 	 * @param file
 	 * @param size
 	 * @param fileName
-	 * @param mimeType
 	 * @param owner
 	 * @return
 	 * @throws BusinessException
 	 */
-	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, String mimeType,UserVo owner) throws BusinessException;
+	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo owner) throws BusinessException;
 	
 	
 	public DocumentVo encryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException;

@@ -26,9 +26,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.linagora.linshare.core.Facade.ShareFacade;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -39,6 +41,7 @@ import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
@@ -566,4 +569,21 @@ public class ShareFacadeImpl implements ShareFacade {
 			throw e;
 		}
 	}
+
+
+
+	@Override
+	public boolean isSignedShare(UserVo actorVo, ShareDocumentVo shareVo) {
+		boolean res = false;
+		User actor = userService.findByLsUid(actorVo.getLsUid());
+		try {
+			ShareEntry share = shareEntryService.findByUuid(actor, shareVo.getIdentifier());
+			Set<Signature> signatures = share.getDocumentEntry().getDocument().getSignatures();
+			if(signatures!=null && signatures.size()>0) res = true;
+		} catch (BusinessException e) {
+			logger.error("Can't find document : " + shareVo.getIdentifier() + ": " + e.getMessage());
+		}
+		return res;
+	}
+	
 }

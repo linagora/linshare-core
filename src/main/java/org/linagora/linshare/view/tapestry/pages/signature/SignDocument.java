@@ -172,7 +172,7 @@ public class SignDocument {
 				DocumentVo currentDoc = docVos.get(i);
 				
 				fi = new FileInputStream(oneFile);
-				documentFacade.insertSignatureFile(fi, oneFile.length(), oneFile.getName(), "text/xml", userVo,currentDoc,userSignature.getSignercert());
+				documentFacade.insertSignatureFile(fi, oneFile.length(), oneFile.getName(), userVo, currentDoc,userSignature.getSignercert());
 				
 				fi.close();
 				

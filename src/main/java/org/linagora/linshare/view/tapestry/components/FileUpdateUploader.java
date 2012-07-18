@@ -145,22 +145,22 @@ public class FileUpdateUploader {
             
             if (uploadedFile != null && i<1) { //limit to one file (for update)
 
-                String mimeType;
-                try {
-                    mimeType = documentFacade.getMimeType(uploadedFile.getStream(), uploadedFile.getFilePath());
-                    if (null == mimeType) {
-                        mimeType = uploadedFile.getContentType();
-                    }
-                } catch (BusinessException e) {
-                    mimeType = uploadedFile.getContentType();
-                }
+//                String mimeType;
+//                try {
+//                    mimeType = documentFacade.getMimeType(uploadedFile.getStream(), uploadedFile.getFilePath());
+//                    if (null == mimeType) {
+//                        mimeType = uploadedFile.getContentType();
+//                    }
+//                } catch (BusinessException e) {
+//                    mimeType = uploadedFile.getContentType();
+//                }
 
                 try {
                     
                 	DocumentVo initialdocument = documentFacade.getDocument(userDetails.getLogin(), uuidDocToUpdate);
                 	
                     DocumentVo document  =  documentFacade.updateDocumentContent(uuidDocToUpdate, uploadedFile.getStream(), uploadedFile.getSize(),
-                            uploadedFile.getFileName(), mimeType, userDetails);
+                            uploadedFile.getFileName(), userDetails);
                     
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_UPDATE_FILE_CONTENT_OK,
                         MessageSeverity.INFO, initialdocument.getFileName(),uploadedFile.getFileName()));

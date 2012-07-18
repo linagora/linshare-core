@@ -34,6 +34,7 @@
 		<constructor-arg ref="accountService"/>
 		<constructor-arg ref="documentEntryTransformer"/>
 		<constructor-arg ref="shareEntryService"/>
+		<constructor-arg ref="signatureService"/>
    	  </bean>
    	  
    	  <bean name="searchDocumentFacade" class="org.linagora.linshare.core.Facade.impl.SearchDocumentFacadeImpl">

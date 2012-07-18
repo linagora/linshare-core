@@ -28,14 +28,21 @@ public class SignatureServiceImpl implements SignatureService {
 	
 	private final SignatureBusinessService signatureBusinessService;
 	private final LogEntryService logEntryService;
-	
 	private static final Logger logger = LoggerFactory.getLogger(SignatureServiceImpl.class);
+	
 	
 	public SignatureServiceImpl(SignatureBusinessService signatureBusinessService, LogEntryService logEntryService) {
 		super();
 		this.signatureBusinessService = signatureBusinessService;
 		this.logEntryService = logEntryService;
 	}
+	
+	
+	@Override
+	public Signature findByUuid(String signatureUuid) {
+		return signatureBusinessService.findByUuid(signatureUuid);
+	}
+
 
 	@Override
 	public Signature createSignature(Account actor, Document document, InputStream stream, Long size, String fileName, X509Certificate signerCertificate) throws BusinessException {
@@ -49,17 +56,16 @@ public class SignatureServiceImpl implements SignatureService {
 		tempFile.delete(); // remove the temporary file
 		return signature;
 	}
+	
 
 	@Override
 	public void deleteSignature(Signature signature) throws BusinessException {
 		signatureBusinessService.deleteSignature(signature);
 	}
 
+	
 	@Override
 	public InputStream getDocumentStream(Signature signature) {
 		return signatureBusinessService.getDocumentStream(signature);
 	}
-
-	
-
 }

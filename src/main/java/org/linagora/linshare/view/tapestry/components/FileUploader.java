@@ -149,19 +149,19 @@ public class FileUploader {
             		continue;
             	}
 
-                String mimeType;
-                try {
-                    mimeType = documentFacade.getMimeType(uploadedFile.getStream(), uploadedFile.getFilePath());
-                    if (null == mimeType) {
-                        mimeType = uploadedFile.getContentType();
-                    }
-                } catch (BusinessException e) {
-                    mimeType = uploadedFile.getContentType();
-                }
+//                String mimeType;
+//                try {
+//                    mimeType = documentFacade.getMimeType(uploadedFile.getStream(), uploadedFile.getFilePath());
+//                    if (null == mimeType) {
+//                        mimeType = uploadedFile.getContentType();
+//                    }
+//                } catch (BusinessException e) {
+//                    mimeType = uploadedFile.getContentType();
+//                }
 
                 try {
                     DocumentVo document = documentFacade.insertFile(uploadedFile.getStream(), uploadedFile.getSize(),
-                        uploadedFile.getFileName(), mimeType, userDetails);
+                        uploadedFile.getFileName(), userDetails);
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_OK,
                         MessageSeverity.INFO, uploadedFile.getFileName()));
 

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -204,4 +203,8 @@ public interface ShareFacade {
 	public InputStream getShareThumbnailStream(UserVo actorVo, String shareEntryUuid);
 	
 	public InputStream getShareStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
+	
+	public boolean isSignedShare(UserVo actorVo, ShareDocumentVo shareVo);
+	
 }
+

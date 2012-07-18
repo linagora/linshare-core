@@ -157,10 +157,12 @@ public class UserVo implements Serializable {
         this.domainIdentifier = null;
 	}
 
+	// We keep login for compatibility
 	public String getLogin() {
 		return login;
 	}
 	
+	// the getter represent the real content of this variable.
 	public String getLsUid() {
 		return login;
 	}

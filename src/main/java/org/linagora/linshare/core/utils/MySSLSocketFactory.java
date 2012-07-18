@@ -1,4 +1,4 @@
-package org.linagora.linShare.core.utils;
+package org.linagora.linshare.core.utils;
 
 import java.io.IOException;
 import java.net.InetAddress;

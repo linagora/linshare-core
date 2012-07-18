@@ -290,15 +290,15 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 			return;
 		}
 
-		String mimeType;
-		try {
-			mimeType = documentFacade.getMimeType(theFile.getStream(), theFile.getFilePath());
-			if(null==mimeType){
-				mimeType = theFile.getContentType();
-			}
-		} catch (BusinessException e) {
-			mimeType = theFile.getContentType();
-		}
+//		String mimeType;
+//		try {
+//			mimeType = documentFacade.getMimeType(theFile.getStream(), theFile.getFilePath());
+//			if(null==mimeType){
+//				mimeType = theFile.getContentType();
+//			}
+//		} catch (BusinessException e) {
+//			mimeType = theFile.getContentType();
+//		}
 
 		try {
 			XSSFilter filter = new XSSFilter(antiSamyPolicy, null);
@@ -311,7 +311,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
             }
 			fileName = filter.clean(fileName);
 			logger.debug("fileName : " + fileName);
-			DocumentVo doc = documentFacade.insertFile(theFile.getStream(), theFile.getSize(), fileName, mimeType, actor );
+			DocumentVo doc = documentFacade.insertFile(theFile.getStream(), theFile.getSize(), fileName, actor );
 
 			if(fileComment != null) {
 				fileComment = filter.clean(fileComment);

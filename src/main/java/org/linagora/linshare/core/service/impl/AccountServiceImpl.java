@@ -35,6 +35,9 @@ public class AccountServiceImpl implements AccountService {
 		if (acc == null) {
 			acc = userRepository.findByMail(uid);
 		}
+		if(acc == null) {
+			logger.error("Can't find logged user  : " + uid);
+		}
 		return acc;
 	}
 

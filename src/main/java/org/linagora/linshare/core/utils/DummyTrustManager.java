@@ -1,4 +1,4 @@
-package org.linagora.linShare.core.utils;
+package org.linagora.linshare.core.utils;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
