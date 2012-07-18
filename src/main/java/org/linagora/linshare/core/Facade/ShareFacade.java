@@ -131,9 +131,10 @@ public interface ShareFacade {
 	 * Delete a sharing
 	 * @param share
 	 * @param actor
+	 * @param mailContainer TODO
 	 * @throws BusinessException 
 	 */
-	void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException;
+	void deleteSharing(ShareDocumentVo share, UserVo actor, MailContainer mailContainer) throws BusinessException;
 	
 	
     /** Create a local copy of a shared document.

@@ -231,4 +231,10 @@
         <constructor-arg ref="userService"/>
     </bean> 
     
+    <bean name="signatureService" class="org.linagora.linshare.core.service.impl.SignatureServiceImpl">
+        <constructor-arg ref="signatureBusinessService"/>
+        <constructor-arg ref="logEntryService"/>
+    </bean> 
+    
+    
 </beans>

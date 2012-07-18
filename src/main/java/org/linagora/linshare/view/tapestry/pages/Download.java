@@ -142,16 +142,12 @@ public class Download {
 		
 
 		try {
-			if (!securedUrlFacade.exists(alea, componentResources.getPageName()
-					.toLowerCase())) {
-				throw new BusinessException(BusinessErrorCode.WRONG_URL,
-						"secure url does not exists");
+			if (!securedUrlFacade.exists(alea, componentResources.getPageName().toLowerCase())) {
+				throw new BusinessException(BusinessErrorCode.WRONG_URL, "secure url does not exists");
 			}
-			this.passwordProtected = (password == null && securedUrlFacade
-					.isPasswordProtected(alea, componentResources.getPageName()
-							.toLowerCase()));
-			if (!securedUrlFacade.isValid(alea, componentResources
-					.getPageName().toLowerCase(), password)) {
+			this.passwordProtected = (password == null && securedUrlFacade.isPasswordProtected(alea, componentResources.getPageName().toLowerCase()));
+			
+			if (!securedUrlFacade.isValid(alea, componentResources.getPageName().toLowerCase(), password)) {
 				throw new BusinessException("the secured url is not valid");
 			}
 

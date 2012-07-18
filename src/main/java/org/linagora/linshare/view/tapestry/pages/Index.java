@@ -43,6 +43,7 @@ import org.apache.tapestry5.services.Response;
 import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.Facade.ShareFacade;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -51,6 +52,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linshare.view.tapestry.utils.WelcomeMessageUtils;
 import org.slf4j.Logger;
 
@@ -82,6 +84,9 @@ public class Index {
     private Response response;
 	@Inject
 	private Logger logger;
+	@Inject
+	private MailContainerBuilder mailContainerBuilder;
+	
 
     /* ***********************************************************
      *                Properties & injected symbol, ASO, etc
@@ -168,7 +173,8 @@ public class Index {
         String uuid = (String) object[0];
         
         ShareDocumentVo shareddoc = searchShareVoByUUid(uuid);
-        shareFacade.deleteSharing(shareddoc, userVo);
+        MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
+        shareFacade.deleteSharing(shareddoc, userVo, mailContainer);
         resetListFiles(null);
     }
     
@@ -177,7 +183,8 @@ public class Index {
 		 
 		for(Object currentObject:object){
 			ShareDocumentVo share = (ShareDocumentVo)currentObject;
-	        shareFacade.deleteSharing(share, userVo);
+			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
+	        shareFacade.deleteSharing(share, userVo, mailContainer);
 	        resetListFiles(null);
 		}
 	}

@@ -99,8 +99,6 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final AnonymousShareEntryService anonymousShareEntryService;
 	
-	private final MailContainerBuilder mailContainerBuilder;
-	
 	private final String urlBase;
 	
 	private final String urlInternal;
@@ -109,7 +107,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	public ShareFacadeImpl(ShareTransformer shareTransformer, UserRepository<User> userRepository, DocumentRepository documentRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
 			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
-			String urlBase, String urlInternal, MailContainerBuilder mailContainerBuilder) {
+			String urlBase, String urlInternal) {
 		super();
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
@@ -125,7 +123,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.urlBase = urlBase;
 		this.urlInternal = urlInternal;
-		this.mailContainerBuilder = mailContainerBuilder;
 	}
 	
 	
@@ -274,9 +271,8 @@ public class ShareFacadeImpl implements ShareFacade {
 
 
 	@Override
-	public void deleteSharing(ShareDocumentVo share, UserVo actorVo) throws BusinessException {
+	public void deleteSharing(ShareDocumentVo share, UserVo actorVo, MailContainer mailContainer) throws BusinessException {
 		User actor = userService.findByLsUid(actorVo.getLsUid());
-		MailContainer mailContainer = mailContainerBuilder.buildMailContainer(actorVo, null);
 		shareEntryService.deleteShare(share.getIdentifier(), actor, mailContainer);
 	}
 
