@@ -30,7 +30,7 @@
 							</t:loop>
 						</ul>
 						<hr />
-						<t:actionLink t:id="downloadThemAll" t:class="btnDLzip" t:context="alea">${message:pages.download.downloadThemAll}</t:actionLink>
+						<t:actionLink t:id="downloadThemAll" t:class="btnDLzip" t:context="uuid">${message:pages.download.downloadThemAll}</t:actionLink>
 					</div>
 					<div id="blocDLfooter">
 						${message:pages.download.footer} <a href="${message:global.companyURL}" title="${message:global.companyName}">${message:global.companyName}</a>

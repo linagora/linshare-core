@@ -163,36 +163,36 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 
 	}
 	
-	@Test
-	public void testBuildMailAnonymousDownload() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		List<Document> docs = new ArrayList<Document>();
-		docs.add(aDocument);
-		
-		String email = john.getMail();
-		User recipient = jane;
-		// buildMailAnonymousDownload
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailAnonymousDownload(actor, mailContainer, docs, email, recipient);
-		testMailGenerate(mailContainerBuild);
-
-		// buildMailAnonymousDownloadWithOneRecipient
-		List<MailContainerWithRecipient> mailContainerBuildList =  mailContentBuildingService.buildMailAnonymousDownloadWithOneRecipient(actor, mailContainer, docs, email, recipient);
-		
-		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
-			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
-			testMailGenerate(mailContainerWithRecipient);
-		}
-		
-		// buildMailAnonymousDownloadWithRecipient
-		mailContainerBuild =  mailContentBuildingService.buildMailAnonymousDownloadWithRecipient(actor, mailContainer, docs, email, recipient);
-		testMailGenerate(mailContainerBuild);
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	public void testBuildMailAnonymousDownload() throws BusinessException{
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		
+//		User actor = john;
+//		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
+//		mailContainer.setLanguage(Language.FRENCH);
+//		List<Document> docs = new ArrayList<Document>();
+//		docs.add(aDocument);
+//		
+//		String email = john.getMail();
+//		User recipient = jane;
+//		// buildMailAnonymousDownload
+//		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailAnonymousDownload(actor, mailContainer, docs, email, recipient);
+//		testMailGenerate(mailContainerBuild);
+//
+//		// buildMailAnonymousDownloadWithOneRecipient
+//		List<MailContainerWithRecipient> mailContainerBuildList =  mailContentBuildingService.buildMailAnonymousDownloadWithOneRecipient(actor, mailContainer, docs, email, recipient);
+//		
+//		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
+//			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
+//			testMailGenerate(mailContainerWithRecipient);
+//		}
+//		
+//		// buildMailAnonymousDownloadWithRecipient
+//		mailContainerBuild =  mailContentBuildingService.buildMailAnonymousDownloadWithRecipient(actor, mailContainer, docs, email, recipient);
+//		testMailGenerate(mailContainerBuild);
+//		
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 
 	@Test
 	public void testBuildMailRegisteredDownload() throws BusinessException{

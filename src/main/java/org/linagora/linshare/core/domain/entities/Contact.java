@@ -20,12 +20,17 @@
 */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 public class Contact {
 	
 	private long persistenceId;
 	private String mail;
+	private Set<AnonymousShareEntry> anonymousShareEntries = new HashSet<AnonymousShareEntry>();
 
+	
 	// for hibernate
 	protected Contact() {
 		this.mail = null;
@@ -65,5 +70,12 @@ public class Contact {
 	public long getPersistenceId() {
 		return persistenceId;
 	}
-	
+
+	public Set<AnonymousShareEntry> getAnonymousShareEntries() {
+		return anonymousShareEntries;
+	}
+
+	public void setAnonymousShareEntries(Set<AnonymousShareEntry> anonymousShareEntries) {
+		this.anonymousShareEntries = anonymousShareEntries;
+	}
 }

@@ -45,10 +45,12 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.DocumentService;
 import org.linagora.linshare.core.service.EnciphermentService;
 import org.linagora.linshare.core.service.ShareEntryService;
+import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.slf4j.Logger;
@@ -62,6 +64,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	private final UserRepository<User> userRepository;
 	
 	private final DocumentTransformer documentTransformer;
+	
 	private final SignatureTransformer signatureTransformer;
 	
 	private final EnciphermentService enciphermentService;
@@ -69,6 +72,10 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	private final DocumentEntryService documentEntryService;
 	
 	private final ShareEntryService shareEntryService;
+	
+	private final ShareService shareService;
+	
+	private final AnonymousShareEntryService anonymousShareEntryService;
 	
 	private final AccountService accountService;
 	
@@ -83,7 +90,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	public DocumentFacadeImpl(DocumentService documentService, UserRepository<User> userRepository, DocumentTransformer documentTransformer, SignatureTransformer signatureTransformer,
 			EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService,
-			DocumentEntryTransformer documentEntryTransformer, ShareEntryService shareEntryService, SignatureService signatureService) {
+			DocumentEntryTransformer documentEntryTransformer, ShareEntryService shareEntryService, SignatureService signatureService, AnonymousShareEntryService anonymousShareEntryService, 
+			ShareService shareService) {
 		super();
 		this.documentService = documentService;
 		this.userRepository = userRepository;
@@ -95,6 +103,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		this.accountService = accountService;
 		this.documentEntryTransformer = documentEntryTransformer;
 		this.signatureService = signatureService;
+		this.anonymousShareEntryService = anonymousShareEntryService;
+		this.shareService = shareService;
 	}
 
 
@@ -110,7 +120,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	public void removeDocument(UserVo actorVo, DocumentVo document, MailContainer mailContainer) throws BusinessException {
 		User actor = (User) accountService.findByLsUid(actorVo.getLsUid());
 		if(actor != null) {
-			shareEntryService.deleteAllShareEntriesWithDocumentEntries(document.getIdentifier(), actor, mailContainer);
+			shareService.deleteAllShareEntriesWithDocumentEntry(document.getIdentifier(), actor, mailContainer);
 		} else {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
 		}
@@ -173,7 +183,6 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		try {
 			DocumentEntry document = documentEntryService.findById(actor, documentVo.getIdentifier());
 			SignatureVo res = null;
-			
 			for (Signature signature : document.getDocument().getSignatures()) {
 				if (signature.getSigner().equals(actor)) {
 					res = signatureTransformer.disassemble(signature);

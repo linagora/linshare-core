@@ -246,17 +246,17 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	/**
 	 * Template CONFIRM_DOWNLOAD_ANONYMOUS
 	 */
-	private MailTemplate buildTemplateConfirmDownloadAnonymous(User actor, Language language, List<Document> docs, String email) throws BusinessException {
+	private MailTemplate buildTemplateConfirmDownloadAnonymous(User actor, Language language, List<String> docNames, String email) throws BusinessException {
 		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.CONFIRM_DOWNLOAD_ANONYMOUS);
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 
 		StringBuffer names = new StringBuffer();
 		StringBuffer namesTxt = new StringBuffer();
-		if (docs != null && docs.size()>0) {
-			for (Document doc : docs) {
-				names.append("<li>"+doc.getName()+"</li>");
-				namesTxt.append(doc.getName()+"\n");
+		if (docNames != null && docNames.size()>0) {
+			for (String name : docNames) {
+				names.append("<li>"+name+"</li>");
+				namesTxt.append(name+"\n");
 			}	
 		}
 
@@ -632,20 +632,15 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	}
 	
 	@Override
-	public MailContainer buildMailAnonymousDownload(User actor, MailContainer mailContainer, List<Document> docs, String email, User recipient) throws BusinessException {
+	public MailContainer buildMailAnonymousDownload(User actor, MailContainer mailContainer, List<String> docs, String email, User recipient) throws BusinessException {
 		MailTemplate template = buildTemplateConfirmDownloadAnonymous(actor, mailContainer.getLanguage(), docs, email);
 		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.ANONYMOUS_DOWNLOAD);
 		return buildMailContainer(actor, mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null, null);
 	}
 	
+	
 	@Override
-	public MailContainerWithRecipient buildMailAnonymousDownloadWithRecipient(User actor, MailContainer mailContainer, List<Document> docs, String email, User recipient) throws BusinessException {
-		MailTemplate template = buildTemplateConfirmDownloadAnonymous(actor, mailContainer.getLanguage(), docs, email);
-		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.ANONYMOUS_DOWNLOAD);
-		return buildMailContainerWithRecipient(actor, actor, mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null);
-	}
-
-	public List<MailContainerWithRecipient> buildMailAnonymousDownloadWithOneRecipient(User actor, MailContainer mailContainer, List<Document> docs, String email, User recipient) throws BusinessException {
+	public List<MailContainerWithRecipient> buildMailAnonymousDownloadWithOneRecipient(User actor, MailContainer mailContainer, List<String> docs, String email, User recipient) throws BusinessException {
 		MailTemplate template = buildTemplateConfirmDownloadAnonymous(actor, mailContainer.getLanguage(), docs, email);
 		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.ANONYMOUS_DOWNLOAD);
 		
@@ -655,12 +650,14 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return mailContainerWithRecipient;
 	}	
 	
+	
 	@Override
 	public MailContainer buildMailRegisteredDownload(User actor, MailContainer mailContainer, List<Document> docs, User downloadingUser, User recipient) throws BusinessException {
 		MailTemplate template = buildTemplateConfirmDownloadRegistered(actor, mailContainer.getLanguage(), docs, downloadingUser);
 		MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.REGISTERED_DOWNLOAD);
 		return buildMailContainer(actor, mailContainer, subject.getContent(), template.getContentTXT(), template.getContentHTML(), recipient, null, null);
 	}
+	
 	
 	@Override
 	public MailContainerWithRecipient buildMailRegisteredDownloadWithRecipient(User actor, MailContainer mailContainer, List<Document> docs, User downloadingUser, User recipient) throws BusinessException {

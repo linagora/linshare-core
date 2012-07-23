@@ -96,31 +96,23 @@
     </bean>
 	     
    
-   <!-- to be deleted -->
+   <!-- to be deleted
     <bean id="securedUrlService" class="org.linagora.linshare.core.service.impl.SecuredUrlServiceImpl">
     	<constructor-arg ref="anonymousUrlRepository"/>
     	<constructor-arg ref="shareExpiryDateService"/>
     	<constructor-arg value="download"/>
     	<constructor-arg ref="logEntryService" />
     </bean>
+     -->
     
    
-<!--     <bean id="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl"> -->
-<!--         <constructor-arg index="0" ref="userRepository" /> -->
-<!--         <constructor-arg index="1" ref="shareRepository"/> -->
-<!--         <constructor-arg index="2" ref="logEntryService" /> -->
-<!--         <constructor-arg index="4" ref="documentRepository" /> -->
-<!--         <constructor-arg index="5" ref="securedUrlService" /> -->
-<!--         <constructor-arg index="6" ref="jackRabbitRepository" /> -->
-<!--     	<constructor-arg index="7" ref="shareExpiryDateService"/> -->
-<!--         <constructor-arg index="8" ref="notifierService" /> -->
-<!--     	<constructor-arg index="9" ref="mailContentBuildingService"/> -->
-<!--     	<constructor-arg index="10" ref="guestRepository"/> -->
-<!--     	<constructor-arg index="11" value="${job.outdatedshares.beforedate.sendnotification}"/> -->
-<!--     	<constructor-arg index="12" value="${linshare.info.url.base}"/> -->
-<!--     	<constructor-arg index="13" ref="functionalityService" /> -->
-<!--     	<constructor-arg index="14" ref="passwordService" /> -->
-<!--     </bean> -->
+    <bean id="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
+        <constructor-arg ref="documentEntryService" />
+        <constructor-arg ref="shareEntryService" />
+        <constructor-arg ref="anonymousShareEntryService" />
+        <constructor-arg ref="userService" />
+    </bean>
+    
     
     
     <bean id="shareEntryService" class="org.linagora.linshare.core.service.impl.ShareEntryServiceImpl">
@@ -143,11 +135,15 @@
     	<constructor-arg ref="logEntryService"/>
     	<constructor-arg ref="notifierService"/>
     	<constructor-arg ref="mailContentBuildingService"/>
+    	<constructor-arg ref="documentEntryBusinessService"/>
     </bean>
     
     
     <bean id="anonymousUrlService" class="org.linagora.linshare.core.service.impl.AnonymousUrlServiceImpl">
     	<constructor-arg ref="anonymousUrlBusinessService"/>
+    	<constructor-arg ref="anonymousShareEntryService"/>
+    	<constructor-arg ref="notifierService"/>
+    	<constructor-arg ref="mailContentBuildingService"/>
     </bean>
     
 	   

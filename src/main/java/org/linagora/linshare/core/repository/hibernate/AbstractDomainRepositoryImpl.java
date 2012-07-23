@@ -40,6 +40,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<String> findAllDomainIdentifiers() {
 
 		return (List<String>) getHibernateTemplate().executeFind(

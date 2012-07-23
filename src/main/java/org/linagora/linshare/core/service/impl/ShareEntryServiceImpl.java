@@ -9,6 +9,7 @@ import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
@@ -51,7 +52,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
     
     private final MailContentBuildingService mailContentBuildingService;
 
-	
 	
 //	private final UserService userService;
 	
@@ -150,10 +150,10 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		}
 		deleteShare(share, actor, mailContainer);
 	}
+	
 
-
-
-	private void deleteShare(ShareEntry share, User actor, MailContainer mailContainer) throws BusinessException {
+	@Override
+	public void deleteShare(ShareEntry share, User actor, MailContainer mailContainer) throws BusinessException {
 		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor)) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
 					actor.getDomainId(),
@@ -176,7 +176,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
 		}
 	}
-
+	
 
 	@Override
 	public SuccessesAndFailsItems<ShareEntry> createShare(List<DocumentEntry> documentEntries, User sender, List<User> recipients, Calendar expirationDate) {
@@ -230,23 +230,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
 		}
 	}
-
-
-
-	@Override
-	public void deleteAllShareEntriesWithDocumentEntries(String docEntryUuid, User actor, MailContainer mailContainer) {
-		try {
-			DocumentEntry entry = documentEntryService.findById(actor, docEntryUuid);
-			for (ShareEntry share : entry.getShareEntries()) {
-				deleteShare(share, actor, mailContainer);
-			}
-			documentEntryService.deleteDocumentEntry(actor, entry.getUuid());
-			
-		} catch (BusinessException e) {
-			logger.error("Document not found : " + docEntryUuid);
-		}
-	}
-
 
 
 	@Override

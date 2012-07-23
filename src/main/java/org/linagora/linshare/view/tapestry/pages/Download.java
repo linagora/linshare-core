@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -46,6 +45,8 @@ import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.service.AnonymousShareEntryService;
+import org.linagora.linshare.core.service.AnonymousUrlService;
 import org.linagora.linshare.core.utils.ArchiveZipStream;
 import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
@@ -82,7 +83,7 @@ public class Download {
 
 	@Property
 	@Persist
-	private String alea;
+	private String uuid;
 
 	/***************************************************************************
 	 * Service injection
@@ -94,13 +95,7 @@ public class Download {
 	private Messages messages;
 
 	@Inject
-	private SecuredUrlFacade securedUrlFacade;
-
-	@Inject
 	private ComponentResources componentResources;
-
-	@Inject
-	private DocumentFacade documentFacade;
 
 	@Inject
 	private JavaScriptSupport renderSupport;
@@ -118,10 +113,19 @@ public class Download {
 	@Inject @Symbol("linshare.logo.webapp.visible")
 	@Property
 	private boolean linshareLogoVisible;
+
+	
+	
+	@Inject
+	private DocumentFacade documentFacade;
+	
+	@Inject
+	private SecuredUrlFacade securedUrlFacade;
+	
 	
 	
 	public String[] getContext() {
-		return new String[] { alea, index.toString()};
+		return new String[] { uuid, index.toString()};
 	}
 	
 	public boolean getContainsDocuments() {
@@ -132,44 +136,21 @@ public class Download {
 		}
 	}
 
-	public StreamResponse onActivate(String alea, Integer documentId) {
-		
-		//check current one with the old one
-		if(this.alea!=null && !this.alea.equals(alea)){
-			this.password = null; //reset cached password
-		}
-		this.alea = alea;
-		
+	public StreamResponse onActivate(String uuid, Integer documentId) {
+		logger.debug("documenbtId : " + String.valueOf(documentId));
+		setCurrentUuid(uuid);
 
 		try {
-			if (!securedUrlFacade.exists(alea, componentResources.getPageName().toLowerCase())) {
-				throw new BusinessException(BusinessErrorCode.WRONG_URL, "secure url does not exists");
-			}
-			this.passwordProtected = (password == null && securedUrlFacade.isPasswordProtected(alea, componentResources.getPageName().toLowerCase()));
-			
-			if (!securedUrlFacade.isValid(alea, componentResources.getPageName().toLowerCase(), password)) {
-				throw new BusinessException("the secured url is not valid");
-			}
-
+			checkUrl(uuid);
 			if(!passwordProtected){
-				final DocumentVo doc = securedUrlFacade.getDocument(alea,
-						componentResources.getPageName().toLowerCase(), password,
-						documentId);
-				final InputStream file = documentFacade.retrieveFileStream(doc,email);
-				
-				securedUrlFacade.logDownloadedDocument(alea, componentResources.getPageName().toLowerCase(), password, documentId, email);
-	
-				List<DocumentVo> docList = new ArrayList<DocumentVo>();
-				docList.add(doc);
-				
+				documents = securedUrlFacade.getDocuments(uuid, password);
+				DocumentVo doc = documents.get(documentId);
 				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(null, null);
-				securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), mailContainer, docList,email);
-				
+				final InputStream file = securedUrlFacade.retrieveFileStream(uuid, doc.getIdentifier(), password, mailContainer);
 				return new FileStreamResponse(doc, file); 
 			} else {
 				return null;
 			}
-			
 			
 		} catch (BusinessException e) {
 			messagesManagementService.notify(e);
@@ -177,87 +158,72 @@ public class Download {
 		return null;
 	}
 
-	public void onActivate(String alea) {
-		//check current one with the old one
-		if(this.alea!=null && !this.alea.equals(alea)){
-			this.password = null; //reset cached password
-		}
-		this.alea = alea;
-		
-		//find email parameter (this parameter can be altered by the user, it is just an information)
-		this.email = requestGlobals.getHTTPServletRequest().getParameter("email");
-		if(email==null) email = "";
-		
+	/**
+	 * this is the first method called in this page.
+	 * @param uuid
+	 */
+	public void onActivate(String uuid) {
+		// download/1r2dln9trm321?email=3Darthur.pendragon@int3.linshare.dev
+		// http://ubuntu1:8080/linshare/download/aa1091d4-d4ab-4862-a2c7-1a6b93ac7dea
 
+		setCurrentUuid(uuid);
 		try {
-			if (!securedUrlFacade.exists(alea, componentResources.getPageName()
-					.toLowerCase())) {
-				throw new BusinessException(BusinessErrorCode.WRONG_URL,
-						"secure url does not exists");
-			}
-			this.passwordProtected = (password == null && securedUrlFacade
-					.isPasswordProtected(alea, componentResources.getPageName()
-							.toLowerCase()));
-			if (!securedUrlFacade.isValid(alea, componentResources
-					.getPageName().toLowerCase(), password)) {
-				throw new BusinessException("the secured url is not valid");
-			}
-
-			documents = securedUrlFacade.getDocuments(alea, componentResources.getPageName().toLowerCase(), password);
+			checkUrl(uuid);
+			documents = securedUrlFacade.getDocuments(uuid, password);
 		} catch (BusinessException e) {
 			messagesManagementService.notify(e);
 		}
 	}
 
-	public StreamResponse onActionFromDownloadThemAll(String alea) throws IOException, BusinessException{
-		
+	private void setCurrentUuid(String uuid) {
+		logger.debug("uuid : " + uuid);
 		//check current one with the old one
-		if(this.alea!=null && !this.alea.equals(alea)){
+		if(this.uuid!=null && !this.uuid.equals(uuid)){
 			this.password = null; //reset cached password
 		}
-		this.alea = alea;
-		
-		
-		if (!securedUrlFacade.exists(alea, componentResources.getPageName()
-				.toLowerCase())) {
-			throw new BusinessException(BusinessErrorCode.WRONG_URL,
-					"secure url does not exists");
+		this.uuid = uuid;
+	}
+	
+	
+	private void checkUrl(String uuid) {
+		try {
+			if (!securedUrlFacade.exists(uuid, componentResources.getPageName().toLowerCase())) {
+				String msg = "secure url does not exists";
+				logger.error(msg);
+				throw new BusinessException(BusinessErrorCode.WRONG_URL, msg);
+			}
+			this.passwordProtected = securedUrlFacade.isPasswordProtected(uuid);
+			if (!securedUrlFacade.isValid(uuid, password)) {
+				String msg = "the secured url is not valid";
+				logger.error(msg);
+				throw new BusinessException(msg);
+			}
+	
+		} catch (BusinessException e) {
+			messagesManagementService.notify(e);
 		}
-		this.passwordProtected = (password == null && securedUrlFacade
-				.isPasswordProtected(alea, componentResources.getPageName()
-						.toLowerCase()));
-		if (!securedUrlFacade.isValid(alea, componentResources
-				.getPageName().toLowerCase(), password)) {
-			throw new BusinessException("the secured url is not valid");
-		}
-		
-		if(!passwordProtected){
-			documents = securedUrlFacade.getDocuments(alea, componentResources.getPageName().toLowerCase(), password);
-			
-			Map<String,InputStream> map = new HashMap<String, InputStream>();
-			
-			for (DocumentVo d : documents) {
-				map.put(d.getFileName(), documentFacade.retrieveFileStream(d,email));
-			}	
-			
-			//prepare an archive zip
-			ArchiveZipStream ai = new ArchiveZipStream(map);
-			
-			securedUrlFacade.logDownloadedDocument(alea, componentResources.getPageName().toLowerCase(), password, null,email);
+	}
 
-			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(null, null);
-			securedUrlFacade.sendEmailNotification(alea, componentResources.getPageName().toLowerCase(), mailContainer, documents, email);
-			
-			return (new FileStreamResponse(ai,null));
-		} else {
-			return null;
+	public StreamResponse onActionFromDownloadThemAll(String uuid) throws IOException, BusinessException{
+		
+		setCurrentUuid(uuid);
+		try {
+			checkUrl(uuid);
+			documents = securedUrlFacade.getDocuments(uuid, password);
+		
+			if(!passwordProtected){
+				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(null, null);
+				return securedUrlFacade.retrieveArchiveZipStream(uuid, password, mailContainer);
+			}
+		} catch (BusinessException e) {
+			messagesManagementService.notify(e);
 		}
+		return null;
 	}
 	
 	
 	public Zone onValidateFormFromPasswordPopup() {
-		if (securedUrlFacade.isValid(alea, componentResources.getPageName()
-				.toLowerCase(), passwordPopup.getPassword())) {
+		if (securedUrlFacade.isValid(uuid, passwordPopup.getPassword())) {
 			password = passwordPopup.getPassword();
 			return passwordPopup.formSuccess();
 		} else {

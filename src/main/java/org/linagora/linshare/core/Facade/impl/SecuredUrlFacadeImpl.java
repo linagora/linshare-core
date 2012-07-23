@@ -20,13 +20,16 @@
 */
 package org.linagora.linshare.core.Facade.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.Facade.SecuredUrlFacade;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailContainer;
@@ -39,9 +42,12 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.AnonymousShareEntryService;
+import org.linagora.linshare.core.service.AnonymousUrlService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.SecuredUrlService;
+import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,93 +55,58 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecuredUrlFacadeImpl.class);
 	
-	private final SecuredUrlService securedUrlService;
+	private final AnonymousUrlService anonymousUrlService;
 	
-	private final DocumentAdapter documentAdapter;
-	
-	private final NotifierService notifierService;
-	
-	private final UserRepository<User> userRepository;
-
-	private final DocumentRepository documentRepository;
-    
-    private final MailContentBuildingService mailElementsFactory;
-	
-	public SecuredUrlFacadeImpl(SecuredUrlService securedUrlService,DocumentAdapter documentAdapter,
-			final NotifierService notifierService,
-			final UserRepository<User> userRepository,
-			final DocumentRepository documentRepository,
-    		final MailContentBuildingService mailElementsFactory) {
-		this.securedUrlService=securedUrlService;
-		this.documentAdapter=documentAdapter;
-		this.notifierService = notifierService;
-		this.userRepository = userRepository;
-		this.documentRepository = documentRepository;
-		this.mailElementsFactory = mailElementsFactory;
+	public SecuredUrlFacadeImpl(final AnonymousUrlService anonymousUrlService) {
+		this.anonymousUrlService = anonymousUrlService;
 	}
 
-	@Override
-	public DocumentVo getDocument(String alea, String urlPath,
-			Integer documentId) throws BusinessException {
-		return  documentAdapter.disassemble(securedUrlService.getDocument(alea, urlPath, documentId));
-	}
 
 	@Override
-	public DocumentVo getDocument(String alea, String urlPath, String password,
-			Integer documentId) throws BusinessException {
-		return documentAdapter.disassemble(securedUrlService.getDocument(alea, urlPath, password, documentId));
-	}
-
-	@Override
-	public List<DocumentVo> getDocuments(String alea, String urlPath)
-			throws BusinessException {
-		return documentAdapter.disassembleDocList(securedUrlService.getDocuments(alea, urlPath));
-	}
-
-	@Override
-	public List<DocumentVo> getDocuments(String alea, String urlPath,
-			String password) throws BusinessException {
-		return documentAdapter.disassembleDocList(securedUrlService.getDocuments(alea, urlPath, password));
-	}
-
-	@Override
-	public boolean isPasswordProtected(String alea, String urlPath) throws LinShareNotSuchElementException {
-		return securedUrlService.isProtectedByPassword(alea, urlPath);
-	}
-
-	@Override
-	public boolean isValid(String alea, String urlPath) {
-		return securedUrlService.isValid(alea, urlPath);
-	}
-
-	@Override
-	public boolean isValid(String alea, String urlPath, String password) {
-		return securedUrlService.isValid(alea, urlPath, password);
-	}
-
-	@Override
-	public boolean exists(String alea, String urlPath) {
-		return securedUrlService.exists(alea,urlPath);
-	}
-	
-	
-	@Override
-	public void logDownloadedDocument(String alea, String urlPath, String password,
-			Integer documentId, String email) {
-		securedUrlService.logDownloadedDocument(alea, urlPath, password, documentId, email) ;
-	}
-
-	@Override
-	public void sendEmailNotification(String alea, String urlPath, MailContainer mailContainer, List<DocumentVo> docs, String email) throws BusinessException {
-		
-		User owner = securedUrlService.getSecuredUrlOwner(alea, urlPath);
-		List<Document> docList = new ArrayList<Document>();
-		for (DocumentVo documentVo : docs) {
-			docList.add(documentRepository.findByUuid(documentVo.getIdentifier()));
+	public List<DocumentVo> getDocuments(String uuid, String password) throws BusinessException {
+		List<DocumentVo> res = new ArrayList<DocumentVo>();
+		List<AnonymousShareEntry> anonymousShareEntries = anonymousUrlService.getAnonymousShareEntry(uuid, password);
+		logger.debug("anonymousShareEntries size : " + anonymousShareEntries.size());
+		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
+			res.add(new DocumentVo(anonymousShareEntry));
 		}
-		
-		//send a notification by mail to the owner
-		notifierService.sendAllNotifications(mailElementsFactory.buildMailAnonymousDownloadWithOneRecipient(owner, mailContainer, docList, email, owner));
+		logger.debug("res size : " + res.size());
+		return res;
+	}
+
+	
+	@Override
+	public boolean isPasswordProtected(String uuid) throws LinShareNotSuchElementException {
+		return anonymousUrlService.isProtectedByPassword(uuid);
+	}
+
+	
+	@Override
+	public boolean isValid(String uuid, String password) {
+		try {
+			return anonymousUrlService.isValid(uuid, password);
+		} catch (LinShareNotSuchElementException e) {
+			logger.error("anonymous url is not valid : " + e.getMessage());
+		}
+		return false;
+	}
+
+	
+	@Override
+	public boolean exists(String uuid, String urlPath) {
+		return anonymousUrlService.exists(uuid,urlPath);
+	}
+
+
+	@Override
+	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid, String password, MailContainer mailContainer) throws BusinessException {
+		return anonymousUrlService.retrieveFileStream(anonymousUrlUuid, anonymousShareEntryUuid, password, mailContainer);
+	}
+
+
+	@Override
+	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password, MailContainer mailContainer) throws BusinessException {
+		return anonymousUrlService.retrieveArchiveZipStream(anonymousUrlUuid, password, mailContainer);
 	}
 	
 }

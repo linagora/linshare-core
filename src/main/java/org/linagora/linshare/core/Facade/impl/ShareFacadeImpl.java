@@ -72,8 +72,7 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareFacadeImpl.class);
 	
-	// to be deleted
-	private ShareService shareService;
+	private final ShareService shareService;
 	
 	private final ShareTransformer shareTransformer;
 	
@@ -107,7 +106,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	public ShareFacadeImpl(ShareTransformer shareTransformer, UserRepository<User> userRepository, DocumentRepository documentRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
 			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
-			String urlBase, String urlInternal) {
+			String urlBase, String urlInternal,ShareService shareService) {
 		super();
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
@@ -123,12 +122,11 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.urlBase = urlBase;
 		this.urlInternal = urlInternal;
+		this.shareService = shareService;
 	}
 	
-	
 
-	//	@Override
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo actorVo, List<DocumentVo> documents, List<UserVo> recipientsVo, Calendar expirationDate) throws BusinessException {
+	private SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo actorVo, List<DocumentVo> documents, List<UserVo> recipientsVo, Calendar expirationDate) throws BusinessException {
 		logger.debug("createSharing:Begin");
 		
 		User actor = userService.findByLsUid(actorVo.getLsUid());
@@ -155,8 +153,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		return results;
 	}
 
-//	@Override
-	public SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, MailContainer mailContainer, Calendar expirationDate, boolean isOneDocEncrypted) throws BusinessException {
+	
+	private SuccessesAndFailsItems<ShareDocumentVo> createSharingWithMail(UserVo owner, List<DocumentVo> documents, List<UserVo> recipients, MailContainer mailContainer, Calendar expirationDate, boolean isOneDocEncrypted) throws BusinessException {
 		logger.debug("createSharingWithMail:Begin");
 		SuccessesAndFailsItems<ShareDocumentVo> result = createSharing(owner,documents,recipients, expirationDate);
 		
@@ -226,24 +224,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		return new ArrayList<ShareDocumentVo>();
 	}
 	
-//	@Override
-//	public Map<String, Calendar> getSharingsByMailAndFile(UserVo senderVo, DocumentVo document) {
-//		User sender = userRepository.findByMail(senderVo.getLogin());
-//
-//		List<SecuredUrl> secUrls = securedUrlService.getUrlsByMailAndFile(sender, document);
-//
-//		Map<String, Calendar> res = new HashMap<String, Calendar>();
-//		
-//		// FIXME : fix anonymous url
-////		for (SecuredUrl securedUrl : secUrls) {
-////			for (Contact recipient : securedUrl.getRecipients()) {
-////				res.put(recipient.getMail(), securedUrl.getExpirationTime());
-////			}
-////		}
-//		return res;
-//	}
-
-	
 	
 	@Override
 	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(UserVo senderVo, DocumentVo documentVo) {
@@ -267,7 +247,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		return res;
 	}
-
 
 
 	@Override
@@ -450,8 +429,6 @@ public class ShareFacadeImpl implements ShareFacade {
 			mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, ""));
 		}
 		notifierService.sendAllNotifications(mailContainerWithRecipient);
-
-    	
     }
     
 

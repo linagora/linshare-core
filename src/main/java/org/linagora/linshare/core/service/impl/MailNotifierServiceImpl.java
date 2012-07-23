@@ -38,9 +38,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -83,7 +82,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	private final boolean displayLogo;
 
 	/** Class logger */
-	private final static Log logger = LogFactory.getLog(MailNotifierServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
 
 	/**
 	 * see http://java.sun.com/developer/EJTechTips/2004/tt0625.html for

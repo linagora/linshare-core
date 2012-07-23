@@ -23,6 +23,8 @@ package org.linagora.linshare.core.domain.vo;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+
 public class DocumentVo implements Serializable, Comparable {
 
 	private static final long serialVersionUID = 8048750523251506651L;
@@ -95,6 +97,25 @@ public class DocumentVo implements Serializable, Comparable {
 		this.type=type;
 		this.size=size;
 		this.fileComment = fileComment;
+	}
+	
+	
+	public DocumentVo(AnonymousShareEntry anonymousShareEntry) {
+		super();
+		this.identifier=anonymousShareEntry.getUuid();
+		this.fileName = anonymousShareEntry.getName();
+		this.creationDate = (Calendar)anonymousShareEntry.getCreationDate().clone();
+		if(anonymousShareEntry.getExpirationDate() !=null) {
+			this.expirationDate = (Calendar)anonymousShareEntry.getExpirationDate().clone();
+		} else {
+			this.expirationDate = null;
+		}
+		this.ownerLogin = anonymousShareEntry.getEntryOwner().getLsUid();
+		this.encrypted = anonymousShareEntry.getDocumentEntry().getCiphered();
+		this.shared = anonymousShareEntry.getDocumentEntry().isShared();
+		this.type=anonymousShareEntry.getDocumentEntry().getType();
+		this.size=anonymousShareEntry.getDocumentEntry().getSize();
+		this.fileComment = anonymousShareEntry.getDocumentEntry().getComment();
 	}
 	
 	

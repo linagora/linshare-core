@@ -48,7 +48,7 @@ public interface MailContentBuildingService {
 	 * by an anonymous user
 	 */
 	public MailContainer buildMailAnonymousDownload(User actor,
-			MailContainer mailContainer, List<Document> docs, String email,
+			MailContainer mailContainer, List<String> docs, String email,
 			User recipient) throws BusinessException;
 	
 	/**
@@ -147,12 +147,8 @@ public interface MailContentBuildingService {
 	 * Notify a user that shared files has been downloaded
 	 * by an anonymous user
 	 */
-	public MailContainerWithRecipient buildMailAnonymousDownloadWithRecipient(User actor,
-			MailContainer mailContainer, List<Document> docs, String email,
-			User recipient) throws BusinessException;
-
 	public List<MailContainerWithRecipient> buildMailAnonymousDownloadWithOneRecipient(User actor,
-			MailContainer mailContainer, List<Document> docs, String email,
+			MailContainer mailContainer, List<String> docs, String email,
 			User recipient) throws BusinessException;	
 	
 	/**

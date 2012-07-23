@@ -21,22 +21,17 @@ public interface ShareEntryService {
 	
 	public ShareEntry findByUuid(User actor, String uuid)  throws BusinessException ;
 
-	
 	public ShareEntry createShare(DocumentEntry documentEntry, User sender, User recipient, Calendar expirationDate) throws BusinessException;
-	
 
 	public SuccessesAndFailsItems<ShareEntry> createShare(DocumentEntry documentEntry, User sender, List<User> recipients, Calendar expirationDate) ;
-
 	
 	public SuccessesAndFailsItems<ShareEntry> createShare(List<DocumentEntry> documentEntries, User sender, List<User> recipients, Calendar expirationDate);
-		
 
 	public void deleteShare(String shareUuid, User actor, MailContainer mailContainer) throws BusinessException;
+	
+	public void deleteShare(ShareEntry share, User actor, MailContainer mailContainer) throws BusinessException;
 
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException; 
-	
-	public void deleteAllShareEntriesWithDocumentEntries(String docEntryUuid, User actor, MailContainer mailContainer);
-	  
 
 	public void updateShareComment(User actor, String uuid, String comment) throws BusinessException;
 	

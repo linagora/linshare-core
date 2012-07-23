@@ -20,206 +20,130 @@
 */
 package org.linagora.linshare.core.service.impl;
 
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.dao.FileSystemDao;
-import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.Contact;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.FileLogEntry;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.domain.entities.Share;
-import org.linagora.linshare.core.domain.entities.ShareLogEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
-import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.repository.AnonymousUrlRepository;
-import org.linagora.linshare.core.repository.ShareRepository;
-import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.FunctionalityService;
-import org.linagora.linshare.core.service.LogEntryService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
-import org.linagora.linshare.core.service.NotifierService;
-import org.linagora.linshare.core.service.PasswordService;
-import org.linagora.linshare.core.service.SecuredUrlService;
-import org.linagora.linshare.core.service.ShareExpiryDateService;
+import org.linagora.linshare.core.service.AnonymousShareEntryService;
+import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShareServiceImpl implements ShareService{
 
 
+	private final ShareEntryService shareEntryService;
 	
-	private final UserRepository<User> userRepository;
-	private final ShareRepository shareRepository;
-	private final LogEntryService logEntryService;
-	private final DocumentRepository documentRepository;
-	private  SecuredUrlService secureUrlService;
-	private final FileSystemDao fileSystemDao;
-	private final ShareExpiryDateService shareExpiryDateService;
-	private final NotifierService notifierService;
-	private final MailContentBuildingService mailBuilder;
-	private final GuestRepository guestRepository;
-	private List<Integer> datesForNotifyUpcomingOutdatedShares;
-	private final String urlBase;
-	private final FunctionalityService functionalityService;
-	private final PasswordService passwordService;
+	private final DocumentEntryService documentEntryService;
+	
+	private final AnonymousShareEntryService anonymousShareEntryService;
+	
+	private final UserService userService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ShareServiceImpl.class);
 
-	public ShareServiceImpl(final UserRepository<User> userRepository,
-			final ShareRepository shareRepository,
-			final LogEntryService logEntryService,
-			final AnonymousUrlRepository securedUrlRepository,
-			final DocumentRepository documentRepository,  
-			final FileSystemDao fileSystemDao, final ShareExpiryDateService shareExpiryDateService,
-			final NotifierService notifierService, final MailContentBuildingService mailBuilder,
-			final GuestRepository guestRepository,
-			final String datesForNotifyUpcomingOutdatedShares, final String urlBase,
-			final FunctionalityService functionalityService,
-			final PasswordService passwordService) {
-		
-		this.userRepository=userRepository;
-		this.shareRepository=shareRepository;
-		this.logEntryService=logEntryService;
-		this.documentRepository = documentRepository;
-        this.fileSystemDao = fileSystemDao;
-        this.shareExpiryDateService = shareExpiryDateService;
-        this.notifierService = notifierService;
-        this.mailBuilder = mailBuilder;
-        this.guestRepository = guestRepository;
-        this.datesForNotifyUpcomingOutdatedShares = new ArrayList<Integer>();
-        String[] dates = datesForNotifyUpcomingOutdatedShares.split(",");
-        for (String date : dates) {
-        	this.datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
+
+	public ShareServiceImpl(ShareEntryService shareEntryService, DocumentEntryService documentEntryService, AnonymousShareEntryService anonymousShareEntryService, UserService userService) {
+		super();
+		this.shareEntryService = shareEntryService;
+		this.documentEntryService = documentEntryService;
+		this.anonymousShareEntryService = anonymousShareEntryService;
+		this.userService = userService;
+	}
+
+
+	@Override
+	public void deleteAllShareEntriesWithDocumentEntry(String docEntryUuid, User actor, MailContainer mailContainer) {
+		try {
+			DocumentEntry entry = documentEntryService.findById(actor, docEntryUuid);
+			
+			List<String> a = new ArrayList<String>();
+			List<String> b = new ArrayList<String>();
+			
+			for (AnonymousShareEntry anonymousShareEntry : entry.getAnonymousShareEntries()) {
+				a.add(anonymousShareEntry.getUuid());
+			}
+			
+			for (ShareEntry shareEntry : entry.getShareEntries()) {
+				b.add(shareEntry.getUuid());
+			}
+
+			for (String uuid : a) {
+				anonymousShareEntryService.deleteShare(uuid, actor, mailContainer);
+			}
+			
+			for (String uuid : b) {
+				shareEntryService.deleteShare(uuid, actor, mailContainer);
+			}
+			
+			documentEntryService.deleteDocumentEntry(actor, entry.getUuid());
+			
+		} catch (BusinessException e) {
+			logger.error("can not delete document : " + docEntryUuid);
 		}
-        this.urlBase = urlBase;
-        this.functionalityService = functionalityService;
-        this.passwordService = passwordService;
-	}
-
-	
-	@Override
-	public void removeReceivedShareForUser(Share share, User user, User actor) throws BusinessException {
-//		user.deleteReceivedShare(share);
-//		userRepository.update(user);
-//		
-//		ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-//				actor.getDomainId(),
-//        		LogAction.SHARE_DELETE, "Remove a received sharing", 
-//        		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
-//        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
-//        
-//        logEntryService.create(logEntry);
-	}
-
-	
-	@Override
-	public void removeReceivedSharesForUser(List<Share> shares, User user, User actor) throws BusinessException {
-//		for(Share currentShare:shares){
-//			user.deleteReceivedShare(currentShare);
-//			userRepository.update(user);
-//			
-//			ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-//					actor.getDomainId(),
-//	        		LogAction.SHARE_DELETE, "Remove a received sharing", 
-//	        		currentShare.getDocument().getName(), currentShare.getDocument().getSize(), currentShare.getDocument().getType(),
-//	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
-//	        
-//	        logEntryService.create(logEntry);
-//		}
-
-	}
-
-
-	@Override
-	public void removeSentShareForUser(Share share, User user, User actor) throws BusinessException {
-//		user.deleteShare(share);
-//		userRepository.update(user);
-//		
-//		ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-//				actor.getDomainId(),
-//        		LogAction.SHARE_DELETE, "Cancel a sharing", 
-//        		share.getDocument().getName(), share.getDocument().getSize(), share.getDocument().getType(),
-//        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
-//        
-//        logEntryService.create(logEntry);
-//        
-	}
-
-
-	@Override
-	public void removeSentSharesForUser(List<Share> shares, User user, User actor)  throws BusinessException{
-//		for(Share currentShare:shares){
-//			user.deleteShare(currentShare);
-//			userRepository.update(user);
-//			
-//			ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-//					actor.getDomainId(),
-//	        		LogAction.SHARE_DELETE, "Cancel a sharing", 
-//	        		currentShare.getDocument().getName(), currentShare.getDocument().getSize(), currentShare.getDocument().getType(),
-//	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
-//	        
-//	        logEntryService.create(logEntry);
-//	        
-//		}
-	}
-
-	
-	@Override
-	public void deleteAllSharesWithDocument(Document doc, User actor, MailContainer mailContainer)
-			throws BusinessException {
-		
-//		//1)delete normal share
-//		List<Share> listShare = shareRepository.getSharesLinkedToDocument(doc);
-//		
-//		
-//		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-//
-//			
-//		for (Share share : listShare) {
-//			if (mailContainer!=null) { //if notification is needed
-//				mailContainerWithRecipient.add(mailBuilder.buildMailSharedFileDeletedWithRecipient(actor, mailContainer, doc, actor, share.getReceiver()));
-//			}
-//			deleteShare(share, actor);
-//		}
-//		
-//		notifierService.sendAllNotifications(mailContainerWithRecipient);
-//
-//		
-//		doc.setShared(false);
-//		
-//		//2)delete secure url if we need
-//		
-//		mailContainerWithRecipient.clear();
-//		
-//		List<SecuredUrl> listSecuredUrl = securedUrlRepository.getSecureUrlLinkedToDocument(doc);
-//		for (SecuredUrl securedUrl : listSecuredUrl) {
-//			if (mailContainer!=null) { //if notification is needed
-//				List<Contact> recipients = securedUrl.getRecipients();
-//								
-//				for (Contact contact : recipients) {	
-//					mailContainerWithRecipient.add(mailBuilder.buildMailSharedFileDeletedWithRecipient(actor, mailContainer, doc, actor, contact));
-//				}
-//			}
-//			
-//			securedUrlRepository.delete(securedUrl);
-//		}
-//		notifierService.sendAllNotifications( mailContainerWithRecipient);
-
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	private void refreshShareAttributeOfDoc(Document doc, Boolean deteteInitialSharedDoc) throws BusinessException {
 //		List<Share> listShare = shareRepository.getSharesLinkedToDocument(doc);
 //		List<SecuredUrl> listSecuredUrl = securedUrlRepository.getSecureUrlLinkedToDocument(doc);
@@ -329,124 +253,48 @@ public class ShareServiceImpl implements ShareService{
     	
     }
     
-    
-	private void sendUpcomingOutdatedSecuredUrlNotification(MailContainer mailContainer, 
-			SecuredUrl securedUrl, Integer days) {
-		
-		//compose the secured url to give in mail
-		StringBuffer httpUrlBase = new StringBuffer();
-		httpUrlBase.append(urlBase);
-		if(!urlBase.endsWith("/")) httpUrlBase.append("/");
-		httpUrlBase.append(securedUrl.getUrlPath());
-		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
-		httpUrlBase.append(securedUrl.getSalt());
-		
-		//securedUrl must be ended with a "/" if no parameter (see urlparam)
-		String securedUrlBase = httpUrlBase.toString();
-		
-		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
+//    
+//	private void sendUpcomingOutdatedSecuredUrlNotification(MailContainer mailContainer, 
+//			SecuredUrl securedUrl, Integer days) {
+//		
+//		//compose the secured url to give in mail
+//		StringBuffer httpUrlBase = new StringBuffer();
+//		httpUrlBase.append(urlBase);
+//		if(!urlBase.endsWith("/")) httpUrlBase.append("/");
+//		httpUrlBase.append(securedUrl.getUrlPath());
+//		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
+//		httpUrlBase.append(securedUrl.getSalt());
+//		
+//		//securedUrl must be ended with a "/" if no parameter (see urlparam)
+//		String securedUrlBase = httpUrlBase.toString();
+//		
+//		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
+//
+//		try {
+//		
+//			for (Contact recipient : securedUrl.getRecipients()) {
+//				String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
+//				
+//				mailContainerWithRecipient.add(mailBuilder.buildMailUpcomingOutdatedSecuredUrlWithRecipient(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam));
+//			}
+//			notifierService.sendAllNotifications( mailContainerWithRecipient);
+//		
+//		} catch (BusinessException e) {
+//			logger.error("Error while trying to notify upcoming outdated secured url", e);
+//		}
+//
+//	}
+	
+//	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
+//			Share share, Integer days) {
+//		try {
+//
+//			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedShareWithOneRecipient(share.getSender(), mailContainer, share, days));
+//		} catch (BusinessException e) {
+//				logger.error("Error while trying to notify upcoming outdated share", e);
+//		}
+//	}
 
-		try {
-		
-			for (Contact recipient : securedUrl.getRecipients()) {
-				String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
-				
-				mailContainerWithRecipient.add(mailBuilder.buildMailUpcomingOutdatedSecuredUrlWithRecipient(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam));
-			}
-			notifierService.sendAllNotifications( mailContainerWithRecipient);
-		
-		} catch (BusinessException e) {
-			logger.error("Error while trying to notify upcoming outdated secured url", e);
-		}
-
-	}
-	
-	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
-			Share share, Integer days) {
-		try {
-
-			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedShareWithOneRecipient(share.getSender(), mailContainer, share, days));
-		} catch (BusinessException e) {
-				logger.error("Error while trying to notify upcoming outdated share", e);
-		}
-	}
-
-	/**
-	 * Log file sharing action.
-	 * @param sender
-	 * @param recipients
-	 * @param securedUrl
-	 * @param doc
-	 * @throws BusinessException
-	 */
-	private void logFileSharing(User sender, List<Contact> recipients, SecuredUrl securedUrl, Document doc) throws BusinessException {
-		for (Contact oneContact : recipients) {
-			ShareLogEntry logEntry = new ShareLogEntry(sender.getMail(), sender.getFirstName(), sender.getLastName(),sender.getDomainId(), 
-				LogAction.FILE_SHARE, "Sharing of a file", doc.getName(), doc.getSize(), doc.getType(), oneContact.getMail(), "", "", "", securedUrl.getExpirationTime());
-			logEntryService.create(logEntry);
-		}
-	}
-	
-	
-	/**
-	 * This method create a share using anonymous url and log it.
-	 * @param sender
-	 * @param docList
-	 * @param password
-	 * @param recipients
-	 * @param expiryDate
-	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws BusinessException
-	 */
-	private SecuredUrl shareDocumentsWithSecuredAnonymousUrlToUser(User sender, List<Document> docList, String password, List<Contact> recipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException {
-		
-		// Secured Url creation
-		SecuredUrl securedUrl = secureUrlService.create(docList, sender, password, recipients, expiryDate);
-			
-		for (Document doc : docList) {
-			
-			// We need to update this field only if it is not already set to true.
-			if(!doc.getShared()) {
-				doc.setShared(true);
-				documentRepository.update(doc);
-			}
-			// log this action.
-			logFileSharing(sender, recipients, securedUrl, doc);
-		}
-
-		return securedUrl;
-	}
-
-	@Override
-	public SecuredUrl shareDocumentsWithSecuredAnonymousUrlToUser(
-			User sender, List<Document> docList, boolean secured, List<Contact> recipients, Calendar expiryDate) throws IllegalArgumentException, BusinessException {
-		
-		// if we need to secure the url, we generate a password, otherwise we will persist a null password. 
-		String password = null;
-		
-		if(functionalityService.isSauMadatory(sender.getDomain().getIdentifier())) {
-			password = passwordService.generatePassword();
-		} else if(functionalityService.isSauAllowed(sender.getDomain().getIdentifier())) {
-			if (secured) {
-				password = passwordService.generatePassword();
-			}
-		}
-		SecuredUrl url= shareDocumentsWithSecuredAnonymousUrlToUser(sender, docList, password, recipients, expiryDate);
-		// Nasty fix : we need to store the plain text password for mail notification
-		url.setTemporaryPlainTextpassword(password);
-		return url;
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 
@@ -469,27 +317,5 @@ public class ShareServiceImpl implements ShareService{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-	@Override
-	public void deleteShare(Share share, User actor) throws BusinessException {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> documents, User sender, List<User> recipients) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public SuccessesAndFailsItems<Share> shareDocumentsToUser(List<Document> document, User sender, List<User> recipient, Calendar expirationDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	
 }

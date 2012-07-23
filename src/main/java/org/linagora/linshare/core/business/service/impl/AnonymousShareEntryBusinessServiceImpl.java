@@ -50,32 +50,35 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 	
 	public AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact recipient, Calendar expirationDate) throws BusinessException {
 		
+		AnonymousShareEntry anonymousShare = null;
+		AnonymousShareEntry current_share = null;
+		
+		
 		Contact contact = contactRepository.find(recipient);
-		if(contact == null) {
+		if(contact != null) {
+			current_share = anonymousShareEntryRepository.getAnonymousShareEntry(documentEntry, sender, contact);
+		} else {
 			contact = contactRepository.create(recipient);
 		}
 		
-		AnonymousShareEntry anonymousShare;
-		AnonymousShareEntry current_share = anonymousShareEntryRepository.getAnonymousShareEntry(documentEntry, sender, recipient);
-		if(current_share == null) {
-			// if not, we create one
-			logger.debug("Creation of a new anonymous share between sender " + sender.getMail() + " and recipient " + recipient.getMail());
-			AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), documentEntry, anonymousUrl , contact, expirationDate);
-			
-			anonymousShare = anonymousShareEntryRepository.create(share);
-		} else {
+		if(current_share != null) {
 			// if it does, we update the expiration date
-			logger.debug("The share (" + documentEntry.getUuid() +") between sender " + sender.getMail() + " and recipient " + recipient.getMail() + " already exists. Just updating expiration date.");
+			logger.debug("The share (" + documentEntry.getUuid() +") between sender " + sender.getMail() + " and recipient " + contact.getMail() + " already exists. Just updating expiration date.");
 			anonymousShare = current_share;
 			anonymousShare.setExpirationDate(expirationDate);
 			anonymousShareEntryRepository.update(anonymousShare);
+		} else {
+			// if not, we create one
+			logger.debug("Creation of a new anonymous share between sender " + sender.getMail() + " and recipient " + contact.getMail());
+			AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), documentEntry, anonymousUrl , contact, expirationDate);
+			anonymousShare = anonymousShareEntryRepository.create(share);
+			contact.getAnonymousShareEntries().add(anonymousShare);
+			contactRepository.update(contact);
+			documentEntry.getAnonymousShareEntries().add(anonymousShare);
+			sender.getEntries().add(anonymousShare);
+			documentEntryRepository.update(documentEntry);
+			accountService.update(sender);
 		}
-		
-		documentEntry.getAnonymousShareEntries().add(anonymousShare);
-		sender.getEntries().add(anonymousShare);
-		
-		documentEntryRepository.update(documentEntry);
-		accountService.update(sender);
 		
 		return anonymousShare;
 	}

@@ -24,12 +24,12 @@
 		
 		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" />
 		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="false" access="field"></many-to-one>
-		<set name="entries" lazy="true" cascade="save-update,lock" inverse="true">
+		<set name="entries" lazy="true" inverse="true">
 			<key column="owner_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.Entry"/>
 		</set>
 		
-		<set name="shareEntries" lazy="true" cascade="save-update,lock" inverse="true">
+		<set name="shareEntries" lazy="true" inverse="true">
 			<key column="recipient_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ShareEntry"/>
 		</set>

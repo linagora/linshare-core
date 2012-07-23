@@ -20,6 +20,7 @@
 */
 package org.linagora.linshare.core.Facade;
 
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -29,130 +30,19 @@ import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
+import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 
 public interface SecuredUrlFacade {
 	
-	/**
-	 * Check that the given URL exists
-	 * @param alea
-	 *            a share identifier
-	 * @param urlPath
-	 *            the URL
-	 * @return true if the URL exists
-	 */
-	boolean exists(String alea, String urlPath);
+	boolean exists(String uuid, String urlPath);
 	
-	/**
-	 * Verify that the given URL is a valid secured URL for the share id
-	 * 
-	 * @param alea
-	 *            a share identifier
-	 * @param urlPath
-	 *            the URL
-	 * @return true if the URL is valid
-	 */
-	boolean isValid(String alea, String urlPath);
+	boolean isValid(String alea, String password);
 
-	/**
-	 * Verify that the given URL is a valid secured URL for the share id with a
-	 * given password
-	 * 
-	 * @param alea
-	 *            a share identifier
-	 * @param urlPath
-	 *            the URL
-	 * @param password
-	 *            a given password (can be null)
-	 * @return true if the URL is valid
-	 */
-	boolean isValid(String alea, String urlPath, String password);
+	List<DocumentVo> getDocuments(String uuid, String password) throws BusinessException;
 
-	/**
-	 * Get the document list bound to the secured url
-	 * 
-	 * @param alea
-	 *            a share identifier
-	 * @param urlPath
-	 *            the URL
-	 * @return a list of documents
-	 * @throws BusinessException
-	 */
-	List<DocumentVo> getDocuments(String alea, String urlPath)
-			throws BusinessException;
-
-	/**
-	 * Get the document list bound to the secured url
-	 * 
-	 * @param alea
-	 *            a share identifier
-	 * @param urlPath
-	 *            the URL
-	 * @param password
-	 *            a given password (can be null)
-	 * @return a list of documents
-	 * @throws BusinessException
-	 */
-	List<DocumentVo> getDocuments(String alea, String urlPath, String password)
-			throws BusinessException;
-
-	/**
-	 * Get a document
-	 * 
-	 * @param alea
-	 *            a share identifier
-	 * @param urlPath
-	 *            the url
-	 * @param documentId
-	 *            a document identifier
-	 * @return a document
-	 */
-	DocumentVo getDocument(String alea, String urlPath, Integer documentId)
-			throws BusinessException;
-
-	/**
-	 * Get a document
-	 * 
-	 * @param alea
-	 *            a share identifier
-	 * @param urlPath
-	 *            the url
-	 * @param password
-	 *            a given password (can be null)
-	 * @param documentId
-	 *            a document identifier
-	 * @return a document
-	 */
-	DocumentVo getDocument(String alea, String urlPath, String password,
-			Integer documentId) throws BusinessException;
-
-	/**
-	 * Verify if the secured url is password protected
-	 * @param alea a share identifier
-	 * @param urlPath the url
-	 * @return true if the secured url is password protected
-	 * @throws LinShareNotSuchElementException 
-	 */
-	boolean isPasswordProtected(String alea, String urlPath) throws LinShareNotSuchElementException;
+	boolean isPasswordProtected(String uuid) throws LinShareNotSuchElementException;
 	
-	/**
-	 * Add an entry in the history, stating the anonymous download of a file
-	 * @param alea a share identifier
-	 * @param urlPath the URL
-	 * @param password the password, if any
-	 * @param documentId the documentId, if any
-	 * @param email of the user who has downloaded the document
-	 */
-	void logDownloadedDocument(String alea, String urlPath, String password,
-			Integer documentId, String email);
-
-	/**
-	 * Send an email notification to the owner of the secured url when the documents are downloaded
-	 * @param alea
-	 * @param urlPath
-	 * @param mailContainer
-	 * @param docs 
-	 * @param email of the user who has downloaded the documents
-	 */
-	void sendEmailNotification(String alea, String urlPath, MailContainer mailContainer, List<DocumentVo> docs, String email) throws BusinessException;
+	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid , String password, MailContainer mailContainer) throws BusinessException;
 	
+	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password, MailContainer mailContainer) throws BusinessException;
 }

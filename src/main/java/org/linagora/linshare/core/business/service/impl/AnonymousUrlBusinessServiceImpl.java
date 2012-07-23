@@ -1,15 +1,18 @@
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Calendar;
+import java.util.Set;
+
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
-import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.PasswordService;
-import org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl;
+import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.linagora.linshare.core.utils.HashUtils;
 
 public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessService {
 
@@ -52,5 +55,43 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 	public void update(AnonymousUrl anonymousUrl) throws BusinessException {
 		anonymousUrlRepository.update(anonymousUrl);
 	}
+
+
+	@Override
+	public AnonymousUrl getAnonymousUrl(String uuid) throws LinShareNotSuchElementException {
+		AnonymousUrl anonymousUrl = findByUuid(uuid);
+		if(anonymousUrl == null) {
+			 throw new LinShareNotSuchElementException("anonymousUrl url not found");
+		}
+		return anonymousUrl;
+	}
+
+
+	@Override
+	public boolean isValidPassword(AnonymousUrl anonymousUrl, String password) {
+		if (anonymousUrl == null) throw new IllegalArgumentException("anonymousUrl url cannot be null");
+
+		// Check password validity
+		if (password != null) {
+			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
+			return hashedPassword.equals(anonymousUrl.getPassword());
+		}
+		return true;
+	}
+
+
+	@Override
+	public boolean isExpired(AnonymousUrl anonymousUrl) {
+		if (anonymousUrl == null)
+			throw new IllegalArgumentException("anonymousUrl url cannot be null");
+
+		Set<AnonymousShareEntry> entries = anonymousUrl.getAnonymousShareEntries();
+		
+		if(entries != null && entries.size() > 0) {
+			return false;
+		}
+		return true;
+	}
+
 	
 }

@@ -213,8 +213,7 @@ public class SecuredUrlServiceImpl implements SecuredUrlService {
 		return (isValidPassword(securedUrl, password) && !isExpired(securedUrl));
 	}
 
-	public boolean isProtectedByPassword(String alea, String urlPath)
-	throws LinShareNotSuchElementException {
+	public boolean isProtectedByPassword(String alea, String urlPath) throws LinShareNotSuchElementException {
 		SecuredUrl securedUrl = getSecuredUrl(alea, urlPath);
 		return !StringUtils.isEmpty(securedUrl.getPassword());
 	}
