@@ -20,7 +20,6 @@
 */
 package org.linagora.linshare.core.Facade.impl;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,31 +30,25 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
-import org.linagora.linshare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentService;
 import org.linagora.linshare.core.service.SearchDocumentService;
-import org.linagora.linshare.core.service.UserService;
 
 public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 
 	private SearchDocumentService searchDocumentService;
-	private DocumentService documentService;
 	private DocumentEntryTransformer documentEntryTransformer;
 	private AccountService accountService;
 	
 	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, 
 			DocumentEntryTransformer documentEntryTransformer,
-			DocumentService documentService,
 			AccountService accountService){
 		this.searchDocumentService = searchDocumentService;
 		this.documentEntryTransformer = documentEntryTransformer;
-		this.documentService = documentService;
 		this.accountService = accountService;
 	}
 	
@@ -99,11 +92,6 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
 		
 		return this.searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-	}
-
-	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException {
-		
-		return documentService.retrieveFileStream(doc, actor);
 	}
 
 	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(

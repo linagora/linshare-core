@@ -26,9 +26,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.dao.document.SearchDocumentDao;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.transformers.impl.DocumentAdapter;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -40,16 +38,9 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 	private final SearchDocumentDao searchDocumentDao;
 	private final UserRepository<User> userRepository;
 
-	
-	private final DocumentAdapter documentAdapter;
-	
-	
-	public SearchDocumentServiceImpl(SearchDocumentDao searchDocumentDao,
-			UserRepository<User> userRepository,
-			final DocumentAdapter documentAdapter){
+	public SearchDocumentServiceImpl(SearchDocumentDao searchDocumentDao, UserRepository<User> userRepository){
 		this.searchDocumentDao=searchDocumentDao;
 		this.userRepository=userRepository;
-		this.documentAdapter = documentAdapter;
 	}
 	
 	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
@@ -59,7 +50,8 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 		//we do not want shares object in this list anymore
 		//List<Share> shares = searchDocumentDao.retrieveUserReceivedSharedDocWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
 		//return documentAdapter.disassembleList(docs, shares);
-		return documentAdapter.disassembleDocList(docs);
+		 List<DocumentVo> vos = new ArrayList<DocumentVo>();
+		return vos;
 	}
 
 
@@ -72,9 +64,8 @@ public class SearchDocumentServiceImpl implements SearchDocumentService{
 //	}
 
 
-	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(
-			SearchDocumentCriterion searchDocumentCriterion) {
-		List<Share> shares = searchDocumentDao.retrieveUserReceivedSharedDocWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
+	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
+//		List<Share> shares = searchDocumentDao.retrieveUserReceivedSharedDocWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
 		// TODO : To be fix
 //		return documentAdapter.disassembleShareList(shares);
 		return  new ArrayList<ShareDocumentVo>();

@@ -32,7 +32,6 @@ import org.hibernate.Session;
 import org.linagora.linshare.core.dao.document.SearchDocumentDao;
 import org.linagora.linshare.core.domain.constants.DocumentType;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -185,36 +184,36 @@ public class SearchDocumentHibernate implements SearchDocumentDao{
 	}
 	
 	
-	/**
-	 * Retrieve the list of all the RECEIVED document
-	 * @param searchDocumentCriterion
-	 * @param matcher
-	 * @return share document
-	 */
-	public List<Share> retrieveUserReceivedSharedDocWithMatchCriterion(
-			final SearchDocumentCriterion searchDocumentCriterion, final int matcher) {
-		
-		final QueryParameter queryParameter = buildQuery(searchDocumentCriterion, matcher);
-		
-		return (List<Share>)hibernateTemplate.executeFind(new HibernateCallback() {
-			public Object doInHibernate(final Session session)
-			throws HibernateException, SQLException {
-				
-				
-				StringBuilder queryString = new StringBuilder("select shares from User u join u.receivedShares shares join shares.document doc ");
-				
-				
-				final Query query = session.createQuery(queryString.append(queryParameter.getQuery()).toString());
-				
-				// Put the objects in the query
-				for (String key : queryParameter.getKey()) {
-					query.setParameter(key, queryParameter.getParameter(key));
-				}
-				
-				return query.setCacheable(true).list();
-			}
-		});
-	}
+//	/**
+//	 * Retrieve the list of all the RECEIVED document
+//	 * @param searchDocumentCriterion
+//	 * @param matcher
+//	 * @return share document
+//	 */
+//	public List<Share> retrieveUserReceivedSharedDocWithMatchCriterion(
+//			final SearchDocumentCriterion searchDocumentCriterion, final int matcher) {
+//		
+//		final QueryParameter queryParameter = buildQuery(searchDocumentCriterion, matcher);
+//		
+//		return (List<Share>)hibernateTemplate.executeFind(new HibernateCallback() {
+//			public Object doInHibernate(final Session session)
+//			throws HibernateException, SQLException {
+//				
+//				
+//				StringBuilder queryString = new StringBuilder("select shares from User u join u.receivedShares shares join shares.document doc ");
+//				
+//				
+//				final Query query = session.createQuery(queryString.append(queryParameter.getQuery()).toString());
+//				
+//				// Put the objects in the query
+//				for (String key : queryParameter.getKey()) {
+//					query.setParameter(key, queryParameter.getParameter(key));
+//				}
+//				
+//				return query.setCacheable(true).list();
+//			}
+//		});
+//	}
 	
 	
 	

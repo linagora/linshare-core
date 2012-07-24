@@ -3,29 +3,21 @@ package org.linagora.linshare.repository.hibernate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
-import org.linagora.linshare.core.repository.ShareRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -78,9 +70,6 @@ public class GuestRepositoryImplTest extends
 	@Autowired
 	@Qualifier("guestRepository")
 	private GuestRepository guestRepository;
-
-	@Autowired
-	private ShareRepository shareRepository;
 
 	@Autowired
 	private DocumentRepository documentRepository;

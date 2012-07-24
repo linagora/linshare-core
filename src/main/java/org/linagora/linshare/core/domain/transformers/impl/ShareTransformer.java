@@ -28,25 +28,16 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.Transformer;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.repository.ShareRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 
 public class ShareTransformer implements Transformer<ShareEntry, ShareDocumentVo> {
 
-	private final DocumentTransformer documentTransformer;
-	
-	private final ShareRepository shareRepository;
-	
 	private final UserRepository<User> userRepository;
 	private final UserTransformer userTransformer;
 	
 	
-	public ShareTransformer(final DocumentTransformer documentTransformer,
-			final ShareRepository shareRepository,
-			final UserRepository<User> userRepository,
+	public ShareTransformer(final UserRepository<User> userRepository,
 			final UserTransformer userTransformer) {
-		this.documentTransformer = documentTransformer;
-		this.shareRepository = shareRepository;
 		this.userRepository = userRepository;
 		this.userTransformer = userTransformer;
 	}

@@ -35,7 +35,6 @@ import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
-import org.linagora.linshare.core.domain.transformers.impl.DocumentTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.SignatureTransformer;
 import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -52,7 +51,6 @@ import org.linagora.linshare.core.service.EnciphermentService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
-import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,11 +58,7 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentFacadeImpl implements DocumentFacade {
 
-	private final DocumentService documentService;
-	
 	private final UserRepository<User> userRepository;
-	
-	private final DocumentTransformer documentTransformer;
 	
 	private final SignatureTransformer signatureTransformer;
 	
@@ -89,14 +83,12 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	
 	
-	public DocumentFacadeImpl(DocumentService documentService, UserRepository<User> userRepository, DocumentTransformer documentTransformer, SignatureTransformer signatureTransformer,
+	public DocumentFacadeImpl(UserRepository<User> userRepository, SignatureTransformer signatureTransformer,
 			EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService,
 			DocumentEntryTransformer documentEntryTransformer, ShareEntryService shareEntryService, SignatureService signatureService, AnonymousShareEntryService anonymousShareEntryService, 
 			ShareService shareService) {
 		super();
-		this.documentService = documentService;
 		this.userRepository = userRepository;
-		this.documentTransformer = documentTransformer;
 		this.signatureTransformer = signatureTransformer;
 		this.enciphermentService = enciphermentService;
 		this.documentEntryService = documentEntryService;

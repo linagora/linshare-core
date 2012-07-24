@@ -287,30 +287,30 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	@Test
-	public void testBuildMailNewSharing() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		List<DocumentVo> docsVo = new ArrayList<DocumentVo>();
-		docsVo.add(new DocumentVo(aDocument.getUuid(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), john.getLogin(), false, false, aDocument.getSize()));
-		
-		
-		User recipient = jane;
-		
-		// buildMailNewSharing
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailNewSharing(actor, mailContainer, john, jane, docsVo, "linShareUrl", "linShareUrlParam", "password", true, "jwsEncryptUrl");
-		testMailGenerate(mailContainerBuild);
-
-		// buildMailNewSharingWithRecipient
-//		MailContainerWithRecipient mailContainerWithRecipientBuild =  mailContentBuildingService.buildMailNewSharingWithRecipient(actor, mailContainer, jane, docsVo, "linShareUrl", "linShareUrlParam", "password", true, "jwsEncryptUrl");
-//		testMailGenerate(mailContainerWithRecipientBuild);
-//		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(recipient.getMail()));
-
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	public void testBuildMailNewSharing() throws BusinessException{
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		
+//		User actor = john;
+//		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
+//		mailContainer.setLanguage(Language.FRENCH);
+//		List<DocumentVo> docsVo = new ArrayList<DocumentVo>();
+//		docsVo.add(new DocumentVo(aDocument.getUuid(), aDocument.getName(), "", aDocument.getCreationDate(), aDocument.getExpirationDate(), aDocument.getType(), john.getLogin(), false, false, aDocument.getSize()));
+//		
+//		
+//		User recipient = jane;
+//		
+//		// buildMailNewSharing
+//		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailNewSharing(actor, mailContainer, john, jane, docsVo, "linShareUrl", "linShareUrlParam", "password", true, "jwsEncryptUrl");
+//		testMailGenerate(mailContainerBuild);
+//
+//		// buildMailNewSharingWithRecipient
+////		MailContainerWithRecipient mailContainerWithRecipientBuild =  mailContentBuildingService.buildMailNewSharingWithRecipient(actor, mailContainer, jane, docsVo, "linShareUrl", "linShareUrlParam", "password", true, "jwsEncryptUrl");
+////		testMailGenerate(mailContainerWithRecipientBuild);
+////		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(recipient.getMail()));
+//
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 	
 	@Test
 	public void testBuildMailSharedDocUpdated() throws BusinessException{

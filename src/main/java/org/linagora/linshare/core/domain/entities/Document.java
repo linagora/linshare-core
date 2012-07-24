@@ -39,44 +39,14 @@ public class Document implements Serializable {
 	private String uuid;
 	
 	/**
-	 * the name of the document.
-	 */
-	private String name;
-	
-	/**
 	 * the creation date of the document.
 	 */
 	private Calendar creationDate;
 	
 	/**
-	 * the expiration date of the document.
-	 */
-	private Calendar expirationDate;
-	
-	/**
-	 * the deletion date of the document.
-	 */
-	private Calendar deletionDate;
-	
-	/**
-	 * the document owner.
-	 */
-	private User owner;
-	
-	/**
 	 * the document type.
 	 */
 	private String type;
-	
-	/**
-	 * if the document is encrypted.
-	 */
-	private Boolean encrypted;
-	
-	/**
-	 * if the document is shared.
-	 */
-	private Boolean shared;
 	
 	/**
 	 * the document file size
@@ -85,9 +55,6 @@ public class Document implements Serializable {
 	
 	
 	private Set<Signature> signatures;
-	
-	
-	private String fileComment;
 	
 	/**
 	 * UUID of the thumbnail file
@@ -117,15 +84,7 @@ public class Document implements Serializable {
 		this.size = size;
 		this.timeStamp = null;
 		this.thmbUuid = null;
-		
-		// to be delete
-		this.name = name;
-		this.owner = owner;
-		this.encrypted = encrypted;
-		this.shared = shared;
 		this.signatures = null;
-		this.deletionDate = null;
-		this.expirationDate = expirationDate;
 	}
 	
 	/**
@@ -172,83 +131,14 @@ public class Document implements Serializable {
 	public String getUuid() {
 		return uuid;
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public Calendar getCreationDate() {
-		return creationDate;
-	}
-
-	public Calendar getExpirationDate() {
-		return expirationDate;
-	}
-
 	
-	public Boolean getEncrypted() {
-		return encrypted;
-	}
-
-	public Boolean getShared() {
-		return shared;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setCreationDate(Calendar creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public void setExpirationDate(Calendar expirationDate) {
-		this.expirationDate = expirationDate;
-	}
-
 	
-	public void setEncrypted(Boolean encrypted) {
-		this.encrypted = encrypted;
-	}
-
-	public void setShared(Boolean shared) {
-		this.shared = shared;
-	}
-
-	public User getOwner() {
-		return owner;
-	}
-	public void setOwner(User owner) {
-		this.owner = owner;
-	}
 	
-	public long getSize() {
-		return size;
-	}
-
-	public void setSize(long fileSize) {
-		this.size = fileSize;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
 	
-	public String getFileComment() {
-		return fileComment;
-	}
 	
-	public void setFileComment(String fileComment) {
-		this.fileComment = fileComment;
-	}
+	
+	
+	
 	
 	public Set<Signature> getSignatures() {
 		return signatures;
@@ -275,17 +165,7 @@ public class Document implements Serializable {
 			this.timeStamp = Arrays.copyOf(timeStamp,timeStamp.length);
 		}
 	}
-	public void setDeletionDate(Calendar deletionDate) {
-		this.deletionDate = deletionDate;
-	}
 	
-	public Calendar getDeletionDate() {
-		return deletionDate;
-	}
-	
-	public void setId(long id) {
-		this.id = id;
-	}
 	public void setSize(Long size) {
 		this.size = size;
 	}
@@ -297,4 +177,65 @@ public class Document implements Serializable {
 	public void setDocumentEntry(DocumentEntry documentEntry) {
 		this.documentEntry = documentEntry;
 	}
+	
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+	
+	public void setCreationDate(Calendar creationDate) {
+		this.creationDate = creationDate;
+	}
+	
+	public Calendar getCreationDate() {
+		return creationDate;
+	}
+	
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long fileSize) {
+		this.size = fileSize;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+
+	
+	
+	
+	
+	
+	/*
+	 *  TODO : To be removed.
+	 */
+	public User getOwner() {
+		return null;
+	}
+	
+	public Calendar getDeletionDate() {
+		return null;
+	}
+	
+	public void setDeletionDate(Calendar a) {
+	}
+	
+	public String getName() {
+		return null;
+	}
+	
+	public Boolean getShared() {
+		return null;
+	}
+	
+	public Boolean getEncrypted() {
+		return null;
+	}
+	
 }

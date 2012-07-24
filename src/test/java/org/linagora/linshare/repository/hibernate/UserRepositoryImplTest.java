@@ -33,7 +33,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
-import org.linagora.linshare.core.repository.ShareRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,9 +70,6 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	@Qualifier("userRepository")
 	private UserRepository<User> userRepository;
 
-	@Autowired
-	private ShareRepository shareRepository;
-	
 	@Autowired
 	private DocumentRepository documentRepository;
 

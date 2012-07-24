@@ -154,56 +154,56 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	@Test
-	public void testIsDocumentEncrypted() throws UnsupportedEncodingException, GeneralSecurityException, BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		Calendar expirationDate = Calendar.getInstance();
-		
-		// Add 2 years from the actual date
-		expirationDate.add(Calendar.YEAR, 2);
-		
-		DocumentVo doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc","user1@linpki.org",false,false,(long) 10);
-
-		Assert.assertFalse(enciphermentService.isDocumentEncrypted(doc));
-		
-		aDocument.setEncrypted(true);
-		
-		Assert.assertTrue(enciphermentService.isDocumentEncrypted(doc));
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-
-	}
-	
-	@Test
-	public void testEncryptDocument() throws BusinessException, IOException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		Calendar expirationDate = Calendar.getInstance();
-		// Add 2 years from the actual date
-		expirationDate.add(Calendar.YEAR, -2);
-		
-		logger.debug("inputStreamUuid : " + inputStreamUuid);
-		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
-
-		DocumentVo docVo = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
-		
-		UserVo userVo = new UserVo(jane);
-		printDocs(jane);
-		
-		Document encryptedDoc = enciphermentService.encryptDocument(docVo, userVo, "password");
-		logger.debug("encryptedDoc.getIdentifier : " + encryptedDoc.getUuid());
-		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
-		logger.debug("inputStreamUuid : " + inputStreamUuid);
-		
-		printDocs(jane);		
-		
-		aDocument = encryptedDoc;
-		
-		Assert.assertTrue(aDocument.getEncrypted());
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	public void testIsDocumentEncrypted() throws UnsupportedEncodingException, GeneralSecurityException, BusinessException {
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		
+//		Calendar expirationDate = Calendar.getInstance();
+//		
+//		// Add 2 years from the actual date
+//		expirationDate.add(Calendar.YEAR, 2);
+//		
+//		DocumentVo doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc","user1@linpki.org",false,false,(long) 10);
+//
+//		Assert.assertFalse(enciphermentService.isDocumentEncrypted(doc));
+//		
+//		aDocument.setEncrypted(true);
+//		
+//		Assert.assertTrue(enciphermentService.isDocumentEncrypted(doc));
+//		
+//		logger.debug(LinShareTestConstants.END_TEST);
+//
+//	}
+//	
+//	@Test
+//	public void testEncryptDocument() throws BusinessException, IOException{
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		
+//		Calendar expirationDate = Calendar.getInstance();
+//		// Add 2 years from the actual date
+//		expirationDate.add(Calendar.YEAR, -2);
+//		
+//		logger.debug("inputStreamUuid : " + inputStreamUuid);
+//		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
+//
+//		DocumentVo docVo = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
+//		
+//		UserVo userVo = new UserVo(jane);
+//		printDocs(jane);
+//		
+//		Document encryptedDoc = enciphermentService.encryptDocument(docVo, userVo, "password");
+//		logger.debug("encryptedDoc.getIdentifier : " + encryptedDoc.getUuid());
+//		logger.debug("aDocument.getIdentifier : " + aDocument.getUuid());
+//		logger.debug("inputStreamUuid : " + inputStreamUuid);
+//		
+//		printDocs(jane);		
+//		
+//		aDocument = encryptedDoc;
+//		
+//		Assert.assertTrue(aDocument.getEncrypted());
+//		
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 	
 	
 	private void printDocs(User user) {

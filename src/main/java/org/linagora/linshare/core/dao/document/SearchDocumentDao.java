@@ -23,7 +23,6 @@ package org.linagora.linshare.core.dao.document;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 
 public interface SearchDocumentDao {
@@ -66,7 +65,7 @@ public interface SearchDocumentDao {
 	 * @param matcher
 	 * @return share list for criterion.
 	 */
-	public List<Share> retrieveUserReceivedSharedDocWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion,int match);
+//	public List<Share> retrieveUserReceivedSharedDocWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion,int match);
 	
 	
 	/**

@@ -51,19 +51,17 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 	
 
 	private final UserService userService;
-	private final DocumentService documentService;
-	private final DocumentRepository documentRepository;
+	// TODO to be removed 
+	private DocumentService documentService;
+	
     private final LogEntryService logEntryService;  
 	private final String workingDir;
 	
 	private static Logger logger = LoggerFactory.getLogger(EnciphermentServiceAesCryptImpl.class);
 	
 	
-	
-	public EnciphermentServiceAesCryptImpl(UserService userService, DocumentService documentService, DocumentRepository documentRepository, LogEntryService logEntryService,String workingDir) {
+	public EnciphermentServiceAesCryptImpl(UserService userService, LogEntryService logEntryService,String workingDir) {
 		this.userService =  userService;
-		this.documentService = documentService;
-		this.documentRepository = documentRepository;
 		this.logEntryService = logEntryService;
 		this.workingDir = workingDir; //linshare.encipherment.tmp.dir
 		

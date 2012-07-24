@@ -87,9 +87,6 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	private InputStream inputStream;
 	
 	@Autowired
-	private DocumentService documentService;
-
-	@Autowired
 	private DocumentEntryService documentEntryService;
 	
 	
@@ -207,75 +204,75 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	@Ignore
-	@Test
-	public void testUpdateFileContent() {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		try {				
-			InputStream update = Thread.currentThread().getContextClassLoader().getResourceAsStream("jackRabbit.properties");
-			InputStream updatedFile = null;
-			String expected = IOUtils.toString(update, "UTF-8");
-			String actual = null;
-			
-			updatedFile = fileRepository.getFileContentByUUID(aDocument.getUuid());
-			
-			documentService.updateFileContent(aDocument.getUuid(), update, 
-					update.available(), aDocument.getName(), 
-					aDocument.getType(), aDocument.getEncrypted(), aDocument.getOwner());
-			
-			updatedFile = fileRepository.getFileContentByUUID(aDocument.getUuid());
+//	@Ignore
+//	@Test
+//	public void testUpdateFileContent() {
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		try {				
+//			InputStream update = Thread.currentThread().getContextClassLoader().getResourceAsStream("jackRabbit.properties");
+//			InputStream updatedFile = null;
+//			String expected = IOUtils.toString(update, "UTF-8");
+//			String actual = null;
+//			
+//			updatedFile = fileRepository.getFileContentByUUID(aDocument.getUuid());
+//			
+//			documentService.updateFileContent(aDocument.getUuid(), update, 
+//					update.available(), aDocument.getName(), 
+//					aDocument.getType(), aDocument.getEncrypted(), aDocument.getOwner());
+//			
+//			updatedFile = fileRepository.getFileContentByUUID(aDocument.getUuid());
+//
+//			IOUtils.closeQuietly(update);				
+//			actual = IOUtils.toString(updatedFile, "UTF-8");
+//			
+//			System.out.println("==============================================");
+//			System.out.println(actual);
+//			System.out.println("==============================================");
+//			
+//			IOUtils.closeQuietly(updatedFile);
+//			
+//			Assert.assertEquals(expected, actual);			
+//		} catch (BusinessException e) {
+//			e.printStackTrace();
+//			Assert.assertFalse(true);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			Assert.assertFalse(true);
+//		}
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 
-			IOUtils.closeQuietly(update);				
-			actual = IOUtils.toString(updatedFile, "UTF-8");
-			
-			System.out.println("==============================================");
-			System.out.println(actual);
-			System.out.println("==============================================");
-			
-			IOUtils.closeQuietly(updatedFile);
-			
-			Assert.assertEquals(expected, actual);			
-		} catch (BusinessException e) {
-			e.printStackTrace();
-			Assert.assertFalse(true);
-		} catch (IOException e) {
-			e.printStackTrace();
-			Assert.assertFalse(true);
-		}
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Test
-	// TODO : tester si la signature est bien dans jackrabbit et la bd.
-	public void testInsertSignatureFile() {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		try {		
-			InputStream signatureFile = Thread.currentThread().getContextClassLoader().getResourceAsStream("CAS.bin.export");
-			CertificateFactory cf = CertificateFactory.getInstance("X.509");
-			X509Certificate c = (X509Certificate)cf.generateCertificate(signatureFile);
-		    
-			//Assert.assertTrue(aDocument.getSignatures().size() == 0);
-			
-			documentService.insertSignatureFile(signatureFile, (long)10000,
-						"cert", "text/plain", jane, aDocument,
-						(X509Certificate)c);
-				
-			signatureFile.close();				 
-			} catch (BusinessException e) {
-				e.printStackTrace();
-				Assert.assertFalse(true);
-			} catch (CertificateException e) {
-				e.printStackTrace();
-				Assert.assertFalse(true);
-			} catch (IOException e) {
-				e.printStackTrace();
-				Assert.assertFalse(true);
-			}
-				
-		Set<Signature> signatures = aDocument.getSignatures();
-		Assert.assertTrue(signatures.size() == 1);
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	// TODO : tester si la signature est bien dans jackrabbit et la bd.
+//	public void testInsertSignatureFile() {
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		try {		
+//			InputStream signatureFile = Thread.currentThread().getContextClassLoader().getResourceAsStream("CAS.bin.export");
+//			CertificateFactory cf = CertificateFactory.getInstance("X.509");
+//			X509Certificate c = (X509Certificate)cf.generateCertificate(signatureFile);
+//		    
+//			//Assert.assertTrue(aDocument.getSignatures().size() == 0);
+//			
+//			documentService.insertSignatureFile(signatureFile, (long)10000,
+//						"cert", "text/plain", jane, aDocument,
+//						(X509Certificate)c);
+//				
+//			signatureFile.close();				 
+//			} catch (BusinessException e) {
+//				e.printStackTrace();
+//				Assert.assertFalse(true);
+//			} catch (CertificateException e) {
+//				e.printStackTrace();
+//				Assert.assertFalse(true);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//				Assert.assertFalse(true);
+//			}
+//				
+//		Set<Signature> signatures = aDocument.getSignatures();
+//		Assert.assertTrue(signatures.size() == 1);
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 
 	@Test
 	// TODO : if param.getGlobalQuotaActive()
@@ -353,26 +350,26 @@ public class DocumentServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		fail("Not yet implemented"); 
 	}
 
-	@Test
-	public void testGetDocument() {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		Document expected = aDocument;
-		Document actual = documentService.getDocument(inputStreamUuid);
-		
-		Assert.assertEquals(expected, actual);
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	public void testGetDocument() {
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		Document expected = aDocument;
+//		Document actual = documentService.getDocument(inputStreamUuid);
+//		
+//		Assert.assertEquals(expected, actual);
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 
-	@Test
-	// test : a Document with a thumbnailUuid not null
-	public void testGetDocumentThumbnail() {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		InputStream expected = null;
-		InputStream actual = documentService.getDocumentThumbnail(aDocument.getUuid());
-		
-		Assert.assertEquals(expected, actual);
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	// test : a Document with a thumbnailUuid not null
+//	public void testGetDocumentThumbnail() {
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		InputStream expected = null;
+//		InputStream actual = documentService.getDocumentThumbnail(aDocument.getUuid());
+//		
+//		Assert.assertEquals(expected, actual);
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 
 	@Test
 	// test if a doc actually has a thumbnail

@@ -59,7 +59,9 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 	
 
 	private final UserService userService;
-	private final DocumentService documentService;
+	// TODO : To be removed
+	private DocumentService documentService;
+	
 	private final DocumentRepository documentRepository;
     private final LogEntryService logEntryService;  
 	private final String workingDir;
@@ -68,9 +70,8 @@ public class EnciphermentServiceImpl implements EnciphermentService {
 	
 	
 	
-	public EnciphermentServiceImpl(UserService userService, DocumentService documentService, DocumentRepository documentRepository, LogEntryService logEntryService,String workingDir) {
+	public EnciphermentServiceImpl(UserService userService, DocumentRepository documentRepository, LogEntryService logEntryService,String workingDir) {
 		this.userService =  userService;
-		this.documentService = documentService;
 		this.documentRepository = documentRepository;
 		this.logEntryService = logEntryService;
 		this.workingDir = workingDir; //linshare.encipherment.tmp.dir
