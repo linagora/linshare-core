@@ -120,8 +120,6 @@ public interface UserService {
 	 */
 	public void updateUserLocale(String domain, String mail, String locale);
 	
-	public void updateUserEnciphermentKey(String mail, byte[] challenge);
-	
 	/**
 	 * change a guest or superadmin password
 	 * @param login

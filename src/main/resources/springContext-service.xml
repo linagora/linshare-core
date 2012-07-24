@@ -131,7 +131,6 @@
 		<constructor-arg index="6" value="${mail.smtp.charset}" />
 		<constructor-arg index="7" value="${linshare.logo.mails.visible}" />
 	</bean>
-	<!-- <bean name="enciphermentService" class="org.linagora.linshare.core.service.impl.EnciphermentServiceImpl"> -->
 
 	<bean name="enciphermentService" class="org.linagora.linshare.core.service.impl.EnciphermentServiceAesCryptImpl">
 		<constructor-arg ref="userService" />

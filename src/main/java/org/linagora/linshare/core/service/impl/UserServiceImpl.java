@@ -397,9 +397,9 @@ public class UserServiceImpl implements UserService {
 			//clearing allowed contacts
 			allowedContactRepository.deleteAllByUserBothSides(userToDelete);
 			
-			// clearing all signatures
-			Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
-			ownSignatures.clear();
+//			// clearing all signatures
+//			Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
+//			ownSignatures.clear();
 			
 			//a guest can create guest (since evolution guest with grant privilege)...
 			//so when deleting a guest (A) you may need to delete the guests (B, C, D) which were created by this guest (A).
@@ -614,23 +614,7 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
-	@Override
-	public void updateUserEnciphermentKey(String mail, byte[] challenge) {
-		 User user = userRepository.findByMail(mail);
-		 if (user == null) {
-			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user " + mail);
-		 }
-		 user.setEnciphermentKeyPass(challenge);
-		 try {
-			user = userRepository.update(user);
-		} catch (IllegalArgumentException e) {
-			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user " + mail);
-		} catch (BusinessException e) {
-			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't save the Encipherment Key challenge for "+ mail);
-		}
-		
-	}
-	
+
 	@Override
 	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException {
 		User user = userRepository.findByMail(login);
@@ -645,6 +629,7 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(HashUtils.hashSha1withBase64(newPassword.getBytes()));
 		userRepository.update(user);
 	}
+	
 
 	@Override
 	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException {

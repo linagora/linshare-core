@@ -41,8 +41,6 @@ public abstract class User extends Account {
 	
 	protected String mail;
 	
-	protected byte[] enciphermentKeyPass;
-	
 	protected Date notAfter;
 	
 	protected Date notBefore;
@@ -80,15 +78,6 @@ public abstract class User extends Account {
 		this.canUpload = true;
 		this.canCreateGuest = true ;
 		this.restricted = false;
-		this.enciphermentKeyPass = null;
-		
-		// TODO: To be deleted:
-//		Set<Share>
-		
-//		this.documents = new HashSet<Document>();
-//		this.shares = new HashSet<Share>();
-//		this.securedUrls = new HashSet<SecuredUrl>();
-//		this.receivedShares = new HashSet<Share>();
 	}
 
 	
@@ -118,13 +107,6 @@ public abstract class User extends Account {
 	
 	public String getLogin() {
 		return mail;
-	}
-	
-	public byte[] getEnciphermentKeyPass() {
-		return enciphermentKeyPass;
-	}
-	public void setEnciphermentKeyPass(byte[] enciphermentKeyPass) {
-		this.enciphermentKeyPass = Arrays.copyOf(enciphermentKeyPass, enciphermentKeyPass.length);
 	}
 	
 	public void setNotAfter(Date value) {
@@ -205,21 +187,5 @@ public abstract class User extends Account {
 	
 	public void setCanCreateGuest(Boolean canCreateGuest) {
 		this.canCreateGuest = canCreateGuest;
-	}
-	
-	
-	// ----------------------------------------------------------
-	
-     /**
-     * signatures made by this user on documents
-     */
-
-    private Set<Signature> ownSignatures;
-		
-	public Set<Signature> getOwnSignatures() {
-		return ownSignatures;
-	}
-	public void setOwnSignatures(Set<Signature> ownSignatures) {
-		this.ownSignatures = ownSignatures;
 	}
 }

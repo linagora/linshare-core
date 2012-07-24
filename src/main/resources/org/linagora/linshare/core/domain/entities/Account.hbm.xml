@@ -56,9 +56,6 @@
 				<property name="firstName" column="First_name" type="string" length="255" not-null="false" lazy="false"/>
 				<property name="lastName" column="Last_name" type="string" length="255" not-null="false" lazy="false"/>
 				<property name="mail" column="Mail" type="string" length="255" not-null="true" lazy="false"/>
-				<!-- 
-				<property name="enciphermentKeyPass" column="Encipherment_key_pass" type="blob" not-null="false" lazy="false"/>
-				 -->
 				<property name="notAfter" column="not_after" type="timestamp" not-null="false" lazy="false"/>
 				<property name="notBefore" column="not_before" type="timestamp" not-null="false" lazy="false"/>
 				<property name="expirationDate" column="expiration_date" type="timestamp" not-null="false" lazy="false"/>
