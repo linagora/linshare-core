@@ -72,6 +72,8 @@
 			<subclass name="org.linagora.linshare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>
 			
 			<subclass name="org.linagora.linshare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
+				<many-to-one name="permission" cascade="lock" column="technical_account_permission_id" class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="true" lazy="no-proxy">
+				</many-to-one>
 			</subclass>
 		</subclass>
 		

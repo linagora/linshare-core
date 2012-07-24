@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class TechnicalAccountPermission {
@@ -10,9 +11,9 @@ public class TechnicalAccountPermission {
 	
 	private boolean all;
 	
-	private Set<Account> accounts = new java.util.HashSet<Account>();
+	private Set<Account> accounts = new HashSet<Account>();
 	
-	private Set<AbstractDomain> domains = new java.util.HashSet<AbstractDomain>();
+	private Set<AbstractDomain> domains = new HashSet<AbstractDomain>();
 
 	public long getId() {
 		return id;

@@ -69,7 +69,7 @@ public class Document implements Serializable {
 	
 	private DocumentEntry documentEntry ;
 
-//	private ThreadEntry threadEntry ;
+	private ThreadEntry threadEntry ;
 	
 	
 	
@@ -178,6 +178,14 @@ public class Document implements Serializable {
 		this.documentEntry = documentEntry;
 	}
 	
+	public ThreadEntry getThreadEntry() {
+		return threadEntry;
+	}
+
+	public void setThreadEntry(ThreadEntry threadEntry) {
+		this.threadEntry = threadEntry;
+	}
+
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}

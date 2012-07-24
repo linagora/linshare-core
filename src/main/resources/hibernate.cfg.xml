@@ -38,11 +38,10 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/AnonymousUrl.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/Signature.hbm.xml"/>
     
+    <mapping resource="org/linagora/linshare/core/domain/entities/Cookie.hbm.xml"/>
     
 	<!-- 
-    <mapping resource="org/linagora/linshare/core/domain/entities/SecuredUrl.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/AllowedMimeType.hbm.xml"/>
-    <mapping resource="org/linagora/linshare/core/domain/entities/Cookie.hbm.xml"/>
     
      -->
   </session-factory>
