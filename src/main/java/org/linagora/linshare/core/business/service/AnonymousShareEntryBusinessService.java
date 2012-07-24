@@ -18,6 +18,4 @@ public interface AnonymousShareEntryBusinessService {
 	
 	public void deleteAnonymousShare(AnonymousShareEntry anonymousShare) throws BusinessException;
 	
-	
-	
 }

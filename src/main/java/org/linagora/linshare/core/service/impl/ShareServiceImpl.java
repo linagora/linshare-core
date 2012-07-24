@@ -23,11 +23,11 @@ package org.linagora.linshare.core.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -64,7 +64,7 @@ public class ShareServiceImpl implements ShareService{
 
 
 	@Override
-	public void deleteAllShareEntriesWithDocumentEntry(String docEntryUuid, User actor, MailContainer mailContainer) {
+	public void deleteAllShareEntriesWithDocumentEntry(String docEntryUuid, User actor, MailContainer mailContainer) throws BusinessException {
 		try {
 			DocumentEntry entry = documentEntryService.findById(actor, docEntryUuid);
 			
@@ -91,57 +91,28 @@ public class ShareServiceImpl implements ShareService{
 			
 		} catch (BusinessException e) {
 			logger.error("can not delete document : " + docEntryUuid);
+			throw e;
 		}
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
+	@Override
+	public void sendSharedUpdateDocNotification(Account actor, DocumentEntry documentEntry, String friendlySize, String originalFileName, MailContainer mailContainer) {
+		if(documentEntry.isShared()) {
+			for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
+				anonymousShareEntryService.sendDocumentEntryUpdateNotification(actor, anonymousShareEntry, friendlySize, originalFileName, mailContainer);
+			}
+			
+			for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
+				shareEntryService.sendDocumentEntryUpdateNotification(actor, shareEntry, friendlySize, originalFileName, mailContainer);
+			}
+		}
+	}
 	
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
 
 
 	private void refreshShareAttributeOfDoc(Document doc, Boolean deteteInitialSharedDoc) throws BusinessException {
@@ -296,26 +267,9 @@ public class ShareServiceImpl implements ShareService{
 //	}
 
 	
-	
-
 	@Override
 	public void refreshShareAttributeOfDoc(Document doc) {
 		// TODO Auto-generated method stub
 		
 	}
-
-
-	@Override
-	public List<SecuredUrl> getSecureUrlLinkedToDocument(Document doc) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public List<Share> getSharesLinkedToDocument(Document doc) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }

@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.linagora.linshare.core.Facade.ShareFacade;
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -38,7 +37,6 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
@@ -64,7 +62,6 @@ import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -385,53 +382,6 @@ public class ShareFacadeImpl implements ShareFacade {
     }
     
 	
-	@Override
-    public void sendSharedUpdateDocNotification(DocumentVo currentDoc,
-    		UserVo currentUser, String fileSizeTxt, String oldFileName,
-    		MailContainer mailContainer) throws BusinessException {
-    	
-    	//1) share with secured url, notification to users.
-
-		User user = userRepository.findByLsUid(currentUser.getLogin());
-    	Document doc = documentRepository.findByUuid(currentDoc.getIdentifier());
-    	
-    	List<SecuredUrl> urls = shareService.getSecureUrlLinkedToDocument(doc);
-    	
-    	String sUrlBase = this.urlBase;
-    	if (!(sUrlBase.charAt(sUrlBase.length()-1)=='/')) {
-    		sUrlBase = sUrlBase.concat("/");
-		}
-    	String sUrlDownload = "";
-    	
-		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
- 	
-    	for (SecuredUrl securedUrl : urls) {
-			List<Contact> recipients = securedUrl.getRecipients();
-			sUrlDownload = sUrlBase.concat(securedUrl.getUrlPath()+"/");
-			sUrlDownload = sUrlDownload.concat(securedUrl.getSalt());
-			
-			for (Contact contact : recipients) {
-    			String urlparam = "?email="+contact.getMail();
-    			mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, sUrlDownload, urlparam));
-			}
-		}
-		
-    	notifierService.sendAllNotifications(mailContainerWithRecipient);
-    	
-    	//2) normal share, notification to guest and internal user
-		List<Share> listShare = shareService.getSharesLinkedToDocument(doc);
-			
-		mailContainerWithRecipient.clear();
-		
-		for (Share share : listShare) {
-			sUrlDownload = share.getReceiver().getAccountType().equals(AccountType.GUEST) ? urlBase : urlInternal;
-			
-			mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, ""));
-		}
-		notifierService.sendAllNotifications(mailContainerWithRecipient);
-    }
-    
-
 	private SuccessesAndFailsItems<ShareDocumentVo> disassembleShareResultList(SuccessesAndFailsItems<ShareEntry> successAndFails) {
 		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
 		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));

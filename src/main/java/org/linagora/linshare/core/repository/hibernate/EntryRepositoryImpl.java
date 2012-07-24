@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.EntryRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;

@@ -21,13 +21,10 @@
 package org.linagora.linshare.core.Facade;
 
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;

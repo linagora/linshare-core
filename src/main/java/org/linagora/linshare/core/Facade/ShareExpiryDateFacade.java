@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareExpiryDateFacade {
 	public Calendar computeShareExpiryDate(DocumentVo docVo, UserVo owner) ;

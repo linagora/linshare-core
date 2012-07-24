@@ -34,7 +34,7 @@ public class FileUtils {
 	private FileUtils() {
 	}
 	
-    public static String getFriendlySize(long SizeInBytes, Messages messages){
+    public static String getFriendlySize(long SizeInBytes, Messages messages) {
         if(SizeInBytes<KiB){
             return String.format(messages.get("components.fileUtils.bytesSize.text"),SizeInBytes);
         }else if(SizeInBytes<MiB){

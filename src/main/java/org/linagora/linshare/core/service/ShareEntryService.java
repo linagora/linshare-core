@@ -4,17 +4,13 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ShareEntryService {
@@ -40,5 +36,7 @@ public interface ShareEntryService {
 	public InputStream getShareThumbnailStream(User actor, String shareEntryUuid) throws BusinessException;
 	
 	public InputStream getShareStream(User actor, String shareEntryUuid) throws BusinessException;
+	
+	public void sendDocumentEntryUpdateNotification(Account actor, ShareEntry shareEntry, String friendlySize, String originalFileName, MailContainer mailContainer);
 	
 }

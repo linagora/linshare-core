@@ -40,7 +40,6 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
-import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.Signature;

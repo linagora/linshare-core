@@ -145,33 +145,18 @@ public class FileUpdateUploader {
             
             if (uploadedFile != null && i<1) { //limit to one file (for update)
 
-//                String mimeType;
-//                try {
-//                    mimeType = documentFacade.getMimeType(uploadedFile.getStream(), uploadedFile.getFilePath());
-//                    if (null == mimeType) {
-//                        mimeType = uploadedFile.getContentType();
-//                    }
-//                } catch (BusinessException e) {
-//                    mimeType = uploadedFile.getContentType();
-//                }
-
                 try {
                     
                 	DocumentVo initialdocument = documentFacade.getDocument(userDetails.getLogin(), uuidDocToUpdate);
                 	
+                	MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userDetails, null);
+                	String filesizeTxt = FileUtils.getFriendlySize(initialdocument.getSize(), messages);
                     DocumentVo document  =  documentFacade.updateDocumentContent(uuidDocToUpdate, uploadedFile.getStream(), uploadedFile.getSize(),
-                            uploadedFile.getFileName(), userDetails);
+                            uploadedFile.getFileName(), userDetails, mailContainer, null);
                     
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_UPDATE_FILE_CONTENT_OK,
                         MessageSeverity.INFO, initialdocument.getFileName(),uploadedFile.getFileName()));
 
-                    if(initialdocument.getShared()){
-            			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userDetails, null);
-                    	String filesizeTxt = FileUtils.getFriendlySize(document.getSize(), messages);
-                    	//send email file has been replaced ....
-                    	shareFacade.sendSharedUpdateDocNotification(document, userDetails, filesizeTxt, initialdocument.getFileName(), mailContainer);
-                    }
-                    
                     
                     // Notify the add of a file.
                     Object[] addedFile = {document};

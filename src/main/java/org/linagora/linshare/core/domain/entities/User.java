@@ -210,21 +210,11 @@ public abstract class User extends Account {
 	
 	// ----------------------------------------------------------
 	
-    /** Secured URL that user has shared to other */
-    private Set<SecuredUrl> securedUrls;
-    
      /**
      * signatures made by this user on documents
      */
 
     private Set<Signature> ownSignatures;
-    
-	public Set<SecuredUrl> getSecuredUrls() {
-		return securedUrls;
-	}
-	public void setSecuredUrls(Set<SecuredUrl> securedUrls) {
-		this.securedUrls = securedUrls;
-	}
 		
 	public Set<Signature> getOwnSignatures() {
 		return ownSignatures;

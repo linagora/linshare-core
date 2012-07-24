@@ -23,7 +23,6 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.SecuredUrl;
 
 public interface EntryRepository extends AbstractRepository<Entry>{
 	

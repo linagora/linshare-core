@@ -163,9 +163,6 @@ public class Download {
 	 * @param uuid
 	 */
 	public void onActivate(String uuid) {
-		// download/1r2dln9trm321?email=3Darthur.pendragon@int3.linshare.dev
-		// http://ubuntu1:8080/linshare/download/aa1091d4-d4ab-4862-a2c7-1a6b93ac7dea
-
 		setCurrentUuid(uuid);
 		try {
 			checkUrl(uuid);

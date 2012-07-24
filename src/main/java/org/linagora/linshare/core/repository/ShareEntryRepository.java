@@ -20,7 +20,6 @@
 */
 package org.linagora.linshare.core.repository;
 
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;

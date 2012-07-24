@@ -24,7 +24,6 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 
 public interface UserRepository<T extends User> extends AccountRepository<T> {

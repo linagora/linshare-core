@@ -20,12 +20,10 @@
  */
 package org.linagora.linshare.core.service;
 
-import java.util.List;
-
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.SecuredUrl;
-import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -33,9 +31,10 @@ public interface ShareService {
 
 	
 	
-	public void deleteAllShareEntriesWithDocumentEntry(String docEntryUuid, User actor, MailContainer mailContainer);
+	public void deleteAllShareEntriesWithDocumentEntry(String docEntryUuid, User actor, MailContainer mailContainer) throws BusinessException;
 	
-
+	public void sendSharedUpdateDocNotification(Account actor, DocumentEntry documentEntry, String friendlySize, String originalFileName, MailContainer mailContainer);
+	
 	
 	
 	
@@ -49,16 +48,9 @@ public interface ShareService {
 	/** Clean all outdated shares. */
 	public void cleanOutdatedShares();
 
-	/**
-	 * find secured url linked to the given doc
-	 * @param doc
-	 * @return
-	 * @throws BusinessException
-	 */
-	public List<SecuredUrl> getSecureUrlLinkedToDocument(Document doc) throws BusinessException;
-
-	public List<Share> getSharesLinkedToDocument(Document doc);
-
 	public void notifyUpcomingOutdatedShares();
+
+
+	
 
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
@@ -102,6 +103,16 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		}
 		
 		
+		
+		sendNotification(documentEntries, sender, recipient, mailContainer, anonymousUrl);
+		
+		
+		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
+		return anonymousShareEntries;
+	}
+
+
+	private void sendNotification(List<DocumentEntry> documentEntries, User sender, Contact recipient, MailContainer mailContainer, AnonymousUrl anonymousUrl) throws BusinessException {
 		List<String> documentNames = new ArrayList<String>();
 		Boolean isOneDocEncrypted = false;
 		for (DocumentEntry documentEntry : documentEntries) {
@@ -113,10 +124,6 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(sender, mailContainer, recipient, documentNames, anonymousUrl, isOneDocEncrypted));
 		
 		notifierService.sendAllNotifications(mailContainerWithRecipient);
-		
-		
-		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
-		return anonymousShareEntries;
 	}
 	
 
@@ -167,6 +174,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		}
 	}
 
+	
 	private AnonymousShareEntry downloadAnonymousShareEntry(String shareUuid) throws BusinessException {
 		AnonymousShareEntry shareEntry = anonymousShareEntryBusinessService.findByUuid(shareUuid);
 		if(shareEntry == null) {
@@ -188,6 +196,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		return shareEntry;
 	}
 
+	
 	@Override
 	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException {
 		try {
@@ -198,7 +207,12 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 			throw e;
 		}
 	}
-	
-	
-    
+
+
+	@Override
+	public void sendDocumentEntryUpdateNotification(Account actor, AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName, MailContainer mailContainer) {
+		//TODO AnonymousShareEntry notification
+//		mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, contact.getMail(), doc, oldFileName, fileSizeTxt, sUrlDownload, urlparam));
+//		notifierService.sendAllNotifications(mailContainerWithRecipient);
+	}
 }

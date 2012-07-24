@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Entry;
 
 public interface ShareExpiryDateService {
 	public Calendar computeShareExpiryDate(DocumentEntry document, Account owner);

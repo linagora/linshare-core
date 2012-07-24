@@ -27,7 +27,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -162,10 +161,12 @@ public interface DocumentFacade {
 	 * @param size
 	 * @param fileName
 	 * @param owner
+	 * @param mailContainer TODO
+	 * @param friendlySize TODO
 	 * @return
 	 * @throws BusinessException
 	 */
-	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo owner) throws BusinessException;
+	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo owner, MailContainer mailContainer, String friendlySize) throws BusinessException;
 	
 	
 	public DocumentVo encryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException;

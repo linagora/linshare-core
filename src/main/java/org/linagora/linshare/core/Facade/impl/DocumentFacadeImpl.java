@@ -52,6 +52,7 @@ import org.linagora.linshare.core.service.EnciphermentService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
+import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.beans.AccountOccupationCriteriaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -325,9 +326,19 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	}
 	
 	@Override
-	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo) throws BusinessException {
+	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo, MailContainer mailContainer, String friendlySize) throws BusinessException {
 		Account actor = accountService.findByLsUid(ownerVo.getLsUid());
-		return documentEntryTransformer.disassemble(documentEntryService.updateDocumentEntry(actor, currentFileUUID, file, size, fileName));
+		
+		DocumentEntry originalEntry = documentEntryService.findById(actor, currentFileUUID);
+		String originalFileName = originalEntry.getName();
+		
+		DocumentEntry documentEntry = documentEntryService.updateDocumentEntry(actor, currentFileUUID, file, size, fileName);
+		if(documentEntry.isShared()){
+			//send email file has been replaced ....
+			shareService.sendSharedUpdateDocNotification(actor, documentEntry, friendlySize, originalFileName, mailContainer);
+		}
+           
+		return documentEntryTransformer.disassemble(documentEntry);
 	}
 	
 	@Override

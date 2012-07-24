@@ -157,17 +157,6 @@ public interface ShareFacade {
     public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, MailContainer mailContainer) throws BusinessException;
     
     
-    /**
-     * send a mail notification to all users which have received a given shared document which has been updated
-     * @param currentDoc current document with an updated content
-     * @param currentUser current user which does the update action
-     * @param fileSizeTxt friendly size of the file
-     * @param oldFileName old file name of the updated doc
-     * @param mailContainer the informations to build the notification
-     * @throws BusinessException
-     */
-    public void sendSharedUpdateDocNotification(DocumentVo currentDoc, UserVo currentUser, String fileSizeTxt,String oldFileName, MailContainer mailContainer) throws BusinessException;
-    
 	/**
 	 * This method returns true if we can enable or disable manually on the IHM the checkbox 'Secured Anonymous URL'.    
 	 * @param user domain identifier

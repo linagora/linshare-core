@@ -9,6 +9,7 @@ import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -312,5 +313,15 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Can't find share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());
 			throw e;
 		}
+	}
+
+
+
+	@Override
+	public void sendDocumentEntryUpdateNotification(Account actor, ShareEntry shareEntry, String friendlySize, String originalFileName, MailContainer mailContainer) {
+		// TODO send notification for DocumentEntry update
+		//	mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, ""));
+		//	notifierService.sendAllNotifications(mailContainerWithRecipient);
+		
 	}
 }

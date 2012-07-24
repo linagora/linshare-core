@@ -28,7 +28,6 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.entities.SecuredUrl;
 import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -47,9 +46,7 @@ public interface MailContentBuildingService {
 	 * Notify a user that shared files has been downloaded
 	 * by an anonymous user
 	 */
-	public MailContainer buildMailAnonymousDownload(User actor,
-			MailContainer mailContainer, List<String> docs, String email,
-			User recipient) throws BusinessException;
+	public MailContainer buildMailAnonymousDownload(User actor, MailContainer mailContainer, List<String> docs, String email, User recipient) throws BusinessException;
 	
 	/**
 	 * Notify a user that shared files has been downloaded
@@ -114,9 +111,9 @@ public interface MailContentBuildingService {
 	/**
 	 * Notify a user that received a share that the share will soon be deleted
 	 */
-	public MailContainer buildMailUpcomingOutdatedSecuredUrl(User actor,
-			MailContainer mailContainer, SecuredUrl securedUrl,
-			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
+//	public MailContainer buildMailUpcomingOutdatedSecuredUrl(User actor,
+//			MailContainer mailContainer, SecuredUrl securedUrl,
+//			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
 
 	public MailContainer buildMailUpcomingOutdatedShare(User actor,
 			MailContainer mailContainer, Share share, Integer days) 
@@ -147,9 +144,7 @@ public interface MailContentBuildingService {
 	 * Notify a user that shared files has been downloaded
 	 * by an anonymous user
 	 */
-	public List<MailContainerWithRecipient> buildMailAnonymousDownloadWithOneRecipient(User actor,
-			MailContainer mailContainer, List<String> docs, String email,
-			User recipient) throws BusinessException;	
+	public List<MailContainerWithRecipient> buildMailAnonymousDownloadWithOneRecipient(User actor, MailContainer mailContainer, List<String> docs, String email, User recipient) throws BusinessException;	
 	
 	/**
 	 * Notify a user that shared files has been downloaded
@@ -231,9 +226,9 @@ public interface MailContentBuildingService {
 	/**
 	 * Notify a user that received a share that the share will soon be deleted
 	 */
-	public MailContainerWithRecipient buildMailUpcomingOutdatedSecuredUrlWithRecipient(User actor,
-			MailContainer mailContainer, SecuredUrl securedUrl,
-			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
+//	public MailContainerWithRecipient buildMailUpcomingOutdatedSecuredUrlWithRecipient(User actor,
+//			MailContainer mailContainer, SecuredUrl securedUrl,
+//			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
 
 	public MailContainerWithRecipient buildMailUpcomingOutdatedShareWithRecipient(User actor,
 			MailContainer mailContainer, Share share, Integer days) 
