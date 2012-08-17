@@ -41,10 +41,6 @@
 		
     
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
-		 <!-- 
-			<many-to-one name="technical_account_permission" column="technical_account_permissionid" class="org.linagora.linshare.core.domain.entities.technical_account_permission" cascade="save-update,lock" unique="true" not-null="false" lazy="no-proxy" access="field">
-			</many-to-one>
-		  -->
 		  	<set name="myThreads" lazy="true" cascade="save-update,lock" inverse="true">
 				<key column="user_id" not-null="true"/>
 				<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadMember"/>
@@ -71,10 +67,19 @@
 			</subclass>
 			<subclass name="org.linagora.linshare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>
 			
-			<subclass name="org.linagora.linshare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
+		</subclass>
+		
+		
+		
+		
+		<subclass name="org.linagora.linshare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
+			<join table="technical_account">
+				<key>
+					<column name="account_id"/>
+				</key>
 				<many-to-one name="permission" cascade="lock" column="technical_account_permission_id" class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="true" lazy="no-proxy">
 				</many-to-one>
-			</subclass>
+			</join>
 		</subclass>
 		
 		<subclass name="org.linagora.linshare.core.domain.entities.Thread" discriminator-value="5" lazy="false">
