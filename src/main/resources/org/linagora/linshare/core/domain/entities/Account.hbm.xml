@@ -39,6 +39,11 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.Signature"/>
 		</set>
 		
+		<set name="tags" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="account_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Tag"/>
+		</set>
+		
     
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
 		  	<set name="myThreads" lazy="true" cascade="save-update,lock" inverse="true">
@@ -68,12 +73,10 @@
 			<subclass name="org.linagora.linshare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>
 					
 		<subclass name="org.linagora.linshare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
-			<many-to-one name="permission" cascade="lock" column="technical_account_permission_id" class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="true" lazy="no-proxy">
+			<many-to-one name="permission" cascade="lock" column="technical_account_permission_id" class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="false" lazy="no-proxy">
 			</many-to-one>
 		</subclass>
 		</subclass>
-		
-		
 		
 
 		

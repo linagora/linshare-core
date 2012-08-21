@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.Tag" table="tag" lazy="false" discriminator-value="0">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<discriminator column="tag_type" type="integer"/>
+		<many-to-one name="owner" cascade="lock" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="system" type="boolean" not-null="true" lazy="false">
+			<column name="system" default="false"/>
+		</property>
+		<property name="visible" type="boolean" not-null="true" lazy="false">
+			<column name="visible" default="true"/>
+		</property>
+		<!-- 
+		<set name="entryAssociation" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="tag_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.EntryTagAssociation"/>
+		</set>
+		 -->
+		<!-- 
+		<set name="view_tag_list" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="tagid" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.ViewTagList"/>
+		</set>
+		 -->
+		<subclass name="org.linagora.linshare.core.domain.entities.TagEnum" discriminator-value="1" lazy="false">
+			<property name="notNull" column="not_null" type="boolean" not-null="false" lazy="false"/>
+			<set name="enumValues" lazy="true" cascade="save-update,lock" inverse="false">
+				<key column="tagid" not-null="false"/>
+				<one-to-many class="org.linagora.linshare.core.domain.entities.TagEnumValue"/>
+			</set>
+		</subclass>
+	</class>
+</hibernate-mapping>

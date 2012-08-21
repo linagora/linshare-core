@@ -36,6 +36,8 @@ public abstract class Account {
 	
 	protected Set<Signature> signatures = new  HashSet<Signature>();
 	
+	protected Set<Tag> tags = new  HashSet<Tag>();
+	
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
@@ -155,6 +157,14 @@ public abstract class Account {
 
 	public void setSignatures(Set<Signature> signatures) {
 		this.signatures = signatures;
+	}
+
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
 	}
 
 	public abstract AccountType getAccountType();

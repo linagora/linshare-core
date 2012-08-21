@@ -102,4 +102,9 @@
 	<bean name="contactRepository" class="org.linagora.linshare.core.repository.hibernate.ContactRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+	
+	<bean name="tagRepository" class="org.linagora.linshare.core.repository.hibernate.TagRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	
 </beans>

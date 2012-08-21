@@ -14,12 +14,12 @@
 		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="comment" column="comment" type="text" not-null="true" lazy="false"/>
 		<property name="uuid" column="uuid" type="string" not-null="true" lazy="false" unique="true"/>
-		<!-- -
 		<set name="tagAssociations" lazy="true"  inverse="true">
 			<key column="entry_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.EntryTagAssociation"/>
 		</set>
-		 -->
+		
+		
 		<joined-subclass name="org.linagora.linshare.core.domain.entities.AnonymousShareEntry" table="anonymous_share_entry" lazy="false">
 			<key>
 				<column name="entry_id"/>

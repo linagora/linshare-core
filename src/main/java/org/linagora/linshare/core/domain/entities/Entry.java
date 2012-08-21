@@ -1,6 +1,8 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.EntryType;
 
@@ -21,6 +23,9 @@ public abstract class Entry {
 	protected String comment;
 	
 	protected String uuid;
+	
+	private Set<EntryTagAssociation> tagAssociations = new HashSet<EntryTagAssociation>();
+	
 	
 	public Entry() {
 	}
@@ -121,6 +126,16 @@ public abstract class Entry {
 			return false;
 		return true;
 	}
+
+	public Set<EntryTagAssociation> getTagAssociations() {
+		return tagAssociations;
+	}
+
+	public void setTagAssociations(Set<EntryTagAssociation> tagAssociations) {
+		this.tagAssociations = tagAssociations;
+	}
+	
+	
 
 	
 //	@Override
