@@ -23,14 +23,6 @@
 					<t:label for="patternDescription"/>
                 	<t:textarea t:id="patternDescription" value="domainPattern.patternDescription" cols="70"/>
 				</p:description>
-				<p:getUserCommand>                
-					<t:label for="getUserCommand"/>
-                	<t:textarea t:id="getUserCommand" value="domainPattern.getUserCommand" cols="70"/>
-				</p:getUserCommand>
-				<p:getAllDomainUsersCommand>                
-					<t:label for="getAllDomainUsersCommand"/>
-                	<t:textarea t:id="getAllDomainUsersCommand" value="domainPattern.getAllDomainUsersCommand" cols="70"/>
-				</p:getAllDomainUsersCommand>
 				<p:authCommand>                
 					<t:label for="authCommand"/>
                 	<t:textarea t:id="authCommand" value="domainPattern.authCommand" cols="70"/>

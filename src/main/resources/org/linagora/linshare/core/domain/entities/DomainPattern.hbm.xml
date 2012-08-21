@@ -12,14 +12,10 @@
     <property access="field" column="search_user_command" name="searchUserCommand"/>
     <property access="field" column="auto_complete_command" name="autoCompleteCommand"/>
     <property access="field" column="system" name="system"/>
-    <property access="field" column="USER_MAIL" name="userMail"/>
-    <property access="field" column="USER_FIRSTNAME" name="userFirstName"/>
-    <property access="field" column="USER_LASTNAME" name="userLastName"/>
-    <property access="field" column="USER_UID" name="ldapUid"/>
     <map name="attributes" lazy="true" cascade="all" inverse="false">
-			<key column="domain_pattern_id" not-null="false"/>
-			<map-key  column="field" type="string"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.LdapAttribute"/>
-	</map>
+        <key column="domain_pattern_id" not-null="false"/>
+        <map-key  column="field" type="string"/>
+        <one-to-many class="org.linagora.linshare.core.domain.entities.LdapAttribute"/>
+    </map>
   </class>
 </hibernate-mapping>

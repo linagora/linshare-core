@@ -20,7 +20,6 @@ import org.apache.tapestry5.annotations.BeforeRenderBody;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-
 import org.chenillekit.tapestry.core.base.AbstractWindow;
 
 /**

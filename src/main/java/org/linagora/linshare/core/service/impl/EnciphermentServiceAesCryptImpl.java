@@ -37,7 +37,6 @@ import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentService;
 import org.linagora.linshare.core.service.EnciphermentService;
 import org.linagora.linshare.core.service.LogEntryService;

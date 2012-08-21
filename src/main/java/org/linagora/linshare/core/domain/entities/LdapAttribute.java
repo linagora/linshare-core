@@ -1,17 +1,6 @@
 package org.linagora.linshare.core.domain.entities;
 
 public class LdapAttribute {
-
-	public LdapAttribute() {
-	}
-	
-	public LdapAttribute(String name, String attribute) {
-		this.field = name;
-		this.attribute = attribute;
-		sync =false;
-		system = true;
-		enable =true;
-	}
 	
 	private Long id;
 	
@@ -25,7 +14,30 @@ public class LdapAttribute {
 	
 	private Boolean enable;
 	
-	public void setId(Long value) {
+	
+	public LdapAttribute() {
+	}
+	
+	public LdapAttribute(String field, String attribute, Boolean sync, Boolean system, Boolean enable) {
+		super();
+		this.field = field;
+		this.attribute = attribute;
+		this.sync = sync;
+		this.system = system;
+		this.enable = enable;
+	}
+	
+	public LdapAttribute(String field, String attribute) {
+		super();
+		this.field = field;
+		this.attribute = attribute;
+		this.sync = false;
+		this.system = true;
+		this.enable = true;
+	}
+
+	@SuppressWarnings("unused")
+	private void setId(Long value) {
 		this.id = value;
 	}
 	

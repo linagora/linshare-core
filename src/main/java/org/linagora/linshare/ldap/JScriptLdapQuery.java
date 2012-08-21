@@ -81,34 +81,6 @@ public class JScriptLdapQuery {
 
 	/** 	Methods 	**/
 	
-	/**
-	 * Get user from Ldap.
-	 * @param userId
-	 * @return User
-	 */
-	public User getUser(String userId) {
-		
-		String command = domainPattern.getGetUserCommand();
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("userId", userId);
-		params.put("domain", baseDn);
-		Map<String, List<String>> retMap = jScriptEvaluator.evalToEntryMap(command, params);
-        return mapToUser(retMap);
-	}
-	
-	/**
-	 * Get all users from the selected Ldap domain.
-	 * @return List of Users
-	 */
-	public List<User> getAllDomainUsers() {
-		
-		String command = domainPattern.getGetAllDomainUsersCommand();
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("domain", baseDn);
-		List<String> ret = jScriptEvaluator.evalToStringList(command, params);
-		List<User> users = dnListToUsersList(ret);
-        return users;
-	}
 
 	/**
 	 * This method allow to search a user from part of his mail or/and first name or/and last name 
@@ -230,19 +202,19 @@ public class JScriptLdapQuery {
 	}
 
 	private Object getLdapUid() {
-		return domainPattern.getLdapUid().trim().toLowerCase();
+		return domainPattern.getAttribute(DomainPattern.USER_UID).trim().toLowerCase();
 	}
 
-	private String getUserMail(){
-		return domainPattern.getUserMail().trim().toLowerCase();
+	private String getUserMail() {
+		return domainPattern.getAttribute(DomainPattern.USER_MAIL).trim().toLowerCase();
 	}
 	
 	private String getUserFirstName(){
-		return domainPattern.getUserFirstName().trim().toLowerCase();
+		return domainPattern.getAttribute(DomainPattern.USER_FIRST_NAME).trim().toLowerCase();
 	}
 	
 	private String getUserLastName(){
-		return domainPattern.getUserLastName().trim().toLowerCase();
+		return domainPattern.getAttribute(DomainPattern.USER_LAST_NAME).trim().toLowerCase();
 	}
 
 	

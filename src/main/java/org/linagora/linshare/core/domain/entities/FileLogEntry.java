@@ -23,8 +23,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 
 /**
  * Log class for uploading/deleting/expiring files

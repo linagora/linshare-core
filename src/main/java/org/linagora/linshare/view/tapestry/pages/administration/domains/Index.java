@@ -17,7 +17,7 @@
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
-*/
+ */
 package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 import java.util.List;
@@ -40,105 +40,105 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Index {
-    
-	private static Logger logger = LoggerFactory.getLogger(Index.class);
+
+    private static Logger logger = LoggerFactory.getLogger(Index.class);
 
     @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
-    
-	@Inject
-	private Messages messages;
-	
+
+    @Inject
+    private Messages messages;
+
     @Inject
     private AbstractDomainFacade domainFacade;
-    
+
     @SessionState
     private UserVo loginUser;
-	
-	@Persist
-	@Property
-	private List<AbstractDomainVo> domains;
-	
-	@Persist
-	@Property
-	private List<DomainPatternVo> domainPatterns;
-	
-	@Persist
-	@Property
-	private List<LDAPConnectionVo> ldapConnections;
-	
-	@Property
-	private AbstractDomainVo domain;
-	
-	@Property
-	private DomainPatternVo domainPattern;
-	
-	@Property
-	private LDAPConnectionVo ldapConnection;
-	
-	@Persist
-	@Property
-	private AbstractDomainVo selectedDomain;
-	
-	@Property
-	@Persist
-	private boolean superadmin;
+
+    @Persist
+    @Property
+    private List<AbstractDomainVo> domains;
+
+    @Persist
+    @Property
+    private List<DomainPatternVo> domainPatterns;
+
+    @Persist
+    @Property
+    private List<LDAPConnectionVo> ldapConnections;
+
+    @Property
+    private AbstractDomainVo domain;
+
+    @Property
+    private DomainPatternVo domainPattern;
+
+    @Property
+    private LDAPConnectionVo ldapConnection;
+
+    @Persist
+    @Property
+    private AbstractDomainVo selectedDomain;
+
+    @Property
+    @Persist
+    private boolean superadmin;
 
     @Property
     @Persist(value="flash")
-	private String domainToDelete;
+    private String domainToDelete;
 
     @Property
     @Persist(value="flash")
-	private String patternToDelete;
+    private String patternToDelete;
 
     @Property
     @Persist(value="flash")
-	private String connectionToDelete;
-	
-	@SetupRender
+    private String connectionToDelete;
+
+    @SetupRender
     public void init() throws BusinessException {
-    	
-    	domains = domainFacade.findAllTopDomain();
-    	domainPatterns = domainFacade.findAllDomainPatterns();
-    	ldapConnections = domainFacade.findAllLDAPConnections();
-    	
-	}
-    
-	@OnEvent(value="domainDeleteEvent")
+
+        domains = domainFacade.findAllTopDomain();
+        domainPatterns = domainFacade.findAllUserDomainPatterns();
+        ldapConnections = domainFacade.findAllLDAPConnections();
+
+    }
+
+    @OnEvent(value="domainDeleteEvent")
     public void deleteDomain() throws BusinessException {
-		domainFacade.deleteDomain(domainToDelete, loginUser);
-		domains = domainFacade.findAllTopDomain();
+        domainFacade.deleteDomain(domainToDelete, loginUser);
+        domains = domainFacade.findAllTopDomain();
     }
-    
-	@OnEvent(value="patternDeleteEvent")
+
+    @OnEvent(value="patternDeleteEvent")
     public void deletePattern() throws BusinessException {
-		domainFacade.deletePattern(patternToDelete, loginUser);
-		domains = domainFacade.findAllTopDomain();
+        domainFacade.deletePattern(patternToDelete, loginUser);
+        domains = domainFacade.findAllTopDomain();
     }
-    
-	@OnEvent(value="connectionDeleteEvent")
+
+    @OnEvent(value="connectionDeleteEvent")
     public void deleteConnection() throws BusinessException {
-		domainFacade.deleteConnection(connectionToDelete, loginUser);
-		ldapConnections = domainFacade.findAllLDAPConnections();
+        domainFacade.deleteConnection(connectionToDelete, loginUser);
+        ldapConnections = domainFacade.findAllLDAPConnections();
     }
-	
-	public boolean getConnectionIsDeletable() throws BusinessException {
-		return domainFacade.connectionIsDeletable(ldapConnection.getIdentifier(), loginUser);
-	}
-	
-	public boolean getPatternIsDeletable() throws BusinessException {
-		return domainFacade.patternIsDeletable(domainPattern.getIdentifier(), loginUser);
-	}
-	
-	public String getConnectionIdentifier() {
-		return domain.getLdapIdentifier();
-	}
-	
-	public String getPatternIdentifier() {
-		return domain.getPatternIdentifier();
-	}
+
+    public boolean getConnectionIsDeletable() throws BusinessException {
+        return domainFacade.connectionIsDeletable(ldapConnection.getIdentifier(), loginUser);
+    }
+
+    public boolean getPatternIsDeletable() throws BusinessException {
+        return domainFacade.patternIsDeletable(domainPattern.getIdentifier(), loginUser);
+    }
+
+    public String getConnectionIdentifier() {
+        return domain.getLdapIdentifier();
+    }
+
+    public String getPatternIdentifier() {
+        return domain.getPatternIdentifier();
+    }
 
     public void onActionFromDeleteDomain(String domain) {
         this.domainToDelete = domain;
@@ -151,13 +151,13 @@ public class Index {
     public void onActionFromDeleteConnection(String connection) {
         this.connectionToDelete = connection;
     }
-	
+
     Object onException(Throwable cause) {
-    	shareSessionObjects.addError(messages.get("global.exception.message"));
-    	logger.error(cause.getMessage());
-    	cause.printStackTrace();
-    	return this;
+        shareSessionObjects.addError(messages.get("global.exception.message"));
+        logger.error(cause.getMessage());
+        cause.printStackTrace();
+        return this;
     }
 
-    
+
 }

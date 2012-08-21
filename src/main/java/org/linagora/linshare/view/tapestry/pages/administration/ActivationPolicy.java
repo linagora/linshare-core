@@ -20,8 +20,6 @@
 */
 package org.linagora.linshare.view.tapestry.pages.administration;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -39,7 +37,6 @@ import org.linagora.linshare.core.domain.vo.PolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.pages.administration.domains.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

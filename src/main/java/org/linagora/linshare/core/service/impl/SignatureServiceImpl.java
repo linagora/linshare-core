@@ -5,18 +5,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
 
-import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
-import org.linagora.linshare.core.business.service.impl.SignatureBusinessServiceImpl;
 import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
-import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Signature;
-import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.SignatureService;

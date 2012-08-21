@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Set;
 
 public class Document implements Serializable {

@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.Facade.RecipientFavouriteFacade;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
-import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.RecipientFavouriteService;
 import org.linagora.linshare.core.service.UserService;
 

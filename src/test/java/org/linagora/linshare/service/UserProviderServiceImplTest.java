@@ -95,7 +95,7 @@ public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTest
 	public void testCreateDomainPattern() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname", "firstname.lastname");
+		DomainPattern domainPattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {
@@ -136,7 +136,7 @@ public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTest
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
 		
-		DomainPattern domainPattern = new DomainPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname", "firstname.lastname");
+		DomainPattern domainPattern = new DomainPattern(identifierP +"2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
 		try {
 			userProviderService.createDomainPattern(domainPattern);
 		} catch (BusinessException e) {

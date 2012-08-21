@@ -21,12 +21,9 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 
-import java.util.Date;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 

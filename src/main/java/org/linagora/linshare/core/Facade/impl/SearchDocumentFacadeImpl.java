@@ -35,7 +35,6 @@ import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.DocumentService;
 import org.linagora.linshare.core.service.SearchDocumentService;
 
 public class SearchDocumentFacadeImpl implements SearchDocumentFacade{

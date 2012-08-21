@@ -20,8 +20,6 @@
 */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.HashSet;
-import java.util.Set;
 
 public class Tag {
 

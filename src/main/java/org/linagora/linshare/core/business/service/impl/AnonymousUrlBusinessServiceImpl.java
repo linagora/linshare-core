@@ -1,6 +1,5 @@
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Calendar;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;

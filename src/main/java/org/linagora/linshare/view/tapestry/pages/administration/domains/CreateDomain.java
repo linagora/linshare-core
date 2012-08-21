@@ -17,7 +17,7 @@
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
-*/
+ */
 package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 import java.util.ArrayList;
@@ -46,143 +46,143 @@ import org.slf4j.LoggerFactory;
 
 public class CreateDomain {
 
-	private static Logger logger = LoggerFactory.getLogger(CreateDomain.class);
+    private static Logger logger = LoggerFactory.getLogger(CreateDomain.class);
 
     @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
-    
+
     @SessionState
     private UserVo loginUser;
-    
-    
-	@Persist
-	@Property
-	private AbstractDomainVo domain;
-	
-	@Inject
-	private AbstractDomainFacade domainFacade;
-	
-	@Inject
-	private DomainPolicyFacade domainPolicyFacade;
-	
-	@Persist
-	@Property
-	private List<String> patterns;
-	
-	@Persist
-	@Property
-	private List<String> connections;
-	
-	@Persist
-	@Property
-	private List<String> policies;
-	
-	@Persist
-	@Property
-	private boolean inModify;
-	
-	
-	@SuppressWarnings("unused")
-	@Persist
-	@Property
-	private SimpleSelectModel<String> model;
-	
-	@Property
-	private List<String> locales;
 
-	@Property
+
+    @Persist
+    @Property
+    private AbstractDomainVo domain;
+
+    @Inject
+    private AbstractDomainFacade domainFacade;
+
+    @Inject
+    private DomainPolicyFacade domainPolicyFacade;
+
+    @Persist
+    @Property
+    private List<String> patterns;
+
+    @Persist
+    @Property
+    private List<String> connections;
+
+    @Persist
+    @Property
+    private List<String> policies;
+
+    @Persist
+    @Property
+    private boolean inModify;
+
+
+    @SuppressWarnings("unused")
+    @Persist
+    @Property
+    private SimpleSelectModel<String> model;
+
+    @Property
+    private List<String> locales;
+
+    @Property
     private SelectableRole role;
-	
-	@Inject
-	private Messages messages;
-	
-	@Inject
-	private SymbolSource symbolSource;
-	
-	
-	
-	public void onActivate(String identifier) throws BusinessException {
-		logger.debug("domainIdentifier:" + identifier);
-		if (identifier != null) {
-			inModify = true;
-			domain = domainFacade.retrieveDomain(identifier);
-		} else {
-			inModify = false;
-			domain = null;
-		}
-	}
-	
-	@SetupRender
-	public void init() throws BusinessException {
-		if (domain == null) {
-			domain = new TopDomainVo();
-			logger.debug("domainVo class:" + domain.getClass().toString());
-			logger.debug("domainVo :" + domain.toString());
-		}
-			
-		patterns = domainFacade.findAllDomainPatternIdentifiers();
-    	connections = domainFacade.findAllLDAPConnectionIdentifiers();
-    	policies = domainPolicyFacade.getAllDomainPolicyIdentifiers();
-    	
-    	if(null==locales || locales.size()==0){
-			if(null!=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES)){
-				String stringLocales=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES);
-				String[]listLocales=stringLocales.split(",");
-				locales=this.getSupportedLocales(listLocales);		
-			}
-		}
-		
-		model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
 
-		role = SelectableRole.fromRole(domain.getDefaultRole());
-	}
-	
-	private List<String> getSupportedLocales(String[]locales){
-		ArrayList<String> newLocales=new ArrayList<String>();
-		for(String currentLocale: locales){
-			newLocales.add(currentLocale);
-		}
-		return newLocales;
-	}
-	
-	public Object onActionFromCancel() {
-		inModify = false;
-		domain = null;
-		return Index.class;
-	}
-	
-	public Object onSubmit() throws BusinessException {
-		logger.debug("domainVo class:" + domain.getClass().toString());
-		logger.debug("domainVo :" + domain.toString());
-		domain.setDefaultRole(SelectableRole.fromSelectableRole(role));
-		try {
-			domain.setDefaultRole(SelectableRole.fromSelectableRole(role));
-			if (inModify) {
-				domainFacade.updateDomain(loginUser, domain);
-			} else {
-				domainFacade.createDomain(loginUser, domain);
-			}
-			inModify = false;
-			domain = null;
-		} catch (BusinessException e) {
-			if(e.getErrorCode().equals(BusinessErrorCode.DOMAIN_ID_ALREADY_EXISTS)) {
-				shareSessionObjects.addError(messages.get("error.code.domain.alreadyExist"));
-				return this;
-			} else {
-				throw e;
-			}
-		}
-		
-		
-		return Index.class;
-	}
-    
+    @Inject
+    private Messages messages;
+
+    @Inject
+    private SymbolSource symbolSource;
+
+
+
+    public void onActivate(String identifier) throws BusinessException {
+        logger.debug("domainIdentifier:" + identifier);
+        if (identifier != null) {
+            inModify = true;
+            domain = domainFacade.retrieveDomain(identifier);
+        } else {
+            inModify = false;
+            domain = null;
+        }
+    }
+
+    @SetupRender
+    public void init() throws BusinessException {
+        if (domain == null) {
+            domain = new TopDomainVo();
+            logger.debug("domainVo class:" + domain.getClass().toString());
+            logger.debug("domainVo :" + domain.toString());
+        }
+
+        patterns = domainFacade.findAllUserDomainPatternIdentifiers();
+        connections = domainFacade.findAllLDAPConnectionIdentifiers();
+        policies = domainPolicyFacade.getAllDomainPolicyIdentifiers();
+
+        if(null==locales || locales.size()==0){
+            if(null!=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES)){
+                String stringLocales=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES);
+                String[]listLocales=stringLocales.split(",");
+                locales=this.getSupportedLocales(listLocales);
+            }
+        }
+
+        model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
+
+        role = SelectableRole.fromRole(domain.getDefaultRole());
+    }
+
+    private List<String> getSupportedLocales(String[]locales){
+        ArrayList<String> newLocales=new ArrayList<String>();
+        for(String currentLocale: locales){
+            newLocales.add(currentLocale);
+        }
+        return newLocales;
+    }
+
+    public Object onActionFromCancel() {
+        inModify = false;
+        domain = null;
+        return Index.class;
+    }
+
+    public Object onSubmit() throws BusinessException {
+        logger.debug("domainVo class:" + domain.getClass().toString());
+        logger.debug("domainVo :" + domain.toString());
+        domain.setDefaultRole(SelectableRole.fromSelectableRole(role));
+        try {
+            domain.setDefaultRole(SelectableRole.fromSelectableRole(role));
+            if (inModify) {
+                domainFacade.updateDomain(loginUser, domain);
+            } else {
+                domainFacade.createDomain(loginUser, domain);
+            }
+            inModify = false;
+            domain = null;
+        } catch (BusinessException e) {
+            if(e.getErrorCode().equals(BusinessErrorCode.DOMAIN_ID_ALREADY_EXISTS)) {
+                shareSessionObjects.addError(messages.get("error.code.domain.alreadyExist"));
+                return this;
+            } else {
+                throw e;
+            }
+        }
+
+
+        return Index.class;
+    }
+
     Object onException(Throwable cause) {
-    	shareSessionObjects.addError(messages.get("global.exception.message"));
-    	logger.error(cause.getMessage());
-    	cause.printStackTrace();
-    	return this;
+        shareSessionObjects.addError(messages.get("global.exception.message"));
+        logger.error(cause.getMessage());
+        cause.printStackTrace();
+        return this;
     }
 
 }

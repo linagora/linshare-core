@@ -50,7 +50,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");", 
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
-				"mail", "givenName", "sn", "givenName.sn");
+				null);
 		baseDn = "dc=linpki,dc=org";
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -58,24 +58,6 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
-	}
-
-	@Ignore
-	@Test
-	public void testGetUser() throws BusinessException, NamingException, IOException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		User user = ldapQueryService.getUser(ldapConn, baseDn, pattern, "user1");
-		Assert.assertEquals("user1@linpki.org", user.getMail());
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	@Ignore
-	@Test
-	public void testGetAllDomainUsers() throws BusinessException, NamingException, IOException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<User> users = ldapQueryService.getAllDomainUsers(ldapConn, baseDn, pattern);
-		Assert.assertEquals(2, users.size());
-		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
 	@Ignore

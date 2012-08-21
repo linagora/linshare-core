@@ -77,7 +77,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		logger.debug("Current ldapconnexion object: " + ldapconnexion.toString());
 		
 		
-		pattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname", "firstname.lastname");
+		pattern = new DomainPattern(identifierP, "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", null);
 		domainPatternRepository.create(pattern);
 		logger.debug("Current pattern object: " + pattern.toString());
 		
@@ -94,11 +94,10 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	
 	@Test
 	public void toto() throws BusinessException {
-		DomainPattern p = new DomainPattern("identifierP2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname", "firstname.lastname");
 		Map<String, LdapAttribute> a = new HashMap<String, LdapAttribute>();
 		a.put("ldapUid", new LdapAttribute("ldapUid" , "uid"));
 		a.put("toto", new LdapAttribute("ldapUid" , "uid"));
-		p.setAttributes(a);
+		DomainPattern p = new DomainPattern("identifierP2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", a);
 		
 		domainPatternRepository.create(p);
 		

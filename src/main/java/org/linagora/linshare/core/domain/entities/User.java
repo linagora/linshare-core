@@ -21,14 +21,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.Set;
-
-import org.linagora.linshare.core.exception.BusinessErrorCode;
-import org.linagora.linshare.core.exception.BusinessException;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 
 public abstract class User extends Account {

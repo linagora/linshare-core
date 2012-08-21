@@ -5,7 +5,6 @@ import java.util.Properties;
 import javax.naming.Context;
 
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
-import org.linagora.linshare.core.utils.MySSLSocketFactory;
 
 public class LDAPConnection {
 	/**

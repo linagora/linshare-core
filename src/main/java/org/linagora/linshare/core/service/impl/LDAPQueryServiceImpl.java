@@ -20,32 +20,15 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LDAPQueryServiceImpl.class);
 	
 	private static final ThreadLocal < JScriptEvaluator > threadLocal = new ThreadLocal < JScriptEvaluator > () {
-             @Override 
-             protected JScriptEvaluator initialValue() {
-                 return new JScriptEvaluator();
-	         }
-	     };
+		@Override 
+		protected JScriptEvaluator initialValue() {
+			return new JScriptEvaluator();
+		}
+	};
 
-     public static JScriptEvaluator getCurrentThreadJSE() {
-         return threadLocal.get();
-     }
-	     
-	@Override
-	public User getUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId) throws BusinessException, NamingException, IOException {
-
-		LOGGER.debug("LDAPQueryServiceImpl.getUser("+ userId + ", " + baseDn);
-		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
-		return query.getUser(userId);
-		
+	public static JScriptEvaluator getCurrentThreadJSE() {
+		return threadLocal.get();
 	}
-
-	@Override
-	public List<User> getAllDomainUsers(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern) throws BusinessException, NamingException, IOException {
-		LOGGER.debug("LDAPQueryServiceImpl.getAllDomainUsers(" + baseDn);
-		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
-		return query.getAllDomainUsers();
-	}
-
 
 	@Override
 	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userId, String userPasswd) throws BusinessException, NamingException, IOException {

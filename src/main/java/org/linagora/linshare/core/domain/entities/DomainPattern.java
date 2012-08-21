@@ -1,70 +1,82 @@
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
 
 public class DomainPattern {
-	/**
-	 * Database persistence identifier
-	 */
-	private long persistenceId;
+    /**
+     * Database persistence identifier
+     */
+    private long persistenceId;
 
-	private final String identifier;
-	private String description;
-	private String getUserCommand;
-	private String getAllDomainUsersCommand;
-	private String authCommand;
-	private String searchUserCommand;
-	private String userMail;
-	private String userFirstName;
-	private String userLastName;
-    private String ldapUid;
+    private final String identifier;
+    private String description;
+    private String authCommand;
+    private String searchUserCommand;
     private String autoCompleteCommand;
     private Boolean system;
+
+    private Map<String, LdapAttribute> attributes;
     
-    
-//    private java.util.Set<LdapAttribute> attributes = new java.util.HashSet<LdapAttribute>();
-    private java.util.Map<String,LdapAttribute> attributes = new java.util.HashMap<String,LdapAttribute>();
-	
-	protected DomainPattern() {
-		this.identifier = null;
-	}
-	
-	
-	public DomainPattern(String identifier, String description,
-			String getUserCommand, String getAllDomainUsersCommand,
-			String authCommand,
-			String searchUserCommand, String mail, String firstName, String lastName, String ldapUid) {
+    public static final String USER_MAIL = "user_mail";
+    public static final String USER_FIRST_NAME = "user_firstname";
+    public static final String USER_LAST_NAME = "user_lastname";
+    public static final String USER_UID = "user_uid";
+
+    protected DomainPattern() {
+        this.identifier = null;
+    }
+
+
+    public DomainPattern(String identifier, String description,
+            String getUserCommand, String getAllDomainUsersCommand,
+            String authCommand,
+            String searchUserCommand, Map<String, LdapAttribute> attributes) {
+        this.identifier = identifier;
+        this.description = description;
+        this.authCommand = authCommand;
+        this.searchUserCommand = searchUserCommand;
+        this.attributes = attributes;
+    }
+
+
+
+    public DomainPattern(DomainPatternVo domainPatternVo) {
+        this.identifier = domainPatternVo.getIdentifier();
+        this.description = domainPatternVo.getPatternDescription();
+        this.authCommand = domainPatternVo.getAuthCommand();
+        this.searchUserCommand = domainPatternVo.getSearchUserCommand();
+        this.autoCompleteCommand = domainPatternVo.getAutoCompleteCommand();
+        this.system = domainPatternVo.getSystem();
+        
+        this.attributes = new HashMap<String, LdapAttribute>();
+        this.attributes.put(domainPatternVo.getUserMail(), 		new LdapAttribute(USER_MAIL,		domainPatternVo.getUserMail()));
+        this.attributes.put(domainPatternVo.getUserFirstName(),	new LdapAttribute(USER_FIRST_NAME,	domainPatternVo.getUserFirstName()));
+        this.attributes.put(domainPatternVo.getUserLastName(),	new LdapAttribute(USER_LAST_NAME,	domainPatternVo.getUserLastName()));
+        this.attributes.put(domainPatternVo.getLdapUid(),		new LdapAttribute(USER_UID,			domainPatternVo.getLdapUid()));
+    }
+
+
+	public DomainPattern(String identifier, String description, String getUserCommand,
+            String getAllDomainUsersCommand, String authCommand, String searchUserCommand, Map<String, LdapAttribute> attributes,
+            String autoCompleteCommand, boolean system) {
+		super();
 		this.identifier = identifier;
 		this.description = description;
-		this.getUserCommand = getUserCommand;
-		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 		this.authCommand = authCommand;
 		this.searchUserCommand = searchUserCommand;
-		this.userMail = mail;
-		this.userFirstName = firstName;
-		this.userLastName = lastName;
-		this.ldapUid = ldapUid;
+        this.attributes = attributes;
+        this.autoCompleteCommand = autoCompleteCommand;
+        this.system = system;
 	}
 
 
-
-	public DomainPattern(DomainPatternVo domainPatternVo) {
-		this.identifier = domainPatternVo.getIdentifier();
-		this.description = domainPatternVo.getPatternDescription();
-		this.getUserCommand = domainPatternVo.getGetUserCommand();
-		this.getAllDomainUsersCommand = domainPatternVo.getGetAllDomainUsersCommand();
-		this.authCommand = domainPatternVo.getAuthCommand();
-		this.searchUserCommand = domainPatternVo.getSearchUserCommand();
-		this.userMail = domainPatternVo.getUserMail();
-		this.userFirstName = domainPatternVo.getUserFirstName();
-		this.userLastName = domainPatternVo.getUserLastName();
-		this.ldapUid = domainPatternVo.getLdapUid();
-	}
-	
 	public long getPersistenceId() {
 		return persistenceId;
 	}
-	
+
 	public void setPersistenceId(long persistenceId) {
 		this.persistenceId = persistenceId;
 	}
@@ -72,29 +84,13 @@ public class DomainPattern {
 	public String getIdentifier() {
 		return identifier;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getGetUserCommand() {
-		return getUserCommand;
-	}
-
-	public void setGetUserCommand(String getUserCommand) {
-		this.getUserCommand = getUserCommand;
-	}
-
-	public String getGetAllDomainUsersCommand() {
-		return getAllDomainUsersCommand;
-	}
-
-	public void setGetAllDomainUsersCommand(String getAllDomainUsersCommand) {
-		this.getAllDomainUsersCommand = getAllDomainUsersCommand;
 	}
 
 	public String getAuthCommand() {
@@ -113,71 +109,37 @@ public class DomainPattern {
 		this.searchUserCommand = searchUserCommand;
 	}
 
-	public String getUserMail() {
-		return userMail;
-	}
-
-	public void setUserMail(String userMail) {
-		this.userMail = userMail;
-	}
-
-	public String getUserFirstName() {
-		return userFirstName;
-	}
-
-	public void setUserFirstname(String userFirstName) {
-		this.userFirstName = userFirstName;
-	}
-
-	public String getUserLastName() {
-		return userLastName;
-	}
-
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
-	}
-
-	public String getLdapUid() {
-		return ldapUid;
-	}
-
-	public void setLdapUid(String ldapUid) {
-		this.ldapUid = ldapUid;
-	}
-
 	@Override
 	public String toString() {
 		return "DomainPattern : " + identifier;
 	}
 
-
-	public String getAutoCompleteCommand() {
-		return autoCompleteCommand;
-	}
-
-
-	public java.util.Map<String, LdapAttribute> getAttributes() {
+	public Map<String, LdapAttribute> getAttributes() {
 		return attributes;
 	}
 
-
-	public void setAttributes(java.util.Map<String, LdapAttribute> attributes) {
+	public void setAttributes(Map<String, LdapAttribute> attributes) {
 		this.attributes = attributes;
 	}
-
+	
+	public String getAutoCompleteCommand() {
+		return this.autoCompleteCommand;
+	}
 
 	public void setAutoCompleteCommand(String autoCompleteCommand) {
 		this.autoCompleteCommand = autoCompleteCommand;
 	}
 
-
 	public Boolean getSystem() {
 		return system;
 	}
-
 
 	public void setSystem(Boolean system) {
 		this.system = system;
 	}
 	
+	public String getAttribute(String field) {
+		return attributes.get(field).getAttribute();
+	}
+
 }

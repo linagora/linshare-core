@@ -23,17 +23,11 @@ package org.linagora.linshare.service;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,7 +48,6 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.DocumentService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;

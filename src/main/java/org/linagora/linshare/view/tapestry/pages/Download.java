@@ -22,10 +22,7 @@ package org.linagora.linshare.view.tapestry.pages;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.StreamResponse;
@@ -45,9 +42,6 @@ import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.service.AnonymousShareEntryService;
-import org.linagora.linshare.core.service.AnonymousUrlService;
-import org.linagora.linshare.core.utils.ArchiveZipStream;
 import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;

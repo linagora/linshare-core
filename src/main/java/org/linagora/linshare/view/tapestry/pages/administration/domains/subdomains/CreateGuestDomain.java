@@ -17,7 +17,7 @@
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
-*/
+ */
 package org.linagora.linshare.view.tapestry.pages.administration.domains.subdomains;
 
 import java.util.ArrayList;
@@ -45,160 +45,160 @@ import org.slf4j.LoggerFactory;
 
 public class CreateGuestDomain {
 
-	private static Logger logger = LoggerFactory.getLogger(CreateGuestDomain.class);
+    private static Logger logger = LoggerFactory.getLogger(CreateGuestDomain.class);
 
     @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
-    
+
     @SessionState
     private UserVo loginUser;
-    
-	@Persist
-	@Property
-	private AbstractDomainVo domain;
-	
-	@Inject
-	private AbstractDomainFacade domainFacade;
-	
-	@Inject
-	private DomainPolicyFacade domainPolicyFacade;
-	
-	@Persist
-	@Property
-	private List<String> patterns;
-	
-	@Persist
-	@Property
-	private List<String> connections;
-	
-	
-	@Persist
-	@Property
-	private List<String> policies;
-	
-	@Persist
-	@Property
-	private boolean inModify;
-	
-	
-	@SuppressWarnings("unused")
-	@Persist
-	@Property
-	private SimpleSelectModel<String> model;
-	
-	@Property
-	private List<String> locales;
-	
-	@Inject
-	private Messages messages;
-	
-	@Inject
-	private SymbolSource symbolSource;
-	
-	@Property
-	@Persist
-	private String currentTopDomainIdentifier;
-	
-	public void onActivate(Object[] parameters) throws BusinessException {
-		logger.debug("onActivate");
-		
-		if(currentTopDomainIdentifier==null) {
-			String domainIdentifier = null;
-			int cpt=0;
-			for (Object string : parameters) {
-				cpt++;
-				if(cpt == 1) {
-					currentTopDomainIdentifier=(String) string;
-				} else if (cpt == 2) {
-					domainIdentifier=(String)string;
-				}
-			}
-			logger.debug("currentTopDomainIdentifier:" + currentTopDomainIdentifier);
-			logger.debug("domainIdentifier:" + domainIdentifier);
-			
-			if (domainIdentifier != null) {
-				logger.debug("update ?");
-				inModify = true;
-				domain = domainFacade.retrieveDomain(domainIdentifier);
-			} else {
-				logger.debug("create ?");
-				inModify = false;
-				domain = null;
-			}
-		}
-	}
-	
-	@SetupRender
-	public void init() throws BusinessException {
-		if (domain == null) {
-			domain = new GuestDomainVo();
-			((GuestDomainVo)domain).setParentDomainIdentifier(currentTopDomainIdentifier);
-			logger.debug("GuestDomain creation with parent : " + currentTopDomainIdentifier);
-			logger.debug("domainVo class:" + domain.getClass().toString());
-			logger.debug("domainVo :" + domain.toString());
-		}
-			
-		patterns = domainFacade.findAllDomainPatternIdentifiers();
-    	connections = domainFacade.findAllLDAPConnectionIdentifiers();
-    	policies = domainPolicyFacade.getAllDomainPolicyIdentifiers();
-    	
-    	if(null==locales || locales.size()==0){
-			if(null!=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES)){
-				String stringLocales=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES);
-				String[]listLocales=stringLocales.split(",");
-				locales=this.getSupportedLocales(listLocales);		
-			}
-		}
-		
-		model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
-	}
-	
-	private List<String> getSupportedLocales(String[]locales){
-		ArrayList<String> newLocales=new ArrayList<String>();
-		for(String currentLocale: locales){
-			newLocales.add(currentLocale);
-		}
-		return newLocales;
-	}
-	
-	public Object onActionFromCancel() {
-		inModify = false;
-		domain = null;
-		currentTopDomainIdentifier=null;
-		return Index.class;
-	}
-	
-	public Object onSubmit() throws BusinessException  {
-		logger.debug("domainVo class:" + domain.getClass().toString());
-		logger.debug("domainVo :" + domain.toString());
-		try {
-			if (inModify) {
-				domainFacade.updateDomain(loginUser, domain);
-			} else {
-				domainFacade.createDomain(loginUser, domain);
-			}
-			inModify = false;
-			domain = null;
-			currentTopDomainIdentifier=null;
-		} catch (BusinessException e) {
-			if(e.getErrorCode().equals(BusinessErrorCode.DOMAIN_ID_ALREADY_EXISTS)) {
-				shareSessionObjects.addError(messages.get("error.code.domain.alreadyExist"));
-				return this;
-			} else {
-				throw e;
-			}
-		}
-		
-		
-		return Index.class;
-	}
-    
+
+    @Persist
+    @Property
+    private AbstractDomainVo domain;
+
+    @Inject
+    private AbstractDomainFacade domainFacade;
+
+    @Inject
+    private DomainPolicyFacade domainPolicyFacade;
+
+    @Persist
+    @Property
+    private List<String> patterns;
+
+    @Persist
+    @Property
+    private List<String> connections;
+
+
+    @Persist
+    @Property
+    private List<String> policies;
+
+    @Persist
+    @Property
+    private boolean inModify;
+
+
+    @SuppressWarnings("unused")
+    @Persist
+    @Property
+    private SimpleSelectModel<String> model;
+
+    @Property
+    private List<String> locales;
+
+    @Inject
+    private Messages messages;
+
+    @Inject
+    private SymbolSource symbolSource;
+
+    @Property
+    @Persist
+    private String currentTopDomainIdentifier;
+
+    public void onActivate(Object[] parameters) throws BusinessException {
+        logger.debug("onActivate");
+
+        if(currentTopDomainIdentifier==null) {
+            String domainIdentifier = null;
+            int cpt=0;
+            for (Object string : parameters) {
+                cpt++;
+                if(cpt == 1) {
+                    currentTopDomainIdentifier=(String) string;
+                } else if (cpt == 2) {
+                    domainIdentifier=(String)string;
+                }
+            }
+            logger.debug("currentTopDomainIdentifier:" + currentTopDomainIdentifier);
+            logger.debug("domainIdentifier:" + domainIdentifier);
+
+            if (domainIdentifier != null) {
+                logger.debug("update ?");
+                inModify = true;
+                domain = domainFacade.retrieveDomain(domainIdentifier);
+            } else {
+                logger.debug("create ?");
+                inModify = false;
+                domain = null;
+            }
+        }
+    }
+
+    @SetupRender
+    public void init() throws BusinessException {
+        if (domain == null) {
+            domain = new GuestDomainVo();
+            ((GuestDomainVo)domain).setParentDomainIdentifier(currentTopDomainIdentifier);
+            logger.debug("GuestDomain creation with parent : " + currentTopDomainIdentifier);
+            logger.debug("domainVo class:" + domain.getClass().toString());
+            logger.debug("domainVo :" + domain.toString());
+        }
+
+        patterns = domainFacade.findAllUserDomainPatternIdentifiers();
+        connections = domainFacade.findAllLDAPConnectionIdentifiers();
+        policies = domainPolicyFacade.getAllDomainPolicyIdentifiers();
+
+        if(null==locales || locales.size()==0){
+            if(null!=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES)){
+                String stringLocales=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES);
+                String[]listLocales=stringLocales.split(",");
+                locales=this.getSupportedLocales(listLocales);		
+            }
+        }
+
+        model = new SimpleSelectModel<String>(locales, messages, "pages.administration.userconfig.select");
+    }
+
+    private List<String> getSupportedLocales(String[]locales){
+        ArrayList<String> newLocales=new ArrayList<String>();
+        for(String currentLocale: locales){
+            newLocales.add(currentLocale);
+        }
+        return newLocales;
+    }
+
+    public Object onActionFromCancel() {
+        inModify = false;
+        domain = null;
+        currentTopDomainIdentifier=null;
+        return Index.class;
+    }
+
+    public Object onSubmit() throws BusinessException  {
+        logger.debug("domainVo class:" + domain.getClass().toString());
+        logger.debug("domainVo :" + domain.toString());
+        try {
+            if (inModify) {
+                domainFacade.updateDomain(loginUser, domain);
+            } else {
+                domainFacade.createDomain(loginUser, domain);
+            }
+            inModify = false;
+            domain = null;
+            currentTopDomainIdentifier=null;
+        } catch (BusinessException e) {
+            if(e.getErrorCode().equals(BusinessErrorCode.DOMAIN_ID_ALREADY_EXISTS)) {
+                shareSessionObjects.addError(messages.get("error.code.domain.alreadyExist"));
+                return this;
+            } else {
+                throw e;
+            }
+        }
+
+
+        return Index.class;
+    }
+
     Object onException(Throwable cause) {
-    	shareSessionObjects.addError(messages.get("global.exception.message"));
-    	logger.error(cause.getMessage());
-    	cause.printStackTrace();
-    	return this;
+        shareSessionObjects.addError(messages.get("global.exception.message"));
+        logger.error(cause.getMessage());
+        cause.printStackTrace();
+        return this;
     }
 
 }

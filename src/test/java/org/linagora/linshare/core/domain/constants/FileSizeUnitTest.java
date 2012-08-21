@@ -1,7 +1,5 @@
 package org.linagora.linshare.core.domain.constants;
 
-import org.linagora.linshare.core.domain.constants.FileSizeUnit;
-
 import junit.framework.TestCase;
 
 

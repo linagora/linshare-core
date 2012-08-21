@@ -23,8 +23,8 @@ package org.linagora.linshare.view.tapestry.utils;
 import java.util.Locale;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.WelcomeText;
 
 /** Helpers for Welcome message processing.
