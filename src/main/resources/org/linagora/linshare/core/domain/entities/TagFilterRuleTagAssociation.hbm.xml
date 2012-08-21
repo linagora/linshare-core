@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.TagFilterRuleTagAssociation" table="tag_filter_rule_tag_association" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<many-to-one name="tag" column="tag_id" class="org.linagora.linshare.core.domain.entities.Tag" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<many-to-one name="tagEnumValue" column="enum_value_id" class="org.linagora.linshare.core.domain.entities.TagEnumValue" not-null="false" lazy="no-proxy">
+		</many-to-one>
+	</class>
+</hibernate-mapping>

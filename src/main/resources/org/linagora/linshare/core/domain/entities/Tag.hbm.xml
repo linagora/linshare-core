@@ -17,12 +17,6 @@
 			<column name="visible" default="true"/>
 		</property>
 		<!-- 
-		<set name="entryAssociation" lazy="true" cascade="save-update,lock" inverse="true">
-			<key column="tag_id" not-null="true"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.EntryTagAssociation"/>
-		</set>
-		 -->
-		<!-- 
 		<set name="view_tag_list" lazy="true" cascade="save-update,lock" inverse="true">
 			<key column="tagid" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.ViewTagList"/>

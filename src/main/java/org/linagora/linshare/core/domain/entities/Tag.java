@@ -45,17 +45,12 @@ public class Tag {
 		this.system = false;
 	}
 	
-	
 	public void setId(Long value) {
 		this.id = value;
 	}
 	
 	public Long getId() {
 		return id;
-	}
-	
-	public Long getORMID() {
-		return getId();
 	}
 	
 	public void setName(String value) {
