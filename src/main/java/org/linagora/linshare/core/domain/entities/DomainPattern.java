@@ -22,7 +22,8 @@ public class DomainPattern {
     private Boolean system;
     
     
-    private java.util.Set<LdapAttribute> attributes = new java.util.HashSet<LdapAttribute>();
+//    private java.util.Set<LdapAttribute> attributes = new java.util.HashSet<LdapAttribute>();
+    private java.util.Map<String,LdapAttribute> attributes = new java.util.HashMap<String,LdapAttribute>();
 	
 	protected DomainPattern() {
 		this.identifier = null;
@@ -149,17 +150,19 @@ public class DomainPattern {
 		return "DomainPattern : " + identifier;
 	}
 
-	public java.util.Set<LdapAttribute> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(java.util.Set<LdapAttribute> attributes) {
-		this.attributes = attributes;
-	}
-
 
 	public String getAutoCompleteCommand() {
 		return autoCompleteCommand;
+	}
+
+
+	public java.util.Map<String, LdapAttribute> getAttributes() {
+		return attributes;
+	}
+
+
+	public void setAttributes(java.util.Map<String, LdapAttribute> attributes) {
+		this.attributes = attributes;
 	}
 
 

@@ -20,13 +20,19 @@
 */
 package org.linagora.linshare.repository.hibernate;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPatternRepository;
@@ -34,12 +40,12 @@ import org.linagora.linshare.core.repository.LDAPConnectionRepository;
 import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations={"classpath:springContext-test.xml", 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
-public class UserProviderRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_LDAP_DE_TEST3";
@@ -86,6 +92,37 @@ public class UserProviderRepositoryImplTest extends AbstractJUnit4SpringContextT
 		logger.debug("End tearDown");
 	}
 	
+	@Test
+	public void toto() throws BusinessException {
+		DomainPattern p = new DomainPattern("identifierP2", "blabla", "getUserCommand", "getAllDomainUsersCommand", "authCommand", "searchUserCommand", "mail","firstname","lastname", "firstname.lastname");
+		Map<String, LdapAttribute> a = new HashMap<String, LdapAttribute>();
+		a.put("ldapUid", new LdapAttribute("ldapUid" , "uid"));
+		a.put("toto", new LdapAttribute("ldapUid" , "uid"));
+		p.setAttributes(a);
+		
+		domainPatternRepository.create(p);
+		
+		DomainPattern aa = domainPatternRepository.findById("identifierP2");
+		logger.debug("aa size : " + aa.getAttributes().size());
+		Assert.assertEquals(2, aa.getAttributes().size());
+
+		
+		aa.getAttributes().put("nom", new LdapAttribute("nom" , "sn"));
+		domainPatternRepository.update(aa);
+		
+		aa = domainPatternRepository.findById("identifierP2");
+		logger.debug("aa size : " + aa.getAttributes().size());
+		Assert.assertEquals(3, aa.getAttributes().size());
+
+		LdapAttribute ldapAttribute = aa.getAttributes().get("ldapUid");
+		
+		logger.debug("ldapUid field: " + ldapAttribute.getField());
+		logger.debug("ldapUid attribute : " + ldapAttribute.getAttribute());
+		Assert.assertEquals("ldapUid", ldapAttribute.getField());
+		Assert.assertEquals("uid", ldapAttribute.getAttribute());
+	}
+	
+	@Ignore
 	@Test
 	public void testCreateLdapUserProvider() throws BusinessException{
 		logger.debug("Begin testCreateLdapUserProvider");

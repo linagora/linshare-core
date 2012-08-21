@@ -5,6 +5,14 @@ public class LdapAttribute {
 	public LdapAttribute() {
 	}
 	
+	public LdapAttribute(String name, String attribute) {
+		this.field = name;
+		this.attribute = attribute;
+		sync =false;
+		system = true;
+		enable =true;
+	}
+	
 	private Long id;
 	
 	private String field;
@@ -17,16 +25,12 @@ public class LdapAttribute {
 	
 	private Boolean enable;
 	
-	private void setId(Long value) {
+	public void setId(Long value) {
 		this.id = value;
 	}
 	
 	public Long getId() {
 		return id;
-	}
-	
-	public Long getORMID() {
-		return getId();
 	}
 	
 	public void setField(String value) {

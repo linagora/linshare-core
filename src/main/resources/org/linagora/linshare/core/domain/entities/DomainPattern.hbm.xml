@@ -16,9 +16,10 @@
     <property access="field" column="USER_FIRSTNAME" name="userFirstName"/>
     <property access="field" column="USER_LASTNAME" name="userLastName"/>
     <property access="field" column="USER_UID" name="ldapUid"/>
-    <set name="attributes" lazy="true" cascade="save-update,lock" inverse="false">
+    <map name="attributes" lazy="true" cascade="all" inverse="false">
 			<key column="domain_pattern_id" not-null="false"/>
+			<map-key  column="field" type="string"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.LdapAttribute"/>
-	</set>
+	</map>
   </class>
 </hibernate-mapping>
