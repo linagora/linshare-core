@@ -91,7 +91,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 @Import(library={"Index.js"})
 public class Index {
 
-	public final static Logger Logger=LoggerFactory.getLogger(Index.class);
+	public final static Logger Logger = LoggerFactory.getLogger(Index.class);
 
     @SessionState
     @Property
@@ -185,7 +185,6 @@ public class Index {
 	 ************************************************************ */
 
 
-	@SuppressWarnings("unused")
 	@SetupRender
 	private void initList(){
 		if (!shareSessionObjectsExists) {
@@ -203,7 +202,6 @@ public class Index {
 		
 	}
 	
-	@SuppressWarnings("unused")
 	@CleanupRender
 	private void initFlag(){
 		shareSessionObjects.setMessages(new ArrayList<String>());

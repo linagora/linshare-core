@@ -33,13 +33,13 @@ Optional parameter :
         <div id="${documentId}" class="${documentLayoutClass}">
 
             <div id="hd">
-            	<t:delegate to="header" />
+                <t:delegate to="header" />
             </div>
 
-       		<t:linkit.Comment>If we have a side bar (meaning left or right parameter are given)</t:linkit.Comment>
-       		<t:if t:test="sideEnabled" >
+            <t:linkit.Comment>If we have a side bar (meaning left or right parameter are given)</t:linkit.Comment>
+            <t:if t:test="sideEnabled" >
                 <div id="bd">
-                	<t:if t:test="prop:menuBarEnable">
+                    <t:if t:test="prop:menuBarEnable">
                         <t:delegate to="menuBar" />
 					</t:if>
                     <div id="yui-main">
@@ -50,17 +50,17 @@ Optional parameter :
                                 </div>
                             </div>
                         </div>
-           			</div>
-           			<t:linkit.Comment>Given the given block, we delegate either to right or left</t:linkit.Comment>
+                    </div>
+                    <t:linkit.Comment>Given the given block, we delegate either to right or left</t:linkit.Comment>
                     <t:if t:test="leftEnable" >
-                    	<div class="yui-b"><t:delegate to="left" /></div>
+                        <div class="yui-b"><t:delegate to="left" /></div>
                     </t:if>
                     <t:if t:test="rightEnable" >
-                    	<div class="yui-b sidebaryui"><t:delegate to="right" /></div>
+                        <div class="yui-b sidebaryui"><t:delegate to="right" /></div>
                     </t:if>
                 </div>
             </t:if>
-            
+
             <t:linkit.Comment>If we don't have to delegate anything</t:linkit.Comment>
             <t:if t:test="sideEnabled" negate="true">
                 <div id="bd">

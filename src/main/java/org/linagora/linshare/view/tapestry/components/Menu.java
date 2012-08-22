@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 public class Menu implements ClientElement{
 
 	private static Logger logger = LoggerFactory.getLogger(Menu.class);
-	
+
 	/**
 	 * Define if the style of the menu entries can change.
 	 * When this value is "true" two cases. 
@@ -66,7 +66,7 @@ public class Menu implements ClientElement{
 	 */
 	@Parameter(value="false",defaultPrefix=BindingConstants.LITERAL)
 	private Boolean alternateStyle;
-	
+
 	/**
 	 * The title of the menu.
 	 * this parameter is required.
@@ -75,7 +75,7 @@ public class Menu implements ClientElement{
 	@Parameter(required=true,defaultPrefix = BindingConstants.LITERAL)
 	@Property
 	private String title;
-	
+
 	/**
 	 * The current highlight we want to have
 	 */
@@ -84,52 +84,49 @@ public class Menu implements ClientElement{
 
 	@Property
 	private MenuEntry object;
-	
+
 	@SuppressWarnings("unused")
 	@Inject
 	@Property
 	private Request request;
-	
+
 	@Environmental
     private JavaScriptSupport renderSupport;
-	
+
 	@Inject
 	private ComponentResources componentResources;
-	
+
 	@Property
 	private boolean image=false;
-	
+
 	@SuppressWarnings("unused")
 	@Property
 	private boolean label=false;
-	
+
 	@SuppressWarnings("unused")
 	@Property
 	private boolean target=false;
 
 	@Property
 	private boolean highlight=false;
-	
+
 	@Property
 	private ArrayList<MenuEntry> listMenuEntry = new ArrayList<MenuEntry>(); ;
-	
+
 	private Integer cpt = 0;
-	
+
 	@SetupRender
-	public void initList(){	
+	public void initList() {
 	}
 
 	public String getClientId() {
-		
 		return renderSupport.allocateClientId(componentResources);
 	}
-	
+
 	public String getStyleValue(){
-		
-		if ((highlight)&& (currentHighlight!=null) &&(currentHighlight.equals(object.getHighlight()))) {
+		if ((highlight) && (currentHighlight!=null) &&(currentHighlight.equals(object.getHighlight()))) {
 			return "highlight";
 		}
-		
 		return (!alternateStyle || object.getId()%2==0)?"0":"1";
 	}
 

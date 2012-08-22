@@ -12,7 +12,7 @@
     <property access="field" column="search_user_command" name="searchUserCommand" not-null="true"/>
     <property access="field" column="auto_complete_command" name="autoCompleteCommand" not-null="true"/>
     <property access="field" column="system" name="system"/>
-    <map name="attributes" lazy="true" cascade="all" inverse="false">
+    <map name="attributes" lazy="false" cascade="all" inverse="false">
         <key column="domain_pattern_id" not-null="false"/>
         <map-key  column="field" type="string"/>
         <one-to-many class="org.linagora.linshare.core.domain.entities.LdapAttribute"/>

@@ -241,6 +241,7 @@ public class MyBorderLayout {
 		MenuEntry homeMenu;
 		MenuEntry fileMenu;
 		MenuEntry userMenu;
+		MenuEntry threadMenu;
 		MenuEntry groupMenu;
 		MenuEntry adminMenu;
 		MenuEntry domainMenu;
@@ -255,9 +256,12 @@ public class MyBorderLayout {
 			homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
 			fileMenu = new MenuEntry(response.encodeURL("files/index"),messages.get("components.myborderlayout.file.title"),null,null,"files");
 		}
-				
+
 		// Menu : User
-		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
+		userMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
+	
+		// Menu : Thread
+		threadMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
 		
 		// Menu : Groups
 		groupMenu = new MenuEntry(response.encodeURL("groups/index"),messages.get("components.myborderlayout.group.title"),null,null,"groups");
@@ -280,37 +284,54 @@ public class MyBorderLayout {
 
 		
 		// home files user groups administration domains audit help
-		if(userVoExists){
+		if (userVoExists) {
 			admin=(userVo.getRole().equals(Role.ADMIN));
 			superadmin=(userVo.getRole().equals(Role.SUPERADMIN));
 			user=(userVo.getRole().equals(Role.SIMPLE));
 			// just home and help page
 			userExt=(userVo.isGuest() && !userVo.isUpload());
-		}else{
+		} else {
 			admin=false;
 			superadmin=false;
 			user=false;
 			userExt=false;
 		}
 		
-		if(userVoExists && !userExt){
-			if(!superadmin) {
+		if(userVoExists && !userExt) {
+			if (!superadmin) {
 				menu.addMenuEntry(homeMenu);
 				menu.addMenuEntry(fileMenu);
 			}
-			if(showUserTab())					menu.addMenuEntry(userMenu);
-			
-			if(superadmin||admin) 				menu.addMenuEntry(adminMenu);
-			if(superadmin) 						menu.addMenuEntry(domainMenu);
-			
-			if(showAuditTab())					menu.addMenuEntry(auditMenu);
-			if(showHelpTab())					menu.addMenuEntry(helpMenu);
+			if (showUserTab())
+				menu.addMenuEntry(userMenu);
+			if (showThreadTab())
+				menu.addMenuEntry(threadMenu);
+			if (superadmin || admin)
+				menu.addMenuEntry(adminMenu);
+			if (superadmin)
+				menu.addMenuEntry(domainMenu);			
+			if (showAuditTab())
+				menu.addMenuEntry(auditMenu);
+			if (showHelpTab())
+				menu.addMenuEntry(helpMenu);
 		} else {
 			menu.addMenuEntry(homeMenu);
-			if(showHelpTab())					menu.addMenuEntry(helpMenu);
+			if (showHelpTab())
+				menu.addMenuEntry(helpMenu);
 		}
 	}
 	
+	boolean showThreadTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			if(!superadmin) {
+				// TODO :
+				// return functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
+				return true;
+			}
+		}
+		return false;
+	}
+
 	boolean showUserTab() {
 		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
 			if(superadmin) {

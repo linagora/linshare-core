@@ -36,7 +36,7 @@ public class MenuEntry {
 		this.image = image;
 		this.target = target;
 		this.highlight = highlight;
-		this.id=id;
+		this.id = id;
 	}
 	
 	public MenuEntry( String link,String label, String image,String target, String highlight) {
