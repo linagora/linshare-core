@@ -119,28 +119,5 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	@Test
-	public void testCreateShareEntry() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		DocumentEntry doc = new DocumentEntry(user, "name", "comment", document);
-		documentEntryRepository.create(doc);
-		logger.debug("documentEntry id : " + doc.getUuid());
-		
-//		ShareEntry share = new ShareEntry(user, "my share", "comment", user, doc);
-//		documentEntryRepository.create(share);
-//		logger.debug("shareEntry id : " + share.getUuid());
-//		
-//		documentEntryRepository.delete(share);
-		documentEntryRepository.delete(doc);
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
 
-	@Test
-	public void testCreateAnonymousShareEntry() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-//		Assert.assertTrue(false);
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-
-	
 }

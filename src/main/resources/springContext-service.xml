@@ -133,6 +133,7 @@
 	</bean>
 
 	<bean name="enciphermentService" class="org.linagora.linshare.core.service.impl.EnciphermentServiceAesCryptImpl">
+		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg value="${linshare.encipherment.tmp.dir}" />

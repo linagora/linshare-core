@@ -373,11 +373,12 @@ public class ShareFacadeImpl implements ShareFacade {
 		User user = userRepository.findByLsUid(currentUser.getLogin());
 		User owner = userRepository.findByLsUid(ownerVo.getLogin());
 		
-		Document doc = documentRepository.findByUuid(sharedDocument.getIdentifier());
-		List<Document> docList = new ArrayList<Document>();
-		docList.add(doc);
+		ShareEntry shareEntry = shareEntryService.findByUuid(user, sharedDocument.getIdentifier());
 		
-		notifierService.sendAllNotifications(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(owner, mailContainer, docList, user, owner));
+		List<String> docNames = new ArrayList<String>();
+		docNames.add(shareEntry.getDocumentEntry().getName());
+		
+		notifierService.sendAllNotifications(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(owner, mailContainer, docNames, user, owner));
     }
     
 	

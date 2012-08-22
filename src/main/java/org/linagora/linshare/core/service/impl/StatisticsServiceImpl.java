@@ -45,6 +45,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	private final LogEntryRepository logEntryRepository;
 	  Locale locale = Locale.getDefault();
 
+
 	public StatisticsServiceImpl(UserRepository<User> userRepository,
 			DocumentRepository documentRepository,
 			LogEntryRepository logEntryRepository) {
@@ -54,217 +55,354 @@ public class StatisticsServiceImpl implements StatisticsService {
 		this.logEntryRepository = logEntryRepository;
 	}
 
-	public long getDownloadVolume(String minDate, String maxDate) throws Exception {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
-		
-		Date dateMin = dateFormat.parse(minDate);
-		Calendar calendarMin = new GregorianCalendar();
-		calendarMin.setTime(dateMin);
 
-		Date dateMax = dateFormat.parse(maxDate);
-		Calendar calendarMax = new GregorianCalendar();
-		calendarMax.setTime(dateMax);
-
-		return getDownloadVolume(calendarMin, calendarMax);
-	}
-
-	public long getUploadVolume(String minDate, String maxDate) throws Exception {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
-		
-		Date dateMin = dateFormat.parse(minDate);
-		Calendar calendarMin = new GregorianCalendar();
-		calendarMin.setTime(dateMin);
-		
-		Date dateMax = dateFormat.parse(maxDate);
-		Calendar calendarMax = new GregorianCalendar();
-		calendarMax.setTime(dateMax);
-		
-		return getUploadVolume(calendarMin, calendarMax);
-	}
-	
-	public long getDownloadVolume(Calendar minDate, Calendar maxDate) {
-		long volume = 0;
-		LogCriteriaBean logCriteria = new LogCriteriaBean();
-		logCriteria.setAfterDate(maxDate);
-		logCriteria.setBeforeDate(minDate);
-		
-		List<LogEntry> logs = logEntryRepository.findByCriteria(logCriteria, null);
-		
-		for (LogEntry logEntry : logs) {
-			LogAction action = logEntry.getLogAction();
-			if (action.equals(LogAction.ANONYMOUS_SHARE_DOWNLOAD)
-					|| action.equals(LogAction.SHARE_DOWNLOAD)) {
-				FileLogEntry fileLogEntry = (FileLogEntry)logEntry;
-				Long fileSize = fileLogEntry.getFileSize();
-				volume+=fileSize.longValue();
-			}
-		}
-		return volume;
-	}
-
-	public long getUploadVolume(Calendar minDate, Calendar maxDate) {
-		long volume = 0;
-		LogCriteriaBean logCriteria = new LogCriteriaBean();
-		logCriteria.setAfterDate(maxDate);
-		logCriteria.setBeforeDate(minDate);
-		
-		List<LogEntry> logs = logEntryRepository.findByCriteria(logCriteria, null);
-		
-		for (LogEntry logEntry : logs) {
-			LogAction action = logEntry.getLogAction();
-			if (action.equals(LogAction.FILE_UPLOAD)) {
-				FileLogEntry fileLogEntry = (FileLogEntry)logEntry;
-				Long fileSize = fileLogEntry.getFileSize();
-				volume+=fileSize.longValue();
-			}
-		}
-		return volume;
-	}
-
-	public int getNbCipheredFiles(long minSize, long maxSize) {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (document.getEncrypted() && document.getSize() >= minSize && document.getSize() <= maxSize) {
-				count++;
-			}
-		}
-		return count;
-	}
-
-	public int getNbExternalUser() {
-		List<User> allUsers = userRepository.findAll();
-		int count=0;
-		
-		for (User user : allUsers) {
-			if (user.getAccountType().equals(AccountType.GUEST)) {
-				count++;
-			}
-		}
-		return count;
-	}
-
-	public int getNbFiles(long minSize, long maxSize) {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (document.getSize() >= minSize && document.getSize() <= maxSize) {
-				count++;
-			}
-		}
-		return count;
-	}
-
+	@Override
 	public int getNbInternalUser() {
-		List<User> allUsers = userRepository.findAll();
-		int count=0;
-		
-		for (User user : allUsers) {
-			if (user.getAccountType().equals(AccountType.INTERNAL)) {
-				count++;
-			}
-		}
-		return count;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
-	public int getNbNotCipheredFiles(long minSize, long maxSize) {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (!document.getEncrypted() && document.getSize() >= minSize && document.getSize() <= maxSize) {
-				count++;
-			}
-		}
-		return count;
+
+	@Override
+	public int getNbExternalUser() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
-	public int getNbNotSharedFiles(long minSize, long maxSize) {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (document.getSize() >= minSize && document.getSize() <= maxSize && !document.getShared()) {
-				count++;
-			}
-		}
-		
-		return count;
-	}
 
-	public int getNbSharedFiles(long minSize, long maxSize) {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (document.getSize() >= minSize && document.getSize() <= maxSize && document.getShared()) {
-				count++;
-			}
-		}
-		
-		return count;
-	}
-
+	@Override
 	public int getNbUser() {
-		List<User> allUsers = userRepository.findAll();
-		return allUsers.size();
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
-	public int getNbCipheredFiles() {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (document.getEncrypted()) {
-				count++;
-			}
-		}
-		return count;
+
+	@Override
+	public int getNbFiles(long minSize, long maxSize) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
+
+	@Override
+	public int getNbSharedFiles(long minSize, long maxSize) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int getNbNotSharedFiles(long minSize, long maxSize) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int getNbCipheredFiles(long minSize, long maxSize) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int getNbNotCipheredFiles(long minSize, long maxSize) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
 	public int getNbFiles() {
-		List<Document> allDocs = documentRepository.findAll();
-		return allDocs.size();
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
-	public int getNbNotCipheredFiles() {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (!document.getEncrypted()) {
-				count++;
-			}
-		}
-		return count;
-	}
 
-	public int getNbNotSharedFiles() {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (!document.getShared()) {
-				count++;
-			}
-		}
-		
-		return count;
-	}
-
+	@Override
 	public int getNbSharedFiles() {
-		List<Document> allDocs = documentRepository.findAll();
-		int count = 0;
-		
-		for (Document document : allDocs) {
-			if (document.getShared()) {
-				count++;
-			}
-		}
-		
-		return count;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
+
+	@Override
+	public int getNbNotSharedFiles() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int getNbCipheredFiles() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int getNbNotCipheredFiles() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public long getUploadVolume(Calendar minDate, Calendar maxDate) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public long getDownloadVolume(Calendar minDate, Calendar maxDate) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public long getUploadVolume(String minDate, String maxDate) throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public long getDownloadVolume(String minDate, String maxDate) throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+//	@Override
+//	public long getDownloadVolume(String minDate, String maxDate) throws Exception {
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+//		
+//		Date dateMin = dateFormat.parse(minDate);
+//		Calendar calendarMin = new GregorianCalendar();
+//		calendarMin.setTime(dateMin);
+//
+//		Date dateMax = dateFormat.parse(maxDate);
+//		Calendar calendarMax = new GregorianCalendar();
+//		calendarMax.setTime(dateMax);
+//
+//		return getDownloadVolume(calendarMin, calendarMax);
+//	}
+//
+//	@Override
+//	public long getUploadVolume(String minDate, String maxDate) throws Exception {
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+//		
+//		Date dateMin = dateFormat.parse(minDate);
+//		Calendar calendarMin = new GregorianCalendar();
+//		calendarMin.setTime(dateMin);
+//		
+//		Date dateMax = dateFormat.parse(maxDate);
+//		Calendar calendarMax = new GregorianCalendar();
+//		calendarMax.setTime(dateMax);
+//		
+//		return getUploadVolume(calendarMin, calendarMax);
+//	}
+//	
+//	@Override
+//	public long getDownloadVolume(Calendar minDate, Calendar maxDate) {
+//		long volume = 0;
+//		LogCriteriaBean logCriteria = new LogCriteriaBean();
+//		logCriteria.setAfterDate(maxDate);
+//		logCriteria.setBeforeDate(minDate);
+//		
+//		List<LogEntry> logs = logEntryRepository.findByCriteria(logCriteria, null);
+//		
+//		for (LogEntry logEntry : logs) {
+//			LogAction action = logEntry.getLogAction();
+//			if (action.equals(LogAction.ANONYMOUS_SHARE_DOWNLOAD)
+//					|| action.equals(LogAction.SHARE_DOWNLOAD)) {
+//				FileLogEntry fileLogEntry = (FileLogEntry)logEntry;
+//				Long fileSize = fileLogEntry.getFileSize();
+//				volume+=fileSize.longValue();
+//			}
+//		}
+//		return volume;
+//	}
+//
+//	@Override
+//	public long getUploadVolume(Calendar minDate, Calendar maxDate) {
+//		long volume = 0;
+//		LogCriteriaBean logCriteria = new LogCriteriaBean();
+//		logCriteria.setAfterDate(maxDate);
+//		logCriteria.setBeforeDate(minDate);
+//		
+//		List<LogEntry> logs = logEntryRepository.findByCriteria(logCriteria, null);
+//		
+//		for (LogEntry logEntry : logs) {
+//			LogAction action = logEntry.getLogAction();
+//			if (action.equals(LogAction.FILE_UPLOAD)) {
+//				FileLogEntry fileLogEntry = (FileLogEntry)logEntry;
+//				Long fileSize = fileLogEntry.getFileSize();
+//				volume+=fileSize.longValue();
+//			}
+//		}
+//		return volume;
+//	}
+//
+//	@Override
+//	public int getNbCipheredFiles(long minSize, long maxSize) {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (document.getEncrypted() && document.getSize() >= minSize && document.getSize() <= maxSize) {
+//				count++;
+//			}
+//		}
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbExternalUser() {
+//		List<User> allUsers = userRepository.findAll();
+//		int count=0;
+//		
+//		for (User user : allUsers) {
+//			if (user.getAccountType().equals(AccountType.GUEST)) {
+//				count++;
+//			}
+//		}
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbFiles(long minSize, long maxSize) {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (document.getSize() >= minSize && document.getSize() <= maxSize) {
+//				count++;
+//			}
+//		}
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbInternalUser() {
+//		List<User> allUsers = userRepository.findAll();
+//		int count=0;
+//		
+//		for (User user : allUsers) {
+//			if (user.getAccountType().equals(AccountType.INTERNAL)) {
+//				count++;
+//			}
+//		}
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbNotCipheredFiles(long minSize, long maxSize) {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (!document.getEncrypted() && document.getSize() >= minSize && document.getSize() <= maxSize) {
+//				count++;
+//			}
+//		}
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbNotSharedFiles(long minSize, long maxSize) {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (document.getSize() >= minSize && document.getSize() <= maxSize && !document.getShared()) {
+//				count++;
+//			}
+//		}
+//		
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbSharedFiles(long minSize, long maxSize) {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (document.getSize() >= minSize && document.getSize() <= maxSize && document.getShared()) {
+//				count++;
+//			}
+//		}
+//		
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbUser() {
+//		List<User> allUsers = userRepository.findAll();
+//		return allUsers.size();
+//	}
+//
+//	@Override
+//	public int getNbCipheredFiles() {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (document.getEncrypted()) {
+//				count++;
+//			}
+//		}
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbFiles() {
+//		List<Document> allDocs = documentRepository.findAll();
+//		return allDocs.size();
+//	}
+//
+//	@Override
+//	public int getNbNotCipheredFiles() {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (!document.getEncrypted()) {
+//				count++;
+//			}
+//		}
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbNotSharedFiles() {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (!document.getShared()) {
+//				count++;
+//			}
+//		}
+//		
+//		return count;
+//	}
+//
+//	@Override
+//	public int getNbSharedFiles() {
+//		List<Document> allDocs = documentRepository.findAll();
+//		int count = 0;
+//		
+//		for (Document document : allDocs) {
+//			if (document.getShared()) {
+//				count++;
+//			}
+//		}
+//		
+//		return count;
+//	}
+//
 }

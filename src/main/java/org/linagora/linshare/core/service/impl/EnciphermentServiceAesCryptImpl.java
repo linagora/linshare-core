@@ -29,8 +29,10 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -53,13 +55,16 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 	// TODO to be removed 
 	private DocumentService documentService;
 	
+	private final DocumentEntryBusinessService documentEntryBusinessService;
+	
     private final LogEntryService logEntryService;  
 	private final String workingDir;
 	
 	private static Logger logger = LoggerFactory.getLogger(EnciphermentServiceAesCryptImpl.class);
 	
 	
-	public EnciphermentServiceAesCryptImpl(UserService userService, LogEntryService logEntryService,String workingDir) {
+	public EnciphermentServiceAesCryptImpl(DocumentEntryBusinessService documentEntryBusinessService, UserService userService, LogEntryService logEntryService,String workingDir) {
+		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.userService =  userService;
 		this.logEntryService = logEntryService;
 		this.workingDir = workingDir; //linshare.encipherment.tmp.dir
@@ -175,9 +180,9 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 
 
 	public boolean isDocumentEncrypted(DocumentVo doc) {
-		Document docdb = documentService.getDocument(doc.getIdentifier());
+		DocumentEntry docdb = documentEntryBusinessService.findById(doc.getIdentifier());
 		if (docdb==null) return false;
-		if(docdb.getEncrypted()==null) return false; else return docdb.getEncrypted();
+		if(docdb.getCiphered()==null) return false; else return docdb.getCiphered();
 	}
 	
 	

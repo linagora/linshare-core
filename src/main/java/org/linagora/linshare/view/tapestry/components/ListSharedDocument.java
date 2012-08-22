@@ -263,6 +263,7 @@ public class ListSharedDocument {
 	 * The action declenched when the user click on the download link on the name of the file. 
 	 */
 	public StreamResponse onActionFromDownload(String uuid) throws BusinessException{
+		logger.debug("onActionFromDownload");
 		// when user has been logged out
 		if (componentdocuments == null) {
 			return null;
@@ -330,6 +331,7 @@ public class ListSharedDocument {
 	}
 	
     public void onActionFromCopy(String docIdentifier) {
+    	logger.debug("onActionFromCopy");
         ShareDocumentVo shareDocumentVo = searchDocumentVoByUUid(componentdocuments, docIdentifier);
         boolean copyDone = false;
         boolean alreadyDownloaded = shareDocumentVo.getDownloaded();
@@ -473,6 +475,7 @@ public class ListSharedDocument {
 
     
 	public void copyFromListDocument(List<ShareDocumentVo> shares) {
+		logger.debug("copyFromListDocument");
 		 
 		for(ShareDocumentVo shareDocumentVo:shares){
 	        boolean copyDone = false;

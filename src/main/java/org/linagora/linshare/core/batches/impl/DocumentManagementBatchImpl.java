@@ -22,7 +22,6 @@ package org.linagora.linshare.core.batches.impl;
 
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -30,8 +29,9 @@ import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
@@ -112,57 +112,57 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     	List<Document> documents = documentRepository.findAll();
     	
     	Calendar now = GregorianCalendar.getInstance();
-    	for (Document document : documents) {
-			if (!document.getShared()) {
-				if (document.getDeletionDate() == null) {
-					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(document.getOwner().getDomain());
-			    	
-					if(!fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
-						break;
-					}
-					
-			    	Calendar deletionDate = (Calendar)document.getCreationDate().clone();
-					deletionDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
-					
-					document.setDeletionDate(deletionDate);
-					
-					try {
-						documentRepository.update(document);
-						logger.info("Documents cleaner batch has set a file to be cleaned at "+(new Date(deletionDate.getTimeInMillis())).toString());
-						
-						final long MILISECOND_PER_DAY = 24 * 60 * 60 * 1000;
-						int days = Math.round(Math.abs((deletionDate.getTimeInMillis()- now.getTimeInMillis())/MILISECOND_PER_DAY))+1;
-						sendUpcomingDeletionNotification(document, days);
-					} catch (Exception e) {
-						logger.error("Documents cleaner batch error while updating deletion date : "+e.getMessage());
-						e.printStackTrace();
-					}
-				} else {
-					if (document.getDeletionDate().before(now)) {
-						try {
-//							documentEntryService.deleteFile("system", document.getUuid(), Reason.EXPIRY);
-							documentEntryService.deleteExpiratedDocumentEntry(document.getDocumentEntry().getUuid());
-							logger.info("Documents cleaner batch has removed a file.");
-						} catch (BusinessException e) {
-							logger.error("Documents cleaner batch error when deleting expired file : "+e.getMessage());
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}
+//    	for (Document document : documents) {
+//			if (!document.getShared()) {
+//				if (document.getDeletionDate() == null) {
+//					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(document.getOwner().getDomain());
+//			    	
+//					if(!fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
+//						break;
+//					}
+//					
+//			    	Calendar deletionDate = (Calendar)document.getCreationDate().clone();
+//					deletionDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
+//					
+//					document.setDeletionDate(deletionDate);
+//					
+//					try {
+//						documentRepository.update(document);
+//						logger.info("Documents cleaner batch has set a file to be cleaned at "+(new Date(deletionDate.getTimeInMillis())).toString());
+//						
+//						final long MILISECOND_PER_DAY = 24 * 60 * 60 * 1000;
+//						int days = Math.round(Math.abs((deletionDate.getTimeInMillis()- now.getTimeInMillis())/MILISECOND_PER_DAY))+1;
+//						sendUpcomingDeletionNotification(document, days);
+//					} catch (Exception e) {
+//						logger.error("Documents cleaner batch error while updating deletion date : "+e.getMessage());
+//						e.printStackTrace();
+//					}
+//				} else {
+//					if (document.getDeletionDate().before(now)) {
+//						try {
+////							documentEntryService.deleteFile("system", document.getUuid(), Reason.EXPIRY);
+//							documentEntryService.deleteExpiratedDocumentEntry(document.getDocumentEntry().getUuid());
+//							logger.info("Documents cleaner batch has removed a file.");
+//						} catch (BusinessException e) {
+//							logger.error("Documents cleaner batch error when deleting expired file : "+e.getMessage());
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//		}
     	
     	logger.info("Documents cleaner batch ended.");
     	
     }
 
-	private void sendUpcomingDeletionNotification(Document document, Integer days) {
+	private void sendUpcomingDeletionNotification(DocumentEntry document, Integer days) {
 		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
 		try {
 						
-			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient(document.getOwner(), mailContainer, document, days));
+			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient((User)document.getEntryOwner(), mailContainer, document, days));
 		} catch (BusinessException e) {
-			logger.error("Can't create the email for "+document.getOwner().getMail());
+			logger.error("Can't create the email for "+ ((User)document.getEntryOwner()).getMail());
 			e.printStackTrace();
 		}
 	}

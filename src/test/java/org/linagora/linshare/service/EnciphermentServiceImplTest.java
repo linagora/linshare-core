@@ -208,30 +208,30 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug("end");
 	}
 	
-	@Test
-	public void testDecryptDocument() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		Calendar expirationDate = Calendar.getInstance();
-		// Add 2 years from the actual date
-		expirationDate.add(Calendar.YEAR, -2);
-
-		DocumentVo doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
-
-		UserVo userVo = new UserVo(jane);
-		
-		Document encryptedDoc = enciphermentService.encryptDocument(doc, userVo, "password");
-		Assert.assertTrue(aDocument.getEncrypted());
-		
-		
-		// Instantiate new DocumentVo encrypted
-		doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
-		
-		Document decryptedDoc = enciphermentService.decryptDocument(doc, userVo, "password");
-		Assert.assertFalse(aDocument.getEncrypted());
-		
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	public void testDecryptDocument() throws BusinessException{
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		
+//		Calendar expirationDate = Calendar.getInstance();
+//		// Add 2 years from the actual date
+//		expirationDate.add(Calendar.YEAR, -2);
+//
+//		DocumentVo doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
+//
+//		UserVo userVo = new UserVo(jane);
+//		
+//		Document encryptedDoc = enciphermentService.encryptDocument(doc, userVo, "password");
+//		Assert.assertTrue(aDocument.getEncrypted());
+//		
+//		
+//		// Instantiate new DocumentVo encrypted
+//		doc = new DocumentVo(aDocument.getUuid(),"doc","",Calendar.getInstance(),expirationDate,"doc",jane.getLogin(),false,false,(long) 10);
+//		
+//		Document decryptedDoc = enciphermentService.decryptDocument(doc, userVo, "password");
+//		Assert.assertFalse(aDocument.getEncrypted());
+//		
+//		
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 	
 }

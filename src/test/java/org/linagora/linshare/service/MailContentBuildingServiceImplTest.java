@@ -190,36 +190,6 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 //		logger.debug(LinShareTestConstants.END_TEST);
 //	}
 
-	@Test
-	public void testBuildMailRegisteredDownload() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		List<Document> docs = new ArrayList<Document>();
-		docs.add(aDocument);
-		
-		String email = john.getMail();
-		User recipient = jane;
-		
-		// buildMailRegisteredDownload
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailRegisteredDownload(actor, mailContainer, docs, john, recipient);
-		testMailGenerate(mailContainerBuild);
-		
-		// buildMailRegisteredDownloadWithRecipient
-		mailContainerBuild =  mailContentBuildingService.buildMailRegisteredDownloadWithRecipient(actor, mailContainer, docs, john, recipient);
-		testMailGenerate(mailContainerBuild);
-		
-		// buildMailRegisteredDownloadWithOneRecipient
-		List<MailContainerWithRecipient> mailContainerBuildList = mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(actor, mailContainer, docs, john, recipient);
-		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
-			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
-			testMailGenerate(mailContainerWithRecipient);
-		}
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
 	
 	@Test
 	public void testBuildMailNewGuest() throws BusinessException{
@@ -307,28 +277,5 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 //
 //		logger.debug(LinShareTestConstants.END_TEST);
 //	}
-	
-	@Test
-	public void testBuildMailSharedDocUpdated() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		
-		User recipient = jane;
-		
-		// buildMailSharedDocUpdated
-		MailContainer mailContainerBuild = mailContentBuildingService.buildMailSharedDocUpdated(actor, mailContainer, john, recipient.getMail(), aDocument, "oldDocName", " "+ aDocument.getSize(), "linShareUrl", "linShareUrlParam");
-		testMailGenerate(mailContainerBuild);
-		
-
-		// buildMailSharedDocUpdatedWithRecipient
-		MailContainerWithRecipient mailContainerWithRecipientBuild = mailContentBuildingService.buildMailSharedDocUpdatedWithRecipient(actor, mailContainer, john, recipient.getMail(), aDocument, "oldDocName", " "+ aDocument.getSize(), "linShareUrl", "linShareUrlParam");
-		testMailGenerate(mailContainerWithRecipientBuild);
-		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(recipient.getMail()));
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
 	
 }

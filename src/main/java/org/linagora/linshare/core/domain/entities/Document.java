@@ -131,14 +131,6 @@ public class Document implements Serializable {
 		return uuid;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	public Set<Signature> getSignatures() {
 		return signatures;
 	}
@@ -212,37 +204,4 @@ public class Document implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-
-	
-	
-	
-	
-	
-	/*
-	 *  TODO : To be removed.
-	 */
-	public User getOwner() {
-		return null;
-	}
-	
-	public Calendar getDeletionDate() {
-		return null;
-	}
-	
-	public void setDeletionDate(Calendar a) {
-	}
-	
-	public String getName() {
-		return null;
-	}
-	
-	public Boolean getShared() {
-		return null;
-	}
-	
-	public Boolean getEncrypted() {
-		return null;
-	}
-	
 }

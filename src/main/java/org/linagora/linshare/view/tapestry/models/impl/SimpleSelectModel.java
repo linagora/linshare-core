@@ -43,7 +43,6 @@ public class SimpleSelectModel<T> extends AbstractSelectModel {
 	}
 
 	public List<OptionGroupModel> getOptionGroups() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
