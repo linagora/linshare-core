@@ -31,21 +31,21 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public class CreateDomainPattern {
-	
+
 	@Property
 	@Persist
 	private DomainPatternVo domainPattern;
-	
+
 	@Inject
 	private AbstractDomainFacade domainFacade;
-	
+
 	@SessionState
     private UserVo loginUser;
-	
+
 	@Persist
 	@Property
 	private boolean inModify;
-	
+
 	public void onActivate(String identifier) throws BusinessException {
 		if (identifier != null) {
 			inModify = true;
@@ -54,22 +54,26 @@ public class CreateDomainPattern {
 			inModify = false;
 			domainPattern = null;
 		}
-		
-	}
-	
+    }
+
 	@SetupRender
 	public void init() {
 		if (domainPattern == null) {
-			domainPattern = new DomainPatternVo();
+			try {
+				domainPattern = domainFacade.findAllSystemDomainPatterns().get(0);
+				domainPattern.setIdentifier(null);
+			} catch (BusinessException e) {
+				domainPattern = null;
+			}
 		}
 	}
-	
+
 	public Object onActionFromCancel() {
 		inModify = false;
 		domainPattern = null;
 		return Index.class;
 	}
-	
+
 	public Object onSubmit() {
 		try {
 			if (inModify) {

@@ -17,6 +17,8 @@ public class DomainPatternVo {
 	private String userFirstName;
 	private String userLastName;
     private String ldapUid;
+
+    @NonVisual
     private String autoCompleteCommand;
 
     @NonVisual
@@ -32,7 +34,7 @@ public class DomainPatternVo {
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
         this.autoCompleteCommand = domainPattern.getAutoCompleteCommand();
         this.system = domainPattern.getSystem();
-        
+
         Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
         this.userMail = attributes.get(DomainPattern.USER_MAIL).getAttribute();
         this.userFirstName = attributes.get(DomainPattern.USER_FIRST_NAME).getAttribute();

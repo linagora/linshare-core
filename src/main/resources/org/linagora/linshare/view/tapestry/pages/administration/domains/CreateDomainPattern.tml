@@ -7,29 +7,29 @@
 	<div id="content">
 
 		<h1>${message:pages.administration.domains.index.createdomainpattern.index}</h1>
-		
-		<t:messagePanel />	
-		
+
+		<t:messagePanel />
+
 		<div id="pageContent">
-		
+
 			<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
-			
+
 			<t:beanEditForm t:object="domainPattern" submitlabel="message:global.button.validate">
-				<p:identifier>                
+				<p:identifier>
 					<t:label for="identifier"/>
-                	<t:textfield t:id="identifier" value="domainPattern.identifier" disabled="inModify"/>
+                    <t:textfield t:id="identifier" value="domainPattern.identifier" disabled="inModify"/>
 				</p:identifier>
-				<p:description>                
+                <p:description>
 					<t:label for="patternDescription"/>
-                	<t:textarea t:id="patternDescription" value="domainPattern.patternDescription" cols="70"/>
+                    <t:textarea t:id="patternDescription" value="domainPattern.patternDescription" cols="70"/>
 				</p:description>
-				<p:authCommand>                
+				<p:authCommand>
 					<t:label for="authCommand"/>
-                	<t:textarea t:id="authCommand" value="domainPattern.authCommand" cols="70"/>
+                    <t:textarea t:id="authCommand" value="domainPattern.authCommand" cols="70"/>
 				</p:authCommand>
-				<p:searchUserCommand>                
+				<p:searchUserCommand>
 					<t:label for="searchUserCommand"/>
-                	<t:textarea t:id="searchUserCommand" value="domainPattern.searchUserCommand" cols="70"/>
+                    <t:textarea t:id="searchUserCommand" value="domainPattern.searchUserCommand" cols="70"/>
 				</p:searchUserCommand>
 			</t:beanEditForm>
 

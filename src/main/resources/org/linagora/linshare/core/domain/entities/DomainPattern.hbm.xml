@@ -8,9 +8,9 @@
     </id>
     <property access="field" column="identifier" index="index_domain_pattern_identifier" name="identifier" not-null="true" unique="true"/>
     <property access="field" column="description" name="description"/>
-    <property access="field" column="auth_command" name="authCommand"/>
-    <property access="field" column="search_user_command" name="searchUserCommand"/>
-    <property access="field" column="auto_complete_command" name="autoCompleteCommand"/>
+    <property access="field" column="auth_command" name="authCommand" not-null="true"/>
+    <property access="field" column="search_user_command" name="searchUserCommand" not-null="true"/>
+    <property access="field" column="auto_complete_command" name="autoCompleteCommand" not-null="true"/>
     <property access="field" column="system" name="system"/>
     <map name="attributes" lazy="true" cascade="all" inverse="false">
         <key column="domain_pattern_id" not-null="false"/>
