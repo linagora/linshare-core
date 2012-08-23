@@ -20,24 +20,26 @@
  */
 package org.linagora.linshare.view.tapestry.pages.thread;
 
+import java.util.List;
+
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.Facade.ThreadFacade;
+import org.linagora.linshare.core.Facade.impl.ThreadFacadeImpl;
+import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.components.FileUploader;
-import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Index {
 
-    public final static Logger Logger = LoggerFactory.getLogger(Index.class);
+	private static final Logger logger = LoggerFactory.getLogger(Index.class);
+	
 
     @SessionState
     @Property
@@ -46,6 +48,9 @@ public class Index {
     @SessionState
     @Property
     private UserVo userVo;
+    
+    @Inject
+    private ThreadFacade threadFacade; 
 
 
     /* ***********************************************************
@@ -59,7 +64,11 @@ public class Index {
 
     @SetupRender
     public void setupRender() {
-        ;
+    	logger.debug("setupRender()");
+    	List<ThreadVo> allThread = threadFacade.getAllThread();
+        for (ThreadVo threadVo : allThread) {
+        	logger.debug("thread name : " + threadVo.getName());
+		}
     }
 
     @AfterRender
@@ -69,7 +78,7 @@ public class Index {
 
     Object onException(Throwable cause) {
         shareSessionObjects.addError(messages.get("global.exception.message"));
-        Logger.error(cause.getMessage());
+        logger.error(cause.getMessage());
         cause.printStackTrace();
         return this;
     }

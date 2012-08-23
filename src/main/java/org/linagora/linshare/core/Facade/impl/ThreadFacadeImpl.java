@@ -1,8 +1,11 @@
 package org.linagora.linshare.core.Facade.impl;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.linagora.linshare.core.Facade.ThreadFacade;
+import org.linagora.linshare.core.business.service.impl.DocumentEntryBusinessServiceImpl;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
@@ -14,8 +17,12 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ThreadFacadeImpl implements ThreadFacade {
+
+	private static final Logger logger = LoggerFactory.getLogger(ThreadFacadeImpl.class);
 
 	private final AccountService accountService;
 	
@@ -26,8 +33,7 @@ public class ThreadFacadeImpl implements ThreadFacade {
 	private final ThreadEntryTransformer threadEntryTransformer;
 	
 	
-	public ThreadFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService,
-			ThreadEntryTransformer threadEntryTransformer) {
+	public ThreadFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, ThreadEntryTransformer threadEntryTransformer) {
 		super();
 		this.accountService = accountService;
 		this.threadService = threadService;
@@ -45,6 +51,17 @@ public class ThreadFacadeImpl implements ThreadFacade {
 		
 		return threadEntryTransformer.disassemble(threadEntry);
 	
+	}
+
+
+	@Override
+	public List<ThreadVo> getAllThread() {
+		List<Thread> all = threadService.findAll();
+		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
+		for (Thread thread : all) {
+			res.add(new ThreadVo(thread));
+		}
+		return res;
 	}
 
 }

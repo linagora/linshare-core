@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.domain.vo;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Thread;
 
 public class ThreadVo extends AccountVo {
 	
@@ -11,6 +12,11 @@ public class ThreadVo extends AccountVo {
 	public ThreadVo(Account account, String name) {
 		super(account);
 		this.name = name;
+	}
+	
+	public ThreadVo(Thread thread) {
+		super(thread);
+		this.name = thread.getName();
 	}
 
 	public String getName() {

@@ -21,6 +21,8 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 
+import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -38,4 +40,9 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
         DetachedCriteria det = DetachedCriteria.forClass(Thread.class).add(Restrictions.eq("lsUuid", entity.getLsUuid()));
         return det;
     }
+
+	@Override
+	public List<Thread> findAll() {
+		return super.findAll();
+	}
 } 

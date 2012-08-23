@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.service.impl;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.service.ThreadService;
@@ -28,5 +30,14 @@ public class ThreadServiceImpl implements ThreadService {
 		}
 		return thread;
 	}
+
+
+	@Override
+	public List<Thread> findAll() {
+		List<Thread> all = threadRepository.findAll();
+		logger.debug("count : " + all.size());
+		return all;
+	}
+	
 
 }

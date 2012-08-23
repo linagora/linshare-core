@@ -36,7 +36,7 @@ INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, 
 
 
 -- Thread
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (51, 6, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_date,current_date, 0, 'fr', true, false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (51, 5, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_date,current_date, 0, 'fr', true, false, 1);
 INSERT INTO thread (account_id, name) VALUES (51, 'cours des comptes');
 
 

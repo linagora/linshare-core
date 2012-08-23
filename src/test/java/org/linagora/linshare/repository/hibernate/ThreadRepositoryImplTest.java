@@ -16,6 +16,7 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
@@ -80,7 +81,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 		threadRepository.create(t);
 	}
 	
-	
+//	@Rollback(false)
 	@Test
 	public void testCreateThreadAndMember() throws BusinessException{
 		
@@ -95,6 +96,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
 		logger.info("thread id :" + t.getId());
 		logger.info("member id :" + m.getId());
 		
+		logger.debug("count : " + threadRepository.findAll().size());
 		
 	}
 	
