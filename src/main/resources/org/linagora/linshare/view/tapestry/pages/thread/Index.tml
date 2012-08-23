@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.thread.title}</h1>
+
+		<t:messagePanel />
+		<t:businessMessagesDisplayer />
+
+
+        <!-- Action bar -->
+
+        <div id="actionBar">
+            <h4>Actions</h4>
+            <ul>
+                <li>
+                <a href="#" class="button" onclick="threadFileUploadWindow.showCenter(true);">
+                    <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/>
+                        ${message:pages.thread.upload.addbutton}</span>
+                </a>
+                </li>
+            </ul>
+        </div><!-- id="actionBar" -->
+
+		<!-- Page content -->
+
+		<div id="pageContent">
+
+			<!-- List : Search result -->
+
+		</div>
+
+	</div><!-- id="content" -->
+
+	<!-- Popups -->
+
+
+	<!-- Widgets -->
+
+
+</t:MyBorderLayout>
