@@ -53,10 +53,10 @@ public class UserVo implements Serializable {
     private String domainIdentifier;
 
     public UserVo(Account user) {
-        this.login = user.getLsUid();
-        this.firstName = user.getLsUid();
+        this.login = user.getLsUuid();
+        this.firstName = user.getLsUuid();
         this.lastName = "";
-        this.mail = user.getLsUid();
+        this.mail = user.getLsUuid();
         this.userType = user.getAccountType();
         this.role = user.getRole();
         this.upload = true;
@@ -69,7 +69,7 @@ public class UserVo implements Serializable {
     
     
     public UserVo(User user) {
-        this.login = user.getLsUid();
+        this.login = user.getLsUuid();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.mail = user.getMail();
@@ -93,7 +93,7 @@ public class UserVo implements Serializable {
     }
 	
     public UserVo(Guest user) {
-    	this.login = user.getLsUid();
+    	this.login = user.getLsUuid();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.mail = user.getMail();

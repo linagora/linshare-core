@@ -26,10 +26,13 @@
 	<bean name="passwordService" class="org.linagora.linshare.core.service.impl.PasswordServiceImpl">
 	</bean>
 
-
 	<bean name="accountService" class="org.linagora.linshare.core.service.impl.AccountServiceImpl">
 		<constructor-arg ref="accountRepository" />
 		<constructor-arg ref="userRepository" />
+	</bean>
+	
+	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">
+		<constructor-arg ref="threadRepository" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">
@@ -61,6 +64,16 @@
 	</bean>
 
 	<bean id="documentEntryService" class="org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl">
+		<constructor-arg ref="documentEntryBusinessService" />
+		<constructor-arg ref="logEntryService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="functionalityService" />
+		<constructor-arg ref="mimeTypeService" />
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="clamavVirusScannerService" />
+	</bean>
+	
+	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
 		<constructor-arg ref="documentEntryBusinessService" />
 		<constructor-arg ref="logEntryService" />
 		<constructor-arg ref="abstractDomainService" />

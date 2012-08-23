@@ -205,7 +205,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 
         List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(user);
 
-		return new org.springframework.security.core.userdetails.User(user.getLsUid(), "", true, true, true, true,
+		return new org.springframework.security.core.userdetails.User(user.getLsUuid(), "", true, true, true, true,
 		                grantedAuthorities.toArray(new GrantedAuthority[0]));
 	}
 	

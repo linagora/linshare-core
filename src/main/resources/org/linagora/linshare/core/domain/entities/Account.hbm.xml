@@ -13,7 +13,7 @@
 			</generator>
 		</id>
 		<discriminator column="account_type" type="integer"/>
-		<property name="lsUid" column="ls_uid" type="string" length="255" not-null="true" lazy="false" unique="true" />
+		<property name="lsUuid" column="ls_uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
 		<property name="creationDate" column="creation_date" type="timestamp" not-null="false" lazy="false"/>
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="false" lazy="false"/>
 		<property access="field" column="ROLE_ID" name="role" not-null="true" type="roleEnumType"/>

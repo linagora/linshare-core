@@ -4,53 +4,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.transformers.Transformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.repository.DocumentEntryRepository;
+import org.linagora.linshare.core.repository.ThreadEntryRepository;
 
 
-public class DocumentEntryTransformer implements Transformer<DocumentEntry, DocumentVo> {
+public class ThreadEntryTransformer implements Transformer<ThreadEntry, DocumentVo> {
 
-	private final DocumentEntryRepository documentEntryRepository;
+	private final ThreadEntryRepository threadEntryRepository;
 
-	public DocumentEntryTransformer(DocumentEntryRepository documentEntryRepository) {
+	public ThreadEntryTransformer(ThreadEntryRepository threadEntryRepository) {
 		super();
-		this.documentEntryRepository = documentEntryRepository;
+		this.threadEntryRepository = threadEntryRepository;
 	}
 
 	@Override
-	public DocumentVo disassemble(DocumentEntry entityObject) {
+	public DocumentVo disassemble(ThreadEntry entityObject) {
 
 		if(null!=entityObject){
 				return new DocumentVo(entityObject.getUuid(),entityObject.getName(), entityObject.getComment() ,entityObject.getCreationDate(),entityObject.getExpirationDate(),
 					entityObject.getDocument().getType(), entityObject.getEntryOwner().getLsUuid(), entityObject.getCiphered(),
-					entityObject.isShared(),entityObject.getDocument().getSize());
+					false,entityObject.getDocument().getSize());
 		}
-			
 		return null;
 	}
 	
 	@Override
-	public List<DocumentVo> disassembleList(List<DocumentEntry> entityObjectList) {
+	public List<DocumentVo> disassembleList(List<ThreadEntry> entityObjectList) {
 		ArrayList<DocumentVo> documents=new ArrayList<DocumentVo>();
-		for(DocumentEntry document : entityObjectList){
+		for(ThreadEntry document : entityObjectList){
 			documents.add(disassemble(document));
 		}
 		return documents;
 	}
 
 	@Override
-	public DocumentEntry assemble(DocumentVo valueObject) {
+	public ThreadEntry assemble(DocumentVo valueObject) {
 		if(null!=valueObject){
-			return (DocumentEntry) documentEntryRepository.findById(valueObject.getIdentifier());
+			return (ThreadEntry) threadEntryRepository.findByUuid(valueObject.getIdentifier());
 		}else{	
 			return null;
 		}
 	}
 
 	@Override
-	public List<DocumentEntry> assembleList(List<DocumentVo> valueObjectList) {
-		ArrayList<DocumentEntry> documents=new ArrayList<DocumentEntry>();
+	public List<ThreadEntry> assembleList(List<DocumentVo> valueObjectList) {
+		ArrayList<ThreadEntry> documents=new ArrayList<ThreadEntry>();
 		for(DocumentVo documentVo :valueObjectList){
 			documents.add(assemble(documentVo));
 		}

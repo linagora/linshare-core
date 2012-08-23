@@ -8,13 +8,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryService {
 	
-	/**
-	 * Compute the MimeType from a file input stream 
-	 * @param theFileStream
-	 * @return
-	 */
-//	public String getMimeType(InputStream theFileStream)  throws BusinessException;
-
 	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, Long size, String fileName) throws BusinessException;
 	
 	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;

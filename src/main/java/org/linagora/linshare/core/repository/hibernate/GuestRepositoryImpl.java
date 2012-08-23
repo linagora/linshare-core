@@ -40,7 +40,7 @@ public class GuestRepositoryImpl extends GenericUserRepositoryImpl<Guest>  imple
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(Guest user) {
-		DetachedCriteria det = DetachedCriteria.forClass(Guest.class).add(Restrictions.eq("lsUid", user.getLsUid()));
+		DetachedCriteria det = DetachedCriteria.forClass(Guest.class).add(Restrictions.eq("lsUuid", user.getLsUuid()));
 		return det;
 	}
 

@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryBusinessService {
@@ -36,5 +37,9 @@ public interface DocumentEntryBusinessService {
 	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException;
 	
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl) throws BusinessException;
+
 	
+	public ThreadEntry createThreadEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
+	
+	public ThreadEntry findThreadEntryById(String docEntryUuid);
 }

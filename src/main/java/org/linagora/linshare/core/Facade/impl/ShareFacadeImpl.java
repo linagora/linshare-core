@@ -164,7 +164,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 		}
 		
-		User owner_ = userRepository.findByLsUid(owner.getLogin());
+		User owner_ = userRepository.findByLsUuid(owner.getLogin());
 		
 		
 		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
@@ -176,7 +176,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
-			User recipient = userRepository.findByLsUid(userVo.getLogin());
+			User recipient = userRepository.findByLsUuid(userVo.getLogin());
 			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
 			
 			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, documentNames, linshareUrl, "", null, isOneDocEncrypted));
@@ -370,8 +370,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		
 		UserVo ownerVo = sharedDocument.getSender();
 
-		User user = userRepository.findByLsUid(currentUser.getLogin());
-		User owner = userRepository.findByLsUid(ownerVo.getLogin());
+		User user = userRepository.findByLsUuid(currentUser.getLogin());
+		User owner = userRepository.findByLsUuid(ownerVo.getLogin());
 		
 		ShareEntry shareEntry = shareEntryService.findByUuid(user, sharedDocument.getIdentifier());
 		

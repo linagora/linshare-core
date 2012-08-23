@@ -51,7 +51,7 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 	@Override
 	public Signature createSignature(Account owner, Document document, File myFile, Long size, String fileName, String mimeType, X509Certificate signerCertificate) throws BusinessException {
 		
-		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUid(), myFile);
+		String uuid = insertIntoJCR(size, fileName, mimeType, owner.getLsUuid(), myFile);
 		
 		Signature entity = null;
 		try {
@@ -67,7 +67,7 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 			
 
 		} catch (BusinessException e) {
-			logger.error("Could not add  " + fileName + " to user " + owner.getLsUid() + ", reason : ", e);
+			logger.error("Could not add  " + fileName + " to user " + owner.getLsUuid() + ", reason : ", e);
 			fileSystemDao.removeFileByUUID(uuid);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_INSERT_SIGNATURE, "couldn't register the signature in the database");
 		}

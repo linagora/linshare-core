@@ -13,7 +13,7 @@ public class TechnicalAccount extends User {
 	
 	@Override
 	public String getAccountReprentation() {
-		return lsUid ;
+		return lsUuid ;
 	}
 
 	public TechnicalAccountPermission getPermission() {

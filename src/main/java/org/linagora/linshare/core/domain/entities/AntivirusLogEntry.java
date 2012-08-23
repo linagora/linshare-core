@@ -20,7 +20,7 @@ public class AntivirusLogEntry extends LogEntry {
 	}
 	
 	public AntivirusLogEntry(Account actor, LogAction logAction, String description) {
-		super(actor.getLsUid(), null, null, actor.getDomain().getIdentifier(), logAction, description);
+		super(actor.getLsUuid(), null, null, actor.getDomain().getIdentifier(), logAction, description);
 	}
 
 }

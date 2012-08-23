@@ -34,6 +34,13 @@
 		<constructor-arg ref="anonymousShareEntryService" />
 		<constructor-arg ref="shareService" />
 	</bean>
+	
+	<bean name="threadFacade" class="org.linagora.linshare.core.Facade.impl.ThreadFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="threadEntryService" />
+		<constructor-arg ref="threadEntryTransformer" />
+	</bean>
 
 	<bean name="searchDocumentFacade" class="org.linagora.linshare.core.Facade.impl.SearchDocumentFacadeImpl">
 		<constructor-arg ref="searchDocumentService" />
@@ -89,6 +96,10 @@
 
 	<bean name="documentEntryTransformer" class="org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer">
 		<constructor-arg ref="documentEntryRepository" />
+	</bean>
+	
+	<bean name="threadEntryTransformer" class="org.linagora.linshare.core.domain.transformers.impl.ThreadEntryTransformer">
+		<constructor-arg ref="threadEntryRepository" />
 	</bean>
 
 	<bean name="signatureTransformer" class="org.linagora.linshare.core.domain.transformers.impl.SignatureTransformer">

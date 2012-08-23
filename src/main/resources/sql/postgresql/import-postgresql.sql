@@ -319,7 +319,7 @@ INSERT INTO ldap_attribute(id, field, attribute, sync, system, enable, domain_pa
 
 
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO account(id, account_type, ls_uid, creation_date, modification_date, role_id, locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', current_date,current_date, 3, 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', current_date,current_date, 3, 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false);
 -- system account : usefull ? it could be ... :(
 -- INSERT INTO user(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest) VALUES (3, 0, 1, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', null, 'false','false');

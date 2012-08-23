@@ -8,7 +8,7 @@ CREATE SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE START 
 CREATE TABLE account (
   id                               int8 NOT NULL, 
   technical_account_permission_id int8, 
-  ls_uid                          varchar(255) NOT NULL, 
+  ls_uuid                          varchar(255) NOT NULL, 
   creation_date                   timestamp(6) NOT NULL, 
   modification_date               timestamp(6) NOT NULL, 
   role_id                         int4 NOT NULL, 
@@ -501,9 +501,9 @@ ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi340520 FOREIGN KEY (view_id)
 ALTER TABLE view_tag ADD CONSTRAINT FKview_tag36011 FOREIGN KEY (view_id) REFERENCES "view" (id);
 ALTER TABLE view_tag ADD CONSTRAINT FKview_tag60432 FOREIGN KEY (tag_id) REFERENCES tag (id);
 CREATE UNIQUE INDEX account_lsuid_index 
-  ON account (ls_uid);
-CREATE UNIQUE INDEX account_ls_uid 
-  ON account (ls_uid);
+  ON account (ls_uuid);
+CREATE UNIQUE INDEX account_ls_uuid 
+  ON account (ls_uuid);
 CREATE INDEX account_account_type 
   ON account (account_type);
 CREATE INDEX allowed_mimetype_index 

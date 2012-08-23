@@ -20,19 +20,13 @@
 */
 package org.linagora.linshare.core.repository;
 
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.Account;
-
-public interface AccountRepository<U extends Account> extends AbstractRepository<U> {
-
+public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry>{
 	
-    U findByLsUuid(String lsUuid);
-    
-    boolean exist(String lsUuid);
-
-	List<U> findByDomain(String domain);
-
-    
-} 
+	 /** Find a ThreadEntry using its uuid.
+     * @param  uuid
+     * @return found ThreadEntry (null if no ThreadEntry found).
+     */
+	public ThreadEntry findByUuid(String uuid);
+}

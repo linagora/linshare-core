@@ -134,7 +134,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			} catch (BusinessException e) {
 				ShareEntry failSharing = new ShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), recipient, documentEntry, expirationDate);
 				returnItems.addSuccessItem(failSharing);
-				logger.error("Could not create the sharing for owner " + sender.getLsUid() + " to user " + recipient.getLsUid() + " of doc " + documentEntry.getUuid(), e);
+				logger.error("Could not create the sharing for owner " + sender.getLsUuid() + " to user " + recipient.getLsUuid() + " of doc " + documentEntry.getUuid(), e);
 			}
 		}
 		return returnItems;

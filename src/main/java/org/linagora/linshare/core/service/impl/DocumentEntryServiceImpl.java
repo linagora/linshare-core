@@ -74,7 +74,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
 		if(mimeFunctionality.getActivationPolicy().getStatus()) {
-			checkFileMimeType(fileName, mimeType, actor);
+			mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
 		}
 		
 		Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
@@ -126,7 +126,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
 		if(mimeFunctionality.getActivationPolicy().getStatus()) {
-			checkFileMimeType(fileName, mimeType, actor);
+			mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
 		}
 		
 		Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
@@ -215,7 +215,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			logEntryService.create(LogEntryService.WARN, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 		} catch (IllegalArgumentException e) {
-			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUid() + ", reason : ", e);
+			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
@@ -239,7 +239,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
 		} catch (IllegalArgumentException e) {
-			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUid() + ", reason : ", e);
+			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
@@ -267,7 +267,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + documentEntry.getName()
-					+ " of user " + actor.getLsUid() + ", reason : ", e);
+					+ " of user " + actor.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
@@ -456,7 +456,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private void checkSpace(long size, String fileName, Account owner) throws BusinessException {
 		// check the user quota
 		if (getAvailableSize(owner) < size) {
-			logger.info("The file  " + fileName + " is too large to fit in " + owner.getLsUid() + " user's space");
+			logger.info("The file  " + fileName + " is too large to fit in " + owner.getLsUuid() + " user's space");
             String[] extras = {fileName};
 			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space", extras);
 		}
@@ -480,40 +480,11 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		if (!checkStatus) {
 			LogEntry logEntry = new AntivirusLogEntry(owner, LogAction.FILE_WITH_VIRUS, fileName);
 			logEntryService.create(LogEntryService.WARN,logEntry);
-			logger.warn(owner.getLsUid() + " tried to upload a file containing virus:" + fileName);
+			logger.warn(owner.getLsUuid() + " tried to upload a file containing virus:" + fileName);
 		    String[] extras = {fileName};
 			throw new BusinessException(BusinessErrorCode.FILE_CONTAINS_VIRUS, "File contains virus", extras);
 		}
 		return checkStatus;
-	}
-	
-	private void checkFileMimeType(String fileName, String mimeType, Account owner) throws BusinessException {
-		// use mimetype filtering
-		if (logger.isDebugEnabled()) {
-			logger.debug("2)check the type mime:" + mimeType);
-		}
-
-		// if we refuse some type of mime type
-		if (mimeType != null) {
-			MimeTypeStatus status = mimeTypeService.giveStatus(mimeType);
-
-			if (status==MimeTypeStatus.DENIED) {
-				if (logger.isDebugEnabled())
-					logger.debug("mimetype not allowed: " + mimeType);
-                String[] extras = {fileName};
-				throw new BusinessException(
-						BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
-						"This kind of file is not allowed: " + mimeType, extras);
-			} else if(status==MimeTypeStatus.WARN){
-				if (logger.isInfoEnabled())
-					logger.info("mimetype warning: " + mimeType + "for user: "+owner.getLsUid());
-			}
-		} else {
-			//type mime is null ?
-            String[] extras = {fileName};
-			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
-                "type mime is empty for this file" + mimeType, extras);
-		}
 	}
 	
 	private void addDocSizeToGlobalUsedQuota(Document docEntity, AbstractDomain domain) throws BusinessException {

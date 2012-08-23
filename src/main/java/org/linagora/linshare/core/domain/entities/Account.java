@@ -10,7 +10,7 @@ public abstract class Account {
 
 	protected long id;
 	
-	protected String lsUid;
+	protected String lsUuid;
 	
 	protected Date creationDate;
 	
@@ -30,7 +30,7 @@ public abstract class Account {
 	
 	protected Account owner;
 	
-	private Set<Entry> entries = new HashSet<Entry>();
+	protected Set<Entry> entries = new HashSet<Entry>();
 	
 	protected Set<ShareEntry> shareEntries = new HashSet<ShareEntry>();
 	
@@ -51,12 +51,12 @@ public abstract class Account {
 		this.id = id;
 	}
 
-	public String getLsUid() {
-		return lsUid;
+	public String getLsUuid() {
+		return lsUuid;
 	}
 
-	public void setLsUid(String lsUid) {
-		this.lsUid = lsUid;
+	public void setLsUuid(String lsUuid) {
+		this.lsUuid = lsUuid;
 	}
 
 	public Account getOwner() {

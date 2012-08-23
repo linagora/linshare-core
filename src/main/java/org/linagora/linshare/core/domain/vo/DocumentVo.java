@@ -110,7 +110,7 @@ public class DocumentVo implements Serializable, Comparable {
 		} else {
 			this.expirationDate = null;
 		}
-		this.ownerLogin = anonymousShareEntry.getEntryOwner().getLsUid();
+		this.ownerLogin = anonymousShareEntry.getEntryOwner().getLsUuid();
 		this.encrypted = anonymousShareEntry.getDocumentEntry().getCiphered();
 		this.shared = anonymousShareEntry.getDocumentEntry().isShared();
 		this.type=anonymousShareEntry.getDocumentEntry().getType();

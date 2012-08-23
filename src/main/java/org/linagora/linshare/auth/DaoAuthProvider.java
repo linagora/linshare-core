@@ -69,7 +69,7 @@ public class DaoAuthProvider implements UserDetailsService {
         org.linagora.linshare.core.domain.entities.Account account = accountService.findByLsUid(username);
         String password = null ;
         if(account != null) {
-        	logger.debug("Account in database found : " + account.getLsUid());
+        	logger.debug("Account in database found : " + account.getLsUuid());
         	password = account.getPassword();
         
         	// If the password field is not set (only Ldap user), we set it to an empty string.
@@ -83,7 +83,7 @@ public class DaoAuthProvider implements UserDetailsService {
 
         List<GrantedAuthority> grantedAuthorities = RoleProvider.getRoles(account);
 
-        return new User(account.getLsUid(), password, true, true, true, true,
+        return new User(account.getLsUuid(), password, true, true, true, true,
             grantedAuthorities.toArray(new GrantedAuthority[0]));
     }
 

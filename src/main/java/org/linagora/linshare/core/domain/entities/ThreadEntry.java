@@ -13,10 +13,10 @@ public class ThreadEntry extends Entry{
 		super();
 	}
 	
-	public ThreadEntry(Document document, Boolean ciphered) {
-		super();
+	public ThreadEntry(Account entryOwner, String name, Document document) {
+		super(entryOwner, name, "");
 		this.document = document;
-		this.ciphered = ciphered;
+		this.ciphered = false;
 	}
 
 	public Document getDocument() {

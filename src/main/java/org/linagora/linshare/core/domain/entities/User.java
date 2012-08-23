@@ -61,7 +61,7 @@ public abstract class User extends Account {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.mail = mail;
-		this.lsUid = null;
+		this.lsUuid = null;
 		this.creationDate = new Date();
 		this.modificationDate = new Date();
 		this.role = Role.SIMPLE;

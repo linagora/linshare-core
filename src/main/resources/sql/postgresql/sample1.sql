@@ -31,12 +31,12 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 
 -- Users
-INSERT INTO account(id, account_type, ls_uid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (50, 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_date,current_date, 0, 'fr', true, false, 3);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (50, 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_date,current_date, 0, 'fr', true, false, 3);
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Bart', 'Simpson', 'bart.simpson@int1.linshare.dev', true, '', false, true);
 
 
 -- Thread
-INSERT INTO account(id, account_type, ls_uid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (51, 6, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_date,current_date, 0, 'fr', true, false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (51, 6, '9806de10-ed0b-11e1-877a-5404a6202d2c', current_date,current_date, 0, 'fr', true, false, 1);
 INSERT INTO thread (account_id, name) VALUES (51, 'cours des comptes');
 
 
@@ -50,7 +50,7 @@ INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALU
 
 INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (3, 50, 'Projets', false, true, true,1);
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (1, 3, 'RATP'); 
-INSERT INTO tag_enum_value (id, tag_id, value) VALUES (2, 3, 'Ministère de lintérieur'); 
+INSERT INTO tag_enum_value (id, tag_id, value) VALUES (2, 3, 'Ministère de l''intérieur'); 
 
 INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (4, 50, 'Phases', false, true, true,1);
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (3, 4, 'Instruction'); 

@@ -53,7 +53,7 @@ public class Guest extends User {
     
 	@Override
 	public String getAccountReprentation() {
-		return this.firstName + " " + this.lastName + "(" + lsUid + ")";
+		return this.firstName + " " + this.lastName + "(" + lsUuid + ")";
 	}
 
 }

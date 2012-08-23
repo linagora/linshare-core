@@ -35,7 +35,7 @@ public class AccountRepositoryImpl extends GenericAccountRepositoryImpl<Account>
 
     @Override
     protected DetachedCriteria getNaturalKeyCriteria(Account account) {
-        DetachedCriteria det = DetachedCriteria.forClass(Account.class).add(Restrictions.eq("lsUid", account.getLsUid()));
+        DetachedCriteria det = DetachedCriteria.forClass(Account.class).add(Restrictions.eq("lsUuid", account.getLsUuid()));
         return det;
     }
 } 

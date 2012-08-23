@@ -38,14 +38,14 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	}
 
 	@Override
-	public U findByLsUid(String lsUid) {
-		 List<U> users = findByCriteria(Restrictions.eq("lsUid", lsUid).ignoreCase());
+	public U findByLsUuid(String lsUuid) {
+		 List<U> users = findByCriteria(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 	        if (users == null || users.isEmpty()) {
 	            return null;
 	        } else if (users.size() == 1) {
 	            return users.get(0);
 	        } else {
-	            throw new IllegalStateException("lsUid must be unique");
+	            throw new IllegalStateException("lsUuid must be unique");
 	        }
 	}
 
@@ -62,9 +62,9 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	
 
 	@Override
-	public boolean exist(String lsUid) {
+	public boolean exist(String lsUuid) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
-		criteria.add(Restrictions.eq("lsUid", lsUid));
+		criteria.add(Restrictions.eq("lsUuid", lsUuid));
 		List<U> accounts = null;
 		accounts = findByCriteria(criteria);
 
@@ -87,7 +87,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	public U create(U entity) throws BusinessException {
 		entity.setCreationDate(new Date());
 		entity.setModificationDate(new Date());
-		entity.setLsUid(UUID.randomUUID().toString());
+		entity.setLsUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
 }
