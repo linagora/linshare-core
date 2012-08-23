@@ -1,6 +1,16 @@
 <t:container
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
+
+    <script type="text/javascript" language="javaScript">
+        function submitShare() {
+            launchUpload('flexUpload');
+            var link = document.getElementById('submitThreadFileUpload');
+            if (link)
+                link.click();
+        }
+    </script>
+
 	<div t:id="threadFileUploadWindow">
 		<div class="confirmPopup">
 
@@ -12,16 +22,6 @@
 			<div class="description"><p>${message:components.quickSharePopup.panelUpload.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelUpload" t:closed="false" t:subject="${message:components.quickSharePopup.panelUpload.subject}">
                 <t:fileUploader divId="literal:flexUpload" showsendbutton="literal:false"/>
-                <t:zone t:id="reloadingZone">
-                    <t:if test="addedDocuments">
-                        <h3>${message:components.quickSharePopup.panelUpload.shareList} :</h3>
-                    </t:if>
-                    <ul>
-                        <t:loop source="addedDocuments" value="documentVo">
-                            <li>${documentVo.fileName}</li>
-                        </t:loop>
-                    </ul>
-                </t:zone>
 			</div>
 			<div class="clear"></div>
 
@@ -32,7 +32,7 @@
 
                 <div class="button">
                         <input name="submitThreadFileUpload" id="submitThreadFileUpload" type="submit" style="display:none"/>
-                        <a id="threadFileUpload_send_link" href="#" class="button" onclick="sendFiles();">
+                        <a id="threadFileUpload_send_link" href="#" class="button" onclick="submitShare();">
                             <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.upload.cap}</span>
                         </a>
                         <t:actionlink t:id="cancelThreadFileUpload" class="button">

@@ -47,9 +47,6 @@ public class Index {
     @Property
     private UserVo userVo;
 
-    @InjectComponent
-    private FileUploader fileUploader;
-
 
     /* ***********************************************************
      *                      Injected services

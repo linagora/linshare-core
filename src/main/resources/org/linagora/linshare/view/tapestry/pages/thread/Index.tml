@@ -38,6 +38,9 @@
 
 	<!-- Popups -->
 
+    <!-- Thread File Upload popup -->
+    <t:threadFileUploadPopup t:eventName="threadFileUploadPopupEvent" />
+
 
 	<!-- Widgets -->
 
