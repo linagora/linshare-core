@@ -25,7 +25,7 @@
 		<subclass name="org.linagora.linshare.core.domain.entities.TagEnum" discriminator-value="1" lazy="false">
 			<property name="notNull" column="not_null" type="boolean" not-null="false" lazy="false"/>
 			<set name="enumValues" lazy="true" cascade="save-update,lock" inverse="false">
-				<key column="tagid" not-null="false"/>
+				<key column="tag_id" not-null="false"/>
 				<one-to-many class="org.linagora.linshare.core.domain.entities.TagEnumValue"/>
 			</set>
 		</subclass>
