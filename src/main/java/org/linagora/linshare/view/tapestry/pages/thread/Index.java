@@ -28,10 +28,11 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.Facade.ThreadFacade;
-import org.linagora.linshare.core.Facade.impl.ThreadFacadeImpl;
+import org.linagora.linshare.core.Facade.ThreadEntryFacade;
+import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class Index {
     private UserVo userVo;
     
     @Inject
-    private ThreadFacade threadFacade; 
+    private ThreadEntryFacade threadEntryFacade; 
 
 
     /* ***********************************************************
@@ -65,9 +66,18 @@ public class Index {
     @SetupRender
     public void setupRender() {
     	logger.debug("setupRender()");
-    	List<ThreadVo> allThread = threadFacade.getAllThread();
+    	List<ThreadVo> allThread = threadEntryFacade.getAllThread();
         for (ThreadVo threadVo : allThread) {
         	logger.debug("thread name : " + threadVo.getName());
+        	try {
+				List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, threadVo);
+				for (ThreadEntryVo threadEntryVo : allThreadEntries) {
+					logger.debug("threadEntryVo name : " + threadEntryVo.getFileName());	
+				}
+				
+			} catch (BusinessException e) {
+				e.printStackTrace();
+			}
 		}
     }
 

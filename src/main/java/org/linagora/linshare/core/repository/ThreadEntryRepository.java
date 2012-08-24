@@ -20,6 +20,9 @@
 */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 
 public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry>{
@@ -29,4 +32,6 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry>{
      * @return found ThreadEntry (null if no ThreadEntry found).
      */
 	public ThreadEntry findByUuid(String uuid);
+	
+	public List<ThreadEntry> findAllThreadEntries(Thread owner);
 }

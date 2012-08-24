@@ -35,7 +35,7 @@
 		<constructor-arg ref="shareService" />
 	</bean>
 	
-	<bean name="threadFacade" class="org.linagora.linshare.core.Facade.impl.ThreadFacadeImpl">
+	<bean name="threadEntryFacade" class="org.linagora.linshare.core.Facade.impl.ThreadEntryFacadeImpl">
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="threadEntryService" />

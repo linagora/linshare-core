@@ -3,9 +3,11 @@ package org.linagora.linshare.core.business.service;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -39,7 +41,9 @@ public interface DocumentEntryBusinessService {
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl) throws BusinessException;
 
 	
-	public ThreadEntry createThreadEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
+	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
 	
 	public ThreadEntry findThreadEntryById(String docEntryUuid);
+	
+	public List<ThreadEntry> findAllThreadEntries(Thread owner);
 }

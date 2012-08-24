@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadEntryRepository;
@@ -69,9 +70,19 @@ public class ThreadEntryRepositoryImpl extends AbstractRepositoryImpl<ThreadEntr
 		return super.create(entity);
 	}
 
+	
 	@Override
 	public ThreadEntry update(ThreadEntry entity) throws BusinessException {
 		entity.setModificationDate(new GregorianCalendar());
 		return super.update(entity);
 	}
+
+	
+	@Override
+	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
+		List<ThreadEntry> entries = findByCriteria(Restrictions.eq("entryOwner", owner));
+        return entries;
+	}
+	
+	
 }

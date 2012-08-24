@@ -39,4 +39,13 @@ public class ThreadEntry extends Entry{
 	public void setCiphered(Boolean ciphered) {
 		this.ciphered = ciphered;
 	}
+	
+	/* usefull getters */
+	public long getSize() {
+		return document.getSize();
+	}
+	
+	public String getType() {
+		return document.getType();
+	}
 }

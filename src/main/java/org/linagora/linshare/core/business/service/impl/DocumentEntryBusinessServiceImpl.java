@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -27,6 +28,7 @@ import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -289,7 +291,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	
 	@Override
-	public ThreadEntry createThreadEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException {
+	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException {
 
 		// add an entry for the file in DB
 		ThreadEntry entity = null;
@@ -318,6 +320,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public ThreadEntry findThreadEntryById(String docEntryUuid) {
 		return (ThreadEntry)threadEntryRepository.findByUuid(docEntryUuid);
+	}
+
+
+	@Override
+	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
+		return threadEntryRepository.findAllThreadEntries(owner);
 	}
 
 

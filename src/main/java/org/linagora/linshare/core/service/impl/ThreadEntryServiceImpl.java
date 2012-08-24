@@ -3,6 +3,7 @@ package org.linagora.linshare.core.service.impl;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -68,6 +69,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		
 		Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
 		if(antivirusFunctionality.getActivationPolicy().getStatus()) {
+			// TODO antivirus check fro thread entries
 //			checkVirus(fileName, actor, stream);
 		}
 
@@ -95,7 +97,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	@Override
 	public ThreadEntry findById(Account actor, Thread thread, String currentDocEntryUuid) throws BusinessException {
 		ThreadEntry entry = documentEntryBusinessService.findThreadEntryById(currentDocEntryUuid);
-		// TODO : check permissions
+		// TODO : check permissions for thread entries
 //		if (!entry.getEntryOwner().equals(actor)) {
 //			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
 //		}
@@ -107,6 +109,15 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	public void deleteThreadEntry(Account actor, Thread thread, String docEntryUuid) throws BusinessException {
 		// TODO Auto-generated method stub
 
+	}
+
+
+
+
+	@Override
+	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException {
+		// TODO : check permissions for thread entries
+		return documentEntryBusinessService.findAllThreadEntries(thread);
 	}
 
 }
