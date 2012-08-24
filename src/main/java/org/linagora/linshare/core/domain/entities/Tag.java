@@ -28,13 +28,13 @@ public class Tag {
 	
 	private Long id;
 	
-	private Account owner;
+	protected Account owner;
 	
-	private String name;
+	protected String name;
 	
-	private Boolean system = false;
+	protected Boolean system = false;
 	
-	private Boolean visible = true;
+	protected Boolean visible = true;
 	
 	public Tag(Account owner, String name) {
 		this.owner = owner;

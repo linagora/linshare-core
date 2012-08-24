@@ -29,6 +29,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.Facade.ThreadEntryFacade;
+import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -62,7 +63,6 @@ public class Index {
     private Messages messages;
 
 
-
     @SetupRender
     public void setupRender() {
     	logger.debug("setupRender()");
@@ -72,7 +72,11 @@ public class Index {
         	try {
 				List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, threadVo);
 				for (ThreadEntryVo threadEntryVo : allThreadEntries) {
-					logger.debug("threadEntryVo name : " + threadEntryVo.getFileName());	
+					logger.debug("threadEntryVo name : " + threadEntryVo.getFileName());
+					List<TagVo> tags = threadEntryVo.getTags();
+					for (TagVo tagVo : tags) {
+						logger.debug("tagVo : " + tagVo.toString());
+					}
 				}
 				
 			} catch (BusinessException e) {

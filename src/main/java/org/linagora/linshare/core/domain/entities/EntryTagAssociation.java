@@ -26,9 +26,9 @@ public class EntryTagAssociation {
 	
 	private Long id;
 	
-	private Entry entries;
+	private Entry entry;
 	
-	private Tag tags;
+	private Tag tag;
 	
 	private TagEnumValue tagEnumValue;
 	
@@ -40,20 +40,20 @@ public class EntryTagAssociation {
 		return id;
 	}
 	
-	public void setEntries(Entry value) {
-		this.entries = value;
+	public void setEntry(Entry value) {
+		this.entry = value;
 	}
 	
-	public Entry getEntries() {
-		return entries;
+	public Entry getEntry() {
+		return entry;
 	}
 	
-	public void setTags(Tag value) {
-		this.tags = value;
+	public void setTag(Tag value) {
+		this.tag = value;
 	}
 	
-	public Tag getTags() {
-		return tags;
+	public Tag getTag() {
+		return tag;
 	}
 	
 	public void setTagEnumValue(TagEnumValue value) {
@@ -63,9 +63,4 @@ public class EntryTagAssociation {
 	public TagEnumValue getTagEnumValue() {
 		return tagEnumValue;
 	}
-	
-	public String toString() {
-		return String.valueOf(getId());
-	}
-	
 }
