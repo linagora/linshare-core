@@ -416,35 +416,35 @@ public class QuickSharePopup{
         addedDocuments = new ArrayList<DocumentVo>();
 	}
     
-	/**
-	 * here we add the file uploaded in the array. It is a good place to check it
-	 * @param aFile
-	 * @throws BusinessException 
-	 */
-    public void onValidateFromFile(UploadedFile aFile)  {  	
-        if (aFile == null) {
-        	// the message will be handled by Tapestry
-        	return;
-        }
-
-//        String mimeType;
-//        try {
-//            mimeType = documentFacade.getMimeType(aFile.getStream(), aFile.getFilePath()); //get mime type with apperture
-//            if(null==mimeType){ //unknown mime type so take Uploaded File declaration
-//                mimeType = aFile.getContentType();
-//            }
-//        } catch (BusinessException e) {
-//            mimeType = aFile.getContentType();
+//	/**
+//	 * here we add the file uploaded in the array. It is a good place to check it
+//	 * @param aFile
+//	 * @throws BusinessException 
+//	 */
+//    public void onValidateFromFile(UploadedFile aFile)  {  	
+//        if (aFile == null) {
+//        	// the message will be handled by Tapestry
+//        	return;
 //        }
-
-        try {
-            DocumentVo doc = documentFacade.insertFile(aFile.getStream(), aFile.getSize(), aFile.getFileName(), userVo);
-            documentsVolist.add(doc);
-            successFiles.add(aFile.getFileName());
-        } catch (BusinessException e) {
-            failFiles.put(aFile.getFileName(),e);
-        }
-    }
+//
+////        String mimeType;
+////        try {
+////            mimeType = documentFacade.getMimeType(aFile.getStream(), aFile.getFilePath()); //get mime type with apperture
+////            if(null==mimeType){ //unknown mime type so take Uploaded File declaration
+////                mimeType = aFile.getContentType();
+////            }
+////        } catch (BusinessException e) {
+////            mimeType = aFile.getContentType();
+////        }
+//
+//        try {
+//            DocumentVo doc = documentFacade.insertFile(aFile.getStream(), aFile.getSize(), aFile.getFileName(), userVo);
+//            documentsVolist.add(doc);
+//            successFiles.add(aFile.getFileName());
+//        } catch (BusinessException e) {
+//            failFiles.put(aFile.getFileName(),e);
+//        }
+//    }
 	
 	
     /**

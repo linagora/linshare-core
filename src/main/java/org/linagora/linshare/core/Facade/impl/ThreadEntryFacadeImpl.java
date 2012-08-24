@@ -45,6 +45,8 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public DocumentVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException {
+		logger.debug("insert file for thread entries");
+		
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		

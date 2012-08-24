@@ -30,6 +30,22 @@ public class AccountVo implements Serializable {
 	protected String locale;
 	
 	protected boolean enable;
+	
+	
+	// constructor just for test
+	public AccountVo(String uuid) {
+		super();
+		this.lsUuid = uuid;
+		this.accountType = null;
+		this.creationDate = null;
+		this.modificationDate = null;
+		this.destroyed = false;
+		this.domainIdentifier = null;
+		this.ownerLsUuid = null;
+		this.role = null;
+		this.locale = null;
+		this.enable = false;
+	}
 
 	public AccountVo(Account account) {
 		super();

@@ -9,6 +9,12 @@ public class ThreadVo extends AccountVo {
 
 	protected final String name;
 	
+	// constructor just for test
+	public ThreadVo(String uuid) {
+		super(uuid);
+		name = "";
+	}
+	
 	public ThreadVo(Account account, String name) {
 		super(account);
 		this.name = name;

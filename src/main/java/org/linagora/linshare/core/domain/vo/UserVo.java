@@ -23,6 +23,7 @@ package org.linagora.linshare.core.domain.vo;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.aspectj.apache.bcel.generic.LSUB;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -52,18 +53,28 @@ public class UserVo implements Serializable {
     private boolean restricted;
     private String domainIdentifier;
 
-    public UserVo(Account user) {
-        this.login = user.getLsUuid();
-        this.firstName = user.getLsUuid();
-        this.lastName = "";
-        this.mail = user.getLsUuid();
-        this.userType = user.getAccountType();
-        this.role = user.getRole();
-        this.upload = true;
-        this.createGuest=false;
-        this.locale = user.getLocale();
-        if (user.getDomain() != null) {
-        	this.domainIdentifier = user.getDomain().getIdentifier();
+    public UserVo(Account account) {
+        this.login = account.getLsUuid();
+        this.userType = account.getAccountType();
+        this.role = account.getRole();
+        this.locale = account.getLocale();
+        
+        if(userType.equals(AccountType.GUEST) || userType.equals(AccountType.INTERNAL) ||userType.equals(AccountType.ROOT)) {
+        	User user = (User)account;
+        	this.firstName = user.getFirstName();
+        	this.lastName = user.getLastName();
+        	this.mail = user.getMail();
+        	this.upload = user.getCanUpload();
+        	this.createGuest= user.getCanCreateGuest();
+        } else {
+        	this.firstName = null;
+        	this.lastName = null;
+        	this.mail = null;
+        	this.upload = false;
+        	this.createGuest=false;
+        }
+        if (account.getDomain() != null) {
+        	this.domainIdentifier = account.getDomain().getIdentifier();
         }
     }
     
@@ -76,8 +87,7 @@ public class UserVo implements Serializable {
         this.userType = user.getAccountType();
         this.role = user.getRole();
         this.upload= user.getCanUpload();
-//        this.createGuest=user.getCanCreateGuest();
-        this.createGuest=false;
+        this.createGuest=user.getCanCreateGuest();
         
         this.locale = user.getLocale();
         if (user instanceof Guest) {
@@ -313,5 +323,4 @@ public class UserVo implements Serializable {
     public void setDomainIdentifier(String domainIdentifier) {
 		this.domainIdentifier = domainIdentifier;
 	}
-
 }

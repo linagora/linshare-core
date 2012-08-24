@@ -33,8 +33,11 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 import org.linagora.linshare.core.Facade.AbstractDomainFacade;
+import org.linagora.linshare.core.Facade.AccountFacade;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -42,6 +45,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 @Import(library = {"LoginFormComponent.js"})
 public class LoginFormComponent {
 
+	private static final Logger logger = LoggerFactory.getLogger(LoginFormComponent.class);
+	
 	/* ***********************************************************
      *                         Parameters
      ************************************************************ */
@@ -63,7 +68,7 @@ public class LoginFormComponent {
 
     @Property
     private String login;
-
+    
     @Property
     private String password;
 
@@ -110,7 +115,7 @@ public class LoginFormComponent {
 		return userDetailsVoExists;
 	}
 
-	public String getUserName() {
+	public String getUserName() throws BusinessException {
 		return userDetailsVo.getFirstName() + " " + userDetailsVo.getLastName();
 	}
 

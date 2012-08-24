@@ -35,6 +35,9 @@ public class TagVo {
 
 	@Override
 	public String toString() {
-		return name + ":" + tagEnumValue;
+		if(tagEnumValue == null)
+			return name;
+		else
+			return name + ":" + tagEnumValue;
 	}
 }
