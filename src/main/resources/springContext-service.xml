@@ -209,4 +209,8 @@
 		<constructor-arg ref="logEntryService" />
 	</bean>
 
+	<bean name="tagService" class="org.linagora.linshare.core.service.impl.TagServiceImpl">
+		<constructor-arg ref="tagBusinessService" />
+	</bean>
+
 </beans>

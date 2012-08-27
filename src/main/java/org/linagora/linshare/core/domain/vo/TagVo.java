@@ -7,20 +7,25 @@ public class TagVo {
 	protected String name;
 	
 	protected String tagEnumValue;
+	
+	protected Boolean isTagEnum;
 
 	public TagVo(String name) {
 		super();
 		this.name = name;
+		this.isTagEnum = false;
 	}
 	
 	public TagVo(String name, String tagEnumValue) {
 		super();
 		this.name = name;
 		this.tagEnumValue = tagEnumValue;
+		this.isTagEnum = false;
 	}
 	
 	public TagVo(EntryTagAssociation entryTag) {
 		this.name = entryTag.getTag().getName();
+		this.isTagEnum = true;
 		if(entryTag.getTagEnumValue() != null)
 			this.tagEnumValue = entryTag.getTagEnumValue().getValue();
 	}
@@ -40,4 +45,14 @@ public class TagVo {
 		else
 			return name + ":" + tagEnumValue;
 	}
+
+	public String getTagEnumValue() {
+		return tagEnumValue;
+	}
+
+	public void setTagEnumValue(String tagEnumValue) {
+		this.tagEnumValue = tagEnumValue;
+	}
+
+	
 }

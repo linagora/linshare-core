@@ -24,6 +24,10 @@ public class TagEnumValue {
 	public TagEnumValue() {
 	}
 	
+	public TagEnumValue(String value) {
+		this.value = value;
+	}
+	
 	private Long id;
 	
 	private String value;

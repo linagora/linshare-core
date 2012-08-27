@@ -5,17 +5,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.Facade.ThreadEntryFacade;
-import org.linagora.linshare.core.business.service.impl.DocumentEntryBusinessServiceImpl;
+import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Tag;
+import org.linagora.linshare.core.domain.entities.TagEnum;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.transformers.impl.ThreadEntryTransformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.TagEnumVo;
+import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.TagService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.slf4j.Logger;
@@ -33,26 +38,31 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	
 	private final ThreadEntryTransformer threadEntryTransformer;
 	
+	private final TagService tagService;
 	
-	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, ThreadEntryTransformer threadEntryTransformer) {
+	
+	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, ThreadEntryTransformer threadEntryTransformer,
+			TagService tagService) {
 		super();
 		this.accountService = accountService;
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;
 		this.threadEntryTransformer = threadEntryTransformer;
+		this.tagService = tagService;
 	}
 
 
 	@Override
-	public DocumentVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException {
+	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException {
 		logger.debug("insert file for thread entries");
 		
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, stream, size, fileName);
-		
-		return threadEntryTransformer.disassemble(threadEntry);
+
+//		return threadEntryTransformer.disassemble(threadEntry);
+		return new ThreadEntryVo(threadEntry);
 	
 	}
 
@@ -79,6 +89,37 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			res.add(new ThreadEntryVo(threadEntry));
 		}
 		return res;
+	}
+
+
+	@Override
+	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name) throws BusinessException {
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		
+		Tag tag = tagService.findByOwnerAndName(actor, thread, name);
+		
+		if(tag != null && tag.getTagType().equals(TagType.ENUM)) {
+			return new TagEnumVo((TagEnum)tag);
+		}
+		return null;
+	}
+
+
+	@Override
+	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo, List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags) throws BusinessException {
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		
+		
+		List<ThreadEntry> threadEntries = new ArrayList<ThreadEntry>();
+		for (ThreadEntryVo threadEntryVo : threadEntriesVo) {
+			threadEntries.add(threadEntryService.findById(actor, thread, threadEntryVo.getIdentifier()));
+		}
+		
+		for (TagVo tagVo : tags) {
+			tagService.setTagToThreadEntries(actor, thread, threadEntries, tagVo.getName(), tagVo.getTagEnumValue());
+		}
 	}
 
 }

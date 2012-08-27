@@ -427,15 +427,6 @@ public class QuickSharePopup{
 //        	return;
 //        }
 //
-////        String mimeType;
-////        try {
-////            mimeType = documentFacade.getMimeType(aFile.getStream(), aFile.getFilePath()); //get mime type with apperture
-////            if(null==mimeType){ //unknown mime type so take Uploaded File declaration
-////                mimeType = aFile.getContentType();
-////            }
-////        } catch (BusinessException e) {
-////            mimeType = aFile.getContentType();
-////        }
 //
 //        try {
 //            DocumentVo doc = documentFacade.insertFile(aFile.getStream(), aFile.getSize(), aFile.getFileName(), userVo);

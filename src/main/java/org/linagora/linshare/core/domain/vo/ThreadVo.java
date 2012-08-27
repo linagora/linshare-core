@@ -10,9 +10,9 @@ public class ThreadVo extends AccountVo {
 	protected final String name;
 	
 	// constructor just for test
-	public ThreadVo(String uuid) {
+	public ThreadVo(String uuid, String name) {
 		super(uuid);
-		name = "";
+		this.name = name;
 	}
 	
 	public ThreadVo(Account account, String name) {

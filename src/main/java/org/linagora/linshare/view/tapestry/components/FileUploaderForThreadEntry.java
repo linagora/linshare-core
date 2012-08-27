@@ -38,7 +38,7 @@ import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.Facade.ThreadEntryFacade;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -74,6 +74,9 @@ public class FileUploaderForThreadEntry {
     @Parameter(required=false, value="true")
     @Property(write=false)
     private String showSendButton;
+    
+    @Parameter(required=true)
+    private ThreadVo thread;
 
     /* ***********************************************************
      *                      Injected services
@@ -116,6 +119,7 @@ public class FileUploaderForThreadEntry {
 	
 	@SetupRender
 	void setupRender() {
+		logger.debug("using thread : " + thread.getName() + "(" + thread.getLsUuid() + ")");
 	}
 	
     @AfterRender
@@ -155,8 +159,8 @@ public class FileUploaderForThreadEntry {
             	}
 
                 try {
-                	ThreadVo thread = new ThreadVo("9806de10-ed0b-11e1-877a-5404a6202d2c");
-                	DocumentVo document = threadEntryFacade.insertFile(userDetails, thread, uploadedFile.getStream(), uploadedFile.getSize(), uploadedFile.getFileName());
+//                	ThreadVo thread = new ThreadVo("9806de10-ed0b-11e1-877a-5404a6202d2c");
+                	ThreadEntryVo document = threadEntryFacade.insertFile(userDetails, thread, uploadedFile.getStream(), uploadedFile.getSize(), uploadedFile.getFileName());
                 	 
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_OK,
                         MessageSeverity.INFO, uploadedFile.getFileName()));

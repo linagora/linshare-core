@@ -49,5 +49,11 @@
 		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="accountRepository" />
 	</bean>
+	
+	<bean id="tagBusinessService" class="org.linagora.linshare.core.business.service.impl.TagBusinessServiceImpl">
+		<constructor-arg ref="tagRepository" />
+		<constructor-arg ref="threadEntryRepository" />
+		<constructor-arg ref="entryTagAssociationRepository"/>
+	</bean>
 
 </beans>

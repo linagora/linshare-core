@@ -1,6 +1,5 @@
 package org.linagora.linshare.view.tapestry.components;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,18 +27,16 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linshare.core.Facade.FunctionalityFacade;
-import org.linagora.linshare.core.Facade.RecipientFavouriteFacade;
-import org.linagora.linshare.core.Facade.ShareFacade;
 import org.linagora.linshare.core.Facade.ThreadEntryFacade;
-import org.linagora.linshare.core.Facade.UserFacade;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.TagEnumVo;
+import org.linagora.linshare.core.domain.vo.TagVo;
+import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,10 +68,10 @@ public class ThreadFileUploadPopup {
 
     @Persist
     @Property
-    private List<DocumentVo> addedDocuments;
+    private List<ThreadEntryVo> addedThreadEntries;
 	
     @Property
-    private DocumentVo documentVo;
+    private ThreadEntryVo tempThreadEntryVo;
 	
 	@Property
 	private int index;
@@ -98,7 +95,39 @@ public class ThreadFileUploadPopup {
 	@Property(write=false)
 	private float period;
 	
+	@Persist
+	@Property
+	private ThreadVo currentThread;
 	
+	
+	@Persist
+	@Property
+	private TagEnumVo project;
+	
+	@Persist
+	@Property
+	private List<String> projectNames;
+	
+//	@Persist(PersistenceConstants.FLASH) 
+	@Property
+	private String selectProjectName;
+	 
+	
+	
+	@Persist
+	@Property
+	private TagEnumVo step;
+	
+	@Persist
+	@Property
+	private List<String> stepNames;
+	
+//	@Persist(PersistenceConstants.FLASH) 
+	@Property
+	private String selectStepName;
+	 
+	 
+	 
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */
@@ -110,24 +139,11 @@ public class ThreadFileUploadPopup {
 	@Inject
     private JavaScriptSupport renderSupport;
 	
-	@Inject
-	private ShareFacade shareFacade;
-	
-	@Inject
-	private UserFacade userFacade;
-	
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
 
-	@Inject
-	private RecipientFavouriteFacade recipientFavouriteFacade;
-
     @Inject
     private ComponentResources resources;
-	
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
-
 	
 	@Inject @Symbol("linshare.default.maxUpload")
 	@Property
@@ -151,6 +167,9 @@ public class ThreadFileUploadPopup {
 	
     @Inject
     private Messages messages;
+    
+    
+   
 	
 
 	/* ***********************************************************
@@ -160,11 +179,20 @@ public class ThreadFileUploadPopup {
 	
 	/**
 	 * Initialization of the form.
+	 * @throws BusinessException 
 	 */
 	@SetupRender
-	public void init() {
+	public void init() throws BusinessException {
 		documentsVolist = new ArrayList<DocumentVo>();
+		currentThread = new ThreadVo("9806de10-ed0b-11e1-877a-5404a6202d2c", "cours des comptes");
+		project = threadEntryFacade.getTagEnumVo(userVo, currentThread, "Projets");
+		projectNames = project.getEnumValues();
+		
+		step = threadEntryFacade.getTagEnumVo(userVo, currentThread, "Phases");
+		stepNames = step.getEnumValues();
 	}
+	
+	
 	/**
 	 * Initialize the JS value
 	 */
@@ -189,35 +217,26 @@ public class ThreadFileUploadPopup {
 	
 	
     public void onSuccessFromQuickShareForm() throws BusinessException {
-    	boolean sendErrors = false;
-		  	
+    	
+    	if(logger.isDebugEnabled()) 	logger.debug("current thread is : " + currentThread.getName() + "(" + currentThread.getLsUuid() + ")");
+
+    	
+    	List<TagVo> tags = new ArrayList<TagVo>();
+    	
+    	tags.add(new TagVo(project.getName() , selectProjectName));
+    	tags.add(new TagVo(step.getName() , selectStepName));
+    	
+    	threadEntryFacade.setTagsToThreadEntries(userVo, currentThread, addedThreadEntries, tags);
+    	
+    	
+    	
 //    	try{
 //	    	
-//			List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
-//			String badFormatEmail =  "";
-//			
-//			for (String recipient : recipients) {
-//				if (!MailCompletionService.MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
-//					badFormatEmail = badFormatEmail + recipient + " ";
-//					sendErrors = true;
-//				}
-//			}
-//			
-//			if(sendErrors) {
 //				businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_BADMAIL,
 //	                MessageSeverity.ERROR, badFormatEmail));
 //				addedDocuments = new ArrayList<DocumentVo>();
 //				return;
-//			} else {
-//				this.recipientsEmail = recipients;
-//			}
 //	    	
-//	    	
-//	    	if (addedDocuments == null || addedDocuments.size() == 0) {
-//	    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE, MessageSeverity.ERROR));
-//				return;
-//	    	}
-	    	
 	
 	    	
 //			//PROCESS SHARE
@@ -277,38 +296,20 @@ public class ThreadFileUploadPopup {
 //		}		
 //		
         // reset list of documents
-        addedDocuments = new ArrayList<DocumentVo>();
+        addedThreadEntries.clear();
 	}
     
-//	/**
-//	 * here we add the file uploaded in the array. It is a good place to check it
-//	 * @param aFile
-//	 * @throws BusinessException 
-//	 */
-//    public void onValidateFromFile(UploadedFile aFile)  {  	
-//        if (aFile == null) {
-//        	// the message will be handled by Tapestry
-//        	return;
-//        }
-//
-//        
-//        try {
-//        	ThreadVo thread = new ThreadVo("9806de10-ed0b-11e1-877a-5404a6202d2c");
-//            DocumentVo doc = threadEntryFacade.insertFile(userVo, thread, aFile.getStream(), aFile.getSize(), aFile.getFileName());
-//            // public DocumentVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException ;
-//            documentsVolist.add(doc);
-//            successFiles.add(aFile.getFileName());
-//        } catch (BusinessException e) {
-//            failFiles.put(aFile.getFileName(),e);
-//        }
-//    }
-	
-	
     /**
 	 * This is the onValidate for the QuickSharePopup Form
 	 */
-    public void onValidateFormFromQuickShareForm()  {
+    public Boolean onValidateFormFromQuickShareForm()  {
+    	logger.debug("selectProjectName : " + selectProjectName);
+    	logger.debug("selectStepName : " + selectStepName);
     	
+    	if(selectProjectName == null) return false;
+    	if(selectStepName == null) return false;
+    	
+    	return true;
     }
     
 
@@ -351,11 +352,11 @@ public class ThreadFileUploadPopup {
 	}
 
     @OnEvent("fileAdded")
-    public void processFileAdded(DocumentVo document) {
-        if (addedDocuments == null) {
-            addedDocuments = new ArrayList<DocumentVo>();
+    public void processFileAdded(ThreadEntryVo document) {
+        if (addedThreadEntries == null) {
+            addedThreadEntries = new ArrayList<ThreadEntryVo>();
         }
-        addedDocuments.add(document);
+        addedThreadEntries.add(document);
     }
 
     @OnEvent("reload")
@@ -372,6 +373,6 @@ public class ThreadFileUploadPopup {
     }
 
     public void onActionFromCancelQuickShare() {
-        addedDocuments = new ArrayList<DocumentVo>();
+        addedThreadEntries.clear();
     }
 }

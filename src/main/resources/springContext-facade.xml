@@ -40,6 +40,7 @@
 		<constructor-arg ref="threadService" />
 		<constructor-arg ref="threadEntryService" />
 		<constructor-arg ref="threadEntryTransformer" />
+		<constructor-arg ref="tagService" />
 	</bean>
 
 	<bean name="searchDocumentFacade" class="org.linagora.linshare.core.Facade.impl.SearchDocumentFacadeImpl">

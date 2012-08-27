@@ -31,7 +31,19 @@ public class TagRepositoryImpl extends AbstractRepositoryImpl<Tag>  implements T
 
 	@Override
 	public Tag findByOwnerAndName(Account owner, String name) {
-		List<Tag> results = findByCriteria(Restrictions.eq("owner", owner),Restrictions.eq("name", name));
+		
+		if(owner == null) throw new IllegalStateException("Tag owner must be set");
+		if(name == null) throw new IllegalStateException("Tag name must be set");
+		logger.debug("owner : " + owner.getAccountReprentation() + ", name: " + name);
+		
+//		DetachedCriteria det = DetachedCriteria.forClass( Account.class )
+//			.add(Restrictions.eq( "owner", owner ))
+//			.add(Restrictions.eq( "name", name ));
+//		List<Tag> results = findByCriteria(det);
+			
+			
+			
+		List<Tag> results = findByCriteria(Restrictions.eq("owner", owner), Restrictions.eq("name", name));
 		if (results == null || results.isEmpty()) {
             return null;
         } else if (results.size() == 1) {

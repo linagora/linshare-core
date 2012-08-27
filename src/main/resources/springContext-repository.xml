@@ -111,4 +111,8 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 	
+	<bean name="entryTagAssociationRepository" class="org.linagora.linshare.core.repository.hibernate.EntryTagAssociationRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	
 </beans>

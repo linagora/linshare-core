@@ -23,14 +23,18 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.TagType;
+
 
 public class TagEnum extends Tag {
-	public TagEnum() {
-	}
 	
 	private Boolean notNull;
 	
 	private Set<TagEnumValue> enumValues = new HashSet<TagEnumValue>();
+	
+	public TagEnum() {
+		tagType = TagType.ENUM;
+	}
 	
 	public void setNotNull(Boolean value) {
 		this.notNull = value;

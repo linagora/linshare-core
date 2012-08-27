@@ -21,8 +21,6 @@
 package org.linagora.linshare.core.domain.entities;
 
 public class EntryTagAssociation {
-	public EntryTagAssociation() {
-	}
 	
 	private Long id;
 	
@@ -31,6 +29,14 @@ public class EntryTagAssociation {
 	private Tag tag;
 	
 	private TagEnumValue tagEnumValue;
+	
+	public EntryTagAssociation() {
+	}
+	
+	public EntryTagAssociation(Entry entry, Tag tag) {
+		this.tag = tag;
+		this.entry=entry;
+	}
 	
 	public void setId(Long value) {
 		this.id = value;

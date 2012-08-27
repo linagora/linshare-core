@@ -20,11 +20,10 @@
 */
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.core.domain.constants.TagType;
+
 
 public class Tag {
-
-	public Tag() {
-	}
 	
 	private Long id;
 	
@@ -32,15 +31,22 @@ public class Tag {
 	
 	protected String name;
 	
-	protected Boolean system = false;
+	protected Boolean system;
 	
-	protected Boolean visible = true;
+	protected Boolean visible;
+	
+	protected TagType tagType;
+	
+	public Tag() {
+		tagType = TagType.SIMPLE;
+	}
 	
 	public Tag(Account owner, String name) {
 		this.owner = owner;
 		this.name = name;
 		this.visible = true;
 		this.system = false;
+		tagType = TagType.SIMPLE;
 	}
 	
 	public void setId(Long value) {
@@ -85,5 +91,9 @@ public class Tag {
 	
 	public Account getOwner() {
 		return owner;
+	}
+
+	public TagType getTagType() {
+		return tagType;
 	}
 }
