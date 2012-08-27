@@ -44,19 +44,19 @@
 	<div t:id="threadFileUploadWindow">
 		<div class="confirmPopup">
 
-	 		<h2>${message:components.quickSharePopup.mainTitle}</h2>
+	 		<h2>${message:components.threadEntryPopup.mainTitle}</h2>
 
 
 			<hr />
 
 			<div class="number1"></div>
-			<div class="description"><p>${message:components.quickSharePopup.panelUpload.description}</p></div>
-			<div t:type="ck/SlidingPanel" t:id="panelUpload" t:closed="false" t:subject="${message:components.quickSharePopup.panelUpload.subject}">
+			<div class="description"><p>${message:components.threadEntryPopup.panelUpload.description}</p></div>
+			<div t:type="ck/SlidingPanel" t:id="panelUpload" t:closed="false" t:subject="${message:components.threadEntryPopup.panelUpload.subject}">
                 <t:FileUploaderForThreadEntry t:id="fileUploader" divId="literal:flexUpload" showsendbutton="literal:false" thread="currentThread"/>
 
                 <t:zone t:id="reloadingZone">
                     <t:if test="addedThreadEntries">
-                        <h3>${message:components.quickSharePopup.panelUpload.shareList} :</h3>
+                        <h3>${message:components.threadEntryPopup.panelUpload.shareList} :</h3>
                     </t:if>
                     <ul>
                         <t:loop source="addedThreadEntries" value="tempThreadEntryVo">
@@ -70,51 +70,21 @@
 
 			<hr />
 			
-			<t:form t:id="quickShareForm">
-			<t:errors />
-			<div class="number2"></div>
-			
-
-			
-			<t:label for="selectProjectName"/>:
-			<t:select t:model="projectNames" t:id="selectProjectName" />
-			
-			<t:label for="selectStepName"/>:
-			<t:select t:model="stepNames" t:id="selectStepName" />
-			
-			<div class="clear"></div>
+				<t:form t:id="threadEntryForm">
+				<t:errors />
+				<div class="number2"></div>
+				
+	
+				
+				<t:label for="selectProjectName"/>:
+				<t:select t:model="projectNames" t:id="selectProjectName" />
+			<br/>
+				
+				<t:label for="selectStepName"/>:
+				<t:select t:model="stepNames" t:id="selectStepName" />
+				
+				<div class="clear"></div>
 			<hr />
-			
-	<!--
-			<div class="description"><p>${message:components.quickSharePopup.panelRecipients.description}</p></div>
-			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false" t:subject="${message:components.quickSharePopup.panelRecipients.subject}">      
-				<t:textarea t:id="recipientsPatternQuickSharePopup" t:value="recipientsSearch" t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens="," class="recipientsPattern" title="${message:components.quickSharePopup.texarea.recipients.title}" onchange="rm_errorclass();"/>
-			</div>
-			<div class="clear"></div>
-			
-			<t:if test="showSecureSharingCheckBox">
-				<t:label for="secureSharing" class="edit-form-label">
-					${message:components.confirmSharePopup.secureSharing}
-				</t:label>
-				<t:checkbox t:id="secureSharing" class="edit-form-field checkbox" />
-			</t:if>
-			<hr />
-
-
-			<div class="number3"></div>
-			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>
-			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
-				t:subject="${message:components.quickSharePopup.panelSubject.subject}">  
-				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field"  title="${message:components.quickSharePopup.texarea.message.title}" onkeypress="if (event.keyCode == 13) return false;"/>
-			</div>
-			<br />
-			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
-				t:subject="${message:components.quickSharePopup.panelMessage.subject}">  
-				<t:textarea rows="8" value="textAreaValue"  title="${message:components.quickSharePopup.texarea.message.title}" />
-			</div>
-
-			<hr />
--->
 			
 
 			<div class="button">
@@ -125,13 +95,7 @@
                    		<span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
                		</a>
 					
-					<!-- 
-               		<t:submit name="submitQuickShare" id="submitQuickShare" style="display:none" />
-               		<a id="quickshare_send_link" href="#" class="button" onclick="sendFiles();">
-                    	<span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
-                	</a>
-                	-->
-					<t:actionlink t:id="cancelQuickShare" class="button">
+					<t:actionlink t:id="btnCancelThreadEntryPopup" class="button">
                     	<span onclick='Windows.close("${JSONId}")'><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span>
 					</t:actionlink>
                 <div class="clear"></div>

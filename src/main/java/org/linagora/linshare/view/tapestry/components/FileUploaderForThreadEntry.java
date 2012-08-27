@@ -89,12 +89,6 @@ public class FileUploaderForThreadEntry {
 	private ThreadEntryFacade threadEntryFacade;
 	
     @Inject
-    private BusinessMessagesManagementService messagesManagementService;
-
-	@Inject
-	private AbstractDomainFacade domainFacade;
-
-    @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
 
     @Inject
@@ -142,35 +136,34 @@ public class FileUploaderForThreadEntry {
             UploadedFile uploadedFile = (UploadedFile) context[i];
             if (uploadedFile != null) {
             	if (uploadedFile.getSize() > getMaxFileSize()) {
-            		messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_WITH_FILE_TOO_LARGE,
+            		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_WITH_FILE_TOO_LARGE,
                             MessageSeverity.ERROR, 
                             uploadedFile.getFileName(), 
                             FileUtils.getFriendlySize(uploadedFile.getSize(),messages),
                             FileUtils.getFriendlySize(getMaxFileSize(),messages)));
             		continue;
             	}
-            	if (uploadedFile.getSize() > getUserFreeSpace()) {
-            		messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_NOT_ENOUGH_SPACE,
-                            MessageSeverity.ERROR, 
-                            uploadedFile.getFileName(), 
-                            FileUtils.getFriendlySize(uploadedFile.getSize(),messages),
-                            FileUtils.getFriendlySize(getUserFreeSpace(),messages)));
-            		continue;
-            	}
+            	
+            	// TODO : we have to use thread quota, not user quota.
+//            	if (uploadedFile.getSize() > getUserFreeSpace()) {
+//            		messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_NOT_ENOUGH_SPACE,
+//                            MessageSeverity.ERROR, 
+//                            uploadedFile.getFileName(), 
+//                            FileUtils.getFriendlySize(uploadedFile.getSize(),messages),
+//                            FileUtils.getFriendlySize(getUserFreeSpace(),messages)));
+//            		continue;
+//            	}
 
                 try {
-//                	ThreadVo thread = new ThreadVo("9806de10-ed0b-11e1-877a-5404a6202d2c");
                 	ThreadEntryVo document = threadEntryFacade.insertFile(userDetails, thread, uploadedFile.getStream(), uploadedFile.getSize(), uploadedFile.getFileName());
-                	 
-                    messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_OK,
-                        MessageSeverity.INFO, uploadedFile.getFileName()));
+                	businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_OK, MessageSeverity.INFO, uploadedFile.getFileName()));
 
                     // Notify the add of a file.
                     Object[] addedFile = {document};
                     componentResources.triggerEvent("fileAdded", addedFile, null);
                     toUpdate=true;
                 } catch (BusinessException e) {
-                    messagesManagementService.notify(e);
+                	businessMessagesManagementService.notify(e);
                 }
             }
         }
@@ -187,7 +180,7 @@ public class FileUploaderForThreadEntry {
         try {
 			res = documentFacade.getUserAvailableQuota(userDetails);
 		} catch (BusinessException e) {
-			messagesManagementService.notify(e);
+			businessMessagesManagementService.notify(e);
 		}
 		return res;
     }

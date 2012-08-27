@@ -45,5 +45,6 @@ public enum BusinessUserMessageType {
         DECRYPTION_OK,
         DECRYPTION_FAILED,
         UNREACHABLE_MAIL_ADDRESS,
-        WARNING_TAGS_FOUND;
+        WARNING_TAGS_FOUND,
+        THREAD_UPLOAD_FAILED;
 }

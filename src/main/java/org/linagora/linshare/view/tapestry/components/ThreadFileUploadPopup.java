@@ -36,6 +36,9 @@ import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +163,7 @@ public class ThreadFileUploadPopup {
 
     @InjectComponent
     @Property
-    private Form quickShareForm;
+    private Form threadEntryForm;
     
 	@Inject
 	private FunctionalityFacade functionalityFacade;
@@ -204,7 +207,7 @@ public class ThreadFileUploadPopup {
         //resize the share popup
         renderSupport.addScript(String.format("threadFileUploadWindow.setSize(650, getHeightForPopup())"));
         
-        quickShareForm.clearErrors();
+        threadEntryForm.clearErrors();
     }
 	
 	/**
@@ -216,7 +219,7 @@ public class ThreadFileUploadPopup {
 	}
 	
 	
-    public void onSuccessFromQuickShareForm() throws BusinessException {
+    public void onSuccessFromThreadEntryForm() {
     	
     	if(logger.isDebugEnabled()) 	logger.debug("current thread is : " + currentThread.getName() + "(" + currentThread.getLsUuid() + ")");
 
@@ -226,83 +229,19 @@ public class ThreadFileUploadPopup {
     	tags.add(new TagVo(project.getName() , selectProjectName));
     	tags.add(new TagVo(step.getName() , selectStepName));
     	
-    	threadEntryFacade.setTagsToThreadEntries(userVo, currentThread, addedThreadEntries, tags);
-    	
-    	
-    	
-//    	try{
-//	    	
-//				businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_BADMAIL,
-//	                MessageSeverity.ERROR, badFormatEmail));
-//				addedDocuments = new ArrayList<DocumentVo>();
-//				return;
-//	    	
-	
-	    	
-//			//PROCESS SHARE
-//			
-//	    	Boolean errorOnAddress = false;
-//	    	
-//			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
-//			try {
-//				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
-//				mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
-//				sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer,null);
-//			
-//			} catch (BusinessException e1) {
-//				
-//				// IF RELAY IS DISABLE ON SMTP SERVER 
-//				if(e1.getErrorCode() == BusinessErrorCode.RELAY_HOST_NOT_ENABLE){
-//					logger.error("Could not create sharing, relay host is disable : ", e1);
-//					
-//					String buffer =  "";
-//					String sep = "";
-//					for (String extra : e1.getExtras()) {
-//						buffer = buffer + sep + extra;
-//						sep = ", ";
-//					}
-//					businessMessagesManagementService.notify(new BusinessUserMessage(
-//			                BusinessUserMessageType.UNREACHABLE_MAIL_ADDRESS, MessageSeverity.ERROR, buffer));
-//					errorOnAddress = true;
-//				} else {
-//					logger.error("Could not create sharing, caught a BusinessException.");
-//					logger.error(e1.getMessage());
-//					businessMessagesManagementService.notify(e1);
-//					
-//			        // reset list of documents
-//			        addedDocuments = new ArrayList<DocumentVo>();
-//			        return;
-//				}
-//			}
-//	
-//			
-//			if (sharing.getFailsItem().size() > 0) {
-//	    		businessMessagesManagementService.notify(new BusinessUserMessage(
-//	                BusinessUserMessageType.QUICKSHARE_FAILED, MessageSeverity.ERROR));
-//			} else if (errorOnAddress) {
-//				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-//				businessMessagesManagementService.notify(new BusinessUserMessage(
-//	                BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
-//			} else {
-//				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-//				businessMessagesManagementService.notify(new BusinessUserMessage(
-//	                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
-//			}
-//
-//    	}catch (NullPointerException e3) {
-//    		logger.error("No Email in textarea", e3);
-//    		businessMessagesManagementService.notify(new BusinessUserMessage(
-//                    BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
-//		}		
-//		
+    	try {
+    		threadEntryFacade.setTagsToThreadEntries(userVo, currentThread, addedThreadEntries, tags);
+    	} catch (BusinessException e1) {
+    		logger.error(e1.getMessage());
+    		logger.debug(e1.toString());
+    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.THREAD_UPLOAD_FAILED, MessageSeverity.ERROR));
+    	}
         // reset list of documents
         addedThreadEntries.clear();
 	}
     
-    /**
-	 * This is the onValidate for the QuickSharePopup Form
-	 */
-    public Boolean onValidateFormFromQuickShareForm()  {
+
+    public Boolean onValidateFormFromThreadEntryForm()  {
     	logger.debug("selectProjectName : " + selectProjectName);
     	logger.debug("selectStepName : " + selectStepName);
     	
@@ -372,7 +311,10 @@ public class ThreadFileUploadPopup {
         return resources.createEventLink(RELOADZONE_EVENT).toString();
     }
 
-    public void onActionFromCancelQuickShare() {
-        addedThreadEntries.clear();
+    public void onActionFromBtnCancelThreadEntryPopup() {
+    	logger.debug("running BtnCancelThreadEntryPopup");
+    	if (addedThreadEntries != null) {
+    		addedThreadEntries.clear();
+        }
     }
 }
