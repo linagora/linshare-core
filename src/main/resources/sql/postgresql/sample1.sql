@@ -45,14 +45,14 @@ INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modi
 
 
 -- Tags
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (1, 50, 'Réponse', false, true, null,0);
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (2, 50, 'Demande', false, true, null,0);
+INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (1, 51, 'Réponse', false, true, null,0);
+INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (2, 51, 'Demande', false, true, null,0);
 
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (3, 50, 'Projets', false, true, true,1);
+INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (3, 51, 'Projets', false, true, true,1);
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (1, 3, 'RATP'); 
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (2, 3, 'Ministère de l''intérieur'); 
 
-INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (4, 50, 'Phases', false, true, true,1);
+INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (4, 51, 'Phases', false, true, true,1);
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (3, 4, 'Instruction'); 
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (4, 4, 'Contradiction'); 
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (5, 4, 'Recommandation'); 
