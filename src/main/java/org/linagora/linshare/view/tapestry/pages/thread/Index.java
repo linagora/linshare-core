@@ -23,7 +23,6 @@ package org.linagora.linshare.view.tapestry.pages.thread;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -35,7 +34,6 @@ import org.linagora.linshare.core.Facade.ThreadEntryFacade;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.components.ThreadFileUploadPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

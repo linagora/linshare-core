@@ -30,13 +30,32 @@
 		<div id="pageContent">
             <h2>${selectedProject.name}</h2>
 
-			<!-- List : Search result -->
-            <!--<div t:type="ck/SlidingPanel" t:id="" t:closed="false" t:subject="${category}">-->
-                <!--<t:loop source="projects" value="currentProject">-->
-                    <!--<t:grid source="phases.keySet()" value="phase">-->
-                    <!--</t:grid>-->
-                <!--</t:loop>-->
-            <!--</div>-->
+            <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes">
+                <h3>Instructions</h3>
+                <t:grid source="outInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                </t:grid>
+                <br />
+                <h3>Contradictions</h3>
+                <t:grid source="outContradictions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                </t:grid>
+                <br />
+                <h3>Recommandations</h3>
+                <t:grid source="outRecommandations" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                </t:grid>
+            </div>
+            <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses">
+                <h3>Instructions</h3>
+                <t:grid source="inInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                </t:grid>
+                <br />
+                <h3>Contradictions</h3>
+                <t:grid source="inContradictions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                </t:grid>
+                <br />
+                <h3>Recommandations</h3>
+                <t:grid source="inRecommandations" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                </t:grid>
+            </div>
 		</div>
 
 	</div><!-- id="content" -->

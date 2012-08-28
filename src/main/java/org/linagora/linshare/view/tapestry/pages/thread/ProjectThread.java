@@ -1,14 +1,13 @@
 package org.linagora.linshare.view.tapestry.pages.thread;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -28,8 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ProjectThread {
-private static final Logger logger = LoggerFactory.getLogger(Index.class);
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(Index.class);
+
 
     @SessionState
     @Property
@@ -38,7 +38,9 @@ private static final Logger logger = LoggerFactory.getLogger(Index.class);
     @SessionState
     @Property
     private UserVo userVo;
-    
+
+    private Index index;
+
     @Property
     @Persist
     private ThreadVo selectedProject;
@@ -46,22 +48,35 @@ private static final Logger logger = LoggerFactory.getLogger(Index.class);
     @InjectComponent
     private ThreadFileUploadPopup threadFileUploadPopup;
     
+    @Property
+    private ThreadEntryVo entry;
 
-//    @Property
-//    private ThreadVo currentThread;
-//    
-//    @Property
-//    private	List<String> inProjects;
-//    
-//    @Property
-//    private	List<String> outProjects;
-//    
-//    @Property
-//    private Map<String, List<ThreadEntryVo>> inProjectEntries;
-//    
-//    @Property
-//    private Map<String, List<ThreadEntryVo>> outProjectEntries;
-    
+    @Property
+    @Persist
+    private Map<String, List<ThreadEntryVo>> inProjectEntries;
+
+    @Property
+    @Persist
+    private Map<String, List<ThreadEntryVo>> outProjectEntries;
+
+    @Property
+    private List<ThreadEntryVo> inInstructions;
+
+    @Property
+    private List<ThreadEntryVo> outInstructions;
+
+    @Property
+    private List<ThreadEntryVo> inContradictions;
+
+    @Property
+    private List<ThreadEntryVo> outContradictions;
+
+    @Property
+    private List<ThreadEntryVo> inRecommandations;
+
+    @Property
+    private List<ThreadEntryVo> outRecommandations;
+
 
 
     /* ***********************************************************
@@ -77,122 +92,127 @@ private static final Logger logger = LoggerFactory.getLogger(Index.class);
 
 
     @SetupRender
-    public void setupRender() {
+    public void setupRender() {  	
+    	logger.debug("Début du Setup Render");
     	
-    	logger.debug("setupRender()");
-    	List<ThreadVo> allThread = threadEntryFacade.getAllThread();
-    	for (ThreadVo threadVo : allThread) {
-        	logger.debug("thread name : " + threadVo.getName());
-        	try {
-				List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, threadVo);
-				for (ThreadEntryVo threadEntryVo : allThreadEntries) {
-					logger.debug("threadEntryVo name : " + threadEntryVo.getFileName());
-					List<TagVo> tags = threadEntryVo.getTags();
-					for (TagVo tagVo : tags) {
-						logger.debug("tagVo : " + tagVo.toString());
-					}
-				}
-				
-			} catch (BusinessException e) {
-				e.printStackTrace();
-			}
-		}
-
+    	if (selectedProject == null)
+    		return;
     	threadFileUploadPopup.setMyCurrentThread(selectedProject);
     	
-    	
-    	
-//		currentThread = threadEntryFacade.getAllThread().get(0);
-//		try {
-//			List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, currentThread);
-//
-//			outProjects = new ArrayList<String>();
-//			outProjectEntries = new HashMap<String, List<ThreadEntryVo>>();
-//			
-//			inProjects = new ArrayList<String>();
-//			inProjectEntries = new HashMap<String, List<ThreadEntryVo>>();		
-//			
-//			for (ThreadEntryVo entry : allThreadEntries) {
-//				List<TagVo> tags = entry.getTags();
-//				for (TagVo tag : tags) {
-//					if (tag.getName() == "Demande") {
-//						this.addToOutProjects(entry, tags);
-//						break;
-//					}
-//					else if (tag.getName() == "Réponse") {
-//						this.addToInProjects(entry, tags);
-//						break;
-//					}
-//				}
-//			}
-//		} catch (BusinessException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-    	logger.debug("Début du Setup Render");
-    	logger.debug("Projet : " + selectedProject.getName());
-    	logger.debug("Fin du Setup Render");
+		try {
+			List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, selectedProject);
+
+			outProjectEntries = new HashMap<String, List<ThreadEntryVo>>();
+			
+			inProjectEntries = new HashMap<String, List<ThreadEntryVo>>();
+
+			logger.debug("Looping through all thread entries");
+			for (ThreadEntryVo e : allThreadEntries) {
+				logger.debug("entry : " + e.toString());
+				List<TagVo> tags = e.getTags();
+				logger.debug("Looping through tags");
+				for (TagVo tag : tags) {
+					logger.debug("tag : " + tag.toString());
+					if (tag.getName().equals("Demande")) {
+						this.addToOutProjectEntries(e, tags);
+						break;
+					}
+					else if (tag.getName().equals("Réponse")) {
+						this.addToInProjectEntries(e, tags);
+						break;
+					}
+				}
+			}
+            inInstructions = inProjectEntries.get("Phases:Instruction");
+            outInstructions = outProjectEntries.get("Phases:Instruction");
+            inContradictions = inProjectEntries.get("Phases:Contradiction");
+            outContradictions = outProjectEntries.get("Phases:Contradiction");
+            inRecommandations = inProjectEntries.get("Phases:Recommandation");
+            outRecommandations = outProjectEntries.get("Phases:Recommandation");
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
     }
 
     @AfterRender
     public void afterRender() {
         ;
     }
-
-//    private void addToOutProjects(ThreadEntryVo entry, List<TagVo> tags) {
-//    	for (TagVo tag : tags) {
-//    		if (tag.getName() == "Projets") {
-//    			String currentTag = tag.toString();
-//    			if (!outProjects.contains(currentTag)) {
-//    				outProjects.add(currentTag);
-//    				outProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
-//    			}
-//    			outProjectEntries.get(currentTag).add(entry);
-//    			sortProjectByPhase(outProjectEntries.get(currentTag));
-//    		}
-//		}
-//    }
-//
-//    private void addToInProjects(ThreadEntryVo entry, List<TagVo> tags) {
-//    	for (TagVo tag : tags) {
-//    		if (tag.getName() == "Projets") {
-//    			String currentTag = tag.toString();
-//    			if (!inProjects.contains(currentTag)) {
-//    				inProjects.add(currentTag);
-//    				inProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
-//    			}
-//    			inProjectEntries.get(currentTag).add(entry);
-//    			sortProjectByPhase(inProjectEntries.get(currentTag));
-//    		}
-//		}
-//    }
-//
-//    // FIXME : please, hurry up and fix me, i'm a poor badly thought-out function
-//    private void sortProjectByPhase(List<ThreadEntryVo> entries) {
-//    	Collections.sort(entries, new Comparator<ThreadEntryVo>() {
-//			@Override
-//			public int compare(ThreadEntryVo o1, ThreadEntryVo o2) {
-//				TagVo tag1 = null;
-//				TagVo tag2 = null;
-//				for (TagVo tag : o1.getTags()) {
-//					if (tag.getName() == "Phases") {
-//						tag1 = tag;
-//						break;
-//					}
-//				}
-//				for (TagVo tag : o2.getTags()) {
-//					if (tag.getName() == "Phases") {
-//						tag2 = tag;
-//						break;
-//					}
-//				}
-//				if (tag1 == null || tag2 == null)
-//					return 0;
-//				return tag1.toString().length() - tag2.toString().length();
-//			}   		
-//		});
-//    }
     
+    @CleanupRender
+    public Object cleanupRender() {
+    	if (selectedProject == null)
+    		return index;
+    	return null;
+    }
+
+    private void addToOutProjectEntries(ThreadEntryVo e, List<TagVo> tags) {
+    	logger.debug("Entering addToOutProjectEntries");
+    	logger.debug("Looping through tags : " + Arrays.toString(tags.toArray()));
+    	for (TagVo tag : tags) {
+    		logger.debug("current tag is " + tag.toString() + "; current tag name is " + tag.getName());
+    		if (tag.getName().equals("Phases")) {
+    			String currentTag = tag.toString();
+    			List<ThreadEntryVo> entries = outProjectEntries.get(currentTag);
+    			if (entries == null) {
+    				outProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
+    				entries = outProjectEntries.get(currentTag);
+    			}
+    			logger.debug("adding to outbox : " + tag.toString() + " -> " + e.toString());
+    			entries.add(e);
+    		}
+		}
+    }
+
+    private void addToInProjectEntries(ThreadEntryVo e, List<TagVo> tags) {
+    	logger.debug("Entering addToInProjectEntries");
+    	logger.debug("Looping through tags : " + Arrays.toString(tags.toArray()));
+    	for (TagVo tag : tags) {
+    		logger.debug("current tag is " + tag.toString() + "; current tag name is " + tag.getName());
+    		if (tag.getName().equals("Phases")) {
+    			String currentTag = tag.toString();
+    			List<ThreadEntryVo> entries = inProjectEntries.get(currentTag);
+    			if (entries == null) {
+    				inProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
+    				entries = inProjectEntries.get(currentTag);
+    			}
+    			logger.debug("adding to outbox : " + tag.toString() + " -> " + e.toString());
+    			entries.add(e);
+    		}
+		}
+    }
+    
+//    // FIXME : ugly
+//    public List<ThreadEntryVo> getInInstructions() {
+//    	return inProjectEntries.get("Phases:Instruction");
+//    }
+//    
+//    // FIXME : ugly
+//    public List<ThreadEntryVo> getOutInstructions() {
+//    	return outProjectEntries.get("Phases:Instruction");
+//    }
+//    
+//    // FIXME : ugly
+//    public List<ThreadEntryVo> getInContradictions() {
+//    	return inProjectEntries.get("Phases:Contradiction");
+//    }
+//
+//    // FIXME : ugly
+//    public List<ThreadEntryVo> getOutContradictions() {
+//    	return outProjectEntries.get("Phases:Contradiction");
+//    }
+//    
+//    // FIXME : ugly
+//    public List<ThreadEntryVo> getInRecommandations() {
+//    	return inProjectEntries.get("Phases:Recommandation");
+//    }
+//    
+//    // FIXME : ugly
+//    public List<ThreadEntryVo> getOutRecommandations() {
+//    	return outProjectEntries.get("Phases:Recommandation");
+//    }
+
     public void setMySelectedProject(ThreadVo selectedProject) {
 		this.selectedProject = selectedProject;
 	}

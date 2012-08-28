@@ -34,7 +34,7 @@
                     <t:actionlink t:id="showProjectThread" context="currentProject.lsUuid">${currentProject.name}</t:actionlink>
                 </p:nameCell>
                 <p:empty>
-                    Aucun projets disponibles. Vous pouvez en ajouter avec le bouton "Ajouter".
+                    Aucun projet disponible. Vous pouvez en ajouter avec le bouton "Ajouter".
                 </p:empty>
             </t:grid>
 		</div>
