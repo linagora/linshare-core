@@ -1,5 +1,6 @@
 <t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+    xmlns:p="tapestry:parameter">
 
 	<!-- Main content -->
 
@@ -33,27 +34,39 @@
             <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes">
                 <h3>Instructions</h3>
                 <t:grid source="outInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                    <p:empty>
+                    </p:empty>
                 </t:grid>
                 <br />
                 <h3>Contradictions</h3>
                 <t:grid source="outContradictions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                    <p:empty>
+                    </p:empty>
                 </t:grid>
                 <br />
                 <h3>Recommandations</h3>
                 <t:grid source="outRecommandations" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                    <p:empty>
+                    </p:empty>
                 </t:grid>
             </div>
             <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses">
                 <h3>Instructions</h3>
                 <t:grid source="inInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                    <p:empty>
+                    </p:empty>
                 </t:grid>
                 <br />
                 <h3>Contradictions</h3>
                 <t:grid source="inContradictions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                    <p:empty>
+                    </p:empty>
                 </t:grid>
                 <br />
                 <h3>Recommandations</h3>
                 <t:grid source="inRecommandations" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
+                    <p:empty>
+                    </p:empty>
                 </t:grid>
             </div>
 		</div>

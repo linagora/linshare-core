@@ -59,24 +59,6 @@ public class ProjectThread {
     @Persist
     private Map<String, List<ThreadEntryVo>> outProjectEntries;
 
-    @Property
-    private List<ThreadEntryVo> inInstructions;
-
-    @Property
-    private List<ThreadEntryVo> outInstructions;
-
-    @Property
-    private List<ThreadEntryVo> inContradictions;
-
-    @Property
-    private List<ThreadEntryVo> outContradictions;
-
-    @Property
-    private List<ThreadEntryVo> inRecommandations;
-
-    @Property
-    private List<ThreadEntryVo> outRecommandations;
-
 
 
     /* ***********************************************************
@@ -123,12 +105,6 @@ public class ProjectThread {
 					}
 				}
 			}
-            inInstructions = inProjectEntries.get("Phases:Instruction");
-            outInstructions = outProjectEntries.get("Phases:Instruction");
-            inContradictions = inProjectEntries.get("Phases:Contradiction");
-            outContradictions = outProjectEntries.get("Phases:Contradiction");
-            inRecommandations = inProjectEntries.get("Phases:Recommandation");
-            outRecommandations = outProjectEntries.get("Phases:Recommandation");
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
@@ -183,35 +159,35 @@ public class ProjectThread {
 		}
     }
     
-//    // FIXME : ugly
-//    public List<ThreadEntryVo> getInInstructions() {
-//    	return inProjectEntries.get("Phases:Instruction");
-//    }
-//    
-//    // FIXME : ugly
-//    public List<ThreadEntryVo> getOutInstructions() {
-//    	return outProjectEntries.get("Phases:Instruction");
-//    }
-//    
-//    // FIXME : ugly
-//    public List<ThreadEntryVo> getInContradictions() {
-//    	return inProjectEntries.get("Phases:Contradiction");
-//    }
-//
-//    // FIXME : ugly
-//    public List<ThreadEntryVo> getOutContradictions() {
-//    	return outProjectEntries.get("Phases:Contradiction");
-//    }
-//    
-//    // FIXME : ugly
-//    public List<ThreadEntryVo> getInRecommandations() {
-//    	return inProjectEntries.get("Phases:Recommandation");
-//    }
-//    
-//    // FIXME : ugly
-//    public List<ThreadEntryVo> getOutRecommandations() {
-//    	return outProjectEntries.get("Phases:Recommandation");
-//    }
+    // FIXME : ugly
+    public List<ThreadEntryVo> getInInstructions() {
+    	return inProjectEntries.get("Phases:Instruction");
+    }
+    
+    // FIXME : ugly
+    public List<ThreadEntryVo> getOutInstructions() {
+    	return outProjectEntries.get("Phases:Instruction");
+    }
+    
+    // FIXME : ugly
+    public List<ThreadEntryVo> getInContradictions() {
+    	return inProjectEntries.get("Phases:Contradiction");
+    }
+
+    // FIXME : ugly
+    public List<ThreadEntryVo> getOutContradictions() {
+    	return outProjectEntries.get("Phases:Contradiction");
+    }
+    
+    // FIXME : ugly
+    public List<ThreadEntryVo> getInRecommandations() {
+    	return inProjectEntries.get("Phases:Recommandation");
+    }
+    
+    // FIXME : ugly
+    public List<ThreadEntryVo> getOutRecommandations() {
+    	return outProjectEntries.get("Phases:Recommandation");
+    }
 
     public void setMySelectedProject(ThreadVo selectedProject) {
 		this.selectedProject = selectedProject;
