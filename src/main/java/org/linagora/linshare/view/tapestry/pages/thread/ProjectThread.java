@@ -40,7 +40,7 @@ private static final Logger logger = LoggerFactory.getLogger(Index.class);
     private UserVo userVo;
     
     @Property
-    @Persist(PersistenceConstants.FLASH)
+    @Persist
     private ThreadVo selectedProject;
     
     @InjectComponent
