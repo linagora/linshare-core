@@ -44,7 +44,7 @@
 	<div t:id="threadFileUploadWindow">
 		<div class="confirmPopup">
 
-	 		<h2>${message:components.threadEntryPopup.mainTitle}</h2>
+	 		<h2>${message:components.threadEntryPopup.mainTitle} : ${currentThread.name}</h2>
 
 
 			<hr />
@@ -77,7 +77,7 @@
 	
 				
 				<t:label for="selectStepName"/>:
-				<t:select t:model="stepNames" t:id="selectStepName" />
+				<t:select t:model="stepNames" t:id="selectStepName" validate="required" />
 				
 				<div class="clear"></div>
 			<hr />
