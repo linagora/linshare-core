@@ -103,19 +103,6 @@ public class ThreadFileUploadPopup {
 	private ThreadVo currentThread;
 	
 	
-	@Persist
-	@Property
-	private TagEnumVo project;
-	
-	@Persist
-	@Property
-	private List<String> projectNames;
-	
-//	@Persist(PersistenceConstants.FLASH) 
-	@Property
-	private String selectProjectName;
-	 
-	
 	
 	@Persist
 	@Property
@@ -125,7 +112,6 @@ public class ThreadFileUploadPopup {
 	@Property
 	private List<String> stepNames;
 	
-//	@Persist(PersistenceConstants.FLASH) 
 	@Property
 	private String selectStepName;
 	 
@@ -187,9 +173,7 @@ public class ThreadFileUploadPopup {
 	@SetupRender
 	public void init() throws BusinessException {
 		documentsVolist = new ArrayList<DocumentVo>();
-		currentThread = new ThreadVo("9806de10-ed0b-11e1-877a-5404a6202d2c", "cours des comptes");
-		project = threadEntryFacade.getTagEnumVo(userVo, currentThread, "Projets");
-		projectNames = project.getEnumValues();
+		currentThread = new ThreadVo("9806de10-ed0b-11e1-877a-5404a6202d2c", "RATP");
 		
 		step = threadEntryFacade.getTagEnumVo(userVo, currentThread, "Phases");
 		stepNames = step.getEnumValues();
@@ -226,7 +210,6 @@ public class ThreadFileUploadPopup {
     	
     	List<TagVo> tags = new ArrayList<TagVo>();
     	
-    	tags.add(new TagVo(project.getName() , selectProjectName));
     	tags.add(new TagVo(step.getName() , selectStepName));
     	
     	try {
@@ -242,10 +225,8 @@ public class ThreadFileUploadPopup {
     
 
     public Boolean onValidateFormFromThreadEntryForm()  {
-    	logger.debug("selectProjectName : " + selectProjectName);
     	logger.debug("selectStepName : " + selectStepName);
     	
-    	if(selectProjectName == null) return false;
     	if(selectStepName == null) return false;
     	
     	return true;

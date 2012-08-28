@@ -76,10 +76,6 @@
 				
 	
 				
-				<t:label for="selectProjectName"/>:
-				<t:select t:model="projectNames" t:id="selectProjectName" />
-			<br/>
-				
 				<t:label for="selectStepName"/>:
 				<t:select t:model="stepNames" t:id="selectStepName" />
 				
