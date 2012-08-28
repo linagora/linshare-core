@@ -23,6 +23,7 @@ package org.linagora.linshare.view.tapestry.pages.thread;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
@@ -35,6 +36,7 @@ import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.components.ThreadFileUploadPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +45,9 @@ public class Index {
 	private static final Logger logger = LoggerFactory.getLogger(Index.class);
 	
 
+	/*
+	 * Session objects
+	 */
     @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
@@ -50,10 +55,21 @@ public class Index {
     @SessionState
     @Property
     private UserVo userVo;
+
+    /*
+     * Components
+     */
+    @InjectComponent
+    private ThreadFileUploadPopup threadFileUploadPopup;
     
+    /*
+     * Services
+     */
     @Inject
     private ThreadEntryFacade threadEntryFacade; 
 
+    
+    
 
     /* ***********************************************************
      *                      Injected services
@@ -67,6 +83,7 @@ public class Index {
     public void setupRender() {
     	logger.debug("setupRender()");
     	List<ThreadVo> allThread = threadEntryFacade.getAllThread();
+    	threadFileUploadPopup.setMyCurrentThread(allThread.get(0));
         for (ThreadVo threadVo : allThread) {
         	logger.debug("thread name : " + threadVo.getName());
         	try {

@@ -57,6 +57,8 @@ INSERT INTO tag_enum_value (id, tag_id, value) VALUES (1, 3, 'Instruction');
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (2, 3, 'Contradiction'); 
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (3, 3, 'Recommandation'); 
 
+INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (7, 51, 'RATP', false, true, null,0);
+
 
 -- Tags
 INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (4, 52, 'Réponse', false, true, null,0);
@@ -67,6 +69,7 @@ INSERT INTO tag_enum_value (id, tag_id, value) VALUES (4, 6, 'Instruction');
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (5, 6, 'Contradiction'); 
 INSERT INTO tag_enum_value (id, tag_id, value) VALUES (6, 6, 'Recommandation'); 
 
+INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (8, 52, 'Ministère de l''intérieur', false, true, null,0);
 
 
 
@@ -121,6 +124,7 @@ INSERT INTO tag_enum_value (id, tag_id, value) VALUES (6, 6, 'Recommandation');
 -- tags filters
 INSERT INTO tag_filter (id, account_id, name) VALUES (1, 51, 'Demande'); 
 INSERT INTO tag_filter (id, account_id, name) VALUES (2, 51, 'Réponse'); 
+INSERT INTO tag_filter (id, account_id, name) VALUES (5, 51, 'Thread name'); 
 
 -- TagFilterByRecipient 1
 -- TagFilterBySender 2
@@ -134,10 +138,15 @@ INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (2
 INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (2, 2, 1, null); 
 
 
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (5, 5, null, 4); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (5, 5, 7, null); 
+
+
 
 -- tags filters
 INSERT INTO tag_filter (id, account_id, name) VALUES (3, 52, 'Demande'); 
 INSERT INTO tag_filter (id, account_id, name) VALUES (4, 52, 'Réponse'); 
+INSERT INTO tag_filter (id, account_id, name) VALUES (6, 52, 'Thread name'); 
 
 -- TagFilterByRecipient 1
 -- TagFilterBySender 2
@@ -149,4 +158,10 @@ INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enu
 
 INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (4, 4, 'GuestDomain', 3); 
 INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (4, 4, 3, null); 
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (6, 6, null, 4); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (6, 6, 8, null); 
+
+
+
 

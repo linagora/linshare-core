@@ -18,5 +18,7 @@
 		</subclass>
 		<subclass name="org.linagora.linshare.core.domain.entities.TagFilterBySender" discriminator-value="2" lazy="false">
 		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.TagFilterRuleAll" discriminator-value="4" lazy="false">
+		</subclass>
 	</class>
 </hibernate-mapping>
