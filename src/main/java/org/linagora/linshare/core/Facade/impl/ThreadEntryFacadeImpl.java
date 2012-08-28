@@ -3,6 +3,7 @@ package org.linagora.linshare.core.Facade.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.Facade.ThreadEntryFacade;
 import org.linagora.linshare.core.domain.constants.TagType;
@@ -11,6 +12,8 @@ import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagEnum;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.ThreadEntryTransformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.TagEnumVo;
@@ -72,6 +75,32 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
 		for (Thread thread : all) {
 			res.add(new ThreadVo(thread));
+		}
+		return res;
+	}
+
+	
+
+	@Override
+	public List<ThreadVo> getAllMyThread(UserVo actorVo) {
+		
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		logger.debug("actor : " + actor.getAccountReprentation());
+		List<Thread> all = threadService.findAll();
+		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
+		for (Thread thread : all) {
+			logger.debug("thread name " + thread.getName());
+//			List<ThreadMember> myMembers = new ArrayList<ThreadMember>();
+			
+			List<User> userMembers = new ArrayList<User>();
+			for (ThreadMember threadMember : thread.getMyMembers()) {
+				userMembers.add(threadMember.getUser());
+			}
+			
+			if(userMembers.contains(actor)) {
+				logger.debug("adding member " + actor.getAccountReprentation());
+				res.add(new ThreadVo(thread));
+			}
 		}
 		return res;
 	}

@@ -75,7 +75,7 @@ public class Index {
     @SetupRender
     public void setupRender() {
     	logger.debug("setupRender()");
-    	projects = threadEntryFacade.getAllThread();
+    	projects = threadEntryFacade.getAllMyThread(userVo);
     }
     
     public Object onActionFromShowProjectThread(String lsUuid) {

@@ -31,8 +31,12 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 
 -- Users
+-- bart simpson
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (50, 2, '9a9ece25-7a0e-4d75-bb55-d4070e25e1e1', current_date, current_date, 0, 'fr', true, false, 3);
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (50, 'Bart', 'Simpson', 'bart.simpson@int1.linshare.dev', true, '', false, true);
+-- pierre mongin : 15kn60njvhdjh
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id, owner_id , password ) VALUES (53, 3, 'fa2cab19-2cd7-44f5-96f6-418455899d3e', current_date, current_date, 0, 'fr', true, false, 4, 50 , 'OsFTxoUjd62imwHnaV/4zQfrJ5s=');
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST, expiration_date) VALUES (53, 'Pierre', 'Mongin', 'pmongin@ratp.fr', true, '', false, false, current_date);
 
 
 -- Thread : projet : RATP
@@ -46,7 +50,9 @@ INSERT INTO thread (account_id, name) VALUES (52, 'Ministère de l''intérieur')
 
 --Thread members
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (1, 51, true, true, current_date, current_date, 50); 
+INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (2, 51, true, true, current_date, current_date, 53); 
 
+INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (3, 52, true, true, current_date, current_date, 50); 
 
 -- Tags
 INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (1, 51, 'Réponse', false, true, null,0);
@@ -172,4 +178,5 @@ INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enu
 -- 
 
 UPDATE policy SET status=true where id=27;
+
 
