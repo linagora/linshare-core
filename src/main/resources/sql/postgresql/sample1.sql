@@ -73,6 +73,57 @@ INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALU
 
 
 
+
+-- tags filters
+INSERT INTO tag_filter (id, account_id, name) VALUES (1, 51, 'Demande tag filter'); 
+INSERT INTO tag_filter (id, account_id, name) VALUES (2, 51, 'Réponse tag filter'); 
+INSERT INTO tag_filter (id, account_id, name) VALUES (5, 51, 'Thread name tag filter'); 
+
+-- TagFilterByRecipient 1
+-- TagFilterBySender 2
+-- TagFilterByDomain 3
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (1, 1, 'MySubDomain', 3); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (1, 1, 2, null); 
+
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (2, 2, 'GuestDomain', 3); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (2, 2, 1, null); 
+
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (5, 5, null, 4); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (5, 5, 7, null); 
+
+
+
+-- tags filters
+INSERT INTO tag_filter (id, account_id, name) VALUES (3, 52, 'Demande tag filter'); 
+INSERT INTO tag_filter (id, account_id, name) VALUES (4, 52, 'Réponse tag filter'); 
+INSERT INTO tag_filter (id, account_id, name) VALUES (6, 52, 'Thread name tag filter'); 
+
+-- TagFilterByRecipient 1
+-- TagFilterBySender 2
+-- TagFilterByDomain 3
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (3, 3, 'MySubDomain', 3); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (3, 3, 5, null); 
+
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (4, 4, 'GuestDomain', 3); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (4, 4, 4, null); 
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (6, 6, null, 4); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (6, 6, 8, null); 
+
+
+
+
+
+
+
+
+
+
 -- -- thread-entry-1-no-dl
 -- INSERT INTO document (id, uuid, creation_date, type, size, thmb_uuid, timestamp) VALUES (1, 'a09e6bea-edcb-11e1-86e7-5404a6202d2c', current_date, 'image/png', 49105, null, null);
 -- INSERT INTO entry (id, owner_id, creation_date, modification_date, name, comment, expiration_date, uuid) VALUES (1, 51, current_date, current_date, 'thread-entry-1-no-dl', '', current_date, '5a663f86-edcb-11e1-a9fd-5404a6202d2c'); 
@@ -120,48 +171,5 @@ INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALU
 -- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (12, 4, 4, 5); 
 -- 
 
-
--- tags filters
-INSERT INTO tag_filter (id, account_id, name) VALUES (1, 51, 'Demande'); 
-INSERT INTO tag_filter (id, account_id, name) VALUES (2, 51, 'Réponse'); 
-INSERT INTO tag_filter (id, account_id, name) VALUES (5, 51, 'Thread name'); 
-
--- TagFilterByRecipient 1
--- TagFilterBySender 2
--- TagFilterByDomain 3
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (1, 1, 'MySubDomain', 3); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (1, 1, 2, null); 
-
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (2, 2, 'GuestDomain', 3); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (2, 2, 1, null); 
-
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (5, 5, null, 4); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (5, 5, 7, null); 
-
-
-
--- tags filters
-INSERT INTO tag_filter (id, account_id, name) VALUES (3, 52, 'Demande'); 
-INSERT INTO tag_filter (id, account_id, name) VALUES (4, 52, 'Réponse'); 
-INSERT INTO tag_filter (id, account_id, name) VALUES (6, 52, 'Thread name'); 
-
--- TagFilterByRecipient 1
--- TagFilterBySender 2
--- TagFilterByDomain 3
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (3, 3, 'MySubDomain', 3); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (3, 3, 4, null); 
-
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (4, 4, 'GuestDomain', 3); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (4, 4, 3, null); 
-
-INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (6, 6, null, 4); 
-INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (6, 6, 8, null); 
-
-
-
+UPDATE policy SET status=true where id=27;
 

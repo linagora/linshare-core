@@ -94,8 +94,12 @@ public class TagBusinessServiceImpl implements TagBusinessService {
 					for (TagFilterRuleTagAssociation tagFilterRuleTagAssociation : tagFilterRuleTagAssociations) {
 
 						Tag tag = tagFilterRuleTagAssociation.getTag();
+						logger.debug("current tag is : " + tag.getName());
 						String value = null;
 						if(tag.getTagType().equals(TagType.ENUM)) {
+							if(tagFilterRuleTagAssociation.getTagEnumValue()== null) {
+								logger.error("tagFilterRuleTagAssociation.getTagEnumValue() is null");
+							}
 							value = tagFilterRuleTagAssociation.getTagEnumValue().getValue();
 						}
 						
