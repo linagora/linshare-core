@@ -44,6 +44,10 @@
 			<one-to-many class="org.linagora.linshare.core.domain.entities.Tag"/>
 		</set>
 		
+		<set name="tagFilters" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="account_id" not-null="false"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.TagFilter"/>
+		</set>
     
 		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
 		  	<set name="myThreads" lazy="true" cascade="save-update,lock" inverse="true">

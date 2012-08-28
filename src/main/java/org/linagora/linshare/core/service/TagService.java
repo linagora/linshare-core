@@ -17,5 +17,4 @@ public interface TagService {
 	
 	public void setTagToThreadEntries(Account actor, Thread owner, List<ThreadEntry> threadEntries, String tagName, String value) throws BusinessException;
 	
-	
 }

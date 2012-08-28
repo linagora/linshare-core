@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 
-public class TagFilterRule {
+public abstract class TagFilterRule {
 
 	public TagFilterRule() {
 	}
@@ -38,6 +38,8 @@ public class TagFilterRule {
 	public void setTagFilterRuleTagAssociation(Set<TagFilterRuleTagAssociation> tagFilterRuleTagAssociation) {
 		this.tagFilterRuleTagAssociation = tagFilterRuleTagAssociation;
 	}
+	
+	public abstract Boolean isTrue(Account actor);
 
 	
 }

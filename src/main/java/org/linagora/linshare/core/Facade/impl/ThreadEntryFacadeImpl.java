@@ -61,7 +61,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, stream, size, fileName);
 
-//		return threadEntryTransformer.disassemble(threadEntry);
 		return new ThreadEntryVo(threadEntry);
 	
 	}

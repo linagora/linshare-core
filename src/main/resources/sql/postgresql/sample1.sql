@@ -105,3 +105,19 @@ INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (
 INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (12, 4, 4, 5); 
 
 
+
+-- tags filters
+INSERT INTO tag_filter (id, account_id, name) VALUES (1, 51, 'Demande'); 
+INSERT INTO tag_filter (id, account_id, name) VALUES (2, 51, 'Réponse'); 
+
+-- TagFilterByRecipient 1
+-- TagFilterBySender 2
+-- TagFilterByDomain 3
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (1, 1, 'MySubDomain', 3); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (1, 1, 2, null); 
+
+
+INSERT INTO tag_filter_rule (id, tag_filter_id, regexp, tag_rule_type) VALUES (2, 2, 'GuestDomain', 3); 
+INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enum_value_id) VALUES (2, 2, 1, null); 
+

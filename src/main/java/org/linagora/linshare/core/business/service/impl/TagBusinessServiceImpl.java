@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
+import java.util.Set;
+
 import org.linagora.linshare.core.business.service.TagBusinessService;
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -7,6 +9,9 @@ import org.linagora.linshare.core.domain.entities.EntryTagAssociation;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagEnum;
 import org.linagora.linshare.core.domain.entities.TagEnumValue;
+import org.linagora.linshare.core.domain.entities.TagFilter;
+import org.linagora.linshare.core.domain.entities.TagFilterRule;
+import org.linagora.linshare.core.domain.entities.TagFilterRuleTagAssociation;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -43,6 +48,7 @@ public class TagBusinessServiceImpl implements TagBusinessService {
 		return tag;
 	}
 
+	
 	@Override
 	public void setTagToThreadEntry(Thread owner, ThreadEntry threadEntry, Tag tag, String optionalValue) throws BusinessException {
 
@@ -69,5 +75,34 @@ public class TagBusinessServiceImpl implements TagBusinessService {
 		threadEntryRepository.update(threadEntry);
 	}
 	
-	
+
+	@Override
+	public void runTagFiltersOnThreadEntry(Account actor, Thread owner, ThreadEntry threadEntry) throws BusinessException {
+		logger.debug("running tags filters on thread entry : " + threadEntry.getName());
+		
+		Set<TagFilter> tagFilters = owner.getTagFilters();
+		for (TagFilter tagFilter : tagFilters) {
+			logger.debug("tag filter name :" + tagFilter.getName());
+			
+			Set<TagFilterRule> rules = tagFilter.getRules();
+			for (TagFilterRule tagFilterRule : rules) {
+				
+				if(tagFilterRule.isTrue(actor)) {
+					logger.debug("tagFilterRule ok : " + tagFilterRule.getId());
+					
+					Set<TagFilterRuleTagAssociation> tagFilterRuleTagAssociations = tagFilterRule.getTagFilterRuleTagAssociation();
+					for (TagFilterRuleTagAssociation tagFilterRuleTagAssociation : tagFilterRuleTagAssociations) {
+
+						Tag tag = tagFilterRuleTagAssociation.getTag();
+						String value = null;
+						if(tag.getTagType().equals(TagType.ENUM)) {
+							value = tagFilterRuleTagAssociation.getTagEnumValue().getValue();
+						}
+						
+						setTagToThreadEntry(owner, threadEntry, tag, value);	
+					}
+				}
+			}
+		}
+	}
 }

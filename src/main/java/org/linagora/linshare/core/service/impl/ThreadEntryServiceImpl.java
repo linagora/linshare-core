@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.business.service.TagBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -33,11 +34,12 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final MimeTypeService mimeTypeService;
 	private final AccountService accountService;
 	private final VirusScannerService virusScannerService;
+	private final TagBusinessService tagBusinessService;
 	
 	
 	
 	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService) {
+			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -46,6 +48,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		this.mimeTypeService = mimeTypeService;
 		this.accountService = accountService;
 		this.virusScannerService = virusScannerService;
+		this.tagBusinessService = tagBusinessService;
 	}
 	
 	
@@ -90,6 +93,11 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		logEntryService.create(logEntry);
 
 		tempFile.delete(); // remove the temporary file
+		
+		
+
+		tagBusinessService.runTagFiltersOnThreadEntry(actor, thread, threadEntry);
+
 		return threadEntry;
 	}
 
