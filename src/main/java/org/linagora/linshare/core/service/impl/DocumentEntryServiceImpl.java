@@ -3,8 +3,10 @@ package org.linagora.linshare.core.service.impl;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -12,10 +14,10 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
-import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -316,17 +318,16 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			
 		} else if(userQuotaFunctionality.getActivationPolicy().getStatus()) {
 				
-			// use config parameter
 			long userQuota = userQuotaFunctionality.getPlainSize();
-	
-			// TODO : To be fix : quota
-//			if ((user.getDocuments() == null) || (user.getDocuments().size() == 0)) {
-//				return userQuota;
-//			}
-//	
-//			for (Document userDoc : user.getDocuments()) {
-//				userQuota -= userDoc.getSize();
-//			}
+			
+			// FIXME : user quota need to create a specific finder for better performance
+			Set<Entry> entries = account.getEntries();
+			for (Entry entry : entries) {
+				if(entry.getEntryType().equals(EntryType.DOCUMENT)) {
+					userQuota -= ((DocumentEntry)entry).getSize();
+				}
+			}
+			
 			return userQuota;
 		}
 		return LinShareConstants.defaultFreeSpace;

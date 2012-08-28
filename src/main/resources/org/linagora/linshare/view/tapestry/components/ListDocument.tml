@@ -79,11 +79,11 @@
 						<!-- 						<span t:type="ck/TrimmedString" maxLength="28" trimPos="right" value="document.fileName" /> -->
 					</t:linkit.Comment>
 					<t:if t:test="${thumbnailExists}">
-+						<div t:type="chenillekit/Tooltip" title="${document.fileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
-+							${document.fileName}											<!--  <img src="${thumbnailPath}" /> -->
+						<div t:type="chenillekit/Tooltip" title="${document.fileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
+							${document.fileName}											<!--  <img src="${thumbnailPath}" /> -->
 						</div>
 						<t:parameter name="else">
-+							<div t:type="chenillekit/Tooltip" title="${document.fileName}" value="${message:components.listDocument.noThumb}">
+							<div t:type="chenillekit/Tooltip" title="${document.fileName}" value="${message:components.listDocument.noThumb}">
 								${document.fileName}
 							</div>
 						</t:parameter>

@@ -52,6 +52,7 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	}
 	
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
+		
 		User user = (User) accountService.findByLsUid(userVo.getLsUid());
 		ArrayList<DocumentVo> documents = new ArrayList<DocumentVo>();
 
@@ -68,7 +69,9 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 		return documents;
 		
 	}
-/*
+
+	
+	/*
 	public List<DocumentVo> retrieveDocumentWithCriterion(
 			SearchDocumentCriterion searchDocumentCriterion) {
 		
