@@ -122,7 +122,7 @@ public class UserFacadeImpl implements UserFacade {
     }
     
     public List<UserVo> searchUser(String mail, String firstName, String lastName, AccountType userType,UserVo currentUser) throws BusinessException {
-		User owner = userRepository.findByMail(currentUser.getLogin());
+		User owner = userRepository.findByLsUuid(currentUser.getLogin());
 		return getUserVoList(userService.searchUser(mail, firstName, lastName, userType, owner));
 	}
 
@@ -174,7 +174,7 @@ public class UserFacadeImpl implements UserFacade {
     
     public void deleteUser(String login, UserVo actorVo) {
         try {
-        	User actor = userRepository.findByMail(actorVo.getLogin());
+        	User actor = userRepository.findByLsUuid(actorVo.getLogin());
             userService.deleteUser(login, actor);
         } catch (BusinessException e) {
             throw new IllegalArgumentException(e.getMessage());

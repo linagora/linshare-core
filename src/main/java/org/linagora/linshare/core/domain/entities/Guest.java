@@ -44,6 +44,7 @@ public class Guest extends User {
 	public Guest(String firstName, String lastName, String mail) {
         super(firstName, lastName, mail);
         this.restricted = false;
+        this.comment = "";
     }
 
 	@Override

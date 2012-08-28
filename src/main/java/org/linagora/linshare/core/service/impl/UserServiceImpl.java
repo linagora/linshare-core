@@ -155,7 +155,9 @@ public class UserServiceImpl implements UserService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"Domain was not found");
 		}
 		
-		User ownerUser = findUserInDB(ownerDomain, ownerLogin);
+		
+		User ownerUser = userRepository.findByLsUuid(ownerLogin); 
+		
 		if(ownerUser == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,"Owner was not found");
 		}
@@ -182,11 +184,10 @@ public class UserServiceImpl implements UserService {
 			
 			String hashedPassword = HashUtils.hashSha1withBase64(password.getBytes());
 			
-			User owner = userRepository.findByMail(ownerLogin);
-			
+			if (comment == null) comment="";
 			Guest guest = new Guest(firstName, lastName, mail, hashedPassword, canUpload, comment);
 			guest.setDomain(guestDomain);
-			guest.setOwner(owner);
+			guest.setOwner(ownerUser);
 			guest.setComment(comment);
 			
 			
@@ -200,19 +201,18 @@ public class UserServiceImpl implements UserService {
 			guest.setLocale(guestDomain.getDefaultLocale());
 			guest.setExpirationDate(calculateUserExpiryDate(guestDomain));
 			
-			
 			guestRepository.create(guest);
 			
 			Calendar expDate = new GregorianCalendar();
 			expDate.setTime(guest.getExpirationDate());
-			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(), owner.getDomainId(),
+			UserLogEntry logEntry = new UserLogEntry(ownerUser.getMail(), ownerUser.getFirstName(), ownerUser.getLastName(), ownerUser.getDomainId(),
 					LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), expDate);
 			
 			logEntryService.create(logEntry);
 			
 			
 			// Send an email to the guest.
-			notifierService.sendAllNotifications(mailElementsFactory.buildMailNewGuestWithOneRecipient(owner, mailContainer, owner, guest, password));
+			notifierService.sendAllNotifications(mailElementsFactory.buildMailNewGuestWithOneRecipient(ownerUser, mailContainer, ownerUser, guest, password));
 			logger.info("Guest " + mail + " was successfully created.");
 			return guest;
 		} else {
@@ -256,7 +256,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
 	public void deleteUser(String login, User actor) throws BusinessException {
-		User userToDelete = userRepository.findByMail(login);
+		User userToDelete = userRepository.findByLsUuid(login);
 		
 		if (userToDelete!=null) {
 			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());

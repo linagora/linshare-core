@@ -257,9 +257,9 @@ public class GuestEditForm {
     		return;
     	}
 
-    	GuestDomainVo guests = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
+    	GuestDomainVo guestDomainVo = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
     	
-        if (userFacade.findUserInDb(mail, userLoggedIn.getDomainIdentifier()) != null || userFacade.findUserInDb(mail, guests.getIdentifier()) != null ) {
+        if (userFacade.findUserInDb(mail, userLoggedIn.getDomainIdentifier()) != null || userFacade.findUserInDb(mail, guestDomainVo.getIdentifier()) != null ) {
             guestCreateForm.recordError(messages.get("pages.user.edit.error.alreadyExist"));
             shareSessionObjects.addError(messages.get("pages.user.edit.error.alreadyExist"));
             userAlreadyExists = true;
@@ -303,6 +303,8 @@ public class GuestEditForm {
 				businessMessagesManagementService.notify(filter.getWarningMessage());
 			}
 		} catch (BusinessException e) {
+			logger.debug(e.toString());
+			businessMessagesManagementService.notify(e);
 			businessMessagesManagementService.notify(e);
 			return Index.class;
 		}
@@ -315,9 +317,15 @@ public class GuestEditForm {
 
 			boolean allowedToCreateGuest = guestsAllowedToCreateGuest;
         	
-        	userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, 
-        			mailContainer,userLoggedIn);
+        	userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, mailContainer, userLoggedIn);
+		} catch (BusinessException e) { 
+			logger.error("Can't create Guest : " + mail);
+			logger.debug(e.toString());
+			businessMessagesManagementService.notify(e);
+//			return Index.class;
+		}
         	
+        try {
         	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
         		userFacade.addGuestContactRestriction(userLoggedIn.getLogin(), mail);
         	}

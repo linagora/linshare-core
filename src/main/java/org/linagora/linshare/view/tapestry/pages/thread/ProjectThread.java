@@ -78,7 +78,30 @@ private static final Logger logger = LoggerFactory.getLogger(Index.class);
 
     @SetupRender
     public void setupRender() {
-    	threadFileUploadPopup.setMyCurrentThread(threadEntryFacade.getAllThread().get(0));
+    	
+    	logger.debug("setupRender()");
+    	List<ThreadVo> allThread = threadEntryFacade.getAllThread();
+    	for (ThreadVo threadVo : allThread) {
+        	logger.debug("thread name : " + threadVo.getName());
+        	try {
+				List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, threadVo);
+				for (ThreadEntryVo threadEntryVo : allThreadEntries) {
+					logger.debug("threadEntryVo name : " + threadEntryVo.getFileName());
+					List<TagVo> tags = threadEntryVo.getTags();
+					for (TagVo tagVo : tags) {
+						logger.debug("tagVo : " + tagVo.toString());
+					}
+				}
+				
+			} catch (BusinessException e) {
+				e.printStackTrace();
+			}
+		}
+
+    	threadFileUploadPopup.setMyCurrentThread(selectedProject);
+    	
+    	
+    	
 //		currentThread = threadEntryFacade.getAllThread().get(0);
 //		try {
 //			List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, currentThread);

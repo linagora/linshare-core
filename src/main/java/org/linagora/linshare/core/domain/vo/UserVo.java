@@ -57,6 +57,7 @@ public class UserVo implements Serializable {
         this.userType = account.getAccountType();
         this.role = account.getRole();
         this.locale = account.getLocale();
+        this.restricted = false;
         
         if(userType.equals(AccountType.GUEST) || userType.equals(AccountType.INTERNAL) ||userType.equals(AccountType.ROOT)) {
         	User user = (User)account;
@@ -65,6 +66,7 @@ public class UserVo implements Serializable {
         	this.mail = user.getMail();
         	this.upload = user.getCanUpload();
         	this.createGuest= user.getCanCreateGuest();
+        	this.expirationDate = user.getExpirationDate();
         } else {
         	this.firstName = null;
         	this.lastName = null;
@@ -87,6 +89,7 @@ public class UserVo implements Serializable {
         this.role = user.getRole();
         this.upload= user.getCanUpload();
         this.createGuest=user.getCanCreateGuest();
+        this.restricted = false;
         
         this.locale = user.getLocale();
         if (user instanceof Guest) {

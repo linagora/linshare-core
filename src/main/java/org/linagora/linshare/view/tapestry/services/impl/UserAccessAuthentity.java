@@ -55,39 +55,40 @@ public class UserAccessAuthentity  {
     }
 
     public void processAuth() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication != null) {
-        	// If we are logged
-        	if (applicationStateManager.getIfExists(UserVo.class) == null) {
-        		// fetch user if not existing
-	            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-	            logger.debug("processAuth with " + userDetails.getUsername());
-	            UserVo userVo = null;
-				try {
-					userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
-				} catch (BusinessException e) {
-					logger.error("Error while trying to find user details", e);
-				}
-				generateAuthLogEntry(userVo);
-				applicationStateManager.set(UserVo.class, userVo);
-        	} else {
-        		// if the login doesn't match the session user email, change the user
-        		if (!applicationStateManager.getIfExists(UserVo.class).getMail().equalsIgnoreCase(
-        				((UserDetails)(authentication.getPrincipal())).getUsername())) {
-        			// fetch user 
-    	            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    	            UserVo userVo = null;
-					try {
-						userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
-					} catch (BusinessException e) {
-						logger.error("Error while trying to find user details", e);
-					}
-					generateAuthLogEntry(userVo);
-    	            applicationStateManager.set(UserVo.class, userVo);
-        		}
-        	}
-        }
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    	if (authentication != null) {
+    		// If we are logged
+    		
+    		if (applicationStateManager.getIfExists(UserVo.class) == null) {
+    			// fetch user if not existing
+    			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    			logger.debug("processAuth with " + userDetails.getUsername());
+    			UserVo userVo = null;
+    			try {
+    				userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
+    			} catch (BusinessException e) {
+    				logger.error("Error while trying to find user details", e);
+    			}
+    			generateAuthLogEntry(userVo);
+    			applicationStateManager.set(UserVo.class, userVo);
+    		} else {
+    			// if the login doesn't match the session user email, change the user
+    			if (!applicationStateManager.getIfExists(UserVo.class).getMail().equalsIgnoreCase(
+    					((UserDetails)(authentication.getPrincipal())).getUsername())) {
+    				// fetch user 
+    				UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    				UserVo userVo = null;
+    				try {
+    					userVo = accountFacade.loadUserDetails(userDetails.getUsername().toLowerCase());
+    				} catch (BusinessException e) {
+    					logger.error("Error while trying to find user details", e);
+    				}
+    				//					generateAuthLogEntry(userVo);
+    				applicationStateManager.set(UserVo.class, userVo);
+    			}
+    		}
+    	}
     }
 
 	private void generateAuthLogEntry(UserVo userVo) {

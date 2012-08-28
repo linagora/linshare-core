@@ -242,7 +242,6 @@ public class MyBorderLayout {
 		MenuEntry fileMenu;
 		MenuEntry userMenu;
 		MenuEntry threadMenu;
-		MenuEntry groupMenu;
 		MenuEntry adminMenu;
 		MenuEntry domainMenu;
 		MenuEntry auditMenu;
@@ -258,13 +257,10 @@ public class MyBorderLayout {
 		}
 
 		// Menu : User
-		userMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
+		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
 	
 		// Menu : Thread
-		threadMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
-		
-		// Menu : Groups
-		groupMenu = new MenuEntry(response.encodeURL("groups/index"),messages.get("components.myborderlayout.group.title"),null,null,"groups");
+		threadMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		
 		// Menu : Administration
 		adminMenu = new MenuEntry(response.encodeURL("administration/index"),messages.get("components.myborderlayout.administration.title"),null,null,"administration");

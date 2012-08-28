@@ -34,6 +34,7 @@ import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.utils.FileUtils;
+import org.slf4j.Logger;
 
 public class InfoComponent {
 
@@ -91,6 +92,10 @@ public class InfoComponent {
 	@Property
 	private boolean globalQuota;
 	
+	@Inject
+	private Logger logger;
+	
+	
 	   /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */
@@ -144,7 +149,12 @@ public class InfoComponent {
 			}
 			
 			if (isGuest) {
-				expirationDate = localisedDateFormat.format(userVo.getExpirationDate());
+				if(userVo.getExpirationDate() != null)
+					expirationDate = localisedDateFormat.format(userVo.getExpirationDate());
+				else {
+					logger.error("userVo.getExpirationDate() is null !");
+					expirationDate = "Null";
+				}
 			}
 		}
 	}
