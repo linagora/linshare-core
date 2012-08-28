@@ -3,7 +3,6 @@ package org.linagora.linshare.core.domain.transformers.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.transformers.Transformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;

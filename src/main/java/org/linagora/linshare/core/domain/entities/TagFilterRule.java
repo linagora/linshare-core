@@ -1,7 +1,7 @@
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 
 public abstract class TagFilterRule {

@@ -20,24 +20,14 @@
 */
 package org.linagora.linshare.core.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Locale;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.FileLogEntry;
-import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.StatisticsService;
-import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
 
 public class StatisticsServiceImpl implements StatisticsService {
 	private final UserRepository<User> userRepository;

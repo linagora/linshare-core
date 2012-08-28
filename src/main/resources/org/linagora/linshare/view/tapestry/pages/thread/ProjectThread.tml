@@ -1,7 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
-    xmlns:p="tapestry:parameter">
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
 	<!-- Main content -->
 
@@ -30,22 +28,23 @@
 		<!-- Page content -->
 
 		<div id="pageContent">
-            <!--<t:loop source="projects" value="currentProject">-->
-                <!--<t:actionlink t:id="showProjectThread" context="currentProject.lsUuid">${currentProject.name}</t:actionlink>-->
-            <!--</t:loop>-->
-            <t:grid source="projects" row="currentProject" include="name" rowsPerPage="10">
-                <p:nameCell>
-                    <t:actionlink t:id="showProjectThread" context="currentProject.lsUuid">${currentProject.name}</t:actionlink>
-                </p:nameCell>
-                <p:empty>
-                    Aucun projets disponibles. Vous pouvez en ajouter avec le bouton "Ajouter".
-                </p:empty>
-            </t:grid>
+            <h2>${selectedProject.name}</h2>
+
+			<!-- List : Search result -->
+            <!--<div t:type="ck/SlidingPanel" t:id="" t:closed="false" t:subject="${category}">-->
+                <!--<t:loop source="projects" value="currentProject">-->
+                    <!--<t:grid source="phases.keySet()" value="phase">-->
+                    <!--</t:grid>-->
+                <!--</t:loop>-->
+            <!--</div>-->
 		</div>
 
 	</div><!-- id="content" -->
 
 	<!-- Popups -->
+
+    <!-- Thread File Upload popup -->
+    <t:threadFileUploadPopup t:eventName="threadFileUploadPopupEvent" />
 
 
 	<!-- Widgets -->

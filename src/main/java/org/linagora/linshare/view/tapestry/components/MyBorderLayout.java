@@ -304,7 +304,7 @@ public class MyBorderLayout {
 			}
 			if (showUserTab())
 				menu.addMenuEntry(userMenu);
-			if (showThreadTab())
+			if (!superadmin && showThreadTab())
 				menu.addMenuEntry(threadMenu);
 			if (superadmin || admin)
 				menu.addMenuEntry(adminMenu);
@@ -323,11 +323,9 @@ public class MyBorderLayout {
 	
 	boolean showThreadTab() {
 		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
-			if(!superadmin) {
-				// TODO :
-				// return functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
-				return true;
-			}
+			// TODO :
+			// return functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
+			return true;
 		}
 		return false;
 	}

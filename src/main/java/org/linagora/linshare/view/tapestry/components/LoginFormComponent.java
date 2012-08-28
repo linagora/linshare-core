@@ -33,7 +33,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 import org.linagora.linshare.core.Facade.AbstractDomainFacade;
-import org.linagora.linshare.core.Facade.AccountFacade;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;

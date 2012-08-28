@@ -1,7 +1,6 @@
 package org.linagora.linshare.service;
 
 import java.io.InputStream;
-import java.util.Calendar;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -11,9 +10,6 @@ import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;

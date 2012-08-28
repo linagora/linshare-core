@@ -24,17 +24,16 @@ import java.util.List;
 
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.Facade.ThreadEntryFacade;
-import org.linagora.linshare.core.domain.vo.TagVo;
-import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.ThreadFileUploadPopup;
 import org.slf4j.Logger;
@@ -45,9 +44,6 @@ public class Index {
 	private static final Logger logger = LoggerFactory.getLogger(Index.class);
 	
 
-	/*
-	 * Session objects
-	 */
     @SessionState
     @Property
     private ShareSessionObjects shareSessionObjects;
@@ -56,19 +52,15 @@ public class Index {
     @Property
     private UserVo userVo;
 
-    /*
-     * Components
-     */
-    @InjectComponent
-    private ThreadFileUploadPopup threadFileUploadPopup;
-    
-    /*
-     * Services
-     */
-    @Inject
-    private ThreadEntryFacade threadEntryFacade; 
+    @InjectPage
+    private ProjectThread projectThreadPage;
 
+    @Property
+    @Persist
+    private	List<ThreadVo> projects;
     
+    @Property
+    private ThreadVo currentProject;
     
 
     /* ***********************************************************
@@ -77,29 +69,31 @@ public class Index {
 
     @Inject
     private Messages messages;
+    
+    @Inject
+    private ThreadEntryFacade threadEntryFacade; 
 
 
     @SetupRender
     public void setupRender() {
     	logger.debug("setupRender()");
-    	List<ThreadVo> allThread = threadEntryFacade.getAllThread();
-    	threadFileUploadPopup.setMyCurrentThread(allThread.get(0));
-        for (ThreadVo threadVo : allThread) {
-        	logger.debug("thread name : " + threadVo.getName());
-        	try {
-				List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, threadVo);
-				for (ThreadEntryVo threadEntryVo : allThreadEntries) {
-					logger.debug("threadEntryVo name : " + threadEntryVo.getFileName());
-					List<TagVo> tags = threadEntryVo.getTags();
-					for (TagVo tagVo : tags) {
-						logger.debug("tagVo : " + tagVo.toString());
-					}
-				}
-				
-			} catch (BusinessException e) {
-				e.printStackTrace();
+    	projects = threadEntryFacade.getAllThread();
+    }
+    
+    public Object onActionFromShowProjectThread(String lsUuid) {
+    	logger.debug("Debut onActionFromShowProjectThread");
+    	for (ThreadVo project : projects) {
+    		logger.debug("Looping through projects list :");
+    		logger.debug("current project name = " + project.getName());
+    		logger.debug("current project lsUuid = " + project.getLsUuid());
+    		logger.debug("selected lsUuid = " + lsUuid);
+			if (project.getLsUuid().equals(lsUuid)) {
+		    	projectThreadPage.setMySelectedProject(project);
+		    	logger.debug("Projet " + project.getName() + "recupere");
+		    	return projectThreadPage;
 			}
 		}
+    	return null;
     }
 
     @AfterRender

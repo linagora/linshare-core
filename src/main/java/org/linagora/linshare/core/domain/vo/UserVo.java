@@ -23,7 +23,6 @@ package org.linagora.linshare.core.domain.vo;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.aspectj.apache.bcel.generic.LSUB;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
