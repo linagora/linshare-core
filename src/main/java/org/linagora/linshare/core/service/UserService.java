@@ -95,6 +95,7 @@ public interface UserService {
 
 	/**
 	 * update a guest (edit mode)
+	 * @param guestUuid TODO
 	 * @param mail
 	 * @param firstName
 	 * @param lastName
@@ -102,16 +103,17 @@ public interface UserService {
 	 * @param owner
 	 * @throws BusinessException
 	 */
-    public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
+    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
     
 	/**
 	 * update the role of a user (admin, simple)
+	 * @param userUuid TODO
 	 * @param mail
 	 * @param role
 	 * @param owner
 	 * @throws BusinessException
 	 */
-	public void updateUserRole(String domain, String mail,Role role, UserVo owner) throws BusinessException;
+	public void updateUserRole(String userUuid, String domain,String mail, Role role, UserVo owner) throws BusinessException;
     
 	/**
 	 * Update a user locale
@@ -127,7 +129,7 @@ public interface UserService {
 	 * @param newPassword
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
-	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException;
+	public void changePassword(String uuid, String oldPassword, String newPassword) throws BusinessException;
 	
 	/**
 	 * Reset a guest password
@@ -135,7 +137,7 @@ public interface UserService {
      * @param mailContainer informations needed to construct the email
 	 * @throws BusinessException
 	 */
-	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException;
+	public void resetPassword(String uuid, MailContainer mailContainer) throws BusinessException;
 	
 	/**
 	 * Update a guest as restricted and set his list of contacts
@@ -143,22 +145,22 @@ public interface UserService {
 	 * @param login of the guest
 	 * @param mailContacts
 	 */
-	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException;
+	public void setGuestContactRestriction(String uuid, List<String> mailContacts) throws BusinessException;
 	
 	/**
 	 * Set a guest as not restricted and remove his list of contacts
 	 * 
 	 * @param login
 	 */
-	public void removeGuestContactRestriction(String login) throws BusinessException;
+	public void removeGuestContactRestriction(String uuid) throws BusinessException;
 	
 	/**
 	 * Add one contact to a restricted guest
 	 * 
-	 * @param ownerLogin
-	 * @param contactLogin
+	 * @param ownerUuid
+	 * @param contactUuid
 	 */
-	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException;
+	public void addGuestContactRestriction(String ownerUuid, String contactUuid) throws BusinessException;
 	
 	/**
 	 * Retrieve the list of contacts of the guest
@@ -166,9 +168,9 @@ public interface UserService {
 	 * @param login
 	 * @return
 	 */
-	public List<User> fetchGuestContacts(String login) throws BusinessException;
+	public List<User> fetchGuestContacts(String uuid) throws BusinessException;
 	
-	public List<String> getGuestEmailContacts(String login) throws BusinessException;
+	public List<String> getGuestEmailContacts(String uuid) throws BusinessException;
 
 	void updateUserDomain(String mail, String selectedDomain, UserVo actor) throws BusinessException;
 

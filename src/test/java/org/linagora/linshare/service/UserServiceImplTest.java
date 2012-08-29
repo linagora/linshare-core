@@ -394,11 +394,11 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		guestRepository.create(guest);
 				
-		userService.updateGuest(LoadingServiceTestDatas.sqlGuestDomain, "user3@linpki.org","Foo","Bar", false, false, userVo2);
+		userService.updateGuest(null, LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", false, false, userVo2);
 		
 		Assert.assertFalse(guest.getCanCreateGuest());
 		
-		userService.updateGuest(LoadingServiceTestDatas.sqlGuestDomain, "user3@linpki.org","Foo","Bar", true, true, userVo2);
+		userService.updateGuest(null, LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", true, true, userVo2);
 
 		Assert.assertTrue(guest.getCanCreateGuest());
 		
@@ -425,7 +425,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user2);
 
 		Assert.assertTrue(user2.getRole()==Role.SIMPLE);
-		userService.updateUserRole(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org", Role.ADMIN, userVo);
+		userService.updateUserRole(user2.getLsUuid(), LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org", Role.ADMIN, userVo);
 		
 		Assert.assertTrue(user2.getRole()==Role.ADMIN);
 		

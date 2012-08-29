@@ -311,35 +311,36 @@ public class GuestEditForm {
 		
 		MailContainer mailContainer = mailBuilder.buildMailContainer(userLoggedIn, customMessage);
   
+		UserVo guestVo = null ;
 		try {
 			// set uploadGranted always to true for guest
 			boolean uploadGranted = true;
 
 			boolean allowedToCreateGuest = guestsAllowedToCreateGuest;
         	
-        	userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, mailContainer, userLoggedIn);
+        	guestVo = userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, mailContainer, userLoggedIn);
 		} catch (BusinessException e) { 
 			logger.error("Can't create Guest : " + mail);
 			logger.debug(e.toString());
 			businessMessagesManagementService.notify(e);
-//			return Index.class;
+			return Index.class;
 		}
         	
         try {
         	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
-        		userFacade.addGuestContactRestriction(userLoggedIn.getLogin(), mail);
+        		userFacade.addGuestContactRestriction(userLoggedIn.getLsUid(), guestVo.getLsUid());
         	}
         	
         	if (restrictedGuest || userLoggedIn.isRestricted()) { // a restricted guest can only create restricted guests
-        		userFacade.setGuestContactRestriction(mail, recipientsEmail);
+        		userFacade.setGuestContactRestriction(guestVo.getLsUid(), recipientsEmail);
         	}
             shareSessionObjects.addMessage(messages.get("components.guestEditForm.action.add.confirm"));
         } catch (BusinessException e) { //bad contact for contacts list
         	shareSessionObjects.addError(messages.get("components.guestEditForm.action.add.guestRestriction.badUser"));
-        	List<String> userLogin = new ArrayList<String>();
-        	userLogin.add(userLoggedIn.getLogin());
+        	List<String> contactMailList = new ArrayList<String>();
+        	contactMailList.add(userLoggedIn.getMail());
         	try {
-				userFacade.setGuestContactRestriction(mail, userLogin); //default: set guest contact restriction with the owner
+				userFacade.setGuestContactRestriction(guestVo.getLsUid(), contactMailList); //default: set guest contact restriction with the owner
 			} catch (BusinessException e1) {
 				e1.printStackTrace();
 			}

@@ -45,11 +45,12 @@ public interface UserFacade {
      * @param owner user who create the guest.
      * @throws BusinessException if user already exist.
      */
-    void createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
+	UserVo createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
     		MailContainer mailContainer, UserVo owner) throws BusinessException;
     
     /**
      * update a guest (edit)
+     * @param guestUuid TODO
      * @param mail
      * @param firstName
      * @param lastName
@@ -57,16 +58,17 @@ public interface UserFacade {
      * @param owner
      * @throws BusinessException
      */
-    public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
+    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException;
     
     /**
      * update an user (only the role)
+     * @param userUuid TODO
      * @param mail
      * @param role
      * @param owner
      * @throws BusinessException
      */
-    public void updateUserRole(String domain, String mail, Role role, UserVo owner) throws BusinessException;
+    public void updateUserRole(String userUuid, String domain, String mail, Role role, UserVo owner) throws BusinessException;
     
 
     /** Search a user.
@@ -170,10 +172,10 @@ public interface UserFacade {
 	/**
 	 * Add one contact to a restricted guest
 	 * 
-	 * @param ownerLogin
-	 * @param contactLogin
+	 * @param ownerUuid
+	 * @param contactUuid
 	 */
-	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException;
+	public void addGuestContactRestriction(String ownerUuid, String contactUuid) throws BusinessException;
     
 	/**
 	 * Retrieve the list of contacts of the guest
@@ -203,6 +205,8 @@ public interface UserFacade {
 	 * @return User entity
 	 */
 	UserVo findGuestWithMailAndUserLoggedIn(UserVo userLoggedIn, String mail);
+	
+	UserVo findGuestByLsUuid(UserVo actorVo, String guestUuid);
 
 	
 	

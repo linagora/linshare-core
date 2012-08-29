@@ -103,6 +103,12 @@ public class UserEditForm {
     @Property
     private UserVo userLoggedIn;
 
+    @Property
+    @Persist
+    private UserVo currentUser;
+    
+    
+    
     @SessionState
     private ShareSessionObjects shareSessionObjects;
 
@@ -179,13 +185,13 @@ public class UserEditForm {
     	autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
     		 
-		UserVo currentUser=null;
+		currentUser=null;
 		userGuest = true;
 		
 		if(editUserWithMail!=null){
 		
 			for (UserVo oneUser : users) {
-				if(oneUser.getLogin().equals(editUserWithMail)) {
+				if(oneUser.getLsUid().equals(editUserWithMail)) {
 					currentUser = oneUser;
 					break;
 				}
@@ -206,7 +212,7 @@ public class UserEditForm {
 	    		if (currentUser.isGuest()&&currentUser.isRestricted()) {
 	    			List<UserVo> contacts = null;
 					try {
-						contacts = userFacade.fetchGuestContacts(currentUser.getLogin());
+						contacts = userFacade.fetchGuestContacts(currentUser.getLsUid());
 					} catch (BusinessException e) {
 						e.printStackTrace();
 					}
@@ -343,9 +349,9 @@ public class UserEditForm {
 
         try {
         	if(userGuest) {    	
-        		userFacade.updateGuest(userDomain, mail, firstName, lastName, uploadGranted,createGuestGranted,userLoggedIn);
+        		userFacade.updateGuest(currentUser.getLsUid(), userDomain, mail, firstName, lastName,uploadGranted,createGuestGranted, userLoggedIn);
         	} else {
-        		userFacade.updateUserRole(userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
+        		userFacade.updateUserRole(currentUser.getLsUid(), userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
         	}
         } catch (BusinessException e) {
             // should never occur.
@@ -354,17 +360,21 @@ public class UserEditForm {
 		
 		if (userGuest) {
 			try {
-				UserVo guest = userFacade.findGuestWithMailAndUserLoggedIn(userLoggedIn, mail);
+				
+//				UserVo guest = userFacade.findGuestWithMailAndUserLoggedIn(userLoggedIn, mail);
+				UserVo guest = userFacade.findGuestByLsUuid(userLoggedIn, editUserWithMail);
+				logger.debug("current guest : " + guest);
+				
 				
 				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
-					userFacade.setGuestContactRestriction(mail, recipientsEmail);
+					userFacade.setGuestContactRestriction(guest.getLsUid(), recipientsEmail);
 					
 				} else if (!restrictedEditGuest && guest.isRestricted()) { //toogle restricted to false
-					userFacade.removeGuestContactRestriction(mail);
+					userFacade.removeGuestContactRestriction(guest.getLsUid());
 					
 				} else if (restrictedEditGuest && guest.isRestricted()) { //maybe user add new contact
 					if (!intialContacts.equalsIgnoreCase(recipientsSearch)) {
-						userFacade.setGuestContactRestriction(mail, recipientsEmail);
+						userFacade.setGuestContactRestriction(guest.getLsUid(), recipientsEmail);
 					}
 				}				
 		        shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.confirm"));

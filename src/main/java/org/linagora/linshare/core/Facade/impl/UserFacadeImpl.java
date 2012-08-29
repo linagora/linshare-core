@@ -83,6 +83,7 @@ public class UserFacadeImpl implements UserFacade {
         this.accountService = accountService;
     }
 
+    
     /** Create a user.
      * @param mail user email (natural key).
      * @param firstName first name.
@@ -92,19 +93,28 @@ public class UserFacadeImpl implements UserFacade {
      * @param mailSubject mail subject.
      * @param mailContent content of the mail.
      * @param owner user who create the guest.
+     * @return 
      * @throws BusinessException if user already exist.
      */
-    public void createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
-    		MailContainer mailContainer, UserVo owner) throws BusinessException {    	
-        userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, mailContainer, owner.getLogin(), owner.getDomainIdentifier());
+    @Override
+    public UserVo createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
+    		MailContainer mailContainer, UserVo owner) throws BusinessException {
+    	
+        Guest guest = userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, mailContainer, owner.getLogin(), owner.getDomainIdentifier());
+        return new UserVo(guest);
     }
     
-    public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException{
-    	userService.updateGuest(domain,mail, firstName, lastName, canUpload, canCreateGuest, owner);
+    
+    @Override
+    public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo owner) throws BusinessException{
+    	
+    	userService.updateGuest(guestUuid,domain, mail, firstName, lastName, canUpload, canCreateGuest, owner);
     }
     
-	public void updateUserRole(String domain, String mail,Role role, UserVo owner) throws BusinessException {
-		userService.updateUserRole(domain, mail,role, owner);
+    
+    @Override
+	public void updateUserRole(String userUuid, String domain,String mail, Role role, UserVo owner) throws BusinessException {
+		userService.updateUserRole(userUuid, domain,mail, role, owner);
 	}
     
 
@@ -236,20 +246,20 @@ public class UserFacadeImpl implements UserFacade {
     	userService.resetPassword(user.getLogin(), mailContainer);		
 	}
 
-	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException {
-		userService.setGuestContactRestriction(login, mailContacts);
+	public void setGuestContactRestriction(String uuid, List<String> mailContacts) throws BusinessException {
+		userService.setGuestContactRestriction(uuid, mailContacts);
 	}
 	
-	public void removeGuestContactRestriction(String login) throws BusinessException {
-		userService.removeGuestContactRestriction(login);
+	public void removeGuestContactRestriction(String uuid) throws BusinessException {
+		userService.removeGuestContactRestriction(uuid);
 	}
 	
-	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException {
-		userService.addGuestContactRestriction(ownerLogin, contactLogin);
+	public void addGuestContactRestriction(String ownerUuid, String contactUuid) throws BusinessException {
+		userService.addGuestContactRestriction(ownerUuid, contactUuid);
 	}
 	
-	public List<UserVo> fetchGuestContacts(String login) throws BusinessException {
-		List<User> contacts = userService.fetchGuestContacts(login);
+	public List<UserVo> fetchGuestContacts(String uuid) throws BusinessException {
+		List<User> contacts = userService.fetchGuestContacts(uuid);
 		if (contacts!=null && !contacts.isEmpty()) {
 			return getUserVoList(contacts);
 		}
@@ -295,6 +305,7 @@ public class UserFacadeImpl implements UserFacade {
     	return null;
     }
 	
+	
 	@Override
 	public UserVo findGuestWithMailAndUserLoggedIn(UserVo userLoggedIn, String mail) {
 		Guest guest = guestRepository.findByMail(mail);
@@ -305,6 +316,17 @@ public class UserFacadeImpl implements UserFacade {
 		}
 		return null;
 	}
+	
+
+	@Override
+	public UserVo findGuestByLsUuid(UserVo actorVo, String guestUuid) {
+		Guest guest = guestRepository.findByLsUuid(guestUuid);
+		if (guest != null) {
+			return new UserVo(guest);
+		}
+		return null;
+	}
+	
 
 	@Override
 	public UserVo findUserFromAuthorizedDomainOnly(String domainId, String mail) {

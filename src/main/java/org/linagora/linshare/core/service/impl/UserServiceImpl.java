@@ -217,9 +217,8 @@ public class UserServiceImpl implements UserService {
 			return guest;
 		} else {
 			logger.error("Can not create guest : no guest domain created.");
+			throw new BusinessException(BusinessErrorCode.DOMAIN_DO_NOT_EXISTS,"Guest domain was not found");
 		}
-		return null;
-		
     }
 
     @Override
@@ -408,7 +407,7 @@ public class UserServiceImpl implements UserService {
 				guest.setOwner(actor);
 				guestRepository.update(guest);
 				if (guest.isRestricted()) { //if restricted guest, needs to have the new owner as contact
-					addGuestContactRestriction(guest.getMail(), actor.getMail());
+					addGuestContactRestriction(guest.getLsUuid(), actor.getLsUuid());
 				}
 			}
 			
@@ -543,10 +542,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateGuest(String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
+	public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
 		
-		Guest guest = guestRepository.findByMail(mail);
-		User owner = userRepository.findByMail(ownerVo.getMail());
+		Guest guest = guestRepository.findByLsUuid(guestUuid);
+		User owner = userRepository.findByLsUuid(ownerVo.getLsUid());
 		
 		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest.getDomainId(), guest.getMail());
 		
@@ -571,9 +570,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserRole(String domain, String mail,Role role, UserVo ownerVo) throws BusinessException{
+	public void updateUserRole(String userUuid, String domain,String mail, Role role, UserVo ownerVo) throws BusinessException{
 		
-		User user = userRepository.findByMailAndDomain(domain, mail);
+		User user = userRepository.findByLsUuid(userUuid);
 		if(user == null) {
 			logger.debug("User " + mail + " was not found in the database. Searching in directories ...");
 			user = searchAndCreateUserEntityFromDirectory(domain, mail);
@@ -583,7 +582,7 @@ public class UserServiceImpl implements UserService {
 		if(user == null) {
 			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user : " + mail + " in domain : " + domain);
 		} else {
-			User owner = userRepository.findByMail(ownerVo.getMail());
+			User owner = userRepository.findByLsUuid(ownerVo.getLsUid());
 			user.setRole(role);
 			userRepository.update(user);
 			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
@@ -650,10 +649,10 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void removeGuestContactRestriction(String login) throws BusinessException {
-		Guest guest = guestRepository.findByMail(login);
+	public void removeGuestContactRestriction(String uuid) throws BusinessException {
+		Guest guest = guestRepository.findByLsUuid(uuid);
 		if (guest == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the uuid " + uuid);
 		}
 		
 		//clean contacts
@@ -668,37 +667,40 @@ public class UserServiceImpl implements UserService {
 			guest.setRestricted(false);
 			guestRepository.update(guest);
 		} catch (IllegalArgumentException e1) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the uuid " + uuid);
 		} catch (BusinessException e1) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not update guest restriction of " + login);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not update guest restriction of " + uuid);
 		}
 	}
 	
 	@Override
-	public void addGuestContactRestriction(String ownerLogin, String contactLogin) throws BusinessException {
+	public void addGuestContactRestriction(String ownerUuid, String contactUuid) throws BusinessException {
 
-		Guest guest = guestRepository.findByMail(ownerLogin);
+		Guest guest = guestRepository.findByLsUuid(ownerUuid);
+		
 		if (guest == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + ownerLogin);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the Uuid " + ownerUuid);
 		}
 		
 		try {
 //			Guest currentGuest = guestRepository.findByMail(currentUser.getMail());
-			User contact = findOrCreateUserWithDomainPolicies(contactLogin, guest.getDomain().getIdentifier());
+//			User contact = findOrCreateUserWithDomainPolicies(contactUuid, guest.getDomain().getIdentifier());
+			User contact = userRepository.findByLsUuid(contactUuid);
+			
 			AllowedContact allowedContact = new AllowedContact(guest, contact);
 			allowedContactRepository.create(allowedContact);
 		} catch (IllegalArgumentException e) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user " + contactLogin);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user " + contactUuid);
 		} catch (BusinessException e) {
 			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Could not add the contact restriction");
 		}
 	}
 	
 	@Override
-	public void setGuestContactRestriction(String login, List<String> mailContacts) throws BusinessException {
-		Guest guest = guestRepository.findByMail(login);
+	public void setGuestContactRestriction(String uuid, List<String> mailContacts) throws BusinessException {
+		Guest guest = guestRepository.findByLsUuid(uuid);
 		if (guest == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the uuid " + uuid);
 		}
 		List<AllowedContact> precedents = new ArrayList<AllowedContact>();
 		try {
@@ -723,21 +725,21 @@ public class UserServiceImpl implements UserService {
 			guestRepository.update(guest);
 		} catch (IllegalArgumentException e1) {
 			logger.debug("TechnicalErrorCode.GENERIC : Couldn't set contacts restriction for user");
-			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't set contacts restriction for user " + login);
+			throw new TechnicalException(TechnicalErrorCode.GENERIC, "Couldn't set contacts restriction for uuid " + uuid);
 		} catch (BusinessException e1) {
 			logger.debug("BusinessErrorCode.USER_NOT_FOUND : Couldn't set contacts restriction for user");
 			for (AllowedContact entity : precedents) { //set old contacts list
 				allowedContactRepository.create(entity);				
 			}
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't set contacts restriction for user " + login);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't set contacts restriction for uuid " + uuid);
 		}
 	}
 	
 	@Override
-	public List<User> fetchGuestContacts(String login) throws BusinessException {
-		Guest guest = guestRepository.findByMail(login);
+	public List<User> fetchGuestContacts(String uuid) throws BusinessException {
+		Guest guest = guestRepository.findByLsUuid(uuid);
 		if (guest == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the uuid " + uuid);
 		}
 		if (!guest.isRestricted()) {
 			return null;
