@@ -19,6 +19,8 @@
 			
 			<p><t:pageLink page="administration/domains/CreateDomain">${message:pages.administration.domains.index.addDomain}</t:pageLink></p>
 			
+			<p><t:pageLink page="administration/domains/ManageDomain">${message:pages.administration.domains.index.manageDomains}</t:pageLink></p>
+
 			<!-- <p><t:pageLink page="administration/domains/MultipleDomainUpdate">${message:pages.administration.domains.multipleDomainUpdate.title}</t:pageLink></p> -->
 		
 			<h2>${message:pages.administration.domains.index.domains}</h2>
