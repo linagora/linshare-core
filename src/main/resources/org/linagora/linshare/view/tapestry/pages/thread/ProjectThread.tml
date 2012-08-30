@@ -31,7 +31,7 @@
 		<div id="pageContent">
             <h2>${selectedProject.name}</h2>
 
-            <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes">
+            <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes" t:options="{duration:0.3}">
                 <h3>Instructions</h3>
                 <t:grid source="outInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
                     <p:empty>
@@ -50,7 +50,7 @@
                     </p:empty>
                 </t:grid>
             </div>
-            <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses">
+            <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses" t:options="{duration:0.3}">
                 <h3>Instructions</h3>
                 <t:grid source="inInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
                     <p:empty>

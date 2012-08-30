@@ -38,6 +38,7 @@
 			<div class="${cssClassNumber}"></div>
 			<div class="description"><p>${message:components.confirmSharePopup.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false"
+                t:options="{duration:0.3}"
 				t:subject="${message:components.confirmSharePopup.panelRecipients.subject}">      
 				<t:textarea t:id="recipientsPatternSharePopup" t:value="recipientsSearch" validate="required"
 					t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens=","
@@ -87,11 +88,13 @@
 			<div class="${cssClassNumber}"></div>
 			<div class="description"><p>${message:components.confirmSharePopup.panelMessage.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
+                t:options="{duration:0.3}"
 				t:subject="${message:components.confirmSharePopup.panelSubject.subject}">  
 				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field"  title="${message:components.confirmSharePopup.texarea.message.title}" />
 			</div>
 			<br />
 			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
+                t:options="{duration:0.3}"
 				t:subject="${message:components.confirmSharePopup.panelMessage.subject}">  
 				<t:textarea rows="8" value="textAreaValue"  title="${message:components.confirmSharePopup.texarea.message.title}" />
 			</div>

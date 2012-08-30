@@ -57,7 +57,7 @@
 
 			<div class="number1"></div>
 			<div class="description"><p>${message:components.quickSharePopup.panelUpload.description}</p></div>
-			<div t:type="ck/SlidingPanel" t:id="panelUpload" t:closed="false" t:subject="${message:components.quickSharePopup.panelUpload.subject}">
+			<div t:type="ck/SlidingPanel" t:id="panelUpload" t:closed="false" t:subject="${message:components.quickSharePopup.panelUpload.subject}" t:options="{duration:0.3}">
                 <t:fileUploader divId="literal:flexUpload" showsendbutton="literal:false"/>
 
                 <t:zone t:id="reloadingZone">
@@ -80,7 +80,7 @@
 			<t:errors />
 			<div class="number2"></div>
 			<div class="description"><p>${message:components.quickSharePopup.panelRecipients.description}</p></div>
-			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false" t:subject="${message:components.quickSharePopup.panelRecipients.subject}">      
+			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false" t:subject="${message:components.quickSharePopup.panelRecipients.subject}" t:options="{duration:0.3}">      
 				<t:textarea t:id="recipientsPatternQuickSharePopup" t:value="recipientsSearch" t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens="," class="recipientsPattern" title="${message:components.quickSharePopup.texarea.recipients.title}" onchange="rm_errorclass();"/>
 			</div>
 			<div class="clear"></div>
@@ -97,11 +97,13 @@
 			<div class="number3"></div>
 			<div class="description"><p>${message:components.quickSharePopup.panelMessage.description}</p></div>
 			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
+                t:options="{duration:0.3}"
 				t:subject="${message:components.quickSharePopup.panelSubject.subject}">  
 				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field"  title="${message:components.quickSharePopup.texarea.message.title}" onkeypress="if (event.keyCode == 13) return false;"/>
 			</div>
 			<br />
 			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
+                t:options="{duration:0.3}"
 				t:subject="${message:components.quickSharePopup.panelMessage.subject}">  
 				<t:textarea rows="8" value="textAreaValue"  title="${message:components.quickSharePopup.texarea.message.title}" />
 			</div>

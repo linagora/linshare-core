@@ -51,7 +51,7 @@
 
 			<div class="number1"></div>
 			<div class="description"><p>${message:components.threadEntryPopup.panelUpload.description}</p></div>
-			<div t:type="ck/SlidingPanel" t:id="panelUpload" t:closed="false" t:subject="${message:components.threadEntryPopup.panelUpload.subject}">
+			<div t:type="ck/SlidingPanel" t:id="panelUpload" t:closed="false" t:subject="${message:components.threadEntryPopup.panelUpload.subject}" t:options="{duration:0.3}">
                 <t:FileUploaderForThreadEntry t:id="fileUploader" divId="literal:flexUpload" showsendbutton="literal:false" thread="currentThread"/>
 
                 <t:zone t:id="reloadingZone">
