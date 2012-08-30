@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -39,11 +40,15 @@ public class ProjectThread {
     @Property
     private UserVo userVo;
 
+    @InjectPage
     private Index index;
 
     @Property
     @Persist
     private ThreadVo selectedProject;
+    
+    @Property
+    private String threadName;
     
     @InjectComponent
     private ThreadFileUploadPopup threadFileUploadPopup;
@@ -75,19 +80,17 @@ public class ProjectThread {
 
     @SetupRender
     public void setupRender() {  	
-    	logger.debug("Début du Setup Render");
-    	
-    	if (selectedProject == null)
-    		return;
+    	logger.debug("Setup Render begins");
+
+    	threadName = selectedProject.getName();
     	threadFileUploadPopup.setMyCurrentThread(selectedProject);
-    	
+
 		try {
 			List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, selectedProject);
 
-			outProjectEntries = new HashMap<String, List<ThreadEntryVo>>();
-			
+	    	outProjectEntries = new HashMap<String, List<ThreadEntryVo>>();		
 			inProjectEntries = new HashMap<String, List<ThreadEntryVo>>();
-
+			
 			logger.debug("Looping through all thread entries");
 			for (ThreadEntryVo e : allThreadEntries) {
 				logger.debug("entry : " + e.toString());
@@ -114,13 +117,6 @@ public class ProjectThread {
     @AfterRender
     public void afterRender() {
         ;
-    }
-    
-    @CleanupRender
-    public Object cleanupRender() {
-    	if (selectedProject == null)
-    		return index;
-    	return null;
     }
 
     private void addToOutProjectEntries(ThreadEntryVo e, List<TagVo> tags) {

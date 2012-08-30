@@ -29,7 +29,7 @@
 		<!-- Page content -->
 
 		<div id="pageContent">
-            <h2>${selectedProject.name}</h2>
+            <h2>${threadName}</h2>
 
             <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes" t:options="{duration:0.3}">
                 <h3>Instructions</h3>
