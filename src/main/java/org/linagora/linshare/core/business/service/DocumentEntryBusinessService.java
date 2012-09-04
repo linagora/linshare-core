@@ -9,6 +9,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryBusinessService {
@@ -33,6 +34,8 @@ public interface DocumentEntryBusinessService {
 	public InputStream getDocumentStream(DocumentEntry entry) ;
 	
 	public DocumentEntry findById(String docEntryUuid);
+	
+	public List<DocumentEntry> findAllMyDocumentEntries(User owner);
 	
 	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException;
 	

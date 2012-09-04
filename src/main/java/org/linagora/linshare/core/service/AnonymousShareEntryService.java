@@ -14,15 +14,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface AnonymousShareEntryService {
 
-	public AnonymousShareEntry findByUuid(User actor, String shareUuid)  throws BusinessException ;
+	public AnonymousShareEntry findByUuid(Account actor, String shareUuid)  throws BusinessException ;
 
 	public List<AnonymousShareEntry> createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected, MailContainer mailContainer) throws BusinessException;
 	
 	public List<AnonymousShareEntry> createAnonymousShare(List<DocumentEntry> documentEntries, User sender, List<Contact> recipients, Calendar expirationDate, Boolean passwordProtected, MailContainer mailContainer) throws BusinessException;
 
-	public void deleteShare(String shareUuid, User actor, MailContainer mailContainer) throws BusinessException;
+	public void deleteShare(Account actor, String shareUuid, MailContainer mailContainer) throws BusinessException;
 	
-	public void deleteShare(AnonymousShareEntry share, User actor, MailContainer mailContainer) throws BusinessException;
+	public void deleteShare(Account actor, AnonymousShareEntry share, MailContainer mailContainer) throws BusinessException;
 	
 	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException ;
 	

@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
@@ -60,7 +61,15 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
         }
     }
 
-	
+	@Override
+	public List<DocumentEntry> findAllMyDocumentEntries(Account owner) {
+		List<DocumentEntry> entries = findByCriteria(Restrictions.eq("entryOwner", owner));
+        if (entries == null) {
+            return null;
+        }
+        return entries;
+	}
+
 	@Override
 	public DocumentEntry create(DocumentEntry entity) throws BusinessException {
 		entity.setCreationDate(new GregorianCalendar());

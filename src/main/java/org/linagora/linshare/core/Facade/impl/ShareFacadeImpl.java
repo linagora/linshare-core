@@ -247,7 +247,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actorVo, MailContainer mailContainer) throws BusinessException {
 		User actor = userService.findByLsUid(actorVo.getLsUid());
-		shareEntryService.deleteShare(share.getIdentifier(), actor, mailContainer);
+		shareEntryService.deleteShare(actor, share.getIdentifier(), mailContainer);
 	}
 
 	

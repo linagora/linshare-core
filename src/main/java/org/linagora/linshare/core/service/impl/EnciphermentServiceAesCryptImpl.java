@@ -104,10 +104,10 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), finalFileName, doc.getType(), false, owner);
 
-			FileLogEntry logEntry = new FileLogEntry(userVo.getMail(), userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
-	        		LogAction.FILE_DECRYPT, "Decrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
-	        
-	        logEntryService.create(logEntry);
+//			FileLogEntry logEntry = new FileLogEntry(userVo.getMail(), userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
+//	        		LogAction.FILE_DECRYPT, "Decrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
+//	        
+//	        logEntryService.create(logEntry);
 		
 		} catch (IOException e) {
 			logger.error(e.toString(),e);
@@ -156,10 +156,10 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			
 			resdoc = documentService.updateFileContent(doc.getIdentifier(), res, res.available(), finalFileName, doc.getType(), true,owner);
 			
-			FileLogEntry logEntry = new FileLogEntry(userVo.getMail(), userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
-	        		LogAction.FILE_ENCRYPT, "Encrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
-			
-	        logEntryService.create(logEntry);
+//			FileLogEntry logEntry = new FileLogEntry(userVo.getMail(), userVo.getFirstName(), userVo.getLastName(), userVo.getDomainIdentifier(),
+//	        		LogAction.FILE_ENCRYPT, "Encrypt file Content", doc.getFileName(), doc.getSize(), doc.getType() );
+//			
+//	        logEntryService.create(logEntry);
 			
 		} catch (IOException e) {
 			logger.error(e.toString(),e);

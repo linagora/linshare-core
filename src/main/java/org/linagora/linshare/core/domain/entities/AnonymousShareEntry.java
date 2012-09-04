@@ -68,4 +68,13 @@ public class AnonymousShareEntry extends Entry{
 		this.contact = contact;
 	}
 	
+	/* usefull getters */
+	public long getSize() {
+		return documentEntry.getSize();
+	}
+	
+	public String getType() {
+		return documentEntry.getType();
+	}
+	
 }

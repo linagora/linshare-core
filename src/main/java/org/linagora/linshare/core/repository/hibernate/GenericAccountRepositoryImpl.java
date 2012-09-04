@@ -90,4 +90,9 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		entity.setLsUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
+	
+	@Override
+	public Account getSystemAccount() {
+		return this.findByLsUuid("system");
+	}
 }

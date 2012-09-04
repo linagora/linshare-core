@@ -20,10 +20,6 @@
 */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 
 /**
@@ -50,55 +46,27 @@ public class FileLogEntry extends LogEntry {
 		this.fileType = null;
 	}
 	
-	public FileLogEntry(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, String actorDomain, 
-			LogAction logAction, String description,
-			String fileName, Long fileSize, String fileType) {
-		super(actionDate, actorMail,
-				actorFirstname, actorLastname, actorDomain,
-				logAction, description);
-		this.fileName = fileName;
-		this.fileSize = fileSize;
-		this.fileType = fileType;
-	}
-	
-	public FileLogEntry(String actorMail, String actorFirstname, String actorLastname, String actorDomain, LogAction logAction, String description, String fileName, Long fileSize, String fileType) {
-			super(actorMail, actorFirstname, actorLastname, actorDomain,
-			logAction, description);
-			this.fileName = fileName;
-			this.fileSize = fileSize;
-			this.fileType = fileType;
-	}
 	
 	public FileLogEntry(Account actor, LogAction logAction, String description, String fileName, Long fileSize, String fileType) {
-		if(actor.getAccountType().equals(AccountType.INTERNAL)||actor.getAccountType().equals(AccountType.GUEST)) {
-			User u = (User)actor;
-			this.actorMail = u.getMail();
-			this.actorFirstname = u.getFirstName();
-			this.actorLastname = u.getLastName();
-			this.actorDomain = u.getDomainId();
-		}
-//		this.actionDate = (Calendar)actionDate.clone();
-		this.actionDate = new GregorianCalendar();
-		this.logAction = logAction;
-		this.description = description;
+		super(actor, logAction, description);
 		this.fileName = fileName;
 		this.fileSize = fileSize;
 		this.fileType = fileType;
 	}
+	
 	
 	public String getFileName() {
 		return fileName;
 	}
+	
 
 	public Long getFileSize() {
 		return fileSize;
 	}
 
+	
 	public String getFileType() {
 		return fileType;
 	}
-
-	
 	
 }

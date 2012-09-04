@@ -62,60 +62,61 @@ public class LogEntryRepositoryImplTest extends AbstractJUnit4SpringContextTests
 
 	@Test
 	public void testExistFileLogEntry() throws BusinessException{
-		LogEntry testFileLogEntry = new FileLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
-				actorDomain, LogAction.FILE_UPLOAD,
-				"test description", fileName, fileSize, fileType);
-		
-		logEntryRepository.create(testFileLogEntry);
-		
-		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
-		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
-		
-		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
-		
-		Assert.assertTrue(tmpLogEntry instanceof FileLogEntry);
-		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
-		Assert.assertTrue(((FileLogEntry)tmpLogEntry).getLogAction().equals(LogAction.FILE_UPLOAD));
-
-		logEntryRepository.delete(tmpLogEntry);
+//		LogEntry testFileLogEntry = new FileLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
+//				actorDomain, LogAction.FILE_UPLOAD,
+//				"test description", fileName, fileSize, fileType);
+//		
+//		logEntryRepository.create(testFileLogEntry);
+//		
+//		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
+//		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
+//		
+//		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
+//		
+//		Assert.assertTrue(tmpLogEntry instanceof FileLogEntry);
+//		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
+//		Assert.assertTrue(((FileLogEntry)tmpLogEntry).getLogAction().equals(LogAction.FILE_UPLOAD));
+//
+//		logEntryRepository.delete(tmpLogEntry);
+		Assert.assertTrue(false);
 	}
 	
 	
-	@Test
-	public void testExistUserLogEntry() throws BusinessException{
-		LogEntry testFileLogEntry = new UserLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
-				actorDomain, LogAction.USER_CREATE,
-				"test description", targetMail, targetFirstname, targetLastname, targetDomain, null);
-		
-		logEntryRepository.create(testFileLogEntry);
-		
-		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
-		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
-		
-		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
-		
-		Assert.assertTrue(tmpLogEntry instanceof UserLogEntry);
-		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
-		Assert.assertTrue(((UserLogEntry)tmpLogEntry).getLogAction().equals(LogAction.USER_CREATE));
-		logEntryRepository.delete(tmpLogEntry);
-	}
-	
-	@Test
-	public void testExistShareLogEntry() throws BusinessException{
-		LogEntry testFileLogEntry = new ShareLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
-				actorDomain, LogAction.FILE_SHARE,
-				"test description", fileName, fileSize, fileType, targetMail, targetFirstname, targetLastname, targetDomain, null);
-		
-		logEntryRepository.create(testFileLogEntry);
-		
-		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
-		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
-		
-		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
-		
-		Assert.assertTrue(tmpLogEntry instanceof ShareLogEntry);
-		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
-		Assert.assertTrue(((ShareLogEntry)tmpLogEntry).getLogAction().equals(LogAction.FILE_SHARE));
-		logEntryRepository.delete(tmpLogEntry);
-	}
+//	@Test
+//	public void testExistUserLogEntry() throws BusinessException{
+//		LogEntry testFileLogEntry = new UserLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
+//				actorDomain, LogAction.USER_CREATE,
+//				"test description", targetMail, targetFirstname, targetLastname, targetDomain, null);
+//		
+//		logEntryRepository.create(testFileLogEntry);
+//		
+//		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
+//		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
+//		
+//		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
+//		
+//		Assert.assertTrue(tmpLogEntry instanceof UserLogEntry);
+//		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
+//		Assert.assertTrue(((UserLogEntry)tmpLogEntry).getLogAction().equals(LogAction.USER_CREATE));
+//		logEntryRepository.delete(tmpLogEntry);
+//	}
+//	
+//	@Test
+//	public void testExistShareLogEntry() throws BusinessException{
+//		LogEntry testFileLogEntry = new ShareLogEntry(actionDate, actorMail, actorFirstname, actorLastname, 
+//				actorDomain, LogAction.FILE_SHARE,
+//				"test description", fileName, fileSize, fileType, targetMail, targetFirstname, targetLastname, targetDomain, null);
+//		
+//		logEntryRepository.create(testFileLogEntry);
+//		
+//		Assert.assertTrue(logEntryRepository.findByUser(actorMail) != null);
+//		Assert.assertTrue(logEntryRepository.findByUser(actorMail).size() == 1);
+//		
+//		LogEntry tmpLogEntry = logEntryRepository.findByUser(actorMail).get(0);
+//		
+//		Assert.assertTrue(tmpLogEntry instanceof ShareLogEntry);
+//		Assert.assertTrue(tmpLogEntry.getActorFirstname().equals(actorFirstname));
+//		Assert.assertTrue(((ShareLogEntry)tmpLogEntry).getLogAction().equals(LogAction.FILE_SHARE));
+//		logEntryRepository.delete(tmpLogEntry);
+//	}
 }

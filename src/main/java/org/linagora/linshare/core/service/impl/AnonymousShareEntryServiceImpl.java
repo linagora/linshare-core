@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessService;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
@@ -62,7 +63,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 
 	
 	@Override
-	public AnonymousShareEntry findByUuid(User actor, String shareUuid) throws BusinessException {
+	public AnonymousShareEntry findByUuid(Account actor, String shareUuid) throws BusinessException {
 		AnonymousShareEntry share = anonymousShareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
@@ -96,9 +97,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		
 		// logs
 		for (DocumentEntry documentEntry : documentEntries) {
-			ShareLogEntry logEntry = new ShareLogEntry(sender.getMail(), sender.getFirstName(), sender.getLastName(), sender.getDomainId(),
-		        	LogAction.FILE_SHARE, "Anonymous sharing of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getType(),
-		        	recipient.getMail(), null, null, null, expirationDate);
+			ShareLogEntry logEntry = new ShareLogEntry(sender, documentEntry, LogAction.FILE_SHARE, "Anonymous sharing of a file", expirationDate);
 		    logEntryService.create(logEntry);
 		}
 		
@@ -138,20 +137,31 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 
 
 	@Override
-	public void deleteShare(String shareUuid, User actor, MailContainer mailContainer) throws BusinessException {
+	public void deleteShare(Account actor, String shareUuid, MailContainer mailContainer) throws BusinessException {
 		AnonymousShareEntry shareEntry = findByUuid(actor, shareUuid);
-		anonymousShareEntryBusinessService.deleteAnonymousShare(shareEntry);
-		//TODO AnonymousShareEntry notification
+		this.deleteShare(actor, shareEntry, mailContainer);
 	}
 
 
 	@Override
-	public void deleteShare(AnonymousShareEntry share, User actor, MailContainer mailContainer) throws BusinessException {
-		anonymousShareEntryBusinessService.deleteAnonymousShare(share);
-		//TODO AnonymousShareEntry mail notification
-		//send a notification by mail to the owner
-//		List<String> docNames = new ArrayList<String>();
-//		docNames.add(share.getName());
+	public void deleteShare(Account actor, AnonymousShareEntry shareEntry, MailContainer mailContainer) throws BusinessException {
+		// TODO : fix permissions
+//		if(shareEntry.getEntryOwner().equals(actor) || actor.equals(guestRepository.getSystemAccount()) || actor.getAccountType().equals(AccountType.ROOT) ) {
+//			
+//		} else {
+//			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareEntry.getUuid());
+//			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this anonymous share, it does not belong to you.");
+//		}
+		
+		
+		
+		anonymousShareEntryBusinessService.deleteAnonymousShare(shareEntry);
+		ShareLogEntry logEntry = new ShareLogEntry(actor, shareEntry, LogAction.SHARE_DELETE, "Deleting anonymous share" );
+		logEntryService.create(logEntry);
+		
+		if(mailContainer != null) {
+			//TODO AnonymousShareEntry mail notification
+		}
 //		notifierService.sendAllNotifications(mailElementsFactory.buildMailAnonymousDownload(actor, mailContainer, docs, email, recipient)
 	}
 	
@@ -182,16 +192,8 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
 		
-		DocumentEntry documentEntry = shareEntry.getDocumentEntry();
-		
-		String email = shareEntry.getContact().getMail();
-		User owner = (User)shareEntry.getEntryOwner();
-		ShareLogEntry logEntry = new ShareLogEntry(owner.getMail(), owner
-				.getFirstName(), owner.getLastName(), owner.getDomainId(),
-				LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file", documentEntry
-				.getName(), documentEntry.getSize(), documentEntry
-				.getType(), email!=null?email:"" , "", "" , "",null);
-		
+		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(), shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file");
+				
 		logEntryService.create(logEntry);
 		return shareEntry;
 	}

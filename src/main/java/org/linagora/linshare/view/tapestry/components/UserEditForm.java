@@ -361,7 +361,6 @@ public class UserEditForm {
 		if (userGuest) {
 			try {
 				
-//				UserVo guest = userFacade.findGuestWithMailAndUserLoggedIn(userLoggedIn, mail);
 				UserVo guest = userFacade.findGuestByLsUuid(userLoggedIn, editUserWithMail);
 				logger.debug("current guest : " + guest);
 				

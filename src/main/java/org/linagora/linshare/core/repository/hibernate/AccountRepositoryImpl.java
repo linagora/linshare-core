@@ -24,6 +24,7 @@ package org.linagora.linshare.core.repository.hibernate;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -38,4 +39,5 @@ public class AccountRepositoryImpl extends GenericAccountRepositoryImpl<Account>
         DetachedCriteria det = DetachedCriteria.forClass(Account.class).add(Restrictions.eq("lsUuid", account.getLsUuid()));
         return det;
     }
+    
 } 

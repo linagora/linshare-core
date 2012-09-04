@@ -22,6 +22,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Calendar;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 
 public class ShareLogEntry extends FileLogEntry {
@@ -48,66 +49,73 @@ public class ShareLogEntry extends FileLogEntry {
 	}
 	
 	
-	public ShareLogEntry(User actor, ShareEntry share,	LogAction logAction, String description) {
+	public ShareLogEntry(Account actor, ShareEntry share,	LogAction logAction, String description) {
 		
-		this.actorMail = actor.getMail();
-		this.actorFirstname = actor.getFirstName();
-		this.actorLastname = actor.getLastName();
-		this.actorDomain = actor.getDomainId();
-		this.logAction = logAction;
-		this.description = description;
+		super(actor, logAction, description, share.getName(), share.getSize(), share.getType());
 		
-		DocumentEntry doc = share.getDocumentEntry();
-		this.fileName = doc.getName();
-		this.fileSize = doc.getSize();
-		this.fileType = doc.getType();
-		
-		User owner = (User) share.getEntryOwner();
-		this.targetMail = owner.getMail();
-		this.targetFirstname = owner.getFirstName();
-		this.targetDomain = owner.getDomainId();
-		this.targetLastname = owner.getLastName();
+		Account target = share.getEntryOwner();
+		this.targetDomain = target.getDomainId();
+		if(isUser(target)) {
+			User user = (User)target;
+			this.targetMail = user.getMail();
+			this.targetFirstname = user.getFirstName();
+			this.targetLastname = user.getLastName();
+		} else {
+			this.targetMail = target.getLsUuid();
+			this.targetFirstname = "";
+			this.targetLastname = "";
+		}
 		this.expirationDate = share.getExpirationDate();
 		
+	}
+	
+	public ShareLogEntry(Account actor, AnonymousShareEntry share,	LogAction logAction, String description) {
+		
+		super(actor, logAction, description, share.getName(), share.getSize(), share.getType());
+		
+		this.targetDomain = "";
+		this.targetMail = share.getContact().getMail();
+		this.targetFirstname = "";
+		this.targetLastname = "";
+		this.expirationDate = share.getExpirationDate();
+	}
+	
+	public ShareLogEntry(Account actor, DocumentEntry document, LogAction logAction, String description, Calendar expirationDate) {
+		
+		super(actor, logAction, description, document.getName(), document.getSize(), document.getType());
+		
+		Account target = document.getEntryOwner();
+		this.targetDomain = target.getDomainId();
+		if(isUser(target)) {
+			User user = (User)target;
+			this.targetMail = user.getMail();
+			this.targetFirstname = user.getFirstName();
+			this.targetLastname = user.getLastName();
+		} else {
+			this.targetMail = target.getLsUuid();
+			this.targetFirstname = "";
+			this.targetLastname = "";
+		}
+		this.expirationDate = expirationDate;
 		
 	}
-	
-	
-	
-	
-	public ShareLogEntry(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, String actorDomain,
-			LogAction logAction,
-			String description, String fileName, Long fileSize,
-			String fileType, 
-			String targetMail, String targetFirstname,
-			String targetLastname, String targetDomain,
-			Calendar expirationDate) {
-		super(actionDate, actorMail, actorFirstname, actorLastname, actorDomain,
-				logAction,
-				description, fileName, fileSize, fileType);
-		this.targetMail = targetMail;
-		this.targetFirstname = targetFirstname;
-		this.targetDomain = targetDomain;
-		this.targetLastname = targetLastname;
-		this.expirationDate = expirationDate;
-	}
 
-	public ShareLogEntry(String actorMail,
-			String actorFirstname, String actorLastname, String actorDomain, 
-			LogAction logAction,
-			String description, String fileName, Long fileSize,
-			String fileType, 
-			String targetMail, String targetFirstname,
-			String targetLastname, String targetDomain,
-			Calendar expirationDate) {
-		super(actorMail, actorFirstname, actorLastname, actorDomain,
-				logAction,
-				description, fileName, fileSize, fileType);
-		this.targetMail = targetMail;
-		this.targetFirstname = targetFirstname;
-		this.targetLastname = targetLastname;
-		this.targetDomain = targetDomain;
+	
+	
+	public ShareLogEntry(Account actor, LogAction logAction, String description, String fileName, Long fileSize, String fileType, Account target, Calendar expirationDate) {
+		super(actor, logAction, description, fileName, fileSize, fileType);
+
+		this.targetDomain = target.getDomainId();
+		if(isUser(target)) {
+			User user = (User)target;
+			this.targetMail = user.getMail();
+			this.targetFirstname = user.getFirstName();
+			this.targetLastname = user.getLastName();
+		} else {
+			this.targetMail = target.getLsUuid();
+			this.targetFirstname = "";
+			this.targetLastname = "";
+		}
 		this.expirationDate = expirationDate;
 	}
 	
@@ -129,9 +137,5 @@ public class ShareLogEntry extends FileLogEntry {
 	public String getTargetDomain() {
 		return targetDomain;
 	}
-	
-	
-	
-	
 
 }

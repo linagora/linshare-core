@@ -29,6 +29,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -191,10 +192,16 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	@Override
 	public DocumentEntry findById(String docEntryUuid) {
-		return (DocumentEntry)documentEntryRepository.findById(docEntryUuid);
+		return documentEntryRepository.findById(docEntryUuid);
 	}
 
 	
+	@Override
+	public List<DocumentEntry> findAllMyDocumentEntries(User owner) {
+		return documentEntryRepository.findAllMyDocumentEntries(owner);
+	}
+
+
 	@Override
 	public void renameDocumentEntry(DocumentEntry entry, String newName) throws BusinessException {
 		String uuid = entry.getDocument().getUuid();

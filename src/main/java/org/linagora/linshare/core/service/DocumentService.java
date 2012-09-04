@@ -59,14 +59,6 @@ public interface DocumentService {
 	
 
 	/**
-	 * Find a doc by its uuid
-	 * @param uuid
-	 * @return
-	 */
-	public Document getDocument(String uuid);
-	
-	
-	/**
 	 * Return a file stream by its uuid and actor
 	 * if the DocumentVo isn't a share, we enforce that actor is the document owner
 	 * @param doc the DocumentVo we want to download, or a SharedDocumentVo 
@@ -76,89 +68,4 @@ public interface DocumentService {
 	 */
 	public InputStream retrieveFileStream(DocumentVo doc, UserVo actor) throws BusinessException;
 	
-	
-	/**
-	 * Retrieve a stream of a Document 
-	 * @param doc the documentVo (or SharedDocumentVo)
-	 * @param actor the user who is acting
-	 * @return inputStream the stream of the document
-	 */
-	public InputStream retrieveFileStream(DocumentVo doc, String actor);
-	
-	public void insertSignatureFile(InputStream file, long size,
-			String fileName, String mimeType, User owner, Document aDoc, X509Certificate signerCertificate) throws  BusinessException;
-	
-    /** Duplicate a document.
-     * @param document the document to duplicate.
-     * @param user the owner of the duplicate.
-     * @return the created document.
-     * @throws BusinessException if document is too large for user account or forbidden mime type.
-     */
-    public Document duplicateDocument(Document document, User user) throws BusinessException;
-
-
-    /** Rename a file.
-     * @param uuid the uuid that identifies the file.
-     * @param newName the new name for the file.
-     */
-    public void renameFile(String uuid, String newName);
-    /** Rename a file if needed and set a comment.
-     * if newName is null it will be ignored in the updating process
-     * if comment is null the comment is deleted
-     * @param uuid the uuid that identifies the file.
-     * @param newName the new name for the file.
-     * @param fileComment comment on the file
-     */
-    public void updateFileProperties(String uuid, String newName, String fileComment);
-    
-    /**
-     * Get the thumbnail (InputStream) of the document
-     * @param uuid the identifier of the document
-     * @return InputStream of the thumbnail
-     */
-    public InputStream getDocumentThumbnail(String uuid);
-
-    /**
-     * Thumbnail of the document exists ?
-     * @param uuid the identifier of the document
-     * @return true if the thumbnail exists, false otherwise
-     */
-	public boolean documentHasThumbnail(String uuid);
-	
-	/**
-	 * return true if the signature functionality is enabled
-	 * @param user
-	 * @return
-	 */
-	public boolean isSignatureActive(User user);
-	/**
-	 * return true if the encipherment functionality is enabled
-	 * @param user
-	 * @return
-	 */
-	public boolean isEnciphermentActive(User user);
-	
-	/**
-	 * return true if the global quota functionality is enabled
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public boolean isGlobalQuotaActive(User user) throws BusinessException;
-
-	/**
-	 * return true if the user quota functionality is enabled
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public boolean isUserQuotaActive(User user) throws BusinessException;
-
-	/**
-	 * return the global quota value
-	 * @param user
-	 * @return
-	 * @throws BusinessException
-	 */
-	public Long getGlobalQuota(User user) throws BusinessException;
 }

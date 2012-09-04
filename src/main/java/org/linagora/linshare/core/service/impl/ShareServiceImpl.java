@@ -42,76 +42,9 @@ import org.slf4j.LoggerFactory;
 public class ShareServiceImpl implements ShareService{
 
 
-	private final ShareEntryService shareEntryService;
-	
-	private final DocumentEntryService documentEntryService;
-	
-	private final AnonymousShareEntryService anonymousShareEntryService;
-	
-	private final UserService userService;
-	
 	private static final Logger logger = LoggerFactory.getLogger(ShareServiceImpl.class);
 
 
-	public ShareServiceImpl(ShareEntryService shareEntryService, DocumentEntryService documentEntryService, AnonymousShareEntryService anonymousShareEntryService, UserService userService) {
-		super();
-		this.shareEntryService = shareEntryService;
-		this.documentEntryService = documentEntryService;
-		this.anonymousShareEntryService = anonymousShareEntryService;
-		this.userService = userService;
-	}
-
-
-	@Override
-	public void deleteAllShareEntriesWithDocumentEntry(String docEntryUuid, User actor, MailContainer mailContainer) throws BusinessException {
-		try {
-			DocumentEntry entry = documentEntryService.findById(actor, docEntryUuid);
-			
-			List<String> a = new ArrayList<String>();
-			List<String> b = new ArrayList<String>();
-			
-			for (AnonymousShareEntry anonymousShareEntry : entry.getAnonymousShareEntries()) {
-				a.add(anonymousShareEntry.getUuid());
-			}
-			
-			for (ShareEntry shareEntry : entry.getShareEntries()) {
-				b.add(shareEntry.getUuid());
-			}
-
-			for (String uuid : a) {
-				anonymousShareEntryService.deleteShare(uuid, actor, mailContainer);
-			}
-			
-			for (String uuid : b) {
-				shareEntryService.deleteShare(uuid, actor, mailContainer);
-			}
-			
-			documentEntryService.deleteDocumentEntry(actor, entry.getUuid());
-			
-		} catch (BusinessException e) {
-			logger.error("can not delete document : " + docEntryUuid);
-			throw e;
-		}
-	}
-	
-	
-	@Override
-	public void sendSharedUpdateDocNotification(Account actor, DocumentEntry documentEntry, String friendlySize, String originalFileName, MailContainer mailContainer) {
-		if(documentEntry.isShared()) {
-			for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
-				anonymousShareEntryService.sendDocumentEntryUpdateNotification(actor, anonymousShareEntry, friendlySize, originalFileName, mailContainer);
-			}
-			
-			for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
-				shareEntryService.sendDocumentEntryUpdateNotification(actor, shareEntry, friendlySize, originalFileName, mailContainer);
-			}
-		}
-	}
-	
-
-
-
-	
 
 
 	private void refreshShareAttributeOfDoc(Document doc, Boolean deteteInitialSharedDoc) throws BusinessException {

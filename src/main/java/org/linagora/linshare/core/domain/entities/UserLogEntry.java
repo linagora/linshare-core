@@ -21,8 +21,10 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.vo.UserVo;
 
 /**
  * log entry for the users
@@ -51,38 +53,37 @@ public class UserLogEntry extends LogEntry {
 		this.targetDomain = null;
 		this.expirationDate = null;
 	}
-	public UserLogEntry(Calendar actionDate, String actorMail,
-			String actorFirstname, String actorLastname, String actorDomain,
-			LogAction logAction, String description,
-			String targetMail, String targetFirstname,
-			String targetLastname, String targetDomain,
-			Calendar expirationDate) {
-		super(actionDate, actorMail,
-				actorFirstname, actorLastname, actorDomain,
-				logAction, description);
-		this.targetMail = targetMail;
-		this.targetFirstname = targetFirstname;
-		this.targetLastname = targetLastname;
-		this.targetDomain = targetDomain;
+	
+	
+	public UserLogEntry(UserVo userVo, LogAction logAction, String description) {
+		super(userVo, logAction, description);
+		this.targetMail = null;
+		this.targetFirstname = null;
+		this.targetLastname = null;
+		this.targetDomain = null;
+		this.expirationDate = null;
+	}
+	
+	public UserLogEntry(Account actor, LogAction logAction, String description, Account target, Calendar expirationDate) {
+		super(actor, logAction, description);
+
+		this.targetDomain = target.getDomainId();
+		if(isUser(target)) {
+			User user = (User)target;
+			this.targetMail = user.getMail();
+			this.targetFirstname = user.getFirstName();
+			this.targetLastname = user.getLastName();
+		} else {
+			this.targetMail = target.getLsUuid();
+			this.targetFirstname = "";
+			this.targetLastname = "";
+		}
 		this.expirationDate = expirationDate;
 	}
 	
-	public UserLogEntry(String actorMail,
-			String actorFirstname, String actorLastname, String actorDomain,
-			LogAction logAction, String description,
-			String targetMail, String targetFirstname,
-			String targetLastname, String targetDomain,
-			Calendar expirationDate) {
-		super(actorMail,
-				actorFirstname, actorLastname, actorDomain,
-				logAction, description);
-		this.targetMail = targetMail;
-		this.targetFirstname = targetFirstname;
-		this.targetLastname = targetLastname;
-		this.targetDomain = targetDomain;
-		this.expirationDate = expirationDate;
+	public UserLogEntry(Account actor, LogAction logAction, String description, Account target) {
+		this(actor, logAction, description, target, null);
 	}
-
 	
 	public String getTargetMail() {
 		return targetMail;

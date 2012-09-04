@@ -20,6 +20,9 @@
 */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
 public interface DocumentEntryRepository extends AbstractRepository<DocumentEntry>{
@@ -29,4 +32,6 @@ public interface DocumentEntryRepository extends AbstractRepository<DocumentEntr
      * @return found document (null if no document found).
      */
 	public DocumentEntry findById(String uuid);
+	
+	public List<DocumentEntry> findAllMyDocumentEntries(Account owner);
 }

@@ -48,6 +48,7 @@
 		<constructor-arg ref="functionalityService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="passwordService" />
+		<constructor-arg ref="entryService" />
 	</bean>
 
 	<bean id="clamavVirusScannerService" class="org.linagora.linshare.core.service.impl.ClamavVirusScannerServiceImpl">
@@ -96,11 +97,19 @@
 
 
 	<bean id="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
+<!-- 		<constructor-arg ref="documentEntryService" /> -->
+<!-- 		<constructor-arg ref="shareEntryService" /> -->
+<!-- 		<constructor-arg ref="anonymousShareEntryService" /> -->
+<!-- 		<constructor-arg ref="userService" /> -->
+	</bean>
+	
+	<bean id="entryService" class="org.linagora.linshare.core.service.impl.EntryServiceImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="shareEntryService" />
 		<constructor-arg ref="anonymousShareEntryService" />
-		<constructor-arg ref="userService" />
 	</bean>
+	
+	
 
 	<bean id="shareEntryService" class="org.linagora.linshare.core.service.impl.ShareEntryServiceImpl">
 		<constructor-arg ref="guestRepository" />

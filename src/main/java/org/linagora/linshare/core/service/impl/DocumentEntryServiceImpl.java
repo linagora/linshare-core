@@ -3,9 +3,11 @@ package org.linagora.linshare.core.service.impl;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -19,6 +21,7 @@ import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -251,8 +254,10 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	public void deleteDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
 		try {
-			if (!documentEntry.getEntryOwner().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+			if (!actor.getAccountType().equals(AccountType.ROOT)) {
+				if(!documentEntry.getEntryOwner().equals(actor)) {
+					throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+				}
 			}
 			
 			if (documentEntry.getShareEntries().size() > 0) {
@@ -261,7 +266,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
-			
 			
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
 			logEntryService.create(LogEntryService.INFO, logEntry);
@@ -422,9 +426,23 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException {
 		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
-		if (!entry.getEntryOwner().equals(actor)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
+		if (!actor.getAccountType().equals(AccountType.ROOT)) {
+			if (!entry.getEntryOwner().equals(actor)) {
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
+			}
 		}
+		return entry;
+	}
+
+
+	@Override
+	public List<DocumentEntry> findAllMyDocumentEntries(Account actor, User owner) throws BusinessException {
+		
+		// TODO : Fix it : owner and system account ?
+//		if (!owner.equals(actor)) {
+//			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get these documents.");
+//		}
+		List<DocumentEntry> entry = documentEntryBusinessService.findAllMyDocumentEntries(owner);
 		return entry;
 	}
 

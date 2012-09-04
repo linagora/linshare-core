@@ -40,10 +40,39 @@ public abstract class Account {
 	
 	protected Set<TagFilter> tagFilters = new  HashSet<TagFilter>();
 	
+
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((lsUuid == null) ? 0 : lsUuid.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Account other = (Account) obj;
+		if (lsUuid == null) {
+			if (other.lsUuid != null)
+				return false;
+		} else if (!lsUuid.equals(other.lsUuid))
+			return false;
+		return true;
+	}
+
 
 	public long getId() {
 		return id;

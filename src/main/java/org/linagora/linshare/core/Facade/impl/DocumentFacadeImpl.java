@@ -47,6 +47,7 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.EnciphermentService;
+import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.SignatureService;
@@ -57,6 +58,8 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentFacadeImpl implements DocumentFacade {
 
+	private static final Logger logger = LoggerFactory.getLogger(DocumentFacadeImpl.class);
+	
 	private final UserRepository<User> userRepository;
 	
 	private final SignatureTransformer signatureTransformer;
@@ -65,11 +68,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	private final DocumentEntryService documentEntryService;
 	
-	private final ShareEntryService shareEntryService;
-	
-	private final ShareService shareService;
-	
-	private final AnonymousShareEntryService anonymousShareEntryService;
+	private final EntryService entryService;
 	
 	private final AccountService accountService;
 	
@@ -77,26 +76,21 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 	private final SignatureService signatureService;
 	
-	private static final Logger logger = LoggerFactory.getLogger(DocumentFacadeImpl.class);
-	
-	
 	
 	
 	public DocumentFacadeImpl(UserRepository<User> userRepository, SignatureTransformer signatureTransformer,
 			EnciphermentService enciphermentService, DocumentEntryService documentEntryService, AccountService accountService,
-			DocumentEntryTransformer documentEntryTransformer, ShareEntryService shareEntryService, SignatureService signatureService, AnonymousShareEntryService anonymousShareEntryService, 
-			ShareService shareService) {
+			DocumentEntryTransformer documentEntryTransformer, SignatureService signatureService, 
+			EntryService entryService) {
 		super();
 		this.userRepository = userRepository;
 		this.signatureTransformer = signatureTransformer;
 		this.enciphermentService = enciphermentService;
 		this.documentEntryService = documentEntryService;
-		this.shareEntryService = shareEntryService;
 		this.accountService = accountService;
 		this.documentEntryTransformer = documentEntryTransformer;
 		this.signatureService = signatureService;
-		this.anonymousShareEntryService = anonymousShareEntryService;
-		this.shareService = shareService;
+		this.entryService = entryService;
 	}
 
 
@@ -111,9 +105,9 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	@Override
 	public void removeDocument(UserVo actorVo, DocumentVo document, MailContainer mailContainer) throws BusinessException {
-		User actor = (User) accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		if(actor != null) {
-			shareService.deleteAllShareEntriesWithDocumentEntry(document.getIdentifier(), actor, mailContainer);
+			entryService.deleteAllShareEntriesWithDocumentEntry(actor, document.getIdentifier(), mailContainer);
 		} else {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
 		}
@@ -327,7 +321,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		DocumentEntry documentEntry = documentEntryService.updateDocumentEntry(actor, currentFileUUID, file, size, fileName);
 		if(documentEntry.isShared()){
 			//send email file has been replaced ....
-			shareService.sendSharedUpdateDocNotification(actor, documentEntry, friendlySize, originalFileName, mailContainer);
+			entryService.sendSharedUpdateDocNotification(actor, documentEntry, friendlySize, originalFileName, mailContainer);
 		}
            
 		return documentEntryTransformer.disassemble(documentEntry);

@@ -30,14 +30,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface ShareService {
 
 	
-	
-	public void deleteAllShareEntriesWithDocumentEntry(String docEntryUuid, User actor, MailContainer mailContainer) throws BusinessException;
-	
-	public void sendSharedUpdateDocNotification(Account actor, DocumentEntry documentEntry, String friendlySize, String originalFileName, MailContainer mailContainer);
-	
-	
-	
-	
 	// to be remove ?
 	/**
 	 * refresh the attribute share of a document to false if it isn't shared 

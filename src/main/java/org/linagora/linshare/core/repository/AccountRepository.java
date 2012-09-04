@@ -24,6 +24,7 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.User;
 
 public interface AccountRepository<U extends Account> extends AbstractRepository<U> {
 
@@ -34,5 +35,6 @@ public interface AccountRepository<U extends Account> extends AbstractRepository
 
 	List<U> findByDomain(String domain);
 
+	Account getSystemAccount();
     
 } 

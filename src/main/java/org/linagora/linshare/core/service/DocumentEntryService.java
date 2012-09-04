@@ -1,9 +1,11 @@
 package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
+import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryService {
@@ -97,7 +99,9 @@ public interface DocumentEntryService {
 	 */
 	public Long getGlobalQuota(Account account) throws BusinessException;
 	
-	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException; 
+	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException;
+	
+	public List<DocumentEntry> findAllMyDocumentEntries(Account actor, User owner) throws BusinessException;
 	
 	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException ;
 	

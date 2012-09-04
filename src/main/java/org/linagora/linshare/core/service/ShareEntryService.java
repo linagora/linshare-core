@@ -22,9 +22,9 @@ public interface ShareEntryService {
 	
 	public SuccessesAndFailsItems<ShareEntry> createShare(List<DocumentEntry> documentEntries, User sender, List<User> recipients, Calendar expirationDate);
 
-	public void deleteShare(String shareUuid, User actor, MailContainer mailContainer) throws BusinessException;
+	public void deleteShare(Account actor, String shareUuid, MailContainer mailContainer) throws BusinessException;
 	
-	public void deleteShare(ShareEntry share, User actor, MailContainer mailContainer) throws BusinessException;
+	public void deleteShare(Account actor, ShareEntry share, MailContainer mailContainer) throws BusinessException;
 
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException; 
 

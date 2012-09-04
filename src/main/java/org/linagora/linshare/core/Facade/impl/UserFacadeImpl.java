@@ -182,13 +182,16 @@ public class UserFacadeImpl implements UserFacade {
         return userVOs;
     }
     
+    
+    @Override
     public void deleteUser(String login, UserVo actorVo) {
-        try {
         	User actor = userRepository.findByLsUuid(actorVo.getLogin());
-            userService.deleteUser(login, actor);
-        } catch (BusinessException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
+            try {
+				userService.deleteUser(login, actor);
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     }
 
 	public List<String> findMails(String beginWith) {

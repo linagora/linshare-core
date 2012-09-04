@@ -23,6 +23,7 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
@@ -79,7 +80,7 @@ public interface UserService {
      * 			useful for the batch
      * @throws BusinessException 
      */
-    void deleteUser(String login, User actor) throws BusinessException;
+    void deleteUser(String login, Account actor) throws BusinessException;
     
     /**
      * Delete all users from domain (and all the related data )
@@ -256,5 +257,5 @@ public interface UserService {
 	 * @param userMailToManage 
 	 * @return
 	 */
-	public boolean isAdminForThisUser(User actor, String userDomainToManage, String userMailToManage);
+	public boolean isAdminForThisUser(Account actor, String userDomainToManage, String userMailToManage);
 }

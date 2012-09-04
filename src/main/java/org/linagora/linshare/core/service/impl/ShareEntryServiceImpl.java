@@ -87,11 +87,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			updateGuestExpirationDate(recipient);
 		}
 		
-		ShareLogEntry logEntry = new ShareLogEntry(sender.getMail(), sender.getFirstName(), sender.getLastName(),
-				sender.getDomainId(),
-	        	LogAction.FILE_SHARE, "Sharing of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType(),
-	        	recipient.getMail(), recipient.getFirstName(), recipient.getLastName(), recipient.getDomainId(), expirationDate);
-	       
+		ShareLogEntry logEntry = new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file");
 	    logEntryService.create(logEntry);
 	    
 		return createShare;
@@ -142,34 +138,30 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public void deleteShare(String shareUuid, User actor, MailContainer mailContainer) throws BusinessException {
+	public void deleteShare(Account actor, String shareUuid, MailContainer mailContainer) throws BusinessException {
 		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		deleteShare(share, actor, mailContainer);
+		deleteShare(actor, share, mailContainer);
 	}
 	
 
 	@Override
-	public void deleteShare(ShareEntry share, User actor, MailContainer mailContainer) throws BusinessException {
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor)) {
-			ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-					actor.getDomainId(),
-	        		LogAction.SHARE_DELETE, "Delete a sharing", 
-	        		share.getDocumentEntry().getName(), share.getDocumentEntry().getDocument().getSize(), share.getDocumentEntry().getDocument().getType(),
-	        		share.getRecipient().getMail(), share.getRecipient().getFirstName(), share.getRecipient().getLastName(), share.getRecipient().getDomainId(), null);
-	        
+	public void deleteShare(Account actor, ShareEntry share, MailContainer mailContainer) throws BusinessException {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.equals(guestRepository.getSystemAccount()) || actor.getAccountType().equals(AccountType.ROOT) ) {
+			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 	        logEntryService.create(logEntry);
-			
-	        logger.info("delete share : " + share.getUuid());
 	        
+	        logger.info("delete share : " + share.getUuid());
 	        shareEntryBusinessService.deleteShare(share);
 	        
-	        List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-	        mailContainerWithRecipient.add(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(mailContainer, share, actor));
-	        notifierService.sendAllNotifications(mailContainerWithRecipient);
+	        if(mailContainer != null) {
+	        	List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
+	        	mailContainerWithRecipient.add(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(mailContainer, share, actor));
+	        	notifierService.sendAllNotifications(mailContainerWithRecipient);
+	        }
 	        
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
@@ -200,24 +192,14 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		
 		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor)) {
 			
-			User sender = (User)share.getEntryOwner();
-			User user = share.getRecipient();
 			 //log the copy
-			ShareLogEntry logEntryShare = new ShareLogEntry(sender.getMail(), 
-					sender.getFirstName(), sender.getLastName(), sender.getDomainId(),
-					LogAction.SHARE_COPY, "Copy of a sharing", share.getName(), share.getSize(), share.getType(), user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
-	
+			ShareLogEntry logEntryShare = new ShareLogEntry(actor, share, LogAction.SHARE_COPY, "Copy of a sharing");
 			logEntryService.create(logEntryShare);
 			
 			DocumentEntry newDocumentEntry = documentEntryService.duplicateDocumentEntry(actor, share.getDocumentEntry().getUuid());
 			
 			
-			ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-					actor.getDomainId(),
-	        		LogAction.SHARE_DELETE, "Remove a received sharing (Copy of a sharing)", 
-	        		share.getName(), share.getSize(), share.getType(),
-	        		user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
-	        
+			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Remove a received sharing (Copy of a sharing)"); 
 	        logEntryService.create(logEntry);
 	        
 	        logger.info("delete share : " + share.getUuid());
@@ -239,7 +221,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor)) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.equals(guestRepository.getSystemAccount())) {
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);

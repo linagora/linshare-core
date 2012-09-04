@@ -34,21 +34,31 @@ import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.SearchDocumentService;
+import org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
+	
+	private static final Logger logger = LoggerFactory.getLogger(SearchDocumentFacadeImpl.class);
+	
 
 	private SearchDocumentService searchDocumentService;
 	private DocumentEntryTransformer documentEntryTransformer;
 	private AccountService accountService;
+	private final DocumentEntryService documentEntryService;
 	
-	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, 
-			DocumentEntryTransformer documentEntryTransformer,
-			AccountService accountService){
+	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, DocumentEntryTransformer documentEntryTransformer, AccountService accountService,
+			DocumentEntryService documentEntryService){
+		
 		this.searchDocumentService = searchDocumentService;
 		this.documentEntryTransformer = documentEntryTransformer;
 		this.accountService = accountService;
+		this.documentEntryService = documentEntryService;
 	}
 	
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
@@ -56,15 +66,23 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 		User user = (User) accountService.findByLsUid(userVo.getLsUid());
 		ArrayList<DocumentVo> documents = new ArrayList<DocumentVo>();
 
-//		return documentTransformer.disassembleList(new ArrayList<Document>(this.searchDocumentService.retrieveDocument(user)));
-		
-		// TODO : Fix documents list
-		Set<Entry> entries = user.getEntries();
-		for (Entry entry : entries) {
-			if(entry.getEntryType().equals(EntryType.DOCUMENT)) {
-				documents.add(documentEntryTransformer.disassemble((DocumentEntry) entry));
+		try {
+			List<DocumentEntry> documentEntries = documentEntryService.findAllMyDocumentEntries(user, user);
+			for (DocumentEntry entry : documentEntries) {
+				documents.add(documentEntryTransformer.disassemble(entry));
 			}
+		} catch (BusinessException e) {
+			logger.error("can't find my document entries");
+			logger.debug(e.toString());
 		}
+		
+//		// TODO : Fix documents list
+//		Set<Entry> entries = user.getEntries();
+//		for (Entry entry : entries) {
+//			if(entry.getEntryType().equals(EntryType.DOCUMENT)) {
+//				documents.add(documentEntryTransformer.disassemble((DocumentEntry) entry));
+//			}
+//		}
 		
 		return documents;
 		

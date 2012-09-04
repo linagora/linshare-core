@@ -32,8 +32,10 @@ import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -51,6 +53,7 @@ import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -99,6 +102,8 @@ public class UserServiceImpl implements UserService {
     
     private final FunctionalityService functionalityService;
     private final PasswordService passwordService;
+    
+    private final EntryService entryService;
 
     /** Constructor.
      * @param userRepository repository.
@@ -117,7 +122,8 @@ public class UserServiceImpl implements UserService {
     		final LDAPQueryService ldapQueryService,
     		final FunctionalityService functionalityService,
     		final AbstractDomainService abstractDomainService,
-    		final PasswordService passwordService) {
+    		final PasswordService passwordService,
+    		final EntryService entryService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.logEntryService = logEntryService;
@@ -131,6 +137,7 @@ public class UserServiceImpl implements UserService {
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
 		this.passwordService = passwordService;
+		this.entryService = entryService;
 		
     }
 
@@ -205,8 +212,8 @@ public class UserServiceImpl implements UserService {
 			
 			Calendar expDate = new GregorianCalendar();
 			expDate.setTime(guest.getExpirationDate());
-			UserLogEntry logEntry = new UserLogEntry(ownerUser.getMail(), ownerUser.getFirstName(), ownerUser.getLastName(), ownerUser.getDomainId(),
-					LogAction.USER_CREATE, "Creation of a guest", guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), expDate);
+			
+			UserLogEntry logEntry = new UserLogEntry(ownerUser, LogAction.USER_CREATE, "Creation of a guest", guest, expDate);
 			
 			logEntryService.create(logEntry);
 			
@@ -253,8 +260,9 @@ public class UserServiceImpl implements UserService {
         return expiryDate.getTime();
     }
     
+    
     @Override
-	public void deleteUser(String login, User actor) throws BusinessException {
+	public void deleteUser(String login, Account actor) throws BusinessException {
 		User userToDelete = userRepository.findByLsUuid(login);
 		
 		if (userToDelete!=null) {
@@ -264,7 +272,7 @@ public class UserServiceImpl implements UserService {
 			
 			if (!hasRightToDeleteThisUser) {
 				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
-						+" cannot be deleted, he is not a guest, or "+ actor.getMail()+ " is not an admin");
+						+" cannot be deleted, he is not a guest, or "+ actor.getAccountReprentation() + " is not an admin");
 			} else {
 				doDeleteUser( actor, userToDelete);
 			}
@@ -273,6 +281,7 @@ public class UserServiceImpl implements UserService {
 			logger.debug("User not found in DB : " + login);
 		}
 	}
+    
     
     @Override
 	public void deleteAllUsersFromDomain(User actor, String domainIdentifier) throws BusinessException {
@@ -290,7 +299,8 @@ public class UserServiceImpl implements UserService {
     }
         
     
-	public boolean isAdminForThisUser(User actor, String userDomainToManage, String userMailToManage) {
+    @Override
+	public boolean isAdminForThisUser(Account actor, String userDomainToManage, String userMailToManage) {
 		if(actor.getRole().equals(Role.SUPERADMIN)) {
 			return true;
 		} else if(actor.getRole().equals(Role.SYSTEM)) {
@@ -314,80 +324,13 @@ public class UserServiceImpl implements UserService {
 		}
 		return false;
 	}
+    
 
-	private void doDeleteUser(User actor, User userToDelete) throws BusinessException {
+	private void doDeleteUser(Account actor, User userToDelete) throws BusinessException {
 		try {
-			// The list of all document that were in the received shares
-			Set<Document> documentsToClean = new HashSet<Document>();
 			
-			// TODO : fix clearing user documents
-			// TODO: fix  clearing  shares	
-//			// clearing received shares
-//			Set<Share> receivedShare = userToDelete.getReceivedShares();
-//			
-//			for (Share share : receivedShare) {
-//				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-//						actor.getDomainId(),
-//		        		LogAction.SHARE_DELETE, "Deleting a user-Removing shares", 
-//		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
-//		        		userToDelete.getMail(), 
-//		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-//				 logEntryService.create(logEntry);
-//				 documentsToClean.add(share.getDocument());
-//			}
-//			
-//			
-//			// clearing sent shares
-//			Set<Share> sentShare = userToDelete.getShares();
-//			
-//			for (Share share : sentShare) {
-//				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-//						actor.getDomainId(),
-//		        		LogAction.SHARE_DELETE, "Deleting of a guest-Removing shares", 
-//		        		share.getDocument().getName(),share.getDocument().getSize(),share.getDocument().getType(),
-//		        		userToDelete.getMail(), 
-//		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-//				 logEntryService.create(logEntry);
-//			}
-//			
-//			// clearing sent urls
-//			Set<SecuredUrl> sentUrls = userToDelete.getSecuredUrls();
-//			for (SecuredUrl url : sentUrls) {
-//				String docs = "";
-//				for (Document doc : url.getDocuments()) {
-//					docs += doc.getName()+";";
-//				}
-//				ShareLogEntry logEntry = new ShareLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-//						actor.getDomainId(),
-//		        		LogAction.SHARE_DELETE, "Deleting a user-Removing url shares", 
-//		        		docs,null,null,
-//		        		userToDelete.getMail(), 
-//		        		userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-//				 logEntryService.create(logEntry);
-//			}
-//			
-//			sentShare.clear();
-//			receivedShare.clear();
-//			sentUrls.clear();
-//			
-//			userRepository.update(userToDelete);
-//			
-//			//clearing user documents
-//			Set<Document> documents = userToDelete.getDocuments();
-//			for (Document document : documents) {
-//				String fileUUID = document.getUuid();
-//				String thumbnailUUID = document.getThmbUuid();
-//				if (thumbnailUUID != null && thumbnailUUID.length()>0) {
-//					fileSystemDao.removeFileByUUID(thumbnailUUID);
-//				}
-//				fileSystemDao.removeFileByUUID(fileUUID);
-//				FileLogEntry logEntry = new FileLogEntry(actor.getMail(), 
-//						actor.getFirstName(), actor.getLastName(),
-//						actor.getDomainId(),
-//						LogAction.USER_DELETE, "User deleted", document.getName(), 
-//						document.getSize(), document.getType());
-//				logEntryService.create(logEntry);
-//			}
+			entryService.deleteAllReceivedShareEntries(actor, userToDelete);
+			entryService.deleteAllShareEntriesWithDocumentEntries(actor, userToDelete);
 			
 			//clearing the favorites
 			recipientFavouriteService.deleteFavoritesOfUser(userToDelete);
@@ -398,36 +341,16 @@ public class UserServiceImpl implements UserService {
 //			// clearing all signatures
 //			Set<Signature> ownSignatures = userToDelete.getOwnSignatures();
 //			ownSignatures.clear();
+//			userRepository.update(userToDelete);
 			
-			//a guest can create guest (since evolution guest with grant privilege)...
-			//so when deleting a guest (A) you may need to delete the guests (B, C, D) which were created by this guest (A).
-			//to fix this: deleting a guest means you will be the new owner of the guest account which were created (B, C, D)
-			List<Guest> usersCreatedByTheUserToDelete = guestRepository.searchGuest(null, null, null, userToDelete);
-			for (Guest guest : usersCreatedByTheUserToDelete) {
-				guest.setOwner(actor);
-				guestRepository.update(guest);
-				if (guest.isRestricted()) { //if restricted guest, needs to have the new owner as contact
-					addGuestContactRestriction(guest.getLsUuid(), actor.getLsUuid());
-				}
-			}
-			
-			
-			userRepository.update(userToDelete);
 			userRepository.delete(userToDelete);
-			UserLogEntry logEntry = new UserLogEntry(actor.getMail(), actor.getFirstName(), actor.getLastName(),
-					actor.getDomainId(),
-		        	LogAction.USER_DELETE, "Deleting an user", userToDelete.getMail(), 
-		        	userToDelete.getFirstName(), userToDelete.getLastName(), userToDelete.getDomainId(), null);
-      
-		    logEntryService.create(logEntry);
+			
+			UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting an user", userToDelete);
+			logEntryService.create(logEntry);
 		    
-		    for (Document document : documentsToClean) {
-		    	shareService.refreshShareAttributeOfDoc(document);
-				
-			}
 		} catch (IllegalArgumentException e) {
-			logger.error("Couldn't find the user " + userToDelete.getMail() +" to be deleted", e);
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + userToDelete.getMail() +" to be deleted");
+			logger.error("Couldn't find the user " + userToDelete.getAccountReprentation() +" to be deleted", e);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user " + userToDelete.getAccountReprentation() +" to be deleted");
 		}
 	}
 
@@ -436,12 +359,14 @@ public class UserServiceImpl implements UserService {
      */
 	   @Override
     public void cleanExpiredGuestAcccounts() {
-        User owner = userRepository.findByMail("system");
+		   
+		Account systemAccount = userRepository.getSystemAccount();
+        
         List<Guest> guests = guestRepository.findOutdatedGuests();
         logger.info(guests.size() + " guest(s) have been found to be removed");
         for (User guest : guests) {
             try {
-                deleteUser(guest.getMail(), owner);
+                deleteUser(guest.getMail(), systemAccount);
                 logger.info("Removed expired user : " + guest.getMail());
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove expired user : " + guest.getMail() + "\n" + ex.toString());
@@ -561,12 +486,8 @@ public class UserServiceImpl implements UserService {
 		guest.setCanCreateGuest(canCreateGuest);
         guestRepository.update(guest);
 
-        UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-				owner.getDomainId(),
-        		LogAction.USER_UPDATE, "Update of a guest:" + guest.getMail(), guest.getMail(), guest.getFirstName(), guest.getLastName(), guest.getDomainId(), null);
-        
+        UserLogEntry logEntry = new UserLogEntry(owner, LogAction.USER_UPDATE, "Update of a guest:" + guest.getMail(), guest);
         logEntryService.create(logEntry);
-
 	}
 
 	@Override
@@ -585,11 +506,7 @@ public class UserServiceImpl implements UserService {
 			User owner = userRepository.findByLsUuid(ownerVo.getLsUid());
 			user.setRole(role);
 			userRepository.update(user);
-			UserLogEntry logEntry = new UserLogEntry(owner.getMail(), owner.getFirstName(), owner.getLastName(),
-					owner.getDomainId(),
-					LogAction.USER_UPDATE, "Update role of a user", user.getMail(), user.getFirstName(), user.getLastName(), user.getDomainId(), null);
-
-			
+			UserLogEntry logEntry = new UserLogEntry(owner, LogAction.USER_UPDATE, "Update of a guest:" + user.getMail(), user);
 			logEntryService.create(logEntry);
 		}
 	}
