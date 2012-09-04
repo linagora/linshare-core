@@ -185,13 +185,13 @@ public class UserFacadeImpl implements UserFacade {
     
     @Override
     public void deleteUser(String login, UserVo actorVo) {
-        	User actor = userRepository.findByLsUuid(actorVo.getLogin());
-            try {
-				userService.deleteUser(login, actor);
-			} catch (BusinessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    	User actor = userRepository.findByLsUuid(actorVo.getLogin());
+        try {
+			userService.deleteUser(login, actor);
+		} catch (BusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 	public List<String> findMails(String beginWith) {
@@ -330,6 +330,16 @@ public class UserFacadeImpl implements UserFacade {
 		return null;
 	}
 	
+
+	@Override
+	public UserVo findUserByLsUuid(UserVo actorVo, String uuid) {
+		User user = userRepository.findByLsUuid(uuid);
+		if (user != null) {
+			return new UserVo(user);
+		}
+		return null;
+	}
+
 
 	@Override
 	public UserVo findUserFromAuthorizedDomainOnly(String domainId, String mail) {

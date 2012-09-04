@@ -357,7 +357,7 @@ public class UserServiceImpl implements UserService {
     /** Clean outdated guest accounts.
      * @throws BusinessException
      */
-	   @Override
+	@Override
     public void cleanExpiredGuestAcccounts() {
 		   
 		Account systemAccount = userRepository.getSystemAccount();
@@ -369,7 +369,7 @@ public class UserServiceImpl implements UserService {
                 deleteUser(guest.getMail(), systemAccount);
                 logger.info("Removed expired user : " + guest.getMail());
             } catch (BusinessException ex) {
-                logger.warn("Unable to remove expired user : " + guest.getMail() + "\n" + ex.toString());
+                logger.warn("Unable to remove expired user : " + guest.getAccountReprentation() + "\n" + ex.toString());
             }
         }
     }

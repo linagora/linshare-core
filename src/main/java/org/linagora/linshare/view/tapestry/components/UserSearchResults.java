@@ -345,8 +345,10 @@ public class UserSearchResults {
     
 	@OnEvent(value="userDeleteEvent")
     public void deleteUser() {
+		UserVo selectedUserVO = userFacade.findUserByLsUuid(userLoggedIn, selectedLogin);
+		
         userFacade.deleteUser(selectedLogin, userLoggedIn);
-        shareSessionObjects.addMessage(messages.format("components.userSearch.action.delete.confirm", selectedLogin));
+        shareSessionObjects.addMessage(messages.format("components.userSearch.action.delete.confirm", selectedUserVO.getCompleteName()));
         componentResources.triggerEvent("resetListUsers", null, null);
     }
 

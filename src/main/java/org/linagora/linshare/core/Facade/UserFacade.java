@@ -207,7 +207,9 @@ public interface UserFacade {
 	UserVo findGuestWithMailAndUserLoggedIn(UserVo userLoggedIn, String mail);
 	
 	UserVo findGuestByLsUuid(UserVo actorVo, String guestUuid);
-
+	
+	UserVo findUserByLsUuid(UserVo actorVo, String uuid);
+	
 	
 	
 	/**
