@@ -85,7 +85,6 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 		documentEntryRepository.update(documentEntry);
 		accountService.update(recipient);
 		accountService.update(sender);
-		
 	}
 
 
@@ -100,5 +99,6 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	public List<ShareEntry> findAllMyShareEntries(User owner) {
 		return shareEntryRepository.findAllMyShareEntries(owner);
 	}
+
 
 }

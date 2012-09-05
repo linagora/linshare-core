@@ -43,6 +43,9 @@ public interface DocumentEntryBusinessService {
 	
 	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl) throws BusinessException;
 
+	public long getRelatedEntriesCount(DocumentEntry documentEntry);
+	
+	
 	
 	public ThreadEntry createThreadEntry(Thread owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
 	

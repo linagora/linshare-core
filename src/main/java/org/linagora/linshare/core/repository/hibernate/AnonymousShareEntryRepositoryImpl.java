@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 	
 	@Override
 	public AnonymousShareEntry findById(String uuid) {
-		 List<AnonymousShareEntry> entries = findByCriteria(Restrictions.eq("uuid", uuid));
+		List<AnonymousShareEntry> entries = findByCriteria(Restrictions.eq("uuid", uuid));
         if (entries == null || entries.isEmpty()) {
             return null;
         } else if (entries.size() == 1) {
@@ -65,4 +66,15 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
             throw new IllegalStateException("AnonymousShareEntry must be unique");
         }
 	}
+
+	
+	@Override
+	public List<AnonymousShareEntry> findAllExpiredEntries() {
+		List<AnonymousShareEntry> entries = findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
+        if (entries == null) {
+            return null;
+        } 
+        return entries;
+	}
+	
 }

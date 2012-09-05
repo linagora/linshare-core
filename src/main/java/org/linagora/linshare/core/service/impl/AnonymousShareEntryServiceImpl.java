@@ -9,6 +9,7 @@ import org.linagora.linshare.core.business.service.AnonymousShareEntryBusinessSe
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
@@ -16,10 +17,13 @@ import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -44,7 +48,6 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
     private final MailContentBuildingService mailElementsFactory;
     
     private final DocumentEntryBusinessService documentEntryBusinessService;
-    
     
     private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
     
@@ -167,6 +170,12 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	
 	
 	@Override
+	public void deleteShare(Account actor, AnonymousShareEntry shareEntry) throws BusinessException {
+		deleteShare(actor, shareEntry, null);
+	}
+	
+	
+	@Override
 	public InputStream getAnonymousShareEntryStream(String shareUuid, MailContainer mailContainer) throws BusinessException {
 		try {
 			AnonymousShareEntry shareEntry = downloadAnonymousShareEntry(shareUuid);
@@ -209,7 +218,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 			throw e;
 		}
 	}
-
+	
 
 	@Override
 	public void sendDocumentEntryUpdateNotification(Account actor, AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName, MailContainer mailContainer) {

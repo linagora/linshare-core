@@ -24,9 +24,12 @@ public interface AnonymousShareEntryService {
 	
 	public void deleteShare(Account actor, AnonymousShareEntry share, MailContainer mailContainer) throws BusinessException;
 	
+	public void deleteShare(Account actor, AnonymousShareEntry share) throws BusinessException;
+	
 	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException ;
 	
 	public InputStream getAnonymousShareEntryStream(String shareUuid, MailContainer mailContainer) throws BusinessException ;
 	
 	public void sendDocumentEntryUpdateNotification(Account actor, AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName, MailContainer mailContainer);
+	
 }

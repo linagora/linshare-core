@@ -21,16 +21,21 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 
+import java.sql.SQLException;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<DocumentEntry> implements DocumentEntryRepository {
@@ -39,11 +44,13 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		super(hibernateTemplate);
 	}
 	
+	
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(DocumentEntry aDoc) {
 		DetachedCriteria det = DetachedCriteria.forClass(DocumentEntry.class).add(Restrictions.eq( "uuid", aDoc.getUuid()) );
 		return det;
 	}
+	
 	
 	 /** Find a document using its id.
      * @param id
@@ -60,6 +67,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
             throw new IllegalStateException("Id must be unique");
         }
     }
+	
 
 	@Override
 	public List<DocumentEntry> findAllMyDocumentEntries(Account owner) {
@@ -70,6 +78,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
         return entries;
 	}
 
+	
 	@Override
 	public DocumentEntry create(DocumentEntry entity) throws BusinessException {
 		entity.setCreationDate(new GregorianCalendar());
@@ -78,9 +87,42 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return super.create(entity);
 	}
 
+	
 	@Override
 	public DocumentEntry update(DocumentEntry entity) throws BusinessException {
 		entity.setModificationDate(new GregorianCalendar());
 		return super.update(entity);
 	}
+	
+
+	@Override
+	public long getRelatedEntriesCount(final DocumentEntry documentEntry) {
+		long result  = 0 ;
+		
+		HibernateCallback<Long> action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+				final Query query = session.createQuery("select count(*) from ShareEntry s where s.documentEntry = :documentEntry");
+				query.setParameter("documentEntry", documentEntry);
+				return 	((Long)query.iterate().next()).longValue();
+			}
+		};
+		Long shareResult = (Long) getHibernateTemplate().execute(action);
+		
+		action = new HibernateCallback<Long>() {
+			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
+				final Query query = session.createQuery("select count(*) from AnonymousShareEntry s where s.documentEntry = :documentEntry");
+				query.setParameter("documentEntry", documentEntry);
+				return 	((Long)query.iterate().next()).longValue();
+			}
+		};
+		Long anonymousShareResult = (Long) getHibernateTemplate().execute(action);
+		
+		result = anonymousShareResult + shareResult;
+		if(logger.isDebugEnabled())
+			logger.debug("related entries for document " + documentEntry.getUuid() + " :  (share=" + shareResult + ", anonymous=" + anonymousShareResult + " , sum=" + result + ")");
+		
+		return result;
+	}
+	
+	
 }

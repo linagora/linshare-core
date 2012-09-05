@@ -21,6 +21,7 @@ import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -209,7 +210,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		Account owner = documentEntry.getEntryOwner();
 		try {
 			
-			if (documentEntry.getShareEntries().size() > 0) {
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
 			}
 			
@@ -228,21 +229,21 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 
 	@Override
-	public void deleteExpiratedDocumentEntry(String docEntryUuid) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+	public void deleteExpiredDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException {
 		Account owner = documentEntry.getEntryOwner();
 		try {
-			
-			if (documentEntry.getShareEntries().size() > 0) {
+
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
 			}
 			
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
 			
-			FileLogEntry logEntry  = new FileLogEntry(owner, LogAction.FILE_EXPIRE, "Expiration of a file",  documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
+			FileLogEntry logEntry  = new FileLogEntry(actor, LogAction.FILE_EXPIRE, "Expiration of a file",  documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
+			
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + documentEntry.getName() + " of user " + owner.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
@@ -260,7 +261,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 				}
 			}
 			
-			if (documentEntry.getShareEntries().size() > 0) {
+			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
 			}
 			

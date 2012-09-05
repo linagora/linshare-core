@@ -38,5 +38,4 @@ public interface DocumentRepository extends AbstractRepository<Document>{
      */
 	public Document findByUuid(String identifier);
 	  
-	
 }

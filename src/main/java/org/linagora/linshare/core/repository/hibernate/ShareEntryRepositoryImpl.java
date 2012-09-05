@@ -1,12 +1,12 @@
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -61,7 +61,6 @@ public class ShareEntryRepositoryImpl extends AbstractRepositoryImpl<ShareEntry>
 	
 	@Override
 	public ShareEntry getShareEntry(DocumentEntry documentEntry, User sender, User recipient) {
-		
 		List<ShareEntry> results = findByCriteria(Restrictions.eq("documentEntry", documentEntry),Restrictions.eq("entryOwner", sender),Restrictions.eq("recipient", recipient));
 		if (results == null || results.isEmpty()) {
             return null;
@@ -81,5 +80,16 @@ public class ShareEntryRepositoryImpl extends AbstractRepositoryImpl<ShareEntry>
         }
         return entries;
 	}
+	
 
+	@Override
+	public List<ShareEntry> findAllExpiredEntries() {
+		List<ShareEntry> entries = findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
+        if (entries == null) {
+            return null;
+        }
+        return entries;
+	}
+
+	
 }

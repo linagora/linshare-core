@@ -42,4 +42,6 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry>{
 	
 	public List<ShareEntry> findAllMyShareEntries(User owner);
 	
+	public List<ShareEntry> findAllExpiredEntries();
+	
 }

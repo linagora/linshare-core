@@ -25,6 +25,8 @@ public interface ShareEntryService {
 	public void deleteShare(Account actor, String shareUuid, MailContainer mailContainer) throws BusinessException;
 	
 	public void deleteShare(Account actor, ShareEntry share, MailContainer mailContainer) throws BusinessException;
+	
+	public void deleteShare(Account actor, ShareEntry share) throws BusinessException;
 
 	public DocumentEntry copyDocumentFromShare(String shareUuid, User actor) throws BusinessException; 
 
@@ -39,4 +41,5 @@ public interface ShareEntryService {
 	public void sendDocumentEntryUpdateNotification(Account actor, ShareEntry shareEntry, String friendlySize, String originalFileName, MailContainer mailContainer);
 
 	public List<ShareEntry> findAllMyShareEntries(Account actor, User owner);
+	
 }

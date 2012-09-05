@@ -9,6 +9,7 @@ import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
@@ -18,9 +19,11 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
+import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -33,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShareEntryServiceImpl implements ShareEntryService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ShareEntryServiceImpl.class);
 	
 	private final GuestRepository guestRepository;
 	
@@ -52,11 +57,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
     
     private final MailContentBuildingService mailContentBuildingService;
 
-	
-//	private final UserService userService;
-	
-	private static final Logger logger = LoggerFactory.getLogger(ShareEntryServiceImpl.class);
-	
 
 	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityService functionalityService, ShareEntryBusinessService shareEntryBusinessService,
 		ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, DocumentEntryService documentEntryService, NotifierService notifierService,
@@ -167,6 +167,12 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
 		}
+	}
+	
+	
+	@Override
+	public void deleteShare(Account actor, ShareEntry share) throws BusinessException {
+		this.deleteShare(actor, share, null);
 	}
 	
 
@@ -301,7 +307,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		// TODO check permissions
 		return shareEntryBusinessService.findAllMyShareEntries(owner);
 	}
-
 
 
 	@Override

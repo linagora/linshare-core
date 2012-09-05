@@ -27,7 +27,6 @@ public class EntryServiceImpl implements EntryService {
 	private final DocumentEntryService documentEntryService;
 	
 	private final AnonymousShareEntryService anonymousShareEntryService;
-	
 
 	
 	public EntryServiceImpl(ShareEntryService shareEntryService, DocumentEntryService documentEntryService, AnonymousShareEntryService anonymousShareEntryService) {

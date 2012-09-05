@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -34,10 +35,11 @@ public interface DocumentEntryService {
 
 	/**
 	 * This method is designed to delete expired documents (batches). 
+	 * @param actor TODO
 	 * @param docEntryUuid
 	 * @throws BusinessException
 	 */
-	public void deleteExpiratedDocumentEntry(String docEntryUuid) throws BusinessException;
+	public void deleteExpiredDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException;
 	
 	public long getUserMaxFileSize(Account account) throws BusinessException;
 	

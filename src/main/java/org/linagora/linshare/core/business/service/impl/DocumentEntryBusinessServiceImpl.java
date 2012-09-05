@@ -499,5 +499,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		}
 		return testheaders;
 	}
+
+
+	@Override
+	public long getRelatedEntriesCount(DocumentEntry documentEntry) {
+		return documentEntryRepository.getRelatedEntriesCount(documentEntry);
+	}
+	
 	
 }

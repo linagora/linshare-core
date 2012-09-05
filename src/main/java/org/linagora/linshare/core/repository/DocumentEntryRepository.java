@@ -34,4 +34,6 @@ public interface DocumentEntryRepository extends AbstractRepository<DocumentEntr
 	public DocumentEntry findById(String uuid);
 	
 	public List<DocumentEntry> findAllMyDocumentEntries(Account owner);
+	
+	public long getRelatedEntriesCount(DocumentEntry documentEntry);
 }

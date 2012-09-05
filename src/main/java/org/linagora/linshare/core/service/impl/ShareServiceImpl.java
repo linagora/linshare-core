@@ -198,10 +198,4 @@ public class ShareServiceImpl implements ShareService{
 //		}
 //	}
 
-	
-	@Override
-	public void refreshShareAttributeOfDoc(Document doc) {
-		// TODO Auto-generated method stub
-		
-	}
 }

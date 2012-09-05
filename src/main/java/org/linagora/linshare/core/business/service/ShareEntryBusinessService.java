@@ -19,4 +19,5 @@ public interface ShareEntryBusinessService {
 	public void updateShareComment(ShareEntry share, String comment) throws BusinessException;
 	
 	public List<ShareEntry> findAllMyShareEntries(User owner);
+	
 }

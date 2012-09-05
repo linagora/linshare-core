@@ -97,6 +97,7 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		return anonymousUrl;
 	}
 
+	
 	@Override
 	public void deleteAnonymousShare(AnonymousShareEntry anonymousShare) throws BusinessException {
 		anonymousShareEntryRepository.delete(anonymousShare);
@@ -110,5 +111,6 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 		documentEntryRepository.update(documentEntry);
 		accountService.update(sender);
 	}
+
 	
 }
