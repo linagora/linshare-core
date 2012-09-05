@@ -49,4 +49,6 @@ public interface DocumentEntryBusinessService {
 	public ThreadEntry findThreadEntryById(String docEntryUuid);
 	
 	public List<ThreadEntry> findAllThreadEntries(Thread owner);
+
+	public InputStream getDocumentStream(ThreadEntry entry);
 }

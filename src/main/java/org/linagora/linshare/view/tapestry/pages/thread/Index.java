@@ -81,10 +81,6 @@ public class Index {
     public Object onActionFromShowProjectThread(String lsUuid) {
     	logger.debug("Debut onActionFromShowProjectThread");
     	for (ThreadVo project : projects) {
-    		logger.debug("Looping through projects list :");
-    		logger.debug("current project name = " + project.getName());
-    		logger.debug("current project lsUuid = " + project.getLsUuid());
-    		logger.debug("selected lsUuid = " + lsUuid);
 			if (project.getLsUuid().equals(lsUuid)) {
 		    	projectThreadPage.setMySelectedProject(project);
 		    	logger.debug("Projet " + project.getName() + "recupere");

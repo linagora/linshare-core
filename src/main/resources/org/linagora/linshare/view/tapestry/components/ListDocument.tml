@@ -15,9 +15,9 @@
 	<t:if test="inSearch" negate="true">
 		<h2>${message:pages.files.list.myfiles.heading}</h2>
 	</t:if>
-	
-	
-	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listDocument.sorter.date.label},${message:components.listDocument.sorter.name.label},${message:components.listDocument.sorter.type.label},${message:components.listDocument.sorter.size.label}" t:properties="literal:date,name,type,size"/> 
+
+
+	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:components.listDocument.sorter.date.label},${message:components.listDocument.sorter.name.label},${message:components.listDocument.sorter.type.label},${message:components.listDocument.sorter.size.label}" t:properties="literal:date,name,type,size"/>
 
 	<t:form t:id="search">
 
@@ -27,7 +27,7 @@
 		<t:if t:test="emptyList" negate="true">
 			<t:errors />
 		</t:if>
-		
+
 		<t:grid t:id="documentGrid" source="documents" row="document" model="model"
 			exclude="fileName, ownerLogin, encrypted, identifier, size, type, shareActive, fileComment, downloaded, actions, creationDate, expirationDate"
 			rowsPerPage="10">
@@ -58,7 +58,7 @@
 			<t:parameter t:name="SignedHeader">
 				<abbr title="${message:components.listDocument.grid.signed}">${message:components.listDocument.grid.signed.abbr}</abbr>
 			</t:parameter>
-			
+
 			<t:parameter t:name="EncryptedAddHeader">
 				<abbr title="${message:components.listDocument.grid.encrypted}">${message:components.listDocument.grid.encrypted.abbr}</abbr>
 			</t:parameter>
@@ -101,7 +101,7 @@
 				<span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
 			</div>
 			</t:parameter>
-			
+
 			<t:parameter t:name="updateDocCell">
 				<t:actionLink t:id="updateDoc"  t:zone="zoneTest" context="${document.identifier}">
 					<span onclick="windowUpdateDocUpload.showCenter(true);">
@@ -115,7 +115,7 @@
 					<span onclick="literal:${fileEdit.javascriptOpenPopup}">
 						<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
 					</span>
-						
+
 				</t:actionLink>
 			</t:parameter>
 
@@ -155,38 +155,38 @@
 				</t:if>
 			</t:parameter>
 
- 			<t:parameter t:name="encryptedAddCell">
+            <t:parameter t:name="encryptedAddCell">
 
- 				<t:if t:test="${document.encrypted}">
- 					<t:actionLink t:id="decryptIcon"
+				<t:if t:test="${document.encrypted}">
+					<t:actionLink t:id="decryptIcon"
  						context="${document.identifier}" t:zone="zoneTest"
  						class="listDocument">
- 						<span onclick="window_passwordDecryptPopup.showCenter(true);">
- 							<img src="${asset:context:images/icons/encrypt-on.png}" alt=""
+						<span onclick="window_passwordDecryptPopup.showCenter(true);">
+							<img src="${asset:context:images/icons/encrypt-on.png}" alt=""
  								title="${message:components.listDocument.picture.encrypton.title}" />
- 						</span>
- 							
- 					</t:actionLink>
- 					<t:parameter name="else">
- 						<t:actionLink t:id="encryptIcon"
+						</span>
+
+					</t:actionLink>
+					<t:parameter name="else">
+						<t:actionLink t:id="encryptIcon"
  							context="${document.identifier}" t:zone="zoneTest"
  							class="listDocument">
- 							<span onclick="window_passwordCryptPopup.showCenter(true);" >
- 								<img src="${asset:context:images/icons/encrypt-off.png}" alt=""
+							<span onclick="window_passwordCryptPopup.showCenter(true);" >
+								<img src="${asset:context:images/icons/encrypt-off.png}" alt=""
  									title="${message:components.listDocument.picture.encryptoff.title}" />
- 							</span>
- 						</t:actionLink>
+							</span>
+						</t:actionLink>
 
- 					</t:parameter>
- 				</t:if>
- 			</t:parameter>
+					</t:parameter>
+				</t:if>
+			</t:parameter>
 
- 			<t:parameter t:name="selectedValueCell">
+			<t:parameter t:name="selectedValueCell">
 				<t:checkbox t:id="filesSelected" onclick="countCheckbox();" />
 			</t:parameter>
 
 		</t:grid>
-		
+
 	</t:form>
 
 	</div><!-- id="list" -->
@@ -202,17 +202,17 @@
 		t:messageLabel="${message:components.listDocument.messageConfirm}"
 		t:fieldName="deleteConfirmed"
 		t:formName="search" />
-		
-		
-	<t:fileUpdateUploader />	
+
+
+	<t:fileUpdateUploader />
 
     <t:fileEditForm t:id="fileEdit" />
 
- 	<t:userDetailsDisplayer/>
+    <t:userDetailsDisplayer/>
 
-  	<t:signatureDetailsDisplayer/> 
+    <t:signatureDetailsDisplayer/>
 
- 	<t:passwordCryptPopup t:id="passwordCryptPopup" t:title="${message:components.listDocument.passwordCryptPopup.title}" t:content="${message:components.listDocument.passwordCryptPopup.content}" t:errorBanner="${message:components.listDocument.passwordCryptPopup.errorBanner}" />
+    <t:passwordCryptPopup t:id="passwordCryptPopup" t:title="${message:components.listDocument.passwordCryptPopup.title}" t:content="${message:components.listDocument.passwordCryptPopup.content}" t:errorBanner="${message:components.listDocument.passwordCryptPopup.errorBanner}" />
 	<t:passwordDecryptPopup t:id="passwordDecryptPopup" t:title="${message:components.listDocument.passwordDecryptPopup.title}" t:content="${message:components.listDocument.passwordDecryptPopup.content}" t:errorBanner="${message:components.listDocument.passwordDecryptPopup.errorBanner}" />
 
 	<t:passwordCryptPopupSubmit t:id="passwordCryptPopupSubmit" t:formId="search" t:title="${message:components.listDocument.passwordCryptPopup.title}" t:content="${message:components.listDocument.passwordCryptPopup.content}" t:errorBanner="${message:components.listDocument.passwordCryptPopup.errorBanner}" />

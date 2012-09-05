@@ -10,11 +10,13 @@ import org.linagora.linshare.core.business.service.TagBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
@@ -24,9 +26,13 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.VirusScannerService;
 import org.linagora.linshare.core.utils.DocumentUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ThreadEntryServiceImpl implements ThreadEntryService {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(ThreadEntryServiceImpl.class);
+			
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 	private final LogEntryService logEntryService;
 	private final AbstractDomainService abstractDomainService;
@@ -126,6 +132,50 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException {
 		// TODO : check permissions for thread entries
 		return documentEntryBusinessService.findAllThreadEntries(thread);
+	}
+
+
+
+
+	@Override
+	public InputStream getDocumentStream(Account actor, String uuid) throws BusinessException {
+		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
+		if (threadEntry == null) {
+			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
+			return null;
+		}
+		// FIXME : check permissions
+		if (false)
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
+		return documentEntryBusinessService.getDocumentStream(threadEntry);
+	}
+
+	@Override
+	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException {
+		DocumentEntry documentEntry = documentEntryBusinessService.findById(uuid);
+		if (documentEntry == null) {
+			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
+			return null;
+		}
+		// FIXME : check permissions
+		if (false)
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this document.");
+		return documentEntryBusinessService.getDocumentThumbnailStream(documentEntry);
+	}
+
+	@Override
+	public boolean documentHasThumbnail(Account actor, String uuid) {
+		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
+		if (threadEntry == null) {
+			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
+			return false;
+		}
+		// FIXME : check rights
+		// if actor is not a threadmember)
+		if (false)
+			return false;		
+		String thmbUUID = threadEntry.getDocument().getThmbUuid();
+		return (thmbUUID != null && thmbUUID.length() > 0);
 	}
 
 }

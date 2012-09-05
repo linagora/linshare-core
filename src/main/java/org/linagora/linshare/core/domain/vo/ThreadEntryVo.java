@@ -37,8 +37,7 @@ public class ThreadEntryVo extends DocumentVo {
 	}
 
 	public void addTag(TagVo tag) {
-		this.tags.add(tag); 
+		this.tags.add(tag);
 	}
-	
-	
+
 }

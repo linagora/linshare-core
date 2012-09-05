@@ -1,9 +1,9 @@
 package org.linagora.linshare.core.Facade.impl;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.Facade.ThreadEntryFacade;
 import org.linagora.linshare.core.domain.constants.TagType;
@@ -15,7 +15,6 @@ import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.ThreadEntryTransformer;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.TagEnumVo;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
@@ -148,6 +147,52 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		for (TagVo tagVo : tags) {
 			tagService.setTagToThreadEntries(actor, thread, threadEntries, tagVo.getName(), tagVo.getTagEnumValue());
 		}
+	}
+
+	@Override
+	public InputStream retrieveFileStream(ThreadEntryVo entry, String lsUid) throws BusinessException {
+		Account actor = accountService.findByLsUid(lsUid);
+		return threadEntryService.getDocumentStream(actor, entry.getIdentifier());
+	}
+
+	@Override
+	public InputStream retrieveFileStream(ThreadEntryVo entry, UserVo actorVo) throws BusinessException {
+		return retrieveFileStream(entry, actorVo.getLsUid());
+	}
+
+
+	@Override
+	public boolean documentHasThumbnail(String lsUid, String docId) {
+		if(lsUid == null) {
+			logger.error("Can't find user with null parameter.");
+			return false;
+		}		
+		Account actor = accountService.findByLsUid(lsUid);
+		if(actor == null) {
+			logger.error("Can't find logged user.");
+			return false;
+		}
+		return threadEntryService.documentHasThumbnail(actor, docId);
+	}
+
+
+	@Override
+	public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid) {
+		if(actorUuid == null) {
+			logger.error("Can't find user with null parameter.");
+			return null;
+		}
+		Account actor = accountService.findByLsUid(actorUuid);
+		if(actor == null) {
+			logger.error("Can't find logged user.");
+			return null;
+		}
+		try {
+			return threadEntryService.getDocumentThumbnailStream(actor, docEntryUuid);
+		} catch (BusinessException e) {
+			logger.error("Can't get document thumbnail : " + docEntryUuid + " : " + e.getMessage());
+		}
+    	return null;
 	}
 
 }

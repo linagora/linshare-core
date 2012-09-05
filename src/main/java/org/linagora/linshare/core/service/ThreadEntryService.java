@@ -22,5 +22,11 @@ public interface ThreadEntryService {
 	public void deleteThreadEntry(Account actor, Thread thread, String docEntryUuid) throws BusinessException;
 	
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException;
+
+	public InputStream getDocumentStream(Account actor, String uuid) throws BusinessException;
+
+	public boolean documentHasThumbnail(Account actor, String identifier);
+
+	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
 	
 }

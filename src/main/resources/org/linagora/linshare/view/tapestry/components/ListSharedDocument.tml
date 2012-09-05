@@ -23,7 +23,7 @@
 
 		<t:linkit.hiddenfield t:id="deleteConfirmed" />
 		<t:linkit.hiddenfield t:id="action" />
-	
+
 		<t:errors />
 
 		<t:grid source="shareDocuments" row="shareDocument" model="model"
@@ -63,7 +63,7 @@
 			<t:parameter t:name="SignedHeader">
 				${message:components.listSharedDocument.grid.signed}
 			</t:parameter>
-			
+
 			<t:parameter t:name="EncryptedAddHeader">
 				<abbr title="${message:components.listSharedDocument.grid.encrypted}">${message:components.listSharedDocument.grid.encrypted.abbr}</abbr>
 			</t:parameter>
@@ -120,7 +120,6 @@
 					<span onclick="literal:${shareEditForm.javascriptOpenPopup}">
 						<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
 					</span>
-
 				</t:actionLink>
 			</t:parameter>
 

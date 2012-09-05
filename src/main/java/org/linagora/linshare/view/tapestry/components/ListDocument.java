@@ -956,28 +956,26 @@ public class ListDocument {
 	}
 	
 	public void onThumbnail(String docID) {
-		InputStream stream=null;
-		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents,
-				docID);
-			stream = documentFacade.getDocumentThumbnail(user.getLsUid(), currentDocumentVo.getIdentifier());
-			if (stream==null) return;
+		InputStream stream = null;
+		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents, docID);
+		stream = documentFacade.getDocumentThumbnail(user.getLsUid(), currentDocumentVo.getIdentifier());
+		if (stream == null)
+			return;
 		OutputStream os = null;
-			response.setDateHeader("Expires", 0);
-			response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-			response.setHeader("Cache-Control", "post-check=0, pre-check=0");
-			response.setHeader("Pragma", "no-cache");
-			try {
+		response.setDateHeader("Expires", 0);
+		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+		response.setHeader("Cache-Control", "post-check=0, pre-check=0");
+		response.setHeader("Pragma", "no-cache");
+		try {
 			os = response.getOutputStream("image/png");
-				BufferedImage bufferedImage=ImageIO.read(stream);
-				if (bufferedImage!=null)
-					ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, os);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		 finally {
-
+			BufferedImage bufferedImage=ImageIO.read(stream);
+			if (bufferedImage != null)
+				ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, os);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
 			try {
-				if (os!=null) {
+				if (os != null) {
 					os.flush();
 					os.close();
 				}

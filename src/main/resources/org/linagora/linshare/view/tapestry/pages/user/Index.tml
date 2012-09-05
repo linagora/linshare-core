@@ -75,7 +75,7 @@
 			<t:userSearchField users="users" />
 		</t:widget>
 	</t:parameter>
-	
+
 	<!-- Actions widget -->
 	<t:parameter name="actionsWidget">
 		<t:if test="users.empty" negate="true">

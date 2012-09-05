@@ -334,6 +334,17 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
 		return threadEntryRepository.findAllThreadEntries(owner);
 	}
+	
+	@Override
+	public InputStream getDocumentStream(ThreadEntry entry) {
+		String UUID = entry.getDocument().getUuid();
+		if (UUID!=null && UUID.length()>0) {
+			logger.debug("retrieve from jackrabbit : " + UUID);
+			InputStream stream = fileSystemDao.getFileContentByUUID(UUID);
+			return stream;
+		}
+		return null;
+	}
 
 
 	private Document createDocument(Account owner, File myFile, Long size, String fileName, String timeStampingUrl, String mimeType) throws BusinessException {

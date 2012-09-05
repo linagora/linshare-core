@@ -17,7 +17,7 @@
 			</ul>
 		</div><!-- id="actionBar" -->
 	</t:if>
-	
+
 	<div id="list">
 
 	<t:if test="inSearch">
@@ -27,8 +27,8 @@
 		<h2>${message:pages.user.list.users.heading}</h2>
 	</t:if>
 
-	
-	
+
+
 	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:pages.user.sorter.name.label},${message:pages.user.sorter.mail.label},${message:pages.user.sorter.expiration.label}" t:properties="literal:name,mail,expiration"/> 
 
 	<t:form t:id="results">
@@ -37,14 +37,14 @@
 		<t:grid source="users" row="user" include="mail"
 				add="picture, action, selectedValue" reorder="mail, picture" rowsPerPage="10">
 
-			<t:parameter t:name="empty">	
-			
+			<t:parameter t:name="empty">
+
 				<t:if test="inSearch">
 					${message:components.userSearch.grid.empty}
-				</t:if>					
+				</t:if>
 				<t:if test="inSearch" negate="true">
 					${message:components.userSearch.grid.nosearch}
-				</t:if>			
+				</t:if>
 			</t:parameter>
 
 
@@ -200,11 +200,11 @@
     <div t:id="userEditWindow">
         <t:zone id="userEditFormZone" update="show"/>
     </div>
-    
+
     <div t:id="zoneDomainMoveWindow">
         <t:zone t:id="zoneDomainFormMove" update="show">
-        	<h2>${message:components.userSearch.action.domainMove.info}</h2>
-        	<t:form t:id="updateDomain">
+            <h2>${message:components.userSearch.action.domainMove.info}</h2>
+            <t:form t:id="updateDomain">
 					<t:select t:id="domainSelect" t:value="selectedDomain" t:model="domains" t:encoder="valueEncoder" blankOption="never" />
 					<t:submit value="${message:global.button.validate}"/>
 			</t:form>

@@ -32,23 +32,31 @@
             <h2>${threadName}</h2>
 
             <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes" t:options="{duration:0.3}">
-                <h3>Instructions</h3>
-                <t:grid source="outInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
-                    <p:empty>
-                    </p:empty>
-                </t:grid>
+
+				<t:ListThreadDocument t:listThreadEntries="outInstructions" t:user="userVo" t:title="titleIns" />
                 <br />
-                <h3>Contradictions</h3>
-                <t:grid source="outContradictions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
-                    <p:empty>
-                    </p:empty>
-                </t:grid>
+				<t:ListThreadDocument t:listThreadEntries="outContradictions" t:user="userVo" t:title="titleCon" />
                 <br />
-                <h3>Recommandations</h3>
-                <t:grid source="outRecommandations" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
-                    <p:empty>
-                    </p:empty>
-                </t:grid>
+				<t:ListThreadDocument t:listThreadEntries="outRecommandations" t:user="userVo" t:title="titleRec" />
+                <br />
+
+                <!--<h3>Instructions</h3>-->
+                <!--<t:grid source="outInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">-->
+                    <!--<p:empty>-->
+                    <!--</p:empty>-->
+                <!--</t:grid>-->
+                <!--<br />-->
+                <!--<h3>Contradictions</h3>-->
+                <!--<t:grid source="outContradictions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">-->
+                    <!--<p:empty>-->
+                    <!--</p:empty>-->
+                <!--</t:grid>-->
+                <!--<br />-->
+                <!--<h3>Recommandations</h3>-->
+                <!--<t:grid source="outRecommandations" row="entry" include="fileName,creationDate,size" rowsPerPage="10">-->
+                    <!--<p:empty>-->
+                    <!--</p:empty>-->
+                <!--</t:grid>-->
             </div>
             <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses" t:options="{duration:0.3}">
                 <h3>Instructions</h3>
