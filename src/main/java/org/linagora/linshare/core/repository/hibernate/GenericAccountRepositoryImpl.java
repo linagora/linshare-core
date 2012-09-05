@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -77,12 +78,14 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		}
 	}
 
+	
 	@Override
 	public U update(U entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
 
+	
 	@Override
 	public U create(U entity) throws BusinessException {
 		entity.setCreationDate(new Date());
@@ -91,8 +94,18 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		return super.create(entity);
 	}
 	
+	
 	@Override
-	public Account getSystemAccount() {
-		return this.findByLsUuid("system");
+	public SystemAccount getSystemAccount() {
+		DetachedCriteria det = DetachedCriteria.forClass( SystemAccount.class ).add(Restrictions.eq( "lsUuid", "system" ) );
+		
+		List<U> users = findByCriteria(det);
+        if (users == null || users.isEmpty()) {
+            return null;
+        } else if (users.size() == 1) {
+            return (SystemAccount) users.get(0);
+        } else {
+            throw new IllegalStateException("lsUuid must be unique");
+        }
 	}
 }

@@ -24,8 +24,16 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
+import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
+import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test showing how to use the PasswordPopup
@@ -34,6 +42,11 @@ import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
  */
 public class TestPopup {
 
+	private static final Logger logger = LoggerFactory.getLogger(UserAndDomainMultiServiceImpl.class);
+	
+	@Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
+	
 	@Inject
 	private Messages messages;
 	
@@ -42,6 +55,9 @@ public class TestPopup {
 
     
     private final String intendedPassword = "bob";
+    
+    @Inject
+    private  UserService userService;
     
  
 	@SuppressWarnings("unused")
@@ -101,4 +117,15 @@ public class TestPopup {
 		
 	} 
 
+	
+	
+	void onActionFromTest1()
+    {
+//		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.WARNING_TAGS_FOUND, MessageSeverity.WARNING));
+		logger.debug("methode fred");
+		userService.cleanExpiredGuestAcccounts();
+    }
+	
+	
+	
 }

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -70,4 +71,15 @@ public class ShareEntryRepositoryImpl extends AbstractRepositoryImpl<ShareEntry>
             throw new IllegalStateException("Sharing must be unique");
         }
 	}
+	
+	
+	@Override
+	public List<ShareEntry> findAllMyShareEntries(User owner) {
+		List<ShareEntry> entries = findByCriteria(Restrictions.eq("recipient", owner));
+        if (entries == null) {
+            return null;
+        }
+        return entries;
+	}
+
 }

@@ -295,6 +295,13 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			throw e;
 		}
 	}
+	
+
+	@Override
+	public List<ShareEntry> findAllMyShareEntries(Account actor, User owner) {
+		// TODO check permissions
+		return shareEntryBusinessService.findAllMyShareEntries(owner);
+	}
 
 
 

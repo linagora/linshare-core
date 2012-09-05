@@ -323,7 +323,7 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false);
 
 -- system account :
-INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (2, 0, 'system', current_date,current_date, 3, 'en', true, false, 1);
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, enable, destroyed, domain_id) VALUES (2, 7, 'system', current_date,current_date, 3, 'en', true, false, 1);
 
 
 -- unit type : TIME(0), SIZE(1)

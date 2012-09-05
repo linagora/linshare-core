@@ -24,9 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -34,8 +32,6 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
@@ -49,6 +45,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
@@ -75,6 +72,8 @@ public class UserServiceImpl implements UserService {
 	
     /** User repository. */
     private final UserRepository<User> userRepository;
+    
+    private final AccountRepository<Account> accountRepository;
 
     /** User repository. */
     private final GuestRepository guestRepository;
@@ -123,7 +122,8 @@ public class UserServiceImpl implements UserService {
     		final FunctionalityService functionalityService,
     		final AbstractDomainService abstractDomainService,
     		final PasswordService passwordService,
-    		final EntryService entryService) {
+    		final EntryService entryService,
+    		final AccountRepository<Account> accountRepository) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.logEntryService = logEntryService;
@@ -138,6 +138,7 @@ public class UserServiceImpl implements UserService {
 		this.functionalityService = functionalityService;
 		this.passwordService = passwordService;
 		this.entryService = entryService;
+		this.accountRepository = accountRepository;
 		
     }
 
@@ -268,7 +269,7 @@ public class UserServiceImpl implements UserService {
 		if (userToDelete!=null) {
 			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());
 			
-			logger.debug("As right ? : "+hasRightToDeleteThisUser);
+			logger.debug("As right ? : " + hasRightToDeleteThisUser);
 			
 			if (!hasRightToDeleteThisUser) {
 				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
@@ -360,14 +361,15 @@ public class UserServiceImpl implements UserService {
 	@Override
     public void cleanExpiredGuestAcccounts() {
 		   
-		Account systemAccount = userRepository.getSystemAccount();
+		Account systemAccount = accountRepository.getSystemAccount();
+		logger.debug("system account found : " + systemAccount.getAccountReprentation());
         
         List<Guest> guests = guestRepository.findOutdatedGuests();
         logger.info(guests.size() + " guest(s) have been found to be removed");
         for (User guest : guests) {
             try {
-                deleteUser(guest.getMail(), systemAccount);
-                logger.info("Removed expired user : " + guest.getMail());
+                deleteUser(guest.getLsUuid(), systemAccount);
+                logger.info("Removed expired user : " + guest.getAccountReprentation());
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove expired user : " + guest.getAccountReprentation() + "\n" + ex.toString());
             }

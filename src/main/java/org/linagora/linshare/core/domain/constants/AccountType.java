@@ -25,7 +25,7 @@ public enum AccountType {
 	// 0 Account
 	// 1 USER
 	// 
-	INTERNAL(2), GUEST(3), TECHNICALACCOUNT(4), THREAD(5), ROOT(6);
+	INTERNAL(2), GUEST(3), TECHNICALACCOUNT(4), THREAD(5), ROOT(6), SYSTEM(7);
 
 	private int value;
 
@@ -44,6 +44,7 @@ public enum AccountType {
             case 4: return AccountType.TECHNICALACCOUNT;
             case 5: return AccountType.THREAD;
             case 6: return AccountType.ROOT;
+            case 7: return AccountType.SYSTEM;
             default : throw new IllegalArgumentException("Doesn't match an existing UserType");
         }
 	}

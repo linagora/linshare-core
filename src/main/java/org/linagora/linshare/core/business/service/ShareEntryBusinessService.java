@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.business.service;
 
 import java.util.Calendar;
+import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -17,5 +18,5 @@ public interface ShareEntryBusinessService {
 
 	public void updateShareComment(ShareEntry share, String comment) throws BusinessException;
 	
-	
+	public List<ShareEntry> findAllMyShareEntries(User owner);
 }

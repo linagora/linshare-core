@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.Calendar;
+import java.util.List;
 
 import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -92,6 +93,12 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	public void updateShareComment(ShareEntry share, String comment) throws BusinessException {
 		share.setComment(comment);
 		shareEntryRepository.update(share);
+	}
+
+
+	@Override
+	public List<ShareEntry> findAllMyShareEntries(User owner) {
+		return shareEntryRepository.findAllMyShareEntries(owner);
 	}
 
 }

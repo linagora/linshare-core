@@ -88,6 +88,14 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
   	bob
   	</div>  
   
+  <br/>
+  <br/>
+  <br/>
+  
+      <t:actionlink t:id="test1">testActionLink</t:actionlink>
+        
+        
+        
    		
 </t:MyBorderLayout>   
  

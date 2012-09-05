@@ -20,6 +20,10 @@
 */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -34,5 +38,8 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry>{
 	
 	
 	public ShareEntry getShareEntry(DocumentEntry documentEntry, User sender, User recipient);
+
+	
+	public List<ShareEntry> findAllMyShareEntries(User owner);
 	
 }

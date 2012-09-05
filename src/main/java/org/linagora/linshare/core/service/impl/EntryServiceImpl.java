@@ -88,7 +88,7 @@ public class EntryServiceImpl implements EntryService {
 
 	@Override
 	public void deleteAllReceivedShareEntries(Account actor, User recipient) throws BusinessException {
-		for (ShareEntry shareEntry : recipient.getShareEntries()) {
+		for (ShareEntry shareEntry : shareEntryService.findAllMyShareEntries(actor, recipient)) {
 			shareEntryService.deleteShare(actor, shareEntry.getUuid(), null);
 		}
 		

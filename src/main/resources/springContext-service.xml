@@ -49,6 +49,7 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="passwordService" />
 		<constructor-arg ref="entryService" />
+		<constructor-arg ref="accountRepository" />
 	</bean>
 
 	<bean id="clamavVirusScannerService" class="org.linagora.linshare.core.service.impl.ClamavVirusScannerServiceImpl">
