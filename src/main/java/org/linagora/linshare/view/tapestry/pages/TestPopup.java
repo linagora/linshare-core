@@ -20,15 +20,11 @@
 */
 package org.linagora.linshare.view.tapestry.pages;
 
-import java.util.List;
-
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;

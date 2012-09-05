@@ -26,11 +26,6 @@ import java.util.GregorianCalendar;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.linagora.linshare.core.domain.constants.LogAction;
-import org.linagora.linshare.core.domain.entities.FileLogEntry;
-import org.linagora.linshare.core.domain.entities.LogEntry;
-import org.linagora.linshare.core.domain.entities.ShareLogEntry;
-import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;

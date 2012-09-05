@@ -22,7 +22,6 @@ package org.linagora.linshare.core.domain.entities;
 
 import java.util.Calendar;
 
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 
 public class ShareLogEntry extends FileLogEntry {

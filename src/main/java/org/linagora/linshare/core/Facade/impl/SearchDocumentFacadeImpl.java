@@ -22,12 +22,9 @@ package org.linagora.linshare.core.Facade.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.Facade.SearchDocumentFacade;
-import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -38,7 +35,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.SearchDocumentService;
-import org.linagora.linshare.core.service.impl.DocumentEntryServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

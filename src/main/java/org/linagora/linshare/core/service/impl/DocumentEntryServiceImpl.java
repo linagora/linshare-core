@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;

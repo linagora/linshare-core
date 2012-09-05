@@ -30,10 +30,8 @@ import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
-import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;

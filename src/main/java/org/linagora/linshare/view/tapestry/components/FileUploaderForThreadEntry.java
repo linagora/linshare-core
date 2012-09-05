@@ -35,7 +35,6 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
-import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.Facade.ThreadEntryFacade;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;

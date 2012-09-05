@@ -20,8 +20,6 @@
 */
 package org.linagora.linshare.view.tapestry.services.impl;
 
-import java.util.GregorianCalendar;
-
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.linagora.linshare.core.Facade.AccountFacade;
 import org.linagora.linshare.core.domain.constants.LogAction;

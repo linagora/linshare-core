@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;

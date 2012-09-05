@@ -1,7 +1,5 @@
 package org.linagora.linshare.core.service;
 
-import java.util.List;
-
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;

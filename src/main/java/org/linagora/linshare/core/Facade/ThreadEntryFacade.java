@@ -3,7 +3,6 @@ package org.linagora.linshare.core.Facade;
 import java.io.InputStream;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.TagEnumVo;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;

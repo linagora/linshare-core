@@ -6,10 +6,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
-import org.linagora.linshare.core.domain.vo.TagVo;
-import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
-import org.linagora.linshare.core.domain.vo.ThreadVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadEntryService {

@@ -1,14 +1,10 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.business.service.TagBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Tag;
-import org.linagora.linshare.core.domain.entities.TagFilter;
-import org.linagora.linshare.core.domain.entities.TagFilterRule;
-import org.linagora.linshare.core.domain.entities.TagFilterRuleTagAssociation;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;

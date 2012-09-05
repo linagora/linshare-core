@@ -21,7 +21,6 @@
 package org.linagora.linshare.core.service;
 
 import java.io.InputStream;
-import java.security.cert.X509Certificate;
 
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.User;
