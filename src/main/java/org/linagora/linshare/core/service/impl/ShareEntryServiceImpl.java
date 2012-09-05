@@ -150,7 +150,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	@Override
 	public void deleteShare(Account actor, ShareEntry share, MailContainer mailContainer) throws BusinessException {
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.equals(guestRepository.getSystemAccount()) || actor.getAccountType().equals(AccountType.ROOT) ) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() ) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 	        logEntryService.create(logEntry);
 	        
@@ -221,14 +221,13 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.equals(guestRepository.getSystemAccount())) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin()) {
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share, it does not belong to you.");
 		}
 	}
-
 
 
 	@Override

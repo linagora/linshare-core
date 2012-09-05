@@ -30,12 +30,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface ShareService {
 
 	
-	// to be remove ?
-	/**
-	 * refresh the attribute share of a document to false if it isn't shared 
-	 * @param doc
-	 */
-	public void refreshShareAttributeOfDoc(Document doc);
 
 	/** Clean all outdated shares. */
 	public void cleanOutdatedShares();

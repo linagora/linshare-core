@@ -72,7 +72,16 @@ public abstract class Account {
 			return false;
 		return true;
 	}
+	
 
+	public boolean isSuperAdmin() {
+		if(this.getRole().equals(Role.SUPERADMIN)) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 
 	public long getId() {
 		return id;

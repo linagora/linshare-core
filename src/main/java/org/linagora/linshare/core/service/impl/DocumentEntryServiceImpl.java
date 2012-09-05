@@ -254,7 +254,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	public void deleteDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
 		try {
-			if (!actor.getAccountType().equals(AccountType.ROOT)) {
+			if (!actor.isSuperAdmin()) {
 				if(!documentEntry.getEntryOwner().equals(actor)) {
 					throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
 				}
@@ -426,7 +426,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException {
 		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
-		if (!actor.getAccountType().equals(AccountType.ROOT)) {
+		if (!actor.isSuperAdmin()) {
 			if (!entry.getEntryOwner().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
 			}
