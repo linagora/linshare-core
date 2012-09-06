@@ -17,6 +17,10 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author fred
+ *
+ */
 public class EntryServiceImpl implements EntryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(EntryServiceImpl.class);
@@ -39,32 +43,48 @@ public class EntryServiceImpl implements EntryService {
 	@Override
 	public void deleteAllShareEntriesWithDocumentEntry(Account actor, String docEntryUuid, MailContainer mailContainer) throws BusinessException {
 		try {
-			DocumentEntry entry = documentEntryService.findById(actor, docEntryUuid);
+			DocumentEntry documentEntry = documentEntryService.findById(actor, docEntryUuid);
 			
-			List<String> a = new ArrayList<String>();
-			List<String> b = new ArrayList<String>();
+			deleteAllShareEntries(actor, documentEntry, mailContainer);
 			
-			for (AnonymousShareEntry anonymousShareEntry : entry.getAnonymousShareEntries()) {
-				a.add(anonymousShareEntry.getUuid());
-			}
-			
-			for (ShareEntry shareEntry : entry.getShareEntries()) {
-				b.add(shareEntry.getUuid());
-			}
-
-			for (String uuid : a) {
-				anonymousShareEntryService.deleteShare(actor, uuid, mailContainer);
-			}
-			
-			for (String uuid : b) {
-				shareEntryService.deleteShare(actor, uuid, mailContainer);
-			}
-			
-			documentEntryService.deleteDocumentEntry(actor, entry.getUuid());
+			documentEntryService.deleteDocumentEntry(actor, documentEntry);
 			
 		} catch (BusinessException e) {
 			logger.error("can not delete document : " + docEntryUuid);
 			throw e;
+		}
+	}
+
+
+	@Override
+	public void deleteAllInconsistentShareEntries(Account actor, DocumentEntry documentEntry) throws BusinessException {
+		try {
+			deleteAllShareEntries(actor, documentEntry, null);
+		} catch (BusinessException e) {
+			logger.error("can not delete all shares related to document : " + documentEntry.getUuid());
+			throw e;
+		}
+	}
+
+
+	private void deleteAllShareEntries(Account actor, DocumentEntry entry, MailContainer mailContainer) throws BusinessException {
+		List<String> a = new ArrayList<String>();
+		List<String> b = new ArrayList<String>();
+		
+		for (AnonymousShareEntry anonymousShareEntry : entry.getAnonymousShareEntries()) {
+			a.add(anonymousShareEntry.getUuid());
+		}
+		
+		for (ShareEntry shareEntry : entry.getShareEntries()) {
+			b.add(shareEntry.getUuid());
+		}
+
+		for (String uuid : a) {
+			anonymousShareEntryService.deleteShare(actor, uuid, mailContainer);
+		}
+		
+		for (String uuid : b) {
+			shareEntryService.deleteShare(actor, uuid, mailContainer);
 		}
 	}
 	

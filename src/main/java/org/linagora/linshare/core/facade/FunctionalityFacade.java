@@ -22,4 +22,5 @@ public interface FunctionalityFacade {
 	public boolean isEnableUserTab(String domainIdentifier);
 	public boolean isEnableAuditTab(String domainIdentifier);
 	public boolean isEnableHelpTab(String domainIdentifier);
+	public boolean isEnableThreadTab(String domainIdentifier);
 }

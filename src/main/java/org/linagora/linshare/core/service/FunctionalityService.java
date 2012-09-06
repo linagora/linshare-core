@@ -122,6 +122,7 @@ public interface FunctionalityService {
 	public IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
 	public Functionality getUserTabFunctionality(AbstractDomain domain);
 	public Functionality getAuditTabFunctionality(AbstractDomain domain);
+	public Functionality getThreadTabFunctionality(AbstractDomain domain);
 	public Functionality getHelpTabFunctionality(AbstractDomain domain);
 	
 	

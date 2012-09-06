@@ -17,6 +17,8 @@ public interface EntryService {
 	 */
 	public void deleteAllShareEntriesWithDocumentEntry(Account actor, String docEntryUuid, MailContainer mailContainer) throws BusinessException;
 	
+	public void deleteAllInconsistentShareEntries(Account actor, DocumentEntry documentEntry) throws BusinessException;
+	
 	/**
 	 * The document entry and all its shares will be removed. No mail will be sent.
 	 * @param docEntryUuid

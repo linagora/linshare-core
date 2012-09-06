@@ -335,6 +335,7 @@ INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date,
 -- Functionality : FILESIZE_MAX
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (1, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (2, true, true, 1, false);
+-- if a functionality is system, you will not be hable see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (1, false, 'FILESIZE_MAX', 1, 2, 1);
 INSERT INTO unit(id, unit_type, unit_value) VALUES (1, 1, 1);
 INSERT INTO functionality_unit(functionality_id, integer_value, unit_id) VALUES (1, 10, 1);
@@ -473,6 +474,12 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (43, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (44, false, false, 2, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (22, false, 'SHARE_NOTIFICATION_BEFORE_EXPIRATION', 43, 44, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (22, '2,7');
+
+-- Functionality : TAB_THREAD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (45, false, false, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false, false, 1, true);
+-- if a functionality is system, you will not be hable see/modify its parameters
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
 
 
 

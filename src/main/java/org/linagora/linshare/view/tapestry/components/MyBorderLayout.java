@@ -309,13 +309,12 @@ public class MyBorderLayout {
 	
 	boolean showThreadTab() {
 		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
-			// TODO :
-			// return functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
-			return true;
+			return functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
 		}
 		return false;
 	}
 
+	
 	boolean showUserTab() {
 		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
 			if(superadmin) {

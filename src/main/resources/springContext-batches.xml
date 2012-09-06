@@ -35,6 +35,7 @@
         <constructor-arg ref="notifierService" />
         <constructor-arg ref="mailContentBuildingService" />
         <constructor-arg ref="functionalityService" />
+        <constructor-arg ref="entryService" />
     </bean>
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->

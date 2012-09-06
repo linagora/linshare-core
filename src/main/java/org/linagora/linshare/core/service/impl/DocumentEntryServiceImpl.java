@@ -204,8 +204,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 	
 	@Override
-	public void deleteInconsistentDocumentEntry(SystemAccount actor, String docEntryUuid) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+	public void deleteInconsistentDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException {
 		Account owner = documentEntry.getEntryOwner();
 		try {
 			
@@ -251,8 +250,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 
 	@Override
-	public void deleteDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+	public void deleteDocumentEntry(Account actor, DocumentEntry documentEntry) throws BusinessException {
 		try {
 			if (!actor.isSuperAdmin()) {
 				if(!documentEntry.getEntryOwner().equals(actor)) {

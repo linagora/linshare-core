@@ -32,6 +32,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
@@ -60,6 +61,9 @@ public class Index {
     @Property
     private ThreadVo currentProject;
     
+    @Property
+    private boolean showThreadTab;
+    
 
     /* ***********************************************************
      *                      Injected services
@@ -69,13 +73,17 @@ public class Index {
     private Messages messages;
     
     @Inject
-    private ThreadEntryFacade threadEntryFacade; 
+    private ThreadEntryFacade threadEntryFacade;
+    
+    @Inject
+    private FunctionalityFacade functionalityFacade; 
 
 
     @SetupRender
     public void setupRender() {
     	logger.debug("setupRender()");
     	projects = threadEntryFacade.getAllMyThread(userVo);
+    	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
     }
     
     public Object onActionFromShowProjectThread(String lsUuid) {

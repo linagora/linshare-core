@@ -663,6 +663,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 	
 	@Override
+	public Functionality getThreadTabFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_THREAD);
+	}
+
+	@Override
 	public Functionality getHelpTabFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_HELP);
 	}

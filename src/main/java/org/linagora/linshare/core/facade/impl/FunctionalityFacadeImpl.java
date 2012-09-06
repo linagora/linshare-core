@@ -41,6 +41,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		this.functionalityService = functionalityService;
 		this.abstractDomainService = abstractDomainService;
 	}
+	
 
 	@Override
 	public List<PolicyVo> getAllActivationPolicy(String domainIdentifier) {
@@ -53,6 +54,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		
 		return res;
 	}
+	
 
 	@Override
 	public List<PolicyVo> getAllConfigurationPolicy(String domainIdentifier) {
@@ -65,6 +67,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		
 		return res;
 	}
+	
 	
 	@Override
 	public List<FunctionalityVo> getAllParameters(String domainIdentifier) {
@@ -111,6 +114,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		return res;
 	}
 
+	
 	@Override
 	public void updateActivationPolicies(UserVo actorVo, List<PolicyVo> policies) throws BusinessException {
 		if(isAuthorized(actorVo)) {
@@ -123,6 +127,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 			}
 		}
 	}
+	
 	
 	@Override
 	public void updateConfigurationPolicies(UserVo actorVo, List<PolicyVo> policies) throws BusinessException {
@@ -137,6 +142,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		}
 	}
 	
+	
 	@Override
 	public void updateParameters(UserVo actorVo, List<FunctionalityVo> functionalities) throws BusinessException {
 		if(isAuthorized(actorVo)) {
@@ -147,6 +153,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 			}
 		}
 	}
+	
 	
 	private boolean isAuthorized(UserVo actorVo) {
 		if(actorVo !=null) {
@@ -160,6 +167,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		return false;
 	}
 
+	
 	@Override
 	public Integer completionThreshold(String domainIdentifier) {
 		try {
@@ -175,6 +183,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		return LinShareConstants.completionThresholdConstantForDeactivation;
 	}
 
+	
 	@Override
 	public boolean isEnableUserTab(String domainIdentifier) {
 		try {
@@ -188,6 +197,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		return false;
 	}
 
+	
 	@Override
 	public boolean isEnableAuditTab(String domainIdentifier) {
 		try {
@@ -196,6 +206,20 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 			return auditTabFunctionality.getActivationPolicy().getStatus();
 		} catch (BusinessException e) {
 			logger.error("Can't find audit tab functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+
+	
+	@Override
+	public boolean isEnableThreadTab(String domainIdentifier) {
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality threadTabFunctionality = functionalityService.getThreadTabFunctionality(domain);
+			return threadTabFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find help tab functionality for domain : " + domainIdentifier);
 			logger.debug(e.getMessage());
 		}
 		return false;

@@ -217,7 +217,9 @@ public abstract class Account {
 		this.tagFilters = tagFilters;
 	}
 
+	
 	public abstract AccountType getAccountType();
+
 	
 	public abstract String getAccountReprentation();
 
@@ -230,5 +232,4 @@ public abstract class Account {
 	public void setExternalMailLocale(String externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
 	}
-
 }

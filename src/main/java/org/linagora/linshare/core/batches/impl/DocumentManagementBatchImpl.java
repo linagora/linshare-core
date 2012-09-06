@@ -39,6 +39,7 @@ import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -64,12 +65,13 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	private final NotifierService notifierService;
 	private final MailContentBuildingService mailBuilder;
 	private final FunctionalityService functionalityService;
+	private final EntryService entryService;
 
 	
 	
 	public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
 			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated, NotifierService notifierService,
-			MailContentBuildingService mailBuilder, FunctionalityService functionalityService) {
+			MailContentBuildingService mailBuilder, FunctionalityService functionalityService, EntryService entryService) {
 		super();
 		this.documentRepository = documentRepository;
 		this.documentEntryRepository = documentEntryRepository;
@@ -80,6 +82,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		this.notifierService = notifierService;
 		this.mailBuilder = mailBuilder;
 		this.functionalityService = functionalityService;
+		this.entryService = entryService;
 	}
 
 	//    public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryService documentEntryService,
@@ -110,7 +113,8 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
             if (stream == null) {
                 try {
                     logger.info("Removing file with UID = {} because of inconsistency", document.getUuid());
-                    documentEntryService.deleteInconsistentDocumentEntry(systemAccount, document.getDocumentEntry().getUuid());
+                    entryService.deleteAllInconsistentShareEntries(systemAccount, document.getDocumentEntry());
+                    documentEntryService.deleteInconsistentDocumentEntry(systemAccount, document.getDocumentEntry());
                     
                 } catch (BusinessException ex) {
                     logger.error("Error when processing cleaning of document whith UID = {} during consistency check " +
