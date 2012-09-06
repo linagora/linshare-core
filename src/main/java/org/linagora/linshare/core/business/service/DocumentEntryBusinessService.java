@@ -54,4 +54,6 @@ public interface DocumentEntryBusinessService {
 	public List<ThreadEntry> findAllThreadEntries(Thread owner);
 
 	public InputStream getDocumentStream(ThreadEntry entry);
+
+	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry);
 }

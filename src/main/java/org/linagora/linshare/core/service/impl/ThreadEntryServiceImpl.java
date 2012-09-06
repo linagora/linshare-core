@@ -152,15 +152,15 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 	@Override
 	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(uuid);
-		if (documentEntry == null) {
+		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
+		if (threadEntry == null) {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
 			return null;
 		}
 		// FIXME : check permissions
 		if (false)
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this document.");
-		return documentEntryBusinessService.getDocumentThumbnailStream(documentEntry);
+		return documentEntryBusinessService.getThreadEntryThumbnailStream(threadEntry);
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		// FIXME : check rights
 		// if actor is not a threadmember)
 		if (false)
-			return false;		
+			return false;
 		String thmbUUID = threadEntry.getDocument().getThmbUuid();
 		return (thmbUUID != null && thmbUUID.length() > 0);
 	}

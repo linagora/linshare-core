@@ -168,10 +168,29 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	@Override
 	public InputStream getDocumentThumbnailStream(DocumentEntry entry) {
 		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
-		String thmbUUID = doc.getThmbUuid();
+		System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : doc = " + doc.toString());
+		String thmbUuid = doc.getThmbUuid();
+		System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : thmbUuid = " + thmbUuid);
 
-		if (thmbUUID!=null && thmbUUID.length()>0) {
-			InputStream stream = fileSystemDao.getFileContentByUUID(thmbUUID);
+		if (thmbUuid != null && thmbUuid.length()>0) {
+			InputStream stream = fileSystemDao.getFileContentByUUID(thmbUuid);
+			System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : stream = " + stream);
+			return stream;
+		}
+		return null;
+	}
+	
+	
+	@Override
+	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry) {
+		Document doc = documentRepository.findByUuid(entry.getDocument().getUuid());
+		System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : doc = " + doc.toString());
+		String thmbUuid = doc.getThmbUuid();
+		System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : thmbUuid = " + thmbUuid);
+
+		if (thmbUuid != null && thmbUuid.length()>0) {
+			InputStream stream = fileSystemDao.getFileContentByUUID(thmbUuid);
+			System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : stream = " + stream);
 			return stream;
 		}
 		return null;
