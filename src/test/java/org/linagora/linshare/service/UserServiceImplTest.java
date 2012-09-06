@@ -317,7 +317,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 
 		guest.setExpirationDate(date);
 		
-		userService.cleanExpiredGuestAcccounts();
+		userService.cleanExpiredGuestAcccounts(userRepository.getSystemAccount());
 		
 		Assert.assertNull(userRepository.findByMail("guest1@linpki.org"));
 		

@@ -189,11 +189,6 @@ public class MyBorderLayout {
 	private boolean enableChromeForIE;
 
 	@SuppressWarnings("unused")
-	@Inject @Symbol("linshare.secured-storage.disallow")
-	@Property
-	private boolean securedStorageDisallowed;
-
-	@SuppressWarnings("unused")
 	@Inject @Symbol("linshare.logo.webapp.visible")
 	@Property
 	private boolean linshareLogoVisible;
@@ -248,13 +243,8 @@ public class MyBorderLayout {
 		MenuEntry helpMenu;
 		
 		// Menu : Home / File 
-		if(securedStorageDisallowed) {
-			homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.securedStorageDisallowed.home.title"),null,null,"home");
-			fileMenu = new MenuEntry(response.encodeURL("files/index"),messages.get("components.myborderlayout.securedStorageDisallowed.file.title"),null,null,"files");
-		} else {
-			homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
-			fileMenu = new MenuEntry(response.encodeURL("files/index"),messages.get("components.myborderlayout.file.title"),null,null,"files");
-		}
+		homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
+		fileMenu = new MenuEntry(response.encodeURL("files/index"),messages.get("components.myborderlayout.file.title"),null,null,"files");
 
 		// Menu : User
 		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");

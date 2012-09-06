@@ -21,21 +21,28 @@
 package org.linagora.linshare.core.batches.impl;
 
 import org.linagora.linshare.core.batches.UserManagementBatch;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.service.UserService;
 
 /** Batch for user management.
  */
 public class UserManagementBatchImpl implements UserManagementBatch {
 
+	
+    public final AccountRepository<Account> accountRepository;
     public final UserService userService;
 
-    public UserManagementBatchImpl(UserService userService) {
+    public UserManagementBatchImpl(AccountRepository<Account> accountRepository, UserService userService) {
         this.userService = userService;
+        this.accountRepository = accountRepository;
     }
 
     /** Find all outdated guest accounts and remove them. */
     public void cleanExpiredGuestAccounts() {
-        userService.cleanExpiredGuestAcccounts();
+    	SystemAccount systemAccount = accountRepository.getSystemAccount();
+        userService.cleanExpiredGuestAcccounts(systemAccount);
     }
 
 }

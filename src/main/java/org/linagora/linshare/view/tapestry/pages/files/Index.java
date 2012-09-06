@@ -149,10 +149,6 @@ public class Index {
      ************************************************************ */
 
 
-	@Inject @Symbol("linshare.secured-storage.disallow")
-	@Property
-	private boolean securedStorageDisallowed;
-	
 	@Property
 	@Persist
 	/** the document list passed to the listDocument component, containing ShareDocumentVo or DocumentVo */
@@ -640,9 +636,7 @@ public class Index {
     }
     
     public String getPageTitle() {
-    	return securedStorageDisallowed ? 
-    			messages.get("components.myborderlayout.securedStorageDisallowed.file.title") 
-    			: messages.get("components.myborderlayout.file.title");
+    	return messages.get("components.myborderlayout.file.title");
     }
     
     Object onException(Throwable cause) {

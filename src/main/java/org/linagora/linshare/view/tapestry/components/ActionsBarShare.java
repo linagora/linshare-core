@@ -82,11 +82,6 @@ public class ActionsBarShare {
 	@Property
 	private boolean activeEncipherment;
 
-	@SuppressWarnings("unused")
-	@Inject @Symbol("linshare.secured-storage.disallow")
-	@Property
-	private boolean securedStorageDisallowed;
-	
 	
 	/*********************************
 	 * Phase render

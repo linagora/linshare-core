@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -354,9 +355,8 @@ public class UserServiceImpl implements UserService {
      * @throws BusinessException
      */
 	@Override
-    public void cleanExpiredGuestAcccounts() {
+    public void cleanExpiredGuestAcccounts(SystemAccount systemAccount) {
 		   
-		Account systemAccount = accountRepository.getSystemAccount();
 		logger.debug("system account found : " + systemAccount.getAccountReprentation());
         
         List<Guest> guests = guestRepository.findOutdatedGuests();

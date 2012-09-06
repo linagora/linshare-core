@@ -27,6 +27,7 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -92,7 +93,7 @@ public interface UserService {
 
 
     /** Clean outdated guest accounts. */
-    void cleanExpiredGuestAcccounts();
+    void cleanExpiredGuestAcccounts(SystemAccount systemAccount);
 
 	/**
 	 * update a guest (edit mode)

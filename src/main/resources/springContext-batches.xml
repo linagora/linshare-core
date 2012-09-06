@@ -9,6 +9,7 @@
        default-autowire="no">
 
     <bean name="userManagementBatch" class="org.linagora.linshare.core.batches.impl.UserManagementBatchImpl">
+        <constructor-arg ref="accountRepository"/>
         <constructor-arg ref="userService"/>
     </bean>
 
@@ -30,8 +31,7 @@
         <constructor-arg ref="documentEntryService"/>
         <constructor-arg ref="accountRepository"/>
         <constructor-arg ref="jackRabbitRepository"/>
-        <constructor-arg value="${linshare.secured-storage.disallow}" />
-        <constructor-arg value="${linshare.secured-storage.disallowed.job.file-cleaner.activate}" />
+        <constructor-arg value="${job.document.cleaner.activation}" />
         <constructor-arg ref="notifierService" />
         <constructor-arg ref="mailContentBuildingService" />
         <constructor-arg ref="functionalityService" />

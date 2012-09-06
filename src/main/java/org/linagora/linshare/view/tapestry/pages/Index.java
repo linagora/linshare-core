@@ -117,11 +117,6 @@ public class Index {
 	/** used to prevent the clearing of documentsVo with search*/
 	private boolean flag;
 
-	@Inject @Symbol("linshare.secured-storage.disallow")
-	@Property
-	private boolean securedStorageDisallowed;
-	
-	
 
     /* ***********************************************************
      *                   Event handlers&processing
@@ -272,9 +267,7 @@ public class Index {
     }
     
     public String getPageTitle() {
-    	return securedStorageDisallowed ? 
-    			messages.get("components.myborderlayout.securedStorageDisallowed.home.title") 
-    			: messages.get("components.myborderlayout.home.title");
+    	return messages.get("components.myborderlayout.home.title");
     }
     
     Object onException(Throwable cause) {

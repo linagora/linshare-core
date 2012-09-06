@@ -60,7 +60,6 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     private final AccountRepository<Account> accountRepository;
     
     private final FileSystemDao fileSystemDao;
-    private final boolean securedStorageDisallowed;
     private final boolean cronActivated;
 	private final NotifierService notifierService;
 	private final MailContentBuildingService mailBuilder;
@@ -69,7 +68,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	
 	
 	public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
-			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated, NotifierService notifierService,
+			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated, NotifierService notifierService,
 			MailContentBuildingService mailBuilder, FunctionalityService functionalityService) {
 		super();
 		this.documentRepository = documentRepository;
@@ -77,7 +76,6 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		this.documentEntryService = documentEntryService;
 		this.accountRepository = accountRepository;
 		this.fileSystemDao = fileSystemDao;
-		this.securedStorageDisallowed = securedStorageDisallowed;
 		this.cronActivated = cronActivated;
 		this.notifierService = notifierService;
 		this.mailBuilder = mailBuilder;
@@ -127,11 +125,6 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	@Override
     public void cleanOldDocuments() {
     	logger.debug("cleanOldDocuments : begin");
-    	
-    	if (!securedStorageDisallowed) {
-    		logger.info("Documents cleaner batch launched but secured storage not disallowed : stopping.");
-    		return;
-    	}
     	
     	if (!cronActivated) {
     		logger.info("Documents cleaner batch launched but was told to be unactivated : stopping.");

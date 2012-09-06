@@ -90,12 +90,6 @@ public class Index {
 	private boolean noDomain;
     
 
-	@SuppressWarnings("unused")
-	@Inject @Symbol("linshare.secured-storage.disallow")
-	@Property
-	private boolean securedStorageDisallowed;
-	
-	
     /* ***********************************************************
      *                   Event handlers&processing
      ************************************************************ */

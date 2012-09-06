@@ -85,11 +85,6 @@ sso.header.user=Auth-User
 tsa.url=http://localhost:8080/signserver/tsa?signerId=1
 
 
-#******** Secured storage
-linshare.secured-storage.disallow=false
-linshare.secured-storage.disallowed.job.file-cleaner.activate=false
-linshare.secured-storage.disallowed.job.file-cleaner.cron=0 0 0 1 1 ?
-
 #******************** Syntax for CRON
 # 	 Field				Mandatory	Allowed Values			Allowed Special Characters
 # 1. Second				yes			0-59					, - * /	
@@ -104,7 +99,14 @@ linshare.secured-storage.disallowed.job.file-cleaner.cron=0 0 0 1 1 ?
 #		 : L : last
 #		 : W : weekday
 
+#******** Document cleaner
+job.document.cleaner.activation=false
+job.document.cleaner.cron.expression=0 0 0 1 1 ?
 
 
 #******** Domain
 linshare.domain.visible=false
+
+#****************** LinShare Logo
+linshare.logo.webapp.visible=true
+linshare.logo.mails.visible=true

@@ -14,7 +14,7 @@
 
     <bean id="cleanOutdatedGuestsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="cleanOutdatedGuestsJob"/>
-        <property name="cronExpression" value="${job.cron.expression}"/>
+        <property name="cronExpression" value="${job.guests.cron.expression}"/>
     </bean>
 
 
@@ -28,7 +28,7 @@
     </bean>
     <bean id="cleanOutdatediSharesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="cleanOutdatedSharesJob"/>
-        <property name="cronExpression" value="${job.cron.expression}"/>
+        <property name="cronExpression" value="${job.shares.cron.expression}"/>
     </bean>
 
 
@@ -83,7 +83,7 @@
     </bean>
     <bean id="cleanOutdatedDocumentsJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="cleanOutdatedDocumentsJob"/>
-        <property name="cronExpression" value="${linshare.secured-storage.disallowed.job.file-cleaner.cron}"/>
+        <property name="cronExpression" value="${job.document.cleaner.cron.expression}"/>
     </bean>
 
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
