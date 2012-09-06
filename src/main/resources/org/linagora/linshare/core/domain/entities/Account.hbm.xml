@@ -18,6 +18,7 @@
 		<property name="modificationDate" column="modification_date" type="timestamp" not-null="false" lazy="false"/>
 		<property access="field" column="ROLE_ID" name="role" not-null="true" type="roleEnumType"/>
 		<property name="locale" column="locale" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="externalMailLocale" column="external_mail_locale" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
 		<property name="password" column="password" type="string" length="255" not-null="false" lazy="false"/>
 		<property name="destroyed" column="destroyed" type="boolean" not-null="true" lazy="false"/>

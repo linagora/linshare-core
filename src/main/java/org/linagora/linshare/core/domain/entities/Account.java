@@ -20,6 +20,8 @@ public abstract class Account {
 	
 	protected String locale;
 	
+	protected String externalMailLocale;
+	
 	protected boolean enable;
 	
 	protected String password;
@@ -218,5 +220,15 @@ public abstract class Account {
 	public abstract AccountType getAccountType();
 	
 	public abstract String getAccountReprentation();
+
+
+	public String getExternalMailLocale() {
+		return externalMailLocale;
+	}
+
+
+	public void setExternalMailLocale(String externalMailLocale) {
+		this.externalMailLocale = externalMailLocale;
+	}
 
 }

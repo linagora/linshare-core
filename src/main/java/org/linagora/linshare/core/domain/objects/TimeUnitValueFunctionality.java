@@ -23,7 +23,7 @@ public class TimeUnitValueFunctionality extends UnitValueFunctionality {
 		setValue(f.getValue());
 	}
 	
-	public int toCalendarValue() {
+	public int toCalendarUnitValue() {
 		TimeUnitClass timeUnit = (TimeUnitClass)getUnit();
 		return timeUnit.toCalendarValue();
 	}

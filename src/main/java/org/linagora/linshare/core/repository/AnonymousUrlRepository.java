@@ -20,9 +20,14 @@
 */
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 
 public interface AnonymousUrlRepository extends AbstractRepository<AnonymousUrl> {
 
 	public AnonymousUrl findByUuid(String uuid);
+	
+	public List<AnonymousUrl> getAllExpiredUrl();
+	
 }

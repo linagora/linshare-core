@@ -21,11 +21,14 @@
 		<constructor-arg ref="accountRepository"/>
 		<constructor-arg ref="functionalityService"/>
 		<constructor-arg ref="documentEntryService"/>
+		<constructor-arg ref="anonymousUrlRepository"/>
     </bean>
 
     <bean name="documentManagementBatch" class="org.linagora.linshare.core.batches.impl.DocumentManagementBatchImpl">
         <constructor-arg ref="documentRepository"/>
+        <constructor-arg ref="documentEntryRepository"/>
         <constructor-arg ref="documentEntryService"/>
+        <constructor-arg ref="accountRepository"/>
         <constructor-arg ref="jackRabbitRepository"/>
         <constructor-arg value="${linshare.secured-storage.disallow}" />
         <constructor-arg value="${linshare.secured-storage.disallowed.job.file-cleaner.activate}" />

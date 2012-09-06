@@ -467,6 +467,13 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
 
 
+-- Functionality : SHARE_NOTIFICATION_BEFORE_EXPIRATION
+-- Policies : MANDATORY(0), ALLOWED(1), FORBIDDEN(2)
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (43, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (44, false, false, 2, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (22, false, 'SHARE_NOTIFICATION_BEFORE_EXPIRATION', 43, 44, 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (22, '2,7');
+
 
 
 -- LinShare version

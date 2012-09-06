@@ -20,19 +20,28 @@
 */
 package org.linagora.linshare.core.batches.impl;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.ShareManagementBatch;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
+import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
@@ -63,11 +72,13 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
     private final FunctionalityService functionalityService;
     
     private final DocumentEntryService documentEntryService;
+    
+    private final AnonymousUrlRepository anonymousUrlRepository;
 
 
 	public ShareManagementBatchImpl(ShareEntryService shareEntryService, AnonymousShareEntryService anonymousShareEntryService, ShareEntryRepository shareEntryRepository,
 			AnonymousShareEntryRepository anonymousShareEntryRepository, DocumentEntryRepository documentEntryRepository, AccountRepository<Account> accountRepository,
-			FunctionalityService functionalityService, DocumentEntryService documentEntryService) {
+			FunctionalityService functionalityService, DocumentEntryService documentEntryService, AnonymousUrlRepository anonymousUrlRepository) {
 		super();
 		this.shareEntryService = shareEntryService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
@@ -77,18 +88,19 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		this.accountRepository = accountRepository;
 		this.functionalityService = functionalityService;
 		this.documentEntryService = documentEntryService;
+		this.anonymousUrlRepository = anonymousUrlRepository;
 	}
 
+
+	@Override
 	public void cleanOutdatedShares() {
 		logger.info("Begin clean outdated shares");
 		removeAllExpiredShareEntries();
 		removeAllExpiredAnonymousShareEntries();
+		removeAllExpiredAnonymousUrl();
 		logger.info("End clean outdated shares");
     }
     
-    public void notifyUpcomingOutdatedShares() {
-    }
-
 
 	private void removeAllExpiredAnonymousShareEntries() {
 		SystemAccount systemAccount = accountRepository.getSystemAccount();
@@ -103,19 +115,8 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {
 					
-					boolean doDeleteDoc = false; 
 					DocumentEntry documentEntry = shareEntry.getDocumentEntry();
-					
-					// if this field is set, we must delete the document entry when the share entry is expired.
-					if(shareExpiryTimeFunctionality.isBool()) {
-						logger.debug("document removing with expired share is enable.");
-						long sum = documentEntryRepository.getRelatedEntriesCount(shareEntry.getDocumentEntry());
-						// we check if the current share is the last related entry to the document
-						if(sum -1 <= 0) {
-							doDeleteDoc = true;
-							logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
-						}
-					}
+					boolean doDeleteDoc = documentSuppressionIsNeeded(documentEntry);
 					
 					anonymousShareEntryService.deleteShare(systemAccount, shareEntry);
 					if(doDeleteDoc) {
@@ -123,11 +124,52 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 					}
 					
 				} catch (BusinessException e) {
-					logger.error("Can't delete expired anonymous share : " + shareEntry.getUuid());
+					logger.error("Can't delete expired anonymous share : " + shareEntry.getUuid()  + " : " + e.getMessage() );
 					logger.debug(e.toString());
 				}
 			}
 		}
+	}
+
+
+	private boolean documentSuppressionIsNeeded(DocumentEntry documentEntry) {
+		boolean doDeleteDoc = false;
+		AbstractDomain domain = documentEntry.getEntryOwner().getDomain();
+		long sum = documentEntryRepository.getRelatedEntriesCount(documentEntry);
+		TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(domain);
+
+		
+		// we check if the current share is the last related entry to the document
+		if(sum -1 <= 0) {
+			// if this field is set, we must delete the document entry when the share entry is expired.
+			if(shareExpiryTimeFunctionality.isBool()) {
+				doDeleteDoc = true;
+				logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
+			} else {
+				
+				// We need to check if file expiration is enable to set deletion date.
+				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(domain);
+				if(fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
+					
+					Calendar deletionDate = Calendar.getInstance();
+					// new GregorianCalendar()); ?
+					
+					deletionDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
+					documentEntry.setExpirationDate(deletionDate);
+					
+					try {
+						documentEntryRepository.update(documentEntry);
+					} catch (IllegalArgumentException e) {
+						logger.error("current document " + documentEntry.getUuid() + " can't not be updated." + e.getMessage());
+						logger.debug("exception:" + e.toString());
+					} catch (BusinessException e) {
+						logger.error("current document " + documentEntry.getUuid() + " can't not be updated." + e.getMessage());
+						logger.debug("exception:" + e.toString());
+					}
+				}
+			}
+		}
+		return doDeleteDoc;
 	}
 	
 
@@ -140,32 +182,123 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			AbstractDomain domain = shareEntry.getEntryOwner().getDomain();
 			
 			TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(domain);
-			// test if this functionnality is enable for the current domain.
+			// test if this functionality is enable for the current domain.
 			if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
 				try {
-					boolean doDeleteDoc = false; 
 					DocumentEntry documentEntry = shareEntry.getDocumentEntry();
-					
-					// if this field is set, we must delete the document entry when the share entry is expired.
-					if(shareExpiryTimeFunctionality.isBool()) {
-						long sum = documentEntryRepository.getRelatedEntriesCount(shareEntry.getDocumentEntry());
-						// we check if the current share is the last related entry to the document
-						if(sum -1 <= 0) {
-							doDeleteDoc = true;
-							logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
-						}
-					}
+					boolean doDeleteDoc = documentSuppressionIsNeeded(documentEntry);
 					
 					shareEntryService.deleteShare(systemAccount, shareEntry);
 					if(doDeleteDoc) {
 						documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
 					}
 				} catch (BusinessException e) {
-					logger.error("Can't delete expired share : " + shareEntry.getUuid());
+					logger.error("Can't delete expired share : " + shareEntry.getUuid()  + " : " + e.getMessage() );
 					logger.debug(e.toString());
 				}
 			}
 		}
 	}
 	
+	
+	private void removeAllExpiredAnonymousUrl() {
+		List<AnonymousUrl> allExpiredUrl = anonymousUrlRepository.getAllExpiredUrl();
+		logger.info(allExpiredUrl.size() + " expired anonymous url(s) found to be delete.");
+		for (AnonymousUrl anonymousUrl : allExpiredUrl) {
+			try {
+				anonymousUrlRepository.delete(anonymousUrl);
+			} catch (IllegalArgumentException e) {
+				logger.error("Can't delete expired anonymous url : " + anonymousUrl.getUuid() + " : " + e.getMessage() );
+				logger.debug(e.toString());
+			} catch (BusinessException e) {
+				logger.error("Can't delete expired anonymous url : " + anonymousUrl.getUuid() + " : " + e.getMessage() );
+				logger.debug(e.toString());
+			}
+		}
+	}
+	
+	
+	
+	@Override
+    public void notifyUpcomingOutdatedShares() {
+		
+		SystemAccount systemAccount = accountRepository.getSystemAccount();
+		
+		StringValueFunctionality notificationBeforeExpirationFunctionality = functionalityService.getShareNotificationBeforeExpirationFunctionality(systemAccount.getDomain());
+		
+		List<Integer> datesForNotifyUpcomingOutdatedShares = new ArrayList<Integer>();
+		
+        String[] dates = notificationBeforeExpirationFunctionality.getValue().split(",");
+        for (String date : dates) {
+        	datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
+		}
+		
+		
+//		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
+        
+        for (Integer date : datesForNotifyUpcomingOutdatedShares) {
+        	
+	        List<ShareEntry> shares = shareEntryRepository.findUpcomingExpiredEntries(date);
+	        logger.info(shares.size() + " upcoming (in "+ date.toString()+" days) outdated share(s) found to be notified.");
+	     // TODO : mail notification
+//	        for (ShareEntry share : shares) {
+//	        	if (!share.getDownloaded()) {
+//	        		sendUpcomingOutdatedShareNotification(mailContainer, share, date);
+//	        	}
+//	        }
+//	        
+	        List<AnonymousShareEntry> anonymousShareEntries = anonymousShareEntryRepository.findUpcomingExpiredEntries(date);
+	        logger.info(anonymousShareEntries.size() + " upcoming (in "+date.toString()+" days) outdated anonymous share Url(s) found to be notified.");
+//	        // TODO : mail notification
+//			for (SecuredUrl securedUrl : securedUrlList) {
+//				sendUpcomingOutdatedSecuredUrlNotification(mailContainer, securedUrl, date);
+//			}
+        }
+    }
+	
+	
+
+//  
+//	private void sendUpcomingOutdatedSecuredUrlNotification(MailContainer mailContainer, 
+//			SecuredUrl securedUrl, Integer days) {
+//		
+//		//compose the secured url to give in mail
+//		StringBuffer httpUrlBase = new StringBuffer();
+//		httpUrlBase.append(urlBase);
+//		if(!urlBase.endsWith("/")) httpUrlBase.append("/");
+//		httpUrlBase.append(securedUrl.getUrlPath());
+//		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
+//		httpUrlBase.append(securedUrl.getSalt());
+//		
+//		//securedUrl must be ended with a "/" if no parameter (see urlparam)
+//		String securedUrlBase = httpUrlBase.toString();
+//		
+//		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
+//
+//		try {
+//		
+//			for (Contact recipient : securedUrl.getRecipients()) {
+//				String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
+//				
+//				mailContainerWithRecipient.add(mailBuilder.buildMailUpcomingOutdatedSecuredUrlWithRecipient(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam));
+//			}
+//			notifierService.sendAllNotifications( mailContainerWithRecipient);
+//		
+//		} catch (BusinessException e) {
+//			logger.error("Error while trying to notify upcoming outdated secured url", e);
+//		}
+//
+//	}
+	
+//	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
+//			Share share, Integer days) {
+//		try {
+//
+//			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedShareWithOneRecipient(share.getSender(), mailContainer, share, days));
+//		} catch (BusinessException e) {
+//				logger.error("Error while trying to notify upcoming outdated share", e);
+//		}
+//	}
+
+
 }

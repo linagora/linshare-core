@@ -97,13 +97,6 @@
 		ref="logEntryService" /> </bean> -->
 
 
-	<bean id="shareService" class="org.linagora.linshare.core.service.impl.ShareServiceImpl">
-<!-- 		<constructor-arg ref="documentEntryService" /> -->
-<!-- 		<constructor-arg ref="shareEntryService" /> -->
-<!-- 		<constructor-arg ref="anonymousShareEntryService" /> -->
-<!-- 		<constructor-arg ref="userService" /> -->
-	</bean>
-	
 	<bean id="entryService" class="org.linagora.linshare.core.service.impl.EntryServiceImpl">
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="shareEntryService" />

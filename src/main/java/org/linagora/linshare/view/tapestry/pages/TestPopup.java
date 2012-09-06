@@ -20,11 +20,16 @@
 */
 package org.linagora.linshare.view.tapestry.pages;
 
+import java.util.List;
+
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
@@ -117,13 +122,23 @@ public class TestPopup {
 
 
 	@Inject
-	private ShareManagementBatch repo;
+	private ShareManagementBatch shareManagementBatch;
 	
+	@Inject
+	private AnonymousUrlRepository anonymousUrlRepository;
 	void onActionFromTest1()
     {
-		logger.debug("methode fred");
-		repo.cleanOutdatedShares(); 
-		
+		logger.debug("begin method onActionFromTest1");
+		shareManagementBatch.cleanOutdatedShares();
+		logger.debug("endmethod onActionFromTest1");
+    }
+	
+	
+	void onActionFromTest2()
+    {
+		logger.debug("begin method onActionFromTest2");
+		shareManagementBatch.notifyUpcomingOutdatedShares();
+		logger.debug("endmethod onActionFromTest2");
     }
 	
 	

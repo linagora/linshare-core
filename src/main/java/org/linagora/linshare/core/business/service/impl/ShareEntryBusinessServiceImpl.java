@@ -55,6 +55,9 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 			shareEntryRepository.update(shareEntity);
 		}
 		
+		// If the current document was previously shared, we need to rest its expiration date
+		documentEntry.setExpirationDate(null);
+		
 		documentEntry.getShareEntries().add(shareEntity);
 		recipient.getShareEntries().add(shareEntity);
 		sender.getEntries().add(shareEntity);

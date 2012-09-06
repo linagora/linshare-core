@@ -669,6 +669,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	
 	
 	@Override
+	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain) {
+		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION);
+	}
+
+	@Override
 	public boolean isSauAllowed(String domainIdentifier) { 
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality funcAU = getAnonymousUrlFunctionality(domain);

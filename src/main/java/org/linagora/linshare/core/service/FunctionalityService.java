@@ -117,7 +117,7 @@ public interface FunctionalityService {
 	public Functionality getSignatureFunctionality(AbstractDomain domain);
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
-
+	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
 	
 	public IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
 	public Functionality getUserTabFunctionality(AbstractDomain domain);

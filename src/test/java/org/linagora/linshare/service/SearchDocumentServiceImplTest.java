@@ -43,7 +43,6 @@ import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.SearchDocumentService;
-import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,8 +94,6 @@ public class SearchDocumentServiceImplTest extends AbstractTransactionalJUnit4Sp
 	@Autowired
 	private SearchDocumentService searchDocumentService;
 	
-	@Autowired
-	private ShareService shareService;
 	
 	private InputStream inputStream;
 	private String inputStreamUuid;

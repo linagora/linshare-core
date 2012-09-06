@@ -58,7 +58,6 @@ import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
-import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,8 +65,6 @@ import org.slf4j.LoggerFactory;
 public class ShareFacadeImpl implements ShareFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareFacadeImpl.class);
-	
-	private final ShareService shareService;
 	
 	private final ShareTransformer shareTransformer;
 	
@@ -101,7 +98,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	public ShareFacadeImpl(ShareTransformer shareTransformer, UserRepository<User> userRepository, DocumentRepository documentRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
 			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
-			String urlBase, String urlInternal,ShareService shareService) {
+			String urlBase, String urlInternal) {
 		super();
 		this.shareTransformer = shareTransformer;
 		this.userRepository = userRepository;
@@ -117,7 +114,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.urlBase = urlBase;
 		this.urlInternal = urlInternal;
-		this.shareService = shareService;
 	}
 	
 

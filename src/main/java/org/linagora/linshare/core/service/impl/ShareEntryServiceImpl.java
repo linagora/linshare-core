@@ -99,7 +99,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			// get new guest expiry date
 			Calendar guestExpiryDate = Calendar.getInstance();
 			TimeUnitValueFunctionality guestFunctionality = functionalityService.getGuestAccountExpiryTimeFunctionality(recipient.getDomain());
-	        guestExpiryDate.add(guestFunctionality.toCalendarValue(), guestFunctionality.getValue());
+	        guestExpiryDate.add(guestFunctionality.toCalendarUnitValue(), guestFunctionality.getValue());
 	        
 			Guest guest = guestRepository.findByMail(recipient.getLogin());
 			guest.setExpirationDate(guestExpiryDate.getTime());

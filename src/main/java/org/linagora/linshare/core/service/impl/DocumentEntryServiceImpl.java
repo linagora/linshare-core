@@ -204,7 +204,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 	
 	@Override
-	public void deleteInconsistentDocumentEntry(String docEntryUuid) throws BusinessException {
+	public void deleteInconsistentDocumentEntry(SystemAccount actor, String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
 		Account owner = documentEntry.getEntryOwner();
 		try {

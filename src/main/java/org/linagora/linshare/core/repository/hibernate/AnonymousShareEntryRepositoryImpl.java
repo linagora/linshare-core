@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
@@ -77,4 +78,15 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
         return entries;
 	}
 	
+
+	@Override
+	public List<AnonymousShareEntry> findUpcomingExpiredEntries(Integer date) {
+		Calendar calMin = Calendar.getInstance();
+    	calMin.add(Calendar.DAY_OF_MONTH, date);
+    	
+    	Calendar calMax = Calendar.getInstance();
+    	calMax.add(Calendar.DAY_OF_MONTH, date+1);
+        
+    	return findByCriteria(Restrictions.lt("expirationDate", calMax), Restrictions.gt("expirationDate", calMin));
+	}
 }

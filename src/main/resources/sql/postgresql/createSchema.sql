@@ -12,6 +12,7 @@ CREATE TABLE account (
   creation_date                   timestamp(6) NOT NULL, 
   modification_date               timestamp(6) NOT NULL, 
   role_id                         int4 NOT NULL, 
+  locale                          varchar(255) NOT NULL, 
   locale                          varchar(255), 
   enable                          bool NOT NULL, 
   account_type                    int4 NOT NULL, 
@@ -395,11 +396,11 @@ CREATE TABLE technical_account_permission (
   "all" bool NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE entry_tag_association (
-  Id             int8 NOT NULL, 
+  id             int8 NOT NULL, 
   entry_id      int8 NOT NULL, 
   tag_id        int8 NOT NULL, 
   enum_value_id int8, 
-  PRIMARY KEY (Id), 
+  PRIMARY KEY (id), 
   CONSTRAINT "unique relation" 
     UNIQUE (entry_id, tag_id));
 CREATE TABLE tag_filter_rule_tag_association (
@@ -478,18 +479,17 @@ ALTER TABLE thread_member ADD CONSTRAINT FKthread_mem280144 FOREIGN KEY (thread_
 ALTER TABLE thread_member ADD CONSTRAINT FKthread_mem565048 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechnical_303831 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechnical_231219 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_621478 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE document_entry ADD CONSTRAINT FKdocument_e19140 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr50652 FOREIGN KEY (entry_id) REFERENCES entry (id);
-ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent715634 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE entry ADD CONSTRAINT FKentry500391 FOREIGN KEY (owner_id) REFERENCES account (id);
 ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_900675 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent715634 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_30632 FOREIGN KEY (tag_id) REFERENCES tag (id);
 ALTER TABLE tag_filter ADD CONSTRAINT FKtag_filter987269 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter901563 FOREIGN KEY (tag_id) REFERENCES tag (id);
-ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter566638 FOREIGN KEY (enum_value_id) REFERENCES tag_enum_value (Id);
-ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_304293 FOREIGN KEY (enum_value_id) REFERENCES tag_enum_value (Id);
+ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter565646 FOREIGN KEY (enum_value_id) REFERENCES tag_enum_value (id);
+ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_305285 FOREIGN KEY (enum_value_id) REFERENCES tag_enum_value (id);
 ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter766081 FOREIGN KEY (tag_filter_rule_id) REFERENCES tag_filter_rule (id);
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_191325 FOREIGN KEY (contact_id) REFERENCES contact (id);
 ALTER TABLE signature ADD CONSTRAINT FKsignature417918 FOREIGN KEY (owner_id) REFERENCES account (id);
@@ -500,6 +500,7 @@ ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi37393 FOREIGN KEY (view_cont
 ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi340520 FOREIGN KEY (view_id) REFERENCES "view" (id);
 ALTER TABLE view_tag ADD CONSTRAINT FKview_tag36011 FOREIGN KEY (view_id) REFERENCES "view" (id);
 ALTER TABLE view_tag ADD CONSTRAINT FKview_tag60432 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 

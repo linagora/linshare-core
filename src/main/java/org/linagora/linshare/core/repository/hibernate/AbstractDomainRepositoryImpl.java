@@ -44,8 +44,8 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	public List<String> findAllDomainIdentifiers() {
 
 		return (List<String>) getHibernateTemplate().executeFind(
-				new HibernateCallback() {
-					public Object doInHibernate(final Session session)
+				new HibernateCallback<List<String>>() {
+					public List<String> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
 						final Query query = session.createQuery("select d.identifier from AbstractDomain d order by d.authShowOrder asc");
 						return query.setCacheable(true).list();
@@ -57,8 +57,8 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@Override
 	public List<AbstractDomain> findAllDomain() {
 		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
-				new HibernateCallback() {
-					public Object doInHibernate(final Session session)
+				new HibernateCallback<List<AbstractDomain>>() {
+					public List<AbstractDomain> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
 						final Query query = session.createQuery("select d from AbstractDomain d order by d.authShowOrder asc");
 						return query.setCacheable(true).list();
@@ -70,8 +70,8 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@Override
 	public List<AbstractDomain> findAllTopAndSubDomain() {
 		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
-				new HibernateCallback() {
-					public Object doInHibernate(final Session session)
+				new HibernateCallback<List<AbstractDomain>>() {
+					public List<AbstractDomain> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
 						final Query query = session.createQuery("select d from AbstractDomain d where TYPE = " + DomainType.TOPDOMAIN.toInt()
 								+ " or TYPE = " + DomainType.SUBDOMAIN.toInt());
@@ -84,8 +84,8 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@Override
 	public List<AbstractDomain> findAllTopDomain() {
 		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
-				new HibernateCallback() {
-					public Object doInHibernate(final Session session)
+				new HibernateCallback<List<AbstractDomain>>() {
+					public List<AbstractDomain> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
 						final Query query = session.createQuery("select d from AbstractDomain d where TYPE = " + DomainType.TOPDOMAIN.toInt());
 						return query.setCacheable(true).list();
@@ -97,8 +97,8 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@Override
 	public List<AbstractDomain> findAllSubDomain() {
 		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
-				new HibernateCallback() {
-					public Object doInHibernate(final Session session)
+				new HibernateCallback<List<AbstractDomain>>() {
+					public List<AbstractDomain> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
 						final Query query = session.createQuery("select d from AbstractDomain d where TYPE = " + DomainType.SUBDOMAIN.toInt());
 						return query.setCacheable(true).list();

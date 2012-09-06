@@ -58,7 +58,6 @@ import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.PasswordService;
 import org.linagora.linshare.core.service.RecipientFavouriteService;
-import org.linagora.linshare.core.service.ShareService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
@@ -84,10 +83,6 @@ public class UserServiceImpl implements UserService {
     private final NotifierService notifierService;
     
     private final LogEntryService logEntryService;
-    
-//    private final ShareService shareService;
-    // to be deleted 
-    private ShareService shareService;
     
     private final RecipientFavouriteService recipientFavouriteService;
     
@@ -256,7 +251,7 @@ public class UserServiceImpl implements UserService {
         Calendar expiryDate = Calendar.getInstance();
 
         TimeUnitValueFunctionality func = functionalityService.getGuestAccountExpiryTimeFunctionality(domain);
-        expiryDate.add(func.toCalendarValue(), func.getValue());
+        expiryDate.add(func.toCalendarUnitValue(), func.getValue());
         
         return expiryDate.getTime();
     }

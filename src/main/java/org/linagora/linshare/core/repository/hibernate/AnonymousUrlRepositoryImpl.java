@@ -20,14 +20,20 @@
 */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<AnonymousUrl> implements AnonymousUrlRepository {
@@ -63,6 +69,24 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 	public AnonymousUrl create(AnonymousUrl entity) throws BusinessException {
 		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
+	}
+
+
+	@Override
+	public List<AnonymousUrl> getAllExpiredUrl() {
+		
+		HibernateCallback<List<AnonymousUrl>> action = new HibernateCallback<List<AnonymousUrl>>() {
+			@SuppressWarnings("unchecked")
+			public List<AnonymousUrl> doInHibernate(final Session session) throws HibernateException, SQLException {
+				final Query query = session.createQuery("SELECT a from AnonymousUrl as a where not exists " +
+						"(SELECT b from AnonymousUrl as b , AnonymousShareEntry as entry where entry.anonymousUrl.id = a.id)");
+				return 	query.list();
+			}
+		};
+		
+		// from eg.Cat as cat where not exists ( from eg.Cat as mate where mate.mate = cat )
+		// SELECT * from anonymous_url where id not in (SELECT id from anonymous_url join anonymous_share_entry  on anonymous_url.id = anonymous_share_entry.anonymous_url_id);
+		return (List<AnonymousUrl>) getHibernateTemplate().execute(action);
 	}
 
 	

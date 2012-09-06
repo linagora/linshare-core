@@ -90,6 +90,18 @@ public class ShareEntryRepositoryImpl extends AbstractRepositoryImpl<ShareEntry>
         }
         return entries;
 	}
+	
+	
+	@Override
+	public List<ShareEntry> findUpcomingExpiredEntries(Integer date) {
+		Calendar calMin = Calendar.getInstance();
+    	calMin.add(Calendar.DAY_OF_MONTH, date);
+    	
+    	Calendar calMax = Calendar.getInstance();
+    	calMax.add(Calendar.DAY_OF_MONTH, date+1);
+        
+    	return findByCriteria(Restrictions.lt("expirationDate", calMax), Restrictions.gt("expirationDate", calMin));
+	}
 
 	
 }

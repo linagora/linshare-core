@@ -28,11 +28,15 @@ import java.util.List;
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.Language;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AccountRepository;
+import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -46,10 +50,15 @@ import org.slf4j.LoggerFactory;
  */
 public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 
-    Logger logger = LoggerFactory.getLogger(DocumentManagementBatchImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(DocumentManagementBatchImpl.class);
 
     private final DocumentRepository documentRepository;
+    
+    private final DocumentEntryRepository documentEntryRepository;
     private final DocumentEntryService documentEntryService;
+    
+    private final AccountRepository<Account> accountRepository;
+    
     private final FileSystemDao fileSystemDao;
     private final boolean securedStorageDisallowed;
     private final boolean cronActivated;
@@ -57,20 +66,42 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	private final MailContentBuildingService mailBuilder;
 	private final FunctionalityService functionalityService;
 
-    public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryService documentEntryService,
-        FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated,
-        NotifierService notifierService, MailContentBuildingService mailBuilder, FunctionalityService functionalityService) {
-        this.documentRepository = documentRepository;
-        this.documentEntryService = documentEntryService;
-        this.fileSystemDao = fileSystemDao;
-        this.securedStorageDisallowed = securedStorageDisallowed;
-        this.cronActivated = cronActivated;
-        this.notifierService = notifierService;
-        this.mailBuilder = mailBuilder;
-        this.functionalityService = functionalityService;
-    }
+	
+	
+	public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
+			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated, NotifierService notifierService,
+			MailContentBuildingService mailBuilder, FunctionalityService functionalityService) {
+		super();
+		this.documentRepository = documentRepository;
+		this.documentEntryRepository = documentEntryRepository;
+		this.documentEntryService = documentEntryService;
+		this.accountRepository = accountRepository;
+		this.fileSystemDao = fileSystemDao;
+		this.securedStorageDisallowed = securedStorageDisallowed;
+		this.cronActivated = cronActivated;
+		this.notifierService = notifierService;
+		this.mailBuilder = mailBuilder;
+		this.functionalityService = functionalityService;
+	}
 
+	//    public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryService documentEntryService,
+//        FileSystemDao fileSystemDao, boolean securedStorageDisallowed, boolean cronActivated,
+//        NotifierService notifierService, MailContentBuildingService mailBuilder, FunctionalityService functionalityService) {
+//        this.documentRepository = documentRepository;
+//        this.documentEntryService = documentEntryService;
+//        this.fileSystemDao = fileSystemDao;
+//        this.securedStorageDisallowed = securedStorageDisallowed;
+//        this.cronActivated = cronActivated;
+//        this.notifierService = notifierService;
+//        this.mailBuilder = mailBuilder;
+//        this.functionalityService = functionalityService;
+//    }
+
+	
+	@Override
     public void removeMissingDocuments() {
+    	SystemAccount systemAccount = accountRepository.getSystemAccount();
+    	
         List<Document> documents = documentRepository.findAll();
 
         logger.info("Remove missing documents batch launched.");
@@ -81,9 +112,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
             if (stream == null) {
                 try {
                     logger.info("Removing file with UID = {} because of inconsistency", document.getUuid());
-//                    documentEntryService.deleteFile(document.getOwner().getLogin(), document.getUuid(),Reason.INCONSISTENCY);
-                    documentEntryService.deleteDocumentEntry(document.getDocumentEntry().getEntryOwner(), document.getUuid());
-                    documentEntryService.deleteInconsistentDocumentEntry(document.getDocumentEntry().getUuid());
+                    documentEntryService.deleteInconsistentDocumentEntry(systemAccount, document.getDocumentEntry().getUuid());
                     
                 } catch (BusinessException ex) {
                     logger.error("Error when processing cleaning of document whith UID = {} during consistency check " +
@@ -94,6 +123,8 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
         logger.info("Remove missing documents batch ended.");
     }
     
+	
+	@Override
     public void cleanOldDocuments() {
     	logger.debug("cleanOldDocuments : begin");
     	

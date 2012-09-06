@@ -27,10 +27,11 @@ public interface DocumentEntryService {
 	
 	/**
 	 * This method is designed inconsistent document, the document exists into the database only (no on the file system) 
+	 * @param actor TODO
 	 * @param docEntryUuid
 	 * @throws BusinessException
 	 */
-	public void deleteInconsistentDocumentEntry(String docEntryUuid) throws BusinessException;
+	public void deleteInconsistentDocumentEntry(SystemAccount actor, String docEntryUuid) throws BusinessException;
 	
 
 	/**

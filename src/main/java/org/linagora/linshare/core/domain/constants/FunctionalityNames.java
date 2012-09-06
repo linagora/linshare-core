@@ -22,5 +22,6 @@ public interface FunctionalityNames {
 	public static final String TAB_HELP = "TAB_HELP";
 	public static final String TAB_AUDIT = "TAB_AUDIT";
 	public static final String TAB_USER = "TAB_USER";
+	public static final String SHARE_NOTIFICATION_BEFORE_EXPIRATION= "SHARE_NOTIFICATION_BEFORE_EXPIRATION";
 
 }
