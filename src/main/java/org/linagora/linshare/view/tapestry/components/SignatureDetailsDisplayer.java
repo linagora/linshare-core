@@ -37,12 +37,12 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.utils.ArchiveZipStream;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 

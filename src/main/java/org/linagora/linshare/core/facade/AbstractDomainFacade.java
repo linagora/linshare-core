@@ -18,7 +18,7 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
  */
-package org.linagora.linshare.core.Facade;
+package org.linagora.linshare.core.facade;
 
 import java.util.List;
 

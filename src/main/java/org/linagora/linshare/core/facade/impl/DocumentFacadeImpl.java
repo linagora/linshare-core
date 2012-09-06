@@ -18,7 +18,7 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.linagora.linshare.core.Facade.DocumentFacade;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -42,6 +41,7 @@ import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;

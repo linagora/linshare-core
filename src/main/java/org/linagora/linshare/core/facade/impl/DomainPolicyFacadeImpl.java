@@ -1,9 +1,9 @@
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.Facade.DomainPolicyFacade;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.core.service.DomainPolicyService;
 
 public class DomainPolicyFacadeImpl implements DomainPolicyFacade {

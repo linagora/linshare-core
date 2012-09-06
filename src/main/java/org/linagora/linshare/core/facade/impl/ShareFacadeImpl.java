@@ -18,7 +18,7 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.linagora.linshare.core.Facade.ShareFacade;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
@@ -49,6 +48,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;

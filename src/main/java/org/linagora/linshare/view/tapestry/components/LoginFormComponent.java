@@ -32,9 +32,9 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
-import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,14 +18,15 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.core.Facade;
+package org.linagora.linshare.core.facade;
 
+import java.util.Calendar;
+import java.util.List;
+
+import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
 
-
-public interface AccountFacade {
-
-    UserVo loadUserDetails(String uid) throws BusinessException;
-	
+public interface ShareExpiryDateFacade {
+	public Calendar computeShareExpiryDate(DocumentVo docVo, UserVo owner) ;
+	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo, UserVo owner) ;
 }

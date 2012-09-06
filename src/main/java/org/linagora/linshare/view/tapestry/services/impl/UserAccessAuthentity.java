@@ -21,11 +21,11 @@
 package org.linagora.linshare.view.tapestry.services.impl;
 
 import org.apache.tapestry5.services.ApplicationStateManager;
-import org.linagora.linshare.core.Facade.AccountFacade;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AccountFacade;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

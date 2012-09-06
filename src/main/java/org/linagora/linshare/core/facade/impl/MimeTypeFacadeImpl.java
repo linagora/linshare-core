@@ -18,16 +18,16 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.util.List;
 
-import org.linagora.linshare.core.Facade.MimeTypeFacade;
 import org.linagora.linshare.core.domain.entities.AllowedMimeType;
 import org.linagora.linshare.core.domain.transformers.Transformer;
 import org.linagora.linshare.core.domain.transformers.impl.AllowedMimeTypeTransformer;
 import org.linagora.linshare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.MimeTypeFacade;
 import org.linagora.linshare.core.service.MimeTypeService;
 
 public class MimeTypeFacadeImpl implements MimeTypeFacade {

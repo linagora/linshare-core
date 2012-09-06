@@ -25,10 +25,10 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AbstractDomainFacade;
 
 public class CreateLdapConnection {
 	

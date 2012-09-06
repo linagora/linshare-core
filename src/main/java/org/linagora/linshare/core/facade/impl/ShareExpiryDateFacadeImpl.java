@@ -18,18 +18,18 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.Facade.ShareExpiryDateFacade;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.ShareExpiryDateFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;

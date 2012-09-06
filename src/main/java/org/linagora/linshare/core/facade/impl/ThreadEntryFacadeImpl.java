@@ -1,10 +1,9 @@
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.Facade.ThreadEntryFacade;
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Tag;
@@ -20,6 +19,7 @@ import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.TagService;
 import org.linagora.linshare.core.service.ThreadEntryService;

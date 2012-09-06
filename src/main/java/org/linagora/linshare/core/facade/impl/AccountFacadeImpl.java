@@ -1,9 +1,9 @@
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
-import org.linagora.linshare.core.Facade.AccountFacade;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AccountFacade;
 import org.linagora.linshare.core.service.AccountService;
 
 public class AccountFacadeImpl implements AccountFacade {

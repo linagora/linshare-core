@@ -28,8 +28,8 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.Facade.FunctionalityFacade;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
 
 
 @SupportsInformalParameters

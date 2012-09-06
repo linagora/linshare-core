@@ -18,15 +18,21 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.core.Facade;
+package org.linagora.linshare.core.facade;
 
-import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.domain.vo.AllowedMimeTypeVO;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public interface ShareExpiryDateFacade {
-	public Calendar computeShareExpiryDate(DocumentVo docVo, UserVo owner) ;
-	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo, UserVo owner) ;
+
+/** Facade entry for mime type management.
+ */
+public interface MimeTypeFacade {
+
+    public List<AllowedMimeTypeVO>  getAllSupportedMimeType() throws BusinessException;
+    public List<AllowedMimeTypeVO>  getAllowedMimeType() throws BusinessException;
+    public boolean isAllowed(String mimeType);
+    public void createAllowedMimeType(List<AllowedMimeTypeVO> newlist) throws BusinessException;
+    public void saveOrUpdateAllowedMimeType(List<AllowedMimeTypeVO> list) throws BusinessException;
 }

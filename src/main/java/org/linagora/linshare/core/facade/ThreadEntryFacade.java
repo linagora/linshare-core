@@ -1,4 +1,4 @@
-package org.linagora.linshare.core.Facade;
+package org.linagora.linshare.core.facade;
 
 import java.io.InputStream;
 import java.util.List;

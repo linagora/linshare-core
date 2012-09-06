@@ -1,4 +1,4 @@
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,7 +8,6 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.Facade.AbstractDomainFacade;
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
@@ -32,6 +31,7 @@ import org.linagora.linshare.core.domain.vo.TopDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityService;

@@ -18,19 +18,19 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.linagora.linshare.core.Facade.LogEntryFacade;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.transformers.impl.DisplayableLogEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.LogEntryTransformer;
 import org.linagora.linshare.core.domain.vo.DisplayableLogEntryVo;
 import org.linagora.linshare.core.domain.vo.LogEntryVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.facade.LogEntryFacade;
 import org.linagora.linshare.core.repository.LogEntryRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;

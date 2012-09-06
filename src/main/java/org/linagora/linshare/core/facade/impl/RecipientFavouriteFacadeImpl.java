@@ -18,16 +18,16 @@
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.core.Facade.impl;
+package org.linagora.linshare.core.facade.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.linagora.linshare.core.Facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
+import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.service.RecipientFavouriteService;
 import org.linagora.linshare.core.service.UserService;
 

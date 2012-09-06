@@ -27,11 +27,11 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.Facade.AbstractDomainFacade;
-import org.linagora.linshare.core.Facade.DocumentFacade;
-import org.linagora.linshare.core.Facade.FunctionalityFacade;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.facade.DocumentFacade;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
 
 
 @SupportsInformalParameters
