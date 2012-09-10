@@ -21,6 +21,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.linagora.linshare.core.domain.constants.Language;
 
@@ -84,6 +85,28 @@ public class MailContainer {
 		this.language = language;
 		this.data = new HashMap<String, String>();
 	}
+	
+	public MailContainer(String locale) {
+		super();
+		this.personalMessage = "";
+		this.language = getLanguageFromLocale(new Locale(locale));
+		this.data = new HashMap<String, String>();
+	}
+	
+	
+	private Language getLanguageFromLocale(Locale locale) {
+        if (Locale.FRENCH.equals(locale)) {
+        	return Language.FRENCH;
+        }
+        /* java.util.Locale doesn't support dutch */
+        if (locale.getLanguage() == "nl_NL" || locale.getLanguage() == "nl") {
+        	return Language.DUTCH;
+        }
+        return Language.DEFAULT;
+    }
+	
+	
+	
 
 	public void setSubject(String subject) {
 		this.subject = subject;

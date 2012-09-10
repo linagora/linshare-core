@@ -36,6 +36,7 @@
         <constructor-arg ref="mailContentBuildingService" />
         <constructor-arg ref="functionalityService" />
         <constructor-arg ref="entryService" />
+        <constructor-arg ref="documentEntryBusinessService" />
     </bean>
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->

@@ -30,6 +30,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -231,19 +233,19 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		
 //		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
         
-        for (Integer date : datesForNotifyUpcomingOutdatedShares) {
+        for (Integer day : datesForNotifyUpcomingOutdatedShares) {
         	
-	        List<ShareEntry> shares = shareEntryRepository.findUpcomingExpiredEntries(date);
-	        logger.info(shares.size() + " upcoming (in "+ date.toString()+" days) outdated share(s) found to be notified.");
+	        List<ShareEntry> shares = shareEntryRepository.findUpcomingExpiredEntries(day);
+	        logger.info(shares.size() + " upcoming (in "+ day.toString()+" days) outdated share(s) found to be notified.");
 	     // TODO : mail notification
-//	        for (ShareEntry share : shares) {
+	        for (ShareEntry share : shares) {
 //	        	if (!share.getDownloaded()) {
-//	        		sendUpcomingOutdatedShareNotification(mailContainer, share, date);
+	        		shareEntryService.sendUpcomingOutdatedShareEntryNotification(systemAccount, share, day);
 //	        	}
-//	        }
+	        }
 //	        
-	        List<AnonymousShareEntry> anonymousShareEntries = anonymousShareEntryRepository.findUpcomingExpiredEntries(date);
-	        logger.info(anonymousShareEntries.size() + " upcoming (in "+date.toString()+" days) outdated anonymous share Url(s) found to be notified.");
+	        List<AnonymousShareEntry> anonymousShareEntries = anonymousShareEntryRepository.findUpcomingExpiredEntries(day);
+	        logger.info(anonymousShareEntries.size() + " upcoming (in "+day.toString()+" days) outdated anonymous share Url(s) found to be notified.");
 //	        // TODO : mail notification
 //			for (SecuredUrl securedUrl : securedUrlList) {
 //				sendUpcomingOutdatedSecuredUrlNotification(mailContainer, securedUrl, date);
@@ -285,15 +287,5 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 //
 //	}
 	
-//	private void sendUpcomingOutdatedShareNotification(MailContainer mailContainer, 
-//			Share share, Integer days) {
-//		try {
-//
-//			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedShareWithOneRecipient(share.getSender(), mailContainer, share, days));
-//		} catch (BusinessException e) {
-//				logger.error("Error while trying to notify upcoming outdated share", e);
-//		}
-//	}
-
 
 }

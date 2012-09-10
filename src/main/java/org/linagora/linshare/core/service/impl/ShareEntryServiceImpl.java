@@ -16,6 +16,7 @@ import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -313,4 +314,17 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		//	notifierService.sendAllNotifications(mailContainerWithRecipient);
 		
 	}
+
+
+	@Override
+	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, ShareEntry shareEntry, Integer days) {
+		try {
+			notifierService.sendAllNotifications(mailContentBuildingService.buildMailUpcomingOutdatedShareWithOneRecipient(shareEntry, days));
+		} catch (BusinessException e) {
+				logger.error("Error while trying to notify upcoming outdated share", e);
+		}
+		
+	}
+	
+	
 }

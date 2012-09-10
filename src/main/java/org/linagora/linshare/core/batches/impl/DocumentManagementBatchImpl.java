@@ -176,14 +176,14 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 //		int days = Math.round(Math.abs((deletionDate.getTimeInMillis()- now.getTimeInMillis())/MILISECOND_PER_DAY))+1;
 //		sendUpcomingDeletionNotification(document, days);
 
-		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
-		try {
-						
-			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient((User)document.getEntryOwner(), mailContainer, document, days));
-		} catch (BusinessException e) {
-			logger.error("Can't create the email for "+ ((User)document.getEntryOwner()).getMail());
-			e.printStackTrace();
-		}
+//		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
+//		try {
+//						
+//			notifierService.sendAllNotifications(mailBuilder.buildMailUpcomingOutdatedDocumentWithOneRecipient((User)document.getEntryOwner(), mailContainer, document, days));
+//		} catch (BusinessException e) {
+//			logger.error("Can't create the email for "+ ((User)document.getEntryOwner()).getMail());
+//			e.printStackTrace();
+//		}
 	}
 	 
 }

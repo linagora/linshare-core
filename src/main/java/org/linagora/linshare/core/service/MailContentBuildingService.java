@@ -82,12 +82,12 @@ public interface MailContentBuildingService {
 			throws BusinessException;
 
 
-	/**
-	 * Notify a user that received a share that the share will soon be deleted
-	 */
-	public MailContainer buildMailUpcomingOutdatedShare(User actor,
-			MailContainer mailContainer, Share share, Integer days) 
-			throws BusinessException;
+//	/**
+//	 * Notify a user that received a share that the share will soon be deleted
+//	 */
+//	public MailContainer buildMailUpcomingOutdatedShare(User actor,
+//			MailContainer mailContainer, Share share, Integer days) 
+//			throws BusinessException;
 	
 
 	/**
@@ -170,23 +170,20 @@ public interface MailContentBuildingService {
 //			MailContainer mailContainer, SecuredUrl securedUrl,
 //			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
 
-	public MailContainerWithRecipient buildMailUpcomingOutdatedShareWithRecipient(User actor,
-			MailContainer mailContainer, Share share, Integer days) 
-			throws BusinessException;
+//	public MailContainerWithRecipient buildMailUpcomingOutdatedShareWithRecipient(User actor,
+//			MailContainer mailContainer, Share share, Integer days) 
+//			throws BusinessException;
 	
-	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedShareWithOneRecipient(User actor,
-			MailContainer mailContainer, Share share, Integer days) 
-			throws BusinessException;	
+	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedShareWithOneRecipient(ShareEntry shareEntry, Integer days) throws BusinessException;	
 
 	/**
 	 * Notify a user that an outdated document will be soon deleted (secured storage disabled)
 	 */
-	public MailContainerWithRecipient buildMailUpcomingOutdatedDocumentWithRecipient(User actor,
-			MailContainer mailContainer, DocumentEntry document, Integer days) throws BusinessException;
+//	public MailContainerWithRecipient buildMailUpcomingOutdatedDocumentWithRecipient(User actor, MailContainer mailContainer, DocumentEntry document, Integer days) throws BusinessException;
 
-	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedDocumentWithOneRecipient(User actor, 
-			MailContainer mailContainer, DocumentEntry document, Integer days)
-			throws BusinessException;
+//	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedDocumentWithOneRecipient(User actor, 
+//			MailContainer mailContainer, DocumentEntry document, Integer days)
+//			throws BusinessException;
 	
 	
 	
