@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
@@ -100,7 +101,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	
 	@Override
-	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException {
+	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
 		
 		// add an entry for the file in DB
 		DocumentEntry entity = null;
@@ -108,6 +109,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			Document document = createDocument(owner, myFile, size, fileName, timeStampingUrl, mimeType);
 
 			DocumentEntry docEntry = new DocumentEntry(owner, fileName, document);
+			// We need to set an expiration date in case of file cleaner activation.
+			docEntry.setExpirationDate(expirationDate);
 
 			//aes encrypt ? check headers
 			if(checkIfIsCiphered) {
@@ -242,7 +245,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	
 	@Override
-	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException {
+	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
 		
 		//create and insert the thumbnail into the JCR
 		String uuidThmb = generateThumbnailIntoJCR(fileName, owner.getLsUuid(), myFile);
@@ -265,6 +268,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			
 			docEntry.setName(fileName);
 			docEntry.setDocument(document);
+			docEntry.setExpirationDate(expirationDate);
 			
 			//aes encrypt ? check headers
 			if(checkIfIsCiphered) {
@@ -283,15 +287,15 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		
 	
 	@Override
-	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl ) throws BusinessException {
+	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl, Calendar expirationDate ) throws BusinessException {
 		InputStream stream = getDocumentStream(originalEntry);
 		BufferedInputStream bufStream = new BufferedInputStream(stream);
 		
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getFileFromBufferedInputStream(bufStream, originalEntry.getName());
 		
-		DocumentEntry documentEntry = createDocumentEntry(owner, tempFile , originalEntry.getDocument().getSize(), 
-				originalEntry.getName(), originalEntry.getCiphered(), timeStampingUrl, originalEntry.getDocument().getType());
+		DocumentEntry documentEntry = createDocumentEntry(owner, tempFile , originalEntry.getDocument().getSize(), originalEntry.getName(), 
+				originalEntry.getCiphered(), timeStampingUrl, originalEntry.getDocument().getType(), expirationDate);
 		tempFile.delete(); // remove the temporary file
 		
 		return documentEntry;

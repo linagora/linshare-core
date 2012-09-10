@@ -36,4 +36,6 @@ public interface DocumentEntryRepository extends AbstractRepository<DocumentEntr
 	public List<DocumentEntry> findAllMyDocumentEntries(Account owner);
 	
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
+	
+	public List<DocumentEntry> findAllExpiredEntries();
 }

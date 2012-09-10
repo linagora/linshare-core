@@ -29,7 +29,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
@@ -84,8 +83,6 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 			}
 		};
 		
-		// from eg.Cat as cat where not exists ( from eg.Cat as mate where mate.mate = cat )
-		// SELECT * from anonymous_url where id not in (SELECT id from anonymous_url join anonymous_share_entry  on anonymous_url.id = anonymous_share_entry.anonymous_url_id);
 		return (List<AnonymousUrl>) getHibernateTemplate().execute(action);
 	}
 

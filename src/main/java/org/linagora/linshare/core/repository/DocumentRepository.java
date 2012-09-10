@@ -37,5 +37,5 @@ public interface DocumentRepository extends AbstractRepository<Document>{
      * @return found document (null if no document found).
      */
 	public Document findByUuid(String identifier);
-	  
+	
 }

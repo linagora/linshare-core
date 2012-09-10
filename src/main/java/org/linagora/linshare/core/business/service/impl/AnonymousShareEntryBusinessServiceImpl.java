@@ -73,6 +73,10 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 			anonymousShare = anonymousShareEntryRepository.create(share);
 			contact.getAnonymousShareEntries().add(anonymousShare);
 			contactRepository.update(contact);
+			
+			// If the current document was previously shared, we need to rest its expiration date
+			documentEntry.setExpirationDate(null);
+			
 			documentEntry.getAnonymousShareEntries().add(anonymousShare);
 			sender.getEntries().add(anonymousShare);
 			documentEntryRepository.update(documentEntry);

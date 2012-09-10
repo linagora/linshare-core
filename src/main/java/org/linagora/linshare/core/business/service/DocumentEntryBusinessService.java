@@ -3,6 +3,7 @@ package org.linagora.linshare.core.business.service;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -21,9 +22,9 @@ public interface DocumentEntryBusinessService {
 	 */
 	public String getMimeType(BufferedInputStream theFileStream)  throws BusinessException;
 	
-	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException;
+	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException;
 	
-	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType) throws BusinessException ;
+	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException ;
 	
 	public void deleteDocumentEntry(DocumentEntry documentEntry) throws BusinessException ;
 	
@@ -41,7 +42,7 @@ public interface DocumentEntryBusinessService {
 	
 	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException;
 	
-	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl) throws BusinessException;
+	public DocumentEntry duplicateDocumentEntry(DocumentEntry originalEntry, Account owner, String timeStampingUrl, Calendar expirationDate) throws BusinessException;
 
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
 	

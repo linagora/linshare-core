@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -73,7 +74,8 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 	public List<AnonymousShareEntry> findAllExpiredEntries() {
 		List<AnonymousShareEntry> entries = findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
         if (entries == null) {
-            return null;
+        	logger.error("the result is null ! this should not happen.");
+            return new ArrayList<AnonymousShareEntry>();
         } 
         return entries;
 	}

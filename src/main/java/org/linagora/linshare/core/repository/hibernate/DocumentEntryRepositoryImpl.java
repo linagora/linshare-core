@@ -22,6 +22,8 @@ package org.linagora.linshare.core.repository.hibernate;
 
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +35,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.springframework.orm.hibernate3.HibernateCallback;
@@ -124,5 +127,16 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		return result;
 	}
 	
+	
+
+	@Override
+	public List<DocumentEntry> findAllExpiredEntries() {
+		List<DocumentEntry> entries = findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
+        if (entries == null) {
+        	logger.error("the result is null ! this should not happen.");
+            return new ArrayList<DocumentEntry>();
+        }
+        return entries;
+	}
 	
 }

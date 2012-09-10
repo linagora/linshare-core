@@ -26,6 +26,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -34,6 +35,7 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
@@ -57,6 +59,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     
     private final DocumentEntryRepository documentEntryRepository;
     private final DocumentEntryService documentEntryService;
+    private final DocumentEntryBusinessService documentEntryBusinessService;
     
     private final AccountRepository<Account> accountRepository;
     
@@ -71,7 +74,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	
 	public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
 			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated, NotifierService notifierService,
-			MailContentBuildingService mailBuilder, FunctionalityService functionalityService, EntryService entryService) {
+			MailContentBuildingService mailBuilder, FunctionalityService functionalityService, EntryService entryService, DocumentEntryBusinessService documentEntryBusinessService) {
 		super();
 		this.documentRepository = documentRepository;
 		this.documentEntryRepository = documentEntryRepository;
@@ -83,6 +86,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		this.mailBuilder = mailBuilder;
 		this.functionalityService = functionalityService;
 		this.entryService = entryService;
+		this.documentEntryBusinessService = documentEntryBusinessService;
 	}
 
 	//    public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryService documentEntryService,
@@ -131,60 +135,47 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     	logger.debug("cleanOldDocuments : begin");
     	
     	if (!cronActivated) {
-    		logger.info("Documents cleaner batch launched but was told to be unactivated : stopping.");
+    		logger.info("Documents cleaner batch launched but was told to be unactivated (cf linshare.properties): stopping.");
     		return;
     	}
-    	
-    	logger.info("Documents cleaner batch launched.");
-    	
-    	List<Document> documents = documentRepository.findAll();
-    	
-    	Calendar now = GregorianCalendar.getInstance();
-//    	for (Document document : documents) {
-//			if (!document.getShared()) {
-//				if (document.getDeletionDate() == null) {
-//					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(document.getOwner().getDomain());
-//			    	
-//					if(!fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
-//						break;
-//					}
-//					
-//			    	Calendar deletionDate = (Calendar)document.getCreationDate().clone();
-//					deletionDate.add(fileExpirationTimeFunctionality.toCalendarValue(), fileExpirationTimeFunctionality.getValue());
-//					
-//					document.setDeletionDate(deletionDate);
-//					
-//					try {
-//						documentRepository.update(document);
-//						logger.info("Documents cleaner batch has set a file to be cleaned at "+(new Date(deletionDate.getTimeInMillis())).toString());
-//						
-//						final long MILISECOND_PER_DAY = 24 * 60 * 60 * 1000;
-//						int days = Math.round(Math.abs((deletionDate.getTimeInMillis()- now.getTimeInMillis())/MILISECOND_PER_DAY))+1;
-//						sendUpcomingDeletionNotification(document, days);
-//					} catch (Exception e) {
-//						logger.error("Documents cleaner batch error while updating deletion date : "+e.getMessage());
-//						e.printStackTrace();
-//					}
-//				} else {
-//					if (document.getDeletionDate().before(now)) {
-//						try {
-////							documentEntryService.deleteFile("system", document.getUuid(), Reason.EXPIRY);
-//							documentEntryService.deleteExpiratedDocumentEntry(document.getDocumentEntry().getUuid());
-//							logger.info("Documents cleaner batch has removed a file.");
-//						} catch (BusinessException e) {
-//							logger.error("Documents cleaner batch error when deleting expired file : "+e.getMessage());
-//							e.printStackTrace();
-//						}
-//					}
-//				}
-//			}
-//		}
-    	
+    	cleanExpiredDocumentEntries();
     	logger.info("Documents cleaner batch ended.");
-    	
     }
 
+	
+	private void cleanExpiredDocumentEntries() {
+		logger.info("Document entries cleaner batch launched.");
+    	
+    	List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
+    	SystemAccount systemAccount = accountRepository.getSystemAccount();
+    	Calendar now = GregorianCalendar.getInstance();
+    	
+    	for (DocumentEntry documentEntry : findAllExpiredEntries) {
+    		// we check if there is not related shares. Should not happen.
+    		if(documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
+    			
+    			TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(documentEntry.getEntryOwner().getDomain());
+    			if(fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
+					if (documentEntry.getExpirationDate().before(now)) {
+						try {
+							documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
+						} catch (BusinessException e) {
+							logger.error("Can't delete expired document entry : " + documentEntry.getUuid()  + " : " + e.getMessage() );
+							logger.debug(e.toString());
+						}
+    				}
+    			}
+    		} else {
+    			logger.warn("expired document with shares found : " + documentEntry.getUuid());
+    		}
+		}
+	}
+	
 	private void sendUpcomingDeletionNotification(DocumentEntry document, Integer days) {
+		final long MILISECOND_PER_DAY = 24 * 60 * 60 * 1000;
+//		int days = Math.round(Math.abs((deletionDate.getTimeInMillis()- now.getTimeInMillis())/MILISECOND_PER_DAY))+1;
+//		sendUpcomingDeletionNotification(document, days);
+
 		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
 		try {
 						

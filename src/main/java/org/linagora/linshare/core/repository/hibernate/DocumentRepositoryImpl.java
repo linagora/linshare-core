@@ -59,7 +59,4 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
             throw new IllegalStateException("Id must be unique");
         }
     }
-
-
-
 }

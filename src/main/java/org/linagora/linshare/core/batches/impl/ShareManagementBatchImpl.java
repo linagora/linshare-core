@@ -25,14 +25,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.linagora.linshare.core.batches.ShareManagementBatch;
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -138,25 +135,21 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 		long sum = documentEntryRepository.getRelatedEntriesCount(documentEntry);
 		TimeUnitBooleanValueFunctionality shareExpiryTimeFunctionality = functionalityService.getDefaultShareExpiryTimeFunctionality(domain);
 
-		
-		// we check if the current share is the last related entry to the document
-		if(sum -1 <= 0) {
-			// if this field is set, we must delete the document entry when the share entry is expired.
-			if(shareExpiryTimeFunctionality.isBool()) {
-				doDeleteDoc = true;
-				logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
-			} else {
-				
-				// We need to check if file expiration is enable to set deletion date.
-				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(domain);
-				if(fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
+		if(shareExpiryTimeFunctionality.getActivationPolicy().getStatus()) {
+			// we check if the current share is the last related entry to the document
+			if(sum -1 <= 0) {
+				// if this field is set, we must delete the document entry when the share entry is expired.
+				if(shareExpiryTimeFunctionality.isBool()) {
+					doDeleteDoc = true;
+					logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
+				} else {
+					
+					TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(domain);
 					
 					Calendar deletionDate = Calendar.getInstance();
-					// new GregorianCalendar()); ?
-					
 					deletionDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
 					documentEntry.setExpirationDate(deletionDate);
-					
+						
 					try {
 						documentEntryRepository.update(documentEntry);
 					} catch (IllegalArgumentException e) {
@@ -168,6 +161,8 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 					}
 				}
 			}
+		} else {
+			logger.warn("Share expiration is not enable.");
 		}
 		return doDeleteDoc;
 	}

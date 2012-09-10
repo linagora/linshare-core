@@ -3,6 +3,7 @@ package org.linagora.linshare.core.service.impl;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
+import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
@@ -98,9 +100,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		Functionality enciphermentFunctionality = functionalityService.getEnciphermentFunctionality(domain);
 		Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 		
-		DocumentEntry docEntry = documentEntryBusinessService.createDocumentEntry(actor, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType);
-		actor.getEntries().add(docEntry);
-		accountService.update(actor);
+		// We need to set an expiration date in case of file cleaner activation.
+		DocumentEntry docEntry = documentEntryBusinessService.createDocumentEntry(actor, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
 	
 		FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file", docEntry.getName(), docEntry.getDocument().getSize(), docEntry.getDocument().getType());
 		logEntryService.create(logEntry);
@@ -150,8 +151,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 		
 		
-		
-		documentEntryBusinessService.updateDocumentEntry(actor, documentEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType);
+		// We need to set an expiration date in case of file cleaner activation.
+		documentEntryBusinessService.updateDocumentEntry(actor, documentEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
 		
 		//put new file name in log
 		//if the file is updated/replaced with a new file (new file name)
@@ -168,6 +169,14 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 		tempFile.delete(); // remove the temporary file
 		return documentEntry;
+	}
+
+
+	private Calendar getDocumentExpirationDate(AbstractDomain domain) {
+		Calendar expirationDate = Calendar.getInstance();
+		TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(domain);
+		expirationDate.add(fileExpirationTimeFunctionality.toCalendarUnitValue(), fileExpirationTimeFunctionality.getValue());
+		return expirationDate;
 	}
 
 	
@@ -191,7 +200,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			 timeStampingUrl = timeStampingFunctionality.getValue();
 		}
 		
-		documentEntryBusinessService.duplicateDocumentEntry(documentEntry, actor, timeStampingUrl);
+		// We need to set an expiration date in case of file cleaner activation.
+		documentEntryBusinessService.duplicateDocumentEntry(documentEntry, actor, timeStampingUrl, getDocumentExpirationDate(domain));
 		
 		FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument().getType());
 		logEntryService.create(logEntry);

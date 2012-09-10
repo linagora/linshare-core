@@ -27,9 +27,9 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
-import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
+import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
@@ -126,6 +126,10 @@ public class TestPopup {
 	
 	@Inject
 	private AnonymousUrlRepository anonymousUrlRepository;
+	
+	@Inject
+	private DocumentEntryRepository documentEntryRepository;
+	
 	void onActionFromTest1()
     {
 		logger.debug("begin method onActionFromTest1");
@@ -137,7 +141,12 @@ public class TestPopup {
 	void onActionFromTest2()
     {
 		logger.debug("begin method onActionFromTest2");
-		shareManagementBatch.notifyUpcomingOutdatedShares();
+//		shareManagementBatch.notifyUpcomingOutdatedShares();
+		List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
+		logger.debug("findAllExpiredEntries size : " + findAllExpiredEntries.size());
+		for (DocumentEntry documentEntry : findAllExpiredEntries) {
+			logger.debug("documentEntry found : " + documentEntry.getId() + ':' + documentEntry.getUuid());
+		}
 		logger.debug("endmethod onActionFromTest2");
     }
 	
