@@ -32,50 +32,20 @@
             <h2>${threadName}</h2>
 
             <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes" t:options="{duration:0.3}">
-
-				<t:ListThreadDocument t:listThreadEntries="outInstructions" t:user="userVo" t:title="titleIns" />
+				<t:ListThreadDocument t:listThreadEntries="outInstructions" t:user="userVo" t:title="titleIns" t:listSelected="listSelected" />
                 <br />
-				<t:ListThreadDocument t:listThreadEntries="outContradictions" t:user="userVo" t:title="titleCon" />
+				<t:ListThreadDocument t:listThreadEntries="outContradictions" t:user="userVo" t:title="titleCon" t:listSelected="listSelected" />
                 <br />
-				<t:ListThreadDocument t:listThreadEntries="outRecommandations" t:user="userVo" t:title="titleRec" />
+				<t:ListThreadDocument t:listThreadEntries="outRecommandations" t:user="userVo" t:title="titleRec" t:listSelected="listSelected" />
                 <br />
-
-                <!--<h3>Instructions</h3>-->
-                <!--<t:grid source="outInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">-->
-                    <!--<p:empty>-->
-                    <!--</p:empty>-->
-                <!--</t:grid>-->
-                <!--<br />-->
-                <!--<h3>Contradictions</h3>-->
-                <!--<t:grid source="outContradictions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">-->
-                    <!--<p:empty>-->
-                    <!--</p:empty>-->
-                <!--</t:grid>-->
-                <!--<br />-->
-                <!--<h3>Recommandations</h3>-->
-                <!--<t:grid source="outRecommandations" row="entry" include="fileName,creationDate,size" rowsPerPage="10">-->
-                    <!--<p:empty>-->
-                    <!--</p:empty>-->
-                <!--</t:grid>-->
             </div>
             <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses" t:options="{duration:0.3}">
-                <h3>Instructions</h3>
-                <t:grid source="inInstructions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
-                    <p:empty>
-                    </p:empty>
-                </t:grid>
+				<t:ListThreadDocument t:listThreadEntries="inInstructions" t:user="userVo" t:title="titleIns" t:listSelected="listSelected" />
                 <br />
-                <h3>Contradictions</h3>
-                <t:grid source="inContradictions" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
-                    <p:empty>
-                    </p:empty>
-                </t:grid>
+				<t:ListThreadDocument t:listThreadEntries="inContradictions" t:user="userVo" t:title="titleCon" t:listSelected="listSelected" />
                 <br />
-                <h3>Recommandations</h3>
-                <t:grid source="inRecommandations" row="entry" include="fileName,creationDate,size" rowsPerPage="10">
-                    <p:empty>
-                    </p:empty>
-                </t:grid>
+				<t:ListThreadDocument t:listThreadEntries="inRecommandations" t:user="userVo" t:title="titleRec" t:listSelected="listSelected" />
+                <br />
             </div>
 		</div>
 
@@ -88,6 +58,15 @@
 
 
 	<!-- Widgets -->
+
+	<!-- Actions widget -->
+	<t:parameter name="actionsWidget">
+		<t:if test="entryExists">
+			<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
+				<t:ActionsBarThreadEntry t:user="userVo" t:formName="search" />
+			</t:widget>
+		</t:if>
+	</t:parameter>
 
 
 </t:MyBorderLayout>

@@ -74,6 +74,10 @@ public class ProjectThread {
     
     @Property
     private ThreadEntryVo entry;
+    
+    @Property
+    @Persist
+    private List<ThreadEntryVo> listSelected;
 
     @Property
     @Persist
@@ -111,20 +115,17 @@ public class ProjectThread {
 
     	threadName = selectedProject.getName();
     	threadFileUploadPopup.setMyCurrentThread(selectedProject);
+    	listSelected = listSelected == null ? new ArrayList<ThreadEntryVo>() : listSelected;
 
 		try {
 			List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, selectedProject);
 
-	    	outProjectEntries = new HashMap<String, List<ThreadEntryVo>>();		
+	    	outProjectEntries = new HashMap<String, List<ThreadEntryVo>>();
 			inProjectEntries = new HashMap<String, List<ThreadEntryVo>>();
 			
-			logger.debug("Looping through all thread entries");
 			for (ThreadEntryVo e : allThreadEntries) {
-				logger.debug("entry : " + e.toString());
 				List<TagVo> tags = e.getTags();
-				logger.debug("Looping through tags");
 				for (TagVo tag : tags) {
-					logger.debug("tag : " + tag.toString());
 					if (tag.getName().equals("Demande")) {
 						this.addToOutProjectEntries(e, tags);
 						break;
@@ -148,9 +149,7 @@ public class ProjectThread {
 
     private void addToOutProjectEntries(ThreadEntryVo e, List<TagVo> tags) {
     	logger.debug("Entering addToOutProjectEntries");
-    	logger.debug("Looping through tags : " + Arrays.toString(tags.toArray()));
     	for (TagVo tag : tags) {
-    		logger.debug("current tag is " + tag.toString() + "; current tag name is " + tag.getName());
     		if (tag.getName().equals("Phases")) {
     			String currentTag = tag.toString();
     			List<ThreadEntryVo> entries = outProjectEntries.get(currentTag);
@@ -158,7 +157,6 @@ public class ProjectThread {
     				outProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
     				entries = outProjectEntries.get(currentTag);
     			}
-    			logger.debug("adding to outbox : " + tag.toString() + " -> " + e.toString());
     			entries.add(e);
     		}
 		}
@@ -166,9 +164,7 @@ public class ProjectThread {
 
     private void addToInProjectEntries(ThreadEntryVo e, List<TagVo> tags) {
     	logger.debug("Entering addToInProjectEntries");
-    	logger.debug("Looping through tags : " + Arrays.toString(tags.toArray()));
     	for (TagVo tag : tags) {
-    		logger.debug("current tag is " + tag.toString() + "; current tag name is " + tag.getName());
     		if (tag.getName().equals("Phases")) {
     			String currentTag = tag.toString();
     			List<ThreadEntryVo> entries = inProjectEntries.get(currentTag);
@@ -176,7 +172,6 @@ public class ProjectThread {
     				inProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
     				entries = inProjectEntries.get(currentTag);
     			}
-    			logger.debug("adding to outbox : " + tag.toString() + " -> " + e.toString());
     			entries.add(e);
     		}
 		}
@@ -210,6 +205,10 @@ public class ProjectThread {
     // FIXME : ugly
     public List<ThreadEntryVo> getOutRecommandations() {
     	return outProjectEntries.get("Phases:Recommandation");
+    }
+    
+    public boolean getEntryExists() {
+    	return !(outProjectEntries.isEmpty() & inProjectEntries.isEmpty());
     }
 
     public void setMySelectedProject(ThreadVo selectedProject) {

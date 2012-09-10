@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<ul>
+
+		<!-- Action > Delete -->
+		<li>
+			<a href="#"
+				class="listDocument" onclick="setFormWithAction('${formName}','DELETE_ACTION');window_confirm_submit.showCenter(true)">
+				<img src="${asset:context:images/icons/delete-small.png}" alt=""/>
+				${message:components.listDocument.action.delete}
+				</a>
+		</li>
+
+	</ul>
+
+</t:container>

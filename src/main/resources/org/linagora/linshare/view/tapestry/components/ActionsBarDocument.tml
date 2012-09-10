@@ -23,7 +23,7 @@
 		</li>
 
 		<!-- Action > Sign -->
-		<t:if t:test="activeSignature">			
+		<t:if t:test="activeSignature">
 		<li>
 			<a href="#" onclick="submitFormWithAction('${formName}','SIGNATURE_ACTION');">
 				<img src="${asset:context:images/icons/sign-small.png}" alt="" />

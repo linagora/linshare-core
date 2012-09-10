@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -55,16 +56,20 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.utils.FileUtils;
+import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.models.SorterModel;
 import org.linagora.linshare.view.tapestry.models.impl.ThreadEntrySorterModel;
+import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
+import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
+import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+@Import(library= { "ListThreadDocument.js"})
 @SupportsInformalParameters
-@Import(library= { "ListDocument.js"})
 public class ListThreadDocument {
 
     private static final Logger logger = LoggerFactory.getLogger(ListThreadDocument.class);
@@ -89,6 +94,10 @@ public class ListThreadDocument {
     @Parameter(required=true,defaultPrefix=BindingConstants.PROP)
     @Property
     private String title;
+    
+    @Parameter(required=true,defaultPrefix=BindingConstants.PROP)
+    @Property
+    private List<ThreadEntryVo> listSelected;
 
 
     /***********************************
@@ -97,18 +106,20 @@ public class ListThreadDocument {
 
     @Property
     private ThreadEntryVo threadEntry;
-
-    @Property
-    @Persist
-    private List<ThreadEntryVo> listSelected;
     
     @Property
     private String login;
     
 	@Property
 	private boolean valueCheck;
+	
+	@Property
+	private String checkBoxGroupUuid;
     
-    private boolean filesSelected;
+	
+    @SuppressWarnings("unused")
+	private boolean filesSelected;
+    
 
     /***********************************
      * Service injection
@@ -140,6 +151,9 @@ public class ListThreadDocument {
     @Inject
 	private ComponentResources componentResources;
     
+    @Inject
+    private BusinessMessagesManagementService businessMessagesManagementService;
+    
     
     /***********************************
 	 * Flags
@@ -150,8 +164,20 @@ public class ListThreadDocument {
 	
 	@Persist
 	private List<ThreadEntryVo> entries;
+	
+	@Property
+	private String deleteConfirmed; // this is nasty, but i didn't find a proper
+									// workaround
 
 
+	
+
+	public ListThreadDocument() {
+		super();
+		checkBoxGroupUuid = "filesSelected_" + UUID.randomUUID().toString();
+	}
+	
+	
     /*********************************
      * Phase render
      *********************************/
@@ -163,10 +189,10 @@ public class ListThreadDocument {
     @SuppressWarnings("unchecked")
 	@SetupRender
     public void init() throws BusinessException {
+    	if (listThreadEntries == null)
+    		return;
     	Collections.sort(listThreadEntries);
-    	listSelected = new ArrayList<ThreadEntryVo>();
     	login = user.getLogin();
-    	
     	initModel();
     }
     
@@ -184,7 +210,7 @@ public class ListThreadDocument {
 		if (listThreadEntries == null) {
 			return null;
 		}
-
+		
 		ThreadEntryVo current = null;
 		for (ThreadEntryVo vo : listThreadEntries) {
 			if (vo.getIdentifier().equals(uuid)) {
@@ -192,14 +218,13 @@ public class ListThreadDocument {
 				break;
 			}
 		}
-
+		
 		if (current == null) {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,	"invalid uuid for this user");
 		} else {
 			InputStream stream = threadEntryFacade.retrieveFileStream(current, user);
 			return new FileStreamResponse(current, stream);
 		}
-
 	}
 	
 	
@@ -216,7 +241,19 @@ public class ListThreadDocument {
 			refreshFlag = true;
 		}
 	}
-    
+
+	public Object onSuccessFromSearch() {
+		if (listSelected.size() < 1) {
+			businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.NOFILE_SELECTED, MessageSeverity.WARNING));
+			return null;
+		}
+		if ("true".equals(deleteConfirmed)) {
+			componentResources.getContainer().getComponentResources().getContainer().getComponentResources().triggerEvent("eventDeleteFromListDocument", listSelected.toArray(), null);
+		}
+		return null;
+	}
+
+
 	/***************************************************************************
 	 * Other methods
 	 **************************************************************************/
@@ -241,13 +278,9 @@ public class ListThreadDocument {
 		model.add("fileProperties", null);
 		model.add("actions", null);
 		model.add("selectedValue", null);
-		model.add("updateDoc", null);
-        model.add("fileEdit", null);
 		
 		List<String> reorderlist = new ArrayList<String>();
 		reorderlist.add("fileProperties");
-		reorderlist.add("updateDoc");
-        reorderlist.add("fileEdit");
 		reorderlist.add("actions");
 		model.reorder(reorderlist.toArray(new String[reorderlist.size()]));
 
