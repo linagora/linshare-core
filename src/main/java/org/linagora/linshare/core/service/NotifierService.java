@@ -58,5 +58,7 @@ public interface NotifierService {
      * @throws BusinessException 
      */
     public void sendAllNotifications(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException;
+    
+    public void sendAllNotification(MailContainerWithRecipient mailContainerWithRecipient) throws BusinessException;
   
 }

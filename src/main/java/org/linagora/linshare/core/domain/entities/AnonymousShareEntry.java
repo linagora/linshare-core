@@ -43,6 +43,10 @@ public class AnonymousShareEntry extends Entry{
 	public void setDownloaded(Long downloaded) {
 		this.downloaded = downloaded;
 	}
+	
+	public void incrementDownload() {
+		downloaded+=1;
+	}
 
 	public DocumentEntry getDocumentEntry() {
 		return documentEntry;

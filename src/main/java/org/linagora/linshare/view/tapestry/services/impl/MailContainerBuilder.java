@@ -26,7 +26,6 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ValidationMessagesSource;
-import org.linagora.linshare.core.domain.constants.GroupMembershipStatus;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -62,9 +61,6 @@ public class MailContainerBuilder {
     	Messages messages = validationMessagesSource.getValidationMessages(locale);
     	
     	MailContainer mailContainer = new MailContainer(customMessage, language);
-    	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.ACCEPTED.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.ACCEPTED.toString()));
-    	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.REJECTED.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.REJECTED.toString()));
-    	mailContainer.addData("GroupMembershipStatus."+GroupMembershipStatus.WAITING_APPROVAL.toString(), messages.get("GroupMembershipStatus."+GroupMembershipStatus.WAITING_APPROVAL.toString()));
     	return mailContainer;
 	}
 }

@@ -74,144 +74,144 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 
     }
 
-    @Test
-    public void testSendNotification() throws MessagingException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-
-    	String subject = "subject";
-    	String txtContent = "content";
-    	
-    	String fromUser = "foobar@foodomain.com";
-    	String recipient = "johndoe@unknow.com";
-    	
-    	MailContainer mailContainer = new MailContainer(subject,txtContent,"");
-    	
-    	mailNotifierService.sendNotification(fromUser, recipient, mailContainer);
-    	
-    	
-        if (wiser.getMessages().size() > 0) {
-            WiserMessage wMsg = wiser.getMessages().get(0);
-            MimeMessage msg = wMsg.getMimeMessage();
-
-            assertNotNull("message was null", msg);
-            assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
-            assertEquals("'To' address did not match", recipient,
-                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", fromUser,
-                    msg.getReplyTo()[0].toString());
-        }else{
-        	Assert.fail();
-        }
-        
-        mailNotifierService.sendNotification(fromUser, recipient, subject, "<span>htmlContent</span>", txtContent);
-        
-        if (wiser.getMessages().size() > 0) {
-            WiserMessage wMsg = wiser.getMessages().get(1);
-            MimeMessage msg = wMsg.getMimeMessage();
-
-            assertNotNull("message was null", msg);
-            assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
-            assertEquals("'To' address did not match", recipient,
-                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", fromUser,
-                    msg.getReplyTo()[0].toString());
-        }else{
-        	logger.error("No mail received");
-        	Assert.fail();
-        }
-        
-		logger.debug(LinShareTestConstants.END_TEST);
-    }
-    
-    @Test
-    public void testSendAllNotifications() throws MessagingException, BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-
-    	String subject = "subject";
-    	String contentTxt = "content";
-    	String contentHTML = "contentHTML";
-    	
-    	String fromUser = "foobar@foodomain.com";
-    	String recipient = "johndoe@unknow.com";
-    	String recipient2 = "janesmith@unknow.com";
-    	
-    	MailContainer mailContainer = new MailContainer(subject,contentTxt,contentHTML);
-    	
-    	MailContainerWithRecipient mailContainerWithRecipient = new MailContainerWithRecipient(mailContainer, recipient);;
-    	MailContainerWithRecipient mailContainerWithRecipient2 = new MailContainerWithRecipient(mailContainer, recipient2);;
-
-    	List<MailContainerWithRecipient> mailContainerWithRecipientList = new ArrayList<MailContainerWithRecipient>();
-    	
-		mailContainerWithRecipientList.add(mailContainerWithRecipient);
-		mailContainerWithRecipientList.add(mailContainerWithRecipient2);
-		
-		mailNotifierService.sendAllNotifications(mailContainerWithRecipientList);
-    	
-    	
-        if (wiser.getMessages().size() > 0) {
-            WiserMessage wMsg = wiser.getMessages().get(0);
-            MimeMessage msg = wMsg.getMimeMessage();
-
-            assertNotNull("message was null", msg);
-            assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
-            assertEquals("'To' address did not match", recipient,
-                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
-                    msg.getReplyTo()[0].toString());
-            
-            wMsg = wiser.getMessages().get(1);
-            msg = wMsg.getMimeMessage();
-
-            assertNotNull("message was null", msg);
-            assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
-            assertEquals("'To' address did not match", recipient2,
-                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
-                    msg.getReplyTo()[0].toString());
-            
-        }else{
-        	logger.error("No mail received");
-        	Assert.fail();
-        }
-        
-        mailContainerWithRecipientList.get(0).setReplyTo(fromUser);
-        mailContainerWithRecipientList.get(1).setReplyTo(fromUser);
-		mailNotifierService.sendAllNotifications(mailContainerWithRecipientList);
-    	
-    	
-        if (wiser.getMessages().size() > 0) {
-            WiserMessage wMsg = wiser.getMessages().get(2);
-            MimeMessage msg = wMsg.getMimeMessage();
-
-            assertNotNull("message was null", msg);
-            assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
-            assertEquals("'To' address did not match", recipient,
-                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", fromUser,
-                    msg.getReplyTo()[0].toString());
-            
-            wMsg = wiser.getMessages().get(3);
-            msg = wMsg.getMimeMessage();
-
-            assertNotNull("message was null", msg);
-            assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
-            assertEquals("'To' address did not match", recipient2,
-                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
-            assertEquals("'ReplyTo' address did not match", fromUser,
-                    msg.getReplyTo()[0].toString());
-            
-        }else{
-        	logger.error("No mail received");
-        	Assert.fail();
-        }
-		logger.debug(LinShareTestConstants.END_TEST);
-
-    }
+//    @Test
+//    public void testSendNotification() throws MessagingException{
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//
+//    	String subject = "subject";
+//    	String txtContent = "content";
+//    	
+//    	String fromUser = "foobar@foodomain.com";
+//    	String recipient = "johndoe@unknow.com";
+//    	
+//    	MailContainer mailContainer = new MailContainer(subject,txtContent,"");
+//    	
+//    	mailNotifierService.sendNotification(fromUser, recipient, mailContainer);
+//    	
+//    	
+//        if (wiser.getMessages().size() > 0) {
+//            WiserMessage wMsg = wiser.getMessages().get(0);
+//            MimeMessage msg = wMsg.getMimeMessage();
+//
+//            assertNotNull("message was null", msg);
+//            assertEquals("'Subject' did not match", subject, msg.getSubject());
+//            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+//            assertEquals("'To' address did not match", recipient,
+//                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
+//            assertEquals("'ReplyTo' address did not match", fromUser,
+//                    msg.getReplyTo()[0].toString());
+//        }else{
+//        	Assert.fail();
+//        }
+//        
+//        mailNotifierService.sendNotification(fromUser, recipient, subject, "<span>htmlContent</span>", txtContent);
+//        
+//        if (wiser.getMessages().size() > 0) {
+//            WiserMessage wMsg = wiser.getMessages().get(1);
+//            MimeMessage msg = wMsg.getMimeMessage();
+//
+//            assertNotNull("message was null", msg);
+//            assertEquals("'Subject' did not match", subject, msg.getSubject());
+//            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+//            assertEquals("'To' address did not match", recipient,
+//                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
+//            assertEquals("'ReplyTo' address did not match", fromUser,
+//                    msg.getReplyTo()[0].toString());
+//        }else{
+//        	logger.error("No mail received");
+//        	Assert.fail();
+//        }
+//        
+//		logger.debug(LinShareTestConstants.END_TEST);
+//    }
+//    
+//    @Test
+//    public void testSendAllNotifications() throws MessagingException, BusinessException{
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//
+//    	String subject = "subject";
+//    	String contentTxt = "content";
+//    	String contentHTML = "contentHTML";
+//    	
+//    	String fromUser = "foobar@foodomain.com";
+//    	String recipient = "johndoe@unknow.com";
+//    	String recipient2 = "janesmith@unknow.com";
+//    	
+//    	MailContainer mailContainer = new MailContainer(subject,contentTxt,contentHTML);
+//    	
+//    	MailContainerWithRecipient mailContainerWithRecipient = new MailContainerWithRecipient(mailContainer, recipient);;
+//    	MailContainerWithRecipient mailContainerWithRecipient2 = new MailContainerWithRecipient(mailContainer, recipient2);;
+//
+//    	List<MailContainerWithRecipient> mailContainerWithRecipientList = new ArrayList<MailContainerWithRecipient>();
+//    	
+//		mailContainerWithRecipientList.add(mailContainerWithRecipient);
+//		mailContainerWithRecipientList.add(mailContainerWithRecipient2);
+//		
+//		mailNotifierService.sendAllNotifications(mailContainerWithRecipientList);
+//    	
+//    	
+//        if (wiser.getMessages().size() > 0) {
+//            WiserMessage wMsg = wiser.getMessages().get(0);
+//            MimeMessage msg = wMsg.getMimeMessage();
+//
+//            assertNotNull("message was null", msg);
+//            assertEquals("'Subject' did not match", subject, msg.getSubject());
+//            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+//            assertEquals("'To' address did not match", recipient,
+//                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
+//            assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
+//                    msg.getReplyTo()[0].toString());
+//            
+//            wMsg = wiser.getMessages().get(1);
+//            msg = wMsg.getMimeMessage();
+//
+//            assertNotNull("message was null", msg);
+//            assertEquals("'Subject' did not match", subject, msg.getSubject());
+//            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+//            assertEquals("'To' address did not match", recipient2,
+//                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
+//            assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
+//                    msg.getReplyTo()[0].toString());
+//            
+//        }else{
+//        	logger.error("No mail received");
+//        	Assert.fail();
+//        }
+//        
+//        mailContainerWithRecipientList.get(0).setReplyTo(fromUser);
+//        mailContainerWithRecipientList.get(1).setReplyTo(fromUser);
+//		mailNotifierService.sendAllNotifications(mailContainerWithRecipientList);
+//    	
+//    	
+//        if (wiser.getMessages().size() > 0) {
+//            WiserMessage wMsg = wiser.getMessages().get(2);
+//            MimeMessage msg = wMsg.getMimeMessage();
+//
+//            assertNotNull("message was null", msg);
+//            assertEquals("'Subject' did not match", subject, msg.getSubject());
+//            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+//            assertEquals("'To' address did not match", recipient,
+//                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
+//            assertEquals("'ReplyTo' address did not match", fromUser,
+//                    msg.getReplyTo()[0].toString());
+//            
+//            wMsg = wiser.getMessages().get(3);
+//            msg = wMsg.getMimeMessage();
+//
+//            assertNotNull("message was null", msg);
+//            assertEquals("'Subject' did not match", subject, msg.getSubject());
+//            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+//            assertEquals("'To' address did not match", recipient2,
+//                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
+//            assertEquals("'ReplyTo' address did not match", fromUser,
+//                    msg.getReplyTo()[0].toString());
+//            
+//        }else{
+//        	logger.error("No mail received");
+//        	Assert.fail();
+//        }
+//		logger.debug(LinShareTestConstants.END_TEST);
+//
+//    }
     
 }

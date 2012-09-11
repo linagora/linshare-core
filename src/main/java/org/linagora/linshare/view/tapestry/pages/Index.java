@@ -168,8 +168,7 @@ public class Index {
         String uuid = (String) object[0];
         
         ShareDocumentVo shareddoc = searchShareVoByUUid(uuid);
-        MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
-        shareFacade.deleteSharing(shareddoc, userVo, mailContainer);
+        shareFacade.deleteSharing(shareddoc, userVo);
         resetListFiles(null);
     }
     
@@ -178,8 +177,7 @@ public class Index {
 		 
 		for(Object currentObject:object){
 			ShareDocumentVo share = (ShareDocumentVo)currentObject;
-			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
-	        shareFacade.deleteSharing(share, userVo, mailContainer);
+	        shareFacade.deleteSharing(share, userVo);
 	        resetListFiles(null);
 		}
 	}

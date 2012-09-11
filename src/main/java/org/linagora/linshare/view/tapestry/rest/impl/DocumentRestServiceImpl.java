@@ -191,8 +191,7 @@ public class DocumentRestServiceImpl implements DocumentRestService {
 		if (docVo!= null ) {
 
 			try {
-                                MailContainer mC = mailContainerBuilder.buildMailContainer(actor, null);
-				documentFacade.removeDocument(actor,docVo,mC);
+				documentFacade.removeDocument(actor,docVo);
 				response.setStatus(HttpStatus.SC_OK);
 			} catch (BusinessException e) {
 				logger.error("Could not remove document " + uuid +" for user " + actor.getMail() + " : " + e.getMessage() );

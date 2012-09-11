@@ -254,10 +254,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 * Send notification giving a mailContainer object.
 	 */
 	@Override
-	public void sendNotification(String replyTo, String recipient,
-			MailContainer mailContainer) throws SendFailedException{
-		sendNotification(replyTo, recipient, mailContainer.getSubject(),
-				mailContainer.getContentHTML(), mailContainer.getContentTXT());
+	public void sendNotification(String replyTo, String recipient, MailContainer mailContainer) throws SendFailedException{
+		sendNotification(replyTo, recipient, mailContainer.getSubject(), mailContainer.getContentHTML(), mailContainer.getContentTXT());
 
 	}
 	
@@ -283,5 +281,18 @@ public class MailNotifierServiceImpl implements NotifierService {
 			throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
 		}
 	}	
+	
+	
+	@Override
+	public void sendAllNotification(MailContainerWithRecipient mailContainer) throws BusinessException {
+		
+		try {
+			sendNotification(mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
+		} catch (SendFailedException e) {
+			logger.error("Addresses unreachables : " + mailContainer.getRecipient());
+			throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable " + mailContainer.getRecipient());
+		}
+	}	
+
 
 }

@@ -141,13 +141,14 @@ public class TestPopup {
 	void onActionFromTest2()
     {
 		logger.debug("begin method onActionFromTest2");
-//		shareManagementBatch.notifyUpcomingOutdatedShares();
-		List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
-		logger.debug("findAllExpiredEntries size : " + findAllExpiredEntries.size());
-		for (DocumentEntry documentEntry : findAllExpiredEntries) {
-			logger.debug("documentEntry found : " + documentEntry.getId() + ':' + documentEntry.getUuid());
-		}
-		logger.debug("endmethod onActionFromTest2");
+		shareManagementBatch.notifyUpcomingOutdatedShares();
+		
+//		List<DocumentEntry> findAllExpiredEntries = documentEntryRepository.findAllExpiredEntries();
+//		logger.debug("findAllExpiredEntries size : " + findAllExpiredEntries.size());
+//		for (DocumentEntry documentEntry : findAllExpiredEntries) {
+//			logger.debug("documentEntry found : " + documentEntry.getId() + ':' + documentEntry.getUuid());
+//		}
+//		logger.debug("endmethod onActionFromTest2");
     }
 	
 	

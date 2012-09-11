@@ -13,6 +13,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface AnonymousShareEntryBusinessService {
 	
 	public AnonymousShareEntry findByUuid(String uuid);
+	
+	public AnonymousShareEntry findByUuidForDownload(String uuid) throws BusinessException;
 
 	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected) throws BusinessException;
 	

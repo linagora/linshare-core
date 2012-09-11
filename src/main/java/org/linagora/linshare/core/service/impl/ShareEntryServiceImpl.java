@@ -10,9 +10,9 @@ import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
@@ -136,18 +136,18 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public void deleteShare(Account actor, String shareUuid, MailContainer mailContainer) throws BusinessException {
+	public void deleteShare(Account actor, String shareUuid) throws BusinessException {
 		ShareEntry share = shareEntryBusinessService.findByUuid(shareUuid);
 		if(share == null) {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		deleteShare(actor, share, mailContainer);
+		deleteShare(actor, share);
 	}
 	
 
 	@Override
-	public void deleteShare(Account actor, ShareEntry share, MailContainer mailContainer) throws BusinessException {
+	public void deleteShare(Account actor, ShareEntry share) throws BusinessException {
 		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() ) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 	        logEntryService.create(logEntry);
@@ -155,12 +155,8 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	        logger.info("delete share : " + share.getUuid());
 	        shareEntryBusinessService.deleteShare(share);
 	        
-	        if(mailContainer != null) {
-	        	List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-	        	mailContainerWithRecipient.add(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(mailContainer, share, actor));
-	        	notifierService.sendAllNotifications(mailContainerWithRecipient);
-	        }
-	        
+        	notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(actor, share));
+        
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
@@ -169,8 +165,18 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	
 	
 	@Override
-	public void deleteShare(Account actor, ShareEntry share) throws BusinessException {
-		this.deleteShare(actor, share, null);
+	public void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() ) {
+			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
+	        logEntryService.create(logEntry);
+	        
+	        logger.info("delete share : " + share.getUuid());
+	        shareEntryBusinessService.deleteShare(share);
+	        
+		} else {
+			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
+		}
 	}
 	
 
@@ -308,23 +314,21 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 
 	@Override
-	public void sendDocumentEntryUpdateNotification(Account actor, ShareEntry shareEntry, String friendlySize, String originalFileName, MailContainer mailContainer) {
-		// TODO send notification for DocumentEntry update
-		//	mailContainerWithRecipient.add(mailElementsFactory.buildMailSharedDocUpdatedWithRecipient(user, mailContainer, user, share.getReceiver(), doc, oldFileName, fileSizeTxt, sUrlDownload, ""));
-		//	notifierService.sendAllNotifications(mailContainerWithRecipient);
-		
+	public void sendDocumentEntryUpdateNotification(ShareEntry shareEntry, String friendlySize, String originalFileName) {
+		try {
+			notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedDocumentUpdated(shareEntry, originalFileName, friendlySize));
+		} catch (BusinessException e) {
+			logger.error("Error while trying to notify document update ", e);
+		}
 	}
-
+	
 
 	@Override
 	public void sendUpcomingOutdatedShareEntryNotification(SystemAccount actor, ShareEntry shareEntry, Integer days) {
 		try {
-			notifierService.sendAllNotifications(mailContentBuildingService.buildMailUpcomingOutdatedShareWithOneRecipient(shareEntry, days));
+			notifierService.sendAllNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
 		} catch (BusinessException e) {
 				logger.error("Error while trying to notify upcoming outdated share", e);
 		}
-		
 	}
-	
-	
 }

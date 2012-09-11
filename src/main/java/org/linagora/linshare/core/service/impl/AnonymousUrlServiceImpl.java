@@ -101,6 +101,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid, String password, MailContainer mailContainer) throws BusinessException {
 		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.getAnonymousUrl(anonymousUrlUuid);
 		if(isValid(anonymousUrl, password)) {
+			// anonymous share are not made with a thousand contacts, performance will not be poor most of the time.
 			for (AnonymousShareEntry anonymousShareEntry : anonymousUrl.getAnonymousShareEntries()) {
 				if(anonymousShareEntry.getUuid().equals(anonymousShareEntryUuid)) {
 					return anonymousShareEntryService.getAnonymousShareEntryStream(anonymousShareEntry.getUuid(), mailContainer);

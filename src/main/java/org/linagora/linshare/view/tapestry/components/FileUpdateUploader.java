@@ -149,10 +149,10 @@ public class FileUpdateUploader {
                     
                 	DocumentVo initialdocument = documentFacade.getDocument(userDetails.getLogin(), uuidDocToUpdate);
                 	
-                	MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userDetails, null);
                 	String filesizeTxt = FileUtils.getFriendlySize(initialdocument.getSize(), messages);
+                	
                     DocumentVo document  =  documentFacade.updateDocumentContent(uuidDocToUpdate, uploadedFile.getStream(), uploadedFile.getSize(),
-                            uploadedFile.getFileName(), userDetails, mailContainer, null);
+                            uploadedFile.getFileName(), userDetails, filesizeTxt);
                     
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_UPDATE_FILE_CONTENT_OK,
                         MessageSeverity.INFO, initialdocument.getFileName(),uploadedFile.getFileName()));

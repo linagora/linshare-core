@@ -11,6 +11,7 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AnonymousShareEntryRepository;
 import org.linagora.linshare.core.repository.ContactRepository;
@@ -47,6 +48,23 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 	}
 
 	
+	
+	@Override
+	public AnonymousShareEntry findByUuidForDownload(String uuid) throws BusinessException {
+		AnonymousShareEntry shareEntry = anonymousShareEntryRepository.findById(uuid);
+		if(shareEntry == null) {
+			logger.error("Share not found : " + uuid);
+			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + uuid);
+		}
+		
+		// update count
+		shareEntry.incrementDownload();
+		anonymousShareEntryRepository.update(shareEntry);
+		
+		return shareEntry;
+	}
+
+
 	public AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact recipient, Calendar expirationDate) throws BusinessException {
 		
 		AnonymousShareEntry anonymousShare = null;

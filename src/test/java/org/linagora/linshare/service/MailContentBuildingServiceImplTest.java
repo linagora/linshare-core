@@ -191,67 +191,67 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 //	}
 
 	
-	@Test
-	public void testBuildMailNewGuest() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		List<Document> docs = new ArrayList<Document>();
-		docs.add(aDocument);
-		
-		String email = john.getMail();
-		User recipient = jane;
-		
-		// buildMailNewGuest
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailNewGuest(actor, mailContainer, john, recipient, "password");
-		testMailGenerate(mailContainerBuild);
-
-		// buildMailNewGuestWithRecipient
-		mailContainerBuild =  mailContentBuildingService.buildMailNewGuestWithRecipient(actor, mailContainer, john, recipient, "password");
-		testMailGenerate(mailContainerBuild);
-		
-		// buildMailNewGuestWithOneRecipient
-		List<MailContainerWithRecipient> mailContainerBuildList = mailContentBuildingService.buildMailNewGuestWithOneRecipient(actor, mailContainer, john, recipient, "password");
-		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
-			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
-			testMailGenerate(mailContainerWithRecipient);
-		}
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void testBuildMailResetPassword() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		User actor = john;
-		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
-		mailContainer.setLanguage(Language.FRENCH);
-		List<Document> docs = new ArrayList<Document>();
-		docs.add(aDocument);
-		
-		String email = john.getMail();
-		User recipient = jane;
-		
-		// buildMailResetPassword
-		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailResetPassword(actor, mailContainer, recipient, "password");
-		testMailGenerate(mailContainerBuild);
-
-		// buildMailResetPasswordWithRecipient
-		mailContainerBuild =  mailContentBuildingService.buildMailResetPasswordWithRecipient(actor, mailContainer, recipient, "password");
-		testMailGenerate(mailContainerBuild);
-		
-		// buildMailResetPasswordWithOneRecipient
-		List<MailContainerWithRecipient> mailContainerBuildList = mailContentBuildingService.buildMailResetPasswordWithOneRecipient(actor, mailContainer, recipient, "password");
-		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
-			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
-			testMailGenerate(mailContainerWithRecipient);
-		}
-		
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
+//	@Test
+//	public void testBuildMailNewGuest() throws BusinessException{
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		
+//		User actor = john;
+//		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
+//		mailContainer.setLanguage(Language.FRENCH);
+//		List<Document> docs = new ArrayList<Document>();
+//		docs.add(aDocument);
+//		
+//		String email = john.getMail();
+//		User recipient = jane;
+//		
+//		// buildMailNewGuest
+//		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailNewGuest(actor, mailContainer, john, recipient, "password");
+//		testMailGenerate(mailContainerBuild);
+//
+//		// buildMailNewGuestWithRecipient
+//		mailContainerBuild =  mailContentBuildingService.buildMailNewGuestWithRecipient(actor, mailContainer, john, recipient, "password");
+//		testMailGenerate(mailContainerBuild);
+//		
+//		// buildMailNewGuestWithOneRecipient
+//		List<MailContainerWithRecipient> mailContainerBuildList = mailContentBuildingService.buildMailNewGuestWithOneRecipient(actor, mailContainer, john, recipient, "password");
+//		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
+//			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
+//			testMailGenerate(mailContainerWithRecipient);
+//		}
+//		
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
+//	
+//	@Test
+//	public void testBuildMailResetPassword() throws BusinessException{
+//		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		
+//		User actor = john;
+//		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
+//		mailContainer.setLanguage(Language.FRENCH);
+//		List<Document> docs = new ArrayList<Document>();
+//		docs.add(aDocument);
+//		
+//		String email = john.getMail();
+//		User recipient = jane;
+//		
+//		// buildMailResetPassword
+//		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailResetPassword(actor, mailContainer, recipient, "password");
+//		testMailGenerate(mailContainerBuild);
+//
+//		// buildMailResetPasswordWithRecipient
+//		mailContainerBuild =  mailContentBuildingService.buildMailResetPasswordWithRecipient(actor, mailContainer, recipient, "password");
+//		testMailGenerate(mailContainerBuild);
+//		
+//		// buildMailResetPasswordWithOneRecipient
+//		List<MailContainerWithRecipient> mailContainerBuildList = mailContentBuildingService.buildMailResetPasswordWithOneRecipient(actor, mailContainer, recipient, "password");
+//		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
+//			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
+//			testMailGenerate(mailContainerWithRecipient);
+//		}
+//		
+//		logger.debug(LinShareTestConstants.END_TEST);
+//	}
 	
 //	@Test
 //	public void testBuildMailNewSharing() throws BusinessException{

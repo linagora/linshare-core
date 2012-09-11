@@ -36,7 +36,16 @@ public class MailContainerWithRecipient extends MailContainer {
 	private String recipient;
 	private String replyTo;
 
+	private StringBuffer bufferTXT = new StringBuffer();
+	private StringBuffer bufferHTML = new StringBuffer();
 
+	
+	public MailContainerWithRecipient(MailContainerWithRecipient mailContainer) {
+		super(mailContainer);
+		this.recipient		=	mailContainer.getRecipient();
+		this.replyTo 		=	mailContainer.getReplyTo();
+	}
+	
 	/**
 	 * Copy constructor
 	 * 
@@ -44,18 +53,6 @@ public class MailContainerWithRecipient extends MailContainer {
 	 */
 	public MailContainerWithRecipient(MailContainer mailContainer, String recipient) {
 		super(mailContainer);
-		this.recipient=recipient;
-	}
-	
-	/**
-	 * Constructor provided for testing purpose.
-	 * 
-	 * @param subject
-	 * @param contentTxt
-	 * @param contentHTML
-	 */
-	public MailContainerWithRecipient(String subject, String contentTxt, String contentHTML, String recipient) {
-		super(subject, contentTxt, contentHTML);
 		this.recipient=recipient;
 	}
 
@@ -68,6 +65,10 @@ public class MailContainerWithRecipient extends MailContainer {
 	 */
 	public MailContainerWithRecipient(String personalMessage, Language language) {
 		super(personalMessage, language);
+	}
+	
+	public MailContainerWithRecipient(String locale) {
+		super(locale);
 	}
 	
 	
@@ -86,4 +87,36 @@ public class MailContainerWithRecipient extends MailContainer {
 	public void setReplyTo(String replyTo) {
 		this.replyTo = replyTo;
 	}
+	
+	
+	/**
+	 * Stuffs 
+	 */
+	
+	
+	public void appendTemplate(MailTemplate template) {
+		bufferTXT.append(template.getContentTXT() + "\n");
+		bufferHTML.append(template.getContentHTML() + "<br/>");
+	}
+	
+
+	@Override
+	public String getContentTXT() {
+		contentTXT = bufferTXT.toString();
+		return super.getContentTXT();
+	}
+
+	@Override
+	public String getContentHTML() {
+		contentHTML= bufferHTML.toString();
+		return super.getContentHTML();
+	}
+	
+	public void setMailSubject(MailSubject mailSubject) {
+		this.subject = mailSubject.getContent();
+	}
+	
+	
+	
+	
 }

@@ -30,7 +30,6 @@ import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
@@ -101,10 +100,10 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 
 	@Override
-	public void removeDocument(UserVo actorVo, DocumentVo document, MailContainer mailContainer) throws BusinessException {
+	public void removeDocument(UserVo actorVo, DocumentVo document) throws BusinessException {
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		if(actor != null) {
-			entryService.deleteAllShareEntriesWithDocumentEntry(actor, document.getIdentifier(), mailContainer);
+			entryService.deleteAllShareEntriesWithDocumentEntry(actor, document.getIdentifier());
 		} else {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
 		}
@@ -309,7 +308,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	}
 	
 	@Override
-	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo, MailContainer mailContainer, String friendlySize) throws BusinessException {
+	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo, String friendlySize) throws BusinessException {
 		Account actor = accountService.findByLsUid(ownerVo.getLsUid());
 		
 		DocumentEntry originalEntry = documentEntryService.findById(actor, currentFileUUID);
@@ -317,8 +316,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		
 		DocumentEntry documentEntry = documentEntryService.updateDocumentEntry(actor, currentFileUUID, file, size, fileName);
 		if(documentEntry.isShared()){
-			//send email file has been replaced ....
-			entryService.sendSharedUpdateDocNotification(actor, documentEntry, friendlySize, originalFileName, mailContainer);
+			//send email, file has been replaced ....
+			entryService.sendSharedUpdateDocNotification(documentEntry, friendlySize, originalFileName);
 		}
            
 		return documentEntryTransformer.disassemble(documentEntry);

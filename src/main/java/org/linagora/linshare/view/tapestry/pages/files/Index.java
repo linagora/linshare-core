@@ -276,8 +276,7 @@ public class Index {
 		boolean flagError=false;
 		for(Object currentObject:object){
 			try {
-				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
-				documentFacade.removeDocument(userVo,((DocumentVo)currentObject), mailContainer);
+				documentFacade.removeDocument(userVo,((DocumentVo)currentObject));
 				
 			} catch (BusinessException e) {
 				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"),
@@ -495,8 +494,7 @@ public class Index {
 	
 			DocumentVo documentVo=getDocumentByUUIDInList((String)object[0]);
 			if(null!=documentVo){
-				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, null);
-				documentFacade.removeDocument(userVo, documentVo, mailContainer);
+				documentFacade.removeDocument(userVo, documentVo);
 				shareSessionObjects.removeDocument(documentVo);
 				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),
 						documentVo.getFileName()) );

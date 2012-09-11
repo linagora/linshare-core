@@ -23,12 +23,12 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.entities.Share;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -82,30 +82,6 @@ public interface MailContentBuildingService {
 			throws BusinessException;
 
 
-//	/**
-//	 * Notify a user that received a share that the share will soon be deleted
-//	 */
-//	public MailContainer buildMailUpcomingOutdatedShare(User actor,
-//			MailContainer mailContainer, Share share, Integer days) 
-//			throws BusinessException;
-	
-
-	/**
-	 * Notify a user that an outdated document will be soon deleted (secured storage disabled)
-	 */
-	public MailContainer buildMailUpcomingOutdatedDocument(User actor,
-			MailContainer mailContainer, DocumentEntry document, Integer days) throws BusinessException;
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * WithRecipicient Functions
-	 */
 	
 	
 	
@@ -157,34 +133,77 @@ public interface MailContentBuildingService {
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor, MailContainer mailContainer, Contact recipient, List<String> docNames, AnonymousUrl anonymousUrl, boolean hasToDecrypt) throws BusinessException;
 
 	
-	/**
-	 * Notify a user that a received shared file is about to be deleted by its owner.
-	 * @param actor TODO
-	 */
-	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(MailContainer mailContainer, ShareEntry share, Account actor) throws BusinessException;
-
-	/**
-	 * Notify a user that received a share that the share will soon be deleted
-	 */
-//	public MailContainerWithRecipient buildMailUpcomingOutdatedSecuredUrlWithRecipient(User actor,
-//			MailContainer mailContainer, SecuredUrl securedUrl,
-//			Contact recipient, Integer days, String securedUrlWithParam) throws BusinessException;
-
-//	public MailContainerWithRecipient buildMailUpcomingOutdatedShareWithRecipient(User actor,
-//			MailContainer mailContainer, Share share, Integer days) 
-//			throws BusinessException;
 	
-	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedShareWithOneRecipient(ShareEntry shareEntry, Integer days) throws BusinessException;	
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Notify a user that an outdated document will be soon deleted (secured storage disabled)
 	 */
-//	public MailContainerWithRecipient buildMailUpcomingOutdatedDocumentWithRecipient(User actor, MailContainer mailContainer, DocumentEntry document, Integer days) throws BusinessException;
+	public MailContainerWithRecipient buildMailUpcomingOutdatedDocument(DocumentEntry document, Integer days) throws BusinessException;
+	
+	
+	/**
+	 * notification for expired shares
+	 * @param shareEntry
+	 * @param days
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailUpcomingOutdatedShare(ShareEntry shareEntry, Integer days) throws BusinessException;
+	
+	
+	/**
+	 * notification for expired anonymous shares
+	 * @param shareEntry
+	 * @param days
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailUpcomingOutdatedShare(AnonymousShareEntry shareEntry, Integer days) throws BusinessException;	
 
-//	public List<MailContainerWithRecipient> buildMailUpcomingOutdatedDocumentWithOneRecipient(User actor, 
-//			MailContainer mailContainer, DocumentEntry document, Integer days)
-//			throws BusinessException;
+	
+	/**
+	 * notification for document update
+	 * @param anonymousShareEntry
+	 * @param oldDocName
+	 * @param fileSizeTxt
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailSharedDocumentUpdated(AnonymousShareEntry anonymousShareEntry, String oldDocName, String fileSizeTxt)throws BusinessException;
 	
 	
+	/**
+	 * notification for document update
+	 * @param shareEntry
+	 * @param oldDocName
+	 * @param fileSizeTxt
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailSharedDocumentUpdated(ShareEntry shareEntry, String oldDocName, String fileSizeTxt)throws BusinessException;
+	
+	
+	/**
+	 * deletion notification
+	 * @param actor TODO
+	 * @param share
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(Account actor, ShareEntry shareEntry) throws BusinessException;
 	
 }

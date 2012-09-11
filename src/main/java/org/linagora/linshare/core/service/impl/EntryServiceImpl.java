@@ -6,7 +6,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -41,11 +40,11 @@ public class EntryServiceImpl implements EntryService {
 
 
 	@Override
-	public void deleteAllShareEntriesWithDocumentEntry(Account actor, String docEntryUuid, MailContainer mailContainer) throws BusinessException {
+	public void deleteAllShareEntriesWithDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
 		try {
 			DocumentEntry documentEntry = documentEntryService.findById(actor, docEntryUuid);
 			
-			deleteAllShareEntries(actor, documentEntry, mailContainer);
+			deleteAllShareEntries(actor, documentEntry);
 			
 			documentEntryService.deleteDocumentEntry(actor, documentEntry);
 			
@@ -59,7 +58,7 @@ public class EntryServiceImpl implements EntryService {
 	@Override
 	public void deleteAllInconsistentShareEntries(Account actor, DocumentEntry documentEntry) throws BusinessException {
 		try {
-			deleteAllShareEntries(actor, documentEntry, null);
+			deleteAllShareEntries(actor, documentEntry);
 		} catch (BusinessException e) {
 			logger.error("can not delete all shares related to document : " + documentEntry.getUuid());
 			throw e;
@@ -67,7 +66,7 @@ public class EntryServiceImpl implements EntryService {
 	}
 
 
-	private void deleteAllShareEntries(Account actor, DocumentEntry entry, MailContainer mailContainer) throws BusinessException {
+	private void deleteAllShareEntries(Account actor, DocumentEntry entry) throws BusinessException {
 		List<String> a = new ArrayList<String>();
 		List<String> b = new ArrayList<String>();
 		
@@ -80,21 +79,15 @@ public class EntryServiceImpl implements EntryService {
 		}
 
 		for (String uuid : a) {
-			anonymousShareEntryService.deleteShare(actor, uuid, mailContainer);
+			anonymousShareEntryService.deleteShare(actor, uuid);
 		}
 		
 		for (String uuid : b) {
-			shareEntryService.deleteShare(actor, uuid, mailContainer);
+			shareEntryService.deleteShare(actor, uuid);
 		}
 	}
 	
 	
-	@Override
-	public void deleteAllShareEntriesWithDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
-		this.deleteAllShareEntriesWithDocumentEntry(actor, docEntryUuid, null);
-	}
-
-
 	@Override
 	public void deleteAllShareEntriesWithDocumentEntries( Account actor , User owner) throws BusinessException {
 		List<DocumentEntry> documentEntries = documentEntryService.findAllMyDocumentEntries(actor, owner);
@@ -107,21 +100,21 @@ public class EntryServiceImpl implements EntryService {
 	@Override
 	public void deleteAllReceivedShareEntries(Account actor, User recipient) throws BusinessException {
 		for (ShareEntry shareEntry : shareEntryService.findAllMyShareEntries(actor, recipient)) {
-			shareEntryService.deleteShare(actor, shareEntry.getUuid(), null);
+			shareEntryService.deleteShare(actor, shareEntry.getUuid());
 		}
 		
 	}
 
 
 	@Override
-	public void sendSharedUpdateDocNotification(Account actor, DocumentEntry documentEntry, String friendlySize, String originalFileName, MailContainer mailContainer) {
+	public void sendSharedUpdateDocNotification(DocumentEntry documentEntry, String friendlySize, String originalFileName) {
 		if(documentEntry.isShared()) {
 			for (AnonymousShareEntry anonymousShareEntry : documentEntry.getAnonymousShareEntries()) {
-				anonymousShareEntryService.sendDocumentEntryUpdateNotification(actor, anonymousShareEntry, friendlySize, originalFileName, mailContainer);
+				anonymousShareEntryService.sendDocumentEntryUpdateNotification(anonymousShareEntry, friendlySize, originalFileName);
 			}
 			
 			for (ShareEntry shareEntry : documentEntry.getShareEntries()) {
-				shareEntryService.sendDocumentEntryUpdateNotification(actor, shareEntry, friendlySize, originalFileName, mailContainer);
+				shareEntryService.sendDocumentEntryUpdateNotification(shareEntry, friendlySize, originalFileName);
 			}
 		}
 	}

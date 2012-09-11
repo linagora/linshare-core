@@ -20,7 +20,6 @@
 */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 import org.linagora.linshare.core.domain.constants.Language;
@@ -35,41 +34,24 @@ import org.linagora.linshare.core.domain.constants.Language;
  *
  */
 public class MailContainer {
-	private String subject;
-	private String contentTXT;
-	private String contentHTML;
-	private String personalMessage;
-	private Language language;
-	private HashMap<String, String> data;
-	
+	protected String subject;
+	protected String contentTXT;
+	protected String contentHTML;
+	protected String personalMessage;
+	protected Language language;
 
+	
 	/**
 	 * Copy constructor
 	 * 
 	 * @param mailContainer
 	 */
 	public MailContainer(MailContainer mailContainer) {
-		this.subject = mailContainer.subject;
-		this.contentTXT = mailContainer.contentTXT;
-		this.contentHTML = mailContainer.contentHTML;
-		this.personalMessage = mailContainer.personalMessage;
-		this.language = mailContainer.language;
-		this.data = new HashMap<String, String>(mailContainer.data);
-	}
-
-	/**
-	 * Constructor provided for testing purpose.
-	 * 
-	 * @param subject
-	 * @param contentTxt
-	 * @param contentHTML
-	 */
-	public MailContainer(String subject, String contentTxt, String contentHTML) {
-		super();
-		this.subject = subject;
-		this.contentTXT = contentTxt;
-		this.contentHTML = contentHTML;
-		this.data = new HashMap<String, String>();
+		this.subject = mailContainer.getSubject();
+		this.contentTXT = mailContainer.getContentTXT();
+		this.contentHTML = mailContainer.getContentHTML();
+		this.personalMessage = mailContainer.getPersonalMessage();
+		this.language = mailContainer.getLanguage();
 	}
 
 	/**
@@ -83,14 +65,19 @@ public class MailContainer {
 		super();
 		this.personalMessage = personalMessage;
 		this.language = language;
-		this.data = new HashMap<String, String>();
 	}
+	
+	
+	
+	
 	
 	public MailContainer(String locale) {
 		super();
 		this.personalMessage = "";
 		this.language = getLanguageFromLocale(new Locale(locale));
-		this.data = new HashMap<String, String>();
+		this.subject = null;
+		this.contentTXT = null;
+		this.contentHTML = null;
 	}
 	
 	
@@ -148,17 +135,4 @@ public class MailContainer {
 		this.personalMessage = personalMessage;
 	}
 	
-	public void addData(String key, String value) {
-		if (this.data == null) {
-			this.data = new HashMap<String, String>();
-		}
-		this.data.put(key, value);
-	}
-	
-	public String getData(String key) {
-		if (this.data.containsKey(key)) {
-			return this.data.get(key);
-		}
-		return null;
-	}
 }
