@@ -230,62 +230,26 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
         	datesForNotifyUpcomingOutdatedShares.add(Integer.parseInt(date));
 		}
 		
-		
-//		MailContainer mailContainer = new MailContainer("", Language.FRENCH);
-        
         for (Integer day : datesForNotifyUpcomingOutdatedShares) {
         	
 	        List<ShareEntry> shares = shareEntryRepository.findUpcomingExpiredEntries(day);
 	        logger.info(shares.size() + " upcoming (in "+ day.toString()+" days) outdated share(s) found to be notified.");
-	     // TODO : mail notification
 	        for (ShareEntry share : shares) {
-//	        	if (!share.getDownloaded()) {
+	        	
+	        	if (share.getDownloaded() >= 1) {
 	        		shareEntryService.sendUpcomingOutdatedShareEntryNotification(systemAccount, share, day);
-//	        	}
+	        	}
 	        }
-//	        
+
 	        List<AnonymousShareEntry> anonymousShareEntries = anonymousShareEntryRepository.findUpcomingExpiredEntries(day);
 	        logger.info(anonymousShareEntries.size() + " upcoming (in "+day.toString()+" days) outdated anonymous share Url(s) found to be notified.");
-//	        // TODO : mail notification
-//			for (SecuredUrl securedUrl : securedUrlList) {
-//				sendUpcomingOutdatedSecuredUrlNotification(mailContainer, securedUrl, date);
-//			}
+	        
+	        for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
+	        	if(anonymousShareEntry.getDownloaded() >= 1) {
+	        		anonymousShareEntryService.sendUpcomingOutdatedShareEntryNotification(systemAccount, anonymousShareEntry, day);
+	        	}
+			}
+	        
         }
     }
-	
-	
-
-//  
-//	private void sendUpcomingOutdatedSecuredUrlNotification(MailContainer mailContainer, 
-//			SecuredUrl securedUrl, Integer days) {
-//		
-//		//compose the secured url to give in mail
-//		StringBuffer httpUrlBase = new StringBuffer();
-//		httpUrlBase.append(urlBase);
-//		if(!urlBase.endsWith("/")) httpUrlBase.append("/");
-//		httpUrlBase.append(securedUrl.getUrlPath());
-//		if(!securedUrl.getUrlPath().endsWith("/")) httpUrlBase.append("/");
-//		httpUrlBase.append(securedUrl.getSalt());
-//		
-//		//securedUrl must be ended with a "/" if no parameter (see urlparam)
-//		String securedUrlBase = httpUrlBase.toString();
-//		
-//		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-//
-//		try {
-//		
-//			for (Contact recipient : securedUrl.getRecipients()) {
-//				String securedUrlWithParam = securedUrlBase+"?email=" + recipient.getMail();
-//				
-//				mailContainerWithRecipient.add(mailBuilder.buildMailUpcomingOutdatedSecuredUrlWithRecipient(securedUrl.getSender(), mailContainer, securedUrl, recipient, days, securedUrlWithParam));
-//			}
-//			notifierService.sendAllNotifications( mailContainerWithRecipient);
-//		
-//		} catch (BusinessException e) {
-//			logger.error("Error while trying to notify upcoming outdated secured url", e);
-//		}
-//
-//	}
-	
-
 }

@@ -115,8 +115,17 @@ public class MailContainerWithRecipient extends MailContainer {
 	public void setMailSubject(MailSubject mailSubject) {
 		this.subject = mailSubject.getContent();
 	}
-	
-	
-	
+
+	@Override
+	public void setContentTXT(String contentTXT) {
+		this.bufferTXT= new StringBuffer(contentTXT);
+		super.setContentTXT(contentTXT);
+	}
+
+	@Override
+	public void setContentHTML(String contentHTML) {
+		this.bufferHTML = new StringBuffer(contentHTML);
+		super.setContentHTML(contentHTML);
+	}
 	
 }

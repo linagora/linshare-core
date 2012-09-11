@@ -58,6 +58,9 @@ public class ShareEntry extends Entry{
 		this.downloaded = downloaded;
 	}
 
+	public void incrementDownload() {
+		downloaded+=1;
+	}
 	
 	/* usefull getters */
 	public long getSize() {

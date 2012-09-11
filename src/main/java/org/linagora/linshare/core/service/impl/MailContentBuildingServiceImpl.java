@@ -1040,6 +1040,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	@Override
 	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(Account actor, ShareEntry shareEntry) throws BusinessException {
 
+		logger.debug("share uuid : " + shareEntry.getUuid());
+		
 		User sender = (User) shareEntry.getEntryOwner();
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
 		
@@ -1219,15 +1221,28 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	        contentHTML = StringUtils.replace(contentHTML, "%{personalMessage}", "");
 		}
 		
+		
         contentTXT = StringUtils.replace(contentTXT, "${greetings}", greetings.getContentTXT());
         contentTXT = StringUtils.replace(contentTXT, "${footer}", footer.getContentTXT());
         contentTXT = StringUtils.replace(contentTXT, "${body}", inputMailContainer.getContentTXT());
+        
+        contentTXT = StringUtils.replace(contentTXT, "%{greetings}", greetings.getContentTXT());
+        contentTXT = StringUtils.replace(contentTXT, "%{footer}", footer.getContentTXT());
+        contentTXT = StringUtils.replace(contentTXT, "%{body}", inputMailContainer.getContentTXT());
+        
         
         
         contentHTML = StringUtils.replace(contentHTML, "${greetings}", greetings.getContentHTML());
         contentHTML = StringUtils.replace(contentHTML, "${footer}", footer.getContentHTML());
         contentHTML = StringUtils.replace(contentHTML, "${body}", inputMailContainer.getContentHTML());
         contentHTML = StringUtils.replace(contentHTML, "${mailSubject}", inputMailContainer.getSubject());
+        
+        contentHTML = StringUtils.replace(contentHTML, "%{greetings}", greetings.getContentHTML());
+        contentHTML = StringUtils.replace(contentHTML, "%{footer}", footer.getContentHTML());
+        contentHTML = StringUtils.replace(contentHTML, "%{body}", inputMailContainer.getContentHTML());
+        contentHTML = StringUtils.replace(contentHTML, "%{mailSubject}", inputMailContainer.getSubject());
+        
+        
         
         mailContainer.setContentTXT(contentTXT);
         mailContainer.setContentHTML(contentHTML);
