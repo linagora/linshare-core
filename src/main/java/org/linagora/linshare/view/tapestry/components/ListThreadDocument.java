@@ -248,7 +248,7 @@ public class ListThreadDocument {
 			return null;
 		}
 		if ("true".equals(deleteConfirmed)) {
-			componentResources.getContainer().getComponentResources().getContainer().getComponentResources().triggerEvent("eventDeleteFromListDocument", listSelected.toArray(), null);
+			componentResources.getContainer().getComponentResources().triggerEvent("eventDeleteFromListDocument", listSelected.toArray(), null);
 		}
 		return null;
 	}
@@ -346,6 +346,8 @@ public class ListThreadDocument {
 	 *            filesSelected or not in the form.
 	 */
 	public void setFilesSelected(boolean selected) {
+		System.out.println(new Exception().getStackTrace()[0].getMethodName() + ": Entering setFilesSelected");
+		System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : selected = " + selected);
 		if (selected) {
 			listSelected.add(threadEntry);
 		}

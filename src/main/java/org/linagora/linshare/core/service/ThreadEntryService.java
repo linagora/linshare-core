@@ -15,7 +15,7 @@ public interface ThreadEntryService {
 	
 	public ThreadEntry findById(Account actor, Thread thread, String currentDocEntryUuid) throws BusinessException;
 	
-	public void deleteThreadEntry(Account actor, Thread thread, String docEntryUuid) throws BusinessException;
+	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException;
 	
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException;
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagEnum;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -18,9 +19,11 @@ import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.TagService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -36,7 +39,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	private final ThreadService threadService;
 	
 	private final ThreadEntryService threadEntryService;
-	
+
 	private final ThreadEntryTransformer threadEntryTransformer;
 	
 	private final TagService tagService;
@@ -192,6 +195,24 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			logger.error("Can't get document thumbnail : " + docEntryUuid + " : " + e.getMessage());
 		}
     	return null;
+	}
+
+
+	@Override
+	public void removeDocument(UserVo actorVo, ThreadEntryVo threadEntryVo) throws BusinessException {
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Thread thread = threadService.findByLsUuid(threadEntryVo.getOwnerLogin());
+		ThreadEntry threadEntry = threadEntryService.findById(actor, thread, threadEntryVo.getIdentifier());
+		if (actor != null) {
+			try {
+				threadEntryService.deleteThreadEntry(actor, threadEntry);
+			} catch (BusinessException e) {
+				logger.error("Cannot delete Thread Entry : " + threadEntryVo.getIdentifier());
+				throw e;
+			}
+		} else {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
+		}
 	}
 
 }

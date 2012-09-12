@@ -77,6 +77,18 @@ public class TagBusinessServiceImpl implements TagBusinessService {
 	
 
 	@Override
+	public void deleteAllTagAssociationsFromThreadEntry(ThreadEntry threadEntry) throws BusinessException {
+		logger.debug("Deleting all tags from Thread Entry : " + threadEntry.getName() + " (" + threadEntry.getId() + ")");
+		Set<EntryTagAssociation> tagAssociations = threadEntry.getTagAssociations();
+		for (EntryTagAssociation tagAssociation : tagAssociations) {
+			tagAssociation.setTagEnumValue(null);
+			entryTagAssociationRepository.update(tagAssociation);
+			entryTagAssociationRepository.delete(tagAssociation);
+		}
+	}
+	
+
+	@Override
 	public void runTagFiltersOnThreadEntry(Account actor, Thread owner, ThreadEntry threadEntry) throws BusinessException {
 		logger.debug("running tags filters on thread entry : " + threadEntry.getName());
 		

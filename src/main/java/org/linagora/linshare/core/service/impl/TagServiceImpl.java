@@ -47,7 +47,7 @@ public class TagServiceImpl implements TagService {
 	public void setTagToThreadEntries(Account actor, Thread owner, List<ThreadEntry> threadEntries, String tagName, String value) throws BusinessException {
 		// TODO : check if the actor is a thread member
 		Tag tag = findByOwnerAndName(actor, owner, tagName);
-		if(tag != null) {
+		if (tag != null) {
 			for (ThreadEntry threadEntry : threadEntries) {
 				tagBusinessService.setTagToThreadEntry(owner, threadEntry, tag, value);
 			}

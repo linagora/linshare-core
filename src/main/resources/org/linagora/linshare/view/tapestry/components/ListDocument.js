@@ -1,20 +1,20 @@
 function countCheckbox()
 {
 
-	var elements = $$('input[type="checkbox"][id^="filesSelected"]').findAll(function(el)
-		{ return el.checked });
+	//var elements = $$('input[type="checkbox"][id^="filesSelected"]').findAll(function(el)
+		//{ return el.checked });
 
-	var allElements = $$('input[type="checkbox"][id^="filesSelected"]').findAll(function(el)
-		{ return true });
-	var result = "none";
+	//var allElements = $$('input[type="checkbox"][id^="filesSelected"]').findAll(function(el)
+		//{ return true });
+	//var result = "none";
 
-	if ((elements!=null)&&(elements.length>0)) {
-		result = "block";
-	}
+	//if ((elements!=null)&&(elements.length>0)) {
+		//result = "block";
+	//}
 
-	if (elements.length<allElements.length) {
-		document.getElementById('selectAll').checked = false;
-	}
+	//if (elements.length<allElements.length) {
+		//document.getElementById('selectAll').checked = false;
+	//}
 }
 
 

@@ -57,4 +57,6 @@ public interface DocumentEntryBusinessService {
 	public InputStream getDocumentStream(ThreadEntry entry);
 
 	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry);
+
+	public void deleteThreadEntry(ThreadEntry threadEntry) throws BusinessException;
 }

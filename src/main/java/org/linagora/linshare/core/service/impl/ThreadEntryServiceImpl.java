@@ -18,6 +18,8 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.exception.TechnicalErrorCode;
+import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -107,7 +109,6 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		return threadEntry;
 	}
 
-	
 	@Override
 	public ThreadEntry findById(Account actor, Thread thread, String currentDocEntryUuid) throws BusinessException {
 		ThreadEntry entry = documentEntryBusinessService.findThreadEntryById(currentDocEntryUuid);
@@ -118,24 +119,29 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		return entry;
 	}
 
-	
 	@Override
-	public void deleteThreadEntry(Account actor, Thread thread, String docEntryUuid) throws BusinessException {
-		// TODO Auto-generated method stub
-
+	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException {
+		try {
+			// TODO : check permissions for thread entries
+//			if (!threadEntry.getEntryOwner().equals(actor)) {
+//				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+//			}
+			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry.getDocument().getType());
+			logEntryService.create(LogEntryService.INFO, logEntry);
+			documentEntryBusinessService.deleteThreadEntry(threadEntry);
+			
+		} catch (IllegalArgumentException e) {
+			logger.error("Could not delete file " + threadEntry.getName()
+					+ " of user " + actor.getLsUuid() + ", reason : ", e);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
+		}
 	}
-
-
-
 
 	@Override
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException {
 		// TODO : check permissions for thread entries
 		return documentEntryBusinessService.findAllThreadEntries(thread);
 	}
-
-
-
 
 	@Override
 	public InputStream getDocumentStream(Account actor, String uuid) throws BusinessException {

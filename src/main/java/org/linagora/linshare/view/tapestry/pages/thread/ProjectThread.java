@@ -29,12 +29,14 @@ import java.util.Map;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
@@ -105,7 +107,7 @@ public class ProjectThread {
     private Messages messages;
 	
     @Inject
-    private ThreadEntryFacade threadEntryFacade; 
+    private ThreadEntryFacade threadEntryFacade;
 
 
 
@@ -213,6 +215,31 @@ public class ProjectThread {
 
     public void setMySelectedProject(ThreadVo selectedProject) {
 		this.selectedProject = selectedProject;
+	}
+    
+    /**
+	 * Delete the document from the repository/facade 
+	 * Invoked when a user clicks on "delete" button in the searched document list
+	 * It also removes the documents from the shared list 
+	 * @param object a DocumentVo[]
+	 */
+	@OnEvent(value="eventDeleteFromListDocument")
+	public void deleteFromListDocument(Object[] object){		 
+		boolean flagError = false;
+		for(Object currentObject : object){
+			try {
+				threadEntryFacade.removeDocument(userVo,((ThreadEntryVo)currentObject));
+				
+			} catch (BusinessException e) {
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"),
+						((DocumentVo)currentObject).getFileName()) );
+			}
+			shareSessionObjects.removeDocument((DocumentVo)currentObject);
+		}
+		if (null != object && object.length > 0 && !flagError){
+			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),object.length));
+			setupRender();
+		}
 	}
     
     Object onException(Throwable cause) {

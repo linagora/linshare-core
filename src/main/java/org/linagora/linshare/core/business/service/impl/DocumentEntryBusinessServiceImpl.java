@@ -23,6 +23,7 @@ import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.LinThumbnail.utils.ImageUtils;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
+import org.linagora.linshare.core.business.service.TagBusinessService;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
@@ -62,10 +63,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	private final DocumentRepository documentRepository;
 	private final AccountRepository<Account> accountRepository; 
 	private final SignatureBusinessService signatureBusinessService;
+	private final TagBusinessService tagBusinessService;
 	
 	
 	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, 
-			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository) {
+			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository, TagBusinessService tagBusinessService) {
 		super();
 		this.mimeTypeIdentifier = new MagicMimeTypeIdentifier();
 		this.fileSystemDao = fileSystemDao;
@@ -75,6 +77,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.accountRepository = accountRepository;
 		this.signatureBusinessService = signatureBusinessService;
 		this.threadEntryRepository = threadEntryRepository;
+		this.tagBusinessService = tagBusinessService;
 	}
 
 	
@@ -521,6 +524,21 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public long getRelatedEntriesCount(DocumentEntry documentEntry) {
 		return documentEntryRepository.getRelatedEntriesCount(documentEntry);
 	}
-	
+
+
+	@Override
+	public void deleteThreadEntry(ThreadEntry threadEntry) throws BusinessException {
+		Account owner = threadEntry.getEntryOwner();
+		owner.getEntries().remove(threadEntry);
+		accountRepository.update(owner);
+		Document doc = threadEntry.getDocument();
+		tagBusinessService.deleteAllTagAssociationsFromThreadEntry(threadEntry);
+		threadEntry.setTagAssociations(null);
+		threadEntryRepository.update(threadEntry);
+		threadEntryRepository.delete(threadEntry);
+		doc.setThreadEntry(null);
+		documentRepository.update(doc);
+		deleteDocument(doc);
+	}
 	
 }

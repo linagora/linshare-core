@@ -14,4 +14,6 @@ public interface TagBusinessService {
 	
 	public void runTagFiltersOnThreadEntry(Account actor, Thread owner, ThreadEntry threadEntry) throws BusinessException;
 
+	public void deleteAllTagAssociationsFromThreadEntry(ThreadEntry threadEntry) throws BusinessException;
+
 }

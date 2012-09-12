@@ -24,11 +24,13 @@ public interface ThreadEntryFacade {
 	
 	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo, List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags) throws BusinessException;
 
-	public InputStream retrieveFileStream(ThreadEntryVo entry, UserVo uactorVo) throws BusinessException;
+	public InputStream retrieveFileStream(ThreadEntryVo entry, UserVo actorVo) throws BusinessException;
 
 	public InputStream retrieveFileStream(ThreadEntryVo entry, String lsUid) throws BusinessException;
 
 	public boolean documentHasThumbnail(String lsUid, String docId);
 
 	public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid);
+
+	public void removeDocument(UserVo userVo, ThreadEntryVo threadEntryVo) throws BusinessException;
 }

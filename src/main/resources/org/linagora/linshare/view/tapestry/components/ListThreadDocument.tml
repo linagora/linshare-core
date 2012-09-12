@@ -31,7 +31,7 @@
                 </p:filePropertiesHeader>
 
                 <p:selectedValueHeader>
-                <t:checkbox t:id="selectAll" name="${checkboxGroupUuid}" onclick="checkAll('${checkboxGroupUuid}', this);" value="valueCheck" title="${message:components.listDocument.grid.checkAll}"/>
+                    <t:checkbox t:id="selectAll" name="${checkboxGroupUuid}" onclick="checkAll('${checkboxGroupUuid}', this);" value="valueCheck" title="${message:components.listDocument.grid.checkAll}"/>
                 </p:selectedValueHeader>
 
 
@@ -63,7 +63,7 @@
                 </p:filePropertiesCell>
 
                 <p:selectedValueCell>
-                <t:checkbox t:id="filesSelected" class="${checkboxGroupUuid}" onclick="countCheckbox();" />
+                    <t:checkbox t:id="filesSelected" class="${checkboxGroupUuid}" onclick="countCheckbox('${checkboxGroupUuid}');" />
                 </p:selectedValueCell>
             </t:grid>
         </t:form>
