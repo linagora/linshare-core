@@ -50,7 +50,7 @@ public interface UserFacade {
     
     /**
      * update a guest (edit)
-     * @param guestUuid TODO
+     * @param guestUuid 
      * @param mail
      * @param firstName
      * @param lastName
@@ -62,7 +62,7 @@ public interface UserFacade {
     
     /**
      * update an user (only the role)
-     * @param userUuid TODO
+     * @param userUuid 
      * @param mail
      * @param role
      * @param owner

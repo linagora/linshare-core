@@ -97,7 +97,7 @@ public interface UserService {
 
 	/**
 	 * update a guest (edit mode)
-	 * @param guestUuid TODO
+	 * @param guestUuid 
 	 * @param mail
 	 * @param firstName
 	 * @param lastName
@@ -109,7 +109,7 @@ public interface UserService {
     
 	/**
 	 * update the role of a user (admin, simple)
-	 * @param userUuid TODO
+	 * @param userUuid 
 	 * @param mail
 	 * @param role
 	 * @param owner

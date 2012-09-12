@@ -56,10 +56,10 @@ public class UserLogEntry extends LogEntry {
 	
 	public UserLogEntry(UserVo userVo, LogAction logAction, String description) {
 		super(userVo, logAction, description);
-		this.targetMail = null;
-		this.targetFirstname = null;
-		this.targetLastname = null;
-		this.targetDomain = null;
+		this.targetMail = userVo.getMail();
+		this.targetFirstname = userVo.getFirstName();
+		this.targetLastname = userVo.getLastName();
+		this.targetDomain = userVo.getDomainIdentifier();
 		this.expirationDate = null;
 	}
 	

@@ -71,7 +71,10 @@ public class MailContainerWithRecipient extends MailContainer {
 		super(locale);
 	}
 	
-	
+	public MailContainerWithRecipient(Language language) {
+		super(language);
+	}
+
 	public String getRecipient() {
 		return recipient;
 	}

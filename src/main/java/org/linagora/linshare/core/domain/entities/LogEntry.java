@@ -97,6 +97,7 @@ public abstract class LogEntry implements Serializable {
 			this.actorMail = user.getMail();
 			this.actorFirstname = user.getFirstName();
 			this.actorLastname = user.getLastName();
+			
 		} else {
 			this.actorMail = actor.getLsUuid();
 			this.actorFirstname = "";
@@ -105,6 +106,8 @@ public abstract class LogEntry implements Serializable {
 		this.logAction = logAction;
 		this.description = description;
 		this.actionDate = new GregorianCalendar();
+		
+		
 	}
 	
 	

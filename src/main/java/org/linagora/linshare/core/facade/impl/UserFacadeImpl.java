@@ -189,8 +189,8 @@ public class UserFacadeImpl implements UserFacade {
         try {
 			userService.deleteUser(login, actor);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("can't delete user : " + actorVo.getLsUid() + " : " + e.getMessage());
+			logger.debug(e.toString());
 		}
     }
 

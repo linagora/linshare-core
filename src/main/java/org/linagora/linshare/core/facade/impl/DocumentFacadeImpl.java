@@ -276,36 +276,27 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	
 	@Override
-	public DocumentVo encryptDocument(DocumentVo doc,UserVo user, String password) throws BusinessException{
-		// TODO : Fix enciphermentService
-		return null;
-//		Document docenc = enciphermentService.encryptDocument(doc, user, password);
-//		return documentTransformer.disassemble(documentService.getDocument(docenc.getUuid()));
+	public DocumentVo encryptDocument(DocumentVo docVo, UserVo userVo, String password) throws BusinessException{
+		Account actor = accountService.findByLsUid(userVo.getLsUid());
+		DocumentEntry documentEntry = enciphermentService.encryptDocument(actor, docVo.getIdentifier(),actor, password);
+		return documentEntryTransformer.disassemble(documentEntry);
 	}
 
 	
 	@Override
-	public DocumentVo decryptDocument(DocumentVo doc, UserVo user,String password) throws BusinessException {
-		// TODO : Fix enciphermentService
-		return null;
-//		Document docenc = enciphermentService.decryptDocument(doc, user, password);
-//		return documentTransformer.disassemble(documentService.getDocument(docenc.getUuid()));
+	public DocumentVo decryptDocument(DocumentVo docVo, UserVo userVo,String password) throws BusinessException {
+		Account actor = accountService.findByLsUid(userVo.getLsUid());
+		DocumentEntry documentEntry = enciphermentService.decryptDocument(actor, docVo.getIdentifier(),actor, password);
+		return documentEntryTransformer.disassemble(documentEntry);
 	}
 	
-	
-	@Override
-	public boolean isDocumentEncrypted(DocumentVo doc) {
-		// TODO : Fix enciphermentService
-		return false;
-//		return enciphermentService.isDocumentEncrypted(doc);
-	}
-
 	
 	@Override
 	public Long getUserTotalQuota(UserVo userVo) throws BusinessException {
 		Account account = accountService.findByLsUid(userVo.getLsUid());
 		return documentEntryService.getTotalSize(account);
 	}
+	
 	
 	@Override
 	public DocumentVo updateDocumentContent(String currentFileUUID, InputStream file, long size, String fileName, UserVo ownerVo, String friendlySize) throws BusinessException {
@@ -387,20 +378,16 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 	
 	@Override
-	public boolean isSignatureActive(UserVo user) {
-//		User currentUser =  userRepository.findByLsUid(user.getLogin());
-//		return documentService.isSignatureActive(currentUser);
-		// TODO : Fix enciphermentService
-		return false;
+	public boolean isSignatureActive(UserVo userVo) {
+		Account actor = accountService.findByLsUid(userVo.getLsUid());
+		return documentEntryService.isSignatureActive(actor);
 	}
 	
 	
 	@Override
-	public boolean isEnciphermentActive(UserVo user) {
-//		User currentUser =  userRepository.findByLsUid(user.getLogin());
-//		return documentService.isEnciphermentActive(currentUser);
-		// TODO : Fix enciphermentService
-		return false;
+	public boolean isEnciphermentActive(UserVo userVo) {
+		Account actor = accountService.findByLsUid(userVo.getLsUid());
+		return documentEntryService.isEnciphermentActive(actor);
 	}
 	
 

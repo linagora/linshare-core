@@ -45,7 +45,7 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 
 -- Mail templates
 -- Template GREETINGS
-INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, E'Welcome to LinShare, the Open Source secure files sharing system.', E'Welcome to LinShare, the Open Source secure files sharing system.', 0);
+INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, E'Hello ${firstName} ${lastName},', E'Hello ${firstName} ${lastName},<br/><br/>', 0);
 
 -- Template FOOTER
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 1, E'<a href="http://linshare.org/" title="LinShare"><strong>LinShare</strong></a> - Open Source secured file sharing application', E'LinShare - http://linshare.org - Open Source secured file sharing application', 0);

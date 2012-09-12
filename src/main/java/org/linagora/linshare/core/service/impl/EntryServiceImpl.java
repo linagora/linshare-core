@@ -102,7 +102,6 @@ public class EntryServiceImpl implements EntryService {
 		for (ShareEntry shareEntry : shareEntryService.findAllMyShareEntries(actor, recipient)) {
 			shareEntryService.deleteShare(actor, shareEntry.getUuid());
 		}
-		
 	}
 
 

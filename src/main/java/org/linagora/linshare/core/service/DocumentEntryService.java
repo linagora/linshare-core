@@ -27,7 +27,7 @@ public interface DocumentEntryService {
 	
 	/**
 	 * This method is designed inconsistent document, the document exists into the database only (no on the file system) 
-	 * @param actor TODO
+	 * @param actor 
 	 * @param docEntryUuid
 	 * @throws BusinessException
 	 */
@@ -36,7 +36,7 @@ public interface DocumentEntryService {
 
 	/**
 	 * This method is designed to delete expired documents (batches). 
-	 * @param actor TODO
+	 * @param actor 
 	 * @param docEntryUuid
 	 * @throws BusinessException
 	 */

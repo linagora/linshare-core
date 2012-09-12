@@ -309,27 +309,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         return template;
 	}
 	
-	/**
-	 * Template DECRYPT_URL
-	 */
+	
+	// to be removed
 	private MailTemplate buildTemplateDecryptUrl(User actor, Language language, boolean hasToBeFilled, String jwsEncryptUrl) throws BusinessException {
-		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.DECRYPT_URL);
-		
-		if(hasToBeFilled){
-			String contentTXT = template.getContentTXT();
-			String contentHTML = template.getContentHTML();
-			
-			contentTXT = StringUtils.replace(contentTXT, "${jwsEncryptUrl}", jwsEncryptUrl);
-	        contentHTML = StringUtils.replace(contentHTML, "${jwsEncryptUrl}", jwsEncryptUrl);
-			
-	        template.setContentTXT(contentTXT);
-	        template.setContentHTML(contentHTML);
-		} else {
-	        template.setContentTXT("");
-	        template.setContentHTML("");
-		}
-		
-		return template;
+		return null;
 	}
 	
 	/**
@@ -725,41 +708,41 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	}
 	
 	
-	@Override
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor, MailContainer mailContainer, User recipient, List<String> docNames, String linShareUrl,
-			String linShareUrlParam, String password, boolean hasToDecrypt) throws BusinessException {
-		MailTemplate template1 = buildTemplateShareNotificationV2(actor, mailContainer.getLanguage(), docNames);
-		
-		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl);
-		
-		String jwsEncryptUrl  = "";
-		if(hasToDecrypt) {
-			jwsEncryptUrl = getJwsEncryptUrlString();
-		}
-			
-			
-		MailTemplate template3 = buildTemplateDecryptUrl(actor, mailContainer.getLanguage(), hasToDecrypt, jwsEncryptUrl);
-		MailTemplate template4 = buildTemplatePasswordGiving(actor, mailContainer.getLanguage(), password);
-		
-		String subjectContent = mailContainer.getSubject();
-		if (subjectContent == null || subjectContent.length() < 1) {
-			MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING);
-			subjectContent = subject.getContent();
-		}
-		
-		StringBuffer contentTXT = new StringBuffer();
-		StringBuffer contentHTML = new StringBuffer();
-		contentTXT.append(template1.getContentTXT() + "\n");
-		contentTXT.append(template2.getContentTXT() + "\n");
-		contentTXT.append(template3.getContentTXT() + "\n");
-		contentTXT.append(template4.getContentTXT() + "\n");
-		contentHTML.append(template1.getContentHTML() + "<br />");
-		contentHTML.append(template2.getContentHTML() + "<br />");
-		contentHTML.append(template3.getContentHTML() + "<br />");
-		contentHTML.append(template4.getContentHTML() + "<br />");
-		
-		return buildMailContainerWithRecipient(actor, actor, mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, mailContainer.getPersonalMessage());
-	}	
+//	@Override
+//	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor, MailContainer mailContainer, User recipient, List<String> docNames, String linShareUrl,
+//			String linShareUrlParam, String password, boolean hasToDecrypt) throws BusinessException {
+//		MailTemplate template1 = buildTemplateShareNotificationV2(actor, mailContainer.getLanguage(), docNames);
+//		
+//		MailTemplate template2 = buildTemplateFileDownloadURL(actor, mailContainer.getLanguage(), linShareUrl);
+//		
+//		String jwsEncryptUrl  = "";
+//		if(hasToDecrypt) {
+//			jwsEncryptUrl = getJwsEncryptUrlString();
+//		}
+//			
+//			
+//		MailTemplate template3 = buildTemplateDecryptUrl(actor, mailContainer.getLanguage(), hasToDecrypt, jwsEncryptUrl);
+//		MailTemplate template4 = buildTemplatePasswordGiving(actor, mailContainer.getLanguage(), password);
+//		
+//		String subjectContent = mailContainer.getSubject();
+//		if (subjectContent == null || subjectContent.length() < 1) {
+//			MailSubject subject = getMailSubject(actor, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING);
+//			subjectContent = subject.getContent();
+//		}
+//		
+//		StringBuffer contentTXT = new StringBuffer();
+//		StringBuffer contentHTML = new StringBuffer();
+//		contentTXT.append(template1.getContentTXT() + "\n");
+//		contentTXT.append(template2.getContentTXT() + "\n");
+//		contentTXT.append(template3.getContentTXT() + "\n");
+//		contentTXT.append(template4.getContentTXT() + "\n");
+//		contentHTML.append(template1.getContentHTML() + "<br />");
+//		contentHTML.append(template2.getContentHTML() + "<br />");
+//		contentHTML.append(template3.getContentHTML() + "<br />");
+//		contentHTML.append(template4.getContentHTML() + "<br />");
+//		
+//		return buildMailContainerWithRecipient(actor, actor, mailContainer, subjectContent, contentTXT.toString(), contentHTML.toString(), recipient, mailContainer.getPersonalMessage());
+//	}
 	
 	
 	@Override
@@ -1036,7 +1019,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return buildMailContainerSetProperties(sender, mailContainer, shareEntry.getRecipient());
 	}
 	
-	
+	/**
+	 * notification for shared file deletion
+	 */
 	@Override
 	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(Account actor, ShareEntry shareEntry) throws BusinessException {
 
@@ -1060,8 +1045,49 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		return buildMailContainerSetProperties(sender, mailContainer, shareEntry.getRecipient());
 	}	
 	
-	
-	
+	/**
+	 * notification for shared document 
+	 */
+	@Override
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User sender, MailContainer inputMailContainer, User recipient, 
+			List<String> docNames, String linShareUrl, String linShareUrlParam, String password, boolean hasToDecrypt) throws BusinessException {
+		
+		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
+		String linShareRootUrl = getLinShareRootUrl(sender);
+		
+		// share notification
+		mailContainer.appendTemplate(buildTemplateShareNotificationV2(sender, mailContainer.getLanguage(), docNames));
+		
+		// LinShare URL
+		mailContainer.appendTemplate(buildTemplateFileDownloadURL(sender, mailContainer.getLanguage(), linShareRootUrl));
+		
+		// Direct download Url
+		if(hasToDecrypt) {
+			mailContainer.appendTemplate(buildTemplateDecryptUrl(sender, mailContainer.getLanguage()));
+		}
+		
+		// Password notification
+		if(password != null && password.trim().length() > 0) {
+			mailContainer.appendTemplate(buildTemplatePasswordGiving(sender, mailContainer.getLanguage(), password));
+		}
+		
+		// subject
+		String subjectContent = inputMailContainer.getSubject();
+		if (subjectContent != null && subjectContent.length() >= 1) {
+			// this means subject was filled by users 
+			mailContainer.setSubject(subjectContent);
+		} else {
+			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING));
+		}
+		
+		// reply mail
+		mailContainer.setReplyTo(sender.getMail());
+		
+		// recipient mail
+		mailContainer.setRecipient(recipient.getMail());
+		
+		return buildMailContainerSetProperties(sender, mailContainer, recipient, inputMailContainer.getPersonalMessage());
+	}	
 	
 	
 	
@@ -1134,6 +1160,24 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	}
 	
 	
+	/**
+	 * TEMPLATE : DECRYPT_URL
+	 */
+	private MailTemplate buildTemplateDecryptUrl(User actor, Language language) throws BusinessException {
+		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.DECRYPT_URL);
+		
+		String contentTXT = template.getContentTXT();
+		String contentHTML = template.getContentHTML();
+		
+		String jwsEncryptUrl = getJwsEncryptUrlString();
+		contentTXT = StringUtils.replace(contentTXT, "${jwsEncryptUrl}", jwsEncryptUrl);
+        contentHTML = StringUtils.replace(contentHTML, "${jwsEncryptUrl}", jwsEncryptUrl);
+		
+        template.setContentTXT(contentTXT);
+        template.setContentHTML(contentHTML);
+	
+		return template;
+	}
 	
 	
 	
@@ -1155,7 +1199,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @param contact
 	 * @throws BusinessException
 	 */
-	private MailContainerWithRecipient buildMailContainerSetProperties(User sender, MailContainerWithRecipient mailContainer, String personalMessage, Contact contact) throws BusinessException {
+	private MailContainerWithRecipient buildMailContainerSetProperties(User sender, MailContainerWithRecipient mailContainer, Contact contact, String personalMessage) throws BusinessException {
 		MailTemplate greetings = buildTemplateGreetings(sender, mailContainer.getLanguage(), contact);
 		return buildMailContainerSetProperties(sender, mailContainer, personalMessage, greetings); 
 	}
@@ -1175,7 +1219,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @param recipient
 	 * @throws BusinessException
 	 */
-	private MailContainerWithRecipient buildMailContainerSetProperties(User sender, MailContainerWithRecipient mailContainer, String personalMessage, User recipient) throws BusinessException {
+	private MailContainerWithRecipient buildMailContainerSetProperties(User sender, MailContainerWithRecipient mailContainer, User recipient,  String personalMessage) throws BusinessException {
 		MailTemplate greetings = buildTemplateGreetings(sender, mailContainer.getLanguage(), recipient);
 		return buildMailContainerSetProperties(sender, mailContainer, personalMessage, greetings); 
 	}
@@ -1247,8 +1291,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         mailContainer.setContentTXT(contentTXT);
         mailContainer.setContentHTML(contentHTML);
         	
-        logger.debug("Subject : " + mailContainer.getSubject());
-        logger.debug("ContentTXT : " + mailContainer.getContentTXT());
+        if(logger.isDebugEnabled()) {
+        	logger.debug("Subject : " + mailContainer.getSubject());
+        	logger.debug("ContentTXT : " + mailContainer.getContentTXT());
+        }
         
         return mailContainer;
 	}

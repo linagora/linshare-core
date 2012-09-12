@@ -234,7 +234,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			entry.setName(newName);
 			entry.setComment(fileComment);
 	        documentEntryRepository.update(entry);
-	        
 	}
 
 	

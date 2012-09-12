@@ -168,7 +168,6 @@ public interface DocumentFacade {
 	
 	public DocumentVo encryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException;
 	public DocumentVo decryptDocument(DocumentVo doc, UserVo user,String password) throws BusinessException;
-	public boolean isDocumentEncrypted(DocumentVo doc);
 	public InputStream retrieveSignatureFileStream(SignatureVo signaturedoc);
 	
     /**

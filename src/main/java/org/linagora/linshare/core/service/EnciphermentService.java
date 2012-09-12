@@ -20,8 +20,9 @@
 */
 package org.linagora.linshare.core.service;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -38,7 +39,8 @@ public interface EnciphermentService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public Document encryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException;
+	public DocumentEntry encryptDocument(Account actor, DocumentEntry documentEntry, Account owner, String password) throws BusinessException;
+	public DocumentEntry encryptDocument(Account actor, String documentEntryUuid, Account owner, String password) throws BusinessException;
 
 	/**
 	 * decrypt the content of a document, and change the content in jackrabbit
@@ -48,23 +50,7 @@ public interface EnciphermentService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public Document decryptDocument(DocumentVo doc,UserVo user,String password) throws BusinessException;
-	
-	/**
-	 * check the encrypted status of the document
-	 * @param doc
-	 * @return
-	 */
-	public boolean isDocumentEncrypted(DocumentVo doc);
-	
-	/**
-	 * give the new name for a file encrypted /decrypted
-	 * for example change the extension with aes
-	 * file1.doc becomes file1.doc.aes (encrypted)
-	 * file1.doc.aes becomes file1.doc (decrypted)
-	 * @param docname
-	 * @return new filename
-	 */
-	public String changeDocumentExtension(String docname);
+	public DocumentEntry decryptDocument(Account actor, DocumentEntry documentEntry, Account owner, String password) throws BusinessException;
+	public DocumentEntry decryptDocument(Account actor, String documentEntryUuid, Account owner, String password) throws BusinessException;
 	
 }

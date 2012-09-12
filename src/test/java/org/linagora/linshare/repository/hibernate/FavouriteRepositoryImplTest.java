@@ -68,10 +68,8 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 			userRepo.create(jean);
 			userRepo.create(pierre);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

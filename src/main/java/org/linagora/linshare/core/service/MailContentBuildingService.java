@@ -199,7 +199,7 @@ public interface MailContentBuildingService {
 	
 	/**
 	 * deletion notification
-	 * @param actor TODO
+	 * @param actor 
 	 * @param share
 	 * @return
 	 * @throws BusinessException

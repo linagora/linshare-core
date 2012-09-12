@@ -140,7 +140,6 @@ public class ArchiveZipStream extends InputStream {
 	@Override
 	public void close() throws IOException {
 		releaseAll();
-		// TODO Auto-generated method stub
 		super.close();
 	}
 	

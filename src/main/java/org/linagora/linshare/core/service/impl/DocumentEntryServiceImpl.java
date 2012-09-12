@@ -114,14 +114,14 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	
 	@Override
 	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
-		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
-		if (!documentEntry.getEntryOwner().equals(actor)) {
+		DocumentEntry originalEntry = documentEntryBusinessService.findById(docEntryUuid);
+		if (!originalEntry.getEntryOwner().equals(actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
 		}
 		
 		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
-		String logText = documentEntry.getName(); //old name of the doc
-		long oldDocSize = documentEntry.getDocument().getSize();
+		String originalFileName = originalEntry.getName();
+		long oldDocSize = originalEntry.getDocument().getSize();
 		BufferedInputStream bufStream = new BufferedInputStream(stream);
 		String mimeType = documentEntryBusinessService.getMimeType(bufStream);
 		checkSpace(size, fileName, actor);
@@ -152,11 +152,12 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		
 		
 		// We need to set an expiration date in case of file cleaner activation.
-		documentEntryBusinessService.updateDocumentEntry(actor, documentEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
+		DocumentEntry documentEntry = documentEntryBusinessService.updateDocumentEntry(actor, originalEntry, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType, getDocumentExpirationDate(domain));
 		
 		//put new file name in log
 		//if the file is updated/replaced with a new file (new file name)
 		//put new file name in log
+		String logText = originalFileName;
 		if (!logText.equalsIgnoreCase(documentEntry.getName())) {
 			logText = documentEntry.getName() + " [" +logText+"]";
 		}	
@@ -434,6 +435,10 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException {
 		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
+		if(entry == null) {
+			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,"Can not find document entry with uuid : " + currentDocEntryUuid);
+					
+		}
 		if (!actor.isSuperAdmin()) {
 			if (!entry.getEntryOwner().equals(actor)) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());

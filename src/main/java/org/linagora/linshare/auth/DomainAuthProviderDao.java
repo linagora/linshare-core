@@ -47,8 +47,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
 
-
-
 public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProvider {
 	
 	private UserService userService;

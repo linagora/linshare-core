@@ -49,7 +49,6 @@ public class TestJackRabbit extends AbstractJUnit4SpringContextTests{
 		try {
 			this.inputStream.close();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		this.inputStream=Thread.currentThread().getContextClassLoader().getResourceAsStream("linShare-default.properties");
@@ -89,7 +88,6 @@ public class TestJackRabbit extends AbstractJUnit4SpringContextTests{
 //				System.out.println(dd);
 //			}
 //		} catch (IOException e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 //		if(this.inputStream.equals(stream)){

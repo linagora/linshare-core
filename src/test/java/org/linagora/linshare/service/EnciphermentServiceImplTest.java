@@ -127,22 +127,6 @@ public class EnciphermentServiceImplTest extends AbstractTransactionalJUnit4Spri
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
-	@Test
-	public void testChangeDocumentExtension() {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		String documentName = new String("foobar.txt");
-		String documentNameEncipher = new String("foobar.txt.aes");
-		
-		String documentNameChanged = enciphermentService.changeDocumentExtension(documentName);
-
-		Assert.assertTrue(documentNameEncipher.equalsIgnoreCase(documentNameChanged));
-		
-		String documentNameChanged2 = enciphermentService.changeDocumentExtension(documentNameChanged);
-		
-		Assert.assertTrue(documentName.equalsIgnoreCase(documentNameChanged2));
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
 //	@Test
 //	public void testIsDocumentEncrypted() throws UnsupportedEncodingException, GeneralSecurityException, BusinessException {
 //		logger.info(LinShareTestConstants.BEGIN_TEST);

@@ -225,7 +225,9 @@ public abstract class Account {
 
 
 	public String getExternalMailLocale() {
-		return externalMailLocale;
+		//TODO : add ihm for external mail locale value. For now, using user locale.
+//		return externalMailLocale;
+		return locale;
 	}
 
 

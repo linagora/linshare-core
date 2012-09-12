@@ -70,6 +70,16 @@ public class MailContainer {
 	
 	
 	
+	public MailContainer(Language language) {
+		super();
+		this.personalMessage = "";
+		this.language = language;
+		this.subject = null;
+		this.contentTXT = null;
+		this.contentHTML = null;
+	}
+	
+	
 	
 	public MailContainer(String locale) {
 		super();
