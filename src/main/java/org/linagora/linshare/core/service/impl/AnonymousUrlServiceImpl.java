@@ -10,13 +10,10 @@ import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.AnonymousUrlService;
-import org.linagora.linshare.core.service.MailContentBuildingService;
-import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.utils.ArchiveZipStream;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.slf4j.Logger;
@@ -24,24 +21,17 @@ import org.slf4j.LoggerFactory;
 
 public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 
+	private static final Logger logger = LoggerFactory.getLogger(AnonymousUrlService.class);
+	
 	private final AnonymousUrlBusinessService anonymousUrlBusinessService;
 	
 	private final AnonymousShareEntryService anonymousShareEntryService;
 	
-	private final NotifierService notifierService;
-    
-    private final MailContentBuildingService mailElementsFactory;
 	
-	private static final Logger logger = LoggerFactory.getLogger(AnonymousUrlService.class);
-	
-	
-	public AnonymousUrlServiceImpl(AnonymousUrlBusinessService anonymousUrlBusinessService, AnonymousShareEntryService anonymousShareEntryService, NotifierService notifierService,
-			MailContentBuildingService mailElementsFactory) {
+	public AnonymousUrlServiceImpl(AnonymousUrlBusinessService anonymousUrlBusinessService, AnonymousShareEntryService anonymousShareEntryService) {
 		super();
 		this.anonymousUrlBusinessService = anonymousUrlBusinessService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
-		this.notifierService = notifierService;
-		this.mailElementsFactory = mailElementsFactory;
 	}
 
 
@@ -87,9 +77,9 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 
 
 	@Override
-	public List<AnonymousShareEntry> getAnonymousShareEntry(String uuid, String password)  throws LinShareNotSuchElementException{
+	public List<AnonymousShareEntry> getAnonymousShareEntry(String anonymousUrlUuid, String password)  throws LinShareNotSuchElementException{
 		List<AnonymousShareEntry> res = new ArrayList<AnonymousShareEntry>();
-		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.getAnonymousUrl(uuid);
+		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.getAnonymousUrl(anonymousUrlUuid);
 		if(isValid(anonymousUrl, password)) {
 			res.addAll(anonymousUrl.getAnonymousShareEntries());				
 		}
@@ -98,13 +88,13 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 
 
 	@Override
-	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid, String password, MailContainer mailContainer) throws BusinessException {
+	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException {
 		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.getAnonymousUrl(anonymousUrlUuid);
 		if(isValid(anonymousUrl, password)) {
 			// anonymous share are not made with a thousand contacts, performance will not be poor most of the time.
 			for (AnonymousShareEntry anonymousShareEntry : anonymousUrl.getAnonymousShareEntries()) {
 				if(anonymousShareEntry.getUuid().equals(anonymousShareEntryUuid)) {
-					return anonymousShareEntryService.getAnonymousShareEntryStream(anonymousShareEntry.getUuid(), mailContainer);
+					return anonymousShareEntryService.getAnonymousShareEntryStream(anonymousShareEntry.getUuid());
 				}
 			}
 			String msg = "anonymousShareEntryUuid not found : " + anonymousShareEntryUuid;
@@ -118,27 +108,18 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 
 
 	@Override
-	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password, MailContainer mailContainer) throws BusinessException {
+	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password) throws BusinessException {
 		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.getAnonymousUrl(anonymousUrlUuid);
 		if(isValid(anonymousUrl, password)) {
 			
-			List<String> docNames = new ArrayList<String>();
 			Map<String,InputStream> map = new HashMap<String, InputStream>();
-			
 			for (AnonymousShareEntry anonymousShareEntry : anonymousUrl.getAnonymousShareEntries()) {
-				map.put(anonymousShareEntry.getName(), anonymousShareEntryService.getAnonymousShareEntryStream(anonymousShareEntry.getUuid(), mailContainer));
-				// FIXME : just send one mail for all files, not one by by file.
-//				map.put(anonymousShareEntry.getName(), anonymousShareEntryService.getAnonymousShareEntryStream(anonymousShareEntry.getUuid()));
-//				docNames.add(anonymousShareEntry.getName());
+				map.put(anonymousShareEntry.getName(), anonymousShareEntryService.getAnonymousShareEntryStream(anonymousShareEntry.getUuid()));
+				// TODO : NEW FUNCTIONNALITY : just send one mail for all files, not one by by file.
 			}
 			
 			//prepare an archive zip
 			ArchiveZipStream ai = new ArchiveZipStream(map);
-			
-//			//send a notification by mail to the owner
-//			String email = shareEntry.getContact().getMail();
-//			User owner = (User)shareEntry.getEntryOwner();
-//			notifierService.sendAllNotifications(mailElementsFactory.buildMailAnonymousDownloadWithOneRecipient(owner, mailContainer, docNames, email, owner));
 			
 			return (new FileStreamResponse(ai,null));
 		}

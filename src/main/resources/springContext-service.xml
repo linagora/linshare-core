@@ -130,8 +130,6 @@
 	<bean id="anonymousUrlService" class="org.linagora.linshare.core.service.impl.AnonymousUrlServiceImpl">
 		<constructor-arg ref="anonymousUrlBusinessService" />
 		<constructor-arg ref="anonymousShareEntryService" />
-		<constructor-arg ref="notifierService" />
-		<constructor-arg ref="mailContentBuildingService" />
 	</bean>
 
 	<bean id="searchDocumentService" class="org.linagora.linshare.core.service.impl.SearchDocumentServiceImpl">

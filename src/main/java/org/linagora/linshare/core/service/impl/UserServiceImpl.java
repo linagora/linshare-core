@@ -35,7 +35,6 @@ import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -145,13 +144,12 @@ public class UserServiceImpl implements UserService {
      * @param mail guest email address.
      * @param canUpload : if the user can upload file
      * @param canCreateGuest : if the user can create other users
-     * @param mailContainer : the informations for the notification
      * @param ownerLogin login of the user who create the guest.
      * @return persisted guest.
      */
     @Override
     public Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment,
-    		MailContainer mailContainer, String ownerLogin, String ownerDomain) throws BusinessException {
+    		String ownerLogin, String ownerDomain) throws BusinessException {
 
     	AbstractDomain domain = abstractDomainService.retrieveDomain(ownerDomain);
     	
@@ -216,7 +214,7 @@ public class UserServiceImpl implements UserService {
 			
 			
 			// Send an email to the guest.
-			notifierService.sendAllNotifications(mailElementsFactory.buildMailNewGuestWithOneRecipient(ownerUser, mailContainer, ownerUser, guest, password));
+			notifierService.sendAllNotification(mailElementsFactory.buildMailNewGuest(ownerUser, guest, password));
 			logger.info("Guest " + mail + " was successfully created.");
 			return guest;
 		} else {
@@ -544,7 +542,7 @@ public class UserServiceImpl implements UserService {
 	
 
 	@Override
-	public void resetPassword(String login, MailContainer mailContainer) throws BusinessException {
+	public void resetPassword(String login) throws BusinessException {
 		Guest guest = guestRepository.findByMail(login);
 		if (guest == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
@@ -556,7 +554,7 @@ public class UserServiceImpl implements UserService {
         
         
         // Send an email to the guest.
-        notifierService.sendAllNotifications(mailElementsFactory.buildMailResetPasswordWithOneRecipient(guest, mailContainer, guest, password));
+        notifierService.sendAllNotification(mailElementsFactory.buildMailResetPassword(guest, password));
         
 		guest.setPassword(hashedPassword);
 		guestRepository.update(guest);

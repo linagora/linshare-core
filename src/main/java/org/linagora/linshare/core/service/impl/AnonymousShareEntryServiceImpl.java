@@ -14,8 +14,6 @@ import org.linagora.linshare.core.domain.entities.AnonymousUrl;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.ShareLogEntry;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -101,28 +99,13 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		    logEntryService.create(logEntry);
 		}
 		
-		sendNotification(documentEntries, sender, recipient, mailContainer, anonymousUrl);
+		notifierService.sendAllNotification(mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousUrl, sender));
 		
 		
 		List<AnonymousShareEntry> anonymousShareEntries = new ArrayList<AnonymousShareEntry>(anonymousUrl.getAnonymousShareEntries());
 		return anonymousShareEntries;
 	}
 
-
-	private void sendNotification(List<DocumentEntry> documentEntries, User sender, Contact recipient, MailContainer mailContainer, AnonymousUrl anonymousUrl) throws BusinessException {
-		List<String> documentNames = new ArrayList<String>();
-		Boolean isOneDocEncrypted = false;
-		for (DocumentEntry documentEntry : documentEntries) {
-			documentNames.add(documentEntry.getName());
-			if(documentEntry.getCiphered()) isOneDocEncrypted = true;
-		}
-		
-		List<MailContainerWithRecipient> mailContainerWithRecipient = new ArrayList<MailContainerWithRecipient>();
-		mailContainerWithRecipient.add(mailContentBuildingService.buildMailNewSharingWithRecipient(sender, mailContainer, recipient, documentNames, anonymousUrl, isOneDocEncrypted));
-		
-		notifierService.sendAllNotifications(mailContainerWithRecipient);
-	}
-	
 
 	@Override
 	public List<AnonymousShareEntry> createAnonymousShare(List<DocumentEntry> documentEntries, User sender, List<Contact> recipients, Calendar expirationDate, Boolean passwordProtected, MailContainer mailContainer) throws BusinessException {
@@ -171,16 +154,11 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	
 	
 	@Override
-	public InputStream getAnonymousShareEntryStream(String shareUuid, MailContainer mailContainer) throws BusinessException {
+	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException {
 		try {
 			AnonymousShareEntry shareEntry = downloadAnonymousShareEntry(shareUuid);
 			//send a notification by mail to the owner
-			String email = shareEntry.getContact().getMail();
-			User owner = (User)shareEntry.getEntryOwner();
-			List<String> docNames = new ArrayList<String>();
-			docNames.add(shareEntry.getName());
-			notifierService.sendAllNotifications(mailContentBuildingService.buildMailAnonymousDownloadWithOneRecipient(owner, mailContainer, docNames, email, owner));
-			
+			notifierService.sendAllNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
 			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
 		} catch (BusinessException e) {
 			logger.error("Can't find anonymous share : " + shareUuid + " : " + e.getMessage());

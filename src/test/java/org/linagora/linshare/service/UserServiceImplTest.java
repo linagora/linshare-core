@@ -34,7 +34,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.FunctionalityNames;
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -46,7 +45,6 @@ import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
@@ -165,7 +163,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user);
 		
 		try{
-		userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", new MailContainer("blabla", Language.FRENCH), user.getMail(), user.getDomainId());
+		userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getMail(), user.getDomainId());
 		}catch(TechnicalException e){
 			logger.info("Impossible to send mail, normal in test environment");
 		}
@@ -307,7 +305,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		user.setCanCreateGuest(true);
 		userService.saveOrUpdateUser(user);
 		
-		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", new MailContainer("blabla", Language.FRENCH), user.getMail(), user.getDomainId());
+		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getMail(), user.getDomainId());
 	
 		Assert.assertNotNull(userRepository.findByMail("guest1@linpki.org"));
 		
@@ -358,7 +356,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		user2.setCanCreateGuest(true);
 		
 		userService.saveOrUpdateUser(user2);
-		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", new MailContainer("blabla", Language.FRENCH), user2.getMail(), user2.getDomainId());
+		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user2.getMail(), user2.getDomainId());
 	
 		Assert.assertTrue(userService.searchUserForRestrictedGuestEditionForm("user2@linpki.org","Jane","Smith", guest).contains(user2));
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -481,7 +479,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		guestRepository.create(guest);
 		
-		userService.resetPassword("user3@linpki.org", new MailContainer("", Language.FRENCH));
+		userService.resetPassword("user3@linpki.org");
 		
 		Assert.assertFalse(guest.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 		

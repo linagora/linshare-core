@@ -16,16 +16,6 @@ public interface AnonymousShareEntryRepository extends AbstractRepository<Anonym
      */
 	public AnonymousShareEntry findById(String uuid);
 	
-	/**
-	 * 
-	 * @param documentEntry
-	 * @param sender : user entity
-	 * @param recipient : Contact object
-	 * @return
-	 */
-	public AnonymousShareEntry getAnonymousShareEntry(DocumentEntry documentEntry, User sender, Contact recipient);
-	
-	
 	public List<AnonymousShareEntry> findAllExpiredEntries();
 
 	

@@ -266,20 +266,25 @@ public class MailNotifierServiceImpl implements NotifierService {
 	@Override
 	public void sendAllNotifications(List<MailContainerWithRecipient> mailContainerWithRecipient) throws BusinessException {
 		
-		List<String> unknownRecipients = new ArrayList<String>();	
-		
-		for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
-			try {
-				sendNotification(mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
-			} catch (SendFailedException e) {
-				unknownRecipients.add(mailContainer.getRecipient());
+		if(mailContainerWithRecipient != null) { 
+			
+			List<String> unknownRecipients = new ArrayList<String>();	
+			
+			for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
+				try {
+					sendNotification(mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
+				} catch (SendFailedException e) {
+					unknownRecipients.add(mailContainer.getRecipient());
+				}
 			}
-		}
-		
-		if(!unknownRecipients.isEmpty()){
-			logger.error("Addresses unreachables : " + unknownRecipients.toString());
-			throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
-		}
+			
+			if(!unknownRecipients.isEmpty()){
+				logger.error("Addresses unreachables : " + unknownRecipients.toString());
+				throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable", unknownRecipients);
+			}
+		} else {
+			logger.error("can not send mails, input list empty");
+		} 
 	}	
 	
 	

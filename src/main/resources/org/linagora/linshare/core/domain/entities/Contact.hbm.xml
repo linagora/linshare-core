@@ -7,9 +7,5 @@
       <generator class="native"/>
     </id>
     <property name="mail" column="mail" unique="true" type="string" length="255" not-null="true" lazy="false"/>
-    <set name="anonymousShareEntries" lazy="true" cascade="save-update,lock" inverse="true">
-			<key column="contact_id" not-null="true"/>
-			<one-to-many class="org.linagora.linshare.core.domain.entities.AnonymousShareEntry"/>
-		</set>
   </class>
 </hibernate-mapping>

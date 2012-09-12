@@ -65,41 +65,19 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 	}
 
 
-	public AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact recipient, Calendar expirationDate) throws BusinessException {
+	private AnonymousShareEntry createAnonymousShare(DocumentEntry documentEntry, AnonymousUrl anonymousUrl, User sender, Contact contact, Calendar expirationDate) throws BusinessException {
 		
-		AnonymousShareEntry anonymousShare = null;
-		AnonymousShareEntry current_share = null;
+		logger.debug("Creation of a new anonymous share between sender " + sender.getMail() + " and recipient " + contact.getMail());
+		AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), documentEntry, anonymousUrl , expirationDate);
+		AnonymousShareEntry anonymousShare = anonymousShareEntryRepository.create(share);
 		
+		// If the current document was previously shared, we need to rest its expiration date
+		documentEntry.setExpirationDate(null);
 		
-		Contact contact = contactRepository.find(recipient);
-		if(contact != null) {
-			current_share = anonymousShareEntryRepository.getAnonymousShareEntry(documentEntry, sender, contact);
-		} else {
-			contact = contactRepository.create(recipient);
-		}
-		
-		if(current_share != null) {
-			// if it does, we update the expiration date
-			logger.debug("The share (" + documentEntry.getUuid() +") between sender " + sender.getMail() + " and recipient " + contact.getMail() + " already exists. Just updating expiration date.");
-			anonymousShare = current_share;
-			anonymousShare.setExpirationDate(expirationDate);
-			anonymousShareEntryRepository.update(anonymousShare);
-		} else {
-			// if not, we create one
-			logger.debug("Creation of a new anonymous share between sender " + sender.getMail() + " and recipient " + contact.getMail());
-			AnonymousShareEntry share= new AnonymousShareEntry(sender, documentEntry.getName(), documentEntry.getComment(), documentEntry, anonymousUrl , contact, expirationDate);
-			anonymousShare = anonymousShareEntryRepository.create(share);
-			contact.getAnonymousShareEntries().add(anonymousShare);
-			contactRepository.update(contact);
-			
-			// If the current document was previously shared, we need to rest its expiration date
-			documentEntry.setExpirationDate(null);
-			
-			documentEntry.getAnonymousShareEntries().add(anonymousShare);
-			sender.getEntries().add(anonymousShare);
-			documentEntryRepository.update(documentEntry);
-			accountService.update(sender);
-		}
+		documentEntry.getAnonymousShareEntries().add(anonymousShare);
+		sender.getEntries().add(anonymousShare);
+		documentEntryRepository.update(documentEntry);
+		accountService.update(sender);
 		
 		return anonymousShare;
 	}
@@ -108,10 +86,15 @@ public class AnonymousShareEntryBusinessServiceImpl implements AnonymousShareEnt
 	@Override
 	public AnonymousUrl createAnonymousShare(List<DocumentEntry> documentEntries, User sender, Contact recipient, Calendar expirationDate, Boolean passwordProtected) throws BusinessException {
 		
-		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.create(passwordProtected);
+		Contact contact = contactRepository.find(recipient);
+		if(contact == null) {
+			contact = contactRepository.create(recipient);
+		}
+		
+		AnonymousUrl anonymousUrl = anonymousUrlBusinessService.create(passwordProtected, contact);
 		
 		for (DocumentEntry documentEntry : documentEntries) {
-			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, recipient, expirationDate);
+			AnonymousShareEntry anonymousShareEntry = createAnonymousShare(documentEntry, anonymousUrl, sender, contact, expirationDate);
 			anonymousUrl.getAnonymousShareEntries().add(anonymousShareEntry);
 		}
 		anonymousUrlBusinessService.update(anonymousUrl);

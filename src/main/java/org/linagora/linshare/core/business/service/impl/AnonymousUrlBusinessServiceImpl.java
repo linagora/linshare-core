@@ -5,6 +5,7 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.AnonymousUrlBusinessService;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
@@ -37,9 +38,9 @@ public class AnonymousUrlBusinessServiceImpl implements AnonymousUrlBusinessServ
 
 	
 	@Override
-	public AnonymousUrl create(Boolean passwordProtected) throws BusinessException {
+	public AnonymousUrl create(Boolean passwordProtected, Contact contact) throws BusinessException {
 		
-		AnonymousUrl anonymousUrl = new AnonymousUrl(baseSecuredUrl);
+		AnonymousUrl anonymousUrl = new AnonymousUrl(baseSecuredUrl, contact);
 		if(passwordProtected) {
 			String password = passwordService.generatePassword();
 			// We store it temporary in this object for mail notification.

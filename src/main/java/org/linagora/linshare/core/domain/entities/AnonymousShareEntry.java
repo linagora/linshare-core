@@ -15,18 +15,15 @@ public class AnonymousShareEntry extends Entry{
 	
 	private AnonymousUrl anonymousUrl;
 	
-	private Contact contact;
-	
 	
 	public AnonymousShareEntry() {
 		super();
 	}
 
-	public AnonymousShareEntry(Account entryOwner, String name, String comment, DocumentEntry documentEntry, AnonymousUrl anonymousUrl, Contact contact , Calendar expirationDate) {
+	public AnonymousShareEntry(Account entryOwner, String name, String comment, DocumentEntry documentEntry, AnonymousUrl anonymousUrl, Calendar expirationDate) {
 		super(entryOwner, name, comment);
 		this.documentEntry = documentEntry;
 		this.anonymousUrl = anonymousUrl;
-		this.contact = contact;
 		this.downloaded = new Long(0);
 		this.expirationDate = expirationDate;
 	}
@@ -64,14 +61,6 @@ public class AnonymousShareEntry extends Entry{
 		this.anonymousUrl = anonymousUrl;
 	}
 
-	public Contact getContact() {
-		return contact;
-	}
-
-	public void setContact(Contact contact) {
-		this.contact = contact;
-	}
-	
 	/* usefull getters */
 	public long getSize() {
 		return documentEntry.getSize();

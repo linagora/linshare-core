@@ -158,9 +158,7 @@ public class UserRestServiceImpl implements UserRestService {
 		boolean createGuestGranted = ((canCreateGuest != null) && ("true".equals(canCreateGuest)));
 		
         try {
-        	MailContainer mailContainer = mailContainerBuilder.buildMailContainer(actor, null);
-            userFacade.createGuest(mail, firstName, lastName, uploadGranted, createGuestGranted, "",
-                mailContainer, actor);
+            userFacade.createGuest(mail, firstName, lastName, uploadGranted, createGuestGranted, "", actor);
             logger.info("User " + mail + " successfully created");
         } catch (BusinessException e) {
         	logger.error(e.toString());

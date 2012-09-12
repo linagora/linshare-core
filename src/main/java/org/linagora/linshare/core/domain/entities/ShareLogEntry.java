@@ -73,7 +73,7 @@ public class ShareLogEntry extends FileLogEntry {
 		super(actor, logAction, description, share.getName(), share.getSize(), share.getType());
 		
 		this.targetDomain = "";
-		this.targetMail = share.getContact().getMail();
+		this.targetMail = share.getAnonymousUrl().getContact().getMail();
 		this.targetFirstname = "";
 		this.targetLastname = "";
 		this.expirationDate = share.getExpirationDate();

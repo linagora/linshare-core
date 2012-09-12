@@ -28,7 +28,7 @@ public interface AnonymousShareEntryService {
 	
 	public void deleteShare(SystemAccount systemAccount, AnonymousShareEntry share) throws BusinessException;
 	
-	public InputStream getAnonymousShareEntryStream(String shareUuid, MailContainer mailContainer) throws BusinessException ;
+	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException ;
 	
 	public void sendDocumentEntryUpdateNotification(AnonymousShareEntry anonymousShareEntry, String friendlySize, String originalFileName);
 

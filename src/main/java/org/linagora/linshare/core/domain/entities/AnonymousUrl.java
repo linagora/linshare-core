@@ -1,7 +1,11 @@
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import org.linagora.linshare.core.domain.vo.DocumentVo;
 
 /**
  * @author fred
@@ -17,6 +21,8 @@ public class AnonymousUrl {
 	
 	private String password;
 	
+	private Contact contact;
+	
 	private String temporaryPlainTextPassword;
 	
 	private Set<AnonymousShareEntry> anonymousShareEntries = new HashSet<AnonymousShareEntry>();
@@ -24,11 +30,12 @@ public class AnonymousUrl {
 	public AnonymousUrl() {
 	}
 	
-	public AnonymousUrl(String urlPath) {
+	public AnonymousUrl(String urlPath, Contact contact) {
 		super();
 		this.urlPath = urlPath;
 		this.password = null;
 		this.temporaryPlainTextPassword = null;
+		this.contact = contact;
 	}
 
 	public Long getId() {
@@ -79,6 +86,7 @@ public class AnonymousUrl {
 		this.temporaryPlainTextPassword = temporaryPlainTextPassword;
 	}
 	
+	
 	public String getFullUrl(String baseUrl) {
 		//compose the secured url to give in mail
 		StringBuffer httpUrlBase = new StringBuffer();
@@ -89,5 +97,37 @@ public class AnonymousUrl {
 		httpUrlBase.append(getUuid());
 		return httpUrlBase.toString();
 	}
+
 	
+	public Contact getContact() {
+		return contact;
+	}
+
+	
+	public void setContact(Contact contact) {
+		this.contact = contact;
+	}
+	
+	
+	/** Useful getters */
+	public List<String> getDocumentNames() {
+		List<String> docNames = new ArrayList<String>();
+		for (AnonymousShareEntry anonymousShareEntry: anonymousShareEntries) {
+			docNames.add(anonymousShareEntry.getDocumentEntry().getName());
+		}
+		return docNames;
+	}
+	
+	
+	public boolean oneDocumentIsEncrypted() {
+		boolean isOneDocEncrypted = false;
+		for (AnonymousShareEntry anonymousShareEntry: anonymousShareEntries) {
+			if(anonymousShareEntry.getDocumentEntry().getCiphered()) {
+				isOneDocEncrypted = true;
+				break;
+			}
+			
+		}
+		return isOneDocEncrypted;
+	}
 }

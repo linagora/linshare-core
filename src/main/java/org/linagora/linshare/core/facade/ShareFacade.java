@@ -151,9 +151,8 @@ public interface ShareFacade {
      * 
      * @param sharedDocument
      * @param currentUser
-     * @param mailContainer
      */
-    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, MailContainer mailContainer) throws BusinessException;
+    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser) throws BusinessException;
     
     
 	/**

@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
@@ -90,17 +89,16 @@ public class UserFacadeImpl implements UserFacade {
      * @param lastName last name.
      * @param canUpload if the user can upoad.
      * @param comment  the comment about the user
+     * @param owner user who create the guest.
      * @param mailSubject mail subject.
      * @param mailContent content of the mail.
-     * @param owner user who create the guest.
      * @return 
      * @throws BusinessException if user already exist.
      */
     @Override
-    public UserVo createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
-    		MailContainer mailContainer, UserVo owner) throws BusinessException {
+    public UserVo createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment, UserVo owner) throws BusinessException {
     	
-        Guest guest = userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, mailContainer, owner.getLogin(), owner.getDomainIdentifier());
+        Guest guest = userService.createGuest(mail, firstName, lastName, mail, canUpload, canCreateGuest, comment, owner.getLogin(), owner.getDomainIdentifier());
         return new UserVo(guest);
     }
     
@@ -241,12 +239,12 @@ public class UserFacadeImpl implements UserFacade {
     	
     }
 
-	public void resetPassword(UserVo user, MailContainer mailContainer) throws BusinessException {
+	public void resetPassword(UserVo user) throws BusinessException {
 		if (!user.getUserType().equals(AccountType.GUEST)) {
     		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user type is wrong, only a guest may change its password");
     	}
     	
-    	userService.resetPassword(user.getLogin(), mailContainer);		
+    	userService.resetPassword(user.getLogin());		
 	}
 
 	public void setGuestContactRestriction(String uuid, List<String> mailContacts) throws BusinessException {

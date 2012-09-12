@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
@@ -47,9 +46,9 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 
 
 	@Override
-	public List<DocumentVo> getDocuments(String uuid, String password) throws BusinessException {
+	public List<DocumentVo> getDocuments(String anonymousUrlUuid, String password) throws BusinessException {
 		List<DocumentVo> res = new ArrayList<DocumentVo>();
-		List<AnonymousShareEntry> anonymousShareEntries = anonymousUrlService.getAnonymousShareEntry(uuid, password);
+		List<AnonymousShareEntry> anonymousShareEntries = anonymousUrlService.getAnonymousShareEntry(anonymousUrlUuid, password);
 		logger.debug("anonymousShareEntries size : " + anonymousShareEntries.size());
 		for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
 			res.add(new DocumentVo(anonymousShareEntry));
@@ -83,14 +82,14 @@ public class SecuredUrlFacadeImpl implements SecuredUrlFacade {
 
 
 	@Override
-	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid, String password, MailContainer mailContainer) throws BusinessException {
-		return anonymousUrlService.retrieveFileStream(anonymousUrlUuid, anonymousShareEntryUuid, password, mailContainer);
+	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid, String password) throws BusinessException {
+		return anonymousUrlService.retrieveFileStream(anonymousUrlUuid, anonymousShareEntryUuid, password);
 	}
 
 
 	@Override
-	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password, MailContainer mailContainer) throws BusinessException {
-		return anonymousUrlService.retrieveArchiveZipStream(anonymousUrlUuid, password, mailContainer);
+	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password) throws BusinessException {
+		return anonymousUrlService.retrieveArchiveZipStream(anonymousUrlUuid, password);
 	}
 	
 }

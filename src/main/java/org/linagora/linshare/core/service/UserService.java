@@ -25,7 +25,6 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -44,13 +43,12 @@ public interface UserService {
      * @param mail guest email address.
      * @param canUpload : if the user can upload file
      * @param comment : the comment about the user
-     * @param mailContainer informations needed to construct the email
      * @param ownerLogin login of the user who create the guest.
      * @return persisted guest.
      * @throws BusinessException in case of duplicated guest.
      */
     Guest createGuest(String login, String firstName, String lastName, String mail, Boolean canUpload, Boolean canCreateGuest, String comment, 
-    		MailContainer mailContainer, String ownerLogin, String ownerDomain) throws BusinessException;
+    		String ownerLogin, String ownerDomain) throws BusinessException;
 
     
     /** Search a user.
@@ -136,10 +134,9 @@ public interface UserService {
 	/**
 	 * Reset a guest password
 	 * @param login
-     * @param mailContainer informations needed to construct the email
 	 * @throws BusinessException
 	 */
-	public void resetPassword(String uuid, MailContainer mailContainer) throws BusinessException;
+	public void resetPassword(String uuid) throws BusinessException;
 	
 	/**
 	 * Update a guest as restricted and set his list of contacts

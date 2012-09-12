@@ -231,7 +231,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			
 			
 			for (AnonymousShareEntry entry : documentEntry.getAnonymousShareEntries()) {
-				res.put(entry.getContact().getMail(), entry.getExpirationDate());
+				res.put(entry.getAnonymousUrl().getContact().getMail(), entry.getExpirationDate());
 			}
 		} catch (BusinessException e) {
 			logger.error("Document " + documentVo.getIdentifier() + " was not found ! " + e.getMessage() );
@@ -361,19 +361,11 @@ public class ShareFacadeImpl implements ShareFacade {
     
     
 	@Override
-    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser, MailContainer mailContainer) throws BusinessException {
+    public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser) throws BusinessException {
 		
-		UserVo ownerVo = sharedDocument.getSender();
-
 		User user = userRepository.findByLsUuid(currentUser.getLogin());
-		User owner = userRepository.findByLsUuid(ownerVo.getLogin());
-		
 		ShareEntry shareEntry = shareEntryService.findByUuid(user, sharedDocument.getIdentifier());
-		
-		List<String> docNames = new ArrayList<String>();
-		docNames.add(shareEntry.getDocumentEntry().getName());
-		
-		notifierService.sendAllNotifications(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(owner, mailContainer, docNames, user, owner));
+		notifierService.sendAllNotification(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
     }
     
 	

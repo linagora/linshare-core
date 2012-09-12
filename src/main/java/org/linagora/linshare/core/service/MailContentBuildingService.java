@@ -25,13 +25,12 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.AnonymousUrl;
-import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 /**
@@ -42,83 +41,9 @@ import org.linagora.linshare.core.exception.BusinessException;
  */
 public interface MailContentBuildingService {
 
-	/**
-	 * Notify a user that shared files has been downloaded
-	 * by an anonymous user
-	 */
-	public MailContainer buildMailAnonymousDownload(User actor, MailContainer mailContainer, List<String> docs, String email, User recipient) throws BusinessException;
-	
-
-	/**
-	 * Notify somebody that his linshare account has been created
-	 */
-	public MailContainer buildMailNewGuest(User actor,MailContainer mailContainer,
-			User owner, User recipient, String password)
-			throws BusinessException;
-
-
-	/**
-	 * Notify a guest user of his new password
-	 */
-	public MailContainer buildMailResetPassword(User actor,MailContainer mailContainer,
-			User recipient, String password) throws BusinessException;
-
-	/**
-	 * Notify a user that he received new sharing
-	 */
-	public MailContainer buildMailNewSharing(User actor,MailContainer mailContainer,
-			User owner, User recipient, List<DocumentVo> docs,
-			String linShareUrl, String linShareUrlParam, String password, 
-			boolean hasToDecrypt, String jwsEncryptUrl)
-			throws BusinessException;
-
-	/**
-	 * Notify a user that he received new sharing
-	 */
-	public MailContainer buildMailNewSharing(User actor,MailContainer mailContainer,
-			User owner, String recipientMail, List<DocumentVo> docs, String linShareUrl,
-			String linShareUrlParam, String password, 
-			boolean hasToDecrypt, String jwsEncryptUrl)
-			throws BusinessException;
-
 
 	
-	
-	
-	
-	/**
-	 * Notify a user that shared files has been downloaded
-	 * by an anonymous user
-	 */
-	public List<MailContainerWithRecipient> buildMailAnonymousDownloadWithOneRecipient(User actor, MailContainer mailContainer, List<String> docs, String email, User recipient) throws BusinessException;	
-	
 
-	public List<MailContainerWithRecipient> buildMailRegisteredDownloadWithOneRecipient(User actor,
-			MailContainer mailContainer, List<String> docNames,
-			User downloadingUser, User recipient) throws BusinessException;
-	
-	/**
-	 * Notify somebody that his linshare account has been created
-	 */
-	public MailContainerWithRecipient buildMailNewGuestWithRecipient(User actor,MailContainer mailContainer,
-			User owner, User recipient, String password)
-			throws BusinessException;
-
-	public List<MailContainerWithRecipient> buildMailNewGuestWithOneRecipient(User actor,MailContainer mailContainer,
-			User owner, User recipient, String password)
-			throws BusinessException;
-
-	/**
-	 * Notify a guest user of his new password
-	 */
-	public MailContainerWithRecipient buildMailResetPasswordWithRecipient(User actor,MailContainer mailContainer,
-			User recipient, String password) throws BusinessException;
-
-	public List<MailContainerWithRecipient> buildMailResetPasswordWithOneRecipient(User actor,MailContainer mailContainer,
-			User recipient, String password) throws BusinessException;
-
-	
-	
 	
 	
 	/**
@@ -126,13 +51,6 @@ public interface MailContentBuildingService {
 	 */
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor,MailContainer mailContainer, User recipient, List<String> docNames, String linShareUrl,
 			String linShareUrlParam, String password, boolean hasToDecrypt) throws BusinessException;
-	
-	// Made by fred ;)
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor, MailContainer mailContainer, User recipient, List<String> docNames) throws BusinessException;
-	
-	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User actor, MailContainer mailContainer, Contact recipient, List<String> docNames, AnonymousUrl anonymousUrl, boolean hasToDecrypt) throws BusinessException;
-
-	
 	
 	
 	
@@ -205,5 +123,53 @@ public interface MailContentBuildingService {
 	 * @throws BusinessException
 	 */
 	public MailContainerWithRecipient buildMailSharedFileDeletedWithRecipient(Account actor, ShareEntry shareEntry) throws BusinessException;
+
+	
+	/**
+	 * anonymous share notification
+	 * @param inputMailContainer
+	 * @param anonymousUrl
+	 * @param sender
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailNewSharingWithRecipient(MailContainer inputMailContainer, AnonymousUrl anonymousUrl, User sender) throws BusinessException;
+	
+	
+	/**
+	 * reset guest password notification
+	 * @param recipient
+	 * @param password
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailResetPassword(Guest recipient, String password) throws BusinessException;
+	
+	
+	/**
+	 * Notify somebody that his linshare account has been created
+	 * @param owner
+	 * @param recipient
+	 * @param password
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailNewGuest(User owner,User recipient, String password) throws BusinessException;
+	
+	
+	/**
+	 * download notification for guest or internal user
+	 * @param shareEntry
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MailContainerWithRecipient buildMailRegisteredDownloadWithOneRecipient(ShareEntry shareEntry) throws BusinessException;
+	
+	
+	/**
+	 * Notify a user that shared files has been downloaded
+	 * by an anonymous user
+	 */
+	public MailContainerWithRecipient buildMailAnonymousDownload(AnonymousShareEntry shareEntry) throws BusinessException;	
 	
 }

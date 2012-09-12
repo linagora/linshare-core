@@ -130,17 +130,16 @@ public class Download {
 		}
 	}
 
-	public StreamResponse onActivate(String uuid, Integer documentId) {
+	public StreamResponse onActivate(String anonymousUrlUuid, Integer documentId) {
 		logger.debug("documenbtId : " + String.valueOf(documentId));
-		setCurrentUuid(uuid);
+		setCurrentAnonymousUrlUuid(anonymousUrlUuid);
 
 		try {
-			checkUrl(uuid);
+			checkUrl(anonymousUrlUuid);
 			if(!passwordProtected){
-				documents = securedUrlFacade.getDocuments(uuid, password);
+				documents = securedUrlFacade.getDocuments(anonymousUrlUuid, password);
 				DocumentVo doc = documents.get(documentId);
-				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(null, null);
-				final InputStream file = securedUrlFacade.retrieveFileStream(uuid, doc.getIdentifier(), password, mailContainer);
+				final InputStream file = securedUrlFacade.retrieveFileStream(anonymousUrlUuid, doc.getIdentifier(), password);
 				return new FileStreamResponse(doc, file); 
 			} else {
 				return null;
@@ -154,19 +153,19 @@ public class Download {
 
 	/**
 	 * this is the first method called in this page.
-	 * @param uuid
+	 * @param anonymousUrlUuid
 	 */
-	public void onActivate(String uuid) {
-		setCurrentUuid(uuid);
+	public void onActivate(String anonymousUrlUuid) {
+		setCurrentAnonymousUrlUuid(anonymousUrlUuid);
 		try {
-			checkUrl(uuid);
-			documents = securedUrlFacade.getDocuments(uuid, password);
+			checkUrl(anonymousUrlUuid);
+			documents = securedUrlFacade.getDocuments(anonymousUrlUuid, password);
 		} catch (BusinessException e) {
 			messagesManagementService.notify(e);
 		}
 	}
 
-	private void setCurrentUuid(String uuid) {
+	private void setCurrentAnonymousUrlUuid(String uuid) {
 		logger.debug("uuid : " + uuid);
 		//check current one with the old one
 		if(this.uuid!=null && !this.uuid.equals(uuid)){
@@ -195,16 +194,15 @@ public class Download {
 		}
 	}
 
-	public StreamResponse onActionFromDownloadThemAll(String uuid) throws IOException, BusinessException{
+	public StreamResponse onActionFromDownloadThemAll(String anonymousUrlUuid) throws IOException, BusinessException{
 		
-		setCurrentUuid(uuid);
+		setCurrentAnonymousUrlUuid(anonymousUrlUuid);
 		try {
-			checkUrl(uuid);
-			documents = securedUrlFacade.getDocuments(uuid, password);
+			checkUrl(anonymousUrlUuid);
+			documents = securedUrlFacade.getDocuments(anonymousUrlUuid, password);
 		
 			if(!passwordProtected){
-				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(null, null);
-				return securedUrlFacade.retrieveArchiveZipStream(uuid, password, mailContainer);
+				return securedUrlFacade.retrieveArchiveZipStream(anonymousUrlUuid, password);
 			}
 		} catch (BusinessException e) {
 			messagesManagementService.notify(e);

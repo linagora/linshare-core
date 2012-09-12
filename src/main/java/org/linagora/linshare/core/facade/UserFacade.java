@@ -23,7 +23,6 @@ package org.linagora.linshare.core.facade;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -41,12 +40,11 @@ public interface UserFacade {
      * @param lastName last name.
      * @param canUpload if the user can upoad.
      * @param comment : the comment about the user
-     * @param mailContainer informations needed to construct the email
      * @param owner user who create the guest.
      * @throws BusinessException if user already exist.
      */
 	UserVo createGuest(String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest,String comment,
-    		MailContainer mailContainer, UserVo owner) throws BusinessException;
+    		UserVo owner) throws BusinessException;
     
     /**
      * update a guest (edit)
@@ -150,9 +148,8 @@ public interface UserFacade {
     /**
      * Set a new password to a guest user
      * @param user
-     * @param mailContainer informations needed to construct the email
      */
-    void resetPassword(UserVo user, MailContainer mailContainer) throws BusinessException;
+    void resetPassword(UserVo user) throws BusinessException;
     
     /**
 	 * Update a guest as restricted and set his list of contacts

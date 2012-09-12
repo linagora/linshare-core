@@ -318,7 +318,7 @@ public class GuestEditForm {
 
 			boolean allowedToCreateGuest = guestsAllowedToCreateGuest;
         	
-        	guestVo = userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, mailContainer, userLoggedIn);
+        	guestVo = userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, userLoggedIn);
 		} catch (BusinessException e) { 
 			logger.error("Can't create Guest : " + mail);
 			logger.debug(e.toString());

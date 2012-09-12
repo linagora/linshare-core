@@ -58,19 +58,6 @@ public class AnonymousShareEntryRepositoryImpl extends AbstractRepositoryImpl<An
 
 	
 	@Override
-	public AnonymousShareEntry getAnonymousShareEntry(DocumentEntry documentEntry, User sender, Contact recipient) {
-		List<AnonymousShareEntry> results = findByCriteria(Restrictions.eq("documentEntry", documentEntry),Restrictions.eq("entryOwner", sender),Restrictions.eq("contact", recipient));
-		if (results == null || results.isEmpty()) {
-            return null;
-        } else if (results.size() == 1) {
-            return results.get(0);
-        } else {
-            throw new IllegalStateException("AnonymousShareEntry must be unique");
-        }
-	}
-
-	
-	@Override
 	public List<AnonymousShareEntry> findAllExpiredEntries() {
 		List<AnonymousShareEntry> entries = findByCriteria(Restrictions.lt("expirationDate", Calendar.getInstance()));
         if (entries == null) {

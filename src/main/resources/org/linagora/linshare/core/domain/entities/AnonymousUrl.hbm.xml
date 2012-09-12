@@ -9,6 +9,7 @@
 		<property name="urlPath" column="url_path" index="anonymous_url3" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="uuid" column="uuid" unique="true" index="anonymous_url3" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="password" column="password" type="string" length="255" not-null="false" lazy="false"/>
+		<many-to-one name="contact" column="contact_id" class="org.linagora.linshare.core.domain.entities.Contact" not-null="true" lazy="no-proxy"/>
 		<set name="anonymousShareEntries" lazy="true" cascade="save-update,lock" inverse="true">
 			<key column="anonymous_url_id" not-null="true"/>
 			<one-to-many class="org.linagora.linshare.core.domain.entities.AnonymousShareEntry"/>

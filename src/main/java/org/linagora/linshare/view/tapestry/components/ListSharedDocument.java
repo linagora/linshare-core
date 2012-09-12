@@ -291,8 +291,7 @@ public class ListSharedDocument {
 	
 	private void notifyOwnerByEmail(ShareDocumentVo currentSharedDocumentVo) {
 		try {
-			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(user, null);
-			shareFacade.sendDownloadNotification(currentSharedDocumentVo, user, mailContainer);
+			shareFacade.sendDownloadNotification(currentSharedDocumentVo, user);
 		} catch (BusinessException e) {
 			logger.error("Problem while sending mail", e);
 			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Problem while sending mail",e);

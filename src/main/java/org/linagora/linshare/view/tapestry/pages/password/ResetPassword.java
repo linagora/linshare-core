@@ -122,10 +122,8 @@ public class ResetPassword {
 			return this;
 		}
 
-		MailContainer mailContainer = mailBuilder.buildMailContainer(user, null);
-
 		try {
-			userFacade.resetPassword(user, mailContainer);
+			userFacade.resetPassword(user);
 		} catch (BusinessException e) {
 			// should never occur.
 			logger.error(e.getMessage());

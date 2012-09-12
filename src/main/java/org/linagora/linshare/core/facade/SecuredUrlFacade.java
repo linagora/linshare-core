@@ -23,7 +23,6 @@ package org.linagora.linshare.core.facade;
 import java.io.InputStream;
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
@@ -35,11 +34,11 @@ public interface SecuredUrlFacade {
 	
 	boolean isValid(String alea, String password);
 
-	List<DocumentVo> getDocuments(String uuid, String password) throws BusinessException;
+	List<DocumentVo> getDocuments(String anonymousUrlUuid, String password) throws BusinessException;
 
 	boolean isPasswordProtected(String uuid) throws LinShareNotSuchElementException;
 	
-	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid , String password, MailContainer mailContainer) throws BusinessException;
+	public InputStream retrieveFileStream(String anonymousUrlUuid, String anonymousShareEntryUuid , String password) throws BusinessException;
 	
-	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password, MailContainer mailContainer) throws BusinessException;
+	public FileStreamResponse retrieveArchiveZipStream(String anonymousUrlUuid, String password) throws BusinessException;
 }
