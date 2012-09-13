@@ -56,17 +56,6 @@ public class MailContainerWithRecipient extends MailContainer {
 		this.recipient=recipient;
 	}
 
-	/**
-	 * Create a mailContainer, used by the MailContainerBuilder
-	 * tapestry service.
-	 * 
-	 * @param personalMessage personalMessage: not required
-	 * @param language language of the email
-	 */
-	public MailContainerWithRecipient(String personalMessage, Language language) {
-		super(personalMessage, language);
-	}
-	
 	public MailContainerWithRecipient(String locale) {
 		super(locale);
 	}

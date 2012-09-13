@@ -35,7 +35,6 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -47,7 +46,6 @@ import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 
 
@@ -94,11 +92,6 @@ public class FileUpdateUploader {
     @Inject
     private Messages messages;
 
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
-    
-    
-	@SuppressWarnings("unused")
 	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=250"})
 	private WindowWithEffects windowUpdateDocUpload;
     

@@ -20,14 +20,11 @@
 */
 package org.linagora.linshare.view.tapestry.pages;
 
-import java.util.List;
-
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.service.UserService;
@@ -63,47 +60,45 @@ public class TestPopup {
     private  UserService userService;
     
  
-	@SuppressWarnings("unused")
 	@Component(parameters = {"style=dialog", "show=false","width=360", "height=335"})
 	private WindowWithEffects dialog;
 	
-	@SuppressWarnings("unused")
 	@Component(parameters = {"style=alert", "show=false","width=360", "height=335"})
 	private WindowWithEffects alert;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=alert_lite", "show=false","width=360", "height=335"})
 	private WindowWithEffects alert_lite;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=alphacube", "show=false","width=360", "height=335"})
 	private WindowWithEffects alphacube;
-	@SuppressWarnings("unused")
+
 	@Component(parameters = {"style=mac_os_x", "show=false","width=360", "height=335"})
 	private WindowWithEffects mac_os_x;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=blur_os_x", "show=false","width=360", "height=335"})
 	private WindowWithEffects blur_os_x;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=mac_os_x_dialog", "show=false","width=360", "height=335"})
 	private WindowWithEffects mac_os_x_dialog;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=nuncio", "show=false","width=360", "height=335"})
 	private WindowWithEffects nuncio;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=spread", "show=false","width=360", "height=335"})
 	private WindowWithEffects spread;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=darkX", "show=false","width=360", "height=335"})
 	private WindowWithEffects darkX;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=greenlighting", "show=false","width=360", "height=335"})
 	private WindowWithEffects greenlighting;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=bluelighting", "show=false","width=360", "height=335"})
 	private WindowWithEffects bluelighting;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=greylighting", "show=false","width=360", "height=335"})
 	private WindowWithEffects greylighting;
-	@SuppressWarnings("unused")
+	
 	@Component(parameters = {"style=darkbluelighting", "show=false","width=360", "height=335"})
 	private WindowWithEffects darkbluelighting;
 	

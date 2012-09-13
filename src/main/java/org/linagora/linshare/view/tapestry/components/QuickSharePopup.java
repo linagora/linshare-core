@@ -67,7 +67,6 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linshare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
@@ -96,7 +95,6 @@ public class QuickSharePopup{
 	private ShareSessionObjects shareSessionObjects;
 	
 
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	private String eventName;
 
@@ -134,9 +132,6 @@ public class QuickSharePopup{
 	@Persist("flash")
 	private List<String> recipientsEmail;
 	
-	
-    
-	@SuppressWarnings("unused") // used in TML
 	@Property
 	private UploadedFile file;
     
@@ -179,10 +174,6 @@ public class QuickSharePopup{
 
     @Inject
     private ComponentResources resources;
-	
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
-
 	
 	@Inject @Symbol("linshare.default.maxUpload")
 	@Property
@@ -362,8 +353,8 @@ public class QuickSharePopup{
 	    	
 			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 			try {
-				MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
-				mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
+				MailContainer mailContainer = new MailContainer(userVo.getLocale(), textAreaValue, textAreaSubjectValue);
+//				mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
 				sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer,null);
 			
 			} catch (BusinessException e1) {

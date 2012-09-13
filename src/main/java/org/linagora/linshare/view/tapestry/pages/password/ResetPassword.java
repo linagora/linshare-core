@@ -31,7 +31,6 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.chenillekit.tapestry.core.components.Kaptcha;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
@@ -41,7 +40,6 @@ import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 
 public class ResetPassword {
@@ -49,7 +47,6 @@ public class ResetPassword {
 	@Persist
 	private String mail;
 	
-	@SuppressWarnings("unused")
 	@Component
 	private Kaptcha kaptcha;
 
@@ -70,9 +67,6 @@ public class ResetPassword {
 
 	@Inject
 	private Messages messages;
-    
-    @Inject
-    private MailContainerBuilder mailBuilder;
     
 	@Inject @Symbol("linshare.domain.visible")
 	@Property

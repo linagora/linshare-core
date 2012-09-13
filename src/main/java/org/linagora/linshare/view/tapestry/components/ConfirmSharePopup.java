@@ -66,7 +66,6 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linshare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
@@ -150,20 +149,28 @@ public class ConfirmSharePopup{
 	@InjectComponent
 	private DatePicker datePicker;
 	
+	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private Date minDatePicker;
+	
 	@Property
 	@Persist
 	private Date maxDatePicker;
+	
+	@SuppressWarnings("unused")
 	@Property
 	private Date defaultDatePicker;
 
+	@SuppressWarnings("unused")
 	@Property
 	private String tooltipValue;
+	
+	@SuppressWarnings("unused")
 	@Property
 	private String tooltipTitle;
 	
+	@SuppressWarnings("unused")
 	@Property
 	private boolean warningCryptedFiles;
 	
@@ -199,9 +206,7 @@ public class ConfirmSharePopup{
 	@Inject
 	private ComponentResources componentResources;
 	
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
-
+	@SuppressWarnings("unused")
 	@Property
 	private int autocompleteMin;
 	
@@ -422,8 +427,8 @@ public class ConfirmSharePopup{
         
 		SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 		try {
-			MailContainer mailContainer = mailContainerBuilder.buildMailContainer(userVo, textAreaValue);
-			mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
+			MailContainer mailContainer = new MailContainer(userVo.getLocale(), textAreaSubjectValue, textAreaSubjectValue);
+//			mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
 			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo, recipientsEmail, secureSharing, mailContainer, dateExpiry);
 
 		

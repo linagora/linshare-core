@@ -39,7 +39,6 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateManager;
@@ -47,34 +46,23 @@ import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.RequestHandler;
 import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.chenillekit.image.ChenilleKitImageConstants;
 import org.linagora.linkit.flexRenderer.services.FlexRendererConfigService;
 import org.linagora.linkit.flexUpload.services.FlexUploadConfigService;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.AccountFacade;
-import org.linagora.linshare.core.facade.DocumentFacade;
-import org.linagora.linshare.core.facade.SearchDocumentFacade;
-import org.linagora.linshare.core.facade.ShareFacade;
-import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.utils.PropertyPlaceholderConfigurer;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.objects.BusinessInformativeContentBundle;
 import org.linagora.linshare.view.tapestry.objects.HelpsASO;
-import org.linagora.linshare.view.tapestry.rest.impl.DocumentRestServiceImpl;
-import org.linagora.linshare.view.tapestry.rest.impl.ShareRestServiceImpl;
-import org.linagora.linshare.view.tapestry.rest.impl.UserRestServiceImpl;
 import org.linagora.linshare.view.tapestry.services.impl.AssetProtectionDispatcher;
 import org.linagora.linshare.view.tapestry.services.impl.BusinessMessagesManagementServiceImpl;
 import org.linagora.linshare.view.tapestry.services.impl.ConfigureMarshallerModule;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linshare.view.tapestry.services.impl.MyMultipartDecoderImpl;
 import org.linagora.linshare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.linshare.view.tapestry.services.impl.UserAccessAuthentity;
@@ -84,7 +72,6 @@ import org.linagora.restmarshaller.ConfigureOmitFieldMarshaller;
 import org.linagora.restmarshaller.Marshaller;
 import org.linagora.restmarshaller.StringClasse;
 import org.linagora.restmarshaller.xstream.impl.XstreamMarshaller;
-import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 
 
@@ -304,7 +291,7 @@ public class AppModule
 	 * UserDetailsVo for session object
 	 * @param configuration
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration)
 	{
 		configuration.add(UserVo.class, new ApplicationStateContribution("session"));
@@ -388,39 +375,39 @@ public class AppModule
     }
     
     
-    /**
-     * Create the Rest dispatcher. Holds nearly all the know universe as constructor
-     */
-    public void contributeRestfulWSDispatcher (MappedConfiguration<String, Object> config,
-    		 ApplicationStateManager applicationStateManager,
-    		 @InjectService("MyMultipartDecoder") MyMultipartDecoder myDecoder,
-    		 @InjectService("RequestGlobals") RequestGlobals requestGlobal,
-    		 @InjectService("DocumentFacade") DocumentFacade documentFacade,
-    		 @InjectService("Marshaller") Marshaller xstreamMarshaller,
-    		 @InjectService("SearchDocumentFacade") SearchDocumentFacade searchDocumentFacade,
-    		 @InjectService("ShareFacade") ShareFacade shareFacade,
-    		 @InjectService("UserFacade") UserFacade userFacade,
-    		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
-    		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
-    		 @InjectService("ThreadLocale")  ThreadLocale threadLocale,
-    		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder,
-    		 @InjectService("antiSamyPolicy")  Policy antiSamyPolicy,
-    		 @InjectService("AbstractDomainFacade")  AbstractDomainFacade domainFacade
-
-    		 )
-    {
-
-        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,antiSamyPolicy));
-        config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, documentFacade, mailContainerBuilder));
-        config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,domainFacade));
-    }
-     
-    public static MailContainerBuilder buildMailContainerBuilder(
-		 @InjectService("PersistentLocale") PersistentLocale persistentLocale,
-		 @InjectService("Request") Request request,
-		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource) {
-    	return new MailContainerBuilder(persistentLocale, request, validationMessagesSource);
-    }
+//    /**
+//     * Create the Rest dispatcher. Holds nearly all the know universe as constructor
+//     */
+//    public void contributeRestfulWSDispatcher (MappedConfiguration<String, Object> config,
+//    		 ApplicationStateManager applicationStateManager,
+//    		 @InjectService("MyMultipartDecoder") MyMultipartDecoder myDecoder,
+//    		 @InjectService("RequestGlobals") RequestGlobals requestGlobal,
+//    		 @InjectService("DocumentFacade") DocumentFacade documentFacade,
+//    		 @InjectService("Marshaller") Marshaller xstreamMarshaller,
+//    		 @InjectService("SearchDocumentFacade") SearchDocumentFacade searchDocumentFacade,
+//    		 @InjectService("ShareFacade") ShareFacade shareFacade,
+//    		 @InjectService("UserFacade") UserFacade userFacade,
+//    		 @InjectService("PropertiesSymbolProvider")	PropertiesSymbolProvider propertiesSymbolProvider,
+//    		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource,
+//    		 @InjectService("ThreadLocale")  ThreadLocale threadLocale,
+//    		 @InjectService("MailContainerBuilder")  MailContainerBuilder mailContainerBuilder,
+//    		 @InjectService("antiSamyPolicy")  Policy antiSamyPolicy,
+//    		 @InjectService("AbstractDomainFacade")  AbstractDomainFacade domainFacade
+//
+//    		 )
+//    {
+//
+//        config.add("documentrestservice", new DocumentRestServiceImpl(applicationStateManager, searchDocumentFacade, documentFacade, myDecoder, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,antiSamyPolicy));
+//        config.add("sharerestservice", new ShareRestServiceImpl(applicationStateManager, shareFacade, documentFacade, mailContainerBuilder));
+//        config.add("userrestservice", new UserRestServiceImpl(applicationStateManager, userFacade, propertiesSymbolProvider, xstreamMarshaller,mailContainerBuilder,domainFacade));
+//    }
+//     
+//    public static MailContainerBuilder buildMailContainerBuilder(
+//		 @InjectService("PersistentLocale") PersistentLocale persistentLocale,
+//		 @InjectService("Request") Request request,
+//		 @InjectService("ValidationMessagesSource") ValidationMessagesSource validationMessagesSource) {
+//    	return new MailContainerBuilder(persistentLocale, request, validationMessagesSource);
+//    }
     
     /**
      * ChenilleKit Kaptcha configuration

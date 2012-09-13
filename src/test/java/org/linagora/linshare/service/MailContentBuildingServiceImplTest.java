@@ -1,21 +1,13 @@
 package org.linagora.linshare.service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 import org.linagora.linshare.core.dao.FileSystemDao;
-import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
@@ -69,12 +61,22 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	@Autowired
 	private FileSystemDao fileRepository;
 	
+	@SuppressWarnings("unused")
 	private LoadingServiceTestDatas datas;
 	
+	@SuppressWarnings("unused")
 	private InputStream inputStream;
+	
+	@SuppressWarnings("unused")
 	private String inputStreamUuid;
+	
+	@SuppressWarnings("unused")
 	private User john;
+	
+	@SuppressWarnings("unused")
 	private User jane;
+	
+	@SuppressWarnings("unused")
 	private Document aDocument;
 	
 	@Before
@@ -154,10 +156,10 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
-	private void testMailGenerate(MailContainer mailContainer){
-		Assert.assertNotNull(mailContainer);
-
-	}
+//	private void testMailGenerate(MailContainer mailContainer){
+//		Assert.assertNotNull(mailContainer);
+//
+//	}
 	
 //	@Test
 //	public void testBuildMailAnonymousDownload() throws BusinessException{

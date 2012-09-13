@@ -63,7 +63,6 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,9 +132,6 @@ public class ListThreadDocument {
     
 	@Inject
 	private Response response;
-
-    @Inject
-    private MailContainerBuilder mailContainerBuilder;
 
     @Inject
 	private BeanModelSource beanModelSource;
@@ -220,6 +216,7 @@ public class ListThreadDocument {
 		}
 		
 		if (current == null) {
+			logger.error("invalid uuid for this user");
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,	"invalid uuid for this user");
 		} else {
 			InputStream stream = threadEntryFacade.retrieveFileStream(current, user);

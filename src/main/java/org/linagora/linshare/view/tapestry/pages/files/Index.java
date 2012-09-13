@@ -39,11 +39,9 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -59,7 +57,6 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.FileUploader;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linshare.view.tapestry.services.MyMultipartDecoder;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,9 +136,6 @@ public class Index {
 	
 	@Inject
 	private PageRenderLinkSource linkFactory;
-	
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
 	
     
 	/* ***********************************************************

@@ -3,9 +3,7 @@ package org.linagora.linshare.service;
 import java.io.InputStream;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Document;

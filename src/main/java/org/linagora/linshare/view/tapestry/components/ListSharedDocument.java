@@ -53,7 +53,6 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -74,7 +73,6 @@ import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +112,6 @@ public class ListSharedDocument {
 	 ***********************************/
 	
 
-	@SuppressWarnings("unused")
 	@Property
 	private ShareDocumentVo shareDocument;
 
@@ -161,7 +158,6 @@ public class ListSharedDocument {
 	private PageRenderLinkSource linkFactory;
 	
 	
-	@SuppressWarnings("unchecked")
 	@Property
 	@Persist
 	private BeanModel model;
@@ -171,9 +167,6 @@ public class ListSharedDocument {
 
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
-	
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
 	
 	/***********************************
 	 * Flags
@@ -203,7 +196,6 @@ public class ListSharedDocument {
 	@SuppressWarnings("unused")
 	private boolean filesSelected;
 
-	@SuppressWarnings("unused")
 	@Property
 	private Boolean valueCheck;
 
@@ -223,7 +215,6 @@ public class ListSharedDocument {
 	/**
 	 * Components Model.
 	 */
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private SorterModel<ShareDocumentVo> sorterModel;

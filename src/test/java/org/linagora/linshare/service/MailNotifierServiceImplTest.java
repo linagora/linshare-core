@@ -1,22 +1,8 @@
 package org.linagora.linshare.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.MailContainer;
-import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.NotifierService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.subethamail.wiser.Wiser;
-import org.subethamail.wiser.WiserMessage;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -46,7 +31,8 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 	
     private Wiser wiser;
     
-    private static String LINSHARE_MAIL = "linShare@yourdomain.com"; 
+    @SuppressWarnings("unused")
+	private static String LINSHARE_MAIL = "linShare@yourdomain.com"; 
 
 	public MailNotifierServiceImplTest() {
 		super();

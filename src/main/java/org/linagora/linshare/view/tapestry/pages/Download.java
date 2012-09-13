@@ -36,7 +36,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -46,7 +45,6 @@ import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +98,6 @@ public class Download {
     @Inject
     private RequestGlobals requestGlobals;
 	
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
-
-	@SuppressWarnings("unused")
 	@Inject @Symbol("linshare.logo.webapp.visible")
 	@Property
 	private boolean linshareLogoVisible;

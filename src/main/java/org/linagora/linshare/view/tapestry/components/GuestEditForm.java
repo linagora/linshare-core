@@ -42,7 +42,6 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -54,7 +53,6 @@ import org.linagora.linshare.view.tapestry.pages.user.Index;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.services.Templating;
 import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linshare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.linshare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.Policy;
@@ -69,12 +67,10 @@ public class GuestEditForm {
 	/* ***********************************************************
      *                         Parameters
      ************************************************************ */
-    @SuppressWarnings("unused")
 	@Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
     private List<UserVo> users;
 
-    @SuppressWarnings("unused")
 	@Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
     private String JSONid;
@@ -155,9 +151,6 @@ public class GuestEditForm {
 
     @Inject
     private ComponentResources componentResources;
-    
-    @Inject
-    private MailContainerBuilder mailBuilder;
     
     @Property
 	private int autocompleteMin;
@@ -309,8 +302,6 @@ public class GuestEditForm {
 			return Index.class;
 		}
 		
-		MailContainer mailContainer = mailBuilder.buildMailContainer(userLoggedIn, customMessage);
-  
 		UserVo guestVo = null ;
 		try {
 			// set uploadGranted always to true for guest

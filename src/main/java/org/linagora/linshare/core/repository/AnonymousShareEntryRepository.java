@@ -3,10 +3,6 @@ package org.linagora.linshare.core.repository;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
-import org.linagora.linshare.core.domain.entities.Contact;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
-import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.User;
 
 public interface AnonymousShareEntryRepository extends AbstractRepository<AnonymousShareEntry> {
 

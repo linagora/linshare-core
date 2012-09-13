@@ -35,13 +35,11 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linshare.core.domain.constants.Language;
-import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -52,7 +50,6 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.services.impl.MailContainerBuilder;
 import org.linagora.linshare.view.tapestry.utils.WelcomeMessageUtils;
 import org.slf4j.Logger;
 
@@ -84,8 +81,6 @@ public class Index {
     private Response response;
 	@Inject
 	private Logger logger;
-	@Inject
-	private MailContainerBuilder mailContainerBuilder;
 	
 
     /* ***********************************************************
@@ -101,12 +96,9 @@ public class Index {
     @Property
     private boolean userVoExists;
 
-    @SuppressWarnings("unused")
 	@Property
     private String welcomeText;
     
-    
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private boolean advanced;
@@ -162,7 +154,6 @@ public class Index {
         
     }
 
-    @SuppressWarnings("unused")
     @OnEvent(value = "eventDeleteUniqueFromListDocument")
     private void deleteFromList(Object[] object) throws BusinessException {
         String uuid = (String) object[0];
@@ -230,7 +221,6 @@ public class Index {
 	   return ErrorNotFound.class;
    } 
    
-	@SuppressWarnings("unused")
 	@CleanupRender
 	private void initFlag(){
 		//flag=false;

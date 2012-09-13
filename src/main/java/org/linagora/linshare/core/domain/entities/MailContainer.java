@@ -54,18 +54,7 @@ public class MailContainer {
 		this.language = mailContainer.getLanguage();
 	}
 
-	/**
-	 * Create a mailContainer, used by the MailContainerBuilder
-	 * tapestry service.
-	 * 
-	 * @param personalMessage personalMessage: not required
-	 * @param language language of the email
-	 */
-	public MailContainer(String personalMessage, Language language) {
-		super();
-		this.personalMessage = personalMessage;
-		this.language = language;
-	}
+
 	
 	
 	
@@ -89,6 +78,26 @@ public class MailContainer {
 		this.contentTXT = null;
 		this.contentHTML = null;
 	}
+
+	public MailContainer(String locale,String message, String subject) {
+		super();
+		this.personalMessage = message;
+		this.language = getLanguageFromLocale(new Locale(locale));
+		this.subject = subject;
+		this.contentTXT = null;
+		this.contentHTML = null;
+	}
+	
+	public MailContainer(String locale,String message) {
+		super();
+		this.personalMessage = message;
+		this.language = getLanguageFromLocale(new Locale(locale));
+		this.subject = null;
+		this.contentTXT = null;
+		this.contentHTML = null;
+	}
+	
+	
 	
 	
 	private Language getLanguageFromLocale(Locale locale) {
