@@ -7,7 +7,7 @@
 			</generator>
 		</id>
 		<property name="write" column="write" type="boolean" not-null="true" lazy="false"/>
-		<property name="all" column="`all`" type="boolean" not-null="true" lazy="false"/>
+		<property name="all" column="all_permissions" type="boolean" not-null="true" lazy="false"/>
 
 		<set name="accounts" table="technical_account_permission_account" lazy="true" cascade="save-update,lock">
 			<key column="technical_account_permission_id" not-null="true"/>
