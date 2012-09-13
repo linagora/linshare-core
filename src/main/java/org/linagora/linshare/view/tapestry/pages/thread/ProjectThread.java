@@ -216,31 +216,6 @@ public class ProjectThread {
 		this.selectedProject = selectedProject;
 	}
     
-    /**
-	 * Delete the document from the repository/facade 
-	 * Invoked when a user clicks on "delete" button in the searched document list
-	 * It also removes the documents from the shared list 
-	 * @param object a DocumentVo[]
-	 */
-	@OnEvent(value="eventDeleteFromListDocument")
-	public void deleteFromListDocument(Object[] object){		 
-		boolean flagError = false;
-		for(Object currentObject : object){
-			try {
-				threadEntryFacade.removeDocument(userVo,((ThreadEntryVo)currentObject));
-				
-			} catch (BusinessException e) {
-				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"),
-						((DocumentVo)currentObject).getFileName()) );
-			}
-			shareSessionObjects.removeDocument((DocumentVo)currentObject);
-		}
-		if (null != object && object.length > 0 && !flagError){
-			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),object.length));
-			setupRender();
-		}
-	}
-    
     Object onException(Throwable cause) {
         shareSessionObjects.addError(messages.get("global.exception.message"));
         logger.error(cause.getMessage());

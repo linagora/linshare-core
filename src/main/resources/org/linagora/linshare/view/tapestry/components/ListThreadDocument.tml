@@ -15,6 +15,9 @@
         <t:form t:id="search">
 
             <t:linkit.hiddenfield t:id="deleteConfirmed" />
+            <t:actionlink t:id="cancelQuickShare" class="button" type="submit">
+                <span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.delete}</span>
+            </t:actionlink>
 
             <t:grid source="listThreadEntries" row="threadEntry" model="model"
                 exclude="fileName, ownerLogin, encrypted, identifier, size, type, shared, shareActive, fileComment, downloaded, actions, creationDate, expirationDate"
@@ -63,7 +66,7 @@
                 </p:filePropertiesCell>
 
                 <p:selectedValueCell>
-                    <t:checkbox t:id="filesSelected" class="${checkboxGroupUuid}" onclick="countCheckbox('${checkboxGroupUuid}');" />
+                    <t:checkbox t:id="filesSelected" class="${checkboxGroupUuid}" value="filesSelected" onclick="countCheckbox('${checkboxGroupUuid}');" />
                 </p:selectedValueCell>
             </t:grid>
         </t:form>

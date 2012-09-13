@@ -125,7 +125,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 //			if (!threadEntry.getEntryOwner().equals(actor)) {
 //				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
 //			}
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry.getDocument().getType());
+			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a thread entry", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry.getDocument().getType());
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
 			
