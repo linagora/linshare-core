@@ -21,15 +21,15 @@
                 <!-- Header definition -->
 
                 <p:empty>
-                    ${message:components.listDocument.grid.empty}
+                    ${message:components.listThreadDocument.grid.empty}
                 </p:empty>
 
                 <p:filePropertiesHeader>
-                    ${message:components.listDocument.grid.filePropertiesHeader}
+                    ${message:components.listThreadDocument.grid.filePropertiesHeader}
                 </p:filePropertiesHeader>
 
                 <p:fileDeleteHeader>
-                    ${message:components.userSearch.grid.actions}
+                    ${message:components.listSharedDocument.delete}
                 </p:fileDeleteHeader>
 
 
@@ -63,7 +63,7 @@
                 <p:fileDeleteCell>
                     <t:if test="deletable">
                         <t:actionLink t:id="delete" context="${threadEntry.identifier}" t:zone="zoneConfirmDelete"
-                            title="${message:components.userSearch.action.delete.title}">
+                            title="${message:components.listThreadDocument.delete.title}">
                             <span onclick="window_confirm.showCenter(true)">
                                 <img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
                             </span>
@@ -83,6 +83,6 @@
 
     <t:confirmPopup
         t:messageLabel="${message:components.userSearch.action.delete.ask}"
-        t:eventName="eventDelete" />
+        t:eventName="eventDeleteThreadEntry" />
 
 </t:container>
