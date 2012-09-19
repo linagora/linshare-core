@@ -29,9 +29,13 @@ import org.linagora.linshare.core.domain.vo.DomainPatternVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateDomainPattern {
 
+	private static Logger logger = LoggerFactory.getLogger(CreateDomainPattern.class);
+	
 	@Property
 	@Persist
 	private DomainPatternVo domainPattern;
@@ -82,8 +86,8 @@ public class CreateDomainPattern {
 				domainFacade.createDomainPattern(loginUser, domainPattern);
 			}
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Can not create or update domain pattern : " + e.getMessage());
+			logger.debug(e.toString());
 		}
 		inModify = false;
 		domainPattern = null;

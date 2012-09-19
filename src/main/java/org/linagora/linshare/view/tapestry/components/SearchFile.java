@@ -173,7 +173,6 @@ public class SearchFile {
 	private boolean resetSimple;
 	
 
-	@SuppressWarnings("unused")
 	@Persist
 	@Property
 	private String login;
@@ -346,7 +345,7 @@ public class SearchFile {
 		SearchDocumentCriterion searchDocumentCriterion=new SearchDocumentCriterion(userlogin,value,null,null,null,isShared(this.shared),null,null,null,null, DocumentType.BOTH);
 		
 		if (!forceFilterOnSharedFile) {
-			List<DocumentVo> documents=searchDocumentFacade.retrieveDocumentContainsCriterion(searchDocumentCriterion);
+			List<DocumentVo> documents=searchDocumentFacade.retrieveDocumentContainsCriterion(userlogin, searchDocumentCriterion);
 			
 			if(documents.size()>0){
 				ArrayList<String> names=new ArrayList<String>();
@@ -468,17 +467,16 @@ public class SearchFile {
 
 		SearchDocumentCriterion searchDocumentCriterion = new SearchDocumentCriterion(userTemp,fileNamePattern, sizeMinInByte,sizeMaxInByte, mimetype, sharedboo, calBegin, calEnd, extension,sharedFrom,DocumentType.BOTH);
 
-
 		/**
 		 * call a different facade given the type of search ?
 		 */
 		List<DocumentVo> docs;
 		
 		if(forceFilterOnSharedFile){
-			List<ShareDocumentVo> sharedocs = searchDocumentFacade.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);	
+			List<ShareDocumentVo> sharedocs = searchDocumentFacade.retrieveShareDocumentContainsCriterion(userlogin, searchDocumentCriterion);	
 			docs = new ArrayList<DocumentVo>(sharedocs);
 		} else {
-			docs = searchDocumentFacade.retrieveDocumentContainsCriterion(searchDocumentCriterion);
+			docs = searchDocumentFacade.retrieveDocumentContainsCriterion(userlogin, searchDocumentCriterion);
 		}		
 
 		Object[] objects=new Object[1];
@@ -515,10 +513,10 @@ public class SearchFile {
 		List<DocumentVo> docs;
 		
 		if(forceFilterOnSharedFile){
-			List<ShareDocumentVo> shareddocs = searchDocumentFacade.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
+			List<ShareDocumentVo> shareddocs = searchDocumentFacade.retrieveShareDocumentContainsCriterion(userlogin, searchDocumentCriterion);
 			docs =  new ArrayList<DocumentVo>(shareddocs);
 		} else {
-			docs = searchDocumentFacade.retrieveDocumentContainsCriterion(searchDocumentCriterion);
+			docs = searchDocumentFacade.retrieveDocumentContainsCriterion(userlogin, searchDocumentCriterion);
 		}
 
 		Object[] objects=new Object[1];

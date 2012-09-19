@@ -38,13 +38,11 @@ public class CustomStreamResponse implements StreamResponse{
 	}
 	
 	public String getContentType() {
-		// TODO Auto-generated method stub
 		return info.getMimeType();
 		
 	}
 
 	public InputStream getStream() throws IOException {
-		// TODO Auto-generated method stub
 		return stream;
 	}
 

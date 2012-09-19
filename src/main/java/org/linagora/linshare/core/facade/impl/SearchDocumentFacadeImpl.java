@@ -23,9 +23,11 @@ package org.linagora.linshare.core.facade.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
+import org.linagora.linshare.core.domain.transformers.impl.ShareEntryTransformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
@@ -43,20 +45,25 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	private static final Logger logger = LoggerFactory.getLogger(SearchDocumentFacadeImpl.class);
 	
 
-	private SearchDocumentService searchDocumentService;
-	private DocumentEntryTransformer documentEntryTransformer;
-	private AccountService accountService;
+	private final SearchDocumentService searchDocumentService;
+	private final DocumentEntryTransformer documentEntryTransformer;
+	
+	private final ShareEntryTransformer shareEntryTransformer;
+	
+	private final AccountService accountService;
 	private final DocumentEntryService documentEntryService;
 	
-	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, DocumentEntryTransformer documentEntryTransformer, AccountService accountService,
-			DocumentEntryService documentEntryService){
-		
+	
+	public SearchDocumentFacadeImpl(SearchDocumentService searchDocumentService, DocumentEntryTransformer documentEntryTransformer, ShareEntryTransformer shareEntryTransformer,
+			AccountService accountService, DocumentEntryService documentEntryService) {
+		super();
 		this.searchDocumentService = searchDocumentService;
 		this.documentEntryTransformer = documentEntryTransformer;
+		this.shareEntryTransformer = shareEntryTransformer;
 		this.accountService = accountService;
 		this.documentEntryService = documentEntryService;
 	}
-	
+
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
 		
 		User user = (User) accountService.findByLsUid(userVo.getLsUid());
@@ -71,48 +78,18 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 			logger.error("can't find my document entries");
 			logger.debug(e.toString());
 		}
-		
-//		// TODO : Fix documents list
-//		Set<Entry> entries = user.getEntries();
-//		for (Entry entry : entries) {
-//			if(entry.getEntryType().equals(EntryType.DOCUMENT)) {
-//				documents.add(documentEntryTransformer.disassemble((DocumentEntry) entry));
-//			}
-//		}
-		
 		return documents;
-		
 	}
 
-	
-	/*
-	public List<DocumentVo> retrieveDocumentWithCriterion(
-			SearchDocumentCriterion searchDocumentCriterion) {
-		
-		return documentTransformer.disassembleList(this.searchDocumentService.retrieveDocumentWithCriterion(searchDocumentCriterion));
+	public List<DocumentVo> retrieveDocumentContainsCriterion(UserVo actorVo, SearchDocumentCriterion searchDocumentCriterion) {
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		return documentEntryTransformer.disassembleList(searchDocumentService.retrieveDocumentContainsCriterion(actor, searchDocumentCriterion));
 	}
 
-	/*
-	public List<DocumentVo> retrieveDocumentBeginWithCriterion(
-			SearchDocumentCriterion searchDocumentCriterion) {
+	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(UserVo actorVo, SearchDocumentCriterion searchDocumentCriterion) {
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		return shareEntryTransformer.disassembleList(this.searchDocumentService.retrieveShareDocumentContainsCriterion(actor, searchDocumentCriterion));
 		
-		return documentTransformer.disassembleList(this.searchDocumentService.retrieveDocumentBeginWithCriterion(searchDocumentCriterion));
-	}
-
-	public List<DocumentVo> retrieveDocumentEndWithCriterion(
-			SearchDocumentCriterion searchDocumentCriterion) {
-		
-		return documentTransformer.disassembleList(this.searchDocumentService.retrieveDocumentEndWithCriterion(searchDocumentCriterion));
-	}
-	*/
-	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
-		
-		return this.searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-	}
-
-	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(
-			SearchDocumentCriterion searchDocumentCriterion) {
-		return this.searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
 	}
 
 }

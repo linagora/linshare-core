@@ -20,74 +20,38 @@
 */
 package org.linagora.linshare.core.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.linagora.linshare.core.dao.document.SearchDocumentDao;
-import org.linagora.linshare.core.domain.entities.Document;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
-import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.repository.DocumentEntryRepository;
+import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.service.SearchDocumentService;
 
 public class SearchDocumentServiceImpl implements SearchDocumentService{
 
-	private final SearchDocumentDao searchDocumentDao;
-	private final UserRepository<User> userRepository;
-
-	public SearchDocumentServiceImpl(SearchDocumentDao searchDocumentDao, UserRepository<User> userRepository){
-		this.searchDocumentDao=searchDocumentDao;
-		this.userRepository=userRepository;
-	}
+	private final DocumentEntryRepository documentEntryRepository;
 	
-	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
-		
-		List<Document> docs= searchDocumentDao.retrieveUserDocumentWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
-		
-		//we do not want shares object in this list anymore
-		//List<Share> shares = searchDocumentDao.retrieveUserReceivedSharedDocWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
-		//return documentAdapter.disassembleList(docs, shares);
-		 List<DocumentVo> vos = new ArrayList<DocumentVo>();
-		return vos;
+	private final ShareEntryRepository shareEntryRepository;
+
+
+	public SearchDocumentServiceImpl(DocumentEntryRepository documentEntryRepository, ShareEntryRepository shareEntryRepository) {
+		super();
+		this.documentEntryRepository = documentEntryRepository;
+		this.shareEntryRepository = shareEntryRepository;
 	}
 
 
-//	public List<DocumentVo> retrieveDocuments(User user) {
-//		
-//		List<Document> docs= new ArrayList<Document>(user.getDocuments());
-//		List<Share> shares = new ArrayList<Share>(user.getReceivedShares());
-//		
-//		return documentAdapter.disassembleList(docs, shares);
-//	}
-
-
-	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion) {
-//		List<Share> shares = searchDocumentDao.retrieveUserReceivedSharedDocWithMatchCriterion(searchDocumentCriterion, searchDocumentDao.getAnyWhere());
-		// TODO : To be fix
-//		return documentAdapter.disassembleShareList(shares);
-		return  new ArrayList<ShareDocumentVo>();
+	public List<DocumentEntry> retrieveDocumentContainsCriterion(Account actor, SearchDocumentCriterion searchDocumentCriterion) {
+		// TODO : check search permissions
+		return documentEntryRepository.retrieveUserDocumentEntriesWithMatchCriterion(searchDocumentCriterion);
 	}
 
-	@Override
-	public Set<Document> retrieveDocument(String login) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Set<Document> retrieveDocument(User user) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ShareEntry> retrieveShareDocumentContainsCriterion(Account actor, SearchDocumentCriterion searchDocumentCriterion) {
+		// TODO : check search permissions
+		return shareEntryRepository.retrieveUserShareEntriesWithMatchCriterion(searchDocumentCriterion);
 	}
-
-	@Override
-	public List<DocumentVo> retrieveDocuments(User user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 }

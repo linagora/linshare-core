@@ -96,14 +96,14 @@ public interface DocumentFacade {
 	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo document);
 	/**
 	 * check if the document is already signed by someone.
-	 * @param userlogin TODO
+	 * @param userlogin 
 	 * @param document the doc to check
 	 * @return false if no signature at all.
 	 */
 	public boolean isSignedDocument(String userLsUuid, DocumentVo document);
 	/**
 	 * get the list of signatures (co signature)
-	 * @param userVo TODO
+	 * @param userVo 
 	 * @param document the document to get the signatures
 	 * @return list of signature
 	 */
@@ -159,7 +159,7 @@ public interface DocumentFacade {
 	 * @param size
 	 * @param fileName
 	 * @param owner
-	 * @param friendlySize TODO
+	 * @param friendlySize 
 	 * @return
 	 * @throws BusinessException
 	 */

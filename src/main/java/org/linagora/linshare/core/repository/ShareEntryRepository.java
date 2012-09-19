@@ -25,8 +25,17 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 
 public interface ShareEntryRepository extends AbstractRepository<ShareEntry>{
+	
+	
+	final static int BEGIN=0;
+	
+	final static int END=1;
+	
+	final static int ANYWHERE=2;
+	
 	
 	 /** Find a Share using its uuid.
      * @param  uuid
@@ -43,5 +52,7 @@ public interface ShareEntryRepository extends AbstractRepository<ShareEntry>{
 	public List<ShareEntry> findAllExpiredEntries();
 	
 	public List<ShareEntry> findUpcomingExpiredEntries(Integer date);
+	
+	public List<ShareEntry> retrieveUserShareEntriesWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion);
 	
 }

@@ -29,8 +29,12 @@ import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateLdapConnection {
+	
+	private static Logger logger = LoggerFactory.getLogger(CreateLdapConnection.class);
 	
 	@SessionState
     private UserVo loginUser;
@@ -79,8 +83,8 @@ public class CreateLdapConnection {
 				domainFacade.createLDAPConnection(loginUser, ldapConn);
 			}
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Can not create or update ldap connection : " + e.getMessage());
+			logger.debug(e.toString());
 		}
 		inModify = false;
 		ldapConn = null;

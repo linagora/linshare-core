@@ -88,7 +88,6 @@ public class Index {
 	private FormSupport formSupport;
 	
 
-	@SuppressWarnings("unused")
 	@InjectComponent
 	private TextArea targetMails;
 	
@@ -115,24 +114,25 @@ public class Index {
 	private String targetListMails;
 
 
-	@Property(write=false) @SuppressWarnings("unused") //used in tml
+	@Property(write=false) //used in tml
 	private ValueEncoder<LogAction> logActionEncoder;
 
-	@Property(write=false)  @SuppressWarnings("unused") //used in tml
+	@Property(write=false) //used in tml
 	private SelectModel logActionModel;
 	
 	/**
 	 * the list of traces matching the request
 	 */
-	@Persist @Property
+	@Persist 
+	@Property
 	private List<DisplayableLogEntryVo> logEntries;
 	
-	@SuppressWarnings("unused")
 	@Property //used in the tml for the grid
 	private DisplayableLogEntryVo logEntry;
 	
 	
-	@Persist @Property(write=false) @SuppressWarnings("unused") //used in tml
+	@Persist 
+	@Property(write=false) //used in tml
 	private boolean displayGrid;
 	
 	@Property

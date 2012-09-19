@@ -36,6 +36,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 	  Locale locale = Locale.getDefault();
 
 
+	  // TODO write statistic service.
 	public StatisticsServiceImpl(UserRepository<User> userRepository,
 			DocumentRepository documentRepository,
 			LogEntryRepository logEntryRepository) {
@@ -48,119 +49,119 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 	@Override
 	public int getNbInternalUser() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbExternalUser() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbUser() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbFiles(long minSize, long maxSize) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbSharedFiles(long minSize, long maxSize) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbNotSharedFiles(long minSize, long maxSize) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbCipheredFiles(long minSize, long maxSize) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbNotCipheredFiles(long minSize, long maxSize) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbFiles() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbSharedFiles() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbNotSharedFiles() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbCipheredFiles() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public int getNbNotCipheredFiles() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public long getUploadVolume(Calendar minDate, Calendar maxDate) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public long getDownloadVolume(Calendar minDate, Calendar maxDate) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public long getUploadVolume(String minDate, String maxDate) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 
 	@Override
 	public long getDownloadVolume(String minDate, String maxDate) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

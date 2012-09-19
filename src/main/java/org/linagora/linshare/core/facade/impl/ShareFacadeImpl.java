@@ -40,7 +40,7 @@ import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
-import org.linagora.linshare.core.domain.transformers.impl.ShareTransformer;
+import org.linagora.linshare.core.domain.transformers.impl.ShareEntryTransformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -66,7 +66,7 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(ShareFacadeImpl.class);
 	
-	private final ShareTransformer shareTransformer;
+	private final ShareEntryTransformer shareEntryTransformer;
 	
 	private final UserRepository<User> userRepository;
 
@@ -95,12 +95,12 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final String urlInternal;
     
 	
-	public ShareFacadeImpl(ShareTransformer shareTransformer, UserRepository<User> userRepository, DocumentRepository documentRepository, NotifierService notifierService,
+	public ShareFacadeImpl(ShareEntryTransformer shareEntryTransformer, UserRepository<User> userRepository, DocumentRepository documentRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
 			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
 			String urlBase, String urlInternal) {
 		super();
-		this.shareTransformer = shareTransformer;
+		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;
 		this.documentRepository = documentRepository;
 		this.notifierService = notifierService;
@@ -193,7 +193,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		ArrayList<ShareEntry> arrayList = new ArrayList<ShareEntry>(actor.getShareEntries());
 		logger.debug("AllSharingReceived size : " + arrayList.size());
-		return shareTransformer.disassembleList(arrayList);		
+		return shareEntryTransformer.disassembleList(arrayList);		
 	}
 
 	
@@ -208,7 +208,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		DocumentEntry documentEntry;
 		try {
 			documentEntry = documentEntryService.findById(actor, documentVo.getIdentifier());
-			return shareTransformer.disassembleList(new ArrayList<ShareEntry>(documentEntry.getShareEntries()));
+			return shareEntryTransformer.disassembleList(new ArrayList<ShareEntry>(documentEntry.getShareEntries()));
 		} catch (BusinessException e) {
 			logger.error("Document " + documentVo.getIdentifier() + " was not found ! " + e.getMessage() );
 		}
@@ -371,8 +371,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private SuccessesAndFailsItems<ShareDocumentVo> disassembleShareResultList(SuccessesAndFailsItems<ShareEntry> successAndFails) {
 		SuccessesAndFailsItems<ShareDocumentVo> results = new SuccessesAndFailsItems<ShareDocumentVo>();
-		results.setFailsItem(shareTransformer.disassembleList(successAndFails.getFailsItem()));
-		results.setSuccessesItem(shareTransformer.disassembleList(successAndFails.getSuccessesItem()));
+		results.setFailsItem(shareEntryTransformer.disassembleList(successAndFails.getFailsItem()));
+		results.setSuccessesItem(shareEntryTransformer.disassembleList(successAndFails.getSuccessesItem()));
 		return results;
 	}
 
@@ -402,7 +402,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public ShareDocumentVo getShareDocumentVoByUuid(UserVo actorVo, String uuid) throws BusinessException {
 		User actor = userService.findByLsUid(actorVo.getLsUid());
-		return shareTransformer.disassemble(shareEntryService.findByUuid(actor, uuid));
+		return shareEntryTransformer.disassemble(shareEntryService.findByUuid(actor, uuid));
 	}
 
 

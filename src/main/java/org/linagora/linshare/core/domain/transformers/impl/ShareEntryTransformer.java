@@ -23,23 +23,20 @@ package org.linagora.linshare.core.domain.transformers.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.Transformer;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.repository.UserRepository;
 
-public class ShareTransformer implements Transformer<ShareEntry, ShareDocumentVo> {
+public class ShareEntryTransformer implements Transformer<ShareEntry, ShareDocumentVo> {
 
-	private final UserRepository<User> userRepository;
-	private final UserTransformer userTransformer;
+	private final ShareEntryBusinessService shareEntryBusinessService;
 	
-	
-	public ShareTransformer(final UserRepository<User> userRepository,
-			final UserTransformer userTransformer) {
-		this.userRepository = userRepository;
-		this.userTransformer = userTransformer;
+
+	public ShareEntryTransformer(ShareEntryBusinessService shareEntryService) {
+		super();
+		this.shareEntryBusinessService = shareEntryService;
 	}
 
 
@@ -83,55 +80,18 @@ public class ShareTransformer implements Transformer<ShareEntry, ShareDocumentVo
 
 	@Override
 	public ShareEntry assemble(ShareDocumentVo valueObject) {
-		// TODO Auto-generated method stub
-		return null;
+		return shareEntryBusinessService.findByUuid(valueObject.getIdentifier());
 	}
 
 
 	@Override
 	public List<ShareEntry> assembleList(List<ShareDocumentVo> valueObjectList) {
-		// TODO Auto-generated method stub
-		return null;
+		List<ShareEntry> shareList = new ArrayList<ShareEntry>();
+		if (valueObjectList!=null) {
+			for (ShareDocumentVo share : valueObjectList) {
+				shareList.add(assemble(share));
+			}
+		}
+		return shareList;
 	}
-
-	
-//	public Share assemble(ShareDocumentVo shareDocumentVo) {
-//		
-//		Share theShare = shareRepository.getShare(documentTransformer.assemble(shareDocumentVo), 
-//				userRepository.findByMail(shareDocumentVo.getSender().getLogin()),
-//				userRepository.findByMail(shareDocumentVo.getReceiver().getLogin()));
-//		
-//		return theShare;
-//	
-//	}
-//
-//	public List<Share> assembleList(List<ShareDocumentVo> valueObjectList) {
-//		List<Share> listResult = new ArrayList<Share>();
-//		for (ShareDocumentVo shareVo : valueObjectList) {
-//			listResult.add(assemble(shareVo));
-//		}
-//		return listResult;
-//		
-//	}
-//
-//	public ShareDocumentVo disassemble(Share share) {
-//		return new ShareDocumentVo(documentTransformer.disassemble(share.getDocument()),
-//				userTransformer.disassemble(share.getSender()), userTransformer.disassemble(share.getReceiver()),
-//				share.getExpirationDate(), 
-//				share.getDownloaded(), share.getComment(), share.getSharingDate(),share.getPersistenceId());
-//	}
-//
-//	public List<ShareDocumentVo> disassembleList(List<Share> entityObjectList) {
-//		List<ShareDocumentVo> shareList = new ArrayList<ShareDocumentVo>();
-//		
-//		if (entityObjectList!=null) {
-//			for (Share share : entityObjectList) {
-//				shareList.add(disassemble(share));
-//			}
-//		}
-//		return shareList;
-//		
-//		
-//	}
-
 }

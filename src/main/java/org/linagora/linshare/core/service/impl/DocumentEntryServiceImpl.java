@@ -450,11 +450,9 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	@Override
 	public List<DocumentEntry> findAllMyDocumentEntries(Account actor, User owner) throws BusinessException {
-		
-		// TODO : Fix it : owner and system account ?
-//		if (!owner.equals(actor)) {
-//			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get these documents.");
-//		}
+		if (!owner.equals(actor)) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get these documents.");
+		}
 		List<DocumentEntry> entry = documentEntryBusinessService.findAllMyDocumentEntries(owner);
 		return entry;
 	}
@@ -474,7 +472,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException {
 		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
 		if (!entry.getEntryOwner().equals(actor)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to rename this document.");
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
 		}
 		documentEntryBusinessService.updateFileProperties(entry, newName, fileComment);
 	}

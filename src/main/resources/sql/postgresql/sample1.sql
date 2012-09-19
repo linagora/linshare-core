@@ -177,6 +177,9 @@ INSERT INTO tag_filter_rule_tag_association (id, tag_filter_rule_id, tag_id, enu
 -- INSERT INTO entry_tag_association (id, entry_id, tag_id, enum_value_id) VALUES (12, 4, 4, 5); 
 -- 
 
+-- enable guests
 UPDATE policy SET status=true where id=27;
 
+-- enable thread tab
+UPDATE policy SET status=true where id=45;
 

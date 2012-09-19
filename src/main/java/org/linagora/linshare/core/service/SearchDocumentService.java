@@ -23,11 +23,12 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 
 /**
  * This service ables to retrieve documents for an user with using SearchDocumentCriterion.
@@ -38,47 +39,24 @@ public interface SearchDocumentService {
 
 			
 	/**
-	 * Retrieve all document for a login.
-	 * @param user
-	 * @return all document for a login.
-	 */
-	public Set<Document> retrieveDocument(String login);
-	
-	
-	/**
-	 * 
-	 * Retrieve all document (owned or received) for an user.
-	 * TODO : only owned for now
-	 * @deprecated
-	 * @param user
-	 * @return all document for an user.
-	 */
-	public Set<Document> retrieveDocument(User user);
-	
-	/**
-	 * Retrieve all document (owned or received) for an user.
-	 * @param user : the user we wish to return docs from
-	 * @return a list of DocumentVo (which may contains SharedDocumentVo)
-	 */
-	public List<DocumentVo> retrieveDocuments(User user);
-	
-	/**
 	 * Retrieve all document corresponding to criterion using matching (contains).
 	 * Warning the user matches always exactly. 
 	 * Only string values in the vo will use the matching (not the size).
+	 * @param actor TODO
 	 * @return all document for criterion
 	 * before in the List it can be mixed with DocumentVo and ShareDocumentVo.
 	 * now we limit to DocumentVo
 	 */
-	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion);
+	public List<DocumentEntry> retrieveDocumentContainsCriterion(Account actor, SearchDocumentCriterion searchDocumentCriterion);
 	
 	/**
 	 * same function as retrieveDocumentContainsCriterion
 	 * but limit to share only
+	 * @param actor TODO
 	 * @param searchDocumentCriterion
 	 * @return list of ShareDocumentVo
 	 */
-	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion);
+	public List<ShareEntry> retrieveShareDocumentContainsCriterion(Account actor, SearchDocumentCriterion searchDocumentCriterion);
 	
 }
 

@@ -24,8 +24,16 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 
 public interface DocumentEntryRepository extends AbstractRepository<DocumentEntry>{
+	
+	final static int BEGIN=0;
+	
+	final static int END=1;
+	
+	final static int ANYWHERE=2;
+	
 	
 	 /** Find a document using its uuid.
      * @param  uuid
@@ -38,4 +46,6 @@ public interface DocumentEntryRepository extends AbstractRepository<DocumentEntr
 	public long getRelatedEntriesCount(DocumentEntry documentEntry);
 	
 	public List<DocumentEntry> findAllExpiredEntries();
+	
+	public List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(final SearchDocumentCriterion searchDocumentCriterion);
 }

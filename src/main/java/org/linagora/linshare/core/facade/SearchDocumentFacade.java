@@ -46,17 +46,19 @@ public interface SearchDocumentFacade {
 	 * Retrieve all document corresponding to criterion using matching (contains).
 	 * Warning the user matches always exactly. 
 	 * Only string values in the vo will use the matching (not the size).
+	 * @param actorVo
 	 * @return all document for criterion.
 	 */
-	public List<DocumentVo> retrieveDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion);
+	public List<DocumentVo> retrieveDocumentContainsCriterion(UserVo actorVo, SearchDocumentCriterion searchDocumentCriterion);
 	
 
 	/**
 	 * same function as retrieveDocumentContainsCriterion but we limit search to shared document
+	 * @param actorVo TODO
 	 * @param searchDocumentCriterion
 	 * @return
 	 */
-	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(SearchDocumentCriterion searchDocumentCriterion);
+	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(UserVo actorVo, SearchDocumentCriterion searchDocumentCriterion);
 
 	
 }

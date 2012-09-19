@@ -33,8 +33,8 @@ public class DocumentEntryTransformer implements Transformer<DocumentEntry, Docu
 	@Override
 	public List<DocumentVo> disassembleList(List<DocumentEntry> entityObjectList) {
 		ArrayList<DocumentVo> documents=new ArrayList<DocumentVo>();
-		for(DocumentEntry document : entityObjectList){
-			documents.add(disassemble(document));
+		for(DocumentEntry documentEntry : entityObjectList){
+			documents.add(disassemble(documentEntry));
 		}
 		return documents;
 	}

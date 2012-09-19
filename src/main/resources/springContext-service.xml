@@ -133,8 +133,8 @@
 	</bean>
 
 	<bean id="searchDocumentService" class="org.linagora.linshare.core.service.impl.SearchDocumentServiceImpl">
-		<constructor-arg ref="searchDocumentDao" />
-		<constructor-arg ref="userRepository" />
+		<constructor-arg ref="documentEntryRepository" />
+		<constructor-arg ref="shareEntryRepository" />
 	</bean>
 
 	<bean name="notifierService" class="org.linagora.linshare.core.service.impl.MailNotifierServiceImpl">

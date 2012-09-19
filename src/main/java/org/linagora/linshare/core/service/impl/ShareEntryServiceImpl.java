@@ -216,8 +216,9 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	        return newDocumentEntry;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to copy this share, it does not belong to you.");
 		}
+		
 	}
 
 
