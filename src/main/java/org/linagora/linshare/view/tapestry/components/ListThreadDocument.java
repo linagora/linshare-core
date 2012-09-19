@@ -35,9 +35,12 @@ import javax.imageio.ImageIO;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
@@ -53,6 +56,7 @@ import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
+import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -65,6 +69,7 @@ import org.linagora.linshare.view.tapestry.models.impl.ThreadEntrySorterModel;
 import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
+import org.linagora.linshare.view.tapestry.pages.thread.ProjectThread;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,10 +101,10 @@ public class ListThreadDocument {
     @Parameter(required=true,defaultPrefix=BindingConstants.PROP)
     @Property
     private String title;
-
+    
+    
     @Parameter(required=true,defaultPrefix=BindingConstants.PROP)
-    @Property
-    private List<ThreadEntryVo> listSelected;
+    private ThreadVo threadVo;
 
 
     /***********************************
@@ -152,6 +157,9 @@ public class ListThreadDocument {
 
     @Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
+    
+    @InjectPage
+    private ProjectThread projectThread;
 
 
     /***********************************
@@ -164,13 +172,10 @@ public class ListThreadDocument {
     @Persist
     private List<ThreadEntryVo> entries;
 
-    @Property
-    private String deleteConfirmed; // this is nasty, but i didn't find a proper
-    // workaround
-
-
-
-
+    @Persist
+	private String selectedId;
+    
+    
     public ListThreadDocument() {
         super();
         checkBoxGroupUuid = "filesSelected_" + UUID.randomUUID().toString();
@@ -226,6 +231,11 @@ public class ListThreadDocument {
             return new FileStreamResponse(current, stream);
         }
     }
+    
+    public void onActionFromDelete(String uuid) {
+    	projectThread.setSelectedThreadEntryId(uuid);
+    	System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : selectedThreadEntryId = " + projectThread.getSelectedThreadEntryId());
+    }
 
 
     /***************************************************************************
@@ -241,46 +251,27 @@ public class ListThreadDocument {
             refreshFlag = true;
         }
     }
-
-    /**
-     * Delete the document from the repository/facade 
-     * Invoked when a user clicks on "delete" button in the searched document list
-     * It also removes the documents from the shared list 
-     * @param object a DocumentVo[]
-     */
-    @OnEvent(value="eventDeleteFromListThreadEntry")
-    public void deleteFromListDocument(Object[] object) {
-        boolean flagError = false;
-        for(Object currentObject : object){
-            try {
-                threadEntryFacade.removeDocument(user,((ThreadEntryVo)currentObject));
-            } catch (BusinessException e) {
-                shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"),
-                            ((ThreadEntryVo)currentObject).getFileName()) );
-            }
-            shareSessionObjects.removeDocument((DocumentVo)currentObject);
-        }
-        if (null != object && object.length > 0 && !flagError){
-            shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),object.length));
-        }
-    }
-
-    public Object onSuccessFromSearch() {
-        if (listSelected.size() < 1) {
-            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.NOFILE_SELECTED, MessageSeverity.WARNING));
-            return null;
-        }
-        if ("true".equals(deleteConfirmed)) {
-            componentResources.triggerEvent("eventDeleteFromListThreadEntry", listSelected.toArray(), null);
-        }
-        return null;
+    
+    @OnEvent(value="eventDelete")
+    public void deleteEntry() {
+    	componentResources.getContainerResources().triggerEvent("eventDeleteThreadEntry", null, null);
     }
 
 
     /***************************************************************************
      * Other methods
      **************************************************************************/
-
+    
+    
+    public boolean isDeletable() {
+    	try {
+    		return  null != threadEntryFacade.findById(user, threadVo, threadEntry.getIdentifier());
+    	} catch(BusinessException e) {
+    		return false;
+    	}
+    }
+    
+    
     /**
      * model for the datagrid we need it to switch off the signature and the
      * encrypted column dynamically administration can desactivate the signature
@@ -299,10 +290,11 @@ public class ListThreadDocument {
         model = beanModelSource.createDisplayModel(ThreadEntryVo.class, componentResources.getMessages());
 
         model.add("fileProperties", null);
-        model.add("selectedValue", null);
+        model.add("fileDelete", null);
 
         List<String> reorderlist = new ArrayList<String>();
         reorderlist.add("fileProperties");
+        reorderlist.add("fileDelete");
         model.reorder(reorderlist.toArray(new String[reorderlist.size()]));
 
         return model;
@@ -350,26 +342,6 @@ public class ListThreadDocument {
         String result = threadEntry.getFileComment().replaceAll("\r","");
         result = result.replaceAll("\n", " ");
         return result;
-    }
-
-    /**
-     * 
-     * @return false (the document is never filesSelected by default)
-     */
-    public boolean getFilesSelected() {
-        return false;
-    }
-
-    /**
-     * This method is called when the form is submitted.
-     * 
-     * @param filesSelected
-     *            filesSelected or not in the form.
-     */
-    public void setFilesSelected(boolean filesSelected) {
-        if (filesSelected) {
-            listSelected.add(threadEntry);
-        }
     }
 
     public Link getThumbnailPath() {

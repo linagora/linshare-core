@@ -14,11 +14,6 @@
 
         <t:form t:id="search">
 
-            <t:linkit.hiddenfield t:id="deleteConfirmed" />
-            <t:actionlink t:id="cancelQuickShare" class="button" type="submit">
-                <span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.delete}</span>
-            </t:actionlink>
-
             <t:grid source="listThreadEntries" row="threadEntry" model="model"
                 exclude="fileName, ownerLogin, encrypted, identifier, size, type, shared, shareActive, fileComment, downloaded, actions, creationDate, expirationDate"
                 rowsPerPage="10">
@@ -33,9 +28,9 @@
                     ${message:components.listDocument.grid.filePropertiesHeader}
                 </p:filePropertiesHeader>
 
-                <p:selectedValueHeader>
-                    <t:checkbox t:id="selectAll" name="${checkboxGroupUuid}" onclick="checkAll('${checkboxGroupUuid}', this);" value="valueCheck" title="${message:components.listDocument.grid.checkAll}"/>
-                </p:selectedValueHeader>
+                <p:fileDeleteHeader>
+                    ${message:components.userSearch.grid.actions}
+                </p:fileDeleteHeader>
 
 
                 <!-- Selected cell definition -->
@@ -65,9 +60,17 @@
                     </div>
                 </p:filePropertiesCell>
 
-                <p:selectedValueCell>
-                    <t:checkbox t:id="filesSelected" class="${checkboxGroupUuid}" value="filesSelected" onclick="countCheckbox('${checkboxGroupUuid}');" />
-                </p:selectedValueCell>
+                <p:fileDeleteCell>
+                    <t:if test="deletable">
+                        <t:actionLink t:id="delete" context="${threadEntry.identifier}" t:zone="zoneConfirmDelete"
+                            title="${message:components.userSearch.action.delete.title}">
+                            <span onclick="window_confirm.showCenter(true)">
+                                <img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+                            </span>
+                        </t:actionLink>
+                    </t:if>
+                </p:fileDeleteCell>
+
             </t:grid>
         </t:form>
 
@@ -76,10 +79,10 @@
 
 	<!-- Popups -->
 
-	<t:confirmSubmitPopup
-		t:messageLabel="${message:components.listDocument.messageConfirm}"
-		t:fieldName="deleteConfirmed"
-		t:formName="search" />
+    <t:zone t:id="zoneConfirmDelete" />
 
+    <t:confirmPopup
+        t:messageLabel="${message:components.userSearch.action.delete.ask}"
+        t:eventName="eventDelete" />
 
 </t:container>

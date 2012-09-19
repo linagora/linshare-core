@@ -32,19 +32,19 @@
             <h2>${threadName}</h2>
 
             <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes" t:options="{duration:0.3}">
-				<t:ListThreadDocument t:listThreadEntries="outInstructions" t:user="userVo" t:title="titleIns" t:listSelected="listSelected" />
+				<t:ListThreadDocument t:listThreadEntries="outInstructions" t:threadVo="selectedProject" t:user="userVo" t:title="titleIns" />
                 <br />
-				<t:ListThreadDocument t:listThreadEntries="outContradictions" t:user="userVo" t:title="titleCon" t:listSelected="listSelected" />
+				<t:ListThreadDocument t:listThreadEntries="outContradictions" t:threadVo="selectedProject" t:user="userVo" t:title="titleCon" />
                 <br />
-				<t:ListThreadDocument t:listThreadEntries="outRecommandations" t:user="userVo" t:title="titleRec" t:listSelected="listSelected" />
+				<t:ListThreadDocument t:listThreadEntries="outRecommandations" t:threadVo="selectedProject" t:user="userVo" t:title="titleRec" />
                 <br />
             </div>
             <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses" t:options="{duration:0.3}">
-				<t:ListThreadDocument t:listThreadEntries="inInstructions" t:user="userVo" t:title="titleIns" t:listSelected="listSelected" />
+				<t:ListThreadDocument t:listThreadEntries="inInstructions" t:threadVo="selectedProject" t:user="userVo" t:title="titleIns" />
                 <br />
-				<t:ListThreadDocument t:listThreadEntries="inContradictions" t:user="userVo" t:title="titleCon" t:listSelected="listSelected" />
+				<t:ListThreadDocument t:listThreadEntries="inContradictions" t:threadVo="selectedProject" t:user="userVo" t:title="titleCon" />
                 <br />
-				<t:ListThreadDocument t:listThreadEntries="inRecommandations" t:user="userVo" t:title="titleRec" t:listSelected="listSelected" />
+				<t:ListThreadDocument t:listThreadEntries="inRecommandations" t:threadVo="selectedProject" t:user="userVo" t:title="titleRec" />
                 <br />
             </div>
 		</div>
@@ -60,13 +60,6 @@
 	<!-- Widgets -->
 
 	<!-- Actions widget -->
-	<t:parameter name="actionsWidget">
-		<t:if test="entryExists">
-			<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
-				<t:ActionsBarThreadEntry t:user="userVo" t:formName="search" />
-			</t:widget>
-		</t:if>
-	</t:parameter>
 
 
 </t:MyBorderLayout>

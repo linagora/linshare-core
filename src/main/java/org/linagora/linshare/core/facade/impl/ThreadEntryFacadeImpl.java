@@ -91,7 +91,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
 		for (Thread thread : all) {
 			logger.debug("thread name " + thread.getName());
-//			List<ThreadMember> myMembers = new ArrayList<ThreadMember>();
 			
 			List<User> userMembers = new ArrayList<User>();
 			for (ThreadMember threadMember : thread.getMyMembers()) {
@@ -139,7 +138,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo, List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags) throws BusinessException {
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		
 		
 		List<ThreadEntry> threadEntries = new ArrayList<ThreadEntry>();
 		for (ThreadEntryVo threadEntryVo : threadEntriesVo) {
@@ -213,6 +211,17 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		} else {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
 		}
+	}
+
+
+	@Override
+	public ThreadEntryVo findById(UserVo actorVo, ThreadVo threadVo, String selectedId) throws BusinessException {
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		ThreadEntry threadEntry = threadEntryService.findById(actor, thread, selectedId);
+		if (threadEntry != null)
+			return new ThreadEntryVo(threadEntry);
+		return null;
 	}
 
 }

@@ -13,13 +13,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface ThreadEntryFacade {
 	
 	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException ;
+
 	
 	public List<ThreadVo> getAllThread();
 	
 	public List<ThreadVo> getAllMyThread(UserVo actorVo);
 	
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
-
+	
 	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name) throws BusinessException;
 	
 	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo, List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags) throws BusinessException;
@@ -33,4 +34,6 @@ public interface ThreadEntryFacade {
 	public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid);
 
 	public void removeDocument(UserVo userVo, ThreadEntryVo threadEntryVo) throws BusinessException;
+
+	public ThreadEntryVo findById(UserVo user, ThreadVo threadVo, String selectedId) throws BusinessException;
 }

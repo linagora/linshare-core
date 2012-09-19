@@ -37,14 +37,15 @@ public class ConfirmPopup {
      *                         Parameters
      ************************************************************ */
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	@Property
 	private String messageLabel;
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=true,defaultPrefix=BindingConstants.LITERAL)
 	private String eventName;
+	
+	@Parameter(required=false,defaultPrefix=BindingConstants.LITERAL)
+	private Object[] context;
 	
 	
 	@Component(parameters = {"style=bluelighting", "show=false","width=500", "height=100"})
@@ -66,7 +67,7 @@ public class ConfirmPopup {
      ************************************************************ */
 	
 	public void onActionFromConfirm(){
-		componentResources.getContainer().getComponentResources().triggerEvent(eventName, null,null);
+		componentResources.getContainer().getComponentResources().triggerEvent(eventName, context, null);
 	}
 	
 

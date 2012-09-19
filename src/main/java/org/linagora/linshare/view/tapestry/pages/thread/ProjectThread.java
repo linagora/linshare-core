@@ -40,6 +40,7 @@ import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
@@ -75,10 +76,6 @@ public class ProjectThread {
     
     @Property
     private ThreadEntryVo entry;
-    
-    @Property
-    @Persist
-    private List<ThreadEntryVo> listSelected;
 
     @Property
     @Persist
@@ -96,6 +93,9 @@ public class ProjectThread {
     
     @Property
     private static final String titleRec = "Recommandations";
+    
+    @Persist
+	private String selectedThreadEntryId;
 
 
     /* ***********************************************************
@@ -110,13 +110,13 @@ public class ProjectThread {
 
 
 
+
     @SetupRender
     public void setupRender() {  	
     	logger.debug("Setup Render begins");
 
     	threadName = selectedProject.getName();
     	threadFileUploadPopup.setMyCurrentThread(selectedProject);
-    	listSelected = listSelected == null ? new ArrayList<ThreadEntryVo>() : listSelected;
 
 		try {
 			List<ThreadEntryVo> allThreadEntries = threadEntryFacade.getAllThreadEntryVo(userVo, selectedProject);
@@ -215,6 +215,28 @@ public class ProjectThread {
     public void setMySelectedProject(ThreadVo selectedProject) {
 		this.selectedProject = selectedProject;
 	}
+    
+    public String getSelectedThreadEntryId() {
+		return selectedThreadEntryId;
+	}
+
+	public void setSelectedThreadEntryId(String selectedThreadEntry) {
+		this.selectedThreadEntryId = selectedThreadEntry;
+	}
+	   
+    @OnEvent(value="eventDeleteThreadEntry")
+    public void deleteThreadEntry() {
+    	System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : selectedThreadEntry = " + selectedThreadEntryId);
+    	ThreadEntryVo selectedVo = null;
+    	try {
+    		selectedVo = threadEntryFacade.findById(userVo, selectedProject, selectedThreadEntryId);
+    		threadEntryFacade.removeDocument(userVo, selectedVo);
+    		shareSessionObjects.removeDocument(selectedVo);
+    		shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"), selectedVo.getFileName()));
+    	} catch (BusinessException e) {
+    		shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"), selectedVo.getFileName()) );
+    	}
+    }
     
     Object onException(Throwable cause) {
         shareSessionObjects.addError(messages.get("global.exception.message"));
