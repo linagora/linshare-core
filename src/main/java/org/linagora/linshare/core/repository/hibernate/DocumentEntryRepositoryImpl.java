@@ -152,7 +152,6 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			public List<DocumentEntry> doInHibernate(final Session session) throws HibernateException, SQLException {
 				
 				StringBuilder queryString = new StringBuilder("select docEntry from DocumentEntry docEntry join docEntry.entryOwner account join docEntry.document doc ");
-//				StringBuilder queryString = new StringBuilder("select doc from DocumentEntry docEntry ");
 				
 				final Query query = session.createQuery(queryString.append(queryParameter.getQuery()).toString());
 				
@@ -165,8 +164,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			}
 		});
 	}
-	
-	
+
 	
 	/**
 	 * Build the search query
@@ -210,7 +208,6 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 			queryParameter.appendToQuery(" doc.size<=:sizeMax " );
 			queryParameter.addParameter("sizeMax", searchDocumentCriterion.getSizeMax());
 		}
-
 		
 		if(null!=searchDocumentCriterion.getDateBegin()){
 			queryParameter.appendToQuery(" docEntry.creationDate>=:creationDateBegin " );

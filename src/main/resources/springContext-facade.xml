@@ -52,7 +52,6 @@
 	<bean name="shareFacade" class="org.linagora.linshare.core.facade.impl.ShareFacadeImpl">
 		<constructor-arg ref="shareEntryTransformer" />
 		<constructor-arg ref="userRepository" />
-		<constructor-arg ref="documentRepository" />
 		<constructor-arg ref="notifierService" />
 		<constructor-arg ref="mailContentBuildingService" />
 		<constructor-arg ref="userService" />

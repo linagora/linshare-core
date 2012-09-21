@@ -49,7 +49,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.ShareFacade;
-import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
@@ -69,8 +68,6 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final ShareEntryTransformer shareEntryTransformer;
 	
 	private final UserRepository<User> userRepository;
-
-	private final DocumentRepository documentRepository;
 
 	private final NotifierService notifierService;
     
@@ -95,14 +92,13 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final String urlInternal;
     
 	
-	public ShareFacadeImpl(ShareEntryTransformer shareEntryTransformer, UserRepository<User> userRepository, DocumentRepository documentRepository, NotifierService notifierService,
+	public ShareFacadeImpl(ShareEntryTransformer shareEntryTransformer, UserRepository<User> userRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
 			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
 			String urlBase, String urlInternal) {
 		super();
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;
-		this.documentRepository = documentRepository;
 		this.notifierService = notifierService;
 		this.mailElementsFactory = mailElementsFactory;
 		this.userService = userService;

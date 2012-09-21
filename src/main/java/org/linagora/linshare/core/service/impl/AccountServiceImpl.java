@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 public class AccountServiceImpl implements AccountService {
 	
-	@SuppressWarnings("unused")
 	final private static Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 	
 	private final AccountRepository<Account> accountRepository;
@@ -20,7 +19,7 @@ public class AccountServiceImpl implements AccountService {
 
     
 	@SuppressWarnings("rawtypes")
-	public AccountServiceImpl(AccountRepository accountRepository,
+	public AccountServiceImpl(AccountRepository<Account> accountRepository,
 			UserRepository userRepository) {
 		super();
 		this.accountRepository = accountRepository;
@@ -44,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Account update(Account account) throws BusinessException {
-		return (Account) accountRepository.update(account);
+		return accountRepository.update(account);
 	}
 
 }

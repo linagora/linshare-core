@@ -20,7 +20,6 @@
 */
 package org.linagora.linshare.core.facade.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
@@ -65,20 +64,15 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	}
 
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
-		
 		User user = (User) accountService.findByLsUid(userVo.getLsUid());
-		ArrayList<DocumentVo> documents = new ArrayList<DocumentVo>();
-
 		try {
 			List<DocumentEntry> documentEntries = documentEntryService.findAllMyDocumentEntries(user, user);
-			for (DocumentEntry entry : documentEntries) {
-				documents.add(documentEntryTransformer.disassemble(entry));
-			}
+			return documentEntryTransformer.disassembleList(documentEntries);
 		} catch (BusinessException e) {
 			logger.error("can't find my document entries");
 			logger.debug(e.toString());
+			return null;
 		}
-		return documents;
 	}
 
 	public List<DocumentVo> retrieveDocumentContainsCriterion(UserVo actorVo, SearchDocumentCriterion searchDocumentCriterion) {

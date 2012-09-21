@@ -336,13 +336,14 @@ INSERT INTO domain_abstract(id, type , identifier, label, enable, template, desc
 
 
 
-
-
 -- login is e-mail address 'root@localhost.localdomain' and password is 'adminlinshare'
-INSERT INTO account(id, account_type, ls_uid, creation_date, modification_date, role_id, locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', current_date(),current_date(), 3, 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
-INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted,CAN_CREATE_GUEST) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false);
--- system account : usefull ? it could be ... :(
--- INSERT INTO user(user_id, user_type_id, domain_id, login, first_name, last_name, mail, creation_date, role_id, password, expiry_date, can_upload, can_create_guest) VALUES (3, 0, 1, 'system', '', '', 'system@localhost', '2009-01-01', 2, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', null, 'false','false');
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, password, destroyed, domain_id) VALUES (1, 6, 'root@localhost.localdomain', current_date(), current_date(), 3, 'en', 'en', true, 'JYRd2THzjEqTGYq3gjzUh2UBso8=', false, 1);
+INSERT INTO users(account_id, First_name, Last_name, Mail, Can_upload, Comment, Restricted, CAN_CREATE_GUEST) VALUES (1, 'Administrator', 'LinShare', 'root@localhost.localdomain', false, '', false, false);
+
+-- system account :
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (2, 7, 'system', current_date(), current_date(), 3, 'en', 'en', true, false, 1);
+
+
 
 
 
@@ -485,5 +486,12 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
+
+-- Functionality : TAB_THREAD
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (45, false, false, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false, false, 1, true);
+-- if a functionality is system, you will not be hable see/modify its parameters
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
+
 
 

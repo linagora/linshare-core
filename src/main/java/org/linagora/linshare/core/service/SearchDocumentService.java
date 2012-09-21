@@ -21,13 +21,10 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 
 /**

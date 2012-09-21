@@ -28,7 +28,6 @@ package org.linagora.linshare.dao.searchDocument;
 @ContextConfiguration(locations={"classpath:springContext-service.xml",
     "classpath:springContext-datasource.xml",
     "classpath:springContext-repository.xml",
-    "classpath:springContext-dao.xml",
     "classpath:springContext-facade.xml",
     "classpath:springContext-jackRabbit.xml","classpath:springContext-test.xml"})
 public class TestSearch extends AbstractJUnit4SpringContextTests{

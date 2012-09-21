@@ -21,9 +21,12 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 
+import java.util.Date;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AccountRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -38,5 +41,12 @@ public class AccountRepositoryImpl extends GenericAccountRepositoryImpl<Account>
         DetachedCriteria det = DetachedCriteria.forClass(Account.class).add(Restrictions.eq("lsUuid", account.getLsUuid()));
         return det;
     }
+
+	@Override
+	public Account update(Account entity) throws BusinessException {
+		entity.setModificationDate(new Date());
+		return super.update(entity);
+	}
+    
     
 } 

@@ -21,7 +21,6 @@
 package org.linagora.linshare.view.tapestry.services;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.fileupload.FileItemFactory;
@@ -34,7 +33,6 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
@@ -62,16 +60,10 @@ import org.linagora.linshare.view.tapestry.objects.BusinessInformativeContentBun
 import org.linagora.linshare.view.tapestry.objects.HelpsASO;
 import org.linagora.linshare.view.tapestry.services.impl.AssetProtectionDispatcher;
 import org.linagora.linshare.view.tapestry.services.impl.BusinessMessagesManagementServiceImpl;
-import org.linagora.linshare.view.tapestry.services.impl.ConfigureMarshallerModule;
 import org.linagora.linshare.view.tapestry.services.impl.MyMultipartDecoderImpl;
 import org.linagora.linshare.view.tapestry.services.impl.PropertiesSymbolProvider;
 import org.linagora.linshare.view.tapestry.services.impl.UserAccessAuthentity;
 import org.linagora.linshare.view.tapestry.services.impl.UserLocaleDispatcher;
-import org.linagora.restmarshaller.ConfigureAliasMarshaller;
-import org.linagora.restmarshaller.ConfigureOmitFieldMarshaller;
-import org.linagora.restmarshaller.Marshaller;
-import org.linagora.restmarshaller.StringClasse;
-import org.linagora.restmarshaller.xstream.impl.XstreamMarshaller;
 import org.slf4j.Logger;
 
 
@@ -79,7 +71,7 @@ import org.slf4j.Logger;
  * This module is automatically included as part of the Tapestry IoC Registry, it's a good place to
  * configure and extend Tapestry, or to place your own service definitions.
  */
-@SubModule(ConfigureMarshallerModule.class)
+//@SubModule(ConfigureMarshallerModule.class)
 public class AppModule
 {
     public static void bind(ServiceBinder binder)
@@ -343,38 +335,38 @@ public class AppModule
 		return new UserLocaleDispatcher(persistentLocale, stateManager, symbolSource, "fr");
 	}
     
-    /****************************
-     * REST part
-     ****************************/
-
-    // Adding the properties for mail subject and content
-    public static void contributeValidationMessagesSource(OrderedConfiguration<String> configuration) {
-    	configuration.add("app", "org/linagora/linShare/view/tapestry/rest/mail");
-    	configuration.add("app2", "org/linagora/linShare/view/tapestry/services/keys");
-    }
-    
-    // These two methods are to be contributed by a submodule
-    public static ConfigureAliasMarshaller buildConfigureAliasMarshaller(List<StringClasse> configuration) {
-    	return new ConfigureAliasMarshaller(configuration);
-    }
-
-    public static ConfigureOmitFieldMarshaller buildConfigureOmitFieldMarshaller(List<StringClasse> configuration) {
-    	return new ConfigureOmitFieldMarshaller(configuration);
-    }
-
-    /**
-     * Construct the marshaller service
-     * @param configureAliasMarshaller : all the aliases
-     * @param configureOmitMarshaller : all the field to omit
-     * @return
-     */
-    public static Marshaller buildMarshaller(
-    		@InjectService("ConfigureAliasMarshaller") ConfigureAliasMarshaller configureAliasMarshaller,
-    		 @InjectService("ConfigureOmitFieldMarshaller") ConfigureOmitFieldMarshaller configureOmitMarshaller) {
-    	return new XstreamMarshaller(configureAliasMarshaller, configureOmitMarshaller);
-    }
-    
-    
+//    /****************************
+//     * REST part
+//     ****************************/
+//
+//    // Adding the properties for mail subject and content
+//    public static void contributeValidationMessagesSource(OrderedConfiguration<String> configuration) {
+//    	configuration.add("app", "org/linagora/linShare/view/tapestry/rest/mail");
+//    	configuration.add("app2", "org/linagora/linShare/view/tapestry/services/keys");
+//    }
+//    
+//    // These two methods are to be contributed by a submodule
+//    public static ConfigureAliasMarshaller buildConfigureAliasMarshaller(List<StringClasse> configuration) {
+//    	return new ConfigureAliasMarshaller(configuration);
+//    }
+//
+//    public static ConfigureOmitFieldMarshaller buildConfigureOmitFieldMarshaller(List<StringClasse> configuration) {
+//    	return new ConfigureOmitFieldMarshaller(configuration);
+//    }
+//
+//    /**
+//     * Construct the marshaller service
+//     * @param configureAliasMarshaller : all the aliases
+//     * @param configureOmitMarshaller : all the field to omit
+//     * @return
+//     */
+//    public static Marshaller buildMarshaller(
+//    		@InjectService("ConfigureAliasMarshaller") ConfigureAliasMarshaller configureAliasMarshaller,
+//    		 @InjectService("ConfigureOmitFieldMarshaller") ConfigureOmitFieldMarshaller configureOmitMarshaller) {
+//    	return new XstreamMarshaller(configureAliasMarshaller, configureOmitMarshaller);
+//    }
+//    
+//    
 //    /**
 //     * Create the Rest dispatcher. Holds nearly all the know universe as constructor
 //     */
