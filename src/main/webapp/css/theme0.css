@@ -1470,6 +1470,33 @@ table.t-data-grid {
 
 
 /*--------------------------------------------------------------------------
+* Pages > Thread
+*/
+
+#thread #pageContent #list {
+}
+
+#thread #list td.fileProperties {
+	max-width: 400px;	/* Value <= 400px */
+}
+#thread #list td.fileProperties div {
+	overflow: hidden;
+	min-width: 400px;		/* For 1024-width screen */
+	white-space: normal;
+}
+#thread #list td.fileProperties span,
+#thread #list td.fileProperties a {
+	white-space: nowrap;
+}
+
+#thread #list .fileDelete {
+	width: 7%;
+	min-width: 100px;	/* 37px = 42px - 5px */
+	text-align: center;
+}
+
+
+/*--------------------------------------------------------------------------
 * Pages > Users
 */
 

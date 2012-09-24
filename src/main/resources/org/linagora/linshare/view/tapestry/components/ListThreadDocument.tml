@@ -29,7 +29,7 @@
                 </p:filePropertiesHeader>
 
                 <p:fileDeleteHeader>
-                    ${message:components.listSharedDocument.delete}
+                    ${message:components.listThreadDocument.delete}
                 </p:fileDeleteHeader>
 
 
