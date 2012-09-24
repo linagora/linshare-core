@@ -214,13 +214,17 @@ public class ThreadFileUploadPopup {
 	
 	
     public void onSuccessFromThreadEntryForm() {
-    	
-    	if(logger.isDebugEnabled()) 	logger.debug("current thread is : " + currentThread.getName() + "(" + currentThread.getLsUuid() + ")");
-
+    	if (logger.isDebugEnabled())
+    		logger.debug("current thread is : " + currentThread.getName() + "(" + currentThread.getLsUuid() + ")");
     	
     	List<TagVo> tags = new ArrayList<TagVo>();
     	
     	tags.add(new TagVo(step.getName() , selectStepName));
+    	
+    	if (addedThreadEntries == null || addedThreadEntries.size() == 0) {
+    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.THREAD_UPLOAD_NO_FILE, MessageSeverity.ERROR));
+			return;
+    	}
     	
     	try {
     		threadEntryFacade.setTagsToThreadEntries(userVo, currentThread, addedThreadEntries, tags);
