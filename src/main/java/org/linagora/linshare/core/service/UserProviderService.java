@@ -41,6 +41,4 @@ public interface UserProviderService {
 
     public boolean patternIsDeletable(String patternToDelete);
     public boolean connectionIsDeletable(String connectionToDelete);
-
-
 }

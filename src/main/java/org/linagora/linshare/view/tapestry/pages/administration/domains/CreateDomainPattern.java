@@ -66,6 +66,8 @@ public class CreateDomainPattern {
 			try {
 				domainPattern = domainFacade.findAllSystemDomainPatterns().get(0);
 				domainPattern.setIdentifier(null);
+				domainPattern.setSystem(false);
+				domainPattern.setPatternDescription("");
 			} catch (BusinessException e) {
 				domainPattern = null;
 			}

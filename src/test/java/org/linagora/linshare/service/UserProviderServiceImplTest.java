@@ -20,6 +20,8 @@
  */
 package org.linagora.linshare.service;
 
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,22 +29,25 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapAttribute;
+import org.linagora.linshare.core.domain.vo.DomainPatternVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopends.xml",
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
-public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTests{
+public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
 	private static String rootDomainName = "Domain0";
 	private static String topDomainName = "Domain0.1";
@@ -152,5 +157,30 @@ public class UserProviderServiceImplTest extends AbstractJUnit4SpringContextTest
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 
+	}
+	
+	@Test
+	public void testUpdateDomainPattern() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
+		DomainPattern domainPattern = null;
+		
+		try {
+			domainPattern = userProviderService.findAllUserDomainPattern().get(0);
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assert.fail("Can't retrieve pattern.");
+		}
+		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
+		attributes.get(DomainPattern.USER_FIRST_NAME).setAttribute("foo");
+		DomainPatternVo vo = new DomainPatternVo(domainPattern);
+		try {
+			userProviderService.updateDomainPattern(domainPattern);
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assert.fail("Can't update pattern.");
+		}
+
+		logger.debug(LinShareTestConstants.END_TEST);
 	}
 }

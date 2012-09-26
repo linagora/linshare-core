@@ -99,11 +99,9 @@ public class Index {
 
     @SetupRender
     public void init() throws BusinessException {
-
         domains = domainFacade.findAllTopDomain();
         domainPatterns = domainFacade.findAllUserDomainPatterns();
         ldapConnections = domainFacade.findAllLDAPConnections();
-
     }
 
     @OnEvent(value="domainDeleteEvent")

@@ -384,10 +384,10 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
-    public DomainPatternVo createDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException {
+    public void createDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException {
         if(isAuthorized(actorVo)) {
             DomainPattern domainPattern = new DomainPattern(domainPatternVo);
-            return new DomainPatternVo(userProviderService.createDomainPattern(domainPattern));
+            userProviderService.createDomainPattern(domainPattern);
         } else {
             throw new BusinessException("You are not authorized to create a domain pattern.");
         }
@@ -402,8 +402,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     @Override
     public void updateDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException {
         if(isAuthorized(actorVo)) {
-            DomainPattern domainPattern = new DomainPattern(domainPatternVo);
-            userProviderService.updateDomainPattern(domainPattern);
+            userProviderService.updateDomainPattern(new DomainPattern(domainPatternVo));
         } else {
             throw new BusinessException("You are not authorized to update a domain pattern.");
         }

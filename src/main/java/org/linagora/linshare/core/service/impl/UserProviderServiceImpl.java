@@ -150,7 +150,10 @@ public class UserProviderServiceImpl implements UserProviderService {
         pattern.setDescription(domainPattern.getDescription());
         pattern.setAuthCommand(domainPattern.getAuthCommand());
         pattern.setSearchUserCommand(domainPattern.getSearchUserCommand());
-        pattern.setAttributes(domainPattern.getAttributes());
+        pattern.getAttributes().get(DomainPattern.USER_FIRST_NAME).setAttribute(domainPattern.getAttributes().get(DomainPattern.USER_FIRST_NAME).getAttribute());
+        pattern.getAttributes().get(DomainPattern.USER_LAST_NAME).setAttribute(domainPattern.getAttributes().get(DomainPattern.USER_LAST_NAME).getAttribute());
+        pattern.getAttributes().get(DomainPattern.USER_MAIL).setAttribute(domainPattern.getAttributes().get(DomainPattern.USER_MAIL).getAttribute());
+        pattern.getAttributes().get(DomainPattern.USER_UID).setAttribute(domainPattern.getAttributes().get(DomainPattern.USER_MAIL).getAttribute());
         domainPatternRepository.update(pattern);
     }
 

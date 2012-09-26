@@ -36,10 +36,6 @@ public class DomainPatternVo {
         this.system = domainPattern.getSystem();
 
         Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
-        System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : ldap attributes :\n");
-        for (String k : attributes.keySet()) {
-        	System.out.println(new Exception().getStackTrace()[0].getMethodName() + "\t\t\t\t" + k + " :" + attributes.get(k).getAttribute());
-		}
         this.userMail = attributes.get(DomainPattern.USER_MAIL).getAttribute();
         this.userFirstName = attributes.get(DomainPattern.USER_FIRST_NAME).getAttribute();
         this.userLastName = attributes.get(DomainPattern.USER_LAST_NAME).getAttribute();

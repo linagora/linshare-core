@@ -52,10 +52,10 @@ public class DomainPattern {
         this.system = domainPatternVo.getSystem();
         
         this.attributes = new HashMap<String, LdapAttribute>();
-        this.attributes.put(domainPatternVo.getUserMail(), 		new LdapAttribute(USER_MAIL,		domainPatternVo.getUserMail()));
-        this.attributes.put(domainPatternVo.getUserFirstName(),	new LdapAttribute(USER_FIRST_NAME,	domainPatternVo.getUserFirstName()));
-        this.attributes.put(domainPatternVo.getUserLastName(),	new LdapAttribute(USER_LAST_NAME,	domainPatternVo.getUserLastName()));
-        this.attributes.put(domainPatternVo.getLdapUid(),		new LdapAttribute(USER_UID,			domainPatternVo.getLdapUid()));
+        this.attributes.put(USER_MAIL, 			new LdapAttribute(USER_MAIL,		domainPatternVo.getUserMail()));
+        this.attributes.put(USER_FIRST_NAME,	new LdapAttribute(USER_FIRST_NAME,	domainPatternVo.getUserFirstName()));
+        this.attributes.put(USER_LAST_NAME,		new LdapAttribute(USER_LAST_NAME,	domainPatternVo.getUserLastName()));
+        this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternVo.getLdapUid()));
     }
 
 
