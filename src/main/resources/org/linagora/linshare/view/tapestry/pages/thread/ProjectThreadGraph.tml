@@ -1,0 +1,65 @@
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+    xmlns:p="tapestry:parameter">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:components.myborderlayout.thread.title}</h1>
+
+		<t:messagePanel />
+		<t:businessMessagesDisplayer />
+
+
+        <!-- Action bar -->
+
+        <div id="actionBar">
+            <h4>Actions</h4>
+            <ul>
+                <li>
+                <a href="#" class="button" onclick="threadFileUploadWindow.showCenter(true);">
+                    <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/>
+                        ${message:pages.thread.upload.addbutton}</span>
+                </a>
+                </li>
+            </ul>
+        </div><!-- id="actionBar" -->
+
+		<!-- Page content -->
+
+		<div id="pageContent">
+            <h2>${threadName}</h2>
+
+            <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes" t:options="{duration:0.3}">
+				<t:ListThreadDocument t:listThreadEntries="outInstructions" t:threadVo="selectedProject" t:user="userVo" t:title="titleIns" />
+                <br />
+				<t:ListThreadDocument t:listThreadEntries="outContradictions" t:threadVo="selectedProject" t:user="userVo" t:title="titleCon" />
+                <br />
+				<t:ListThreadDocument t:listThreadEntries="outRecommandations" t:threadVo="selectedProject" t:user="userVo" t:title="titleRec" />
+                <br />
+            </div>
+            <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses" t:options="{duration:0.3}">
+				<t:ListThreadDocument t:listThreadEntries="inInstructions" t:threadVo="selectedProject" t:user="userVo" t:title="titleIns" />
+                <br />
+				<t:ListThreadDocument t:listThreadEntries="inContradictions" t:threadVo="selectedProject" t:user="userVo" t:title="titleCon" />
+                <br />
+				<t:ListThreadDocument t:listThreadEntries="inRecommandations" t:threadVo="selectedProject" t:user="userVo" t:title="titleRec" />
+                <br />
+            </div>
+		</div>
+
+	</div><!-- id="content" -->
+
+	<!-- Popups -->
+
+    <!-- Thread File Upload popup -->
+    <t:threadFileUploadPopup t:eventName="threadFileUploadPopupEvent" />
+
+
+	<!-- Widgets -->
+
+	<!-- Actions widget -->
+
+
+</t:MyBorderLayout>

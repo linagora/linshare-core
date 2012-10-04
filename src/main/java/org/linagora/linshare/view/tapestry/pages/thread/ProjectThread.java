@@ -152,7 +152,8 @@ public class ProjectThread {
     	logger.debug("Entering addToOutProjectEntries");
     	for (TagVo tag : tags) {
     		if (tag.getName().equals("Phases")) {
-    			String currentTag = tag.toString();
+    			String currentTag = tag.getFullName();
+    			logger.info("currentTag = " + currentTag);
     			List<ThreadEntryVo> entries = outProjectEntries.get(currentTag);
     			if (entries == null) {
     				outProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
@@ -167,7 +168,8 @@ public class ProjectThread {
     	logger.debug("Entering addToInProjectEntries");
     	for (TagVo tag : tags) {
     		if (tag.getName().equals("Phases")) {
-    			String currentTag = tag.toString();
+    			String currentTag = tag.getFullName();
+    			logger.info("currentTag = " + currentTag);
     			List<ThreadEntryVo> entries = inProjectEntries.get(currentTag);
     			if (entries == null) {
     				inProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());

@@ -25,6 +25,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -83,6 +84,23 @@ public class ThreadEntryRepositoryImpl extends AbstractRepositoryImpl<ThreadEntr
 		List<ThreadEntry> entries = findByCriteria(Restrictions.eq("entryOwner", owner));
         return entries;
 	}
-	
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names) {
+		List<ThreadEntry> res = null;
+
+		for (String name : names) {
+			DetachedCriteria criteria = DetachedCriteria.forClass(ThreadEntry.class);
+			criteria.add(Restrictions.eq("entryOwner", owner));
+			criteria.createAlias("tagAssociations", "ta", Criteria.LEFT_JOIN);
+			criteria.createAlias("ta.tag", "t", Criteria.LEFT_JOIN);
+			criteria.add(Restrictions.eq("t.name", name));
+			if (res == null)
+				res = (List<ThreadEntry>) getHibernateTemplate().findByCriteria(criteria);
+			else
+				res.retainAll((List<ThreadEntry>) getHibernateTemplate().findByCriteria(criteria));
+		}
+		return res;
+	}
 }

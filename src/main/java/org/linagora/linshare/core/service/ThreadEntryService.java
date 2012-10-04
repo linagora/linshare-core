@@ -24,5 +24,7 @@ public interface ThreadEntryService {
 	public boolean documentHasThumbnail(Account actor, String identifier);
 
 	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
+
+	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
 	
 }

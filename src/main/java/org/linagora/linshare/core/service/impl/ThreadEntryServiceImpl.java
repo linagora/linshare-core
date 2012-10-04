@@ -43,8 +43,6 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final VirusScannerService virusScannerService;
 	private final TagBusinessService tagBusinessService;
 	
-	
-	
 	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
 			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService) {
 		super();
@@ -57,9 +55,6 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		this.virusScannerService = virusScannerService;
 		this.tagBusinessService = tagBusinessService;
 	}
-	
-	
-
 
 	@Override
 	public ThreadEntry createThreadEntry(Account actor, Thread thread, InputStream stream, Long size, String fileName) throws BusinessException {
@@ -73,12 +68,12 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		
 		// check if the file MimeType is allowed
 		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
-		if(mimeFunctionality.getActivationPolicy().getStatus()) {
+		if (mimeFunctionality.getActivationPolicy().getStatus()) {
 			mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
 		}
 		
 		Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
-		if(antivirusFunctionality.getActivationPolicy().getStatus()) {
+		if (antivirusFunctionality.getActivationPolicy().getStatus()) {
 			// TODO antivirus check fro thread entries
 //			checkVirus(fileName, actor, stream);
 		}
@@ -86,11 +81,10 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		// want a timestamp on doc ?
 		String timeStampingUrl = null;
 		StringValueFunctionality timeStampingFunctionality = functionalityService.getTimeStampingFunctionality(domain);
-		if(timeStampingFunctionality.getActivationPolicy().getStatus()) {
+		if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
 			 timeStampingUrl = timeStampingFunctionality.getValue();
 		}
-				
-				
+	
 		Functionality enciphermentFunctionality = functionalityService.getEnciphermentFunctionality(domain);
 		Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 		
@@ -100,8 +94,6 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		logEntryService.create(logEntry);
 
 		tempFile.delete(); // remove the temporary file
-		
-		
 
 		tagBusinessService.runTagFiltersOnThreadEntry(actor, thread, threadEntry);
 
@@ -143,6 +135,12 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	}
 
 	@Override
+	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names) {
+		// TODO : check permissions for thread entries
+		return documentEntryBusinessService.findAllThreadEntriesTaggedWith(thread, names);
+	}
+	
+	@Override
 	public InputStream getDocumentStream(Account actor, String uuid) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
 		if (threadEntry == null) {
@@ -182,5 +180,4 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		String thmbUUID = threadEntry.getDocument().getThmbUuid();
 		return (thmbUUID != null && thmbUUID.length() > 0);
 	}
-
 }

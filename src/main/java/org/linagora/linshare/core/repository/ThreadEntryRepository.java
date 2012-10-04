@@ -34,4 +34,6 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry>{
 	public ThreadEntry findByUuid(String uuid);
 	
 	public List<ThreadEntry> findAllThreadEntries(Thread owner);
+
+	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);
 }

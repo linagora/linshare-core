@@ -119,6 +119,21 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return res;
 	}
 
+	@Override
+	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo, ThreadVo threadVo, TagVo[] tags) throws BusinessException {
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		String[] names = new String[tags.length];
+		for (int i = 0; i < names.length; ++i) {
+			names[i] = tags[i].getName();
+		}
+		List<ThreadEntry> threadEntries = threadEntryService.findAllThreadEntriesTaggedWith(actor, thread, names);
+		List<ThreadEntryVo> res = new ArrayList<ThreadEntryVo>(); 
+		for (ThreadEntry threadEntry : threadEntries) {
+			res.add(new ThreadEntryVo(threadEntry));
+		}
+		return res;
+	}
 
 	@Override
 	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name) throws BusinessException {
@@ -223,5 +238,4 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			return new ThreadEntryVo(threadEntry);
 		return null;
 	}
-
 }

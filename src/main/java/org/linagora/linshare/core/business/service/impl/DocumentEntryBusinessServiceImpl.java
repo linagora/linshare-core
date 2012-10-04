@@ -353,6 +353,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
 		return threadEntryRepository.findAllThreadEntries(owner);
 	}
+
+	@Override
+	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names) {
+		return threadEntryRepository.findAllThreadEntriesTaggedWith(owner, names);
+	}
 	
 	@Override
 	public InputStream getDocumentStream(ThreadEntry entry) {
@@ -539,6 +544,5 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		doc.setThreadEntry(null);
 		documentRepository.update(doc);
 		deleteDocument(doc);
-	}
-	
+	}	
 }

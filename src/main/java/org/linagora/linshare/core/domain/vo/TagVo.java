@@ -40,10 +40,11 @@ public class TagVo {
 
 	@Override
 	public String toString() {
-		if(tagEnumValue == null)
-			return name;
-		else
-			return name + ":" + tagEnumValue;
+		return isTagEnum ? tagEnumValue : name;
+	}
+	
+	public String getFullName() {
+		return name + (isTagEnum ? ":" + tagEnumValue : "");
 	}
 
 	public String getTagEnumValue() {
