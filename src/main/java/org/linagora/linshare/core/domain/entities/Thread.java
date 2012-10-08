@@ -9,6 +9,10 @@ public class Thread extends Account {
 	protected String name;
 	
 	protected Set<ThreadMember> myMembers = new java.util.HashSet<ThreadMember>();
+	
+	protected Set<ThreadView> threadViews = new java.util.HashSet<ThreadView>();
+	
+	protected ThreadView currentThreadView;
 
 	public Thread() {
 		super();
@@ -51,5 +55,26 @@ public class Thread extends Account {
 	public String getAccountReprentation() {
 		return name + "(" + lsUuid + ")";
 	}
+
+
+	public Set<ThreadView> getThreadViews() {
+		return threadViews;
+	}
+
+
+	public void setThreadViews(Set<ThreadView> threadViews) {
+		this.threadViews = threadViews;
+	}
+
+
+	public ThreadView getCurrentThreadView() {
+		return currentThreadView;
+	}
+
+
+	public void setCurrentThreadView(ThreadView currentThreadView) {
+		this.currentThreadView = currentThreadView;
+	}
+	
 
 }

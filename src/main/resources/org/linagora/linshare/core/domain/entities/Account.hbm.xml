@@ -98,11 +98,17 @@
 				<key column="thread_id" not-null="true"/>
 				<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadMember"/>
 			</set>
+			<set name="threadViews" lazy="true" cascade="save-update,lock" inverse="true">
+				<key column="thread_account_id" not-null="true"/>
+				<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadView"/>
+			</set>
 			<join table="thread">
 				<key>
 					<column name="account_id"/>
 				</key>
 				<property name="name" column="Name" type="string" length="255" not-null="true" lazy="false"/>
+				<many-to-one name="currentThreadView" column="thread_view_id" class="org.linagora.linshare.core.domain.entities.ThreadView" cascade="save-update,lock" unique="true" not-null="false" lazy="no-proxy">
+				</many-to-one>
 			</join>
 		</subclass>
 	</class>

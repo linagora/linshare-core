@@ -183,3 +183,30 @@ UPDATE policy SET status=true where id=27;
 -- enable thread tab
 UPDATE policy SET status=true where id=45;
 
+
+
+-- default view and ratp view for thread ratp
+INSERT INTO thread_view (id, thread_account_id, name) VALUES (1, 51, 'cc_default'); 
+INSERT INTO thread_view (id, thread_account_id, name) VALUES (2, 51, 'cc_ratp'); 
+UPDATE thread set thread_view_id=1 where account_id=51;
+INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (1, 7, 2, 1); 
+INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (2, 1, 2, 2); 
+INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (3, 2, 2, 2); 
+INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (4, 3, 2, 3); 
+
+
+
+
+
+-- default view and 3mi view for thread 3mi
+INSERT INTO thread_view (id, thread_account_id, name) VALUES (3, 52, 'cc_default'); 
+INSERT INTO thread_view (id, thread_account_id, name) VALUES (4, 52, 'cc_3mi'); 
+UPDATE thread set thread_view_id=3 where account_id=52;
+INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (5, 8, 4, 1); 
+INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (6, 4, 4, 2); 
+INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (7, 5, 4, 2); 
+INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (8, 6, 4, 3); 
+
+
+
+

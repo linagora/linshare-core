@@ -7,7 +7,9 @@ SET default_with_oids = false;
 CREATE SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE START WITH 1 CACHE 1;
 CREATE TABLE account (
   id                               int8 NOT NULL, 
+  domain_id                       int8 NOT NULL, 
   technical_account_permission_id int8, 
+  owner_id                        int8, 
   ls_uuid                         varchar(255) NOT NULL, 
   creation_date                   timestamp(6) NOT NULL, 
   modification_date               timestamp(6) NOT NULL, 
@@ -16,10 +18,8 @@ CREATE TABLE account (
   external_mail_locale            varchar(255) NOT NULL, 
   enable                          bool NOT NULL, 
   account_type                    int4 NOT NULL, 
-  domain_id                       int8 NOT NULL, 
   password                        varchar(255), 
   destroyed                       bool NOT NULL, 
-  owner_id                        int8, 
   CONSTRAINT account_pkey 
     PRIMARY KEY (id));
 CREATE TABLE allowed_mimetype (
@@ -297,8 +297,9 @@ CREATE TABLE tag_filter_rule (
   tag_rule_type int4 NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE thread (
-  name       varchar(255) NOT NULL, 
-  account_id int8 NOT NULL, 
+  name           varchar(255) NOT NULL, 
+  account_id     int8 NOT NULL, 
+  thread_view_id int8, 
   PRIMARY KEY (account_id));
 CREATE TABLE thread_entry (
   entry_id    int8 NOT NULL, 
@@ -436,6 +437,17 @@ CREATE TABLE view_tag_asso (
   views_id int8 NOT NULL, 
   depth    int4 NOT NULL, 
   PRIMARY KEY (id));
+CREATE TABLE thread_view (
+  id                 int8 NOT NULL, 
+  thread_account_id int8 NOT NULL, 
+  name              varchar(255) NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE thread_view_asso (
+  id              int8 NOT NULL, 
+  tag_id         int8 NOT NULL, 
+  thread_view_id int8 NOT NULL, 
+  depth          int4 NOT NULL, 
+  PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -506,6 +518,10 @@ ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi755506 FOREIGN KEY (view_id)
 ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
 ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a660721 FOREIGN KEY (views_id) REFERENCES views (id);
 ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a218567 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie68184 FOREIGN KEY (thread_account_id) REFERENCES thread (account_id);
+ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie285846 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
+ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE thread ADD CONSTRAINT FKthread957862 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 

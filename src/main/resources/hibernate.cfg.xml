@@ -53,6 +53,9 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/DefaultView.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/View.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/ViewTagAsso.hbm.xml"/>
+    
+    <mapping resource="org/linagora/linshare/core/domain/entities/ThreadView.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/ThreadViewAsso.hbm.xml"/>
         
         
     
