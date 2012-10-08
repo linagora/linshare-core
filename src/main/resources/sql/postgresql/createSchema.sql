@@ -279,7 +279,7 @@ CREATE TABLE tag (
   tag_type   int4 NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE tag_enum_value (
-  id      BIGSERIAL NOT NULL, 
+  id      int8 NOT NULL, 
   tag_id int8, 
   value  varchar(255) NOT NULL, 
   PRIMARY KEY (id));
@@ -424,17 +424,18 @@ CREATE TABLE technical_account_permission_account (
   account_id                      int8 NOT NULL, 
   PRIMARY KEY (technical_account_permission_id, 
   account_id));
-CREATE TABLE view_tag (
-  view_id int8 NOT NULL, 
-  tag_id  int8 NOT NULL, 
-  "index" int4 NOT NULL, 
-  PRIMARY KEY (view_id, 
-  tag_id));
 CREATE TABLE default_view (
-  identifier      varchar(255) NOT NULL, 
+  id               int8 NOT NULL, 
+  identifier      varchar(255) NOT NULL UNIQUE, 
   view_id         int8 NOT NULL, 
   view_context_id int8 NOT NULL, 
-  PRIMARY KEY (identifier));
+  PRIMARY KEY (id));
+CREATE TABLE view_tag_asso (
+  id        int8 NOT NULL, 
+  tag_id   int8 NOT NULL, 
+  views_id int8 NOT NULL, 
+  depth    int4 NOT NULL, 
+  PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -486,8 +487,8 @@ ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechni
 ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_621478 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE document_entry ADD CONSTRAINT FKdocument_e19140 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr50652 FOREIGN KEY (entry_id) REFERENCES entry (id);
-ALTER TABLE entry ADD CONSTRAINT FKentry500391 FOREIGN KEY (owner_id) REFERENCES account (id);
 ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent715634 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE entry ADD CONSTRAINT FKentry500391 FOREIGN KEY (owner_id) REFERENCES account (id);
 ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_900675 FOREIGN KEY (entry_id) REFERENCES entry (id);
 ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_30632 FOREIGN KEY (tag_id) REFERENCES tag (id);
 ALTER TABLE tag_filter ADD CONSTRAINT FKtag_filter987269 FOREIGN KEY (account_id) REFERENCES account (id);
@@ -502,9 +503,9 @@ ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_6225
 ALTER TABLE account ADD CONSTRAINT FKaccount693567 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
 ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi37393 FOREIGN KEY (view_context_id) REFERENCES view_context (id);
 ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi755506 FOREIGN KEY (view_id) REFERENCES views (id);
-ALTER TABLE view_tag ADD CONSTRAINT FKview_tag621024 FOREIGN KEY (view_id) REFERENCES views (id);
-ALTER TABLE view_tag ADD CONSTRAINT FKview_tag60432 FOREIGN KEY (tag_id) REFERENCES tag (id);
 ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
+ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a660721 FOREIGN KEY (views_id) REFERENCES views (id);
+ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a218567 FOREIGN KEY (tag_id) REFERENCES tag (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 

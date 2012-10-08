@@ -42,7 +42,8 @@ public abstract class Account {
 	
 	protected Set<TagFilter> tagFilters = new  HashSet<TagFilter>();
 	
-
+	protected Set<View> views = new  HashSet<View>();
+	
 	public Account() {
 		setCreationDate(new Date());
 		setModificationDate(new Date());
@@ -234,4 +235,13 @@ public abstract class Account {
 	public void setExternalMailLocale(String externalMailLocale) {
 		this.externalMailLocale = externalMailLocale;
 	}
+
+	public Set<View> getViews() {
+		return views;
+	}
+
+	public void setViews(Set<View> views) {
+		this.views = views;
+	}
+	
 }

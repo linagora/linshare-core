@@ -49,6 +49,12 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/TagFilterRule.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/TagFilterRuleTagAssociation.hbm.xml"/>
     
+    <mapping resource="org/linagora/linshare/core/domain/entities/ViewContext.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/DefaultView.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/View.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/ViewTagAsso.hbm.xml"/>
+        
+        
     
 	<!-- 
     <mapping resource="org/linagora/linshare/core/domain/entities/AllowedMimeType.hbm.xml"/>
