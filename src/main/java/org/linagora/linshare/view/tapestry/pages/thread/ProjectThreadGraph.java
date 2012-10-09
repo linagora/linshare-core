@@ -22,10 +22,8 @@ package org.linagora.linshare.view.tapestry.pages.thread;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -77,33 +75,33 @@ public class ProjectThreadGraph {
 	@Property
 	private ThreadEntryVo entry;
 
-	@Property
-	@Persist
-	private Map<String, List<ThreadEntryVo>> inProjectEntries;
-
-	@Property
-	@Persist
-	private Map<String, List<ThreadEntryVo>> outProjectEntries;
-
-	@Property
-	private static final String titleIns = "Instructions";
-
-	@Property
-	private static final String titleCon = "Contradictions";
-
-	@Property
-	private static final String titleRec = "Recommandations";
-
 	@Persist
 	private String selectedThreadEntryId;
-
+	
 	@Property
-	@Persist
-	private Map<String, List<ThreadEntryVo>> childEntries;
-
+	private DefaultMutableTreeNode root;
+	
 	@Property
-	@Persist
-	private Map<String, String> entriesIndexTable;
+	private List<DefaultMutableTreeNode> children;
+	
+	@Property
+	private DefaultMutableTreeNode currentChild;
+	
+	@Property
+	private DefaultMutableTreeNode currentLeaf;
+
+	
+
+//	<t:loop source="children" value="currentChild">
+//    <div t:type="ck/SlidingPanel" t:id="currentChild" t:closed="true" t:subject="currentChildSubject" t:options="{duration:0.3}">
+//        <t:loop source="childLeafs" value="currentLeaf">
+//            <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:title="currentTitle" />
+//            <br />
+//        </t:loop>
+//    </div>
+//    </t:loop>
+
+
 
 
 	/* ***********************************************************
@@ -117,6 +115,7 @@ public class ProjectThreadGraph {
 	private ThreadEntryFacade threadEntryFacade;
 
 
+	@SuppressWarnings("unchecked")
 	@SetupRender
 	public void setupRender() {
 		logger.debug("Setup Render begins");
@@ -124,11 +123,10 @@ public class ProjectThreadGraph {
 		threadName = selectedProject.getName();
 		threadFileUploadPopup.setMyCurrentThread(selectedProject);
 
-		try {
+//		try {
 			/*
 			 * TODO : print getOutInstructions() content
 			 */
-
 			DefaultMutableTreeNode root = null;
 
 			List<DummyViewTagVo> listViewTag = new ArrayList<DummyViewTagVo>();
@@ -142,117 +140,78 @@ public class ProjectThreadGraph {
 			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Contradiction"), 3));
 			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Recommandation"), 3));
 			/*
-			 * XXX : This algorithm is valid only if datas are correctly ordered by TagViewVo.order
+			 * XXX : This algorithm is valid only if datas are correctly ordered by TagViewVo.depth
 			 */
 			/*
 			 * TODO : maybe a method returning the correct Tree structure
 			 */
-			for (DummyViewTagVo dummy : listViewTag) {
-				switch (dummy.getDepth()) {
-				case 1:
-					root = new DefaultMutableTreeNode(dummy.getTagVo());
-					break;
-				case 2:
-					root.add(new DefaultMutableTreeNode(dummy.getTagVo()));
-					break;
-				case 3:
-					for (int i = 0; i < root.getChildCount(); ++i) {
-						DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
-						child.add(new DefaultMutableTreeNode(dummy.getTagVo()));
+			if (listViewTag == null || listViewTag.isEmpty()) {
+				root = new DefaultMutableTreeNode(new TagVo(selectedProject.getName()));
+			}
+			else {
+				for (DummyViewTagVo dummy : listViewTag) {
+					switch (dummy.getDepth()) {
+					case 1:
+						root = new DefaultMutableTreeNode(dummy.getTagVo());
+						break;
+					case 2:
+						root.add(new DefaultMutableTreeNode(dummy.getTagVo()));
+						break;
+					case 3:
+						for (int i = 0; i < root.getChildCount(); ++i) {
+							DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+							child.add(new DefaultMutableTreeNode(dummy.getTagVo()));
+						}
+						break;
+					default:
+						// TODO : can't be there, throw an exception?
+						break;
 					}
-					break;
-				default:
-					// TODO : can't be there, throw an exception?
-							break;
 				}
 			}
-			@SuppressWarnings("unchecked")
-			Enumeration<DefaultMutableTreeNode> e = root.preorderEnumeration();
-			while (e.hasMoreElements()) {
-				String d = (String) e.nextElement().getUserObject().toString();
-				logger.info("Tree node is Tag  : " + d);
-			}
-			DefaultMutableTreeNode currentLeaf = null;
-			currentLeaf = root.getFirstLeaf();
-			for (int i = 0; i < root.getLeafCount()	; ++i) {
-				Object[] objs = currentLeaf.getUserObjectPath();
-				TagVo[] tags = Arrays.copyOf(objs, objs.length, TagVo[].class);
-				List<ThreadEntryVo> current = threadEntryFacade.getAllThreadEntriesTaggedWith(userVo, selectedProject, tags);
-				currentLeaf = root.getNextLeaf();
-			}
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
+			children = root != null ? Collections.list(root.children()) : new ArrayList<DefaultMutableTreeNode>();
+//			List<DefaultMutableTreeNode> children = new ArrayList<DefaultMutableTreeNode>();
+//			for (DefaultMutableTreeNode currentChild = (DefaultMutableTreeNode) root.getFirstChild(); currentChild != null; currentChild = currentChild.getNextSibling()) {
+//				children.add(currentChild);
+//			}
+//			for (DefaultMutableTreeNode currentChild = (DefaultMutableTreeNode) root.getFirstChild(); currentChild != null; currentChild = currentChild.getNextSibling()) {
+//				for (DefaultMutableTreeNode currentLeaf = currentChild.getFirstLeaf(); currentLeaf != null; currentLeaf = currentLeaf.getNextSibling()) {
+//					logger.info("looping");
+//					Object[] objs = currentLeaf.getUserObjectPath();
+//					TagVo[] tags = Arrays.copyOf(objs, objs.length, TagVo[].class);
+//					List<ThreadEntryVo> current = threadEntryFacade.getAllThreadEntriesTaggedWith(userVo, selectedProject, tags);
+//
+//					logger.info("> Tag : " + ((TagVo) ((DefaultMutableTreeNode) currentLeaf.getParent()).getUserObject()).getName() + " - " + ((TagVo) currentLeaf.getUserObject()).getFullName());
+//					for (ThreadEntryVo tevo : current) {
+//						logger.info(" ---> File : " + tevo.getFileName());
+//					}
+//				}
+//			}
+//		} catch (BusinessException e) {
+//			logger.error(e.getMessage());
+//			e.printStackTrace();
+//		}
 	}
 
 	@AfterRender
 	public void afterRender() {
 		;
 	}
-
-	private void addToOutProjectEntries(ThreadEntryVo e, List<TagVo> tags) {
-		logger.debug("Entering addToOutProjectEntries");
-		for (TagVo tag : tags) {
-			if (tag.getName().equals("Phases")) {
-				String currentTag = tag.getFullName();
-				List<ThreadEntryVo> entries = outProjectEntries.get(currentTag);
-				if (entries == null) {
-					outProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
-					entries = outProjectEntries.get(currentTag);
-				}
-				entries.add(e);
-			}
-		}
+	
+	public String getCurrentChildSubject() {
+		return currentChild.toString();
 	}
-
-	private void addToInProjectEntries(ThreadEntryVo e, List<TagVo> tags) {
-		logger.debug("Entering addToInProjectEntries");
-		for (TagVo tag : tags) {
-			if (tag.getName().equals("Phases")) {
-				String currentTag = tag.getFullName();
-				List<ThreadEntryVo> entries = inProjectEntries.get(currentTag);
-				if (entries == null) {
-					inProjectEntries.put(currentTag, new ArrayList<ThreadEntryVo>());
-					entries = inProjectEntries.get(currentTag);
-				}
-				entries.add(e);
-			}
-		}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<DefaultMutableTreeNode> getChildLeaves() {
+		return Collections.list(currentChild.children());
 	}
-
-	// FIXME : ugly
-	public List<ThreadEntryVo> getInInstructions() {
-		return inProjectEntries.get("Phases:Instruction");
-	}
-
-	// FIXME : ugly
-	public List<ThreadEntryVo> getOutInstructions() {
-		return outProjectEntries.get("Phases:Instruction");
-	}
-
-	// FIXME : ugly
-	public List<ThreadEntryVo> getInContradictions() {
-		return inProjectEntries.get("Phases:Contradiction");
-	}
-
-	// FIXME : ugly
-	public List<ThreadEntryVo> getOutContradictions() {
-		return outProjectEntries.get("Phases:Contradiction");
-	}
-
-	// FIXME : ugly
-	public List<ThreadEntryVo> getInRecommandations() {
-		return inProjectEntries.get("Phases:Recommandation");
-	}
-
-	// FIXME : ugly
-	public List<ThreadEntryVo> getOutRecommandations() {
-		return outProjectEntries.get("Phases:Recommandation");
-	}
-
-	public boolean getEntryExists() {
-		return !(outProjectEntries.isEmpty() & inProjectEntries.isEmpty());
+	
+	public List<ThreadEntryVo> getCurrentEntriesList() throws BusinessException {
+		Object[] objs = currentLeaf.getUserObjectPath();
+		TagVo[] tags = Arrays.copyOf(objs, objs.length, TagVo[].class);
+		return threadEntryFacade.getAllThreadEntriesTaggedWith(userVo, selectedProject, tags);
 	}
 
 	public void setMySelectedProject(ThreadVo selectedProject) {

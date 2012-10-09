@@ -53,10 +53,13 @@ public class Index {
 
     @InjectPage
     private ProjectThread projectThreadPage;
+    
+    @InjectPage
+    private ProjectThreadGraph projectThreadPageGraph;
 
     @Property
     @Persist
-    private	List<ThreadVo> projects;
+    private List<ThreadVo> projects;
     
     @Property
     private ThreadVo currentProject;
@@ -98,6 +101,18 @@ public class Index {
     	return null;
     }
 
+    public Object onActionFromShowProjectThreadGraph(String lsUuid) {
+    	logger.debug("Debut onActionFromShowProjectThreadGraph");
+    	for (ThreadVo project : projects) {
+			if (project.getLsUuid().equals(lsUuid)) {
+		    	projectThreadPageGraph.setMySelectedProject(project);
+		    	logger.debug("Projet " + project.getName() + "recupere");
+		    	return projectThreadPageGraph;
+			}
+		}
+    	return null;
+    }
+    
     @AfterRender
     public void afterRender() {
         ;

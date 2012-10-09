@@ -20,14 +20,17 @@ public class TagVo {
 		super();
 		this.name = name;
 		this.tagEnumValue = tagEnumValue;
-		this.isTagEnum = false;
+		this.isTagEnum = true;
 	}
 	
 	public TagVo(EntryTagAssociation entryTag) {
 		this.name = entryTag.getTag().getName();
-		this.isTagEnum = true;
-		if(entryTag.getTagEnumValue() != null)
+		if (entryTag.getTagEnumValue() != null) {
 			this.tagEnumValue = entryTag.getTagEnumValue().getValue();
+			this.isTagEnum = true;
+		}
+		else
+			this.isTagEnum = false;
 	}
 
 	public String getName() {

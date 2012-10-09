@@ -31,22 +31,14 @@
 		<div id="pageContent">
             <h2>${threadName}</h2>
 
-            <div t:type="ck/SlidingPanel" t:id="outbox" t:closed="true" t:subject="Demandes" t:options="{duration:0.3}">
-				<t:ListThreadDocument t:listThreadEntries="outInstructions" t:threadVo="selectedProject" t:user="userVo" t:title="titleIns" />
-                <br />
-				<t:ListThreadDocument t:listThreadEntries="outContradictions" t:threadVo="selectedProject" t:user="userVo" t:title="titleCon" />
-                <br />
-				<t:ListThreadDocument t:listThreadEntries="outRecommandations" t:threadVo="selectedProject" t:user="userVo" t:title="titleRec" />
-                <br />
-            </div>
-            <div t:type="ck/SlidingPanel" t:id="inbox" t:closed="true" t:subject="Réponses" t:options="{duration:0.3}">
-				<t:ListThreadDocument t:listThreadEntries="inInstructions" t:threadVo="selectedProject" t:user="userVo" t:title="titleIns" />
-                <br />
-				<t:ListThreadDocument t:listThreadEntries="inContradictions" t:threadVo="selectedProject" t:user="userVo" t:title="titleCon" />
-                <br />
-				<t:ListThreadDocument t:listThreadEntries="inRecommandations" t:threadVo="selectedProject" t:user="userVo" t:title="titleRec" />
-                <br />
-            </div>
+            <t:loop source="children" value="currentChild">
+                <div t:type="ck/SlidingPanel" t:id="currentChild" t:closed="true" t:subject="${currentChildSubject}" t:options="{duration:0.3}">
+                    <t:loop source="childLeaves" value="currentLeaf">
+                    <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:title="${currentLeaf}" />
+                        <br />
+                    </t:loop>
+                </div>
+            </t:loop>
 		</div>
 
 	</div><!-- id="content" -->

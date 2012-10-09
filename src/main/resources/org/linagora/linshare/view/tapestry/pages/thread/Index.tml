@@ -26,12 +26,10 @@
 		<!-- Page content -->
 
 		<div id="pageContent">
-            <!--<t:loop source="projects" value="currentProject">-->
-                <!--<t:actionlink t:id="showProjectThread" context="currentProject.lsUuid">${currentProject.name}</t:actionlink>-->
-            <!--</t:loop>-->
             <t:grid source="projects" row="currentProject" include="name" rowsPerPage="10">
                 <p:nameCell>
-                    <t:actionlink t:id="showProjectThread" context="currentProject.lsUuid">${currentProject.name}</t:actionlink>
+                    <t:actionlink t:id="showProjectThread" context="currentProject.lsUuid"> ${currentProject.name} </t:actionlink>
+                    <t:actionlink t:id="showProjectThreadGraph" context="currentProject.lsUuid"> ${currentProject.name} </t:actionlink>
                 </p:nameCell>
                 <p:empty>
                     Aucun projet disponible. Vous pouvez en ajouter avec le bouton "Ajouter".

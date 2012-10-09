@@ -1,42 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:MyBorderLayout t:title="message:pages.administration.domains.index.createdomain.index" t:identifier="domains" t:currentHighlight="domains"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 
 
-	<!-- Main content -->
+<!-- Main content -->
 
-	<div id="content">
+<div id="content">
 
-		<h1>${message:pages.administration.domains.index.manageDomains}</h1>
-		
-		<t:messagePanel />	
-		
-		<div id="pageContent">
-		
-			<p>${message:pages.administration.domains.index.manageDomains.help}</p>
-		
-			<form t:type="form" t:id="manageForm">
-					<ul id="sortable">
-				        <t:loop source="domainNames" value="domainName" index="indexDomain">
-				            <li class="ui-state-default" >				            	
-				            	<span id="position" >${indexDomain}</span><span id="domainName" >${domainName}</span><span class="ui-icon ui-icon-arrowthick-2-n-s" ></span>
-				            </li>
-				        </t:loop>
-					</ul>
-					
-					<input t:type="TextField" t:id="tabPos" style="display:none" />
-					
-					
-					<div class="button">
-                    	<t:linkSubmit class="button" ><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
-	                    <span> </span>
-	                    <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
-	
-					</div>
-			</form>
+    <h1>${message:pages.administration.domains.index.manageDomains}</h1>
 
-		</div>
+    <t:messagePanel />
 
-	</div><!-- id="content" -->
+    <div id="pageContent">
+
+        <p>${message:pages.administration.domains.index.manageDomains.help}</p>
+
+        <form t:type="form" t:id="manageForm">
+            <ul id="sortable">
+                <t:loop source="domainNames" value="domainName" index="indexDomain">
+                <li class="ui-state-default" >
+                <span id="position" >${indexDomain}</span><span id="domainName" >${domainName}</span><span class="ui-icon ui-icon-arrowthick-2-n-s" ></span>
+                </li>
+                </t:loop>
+            </ul>
+
+            <input t:type="TextField" t:id="tabPos" style="display:none" />
+
+
+            <div class="button">
+                <t:linkSubmit class="button" ><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
+                <span> </span>
+                <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
+
+            </div>
+        </form>
+
+    </div>
+
+</div><!-- id="content" -->
 
 </t:MyBorderLayout>
