@@ -106,6 +106,20 @@ public class Index {
     	for (ThreadVo project : projects) {
 			if (project.getLsUuid().equals(lsUuid)) {
 		    	projectThreadPageGraph.setMySelectedProject(project);
+		    	projectThreadPageGraph.setDepth(3);
+		    	logger.debug("Projet " + project.getName() + "recupere");
+		    	return projectThreadPageGraph;
+			}
+		}
+    	return null;
+    }
+    
+    public Object onActionFromShowProjectThreadGraphOnly(String lsUuid) {
+    	logger.debug("Debut onActionFromShowProjectThreadGraph");
+    	for (ThreadVo project : projects) {
+			if (project.getLsUuid().equals(lsUuid)) {
+		    	projectThreadPageGraph.setMySelectedProject(project);
+		    	projectThreadPageGraph.setDepth(1);
 		    	logger.debug("Projet " + project.getName() + "recupere");
 		    	return projectThreadPageGraph;
 			}

@@ -29,7 +29,8 @@
             <t:grid source="projects" row="currentProject" include="name" rowsPerPage="10">
                 <p:nameCell>
                     <t:actionlink t:id="showProjectThread" context="currentProject.lsUuid"> ${currentProject.name} </t:actionlink>
-                    <t:actionlink t:id="showProjectThreadGraph" context="currentProject.lsUuid"> ${currentProject.name} </t:actionlink>
+                    <t:actionlink t:id="showProjectThreadGraph" context="currentProject.lsUuid"> ${currentProject.name}_3 </t:actionlink>
+                    <t:actionlink t:id="showProjectThreadGraphOnly" context="currentProject.lsUuid"> ${currentProject.name}_1 </t:actionlink>
                 </p:nameCell>
                 <p:empty>
                     Aucun projet disponible. Vous pouvez en ajouter avec le bouton "Ajouter".
