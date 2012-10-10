@@ -95,7 +95,7 @@ public class ProjectThreadGraph {
 	private DefaultMutableTreeNode currentLeaf;
 
 	@Inject
-	private Block case1, case2, case3;
+	private Block case0, case1, case2, case3;
 
 
 	/* ***********************************************************
@@ -117,9 +117,6 @@ public class ProjectThreadGraph {
 		threadName = selectedProject.getName();
 		threadFileUploadPopup.setMyCurrentThread(selectedProject);
 
-		/*
-		 * TODO : print getOutInstructions() content
-		 */
 		DefaultMutableTreeNode root = null;
 
 		List<DummyViewTagVo> listViewTag = new ArrayList<DummyViewTagVo>();
@@ -127,41 +124,49 @@ public class ProjectThreadGraph {
 		 * TODO : a ThreadFacade.getSortedViewTagsFromThread() method that return the list sorted by ascendant order
 		 */
 		listViewTag.add(new DummyViewTagVo(new TagVo(selectedProject.getName()), 1));
-		listViewTag.add(new DummyViewTagVo(new TagVo("Demande"), 2));
-		listViewTag.add(new DummyViewTagVo(new TagVo("Réponse"), 2));
-		listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Instruction"), 3));
-		listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Contradiction"), 3));
-		listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Recommandation"), 3));
-		/*
-		 * XXX : This algorithm is valid only if datas are correctly ordered by TagViewVo.depth
-		 */
-		/*
-		 * TODO : maybe a method returning the correct Tree structure
-		 */
-		if (depth == 1 || listViewTag == null || listViewTag.isEmpty()) {
-			root = new DefaultMutableTreeNode(new TagVo(selectedProject.getName()));
-			currentLeaf = root;
+		if (depth > 1) {
+			listViewTag.add(new DummyViewTagVo(new TagVo("Demande"), 2));
+			listViewTag.add(new DummyViewTagVo(new TagVo("Réponse"), 2));
 		}
-		else {
-			for (DummyViewTagVo dummy : listViewTag) {
-				switch (dummy.getDepth()) {
-				case 1:
-					root = new DefaultMutableTreeNode(dummy.getTagVo());
-					break;
-				case 2:
-					root.add(new DefaultMutableTreeNode(dummy.getTagVo()));
-					break;
-				case 3:
-					for (int i = 0; i < root.getChildCount(); ++i) {
-						DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
-						child.add(new DefaultMutableTreeNode(dummy.getTagVo()));
-					}
-					break;
-				default:
-					// TODO : can't be there, throw an exception?
-					break;
+		if (depth > 2) {
+			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Instruction"), 3));
+			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Contradiction"), 3));
+			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Recommandation"), 3));
+		}
+		for (DummyViewTagVo dummy : listViewTag) {
+			switch (dummy.getDepth()) {
+			case 1:
+				root = new DefaultMutableTreeNode(dummy.getTagVo());
+				break;
+			case 2:
+				root.add(new DefaultMutableTreeNode(dummy.getTagVo()));
+				break;
+			case 3:
+				for (int i = 0; i < root.getChildCount(); ++i) {
+					DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+					child.add(new DefaultMutableTreeNode(dummy.getTagVo()));
 				}
+				break;
+			default:
+				// TODO : can't be there, throw an exception?
+				break;
 			}
+		}
+		switch (depth) {
+		case 0:
+			root = null;
+			break;
+		case 1:
+			currentLeaf = root;
+			break;
+		case 2:
+			currentChild = root;
+			break;
+		case 3:
+			break;
+		default:
+			// TODO : can't be there, throw an exception?
+			break;
 		}
 		children = root != null ? Collections.list(root.children()) : new ArrayList<DefaultMutableTreeNode>();
 	}
@@ -176,25 +181,30 @@ public class ProjectThreadGraph {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<DefaultMutableTreeNode> getChildLeaves() {
+	public List<DefaultMutableTreeNode> getLeaves() {
 		return Collections.list(currentChild.children());
 	}
 
 	public Object getCase() {
 		logger.info("Depth = " + depth);
 		switch (depth) {
-            case 1:
-                return case1;
-            case 2:
-                return case2;
-            case 3:
-                return case3;
-            default:
-                return null;
-        }
+		case 0:
+			return case0;
+		case 1:
+			return case1;
+		case 2:
+			return case2;
+		case 3:
+			return case3;
+		default:
+			return null;
+		}
 	}
 
 	public List<ThreadEntryVo> getCurrentEntriesList() throws BusinessException {
+		if (depth == 0) {
+			return threadEntryFacade.getAllThreadEntryVo(userVo, selectedProject);
+		}
 		Object[] objs = currentLeaf.getUserObjectPath();
 		TagVo[] tags = Arrays.copyOf(objs, objs.length, TagVo[].class);
 		return threadEntryFacade.getAllThreadEntriesTaggedWith(userVo, selectedProject, tags);
