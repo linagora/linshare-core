@@ -45,7 +45,9 @@ INSERT INTO thread (account_id, name) VALUES (51, 'RATP');
 -- Thread : projet : 3MI
 INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (52, 5, '34544580-f0ec-11e1-a62a-080027c0eef0', current_date, current_date, 0, 'fr', 'fr', true, false, 1);
 INSERT INTO thread (account_id, name) VALUES (52, 'Ministère de l''intérieur');
-
+-- Thread : projet : Test Thread
+INSERT INTO account(id, account_type, ls_uuid, creation_date, modification_date, role_id, locale, external_mail_locale, enable, destroyed, domain_id) VALUES (54, 5, 'c4570914-d004-4506-8abf-04527f342e88', current_date, current_date, 0, 'en', 'en', true, false, 1);
+INSERT INTO thread (account_id, name) VALUES (54, 'Test Thread');
 
 
 --Thread members
@@ -53,6 +55,9 @@ INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modi
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (2, 51, true, true, current_date, current_date, 53); 
 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (3, 52, true, true, current_date, current_date, 50); 
+
+INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (4, 54, true, true, current_date, current_date, 50); 
+INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, true, true, current_date, current_date, 53); 
 
 -- Tags
 INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (1, 51, 'Réponse', false, true, null,0);
@@ -194,10 +199,6 @@ INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (2, 1, 2
 INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (3, 2, 2, 2); 
 INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (4, 3, 2, 3); 
 
-
-
-
-
 -- default view and 3mi view for thread 3mi
 INSERT INTO thread_view (id, thread_account_id, name) VALUES (3, 52, 'cc_default'); 
 INSERT INTO thread_view (id, thread_account_id, name) VALUES (4, 52, 'cc_3mi'); 
@@ -207,6 +208,7 @@ INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (6, 4, 4
 INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (7, 5, 4, 2); 
 INSERT INTO thread_view_asso (id, tag_id, thread_view_id, depth) VALUES (8, 6, 4, 3); 
 
-
-
+-- default view for thread Test Thread
+INSERT INTO thread_view (id, thread_account_id, name) VALUES (5, 54, 'cc_default'); 
+UPDATE thread set thread_view_id=5 where account_id=54;
 

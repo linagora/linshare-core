@@ -133,6 +133,7 @@ public class ProjectThreadGraph {
 			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Contradiction"), 3));
 			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Recommandation"), 3));
 		}
+		// building Tag Tree from listViewTag
 		for (DummyViewTagVo dummy : listViewTag) {
 			switch (dummy.getDepth()) {
 			case 1:
@@ -148,7 +149,7 @@ public class ProjectThreadGraph {
 				}
 				break;
 			default:
-				// TODO : can't be there, throw an exception?
+				// TODO : can't be there, throw an exception
 				break;
 			}
 		}
@@ -165,7 +166,7 @@ public class ProjectThreadGraph {
 		case 3:
 			break;
 		default:
-			// TODO : can't be there, throw an exception?
+			// TODO : can't be there, throw an exception
 			break;
 		}
 		children = root != null ? Collections.list(root.children()) : new ArrayList<DefaultMutableTreeNode>();
@@ -185,6 +186,10 @@ public class ProjectThreadGraph {
 		return Collections.list(currentChild.children());
 	}
 
+
+	/*
+	 * Handle page layout with Tapestry Blocks
+	 */
 	public Object getCase() {
 		logger.info("Depth = " + depth);
 		switch (depth) {
@@ -202,18 +207,26 @@ public class ProjectThreadGraph {
 	}
 
 	public List<ThreadEntryVo> getCurrentEntriesList() throws BusinessException {
+		// handling list displaying without any tag
 		if (depth == 0) {
 			return threadEntryFacade.getAllThreadEntryVo(userVo, selectedProject);
 		}
+		// handling list displaying with tags
 		Object[] objs = currentLeaf.getUserObjectPath();
 		TagVo[] tags = Arrays.copyOf(objs, objs.length, TagVo[].class);
 		return threadEntryFacade.getAllThreadEntriesTaggedWith(userVo, selectedProject, tags);
 	}
 
+	/*
+	 *  Mandatory for page generation
+	 */
 	public void setMySelectedProject(ThreadVo selectedProject) {
 		this.selectedProject = selectedProject;
 	}
 
+	/*
+	 *  Mandatory for page generation
+	 */
 	public void setDepth(int depth) {
 		this.depth = depth;
 	}

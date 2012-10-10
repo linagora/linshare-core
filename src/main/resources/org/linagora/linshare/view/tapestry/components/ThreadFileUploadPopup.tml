@@ -70,34 +70,33 @@
 
 			<hr />
 
-				<t:form t:id="threadEntryForm">
-				<t:errors />
-				<div class="number2"></div>
+            <t:form t:id="threadEntryForm">
+                <t:errors />
+                <!--<div class="number2"></div>-->
 
-				<t:label for="selectStepName"/>:
-				<t:select t:model="stepNames" t:id="selectStepName" validate="required" />
+                <!--<t:label for="selectStepName"/>:-->
+                <!--<t:select t:model="stepNames" t:id="selectStepName" validate="required" />-->
 
-				<div class="clear"></div>
-			<hr />
+                <!--<div class="clear"></div>-->
+            <!--<hr />-->
 
 
-			<div class="button">
+                <div class="button">
 
-					<input name="submitQuickShare" id="submitQuickShare" type="submit" style="display:none"/>
+                    <input name="submitQuickShare" id="submitQuickShare" type="submit" style="display:none"/>
 
-				    <a id="quickshare_send_link" href="#" class="button" onclick="sendFiles();">
-                   		<span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/> ${message:global.button.upload}</span>
-               		</a>
+                    <a id="quickshare_send_link" href="#" class="button" onclick="sendFiles();">
+                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/> ${message:global.button.upload}</span>
+                    </a>
 
-					<t:actionlink t:id="btnCancelThreadEntryPopup" class="button">
+                    <t:actionlink t:id="btnCancelThreadEntryPopup" class="button">
                         <span onclick='Windows.close("${JSONId}")'><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span>
-					</t:actionlink>
-                <div class="clear"></div>
-			</div>
+                    </t:actionlink>
+                    <div class="clear"></div>
+                </div>
+            </t:form>
 
-		</t:form>
+        </div>
+    </div>
 
-	</div>
-	</div>
-
-</t:container>
+    </t:container>

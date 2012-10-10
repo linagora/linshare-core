@@ -173,9 +173,6 @@ public class ThreadFileUploadPopup {
 	@SetupRender
 	public void init() throws BusinessException {
 		documentsVolist = new ArrayList<DocumentVo>();
-//		currentThread = new ThreadVo("9806de10-ed0b-11e1-877a-5404a6202d2c", "RATP");
-//		step = threadEntryFacade.getTagEnumVo(userVo, currentThread, "Phases");
-//		stepNames = step.getEnumValues();
 	}
 	
 	public void setMyCurrentThread(ThreadVo thread) {
@@ -189,7 +186,6 @@ public class ThreadFileUploadPopup {
 		}
 	}
 	
-	
 	/**
 	 * Initialize the JS value
 	 */
@@ -200,32 +196,30 @@ public class ThreadFileUploadPopup {
         
         //resize the share popup
         renderSupport.addScript(String.format("threadFileUploadWindow.setSize(650, getHeightForPopup())"));
-        
+
         threadEntryForm.clearErrors();
     }
 	
 	/**
-	 * Prior to validating the form, we need to initialise all the arrays
+	 * Prior to validating the form, we need to initialize all the arrays
 	 */
 	public void onPrepare() {
 		successFiles = new ArrayList<String>();
 		failFiles = new HashMap<String,BusinessException>();
 	}
-	
-	
+		
     public void onSuccessFromThreadEntryForm() {
     	if (logger.isDebugEnabled())
     		logger.debug("current thread is : " + currentThread.getName() + "(" + currentThread.getLsUuid() + ")");
     	
     	List<TagVo> tags = new ArrayList<TagVo>();
-    	
-    	tags.add(new TagVo(step.getName() , selectStepName));
-    	
+    	if (selectStepName != null) {
+    		tags.add(new TagVo(step.getName() , selectStepName));
+    	}
     	if (addedThreadEntries == null || addedThreadEntries.size() == 0) {
     		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.THREAD_UPLOAD_NO_FILE, MessageSeverity.ERROR));
 			return;
     	}
-    	
     	try {
     		threadEntryFacade.setTagsToThreadEntries(userVo, currentThread, addedThreadEntries, tags);
     	} catch (BusinessException e1) {
@@ -235,17 +229,7 @@ public class ThreadFileUploadPopup {
     	}
         // reset list of documents
         addedThreadEntries.clear();
-	}
-    
-
-    public Boolean onValidateFormFromThreadEntryForm()  {
-    	logger.debug("selectStepName : " + selectStepName);
-    	
-    	if(selectStepName == null) return false;
-    	
-    	return true;
-    }
-    
+	}   
 
 	public String getJSONId() {
 		return threadFileUploadWindow.getJSONId();
