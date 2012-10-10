@@ -476,7 +476,7 @@
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
-			<version>1.2.2</version>
+			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-pool</groupId>
@@ -1391,7 +1391,6 @@
 		<jackrabbit-release-version>1.4</jackrabbit-release-version>
 		<jackrabbit-core-version>1.4.13-LINAGORA</jackrabbit-core-version>
 		<slf4j-release-version>1.7.1</slf4j-release-version>
-		<!--<slf4j-release-version>1.6.6</slf4j-release-version>-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>
