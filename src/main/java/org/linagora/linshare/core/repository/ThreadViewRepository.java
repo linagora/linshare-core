@@ -17,23 +17,40 @@
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
-*/
+ */
 package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.entities.ThreadViewAsso;
 
-public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
-	
-	 /** Find a ThreadEntry using its uuid.
-     * @param  uuid
-     * @return found ThreadEntry (null if no ThreadEntry found).
-     */
-	public ThreadEntry findByUuid(String uuid);
-	
-	public List<ThreadEntry> findAllThreadEntries(Thread owner);
 
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);
+public interface ThreadViewRepository extends AbstractRepository<ThreadView> {
+	
+	/**
+	 * Find all ThreadView associated to a Thread
+	 * 
+	 * @param thread
+	 * @return a list of all ThrewView associated to thread
+	 */
+	public List<ThreadView> findAllThreadView(Thread thread);
+
+	/**
+	 * Find ThreadView by id
+	 * 
+	 * @param id
+	 * @return the ThreadView
+	 */
+	public ThreadView findById(String id);
+
+	/**
+	 * Find all ThreadViewAsso associated to a ThreadView
+	 * 
+	 * @param threadView
+	 * @return the list of ThreadViewAsso
+	 */
+	public List<ThreadViewAsso> findThreadViewAsso(ThreadView threadView);
+
 }

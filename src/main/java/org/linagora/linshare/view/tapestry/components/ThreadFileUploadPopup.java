@@ -177,13 +177,13 @@ public class ThreadFileUploadPopup {
 	
 	public void setMyCurrentThread(ThreadVo thread) {
 		currentThread = thread;
-		try {
-			step = threadEntryFacade.getTagEnumVo(userVo, currentThread, "Phases");
-			stepNames = step.getEnumValues();
-		} catch (BusinessException e) {
-			logger.error("Can't get phases tag !");
-			logger.debug(e.toString());
-		}
+//		try {
+//			step = threadEntryFacade.getTagEnumVo(userVo, currentThread, "Phases");
+//			stepNames = step.getEnumValues();
+//		} catch (BusinessException e) {
+//			logger.error("Can't get phases tag !");
+//			logger.debug(e.toString());
+//		}
 	}
 	
 	/**

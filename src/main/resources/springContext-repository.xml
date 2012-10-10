@@ -114,4 +114,7 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 	
+	<bean name="ThreadViewRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadViewRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>
