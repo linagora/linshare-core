@@ -119,7 +119,7 @@ public class Index {
     	for (ThreadVo project : projects) {
 			if (project.getLsUuid().equals(lsUuid)) {
 		    	projectThreadPageGraph.setMySelectedProject(project);
-		    	projectThreadPageGraph.setDepth(3);
+		    	projectThreadPageGraph.setDepth(2);
 		    	logger.debug("Projet " + project.getName() + "recupere");
 		    	return projectThreadPageGraph;
 			}
@@ -145,7 +145,7 @@ public class Index {
     	for (ThreadVo project : projects) {
 			if (project.getLsUuid().equals(lsUuid)) {
 		    	projectThreadPageGraph.setMySelectedProject(project);
-		    	projectThreadPageGraph.setDepth(1);
+		    	projectThreadPageGraph.setDepth(0);
 		    	logger.debug("Projet " + project.getName() + "recupere");
 		    	return projectThreadPageGraph;
 			}
