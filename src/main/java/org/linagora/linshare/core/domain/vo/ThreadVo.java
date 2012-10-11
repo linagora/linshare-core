@@ -9,6 +9,9 @@ public class ThreadVo extends AccountVo {
 
 	protected final String name;
 	
+	protected ThreadViewVo view;
+
+
 	// constructor just for test
 	public ThreadVo(String uuid, String name) {
 		super(uuid);
@@ -23,9 +26,18 @@ public class ThreadVo extends AccountVo {
 	public ThreadVo(Thread thread) {
 		super(thread);
 		this.name = thread.getName();
+		this.view = new ThreadViewVo(thread.getCurrentThreadView());
 	}
 
 	public String getName() {
 		return name;
+	}
+	
+	public ThreadViewVo getView() {
+		return view;
+	}
+
+	public void setView(ThreadViewVo view) {
+		this.view = view;
 	}
 }

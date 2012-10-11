@@ -77,6 +77,4 @@ public class TagVo {
 	public void setTagEnumValue(String tagEnumValue) {
 		this.tagEnumValue = tagEnumValue;
 	}
-
-	
 }

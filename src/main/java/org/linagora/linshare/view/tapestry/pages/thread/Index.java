@@ -88,64 +88,12 @@ public class Index {
     	projects = threadEntryFacade.getAllMyThread(userVo);
     	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
     }
-    
-    public Object onActionFromShowProjectThreadOld(String lsUuid) {
-    	logger.debug("Debut onActionFromShowProjectThread");
-    	for (ThreadVo project : projects) {
-			if (project.getLsUuid().equals(lsUuid)) {
-		    	projectThreadPage.setMySelectedProject(project);
-		    	logger.debug("Projet " + project.getName() + "recupere");
-		    	return projectThreadPage;
-			}
-		}
-    	return null;
-    }
 
-    public Object onActionFromShowProjectThreadGraphThree(String lsUuid) {
+    public Object onActionFromShowProjectThreadGraph(String lsUuid) {
     	logger.debug("Debut onActionFromShowProjectThreadGraph");
     	for (ThreadVo project : projects) {
 			if (project.getLsUuid().equals(lsUuid)) {
 		    	projectThreadPageGraph.setMySelectedProject(project);
-		    	projectThreadPageGraph.setDepth(3);
-		    	logger.debug("Projet " + project.getName() + "recupere");
-		    	return projectThreadPageGraph;
-			}
-		}
-    	return null;
-    }
-    
-    public Object onActionFromShowProjectThreadGraphTwo(String lsUuid) {
-    	logger.debug("Debut onActionFromShowProjectThreadGraph");
-    	for (ThreadVo project : projects) {
-			if (project.getLsUuid().equals(lsUuid)) {
-		    	projectThreadPageGraph.setMySelectedProject(project);
-		    	projectThreadPageGraph.setDepth(2);
-		    	logger.debug("Projet " + project.getName() + "recupere");
-		    	return projectThreadPageGraph;
-			}
-		}
-    	return null;
-    }
-    
-    public Object onActionFromShowProjectThreadGraphOne(String lsUuid) {
-    	logger.debug("Debut onActionFromShowProjectThreadGraph");
-    	for (ThreadVo project : projects) {
-			if (project.getLsUuid().equals(lsUuid)) {
-		    	projectThreadPageGraph.setMySelectedProject(project);
-		    	projectThreadPageGraph.setDepth(1);
-		    	logger.debug("Projet " + project.getName() + "recupere");
-		    	return projectThreadPageGraph;
-			}
-		}
-    	return null;
-    }
-    
-    public Object onActionFromShowProjectThreadGraphZero(String lsUuid) {
-    	logger.debug("Debut onActionFromShowProjectThreadGraph");
-    	for (ThreadVo project : projects) {
-			if (project.getLsUuid().equals(lsUuid)) {
-		    	projectThreadPageGraph.setMySelectedProject(project);
-		    	projectThreadPageGraph.setDepth(0);
 		    	logger.debug("Projet " + project.getName() + "recupere");
 		    	return projectThreadPageGraph;
 			}

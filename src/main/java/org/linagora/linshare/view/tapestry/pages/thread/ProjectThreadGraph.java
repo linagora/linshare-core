@@ -40,6 +40,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
+import org.linagora.linshare.core.domain.vo.ThreadViewAssoVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -116,36 +117,24 @@ public class ProjectThreadGraph {
 
 		threadName = selectedProject.getName();
 		threadFileUploadPopup.setMyCurrentThread(selectedProject);
+		depth = selectedProject.getView().getDepth();
 
+		List<ThreadViewAssoVo> listViewTag = selectedProject.getView().getThreadViewAssos();
 		DefaultMutableTreeNode root = null;
 
-		List<DummyViewTagVo> listViewTag = new ArrayList<DummyViewTagVo>();
-		/*
-		 * TODO : a ThreadFacade.getSortedViewTagsFromThread() method that return the list sorted by ascendant order
-		 */
-		listViewTag.add(new DummyViewTagVo(new TagVo(selectedProject.getName()), 1));
-		if (depth > 1) {
-			listViewTag.add(new DummyViewTagVo(new TagVo("Demande"), 2));
-			listViewTag.add(new DummyViewTagVo(new TagVo("Réponse"), 2));
-		}
-		if (depth > 2) {
-			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Instruction"), 3));
-			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Contradiction"), 3));
-			listViewTag.add(new DummyViewTagVo(new TagVo("Phases", "Recommandation"), 3));
-		}
 		// building Tag Tree from listViewTag
-		for (DummyViewTagVo dummy : listViewTag) {
-			switch (dummy.getDepth()) {
+		for (ThreadViewAssoVo view : listViewTag) {
+			switch (view.getDepth()) {
 			case 1:
-				root = new DefaultMutableTreeNode(dummy.getTagVo());
+				root = new DefaultMutableTreeNode(view.getTagVo());
 				break;
 			case 2:
-				root.add(new DefaultMutableTreeNode(dummy.getTagVo()));
+				root.add(new DefaultMutableTreeNode(view.getTagVo()));
 				break;
 			case 3:
 				for (int i = 0; i < root.getChildCount(); ++i) {
 					DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
-					child.add(new DefaultMutableTreeNode(dummy.getTagVo()));
+					child.add(new DefaultMutableTreeNode(view.getTagVo()));
 				}
 				break;
 			default:

@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadViewAsso;
 
 
 public interface ThreadViewRepository extends AbstractRepository<ThreadView> {
@@ -44,13 +43,5 @@ public interface ThreadViewRepository extends AbstractRepository<ThreadView> {
 	 * @return the ThreadView
 	 */
 	public ThreadView findById(String id);
-
-	/**
-	 * Find all ThreadViewAsso associated to a ThreadView
-	 * 
-	 * @param threadView
-	 * @return the list of ThreadViewAsso
-	 */
-	public List<ThreadViewAsso> findThreadViewAsso(ThreadView threadView);
 
 }

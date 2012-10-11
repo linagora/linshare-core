@@ -10,6 +10,11 @@ public class ViewTagAsso {
 	
 	private int depth;
 
+
+	public ViewTagAsso() {
+		super();
+	}
+
 	public long getId() {
 		return id;
 	}

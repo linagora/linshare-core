@@ -10,7 +10,12 @@ public class ThreadView {
 	private Thread thread;
 	
 	private String name;
-	
+
+
+	public ThreadView() {
+		super();
+	}
+
 	private Set<ThreadViewAsso> threadViewAssos = new HashSet<ThreadViewAsso>();
 
 	public Long getId() {

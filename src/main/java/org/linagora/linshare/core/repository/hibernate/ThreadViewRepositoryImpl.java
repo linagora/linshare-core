@@ -6,7 +6,6 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadViewAsso;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -36,13 +35,5 @@ public class ThreadViewRepositoryImpl extends AbstractRepositoryImpl<ThreadView>
         } else {
             throw new IllegalStateException("Id must be unique");
         }
-	}
-	
-	@Override
-	public List<ThreadViewAsso> findThreadViewAsso(ThreadView threadView) {
-		List<ThreadViewAsso> res = null;
-		
-		// TODO FIXME XXX
-		return res;
 	}
 }

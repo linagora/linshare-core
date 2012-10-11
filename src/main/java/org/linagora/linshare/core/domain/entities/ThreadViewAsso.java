@@ -8,6 +8,11 @@ public class ThreadViewAsso {
 	
 	private int depth;
 
+
+	public ThreadViewAsso() {
+		super();
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -31,6 +36,4 @@ public class ThreadViewAsso {
 	public void setDepth(int depth) {
 		this.depth = depth;
 	}
-	
-	
 }

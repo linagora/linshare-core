@@ -28,11 +28,7 @@
 		<div id="pageContent">
             <t:grid source="projects" row="currentProject" include="name" rowsPerPage="10">
                 <p:nameCell>
-                    <t:actionlink t:id="showProjectThreadOld" context="currentProject.lsUuid"> ${currentProject.name}_old_way </t:actionlink>
-                    <t:actionlink t:id="showProjectThreadGraphThree" context="currentProject.lsUuid"> ${currentProject.name}_3_tags </t:actionlink>
-                    <t:actionlink t:id="showProjectThreadGraphTwo" context="currentProject.lsUuid"> ${currentProject.name}_2_tags </t:actionlink>
-                    <t:actionlink t:id="showProjectThreadGraphOne" context="currentProject.lsUuid"> ${currentProject.name}_1_tag </t:actionlink>
-                    <t:actionlink t:id="showProjectThreadGraphZero" context="currentProject.lsUuid"> ${currentProject.name}_no_tag </t:actionlink>
+                    <t:actionlink t:id="showProjectThreadGraph" context="currentProject.lsUuid"> ${currentProject.name} </t:actionlink>
                 </p:nameCell>
                 <p:empty>
                     Aucun projet disponible. Vous pouvez en ajouter avec le bouton "Ajouter".
