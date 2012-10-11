@@ -35,9 +35,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -54,7 +52,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Response;
 import org.linagora.LinThumbnail.utils.Constants;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -63,13 +60,10 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.models.SorterModel;
 import org.linagora.linshare.view.tapestry.models.impl.ThreadEntrySorterModel;
-import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
-import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
-import org.linagora.linshare.view.tapestry.pages.thread.ProjectThread;
+import org.linagora.linshare.view.tapestry.pages.thread.ProjectThreadGraph;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +153,7 @@ public class ListThreadDocument {
     private BusinessMessagesManagementService businessMessagesManagementService;
     
     @InjectPage
-    private ProjectThread projectThread;
+    private ProjectThreadGraph projectThread;
 
 
     /***********************************
@@ -254,7 +248,7 @@ public class ListThreadDocument {
     
     @OnEvent(value="eventDelete")
     public void deleteEntry() {
-    	componentResources.getContainerResources().triggerEvent("eventDeleteThreadEntry", null, null);
+    	componentResources.getPage().getComponentResources().triggerEvent("eventDeleteThreadEntry", null, null);
     }
 
 
