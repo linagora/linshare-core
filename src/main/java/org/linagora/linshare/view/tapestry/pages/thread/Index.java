@@ -51,8 +51,8 @@ public class Index {
     @Property
     private UserVo userVo;
 
-    @InjectPage
-    private ProjectThread projectThreadPage;
+    //@InjectPage
+    //private ProjectThread projectThreadPage;
     
     @InjectPage
     private ProjectThreadGraph projectThreadPageGraph;
