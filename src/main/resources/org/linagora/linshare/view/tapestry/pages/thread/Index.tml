@@ -19,10 +19,13 @@
             <h4>Actions</h4>
             <ul>
                 <li>
-					<t:pageLink page="thread/CreateThread"
-						title="${message:pages.administration.domains.index.subdomain.edit.button}">
-						<img src="${asset:context:images/icons/add-member.png}" alt="${message:global.button.edit}" />
-					</t:pageLink>
+					<!--<input name="submitCreateThread" id="submitCreateThread" type="submit" style="display:none"/>-->
+					<!--<a id="quickshare_send_link" href="#" class="button">-->
+                           <!--<span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/> ${message:global.button.add}</span>-->
+                       <!--</a>-->
+                    <t:pageLink page="thread/CreateThread" class="button" title="${message:global.button.add}">
+                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:global.button.add}</span>
+                    </t:pageLink>
                 </li>
             </ul>
         </div><!-- id="actionBar" -->
