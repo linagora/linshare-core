@@ -23,6 +23,6 @@ package org.linagora.linshare.core.repository;
 
 import org.linagora.linshare.core.domain.entities.Thread;
 
-public interface ThreadRepository<T extends Thread> extends AccountRepository<T> {
+public interface ThreadRepository extends AccountRepository<Thread> {
     
 } 

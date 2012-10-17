@@ -230,7 +230,6 @@ public class ProjectThreadGraph {
 
 	@OnEvent(value="eventDeleteThreadEntry")
 	public void deleteThreadEntry() {
-		System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : selectedThreadEntry = " + selectedThreadEntryId);
 		ThreadEntryVo selectedVo = null;
 		try {
 			selectedVo = threadEntryFacade.findById(userVo, selectedProject, selectedThreadEntryId);

@@ -41,7 +41,7 @@ public class ThreadRepositoryImplTest extends AbstractTransactionalJUnit4SpringC
     
 	@Autowired
 	@Qualifier("threadRepository")
-	private ThreadRepository<Thread> threadRepository;
+	private ThreadRepository threadRepository;
 	
 	
 	@Autowired

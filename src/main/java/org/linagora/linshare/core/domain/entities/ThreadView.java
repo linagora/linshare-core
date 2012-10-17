@@ -3,6 +3,8 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
+
 public class ThreadView {
 
 	private Long id;
@@ -11,12 +13,25 @@ public class ThreadView {
 	
 	private String name;
 
+	private Set<ThreadViewAsso> threadViewAssos = new HashSet<ThreadViewAsso>();
+
 
 	public ThreadView() {
 		super();
 	}
 
-	private Set<ThreadViewAsso> threadViewAssos = new HashSet<ThreadViewAsso>();
+	public ThreadView(Thread thread) {
+		super();
+		this.thread = thread;
+		this.name = LinShareConstants.defaultThreadView;
+	}
+
+	public ThreadView(Thread thread, String name, Set<ThreadViewAsso> threadViewAssos) {
+		super();
+		this.thread = thread;
+		this.name = name;
+		this.threadViewAssos = threadViewAssos;
+	}
 
 	public Long getId() {
 		return id;

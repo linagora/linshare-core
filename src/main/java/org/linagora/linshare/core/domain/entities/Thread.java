@@ -17,7 +17,6 @@ public class Thread extends Account {
 	public Thread() {
 		super();
 	}
-
 	
 	public Thread(AbstractDomain domain, Account owner , String name) {
 		super();
@@ -26,6 +25,9 @@ public class Thread extends Account {
 		this.enable = true;
 		this.destroyed = false;
 		this.owner = owner;
+		this.locale = owner.locale;
+		this.externalMailLocale = owner.externalMailLocale;
+		System.err.println("LOGLOGLOGLOG : this.externalMailLocale = " + this.externalMailLocale);
 	}
 
 	public void setName(String value) {
@@ -75,6 +77,5 @@ public class Thread extends Account {
 	public void setCurrentThreadView(ThreadView currentThreadView) {
 		this.currentThreadView = currentThreadView;
 	}
-	
 
 }

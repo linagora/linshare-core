@@ -50,7 +50,9 @@ public class LinShareConstants {
 	/**
 	 * Default max available size
 	 */
-	public static Long defaultFreeSpace = Long.MAX_VALUE;		
+	public static Long defaultFreeSpace = Long.MAX_VALUE;
+
+	public static String defaultThreadView = "Default";	
 	
 	
 }

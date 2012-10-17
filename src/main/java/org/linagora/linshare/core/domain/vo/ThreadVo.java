@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.domain.vo;
 
+import org.apache.tapestry5.beaneditor.NonVisual;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 
@@ -7,8 +9,9 @@ public class ThreadVo extends AccountVo {
 	
 	private static final long serialVersionUID = 907135796857640950L;
 
-	protected final String name;
+	protected String name;
 	
+	@NonVisual
 	protected ThreadViewVo view;
 
 
@@ -31,6 +34,11 @@ public class ThreadVo extends AccountVo {
 
 	public String getName() {
 		return name;
+	}
+
+	@Validate("required")
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public ThreadViewVo getView() {

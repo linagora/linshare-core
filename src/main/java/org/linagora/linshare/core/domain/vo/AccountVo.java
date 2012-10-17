@@ -30,8 +30,8 @@ public class AccountVo implements Serializable {
 	protected String locale;
 	
 	protected boolean enable;
-	
-	
+
+
 	// constructor just for test
 	public AccountVo(String uuid) {
 		super();

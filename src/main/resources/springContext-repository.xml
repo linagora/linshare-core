@@ -10,6 +10,10 @@
 	<bean name="threadRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
+	
+	<bean name="threadViewRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadViewRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 
 	<bean name="userRepository" class="org.linagora.linshare.core.repository.hibernate.UserRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
@@ -111,10 +115,6 @@
 	</bean>
 	
 	<bean name="entryTagAssociationRepository" class="org.linagora.linshare.core.repository.hibernate.EntryTagAssociationRepositoryImpl">
-		<constructor-arg ref="hibernateTemplate" />
-	</bean>
-	
-	<bean name="ThreadViewRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadViewRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 </beans>

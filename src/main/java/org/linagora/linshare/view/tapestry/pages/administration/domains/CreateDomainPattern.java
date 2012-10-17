@@ -17,7 +17,7 @@
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
-*/
+ */
 package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 import org.apache.tapestry5.annotations.Persist;

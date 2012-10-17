@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagEnum;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -43,7 +42,6 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.TagService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
@@ -258,4 +256,37 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			return new ThreadEntryVo(threadEntry);
 		return null;
 	}
+
+
+	@Override
+	public void createThread(UserVo actorVo, String name) throws BusinessException {
+		if (actorVo == null || name == null)
+			return;
+		if (actorVo.isGuest()) {
+			logger.error("you are not authorised.");
+			return;
+		}
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		if (actor != null) {
+			threadService.create(actor, name);
+		}
+	}
+
+
+//	TODO
+//	@Override
+//	public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException {
+//		if (actorVo == null || threadVo == null)
+//			return;
+//		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+//		for (ThreadMember member : thread.getMyMembers()) {
+//			if (member.getAdmin()) {
+//				if (member.getUser().getLsUuid() != actorVo.getLsUid()) {
+//					logger.error("you are not authorised.");
+//					return;
+//				}
+//				threadService.delete(thread);
+//			}
+//		}
+//	}
 }

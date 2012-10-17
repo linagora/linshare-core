@@ -228,7 +228,6 @@ public class ListThreadDocument {
     
     public void onActionFromDelete(String uuid) {
     	projectThread.setSelectedThreadEntryId(uuid);
-    	System.out.println(new Exception().getStackTrace()[0].getMethodName() + " : selectedThreadEntryId = " + projectThread.getSelectedThreadEntryId());
     }
 
 

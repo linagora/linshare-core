@@ -14,6 +14,9 @@ public interface ThreadEntryFacade {
 	
 	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException ;
 
+	public void createThread(UserVo actorVo, String name) throws BusinessException;
+	
+	// public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
 	
 	public List<ThreadVo> getAllThread();
 	
@@ -36,7 +39,6 @@ public interface ThreadEntryFacade {
 	public void removeDocument(UserVo userVo, ThreadEntryVo threadEntryVo) throws BusinessException;
 
 	public ThreadEntryVo findById(UserVo user, ThreadVo threadVo, String selectedId) throws BusinessException;
-
 
 	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo, ThreadVo threadVo, TagVo[] tags) throws BusinessException;
 }

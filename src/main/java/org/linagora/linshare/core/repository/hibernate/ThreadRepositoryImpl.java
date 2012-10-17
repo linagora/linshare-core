@@ -29,7 +29,7 @@ import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> implements ThreadRepository<Thread> {
+public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> implements ThreadRepository {
 
     public ThreadRepositoryImpl(HibernateTemplate hibernateTemplate) {
         super(hibernateTemplate);
@@ -45,4 +45,4 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 	public List<Thread> findAll() {
 		return super.findAll();
 	}
-} 
+}

@@ -50,9 +50,6 @@ public class Index {
     @SessionState
     @Property
     private UserVo userVo;
-
-    //@InjectPage
-    //private ProjectThread projectThreadPage;
     
     @InjectPage
     private ProjectThreadGraph projectThreadPageGraph;
@@ -98,6 +95,10 @@ public class Index {
 		    	return projectThreadPageGraph;
 			}
 		}
+    	return null;
+    }
+    
+    public Object onActionFromAddThread() {
     	return null;
     }
     
