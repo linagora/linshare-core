@@ -484,8 +484,22 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 
 -- LinShare version
-INSERT INTO version (id,description) VALUES (1,'0.11.0');
+INSERT INTO version (id,description) VALUES (1,'1.0.0');
 
 -- Sequence for hibernate
 SELECT setval('hibernate_sequence', 100);
+
+
+
+
+
+-- disable mimi type filter functionality : bug
+UPDATE policy SET system = true where id=7;
+
+-- disable signature functionality : bug
+UPDATE policy SET system = true where id=9;
+
+-- disable signature functionality : bug
+UPDATE policy SET system = true where id=11;
+
 
