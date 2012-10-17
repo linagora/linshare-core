@@ -17,27 +17,21 @@
 
         <div id="actionBar">
             <h4>Actions</h4>
-            <ul>
-                <li>
-					<t:pageLink page="thread/CreateThread"
-						title="${message:pages.administration.domains.index.subdomain.edit.button}">
-						<img src="${asset:context:images/icons/add-member.png}" alt="${message:global.button.edit}" />
-					</t:pageLink>
-                </li>
-            </ul>
         </div><!-- id="actionBar" -->
 
 		<!-- Page content -->
 
 		<div id="pageContent">
-            <t:grid source="projects" row="currentProject" include="name" rowsPerPage="10">
-                <p:nameCell>
-                    <t:actionlink t:id="showProjectThreadGraph" context="currentProject.lsUuid"> ${currentProject.name} </t:actionlink>
-                </p:nameCell>
-                <p:empty>
-                    ${message:pages.thread.empy}
-                </p:empty>
-            </t:grid>
+			<form t:type="form" t:id="createForm">
+                <t:label for="name">${message:pages.thread.form.name}</t:label>
+                <t:textfield t:id="name" value="name"/>
+                <br/>
+
+				<div class="button">
+                    <t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
+                    <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
+				</div>
+            </form>
 		</div>
 
 	</div><!-- id="content" -->
@@ -46,5 +40,6 @@
 
 
 	<!-- Widgets -->
+
 
 </t:MyBorderLayout>
