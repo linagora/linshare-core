@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.ThreadView;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
@@ -20,6 +22,7 @@ public class ThreadServiceImpl implements ThreadService {
 	private final ThreadRepository threadRepository;
 	
 	private final ThreadViewRepository threadViewRepository;
+	
     
 	
 	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository) {
@@ -49,12 +52,20 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void create(Account actor, String name) throws BusinessException {
-		Thread thread = new Thread(actor.getDomain(), actor, name);
+		Thread thread = null;
+		ThreadView threadView = null;
+		ThreadMember member = null;
+		
+		thread = new Thread(actor.getDomain(), actor, name);
 		threadRepository.create(thread);
-		ThreadView threadView = new ThreadView(thread);
+		threadView = new ThreadView(thread);
 		threadViewRepository.create(threadView);
 		thread.setCurrentThreadView(threadView);
 		threadRepository.update(thread);
+		member = new ThreadMember(true, true, (User)actor, thread);
+		thread.getMyMembers().add(member);
+		threadRepository.update(thread);
+		
 	}
 
 }

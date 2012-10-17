@@ -24,10 +24,8 @@ public class Thread extends Account {
 		this.domain = domain;
 		this.enable = true;
 		this.destroyed = false;
-		this.owner = owner;
 		this.locale = owner.locale;
 		this.externalMailLocale = owner.externalMailLocale;
-		System.err.println("LOGLOGLOGLOG : this.externalMailLocale = " + this.externalMailLocale);
 	}
 
 	public void setName(String value) {
