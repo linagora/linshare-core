@@ -22,7 +22,9 @@ package org.linagora.linshare.core.facade.impl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -36,6 +38,7 @@ import org.linagora.linshare.core.domain.transformers.impl.ThreadEntryTransforme
 import org.linagora.linshare.core.domain.vo.TagEnumVo;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
+import org.linagora.linshare.core.domain.vo.ThreadMemberVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -263,13 +266,34 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		if (actorVo == null || name == null)
 			return;
 		if (actorVo.isGuest()) {
-			logger.error("you are not authorised.");
+			logger.error("guests are not authorised to create a thread");
 			return;
 		}
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		if (actor != null) {
 			threadService.create(actor, name);
 		}
+	}
+	
+	@Override
+	public boolean isMember(ThreadVo threadVo, UserVo userVo) {
+		Set<ThreadMember> members = threadService.findByLsUuid(threadVo.getLsUuid()).getMyMembers();
+		for (ThreadMember member : members) {
+			if (member.getUser().getLsUuid().equals(userVo.getLsUid()))
+				return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public List<ThreadMemberVo> getThreadMembers(ThreadVo threadVo) throws BusinessException {
+		Set<ThreadMember> threadMembers = threadService.findByLsUuid(threadVo.getLsUuid()).getMyMembers();
+		List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
+		for (ThreadMember threadMember : threadMembers) {
+			members.add(new ThreadMemberVo(threadMember));
+		}
+		Collections.sort(members);
+		return members;
 	}
 
 
@@ -282,7 +306,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 //		for (ThreadMember member : thread.getMyMembers()) {
 //			if (member.getAdmin()) {
 //				if (member.getUser().getLsUuid() != actorVo.getLsUid()) {
-//					logger.error("you are not authorised.");
+//					logger.error("not authorised");
 //					return;
 //				}
 //				threadService.delete(thread);

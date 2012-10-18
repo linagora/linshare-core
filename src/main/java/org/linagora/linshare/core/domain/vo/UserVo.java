@@ -33,7 +33,7 @@ import org.linagora.linshare.core.domain.entities.User;
  * @author ncharles
  *
  */
-public class UserVo implements Serializable {
+public class UserVo implements Serializable, Comparable<UserVo> {
 
 	private static final long serialVersionUID = 3087781771112041575L;
 
@@ -318,11 +318,24 @@ public class UserVo implements Serializable {
         return stringBuffer.toString();
     }
     
+    public String getFullName() {
+    	return this.firstName + " " + this.lastName;
+    }
+    
     public String getDomainIdentifier() {
 		return domainIdentifier;
 	}
     
     public void setDomainIdentifier(String domainIdentifier) {
 		this.domainIdentifier = domainIdentifier;
+	}
+
+
+	@Override
+	public int compareTo(UserVo o) {
+		int res = this.lastName.compareToIgnoreCase(o.lastName);
+		if (res == 0)
+			return this.firstName.compareToIgnoreCase(o.firstName);
+		return res;
 	}
 }

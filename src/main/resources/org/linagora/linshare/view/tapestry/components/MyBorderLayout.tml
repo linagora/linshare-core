@@ -77,6 +77,7 @@
 			<t:delegate to="actionsWidget" />
 			<t:delegate to="shareWidget" />
 			<t:delegate to="eventsWidget" />
+			<t:delegate to="membersWidget" />
 		</div>
 	</t:parameter>
 

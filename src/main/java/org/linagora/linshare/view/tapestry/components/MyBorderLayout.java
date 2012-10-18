@@ -103,6 +103,11 @@ public class MyBorderLayout {
 	@Property
 	private Block eventsWidget;
 
+	@SuppressWarnings("unused")
+	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
+	@Property
+	private Block membersWidget;
+	
 	/* ***********************************************************
 	 *                      Injected services
 	 ************************************************************ */

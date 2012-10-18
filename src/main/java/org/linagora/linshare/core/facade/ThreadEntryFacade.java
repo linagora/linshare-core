@@ -6,6 +6,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.vo.TagEnumVo;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
+import org.linagora.linshare.core.domain.vo.ThreadMemberVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -41,4 +42,8 @@ public interface ThreadEntryFacade {
 	public ThreadEntryVo findById(UserVo user, ThreadVo threadVo, String selectedId) throws BusinessException;
 
 	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo, ThreadVo threadVo, TagVo[] tags) throws BusinessException;
+
+	public boolean isMember(ThreadVo threadVo, UserVo userVo);
+
+	public List<ThreadMemberVo> getThreadMembers(ThreadVo threadVo) throws BusinessException;
 }
