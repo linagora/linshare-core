@@ -32,6 +32,9 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
+import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.pages.thread.Index;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.utils.XSSFilter;
@@ -93,13 +96,13 @@ public class CreateThread {
     	}
 		try {
 			threadEntryFacade.createThread(loginUser, name);
+			businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.THREAD_CREATION_SUCCESS, MessageSeverity.INFO));
 		} catch (BusinessException e) {
 			logger.error("Can not create thread : " + e.getMessage());
 			logger.debug(e.toString());
-    		businessMessagesManagementService.notify(e);
+    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.THREAD_CREATION_FAIL, MessageSeverity.ERROR));
 		}
 		name = null;
-		logger.info("onSuccessFromCreateThreadForm successful");
 		return Index.class;
 	}
 }

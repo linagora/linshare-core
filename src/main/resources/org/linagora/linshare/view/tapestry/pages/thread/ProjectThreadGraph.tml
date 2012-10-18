@@ -5,12 +5,10 @@
 	<!-- Main content -->
 
 	<div id="content">
-
-		<h1>${message:components.myborderlayout.thread.title}</h1>
+		<h1>${message:pages.thread.tree.title} : ${threadName}</h1>
 
 		<t:messagePanel />
 		<t:businessMessagesDisplayer />
-
 
         <!-- Action bar -->
 
@@ -37,15 +35,11 @@
             </t:block>
 
             <t:block id="case1">
-                <h2>${threadName}</h2>
-
                 <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:title="${currentLeaf}" />
                 <br />
             </t:block>
 
             <t:block id="case2">
-                <h2>${threadName}</h2>
-
                 <t:loop source="leaves" value="currentLeaf">
                     <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:title="${currentLeaf}" />
                     <br />
@@ -53,8 +47,6 @@
             </t:block>
 
             <t:block id="case3">
-                <h2>${threadName}</h2>
-
                 <t:loop source="children" value="currentChild">
                     <div t:type="ck/SlidingPanel" t:id="currentChild" t:closed="true" t:subject="${currentChildSubject}" t:options="{duration:0.3}">
                         <t:loop source="leaves" value="currentLeaf">
@@ -73,10 +65,8 @@
     <!-- Thread File Upload popup -->
     <t:threadFileUploadPopup t:eventName="threadFileUploadPopupEvent" />
 
-
 	<!-- Widgets -->
 
 	<!-- Actions widget -->
-
 
 </t:MyBorderLayout>

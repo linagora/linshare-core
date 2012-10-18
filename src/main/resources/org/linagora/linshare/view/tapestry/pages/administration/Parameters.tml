@@ -56,7 +56,10 @@
 						<t:if test="ShowGuestAccountExpiryTime">
 							<tr>
 								<td class="label"><t:label for="guestAccountExpiryTime" class="edit-form-label">${message:pages.administration.index.guestAccountExpiryTime}</t:label></td>
-								<td class="input"><t:textfield t:id="guestAccountExpiryTime" size="5" class="edit-form-field" validate="required"/>&nbsp;&nbsp;<t:select t:id="guestAccountExpiryUnit" blankoption="never"/></td>
+                                <td class="input">
+                                    <t:textfield t:id="guestAccountExpiryTime" size="5" class="edit-form-field" validate="required"/>
+                                    &nbsp;&nbsp;<t:select t:id="guestAccountExpiryUnit" blankoption="never"/>
+                                </td>
 							</tr>
 						</t:if>
 						

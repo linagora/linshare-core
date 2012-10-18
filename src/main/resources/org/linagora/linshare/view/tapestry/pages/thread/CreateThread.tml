@@ -7,11 +7,7 @@
 
 	<div id="content">
 
-		<h1>${message:components.myborderlayout.thread.title}</h1>
-
-		<t:messagePanel />
-		<t:businessMessagesDisplayer />
-
+		<h1>${message:pages.thread.create.title}</h1>
 
         <!-- Action bar -->
 
@@ -23,23 +19,27 @@
 
 		<div id="pageContent">
 			<form t:type="form" t:id="createForm">
-                <t:label for="name">${message:pages.thread.form.name}</t:label>
-                <t:textfield t:id="name" value="name"/>
                 <br/>
+                <div id="thread_creation_form">
+                    <t:label for="name">${message:pages.thread.form.name} : </t:label>
+                    <t:textfield t:id="name" value="name"/>
+                </div>
 
-				<div class="button">
+                <br/>
+                <br/>
+                <div class="button">
                     <t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
                     <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
-				</div>
+                </div>
             </form>
-		</div>
+        </div>
 
-	</div><!-- id="content" -->
+    </div><!-- id="content" -->
 
-	<!-- Popups -->
-
-
-	<!-- Widgets -->
+    <!-- Popups -->
 
 
-</t:MyBorderLayout>
+    <!-- Widgets -->
+
+
+    </t:MyBorderLayout>

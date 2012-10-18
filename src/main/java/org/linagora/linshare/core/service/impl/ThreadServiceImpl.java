@@ -64,8 +64,7 @@ public class ThreadServiceImpl implements ThreadService {
 		threadRepository.update(thread);
 		member = new ThreadMember(true, true, (User)actor, thread);
 		thread.getMyMembers().add(member);
-		threadRepository.update(thread);
-		
+		threadRepository.update(thread);	
 	}
 
 }

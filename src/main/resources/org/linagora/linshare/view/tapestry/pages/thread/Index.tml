@@ -7,7 +7,7 @@
 
 	<div id="content">
 
-		<h1>${message:components.myborderlayout.thread.title}</h1>
+		<h1>${message:pages.thread.index.title}</h1>
 
 		<t:messagePanel />
 		<t:businessMessagesDisplayer />
@@ -19,12 +19,8 @@
             <h4>Actions</h4>
             <ul>
                 <li>
-					<!--<input name="submitCreateThread" id="submitCreateThread" type="submit" style="display:none"/>-->
-					<!--<a id="quickshare_send_link" href="#" class="button">-->
-                           <!--<span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/> ${message:global.button.add}</span>-->
-                       <!--</a>-->
-                    <t:pageLink page="thread/CreateThread" class="button" title="${message:global.button.add}">
-                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:global.button.add}</span>
+                    <t:pageLink page="thread/CreateThread" class="button" title="${message:pages.thread.upload.addbutton}">
+                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.thread.upload.addbutton}</span>
                     </t:pageLink>
                 </li>
             </ul>
@@ -35,7 +31,7 @@
 		<div id="pageContent">
             <t:grid source="projects" row="currentProject" include="name" rowsPerPage="10">
                 <p:nameCell>
-                    <t:actionlink t:id="showProjectThreadGraph" context="currentProject.lsUuid"> ${currentProject.name} </t:actionlink>
+                    <t:actionlink t:id="showProjectThreadGraph" context="currentProject.lsUuid"> ${currentProject.name}</t:actionlink>
                 </p:nameCell>
                 <p:empty>
                     ${message:pages.thread.empy}
