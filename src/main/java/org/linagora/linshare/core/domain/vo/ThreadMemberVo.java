@@ -15,7 +15,7 @@ public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 		super();
 		this.user = new UserVo(threadMember.getUser());
 		this.admin = threadMember.getAdmin();
-		this.canUpload = threadMember.getAdmin();
+		this.canUpload = threadMember.getCanUpload();
 	}
 
 	public ThreadMemberVo(UserVo user, boolean canUpload, boolean admin) {

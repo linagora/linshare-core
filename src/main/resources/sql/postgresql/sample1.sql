@@ -51,13 +51,13 @@ INSERT INTO thread (account_id, name) VALUES (54, 'Test Thread');
 
 
 --Thread members
-INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (1, 51, true, true, current_date, current_date, 50); 
+INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (1, 51, false, false, current_date, current_date, 50); 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (2, 51, true, true, current_date, current_date, 53); 
 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (3, 52, true, true, current_date, current_date, 50); 
 
 INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (4, 54, true, true, current_date, current_date, 50); 
-INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, true, true, current_date, current_date, 53); 
+INSERT INTO thread_member (id, thread_id, admin, can_upload, creation_date, modification_date, user_id) VALUES (5, 54, false, true, current_date, current_date, 53); 
 
 -- Tags
 INSERT INTO tag (id, account_id, name, system, visible, not_null, tag_type) VALUES (1, 51, 'Réponse', false, true, null,0);

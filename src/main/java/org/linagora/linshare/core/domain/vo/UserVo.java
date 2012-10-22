@@ -330,12 +330,9 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.domainIdentifier = domainIdentifier;
 	}
 
-
 	@Override
 	public int compareTo(UserVo o) {
 		int res = this.lastName.compareToIgnoreCase(o.lastName);
-		if (res == 0)
-			return this.firstName.compareToIgnoreCase(o.firstName);
-		return res;
+		return res != 0 ? res : this.firstName.compareToIgnoreCase(o.firstName);
 	}
 }
