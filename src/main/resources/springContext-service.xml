@@ -34,6 +34,7 @@
 	<bean name="threadService" class="org.linagora.linshare.core.service.impl.ThreadServiceImpl">
 		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="threadViewRepository" />
+		<constructor-arg ref="threadMemberRepository" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">

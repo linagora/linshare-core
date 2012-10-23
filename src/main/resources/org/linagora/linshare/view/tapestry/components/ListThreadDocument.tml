@@ -70,7 +70,6 @@
                         </t:actionLink>
                     </t:if>
                 </p:fileDeleteCell>
-
             </t:grid>
         </t:form>
 

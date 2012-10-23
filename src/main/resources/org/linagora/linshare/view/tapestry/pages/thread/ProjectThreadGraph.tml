@@ -16,10 +16,12 @@
             <h4>Actions</h4>
             <ul>
                 <li>
-                <a href="#" class="button" onclick="threadFileUploadWindow.showCenter(true);">
-                    <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/>
-                        ${message:pages.thread.upload.addbutton}</span>
-                </a>
+                    <t:if test="canUpload">
+                        <a href="#" class="button" onclick="threadFileUploadWindow.showCenter(true);">
+                            <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/>
+                                ${message:pages.thread.upload.addbutton}</span>
+                        </a>
+                    </t:if>
                 </li>
             </ul>
         </div><!-- id="actionBar" -->
@@ -30,18 +32,18 @@
             <t:delegate to="case" />
 
             <t:block id="case0">
-                <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:title="${threadName}" />
+                <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:admin="admin" t:title="${threadName}" />
                 <br />
             </t:block>
 
             <t:block id="case1">
-                <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:title="${currentLeaf}" />
+                <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
                 <br />
             </t:block>
 
             <t:block id="case2">
                 <t:loop source="leaves" value="currentLeaf">
-                    <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:title="${currentLeaf}" />
+                    <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
                     <br />
                 </t:loop>
             </t:block>
@@ -50,7 +52,7 @@
                 <t:loop source="children" value="currentChild">
                     <div t:type="ck/SlidingPanel" t:id="currentChild" t:closed="true" t:subject="${currentChildSubject}" t:options="{duration:0.3}">
                         <t:loop source="leaves" value="currentLeaf">
-                            <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:title="${currentLeaf}" />
+                            <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedProject" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
                             <br />
                         </t:loop>
                     </div>

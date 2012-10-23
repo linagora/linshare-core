@@ -8,6 +8,7 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
 import org.linagora.linshare.core.service.ThreadService;
@@ -16,31 +17,30 @@ import org.slf4j.LoggerFactory;
 
 public class ThreadServiceImpl implements ThreadService {
 
-	
 	final private static Logger logger = LoggerFactory.getLogger(ThreadServiceImpl.class);
 	
 	private final ThreadRepository threadRepository;
 	
 	private final ThreadViewRepository threadViewRepository;
 	
+	private ThreadMemberRepository threadMemberRepository;
     
 	
-	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository) {
+	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository, ThreadMemberRepository threadMemberRepository) {
 		super();
 		this.threadRepository = threadRepository;
 		this.threadViewRepository = threadViewRepository;
+		this.threadMemberRepository = threadMemberRepository;
 	}
-
 	
 	@Override
 	public Thread findByLsUuid(String uuid) {
 		Thread thread = threadRepository.findByLsUuid(uuid);
-		if(thread == null) {
+		if (thread == null) {
 			logger.error("Can't find thread  : " + uuid);
 		}
 		return thread;
 	}
-
 
 	@Override
 	public List<Thread> findAll() {
@@ -48,7 +48,6 @@ public class ThreadServiceImpl implements ThreadService {
 		logger.debug("count : " + all.size());
 		return all;
 	}
-
 
 	@Override
 	public void create(Account actor, String name) throws BusinessException {
@@ -65,6 +64,24 @@ public class ThreadServiceImpl implements ThreadService {
 		member = new ThreadMember(true, true, (User)actor, thread);
 		thread.getMyMembers().add(member);
 		threadRepository.update(thread);	
+	}
+
+	@Override
+	public ThreadMember getThreadMemberById(String id) {
+		if (id == null) {
+			logger.debug("id is null");
+			return null;
+		}
+		return threadMemberRepository.findById(id);
+	}
+
+	@Override
+	public ThreadMember getThreadMemberFromUser(Thread thread, User user) {
+		if (thread == null || user == null) {
+			logger.debug("null parameter");
+			return null;
+		}
+		return threadMemberRepository.findUserThreadMember(thread, user);
 	}
 
 }

@@ -137,6 +137,8 @@ public class UserSearchResults {
     
     private List<UserVo> selectedUsers;
 
+	private List<UserVo> userAddToThreadsList;
+
     private boolean share = false;
 
     @Property
@@ -186,10 +188,11 @@ public class UserSearchResults {
      ************************************************************ */
     @SetupRender
     public void initUserSearch() throws BusinessException {
-    	
-    	
         if (selectedUsers == null) {
             selectedUsers = new ArrayList<UserVo>();
+        }
+        if (userAddToThreadsList == null) {
+            userAddToThreadsList = new ArrayList<UserVo>();
         }
         if (users == null || users.size() == 0) {
         	if (userLoggedIn.isSuperAdmin() && showBreakedUsers) {
@@ -202,7 +205,6 @@ public class UserSearchResults {
         		}
         	}
     	}
-
         if(refreshFlag==true){
 			users=usr;
 			refreshFlag=false;
@@ -231,7 +233,6 @@ public class UserSearchResults {
 
     public void onSuccess() {
 		actionbutton =  ActionFromBarDocument.fromString(action);
-		
 		switch (actionbutton) {
 		case SHARED_ACTION:
 			if (userShareList == null) {

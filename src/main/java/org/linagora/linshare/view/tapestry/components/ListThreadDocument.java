@@ -91,6 +91,10 @@ public class ListThreadDocument {
     @Parameter(required=true,defaultPrefix=BindingConstants.PROP)
     @Property
     private List<ThreadEntryVo> listThreadEntries;
+    
+    @Parameter(required=true,defaultPrefix=BindingConstants.PROP)
+    @Property
+    private boolean admin;
 
     @Parameter(required=true,defaultPrefix=BindingConstants.PROP)
     @Property
@@ -281,13 +285,15 @@ public class ListThreadDocument {
         }
         sorterModel = new ThreadEntrySorterModel(listThreadEntries);
         model = beanModelSource.createDisplayModel(ThreadEntryVo.class, componentResources.getMessages());
-
         model.add("fileProperties", null);
-        model.add("fileDelete", null);
-
+        if (admin) {
+        	model.add("fileDelete", null);
+        }
         List<String> reorderlist = new ArrayList<String>();
         reorderlist.add("fileProperties");
-        reorderlist.add("fileDelete");
+        if (admin) {
+        	reorderlist.add("fileDelete");
+        }
         model.reorder(reorderlist.toArray(new String[reorderlist.size()]));
 
         return model;

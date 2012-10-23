@@ -174,7 +174,14 @@ public class ProjectThreadGraph {
 	public List<DefaultMutableTreeNode> getLeaves() {
 		return Collections.list(currentChild.children());
 	}
+	
+	public boolean getCanUpload() {
+		return threadEntryFacade.userCanUpload(userVo, selectedProject);
+	}
 
+	public boolean getAdmin() {
+		return threadEntryFacade.userIsAdmin(userVo, selectedProject);
+	}
 
 	/*
 	 * Handle page layout with Tapestry Blocks

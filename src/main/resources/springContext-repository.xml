@@ -15,6 +15,10 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
+	<bean name="threadMemberRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadMemberRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
 	<bean name="userRepository" class="org.linagora.linshare.core.repository.hibernate.UserRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>

@@ -46,4 +46,8 @@ public interface ThreadEntryFacade {
 	public boolean isMember(ThreadVo threadVo, UserVo userVo);
 
 	public List<ThreadMemberVo> getThreadMembers(ThreadVo threadVo) throws BusinessException;
+
+	public boolean userCanUpload(UserVo actorVo, ThreadVo threadVo);
+
+	public boolean userIsAdmin(UserVo userVo, ThreadVo selectedProject);
 }

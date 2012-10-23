@@ -20,28 +20,26 @@
  */
 package org.linagora.linshare.core.repository;
 
-import java.util.List;
-
-import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.User;
 
-
-public interface ThreadViewRepository extends AbstractRepository<ThreadView> {
-
-	/**
-	 * Find all ThreadView associated to a Thread
-	 * 
-	 * @param thread
-	 * @return a list of all ThrewView associated to thread
-	 */
-	public List<ThreadView> findAllThreadView(Thread thread);
+public interface ThreadMemberRepository extends AbstractRepository<ThreadMember> {
 
 	/**
-	 * Find ThreadView by id
+	 * Find ThreadMember by id
 	 * 
 	 * @param id
-	 * @return the ThreadView
+	 * @return the ThreadMember
 	 */
-	public ThreadView findById(String id);
+	public ThreadMember findById(String id);
 
+	/**
+	 * Find ThreadMember corresponding to a User
+	 * 
+	 * @param thread
+	 * @param user
+	 * @return the ThreadMember
+	 */
+    public ThreadMember findUserThreadMember(Thread thread, User user);
 }

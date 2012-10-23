@@ -175,13 +175,15 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		
-		List<ThreadEntry> threadEntries = new ArrayList<ThreadEntry>();
-		for (ThreadEntryVo threadEntryVo : threadEntriesVo) {
-			threadEntries.add(threadEntryService.findById(actor, thread, threadEntryVo.getIdentifier()));
-		}
-		
-		for (TagVo tagVo : tags) {
-			tagService.setTagToThreadEntries(actor, thread, threadEntries, tagVo.getName(), tagVo.getTagEnumValue());
+		if (userCanUpload(actorVo, threadVo) || userIsAdmin(actorVo, threadVo)) {
+			List<ThreadEntry> threadEntries = new ArrayList<ThreadEntry>();
+			for (ThreadEntryVo threadEntryVo : threadEntriesVo) {
+				threadEntries.add(threadEntryService.findById(actor, thread, threadEntryVo.getIdentifier()));
+			}
+
+			for (TagVo tagVo : tags) {
+				tagService.setTagToThreadEntries(actor, thread, threadEntries, tagVo.getName(), tagVo.getTagEnumValue());
+			}
 		}
 	}
 
@@ -260,6 +262,44 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return null;
 	}
 
+	@Override
+	public boolean isMember(ThreadVo threadVo, UserVo userVo) {
+		User user = (User) accountService.findByLsUid(userVo.getLsUid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
+		return member != null;
+	}
+	
+	@Override
+	public boolean userCanUpload(UserVo userVo, ThreadVo threadVo) {
+		User user = (User) accountService.findByLsUid(userVo.getLsUid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
+		if (member != null)
+			return member.getCanUpload() || member.getAdmin();
+		return false;
+	}
+
+	@Override
+	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) {
+		User user = (User) accountService.findByLsUid(userVo.getLsUid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
+		if (member != null)
+			return member.getAdmin();
+		return false;
+	}
+
+	@Override
+	public List<ThreadMemberVo> getThreadMembers(ThreadVo threadVo) throws BusinessException {
+		Set<ThreadMember> threadMembers = threadService.findByLsUuid(threadVo.getLsUuid()).getMyMembers();
+		List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
+		for (ThreadMember threadMember : threadMembers) {
+			members.add(new ThreadMemberVo(threadMember));
+		}
+		Collections.sort(members);
+		return members;
+	}
 
 	@Override
 	public void createThread(UserVo actorVo, String name) throws BusinessException {
@@ -274,28 +314,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			threadService.create(actor, name);
 		}
 	}
-	
-	@Override
-	public boolean isMember(ThreadVo threadVo, UserVo userVo) {
-		Set<ThreadMember> members = threadService.findByLsUuid(threadVo.getLsUuid()).getMyMembers();
-		for (ThreadMember member : members) {
-			if (member.getUser().getLsUuid().equals(userVo.getLsUid()))
-				return true;
-		}
-		return false;
-	}
-	
-	@Override
-	public List<ThreadMemberVo> getThreadMembers(ThreadVo threadVo) throws BusinessException {
-		Set<ThreadMember> threadMembers = threadService.findByLsUuid(threadVo.getLsUuid()).getMyMembers();
-		List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
-		for (ThreadMember threadMember : threadMembers) {
-			members.add(new ThreadMemberVo(threadMember));
-		}
-		Collections.sort(members);
-		return members;
-	}
-
 
 //	TODO
 //	@Override
