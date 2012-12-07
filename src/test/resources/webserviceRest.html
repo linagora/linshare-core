@@ -1,0 +1,114 @@
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+<body>
+	<h1>HELLO WEB SERVICES !</h1>
+	<a href="http://localhost:8080/linshare/webservice/services">http://localhost:8080/linshare/webservice/services</a>
+	<br />
+
+	<h1>Exemples REST (json ou xml)</h1>
+
+	<h2>Récuperer la liste des documents utilisateur</h2>
+	<ul>
+		<li><a
+			href="http://localhost:8080/linshare/webservice/rest/document/list.json">http://localhost:8080/linshare/webservice/rest/list.json</a></li>
+		<li><a
+			href="http://localhost:8080/linshare/webservice/rest/document/list.xml">http://localhost:8080/linshare/webservice/rest/list.xml</a></li>
+	</ul>
+
+	<h2>Upload un fichier (multipart/form-data)</h2>
+	<span>retour info doc en json</span>
+	<br />
+	<form method="post"
+		action="http://localhost:8080/linshare/webservice/rest/document/upload.json"
+		enctype="multipart/form-data">
+		<table>
+			<tr>
+				<td>comment:</td>
+				<td><input type="text" name="comment" /></td>
+			</tr>
+
+			<tr>
+				<td>filename:</td>
+				<td><input type="text" name="filename" /></td>
+			</tr>
+
+			<tr>
+				<td>file:</td>
+				<td><input type="file" name="file"></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td><input type="submit"></td>
+			</tr>
+		</table>
+	</form>
+
+	<span>retour info doc en xml</span>
+	<br />
+	<form method="post"
+		action="http://localhost:8080/linshare/webservice/rest/document/upload.xml"
+		enctype="multipart/form-data">
+		<table>
+			<tr>
+				<td>comment:</td>
+				<td><input type="text" name="comment" /></td>
+			</tr>
+
+			<tr>
+				<td>filename:</td>
+				<td><input type="text" name="filename" /></td>
+			</tr>
+
+			<tr>
+				<td>file:</td>
+				<td><input type="file" name="file"></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td><input type="submit"></td>
+			</tr>
+		</table>
+	</form>
+		
+
+	<h2>userMaxFileSize</h2>
+	<ul>
+		<li><a
+			href="http://localhost:8080/linshare/webservice/rest/document/userMaxFileSize.json">http://localhost:8080/linshare/webservice/rest/document/userMaxFileSize.json</a></li>
+		<li><a
+			href="http://localhost:8080/linshare/webservice/rest/document/userMaxFileSize.xml">http://localhost:8080/linshare/webservice/rest/document/userMaxFileSize.xml</a></li>
+	</ul>
+	
+		<h2>availableSize</h2>
+	<ul>
+		<li><a
+			href="http://localhost:8080/linshare/webservice/rest/document/availableSize.json">http://localhost:8080/linshare/webservice/rest/document/availableSize.json</a></li>
+		<li><a
+			href="http://localhost:8080/linshare/webservice/rest/document/availableSize.xml">http://localhost:8080/linshare/webservice/rest/document/availableSize.xml</a></li>
+	</ul>
+	
+	
+	<h2>Share a document</h2>
+	<span>url est http://localhost:8080/linshare/webservice/rest/share/sharedocument/maggie.simpson@int1.linshare.dev/7e6fb8a3-82dd-48c1-a3b8-f0eaaff815fb?securedShare=1</span><br />
+	<a href="http://localhost:8080/linshare/webservice/rest/share/sharedocument/maggie.simpson@int1.linshare.dev/7e6fb8a3-82dd-48c1-a3b8-f0eaaff815fb?securedShare=1"> Share a document</a>
+	
+	
+	<h2>Share multiple documents</h2><br />
+	<form method="post" action="http://localhost:8080/linshare/webservice/rest/share/multiplesharedocuments">
+	To: <input type="text" name="targetMail" value="maggie.simpson@int1.linshare.dev"/><br />
+	<input type="checkbox" name="securedShare" value="1" />Secured share<br />
+	comment: <br/>
+	<textarea  name="message">bla bla</textarea><br />
+	<p>Files:</p>
+	<input type="text" name="file" value="7e6fb8a3-82dd-48c1-a3b8-f0eaaff815fb"/><br />
+	<input type="text" name="file" value="4aec8802-18e4-4aec-9ceb-247440d56688"/><br />
+	<input type="text" name="file" value="5af06dc9-3d9e-42be-a00b-6cf1bb77a0e0"/><br />
+	<input type="submit"/>
+</form>
+	
+
+</body>

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+    xmlns:p="tapestry:parameter">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:pages.thread.create.title}</h1>
+
+        <!-- Action bar -->
+
+        <div id="actionBar">
+            <h4>Actions</h4>
+        </div><!-- id="actionBar" -->
+
+		<!-- Page content -->
+
+		<div id="pageContent">
+			<form t:type="form" t:id="createForm">
+                <br/>
+                <div id="thread_creation_form">
+                    <t:label for="name">${message:pages.thread.form.name} : </t:label>
+                    <t:textfield t:id="name" value="name"/>
+                </div>
+
+                <br/>
+                <br/>
+                <div class="button">
+                    <t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
+                    <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
+                </div>
+            </form>
+        </div>
+
+    </div><!-- id="content" -->
+
+    <!-- Popups -->
+
+
+    <!-- Widgets -->
+
+
+    </t:MyBorderLayout>

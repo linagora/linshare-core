@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.domains.index.createdomainpattern.index" t:identifier="domains" t:currentHighlight="domains"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:pages.administration.domains.index.createdomainpattern.index}</h1>
+
+		<t:messagePanel />
+
+		<div id="pageContent">
+
+			<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+
+			<t:beanEditForm t:object="domainPattern" submitlabel="message:global.button.validate">
+				<p:identifier>
+					<t:label for="identifier"/>
+                    <t:textfield t:id="identifier" value="domainPattern.identifier" disabled="inModify"/>
+				</p:identifier>
+                <p:description>
+					<t:label for="patternDescription"/>
+                    <t:textarea t:id="patternDescription" value="domainPattern.patternDescription" cols="70"/>
+				</p:description>
+				<p:authCommand>
+					<t:label for="authCommand"/>
+                    <t:textarea t:id="authCommand" value="domainPattern.authCommand" cols="70"/>
+				</p:authCommand>
+				<p:searchUserCommand>
+					<t:label for="searchUserCommand"/>
+                    <t:textarea t:id="searchUserCommand" value="domainPattern.searchUserCommand" cols="70"/>
+				</p:searchUserCommand>
+			</t:beanEditForm>
+
+		</div>
+
+	</div><!-- id="content" -->
+
+</t:MyBorderLayout>

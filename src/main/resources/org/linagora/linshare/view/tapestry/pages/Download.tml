@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<head>
+		<title>LinShare - T&eacute;l&eacute;charger</title>
+		<link href="../css/theme0.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<t:businessMessagesDisplayer />
+		<t:if test="passwordProtected">
+			<t:passwordPopup t:id="passwordPopup" t:title="${message:components.download.passwordPopup.title}" t:content="${message:components.download.passwordPopup.content}" t:errorBanner="${message:components.download.passwordPopup.errorBanner}" />
+			<t:parameter name="else">
+				<t:if test="containsDocuments">
+				<br /><br />
+				<center>
+					<t:if test="linshareLogoVisible">
+						<img src="../images/logo_linshare_large.png" alt="LinShare" />
+						<br /><br />
+					</t:if>
+					<div id="blocDLheader">&nbsp;</div>
+					<div id="blocDL">
+						<ul>
+							<t:loop t:source="documents" t:value="document" t:index="index">
+								<li>
+									<t:pagelink class="fileName" page="Download" context="context" t:title="${document.fileName}">
+										<span t:type="ck/TrimmedString" maxLength="50" trimPos="right" value="document.fileName" />
+									</t:pagelink>
+									<t:pagelink page="Download" class="btnDL" context="context">${message:pages.download.document.downloadlink}(${friendlySize})</t:pagelink>
+									<div class="clear">&nbsp;</div>
+								</li>
+							</t:loop>
+						</ul>
+						<hr />
+						<t:actionLink t:id="downloadThemAll" t:class="btnDLzip" t:context="uuid">${message:pages.download.downloadThemAll}</t:actionLink>
+					</div>
+					<div id="blocDLfooter">
+						${message:pages.download.footer} <a href="${message:global.companyURL}" title="${message:global.companyName}">${message:global.companyName}</a>
+						 via <a href="${message:global.productUrl}" title="${message:global.appName}">${message:global.appName}</a>
+					</div>
+				</center>
+				<br /><br />
+				</t:if>
+			</t:parameter>
+		</t:if>
+	</body>
+</html>

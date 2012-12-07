@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+
+	<typedef
+		class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="roleEnumType">
+		<param name="enumClass">org.linagora.linshare.core.domain.entities.Role</param>
+		<param name="identifierMethod">toInt</param>
+		<param name="valueOfMethod">fromInt</param>
+	</typedef>
+	
+
+	<class name="AbstractDomain" table="domain_abstract" discriminator-value= "-1" >
+		<id name="persistenceId" type="long">
+			<column name="id" not-null="true" index="index_abstract_domain_id"/>
+			<generator class="native" />
+		</id>
+		 
+		<discriminator column="type" type="integer" />
+		
+		<property access="field" column="identifier" name="identifier" not-null="true" unique="true" index="index_abstract_domain_identifier" />
+		<property access="field" column="label" name="label" not-null="true" />
+		<property access="field" column="enable" name="enable" not-null="true" />
+		<property access="field" column="template" name="template" not-null="true" />
+		<property access="field" column="description" name="description" />
+		<property access="field" column="default_role" name="defaultRole" type="roleEnumType" />
+		<property access="field" column="default_locale" name="defaultLocale" />
+		<property access="field" column="used_space" name="usedSpace" not-null="true"/>
+		<property access="field" column="auth_show_order" name="authShowOrder" />
+		
+		<many-to-one name="userProvider" class="org.linagora.linshare.core.domain.entities.LdapUserProvider" 
+			column="user_provider_id" unique="true" lazy="false" cascade="delete" />
+			
+		<many-to-one name="policy" class="org.linagora.linshare.core.domain.entities.DomainPolicy" 
+			column="domain_policy_id" not-null="true" lazy="false" />
+    	
+		<many-to-one name="parentDomain" column="parent_id" class="AbstractDomain" lazy="false"/>
+		<set name="subdomain" lazy="false" cascade="all-delete-orphan">
+	 		<key column="parent_id" />
+	 		<one-to-many class="AbstractDomain" />
+	 	</set>
+	
+		<set name="functionalities" inverse="true" cascade="all-delete-orphan" lazy="false">
+			<key column="domain_id" />
+			<one-to-many class="Functionality"  />
+		</set>
+		
+		<set name="domainAccessRules" inverse="true" cascade="delete-orphan">
+			<key column="domain_id" />
+			<one-to-many class="DomainAccessRule"  />
+		</set>
+	
+		<many-to-one cascade="save-update" lazy="false" access="field" class="org.linagora.linshare.core.domain.entities.MessagesConfiguration" 
+			name="messagesConfiguration" column="messages_configuration_id" not-null="false" />
+
+		<list name="shareExpiryRules" table="share_expiry_rules" lazy="false">
+      		<key>
+	     		<column name="domain_id" not-null="true" index="index_share_expiry_rule_id"/>
+    		</key>
+      		<list-index column="rule_sort_order"/>
+	      	<composite-element class="ShareExpiryRule">
+		        <property column="expiry_time" name="shareExpiryTime"/>
+		        <property column="time_unit_id" name="shareExpiryUnit" type="timeUnitEnumType"/>
+		        <property column="share_size" name="shareSize"/>
+		        <property column="size_unit_id" name="shareSizeUnit" type="fileSizeEnumType"/>
+	      	</composite-element>
+	    </list>
+	 	
+		<subclass discriminator-value="0" name="org.linagora.linshare.core.domain.entities.RootDomain"></subclass>
+		<subclass discriminator-value="1" name="org.linagora.linshare.core.domain.entities.TopDomain"></subclass>
+		<subclass discriminator-value="2" name="org.linagora.linshare.core.domain.entities.SubDomain"></subclass>
+		<subclass discriminator-value="3" name="org.linagora.linshare.core.domain.entities.GuestDomain"></subclass>
+
+	</class>
+</hibernate-mapping>
+
+

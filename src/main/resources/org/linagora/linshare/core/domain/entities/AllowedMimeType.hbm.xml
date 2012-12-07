@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+   <typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="mimeTypeStatusType">
+    <param name="enumClass">org.linagora.linshare.core.domain.entities.MimeTypeStatus</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  <class name="AllowedMimeType" table="allowed_mimetype">
+  	<id name="id" type="long">
+      <column name="id" not-null="true" index="index_allowed_mime_type_id"/>
+    </id>
+    <property column="extensions" name="extensions"/>
+    <property column="mimetype" name="mimetype"/>
+    <property column="status" name="status" type="mimeTypeStatusType" />
+  </class>
+</hibernate-mapping>

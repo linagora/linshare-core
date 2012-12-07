@@ -22,7 +22,7 @@
 		<!-- The only significant configuration for Tapestry 5, this informs Tapestry
 			of where to look for pages, components and mixins. -->
 		<param-name>tapestry.app-package</param-name>
-		<param-value>org.linagora.linShare.view.tapestry</param-value>
+		<param-value>org.linagora.linshare.view.tapestry</param-value>
 	</context-param>
 
     <context-param>
@@ -39,12 +39,8 @@
 
 
     <filter>
-        <filter-name>springSecurity</filter-name>
-        <filter-class>org.springframework.security.util.FilterToBeanProxy</filter-class>
-        <init-param>
-            <param-name>targetClass</param-name>
-            <param-value>org.springframework.security.util.FilterChainProxy</param-value>
-        </init-param>
+        <filter-name>springSecurityFilterChainProxy</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 	<filter>
 		<filter-name>app</filter-name>
@@ -53,13 +49,26 @@
 	</filter>
 
     <filter-mapping>
-        <filter-name>springSecurity</filter-name>
+        <filter-name>springSecurityFilterChainProxy</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 	<filter-mapping>
 		<filter-name>app</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<servlet>                                                     
+        <servlet-name>CXFServlet</servlet-name>                   
+        <display-name>CXF Servlet</display-name>                  
+        <servlet-class>                                           
+            org.apache.cxf.transport.servlet.CXFServlet           
+        </servlet-class>                                          
+        <load-on-startup>1</load-on-startup>                      
+    </servlet>                                                    
+    <servlet-mapping>                                             
+        <servlet-name>CXFServlet</servlet-name>                   
+        <url-pattern>/webservice/*</url-pattern>                        
+    </servlet-mapping> 
 
 
 	<!-- 

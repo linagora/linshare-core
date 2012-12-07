@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<t:if test="isSuperAdmin">
+		<div id="actionBar">
+			<h4>Actions</h4>
+			<ul>
+				<li>
+					<t:actionlink t:id="breakedUsers" class="button">
+						<t:if test="showBreakedUsers">
+							<span><img src="${asset:context:images/icons/usertype-small.png}" alt=""/>${message:pages.user.list.users.heading}</span>
+						</t:if>
+						<t:if test="showBreakedUsers" negate="true">
+							<span><img src="${asset:context:images/icons/tango-applications-system.png}" alt=""/>${message:components.userSearch.showBreakedUsers}</span>
+						</t:if>
+					</t:actionlink>
+				</li>
+			</ul>
+		</div><!-- id="actionBar" -->
+	</t:if>
+
+	<div id="list">
+
+	<t:if test="inSearch">
+		<h2>${message:pages.user.list.users.search.heading}</h2>
+	</t:if>
+	<t:if test="inSearch" negate="true">
+		<h2>${message:pages.user.list.users.heading}</h2>
+	</t:if>
+
+
+
+	<t:sorter t:toggleNeeded="false" t:eventName="eventReorderList" t:sorter="prop:sorterModel" t:labels="${message:pages.user.sorter.name.label},${message:pages.user.sorter.mail.label},${message:pages.user.sorter.expiration.label}" t:properties="literal:name,mail,expiration"/> 
+
+	<t:form t:id="results">
+		<t:linkit.hiddenfield t:id="action" />
+
+		<t:grid source="users" row="user" include="mail"
+				add="picture, action, selectedValue" reorder="mail, picture" rowsPerPage="10">
+
+			<t:parameter t:name="empty">
+
+				<t:if test="inSearch">
+					${message:components.userSearch.grid.empty}
+				</t:if>
+				<t:if test="inSearch" negate="true">
+					${message:components.userSearch.grid.nosearch}
+				</t:if>
+			</t:parameter>
+
+
+			<!-- Header definition -->
+
+			<t:parameter t:name="mailHeader">
+				${message:components.userSearch.grid.user}
+			</t:parameter>
+
+			<t:parameter t:name="pictureHeader">
+				${message:components.userSearch.grid.usertype}
+			</t:parameter>
+
+			<t:parameter t:name="actionHeader">
+				${message:components.userSearch.grid.actions}
+			</t:parameter>
+
+			<t:parameter t:name="selectedValueHeader">
+				<t:checkbox t:id="selectAll" onclick="checkAll();" value="valueCheck" title="${message:components.userSearch.grid.checkAll}"/>
+			</t:parameter>
+
+
+			<!-- Selected cell definition -->
+
+			<t:parameter name="pictureCell">
+					<t:if test="userGuestRestricted">
+						<img src="${asset:context:images/icons/usertype-guestrestricted.png}"
+							alt="${message:components.userSearch.grid.usertype.guestRestricted}"
+							title="${message:components.userSearch.grid.usertype.guestRestricted}" />
+							<t:parameter name="else">
+								<t:if test="userGuest">
+									<img src="${asset:context:images/icons/usertype-guestsimple.png}"
+										alt="${message:components.userSearch.grid.usertype.guestSimple}"
+										title="${message:components.userSearch.grid.usertype.guestSimple}" />
+									<t:parameter name="else">
+										<t:if test="userAdmin">
+											<img src="${asset:context:images/icons/usertype-internaladmin.png}"
+												alt="${message:components.userSearch.grid.usertype.internalAdmin}"
+												title="${message:components.userSearch.grid.usertype.internalAdmin}" />
+											<t:parameter name="else">
+												<img src="${asset:context:images/icons/usertype-internalsimple.png}"
+													alt="${message:components.userSearch.grid.usertype.internalSimple}"
+													title="${message:components.userSearch.grid.usertype.internalSimple}" />
+											</t:parameter>
+										</t:if>
+									</t:parameter>
+								</t:if>
+						</t:parameter>
+					</t:if>
+			</t:parameter>
+
+			<t:parameter name="mailCell">
+				<div>
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${showUserTooltip}" context="user.mail">
+						<span  onclick="userDetailsWindow.showCenter(true);">${user.firstName} ${user.lastName}</span>
+					</t:actionlink>
+					<br/>
+					<span class="emailAddress">
+						${user.mail},
+						<t:if test="superAdmin">
+							${user.domainIdentifier},
+						</t:if>
+						<t:if test="userGuestRestricted">
+							${message:components.userSearch.userType.RESTRICTED}<t:if test="${user.expirationDate}">,</t:if>
+						<t:parameter name="else">
+							<t:if test="userGuest">
+								${message:UserType.GUEST}<t:if test="${user.expirationDate}">,</t:if>
+							</t:if>
+						</t:parameter>
+						</t:if>
+						<t:if test="userGuest" negate="true">
+							${message:UserType.INTERNAL}<t:if test="${user.expirationDate}">,</t:if>
+						</t:if>
+					</span>${message:global.space}
+					<span class="expirationDate">
+						<t:if test="${user.expirationDate}">
+							${message:components.userSearch.grid.expires} ${formattedUserExpiryDate}<t:if test="${userCommentExtract}">,</t:if>
+						</t:if>
+					</span>${message:global.space}
+					<span class="userComment">
+						<t:if test="${userCommentExtract}">
+							${userCommentExtract}
+						</t:if>
+					</span>
+				</div>
+			</t:parameter>
+
+			<t:parameter name="actionCell">
+				<t:if test="userAbleToAddToThread">
+                    <t:actionLink t:id="add" context="user.login" t:zone="userAddToThreadFormZone"
+                        title="${message:components.userSearch.action.userAddToThread.title}">
+                        <span onClick="userAddToThreadWindow.showCenter(true)">
+                            <img src="${asset:context:images/icons/add-member.png}" alt="${message:global.button.add}"/>
+                        </span>
+                    </t:actionLink>
+				</t:if>
+				<t:if test="userDomainMovable">
+					<t:actionLink t:id="domainMove" context="user.login" t:zone="zoneDomainFormMove"
+						title="${message:components.userSearch.action.domainMove.title}">
+						<span onclick="zoneDomainMoveWindow.showCenter(true)">
+							<img src="${asset:context:images/icons/update.png}" alt="${message:components.userSearch.action.domainMove.title}" />
+						</span>
+					</t:actionLink>
+				</t:if>
+				<t:if test="userEditable">
+					<t:actionLink t:id="edit" context="user.login" t:zone="userEditFormZone"
+						title="${message:components.userSearch.action.edit.title}">
+						<span onclick="userEditWindow.showCenter(true)">
+							<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
+						</span>
+					</t:actionLink>
+				</t:if>
+				<t:if test="userDeletable">
+					<t:actionLink t:id="delete" context="user.login" t:zone="zoneConfirmDelete"
+						title="${message:components.userSearch.action.delete.title}">
+						<span onclick="window_confirm.showCenter(true)">
+							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+						</span>
+					</t:actionLink>
+				</t:if>
+			</t:parameter>
+
+			<t:parameter name="selectedValueCell">
+				<t:checkbox t:id="selected" onclick="countUserCheckbox();"/>
+			</t:parameter>
+
+		</t:grid>
+
+		<t:if test="users">
+			<t:if test="users.empty" negate="true">
+				<div id="actionListUser" style="display:none">
+					<t:eventLink t:event="share" class="listDocument" title="${message:components.userSearch.action.share}">
+					<img src="${asset:context:images/icons/share-on.png}" alt="" /> ${message:components.userSearch.action.share}</t:eventLink>
+				</div>
+			</t:if>
+		</t:if>
+
+	</t:form>
+
+	</div><!-- id="list" -->
+
+
+	<!-- Popups -->
+
+    <t:confirmPopup t:messageLabel="${message:components.userSearch.action.delete.ask}" t:eventName="userDeleteEvent" />
+
+    <div style="display:none">
+        <t:zone t:id="userAddToThreadTemplateZone">
+            <t:userAddToThreadForm threads="threads" newMemberList="userAddToThreadList"/>
+        </t:zone>
+    </div>
+
+    <div t:id="userAddToThreadWindow">
+        <t:zone id="userAddToThreadFormZone" update="show">
+            <t:userAddToThreadForm threads="threads" newMemberList="userAddToThreadList"/>
+        </t:zone>
+    </div>
+
+    <t:zone t:id="zoneConfirmDelete" />
+
+    <t:userDetailsDisplayer/>
+
+    <div style="display:none">
+        <t:zone t:id="userEditTemplateZone">
+            <t:userEditForm users="users" editUserWithMail="selectedLogin"/>
+        </t:zone>
+    </div>
+
+    <div t:id="userEditWindow">
+        <t:zone id="userEditFormZone" update="show"/>
+    </div>
+
+    <div t:id="zoneDomainMoveWindow">
+        <t:zone t:id="zoneDomainFormMove" update="show">
+            <h2>${message:components.userSearch.action.domainMove.info}</h2>
+            <t:form t:id="updateDomain">
+					<t:select t:id="domainSelect" t:value="selectedDomain" t:model="domains" t:encoder="valueEncoder" blankOption="never" />
+					<t:submit value="${message:global.button.validate}"/>
+			</t:form>
+        </t:zone>
+    </div>
+
+</t:container>

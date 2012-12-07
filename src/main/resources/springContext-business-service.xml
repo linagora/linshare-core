@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="    
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+	default-autowire="no">
+
+
+	<bean id="documentEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.DocumentEntryBusinessServiceImpl">
+		<constructor-arg ref="jackRabbitRepository" />
+		<constructor-arg ref="timeStampingService" />
+		<constructor-arg ref="documentEntryRepository" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="signatureBusinessService" />
+		<constructor-arg ref="accountRepository" />
+		<constructor-arg ref="threadEntryRepository" />
+		<constructor-arg ref="tagBusinessService" />
+	</bean>
+
+
+	<bean id="shareEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.ShareEntryBusinessServiceImpl">
+		<constructor-arg ref="shareEntryRepository" />
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="documentEntryRepository" />
+	</bean>
+
+
+	<bean id="anonymousShareEntryBusinessService" class="org.linagora.linshare.core.business.service.impl.AnonymousShareEntryBusinessServiceImpl">
+		<constructor-arg ref="anonymousShareEntryRepository" />
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="documentEntryRepository" />
+		<constructor-arg ref="contactRepository" />
+		<constructor-arg ref="anonymousUrlBusinessService" />
+	</bean>
+
+
+	<bean id="anonymousUrlBusinessService" class="org.linagora.linshare.core.business.service.impl.AnonymousUrlBusinessServiceImpl">
+		<constructor-arg ref="anonymousUrlRepository" />
+		<constructor-arg value="download" />
+		<constructor-arg ref="passwordService" />
+	</bean>
+
+
+	<bean id="signatureBusinessService" class="org.linagora.linshare.core.business.service.impl.SignatureBusinessServiceImpl">
+		<constructor-arg ref="jackRabbitRepository" />
+		<constructor-arg ref="signatureRepository" />
+		<constructor-arg ref="documentRepository" />
+		<constructor-arg ref="accountRepository" />
+	</bean>
+	
+	<bean id="tagBusinessService" class="org.linagora.linshare.core.business.service.impl.TagBusinessServiceImpl">
+		<constructor-arg ref="tagRepository" />
+		<constructor-arg ref="threadEntryRepository" />
+		<constructor-arg ref="entryTagAssociationRepository"/>
+	</bean>
+
+</beans>

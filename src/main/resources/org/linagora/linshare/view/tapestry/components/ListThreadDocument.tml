@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+    xmlns:p="tapestry:parameter">
+
+	<t:block id="comment">
+		This zone is used to contains the destination of the submit; to prevent a full page reloading
+	</t:block>
+	<t:zone t:id="zoneTest"/>
+
+	<div id="list">
+
+		<h3>${title}</h3>
+
+        <t:form t:id="search">
+
+            <t:grid source="listThreadEntries" row="threadEntry" model="model"
+                exclude="fileName, ownerLogin, encrypted, identifier, size, type, shared, shareActive, fileComment, downloaded, actions, creationDate, expirationDate"
+                rowsPerPage="10">
+
+                <!-- Header definition -->
+
+                <p:empty>
+                    ${message:components.listThreadDocument.grid.empty}
+                </p:empty>
+
+                <p:filePropertiesHeader>
+                    ${message:components.listThreadDocument.grid.filePropertiesHeader}
+                </p:filePropertiesHeader>
+
+                <p:fileDeleteHeader>
+                    ${message:components.listThreadDocument.delete}
+                </p:fileDeleteHeader>
+
+
+                <!-- Selected cell definition -->
+
+                <p:filePropertiesCell>
+                    <div class="fileProperties">
+                        <t:actionLink t:id="download" t:context="${threadEntry.identifier}" t:type="${threadEntry.type}" class="fileName ${typeCSSClass}">
+                            <t:if t:test="${thumbnailExists}">
+                                <div t:type="chenillekit/Tooltip" title="${threadEntry.fileName}" value="&lt;img src=&quot;${thumbnailPath}&quot; /&gt;">
+                                    ${threadEntry.fileName}
+                                </div>
+                                <t:parameter name="else">
+                                    <div t:type="chenillekit/Tooltip" title="${threadEntry.fileName}" value="${message:components.listDocument.noThumb}">
+                                        ${threadEntry.fileName}
+                                    </div>
+                                </t:parameter>
+                            </t:if>
+                        </t:actionLink>
+                        <br/>
+                        <t:if t:test="${threadEntry.fileComment}">
+                            <div t:type="ck/Tooltip" title="${message:components.listDocument.picture.tooltip.title}" value="${formattedComment}">
+                            <img src="${asset:context:images/icons/pin.png}" />
+                            </div>
+                        </t:if>
+                        <span class="friendlySize">${friendlySize},</span>${message:global.space}
+                        <span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
+                    </div>
+                </p:filePropertiesCell>
+
+                <p:fileDeleteCell>
+                    <t:if test="deletable">
+                        <t:actionLink t:id="delete" context="${threadEntry.identifier}" t:zone="zoneConfirmDelete"
+                            title="${message:components.listThreadDocument.delete.title}">
+                            <span onclick="window_confirm.showCenter(true)">
+                                <img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+                            </span>
+                        </t:actionLink>
+                    </t:if>
+                </p:fileDeleteCell>
+            </t:grid>
+        </t:form>
+
+	</div><!-- id="list" -->
+
+
+	<!-- Popups -->
+
+    <t:zone t:id="zoneConfirmDelete" />
+
+    <t:confirmPopup
+        t:messageLabel="${message:components.userSearch.action.delete.ask}"
+        t:eventName="eventDeleteThreadEntry" />
+
+</t:container>

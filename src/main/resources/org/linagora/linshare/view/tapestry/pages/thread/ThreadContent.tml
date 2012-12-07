@@ -1,0 +1,85 @@
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
+
+    <!-- Main content -->
+
+    <div id="content">
+        <h1>${message:pages.thread.tree.title} : ${threadName}</h1>
+
+        <t:messagePanel />
+        <t:businessMessagesDisplayer />
+
+        <!-- Action bar -->
+
+        <div id="actionBar">
+            <h4>Actions</h4>
+            <ul>
+                <t:if test="canUpload">
+                    <li>
+                        <a href="#" class="button" onclick="threadFileUploadWindow.showCenter(true);">
+                            <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/> ${message:pages.thread.upload.addbutton}</span>
+                        </a>
+                    </li>
+                </t:if>
+                <t:if test="admin">
+                    <li>
+                        <t:actionLink t:id="admin" class="button" title="${message:pages.thread.admin.title}">
+                            <span><img src="${asset:context:images/icons/edit-small.png}" alt="" /> ${message:pages.thread.admin.title}</span>
+                        </t:actionLink>
+                    </li>
+                </t:if>
+            </ul>
+        </div><!-- id="actionBar" -->
+
+        <!-- Page content -->
+
+        <div id="pageContent">
+            <t:delegate to="case" />
+
+            <t:block id="case0">
+                <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${threadName}" />
+                <br />
+            </t:block>
+
+            <t:block id="case1">
+                <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
+                <br />
+            </t:block>
+
+            <t:block id="case2">
+                <t:loop source="leaves" value="currentLeaf">
+                    <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
+                    <br />
+                </t:loop>
+            </t:block>
+
+            <t:block id="case3">
+                <t:loop source="children" value="currentChild">
+                    <div t:type="ck/SlidingPanel" t:id="currentChild" t:closed="true" t:subject="${currentChildSubject}" t:options="{duration:0.3}">
+                        <t:loop source="leaves" value="currentLeaf">
+                            <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
+                            <br />
+                        </t:loop>
+                    </div>
+                </t:loop>
+            </t:block>
+        </div>
+
+    </div><!-- id="content" -->
+
+    <!-- Popups -->
+
+    <!-- Thread File Upload popup -->
+    <t:threadFileUploadPopup t:eventName="threadFileUploadPopupEvent" />
+
+    <!-- Widgets -->
+
+    <!-- Members widget -->
+    <t:parameter name="membersWidget">
+        <t:widget widgetId="membersWidget" title="${message:components.widget.membersWidget.title}">
+            <t:threadMembersComponent t:user="userVo" t:thread="selectedThread" />
+        </t:widget>
+    </t:parameter>
+
+</t:MyBorderLayout>

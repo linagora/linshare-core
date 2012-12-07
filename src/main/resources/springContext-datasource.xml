@@ -22,9 +22,11 @@
                 <prop key="hibernate.hbm2ddl.auto">${linshare.db.hbm2ddl.auto}</prop>
             </props>
         </property>
+        <!-- 
         <property name="namingStrategy">
-			<bean id="namingStrategy" class="org.linagora.linShare.core.repository.hibernate.LinShareNamingStrategy"/>
+			<bean id="namingStrategy" class="org.linagora.linshare.core.repository.hibernate.LinShareNamingStrategy"/>
 		</property>
+         -->
     </bean>
 
     
@@ -42,8 +44,8 @@
 		<property name="validationQuery" value="SELECT 1"/>
 		<property name="testOnBorrow" value="true"/>
         <property name="timeBetweenEvictionRunsMillis" value="${linshare.db.pool.timebetweenevictionrunsmillis}" />
+<!-- 		<property name="connectionProperties" value="ssl=true;sslfactory=org.postgresql.ssl.NonValidatingFactory;"/> -->
     </bean>
-    
     
 
     <bean name="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">

@@ -1,1185 +1,630 @@
-
-
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 SET default_with_oids = false;
 
--- other options : could be useful for some case
--- SET standard_conforming_strings = off;
--- SET check_function_bodies = false;
 
--- SET escape_string_warning = off;
-
-
-
-CREATE SEQUENCE hibernate_sequence
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-CREATE TABLE linshare_version
-(
-  id bigint NOT NULL,
-  description text NOT NULL
+CREATE SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE START WITH 1 CACHE 1;
+CREATE TABLE account (
+  id                               int8 NOT NULL, 
+  domain_id                       int8 NOT NULL, 
+  technical_account_permission_id int8, 
+  owner_id                        int8, 
+  ls_uuid                         varchar(255) NOT NULL, 
+  creation_date                   timestamp(6) NOT NULL, 
+  modification_date               timestamp(6) NOT NULL, 
+  role_id                         int4 NOT NULL, 
+  locale                          varchar(255) NOT NULL, 
+  external_mail_locale            varchar(255) NOT NULL, 
+  enable                          bool NOT NULL, 
+  account_type                    int4 NOT NULL, 
+  password                        varchar(255), 
+  destroyed                       bool NOT NULL, 
+  CONSTRAINT account_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE allowed_mimetype (
+  id          int8 NOT NULL, 
+  extensions varchar(255), 
+  mimetype   varchar(255), 
+  status     int4, 
+  CONSTRAINT linshare_allowed_mimetype_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE anonymous_share_entry (
+  entry_id          int8 NOT NULL, 
+  downloaded        int8 NOT NULL, 
+  document_entry_id int8 NOT NULL, 
+  anonymous_url_id  int8 NOT NULL, 
+  PRIMARY KEY (entry_id));
+CREATE TABLE cookie (
+  cookie_id   int8 NOT NULL, 
+  identifier varchar(255) NOT NULL, 
+  user_name  varchar(255) NOT NULL, 
+  value      varchar(255) NOT NULL, 
+  last_use   timestamp(6) NOT NULL, 
+  CONSTRAINT linshare_cookie_pkey 
+    PRIMARY KEY (cookie_id));
+CREATE TABLE document (
+  id             int8 NOT NULL, 
+  uuid          varchar(255) NOT NULL UNIQUE, 
+  creation_date timestamp(6) NOT NULL, 
+  type          varchar(255) NOT NULL, 
+  size          int8 NOT NULL, 
+  thmb_uuid     varchar(255), 
+  timestamp     bytea, 
+  CONSTRAINT linshare_document_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE document_entry (
+  entry_id    int8 NOT NULL, 
+  document_id int8 NOT NULL, 
+  ciphered    bool NOT NULL, 
+  PRIMARY KEY (entry_id), 
+  CONSTRAINT "unique document entry" 
+    UNIQUE (entry_id, document_id));
+CREATE TABLE domain_abstract (
+  id                         int8 NOT NULL, 
+  type                      int4 NOT NULL, 
+  identifier                varchar(255) NOT NULL, 
+  label                     varchar(255) NOT NULL, 
+  enable                    bool NOT NULL, 
+  template                  bool NOT NULL, 
+  description               text NOT NULL, 
+  default_role              int4 NOT NULL, 
+  default_locale            varchar(255), 
+  used_space                int8 NOT NULL, 
+  user_provider_id          int8, 
+  domain_policy_id          int8 NOT NULL, 
+  parent_id                 int8, 
+  messages_configuration_id int8 NOT NULL, 
+  auth_show_order           int8 NOT NULL, 
+  CONSTRAINT linshare_domain_abstract_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE domain_access_policy (
+  id  int8 NOT NULL, 
+  CONSTRAINT linshare_domain_access_policy_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE domain_access_rule (
+  id                       int8 NOT NULL, 
+  domain_access_rule_type int4 NOT NULL, 
+  regexp                  varchar(255), 
+  domain_id               int8, 
+  domain_access_policy_id int8 NOT NULL, 
+  rule_index              int4, 
+  CONSTRAINT linshare_domain_access_rule_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE domain_pattern (
+  domain_pattern_id      int8 NOT NULL, 
+  identifier            varchar(255) NOT NULL, 
+  description           text NOT NULL, 
+  auth_command          text NOT NULL, 
+  search_user_command   text NOT NULL, 
+  system                bool NOT NULL, 
+  auto_complete_command text NOT NULL, 
+  CONSTRAINT linshare_domain_pattern_pkey 
+    PRIMARY KEY (domain_pattern_id));
+CREATE TABLE domain_policy (
+  id                       int8 NOT NULL, 
+  description             text, 
+  identifier              varchar(255), 
+  domain_access_policy_id int8, 
+  CONSTRAINT linshare_domain_policy_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE entry (
+  id                int8 NOT NULL, 
+  owner_id          int8 NOT NULL, 
+  creation_date     timestamp(6) NOT NULL, 
+  modification_date timestamp(6) NOT NULL, 
+  name              varchar(255) NOT NULL, 
+  comment           text NOT NULL, 
+  expiration_date   timestamp(6), 
+  uuid              varchar(255) NOT NULL UNIQUE, 
+  PRIMARY KEY (id));
+CREATE TABLE functionality (
+  id                       int8 NOT NULL, 
+  system                  bool NOT NULL, 
+  identifier              varchar(255) NOT NULL, 
+  policy_activation_id    int8, 
+  policy_configuration_id int8, 
+  domain_id               int8 NOT NULL, 
+  CONSTRAINT linshare_functionality_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE functionality_integer (
+  functionality_id int8 NOT NULL, 
+  integer_value    int4, 
+  CONSTRAINT linshare_functionality_integer_pkey 
+    PRIMARY KEY (functionality_id));
+CREATE TABLE functionality_range_unit (
+  functionality_id int8 NOT NULL, 
+  min              int4 NOT NULL, 
+  max              int4 NOT NULL, 
+  unit_min_id      int8 NOT NULL, 
+  unit_max_id      int8 NOT NULL, 
+  CONSTRAINT linshare_functionality_range_unit_pkey 
+    PRIMARY KEY (functionality_id));
+CREATE TABLE functionality_string (
+  functionality_id int8 NOT NULL, 
+  string_value     varchar(255), 
+  CONSTRAINT linshare_functionality_string_pkey 
+    PRIMARY KEY (functionality_id));
+CREATE TABLE functionality_unit (
+  functionality_id int8 NOT NULL, 
+  integer_value    int4, 
+  unit_id          int8, 
+  CONSTRAINT linshare_functionality_unit_pkey 
+    PRIMARY KEY (functionality_id));
+CREATE TABLE functionality_unit_boolean (
+  functionality_id int8 NOT NULL, 
+  integer_value    int4 NOT NULL, 
+  boolean_value    bool NOT NULL, 
+  unit_id          int8 NOT NULL, 
+  CONSTRAINT linshare_functionality_unit_boolean_pkey 
+    PRIMARY KEY (functionality_id));
+CREATE TABLE ldap_connection (
+  ldap_connection_id    int8 NOT NULL, 
+  identifier           varchar(255) NOT NULL, 
+  provider_url         varchar(255) NOT NULL, 
+  security_auth        varchar(255), 
+  security_principal   varchar(255), 
+  security_credentials varchar(255), 
+  CONSTRAINT linshare_ldap_connection_pkey 
+    PRIMARY KEY (ldap_connection_id));
+CREATE TABLE log_entry (
+  id                int8 NOT NULL, 
+  entry_type       varchar(255) NOT NULL, 
+  action_date      timestamp(6) NOT NULL, 
+  actor_mail       varchar(255) NOT NULL, 
+  actor_firstname  varchar(255) NOT NULL, 
+  actor_lastname   varchar(255) NOT NULL, 
+  actor_domain     varchar(255), 
+  log_action       varchar(255) NOT NULL, 
+  description      text, 
+  file_name        varchar(255), 
+  file_type        varchar(255), 
+  file_size        int8, 
+  target_mail      varchar(255), 
+  target_firstname varchar(255), 
+  target_lastname  varchar(255), 
+  target_domain    varchar(255), 
+  expiration_date  timestamp(6), 
+  CONSTRAINT linshare_log_entry_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE mail_subjects (
+  messages_configuration_id int8 NOT NULL, 
+  subject_id                int4 NOT NULL, 
+  language_id               int4 NOT NULL, 
+  content                   text
 );
-
-
-CREATE TABLE linshare_allowed_contact (
-    id bigint NOT NULL,
-    user_id bigint,
-    contact_id bigint
+CREATE TABLE mail_templates (
+  messages_configuration_id int8 NOT NULL, 
+  template_id               int4 NOT NULL, 
+  language_id               int4 NOT NULL, 
+  content_html              text, 
+  content_txt               text
+); 
+CREATE TABLE messages_configuration (
+  messages_configuration_id  int8 NOT NULL, 
+  CONSTRAINT linshare_messages_configuration_pkey 
+    PRIMARY KEY (messages_configuration_id));
+CREATE TABLE policy (
+  id              int8 NOT NULL, 
+  status         bool NOT NULL, 
+  default_status bool NOT NULL, 
+  policy         int4 NOT NULL, 
+  system         bool NOT NULL, 
+  CONSTRAINT linshare_policy_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE recipient_favourite (
+  id              int8 NOT NULL, 
+  recipient_mail varchar(255) NOT NULL, 
+  weight         int8 NOT NULL, 
+  user_id        int8 NOT NULL, 
+  CONSTRAINT linshare_recipient_favourite_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE anonymous_url (
+  id         int8 NOT NULL, 
+  url_path   varchar(255) NOT NULL, 
+  uuid       varchar(255) NOT NULL UNIQUE, 
+  password   varchar(255), 
+  contact_id int8 NOT NULL, 
+  CONSTRAINT linshare_secured_url_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE share_entry (
+  entry_id          int8 NOT NULL, 
+  document_entry_id int8 NOT NULL, 
+  downloaded        int8 NOT NULL, 
+  recipient_id      int8 NOT NULL, 
+  PRIMARY KEY (entry_id));
+CREATE TABLE share_expiry_rules (
+  domain_id       int8 NOT NULL, 
+  expiry_time     int4, 
+  time_unit_id    int4, 
+  share_size      int4, 
+  size_unit_id    int4, 
+  rule_sort_order int4 NOT NULL, 
+  CONSTRAINT linshare_share_expiry_rules_pkey 
+    PRIMARY KEY (domain_id, 
+  rule_sort_order));
+CREATE TABLE signature (
+  id                 int8 NOT NULL, 
+  owner_id          int8, 
+  document_id       int8 NOT NULL, 
+  uuid              varchar(255) NOT NULL UNIQUE, 
+  name              varchar(255) NOT NULL, 
+  creation_date     timestamp(6) NOT NULL, 
+  modification_date timestamp(6) NOT NULL, 
+  type              varchar(255), 
+  size              int8, 
+  cert_subject_dn   varchar(255), 
+  cert_issuer_dn    varchar(255), 
+  cert_not_after    timestamp(6), 
+  cert              text, 
+  sort_order        int4, 
+  CONSTRAINT linshare_signature_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE ldap_attribute (
+  id                 int8 NOT NULL, 
+  domain_pattern_id int8, 
+  field             varchar(255) NOT NULL, 
+  attribute         varchar(255) NOT NULL, 
+  sync              bool NOT NULL, 
+  system            bool NOT NULL, 
+  enable            bool NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE tag (
+  id          int8 NOT NULL, 
+  account_id int8 NOT NULL, 
+  name       varchar(255) NOT NULL, 
+  system     bool DEFAULT 'false' NOT NULL, 
+  visible    bool DEFAULT 'true' NOT NULL, 
+  not_null   bool, 
+  tag_type   int4 NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE tag_enum_value (
+  id      int8 NOT NULL, 
+  tag_id int8, 
+  value  varchar(255) NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE tag_filter (
+  id          int8 NOT NULL, 
+  account_id int8, 
+  name       varchar(255) NOT NULL, 
+  PRIMARY KEY (id), 
+  CONSTRAINT unique_rulename_by_account 
+    UNIQUE (name, account_id));
+CREATE TABLE tag_filter_rule (
+  id             int8 NOT NULL, 
+  tag_filter_id int8, 
+  regexp        text, 
+  tag_rule_type int4 NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE thread (
+  name           varchar(255) NOT NULL, 
+  account_id     int8 NOT NULL, 
+  thread_view_id int8, 
+  PRIMARY KEY (account_id));
+CREATE TABLE thread_entry (
+  entry_id    int8 NOT NULL, 
+  document_id int8 NOT NULL, 
+  ciphered    bool NOT NULL, 
+  PRIMARY KEY (entry_id), 
+  CONSTRAINT "unique thread entry" 
+    UNIQUE (entry_id, document_id));
+CREATE TABLE thread_member (
+  id                 int8 NOT NULL, 
+  thread_id         int8 NOT NULL, 
+  admin             bool NOT NULL, 
+  can_upload        bool NOT NULL, 
+  creation_date     timestamp(6) NOT NULL, 
+  modification_date timestamp(6) NOT NULL, 
+  user_id           int8 NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE thread_member_history (
+  id              int8 NOT NULL, 
+  creation_date  timestamp(6) NOT NULL, 
+  operation_type int4 NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE unit (
+  id          int8 NOT NULL, 
+  unit_type  int4 NOT NULL, 
+  unit_value int4 NOT NULL, 
+  CONSTRAINT linshare_unit_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE users (
+  account_id            int8 NOT NULL, 
+  first_name            varchar(255), 
+  last_name             varchar(255), 
+  mail                  varchar(255), 
+  encipherment_key_pass bytea, 
+  not_after             timestamp(6), 
+  not_before            timestamp(6), 
+  can_upload            bool NOT NULL, 
+  comment               text, 
+  restricted            bool NOT NULL, 
+  expiration_date       timestamp, 
+  ldap_uid              varchar(255), 
+  can_create_guest      bool NOT NULL, 
+  CONSTRAINT user_pkey 
+    PRIMARY KEY (account_id));
+CREATE TABLE user_provider_ldap (
+  id                 int8 NOT NULL, 
+  differential_key   varchar(255) NOT NULL, 
+  domain_pattern_id  int8 NOT NULL, 
+  ldap_connection_id int8 NOT NULL, 
+  CONSTRAINT linshare_user_provider_ldap_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE version (
+  id           int8 NOT NULL, 
+  description text NOT NULL, 
+  CONSTRAINT linshare_allowed_contact_pkey 
+    PRIMARY KEY (id));
+CREATE TABLE views (
+  id               int8 NOT NULL, 
+  account_id      int8 NOT NULL, 
+  view_context_id int8 NOT NULL, 
+  name            varchar(255) NOT NULL, 
+  _public         bool NOT NULL, 
+  PRIMARY KEY (id), 
+  CONSTRAINT unique_viewname_by_account_and_context 
+    UNIQUE (view_context_id, name, account_id));
+CREATE TABLE view_context (
+  id           int8 NOT NULL, 
+  name        varchar(255) NOT NULL, 
+  description text NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE welcome_texts (
+  messages_configuration_id int8 NOT NULL, 
+  welcome_text              text, 
+  language_id               int4
 );
-
-
-
-CREATE TABLE linshare_allowed_mimetype (
-    id bigint NOT NULL,
-    extensions character varying(255),
-    mimetype character varying(255),
-    status integer
-);
-
-
-
-CREATE TABLE linshare_contact (
-    contact_id bigint NOT NULL,
-    mail character varying(255) NOT NULL
-);
-
-
-
-CREATE TABLE linshare_cookie (
-    cookie_id bigint NOT NULL,
-    identifier character varying(255) NOT NULL,
-    user_name character varying(255) NOT NULL,
-    value character varying(255) NOT NULL,
-    last_use timestamp without time zone NOT NULL
-);
-
-
-
-CREATE TABLE linshare_document (
-    document_id bigint NOT NULL,
-    identifier character varying(255) NOT NULL,
-    name character varying(255) NOT NULL,
-    creation_date timestamp without time zone NOT NULL,
-    expiration_date timestamp without time zone NOT NULL,
-    deletion_date timestamp without time zone,
-    type character varying(255),
-    encrypted boolean,
-    shared boolean,
-    shared_with_group boolean,
-    size bigint,
-    file_comment text,
-    thmb_uuid character varying(255),
-    "timestamp" bytea,
-    owner_id bigint
-);
-
-
-
-CREATE TABLE linshare_domain_abstract (
-    id bigint NOT NULL,
-    type integer NOT NULL,
-    identifier character varying(255) NOT NULL,
-    label character varying(255) NOT NULL,
-    enable boolean NOT NULL,
-    template boolean NOT NULL,
-    description text,
-    default_role integer,
-    default_locale character varying(255),
-    used_space bigint NOT NULL,
-    user_provider_id bigint,
-    domain_policy_id bigint NOT NULL,
-    parent_id bigint,
-    auth_show_order bigint,
-    messages_configuration_id bigint
-);
-
-
-
-CREATE TABLE linshare_domain_access_policy (
-    id bigint NOT NULL
-);
-
-
-
-CREATE TABLE linshare_domain_access_rule (
-    id bigint NOT NULL,
-    domain_access_rule_type integer NOT NULL,
-    regexp character varying(255),
-    domain_id bigint,
-    domain_access_policy_id bigint NOT NULL,
-    rule_index integer
-);
-
-
-
-CREATE TABLE linshare_domain_pattern (
-    domain_pattern_id bigint NOT NULL,
-    identifier character varying(255) NOT NULL,
-    description text,
-    get_user_command text,
-    get_all_domain_users_command text,
-    auth_command text,
-    search_user_command text,
-    user_mail character varying(255),
-    user_firstname character varying(255),
-    user_lastname character varying(255)
-);
-
-
-
-CREATE TABLE linshare_domain_policy (
-    id bigint NOT NULL,
-    description text,
-    identifier character varying(255),
-    domain_access_policy_id bigint
-);
-
-
-
-CREATE TABLE linshare_functionality (
-    id bigint NOT NULL,
-    system boolean NOT NULL,
-    identifier character varying(255) NOT NULL,
-    policy_activation_id bigint,
-    policy_configuration_id bigint,
-    domain_id bigint NOT NULL
-);
-
-
-
-CREATE TABLE linshare_functionality_integer (
-    functionality_id bigint NOT NULL,
-    integer_value integer
-);
-
-
-
-CREATE TABLE linshare_functionality_range_unit (
-    functionality_id bigint NOT NULL,
-    min integer,
-    max integer,
-    unit_min_id bigint,
-    unit_max_id bigint
-);
-
-
-
-CREATE TABLE linshare_functionality_string (
-    functionality_id bigint NOT NULL,
-    string_value character varying(255)
-);
-
-
-
-CREATE TABLE linshare_functionality_unit (
-    functionality_id bigint NOT NULL,
-    integer_value integer,
-    unit_id bigint
-);
-
-CREATE TABLE linshare_functionality_unit_boolean (
-    functionality_id bigint NOT NULL,
-    integer_value integer,
-    boolean_value boolean,
-    unit_id bigint
-);
-
-
-
-CREATE TABLE linshare_group (
-    group_id bigint NOT NULL,
-    name character varying(255) NOT NULL,
-    group_user_id bigint NOT NULL,
-    functional_email character varying(255),
-    description text
-);
-
-
-
-CREATE TABLE linshare_group_members (
-    group_id bigint NOT NULL,
-    member_type_id integer,
-    membership_date timestamp without time zone NOT NULL,
-    user_id bigint,
-    owner_id bigint
-);
-
-
-
-CREATE TABLE linshare_ldap_connection (
-    ldap_connection_id bigint NOT NULL,
-    identifier character varying(255) NOT NULL,
-    provider_url character varying(255),
-    security_auth character varying(255),
-    security_principal character varying(255),
-    security_credentials character varying(255)
-);
-
-
-
-CREATE TABLE linshare_log_entry (
-    id bigint NOT NULL,
-    entry_type character varying(255) NOT NULL,
-    action_date timestamp without time zone NOT NULL,
-    actor_mail character varying(255) NOT NULL,
-    actor_firstname character varying(255) NOT NULL,
-    actor_lastname character varying(255) NOT NULL,
-    actor_domain character varying(255),
-    log_action character varying(255) NOT NULL,
-    description text,
-    file_name character varying(255),
-    file_type character varying(255),
-    file_size bigint,
-    target_mail character varying(255),
-    target_firstname character varying(255),
-    target_lastname character varying(255),
-    target_domain character varying(255),
-    expiration_date timestamp without time zone
-);
-
-
-
-CREATE TABLE linshare_mail_subjects (
-    messages_configuration_id bigint NOT NULL,
-    subject_id integer NOT NULL,
-    language_id integer NOT NULL,
-    content text
-);
-
-
-
-CREATE TABLE linshare_mail_templates (
-    messages_configuration_id bigint NOT NULL,
-    template_id integer NOT NULL,
-    language_id integer NOT NULL,
-    content_html text,
-    content_txt text
-);
-
-
-
-CREATE TABLE linshare_messages_configuration (
-    messages_configuration_id bigint NOT NULL
-);
-
-
-
-CREATE TABLE linshare_policy (
-    id bigint NOT NULL,
-    status boolean NOT NULL,
-    default_status boolean NOT NULL,
-    policy integer NOT NULL,
-    system boolean NOT NULL
-);
-
-
-
-CREATE TABLE linshare_recipient_favourite (
-    id bigint NOT NULL,
-    user_id bigint,
-    recipient character varying(255),
-    weight bigint
-);
-
-
-
-CREATE TABLE linshare_secured_url (
-    secured_url_id bigint NOT NULL,
-    url_path character varying(255) NOT NULL,
-    alea character varying(255) NOT NULL,
-    expiration_date timestamp without time zone NOT NULL,
-    password character varying(255),
-    sender_id bigint
-);
-
-
-
-CREATE TABLE linshare_secured_url_documents (
-    secured_url_id bigint NOT NULL,
-    elt bigint NOT NULL,
-    document_index integer NOT NULL
-);
-
-
-
-CREATE TABLE linshare_secured_url_recipients (
-    contact_id bigint NOT NULL,
-    elt bigint NOT NULL,
-    contact_index integer NOT NULL
-);
-
-
-
-CREATE TABLE linshare_share (
-    share_id bigint NOT NULL,
-    document_id bigint,
-    sender_id bigint,
-    recipient_id bigint,
-    expiration_date timestamp without time zone,
-    sharing_date timestamp without time zone,
-    share_active boolean,
-    downloaded boolean,
-    comment text
-);
-
-
-
-CREATE TABLE linshare_share_expiry_rules (
-    domain_id bigint NOT NULL,
-    expiry_time integer,
-    time_unit_id integer,
-    share_size integer,
-    size_unit_id integer,
-    rule_sort_order integer NOT NULL
-);
-
-
-
-CREATE TABLE linshare_signature (
-    signature_id bigint NOT NULL,
-    identifier character varying(255) NOT NULL,
-    name character varying(255) NOT NULL,
-    creation_date timestamp without time zone NOT NULL,
-    type character varying(255),
-    size bigint,
-    cert_subjectdn character varying(255),
-    cert_issuerdn character varying(255),
-    cert_notafter timestamp without time zone,
-    cert text,
-    signer_id bigint,
-    document_id_fk bigint,
-    sort_order integer
-);
-
-
-
-CREATE TABLE linshare_unit (
-    id bigint NOT NULL,
-    unit_type integer NOT NULL,
-    unit_value integer
-);
-
-
-
-CREATE TABLE linshare_user (
-    user_id bigint NOT NULL,
-    user_type_id character varying(255) NOT NULL,
-    login character varying(255) NOT NULL,
-    first_name character varying(255) NOT NULL,
-    last_name character varying(255) NOT NULL,
-    encipherment_key_pass bytea,
-    mail character varying(255) NOT NULL,
-    creation_date timestamp without time zone,
-    role_id integer NOT NULL,
-    can_upload boolean,
-    can_create_guest boolean,
-    password character varying(255),
-    locale character varying(255),
-    domain_id bigint,
-    expiry_date timestamp without time zone,
-    comment text,
-    restricted boolean,
-    owner_id bigint
-);
-
-
-
-CREATE TABLE linshare_user_provider_ldap (
-    id bigint NOT NULL,
-    differential_key character varying(255),
-    domain_pattern_id bigint NOT NULL,
-    ldap_connection_id bigint NOT NULL
-);
-
-
-
-CREATE TABLE linshare_welcome_texts (
-    messages_configuration_id bigint NOT NULL,
-    welcome_text text,
-    language_id integer
-);
-
-
-
-ALTER TABLE ONLY linshare_version
-    ADD CONSTRAINT linshare_allowed_contact_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY linshare_version
-    ADD CONSTRAINT linshare_version_descrition_pkey UNIQUE (description);
-    
-
-
-ALTER TABLE ONLY linshare_allowed_contact
-    ADD CONSTRAINT linshare_version_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_allowed_mimetype
-    ADD CONSTRAINT linshare_allowed_mimetype_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_contact
-    ADD CONSTRAINT linshare_contact_pkey PRIMARY KEY (contact_id);
-
-
-
-ALTER TABLE ONLY linshare_cookie
-    ADD CONSTRAINT linshare_cookie_identifier_key UNIQUE (identifier);
-
-
-
-ALTER TABLE ONLY linshare_cookie
-    ADD CONSTRAINT linshare_cookie_pkey PRIMARY KEY (cookie_id);
-
-
-
-ALTER TABLE ONLY linshare_document
-    ADD CONSTRAINT linshare_document_identifier_key UNIQUE (identifier);
-
-
-
-ALTER TABLE ONLY linshare_document
-    ADD CONSTRAINT linshare_document_pkey PRIMARY KEY (document_id);
-
-
-
-ALTER TABLE ONLY linshare_domain_abstract
-    ADD CONSTRAINT linshare_domain_abstract_identifier_key UNIQUE (identifier);
-
-
-
-ALTER TABLE ONLY linshare_domain_abstract
-    ADD CONSTRAINT linshare_domain_abstract_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_domain_abstract
-    ADD CONSTRAINT linshare_domain_abstract_user_provider_id_key UNIQUE (user_provider_id);
-
-
-
-ALTER TABLE ONLY linshare_domain_access_policy
-    ADD CONSTRAINT linshare_domain_access_policy_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_domain_access_rule
-    ADD CONSTRAINT linshare_domain_access_rule_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_domain_pattern
-    ADD CONSTRAINT linshare_domain_pattern_identifier_key UNIQUE (identifier);
-
-
-
-ALTER TABLE ONLY linshare_domain_pattern
-    ADD CONSTRAINT linshare_domain_pattern_pkey PRIMARY KEY (domain_pattern_id);
-
-
-
-ALTER TABLE ONLY linshare_domain_policy
-    ADD CONSTRAINT linshare_domain_policy_domain_access_policy_id_key UNIQUE (domain_access_policy_id);
-
-
-
-ALTER TABLE ONLY linshare_domain_policy
-    ADD CONSTRAINT linshare_domain_policy_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_functionality
-    ADD CONSTRAINT linshare_functionality_identifier_key UNIQUE (identifier, domain_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_integer
-    ADD CONSTRAINT linshare_functionality_integer_pkey PRIMARY KEY (functionality_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality
-    ADD CONSTRAINT linshare_functionality_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_functionality
-    ADD CONSTRAINT linshare_functionality_policy_activation_id_key UNIQUE (policy_activation_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality
-    ADD CONSTRAINT linshare_functionality_policy_configuration_id_key UNIQUE (policy_configuration_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_range_unit
-    ADD CONSTRAINT linshare_functionality_range_unit_pkey PRIMARY KEY (functionality_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_range_unit
-    ADD CONSTRAINT linshare_functionality_range_unit_unit_max_id_key UNIQUE (unit_max_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_range_unit
-    ADD CONSTRAINT linshare_functionality_range_unit_unit_min_id_key UNIQUE (unit_min_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_string
-    ADD CONSTRAINT linshare_functionality_string_pkey PRIMARY KEY (functionality_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_unit
-    ADD CONSTRAINT linshare_functionality_unit_pkey PRIMARY KEY (functionality_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_unit
-    ADD CONSTRAINT linshare_functionality_unit_unit_id_key UNIQUE (unit_id);
-
-    
-    
-ALTER TABLE ONLY linshare_functionality_unit_boolean
-    ADD CONSTRAINT linshare_functionality_unit_boolean_pkey PRIMARY KEY (functionality_id);
-
-    
-    
-ALTER TABLE ONLY linshare_functionality_unit_boolean
-    ADD CONSTRAINT linshare_functionality_unit_boolean_unit_id_key UNIQUE (unit_id);
-    
-    
-
-ALTER TABLE ONLY linshare_group
-    ADD CONSTRAINT linshare_group_group_user_id_key UNIQUE (group_user_id);
-
-
-
-ALTER TABLE ONLY linshare_group_members
-    ADD CONSTRAINT linshare_group_members_pkey PRIMARY KEY (group_id, membership_date);
-
-
-
-ALTER TABLE ONLY linshare_group
-    ADD CONSTRAINT linshare_group_pkey PRIMARY KEY (group_id);
-
-
-
-ALTER TABLE ONLY linshare_ldap_connection
-    ADD CONSTRAINT linshare_ldap_connection_identifier_key UNIQUE (identifier);
-
-
-
-ALTER TABLE ONLY linshare_ldap_connection
-    ADD CONSTRAINT linshare_ldap_connection_pkey PRIMARY KEY (ldap_connection_id);
-
-
-
-ALTER TABLE ONLY linshare_log_entry
-    ADD CONSTRAINT linshare_log_entry_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_mail_subjects
-    ADD CONSTRAINT linshare_mail_subjects_pkey PRIMARY KEY (messages_configuration_id, subject_id, language_id);
-
-
-
-ALTER TABLE ONLY linshare_mail_templates
-    ADD CONSTRAINT linshare_mail_templates_pkey PRIMARY KEY (messages_configuration_id, template_id, language_id);
-
-
-
-ALTER TABLE ONLY linshare_messages_configuration
-    ADD CONSTRAINT linshare_messages_configuration_pkey PRIMARY KEY (messages_configuration_id);
-
-
-
-ALTER TABLE ONLY linshare_policy
-    ADD CONSTRAINT linshare_policy_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_recipient_favourite
-    ADD CONSTRAINT linshare_recipient_favourite_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_secured_url_documents
-    ADD CONSTRAINT linshare_secured_url_documents_pkey PRIMARY KEY (secured_url_id, document_index);
-
-
-
-ALTER TABLE ONLY linshare_secured_url
-    ADD CONSTRAINT linshare_secured_url_pkey PRIMARY KEY (secured_url_id);
-
-
-
-ALTER TABLE ONLY linshare_secured_url_recipients
-    ADD CONSTRAINT linshare_secured_url_recipients_pkey PRIMARY KEY (contact_id, contact_index);
-
-
-
-ALTER TABLE ONLY linshare_secured_url
-    ADD CONSTRAINT linshare_secured_url_url_path_key UNIQUE (url_path, alea);
-
-
-
-ALTER TABLE ONLY linshare_share_expiry_rules
-    ADD CONSTRAINT linshare_share_expiry_rules_pkey PRIMARY KEY (domain_id, rule_sort_order);
-
-
-
-ALTER TABLE ONLY linshare_share
-    ADD CONSTRAINT linshare_share_pkey PRIMARY KEY (share_id);
-
-
-
-ALTER TABLE ONLY linshare_signature
-    ADD CONSTRAINT linshare_signature_identifier_key UNIQUE (identifier);
-
-
-
-ALTER TABLE ONLY linshare_signature
-    ADD CONSTRAINT linshare_signature_pkey PRIMARY KEY (signature_id);
-
-
-
-ALTER TABLE ONLY linshare_unit
-    ADD CONSTRAINT linshare_unit_pkey PRIMARY KEY (id);
-
-
-
-ALTER TABLE ONLY linshare_user
-    ADD CONSTRAINT linshare_user_login_key UNIQUE (login);
-
-
-
-ALTER TABLE ONLY linshare_user
-    ADD CONSTRAINT linshare_user_mail_key UNIQUE (mail);
-
-
-
-ALTER TABLE ONLY linshare_user
-    ADD CONSTRAINT linshare_user_pkey PRIMARY KEY (user_id);
-
-
-
-ALTER TABLE ONLY linshare_user_provider_ldap
-    ADD CONSTRAINT linshare_user_provider_ldap_pkey PRIMARY KEY (id);
-
-
-
-CREATE INDEX idx_secured_url ON linshare_secured_url USING btree (url_path, alea);
-
-
-
-CREATE INDEX index_abstract_domain_id ON linshare_domain_abstract USING btree (id);
-
-
-
-CREATE INDEX index_abstract_domain_identifier ON linshare_domain_abstract USING btree (identifier);
-
-
-
-CREATE INDEX index_allowed_contact_contact_id ON linshare_allowed_contact USING btree (contact_id);
-
-
-
-CREATE INDEX index_allowed_contact_id ON linshare_allowed_contact USING btree (id);
-
-
-
-CREATE INDEX index_allowed_contact_user_id ON linshare_allowed_contact USING btree (user_id);
-
-
-
-CREATE INDEX index_allowed_mime_type_id ON linshare_allowed_mimetype USING btree (id);
-
-
-
-CREATE INDEX index_contact_id ON linshare_contact USING btree (contact_id);
-
-
-
-CREATE INDEX index_cookie_id ON linshare_cookie USING btree (cookie_id);
-
-
-
-CREATE INDEX index_cookie_identifier ON linshare_cookie USING btree (identifier);
-
-
-
-CREATE INDEX index_document_expiration_date ON linshare_document USING btree (expiration_date);
-
-
-
-CREATE INDEX index_document_id ON linshare_document USING btree (document_id);
-
-
-
-CREATE INDEX index_document_identifier ON linshare_document USING btree (identifier);
-
-
-
-CREATE INDEX index_document_name ON linshare_document USING btree (name);
-
-
-
-CREATE INDEX index_document_owner_id ON linshare_document USING btree (owner_id);
-
-
-
-CREATE INDEX index_domain_access_policy_id ON linshare_domain_access_policy USING btree (id);
-
-
-
-CREATE INDEX index_domain_access_rule_id ON linshare_domain_access_rule USING btree (id);
-
-
-
-CREATE INDEX index_domain_pattern_id ON linshare_domain_pattern USING btree (domain_pattern_id);
-
-
-
-CREATE INDEX index_domain_pattern_identifier ON linshare_domain_pattern USING btree (identifier);
-
-
-
-CREATE INDEX index_domain_policy_id ON linshare_domain_policy USING btree (id);
-
-
-
-CREATE INDEX index_favourite_recipient_id ON linshare_recipient_favourite USING btree (user_id);
-
-
-
-CREATE INDEX index_filelog_entry_file_name ON linshare_log_entry USING btree (file_name);
-
-
-
-CREATE INDEX index_functionality_id ON linshare_functionality USING btree (id);
-
-
-
-CREATE INDEX index_functionality_integer_id ON linshare_functionality_integer USING btree (functionality_id);
-
-
-
-CREATE INDEX index_functionality_string_id ON linshare_functionality_string USING btree (functionality_id);
-
-
-
-CREATE INDEX index_functionality_unit_id ON linshare_functionality_unit USING btree (functionality_id);
-
-
-
-CREATE INDEX index_functionality_unit_boolean_id ON linshare_functionality_unit_boolean USING btree (functionality_id);
-
-
-
-CREATE INDEX index_functionality_unit_range_id ON linshare_functionality_range_unit USING btree (functionality_id);
-
-
-
-CREATE INDEX index_group_id ON linshare_group USING btree (group_id);
-
-
-
-CREATE INDEX index_group_members_user_id ON linshare_group_members USING btree (user_id);
-
-
-
-CREATE INDEX index_group_name ON linshare_group USING btree (name);
-
-
-
-CREATE INDEX index_group_user_id ON linshare_group USING btree (group_user_id);
-
-
-
-CREATE INDEX index_ldap_connection_id ON linshare_ldap_connection USING btree (ldap_connection_id);
-
-
-
-CREATE INDEX index_ldap_connection_identifier ON linshare_ldap_connection USING btree (identifier);
-
-
-
-CREATE INDEX index_ldap_user_provider_id ON linshare_user_provider_ldap USING btree (id);
-
-
-
-CREATE INDEX index_log_entry_action ON linshare_log_entry USING btree (log_action);
-
-
-
-CREATE INDEX index_log_entry_action_date ON linshare_log_entry USING btree (action_date);
-
-
-
-CREATE INDEX index_log_entry_actor_domain ON linshare_log_entry USING btree (actor_domain);
-
-
-
-CREATE INDEX index_log_entry_actor_first_name ON linshare_log_entry USING btree (actor_firstname);
-
-
-
-CREATE INDEX index_log_entry_actor_last_name ON linshare_log_entry USING btree (actor_lastname);
-
-
-
-CREATE INDEX index_log_entry_actor_mail ON linshare_log_entry USING btree (actor_mail);
-
-
-
-CREATE INDEX index_log_entry_id ON linshare_log_entry USING btree (id);
-
-
-
-CREATE INDEX index_messages_configuration_subject_id ON linshare_mail_subjects USING btree (messages_configuration_id);
-
-
-
-CREATE INDEX index_messages_configuration_template_id ON linshare_mail_templates USING btree (messages_configuration_id);
-
-
-
-CREATE INDEX index_messages_configuration_welcome_id ON linshare_welcome_texts USING btree (messages_configuration_id);
-
-
-
-CREATE INDEX index_policy_id ON linshare_policy USING btree (id);
-
-
-
-CREATE INDEX index_recipient_favourite_id ON linshare_recipient_favourite USING btree (id);
-
-
-
-CREATE INDEX index_secured_url_contact_id ON linshare_secured_url_recipients USING btree (contact_id);
-
-
-
-CREATE INDEX index_secured_url_id ON linshare_secured_url USING btree (secured_url_id);
-
-
-
-CREATE INDEX index_secured_url_secured_url_id ON linshare_secured_url_documents USING btree (secured_url_id);
-
-
-
-CREATE INDEX index_securedurl_sender_id ON linshare_secured_url USING btree (sender_id);
-
-
-
-CREATE INDEX index_share_document_id ON linshare_share USING btree (document_id);
-
-
-
-CREATE INDEX index_share_expiration_date ON linshare_share USING btree (expiration_date);
-
-
-
-CREATE INDEX index_share_expiry_rule_id ON linshare_share_expiry_rules USING btree (domain_id);
-
-
-
-CREATE INDEX index_share_id ON linshare_share USING btree (share_id);
-
-
-
-CREATE INDEX index_share_recipient_id ON linshare_share USING btree (recipient_id);
-
-
-
-CREATE INDEX index_share_sender_id ON linshare_share USING btree (sender_id);
-
-
-
-CREATE INDEX index_share_sharing_date ON linshare_share USING btree (sharing_date);
-
-
-
-CREATE INDEX index_sharelog_entry_file_name ON linshare_log_entry USING btree (file_name);
-
-
-
-CREATE INDEX index_sharelog_entry_target_mail ON linshare_log_entry USING btree (target_mail);
-
-
-
-CREATE INDEX index_signature_id ON linshare_signature USING btree (signature_id);
-
-
-
-CREATE INDEX index_signature_signer_id ON linshare_signature USING btree (signer_id);
-
-
-
-CREATE INDEX index_unit_id ON linshare_unit USING btree (id);
-
-
-
-CREATE INDEX index_user_first_name ON linshare_user USING btree (first_name);
-
-
-
-CREATE INDEX index_user_id ON linshare_user USING btree (user_id);
-
-
-
-CREATE INDEX index_user_last_name ON linshare_user USING btree (last_name);
-
-
-
-CREATE INDEX index_user_login ON linshare_user USING btree (login);
-
-
-
-CREATE INDEX index_user_mail ON linshare_user USING btree (mail);
-
-
-
-CREATE INDEX index_userlog_entry_target_mail ON linshare_log_entry USING btree (target_mail);
-
-
-
-ALTER TABLE ONLY linshare_secured_url_documents
-    ADD CONSTRAINT fk139f29651fbb6b4e FOREIGN KEY (secured_url_id) REFERENCES linshare_secured_url(secured_url_id);
-
-
-
-ALTER TABLE ONLY linshare_secured_url_documents
-    ADD CONSTRAINT fk139f29659af607d7 FOREIGN KEY (elt) REFERENCES linshare_document(document_id);
-
-
-
-ALTER TABLE ONLY linshare_mail_subjects
-    ADD CONSTRAINT fk1c97f3be126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES linshare_messages_configuration(messages_configuration_id);
-
-
-
-ALTER TABLE ONLY linshare_group_members
-    ADD CONSTRAINT fk354c70c8675f9781 FOREIGN KEY (owner_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_group_members
-    ADD CONSTRAINT fk354c70c8a0ea11ab FOREIGN KEY (group_id) REFERENCES linshare_group(group_id);
-
-
-
-ALTER TABLE ONLY linshare_group_members
-    ADD CONSTRAINT fk354c70c8fb78e769 FOREIGN KEY (user_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_welcome_texts
-    ADD CONSTRAINT fk36a0c738126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES linshare_messages_configuration(messages_configuration_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_unit
-    ADD CONSTRAINT fk3ced016910439d2b FOREIGN KEY (functionality_id) REFERENCES linshare_functionality(id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_unit
-    ADD CONSTRAINT fk3ced0169f329e0c9 FOREIGN KEY (unit_id) REFERENCES linshare_unit(id);
-
-
-    
-   ALTER TABLE ONLY linshare_functionality_unit_boolean
-    ADD CONSTRAINT fk3ced016910439d2c FOREIGN KEY (functionality_id) REFERENCES linshare_functionality(id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_unit_boolean
-    ADD CONSTRAINT fk3ced0169f329e0d9 FOREIGN KEY (unit_id) REFERENCES linshare_unit(id);
-
-    
-
-ALTER TABLE ONLY linshare_user_provider_ldap
-    ADD CONSTRAINT fk409cafb2372a0802 FOREIGN KEY (domain_pattern_id) REFERENCES linshare_domain_pattern(domain_pattern_id);
-
-
-
-ALTER TABLE ONLY linshare_user_provider_ldap
-    ADD CONSTRAINT fk409cafb23834018 FOREIGN KEY (ldap_connection_id) REFERENCES linshare_ldap_connection(ldap_connection_id);
-
-
-
-ALTER TABLE ONLY linshare_domain_abstract
-    ADD CONSTRAINT fk449bc2ec126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES linshare_messages_configuration(messages_configuration_id);
-
-
-
-ALTER TABLE ONLY linshare_domain_abstract
-    ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES linshare_user_provider_ldap(id);
-
-
-
-ALTER TABLE ONLY linshare_domain_abstract
-    ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES linshare_domain_policy(id);
-
-
-
-ALTER TABLE ONLY linshare_domain_abstract
-    ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES linshare_domain_abstract(id);
-
-
-
-ALTER TABLE ONLY linshare_domain_policy
-    ADD CONSTRAINT fk49c9a27c85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES linshare_domain_access_policy(id);
-
-
-
-ALTER TABLE ONLY linshare_secured_url
-    ADD CONSTRAINT fk5391e32c62928bf FOREIGN KEY (sender_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_range_unit
-    ADD CONSTRAINT fk55007f6b10439d2b FOREIGN KEY (functionality_id) REFERENCES linshare_functionality(id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_range_unit
-    ADD CONSTRAINT fk55007f6b4b6b3004 FOREIGN KEY (unit_max_id) REFERENCES linshare_unit(id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_range_unit
-    ADD CONSTRAINT fk55007f6b4bd76056 FOREIGN KEY (unit_min_id) REFERENCES linshare_unit(id);
-
-
-
-ALTER TABLE ONLY linshare_document
-    ADD CONSTRAINT fk56846e4c675f9781 FOREIGN KEY (owner_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_user
-    ADD CONSTRAINT fk56d6c97c3c036ccb FOREIGN KEY (domain_id) REFERENCES linshare_domain_abstract(id);
-
-
-
-ALTER TABLE ONLY linshare_user
-    ADD CONSTRAINT fk56d6c97c675f9781 FOREIGN KEY (owner_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality
-    ADD CONSTRAINT fk7430c53a3c036ccb FOREIGN KEY (domain_id) REFERENCES linshare_domain_abstract(id);
-
-
-
-ALTER TABLE ONLY linshare_functionality
-    ADD CONSTRAINT fk7430c53a58fe5398 FOREIGN KEY (policy_activation_id) REFERENCES linshare_policy(id);
-
-
-
-ALTER TABLE ONLY linshare_functionality
-    ADD CONSTRAINT fk7430c53a71796372 FOREIGN KEY (policy_configuration_id) REFERENCES linshare_policy(id);
-
-
-
-ALTER TABLE ONLY linshare_secured_url_recipients
-    ADD CONSTRAINT fk7c25d06d464c4a4b FOREIGN KEY (contact_id) REFERENCES linshare_secured_url(secured_url_id);
-
-
-
-ALTER TABLE ONLY linshare_secured_url_recipients
-    ADD CONSTRAINT fk7c25d06de97b80de FOREIGN KEY (elt) REFERENCES linshare_contact(contact_id);
-
-
-
-ALTER TABLE ONLY linshare_signature
-    ADD CONSTRAINT fk81c9a1a74472b3aa FOREIGN KEY (signer_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_signature
-    ADD CONSTRAINT fk81c9a1a7c0bbd6f FOREIGN KEY (document_id_fk) REFERENCES linshare_document(document_id);
-
-
-
-ALTER TABLE ONLY linshare_group
-    ADD CONSTRAINT fk833cceeefe8695a9 FOREIGN KEY (group_user_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_share
-    ADD CONSTRAINT fk83e1284e4f9c165b FOREIGN KEY (recipient_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_share
-    ADD CONSTRAINT fk83e1284e62928bf FOREIGN KEY (sender_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_share
-    ADD CONSTRAINT fk83e1284eb927c5e9 FOREIGN KEY (document_id) REFERENCES linshare_document(document_id);
-
-
-
-ALTER TABLE ONLY linshare_recipient_favourite
-    ADD CONSTRAINT fk847bec32fb78e769 FOREIGN KEY (user_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_integer
-    ADD CONSTRAINT fk8662133910439d2b FOREIGN KEY (functionality_id) REFERENCES linshare_functionality(id);
-
-
-
-ALTER TABLE ONLY linshare_functionality_string
-    ADD CONSTRAINT fkb2a122b610439d2b FOREIGN KEY (functionality_id) REFERENCES linshare_functionality(id);
-
-
-
-ALTER TABLE ONLY linshare_mail_templates
-    ADD CONSTRAINT fkdd1b7f22126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES linshare_messages_configuration(messages_configuration_id);
-
-
-
-ALTER TABLE ONLY linshare_allowed_contact
-    ADD CONSTRAINT fkdfe3fe38c9452f4 FOREIGN KEY (contact_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_allowed_contact
-    ADD CONSTRAINT fkdfe3fe38fb78e769 FOREIGN KEY (user_id) REFERENCES linshare_user(user_id);
-
-
-
-ALTER TABLE ONLY linshare_domain_access_rule
-    ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES linshare_domain_abstract(id);
-
-
-
-ALTER TABLE ONLY linshare_domain_access_rule
-    ADD CONSTRAINT fkf75719ed85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES linshare_domain_access_policy(id);
-
-
-
-ALTER TABLE ONLY linshare_share_expiry_rules
-    ADD CONSTRAINT fkfda1673c3c036ccb FOREIGN KEY (domain_id) REFERENCES linshare_domain_abstract(id);
-
-
-
-
+CREATE TABLE allowed_contact (
+  id          int8 NOT NULL, 
+  account_id int8 NOT NULL, 
+  contact_id int8 NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE account_thread_member_history (
+  Accountid               int8 NOT NULL, 
+  thread_member_historyid int8 NOT NULL, 
+  PRIMARY KEY (Accountid, 
+  thread_member_historyid));
+CREATE TABLE thread_thread_member_history (
+  Threadaccount_id        int8 NOT NULL, 
+  thread_member_historyid int8 NOT NULL, 
+  PRIMARY KEY (Threadaccount_id, 
+  thread_member_historyid));
+CREATE TABLE technical_account_permission_domain_abstract (
+  technical_account_permission_id int8 NOT NULL, 
+  domain_abstract_id              int8 NOT NULL, 
+  PRIMARY KEY (technical_account_permission_id, 
+  domain_abstract_id));
+CREATE TABLE technical_account_permission (
+  id               int8 NOT NULL, 
+  write           bool NOT NULL, 
+  all_permissions bool NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE entry_tag_association (
+  id             int8 NOT NULL, 
+  entry_id      int8 NOT NULL, 
+  tag_id        int8 NOT NULL, 
+  enum_value_id int8, 
+  PRIMARY KEY (id), 
+  CONSTRAINT "unique relation" 
+    UNIQUE (entry_id, tag_id));
+CREATE TABLE tag_filter_rule_tag_association (
+  id                  int8 NOT NULL, 
+  tag_filter_rule_id int8, 
+  tag_id             int8 NOT NULL, 
+  enum_value_id      int8, 
+  PRIMARY KEY (id), 
+  CONSTRAINT "tag filter rules unique constraint" 
+    UNIQUE (tag_id, tag_filter_rule_id));
+CREATE TABLE contact (
+  id    int8 NOT NULL, 
+  mail varchar(255) NOT NULL UNIQUE, 
+  PRIMARY KEY (id));
+CREATE TABLE technical_account_permission_account (
+  technical_account_permission_id int8 NOT NULL, 
+  account_id                      int8 NOT NULL, 
+  PRIMARY KEY (technical_account_permission_id, 
+  account_id));
+CREATE TABLE default_view (
+  id               int8 NOT NULL, 
+  identifier      varchar(255) NOT NULL UNIQUE, 
+  view_id         int8 NOT NULL, 
+  view_context_id int8 NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE view_tag_asso (
+  id        int8 NOT NULL, 
+  tag_id   int8 NOT NULL, 
+  views_id int8 NOT NULL, 
+  depth    int4 NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE thread_view (
+  id                 int8 NOT NULL, 
+  thread_account_id int8 NOT NULL, 
+  name              varchar(255) NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE thread_view_asso (
+  id              int8 NOT NULL, 
+  tag_id         int8 NOT NULL, 
+  thread_view_id int8 NOT NULL, 
+  depth          int4 NOT NULL, 
+  PRIMARY KEY (id));
+ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_access_rule ADD CONSTRAINT fkf75719ed85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES domain_access_policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE domain_policy ADD CONSTRAINT fk49c9a27c85924e31 FOREIGN KEY (domain_access_policy_id) REFERENCES domain_access_policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality ADD CONSTRAINT fk7430c53a58fe5398 FOREIGN KEY (policy_activation_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality ADD CONSTRAINT fk7430c53a71796372 FOREIGN KEY (policy_configuration_id) REFERENCES policy (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality ADD CONSTRAINT fk7430c53a3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_integer ADD CONSTRAINT fk8662133910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_range_unit ADD CONSTRAINT fk55007f6b10439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_range_unit ADD CONSTRAINT fk55007f6b4bd76056 FOREIGN KEY (unit_min_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_range_unit ADD CONSTRAINT fk55007f6b4b6b3004 FOREIGN KEY (unit_max_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_string ADD CONSTRAINT fkb2a122b610439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced016910439d2b FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_unit ADD CONSTRAINT fk3ced0169f329e0c9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_unit_boolean ADD CONSTRAINT fk3ced016910439d2c FOREIGN KEY (functionality_id) REFERENCES functionality (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE functionality_unit_boolean ADD CONSTRAINT fk3ced0169f329e0d9 FOREIGN KEY (unit_id) REFERENCES unit (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE mail_subjects ADD CONSTRAINT fk1c97f3be126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE mail_templates ADD CONSTRAINT fkdd1b7f22126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE share_expiry_rules ADD CONSTRAINT fkfda1673c3c036ccb FOREIGN KEY (domain_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE signature ADD CONSTRAINT fk81c9a1a7c0bbd6f FOREIGN KEY (document_id) REFERENCES document (id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE user_provider_ldap ADD CONSTRAINT fk409cafb2372a0802 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE user_provider_ldap ADD CONSTRAINT fk409cafb23834018 FOREIGN KEY (ldap_connection_id) REFERENCES ldap_connection (ldap_connection_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE welcome_texts ADD CONSTRAINT fk36a0c738126ff4f2 FOREIGN KEY (messages_configuration_id) REFERENCES messages_configuration (messages_configuration_id) ON UPDATE No action ON DELETE No action;
+ALTER TABLE thread ADD CONSTRAINT inheritance_account_thread FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE document_entry ADD CONSTRAINT FKdocument_e594117 FOREIGN KEY (document_id) REFERENCES document (id);
+ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr708932 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
+ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_138106 FOREIGN KEY (document_entry_id) REFERENCES document_entry (entry_id);
+ALTER TABLE recipient_favourite ADD CONSTRAINT FKrecipient_90791 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_732508 FOREIGN KEY (anonymous_url_id) REFERENCES anonymous_url (id);
+ALTER TABLE tag ADD CONSTRAINT FKtag535917 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE tag_enum_value ADD CONSTRAINT FKtag_enum_v488575 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr87036 FOREIGN KEY (recipient_id) REFERENCES account (id);
+ALTER TABLE views ADD CONSTRAINT FKviews640843 FOREIGN KEY (view_context_id) REFERENCES view_context (id);
+ALTER TABLE views ADD CONSTRAINT FKviews445993 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE tag_filter_rule ADD CONSTRAINT FKtag_filter70274 FOREIGN KEY (tag_filter_id) REFERENCES tag_filter (id);
+ALTER TABLE account ADD CONSTRAINT FKaccount400616 FOREIGN KEY (domain_id) REFERENCES domain_abstract (id);
+ALTER TABLE ldap_attribute ADD CONSTRAINT FKldap_attri687153 FOREIGN KEY (domain_pattern_id) REFERENCES domain_pattern (domain_pattern_id);
+ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co409962 FOREIGN KEY (account_id) REFERENCES users (account_id);
+ALTER TABLE allowed_contact ADD CONSTRAINT FKallowed_co620678 FOREIGN KEY (contact_id) REFERENCES users (account_id);
+ALTER TABLE account ADD CONSTRAINT FKaccount487511 FOREIGN KEY (owner_id) REFERENCES account (id);
+ALTER TABLE users ADD CONSTRAINT FKusers71760 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE thread_member ADD CONSTRAINT FKthread_mem280144 FOREIGN KEY (thread_id) REFERENCES thread (account_id);
+ALTER TABLE thread_member ADD CONSTRAINT FKthread_mem565048 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechnical_303831 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
+ALTER TABLE technical_account_permission_domain_abstract ADD CONSTRAINT FKtechnical_231219 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE anonymous_share_entry ADD CONSTRAINT FKanonymous_621478 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE document_entry ADD CONSTRAINT FKdocument_e19140 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE share_entry ADD CONSTRAINT FKshare_entr50652 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent715634 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE entry ADD CONSTRAINT FKentry500391 FOREIGN KEY (owner_id) REFERENCES account (id);
+ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_900675 FOREIGN KEY (entry_id) REFERENCES entry (id);
+ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_30632 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE tag_filter ADD CONSTRAINT FKtag_filter987269 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter901563 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter565646 FOREIGN KEY (enum_value_id) REFERENCES tag_enum_value (id);
+ALTER TABLE entry_tag_association ADD CONSTRAINT FKentry_tag_305285 FOREIGN KEY (enum_value_id) REFERENCES tag_enum_value (id);
+ALTER TABLE tag_filter_rule_tag_association ADD CONSTRAINT FKtag_filter766081 FOREIGN KEY (tag_filter_rule_id) REFERENCES tag_filter_rule (id);
+ALTER TABLE anonymous_url ADD CONSTRAINT FKanonymous_877695 FOREIGN KEY (contact_id) REFERENCES contact (id);
+ALTER TABLE signature ADD CONSTRAINT FKsignature417918 FOREIGN KEY (owner_id) REFERENCES account (id);
+ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_69967 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
+ALTER TABLE technical_account_permission_account ADD CONSTRAINT FKtechnical_622557 FOREIGN KEY (account_id) REFERENCES account (id);
+ALTER TABLE account ADD CONSTRAINT FKaccount693567 FOREIGN KEY (technical_account_permission_id) REFERENCES technical_account_permission (id);
+ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi37393 FOREIGN KEY (view_context_id) REFERENCES view_context (id);
+ALTER TABLE default_view ADD CONSTRAINT FKdefault_vi755506 FOREIGN KEY (view_id) REFERENCES views (id);
+ALTER TABLE thread_entry ADD CONSTRAINT FKthread_ent140657 FOREIGN KEY (document_id) REFERENCES document (id);
+ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a660721 FOREIGN KEY (views_id) REFERENCES views (id);
+ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a218567 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie68184 FOREIGN KEY (thread_account_id) REFERENCES thread (account_id);
+ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie285846 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
+ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE thread ADD CONSTRAINT FKthread957862 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
+CREATE UNIQUE INDEX account_lsuid_index 
+  ON account (ls_uuid);
+CREATE UNIQUE INDEX account_ls_uuid 
+  ON account (ls_uuid);
+CREATE INDEX account_account_type 
+  ON account (account_type);
+CREATE INDEX allowed_mimetype_index 
+  ON allowed_mimetype (id);
+CREATE INDEX cookie2 
+  ON cookie (identifier);
+CREATE INDEX cookie_i 
+  ON cookie (cookie_id);
+CREATE INDEX document_id_index 
+  ON document (id);
+CREATE INDEX document_i 
+  ON document (uuid);
+CREATE INDEX domain_abstract_id_index 
+  ON domain_abstract (identifier);
+CREATE UNIQUE INDEX domain_abstract_i 
+  ON domain_abstract (user_provider_id);
+CREATE INDEX domain_abstract_i2 
+  ON domain_abstract (id);
+CREATE INDEX domain_access_policy_index 
+  ON domain_access_policy (id);
+CREATE INDEX domain_access_rule_index 
+  ON domain_access_rule (id);
+CREATE INDEX domain_pattern_index 
+  ON domain_pattern (identifier);
+CREATE INDEX domain_pattern_i 
+  ON domain_pattern (domain_pattern_id);
+CREATE INDEX domain_policy_index 
+  ON domain_policy (id);
+CREATE UNIQUE INDEX domain_policy_i 
+  ON domain_policy (domain_access_policy_id);
+CREATE INDEX functionality_i 
+  ON functionality (id);
+CREATE UNIQUE INDEX functionality_index 
+  ON functionality (policy_activation_id);
+CREATE UNIQUE INDEX functionality_i2 
+  ON functionality (identifier, domain_id);
+CREATE UNIQUE INDEX functionality_i3 
+  ON functionality (policy_configuration_id);
+CREATE INDEX functionality_integer_index 
+  ON functionality_integer (functionality_id);
+CREATE UNIQUE INDEX functionality_range_unit_index 
+  ON functionality_range_unit (unit_max_id);
+CREATE UNIQUE INDEX functionality_range_unit_i 
+  ON functionality_range_unit (unit_min_id);
+CREATE INDEX functionality_range_unit_i2 
+  ON functionality_range_unit (functionality_id);
+CREATE INDEX functionality_string_index 
+  ON functionality_string (functionality_id);
+CREATE UNIQUE INDEX functionality_unit_index 
+  ON functionality_unit (unit_id);
+CREATE INDEX functionality_unit_i 
+  ON functionality_unit (functionality_id);
+CREATE UNIQUE INDEX functionality_unit_boolean_index 
+  ON functionality_unit_boolean (unit_id);
+CREATE INDEX functionality_unit_boolean_i 
+  ON functionality_unit_boolean (functionality_id);
+CREATE INDEX ldap_connection_index 
+  ON ldap_connection (identifier);
+CREATE INDEX ldap_connection_i 
+  ON ldap_connection (ldap_connection_id);
+CREATE INDEX log_entry_i 
+  ON log_entry (actor_domain);
+CREATE INDEX log_entry_i2 
+  ON log_entry (file_name);
+CREATE INDEX log_entry_i3 
+  ON log_entry (actor_firstname);
+CREATE INDEX log_entry_i4 
+  ON log_entry (actor_mail);
+CREATE INDEX log_entry_i5 
+  ON log_entry (action_date);
+CREATE INDEX log_entry_i6 
+  ON log_entry (log_action);
+CREATE INDEX log_entry_i7 
+  ON log_entry (target_mail);
+CREATE INDEX log_entry_i8 
+  ON log_entry (actor_lastname);
+CREATE INDEX log_entry_i9 
+  ON log_entry (file_name);
+CREATE INDEX log_entry_i10 
+  ON log_entry (id);
+CREATE INDEX policy_index 
+  ON policy (id);
+CREATE UNIQUE INDEX anonymous_url_i 
+  ON anonymous_url (url_path, uuid);
+CREATE INDEX anonymous_url_i2 
+  ON anonymous_url (id);
+CREATE INDEX share_expiry_rules_index 
+  ON share_expiry_rules (domain_id);
+CREATE INDEX signature_index 
+  ON signature (id);
+CREATE UNIQUE INDEX signature_i 
+  ON signature (uuid);
+CREATE INDEX thread_member_history_operation_type 
+  ON thread_member_history (operation_type);
+CREATE INDEX unit_index 
+  ON unit (id);
+CREATE INDEX user_provider_ldap_index 
+  ON user_provider_ldap (id);
+CREATE UNIQUE INDEX version_i 
+  ON version (description);
+CREATE INDEX welcome_texts_i 
+  ON welcome_texts (messages_configuration_id);

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.linagora.linshare.core.domain.entities">
+
+	<class name="DomainPolicy" table="domain_policy">
+		<id name="persistenceId" type="long">
+		<column name="id" not-null="true" index="index_domain_policy_id"/>
+			<generator class="native" />
+		</id>
+		<property access="field" column="identifier" name="identifier" index="index_domain_policy_identifier" not-null="true" unique="true" />
+		<property column="description" name="description" type="text" />
+		<many-to-one name="domainAccessPolicy" class="org.linagora.linshare.core.domain.entities.DomainAccessPolicy" 
+			column="domain_access_policy_id" unique="true" cascade="all" lazy="false"/>
+	</class>
+</hibernate-mapping>
+
+

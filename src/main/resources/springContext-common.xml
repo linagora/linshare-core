@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
 	default-autowire="no">
-    <bean id="propertyPlaceholder" class="org.linagora.linShare.core.utils.PropertyPlaceholderConfigurer">
+    <bean id="propertyPlaceholder" class="org.linagora.linshare.core.utils.PropertyPlaceholderConfigurer">
     	<property name="ignoreResourceNotFound" value="true"/>
     	<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
     	
@@ -20,11 +20,11 @@
         <property name="locations">
             <list>
                 <value>classpath:version.properties</value>
-                <value>classpath:linShare-mailContainer.properties</value>
-                <value>classpath:linShare-default.properties</value>
-                <value>classpath:linShare.properties</value>
+                <value>classpath:linshare-mailContainer.properties</value>
+                <value>classpath:linshare-default.properties</value>
+                <value>classpath:linshare.properties</value>
                 <value>classpath:jackRabbit.properties</value>
-                <value>${linshare.config.path}/linShare.properties</value>
+                <value>${linshare.config.path}/linshare.properties</value>
                 <value>${linshare.config.path}/jackRabbit.properties</value>
             </list>
         </property>

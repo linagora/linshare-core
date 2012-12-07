@@ -391,19 +391,23 @@ table.t-data-grid thead tr th {		/* Impossible to style 'tr' tags (5.5, 6, 7) */
 */
 
 #guestEditFormComponent .edit-form-label,
+#memberEditFormComponent .edit-form-label,
 #userEditFormComponent .edit-form-label {
 	float: left;
 }
 #guestEditFormComponent .edit-form-field,
+#memberEditFormComponent .edit-form-field,
 #userEditFormComponent .edit-form-field {
 	width: 19em;
 }
 #guestEditFormComponent .edit-form-checkbox,
+#memberEditFormComponent .edit-form-checkbox,
 #userEditFormComponent .edit-form-checkbox {
 	margin-top: -1.30em;
 	margin-right: 10em;		/* Safe margin */
 }
 #guestEditFormComponent textarea,
+#memberEditFormComponent textarea,
 #userEditFormComponent textarea {
 	width: 41em;
 }

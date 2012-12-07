@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+  <class name="Functionality" table="functionality" >
+    <id name="persistenceId" type="long">
+      <column name="id" not-null="true" index="index_functionality_id"/>
+      <generator class="native"/>
+    </id>
+    <property access="field" column="system" name="system" not-null="true"/>
+    <property access="field" column="identifier" name="identifier" not-null="true"  unique-key="functionality_unicity_key"/>
+    <many-to-one name="activationPolicy" class="Policy" column="policy_activation_id" unique="true" cascade="all" lazy="false" />
+    <many-to-one name="configurationPolicy" class="Policy" column="policy_configuration_id" unique="true" cascade="all" lazy="false" />
+
+	<many-to-one name="domain" column="domain_id" not-null="true" lazy="false"  unique-key="functionality_unicity_key" />
+
+	<joined-subclass name="StringValueFunctionality" table="functionality_string">
+		<key>
+     		<column name="functionality_id" not-null="true" index="index_functionality_string_id"/>
+    	</key>
+        <property name="value" column="string_value" type="string"/>
+    </joined-subclass>
+    
+    <joined-subclass name="IntegerValueFunctionality" table="functionality_integer">
+    	<key>
+     		<column name="functionality_id" not-null="true" index="index_functionality_integer_id"/>
+    	</key>
+        <property name="value" column="integer_value" type="integer"/>
+    </joined-subclass>
+    
+    
+    <joined-subclass name="UnitValueFunctionality" table="functionality_unit">
+    	<key>
+     		<column name="functionality_id" not-null="true" index="index_functionality_unit_id"/>
+    	</key>
+        <property name="value" column="integer_value" type="integer"/>
+        <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
+    </joined-subclass>
+    
+    <joined-subclass name="UnitBooleanValueFunctionality" table="functionality_unit_boolean">
+    	<key>
+     		<column name="functionality_id" not-null="true" index="index_functionality_unit_boolean_id"/>
+    	</key>
+        <property name="value" column="integer_value" type="integer"/>
+        <property name="bool" column="boolean_value" type="boolean"/>
+        <many-to-one name="unit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_id" unique="true" cascade="all" lazy="false" />
+    </joined-subclass>
+    
+    <joined-subclass name="UnitRangeFunctionality" table="functionality_range_unit">
+    	<key>
+     		<column name="functionality_id" not-null="true" index="index_functionality_unit_range_id"/>
+    	</key>
+        <property name="min" column="min" type="integer"/>
+        <property name="max" column="max" type="integer"/>
+        <many-to-one name="minUnit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_min_id" unique="true" cascade="all" lazy="false" />
+        <many-to-one name="maxUnit" class="org.linagora.linshare.core.domain.entities.Unit" column="unit_max_id" unique="true" cascade="all" lazy="false" />
+    </joined-subclass>
+    
+  </class>
+ </hibernate-mapping>

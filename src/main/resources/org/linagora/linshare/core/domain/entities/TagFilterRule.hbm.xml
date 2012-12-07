@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.TagFilterRule" table="tag_filter_rule" lazy="false" discriminator-value="0">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<discriminator column="tag_rule_type" type="integer"/>
+		<property name="regexp" column="regexp" type="text" length="255" not-null="false" lazy="false"/>
+		<set name="tagFilterRuleTagAssociation" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="tag_filter_rule_id" not-null="false"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.TagFilterRuleTagAssociation"/>
+		</set>
+		<subclass name="org.linagora.linshare.core.domain.entities.TagFilterByDomain" discriminator-value="3" lazy="false">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.TagFilterByRecipient" discriminator-value="1" lazy="false">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.TagFilterBySender" discriminator-value="2" lazy="false">
+		</subclass>
+		<subclass name="org.linagora.linshare.core.domain.entities.TagFilterRuleAll" discriminator-value="4" lazy="false">
+		</subclass>
+	</class>
+</hibernate-mapping>

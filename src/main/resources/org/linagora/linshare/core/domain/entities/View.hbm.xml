@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="org.linagora.linshare.core.domain.entities.View" table="views" lazy="false">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<many-to-one name="owner" column="account_id" class="org.linagora.linshare.core.domain.entities.Account" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<many-to-one name="context" column="view_context_id" class="org.linagora.linshare.core.domain.entities.ViewContext" not-null="true" lazy="no-proxy">
+		</many-to-one>
+		<property name="name" column="name" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="_public" column="_public" type="boolean" not-null="true" lazy="false"/>
+		<set name="viewTagAsso" lazy="true" cascade="save-update" inverse="true">
+			<key column="views_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.ViewTagAsso"/>
+		</set>
+	</class>
+</hibernate-mapping>

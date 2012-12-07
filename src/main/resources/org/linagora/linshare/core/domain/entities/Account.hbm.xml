@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <typedef class="org.linagora.linshare.core.repository.hibernate.type.GenericEnumType" name="roleEnumType">
+    <param name="enumClass">org.linagora.linshare.core.domain.entities.Role</param>
+    <param name="identifierMethod">toInt</param>
+    <param name="valueOfMethod">fromInt</param>
+  </typedef>
+  
+	<class name="org.linagora.linshare.core.domain.entities.Account" table="account" lazy="false" discriminator-value="0">
+		<id name="id" column="id" type="long" unsaved-value="0">
+			<generator class="native">
+			</generator>
+		</id>
+		<discriminator column="account_type" type="integer"/>
+		<property name="lsUuid" column="ls_uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
+		<property name="creationDate" column="creation_date" type="timestamp" not-null="false" lazy="false"/>
+		<property name="modificationDate" column="modification_date" type="timestamp" not-null="false" lazy="false"/>
+		<property access="field" column="role_id" name="role" not-null="true" type="roleEnumType"/>
+		<property name="locale" column="locale" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="externalMailLocale" column="external_mail_locale" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
+		<property name="password" column="password" type="string" length="255" not-null="false" lazy="false"/>
+		<property name="destroyed" column="destroyed" type="boolean" not-null="true" lazy="false"/>
+		
+		<many-to-one name="owner" column="owner_id" class="org.linagora.linshare.core.domain.entities.Account" />
+		<many-to-one name="domain" column="domain_id" class="org.linagora.linshare.core.domain.entities.AbstractDomain" not-null="true" lazy="false" access="field"></many-to-one>
+		<set name="entries" lazy="true" inverse="true">
+			<key column="owner_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Entry"/>
+		</set>
+		
+		<set name="shareEntries" lazy="true" inverse="true">
+			<key column="recipient_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.ShareEntry"/>
+		</set>
+    
+    	<set name="signatures" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="owner_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Signature"/>
+		</set>
+		
+		<set name="tags" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="account_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.Tag"/>
+		</set>
+		
+		<set name="tagFilters" lazy="true" cascade="save-update,lock" inverse="false">
+			<key column="account_id" not-null="false"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.TagFilter"/>
+		</set>
+    
+    	<set name="views" lazy="true" cascade="save-update,lock" inverse="true">
+			<key column="account_id" not-null="true"/>
+			<one-to-many class="org.linagora.linshare.core.domain.entities.View"/>
+		</set>
+		
+		
+		<subclass name="org.linagora.linshare.core.domain.entities.User" discriminator-value="1" lazy="false">
+		  	<set name="myThreads" lazy="true" cascade="save-update,lock" inverse="true">
+				<key column="user_id" not-null="true"/>
+				<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadMember"/>
+			</set>
+			<join table="users">
+				<key>
+					<column name="account_id"/>
+				</key>
+				<property name="firstName" column="First_name" type="string" length="255" not-null="false" lazy="false"/>
+				<property name="lastName" column="Last_name" type="string" length="255" not-null="false" lazy="false"/>
+				<property name="mail" column="Mail" type="string" length="255" not-null="true" lazy="false"/>
+				<property name="notAfter" column="not_after" type="timestamp" not-null="false" lazy="false"/>
+				<property name="notBefore" column="not_before" type="timestamp" not-null="false" lazy="false"/>
+				<property name="expirationDate" column="expiration_date" type="timestamp" not-null="false" lazy="false"/>
+				<property name="ldapUid" column="ldap_uid" type="string" length="255" not-null="false" lazy="false"/>
+				<property name="canUpload" column="can_upload" type="boolean" not-null="true" lazy="false"/>
+				<property name="canCreateGuest" column="can_create_guest" type="boolean" not-null="true" lazy="false"/>
+				<property name="comment" column="comment" type="text" not-null="true" lazy="false"/>
+				<property name="restricted" column="restricted" type="boolean" not-null="true" lazy="false"/>
+			</join>
+			<subclass name="org.linagora.linshare.core.domain.entities.Internal" discriminator-value="2" lazy="false">
+			</subclass>
+			<subclass name="org.linagora.linshare.core.domain.entities.Guest" discriminator-value="3" lazy="false">
+			</subclass>
+			<subclass name="org.linagora.linshare.core.domain.entities.Root" discriminator-value="6" lazy="false"/>
+					
+			<subclass name="org.linagora.linshare.core.domain.entities.TechnicalAccount" discriminator-value="4" lazy="false">
+				<many-to-one name="permission" cascade="lock" column="technical_account_permission_id" class="org.linagora.linshare.core.domain.entities.TechnicalAccountPermission" not-null="false" lazy="no-proxy">
+				</many-to-one>
+			</subclass>
+		</subclass>
+		
+		<subclass name="org.linagora.linshare.core.domain.entities.SystemAccount" discriminator-value="7" lazy="false">
+		</subclass>
+
+		
+		<subclass name="org.linagora.linshare.core.domain.entities.Thread" discriminator-value="5" lazy="false">
+			<set name="myMembers" lazy="true" cascade="save-update,lock" inverse="true">
+				<key column="thread_id" not-null="true"/>
+				<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadMember"/>
+			</set>
+			<set name="threadViews" lazy="true" cascade="save-update,lock" inverse="true">
+				<key column="thread_account_id" not-null="true"/>
+				<one-to-many class="org.linagora.linshare.core.domain.entities.ThreadView"/>
+			</set>
+			<join table="thread">
+				<key>
+					<column name="account_id"/>
+				</key>
+				<property name="name" column="Name" type="string" length="255" not-null="true" lazy="false"/>
+				<many-to-one name="currentThreadView" column="thread_view_id" class="org.linagora.linshare.core.domain.entities.ThreadView" cascade="save-update,lock" unique="true" not-null="false" lazy="no-proxy">
+				</many-to-one>
+			</join>
+		</subclass>
+	</class>
+</hibernate-mapping>

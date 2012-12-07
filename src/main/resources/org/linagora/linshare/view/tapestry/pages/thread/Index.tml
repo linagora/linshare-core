@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
+
+    <!-- Main content -->
+
+    <div id="content">
+
+        <h1>${message:pages.thread.index.title}</h1>
+
+        <t:messagePanel />
+        <t:businessMessagesDisplayer />
+
+
+        <!-- Action bar -->
+
+        <div id="actionBar">
+            <h4>Actions</h4>
+            <ul>
+                <li>
+                    <t:pageLink page="thread/CreateThread" class="button" title="${message:pages.thread.index.addbutton}">
+                        <span><img src="${asset:context:images/icons/create-group-mini.png}" alt="" /> ${message:pages.thread.index.addbutton}</span>
+                    </t:pageLink>
+                </li>
+            </ul>
+        </div><!-- id="actionBar" -->
+
+        <!-- Page content -->
+
+        <div id="pageContent">
+            <t:grid source="threads" row="currentThread" include="name, creationDate" rowsPerPage="10">
+                <p:nameCell>
+                    <t:actionlink t:id="showThreadContent" context="currentThread.lsUuid"> ${currentThread.name}</t:actionlink>
+                </p:nameCell>
+                <p:creationDateCell>
+                    <span class="creationDate">${creationDate}</span>
+                </p:creationDateCell>
+                <p:empty>
+                    ${message:pages.thread.empy}
+                </p:empty>
+            </t:grid>
+        </div>
+
+    </div><!-- id="content" -->
+
+    <!-- Popups -->
+
+
+    <!-- Widgets -->
+
+</t:MyBorderLayout>
