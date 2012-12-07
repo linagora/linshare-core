@@ -1,0 +1,45 @@
+/*
+ * LinShare - Large files secured sharing system
+ * CSS custom style ONLY FOR IE  (8.0 only)
+ * Report changes to: info@linagora.com
+ *
+ * Language: all
+ * Encoding: ASCII
+ * 2009-12-22, LINAGORA Group
+ */
+
+
+/***************************************************************************
+* PAGES
+*/
+
+/**
+ * Fix auto complete position
+ */
+ 
+#fileSearch #simpleSearchForm .t-autocomplete-menu {
+	top:185px !important;
+	left:18px !important;
+}
+
+#userSearch #userSearchForm .t-autocomplete-menu {
+	top:185px !important;
+	left:18px !important;
+}
+
+#history #formReport #targetCriterion .t-autocomplete-menu {
+	top:147px !important;
+	left:145px !important;
+}
+
+#audit #formReport #actorCriterion .t-autocomplete-menu {
+	top:147px !important;
+	left:145px !important;
+}
+
+#audit #formReport #targetCriterion .t-autocomplete-menu {
+	top:147px !important;
+	left:451px !important;
+}
+
+/***************************************************************************/

@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.index.title" t:identifier="administration" t:currentHighlight="administration"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${message:pages.administration.index.link.activationpolicy} : ${selectedDomain}</h1>
+		
+		<!-- Action bar 
+		<div id="actionBar">
+			<h4>Actions</h4>
+			<ul>
+				<li>
+					<t:pagelink t:id="parameters" t:page="administration/Index" class="button"><span><img src="${asset:context:images/icons/tango-applications-system.png}" alt=""/>${message:pages.administration.personalization.link.parameters}</span></t:pagelink>
+				</li>
+			</ul>
+		</div> id="actionBar" -->
+		<t:messagePanel />	
+		
+		<div id="pageContent">
+		  	<form t:type="form" t:id="policyForm">
+				<t:FunctionalityPolicyConfigurer t:policies="activationPolicies"/>
+				<div class="button">
+                    <t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
+                    <span> </span>
+                    <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
+
+				</div>
+			</form>
+		</div>
+	</div>
+
+</t:MyBorderLayout>

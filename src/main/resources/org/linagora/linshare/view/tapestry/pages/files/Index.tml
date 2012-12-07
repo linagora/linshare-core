@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="prop:pageTitle" t:identifier="files" t:currentHighlight="files"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+	<!-- Main content -->
+
+	<div id="content">
+
+		<h1>${pageTitle}</h1>
+
+
+		<t:messagePanel />
+		<t:businessMessagesDisplayer />
+
+
+		<!-- Action bar -->
+
+		<div id="actionBar">
+			<h4>Actions</h4>
+			<ul>
+				<t:if test="displayUploadButton">
+				<li>
+					<a href="#" class="button" onclick="windowUpload.showCenter(true);">
+						<span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/>
+							${message:pages.files.upload.addbutton}</span>
+					</a>
+				</li>
+				<t:parameter name="else"><t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
+				<li>&nbsp;</li>
+				</t:parameter>
+				</t:if>
+			</ul>
+		</div><!-- id="actionBar" -->
+
+
+		<!-- Page content -->
+
+		<div id="pageContent">
+
+			<!-- List : Search result -->
+
+			<t:ListDocument t:documents="listDocumentsVo" t:user="userVo" inSearch="prop:inSearch" />
+
+		</div>
+
+	</div><!-- id="content" -->
+
+
+
+	<!-- Popups -->
+
+	<!-- Confirm share popup -->
+	<t:confirmSharePopup t:messageLabel="${message:pages.user.fileSearch.messageConfirm}"
+		t:eventName="sharePopupEvent" t:usersVo="prop:shareSessionObjects.users"
+		t:documentsVo="prop:shareSessionObjects.documents" />
+	
+	<!-- Uploader popup -->
+	<div t:id="windowUpload">
+		<t:fileUploader divId="literal:sendFiles" showsendbutton="literal:true"/>
+		<div class="button">
+		<a href="#" onclick='Windows.close("${JSONId}")' class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}
+			</span></a>
+		</div>
+	</div>
+	
+	<!-- Widgets -->
+
+	<!-- Search widget -->
+	<t:parameter name="searchWidget">
+		<t:widget widgetId="searchWidget" title="${message:components.widget.searchWidget.title}">
+			<t:SearchFile userlogin="userVo" />
+		</t:widget>
+	</t:parameter>
+	
+	<!-- Actions widget -->
+	<t:parameter name="actionsWidget">
+		<t:if test="listDocumentsVo">
+			<t:widget widgetId="actionsWidget" title="${message:components.widget.actionsWidget.title}">
+				<t:actionsBarDocument t:user="userVo" t:formName="search" />
+			</t:widget>
+		</t:if>
+	</t:parameter>
+	
+	<!-- Share widget -->
+	<t:parameter name="shareWidget">
+		<t:if test="shareSessionObjects.notEmpty">
+			<t:widget widgetId="shareWidget" title="${message:components.widget.shareWidget.title}">
+				<t:sharePanel listObject="prop:shareSessionObjects.documents" columns="fileName"
+					label="${message:pages.user.fileSearch.sharePanel.label}" />
+			</t:widget>
+		</t:if>
+	</t:parameter>
+
+
+</t:MyBorderLayout>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+	<!-- cxf -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	
+	
+	<!-- SOAP  -->
+
+
+	<bean id="documentSoapService" class="org.linagora.linshare.webservice.impl.DocumentSoapServiceImpl">
+		<constructor-arg ref="webServiceDocumentFacade" />
+	</bean>
+	
+	<bean id="shareSoapService" class="org.linagora.linshare.webservice.impl.ShareSoapServiceImpl">
+		<constructor-arg ref="webServiceShareFacade" />
+	</bean>
+
+
+	<bean id="pluginManagmentSoapService" class="org.linagora.linshare.webservice.impl.PluginManagmentSoapServiceImpl">
+	</bean>
+	
+	
+	<bean id="soapExceptionInterceptor" class="org.linagora.linshare.webservice.interceptor.SoapExceptionInterceptor" />
+
+
+
+	<cxf:bus>
+		<cxf:features>
+			<!--<cxf:logging /> -->
+		</cxf:features>
+		
+		<cxf:inInterceptors />
+		<cxf:outInterceptors />
+		<cxf:outFaultInterceptors>
+			<!--<ref bean="soapExceptionInterceptor" />-->
+		</cxf:outFaultInterceptors>
+	</cxf:bus>
+
+
+	<jaxws:endpoint id="documentEndpoint" implementor="#documentSoapService"
+		address="/soap/document">
+		<jaxws:properties>
+			<entry key="mtom-enabled" value="true" />
+			<entry key="attachment-directory" value="${webservice.attachment-directory}" />
+			<!-- data exceeding the memory threshold will be written to the directory 
+				specified in bytes -->
+			<entry key="attachment-memory-threshold" value="${webservice.attachment-memory-threshold}" />
+		</jaxws:properties>
+		<jaxws:outFaultInterceptors>
+			<ref bean="soapExceptionInterceptor" />
+		</jaxws:outFaultInterceptors>
+	</jaxws:endpoint>  
+	
+ 	<jaxws:endpoint id="shareEndpoint" implementor="#shareSoapService" address="/soap/share" >
+		<jaxws:outFaultInterceptors>
+			<ref bean="soapExceptionInterceptor" />
+		</jaxws:outFaultInterceptors> 	
+ 	</jaxws:endpoint>
+ 	
+ 	<jaxws:endpoint id="pluginManagmentEndpoint" implementor="#pluginManagmentSoapService" address="/soap/plugin" >
+		<jaxws:outFaultInterceptors>
+			<ref bean="soapExceptionInterceptor" />
+		</jaxws:outFaultInterceptors> 	
+ 	</jaxws:endpoint>
+
+
+	<!-- REST  -->
+
+	<bean id="documentRestService" class="org.linagora.linshare.webservice.impl.DocumentRestServiceImpl">
+		<constructor-arg ref="webServiceDocumentFacade" />
+	</bean>
+	
+	<bean id="shareRestService" class="org.linagora.linshare.webservice.impl.ShareRestServiceImpl">
+		<constructor-arg ref="webServiceShareFacade" />
+	</bean>
+	
+	<bean id="pluginManagmentRestService" class="org.linagora.linshare.webservice.impl.PluginManagmentRestServiceImpl">
+	</bean>
+
+	<jaxrs:server id="restContainer" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="documentRestService" />
+			<ref bean="shareRestService" />
+			<ref bean="pluginManagmentRestService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+			<entry key="xml" value="application/xml" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<!--<cxf:logging /> -->
+		</jaxrs:features>
+	</jaxrs:server>
+	
+	<!-- enable json with jackson (not the default jettison)-->
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+
+</beans>

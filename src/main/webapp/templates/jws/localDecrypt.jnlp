@@ -20,7 +20,7 @@
 		<jar href="jwsDecrypt.jar" download="eager" main="true"/>
 	</resources>
 
-	<application-desc main-class="org.linagora.linShare.aescrypt.JwsDecrypt">
+	<application-desc main-class="org.linagora.linshare.aescrypt.JwsDecrypt">
 	</application-desc>
 </jnlp>
 			

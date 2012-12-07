@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="org.linagora.linshare.core.domain.entities.DomainPattern" table="domain_pattern">
+    <id name="persistenceId" type="long">
+    	<column name="domain_pattern_id" not-null="true" index="index_domain_pattern_id"/>
+      	<generator class="native"/>
+    </id>
+    <property access="field" column="identifier" index="index_domain_pattern_identifier" name="identifier" not-null="true" unique="true"/>
+    <property column="description" name="description"/>
+    <property column="auth_command" name="authCommand" not-null="true" type="text" />
+    <property column="search_user_command" name="searchUserCommand" not-null="true" type="text" />
+    <property column="auto_complete_command" name="autoCompleteCommand" not-null="true" type="text" />
+    <property column="system" name="system"/>
+    <map name="attributes" lazy="false" cascade="all" inverse="false">
+        <key column="domain_pattern_id" not-null="false"/>
+        <map-key  column="field" type="string"/>
+        <one-to-many class="org.linagora.linshare.core.domain.entities.LdapAttribute"/>
+    </map>
+  </class>
+</hibernate-mapping>

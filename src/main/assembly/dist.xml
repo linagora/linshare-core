@@ -70,7 +70,7 @@
 			<directory>${project.basedir}/misc</directory>
 			<outputDirectory>jetty/resources</outputDirectory>
 			<includes>
-				<include>linShare.properties</include>
+				<include>linshare.properties</include>
 			</includes>
 			<fileMode>0644</fileMode>
 		</fileSet>

@@ -416,6 +416,7 @@ public final class EmbeddedOpenDS {
             sb.append(line).append("\n");
         }
         addEntries(sb.toString());
+        br.close();
     }
 
 }

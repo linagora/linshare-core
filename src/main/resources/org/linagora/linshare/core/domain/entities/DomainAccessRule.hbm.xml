@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+
+	<class name="DomainAccessRule" table="domain_access_rule" abstract="true" discriminator-value= "-1">
+		<id name="persistenceId" type="long">
+			<column name="id" not-null="true" index="index_domain_access_rule_id"/>
+			<generator class="native" />
+		</id>
+		<discriminator column="domain_access_rule_type" type="integer" />
+		<property access="field" column="regexp" name="regexp" />
+	
+		<subclass discriminator-value="0" name="org.linagora.linshare.core.domain.entities.AllowAllDomain"></subclass>
+        <subclass discriminator-value="1" name="org.linagora.linshare.core.domain.entities.DenyAllDomain"></subclass>
+		<subclass discriminator-value="2" name="org.linagora.linshare.core.domain.entities.AllowDomain">
+			<many-to-one name="domain" column="domain_id" lazy="false" />
+        </subclass>
+		<subclass discriminator-value="3" name="org.linagora.linshare.core.domain.entities.DenyDomain">
+			<many-to-one name="domain" column="domain_id" lazy="false" />
+        </subclass>
+	</class>
+</hibernate-mapping>
+
+

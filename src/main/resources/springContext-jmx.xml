@@ -25,7 +25,7 @@
 		
 	</bean>
 
-	<bean name="linshareStats" class="org.linagora.linShare.jmx.LinshareStatsImpl">
+	<bean name="linshareStats" class="org.linagora.linshare.jmx.LinshareStatsImpl">
 		<constructor-arg ref="statisticsService" />
 	</bean>
 

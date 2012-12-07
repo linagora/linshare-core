@@ -1,86 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean name="userRepository" class="org.linagora.linShare.core.repository.hibernate.UserRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-    
-    <bean name="guestRepository" class="org.linagora.linShare.core.repository.hibernate.GuestRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-
-    <bean name="documentRepository" class="org.linagora.linShare.core.repository.hibernate.DocumentRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-
-    <bean name="logEntryRepository" class="org.linagora.linShare.core.repository.hibernate.LogEntryRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
-	</bean>    
-   <bean name="shareRepository"
-		class="org.linagora.linShare.core.repository.hibernate.ShareRepositoryImpl">
+	<bean name="accountRepository" class="org.linagora.linshare.core.repository.hibernate.AccountRepositoryImpl">
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 
-    <bean name="securedUrlRepository" class="org.linagora.linShare.core.repository.hibernate.SecuredUrlRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
-    </bean>
-    
-    <bean name="allowedMimeTypeRepository" class="org.linagora.linShare.core.repository.hibernate.AllowedMimeTypeRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-    
-  	<bean name="recipientFavouriteRepository" class="org.linagora.linShare.core.repository.hibernate.RecipientFavouriteRepository">
-    <constructor-arg ref="hibernateTemplate"/>
+	<bean name="threadRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-  	
-  	<bean name="cookieRepository" class="org.linagora.linShare.core.repository.hibernate.CookieRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
+	
+	<bean name="threadViewRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadViewRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-  	
-  	<bean name="groupRepository" class="org.linagora.linShare.core.repository.hibernate.GroupRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
+
+	<bean name="threadMemberRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadMemberRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-  	
-  	<bean name="allowedContactRepository" class="org.linagora.linShare.core.repository.hibernate.AllowedContactRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
+
+	<bean name="userRepository" class="org.linagora.linshare.core.repository.hibernate.UserRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-  	
-  	<bean name="domainPatternRepository" class="org.linagora.linShare.core.repository.hibernate.DomainPatternRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
+
+	<bean name="guestRepository" class="org.linagora.linshare.core.repository.hibernate.GuestRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-  	
-  	<bean name="ldapConnectionRepository" class="org.linagora.linShare.core.repository.hibernate.LDAPConnectionRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
+
+	<bean name="documentRepository" class="org.linagora.linshare.core.repository.hibernate.DocumentRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-  	
-  	<bean name="messagesRepository" class="org.linagora.linShare.core.repository.hibernate.MessagesRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
+
+	<bean name="signatureRepository" class="org.linagora.linshare.core.repository.hibernate.SignatureRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-  	<bean name="policyRepository" class="org.linagora.linShare.core.repository.hibernate.PolicyRepositoryImpl">
-    	<constructor-arg ref="hibernateTemplate"/>
+
+	<bean name="documentEntryRepository" class="org.linagora.linshare.core.repository.hibernate.DocumentEntryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
 	</bean>
-	<bean name="unitRepository" class="org.linagora.linShare.core.repository.hibernate.UnitRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-	<bean name="abstractDomainRepository" class="org.linagora.linShare.core.repository.hibernate.AbstractDomainRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-	<bean name="functionalityRepository" class="org.linagora.linShare.core.repository.hibernate.FunctionalityRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-	<bean name="userProviderRepository" class="org.linagora.linShare.core.repository.hibernate.UserProviderRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-	<bean name="domainAccessRuleRepository" class="org.linagora.linShare.core.repository.hibernate.DomainAccessRuleRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-	<bean name="domainAccessPolicyRepository" class="org.linagora.linShare.core.repository.hibernate.DomainAccessPolicyRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
-	<bean name="domainPolicyRepository" class="org.linagora.linShare.core.repository.hibernate.DomainPolicyRepositoryImpl">
-        <constructor-arg ref="hibernateTemplate"/>
-    </bean>
+	
+	<bean name="threadEntryRepository" class="org.linagora.linshare.core.repository.hibernate.ThreadEntryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="logEntryRepository" class="org.linagora.linshare.core.repository.hibernate.LogEntryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="shareEntryRepository" class="org.linagora.linshare.core.repository.hibernate.ShareEntryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="anonymousShareEntryRepository" class="org.linagora.linshare.core.repository.hibernate.AnonymousShareEntryRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="anonymousUrlRepository" class="org.linagora.linshare.core.repository.hibernate.AnonymousUrlRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="allowedMimeTypeRepository" class="org.linagora.linshare.core.repository.hibernate.AllowedMimeTypeRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="recipientFavouriteRepository" class="org.linagora.linshare.core.repository.hibernate.RecipientFavouriteRepository">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="cookieRepository" class="org.linagora.linshare.core.repository.hibernate.CookieRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="allowedContactRepository" class="org.linagora.linshare.core.repository.hibernate.AllowedContactRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="domainPatternRepository" class="org.linagora.linshare.core.repository.hibernate.DomainPatternRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="ldapConnectionRepository" class="org.linagora.linshare.core.repository.hibernate.LDAPConnectionRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+
+	<bean name="messagesRepository" class="org.linagora.linshare.core.repository.hibernate.MessagesRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="policyRepository" class="org.linagora.linshare.core.repository.hibernate.PolicyRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="unitRepository" class="org.linagora.linshare.core.repository.hibernate.UnitRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="abstractDomainRepository" class="org.linagora.linshare.core.repository.hibernate.AbstractDomainRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="functionalityRepository" class="org.linagora.linshare.core.repository.hibernate.FunctionalityRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="userProviderRepository" class="org.linagora.linshare.core.repository.hibernate.UserProviderRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="domainAccessRuleRepository" class="org.linagora.linshare.core.repository.hibernate.DomainAccessRuleRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="domainAccessPolicyRepository" class="org.linagora.linshare.core.repository.hibernate.DomainAccessPolicyRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="domainPolicyRepository" class="org.linagora.linshare.core.repository.hibernate.DomainPolicyRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	<bean name="contactRepository" class="org.linagora.linshare.core.repository.hibernate.ContactRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	
+	<bean name="tagRepository" class="org.linagora.linshare.core.repository.hibernate.TagRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	
+	<bean name="entryTagAssociationRepository" class="org.linagora.linshare.core.repository.hibernate.EntryTagAssociationRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
 </beans>

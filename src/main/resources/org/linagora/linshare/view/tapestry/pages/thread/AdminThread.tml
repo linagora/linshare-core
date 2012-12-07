@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
+
+    <div id="content">
+        <h1>${message:pages.thread.admin.title} : ${currentThread.name}</h1>
+
+        <t:messagePanel />
+        <t:businessMessagesDisplayer />
+        <!-- Page content -->
+
+        <div id="actionBar">
+            <h4>Actions</h4>
+            <ul>
+                <li>
+                    <t:pageLink page="thread/ThreadContent" class="button" title="${message:pages.thread.admin.back}">
+                        <span><img src="${asset:context:images/icons/cancel.png}" alt="" /> ${message:pages.thread.admin.back}</span>
+                    </t:pageLink>
+                </li>
+            </ul>
+        </div>
+
+        <div id="pageContent">
+            <t:grid source="members" row="member" include="fullName,mail" add="type,edit" >
+                
+                <p:typeCell>
+                	<t:delegate to="type" />
+
+		            <t:block id="adminBlock">
+		            	<span><img src="${asset:context:images/icons/usertype-threadadmin.png}" alt="${message:pages.thread.userType.admin}" title="${message:pages.thread.userType.admin}"/></span>
+		            </t:block>
+		            
+		           	<t:block id="userBlock">
+		           		<span><img src="${asset:context:images/icons/usertype-internalsimple.png}" alt="${message:pages.thread.userType.user}" title="${message:pages.thread.userType.user}"/></span>
+		            </t:block>
+		            
+		           	<t:block id="restrictedUserBlock">
+		            	<span><img src="${asset:context:images/icons/usertype-userrestricted.png}" alt="${message:pages.thread.userType.userRestricted}" title="${message:pages.thread.userType.userRestricted}"/></span>
+		            </t:block>
+                </p:typeCell>
+                
+                <p:editCell>
+                    <t:actionLink t:id="editMember" t:context="${member.lsUuid}" t:zone="memberEditFormZone"
+                            title="${message:components.userSearch.action.domainMove.title}">
+                        <span onclick="memberEditWindow.showCenter(true)">
+                            <img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
+                        </span>
+                    </t:actionLink>
+                </p:editCell>
+                
+            </t:grid>
+        </div><!-- id="list" -->
+
+        <div style="display:none">
+            <t:zone t:id="memberEditTemplateZone">
+                <t:threadMemberEditForm members="members" editMemberId="selectedMemberId" currentThread="currentThread" />
+            </t:zone>
+        </div>
+
+        <div t:id="memberEditWindow">
+            <t:zone id="memberEditFormZone" update="show" />
+        </div>
+
+    </div>
+</t:MyBorderLayout>

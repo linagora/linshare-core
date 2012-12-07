@@ -12,7 +12,7 @@
        
     	
 	    <aop:config>
-			<aop:pointcut id="linshareCoreServiceFacadeMethods" expression="execution(* org.linagora.linShare.core.Facade.*.*(..))" />
+			<aop:pointcut id="linshareCoreServiceFacadeMethods" expression="execution(* org.linagora.linshare.core.facade.*.*(..))" />
 	
 			<aop:advisor advice-ref="txAdvice" pointcut-ref="linshareCoreServiceFacadeMethods" />
 		 	<aop:advisor advice-ref="txAdviceJackRabbit" pointcut-ref="linshareCoreServiceFacadeMethods" />

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
-	<version>0.11.3</version>
+	<version>1.0.0-rc-1</version>
 	<packaging>war</packaging>
 	<name>LinShare, Secure File Sharing</name>
 	<description>Specially designed to secure paperless trading companies that put privacy and traceability in the heart of their problems of exchange, Linshare provides a simple solution completely intuitive :
@@ -54,26 +53,26 @@
 				<role>Manager</role>
 			</roles>
 		</developer>
-		<developer>
-			<id>ctjhoa</id>
-			<name>Camille Tjhoa</name>
-			<email>ctjhoa@linagora.com</email>
-			<organization>LINAGORA</organization>
-			<organizationUrl>http://www.linagora.com/</organizationUrl>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>nbertrand</id>
-			<name>Nicolas Bertrand</name>
-			<email>nbertrand@linagora.com</email>
-			<organization>LINAGORA</organization>
-			<organizationUrl>http://www.linagora.com/</organizationUrl>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
+        <developer>
+            <id>ctjhoa</id>
+            <name>Camille Tjhoa</name>
+            <email>ctjhoa@linagora.com</email>
+            <organization>LINAGORA</organization>
+            <organizationUrl>http://www.linagora.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>nbertrand</id>
+            <name>Nicolas Bertrand</name>
+            <email>nbertrand@linagora.com</email>
+            <organization>LINAGORA</organization>
+            <organizationUrl>http://www.linagora.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
 	</developers>
 	<mailingLists>
 		<mailingList>
@@ -131,17 +130,6 @@
 			<version>2.3</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>0.8.0-incubating</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>com.artofsolving</groupId>
 			<artifactId>jodconverter</artifactId>
 			<version>2.2.1</version>
@@ -158,23 +146,16 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>us.antera</groupId>
-			<artifactId>t5restfulws</artifactId>
-			<version>0.2.5-LNG</version>
-		</dependency>
-
 
 		<!-- A dependency on either JUnit or TestNG is required, or the surefire 
 			plugin (which runs the tests) will fail, preventing Maven from packaging 
 			the WAR. Tapestry includes a large number of testing facilities designed 
 			for use with TestNG (http://testng.org/), so it's recommended. -->
 
-
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
-			<version>3.2.6.ga</version>
+			<version>3.2.7.ga</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -335,7 +316,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<dependency>
+               <groupId>org.springframework.security</groupId>
+               <artifactId>spring-security-config</artifactId>
+               <version>${spring-security-release-version}</version>
+               <scope>runtime</scope>
+       </dependency>
+		
+		
 
+<!-- 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core-tiger</artifactId>
@@ -347,7 +338,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+ -->
 		<!-- SL4J: Logger API and choose LOG4J implementation -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -465,38 +456,26 @@
 			<artifactId>jcr</artifactId>
 			<version>1.0</version>
 		</dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.aparzev</groupId>-->
-            <!--<artifactId>commons</artifactId>-->
-            <!--<version>0.2</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.aparzev</groupId>-->
-            <!--<artifactId>doka</artifactId>-->
-            <!--<version>0.1</version>-->
-        <!--</dependency>-->
 		<dependency>
 			<groupId>org.safehaus.jug</groupId>
 			<artifactId>jug</artifactId>
 			<version>2.0.0</version>
 			<classifier>asl</classifier>
 		</dependency>
-
-
-		<dependency>
+		 <dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.1</version>
+			<version>3.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
-			<version>1.2.2</version>
+			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
-			<version>1.4</version>
+			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
@@ -512,7 +491,7 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			<version>1.4.1</version>
+			<version>1.4.5</version>
 		</dependency>
 		<dependency>
 			<groupId>quartz</groupId>
@@ -541,20 +520,22 @@
 			<version>0.8</version>
 		</dependency>
 
+<!--
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.3.1</version>
+			<version>1.4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
 			<version>2.1.3</version>
 		</dependency>
+-->
 		<dependency>
 			<groupId>com.sun.xml.messaging.saaj</groupId>
 			<artifactId>saaj-impl</artifactId>
-			<version>1.3</version>
+			<version>1.3.19</version>
 		</dependency>
 		<dependency>
 			<groupId>xalan</groupId>
@@ -573,11 +554,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.linagora</groupId>
 			<artifactId>RestMarshaller</artifactId>
 			<version>1.0-dev-b2</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>javax.annotations</groupId>
 			<artifactId>jsr250-api</artifactId>
@@ -600,13 +583,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.subethamail</groupId>
 			<artifactId>subethasmtp</artifactId>
-			<version>3.1.6</version>
+			<version>3.1.7</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -635,7 +618,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.2.126</version>
+			<version>1.3.168</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
@@ -718,6 +701,31 @@
 			<artifactId>antisamy</artifactId>
 			<version>1.4</version>
 		</dependency>
+		
+		<!-- ###### web services #######-->
+		<!-- cxf rest jaxrs -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<!-- cxf soap jaxws -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		<!-- cxf: json: want to change from jettison to jackson provider ? -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>1.9.9</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -785,11 +793,50 @@
 						<configuration>
 							<sources>
 								<source>src/opends/java</source>
+								<source>${project.basedir}/src/test/generated/cxf</source>
 							</sources>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
+			
+			<!--generate stub client SOAP for test purpose 
+			mvn cxf-codegen:wsdl2java
+			-->
+		<plugin>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-codegen-plugin</artifactId>
+			<version>${cxf.version}</version>
+			<configuration>
+				<sourceRoot>${project.basedir}/src/test/generated/cxf</sourceRoot>
+				<wsdlOptions>
+					<wsdlOption>
+						<wsdl>http://localhost:8080/linshare/webservice/soap/document?wsdl</wsdl>
+						<extraargs>
+							<extraarg>-client</extraarg>
+							<extraarg>-verbose</extraarg>
+							<extraarg>-p</extraarg>
+							<extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
+							<extraarg>-p</extraarg>
+							<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
+						</extraargs>
+					</wsdlOption>
+					<wsdlOption>
+						<wsdl>http://localhost:8080/linshare/webservice/soap/share?wsdl</wsdl>
+						<extraargs>
+							<extraarg>-client</extraarg>
+							<extraarg>-verbose</extraarg>
+							<extraarg>-p</extraarg>
+							<extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
+							<extraarg>-p</extraarg>
+							<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
+						</extraargs>
+					</wsdlOption>
+				</wsdlOptions>
+			</configuration>
+		</plugin>
+			
 
 			<!-- Run the application using "mvn jetty:run" -->
 			<plugin>
@@ -842,7 +889,7 @@
 						<update>false</update>
 						<export>false</export>
 						<format>true</format>
-						<namingstrategy>org.linagora.linShare.core.repository.hibernate.LinShareNamingStrategy</namingstrategy>
+						<namingstrategy>org.linagora.linshare.core.repository.hibernate.LinShareNamingStrategy</namingstrategy>
 						<configurationfile>src/main/resources/hibernate.cfg.xml</configurationfile>
 						<propertyfile>src/main/resources/reference-database.properties</propertyfile>
 						<outputfilename>createSchema.sql</outputfilename>
@@ -924,8 +971,7 @@
 				</executions>
 			</plugin>
 
-		</plugins><!-- <extensions> <extension> <groupId>postgresql</groupId> <artifactId>postgresql</artifactId> 
-			<version>9.1-901.jdbc4</version> </extension> </extensions> -->
+		</plugins>
 		<resources>
 			<resource>
 				<filtering>false</filtering>
@@ -974,7 +1020,7 @@
 				<artifactId>tapestry-component-report</artifactId>
 				<version>${tapestry-release-version}</version>
 				<configuration>
-						<rootPackage>org.linagora.linShare.view.tapestry</rootPackage>
+						<rootPackage>org.linagora.linshare.view.tapestry</rootPackage>
 				</configuration>
 		  </plugin>
 		-->
@@ -990,12 +1036,12 @@
 				<dependency>
 					<groupId>postgresql</groupId>
 					<artifactId>postgresql</artifactId>
-					<version>9.1-901.jdbc4</version>
+					<version>9.1-901-1.jdbc4</version>
 				</dependency>
 				<dependency>
 					<groupId>mysql</groupId>
 					<artifactId>mysql-connector-java</artifactId>
-					<version>5.1.12</version>
+					<version>5.1.21</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -1103,7 +1149,7 @@
 				<dependency>
 					<groupId>com.h2database</groupId>
 					<artifactId>h2</artifactId>
-					<version>1.2.126</version>
+					<version>1.3.168</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -1397,11 +1443,12 @@
 
 	<properties>
 		<tapestry-release-version>5.2.6</tapestry-release-version>
-		<spring-release-version>2.5.5</spring-release-version>
-		<spring-security-release-version>2.0.5.RELEASE</spring-security-release-version>
+		<spring-release-version>3.0.5.RELEASE</spring-release-version>
+		<spring-security-release-version>3.0.5.RELEASE</spring-security-release-version>
 		<jackrabbit-release-version>1.4</jackrabbit-release-version>
 		<jackrabbit-core-version>1.4.13-LINAGORA</jackrabbit-core-version>
-		<slf4j-release-version>1.5.6</slf4j-release-version>
+		<slf4j-release-version>1.7.2</slf4j-release-version>
+		<cxf.version>2.7.0</cxf.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>

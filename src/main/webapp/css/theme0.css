@@ -1262,15 +1262,16 @@ select, textarea {
 	padding: 2px !important;
 	border: 0px none;
 }
+
 input[type="text"], input[type="password"], input[type="file"],
 input[type="submit"], input[type="reset"], input[type="button"],
 select, textarea {
 	border: 1px solid #DDD;
 }
+
 input[type="submit"], input[type="reset"], input[type="button"] {
 	cursor: pointer;
 }
-
 
 /*--------------------------------------------------------------------------
 * Objects > Message label
@@ -1466,6 +1467,33 @@ table.t-data-grid {
 }
 #files #list .selectedValue {
 	width: 3.5%;
+}
+
+
+/*--------------------------------------------------------------------------
+* Pages > Thread
+*/
+
+#thread #pageContent #list {
+}
+
+#thread #list td.fileProperties {
+	max-width: 400px;	/* Value <= 400px */
+}
+#thread #list td.fileProperties div {
+	overflow: hidden;
+	min-width: 400px;		/* For 1024-width screen */
+	white-space: normal;
+}
+#thread #list td.fileProperties span,
+#thread #list td.fileProperties a {
+	white-space: nowrap;
+}
+
+#thread #list .fileDelete {
+	width: 7%;
+	min-width: 100px;	/* 37px = 42px - 5px */
+	text-align: center;
 }
 
 
@@ -1926,6 +1954,13 @@ DIV.t-palette-controls BUTTON {
 	margin-top: 1em;
 }
 
+/*--------------------------------------------------------------------------
+* Pages > Domains
+*/
+
+#domains #pageContent input#domainDescription, #domains #pageContent input#differentialKey, #domains #pageContent input#identifier {
+	width: 30em;	
+}
 
 /*--------------------------------------------------------------------------
 * Pages > User Configuration
@@ -3225,6 +3260,7 @@ form#uploadForm .upload-list {
 */
 
 #guestEditFormComponent .edit-form-label,
+#memberEditFormComponent .edit-form-label,
 #userEditFormComponent .edit-form-label,
 #createGroupZone .edit-form-label {
 	display: block;
@@ -3232,16 +3268,20 @@ form#uploadForm .upload-list {
 	margin-top: .25em;
 	text-align: right !important;
 }
-#userEditFormComponent .edit-form-label {
+#userEditFormComponent .edit-form-label,
+#memberEditFormComponent .edit-form-label {
 	width: 20em;
 }
 
 #guestEditFormComponent .edit-form-field,
 #userEditFormComponent .edit-form-field,
+#memberEditFormComponent .edit-form-field,
 #guestEditFormComponent .edit-form-checkbox,
 #userEditFormComponent .edit-form-checkbox,
+#memberEditFormComponent .edit-form-checkbox,
 #guestEditFormComponent .edit-form-select,
 #userEditFormComponent .edit-form-select,
+#memberEditFormComponent .edit-form-select,
 #createGroupZone .edit-form-field,
 #createGroupZone .edit-form-checkbox,
 #createGroupZone .edit-form-select {
@@ -3257,21 +3297,25 @@ form#uploadForm .upload-list {
 	margin-left: 26em;
 }
 #guestEditFormComponent [readonly="true"],
+#memberEditFormComponent [readonly="true"],
 #userEditFormComponent [readonly="true"] {
 	background-color: #E0E0E0;
 }
 #guestEditFormComponent .edit-form-field,
+#memberEditFormComponent .edit-form-field,
 #userEditFormComponent .edit-form-field,
 #createGroupZone .edit-form-field {
 	width: 17em;
 }
 #guestEditFormComponent .edit-form-checkbox,
+#memberEditFormComponent .edit-form-checkbox,
 #userEditFormComponent .edit-form-checkbox,
 #createGroupZone .edit-form-checkbox {
 	margin-top: -1.35em;
 }
 
 #guestEditFormComponent img.t-error-icon,
+#memberEditFormComponent img.t-error-icon,
 #userEditFormComponent img.t-error-icon,
 #createGroupZone img.t-error-icon {
 	float: right;
@@ -3286,6 +3330,7 @@ form#uploadForm .upload-list {
 }
 
 #guestEditFormComponent textarea,
+#memberEditFormComponent textarea,
 #userEditFormComponent textarea,
 #createGroupZone textarea {
 	float: left;
@@ -3294,6 +3339,7 @@ form#uploadForm .upload-list {
 	margin-bottom: 1.5em;
 }
 #guestEditFormComponent input[type="submit"],
+#memberEditFormComponent input[type="submit"],
 #userEditFormComponent input[type="submit"] {
 	float: none;
 	width: auto;

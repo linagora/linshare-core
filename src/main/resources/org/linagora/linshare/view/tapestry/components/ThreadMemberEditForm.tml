@@ -1,0 +1,25 @@
+<t:container
+        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
+    <div id="memberEditFormComponent">
+        <t:form t:id="memberForm">
+			<hr/>
+            <t:label for="fullName" class="edit-form-label" />
+            <t:textfield t:id="fullName" class="edit-form-field" readonly="true" size="20" />
+            <br/>
+            <t:label for="admin" class="edit-form-label" />
+            <t:checkbox t:id="admin" value="admin" class="edit-form-checkbox" />
+            <br/>
+            <t:label for="canUpload" class="edit-form-label" />
+            <t:checkbox t:id="canUpload" value="canUpload" class="edit-form-checkbox" />
+			<hr />
+			<div class="clear"></div>
+			<div class="button">
+				<t:linkSubmit class="button">
+                    <span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:global.button.validate}</span>
+                </t:linkSubmit>
+				<a href="#" onclick="memberEditWindow.close();" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+			</div>
+        </t:form>
+    </div>
+</t:container>
