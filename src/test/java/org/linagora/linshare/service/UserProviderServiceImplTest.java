@@ -173,7 +173,6 @@ public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4Spri
 		}
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
 		attributes.get(DomainPattern.USER_FIRST_NAME).setAttribute("foo");
-		DomainPatternVo vo = new DomainPatternVo(domainPattern);
 		try {
 			userProviderService.updateDomainPattern(domainPattern);
 		} catch (BusinessException e) {

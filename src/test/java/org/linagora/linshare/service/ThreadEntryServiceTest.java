@@ -47,7 +47,7 @@ public class ThreadEntryServiceTest {
 	ThreadEntryService threadEntryService;
 	
 	@Before
-	void init() {
+	public void init() {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -59,6 +59,6 @@ public class ThreadEntryServiceTest {
 	}
 
 	@Test
-	void testFindAllThreadEntriesTaggedWith() {
+	public void testFindAllThreadEntriesTaggedWith() {
 	}
 }

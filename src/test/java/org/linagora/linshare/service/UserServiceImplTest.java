@@ -74,6 +74,7 @@ import org.subethamail.wiser.Wiser;
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopends.xml",
 		"classpath:springContext-jackRabbit.xml",
@@ -162,7 +163,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user);
 		
 		try{
-		userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getMail(), user.getDomainId());
+			userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getMail(), user.getDomainId());
 		}catch(TechnicalException e){
 			logger.info("Impossible to send mail, normal in test environment");
 		}
