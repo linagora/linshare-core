@@ -29,7 +29,6 @@ public class DomainPattern {
         this.identifier = null;
     }
 
-
     public DomainPattern(String identifier, String description,
             String getUserCommand, String getAllDomainUsersCommand,
             String authCommand,
@@ -39,9 +38,8 @@ public class DomainPattern {
         this.authCommand = authCommand;
         this.searchUserCommand = searchUserCommand;
         this.attributes = attributes;
+        this.autoCompleteCommand = "";
     }
-
-
 
     public DomainPattern(DomainPatternVo domainPatternVo) {
         this.identifier = domainPatternVo.getIdentifier();

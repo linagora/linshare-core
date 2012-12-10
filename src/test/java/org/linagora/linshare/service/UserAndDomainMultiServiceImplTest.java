@@ -1,11 +1,16 @@
 package org.linagora.linshare.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
@@ -27,6 +32,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopends.xml",
 		"classpath:springContext-jackRabbit.xml",
@@ -90,6 +96,13 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 		
 		User actor = datas.getUser1(); 
 		
+		TechnicalAccountPermission technicalAccountPermission = new TechnicalAccountPermission();
+		technicalAccountPermission.setAll(true);
+		HashSet<AbstractDomain> hashSet = new HashSet<AbstractDomain>();
+		hashSet.add(datas.getUser2().getDomain());
+		technicalAccountPermission.setDomains(hashSet);
+		actor.setTechnicalAccountPermission(technicalAccountPermission);
+		
 		String user1Login = new String(datas.getUser1().getLogin());
 		String user2Login = new String(datas.getUser2().getLogin());
 		String user3Login = new String(datas.getUser3().getLogin());
@@ -101,13 +114,14 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 			
 		}catch (BusinessException e) {
 			logger.error("userAndDomainMultiService can not delete a user in subdomain");
-			logger.error(e.toString());
+			e.printStackTrace();
 		}
 		
 		User tmpUser = userRepository.findByMailAndDomain(LoadingServiceTestDatas.topDomainName, user1Login);
 		Assert.assertNotNull(tmpUser);
 		
 		tmpUser = userRepository.findByMail(user2Login);
+		logger.error(tmpUser.toString());
 		Assert.assertNull(tmpUser);
 		
 		tmpUser = userRepository.findByMailAndDomain(LoadingServiceTestDatas.guestDomainName1, user3Login);

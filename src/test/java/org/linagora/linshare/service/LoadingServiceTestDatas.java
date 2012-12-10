@@ -255,10 +255,13 @@ public class LoadingServiceTestDatas {
 		topDomain.addSubdomain(userGuestDomain);
 		abstractDomainRepository.update(topDomain);	
 		
-		
 		user1 = new Internal("John","Doe","user1@linpki.org", null);
 		user2 = new Internal("Jane","Smith","user2@linpki.org", null);
-		user3 = new Internal("Foo","Bar","user3@linpki.org", null);
+		user3 = new Internal("Foo","Bar","user3@linpki.org", null); 
+		
+		user1.setLocale(userGuestDomain.getDefaultLocale());
+		user2.setLocale(userGuestDomain.getDefaultLocale());
+		user3.setLocale(userGuestDomain.getDefaultLocale());
 		
 		user1.setDomain(abstractDomainRepository.findById(topDomainName));
 		user2.setDomain(abstractDomainRepository.findById(subDomainName1));

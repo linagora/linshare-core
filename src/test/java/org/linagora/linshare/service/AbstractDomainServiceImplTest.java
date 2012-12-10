@@ -45,6 +45,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-service.xml",
+		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopends.xml",
 		"classpath:springContext-jackRabbit.xml",
