@@ -1,7 +1,10 @@
 package org.linagora.linshare.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 
@@ -13,6 +16,7 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPQueryService;
@@ -39,18 +43,25 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	
 	private DomainPattern pattern;
 	
+	private Map<String, LdapAttribute> attributes;
+	
 	private String baseDn ;
 	
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
 		ldapConn = new LDAPConnection("testldap", "ldap://localhost:33389", "anonymous");
+		attributes = new HashMap<String, LdapAttribute>();
+		attributes.put(DomainPattern.USER_MAIL, new LdapAttribute(DomainPattern.USER_MAIL, "mail"));
+		attributes.put(DomainPattern.USER_FIRST_NAME, new LdapAttribute(DomainPattern.USER_FIRST_NAME, "givenName"));
+		attributes.put(DomainPattern.USER_LAST_NAME, new LdapAttribute(DomainPattern.USER_LAST_NAME, "sn"));
+		attributes.put(DomainPattern.USER_UID, new LdapAttribute(DomainPattern.USER_UID, "uid"));
 		pattern= new DomainPattern("testPattern", "testPattern", 
 				"ldap.entry(\"uid=\" + userId + \",ou=People,\" + domain, \"objectClass=*\");", 
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");", 
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
 				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
-				null);
+				attributes);
 		baseDn = "dc=linpki,dc=org";
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -60,7 +71,6 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
-	@Ignore
 	@Test
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -73,7 +83,6 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	@Ignore
 	@Test
 	public void testSearchUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
