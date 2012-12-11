@@ -337,7 +337,7 @@ public class UserServiceImpl implements UserService {
 			//clearing allowed contacts
 			allowedContactRepository.deleteAllByUserBothSides(userToDelete);
 			
-			//cear all thread memberships
+			//clear all thread memberships
 			threadService.deleteAllUserMemberships(userToDelete);
 			
 //			// clearing all signatures
