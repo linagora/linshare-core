@@ -35,6 +35,7 @@
 		<constructor-arg ref="threadRepository" />
 		<constructor-arg ref="threadViewRepository" />
 		<constructor-arg ref="threadMemberRepository" />
+		<constructor-arg ref="tagRepository" />
 	</bean>
 
 	<bean name="userService" class="org.linagora.linshare.core.service.impl.UserServiceImpl">

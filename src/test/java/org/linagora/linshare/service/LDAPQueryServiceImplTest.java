@@ -1,7 +1,6 @@
 package org.linagora.linshare.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import javax.naming.NamingException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
@@ -65,6 +63,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		baseDn = "dc=linpki,dc=org";
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
+	
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
