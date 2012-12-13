@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AllowedContact;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
@@ -163,7 +164,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user);
 		
 		try{
-			userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getMail(), user.getDomainId());
+			userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getLsUuid(), user.getDomainId());
 		}catch(TechnicalException e){
 			logger.info("Impossible to send mail, normal in test environment");
 		}
@@ -231,7 +232,8 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user2);
 		
 		logger.info("John Doe trying to delete Jane Smith");
-		userService.deleteUser("user2@linpki.org", user1);
+		User u = userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org");
+		userService.deleteUser(u.getLsUuid(), user1);
 		
 		Assert.assertNull(userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org"));
 		Assert.assertNotNull(userService.findUserInDB(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org"));
@@ -280,7 +282,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
 		user2.setDomain(subDomain);
 		
-		Assert.assertTrue(userService.isAdminForThisUser(user1, user2.getDomainId(),user2.getMail()));
+		Assert.assertTrue(userService.isAdminForThisUser(user1, user2.getDomainId(),user2.getLsUuid()));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -305,7 +307,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		user.setCanCreateGuest(true);
 		userService.saveOrUpdateUser(user);
 		
-		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getMail(), user.getDomainId());
+		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getLsUuid(), user.getDomainId());
 	
 		Assert.assertNotNull(userRepository.findByMail("guest1@linpki.org"));
 		
@@ -333,6 +335,8 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		user1.setRole(Role.ADMIN);
 		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
 		user2.setDomain(subDomain);
+		userService.saveOrUpdateUser(user1);
+		userService.saveOrUpdateUser(user2);
 		
 		Assert.assertTrue(userService.searchUser(user2.getMail(), user2.getFirstName(), user2.getLastName(), AccountType.INTERNAL, user1).contains(user2));
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -356,7 +360,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		user2.setCanCreateGuest(true);
 		
 		userService.saveOrUpdateUser(user2);
-		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user2.getMail(), user2.getDomainId());
+		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user2.getLsUuid(), user2.getDomainId());
 	
 		Assert.assertTrue(userService.searchUserForRestrictedGuestEditionForm("user2@linpki.org","Jane","Smith", guest).contains(user2));
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -545,7 +549,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		guestRepository.create(guest);
 		
-		userService.addGuestContactRestriction(guest.getMail(), guest2.getMail());
+		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
 		
 		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
 		
@@ -553,7 +557,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		for (AllowedContact allowedContact : listAllowedContact) {
 			
-			if(allowedContact.getContact().getMail() == guest2.getMail()){
+			if(allowedContact.getContact().getLsUuid() == guest2.getLsUuid()){
 				test=true;
 			}	
 		}
@@ -596,7 +600,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		mailContacts.add(guest2.getMail());
 		
-		userService.setGuestContactRestriction(guest.getMail(), mailContacts);
+		userService.setGuestContactRestriction(guest.getLsUuid(), mailContacts);
 		
 		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
 		
@@ -604,7 +608,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		for (AllowedContact allowedContact : listAllowedContact) {
 			
-			if(allowedContact.getContact().getMail() == guest2.getMail()){
+			if(allowedContact.getContact().getLsUuid() == guest2.getLsUuid()){
 				test=true;
 			}	
 		}
@@ -645,10 +649,10 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		guestRepository.create(guest);
 		
 		
-		userService.addGuestContactRestriction(guest.getMail(), guest2.getMail());
+		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
 
 		
-		List<User> guestContacts = userService.fetchGuestContacts(guest.getMail());
+		List<User> guestContacts = userService.fetchGuestContacts(guest.getLsUuid());
 		
 		Assert.assertTrue(guestContacts.contains(guest2));
 		
@@ -687,7 +691,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		guestRepository.create(guest);
 		
 		
-		userService.addGuestContactRestriction(guest.getMail(), guest2.getMail());
+		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
 
 		
 		List<String> guestEmailContacts = userService.getGuestEmailContacts(guest.getMail());
