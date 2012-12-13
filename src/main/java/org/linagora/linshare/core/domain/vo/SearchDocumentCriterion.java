@@ -37,7 +37,10 @@ public class SearchDocumentCriterion {
 	private final Long sizeMin;
 	private final Long sizeMax;
 	private final String type;
+	
+	// TODO: Fix or remove. Currently not used
 	private final Boolean shared;
+	
 	private final Calendar dateBegin;
 	private final Calendar dateEnd;
 	private final DocumentType documentType;

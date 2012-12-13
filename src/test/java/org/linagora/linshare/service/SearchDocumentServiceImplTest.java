@@ -17,27 +17,42 @@
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
-*/
+ */
 package org.linagora.linshare.service;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.business.service.ShareEntryBusinessService;
 import org.linagora.linshare.core.dao.FileSystemDao;
+import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.constants.Policies;
+import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.FileSizeUnitClass;
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.Signature;
+import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.TimeUnitClass;
+import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
@@ -55,492 +70,604 @@ import org.subethamail.wiser.Wiser;
 /*
  * This all class was disable because of a huge spring context problem
  * */
-@ContextConfiguration(locations = { 
-		"classpath:springContext-datasource.xml",
+@ContextConfiguration(locations = { "classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
 		"classpath:springContext-startopends.xml",
 		"classpath:springContext-jackRabbit.xml",
-		"classpath:springContext-test.xml"
-		})
-public class SearchDocumentServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
-	
-	private static Logger logger = LoggerFactory.getLogger(SearchDocumentServiceImplTest.class);
-	
+		"classpath:springContext-test.xml" })
+public class SearchDocumentServiceImplTest extends
+		AbstractTransactionalJUnit4SpringContextTests {
+
+	private static Logger logger = LoggerFactory
+			.getLogger(SearchDocumentServiceImplTest.class);
+
 	@Autowired
 	private FunctionalityRepository functionalityRepository;
-	
+
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
-	
+
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
-	
+
 	@Qualifier("userRepository")
 	@Autowired
 	private UserRepository<User> userRepository;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private DocumentRepository documentRepository;
-	
+
+	@Autowired
+	private DocumentEntryRepository documentEntryRepository;
+
 	@Autowired
 	private FileSystemDao fileRepository;
-	
+
 	@Autowired
 	private SearchDocumentService searchDocumentService;
-	
-	
+
+	@Autowired
+	private ShareEntryBusinessService shareEntryBusinessService;
+
 	private InputStream inputStream;
 	private String inputStreamUuid;
 	private User John;
 	private User Jane;
+	private UserVo johnVo;
+	private UserVo janeVo;
 	private Document aDocument;
+	private DocumentEntry aDocumentEntry;
 
 	private LoadingServiceTestDatas datas;
 
 	private Wiser wiser;
-	
+
 	public SearchDocumentServiceImplTest() {
 		super();
 		wiser = new Wiser(2525);
 
 	}
-	
+
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-//		wiser.start();
-//
-//		
-//		datas = new LoadingServiceTestDatas(functionalityRepository,abstractDomainRepository,domainPolicyRepository,userRepository,userService);
-//		datas.loadUsers();
-//		
-//		John = datas.getUser1();
-//		Jane = datas.getUser2();
-//		
-//		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
-//		inputStreamUuid = fileRepository.insertFile(Jane.getLogin(), inputStream, 10000, "linshare-default.properties", "text/plain");
-//				
-//		FileInfo inputStreamInfo = fileRepository.getFileInfoByUUID(inputStreamUuid);
-//		
-//		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
-//		Calendar exp=inputStreamInfo.getLastModified();
-//		exp.add(Calendar.HOUR, 4);
-//		
-//		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, Jane,false,false,new Long(10000));
-//		List<Signature> signatures = new ArrayList<Signature>();
-//		aDocument.setSignatures(signatures);
-//		
-//		try {
-//			documentRepository.create(aDocument);
-//			Jane.addDocument(aDocument);
-//			userRepository.update(Jane);
-//		} catch (IllegalArgumentException e) {
-//			e.printStackTrace();
-//			Assert.fail();
-//		} catch (BusinessException e) {
-//			e.printStackTrace();
-//			Assert.fail();
-//		}
-//		
-//		
+		wiser.start();
+
+		datas = new LoadingServiceTestDatas(functionalityRepository,
+				abstractDomainRepository, domainPolicyRepository,
+				userRepository, userService);
+		datas.loadUsers();
+
+		John = datas.getUser1();
+		Jane = datas.getUser2();
 		
+		janeVo = new UserVo(Jane);
+		johnVo = new UserVo(John);
+
+		Integer value = 1;
+		ArrayList<Functionality> functionalities = new ArrayList<Functionality>();
+		functionalities.add(new UnitValueFunctionality("QUOTA_GLOBAL", true,
+				new Policy(Policies.ALLOWED, false), new Policy(
+						Policies.ALLOWED, false), Jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
+
+		functionalities.add(new UnitValueFunctionality("QUOTA_USER", true,
+				new Policy(Policies.ALLOWED, false), new Policy(
+						Policies.ALLOWED, false), Jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
+
+		functionalities.add(new UnitValueFunctionality("MIME_TYPE", true,
+				new Policy(Policies.ALLOWED, false), new Policy(
+						Policies.ALLOWED, false), Jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
+
+		functionalities.add(new UnitValueFunctionality("ANTIVIRUS", true,
+				new Policy(Policies.ALLOWED, false), new Policy(
+						Policies.ALLOWED, false), Jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
+
+		functionalities.add(new UnitValueFunctionality("ENCIPHERMENT", true,
+				new Policy(Policies.ALLOWED, true), new Policy(
+						Policies.ALLOWED, true), Jane.getDomain(), value,
+				new FileSizeUnitClass(FileSizeUnit.GIGA)));
+
+		functionalities.add(new StringValueFunctionality("TIME_STAMPING", true,
+				new Policy(Policies.ALLOWED, false), new Policy(
+						Policies.ALLOWED, false), Jane.getDomain(), ""));
+
+		functionalities.add(new UnitValueFunctionality("FILE_EXPIRATION", true,
+				new Policy(Policies.ALLOWED, false), new Policy(
+						Policies.ALLOWED, false), Jane.getDomain(), value,
+				new TimeUnitClass(TimeUnit.DAY)));
+
+		for (Functionality functionality : functionalities) {
+			functionalityRepository.create(functionality);
+			Jane.getDomain().addFunctionality(functionality);
+		}
+
+		inputStream = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("linshare-default.properties");
+		inputStreamUuid = fileRepository
+				.insertFile(Jane.getLogin(), inputStream, 10000,
+						"linshare-default.properties", "text/plain");
+
+		FileInfo inputStreamInfo = fileRepository
+				.getFileInfoByUUID(inputStreamUuid);
+
+		Calendar lastModifiedLin = inputStreamInfo.getLastModified();
+		Calendar exp = inputStreamInfo.getLastModified();
+		exp.add(Calendar.HOUR, 4);
+
+		aDocument = new Document(inputStreamUuid, inputStreamInfo.getName(),
+				inputStreamInfo.getMimeType(), lastModifiedLin, exp, Jane,
+				false, false, new Long(10000));
+		HashSet<Signature> signatures = new HashSet<Signature>();
+		aDocumentEntry = new DocumentEntry(Jane, inputStreamInfo.getName(), aDocument);
+		aDocument.setSignatures(signatures);
+
+		try {
+			documentRepository.create(aDocument);
+			documentEntryRepository.create(aDocumentEntry);
+			Jane.getEntries().add(aDocumentEntry);
+			userRepository.update(Jane);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Assert.fail();
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
-		
-//		documentRepository.delete(aDocument);
-//		Jane.deleteDocument(aDocument);
-//		userRepository.update(Jane);
-//		fileRepository.removeFileByUUID(aDocument.getUuid());
-//		datas.deleteUsers();
-//		
-//		wiser.stop();
+
+		documentEntryRepository.delete(aDocumentEntry);
+		Jane.getEntries().clear();
+		userRepository.update(Jane);
+		fileRepository.removeFileByUUID(aDocument.getUuid());
+		documentRepository.delete(aDocument);
+		datas.deleteUsers();
+
+		wiser.stop();
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
-	
-//	@Test
-//	public void testRetrieveDocument() throws BusinessException {
-//		logger.info(LinShareTestConstants.BEGIN_TEST);
-//		
-//		Set<Document> janeDocuments = searchDocumentService.retrieveDocument(Jane.getLogin());
-//
-//		Assert.assertTrue(janeDocuments.contains(aDocument));
-//		
-//		janeDocuments = searchDocumentService.retrieveDocument(Jane);
-//		
-//		Assert.assertTrue(janeDocuments.contains(aDocument));
-//		
-//		logger.debug(LinShareTestConstants.END_TEST);
-//	}
-//	
-//	
-//	@Test
-//	public void testRetrieveDocuments() throws BusinessException{
-//		logger.info(LinShareTestConstants.BEGIN_TEST);
-//	
-//		UserVo janeVo = new UserVo(Jane);
-//		
-//		List<DocumentVo> documents = searchDocumentService.retrieveDocuments(Jane);
-//		
-//		// TODO : To be fix
-////		Assert.assertTrue(documents.get(0).getFileName().equalsIgnoreCase(aDocument.getName()));
-//		
-//		logger.debug(LinShareTestConstants.END_TEST);
-//	}
-//	
-//	@Test
-//	public void testRetrieveDocumentContainsCriterion() throws BusinessException{
-//		logger.info(LinShareTestConstants.BEGIN_TEST);
-//		
-//		UserVo janeVo = new UserVo(Jane);
-//		UserVo johnVo = new UserVo(John);
-//		
-//		// User criterion
-//		SearchDocumentCriterion searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null, null, null, null, null, null, null, null, null);
-//		
-//		List<DocumentVo> documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// User criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(johnVo, null, null, null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Name criterion
-//		//TODO : To be fix
-////		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, aDocument.getName(), null, null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Name criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, "toto", null, null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Min size criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, new Long(0), null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Min size criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, new Long(Long.MAX_VALUE), null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		// Max size criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , new Long(Long.MAX_VALUE), null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Max size criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , new Long(0), null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		// Type criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , aDocument.getType(), null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Type criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , "toto", null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Shared criterion
-//		Boolean shared = false;
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, shared, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Shared criterion fail
-//		shared = true;
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, shared, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Creation date criterion
-//		Calendar creationDate = Calendar.getInstance();
-//		creationDate.add(Calendar.YEAR, -2);
-//
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, creationDate, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Creation date criterion fail
-//		creationDate.add(Calendar.YEAR, 4);
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, creationDate, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Expiration date criterion
-//		Calendar expirationDate = Calendar.getInstance();
-//		expirationDate.add(Calendar.YEAR, 2);
-//
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, expirationDate, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Expiration date criterion fail
-//		expirationDate.add(Calendar.YEAR, -4);
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, expirationDate, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		// Extension criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, null, "properties", null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Extension criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, null, "toto", null, null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//	
-//		// Shared From criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, null, null, janeVo.getMail(), null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Shared From criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, null, null,"toto" , null);
-//		
-//		documents = searchDocumentService.retrieveDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		logger.debug(LinShareTestConstants.END_TEST);
-//	}
-	
+
 	@Test
-	public void testRetrieveShareDocumentContainsCriterion() throws BusinessException{
+	public void testRetrieveDocument() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-//		UserVo janeVo = new UserVo(Jane);
-//		UserVo johnVo = new UserVo(John);
-//		
-//		Calendar cldr = Calendar.getInstance();
-//		cldr.add(Calendar.YEAR, 1);
-//		
-//	    List<Document> shareDocuments = new ArrayList<Document>();
-//	    shareDocuments.add(aDocument);
-//		
-//	    List<User> recipient = new ArrayList<User>();
-//	    recipient.add(Jane);
-//	    
-//	    SuccessesAndFailsItems<Share> shares = shareService.shareDocumentsToUser(shareDocuments, John, recipient, cldr );
-//		
-//		// User criterion
-//		SearchDocumentCriterion searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null, null, null, null, null, null, null, null, null);
-//		
-//		List<ShareDocumentVo> documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// User criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(johnVo, null, null, null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Name criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, aDocument.getName(), null, null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Name criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, "toto", null, null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Min size criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, new Long(0), null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Min size criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, new Long(Long.MAX_VALUE), null, null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		// Max size criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , new Long(Long.MAX_VALUE), null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Max size criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , new Long(0), null, null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		// Type criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , aDocument.getType(), null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Type criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , "toto", null, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Shared criterion
-//		Boolean shared = false;
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, shared, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		// Shared criterion fail
-//		shared = true;
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, shared, null, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		
-//		// Creation date criterion
-//		Calendar creationDate = Calendar.getInstance();
-//		creationDate.add(Calendar.YEAR, -2);
-//
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, creationDate, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Creation date criterion fail
-//		creationDate.add(Calendar.YEAR, 4);
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, creationDate, null, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		// Expiration date criterion
-//		Calendar expirationDate = Calendar.getInstance();
-//		expirationDate.add(Calendar.YEAR, 2);
-//
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, expirationDate, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Expiration date criterion fail
-//		expirationDate.add(Calendar.YEAR, -4);
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, expirationDate, null, null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		// Extension criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, null, "properties", null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Extension criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, null, "toto", null, null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//	
-//		// Shared From criterion
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, null, null, janeVo.getMail(), null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertFalse(documents.isEmpty());
-//		
-//		// Shared From criterion fail
-//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null, null , null , null, null, null, null, null,"toto" , null);
-//		
-//		documents = searchDocumentService.retrieveShareDocumentContainsCriterion(searchDocumentCriterion);
-//		
-//		Assert.assertTrue(documents.isEmpty());
-//		
-//		
-//		Jane.deleteReceivedShare(shares.getSuccessesItem().get(0));
-//		John.deleteShare(shares.getSuccessesItem().get(0));
-//		
+
+		List<DocumentEntry> janeDocuments = searchDocumentService
+				.retrieveDocumentContainsCriterion(Jane,
+						new SearchDocumentCriterion(janeVo, null, null, null,
+								null, null, null, null, null, null, null));
+
+		Assert.assertTrue(janeDocuments.contains(aDocumentEntry));
+
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
+	@Test
+	public void testRetrieveDocumentContainsCriterion()
+			throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
+		// User criterion
+		SearchDocumentCriterion searchDocumentCriterion = new SearchDocumentCriterion(
+				janeVo, null, null, null, null, null, null, null, null, null,
+				null);
+
+		List<DocumentEntry> documents = searchDocumentService
+				.retrieveDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+		Assert.assertTrue(documents.size() == 1);
+		
+		// User criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(johnVo, null,
+				null, null, null, null, null, null, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Name criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo,
+				aDocumentEntry.getName(), null, null, null, null, null, null,
+				null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Name criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, "toto",
+				null, null, null, null, null, null, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Min size criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				new Long(0), null, null, null, null, null, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Min size criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				new Long(Long.MAX_VALUE), null, null, null, null, null, null,
+				null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Max size criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, new Long(Long.MAX_VALUE), null, null, null, null, null,
+				null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Max size criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, new Long(0), null, null, null, null, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Type criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, aDocument.getType(), null, null, null, null, null,
+				null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Type criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, "toto", null, null, null, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Creation date criterion
+		Calendar creationDate = Calendar.getInstance();
+		creationDate.add(Calendar.YEAR, -2);
+
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, creationDate, null, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Creation date criterion fail
+		creationDate.add(Calendar.YEAR, 4);
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, creationDate, null, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Expiration date criterion
+		Calendar expirationDate = Calendar.getInstance();
+		expirationDate.add(Calendar.YEAR, 2);
+
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, expirationDate, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Expiration date criterion fail
+		expirationDate.add(Calendar.YEAR, -4);
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, expirationDate, null, null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Extension criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, null, "properties", null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Extension criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, null, "toto", null, null);
+
+		documents = searchDocumentService.retrieveDocumentContainsCriterion(
+				Jane, searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+	@Test
+	public void testRetrieveShareDocumentContainsCriterion()
+			throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
+		Calendar cldr = Calendar.getInstance();
+		cldr.add(Calendar.YEAR, 1);
+
+		List<DocumentEntry> shareDocuments = new ArrayList<DocumentEntry>();
+		shareDocuments.add(aDocumentEntry);
+
+		ArrayList<ShareEntry> shares = new ArrayList<ShareEntry>();
+
+		for (DocumentEntry documentEntry : shareDocuments) {
+			shares.add(shareEntryBusinessService.createShare(documentEntry,
+					John, Jane, cldr));
+		}
+
+		try {
+		
+		// User criterion
+		SearchDocumentCriterion searchDocumentCriterion = new SearchDocumentCriterion(
+				janeVo, null, null, null, null, null, null, null, null, null,
+				null);
+
+		List<ShareEntry> documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// User criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(johnVo, null,
+				null, null, null, null, null, null, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+		
+		Assert.assertTrue(documents.isEmpty());
+
+		// Name criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo,
+				aDocumentEntry.getName(), null, null, null, null, null, null,
+				null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Name criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, "toto",
+				null, null, null, null, null, null, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Min size criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				new Long(0), null, null, null, null, null, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Min size criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				new Long(Long.MAX_VALUE), null, null, null, null, null, null,
+				null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Max size criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, new Long(Long.MAX_VALUE), null, null, null, null, null,
+				null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Max size criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, new Long(0), null, null, null, null, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Type criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, aDocument.getType(), null, null, null, null, null,
+				null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Type criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, "toto", null, null, null, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+//		FIXME: Boolean is currently not used
+//		// Shared criterion
+//		Boolean shared = false;
+//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+//				null, null, null, shared, null, null, null, null, null);
+//
+//		documents = searchDocumentService
+//				.retrieveShareDocumentContainsCriterion(Jane,
+//						searchDocumentCriterion);
+//
+//		Assert.assertTrue(documents.isEmpty());
+//
+//		// Shared criterion fail
+//		shared = true;
+//		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+//				null, null, null, shared, null, null, null, null, null);
+//
+//		documents = searchDocumentService
+//				.retrieveShareDocumentContainsCriterion(Jane,
+//						searchDocumentCriterion);
+//
+//		Assert.assertFalse(documents.isEmpty());
+
+		// Creation date criterion
+		Calendar creationDate = Calendar.getInstance();
+		creationDate.add(Calendar.YEAR, -2);
+
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, creationDate, null, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Creation date criterion fail
+		creationDate.add(Calendar.YEAR, 4);
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, creationDate, null, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Expiration date criterion
+		Calendar expirationDate = Calendar.getInstance();
+		expirationDate.add(Calendar.YEAR, 2);
+
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, expirationDate, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Expiration date criterion fail
+		expirationDate.add(Calendar.YEAR, -4);
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, expirationDate, null, null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Extension criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, null, "properties", null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Extension criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, null, "toto", null, null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		// Shared From criterion
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, null, null, johnVo.getMail(),
+				null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertFalse(documents.isEmpty());
+
+		// Shared From criterion fail
+		searchDocumentCriterion = new SearchDocumentCriterion(janeVo, null,
+				null, null, null, null, null, null, null, "toto", null);
+
+		documents = searchDocumentService
+				.retrieveShareDocumentContainsCriterion(Jane,
+						searchDocumentCriterion);
+
+		Assert.assertTrue(documents.isEmpty());
+
+		} catch (AssertionError e) {
+			throw e;
+		} finally {
+			for (ShareEntry share : shares) {
+				shareEntryBusinessService.deleteShare(share);
+			}
+			logger.debug(LinShareTestConstants.END_TEST);
+		}
+	}
+
 }
