@@ -326,8 +326,8 @@ public class Parameters {
 			userMaxFileSizeFunctionality.setUnit(userMaxFileSizeUnit);
 		}
 		if(globalQuotaFunctionality != null ){
-			globalQuota = globalQuotaFunctionality.getSize();
-			globalQuotaUnit = globalQuotaFunctionality.getUnit();
+			globalQuotaFunctionality.setSize(globalQuota);
+			globalQuotaFunctionality.setUnit(globalQuotaUnit);
 		}
 		if(userQuotaFunctionality != null ){
 			userQuotaFunctionality.setSize(userQuota);
