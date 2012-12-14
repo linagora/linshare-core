@@ -308,7 +308,6 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user);
 		
 		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user.getLsUuid(), user.getDomainId());
-	
 		Assert.assertNotNull(userRepository.findByMail("guest1@linpki.org"));
 		
 		DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -316,9 +315,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		Date date = dfm.parse("2007-02-26 20:15:00");
 
 		guest.setExpirationDate(date);
-		
 		userService.cleanExpiredGuestAcccounts(userRepository.getSystemAccount());
-		
 		Assert.assertNull(userRepository.findByMail("guest1@linpki.org"));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -337,8 +334,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		user2.setDomain(subDomain);
 		userService.saveOrUpdateUser(user1);
 		userService.saveOrUpdateUser(user2);
-		
-		Assert.assertTrue(userService.searchUser(user2.getMail(), user2.getFirstName(), user2.getLastName(), AccountType.INTERNAL, user1).contains(user2));
+		Assert.assertTrue(userService.searchUser(user2.getMail(), user2.getFirstName(), user2.getLastName(), AccountType.INTERNAL, user1).get(0).getMail().equals(user2.getMail()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -361,8 +357,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user2);
 		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user2.getLsUuid(), user2.getDomainId());
-	
-		Assert.assertTrue(userService.searchUserForRestrictedGuestEditionForm("user2@linpki.org","Jane","Smith", guest).contains(user2));
+		Assert.assertTrue(userService.searchUserForRestrictedGuestEditionForm("user2@linpki.org","Jane","Smith", guest).get(0).getMail().equals(user2.getMail()));
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -388,22 +383,21 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		UserVo userVo2 = new UserVo(user2);
 		
+		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		guestDomain.setDefaultLocale("en");
+		
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
 		guest.setOwner(user2);
-		
+		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest);
-				
-		userService.updateGuest(null, LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", false, false, userVo2);
 		
+		userService.updateGuest(guest.getLsUuid(), LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", false, false, userVo2);
 		Assert.assertFalse(guest.getCanCreateGuest());
-		
-		userService.updateGuest(null, LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", true, true, userVo2);
-
+		userService.updateGuest(guest.getLsUuid(), LoadingServiceTestDatas.sqlGuestDomain,"user3@linpki.org","Foo", "Bar", true, true, userVo2);
 		Assert.assertTrue(guest.getCanCreateGuest());
-		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -415,8 +409,6 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
 		user1.setDomain(rootDomain);
 		user1.setRole(Role.SYSTEM);
-		UserVo userVo = new UserVo(user1);
-		
 		
 		User user2 = new Internal("Jane","Smith","user2@linpki.org", null);
 		user2.setDomain(subDomain);
@@ -425,10 +417,11 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user1);
 		userService.saveOrUpdateUser(user2);
-
+		
+		UserVo userVo = new UserVo(user1);
+		
 		Assert.assertTrue(user2.getRole()==Role.SIMPLE);
 		userService.updateUserRole(user2.getLsUuid(), LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org", Role.ADMIN, userVo);
-		
 		Assert.assertTrue(user2.getRole()==Role.ADMIN);
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -448,13 +441,9 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 				HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 		
 		userService.saveOrUpdateUser(user1);
-		
 		String newPassword = new String("newPassword");
-
 		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
-		
 		userService.changePassword("user1@linpki.org", oldPassword, newPassword);
-		
 		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(newPassword.getBytes())));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -470,21 +459,22 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user1);
 		
+		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		guestDomain.setDefaultLocale("en");
+		
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
 		guest.setOwner(user1);
-		
+		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest.setLocale(guestDomain.getDefaultLocale());
 		String oldPassword = new String("password222");
 		
 		guest.setPassword(
 				HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 		
 		guestRepository.create(guest);
-		
 		userService.resetPassword("user3@linpki.org");
-		
 		Assert.assertFalse(guest.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -500,20 +490,19 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user1);
 		
+		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		guestDomain.setDefaultLocale("en");
+		
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
 		guest.setOwner(user1);
-		
 		guest.setRestricted(true);
-		
+		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest);
-		
 		Assert.assertTrue(guest.isRestricted());
-		
-		userService.removeGuestContactRestriction("user3@linpki.org");
-		
+		userService.removeGuestContactRestriction(guest.getLsUuid());
 		Assert.assertFalse(guest.isRestricted());
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -531,12 +520,15 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user1);
 		
+		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		guestDomain.setDefaultLocale("en");
+		
 		//create guest
 		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
 		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
 		guest2.setOwner(user1);
-		
+		guest2.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest2.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest2);
 		
 		//create guest
@@ -544,24 +536,18 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
 		
 		guest.setOwner(user1);
-		
 		guest.setRestricted(true);
-		
+		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest);
-		
 		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
-		
 		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
-		
 		boolean test = false;
-		
 		for (AllowedContact allowedContact : listAllowedContact) {
-			
 			if(allowedContact.getContact().getLsUuid() == guest2.getLsUuid()){
 				test=true;
 			}	
 		}
-		
 		Assert.assertTrue(test);
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -578,36 +564,33 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user1);
 		
+		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		guestDomain.setDefaultLocale("en");
+		
 		//create guest
 		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
 		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
 		guest2.setOwner(user1);
-		
+		guest2.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest2.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest2);
 		
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
 		guest.setOwner(user1);
-		
 		guest.setRestricted(true);
+		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest.setLocale(guestDomain.getDefaultLocale());
 		
 		guestRepository.create(guest);
 		
 		List<String> mailContacts = new ArrayList<String>();
-		
 		mailContacts.add(guest2.getMail());
-		
 		userService.setGuestContactRestriction(guest.getLsUuid(), mailContacts);
-		
 		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
-		
 		boolean test = false;
-		
 		for (AllowedContact allowedContact : listAllowedContact) {
-			
 			if(allowedContact.getContact().getLsUuid() == guest2.getLsUuid()){
 				test=true;
 			}	
@@ -629,31 +612,28 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user1);
 		
+		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		guestDomain.setDefaultLocale("en");
+		
 		//create guest
 		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
 		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
 		guest2.setOwner(user1);
-		
+		guest2.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest2.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest2);
-		
 		
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
 		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
 		guest.setOwner(user1);
-		
 		guest.setRestricted(true);
-		
+		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest);
 		
-		
 		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
-
-		
 		List<User> guestContacts = userService.fetchGuestContacts(guest.getLsUuid());
-		
 		Assert.assertTrue(guestContacts.contains(guest2));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -671,31 +651,28 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user1);
 		
+		AbstractDomain guestDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain);
+		guestDomain.setDefaultLocale("en");
+		
 		//create guest
 		Guest guest2 = new Guest("Jane","Smith","user2@linpki.org");
-		guest2.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
+		guest2.setDomain(guestDomain);
 		guest2.setOwner(user1);
-		
+		guest2.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest2.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest2);
-		
 		
 		//create guest
 		Guest guest = new Guest("Foo","Bar","user3@linpki.org");
-		guest.setDomain(abstractDomainRepository.findById(LoadingServiceTestDatas.sqlGuestDomain));
-		
+		guest.setDomain(guestDomain);
 		guest.setOwner(user1);
-		
 		guest.setRestricted(true);
-		
+		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
+		guest.setLocale(guestDomain.getDefaultLocale());
 		guestRepository.create(guest);
 		
-		
 		userService.addGuestContactRestriction(guest.getLsUuid(), guest2.getLsUuid());
-
-		
 		List<String> guestEmailContacts = userService.getGuestEmailContacts(guest.getMail());
-		
 		Assert.assertTrue(guestEmailContacts.contains(guest2.getMail()));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
