@@ -21,25 +21,21 @@
 package org.linagora.linshare.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
-import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,25 +71,15 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
 	
-	@SuppressWarnings("rawtypes")
 	@Qualifier("userRepository")
 	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private UserAndDomainMultiService userAndDomainMultiService;	
-	
-	@Autowired
-	private AbstractDomainService abstractDomainService;
+	private UserRepository<User> userRepository;
 	
 	@Autowired
 	private UserService userService;
 	
 	@Autowired
 	private ThreadService threadService;
-	
-	@Autowired
-	private ThreadEntryService threadEntryService;
 	
 	private List<Thread> threads;
 	

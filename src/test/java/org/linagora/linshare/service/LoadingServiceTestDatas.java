@@ -104,7 +104,7 @@ public class LoadingServiceTestDatas {
 			FunctionalityRepository functionalityRepository,
 			AbstractDomainRepository abstractDomainRepository,
 			DomainPolicyRepository domainPolicyRepository, 
-			UserRepository userRepository,
+			UserRepository<User> userRepository,
 			UserService userService) {
 		super();
 		this.functionalityRepository = functionalityRepository;

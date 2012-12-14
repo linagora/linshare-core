@@ -44,7 +44,6 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 	
     private Wiser wiser;
     
-    @SuppressWarnings("unused")
 	private static String LINSHARE_MAIL = "linShare@yourdomain.com"; 
 
 	public MailNotifierServiceImplTest() {

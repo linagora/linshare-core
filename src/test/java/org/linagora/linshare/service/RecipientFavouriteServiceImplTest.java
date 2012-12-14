@@ -56,7 +56,7 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 	
 	@Qualifier("userRepository")
 	@Autowired
-	private UserRepository userRepository;
+	private UserRepository<User> userRepository;
 	
 	@Autowired
 	private UserService userService;
@@ -173,11 +173,8 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 		favouriteRepository.incAndCreate(recipients,owner);
 		
 		favouriteRepository.inc(user3, owner);
-		
 		Assert.assertFalse(recipientFavouriteService.findRecipientFavorite( datas.getUser3().getMail(), owner).isEmpty());
-		
 		Assert.assertTrue(recipientFavouriteService.findRecipientFavorite( "failMail@mail.com", owner).isEmpty());
-		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
@@ -187,7 +184,6 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 		
 		User owner = datas.getUser1();
 		
-		String user2 = datas.getUser2().getLogin();
 		String user3 = datas.getUser3().getLogin();
 		
 		List<String> recipients = new ArrayList<String>();
@@ -196,12 +192,8 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 		favouriteRepository.incAndCreate(recipients,owner);
 		
 		Assert.assertFalse(recipientFavouriteService.findRecipientFavorite(datas.getUser3().getMail(), owner).isEmpty());
-		
 		recipientFavouriteService.deleteFavoritesOfUser(owner);
-		
 		Assert.assertTrue(recipientFavouriteService.findRecipientFavorite( datas.getUser3().getMail(), owner).isEmpty());
-
 		logger.debug(LinShareTestConstants.END_TEST);
-
 	}
 }
