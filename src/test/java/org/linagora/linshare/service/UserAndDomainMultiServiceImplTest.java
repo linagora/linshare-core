@@ -1,7 +1,6 @@
 package org.linagora.linshare.service;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -54,10 +53,9 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 	@Autowired
 	private DomainPolicyRepository domainPolicyRepository;
 	
-	@SuppressWarnings("unchecked")
 	@Qualifier("userRepository")
 	@Autowired
-	private UserRepository userRepository;
+	private UserRepository<User> userRepository;
 	
 	@Autowired
 	private UserAndDomainMultiService userAndDomainMultiService;	

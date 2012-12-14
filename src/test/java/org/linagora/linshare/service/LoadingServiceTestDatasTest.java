@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
@@ -62,7 +63,7 @@ public class LoadingServiceTestDatasTest extends AbstractTransactionalJUnit4Spri
 	
 	@Qualifier("userRepository")
 	@Autowired
-	private UserRepository userRepository;
+	private UserRepository<User> userRepository;
 	
 	@Autowired
 	private UserService userService;

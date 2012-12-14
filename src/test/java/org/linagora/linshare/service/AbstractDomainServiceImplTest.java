@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
@@ -117,8 +116,7 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 		topDomain.setPolicy(policy);
 		
 		try {
-			AbstractDomain domain = abstractDomainService.createTopDomain(topDomain);
-			
+			abstractDomainService.createTopDomain(topDomain);
 			abstractDomainService.deleteDomain(topDomain.getIdentifier());
 					
 			
