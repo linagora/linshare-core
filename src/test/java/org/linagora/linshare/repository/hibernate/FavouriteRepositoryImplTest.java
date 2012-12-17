@@ -26,11 +26,14 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.RecipientFavourite;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +50,9 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml"})
 public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
+	
+	// default import.sql
+ 	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
 
 	@Autowired
 	private FavouriteRepository<String, User, RecipientFavourite> favouriteRepository;
@@ -55,13 +61,26 @@ public class FavouriteRepositoryImplTest extends AbstractTransactionalJUnit4Spri
 	@Qualifier("userRepository")
 	private UserRepository<Guest> userRepo;
 	
+	@Autowired
+	private AbstractDomainRepository abstractDomainRepository;
 	
+	private AbstractDomain domain;
 	
 	@Before
-	public void setUp(){
-		Guest robert=new Guest( "robert", "lechat", "robert.lechat@linagora.com","secret", true, "comment");
-		Guest jean=new Guest("jean", "lechat", "jean.lechat@linagora.com","secret", true, "comment");
-		Guest pierre=new Guest("pierre", "lechat", "pierre.lechat@linagora.com","secret", true,"comment");
+	public void setUp() {
+		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
+		
+		Guest robert = new Guest("robert", "lechat", "robert.lechat@linagora.com","secret", true, "comment");
+		robert.setLocale(domain.getDefaultLocale());
+		robert.setDomain(domain);
+		
+		Guest jean = new Guest("jean", "lechat", "jean.lechat@linagora.com","secret", true, "comment");
+		jean.setLocale(domain.getDefaultLocale());
+		jean.setDomain(domain);
+		
+		Guest pierre = new Guest("pierre", "lechat", "pierre.lechat@linagora.com","secret", true,"comment");
+		pierre.setLocale(domain.getDefaultLocale());
+		pierre.setDomain(domain);
 		
 		try {
 			userRepo.create(robert);
