@@ -40,7 +40,8 @@ public class AccountRepositoryImplTest extends AbstractTransactionalJUnit4Spring
 	public void testCreateInternalUser() throws BusinessException{
 		AbstractDomain domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
-		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL, UID);
+		User u = new Internal(FIRST_NAME, LAST_NAME, MAIL, UID);
+		u.setLocale(domain.getDefaultLocale());
 		u.setDomain(domain);
 		accountRepository.create(u);
 	}
