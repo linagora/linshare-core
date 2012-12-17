@@ -1,5 +1,7 @@
 package org.linagora.linshare.repository.hibernate;
 
+import java.util.Date;
+
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -63,6 +65,8 @@ public class TagRepositoryImplTest extends AbstractTransactionalJUnit4SpringCont
 		rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
 		account = new Guest(FIRST_NAME, LAST_NAME, MAIL, PASSWORD, true, "comment");
 		account.setDomain(rootDomain);
+		account.setCreationDate(new Date());
+		account.setLocale(rootDomain.getDefaultLocale());
 		accountRepository.create(account);
 		
 		logger.debug("End setUp");
@@ -71,7 +75,9 @@ public class TagRepositoryImplTest extends AbstractTransactionalJUnit4SpringCont
 	@After
 	public void tearDown() throws Exception {
 		logger.debug("Begin tearDown");
+		
 		accountRepository.delete(account);
+		
 		logger.debug("End tearDown");
 	}
 	
