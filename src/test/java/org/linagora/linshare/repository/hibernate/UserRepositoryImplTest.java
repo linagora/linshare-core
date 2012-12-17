@@ -45,23 +45,20 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
         "classpath:springContext-repository.xml"})
 public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-    private static final String LOGIN = "login";
     private static final String FIRST_NAME = "first name";
     private static final String LAST_NAME = "last name";
     private static final String MAIL = "mail";
     private static final String PASSWORD = "password";
 
-    private static final String LOGIN2 = "login2";
     private static final String FIRST_NAME2 = "jean";
     private static final String LAST_NAME2 = "laporte";
     private static final String MAIL2 = "jean@jean.com";
     
-    private static final String LOGIN3 = "login3";
     private static final String FIRST_NAME3 = "robert";
     private static final String LAST_NAME3 = "lepoint";
     private static final String MAIL3 = "robert@lepoint.com";
 
- // default import.sql
+    // default import.sql
  	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
     
     private boolean flag=false;
@@ -83,7 +80,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
 		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());		
-		if(!flag){
+		if (!flag) {
 			User u1=new Guest(FIRST_NAME2, LAST_NAME2, MAIL2,encpassword, true, "comment");
 			u1.setLocale(domain.getDefaultLocale());
 			u1.setDomain(domain);
@@ -94,7 +91,7 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 			u2.setLocale(domain.getDefaultLocale());
 			u2.setDomain(domain);
 			userRepository.create(u2);
-			flag=true;
+			flag = true;
 		}
 		
 	}

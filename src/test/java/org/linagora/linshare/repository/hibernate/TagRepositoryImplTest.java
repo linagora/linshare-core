@@ -44,15 +44,10 @@ public class TagRepositoryImplTest extends AbstractTransactionalJUnit4SpringCont
 	@Autowired
 	private TagRepository tagRepository;
 	
-	
-	
-	private static final String LOGIN = "login";
     private static final String FIRST_NAME = "first name";
     private static final String LAST_NAME = "last name";
     private static final String MAIL = "mail";
     private static final String PASSWORD = "password";
-
-    
     
 	// Members
     private AbstractDomain rootDomain;
