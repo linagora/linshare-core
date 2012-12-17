@@ -1,18 +1,39 @@
 package org.linagora.linshare.service;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 import org.linagora.linshare.core.dao.FileSystemDao;
+import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.Document;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.MailContainerWithRecipient;
+import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.objects.FileInfo;
+import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.AbstractRepository;
+import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.DocumentRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
+import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
@@ -56,41 +77,41 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 	private MailContentBuildingService mailContentBuildingService;
 	
 	@Autowired
+	private AnonymousShareEntryService anonymousShareEntryService;
+	
+	@Autowired
 	private DocumentRepository documentRepository;
+
+	@Autowired
+	private DocumentEntryRepository documentEntryRepository;
 	
 	@Autowired
 	private FileSystemDao fileRepository;
 	
-	@SuppressWarnings("unused")
 	private LoadingServiceTestDatas datas;
 	
-	@SuppressWarnings("unused")
 	private InputStream inputStream;
 	
-	@SuppressWarnings("unused")
 	private String inputStreamUuid;
 	
-	@SuppressWarnings("unused")
 	private User john;
 	
-	@SuppressWarnings("unused")
 	private User jane;
 	
-	@SuppressWarnings("unused")
 	private Document aDocument;
+	
+	private DocumentEntry aDocumentEntry;
 	
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-//		
+		
 //		john = userService.findOrCreateUser("user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
-//		
 //		try  {
 //			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);			
 //		} catch (BusinessException e) {
 //			jane = userService.findOrCreateUser("user2@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 //		}
-//		
 //		
 //		inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("linshare-default.properties");
 //		inputStreamUuid = fileRepository.insertFile(john.getLogin(), inputStream, 10000, "linshare-default.properties", "text/plain");
@@ -102,12 +123,14 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 //		exp.add(Calendar.HOUR, 4);
 //		
 //		aDocument = new Document(inputStreamUuid,inputStreamInfo.getName(),inputStreamInfo.getMimeType(),lastModifiedLin,exp, john,false,false,new Long(10000));
-//		List<Signature> signatures = new ArrayList<Signature>();
+//		Set<Signature> signatures = new HashSet<Signature>();
 //		aDocument.setSignatures(signatures);
-//		
+//		aDocumentEntry = new DocumentEntry(john, "new document", aDocument);
+//
 //		try {
 //			documentRepository.create(aDocument);
-//			john.addDocument(aDocument);
+//			documentEntryRepository.create(aDocumentEntry);
+//			john.getEntries().add(aDocumentEntry);
 //			userRepository.update(john);
 //		} catch (IllegalArgumentException e) {
 //			e.printStackTrace();
@@ -141,62 +164,55 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 //		
 //		userRepository.update(john);
 //*/
-//		
+		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_TEARDOWN);
+		
+//		documentEntryRepository.delete(aDocumentEntry);
 //		documentRepository.delete(aDocument);
-//		john.getDocuments().clear();
+//		john.getEntries().clear();
 //		userRepository.update(john);
 //		fileRepository.removeFileByUUID(aDocument.getUuid());
 		
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
-//	private void testMailGenerate(MailContainer mailContainer){
-//		Assert.assertNotNull(mailContainer);
-//
-//	}
+	private void testMailGenerate(MailContainer mailContainer){
+		Assert.assertNotNull(mailContainer);
+	}
 	
-//	@Test
-//	public void testBuildMailAnonymousDownload() throws BusinessException{
-//		logger.info(LinShareTestConstants.BEGIN_TEST);
-//		
+	@Test
+	public void testBuildMailAnonymousDownload() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+	
 //		User actor = john;
+//		Contact recipient = new Contact(jane.getMail());
 //		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
 //		mailContainer.setLanguage(Language.FRENCH);
-//		List<Document> docs = new ArrayList<Document>();
-//		docs.add(aDocument);
-//		
-//		String email = john.getMail();
-//		User recipient = jane;
+//		List<DocumentEntry> docs = new ArrayList<DocumentEntry>();
+//		docs.add(aDocumentEntry);
+//
 //		// buildMailAnonymousDownload
-//		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailAnonymousDownload(actor, mailContainer, docs, email, recipient);
+//		AnonymousShareEntry anonymousShareEntry = anonymousShareEntryService.createAnonymousShare(docs, actor, recipient, Calendar.getInstance(), false, mailContainer).get(0);
+//		MailContainer mailContainerBuild =  mailContentBuildingService.buildMailAnonymousDownload(anonymousShareEntry);
 //		testMailGenerate(mailContainerBuild);
 //
 //		// buildMailAnonymousDownloadWithOneRecipient
-//		List<MailContainerWithRecipient> mailContainerBuildList =  mailContentBuildingService.buildMailAnonymousDownloadWithOneRecipient(actor, mailContainer, docs, email, recipient);
-//		
-//		for (MailContainerWithRecipient mailContainerWithRecipient : mailContainerBuildList) {
-//			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
-//			testMailGenerate(mailContainerWithRecipient);
-//		}
-//		
-//		// buildMailAnonymousDownloadWithRecipient
-//		mailContainerBuild =  mailContentBuildingService.buildMailAnonymousDownloadWithRecipient(actor, mailContainer, docs, email, recipient);
+//		mailContainerBuild = mailContentBuildingService.buildMailNewSharingWithRecipient(mailContainer, anonymousShareEntry.getAnonymousUrl(), actor);
 //		testMailGenerate(mailContainerBuild);
-//		
-//		logger.debug(LinShareTestConstants.END_TEST);
-//	}
+	
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 
 	
-//	@Test
-//	public void testBuildMailNewGuest() throws BusinessException{
-//		logger.info(LinShareTestConstants.BEGIN_TEST);
-//		
+	@Test
+	public void testBuildMailNewGuest() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
 //		User actor = john;
 //		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
 //		mailContainer.setLanguage(Language.FRENCH);
@@ -220,14 +236,14 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 //			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
 //			testMailGenerate(mailContainerWithRecipient);
 //		}
-//		
-//		logger.debug(LinShareTestConstants.END_TEST);
-//	}
-//	
-//	@Test
-//	public void testBuildMailResetPassword() throws BusinessException{
-//		logger.info(LinShareTestConstants.BEGIN_TEST);
-//		
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testBuildMailResetPassword() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
 //		User actor = john;
 //		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
 //		mailContainer.setLanguage(Language.FRENCH);
@@ -251,14 +267,14 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 //			Assert.assertTrue(mailContainerWithRecipient.getRecipient().equals(recipient.getMail()));
 //			testMailGenerate(mailContainerWithRecipient);
 //		}
-//		
-//		logger.debug(LinShareTestConstants.END_TEST);
-//	}
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 	
-//	@Test
-//	public void testBuildMailNewSharing() throws BusinessException{
-//		logger.info(LinShareTestConstants.BEGIN_TEST);
-//		
+	@Test
+	public void testBuildMailNewSharing() throws BusinessException{
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
 //		User actor = john;
 //		MailContainer mailContainer = new MailContainer("subjet","contentTxt","contentHTML");
 //		mailContainer.setLanguage(Language.FRENCH);
@@ -276,8 +292,8 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 ////		MailContainerWithRecipient mailContainerWithRecipientBuild =  mailContentBuildingService.buildMailNewSharingWithRecipient(actor, mailContainer, jane, docsVo, "linShareUrl", "linShareUrlParam", "password", true, "jwsEncryptUrl");
 ////		testMailGenerate(mailContainerWithRecipientBuild);
 ////		Assert.assertTrue(mailContainerWithRecipientBuild.getRecipient().equals(recipient.getMail()));
-//
-//		logger.debug(LinShareTestConstants.END_TEST);
-//	}
+
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 	
 }
