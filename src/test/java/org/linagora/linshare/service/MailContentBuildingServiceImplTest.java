@@ -5,6 +5,7 @@ import java.io.InputStream;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
@@ -171,6 +172,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		Assert.assertNotNull(mailContainer);
 	}
 	
+	@Ignore
 	@Test
 	public void testBuildMailAnonymousDownload() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -194,7 +196,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
-	
+	@Ignore
 	@Test
 	public void testBuildMailNewGuest() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -226,6 +228,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
+	@Ignore
 	@Test
 	public void testBuildMailResetPassword() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -257,6 +260,7 @@ public class MailContentBuildingServiceImplTest extends AbstractTransactionalJUn
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
+	@Ignore
 	@Test
 	public void testBuildMailNewSharing() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
