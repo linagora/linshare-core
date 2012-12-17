@@ -76,43 +76,48 @@ public class UserRepositoryImplTest extends AbstractTransactionalJUnit4SpringCon
 	@Autowired
 	private AbstractDomainRepository abstractDomainRepository;
 	
+	private AbstractDomain domain;
 	
 	@Before
 	public void setUp() throws Exception {
+		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
 		
 		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());		
 		if(!flag){
 			User u1=new Guest(FIRST_NAME2, LAST_NAME2, MAIL2,encpassword, true, "comment");
+			u1.setLocale(domain.getDefaultLocale());
+			u1.setDomain(domain);
 			userRepository.create(u1);
 			
 		
 			User u2=new Guest(FIRST_NAME3, LAST_NAME3, MAIL3,encpassword, true, "comment");
+			u2.setLocale(domain.getDefaultLocale());
+			u2.setDomain(domain);
 			userRepository.create(u2);
 			flag=true;
 		}
 		
 	}
 
-//	@Test
-//	public void testExistUser() throws BusinessException{
-//		
-//		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());
-//		
-//		User u = new Guest( FIRST_NAME, LAST_NAME, MAIL, encpassword, true, "comment");
-//	
-//		userRepository.create(u);
-//
-//		Assert.assertTrue(userRepository.exist(LOGIN, encpassword));
-//		Assert.assertFalse(userRepository.exist(LOGIN, "pass"));
-//		Assert.assertFalse(userRepository.exist("login90", encpassword));
-//		
-//	}
+	@Test
+	public void testExistUser() throws BusinessException{
+		
+		String encpassword = HashUtils.hashSha1withBase64(PASSWORD.getBytes());
+		
+		User u = new Guest( FIRST_NAME, LAST_NAME, MAIL, encpassword, true, "comment");
+		u.setLocale(domain.getDefaultLocale());
+		u.setDomain(domain);
+	
+		u = userRepository.create(u);
+
+		Assert.assertTrue(userRepository.exist(u.getLsUuid()));
+		Assert.assertFalse(userRepository.exist("toto"));
+	}
 	
 	@Test
 	public void testfindUser() throws BusinessException{
-		AbstractDomain domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
-		
 		User u = new Internal( FIRST_NAME, LAST_NAME, MAIL, null);
+		u.setLocale(domain.getDefaultLocale());
 		u.setDomain(domain);
 		
 		userRepository.create(u);
