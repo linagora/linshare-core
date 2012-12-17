@@ -51,7 +51,6 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryRepositoryImplTest.class);
 	
 	
-    private static final String LOGIN = "login";
     private static final String FIRST_NAME = "first name";
     private static final String LAST_NAME = "last name";
     private static final String MAIL = "mail";
@@ -59,10 +58,7 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 
     
     private final String identifier = "docId";
-    private final String name ="docName";
     private final String type = "doctype";
-    private final Boolean encrypted = false;
-    private final Boolean shared = false;
     private final long fileSize = 1l;
     
     
@@ -87,13 +83,13 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 	@Autowired
 	private DocumentEntryRepository documentEntryRepository;
 	
-	
 	@Before
 	public void setUp() throws Exception {
 		logger.debug("Begin setUp");
 		rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
 		user = new Guest(FIRST_NAME, LAST_NAME, MAIL, PASSWORD, true, "comment");
 		user.setDomain(rootDomain);
+		user.setLocale(rootDomain.getDefaultLocale());
 		userRepository.create(user);
 		
 		document = new Document(identifier, type, fileSize);
@@ -113,9 +109,11 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
 	@Test
 	public void testCreateDocumentEntry() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		
 		DocumentEntry d = new DocumentEntry(user, "name", "comment", document);
 		documentEntryRepository.create(d);
 		documentEntryRepository.delete(d);
+		
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
