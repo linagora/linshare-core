@@ -231,9 +231,13 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user1);
 		userService.saveOrUpdateUser(user2);
 		
-		logger.info("John Doe trying to delete Jane Smith");
-		User u = userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org");
-		userService.deleteUser(u.getLsUuid(), user1);
+		try {
+			logger.info("John Doe trying to delete Jane Smith");
+			User u = userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org");
+			userService.deleteUser(u.getLsUuid(), user1);
+		} catch (BusinessException e) {
+			Assert.fail(e.getMessage());
+		}
 		
 		Assert.assertNull(userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org"));
 		Assert.assertNotNull(userService.findUserInDB(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org"));
@@ -260,8 +264,12 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user2);
 		userService.saveOrUpdateUser(user3);
 		
-		logger.info("John Doe trying to delete Jane Smith");
-		userService.deleteAllUsersFromDomain(user1, subDomain.getIdentifier());
+		try {
+			logger.info("John Doe trying to delete Jane Smith");
+			userService.deleteAllUsersFromDomain(user1, subDomain.getIdentifier());
+		} catch (BusinessException e) {
+			Assert.fail(e.getMessage());
+		}
 		
 		Assert.assertNull(userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org"));
 		Assert.assertNull(userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user3@linpki.org"));
