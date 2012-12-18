@@ -216,7 +216,7 @@ public class UserSearchResults {
         if (users == null || users.size() == 0) {
             if (userLoggedIn.isSuperAdmin() && showBreakedUsers) {
                 users = userFacade.searchAllBreakedUsers(userLoggedIn);
-            } else if (inSearch==false) {
+            } else if (!inSearch) {
                 if (showAll || userLoggedIn.isRestricted()) {
                     users = userFacade.searchUser("", "", "", userLoggedIn);
                 } else {
@@ -224,9 +224,9 @@ public class UserSearchResults {
                 }
             }
         }
-        if (refreshFlag==true){
+        if (refreshFlag){
             users = usr;
-            refreshFlag=false;
+            refreshFlag = false;
         }
         sorterModel = new UserSorterModel(users);
 

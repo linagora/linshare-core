@@ -105,7 +105,6 @@ public class Index {
     
     @AfterRender
     public void afterRender() {
-        ;
     }
     
     /**

@@ -374,11 +374,12 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	
 	private boolean oneDocIsEncrypted(List<DocumentVo> docList) {
-		boolean isOneDocEncrypted = false;
-		for(DocumentVo doc : docList) {
-			if(doc.getEncrypted()==true) isOneDocEncrypted = true;
+		for (DocumentVo doc : docList) {
+			if (doc.getEncrypted()) {
+				return true;
+			}
 		}
-		return isOneDocEncrypted;
+		return false;
 	}
 
 	

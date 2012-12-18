@@ -190,6 +190,7 @@ public class FileUploaderForThreadEntry {
             maxFileSize = documentFacade.getUserMaxFileSize(userDetails);
         } catch (BusinessException e) {
             // value has not been defined. We use the default value.
+        	e.printStackTrace();
         }
         return maxFileSize;
     }

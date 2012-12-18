@@ -132,6 +132,7 @@ public final class JScriptEvaluator {
 		try {
 			return (Map<String, List<String>>) Context.jsToJava(result, Map.class);
 		} catch (Exception e) {
+			LOGGER.error(e.toString());
 		} // try next approach
 		
 		return null;
@@ -151,11 +152,13 @@ public final class JScriptEvaluator {
 			}
 			return resultsArray;
 		} catch (Exception e) {
+			LOGGER.error(e.toString());
 		} // try next approach
 
 		try {
 			return (List<String>) Context.jsToJava(result, List.class);
 		} catch (Exception e) {
+			LOGGER.error(e.toString());
 		} // try next approach
 
 		List<String> resultsArray = new ArrayList<String>();

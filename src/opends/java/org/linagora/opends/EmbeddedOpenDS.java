@@ -145,7 +145,7 @@ public final class EmbeddedOpenDS {
                 sb.append("[ ").append(b.getBackendID()).append(" => ");
                 DN[] dns = b.getBaseDNs();
                 for (int i = 0; i < dns.length; i++) {
-                    sb.append("(").append(dns[i].toNormalizedString()).append(")");
+                    sb.append('(').append(dns[i].toNormalizedString()).append(')');
                 }
                 sb.append(" ]");
             }
@@ -385,8 +385,8 @@ public final class EmbeddedOpenDS {
     // }
     //
     public static void initializeTestBackend(boolean createBaseEntry, String dn) throws Exception {
-
         DN baseDN = DN.decode(dn);
+        
         if (memoryBackend == null) {
             memoryBackend = new MemoryBackend();
             memoryBackend.setBackendID("test");
@@ -394,9 +394,7 @@ public final class EmbeddedOpenDS {
             memoryBackend.initializeBackend();
             DirectoryServer.registerBackend(memoryBackend);
         }
-
         memoryBackend.clearMemoryBackend();
-
         if (createBaseEntry) {
             Entry e = createEntry(baseDN);
             memoryBackend.addEntry(e, null);
@@ -412,8 +410,9 @@ public final class EmbeddedOpenDS {
         BufferedReader br = new BufferedReader(new FileReader(ldif));
         StringBuffer sb = new StringBuffer("");
         String line = null;
+        
         while (null != (line = br.readLine())) {
-            sb.append(line).append("\n");
+            sb.append(line).append('\n');
         }
         addEntries(sb.toString());
         br.close();

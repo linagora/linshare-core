@@ -43,16 +43,16 @@ public class MailCompletionService {
 	 * @param user
 	 * @return
 	 */
-	public static String formatLabel(final UserVo user){
+	public static String formatLabel(final UserVo user) {
 		StringBuffer buf = new StringBuffer();
 		
 		if(user.getLastName()!=null&&user.getFirstName()!=null){
 			//uservo from USER table or ldap
-			buf.append("\"").append(user.getLastName().trim()).append(" ").append(user.getFirstName().trim()).append("\"");
+			buf.append('"').append(user.getLastName().trim()).append(' ').append(user.getFirstName().trim()).append('"');
 			buf.append(" <").append(user.getMail()).append(">,");
 		} else {
 			//uservo from favorite table
-			buf.append(user.getMail()).append(",");
+			buf.append(user.getMail()).append(',');
 		}
 		return buf.toString();
 	}
@@ -77,18 +77,16 @@ public class MailCompletionService {
 	 * @param recipientsList
 	 * @return
 	 */
-	public static List<String> parseEmails(final String recipientsList){
-			 	
-		
+	public static List<String> parseEmails(final String recipientsList) {
 		String[] recipients = recipientsList.replaceAll(";", ",").split(",");
 		ArrayList<String> emails = new ArrayList<String> ();
 		
 		for (String oneUser : recipients) {
-			
 			String email = contentInsideToken(oneUser, "<",">");
-			if(email==null) email = oneUser.trim();
-			
-			if(!email.equals("")) {
+			if (email == null) {
+				email = oneUser.trim();
+			}
+			if (!email.equals("")) {
 				if (!emails.contains(email)) {
 					emails.add(email); 
 				}
@@ -109,7 +107,10 @@ public class MailCompletionService {
 	public static String contentInsideToken(final String str, final String tokenright, final String tokenleft) {
 		int deb = str.indexOf(tokenright,0);
 		int end = str.indexOf(tokenleft,1);
-		if(deb==-1||end==-1) return null;
-		else return str.substring(deb+1, end).trim();
+		if (deb == -1 || end == -1) {
+			return null;
+		} else {
+			return str.substring(deb+1, end).trim();
+		}
 	}
 }

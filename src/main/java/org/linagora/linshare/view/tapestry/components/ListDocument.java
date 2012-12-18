@@ -816,11 +816,11 @@ public class ListDocument {
 	public BeanModel initModel() throws BusinessException {
 
 		//Initialize the sorter model for sorter component.
-		if(refreshFlag==true){
-			documents=docs;
-			refreshFlag=false;
+		if (refreshFlag) {
+			documents = docs;
+			refreshFlag = false;
 		}
-		sorterModel=new FileSorterModel(documents);
+		sorterModel = new FileSorterModel(documents);
 
 		model = beanModelSource.createDisplayModel(DocumentVo.class,
 				componentResources.getMessages());

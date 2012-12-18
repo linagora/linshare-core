@@ -99,7 +99,7 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			
 			in = documentEntryService.getDocumentStream(owner, documentEntry.getUuid());
 			
-			f = new File(workingDir+"/"+UUID.randomUUID());
+			f = new File(workingDir + "/" + UUID.randomUUID());
 			out = new FileOutputStream(f);
 			
 			AESCrypt aes = new AESCrypt(false, password);
@@ -124,17 +124,28 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			logger.error(e.toString(),e);
 			throw new BusinessException(BusinessErrorCode.CANNOT_DECRYPT_DOCUMENT,"can not decrypt document "+ documentEntry.getUuid());
 		} finally {
-			
-			if(in!=null) {
-				try {in.close();} catch (IOException e) {}
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					logger.error(e.toString());
+				}
 			}
-			if(out!=null) {
-				try {out.close();} catch (IOException e) {}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					logger.error(e.toString());
+				}
 			}
-			if(inputStream!=null) {
-				try {inputStream.close();} catch (IOException e) {}
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					logger.error(e.toString());
+				}
 			}
-			if(f!=null&&f.exists()) {
+			if (f != null && f.exists()) {
 				f.delete();
 			}
 		}
@@ -179,17 +190,28 @@ public class EnciphermentServiceAesCryptImpl implements EnciphermentService {
 			logger.error(e.toString(),e);
 			throw new BusinessException(BusinessErrorCode.CANNOT_ENCRYPT_DOCUMENT,"can not encrypt documentEntry "+ documentEntry.getUuid());
 		} finally {
-			
-			if(in!=null) {
-				try {in.close();} catch (IOException e) {}
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			if(out!=null) {
-				try {out.close();} catch (IOException e) {}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			if(inputStream!=null) {
-				try {inputStream.close();} catch (IOException e) {}
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			if(f!=null&&f.exists()) {
+			if (f != null && f.exists()) {
 				f.delete();
 			}
 		}

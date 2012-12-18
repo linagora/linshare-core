@@ -40,38 +40,34 @@ public class LogEntryServiceImpl implements LogEntryService {
 	}
 	
 	private String getLogMessage(LogEntry entity) {
-		
 		 StringBuilder builder = new StringBuilder();
 		 
-		 builder.append(USER_ACTIVITY_MARK+":");
-		 
+		 builder.append(USER_ACTIVITY_MARK + ':');
 		 builder.append(entity.getLogAction());
-		 
 		 if (entity.getActorDomain() != null) {
-			 builder.append(":"+entity.getActorDomain());
+			 builder.append(':' + entity.getActorDomain());
 		 } else {
 			 builder.append(":null domain");
 		 }
-		 builder.append(":"+entity.getActorMail());
-		 builder.append(":"+entity.getDescription());
+		 builder.append(':' + entity.getActorMail());
+		 builder.append(':' + entity.getDescription());
 
 		 // Add specific test for specific data
 		 if(entity instanceof FileLogEntry) {
-			 builder.append(":");
-			 builder.append("file="+((FileLogEntry)entity).getFileName());
-			 builder.append(",");
-			 builder.append("size="+((FileLogEntry)entity).getFileSize());
+			 builder.append(':');
+			 builder.append("file=" + ((FileLogEntry)entity).getFileName());
+			 builder.append(',');
+			 builder.append("size=" + ((FileLogEntry)entity).getFileSize());
 		 }
+		 
 		 return builder.toString();
 	}
 	
 	@Override
-	public LogEntry create(int level, LogEntry entity) throws IllegalArgumentException, BusinessException  {
-
+	public LogEntry create(int level, LogEntry entity) throws IllegalArgumentException, BusinessException {
 		 if (entity == null) {
 	            throw new IllegalArgumentException("Entity must not be null");
 	     }
-		 
 		 // Logger trace
 		 if(level == INFO) {
 			 logger.info(getLogMessage(entity));
@@ -80,18 +76,12 @@ public class LogEntryServiceImpl implements LogEntryService {
 		 } else if(level == ERROR) {
 			 logger.error(getLogMessage(entity));
 		 }
-		 
 		 // Database trace
 		 return logEntryRepository.create(entity);
 	}
 
-
-
 	@Override
-	public LogEntry create(LogEntry entity) throws IllegalArgumentException,
-			BusinessException {
+	public LogEntry create(LogEntry entity) throws IllegalArgumentException, BusinessException {
 		return create(INFO,entity);
 	}
-	
-
 }

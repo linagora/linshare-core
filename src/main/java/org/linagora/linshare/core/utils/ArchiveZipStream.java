@@ -32,7 +32,12 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ArchiveZipStream extends InputStream {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ArchiveZipStream.class);
 	
 	public static final String ARCHIVE_ZIP_DOWNLOAD_NAME = "allFiles.zip";
 	
@@ -53,54 +58,55 @@ public class ArchiveZipStream extends InputStream {
 	 * @throws IOException
 	 */
 	public ArchiveZipStream(Map<String,InputStream> allFilesTozip) {
-		
 			try {
 				this.allFilesTozip =  allFilesTozip;
-				
 				tempFile = File.createTempFile("linshareZip", null);
 				
 				zout = new ZipOutputStream(new FileOutputStream(tempFile));
 				bzfout= new BufferedOutputStream(zout);
 				
 				writeprocess();
-				
 				fi = new FileInputStream(tempFile);
-				
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		
 	}
 
 
 	private void releaseAll() {
-		if (zout!=null)
+		if (zout != null) {
 			try {
 				zout.close();
-			} catch (IOException e) {}
-		
-		if (bzfout!=null)
+			} catch (IOException e) {
+				logger.error(e.toString());
+			}
+		}
+		if (bzfout != null) {
 			try {
 				bzfout.close();
-			} catch (IOException e) {}
-		if (fi!=null)
+			} catch (IOException e) {
+				logger.error(e.toString());
+			}
+		}
+		if (fi != null) {
 			try {
 				fi.close();
-			} catch (IOException e) {}
-			
-		if(tempFile!=null && tempFile.exists()) {tempFile.delete();}
+			} catch (IOException e) {
+				logger.error(e.toString());
+			}
+		}
+		if (tempFile != null && tempFile.exists()) {
+			tempFile.delete();
+		}
 	}
 
 	private void writeprocess() throws IOException {
-		
 		byte[] buffer;
 		
 		//*** all files in zip
-		
 		for (String filename : allFilesTozip.keySet()) {
-			
 			buffer = new byte[BUFFERSIZE];
 			zout.putNextEntry(new ZipEntry(filename));
 			

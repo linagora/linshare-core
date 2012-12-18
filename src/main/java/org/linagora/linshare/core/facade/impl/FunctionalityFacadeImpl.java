@@ -95,7 +95,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 					res.add(new SizeValueFunctionalityVo(functionality.getIdentifier(), domainIdentifier, f.getValue(), sizeUnit.getUnitValue()));
 					
 				} else {
-					logger.error("Unknown Unit Functionality Type for : " + functionality.getIdentifier());;
+					logger.error("Unknown Unit Functionality Type for : " + functionality.getIdentifier());
 				}
 			} else if(functionality.getType().equals(FunctionalityType.UNIT_BOOLEAN)) {
 				UnitBooleanValueFunctionality f = (UnitBooleanValueFunctionality)functionality;
@@ -104,7 +104,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 					TimeUnitClass timeUnit = (TimeUnitClass)f.getUnit();
 					res.add(new TimeValueBooleanFunctionalityVo(functionality.getIdentifier(), domainIdentifier, f.getValue(), timeUnit.getUnitValue(), f.isBool()));
 				} else {
-					logger.error("Unknown Unit boolean Functionality Type for : " + functionality.getIdentifier());;
+					logger.error("Unknown Unit boolean Functionality Type for : " + functionality.getIdentifier());
 				}
 			} else {
 				logger.error("Unknown Functionality Type for : " + functionality.getIdentifier() + " : " + functionality.getType().toString());

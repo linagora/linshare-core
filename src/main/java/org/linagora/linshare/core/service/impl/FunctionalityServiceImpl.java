@@ -499,7 +499,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		if (domain != null) {
 			
 			List<Functionality> allFunctionalities = new ArrayList<Functionality>();
-			List<Functionality> parentFunctionalitites = new ArrayList<Functionality>();;
+			List<Functionality> parentFunctionalitites = new ArrayList<Functionality>();
 
 			// Add all my functionality identifiers
 			List<String> allFunctionalityIdentifiers = getFunctionalityIdentifiers(domain.getFunctionalities());

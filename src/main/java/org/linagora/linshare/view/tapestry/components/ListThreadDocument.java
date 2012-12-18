@@ -241,8 +241,8 @@ public class ListThreadDocument {
 
     @SuppressWarnings("unchecked")
     @OnEvent(value="eventReorderList")
-    public void reorderList(Object[] o1){
-        if (o1 != null && o1.length > 0){
+    public void reorderList(Object[] o1) {
+        if (o1 != null && o1.length > 0) {
             this.entries = (List<ThreadEntryVo>)Arrays.copyOf(o1,1)[0];
             this.sorterModel = new ThreadEntrySorterModel(this.entries);
             refreshFlag = true;
@@ -279,7 +279,7 @@ public class ListThreadDocument {
      */
     public BeanModel<ThreadEntryVo> initModel() throws BusinessException {
         //Initialize the sorter model for sorter component.
-        if (refreshFlag == true){
+        if (refreshFlag) {
             listThreadEntries = entries;
             refreshFlag = false;
         }

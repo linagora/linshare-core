@@ -94,11 +94,9 @@ public class Audit {
 	@Environmental
 	private FormSupport formSupport;
 	
-	@SuppressWarnings("unused")
 	@InjectComponent
 	private TextArea actorMails;
 
-	@SuppressWarnings("unused")
 	@InjectComponent
 	private TextArea targetMails;
 	
@@ -107,6 +105,7 @@ public class Audit {
 
     @InjectPage
     private org.linagora.linshare.view.tapestry.pages.history.Index historyPage;
+    
 	/* ***********************************************************
 	 *                         Properties
 	 ************************************************************ */    
@@ -118,10 +117,10 @@ public class Audit {
 	private String targetListMails;
 
 
-	@Property(write=false) @SuppressWarnings("unused") //used in tml
+	@Property(write = false)
 	private ValueEncoder<LogAction> logActionEncoder;
-
-	@Property(write=false)  @SuppressWarnings("unused") //used in tml
+	
+	@Property(write = false)
 	private SelectModel logActionModel;
 	
 	/**
@@ -130,12 +129,12 @@ public class Audit {
 	@Persist @Property
 	private List<DisplayableLogEntryVo> logEntries;
 	
-	@SuppressWarnings("unused")
 	@Property //used in the tml for the grid
 	private DisplayableLogEntryVo logEntry;
 	
 	
-	@Persist @Property(write=false) @SuppressWarnings("unused") //used in tml
+	@Persist
+	@Property(write = false)
 	private boolean displayGrid;
 	
 	private boolean generateCsv;
@@ -312,30 +311,30 @@ public class Audit {
 	
 		
 		csv
-			.append(messages.get("pages.administration.audit.result.actionDate")).append(",")
-			.append(messages.get("pages.administration.audit.result.actorMail")).append(",")
-			.append(messages.get("pages.administration.audit.result.actorFirstname")).append(",")
-			.append(messages.get("pages.administration.audit.result.actorLastname")).append(",")
-			.append(messages.get("pages.administration.audit.result.logAction")).append(",")
-			.append(messages.get("pages.administration.audit.result.targetMail")).append(",")
-			.append(messages.get("pages.administration.audit.result.targetFirstname")).append(",")
-			.append(messages.get("pages.administration.audit.result.targetLastname")).append(",")
-			.append(messages.get("pages.administration.audit.result.fileName")).append(",")
-			.append(messages.get("pages.administration.audit.result.fileSize")).append(",")
-			.append(messages.get("pages.administration.audit.result.fileType")).append("\n");
+			.append(messages.get("pages.administration.audit.result.actionDate")).append(',')
+			.append(messages.get("pages.administration.audit.result.actorMail")).append(',')
+			.append(messages.get("pages.administration.audit.result.actorFirstname")).append(',')
+			.append(messages.get("pages.administration.audit.result.actorLastname")).append(',')
+			.append(messages.get("pages.administration.audit.result.logAction")).append(',')
+			.append(messages.get("pages.administration.audit.result.targetMail")).append(',')
+			.append(messages.get("pages.administration.audit.result.targetFirstname")).append(',')
+			.append(messages.get("pages.administration.audit.result.targetLastname")).append(',')
+			.append(messages.get("pages.administration.audit.result.fileName")).append(',')
+			.append(messages.get("pages.administration.audit.result.fileSize")).append(',')
+			.append(messages.get("pages.administration.audit.result.fileType")).append('\n');
 		for (DisplayableLogEntryVo logEntry : listLogEntry) {
 			csv
-			.append(dateFormat.format(logEntry.getActionDate())).append(",")
-			.append(logEntry.getActorMail()).append(",")
-			.append(logEntry.getActorFirstname()).append(",")
-			.append(logEntry.getActorLastname()).append(",")
-			.append(logEntry.getLogAction()).append(",")
-			.append(logEntry.getTargetMail()).append(",")
-			.append(logEntry.getTargetFirstname()).append(",")
-			.append(logEntry.getTargetLastname()).append(",")
-			.append(logEntry.getFileName()).append(",")
-			.append(logEntry.getFileSize()).append(",")
-			.append(logEntry.getFileType()).append("\n");
+			.append(dateFormat.format(logEntry.getActionDate())).append(',')
+			.append(logEntry.getActorMail()).append(',')
+			.append(logEntry.getActorFirstname()).append(',')
+			.append(logEntry.getActorLastname()).append(',')
+			.append(logEntry.getLogAction()).append(',')
+			.append(logEntry.getTargetMail()).append(',')
+			.append(logEntry.getTargetFirstname()).append(',')
+			.append(logEntry.getTargetLastname()).append(',')
+			.append(logEntry.getFileName()).append(',')
+			.append(logEntry.getFileSize()).append(',')
+			.append(logEntry.getFileType()).append('\n');
 		}
 		return csv;
 	}

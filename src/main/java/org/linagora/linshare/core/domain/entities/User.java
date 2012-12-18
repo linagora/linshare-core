@@ -69,7 +69,7 @@ public abstract class User extends Account {
 		this.destroyed = false;
 		this.comment = "";
 		this.canUpload = true;
-		this.canCreateGuest = true ;
+		this.canCreateGuest = true;
 		this.restricted = false;
 	}
 

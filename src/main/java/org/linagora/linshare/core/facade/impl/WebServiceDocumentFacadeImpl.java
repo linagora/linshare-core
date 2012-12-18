@@ -41,14 +41,16 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.webservice.dto.Document;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
-
-	
-	final private DocumentEntryService documentEntryService;
-	final private AccountService accountService;
+    private static final Logger logger = LoggerFactory.getLogger(WebServiceDocumentFacade.class);
+    
+	private final DocumentEntryService documentEntryService;
+	private final AccountService accountService;
 
 	public WebServiceDocumentFacadeImpl(final DocumentEntryService documentEntryService, final AccountService accountService) {
 		this.documentEntryService = documentEntryService;
@@ -82,7 +84,6 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 		File tempFile = null;
 		
 		try {
-			 
 			User actor = getAuthentication();
 			
 			//here we need tempFile to evaluate length of the stream ...
@@ -90,7 +91,6 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 			tempfi = new FileInputStream(tempFile);
 			res =  documentEntryService.createDocumentEntry(actor, tempfi, tempFile.length(), filename);
 			documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), fileComment);
- 
 		} catch (BusinessException e) {
 			throw e;
 		} catch (FileNotFoundException e) {
@@ -98,12 +98,15 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 		} catch (IOException e) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "unable to upload", e);
 		} finally {
-			if (tempfi!=null)
+			if (tempfi != null)
 				try {
 					tempfi.close();
-				} catch (IOException e) {}
-			
-			if(!tempFile.delete()) tempFile.deleteOnExit();
+				} catch (IOException e) {
+					logger.error(e.toString());
+				}
+			if (!tempFile.delete()) {
+				tempFile.deleteOnExit();
+			}
 		}
 		
 		return new Document(res);
@@ -132,11 +135,9 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
     	File tempFile = null;
     	
     	try {
-    		
     		User actor = getAuthentication();
-    		
-			 DataHandler dh = doca.getDocument();
-			 InputStream in = dh.getInputStream();
+    		DataHandler dh = doca.getDocument();
+    		InputStream in = dh.getInputStream();
 			 
 			//here we need tempFile to evaluate length of the stream ...
 			tempFile = getTempFile(in, doca.getFilename());
@@ -145,24 +146,24 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 			res =  documentEntryService.createDocumentEntry(actor, tempfi, tempFile.length(), doca.getFilename());
 			
 			//mandatory ?
-			String comment =  (doca.getComment()==null)? "" :  doca.getComment();
+		 	String comment = (doca.getComment() == null)? "" : doca.getComment();
 			
 			documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), comment);
-				
-
-
 		} catch (IOException e) {
 			throw  new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "unable to upload",e);
 		} catch (BusinessException e) {
 			throw e;
 		} finally {
-			
-			if(tempfi!=null)
+			if (tempfi != null) {
 				try {
 					tempfi.close();
-				} catch (IOException e) {}
-			
-			if(!tempFile.delete()) tempFile.deleteOnExit();
+				} catch (IOException e) {
+					logger.error(e.toString());
+				}
+			}
+			if (!tempFile.delete()) {
+				tempFile.deleteOnExit();
+			}
 		}
 		
 		return new Document(res);
@@ -236,7 +237,9 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	private User getAuthentication() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
 	     String name =  (auth != null) ? auth.getName() : null; //get logged in username
-	     if (name == null) return null;
+	     if (name == null) {
+	    	 return null;
+	     }
 	     User user = (User) accountService.findByLsUid(name);
 	     return user;
 	}

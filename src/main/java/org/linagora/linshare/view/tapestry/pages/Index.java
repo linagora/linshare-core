@@ -128,7 +128,7 @@ public class Index {
     @SetupRender
     private void initList() throws BusinessException {
     	
-        if (userVoExists == false) {
+        if (!userVoExists) {
         	Locale locale = WelcomeMessageUtils.getNormalisedLocale(persistentLocale.get(), request.getLocale(), null);
         	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
             shares = new ArrayList<ShareDocumentVo>();

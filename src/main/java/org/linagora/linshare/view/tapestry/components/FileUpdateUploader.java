@@ -130,38 +130,31 @@ public class FileUpdateUploader {
 	  
     @OnEvent(value = "fileUploaded")
     public void processFilesUploaded(Object[] context) {
-    	boolean toUpdate=false;
+    	boolean toUpdate = false;
 
-        for (int i = 0; i < context.length; i++) {
-            
+        for (int i = 0; i < context.length; ++i) {
         	UploadedFile uploadedFile = (UploadedFile) context[i];
             
-            if (uploadedFile != null && i<1) { //limit to one file (for update)
-
+            if (uploadedFile != null && i < 1) { //limit to one file (for update)
                 try {
-                    
                 	DocumentVo initialdocument = documentFacade.getDocument(userDetails.getLogin(), uuidDocToUpdate);
-                	
                 	String filesizeTxt = FileUtils.getFriendlySize(initialdocument.getSize(), messages);
-                	
                     DocumentVo document  =  documentFacade.updateDocumentContent(uuidDocToUpdate, uploadedFile.getStream(), uploadedFile.getSize(),
                             uploadedFile.getFileName(), userDetails, filesizeTxt);
                     
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_UPDATE_FILE_CONTENT_OK,
                         MessageSeverity.INFO, initialdocument.getFileName(),uploadedFile.getFileName()));
-
-                    
                     // Notify the add of a file.
                     Object[] addedFile = {document};
                     componentResources.triggerEvent("fileAdded", addedFile, null);
-                    toUpdate=true;
+                    toUpdate = true;
                 } catch (BusinessException e) {
                     messagesManagementService.notify(e);
                     readFileStream(uploadedFile);
                 }
             } else {
-            	
-            	if (uploadedFile!=null) readFileStream(uploadedFile);
+            	if (uploadedFile != null)
+            		readFileStream(uploadedFile);
             }
         }
         if (toUpdate) 
@@ -192,6 +185,7 @@ public class FileUpdateUploader {
             maxFileSize = documentFacade.getUserMaxFileSize(userDetails);
         } catch (BusinessException e) {
             // value has not been defined. We use the default value.
+        	e.printStackTrace();
         }
         return maxFileSize;
     }

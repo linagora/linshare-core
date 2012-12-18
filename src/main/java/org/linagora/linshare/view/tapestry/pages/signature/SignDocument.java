@@ -129,18 +129,19 @@ public class SignDocument {
 		}
 		
 		
-		if(stopWizard){
+		if (stopWizard){
 			try {
 				response.sendRedirect(linkFactory.createPageRenderLink("signature/ExitSignatureWithError"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
 	}
     
     
-	void onSelectedFromCancel() { buttonCancel = true; }
+	public void onSelectedFromCancel() {
+		buttonCancel = true;
+	}
     
     public Object onSuccess() {
     	
@@ -155,8 +156,6 @@ public class SignDocument {
 		}
 		
 		Map<String,String> signatures = ParameterConverterJavaJavascript.convertStringToMap(signContent);
-		
-		
 		FileInputStream fi = null;
 		
 		try {
@@ -165,9 +164,7 @@ public class SignDocument {
 			List<File> outSignedFiles = userSignature.getFinalizedDocument();
 			List<DocumentVo> docVos = userSignature.getDocumentVos();
 			
-			
-			for (int i=0; i<outSignedFiles.size(); i++) {
-				
+			for (int i = 0; i<outSignedFiles.size(); ++i) {
 				File oneFile = outSignedFiles.get(i);
 				DocumentVo currentDoc = docVos.get(i);
 				
@@ -175,39 +172,42 @@ public class SignDocument {
 				documentFacade.insertSignatureFile(fi, oneFile.length(), oneFile.getName(), userVo, currentDoc,userSignature.getSignercert());
 				
 				fi.close();
-				
 			}
-			
 		} catch (ObjectNotFoundException e) {
 			//instance de signature introuvable: quitter l'application...
-			stopWizard=true;
+			stopWizard = true;
 			log.error(e.toString(),e);
 			userSignature.setErrorMessage(messages.get("pages.signature.error.objectNotFoundException"));
 		} catch (FinalizeDocumentException e) {
-			stopWizard=true;
+			stopWizard = true;
 			log.error(e.toString(),e);
 			userSignature.setErrorMessage(messages.get("pages.signature.error.finalizeDocumentException"));
 		} catch (CheckSignerKeyException e) {
-			stopWizard=true;
+			stopWizard = true;
 			log.error(e.toString(),e);
 			userSignature.setErrorMessage(messages.get("pages.signature.error.checkSignerKeyException"));
 		} catch (CorruptedFileException e) {
-			stopWizard=true;
+			stopWizard = true;
 			log.error(e.toString(),e);
 			userSignature.setErrorMessage(messages.get("pages.signature.error.corruptedFileException"));
 		} catch (IOException e) {
-			stopWizard=true;
+			stopWizard = true;
 			log.error(e.toString(),e);
 			userSignature.setErrorMessage(messages.get("pages.signature.error.iOException"));
 		} catch (BusinessException e) {
 			// insertSignatureFile
-			stopWizard=true;
+			stopWizard = true;
 			log.error(e.toString(),e);
 			userSignature.setErrorMessage(messages.get("pages.signature.error.database"));
 		} finally {
-			if(fi!=null) try {fi.close();} catch (IOException e) {}
-	    	
-			hashes=null;
+			if (fi != null) {
+				try {
+					fi.close();
+				} catch (IOException e) {
+					log.error(e.toString());
+				}
+			}
+			hashes = null;
 	    	userSignature.close(); //delete working directory and resources
 		}
 		
