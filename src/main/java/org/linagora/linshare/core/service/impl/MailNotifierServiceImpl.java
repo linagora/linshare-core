@@ -275,6 +275,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 					sendNotification(mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
 				} catch (SendFailedException e) {
 					unknownRecipients.add(mailContainer.getRecipient());
+					logger.debug(e.toString());
 				}
 			}
 			

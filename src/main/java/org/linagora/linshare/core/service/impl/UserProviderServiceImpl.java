@@ -184,7 +184,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 
     @Override
     public User auth(LdapUserProvider userProvider, String mail, String userPasswd)	throws BusinessException, NamingException, IOException {
-        LdapUserProvider p = (LdapUserProvider)userProvider;
+        LdapUserProvider p = userProvider;
         if(p == null) {
             return null;
         }

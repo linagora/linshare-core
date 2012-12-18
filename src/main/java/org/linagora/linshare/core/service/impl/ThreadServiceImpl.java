@@ -3,8 +3,6 @@ package org.linagora.linshare.core.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.processing.Filer;
-
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagFilter;
@@ -13,12 +11,10 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.AbstractRepository;
 import org.linagora.linshare.core.repository.TagRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
-import org.linagora.linshare.core.repository.hibernate.AbstractRepositoryImpl;
 import org.linagora.linshare.core.service.ThreadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

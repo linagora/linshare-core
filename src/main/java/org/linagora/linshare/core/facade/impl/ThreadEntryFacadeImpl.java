@@ -309,7 +309,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 				User user = (User) accountService.findByLsUid(newMember.getLsUid());
 				List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
 				for (ThreadMemberVo member : members) {
-					if (member.getUser().getLsUid() == user.getLsUuid()) {
+					if (member.getUser().getLsUid().equals(user.getLsUuid())) {
 						// TODO error duplicate member
 						return;
 					}

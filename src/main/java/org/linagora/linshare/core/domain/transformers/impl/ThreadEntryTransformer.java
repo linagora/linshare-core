@@ -40,8 +40,8 @@ public class ThreadEntryTransformer implements Transformer<ThreadEntry, Document
 
 	@Override
 	public ThreadEntry assemble(DocumentVo valueObject) {
-		if(null!=valueObject){
-			return (ThreadEntry) threadEntryRepository.findByUuid(valueObject.getIdentifier());
+		if(null != valueObject){
+			return threadEntryRepository.findByUuid(valueObject.getIdentifier());
 		}else{	
 			return null;
 		}

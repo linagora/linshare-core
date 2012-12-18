@@ -102,11 +102,6 @@ public class UserServiceImpl implements UserService {
 
 	private final ThreadService threadService;
 
-    /** Constructor.
-     * @param userRepository repository.
-     * @param notifierService notifier service.
-     * @param ldapDao LDAP DAO.
-     */
     public UserServiceImpl(final UserRepository userRepository,
     		final NotifierService notifierService, 
     		final LogEntryService logEntryService,

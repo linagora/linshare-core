@@ -379,6 +379,7 @@ public class UserEditForm {
 		        shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.confirm"));
 			} catch (BusinessException e) {
 				shareSessionObjects.addError(messages.get("components.guestEditForm.action.update.guestRestriction.badUser"));
+				logger.debug(e.toString());
 			}
 		}
 

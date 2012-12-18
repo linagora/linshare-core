@@ -105,7 +105,7 @@ public class MailContainer {
         	return Language.FRENCH;
         }
         /* java.util.Locale doesn't support dutch */
-        if (locale.getLanguage() == "nl_NL" || locale.getLanguage() == "nl") {
+        if (locale.getLanguage().equals("nl_NL") || locale.getLanguage().equals("nl")) {
         	return Language.DUTCH;
         }
         return Language.DEFAULT;

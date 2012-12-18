@@ -83,12 +83,11 @@ public class AllowedMimeTypeVO implements Serializable{
 
 	@Override
 	public boolean equals(Object obj) {
-		
 		if (obj instanceof AllowedMimeTypeVO) {
 			AllowedMimeTypeVO vo = (AllowedMimeTypeVO) obj;
-			if(vo.getId()== this.getId()) return true;
-			else return false;
-		} else return false;
+			return (vo.getId()== this.getId());
+		}
+		return false;
 		
 	}
 	

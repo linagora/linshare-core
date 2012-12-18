@@ -44,7 +44,7 @@ public class DomainPatternRepositoryImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DomainPattern> findAllSystemDomainPattern() {
-		return (List<DomainPattern>) getHibernateTemplate().executeFind(
+		return getHibernateTemplate().executeFind(
 				new HibernateCallback() {
 					public Object doInHibernate(final Session session)
 							throws HibernateException, SQLException {
@@ -58,7 +58,7 @@ public class DomainPatternRepositoryImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DomainPattern> findAllUserDomainPattern() {
-		return (List<DomainPattern>) getHibernateTemplate().executeFind(
+		return getHibernateTemplate().executeFind(
 				new HibernateCallback() {
 					public Object doInHibernate(final Session session)
 							throws HibernateException, SQLException {

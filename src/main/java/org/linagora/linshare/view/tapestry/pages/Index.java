@@ -50,9 +50,6 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
-import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
-import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.utils.WelcomeMessageUtils;
 import org.slf4j.Logger;
 

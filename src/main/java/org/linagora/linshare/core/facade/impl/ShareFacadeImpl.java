@@ -328,6 +328,7 @@ public class ShareFacadeImpl implements ShareFacade {
 				hasRightsToShareWithExternals = abstractDomainService.hasRightsToShareWithExternals(sender);
 			} catch (BusinessException e) {
 				logger.error("Could not retrieve domain of sender while sharing to externals: "+sender.getAccountReprentation());
+				logger.debug(e.toString());
 			}
 			
 			if (hasRightsToShareWithExternals) {

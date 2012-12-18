@@ -171,7 +171,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	@Override
 	public List<String> findMails(final String beginWith) {
 		
-		return (List<String>)getHibernateTemplate().executeFind(new HibernateCallback() {
+		return getHibernateTemplate().executeFind(new HibernateCallback() {
 			public Object doInHibernate(final Session session)
 			throws HibernateException, SQLException {
 				

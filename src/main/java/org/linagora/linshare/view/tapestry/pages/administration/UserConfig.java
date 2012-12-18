@@ -175,6 +175,7 @@ public class UserConfig {
 			userFacade.changePassword(userVo, oldUserPassword, newUserPassword);
 		} catch (BusinessException e) {
 			changePassword.recordError(messages.get("pages.administration.userconfig.error.wrong.password"));
+			logger.debug(e.toString());
     		return false;
 		}
 		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.PASSWORD_CHANGE_SUCCESS, MessageSeverity.INFO));

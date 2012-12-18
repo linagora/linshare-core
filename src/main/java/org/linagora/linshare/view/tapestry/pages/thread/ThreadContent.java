@@ -270,6 +270,7 @@ public class ThreadContent {
 			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"), selectedVo.getFileName()));
 		} catch (BusinessException e) {
 			shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"), selectedVo.getFileName()) );
+			logger.debug(e.toString());
 		}
 	}
 

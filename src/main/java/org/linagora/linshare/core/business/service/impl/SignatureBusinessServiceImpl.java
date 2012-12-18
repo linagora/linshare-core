@@ -85,13 +85,11 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("insert of the document in jack rabbit:" + fileName + ", size:"+ size + ", path:" + path + " , type: " + mimeType);
 			}
-
 			uuid = fileSystemDao.insertFile(path, fis, size, fileName, mimeType);
 		} catch (FileNotFoundException e1) {
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
 					"couldn't open inputStream on the temporary file");
 		} finally {
-
 			try {
 				logger.debug("closing FileInputStream ");
 				if (fis != null)
@@ -99,8 +97,8 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 			} catch (IOException e) {
 				// Do nothing Happy java :)
 				logger.error("IO exception : should not happen ! ");
+				logger.error(e.toString());
 			}
-
 		}
 		return uuid;
 	}

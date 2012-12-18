@@ -173,7 +173,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		// Remove element from its ancestor. It does not need to be updated. Do not know why, implicit update somewhere ?
 		if(domain.getParentDomain()!=null) {
 			for (Iterator<AbstractDomain> iterator = domain.getParentDomain().getSubdomain().iterator(); iterator.hasNext();) {
-				AbstractDomain s= (AbstractDomain) iterator.next();
+				AbstractDomain s = iterator.next();
 				if(s.getIdentifier().equals(identifier)) {
 					iterator.remove();
 					//					abstractDomainRepository.update(domain.getParentDomain());

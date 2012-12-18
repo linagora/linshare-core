@@ -120,6 +120,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
                 } catch (BusinessException ex) {
                     logger.error("Error when processing cleaning of document whith UID = {} during consistency check " +
                         "process", document.getUuid());
+                    logger.debug(ex.toString());
                 }
             }
         }

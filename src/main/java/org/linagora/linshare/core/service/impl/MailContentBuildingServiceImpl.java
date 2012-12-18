@@ -850,7 +850,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 			namesTxt.append(name +"\n");			
 		}
 
-		String number = new Integer(docNames.size()).toString();
+		String number = "" + docNames.size();
 
 		contentTXT = StringUtils.replace(contentTXT, "${firstName}", actor.getFirstName());
 		contentTXT = StringUtils.replace(contentTXT, "${lastName}", actor.getLastName());

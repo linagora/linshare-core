@@ -42,7 +42,7 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 	@SuppressWarnings("unchecked")
 	public List<String> findAllIdentifiers() {
 
-		return (List<String>) getHibernateTemplate().executeFind(
+		return getHibernateTemplate().executeFind(
 				new HibernateCallback() {
 					public Object doInHibernate(final Session session)
 							throws HibernateException, SQLException {

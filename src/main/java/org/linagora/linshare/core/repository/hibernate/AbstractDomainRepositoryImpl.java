@@ -42,8 +42,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDomainIdentifiers() {
-
-		return (List<String>) getHibernateTemplate().executeFind(
+		return getHibernateTemplate().executeFind(
 				new HibernateCallback<List<String>>() {
 					public List<String> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
@@ -56,7 +55,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AbstractDomain> findAllDomain() {
-		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
+		return getHibernateTemplate().executeFind(
 				new HibernateCallback<List<AbstractDomain>>() {
 					public List<AbstractDomain> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
@@ -69,7 +68,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AbstractDomain> findAllTopAndSubDomain() {
-		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
+		return getHibernateTemplate().executeFind(
 				new HibernateCallback<List<AbstractDomain>>() {
 					public List<AbstractDomain> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
@@ -83,7 +82,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AbstractDomain> findAllTopDomain() {
-		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
+		return getHibernateTemplate().executeFind(
 				new HibernateCallback<List<AbstractDomain>>() {
 					public List<AbstractDomain> doInHibernate(final Session session)
 							throws HibernateException, SQLException {
@@ -96,7 +95,7 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AbstractDomain> findAllSubDomain() {
-		return (List<AbstractDomain>) getHibernateTemplate().executeFind(
+		return getHibernateTemplate().executeFind(
 				new HibernateCallback<List<AbstractDomain>>() {
 					public List<AbstractDomain> doInHibernate(final Session session)
 							throws HibernateException, SQLException {

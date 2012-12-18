@@ -292,6 +292,7 @@ public final class JndiServices {
 			ne = ctx.search(rewrittenBase, searchFilter, sc);
 		} catch (CommunicationException ce) {
 			LOGGER.error("ComunicationException : reconnexion to ,ldap directory");
+			LOGGER.error(ce.toString());
 			ctx.reconnect(ctx.getConnectControls());
 			return getEntry(base, filter, sc, scope);
 		} catch (NamingException nex) {
@@ -302,10 +303,9 @@ public final class JndiServices {
 		
 		SearchResult sr = null;
 		if (ne.hasMoreElements()) {
-			sr = (SearchResult) ne.nextElement();
+			sr = ne.nextElement();
 			if (ne.hasMoreElements()) {
-				LOGGER.error("Too many entries returned (base: \"{}\", filter: \"{}\")",
-								searchBase, searchFilter);
+				LOGGER.error("Too many entries returned (base: \"{}\", filter: \"{}\")", searchBase, searchFilter);
 				throw new SizeLimitExceededException("Too many entries returned (base: \"" + searchBase + "\", filter: \"" + searchFilter + "\")");
 			} else {
 				return sr;
@@ -391,6 +391,7 @@ public final class JndiServices {
 			ne = ctx.search(rewriteBase(base), filter, sc);
 		} catch (CommunicationException ce) {
 			ctx.reconnect(ctx.getConnectControls());
+			LOGGER.debug(ce.toString());
 			return readEntry(base, filter, allowError, sc);
 		} catch (NamingException nex) {
 			if (!allowError) {
@@ -402,7 +403,7 @@ public final class JndiServices {
 
 		SearchResult sr = null;
 		if (ne.hasMore()) {
-			sr = (SearchResult) ne.next();
+			sr = ne.next();
 			if (ne.hasMore()) {
 				LOGGER.error("Too many entries returned (base: \"{}\")", base);
 			} else {
@@ -438,6 +439,7 @@ public final class JndiServices {
 			ret = true;
 		} catch (Exception e) {
 			ret = false;
+			LOGGER.debug(e.toString());
 		} finally {
             bindContext.removeFromEnvironment(Context.SECURITY_AUTHENTICATION);
             bindContext.removeFromEnvironment(Context.SECURITY_PRINCIPAL);
@@ -485,10 +487,11 @@ public final class JndiServices {
 				completedBaseDn = "," + base;
 			}
 			while (ne.hasMoreElements()) {
-				iist.add(((SearchResult) ne.next()).getName() + completedBaseDn);
+				iist.add((ne.next()).getName() + completedBaseDn);
 			}
 		} catch (CommunicationException ce) {
 			ctx.reconnect(ctx.getConnectControls());
+			LOGGER.debug(ce.toString());
 			return getDnList(base, filter, scope);
 		} catch (NamingException e) {
 			LOGGER.error(e.toString());

@@ -43,6 +43,8 @@ import org.linagora.linshare.view.tapestry.enums.HelpType;
 import org.linagora.linshare.view.tapestry.objects.HelpsASO;
 import org.linagora.linshare.view.tapestry.objects.Subsection;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This component permits to display all help categories.
@@ -57,7 +59,7 @@ import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementSe
 @Import(library = {"Help.js"})
 public class Help {
 
-
+	private static Logger logger = LoggerFactory.getLogger(Help.class);
 
 	@SessionState
 	private HelpsASO helpsASO;
@@ -334,6 +336,7 @@ public class Help {
 				 * We do nothing, just set the asset to null, for checking if the asset exist or not.
 				 */
 				imgAsset=null;
+				logger.debug(exception.toString());
 			}
 			String subsectionTitle=messagesComponent.get(subsection+i+"."+TITLE_PREFIX);
 			String imgTitle=(imgAsset!=null) ? messagesComponent.get(subsection+i+"."+IMAGE_TITLE):null;
@@ -353,6 +356,7 @@ public class Help {
 			 * We do nothing, just set the asset to null, for checking if the asset exist or not.
 			 */
 			videoAsset=null;
+			logger.debug(exception.toString());
 		}
 		if(videoAsset==null){
 			videoUrl=null;
