@@ -179,7 +179,9 @@ public class BetterRepositoryFactoryBean extends RepositoryFactoryBean {
 					try {
 						replacement = replaceVariables(variables,replacement,false);
 					} catch (IllegalArgumentException e) {
-						log.error(e.toString());
+						if (log.isDebugEnabled()) {
+							log.debug(e.toString());
+						}
 					}
 				}
 

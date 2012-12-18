@@ -264,6 +264,7 @@ public class ListThreadDocument {
     	try {
     		return  null != threadEntryFacade.findById(user, threadVo, threadEntry.getIdentifier());
     	} catch(BusinessException e) {
+    		logger.debug(e.toString());
     		return false;
     	}
     }

@@ -429,6 +429,7 @@ public class ListSharedDocument {
 				} catch (BusinessException e) {
 					businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.DECRYPTION_FAILED,
 				                MessageSeverity.WARNING));
+					logger.debug(e.toString());
 				}
 	
 			}
@@ -504,11 +505,7 @@ public class ListSharedDocument {
 	 * 
 	 */
 	public boolean isEmptyList(){
-		if(null==shareDocuments || shareDocuments.isEmpty()){
-			return true;
-		}else{
-			return false;
-		}
+		return (null == shareDocuments || shareDocuments.isEmpty());
 	}
 	
 	/**

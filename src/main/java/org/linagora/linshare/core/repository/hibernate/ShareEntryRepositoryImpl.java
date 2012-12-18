@@ -119,7 +119,7 @@ public class ShareEntryRepositoryImpl extends AbstractRepositoryImpl<ShareEntry>
 		
 		final QueryParameter queryParameter = buildQuery(searchDocumentCriterion, ANYWHERE);
 		
-		return (List<ShareEntry>)getHibernateTemplate().executeFind(new HibernateCallback<List<ShareEntry>>() {
+		return getHibernateTemplate().executeFind(new HibernateCallback<List<ShareEntry>>() {
 			public List<ShareEntry> doInHibernate(final Session session) throws HibernateException, SQLException {
 				
 				StringBuilder queryString = new StringBuilder("select share from ShareEntry share join share.recipient recipient join share.documentEntry.document doc join share.entryOwner sender ");

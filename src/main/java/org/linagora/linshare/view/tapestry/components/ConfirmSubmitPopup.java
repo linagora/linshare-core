@@ -81,11 +81,9 @@ public class ConfirmSubmitPopup {
     }
 
     public void onActionFromConfirmsubmitPopupYes() {
-		return;
 	}
     
 	public void onActionFromConfirmsubmitPopupNo() {
-		return;
 	}
 	
 	public String getJSONId() {

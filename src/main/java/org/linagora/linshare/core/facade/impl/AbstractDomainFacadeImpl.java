@@ -130,7 +130,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
         LdapUserProvider provider = null;
         String baseDn = domainVo.getDifferentialKey();
-        if(baseDn != "" && domainPattern != null && ldapConn != null) {
+        if (baseDn.isEmpty() && domainPattern != null && ldapConn != null) {
             provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
         }
 
@@ -511,12 +511,16 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
         } catch (UnsupportedEncodingException e) {
             res =  false;
+            logger.debug(e.toString());
         } catch (GeneralSecurityException e) {
             res =  false;
+            logger.debug(e.toString());
         } catch (IOException e) {
             res =  false;
+            logger.debug(e.toString());
         } catch (Error err) {
             res = false;
+            logger.error(err.toString());
         }
 
         return res;
@@ -585,6 +589,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
                     }
                 } catch (BusinessException e) {
                     logger.error("domain not found : " + domainIdentifier);
+                    logger.debug(e.toString());
                 }
             }
         }

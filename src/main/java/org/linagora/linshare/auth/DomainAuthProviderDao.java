@@ -80,7 +80,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		logger.debug("Retrieving user detail for ldap authentication : " + login);
 		
 		String password = (String)authentication.getCredentials();
-		if(password == "") {
+		if (password.isEmpty()) {
 			logger.debug("User password is empty, authentification failed");
 			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 		}

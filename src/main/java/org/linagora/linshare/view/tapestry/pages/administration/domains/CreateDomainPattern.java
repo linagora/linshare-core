@@ -70,6 +70,7 @@ public class CreateDomainPattern {
 				domainPattern.setPatternDescription("");
 			} catch (BusinessException e) {
 				domainPattern = null;
+				logger.debug(e.toString());
 			}
 		}
 	}

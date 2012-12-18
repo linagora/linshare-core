@@ -83,7 +83,7 @@ public class AnonymousUrlRepositoryImpl extends AbstractRepositoryImpl<Anonymous
 			}
 		};
 		
-		return (List<AnonymousUrl>) getHibernateTemplate().execute(action);
+		return getHibernateTemplate().execute(action);
 	}
 
 	

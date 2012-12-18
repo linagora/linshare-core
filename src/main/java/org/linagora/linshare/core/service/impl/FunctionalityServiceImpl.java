@@ -437,14 +437,9 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 			// I have to check if I have the permission to modify the activation status of this functionality
 			if (!functionality.getActivationPolicy().isSystem()) {
 				for (Functionality ancestor : parentFunctionalitites) {
-					if(ancestor.getIdentifier().equals(functionality.getIdentifier())) { // same functionality but different entities
-						if (ancestor.getActivationPolicy().isMutable()) {
-							// the ancestor allows modifications
-							return true;
-						} else {
-							// the ancestor does not allow modifications
-							return false;
-						}
+					if (ancestor.getIdentifier().equals(functionality.getIdentifier())) { // same functionality but different entities
+						// return true if the ancestor allows modifications
+						return (ancestor.getActivationPolicy().isMutable());
 					}
 				}
 				// No ancestor found, modifications are allowed.
@@ -457,13 +452,8 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 				if (!functionality.getConfigurationPolicy().isSystem()) {
 					for (Functionality ancestor : parentFunctionalitites) {
 						if(ancestor.getIdentifier().equals(functionality.getIdentifier())) { // same functionality but different entities
-							if (ancestor.getConfigurationPolicy().isMutable()) {
-								// the ancestor allows modifications
-								return true;
-							} else {
-								// the ancestor does not allow modifications
-								return false;
-							}
+							// return true if the ancestor allows modifications
+							return (ancestor.getConfigurationPolicy().isMutable());
 						}
 					}
 					// No ancestor found, modifications are allowed.
@@ -478,13 +468,8 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 				if (functionality.getActivationPolicy().getStatus()) {
 					for (Functionality ancestor : parentFunctionalitites) {
 						if(ancestor.getIdentifier().equals(functionality.getIdentifier())) { // same functionality but different entities
-							if (ancestor.getConfigurationPolicy().getStatus()) {
-								// the ancestor allows modifications
-								return true;
-							} else {
-								// the ancestor does not allow modifications
-								return false;
-							}
+							// return true if the ancestor allows modifications
+							return (ancestor.getConfigurationPolicy().getStatus());
 						}
 					}
 					// No ancestor found, modifications are allowed.

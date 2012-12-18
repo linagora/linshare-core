@@ -30,7 +30,6 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
@@ -129,6 +128,7 @@ public class Index {
     		}
 		} catch (IOException e) {
 			 logger.debug("Impossible to load version.properties, Is this a dev environnement?");
+			 logger.debug(e.toString());
 		}
 		if (prop.getProperty("Implementation-Version") != null) {
 			return prop.getProperty("Implementation-Version");	

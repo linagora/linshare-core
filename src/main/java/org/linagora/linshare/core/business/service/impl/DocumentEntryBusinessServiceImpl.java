@@ -119,7 +119,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			if(checkIfIsCiphered) {
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
-			entity = (DocumentEntry) documentEntryRepository.create(docEntry);
+			entity = documentEntryRepository.create(docEntry);
 			
 			owner.getEntries().add(entity);
 			accountRepository.update(owner);
@@ -327,10 +327,10 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			ThreadEntry docEntry = new ThreadEntry(owner, fileName, document);
 
 			//aes encrypt ? check headers
-			if(checkIfIsCiphered) {
+			if (checkIfIsCiphered) {
 				docEntry.setCiphered(checkIfFileIsCiphered(fileName, myFile));
 			}
-			entity = (ThreadEntry) threadEntryRepository.create(docEntry);
+			entity = threadEntryRepository.create(docEntry);
 			
 			owner.getEntries().add(entity);
 			accountRepository.update(owner);
@@ -346,7 +346,7 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public ThreadEntry findThreadEntryById(String docEntryUuid) {
-		return (ThreadEntry)threadEntryRepository.findByUuid(docEntryUuid);
+		return threadEntryRepository.findByUuid(docEntryUuid);
 	}
 
 
@@ -485,13 +485,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			if (logger.isDebugEnabled()) {
 				logger.debug("insert of the document in jack rabbit:" + fileName + ", size:"+ size + ", path:" + path + " , type: " + mimeType);
 			}
-
 			uuid = fileSystemDao.insertFile(path, fis, size, fileName, mimeType);
 		} catch (FileNotFoundException e1) {
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,
 					"couldn't open inputStream on the temporary file");
 		} finally {
-
 			try {
 				logger.debug("closing FileInputStream ");
 				if (fis != null)
@@ -499,8 +497,8 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			} catch (IOException e) {
 				// Do nothing Happy java :)
 				logger.error("IO exception : should not happen ! ");
+				logger.error(e.toString());
 			}
-
 		}
 		return uuid;
 	}

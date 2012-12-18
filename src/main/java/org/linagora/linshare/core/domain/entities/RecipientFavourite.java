@@ -73,29 +73,19 @@ public class RecipientFavourite extends AbstractFavourite<User>{
 		this.persistenceId = persistenceId;
 	}
 	
-
-	
 	@Override
 	public boolean equals(Object o){
-		if(null!=o && o instanceof RecipientFavourite) {
-			if(o==this 
-					|| (((RecipientFavourite)o).getOwner().equals(this.getOwner())
-					&& ((RecipientFavourite)o).getRecipient().equals(this.getRecipient())
-					
-				)){
-				return true;
-			}else{
-				return false;
-			}
-		}else{
+		if(null != o && o instanceof RecipientFavourite) {
+			return (o == this || (((RecipientFavourite)o).getOwner().equals(this.getOwner())
+					&& ((RecipientFavourite)o).getRecipient().equals(this.getRecipient())));
+		} else {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public int hashCode(){
 		return this.getOwner().hashCode()+this.getRecipient().hashCode();
 	}
-	
-	
+
 }

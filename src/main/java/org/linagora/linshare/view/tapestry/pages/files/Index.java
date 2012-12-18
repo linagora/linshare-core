@@ -88,7 +88,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 @Import(library={"Index.js"})
 public class Index {
 
-	public final static Logger Logger = LoggerFactory.getLogger(Index.class);
+	public final static Logger logger = LoggerFactory.getLogger(Index.class);
 
     @SessionState
     @Property
@@ -275,6 +275,7 @@ public class Index {
 			} catch (BusinessException e) {
 				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"),
 						((DocumentVo)currentObject).getFileName()) );
+				logger.debug(e.toString());
 			}
 			shareSessionObjects.removeDocument((DocumentVo)currentObject);
 		}
@@ -311,10 +312,10 @@ public class Index {
 				}
 				
 			} catch (BusinessException e) {
-				
 				ko = true;
 				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.crypt"),
 						(currentObject).getFileName()) );
+				logger.debug(e.toString());
 			}
 			
 		}
@@ -341,12 +342,11 @@ public class Index {
 				} else {
 					numberIgnore++; //if it exists an entry which is already encrypted ignore it
 				}
-				
 			} catch (BusinessException e) {
-				
 				ko = true;
 				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.decrypt"),
 						(currentObject).getFileName()) );
+				logger.debug(e.toString());
 			}
 			
 		}
@@ -361,27 +361,24 @@ public class Index {
 	 * @param object
 	 */
 	@OnEvent(value="eventCryptOneDocFromListDocument")
-	public void cryptOneDoc(Object[] object){
-		
+	public void cryptOneDoc(Object[] object) {
 		String pass = (String) object[0];
 		DocumentVo currentDocumentVo = (DocumentVo) object[1];
 
-		if(currentDocumentVo.getShared()) {
+		if (currentDocumentVo.getShared()) {
 			//do nothing on shared document
 			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.failed.crypt.sharedFile"),(currentDocumentVo).getFileName()));
 		} else {
-		
 			//ignore already encrypted file
 			if(!currentDocumentVo.getEncrypted()){ 
 				try {
 					documentFacade.encryptDocument(currentDocumentVo, userVo,pass);
 					shareSessionObjects.addMessage(messages.get("pages.index.message.success.crypt"));
-	
 				} catch (BusinessException e) {
 					shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.crypt"),
 							(currentDocumentVo).getFileName()) );
+					logger.debug(e.toString());
 				}
-	
 			}	
 		}		
 	}
@@ -405,12 +402,11 @@ public class Index {
 				try {
 					documentFacade.decryptDocument(currentDocumentVo, userVo,pass);
 					shareSessionObjects.addMessage(messages.get("pages.index.message.success.decrypt"));
-	
 				} catch (BusinessException e) {
 					shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.decrypt"),
 							(currentDocumentVo).getFileName()) );
+					logger.debug(e.toString());
 				}
-	
 			}
 		}	
 	}
@@ -633,7 +629,7 @@ public class Index {
     
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
-    	Logger.error(cause.getMessage());
+    	logger.error(cause.getMessage());
     	cause.printStackTrace();
     	return this;
     }

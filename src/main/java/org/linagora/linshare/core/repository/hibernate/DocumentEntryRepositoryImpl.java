@@ -110,7 +110,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 				return 	((Long)query.iterate().next()).longValue();
 			}
 		};
-		Long shareResult = (Long) getHibernateTemplate().execute(action);
+		Long shareResult = getHibernateTemplate().execute(action);
 		
 		action = new HibernateCallback<Long>() {
 			public Long doInHibernate(final Session session) throws HibernateException, SQLException {
@@ -119,7 +119,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 				return 	((Long)query.iterate().next()).longValue();
 			}
 		};
-		Long anonymousShareResult = (Long) getHibernateTemplate().execute(action);
+		Long anonymousShareResult = getHibernateTemplate().execute(action);
 		
 		result = anonymousShareResult + shareResult;
 		if(logger.isDebugEnabled())
@@ -148,7 +148,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		
 		final QueryParameter queryParameter = buildQuery(searchDocumentCriterion, ANYWHERE);
 		
-		return (List<DocumentEntry>)getHibernateTemplate().executeFind(new HibernateCallback<List<DocumentEntry>>() {
+		return getHibernateTemplate().executeFind(new HibernateCallback<List<DocumentEntry>>() {
 			public List<DocumentEntry> doInHibernate(final Session session) throws HibernateException, SQLException {
 				
 				StringBuilder queryString = new StringBuilder("select docEntry from DocumentEntry docEntry join docEntry.entryOwner account join docEntry.document doc ");

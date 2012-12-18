@@ -45,13 +45,8 @@ public class AllowedContact {
 	@Override
 	public boolean equals(Object o) {
 		if (null != o && o instanceof AllowedContact) {
-			if (o == this
-					|| (((AllowedContact) o).getOwner().equals(this.getOwner()) && ((AllowedContact) o)
-							.getContact().equals(this.getContact()))) {
-				return true;
-			} else {
-				return false;
-			}
+			return (o == this || (((AllowedContact) o).getOwner().equals(this.getOwner()) && ((AllowedContact) o)
+							.getContact().equals(this.getContact())));
 		} else {
 			return false;
 		}

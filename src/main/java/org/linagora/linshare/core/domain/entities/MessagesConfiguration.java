@@ -108,14 +108,10 @@ public class MessagesConfiguration implements Serializable {
 	
 	@Override
     public boolean equals(Object o1){
-    	if(null==o1 || !(o1 instanceof MessagesConfiguration)){
+    	if (null == o1 || !(o1 instanceof MessagesConfiguration)) {
     		return false;
-    	}else{
-    		if(o1==this || ((MessagesConfiguration)o1).id==this.id){
-    			return true;
-    		}else{
-    			return false;
-    		}
+    	} else {
+    		return (o1 == this || ((MessagesConfiguration)o1).id == this.id);
     	}
     }
     

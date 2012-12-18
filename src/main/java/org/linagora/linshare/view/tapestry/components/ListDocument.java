@@ -725,11 +725,7 @@ public class ListDocument {
 	 * 
 	 */
 	public boolean isEmptyList() {
-		if (null == documents || documents.isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
+		return (null == documents || documents.isEmpty());
 	}
 
 	public boolean isDocumentSignedByCurrentUser() {

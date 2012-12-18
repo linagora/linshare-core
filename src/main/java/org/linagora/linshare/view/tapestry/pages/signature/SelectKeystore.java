@@ -202,7 +202,7 @@ public class SelectKeystore {
 		
 		HttpServletRequest req = requestGlobals.getHTTPServletRequest();
 		
-		String useragent = (String) req.getHeader("user-agent");
+		String useragent = req.getHeader("user-agent");
 		boolean supportBrowser = UserAgent.isBrowserSupported(useragent);
 		
 		List<KeystoreType> availableKeystore = new ArrayList<KeystoreType>();

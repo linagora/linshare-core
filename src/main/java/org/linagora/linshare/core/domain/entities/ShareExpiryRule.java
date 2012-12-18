@@ -97,7 +97,7 @@ public class ShareExpiryRule implements Serializable, Comparable<ShareExpiryRule
 	public int compareTo(ShareExpiryRule o ) {
 		if (null ==o) return 1;
 		
-		 long size1  = ((ShareExpiryRule)o).getShareSizeUnit().getPlainSize(((ShareExpiryRule)o).getShareSize());
+		 long size1  = o.getShareSizeUnit().getPlainSize(o.getShareSize());
          long size2  = this.getShareSizeUnit().getPlainSize(this.getShareSize());
          if (size1 < size2) {
              return 1;

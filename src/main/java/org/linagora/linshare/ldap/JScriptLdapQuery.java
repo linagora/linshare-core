@@ -193,10 +193,10 @@ public class JScriptLdapQuery {
 	 * @return
 	 */
 	private User mapToUser(Map<String, List<String>> retMap) {
-		String mail = (String) retMap.get(getUserMail()).get(0);
-    	String firstName = (String) retMap.get(getUserFirstName()).get(0);
-        String lastName = (String) retMap.get(getUserLastName()).get(0);
-        String ldapUid = (String) retMap.get(getLdapUid()).get(0);
+		String mail = retMap.get(getUserMail()).get(0);
+    	String firstName = retMap.get(getUserFirstName()).get(0);
+        String lastName = retMap.get(getUserLastName()).get(0);
+        String ldapUid = retMap.get(getLdapUid()).get(0);
         User user = new Internal(firstName, lastName, mail, ldapUid);
 		return user;
 	}

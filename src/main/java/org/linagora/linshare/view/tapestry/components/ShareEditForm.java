@@ -169,8 +169,10 @@ public class ShareEditForm {
 			componentResources.triggerEvent("resetListFiles", null, null);
 		} catch (IllegalArgumentException e) {
 			onFailure();
+			logger.debug(e.toString());
 		} catch (BusinessException e) {
 			onFailure();
+			logger.debug(e.toString());
 		}
 		
 	}
@@ -223,6 +225,7 @@ public class ShareEditForm {
 					shareComment = share.getFileComment();
 				} catch (BusinessException e) {
 					logger.error("share not found : " + editShareWithUuid);
+					logger.debug(e.toString());
 				}
 		}
     }

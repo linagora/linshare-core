@@ -45,6 +45,7 @@ public class AnonymousUrlServiceImpl implements AnonymousUrlService {
 			logger.error("the source path is different than the anonymous url path : " + urlPath + " : " + anonymousUrl.getUrlPath());
 		} catch (LinShareNotSuchElementException e) {
 			logger.warn("the anonymousUrl '" + uuid + "' does not exist.");
+			logger.debug(e.toString());
 		}
 		return false;
 	}

@@ -307,6 +307,7 @@ public class SearchFile {
 				}
 			}catch(NumberFormatException e){
 				advancedSearchForm.recordError(messages.get("components.searchfile.errors.size.notNumeric"));
+				logger.debug(e.toString());
 			}
 		}else{
 			try{
@@ -316,15 +317,10 @@ public class SearchFile {
 
 			}catch(NumberFormatException e){
 				advancedSearchForm.recordError(messages.get("components.searchfile.errors.size.notNumeric"));
+				logger.debug(e.toString());
 			}
 		}
-
-
-
-
 	}
-
-
 
 
 	/**

@@ -35,25 +35,25 @@ public class FileUtils {
 	}
 	
     public static String getFriendlySize(long SizeInBytes, Messages messages) {
-        if(SizeInBytes<KiB){
-            return String.format(messages.get("components.fileUtils.bytesSize.text"),SizeInBytes);
-        }else if(SizeInBytes<MiB){
-            return String.format(messages.get("components.fileUtils.kiloSize.text"), (float)(SizeInBytes/KiB));
-        }else if(SizeInBytes<GiB){
-            return String.format(messages.get("components.fileUtils.megaSize.text"), (float)(SizeInBytes/MiB));
-        }else{
-            return String.format(messages.get("components.fileUtils.gigaSize.text"), (float)(SizeInBytes/GiB));
+        if (SizeInBytes < KiB){
+            return String.format(messages.get("components.fileUtils.bytesSize.text"), SizeInBytes);
+        } else if(SizeInBytes < MiB){
+            return String.format(messages.get("components.fileUtils.kiloSize.text"), SizeInBytes / KiB);
+        } else if(SizeInBytes < GiB){
+            return String.format(messages.get("components.fileUtils.megaSize.text"), SizeInBytes / MiB);
+        } else{
+            return String.format(messages.get("components.fileUtils.gigaSize.text"), SizeInBytes / GiB);
         }
     }
     
     public static Unit getAppropriateUnitSize(long sizeInBytes){
-        if(sizeInBytes<KiB){
+        if (sizeInBytes < KiB){
             return Unit.Byte;
-        }else if(sizeInBytes<MiB){
+        } else if (sizeInBytes < MiB){
         	 return Unit.KiB;
-        }else if(sizeInBytes<GiB){
+        } else if (sizeInBytes < GiB){
         	 return Unit.MiB;
-        }else{
+        } else{
         	 return Unit.GiB;
         }
     }
@@ -68,19 +68,19 @@ public class FileUtils {
     	
 	    	switch (wantedUnit) {
 			case Byte:
-				res = String.format(messages.get("components.fileUtils.bytesSize.text"),SizeInBytes);
+				res = String.format(messages.get("components.fileUtils.bytesSize.text"), SizeInBytes);
 				break;
 			case KiB:
-				res = String.format(messages.get("components.fileUtils.kiloSize.text"), (float)(SizeInBytes/KiB));
+				res = String.format(messages.get("components.fileUtils.kiloSize.text"), SizeInBytes / KiB);
 				break;
 			case MiB:
-				res = String.format(messages.get("components.fileUtils.megaSize.text"), (float)(SizeInBytes/MiB));
+				res = String.format(messages.get("components.fileUtils.megaSize.text"), SizeInBytes / MiB);
 				break;
 			case GiB:
-				res = String.format(messages.get("components.fileUtils.gigaSize.text"), (float)(SizeInBytes/GiB));
+				res = String.format(messages.get("components.fileUtils.gigaSize.text"), SizeInBytes / GiB);
 				break;
 			default:
-				res = String.format(messages.get("components.fileUtils.gigaSize.text"), (float)(SizeInBytes/GiB));
+				res = String.format(messages.get("components.fileUtils.gigaSize.text"), SizeInBytes / GiB);
 				break;
 			}
     	}

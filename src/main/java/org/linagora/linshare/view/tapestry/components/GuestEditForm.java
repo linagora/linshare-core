@@ -327,6 +327,7 @@ public class GuestEditForm {
         	}
             shareSessionObjects.addMessage(messages.get("components.guestEditForm.action.add.confirm"));
         } catch (BusinessException e) { //bad contact for contacts list
+        	logger.debug(e.toString());
         	shareSessionObjects.addError(messages.get("components.guestEditForm.action.add.guestRestriction.badUser"));
         	List<String> contactMailList = new ArrayList<String>();
         	contactMailList.add(userLoggedIn.getMail());

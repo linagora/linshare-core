@@ -42,7 +42,7 @@ public class DocumentEntryTransformer implements Transformer<DocumentEntry, Docu
 	@Override
 	public DocumentEntry assemble(DocumentVo valueObject) {
 		if(null!=valueObject){
-			return (DocumentEntry) documentEntryRepository.findById(valueObject.getIdentifier());
+			return documentEntryRepository.findById(valueObject.getIdentifier());
 		}else{	
 			return null;
 		}

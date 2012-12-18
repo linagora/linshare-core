@@ -58,7 +58,7 @@ public class ManageDomain {
     	
     	logger.debug("Domain name identifers retrieve:" + domainNames.toString());
     	
-    	return (String[]) domainNames.toArray(new String[domainNames.size()]);
+    	return domainNames.toArray(new String[domainNames.size()]);
     }
     
     public Object onException(Throwable cause) {
