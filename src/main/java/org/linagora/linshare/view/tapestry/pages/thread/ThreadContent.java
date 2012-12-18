@@ -170,7 +170,6 @@ public class ThreadContent {
 
 	@AfterRender
 	public void afterRender() {
-		;
 	}
 	
 	public Object onActionFromAdmin() {

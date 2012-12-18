@@ -439,7 +439,7 @@ public class UserServiceImpl implements UserService {
 	
 		if (currentUser !=null && currentUser.getAccountType()==AccountType.GUEST){ //GUEST RESTRICTED MUST NOT SEE ALL USERS
 			Guest currentGuest = guestRepository.findByMail(currentUser.getMail());
-			if (currentGuest.isRestricted() == true) {
+			if (currentGuest.isRestricted()) {
 				return completionSearchForRestrictedGuest(mail,firstName,lastName,currentGuest);
 			}
 		}

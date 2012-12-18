@@ -135,15 +135,14 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public byte[] getTimeStamp(String fileName, File tempFile, String timeStampingUrl) throws BusinessException {
-		
 		if(timeStampingUrl == null) {
 			return null;
 		}
 		
 		byte[] timestampToken = null;
 		FileInputStream fis = null;
-		try{
 		
+		try{
 			fis = new FileInputStream(tempFile);
 			TimeStampResponse resp =  timeStampingService.getTimeStamp(timeStampingUrl, fis);
 			timestampToken  = resp.getEncoded();
@@ -160,13 +159,15 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			logger.error(e.toString());
 			throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_WRONG_TSA_URL,"The Tsa Url is empty or invalid", new String[] {fileName});
 		} finally {
-
 			try {
 				if (fis != null)
 					fis.close();
 				fis = null;
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				logger.error(e.toString());
+			}
 		}
+		
 		return timestampToken ;
 	}
 	
@@ -451,7 +452,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 					uuidThmb = fileSystemDao.insertFile(path, fisThmb, tempThumbFile.length(),
 							tempThumbFile.getName(), mimeTypeThb);
 				}
-				
 			} catch (FileNotFoundException e) {
 				logger.error(e.toString());
 				// if the thumbnail generation fails, it's not big deal, it has not to block
@@ -459,12 +459,12 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 			} catch (IOException e) {
 				logger.error(e.toString());
 			} finally {
-	
 				try {
 					if (fisThmb != null)
 						fisThmb.close();
 				} catch (IOException e) {
 					// Do nothing Happy java :)
+					logger.error(e.toString());
 				}
 				if(tempThumbFile!=null){
 					tempThumbFile.delete();

@@ -43,19 +43,21 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.linagora.linshare.core.service.TimeStampingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class TimeStampingServiceImpl implements TimeStampingService {
 
+    private static final Logger logger = LoggerFactory.getLogger(TimeStampingService.class);
 
 	public TimeStampingServiceImpl() {
 	}
 	
 	private URI getUriFromUrl(String urlTSA) throws URISyntaxException, TSPException  {
-		
 		URI uriTSA;
 		
-		if(urlTSA==null||urlTSA.equals("")) {
+		if (urlTSA == null || urlTSA.equals("")) {
 			throw new TSPException("no TSA url");
 		} else { 
 			try {
@@ -64,6 +66,7 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 				throw e;
 			}
 		}
+		
 		return uriTSA;
 	}
 	
@@ -73,7 +76,7 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 	 * @throws URISyntaxException 
 	 */
 	public TimeStampResponse getTimeStamp(String urlTSA, InputStream inToTimeStamp) throws TSPException, URISyntaxException {
-		URI uriTSA = getUriFromUrl(urlTSA);;
+		URI uriTSA = getUriFromUrl(urlTSA);
 		byte[] hash = computeDigest(inToTimeStamp);
 		return getTimeStamp(uriTSA, hash);
 	} 
@@ -134,26 +137,27 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 				//404 or 500 ...
 				throw new TSPException("service TSA is not available");
 			}
-			
 		} catch (ProtocolException e) {
-			throw new TSPException(e.getMessage(),e);
+			throw new TSPException(e.getMessage(), e);
 		} catch (IOException e) {
-			throw new TSPException(e.getMessage(),e);
+			throw new TSPException(e.getMessage(), e);
 		} catch (NoSuchAlgorithmException e) {
-			throw new TSPException(e.getMessage(),e);
-		}
-		finally{
-			if (out!=null)
+			throw new TSPException(e.getMessage(), e);
+		} finally {
+			if (out != null) {
 				try {
 					out.close();
 				} catch (IOException e) {
+					logger.error(e.toString());
 				}
-			if (bis!=null)
+			}
+			if (bis != null) {
 				try {
 					bis.close();
 				} catch (IOException e) {
+					logger.error(e.toString());
 				}
-			
+			}
 		}
 		
 		return response;
@@ -161,26 +165,22 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 	
 	
 	private byte[] computeDigest(InputStream is) throws TSPException {
-		
 		byte[] result = null;
-		
 		MessageDigest dig;
+		
 		try {
 			dig = MessageDigest.getInstance("SHA-1");
-			
 			byte[] bytes = new byte[2048];
-
 			int numBytes;
+
 			while ((numBytes = is.read(bytes)) != -1) {
 				dig.update(bytes, 0, numBytes);
 			}
-			
 			result = dig.digest();
-			
 		} catch (NoSuchAlgorithmException e) {
-			throw new TSPException(e.getMessage(),e);
+			throw new TSPException(e.getMessage(), e);
 		} catch (IOException e) {
-			throw new TSPException(e.getMessage(),e);
+			throw new TSPException(e.getMessage(), e);
 		}
         
         return result;
@@ -188,17 +188,16 @@ public class TimeStampingServiceImpl implements TimeStampingService {
 	
 	
 	public Date getGenerationTime(TimeStampResponse response) {
-		
 	    TimeStampToken  tsToken = response.getTimeStampToken();
-	    TimeStampTokenInfo tsInfo= tsToken.getTimeStampInfo();
+	    TimeStampTokenInfo tsInfo = tsToken.getTimeStampInfo();
 	    
 	    return tsInfo.getGenTime();
 	}
 	
 	
     public SignerId getSignerID(TimeStampResponse response) {
-		
 	    TimeStampToken  tsToken = response.getTimeStampToken();
+		
 	    return tsToken.getSID();
 	}
 }

@@ -82,7 +82,7 @@ public class LocalDecrypt {
 			
 			//result codebase for JNLP is an url like http://localhost:8080/linshare/applet to download jwsDecrypt.jar
 			StringBuffer jwsUrlToPut = new StringBuffer(linshareInfoUrlBase);
-			if(!linshareInfoUrlBase.endsWith("/")) jwsUrlToPut.append("/");
+			if(!linshareInfoUrlBase.endsWith("/")) jwsUrlToPut.append('/');
 			jwsUrlToPut.append(suffixcodebase); //application jws directory: applet in this case
 			if(suffixcodebase.endsWith("/")) jwsUrlToPut.deleteCharAt(jwsUrlToPut.length()-1);
 			

@@ -612,12 +612,12 @@ public class ListSharedDocument {
 		
 		
 		//Initialize the sorter model for sorter component.
-		if(refreshFlag==true){
-			shareDocuments=docs;
-			refreshFlag=false;
+		if (refreshFlag) {
+			shareDocuments = docs;
+			refreshFlag = false;
 		}
         
-		sorterModel=new SharedFileSorterModel(shareDocuments);
+		sorterModel = new SharedFileSorterModel(shareDocuments);
     	
     	model = beanModelSource.createDisplayModel(ShareDocumentVo.class, componentResources.getMessages());
         

@@ -146,6 +146,7 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 							}
 						} catch (NameNotFoundException e) {
 							// just not found in this domain
+							logger.error(e);
 						} catch (IOException e) {
 							//TLS negociation problem
 							logger.error(e);

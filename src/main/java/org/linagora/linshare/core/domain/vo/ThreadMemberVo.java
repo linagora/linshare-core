@@ -45,7 +45,6 @@ public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 	}
 
 	public ThreadMemberVo() {
-		;
 	}
 
 	public UserVo getUser() {

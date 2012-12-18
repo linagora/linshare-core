@@ -277,12 +277,11 @@ public class SelectPolicy {
 	
 	
     private void initSelectFiles() throws PolicyNotFoundException, ObjectNotFoundException, CreateSignedDocumentContainerException, IOException, BusinessException {
-    	
     	//ckeck integrity on signed jar (linsign config and core)
     	SignaturePolicies.getInstance();
-    	
     	String oidPolicy = null;
     	InputStream is = null;
+ 
     	try {
 			//get user policy selection
 			oidPolicy = userSignature.getOidSignaturePolicy();
@@ -305,8 +304,6 @@ public class SelectPolicy {
 			}
 			
 			userSignature.sendDocuments(filetoSign);
-			
-			
 		} catch (PolicyNotFoundException e) {
 			throw e;
 		} catch (ObjectNotFoundException e) {
@@ -318,7 +315,13 @@ public class SelectPolicy {
 		} catch (BusinessException e) {
 			throw e;
 		} finally {
-			if(is!=null) try {is.close();} catch (IOException e) {}
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					log.error(e.toString());
+				}
+			}
 		}
     }
 	
@@ -330,41 +333,40 @@ public class SelectPolicy {
      * @param dst
      * @throws IOException
      */
-        static private void copy(InputStream in, File dst) throws IOException {
-            
-        	
-    		BufferedOutputStream bouf = null;
-    		BufferedInputStream bif = null;
-        	
-        	try {
-        		bouf = new BufferedOutputStream(new FileOutputStream(dst));
-        		bif = new BufferedInputStream(in);
-       
-    			// Transfer bytes from in to out
-    			byte[] buf = new byte[2048];
-    			int len;
-    			while ((len = bif.read(buf)) > 0) {
-    				bouf.write(buf, 0, len);
-    			}
+    private static void copy(InputStream in, File dst) throws IOException {
+    	BufferedOutputStream bouf = null;
+    	BufferedInputStream bif = null;
 
-    			bouf.flush();
-    			
-    		} catch (IOException e) {
-    			throw e;
-    		} finally {
-    			if(bif!=null){
-    				try {
-    					bif.close();
-    				} catch (IOException e) {}
-    			}	
-    				
-    			if(bouf!=null){
-    				try {
-    					bouf.close();
-    				} catch (IOException e) {}
-    			}	
+    	try {
+    		bouf = new BufferedOutputStream(new FileOutputStream(dst));
+    		bif = new BufferedInputStream(in);
+
+    		// Transfer bytes from in to out
+    		byte[] buf = new byte[2048];
+    		int len;
+    		
+    		while ((len = bif.read(buf)) > 0) {
+    			bouf.write(buf, 0, len);
     		}
-        }
-    
+    		bouf.flush();
+    	} catch (IOException e) {
+    		throw e;
+    	} finally {
+    		if (bif != null){
+    			try {
+    				bif.close();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}	
+    		if (bouf != null){
+    			try {
+    				bouf.close();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}	
+    	}
+    }
 } 
 

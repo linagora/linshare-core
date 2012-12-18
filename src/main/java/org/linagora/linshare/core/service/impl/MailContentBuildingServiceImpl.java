@@ -101,10 +101,14 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	private String getJwsEncryptUrlString() {
 		String jwsEncryptUrlString = "";
 		StringBuffer jwsEncryptUrl = new StringBuffer();
+		
 		jwsEncryptUrl.append(pUrlBase);
-		if(!pUrlBase.endsWith("/")) jwsEncryptUrl.append("/");
+		if (!pUrlBase.endsWith("/")) {
+			jwsEncryptUrl.append('/');
+		}
 		jwsEncryptUrl.append("localDecrypt");
 		jwsEncryptUrlString = jwsEncryptUrl.toString();
+		
 		return jwsEncryptUrlString;
 	}
 	

@@ -138,7 +138,7 @@ public class Index {
     }
     
     public boolean getShowMimeTypeView() {
-    	if(noDomain == false) {
+    	if(!noDomain) {
     		logger.debug("selectedDomain : " + selectedDomain );
     		return domainFacade.isMimeTypeFilterEnableFor(selectedDomain, loginUser);
     	}

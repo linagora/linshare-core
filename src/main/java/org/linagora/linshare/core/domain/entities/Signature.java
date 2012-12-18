@@ -60,47 +60,48 @@ public class Signature {
 	private Integer sortOrder;
 	
 	
-	protected Signature(){
-		this.uuid=null;
+	protected Signature() {
+		this.uuid = null;
 		this.name = null;
 		this.type = MIMETYPE;
 		this.creationDate = null;
 		this.signer = null;
 		this.size = null;
-		this.certSubjectDn=null;
-		this.certIssuerDn=null;
-		this.certNotAfter=null;
+		this.certSubjectDn = null;
+		this.certIssuerDn = null;
+		this.certNotAfter = null;
 	}
 	
 	public Signature(String uuid, String name, Calendar creationDate, Account signer, Document doc, Long size,X509Certificate signerCertificate) {
 		super();
-		this.uuid=uuid;
+		this.uuid = uuid;
 		this.name = name;
 		this.type = MIMETYPE;
 		this.creationDate = creationDate;
 		this.signer = signer;
 		this.document = doc;
 		this.size = size;
-		this.certSubjectDn=signerCertificate.getSubjectX500Principal().toString();
-		this.certIssuerDn=signerCertificate.getIssuerX500Principal().toString();
-		this.certNotAfter=signerCertificate.getNotAfter();
+		this.certSubjectDn = signerCertificate.getSubjectX500Principal().toString();
+		this.certIssuerDn = signerCertificate.getIssuerX500Principal().toString();
+		this.certNotAfter = signerCertificate.getNotAfter();
 		try {
-			this.cert=Base64Utils.encodeBytes(signerCertificate.getEncoded());
+			this.cert = Base64Utils.encodeBytes(signerCertificate.getEncoded());
 		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	@Override
-	public boolean equals(Object o1){
-		if(o1 instanceof Signature){
+	public boolean equals(Object o1) {
+		if (o1 instanceof Signature) {
 			return this.uuid.equals(((Signature)o1).uuid);
-		}else{
+		} else {
 			return false;
 		}
 	}
 	
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		return this.uuid.hashCode();
 	}
 
@@ -215,5 +216,4 @@ public class Signature {
 	public void setSortOrder(Integer sortOrder) {
 		this.sortOrder = sortOrder;
 	}
-	
 }

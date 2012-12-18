@@ -461,12 +461,12 @@ public class Index {
 		
 		DocumentVo doc;
 		
-		if(shareSessionObjects.isComeFromSharePopup() == true){
+		if (shareSessionObjects.isComeFromSharePopup()) {
 			shareSessionObjects.getDocuments().clear();
 			shareSessionObjects.setComeFromSharePopup(false);
 		}
 		
-		for(Object currentObject:object){
+		for(Object currentObject:object) {
 			doc = (DocumentVo)currentObject;
 			
 			shareSessionObjects.addDocument(doc);
