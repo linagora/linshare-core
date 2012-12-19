@@ -9,8 +9,10 @@ import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.TechnicalAccountPermission;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
@@ -89,17 +91,12 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 	
 	
 	@Test
-	public void testDeleteUserInSubDomain() {
+	public void testDeleteUserInSubDomain() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		
-		User actor = datas.getUser1(); 
-		
-		TechnicalAccountPermission technicalAccountPermission = new TechnicalAccountPermission();
-		technicalAccountPermission.setAll(true);
-		HashSet<AbstractDomain> hashSet = new HashSet<AbstractDomain>();
-		hashSet.add(datas.getUser2().getDomain());
-		technicalAccountPermission.setDomains(hashSet);
-		actor.setTechnicalAccountPermission(technicalAccountPermission);
+		UserVo root = new UserVo(userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier));
+		User actor = datas.getUser1();
+		userService.updateUserRole(actor.getLsUuid(), LoadingServiceTestDatas.topDomainName, actor.getMail(), Role.ADMIN, root);
 		
 		String user1Login = new String(datas.getUser1().getLogin());
 		String user2Login = new String(datas.getUser2().getLogin());
@@ -107,9 +104,7 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 		
 		try {
 			logger.debug("John Doe trying to delete Jane Smith (who is in a subdomain)");
-			
 			userAndDomainMultiService.deleteDomainAndUsers(actor, LoadingServiceTestDatas.subDomainName1);
-			
 		}catch (BusinessException e) {
 			logger.error("userAndDomainMultiService can not delete a user in subdomain");
 			e.printStackTrace();
@@ -119,7 +114,6 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 		Assert.assertNotNull(tmpUser);
 		
 		tmpUser = userRepository.findByMail(user2Login);
-		logger.error(tmpUser.toString());
 		Assert.assertNull(tmpUser);
 		
 		tmpUser = userRepository.findByMailAndDomain(LoadingServiceTestDatas.guestDomainName1, user3Login);
@@ -132,7 +126,9 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 	public void testDeleteGuestInGuestDomain() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		User actor = datas.getUser1(); 
+		UserVo root = new UserVo(userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier));
+		User actor = datas.getUser1();
+		userService.updateUserRole(actor.getLsUuid(), LoadingServiceTestDatas.topDomainName, actor.getMail(), Role.ADMIN, root);
 		
 		String user1Login = new String(datas.getUser1().getLogin());
 		String user2Login = new String(datas.getUser2().getLogin());
@@ -148,7 +144,6 @@ public class UserAndDomainMultiServiceImplTest extends AbstractTransactionalJUni
 			logger.error("userAndDomainMultiService can not delete a user in guest domain");
 			logger.error(e.toString());
 		}
-		
 		
 		User tmpUser = userRepository.findByMailAndDomain(LoadingServiceTestDatas.topDomainName, user1Login);
 		Assert.assertNotNull(tmpUser);

@@ -127,11 +127,9 @@ public class LoadingServiceTestDatas {
 	public  void deleteUsers() throws BusinessException {
 		User root = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
 		
-//		userService.deleteUser(getGuest1().getLogin(), getUser1());
-		
-		userService.deleteUser(getUser1().getMail(), root);
-		userService.deleteUser(getUser2().getMail(), root);
-		userService.deleteUser(getUser3().getMail(), root);
+		userService.deleteUser(getUser1().getLsUuid(), root);
+		userService.deleteUser(getUser2().getLsUuid(), root);
+		userService.deleteUser(getUser3().getLsUuid(), root);
 		
 		abstractDomainRepository.delete(getRootDomain());
 		domainPolicyRepository.delete(defaultPolicy);
@@ -270,7 +268,6 @@ public class LoadingServiceTestDatas {
 		userRepository.create(user1);		
 		userRepository.create(user2);
 		userRepository.create(user3);
-		
 	}
 	
 	private void createTimeStampingFunctionality(AbstractDomain currentDomain) throws BusinessException {
