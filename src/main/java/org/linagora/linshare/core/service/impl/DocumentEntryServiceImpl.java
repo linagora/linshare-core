@@ -19,7 +19,9 @@ import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
@@ -179,7 +181,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		return documentEntry;
 	}
 
-
 	private Calendar getDocumentExpirationDate(AbstractDomain domain) {
 		Calendar expirationDate = Calendar.getInstance();
 		TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(domain);
@@ -187,8 +188,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		return expirationDate;
 	}
 
-	
-	
 	@Override
 	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
@@ -219,8 +218,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		return documentEntry;
 	}
 	
-	
-	
 	@Override
 	public void deleteInconsistentDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException {
 		Account owner = documentEntry.getEntryOwner();
@@ -241,8 +238,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
-
-	
 
 	@Override
 	public void deleteExpiredDocumentEntry(SystemAccount actor, DocumentEntry documentEntry) throws BusinessException {
@@ -266,14 +261,11 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		}
 	}
 
-
 	@Override
 	public void deleteDocumentEntry(Account actor, DocumentEntry documentEntry) throws BusinessException {
 		try {
-			if (!actor.isSuperAdmin()) {
-				if(!documentEntry.getEntryOwner().equals(actor)) {
-					throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
-				}
+			if (!isOwnerOrAdmin(actor, documentEntry.getEntryOwner())) {
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
 			}
 			
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
@@ -293,7 +285,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
-
 
 	@Override
 	public long getUserMaxFileSize(Account account) throws BusinessException {
@@ -315,7 +306,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		}
 		return LinShareConstants.defaultMaxFileSize;
 	}
-	
 	
 	@Override
 	public long getAvailableSize(Account account) throws BusinessException {
@@ -353,7 +343,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		return LinShareConstants.defaultFreeSpace;
 	}
 
-	
 	@Override
 	public long getTotalSize(Account account) throws BusinessException {
 		
@@ -371,7 +360,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		return userQuota;
 
 	}
-	
 	
 	@Override
 	public boolean documentHasThumbnail(Account owner, String docEntryUuid) {
@@ -411,7 +399,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		}
 	}
 
-
 	@Override
 	public boolean isSignatureActive(Account account) {
 		return functionalityService.getSignatureFunctionality(account.getDomain()).getActivationPolicy().getStatus();
@@ -438,34 +425,27 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		return globalQuotaFunctionality.getPlainSize();
 	}
 	
-	
 	@Override
 	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException {
 		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
-		if(entry == null) {
+		if (entry == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT,"Can not find document entry with uuid : " + currentDocEntryUuid);
 					
 		}
-		if (!actor.isSuperAdmin() && !actor.isTechnicalAccount()) {
-			if (!entry.getEntryOwner().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
-			}
+		if (!isOwnerOrAdmin(actor, entry.getEntryOwner())) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
 		}
 		return entry;
 	}
 
-
 	@Override
 	public List<DocumentEntry> findAllMyDocumentEntries(Account actor, User owner) throws BusinessException {
-		if (!actor.isSuperAdmin() && !actor.isTechnicalAccount()) {
-			if (!owner.equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get these documents.");
-			}
+		if (!isOwnerOrAdmin(actor, owner)) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get these documents.");
 		}
 		List<DocumentEntry> entry = documentEntryBusinessService.findAllMyDocumentEntries(owner);
 		return entry;
 	}
-
 
 	@Override
 	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException {
@@ -478,7 +458,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		documentEntryBusinessService.renameDocumentEntry(entry, newName);
 	}
 
-
 	@Override
 	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException {
 		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
@@ -489,12 +468,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		}
 		documentEntryBusinessService.updateFileProperties(entry, newName, fileComment);
 	}
-
-
-	
-	
-	
-
 
 	private void checkSpace(long size, String fileName, Account owner) throws BusinessException {
 		// check the user quota
@@ -540,6 +513,32 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
 		domain.setUsedSpace(newUsedQuota);
 		abstractDomainService.updateDomain(domain);
+	}
+	
+	// FIXME : code duplication
+	private boolean isOwnerOrAdmin(Account actor, Account user) {
+		if (actor.equals(user)) {
+			return true;
+		} else if (actor.getRole().equals(Role.SUPERADMIN)) {
+			return true;
+		} else if (actor.getRole().equals(Role.SYSTEM)) {
+			return true;
+		} else if (actor.getRole().equals(Role.ADMIN)) {
+			List<String> allMyDomain = abstractDomainService.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());
+			for (String domain : allMyDomain) {
+				if(domain.equals(user.getDomainId())) {
+					return true;
+				}
+			}
+		}
+		if (user instanceof Guest) {
+			// At this point the actor object could be an entity or a proxy. No idea why it happens. 
+			// That is why we compare IDs.
+			if (actor.getId() == ((Guest)user).getOwner().getId()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

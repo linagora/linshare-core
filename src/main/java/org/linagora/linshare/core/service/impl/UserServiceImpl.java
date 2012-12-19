@@ -256,25 +256,24 @@ public class UserServiceImpl implements UserService {
     
     
     @Override
-	public void deleteUser(String login, Account actor) throws BusinessException {
-		User userToDelete = userRepository.findByLsUuid(login);
-		
-		if (userToDelete!=null) {
-			boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());
-			
-			logger.debug("Has right ? : " + hasRightToDeleteThisUser);
-			
-			if (!hasRightToDeleteThisUser) {
-				throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
-						+" cannot be deleted, he is not a guest, or "+ actor.getAccountReprentation() + " is not an admin");
-			} else {
-				doDeleteUser( actor, userToDelete);
-			}
-			
-		}else{
-			logger.debug("User not found in DB : " + login);
-		}
-	}
+    public void deleteUser(String login, Account actor) throws BusinessException {
+    	User userToDelete = userRepository.findByLsUuid(login);
+
+    	if (userToDelete != null) {
+    		boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());
+
+    		logger.debug("Has right ? : " + hasRightToDeleteThisUser);
+
+    		if (!hasRightToDeleteThisUser) {
+    			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
+    					+" cannot be deleted, he is not a guest, or "+ actor.getAccountReprentation() + " is not an admin");
+    		} else {
+    			doDeleteUser(actor, userToDelete);
+    		}
+    	} else {
+    		logger.debug("User not found in DB : " + login);
+    	}
+    }
     
     
     @Override
@@ -465,7 +464,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
-		
+		// TODO : mail is useless, use getLsUuid and remove it
 		Guest guest = guestRepository.findByLsUuid(guestUuid);
 		User owner = userRepository.findByLsUuid(ownerVo.getLsUid());
 		
@@ -488,8 +487,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUserRole(String userUuid, String domain,String mail, Role role, UserVo ownerVo) throws BusinessException{
-		
+	public void updateUserRole(String userUuid, String domain, String mail, Role role, UserVo ownerVo) throws BusinessException{
+		// TODO : mail is useless, use getLsUuid and remove it
 		User user = userRepository.findByLsUuid(userUuid);
 		if(user == null) {
 			logger.debug("User " + mail + " was not found in the database. Searching in directories ...");
@@ -510,7 +509,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void updateUserLocale(String domain, String mail, String locale) {
-		
+		// TODO : mail is useless, use getLsUuid and remove it
 		User user = userRepository.findByMailAndDomain(domain,mail);
 		if(user == null) {
 			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user " + mail);
@@ -529,6 +528,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException {
+		// TODO : mail is useless, use getLsUuid and remove it
 		User user = userRepository.findByMail(login);
 		if (user == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a user with the login " + login);
@@ -688,7 +688,7 @@ public class UserServiceImpl implements UserService {
 	public void updateUserDomain(String mail, String selectedDomain, UserVo ownerVo) throws BusinessException {
 		if (!ownerVo.isSuperAdmin()) {
 			throw new BusinessException(BusinessErrorCode.CANNOT_UPDATE_USER, "The user " + mail 
-					+" cannot be moved to "+selectedDomain+" domain, "+ ownerVo.getMail()+ " is not a superadmin");
+					+ " cannot be moved to " + selectedDomain + " domain, " + ownerVo.getMail() + " is not a superadmin");
 		}
 		User user = null;
         // Seek user in base. If not found, try again but in directories

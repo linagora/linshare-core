@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Document implements Serializable {
@@ -53,7 +54,7 @@ public class Document implements Serializable {
 	private Long size;
 	
 	
-	private Set<Signature> signatures;
+	private Set<Signature> signatures = new HashSet<Signature>();
 	
 	/**
 	 * UUID of the thumbnail file
@@ -66,9 +67,9 @@ public class Document implements Serializable {
 	 */
 	private byte[] timeStamp;
 	
-	private DocumentEntry documentEntry ;
+	private DocumentEntry documentEntry;
 
-	private ThreadEntry threadEntry ;
+	private ThreadEntry threadEntry;
 	
 	
 	
@@ -83,7 +84,6 @@ public class Document implements Serializable {
 		this.size = size;
 		this.timeStamp = null;
 		this.thmbUuid = null;
-		this.signatures = null;
 	}
 	
 	/**
