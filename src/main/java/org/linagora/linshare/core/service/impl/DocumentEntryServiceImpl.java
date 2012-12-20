@@ -32,7 +32,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.LogEntryService;
@@ -51,20 +50,18 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final AbstractDomainService abstractDomainService;
 	private final FunctionalityService functionalityService;
 	private final MimeTypeService mimeTypeService;
-	private final AccountService accountService;
 	private final VirusScannerService virusScannerService;
 	
 	
 	
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService) {
+			FunctionalityService functionalityService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
 		this.mimeTypeService = mimeTypeService;
-		this.accountService = accountService;
 		this.virusScannerService = virusScannerService;
 	}
 
