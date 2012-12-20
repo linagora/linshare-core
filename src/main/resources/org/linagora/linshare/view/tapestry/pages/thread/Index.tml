@@ -38,7 +38,7 @@
                     <span class="creationDate">${creationDate}</span>
                 </p:creationDateCell>
                 <p:countDocumentsCell>
-                    <span class="countShare">${countShare}</span>
+                    <span class="countDocuments">${countDocuments}</span>
                 </p:countDocumentsCell>
                 <p:empty>
                     ${message:pages.thread.empty}
