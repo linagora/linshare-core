@@ -31,6 +31,7 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.Policy;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.UnitValueFunctionality;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -632,4 +633,69 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
+	@Test
+	public void testCheckAndUpdate() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
+		Policy activationPolicy = new Policy();
+		Policy configurationPolicy = new Policy();
+		
+		// Try to modify functionalities with a specific configuration. Fail in Linshare 1.0.0-rc1
+		try {
+			// Set the functionality entity
+			StringValueFunctionality funcAncestor = (StringValueFunctionality)functionalityService.getFunctionalityByIdentifiers(LoadingServiceTestDatas.rootDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+			
+			activationPolicy = new Policy();
+			activationPolicy.setStatus(true);
+			activationPolicy.setSystem(false);
+			activationPolicy.setPolicy(Policies.ALLOWED);
+			funcAncestor.setActivationPolicy(activationPolicy);
+			
+			configurationPolicy = new Policy();
+			configurationPolicy.setStatus(false);
+			configurationPolicy.setSystem(true);
+			configurationPolicy.setPolicy(Policies.FORBIDDEN);
+			funcAncestor.setConfigurationPolicy(configurationPolicy);
+			
+			functionalityService.update(LoadingServiceTestDatas.rootDomainName,funcAncestor);
+			
+			// Set the functionality entity
+			StringValueFunctionality funcEntity = (StringValueFunctionality)functionalityService.getFunctionalityByIdentifiers(LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+			
+			activationPolicy = new Policy();
+			activationPolicy.setStatus(false);
+			activationPolicy.setSystem(false);
+			activationPolicy.setPolicy(Policies.FORBIDDEN);
+			funcEntity.setActivationPolicy(activationPolicy);
+			
+			configurationPolicy = new Policy();
+			configurationPolicy.setStatus(false);
+			configurationPolicy.setSystem(true);
+			configurationPolicy.setPolicy(Policies.FORBIDDEN);
+			funcEntity.setConfigurationPolicy(configurationPolicy);
+			
+			functionalityService.update(LoadingServiceTestDatas.topDomainName,funcEntity);
+			
+			// Set the functionality DTO
+			StringValueFunctionality funcDto = (StringValueFunctionality)functionalityService.getFunctionalityByIdentifiers(LoadingServiceTestDatas.topDomainName, LoadingServiceTestDatas.TEST_TIME_STAMPING);
+			
+			activationPolicy = new Policy();
+			activationPolicy.setStatus(true);
+			activationPolicy.setSystem(false);
+			activationPolicy.setPolicy(Policies.MANDATORY);
+			funcDto.setActivationPolicy(activationPolicy);
+			
+			configurationPolicy = new Policy();
+			configurationPolicy.setStatus(false);
+			configurationPolicy.setSystem(true);
+			configurationPolicy.setPolicy(Policies.FORBIDDEN);
+			funcDto.setConfigurationPolicy(configurationPolicy);
+			
+			functionalityService.update(LoadingServiceTestDatas.topDomainName, funcDto);
+		} catch (TechnicalException e){
+			Assert.fail();
+		}
+		
+		logger.info(LinShareTestConstants.END_TEST);
+	}
 }
