@@ -64,9 +64,9 @@ public class RestWebserviceTest extends TestCase {
 		xop.setFilename("fichier.htm");
 		xop.setComment("toto");
 		InputStream is = RestWebserviceTest.class
-				.getResourceAsStream("webserviceRest.html");
+				.getResourceAsStream("/webserviceRest.html");
 		if (is == null)
-			throw new FileNotFoundException("webserviceRest.html");
+			throw new FileNotFoundException("/webserviceRest.html");
 
 		byte[] data = IOUtils.readBytesFromStream(is);
 		xop.setDocument(new DataHandler(new ByteArrayDataSource(data,
