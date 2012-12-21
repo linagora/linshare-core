@@ -178,58 +178,61 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		queryParameter.appendToQuery(" docEntry.entryOwner.lsUuid=:lsUuid " );
 		queryParameter.addParameter("lsUuid", searchDocumentCriterion.getUser().getLsUid());
 		
-		if(null!=searchDocumentCriterion.getName()){
+		if (null != searchDocumentCriterion.getName()) {
 			queryParameter.appendToQuery(" lower(docEntry.name) like lower(:name) " );
 			queryParameter.addParameter("name", createMatchingCriteria(matcher,searchDocumentCriterion.getName()));
 		}
 		
-		if(null!=searchDocumentCriterion.getExtension()){
+		if (null != searchDocumentCriterion.getExtension()) {
 			queryParameter.appendToQuery(" lower(docEntry.name) like lower(:extension) " );
 			queryParameter.addParameter("extension", createMatchingCriteria(END,searchDocumentCriterion.getExtension()));
 		}
 		
-		// TODO
-//		if(null!=searchDocumentCriterion.isShared()){
-//			queryParameter.appendToQuery(" doc.shared=:shared " );
-//			queryParameter.addParameter("shared", searchDocumentCriterion.isShared());
-//		}
+		if (null != searchDocumentCriterion.isShared()) {
+			if (searchDocumentCriterion.isShared()) {
+				queryParameter.appendToQuery(" (docEntry.id IN (SELECT de.id FROM ShareEntry se, DocumentEntry de WHERE de=se.documentEntry) OR docEntry.id IN (SELECT de.id FROM AnonymousShareEntry ase, DocumentEntry de WHERE de=ase.documentEntry))");
+			} else {
+				queryParameter.appendToQuery(" docEntry.id NOT IN (SELECT de.id FROM DocumentEntry de, ShareEntry se WHERE de=se.documentEntry) ");
+				queryParameter.appendToQuery(" docEntry.id NOT IN (SELECT de.id FROM DocumentEntry de, AnonymousShareEntry ase WHERE de=ase.documentEntry) ");
+			}
+		}
 		
-		if(null!=searchDocumentCriterion.getType() && !"".equals(searchDocumentCriterion.getType())){
+		if (null != searchDocumentCriterion.getType() && !"".equals(searchDocumentCriterion.getType())) {
 			queryParameter.appendToQuery(" doc.type like :type " );
 			queryParameter.addParameter("type", createMatchingCriteria(matcher,searchDocumentCriterion.getType()));
 		}
 		
-		if(null!=searchDocumentCriterion.getSizeMin()){
+		if (null != searchDocumentCriterion.getSizeMin()) {
 			queryParameter.appendToQuery(" doc.size>=:sizeMin " );
 			queryParameter.addParameter("sizeMin", searchDocumentCriterion.getSizeMin());
 		}
 		
-		if(null!=searchDocumentCriterion.getSizeMax()){
+		if (null != searchDocumentCriterion.getSizeMax()) {
 			queryParameter.appendToQuery(" doc.size<=:sizeMax " );
 			queryParameter.addParameter("sizeMax", searchDocumentCriterion.getSizeMax());
 		}
 		
-		if(null!=searchDocumentCriterion.getDateBegin()){
+		if (null != searchDocumentCriterion.getDateBegin()) {
 			queryParameter.appendToQuery(" docEntry.creationDate>=:creationDateBegin " );
 			queryParameter.addParameter("creationDateBegin", searchDocumentCriterion.getDateBegin());
 	
 		}
 		
-		if(null!=searchDocumentCriterion.getDateEnd()){
+		if (null != searchDocumentCriterion.getDateEnd()) {
 			queryParameter.appendToQuery(" docEntry.creationDate<=:creationDateEnd " );
 			queryParameter.addParameter("creationDateEnd", searchDocumentCriterion.getDateEnd());
 
 		}
-
+		
 		return queryParameter;
 	}
 	
 
 	private String createMatchingCriteria(int matcher,String value ) {
-		switch(matcher){
-		case BEGIN: return value+"%";
-		case END:return "%"+value ;
-		case ANYWHERE: return "%"+value+"%";
+		switch (matcher) {
+			case BEGIN: return value+"%";
+			case END:return "%"+value ;
+			case ANYWHERE: return "%"+value+"%";
 		}
 		return value;
 	}
