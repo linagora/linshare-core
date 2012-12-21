@@ -15,12 +15,14 @@ import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.webservice.dto.Document;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
 
+@Ignore
 public class RestWebserviceTest extends TestCase {
 
 	public static final String WEBSERVICE_REST_URL = "http://localhost:8080/linshare/webservice/rest/";
