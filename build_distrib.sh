@@ -137,6 +137,16 @@ function build_sso ()
 	mv ${g_ressources}/{,DISABLED}springContext-securityLLNG.xml
 }
 
+
+function test_linshare ()
+{
+	# Creation de la version avec SSO
+	maven_clean
+	echo_linshare "Testing LinShare"
+	echo "> mvn test"
+	mvn test >> $g_logfile
+}
+
 ############################################################
 # MAIN
 ############################################################
@@ -145,14 +155,17 @@ function build_sso ()
 init_context
 
 if [ -z $g_main_function ] ; then 
+	# Testing LinShare
+	test_linshare
+
 	# Creation de la version avec installeur.
-	build_installer
+	#build_installer
 
 	# Creation de la version sans SSO
 	build_classic
 
 	# Creation de la version avec CAS
-	build_cas
+	#build_cas
 
 	# Creation de la version avec SSO
 	build_sso
