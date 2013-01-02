@@ -9,7 +9,11 @@
 	<t:parameter name="else">
 		<t:pagelink page="password/reset">${message:pages.index.link.password}</t:pagelink>
 
+      	<div id="invalidLoginFormat" class="t-warning">
+        	${message:pages.login.warningFormatLogin}
+    	</div>
         <form id="linshareLoginForm" method="post" action="${request.contextPath}/j_security_check">
+
 			<label for="login">${message:pages.login.form.loginLabel}</label>
 				<input id="login" type="text" name="login" title="${message:pages.login.form.loginLabel}"/>
 			<label for="password">${message:pages.login.form.passwordLabel}</label>
@@ -46,6 +50,7 @@
                 <ul><li>${message:pages.login.badDomain}</li></ul>
             </div>
         </t:if>
+        
 	</t:parameter>
 	</t:if>
 </html>
