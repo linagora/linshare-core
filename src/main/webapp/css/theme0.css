@@ -562,6 +562,14 @@ strong {
 	font-weight: bold;
 }
 
+#settings #connection div.t-warning {
+    float: right;
+    margin-right: 250px;
+    margin-top: 5px;
+    position: fixed;
+    visibility: visible;
+    width: 400px;
+}
 
 /*--------------------------------------------------------------------------
 * Components > Localizer
