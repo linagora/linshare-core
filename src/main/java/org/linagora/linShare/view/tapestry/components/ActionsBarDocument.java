@@ -104,7 +104,6 @@ public class ActionsBarDocument {
 		if (user.getDomainIdentifier() != null && user.getDomainIdentifier().length() > 0) {
 			showGroups = functionalityFacade.isEnableGroupTab(user.getDomainIdentifier());
 		}
-		showGroups = false;
 	}
 	
 	
