@@ -50,7 +50,10 @@ public class CreateLdapConnection {
 	@Property
 	private boolean inModify;
 	
+    private boolean resetFields = true;
+	
 	public void onActivate(String identifier) throws BusinessException {
+        logger.debug("ldapConnectionIdentifier:" + identifier);
 		if (identifier != null) {
 			inModify = true;
 			ldapConn = domainFacade.retrieveLDAPConnection(identifier);
@@ -60,6 +63,15 @@ public class CreateLdapConnection {
 		}
 		
 	}
+	
+    // Workaround in order to reset fields. See Bug #444
+    public void onActivate(){
+    	if (resetFields) {
+    		logger.debug("Reset the fields");
+            inModify = false;
+            ldapConn = null;	
+    	}
+    }
 	
 	@SetupRender
 	public void init() {

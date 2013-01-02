@@ -99,8 +99,8 @@ public class CreateDomain {
 
     @Inject
     private SymbolSource symbolSource;
-
-
+    
+    private boolean resetFields = true;
 
     public void onActivate(String identifier) throws BusinessException {
         logger.debug("domainIdentifier:" + identifier);
@@ -111,6 +111,16 @@ public class CreateDomain {
             inModify = false;
             domain = null;
         }
+        resetFields = false;
+    }
+    
+    // Workaround in order to reset fields. See Bug #444
+    public void onActivate(){
+    	if (resetFields) {
+    		logger.debug("Reset the fields");
+            inModify = false;
+            domain = null;	
+    	}
     }
 
     @SetupRender
