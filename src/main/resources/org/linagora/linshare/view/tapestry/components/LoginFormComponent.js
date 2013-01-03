@@ -1,9 +1,5 @@
 function submitWithCookie() {
 	document.cookie = "linshare_persistent_login="+document.getElementById('login').value+"; path=/";
-	if (document.getElementById('login').value.indexOf('@') != -1) {
-		document.getElementById('invalidLoginFormat').style.visibility = 'hidden'; 
-		return false;
-	}
 	document.forms["linshareLoginForm"].submit();
 }
 
