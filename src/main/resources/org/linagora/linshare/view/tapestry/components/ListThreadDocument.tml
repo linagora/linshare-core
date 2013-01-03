@@ -81,7 +81,7 @@
     <t:zone t:id="zoneConfirmDelete" />
 
     <t:confirmPopup
-        t:messageLabel="${message:components.userSearch.action.delete.ask}"
+        t:messageLabel="${message:components.listThreadDocument.delete.ask}"
         t:eventName="eventDeleteThreadEntry" />
 
 </t:container>

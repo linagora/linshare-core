@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
@@ -45,14 +44,12 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.AllowedContactRepository;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityService;
-import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -73,8 +70,6 @@ public class UserServiceImpl implements UserService {
     /** User repository. */
     private final UserRepository<User> userRepository;
     
-    private final AccountRepository<Account> accountRepository;
-
     /** User repository. */
     private final GuestRepository guestRepository;
     
@@ -89,10 +84,6 @@ public class UserServiceImpl implements UserService {
     
     private final MailContentBuildingService mailElementsFactory;
     
-    private final FileSystemDao fileSystemDao;
-    
-    private final LDAPQueryService ldapQueryService;
-    
     private final AbstractDomainService abstractDomainService;
     
     private final FunctionalityService functionalityService;
@@ -102,38 +93,30 @@ public class UserServiceImpl implements UserService {
 
 	private final ThreadService threadService;
 
-    public UserServiceImpl(final UserRepository userRepository,
+    public UserServiceImpl(final UserRepository<User> userRepository,
     		final NotifierService notifierService, 
     		final LogEntryService logEntryService,
     		final GuestRepository guestRepository, 
-//    		final ShareService shareService,
     		final RecipientFavouriteService recipientFavouriteService,
     		final AllowedContactRepository allowedContactRepository,
     		final MailContentBuildingService mailElementsFactory,
-    		final FileSystemDao fileSystemDao,
-    		final LDAPQueryService ldapQueryService,
     		final FunctionalityService functionalityService,
     		final AbstractDomainService abstractDomainService,
     		final PasswordService passwordService,
     		final EntryService entryService,
-    		final ThreadService threadService,
-    		final AccountRepository<Account> accountRepository) {
+    		final ThreadService threadService) {
         this.userRepository = userRepository;
         this.notifierService = notifierService;
         this.logEntryService = logEntryService;
         this.guestRepository = guestRepository;
-//		this.shareService = shareService;
 		this.recipientFavouriteService = recipientFavouriteService;
 		this.allowedContactRepository = allowedContactRepository;
 		this.mailElementsFactory = mailElementsFactory;
-		this.fileSystemDao = fileSystemDao;
-		this.ldapQueryService = ldapQueryService;
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
 		this.passwordService = passwordService;
 		this.entryService = entryService;
 		this.threadService = threadService;
-		this.accountRepository = accountRepository;
     }
 
     /** Create a guest.

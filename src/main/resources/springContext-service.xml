@@ -46,14 +46,11 @@
 		<constructor-arg ref="recipientFavouriteService" />
 		<constructor-arg ref="allowedContactRepository" />
 		<constructor-arg ref="mailContentBuildingService" />
-		<constructor-arg ref="jackRabbitRepository" />
-		<constructor-arg ref="ldapQueryService" />
 		<constructor-arg ref="functionalityService" />
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="passwordService" />
 		<constructor-arg ref="entryService" />
 		<constructor-arg ref="threadService" />
-		<constructor-arg ref="accountRepository" />
 	</bean>
 
 	<bean id="clamavVirusScannerService" class="org.linagora.linshare.core.service.impl.ClamavVirusScannerServiceImpl">
@@ -75,7 +72,6 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityService" />
 		<constructor-arg ref="mimeTypeService" />
-		<constructor-arg ref="accountService" />
 		<constructor-arg ref="clamavVirusScannerService" />
 	</bean>
 	
