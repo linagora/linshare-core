@@ -33,6 +33,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
@@ -117,7 +118,21 @@ public class Index {
 		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 		return formatter.format(currentThread.getCreationDate().getTime());
 	}
-
+	
+    /**
+	 * Retrieve the number of documents in the thread.
+	 * 
+	 * @return the number of documents
+	 */
+	public int getCountDocuments() {
+		try {
+			return threadEntryFacade.getAllThreadEntryVo(userVo, currentThread).size();
+		} catch (BusinessException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
     Object onException(Throwable cause) {
         shareSessionObjects.addError(messages.get("global.exception.message"));
         logger.error(cause.getMessage());
