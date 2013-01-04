@@ -42,7 +42,7 @@
                 
                 <p:editCell>
                     <t:actionLink t:id="editMember" t:context="${member.lsUuid}" t:zone="memberEditFormZone"
-                            title="${message:components.userSearch.action.domainMove.title}">
+                            title="${message:pages.thread.editUserType}">
                         <span onclick="memberEditWindow.showCenter(true)">
                             <img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
                         </span>
