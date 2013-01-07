@@ -57,11 +57,8 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/ThreadView.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/ThreadViewAsso.hbm.xml"/>
         
-    
-	<!-- TODO : 
     <mapping resource="org/linagora/linshare/core/domain/entities/AllowedMimeType.hbm.xml"/>
     
-     -->
   </session-factory>
 </hibernate-configuration>
 
