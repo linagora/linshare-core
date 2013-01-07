@@ -23,6 +23,8 @@ public interface ThreadEntryFacade {
 	
 	public List<ThreadVo> getAllMyThread(UserVo actorVo);
 	
+	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo);
+
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
 	
 	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name) throws BusinessException;
