@@ -101,31 +101,45 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return res;
 	}
 
-	
-
 	@Override
 	public List<ThreadVo> getAllMyThread(UserVo actorVo) {
-		
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		logger.debug("actor : " + actor.getAccountReprentation());
 		List<Thread> all = threadService.findAll();
 		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
 		for (Thread thread : all) {
-			logger.debug("thread name " + thread.getName());
-			
 			List<User> userMembers = new ArrayList<User>();
 			for (ThreadMember threadMember : thread.getMyMembers()) {
 				userMembers.add(threadMember.getUser());
 			}
-			
-			if(userMembers.contains(actor)) {
-				logger.debug("adding member " + actor.getAccountReprentation());
+			if (userMembers.contains(actor)) {
+				logger.debug("thread name " + thread.getName());
 				res.add(new ThreadVo(thread));
 			}
 		}
 		return res;
 	}
 
+	@Override
+	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo) {
+		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		logger.debug("actor : " + actor.getAccountReprentation());
+		List<Thread> all = threadService.findAll();
+		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
+		for (Thread thread : all) {
+			List<User> userMembers = new ArrayList<User>();
+			for (ThreadMember threadMember : thread.getMyMembers()) {
+				if (threadMember.getCanUpload()) {
+					userMembers.add(threadMember.getUser());
+				}
+			}
+			if (userMembers.contains(actor)) {
+				logger.debug("thread name " + thread.getName());
+				res.add(new ThreadVo(thread));
+			}
+		}
+		return res;
+	}
 
 	@Override
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo, ThreadVo threadVo) throws BusinessException {
