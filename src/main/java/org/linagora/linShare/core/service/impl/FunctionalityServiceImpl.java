@@ -271,7 +271,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		}
 
 		// check permissions for parameter modifications
-		if (!functionalityDto.businessEquals(functionalityEntity)) {
+		if (!functionalityDto.businessEquals(functionalityEntity, false)) {
 			if (cptCheck != 0) {
 				throw new TechnicalException(TechnicalErrorCode.FUNCTIONALITY_ENTITY_MODIFICATION_NOT_ALLOW, "You try to modify multiple parameters at the same time !");
 			}
@@ -347,7 +347,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		if (functionalityEntity.getDomain().getIdentifier().equals(currentDomain.getIdentifier())) {
 			logger.debug("this functionality belongs to the current domain");
 
-			if (!functionalityDto.businessEquals(functionalityEntity)) {
+			if (!functionalityDto.businessEquals(functionalityEntity, true)) {
 				logger.debug("the functionality is different from the entity");
 				
 				// We check if it has an identical ancestor.
@@ -355,7 +355,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 					logger.debug("This is not the root domain, the domain must have a parent");
 					
 					Functionality ancestorFunctionality = getFunctionalityEntityByIdentifiers(functionalityEntity.getDomain().getParentDomain(), functionalityDto.getIdentifier());
-					if (functionalityDto.businessEquals(ancestorFunctionality)) {
+					if (functionalityDto.businessEquals(ancestorFunctionality, true)) {
 						// This functionality is identical to its ancestor, we does not need to persist an other entity
 						logger.debug("This functionality is identical to its ancestor, we need not to persist an other entity");
 						
@@ -385,7 +385,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		} else {
 			logger.debug("this functionality does not belong to the current domain");
 			// This functionality does not belong to the current domain.
-			if (!functionalityDto.businessEquals(functionalityEntity)) {
+			if (!functionalityDto.businessEquals(functionalityEntity, true)) {
 				// This functionality is different, it needs to be persist.
 				functionalityDto.setDomain(currentDomain);
 

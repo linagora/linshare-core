@@ -23,8 +23,8 @@ public class StringValueFunctionality extends OneValueFunctionality<String> {
 	}
 	
 	@Override
-	public boolean businessEquals(Functionality obj) {
-		if(super.businessEquals(obj)) {
+	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+		if(super.businessEquals(obj, checkPolicies)) {
 			StringValueFunctionality o = (StringValueFunctionality)obj;
 			if(value.equals(o.getValue())) {
 				logger.debug("StringValueFunctionality : " + this.toString() + " is equal to StringValueFunctionality " + obj.toString());

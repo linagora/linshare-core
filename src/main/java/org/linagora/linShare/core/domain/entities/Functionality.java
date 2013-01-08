@@ -107,15 +107,20 @@ public class Functionality implements Cloneable {
 		return "Functionality identifier is : " + identifier + "(" + persistenceId + ")";
 	}
 
-	public boolean businessEquals(Functionality fonc) {
+	public boolean businessEquals(Functionality fonc, boolean checkPolicies) {
 		
 		if(identifier.equals(fonc.getIdentifier())) {
 			if(system == fonc.isSystem()) {
-				if(configurationPolicy.businessEquals(fonc.getConfigurationPolicy())) {
-					if(activationPolicy.businessEquals(fonc.getActivationPolicy())) {
-						logger.debug("Functionality : " + this.toString() + " is equal to Functionality " + fonc.toString());
-						return true;
+				if(checkPolicies) {
+					if(configurationPolicy.businessEquals(fonc.getConfigurationPolicy())) {
+						if(activationPolicy.businessEquals(fonc.getActivationPolicy())) {
+							logger.debug("Functionality : " + this.toString() + " is equal to Functionality " + fonc.toString());
+							return true;
+						}
 					}
+				} else {
+					logger.debug("Functionality : " + this.toString() + " is equal to Functionality " + fonc.toString());
+					return true;
 				}
 			}
 		}

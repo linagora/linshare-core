@@ -56,8 +56,8 @@ public abstract class AbstractRangeFunctionality<U,T extends Unit<?>> extends Fu
 	}
 
 	@Override
-	public boolean businessEquals(Functionality obj) {
-		if(super.businessEquals(obj)) {
+	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+		if(super.businessEquals(obj, checkPolicies)) {
 			AbstractRangeFunctionality<?,?> a = (AbstractRangeFunctionality<?,?>)obj;
 			if(min.equals(a.getMin())) {
 				if(max.equals(a.getMax())) {

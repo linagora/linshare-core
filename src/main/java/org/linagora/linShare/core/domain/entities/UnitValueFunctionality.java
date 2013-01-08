@@ -35,8 +35,8 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 	
 	@Override
-	public boolean businessEquals(Functionality obj) {
-		if(super.businessEquals(obj)) {
+	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+		if(super.businessEquals(obj, checkPolicies)) {
 			UnitValueFunctionality o = (UnitValueFunctionality)obj;
 			if(value.equals(o.getValue())) {
 				if(unit.businessEquals(o.getUnit())) {
