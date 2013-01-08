@@ -100,10 +100,8 @@ public class Index {
 	@Property
 	private UserVo userVo;
 
-	
     @InjectComponent
-    private FileUploader fileUploader;
-    
+    private FileUploader fileUploader;    
     
     /* ***********************************************************
      *                      Injected services
@@ -256,8 +254,7 @@ public class Index {
 		flag=true;
 		this.listDocumentsVo = (List<DocumentVo>)Arrays.copyOf(object,1)[0];
 	}
-
-
+	
 	/**
 	 * Delete the document from the repository/facade 
 	 * Invoked when a user clicks on "delete" button in the searched document list
@@ -268,7 +265,7 @@ public class Index {
 	public void deleteFromListDocument(Object[] object){
 		 
 		boolean flagError=false;
-		for(Object currentObject:object){
+		for(Object currentObject : object){
 			try {
 				documentFacade.removeDocument(userVo,((DocumentVo)currentObject));
 				
@@ -280,7 +277,7 @@ public class Index {
 			shareSessionObjects.removeDocument((DocumentVo)currentObject);
 		}
 
-		if(null!=object && object.length>0 && !flagError){
+		if(null != object && object.length > 0 && !flagError){
 			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),object.length));
 					
 			resetListFiles(null);

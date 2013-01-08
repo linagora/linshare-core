@@ -26,16 +26,34 @@ public enum ActionFromBarDocument
 		
 		public static ActionFromBarDocument fromString(String item){
 			
-			if(item==null ) return ActionFromBarDocument.NO_ACTION;
+			if (item == null) return ActionFromBarDocument.NO_ACTION;
 			
-			if(item.equalsIgnoreCase("SHARED_ACTION")) return ActionFromBarDocument.SHARED_ACTION;
-			else if(item.equalsIgnoreCase("GROUP_SHARE_ACTION")) return ActionFromBarDocument.GROUP_SHARE_ACTION;
-			else if(item.equalsIgnoreCase("MEMBER_ADD_ACTION")) return ActionFromBarDocument.MEMBER_ADD_ACTION;
-			else if(item.equalsIgnoreCase("DELETE_ACTION")) return ActionFromBarDocument.DELETE_ACTION;
-			else if(item.equalsIgnoreCase("CRYPT_ACTION")) return ActionFromBarDocument.CRYPT_ACTION;
-			else if(item.equalsIgnoreCase("DECRYPT_ACTION")) return ActionFromBarDocument.DECRYPT_ACTION;
-			else if(item.equalsIgnoreCase("SIGNATURE_ACTION")) return ActionFromBarDocument.SIGNATURE_ACTION;
-			else if(item.equalsIgnoreCase("COPY_ACTION")) return ActionFromBarDocument.COPY_ACTION;
-			else return ActionFromBarDocument.NO_ACTION;
+			if (item.equalsIgnoreCase("SHARED_ACTION")) {
+				return ActionFromBarDocument.SHARED_ACTION;
+			}
+			else if (item.equalsIgnoreCase("GROUP_SHARE_ACTION")) {
+				return ActionFromBarDocument.GROUP_SHARE_ACTION;
+			}
+			else if (item.equalsIgnoreCase("MEMBER_ADD_ACTION")) {
+				return ActionFromBarDocument.MEMBER_ADD_ACTION;
+			}
+			else if (item.equalsIgnoreCase("DELETE_ACTION")) {
+				return ActionFromBarDocument.DELETE_ACTION;
+			}
+			else if (item.equalsIgnoreCase("CRYPT_ACTION")) {
+				return ActionFromBarDocument.CRYPT_ACTION;
+			}
+			else if (item.equalsIgnoreCase("DECRYPT_ACTION")) {
+				return ActionFromBarDocument.DECRYPT_ACTION;
+			}
+			else if (item.equalsIgnoreCase("SIGNATURE_ACTION")) {
+				return ActionFromBarDocument.SIGNATURE_ACTION;
+			}
+			else if (item.equalsIgnoreCase("COPY_ACTION")) {
+				return ActionFromBarDocument.COPY_ACTION;
+			}
+			else {
+				return ActionFromBarDocument.NO_ACTION;
+			}
 		}
 }
