@@ -35,6 +35,7 @@ import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.ThreadEntryTransformer;
+import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.TagEnumVo;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
@@ -45,9 +46,11 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.TagService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,15 +68,17 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	
 	private final TagService tagService;
 	
+	private final DocumentEntryService documentEntryService;
 	
 	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, ThreadEntryTransformer threadEntryTransformer,
-			TagService tagService) {
+			TagService tagService, DocumentEntryService documentEntryService) {
 		super();
 		this.accountService = accountService;
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;
 		this.threadEntryTransformer = threadEntryTransformer;
 		this.tagService = tagService;
+		this.documentEntryService = documentEntryService;
 	}
 
 
@@ -87,9 +92,14 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, stream, size, fileName);
 
 		return new ThreadEntryVo(threadEntry);
-	
 	}
-
+	
+	@Override
+	public void copyDocinThread(UserVo actorVo, ThreadVo threadVo, DocumentVo documentVo) throws BusinessException {
+		Account owner = accountService.findByLsUid(documentVo.getOwnerLogin());
+		InputStream stream = documentEntryService.getDocumentStream(owner , documentVo.getIdentifier());
+		insertFile(actorVo, threadVo, stream, documentVo.getSize(), documentVo.getFileName());
+	}
 
 	@Override
 	public List<ThreadVo> getAllThread() {

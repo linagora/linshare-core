@@ -82,7 +82,10 @@ public class ActionsBarDocument {
 	@SuppressWarnings("unused")
 	@Property
 	private boolean activeEncipherment;
-    
+	
+	@SuppressWarnings("unused")
+	@Property
+	private boolean activeThreadTab;
 	
 	/*********************************
 	 * Phase render
@@ -96,6 +99,7 @@ public class ActionsBarDocument {
 	public void initUserlogin() throws BusinessException {
 		activeSignature = documentFacade.isSignatureActive(user);
 		activeEncipherment = documentFacade.isEnciphermentActive(user);
+		activeThreadTab = functionalityFacade.isEnableThreadTab(user.getDomainIdentifier());
 	}
 	
 	

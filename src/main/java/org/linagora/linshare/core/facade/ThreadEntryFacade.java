@@ -3,6 +3,7 @@ package org.linagora.linshare.core.facade;
 import java.io.InputStream;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.TagEnumVo;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
@@ -15,6 +16,8 @@ public interface ThreadEntryFacade {
 	
 	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException ;
 
+	public void copyDocinThread(UserVo actorVo, ThreadVo threadVo, DocumentVo documentVo) throws BusinessException;
+	
 	public void createThread(UserVo actorVo, String name) throws BusinessException;
 	
 	// public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
@@ -60,4 +63,6 @@ public interface ThreadEntryFacade {
 	public boolean isUserAdminOfAnyThread(UserVo actorVo) throws BusinessException;
 
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo);
+
+
 }
