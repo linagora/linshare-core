@@ -23,8 +23,8 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 	}
 	
 	@Override
-	public boolean businessEquals(Functionality obj) {
-		if(super.businessEquals(obj)) {
+	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+		if(super.businessEquals(obj, checkPolicies)) {
 			IntegerValueFunctionality o = (IntegerValueFunctionality)obj;
 			if(value.equals(o.getValue())) {
 				logger.debug("IntegerValueFunctionality : " + this.toString() + " is equal to IntegerValueFunctionality " + obj.toString());
