@@ -418,13 +418,13 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 						new Policy(Policies.ALLOWED, true),
 						currentDomain);
 		
-		Assert.assertTrue(fonc.businessEquals(fonc2));
+		Assert.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setSystem(true);
-		Assert.assertFalse(fonc.businessEquals(fonc2));
+		Assert.assertFalse(fonc.businessEquals(fonc2, true));
 		
 		fonc.setSystem(true);
 		fonc2.setIdentifier(ID_FONC_2);
-		Assert.assertFalse(fonc.businessEquals(fonc2));
+		Assert.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 	
 	@Test
@@ -446,10 +446,10 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 				currentDomain,
 				value);
 		
-		Assert.assertTrue(fonc.businessEquals(fonc2));
+		Assert.assertTrue(fonc.businessEquals(fonc2, true));
 		String value2 = "http://server/service2";
 		fonc2.setValue(value2);
-		Assert.assertFalse(fonc.businessEquals(fonc2));
+		Assert.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 	
 	@Test
@@ -470,9 +470,9 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 				currentDomain,
 				value);
 		
-		Assert.assertTrue(fonc.businessEquals(fonc2));
+		Assert.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setValue(2);
-		Assert.assertFalse(fonc.businessEquals(fonc2));
+		Assert.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 	
 	@Test
@@ -497,9 +497,9 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 				new FileSizeUnitClass(FileSizeUnit.GIGA)
 				);
 		
-		Assert.assertTrue(fonc.businessEquals(fonc2));
+		Assert.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc2.setValue(8);
-		Assert.assertFalse(fonc.businessEquals(fonc2));
+		Assert.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 	
 	@Test
@@ -533,8 +533,8 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 				new TimeUnitClass(TimeUnit.DAY)
 				);
 		
-		Assert.assertFalse(fonc.businessEquals(fonc2));
-		Assert.assertFalse(fonc2.businessEquals(fonc3));
+		Assert.assertFalse(fonc.businessEquals(fonc2, true));
+		Assert.assertFalse(fonc2.businessEquals(fonc3, true));
 	}
 	
 	@Test
@@ -564,15 +564,15 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 						new FileSizeUnitClass(FileSizeUnit.GIGA),
 						new FileSizeUnitClass(FileSizeUnit.GIGA));
 		
-		Assert.assertTrue(fonc.businessEquals(fonc2));
+		Assert.assertTrue(fonc.businessEquals(fonc2, true));
 		fonc.setMin(30);
-		Assert.assertFalse(fonc.businessEquals(fonc2));
+		Assert.assertFalse(fonc.businessEquals(fonc2, true));
 		fonc2.setMin(30);
-		Assert.assertTrue(fonc.businessEquals(fonc2));
+		Assert.assertTrue(fonc.businessEquals(fonc2, true));
 		if(fonc2.getMinUnit().getUnitType().equals(UnitType.SIZE)) {
 			((FileSizeUnitClass) fonc2.getMinUnit()).setUnitValue(FileSizeUnit.KILO);
 		}
-		Assert.assertFalse(fonc.businessEquals(fonc2));
+		Assert.assertFalse(fonc.businessEquals(fonc2, true));
 	}
 
 	@Test
@@ -585,10 +585,10 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 				currentDomain);
 		
 		Functionality newFunc = (Functionality) func.clone();
-		Assert.assertTrue(newFunc.businessEquals(func));
+		Assert.assertTrue(newFunc.businessEquals(func, true));
 		
 		func.setSystem(true);
-		Assert.assertFalse(newFunc.businessEquals(func));
+		Assert.assertFalse(newFunc.businessEquals(func, true));
 	}
 	
 	
@@ -622,11 +622,11 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 		logger.debug("Current object newFunc : " + newFunc.toString());
 		
 		
-		Assert.assertTrue(newFunc.businessEquals(func));
+		Assert.assertTrue(newFunc.businessEquals(func, true));
 		Assert.assertNotNull(newFunc.getDomain());
 		
 		func.setValue("plop");
-		Assert.assertFalse(newFunc.businessEquals(func));
+		Assert.assertFalse(newFunc.businessEquals(func, true));
 		
 		abstractDomainRepository.delete(otherDomain);
 		domainPolicyRepository.delete(policy);
@@ -664,11 +664,11 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 		logger.debug("Current object newFunc : " + newFunc.toString());
 		
 		
-		Assert.assertTrue(newFunc.businessEquals(func));
+		Assert.assertTrue(newFunc.businessEquals(func, true));
 		Assert.assertNotNull(newFunc.getDomain());
 		
 		func.setValue(256);
-		Assert.assertFalse(newFunc.businessEquals(func));
+		Assert.assertFalse(newFunc.businessEquals(func, true));
 		Assert.assertTrue(newFunc instanceof UnitValueFunctionality);
 		
 		
@@ -712,11 +712,11 @@ public class FunctionalityRepositoryImplTest extends AbstractJUnit4SpringContext
 		logger.debug("Current object newFunc : " + newFunc.toString());
 		
 		
-		Assert.assertTrue(newFunc.businessEquals(func));
+		Assert.assertTrue(newFunc.businessEquals(func, true));
 		Assert.assertNotNull(newFunc.getDomain());
 		
 		func.setMax(42);
-		Assert.assertFalse(newFunc.businessEquals(func));
+		Assert.assertFalse(newFunc.businessEquals(func, true));
 		Assert.assertTrue(newFunc instanceof UnitRangeFunctionality);
 		
 		

@@ -27,8 +27,8 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 	}
 	
 	@Override
-	public boolean businessEquals(Functionality obj) {
-		if(super.businessEquals(obj)) {
+	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
+		if(super.businessEquals(obj, checkPolicies)) {
 			UnitBooleanValueFunctionality o = (UnitBooleanValueFunctionality)obj;
 			if(bool == o.isBool()) {
 				logger.debug("UnitBooleanValueFunctionality : " + this.toString() + " is equal to UnitBooleanValueFunctionality " + obj.toString());

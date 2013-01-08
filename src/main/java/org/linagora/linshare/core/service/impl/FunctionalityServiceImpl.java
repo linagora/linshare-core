@@ -208,22 +208,23 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	
 	private void permissionPropagationForActivationPolicy(Functionality functionalityEntity) throws IllegalArgumentException, BusinessException {
 		if(functionalityEntity.getActivationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
-			// We have to delete the functionality from all the sub  domains
+			// We have to delete the activation policy of each functionality from all the sub  domains
 			deleteFunctionalityRecursivly(functionalityEntity.getDomain(), functionalityEntity.getIdentifier());
 			
 		} else if(functionalityEntity.getActivationPolicy().getPolicy().equals(Policies.MANDATORY)) {
-			// TODO : We have to update the functionalities from all the sub domains
+			// TODO : We have to update the activation policy of each functionality from all the sub domains
 			updateActivationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity);
 		}
 	}
 	
 	private void permissionPropagationForConfigurationPolicy(Functionality functionalityEntity) throws IllegalArgumentException, BusinessException {
 		if(functionalityEntity.getConfigurationPolicy().getPolicy().equals(Policies.FORBIDDEN)) {
-			// We have to update the functionalities from all the sub domains
+			// We have to update the configuration policy of each functionality from all the sub domains
+			// The parameters of the current functionality are propagated to all sub functionalities
 			updateConfigurationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity, true);
 			
 		} else if(functionalityEntity.getConfigurationPolicy().getPolicy().equals(Policies.MANDATORY)) {
-			// We have to update the functionalities from all the sub domains
+			// We have to update the configuration policy of each functionality from all the sub domains
 			updateConfigurationPolicyRecursivly(functionalityEntity.getDomain(), functionalityEntity, false);
 		}
 	}
@@ -248,7 +249,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 
 		// We only can modify one element at the same time : activation policy, configuration policy or parameters.
 
-		// check permissions for activation policy modifications
+		// check if the two activation policies are different, and then if we have the permissions for modifications
 		if (!functionalityDto.getActivationPolicy().businessEquals(functionalityEntity.getActivationPolicy())) {
 			cptCheck += 1;
 			flag = CST_MODIFICATION_TYPE_AP;
@@ -259,7 +260,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 			}
 		}
 
-		// check permissions for configuration policy modifications
+		// check if the two configuration policies are different, and then if we have the permissions for modifications 
 		if (!functionalityDto.getConfigurationPolicy().businessEquals(functionalityEntity.getConfigurationPolicy())) {
 			cptCheck += 1;
 			flag = CST_MODIFICATION_TYPE_CP;
@@ -270,8 +271,8 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 			}
 		}
 
-		// check permissions for parameter modifications
-		if (!functionalityDto.businessEquals(functionalityEntity)) {
+		// check if functionality content without policies are different, then if we have the permissions for modifications
+		if (!functionalityDto.businessEquals(functionalityEntity, false)) {
 			if (cptCheck != 0) {
 				// TODO: Bug here. There a case where the exception is thrown but it should not be.
 				throw new TechnicalException(TechnicalErrorCode.FUNCTIONALITY_ENTITY_MODIFICATION_NOT_ALLOW, "You try to modify multiple parameters at the same time !");
@@ -348,7 +349,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		if (functionalityEntity.getDomain().getIdentifier().equals(currentDomain.getIdentifier())) {
 			logger.debug("this functionality belongs to the current domain");
 
-			if (!functionalityDto.businessEquals(functionalityEntity)) {
+			if (!functionalityDto.businessEquals(functionalityEntity, true)) {
 				logger.debug("the functionality is different from the entity");
 				
 				// We check if it has an identical ancestor.
@@ -356,7 +357,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 					logger.debug("This is not the root domain, the domain must have a parent");
 					
 					Functionality ancestorFunctionality = getFunctionalityEntityByIdentifiers(functionalityEntity.getDomain().getParentDomain(), functionalityDto.getIdentifier());
-					if (functionalityDto.businessEquals(ancestorFunctionality)) {
+					if (functionalityDto.businessEquals(ancestorFunctionality, true)) {
 						// This functionality is identical to its ancestor, we does not need to persist an other entity
 						logger.debug("This functionality is identical to its ancestor, we need not to persist an other entity");
 						
@@ -371,7 +372,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 						checkAndUpdate(currentDomain, functionalityDto, functionalityEntity, ancestorFunctionality);
 					}
 
-				} else { // No ancestors
+				} else { // No ancestors, this is a root functionality
 					// This functionality is different from the entity, it needs to be updated.
 					logger.debug("update(functionalityEntity) from dto (no ancestors)");
 					functionalityEntity.updateFunctionalityFrom(functionalityDto);
@@ -386,7 +387,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		} else {
 			logger.debug("this functionality does not belong to the current domain");
 			// This functionality does not belong to the current domain.
-			if (!functionalityDto.businessEquals(functionalityEntity)) {
+			if (!functionalityDto.businessEquals(functionalityEntity, true)) {
 				// This functionality is different, it needs to be persist.
 				functionalityDto.setDomain(currentDomain);
 
