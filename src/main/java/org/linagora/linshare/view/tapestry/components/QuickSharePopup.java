@@ -354,7 +354,6 @@ public class QuickSharePopup{
 			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 			try {
 				MailContainer mailContainer = new MailContainer(userVo.getLocale(), textAreaValue, textAreaSubjectValue);
-//				mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
 				sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer,null);
 			
 			} catch (BusinessException e1) {

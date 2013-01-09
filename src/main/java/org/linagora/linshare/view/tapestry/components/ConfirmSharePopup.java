@@ -427,8 +427,7 @@ public class ConfirmSharePopup{
         
 		SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 		try {
-			MailContainer mailContainer = new MailContainer(userVo.getLocale(), textAreaSubjectValue, textAreaSubjectValue);
-//			mailContainer.setSubject(textAreaSubjectValue); //retrieve the subject of the mail defined by the user
+			MailContainer mailContainer = new MailContainer(userVo.getLocale(), textAreaValue, textAreaSubjectValue);
 			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo, recipientsEmail, secureSharing, mailContainer, dateExpiry);
 
 		
