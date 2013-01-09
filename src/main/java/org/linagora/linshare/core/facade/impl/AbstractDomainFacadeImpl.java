@@ -486,8 +486,8 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
-    public boolean isCustomLogoActiveByDefault() throws BusinessException {
-        return functionalityService.getCustomLogoFunctionality(abstractDomainService.getUniqueRootDomain()).getActivationPolicy().getStatus();
+    public boolean isCustomLogoActiveInRootDomain() throws BusinessException {
+        return functionalityService.isCustomLogoActiveInRootDomain();
     }
     
     @Override
@@ -497,8 +497,8 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
-    public String getCustomLogoUrlByDefault() throws BusinessException {
-        return functionalityService.getCustomLogoFunctionality(abstractDomainService.getUniqueRootDomain()).getValue();
+    public String getCustomLogoUrlInRootDomain() throws BusinessException {
+        return functionalityService.getCustomLogoUrlInRootDomain();
     }
     
     @Override

@@ -693,4 +693,14 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
 		return func.getActivationPolicy().getStatus();
 	}
+	
+	@Override
+	public boolean isCustomLogoActiveInRootDomain() throws BusinessException {
+		return this.getCustomLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
+	}
+	
+	@Override
+	public String getCustomLogoUrlInRootDomain() throws BusinessException {
+		return this.getCustomLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
+	}
 }

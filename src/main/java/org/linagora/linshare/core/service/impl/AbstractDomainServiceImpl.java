@@ -57,11 +57,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	
 	@Override
 	public RootDomain getUniqueRootDomain() throws BusinessException {
-		RootDomain domain = (RootDomain) abstractDomainRepository.findById(LinShareConstants.rootDomainIdentifier);
-		if(domain == null) {
-			throw new BusinessException(BusinessErrorCode.DATABASE_INCOHERENCE_NO_ROOT_DOMAIN,"No root domain found in the database.");
-		}
-		return domain;
+		return abstractDomainRepository.getUniqueRootDomain();
 	}
 
 	private void createDomain(AbstractDomain domain, AbstractDomain parentDomain ) throws BusinessException {
