@@ -230,8 +230,8 @@ public class MyBorderLayout {
 			if(domainFacade.isCustomLogoActive(userVo)) {
 				customLogoUrl = domainFacade.getCustomLogoUrl(userVo);
 			}
-		} else if (domainFacade.isCustomLogoActiveByDefault()) {
-			customLogoUrl = domainFacade.getCustomLogoUrlByDefault();
+		} else if (domainFacade.isCustomLogoActiveInRootDomain()) {
+			customLogoUrl = domainFacade.getCustomLogoUrlInRootDomain();
 		}
 
 		ie9Css="<!--[if IE 9]><link href='"+ie9CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";

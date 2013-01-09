@@ -146,5 +146,17 @@ public interface FunctionalityService {
 	 * @return
 	 */
 	public boolean getDefaultSauValue(String domainIdentifier);
+
+	/**
+	 * Return the status of the custom logo  in root domain
+	 * @return the status
+	 */
+	public boolean isCustomLogoActiveInRootDomain() throws BusinessException;
+	
+	/**
+	 * Return the status of the custom logo  in root domain
+	 * @return the status
+	 */
+	public String getCustomLogoUrlInRootDomain() throws BusinessException;
 	
 }

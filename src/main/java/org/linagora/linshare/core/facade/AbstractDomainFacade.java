@@ -80,9 +80,9 @@ public interface AbstractDomainFacade {
     public boolean connectionIsDeletable(String connectionToDelete, UserVo actor) ;
 
     public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException;
-	public boolean isCustomLogoActiveByDefault() throws BusinessException;
+	public boolean isCustomLogoActiveInRootDomain() throws BusinessException;
     public String getCustomLogoUrl(UserVo actorVo) throws BusinessException;
-	public String getCustomLogoUrlByDefault() throws BusinessException;
+	public String getCustomLogoUrlInRootDomain() throws BusinessException;
 
     public MessagesConfiguration getMessages(String domainIdentifier) throws BusinessException;
     public void updateMessages(UserVo actorVo, String domainIdentifier, MessagesConfiguration messages) throws BusinessException;

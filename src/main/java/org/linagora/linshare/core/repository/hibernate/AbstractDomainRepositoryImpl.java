@@ -9,7 +9,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.RootDomain;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -103,6 +107,15 @@ public class AbstractDomainRepositoryImpl extends AbstractRepositoryImpl<Abstrac
 						return query.setCacheable(true).list();
 					}
 				});
+	}
+
+	@Override
+	public RootDomain getUniqueRootDomain() throws BusinessException {
+		RootDomain domain = (RootDomain) this.findById(LinShareConstants.rootDomainIdentifier);
+		if(domain == null) {
+			throw new BusinessException(BusinessErrorCode.DATABASE_INCOHERENCE_NO_ROOT_DOMAIN,"No root domain found in the database.");
+		}
+		return domain;
 	}
 
 	
