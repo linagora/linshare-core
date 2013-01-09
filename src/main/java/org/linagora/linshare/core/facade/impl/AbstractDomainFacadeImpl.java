@@ -486,11 +486,21 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
+    public boolean isCustomLogoActiveByDefault() throws BusinessException {
+        return functionalityService.getCustomLogoFunctionality(abstractDomainService.getUniqueRootDomain()).getActivationPolicy().getStatus();
+    }
+    
+    @Override
     public String getCustomLogoUrl(UserVo actorVo) throws BusinessException {
         User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
         return functionalityService.getCustomLogoFunctionality(actor.getDomain()).getValue();
     }
 
+    @Override
+    public String getCustomLogoUrlByDefault() throws BusinessException {
+        return functionalityService.getCustomLogoFunctionality(abstractDomainService.getUniqueRootDomain()).getValue();
+    }
+    
     @Override
     public Long getUsedSpace(String domainIdentifier) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);

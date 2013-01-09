@@ -230,6 +230,8 @@ public class MyBorderLayout {
 			if(domainFacade.isCustomLogoActive(userVo)) {
 				customLogoUrl = domainFacade.getCustomLogoUrl(userVo);
 			}
+		} else if (domainFacade.isCustomLogoActiveByDefault()) {
+			customLogoUrl = domainFacade.getCustomLogoUrlByDefault();
 		}
 
 		ie9Css="<!--[if IE 9]><link href='"+ie9CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
@@ -242,7 +244,7 @@ public class MyBorderLayout {
 //				+ "<script src='"+ie6DDPNGAsset.toClientURL()+"' ></script><script>DD_belatedPNG.fix('img, h1, a.button, a.button span');</script><![endif]--> ";
 		
 		defaultCss="<link href='"+defaultCssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>";
-		includeLocales=new ArrayList<Locale>();
+		includeLocales = new ArrayList<Locale>();
 		includeLocales.add(Locale.FRENCH);
 		includeLocales.add(Locale.ENGLISH);
 		
