@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
@@ -61,4 +63,7 @@ public interface DocumentEntryBusinessService {
 	public InputStream getThreadEntryThumbnailStream(ThreadEntry entry);
 
 	public void deleteThreadEntry(ThreadEntry threadEntry) throws BusinessException;
+
+	public void deleteSetThreadEntry(Set<Entry> setThreadEntry) throws BusinessException;
+
 }

@@ -32,14 +32,20 @@ public interface ThreadService {
 	public void updateMember(ThreadMember member, boolean admin, boolean canUpload);
 
 	public void deleteMember(Thread thread, ThreadMember member);
+	
+	public void deleteAllMembers(Thread thread);
 
 	public void deleteAllUserMemberships(User user);
 
 	public void deleteThread(User user, Thread thread);
 
 	public void deleteThreadView(User user, Thread thread, ThreadView threadView);
+	
+	public void deleteAllThreadViews(User user, Thread thread);
 
 	public void deleteTagFilter(User user, Thread thread, TagFilter filter);
 
 	public void deleteTag(User user, Thread thread, Tag tag);
+
+	public void deleteAllTags(User user, Thread thread);
 }

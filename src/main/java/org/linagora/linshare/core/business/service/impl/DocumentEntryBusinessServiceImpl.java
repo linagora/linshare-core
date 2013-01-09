@@ -28,6 +28,7 @@ import org.linagora.linshare.core.dao.FileSystemDao;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
@@ -542,5 +543,29 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		doc.setThreadEntry(null);
 		documentRepository.update(doc);
 		deleteDocument(doc);
-	}	
+	}
+	
+	@Override
+	public void deleteSetThreadEntry(Set<Entry> setThreadEntry) throws BusinessException {
+		
+		for (Object threadEntry : setThreadEntry.toArray()) {
+			this.deleteThreadEntry((ThreadEntry) threadEntry);
+		}
+		
+//		owner.getEntries().remove(setThreadEntry);
+//		accountRepository.update(owner);
+//		
+//		for (Object threadEntry : setThreadEntry.toArray()) {
+//			Document doc = ((ThreadEntry)threadEntry).getDocument();
+//			Account owner = ((ThreadEntry)threadEntry).getEntryOwner();
+//			accountRepository.update(owner);
+//			tagBusinessService.deleteAllTagAssociationsFromThreadEntry(((ThreadEntry)threadEntry));
+//			((ThreadEntry)threadEntry).setTagAssociations(null);
+//			threadEntryRepository.update(((ThreadEntry)threadEntry));
+//			threadEntryRepository.delete(((ThreadEntry)threadEntry));
+//			doc.setThreadEntry(null);
+//			documentRepository.update(doc);
+//			deleteDocument(doc);
+//		}
+	}
 }

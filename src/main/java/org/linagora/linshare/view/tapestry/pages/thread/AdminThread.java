@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -38,6 +39,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.components.ConfirmPopup;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +63,9 @@ public class AdminThread {
     @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=180"})
     private WindowWithEffects memberEditWindow;
 
+    @InjectComponent
+    private ConfirmPopup confirmPopup;
+    
     @InjectComponent
     private Zone memberEditTemplateZone;
     
@@ -135,4 +140,13 @@ public class AdminThread {
     	return memberEditTemplateZone;
     }
 
+	@OnEvent(value="deleteThreadPopupEvent")
+	public void deleteCurrentThread() {
+		try {
+			threadEntryFacade.deleteThread(userVo, currentThread);
+			currentThread = null;
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+		}
+	}
 }
