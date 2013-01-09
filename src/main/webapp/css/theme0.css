@@ -1496,6 +1496,9 @@ table.t-data-grid {
 	text-align: center;
 }
 
+#thread .countDocuments {
+	text-align: center !important;
+}
 
 /*--------------------------------------------------------------------------
 * Pages > Users
