@@ -29,16 +29,19 @@
         <!-- Page content -->
 
         <div id="pageContent">
-            <t:grid source="threads" row="currentThread" include="name, creationDate" add="countDocuments" rowsPerPage="10">
+            <t:grid source="threads" row="currentThread" include="name, creationDate, modificationDate" add="countDocuments" rowsPerPage="10">
             
                 <p:nameCell>
                     <t:actionlink t:id="showThreadContent" context="currentThread.lsUuid"> ${currentThread.name}</t:actionlink>
                 </p:nameCell>
+                <p:modificationDateCell>
+                    <span class="modificationDate">${modificationDate}</span>
+                </p:modificationDateCell>
                 <p:creationDateCell>
                     <span class="creationDate">${creationDate}</span>
                 </p:creationDateCell>
                 <p:countDocumentsCell>
-                    <span class="countDocuments">${countDocuments}</span>
+                    <span class="countDocuments" style="text-align : center;">${countDocuments}</span>
                 </p:countDocumentsCell>
                 <p:empty>
                     ${message:pages.thread.empty}

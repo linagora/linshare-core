@@ -120,6 +120,17 @@ public class Index {
 	}
 	
     /**
+	 * Format the modification date for good displaying using DateFormatUtils of
+	 * apache commons lib.
+	 * 
+	 * @return creation date the date in localized format.
+	 */
+	public String getModificationDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(currentThread.getModificationDate().getTime());
+	}
+	
+    /**
 	 * Retrieve the number of documents in the thread.
 	 * 
 	 * @return the number of documents
