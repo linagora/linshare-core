@@ -2,16 +2,21 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagFilter;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.TagRepository;
+import org.linagora.linshare.core.repository.ThreadEntryRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
@@ -27,17 +32,20 @@ public class ThreadServiceImpl implements ThreadService {
 	
 	private final ThreadViewRepository threadViewRepository;
 	
-	private ThreadMemberRepository threadMemberRepository;
+	private final ThreadMemberRepository threadMemberRepository;
+	
+	private final DocumentEntryBusinessService documentEntryBusinessService;
 
-	private TagRepository tagRepository;
+	private final TagRepository tagRepository;
     
 	
-	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository, ThreadMemberRepository threadMemberRepository, TagRepository tagRepository) {
+	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository, ThreadMemberRepository threadMemberRepository, TagRepository tagRepository, DocumentEntryBusinessService documentEntryBusinessService) {
 		super();
 		this.threadRepository = threadRepository;
 		this.threadViewRepository = threadViewRepository;
 		this.threadMemberRepository = threadMemberRepository;
 		this.tagRepository = tagRepository;
+		this.documentEntryBusinessService = documentEntryBusinessService;
 	}
 	
 	@Override
@@ -152,6 +160,24 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 	
 	@Override
+	public void deleteAllMembers(Thread thread) {
+		Object[] myMembers = thread.getMyMembers().toArray();
+		
+		for (Object threadMember : myMembers) {
+			thread.getMyMembers().remove(threadMember);
+			// XXX : error handling
+			try {
+				threadRepository.update(thread);
+				threadMemberRepository.delete((ThreadMember) threadMember);
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	@Override
 	public void deleteAllUserMemberships(User user) {
 		// XXX : error handling
 		List <ThreadMember> memberships = threadMemberRepository.findAllUserMemberships(user);
@@ -174,6 +200,23 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
+	public void deleteAllThreadViews(User user, Thread thread) {
+		Object[] myThreadViews = thread.getThreadViews().toArray();
+		
+		for (Object threadView : myThreadViews) {
+			thread.getThreadViews().remove(threadView);
+			// XXX : error handling
+			try {
+				threadRepository.update(thread);
+				threadViewRepository.delete((ThreadView) threadView);
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
 	public void deleteTagFilter(User user, Thread thread, TagFilter filter) {
 		thread.getThreadViews().remove(filter);
 		// XXX : error handling
@@ -188,7 +231,7 @@ public class ThreadServiceImpl implements ThreadService {
 	
 	@Override
 	public void deleteTag(User user, Thread thread, Tag tag) {
-		thread.getThreadViews().remove(tag);
+		thread.getTags().remove(tag);
 		// XXX : error handling
 		try {
 			threadRepository.update(thread);
@@ -200,23 +243,39 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 	
 	@Override
+	public void deleteAllTags(User user, Thread thread) {
+		Object[] myTags = thread.getTags().toArray();
+		
+		for (Object tag : myTags) {
+			thread.getTags().remove(tag);
+			// XXX : error handling
+			try {
+				threadRepository.update(thread);
+				tagRepository.delete((Tag) tag);
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
 	public void deleteThread(User user, Thread thread) {
 		// XXX : error handling
 		try {
+			// Delete all entries
+			documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
+			thread.setEntries(null);
+			threadRepository.update(thread);
 			// Deleting members
-			for (ThreadMember member : thread.getMyMembers()) {
-				this.deleteMember(thread, member);
-			}
+			this.deleteAllMembers(thread);
+
 			// Deleting views
 			thread.setCurrentThreadView(null);
 			threadRepository.update(thread);
-			for (ThreadView threadView : thread.getThreadViews()) {
-				this.deleteThreadView(user, thread, threadView);
-			}
+			this.deleteAllThreadViews(user, thread);
 			// Deleting tags
-			for (Tag tag : thread.getTags()) {
-				this.deleteTag(user, thread, tag);
-			}
+			this.deleteAllTags(user, thread);
 			// Deleting the thread
 			threadRepository.delete(thread);
 		} catch (BusinessException e) {

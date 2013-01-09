@@ -64,5 +64,5 @@ public interface ThreadEntryFacade {
 
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo);
 
-
+	public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
 }

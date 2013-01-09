@@ -405,20 +405,15 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		}
 	}
 
-	//	TODO
-	//	@Override
-	//	public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException {
-	//		if (actorVo == null || threadVo == null)
-	//			return;
-	//		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-	//		for (ThreadMember member : thread.getMyMembers()) {
-	//			if (member.getAdmin()) {
-	//				if (member.getUser().getLsUuid() != actorVo.getLsUid()) {
-	//					logger.error("not authorised");
-	//					return;
-	//				}
-	//				threadService.delete(thread);
-	//			}
-	//		}
-	//	}
+	@Override
+	public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException {
+		if (actorVo == null || threadVo == null)
+			return;
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		if (!userIsAdmin(actorVo, threadVo)) {
+			logger.error("not authorised");
+			return;
+		}
+		threadService.deleteThread((User)accountService.findByLsUid(actorVo.getLsUid()), thread);
+	}
 }

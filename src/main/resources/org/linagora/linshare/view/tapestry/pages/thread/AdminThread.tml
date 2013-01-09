@@ -17,6 +17,15 @@
                     <t:pageLink page="thread/ThreadContent" class="button" title="${message:pages.thread.admin.back}">
                         <span><img src="${asset:context:images/icons/cancel.png}" alt="" /> ${message:pages.thread.admin.back}</span>
                     </t:pageLink>
+                    <!-- <t:ConfirmPopup t:eventName="deleteThread" t:messageLabel="${message:pages.thread.admin.confirmDelete}" class="button" title="${message:pages.thread.admin.deleteButton}">
+                        <span><img src="${asset:context:images/icons/delete-small.png}" alt="" /> ${message:pages.thread.admin.deleteButton}</span>
+                    </t:ConfirmPopup> -->
+                                        
+                </li>
+                <li>
+	                <a href="#" class="button" onclick="window_confirm.showCenter(true);">
+	                    <span><img src="${asset:context:images/icons/delete-small.png}" alt=""/> ${message:pages.thread.admin.deleteButton}</span>
+	                </a>
                 </li>
             </ul>
         </div>
@@ -61,6 +70,11 @@
         <div t:id="memberEditWindow">
             <t:zone id="memberEditFormZone" update="show" />
         </div>
+
+	    <!-- Popups -->
+	
+	    <!-- Delete thread confirm popup -->
+	    <t:confirmPopup t:eventName="deleteThreadPopupEvent" t:messageLabel="${message:pages.thread.admin.confirmDelete}"/>
 
     </div>
 </t:MyBorderLayout>
