@@ -33,6 +33,7 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
+import org.apache.jackrabbit.core.data.DataStoreException;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
@@ -225,8 +226,14 @@ public class ListThreadDocument {
             logger.error("invalid uuid for this user");
             throw new BusinessException(BusinessErrorCode.INVALID_UUID,	"invalid uuid for this user");
         } else {
-            InputStream stream = threadEntryFacade.retrieveFileStream(current, user);
-            return new FileStreamResponse(current, stream);
+        	try {
+                InputStream stream = threadEntryFacade.retrieveFileStream(current, user);
+                return new FileStreamResponse(current, stream);
+			} catch (Exception e) {
+				logger.error("File don't exist anymore, please remove it");
+				businessMessagesManagementService.notify(new BusinessException(BusinessErrorCode.FILE_UNREACHABLE,	"File unreachable in file system, please remove the entry"));
+				return null;
+			}
         }
     }
     
@@ -361,7 +368,11 @@ public class ListThreadDocument {
                 break;
             }
         }
-        stream = threadEntryFacade.getDocumentThumbnail(user.getLsUid(), current.getIdentifier());
+        try {
+        	stream = threadEntryFacade.getDocumentThumbnail(user.getLsUid(), current.getIdentifier());
+        } catch (Exception e) {
+			logger.error("Trying to get a thumbnail linked to a document which doesn't exist anymore");
+		}
         if (stream == null)
             return;
         OutputStream os = null;
