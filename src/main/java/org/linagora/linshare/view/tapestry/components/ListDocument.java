@@ -954,7 +954,11 @@ public class ListDocument {
 	public void onThumbnail(String docID) {
 		InputStream stream = null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents, docID);
-		stream = documentFacade.getDocumentThumbnail(user.getLsUid(), currentDocumentVo.getIdentifier());
+        try {
+			stream = documentFacade.getDocumentThumbnail(user.getLsUid(), currentDocumentVo.getIdentifier());
+	    } catch (Exception e) {
+			logger.error("Trying to get a thumbnail linked to a document which doesn't exist anymore");
+		}
 		if (stream == null)
 			return;
 		OutputStream os = null;
