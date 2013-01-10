@@ -69,7 +69,7 @@
 			</fileset>
 			<executable targetfile="$INSTALL_PATH/jetty/bin/jetty.sh" stage="never" keep="true" os="unix,mac"/>
 			<executable targetfile="$INSTALL_PATH/linshare.sh"   stage="never" keep="true" os="unix,mac" />
-			<parsable 	targetfile="$INSTALL_PATH/jetty/resources/linShare.properties" encoding="UTF-8" type="javaprop"  />
+			<parsable 	targetfile="$INSTALL_PATH/jetty/resources/linshare.properties" encoding="UTF-8" type="javaprop"  />
 		</pack>
 	</packs>
 
