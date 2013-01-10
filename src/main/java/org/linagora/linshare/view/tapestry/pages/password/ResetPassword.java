@@ -112,7 +112,7 @@ public class ResetPassword {
 		}
 
 		if (!user.isGuest()) {
-			shareSessionObjects.addError(messages.get("pages.password.error.notguest"));
+			shareSessionObjects.addError(messages.get("pages.password.error.notGuest"));
 			return this;
 		}
 
