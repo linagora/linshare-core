@@ -113,6 +113,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public List<ThreadVo> getAllMyThread(UserVo actorVo) {
+		//TODO: To be optimized (find my threads using UserVo as research entry point than all threads).
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		logger.debug("actor : " + actor.getAccountReprentation());
 		List<Thread> all = threadService.findAll();
@@ -132,6 +133,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo) {
+		//TODO: To be optimized (find my threads using UserVo as research entry point than all threads).
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
 		logger.debug("actor : " + actor.getAccountReprentation());
 		List<Thread> all = threadService.findAll();
