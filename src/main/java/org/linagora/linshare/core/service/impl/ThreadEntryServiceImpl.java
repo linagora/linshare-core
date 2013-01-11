@@ -94,7 +94,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		
 		Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
 		if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-			// TODO antivirus check fro thread entries
+			// TODO antivirus check for thread entries
 //			checkVirus(fileName, actor, stream);
 		}
 
