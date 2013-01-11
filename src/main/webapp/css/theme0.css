@@ -2537,10 +2537,6 @@ div#blocDL ul li {
 	font-size: 1.4em;
 }
 
-#content td.fileProperties .creationDate {
-	margin-left: .25em;
-}
-
 #content td.fileProperties .creationDate,
 #content td.fileProperties .friendlySize,
 #content td.fileProperties .ownerLogin,
@@ -2557,6 +2553,25 @@ div#blocDL ul li {
 	color: #F24061;
 }
 
+#content td.fileName .fileName {
+	font-size: 1.4em;
+}
+
+#content td.fileName .creationDate,
+#content td.fileName .friendlySize,
+#content td.fileName .ownerLogin,
+#content td.fileName .sharedBy {
+	color: #888;
+}
+
+#content td.fileName .ownerLogin a:link, #content td.fileProperties .ownerLogin a:visited,
+#content td.fileName .sharedBy a:link, #content td.fileProperties .sharedBy a:visited {
+	color: #5A93AF;
+}
+#content td.fileName .ownerLogin a:hover, #content td.fileProperties .ownerLogin a:active,
+#content td.fileName .sharedBy a:hover, #content td.fileProperties .sharedBy a:active {
+	color: #F24061;
+}
 
 /*--------------------------------------------------------------------------
 * Contents > MIME Types (files)
