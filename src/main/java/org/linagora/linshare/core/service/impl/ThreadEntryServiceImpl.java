@@ -23,6 +23,7 @@ package org.linagora.linshare.core.service.impl;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
@@ -30,15 +31,19 @@ import org.linagora.linshare.core.business.service.TagBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -62,9 +67,10 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final AccountService accountService;
 	private final VirusScannerService virusScannerService;
 	private final TagBusinessService tagBusinessService;
+	private final ThreadMemberRepository threadMemberRepository;
 	
 	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService) {
+			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService, ThreadMemberRepository threadMemberRepository) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -74,6 +80,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		this.accountService = accountService;
 		this.virusScannerService = virusScannerService;
 		this.tagBusinessService = tagBusinessService;
+		this.threadMemberRepository = threadMemberRepository;
 	}
 
 	@Override
@@ -121,22 +128,20 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	}
 
 	@Override
-	public ThreadEntry findById(Account actor, Thread thread, String currentDocEntryUuid) throws BusinessException {
-		ThreadEntry entry = documentEntryBusinessService.findThreadEntryById(currentDocEntryUuid);
-		// TODO : check permissions for thread entries
-//		if (!entry.getEntryOwner().equals(actor)) {
-//			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
-//		}
-		return entry;
+	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException {
+		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
+		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User)actor)) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+		}
+		return threadEntry;
 	}
 
 	@Override
 	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException {
 		try {
-			// TODO : check permissions for thread entries
-//			if (!threadEntry.getEntryOwner().equals(actor)) {
-//				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
-//			}
+			if (!this.isAdmin((Thread) threadEntry.getEntryOwner(), (User)actor)) {
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+			}
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a thread entry", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry.getDocument().getType());
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
@@ -150,13 +155,17 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 	@Override
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException {
-		// TODO : check permissions for thread entries
+		if (!this.isThreadMember(thread, (User)actor)) {
+			return new ArrayList<ThreadEntry>();
+		}
 		return documentEntryBusinessService.findAllThreadEntries(thread);
 	}
 
 	@Override
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names) {
-		// TODO : check permissions for thread entries
+		if (!this.isThreadMember(thread, (User)actor)) {
+			return new ArrayList<ThreadEntry>();
+		}
 		return documentEntryBusinessService.findAllThreadEntriesTaggedWith(thread, names);
 	}
 	
@@ -167,9 +176,9 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
 			return null;
 		}
-		// FIXME : check permissions
-		if (false)
+		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User)actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
+		}
 		return documentEntryBusinessService.getDocumentStream(threadEntry);
 	}
 
@@ -180,9 +189,9 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
 			return null;
 		}
-		// FIXME : check permissions
-		if (false)
+		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User)owner)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this document.");
+		}
 		return documentEntryBusinessService.getThreadEntryThumbnailStream(threadEntry);
 	}
 
@@ -193,11 +202,39 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
 			return false;
 		}
-		// FIXME : check rights
-		// if actor is not a threadmember)
-		if (false)
+
+		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User)actor)) {
 			return false;
+		}
 		String thmbUUID = threadEntry.getDocument().getThmbUuid();
 		return (thmbUUID != null && thmbUUID.length() > 0);
+	}
+
+	@Override
+	public void updateFileProperties(Account actor, String threadEntryUuid, String fileComment) throws BusinessException {
+		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
+		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User)actor)) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
+		}
+		documentEntryBusinessService.updateFileProperties(threadEntry, fileComment);
+	}
+	
+	/**
+	 * PERMISSIONS
+	 */
+	
+	private boolean isThreadMember(Thread thread, User user) {
+		ThreadMember threadMember = threadMemberRepository.findUserThreadMember(thread, user);
+		return threadMember != null;
+	}
+	
+	private boolean isAdmin(Thread thread, User user) {
+		ThreadMember threadMember = threadMemberRepository.findUserThreadMember(thread, user);
+		return threadMember.getAdmin();
+	}
+	
+	private boolean canUpload(Thread thread, User user) {
+		ThreadMember threadMember = threadMemberRepository.findUserThreadMember(thread, user);
+		return threadMember.getCanUpload();
 	}
 }

@@ -13,7 +13,7 @@ public interface ThreadEntryService {
 	
 	public ThreadEntry createThreadEntry(Account actor, Thread thread, InputStream stream, Long size, String fileName) throws BusinessException;
 	
-	public ThreadEntry findById(Account actor, Thread thread, String currentDocEntryUuid) throws BusinessException;
+	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException;
 	
 	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException;
 	
@@ -26,5 +26,7 @@ public interface ThreadEntryService {
 	public InputStream getDocumentThumbnailStream(Account owner, String uuid) throws BusinessException;
 
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names);
+
+	public void updateFileProperties(Account actor, String threadEntryUuid, String fileComment) throws BusinessException;
 	
 }

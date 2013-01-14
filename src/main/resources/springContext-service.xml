@@ -85,7 +85,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="clamavVirusScannerService" />
 		<constructor-arg ref="tagBusinessService" />
-		
+		<constructor-arg ref="threadMemberRepository" />
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">

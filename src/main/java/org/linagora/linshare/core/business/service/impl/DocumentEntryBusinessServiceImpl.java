@@ -234,13 +234,19 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	@Override
 	public void updateFileProperties(DocumentEntry entry, String newName, String fileComment) throws BusinessException {
-			String uuid = entry.getDocument().getUuid();
-			fileSystemDao.renameFile(uuid, newName);
-			entry.setName(newName);
-			entry.setComment(fileComment);
-	        documentEntryRepository.update(entry);
+		String uuid = entry.getDocument().getUuid();
+		fileSystemDao.renameFile(uuid, newName);
+		entry.setName(newName);
+		entry.setComment(fileComment);
+        documentEntryRepository.update(entry);
 	}
 
+	@Override
+	public void updateFileProperties(ThreadEntry entry, String fileComment) throws BusinessException {
+		String uuid = entry.getDocument().getUuid();
+		entry.setComment(fileComment);
+        threadEntryRepository.update(entry);
+	}
 	
 	@Override
 	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
@@ -528,7 +534,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public long getRelatedEntriesCount(DocumentEntry documentEntry) {
 		return documentEntryRepository.getRelatedEntriesCount(documentEntry);
 	}
-
 
 	@Override
 	public void deleteThreadEntry(ThreadEntry threadEntry) throws BusinessException {

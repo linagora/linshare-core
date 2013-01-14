@@ -33,12 +33,12 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import org.apache.jackrabbit.core.data.DataStoreException;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -48,6 +48,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
@@ -159,6 +160,10 @@ public class ListThreadDocument {
     
     @InjectPage
     private ThreadContent threadContent;
+    
+	@Property
+	@InjectComponent
+	private ThreadEntryEditForm threadEntryEdit;
 
 
     /***********************************
@@ -241,6 +246,29 @@ public class ListThreadDocument {
     	threadContent.setSelectedThreadEntryId(uuid);
     }
 
+    public Zone onActionFromFileEditProperties(String uuid) throws BusinessException {
+    	
+        // when user has been logged out
+        if (listThreadEntries == null) {
+            return null;
+        }
+
+        ThreadEntryVo current = null;
+        for (ThreadEntryVo vo : listThreadEntries) {
+            if (vo.getIdentifier().equals(uuid)) {
+                current = vo;
+                break;
+            }
+        }
+
+        if (current == null) {
+            logger.error("invalid uuid for this user");
+            throw new BusinessException(BusinessErrorCode.INVALID_UUID,	"invalid uuid for this user");
+        } else {
+        	threadEntryEdit.setUuidThreadEntryToedit(uuid);
+            return threadEntryEdit.getShowPopupWindow();
+        }
+    }
 
     /***************************************************************************
      * Events
@@ -269,7 +297,7 @@ public class ListThreadDocument {
     
     public boolean isDeletable() {
     	try {
-    		return  null != threadEntryFacade.findById(user, threadVo, threadEntry.getIdentifier());
+    		return  null != threadEntryFacade.findById(user, threadEntry.getIdentifier());
     	} catch(BusinessException e) {
     		logger.debug(e.toString());
     		return false;
@@ -351,6 +379,25 @@ public class ListThreadDocument {
         return result;
     }
 
+    public boolean getCanUpload(){
+    	try {
+    		logger.error(threadEntryFacade.userCanUpload(user, threadVo) + "AAAAAA");
+			return threadEntryFacade.userCanUpload(user, threadVo);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			return false;
+		}
+    }
+    
+    public boolean getIsAdmin(){
+    	try {
+			return threadEntryFacade.userIsAdmin(user, threadVo);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			return false;
+		}
+    }
+    
     public Link getThumbnailPath() {
         return componentResources.createEventLink("thumbnail", threadEntry.getIdentifier());
     }

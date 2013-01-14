@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagEnum;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -204,7 +205,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		if (userCanUpload(actorVo, threadVo) || userIsAdmin(actorVo, threadVo)) {
 			List<ThreadEntry> threadEntries = new ArrayList<ThreadEntry>();
 			for (ThreadEntryVo threadEntryVo : threadEntriesVo) {
-				threadEntries.add(threadEntryService.findById(actor, thread, threadEntryVo.getIdentifier()));
+				threadEntries.add(threadEntryService.findById(actor, threadEntryVo.getIdentifier()));
 			}
 
 			for (TagVo tagVo : tags) {
@@ -263,8 +264,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void removeDocument(UserVo actorVo, ThreadEntryVo threadEntryVo) throws BusinessException {
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
-		Thread thread = threadService.findByLsUuid(threadEntryVo.getOwnerLogin());
-		ThreadEntry threadEntry = threadEntryService.findById(actor, thread, threadEntryVo.getIdentifier());
+		ThreadEntry threadEntry = threadEntryService.findById(actor, threadEntryVo.getIdentifier());
 		if (actor != null) {
 			try {
 				threadEntryService.deleteThreadEntry(actor, threadEntry);
@@ -279,10 +279,9 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 
 	@Override
-	public ThreadEntryVo findById(UserVo actorVo, ThreadVo threadVo, String selectedId) throws BusinessException {
+	public ThreadEntryVo findById(UserVo actorVo, String threadEntryUuid) throws BusinessException {
 		Account actor = accountService.findByLsUid(actorVo.getLsUid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		ThreadEntry threadEntry = threadEntryService.findById(actor, thread, selectedId);
+		ThreadEntry threadEntry = threadEntryService.findById(actor, threadEntryUuid);
 		if (threadEntry != null)
 			return new ThreadEntryVo(threadEntry);
 		return null;
@@ -417,5 +416,33 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			return;
 		}
 		threadService.deleteThread((User)accountService.findByLsUid(actorVo.getLsUid()), thread);
+	}
+
+	@Override
+	public void updateFileProperties(String lsUid, String threadEntryUuid, String fileComment) {
+		Account actor = accountService.findByLsUid(lsUid);
+		if(fileComment == null) {
+			fileComment = "";
+		}
+        try {
+			threadEntryService.updateFileProperties(actor, threadEntryUuid, fileComment);
+		} catch (BusinessException e) {
+			logger.error("Can't update file properties document : " + threadEntryUuid + " : " + e.getMessage());
+		}
+	}
+
+	@Override
+	public ThreadEntryVo getThreadEntry(String login, String threadEntryUuid) {
+		Account actor = accountService.findByLsUid(login);
+		if(actor != null) {
+			ThreadEntry entry;
+			try {
+				entry = threadEntryService.findById(actor, threadEntryUuid);
+				return new ThreadEntryVo(entry);
+			} catch (BusinessException e) {
+				logger.error("can't get document : " + e.getMessage());
+			}
+		}
+		return null;
 	}
 }
