@@ -44,7 +44,7 @@ public interface ThreadEntryFacade {
 
 	public void removeDocument(UserVo userVo, ThreadEntryVo threadEntryVo) throws BusinessException;
 
-	public ThreadEntryVo findById(UserVo user, ThreadVo threadVo, String selectedId) throws BusinessException;
+	public ThreadEntryVo findById(UserVo user, String threadEntryUuid) throws BusinessException;
 
 	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo, ThreadVo threadVo, TagVo[] tags) throws BusinessException;
 
@@ -65,4 +65,8 @@ public interface ThreadEntryFacade {
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo);
 
 	public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
+
+	public void updateFileProperties(String lsUid, String threadEntryUuid, String fileComment);
+
+	public ThreadEntryVo getThreadEntry(String login, String threadEntryUuid);
 }

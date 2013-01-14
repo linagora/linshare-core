@@ -15,7 +15,7 @@
         <t:form t:id="search">
 
             <t:grid source="listThreadEntries" row="threadEntry" include="fileName, size, creationDate"
-                exclude="ownerLogin, identifier, type, shared, shareActive, fileComment, downloaded, actions, expirationDate" add="fileDelete"
+                exclude="ownerLogin, identifier, type, shared, shareActive, fileComment, downloaded, actions, expirationDate" add="fileEdit, fileDelete"
                 rowsPerPage="10">
 
                 <!-- Header definition -->
@@ -79,8 +79,20 @@
 				<p:sizeCell>
 					<span class="friendlySize">${friendlySize},</span>${message:global.space}
 				</p:sizeCell>
+
+				<p:fileEditCell>
+					<t:if t:test="${canUpload}">
+					<t:actionLink t:id="fileEditProperties" t:zone="${threadEntryEdit.zoneClientId}" context="${threadEntry.identifier}">
+						<span onclick="literal:${threadEntryEdit.javascriptOpenPopup}">
+							<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
+						</span>
+	
+					</t:actionLink>
+					</t:if>
+				</p:fileEditCell>
 				
                 <p:fileDeleteCell>
+                	<t:if t:test="${isAdmin}">
                     <t:if test="deletable">
                         <t:actionLink t:id="delete" context="${threadEntry.identifier}" t:zone="zoneConfirmDelete"
                             title="${message:components.listThreadDocument.delete.title}">
@@ -88,6 +100,7 @@
                                 <img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
                             </span>
                         </t:actionLink>
+                    </t:if>
                     </t:if>
                 </p:fileDeleteCell>
             </t:grid>
@@ -103,5 +116,8 @@
     <t:confirmPopup
         t:messageLabel="${message:components.listThreadDocument.delete.ask}"
         t:eventName="eventDeleteThreadEntry" />
+        
+    <t:threadEntryEditForm t:id="threadEntryEdit" />
+    
 
 </t:container>

@@ -36,10 +36,13 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DocumentFacade;
+import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.linagora.linshare.view.tapestry.utils.XSSFilter;
@@ -48,7 +51,7 @@ import org.slf4j.Logger;
 
 /** This component is used to edit properties of a file.
  */
-public class FileEditForm {
+public class ThreadEntryEditForm {
 
 	/* ***********************************************************
      *                         Parameters
@@ -61,7 +64,7 @@ public class FileEditForm {
      *                      Injected services
      ************************************************************ */
 	@Inject
-	private DocumentFacade documentFacade;
+	private ThreadEntryFacade threadEntryFacade;
 
     @InjectComponent
     private Form editForm;
@@ -103,11 +106,8 @@ public class FileEditForm {
     @Parameter(required=true,value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
     private String id;
     
-    
-    
     @Persist
-    private String editFileWithUuid;
-    
+    private String threadEntryUuid;
     
     @SessionState
     @Property
@@ -115,9 +115,6 @@ public class FileEditForm {
 
     @SessionState
     private ShareSessionObjects shareSessionObjects;
-
-    @Property
-    private String fileName;
 
     @Property
     private String fileComment;
@@ -142,11 +139,6 @@ public class FileEditForm {
     	if (editForm.getHasErrors()) {
     		return false;
     	}
-
-    	if (fileName == null) {
-    		return false;
-    	}
-    	
         return true;
     }
     
@@ -158,7 +150,6 @@ public class FileEditForm {
 		filter = new XSSFilter(shareSessionObjects, editForm, antiSamyPolicy, messages);
 		try {
 			fileComment = filter.clean(fileComment);
-			fileName = filter.clean(fileName);
 			if (filter.hasError()) {
 				logger.debug("XSSFilter found some tags and striped them.");
 				businessMessagesManagementService.notify(filter.getWarningMessage());
@@ -168,7 +159,7 @@ public class FileEditForm {
 		}
 		if(reset) return;
 
-        documentFacade.updateFileProperties(userLoggedIn.getLsUid(), editFileWithUuid, fileName, fileComment);
+        threadEntryFacade.updateFileProperties(userLoggedIn.getLsUid(), threadEntryUuid, fileComment);
         shareSessionObjects.addMessage(messages.get("component.fileEditForm.action.update.confirm"));
         componentResources.triggerEvent("resetListFiles", null, null);
 	}
@@ -208,16 +199,15 @@ public class FileEditForm {
     	return _assignedZoneClientId;
     }
 
-	public void setUuidDocToedit(String uuid) {
-		this.editFileWithUuid = uuid;
+	public void setUuidThreadEntryToedit(String uuid) {
+		this.threadEntryUuid = uuid;
 		initFormToEdit();
 	}
 	
     private void initFormToEdit(){
 		 
-		if(editFileWithUuid != null){
-		    	DocumentVo doc = documentFacade.getDocument(userLoggedIn.getLogin(), editFileWithUuid);
-		    	fileName = doc.getFileName();
+		if(threadEntryUuid != null){
+		    	ThreadEntryVo doc = threadEntryFacade.getThreadEntry(userLoggedIn.getLogin(), threadEntryUuid);
 		    	fileComment = doc.getFileComment();
 		}
     }

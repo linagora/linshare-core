@@ -264,7 +264,7 @@ public class ThreadContent {
 	public void deleteThreadEntry() {
 		ThreadEntryVo selectedVo = null;
 		try {
-			selectedVo = threadEntryFacade.findById(userVo, selectedThread, selectedThreadEntryId);
+			selectedVo = threadEntryFacade.findById(userVo, selectedThreadEntryId);
 			threadEntryFacade.removeDocument(userVo, selectedVo);
 			shareSessionObjects.removeDocument(selectedVo);
 			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"), selectedVo.getFileName()));
