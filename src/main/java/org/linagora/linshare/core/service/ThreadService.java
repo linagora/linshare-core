@@ -48,4 +48,6 @@ public interface ThreadService {
 	public void deleteTag(User user, Thread thread, Tag tag);
 
 	public void deleteAllTags(User user, Thread thread);
+
+	public void rename(Thread thread, String threadName) throws BusinessException;
 }

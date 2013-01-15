@@ -69,4 +69,8 @@ public interface ThreadEntryFacade {
 	public void updateFileProperties(String lsUid, String threadEntryUuid, String fileComment);
 
 	public ThreadEntryVo getThreadEntry(String login, String threadEntryUuid);
+
+	public ThreadVo getThread(UserVo login, String threadUuid) throws BusinessException;
+
+	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException;
 }
