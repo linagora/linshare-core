@@ -91,6 +91,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		logger.debug("End tearDown");
 	}
 	
+	// TODO : toto?
 	@Test
 	public void toto() throws BusinessException {
 		Map<String, LdapAttribute> a = new HashMap<String, LdapAttribute>();
