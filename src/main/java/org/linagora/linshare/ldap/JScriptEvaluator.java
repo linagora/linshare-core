@@ -152,13 +152,13 @@ public final class JScriptEvaluator {
 			}
 			return resultsArray;
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.debug(e.toString());
 		} // try next approach
 
 		try {
 			return (List<String>) Context.jsToJava(result, List.class);
 		} catch (Exception e) {
-			LOGGER.error(e.toString());
+			LOGGER.debug(e.toString());
 		} // try next approach
 
 		List<String> resultsArray = new ArrayList<String>();
