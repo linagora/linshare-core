@@ -50,8 +50,6 @@ public class CreateDomainPattern {
 	@Property
 	private boolean inModify;
 	
-    private boolean resetFields = true;
-
 	public void onActivate(String identifier) throws BusinessException {
         logger.debug("domainPatternIdentifier:" + identifier);
 		if (identifier != null) {
@@ -63,15 +61,6 @@ public class CreateDomainPattern {
 		}
     }
 	
-    // Workaround in order to reset fields. See Bug #444
-    public void onActivate(){
-    	if (resetFields) {
-    		logger.debug("Reset the fields");
-            inModify = false;
-            domainPattern = null;	
-    	}
-    }
-
 	@SetupRender
 	public void init() {
 		if (domainPattern == null) {
