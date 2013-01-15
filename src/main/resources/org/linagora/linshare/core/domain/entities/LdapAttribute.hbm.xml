@@ -6,7 +6,7 @@
 			<generator class="native">
 			</generator>
 		</id>
-		<property name="field" column="field" type="string" length="255" not-null="true" lazy="false"/>
+		<property name="field" column="field" type="string" length="255" not-null="true" lazy="false" insert="false" update="false"/>
 		<property name="attribute" column="attribute" type="string" length="255" not-null="true" lazy="false"/>
 		<property name="sync" column="sync" type="boolean" not-null="true" lazy="false"/>
 		<property name="system" column="system" type="boolean" not-null="true" lazy="false"/>
