@@ -28,7 +28,6 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagEnum;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -51,7 +50,6 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.TagService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
-import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -342,8 +340,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 				threadService.addMember(thread, user, readOnly);
 			}
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -361,8 +358,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 				threadService.updateMember(member, memberVo.isAdmin(), memberVo.isCanUpload());
 			}
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -444,5 +440,28 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ThreadVo getThread(UserVo userVo, String threadUuid) throws BusinessException {
+		Thread thread = threadService.findByLsUuid(threadUuid);
+		ThreadVo threadVo = new ThreadVo(thread);
+		if (!this.isMember(threadVo, userVo)) {
+			logger.error("Not authorised to get the thread " + threadUuid);
+			throw new BusinessException("Not authorised to get the thread " + threadUuid);
+		}
+		return threadVo;
+	}
+
+
+	@Override
+	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException {
+		Thread thread = threadService.findByLsUuid(threadUuid);
+		ThreadVo threadVo = new ThreadVo(thread);
+		if (!this.userIsAdmin(userVo, threadVo)) {
+			logger.error("Not authorised to get the thread " + threadUuid);
+			throw new BusinessException("Not authorised to get the thread " + threadUuid);
+		}
+		threadService.rename(thread, threadName);
 	}
 }

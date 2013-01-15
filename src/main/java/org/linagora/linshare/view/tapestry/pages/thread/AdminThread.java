@@ -40,6 +40,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.ConfirmPopup;
+import org.linagora.linshare.view.tapestry.components.ThreadEditForm;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,11 +64,17 @@ public class AdminThread {
     @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=180"})
     private WindowWithEffects memberEditWindow;
 
+    @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=180"})
+    private WindowWithEffects threadEditWindow;
+    
     @InjectComponent
     private ConfirmPopup confirmPopup;
     
     @InjectComponent
     private Zone memberEditTemplateZone;
+    
+    @InjectComponent
+    private Zone threadEditTemplateZone;
     
 	@Property
 	@Persist
@@ -138,6 +145,11 @@ public class AdminThread {
     	logger.info("Trying to edit member with identifier : " + identifier);
     	selectedMemberId = identifier;
     	return memberEditTemplateZone;
+    }
+    
+    public Zone onActionFromEditThread() {
+    	logger.info("Trying to edit current thread ");
+    	return threadEditTemplateZone;
     }
 
 	@OnEvent(value="deleteThreadPopupEvent")

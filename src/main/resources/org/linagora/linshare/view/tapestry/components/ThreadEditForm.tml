@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container
+        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
+    <div id="threadEditFormComponent">
+        <t:form t:id="threadForm">
+			<hr/>
+            <t:label for="threadName" class="edit-form-label" />
+            <t:textfield t:id="threadName" class="edit-form-field" size="20" />
+            <br/>
+            <hr/>
+			<div class="clear"></div>
+			<div class="button">
+				<t:linkSubmit class="button">
+                    <span><img src="${asset:context:images/icons/edit.png}" alt=""/> ${message:global.button.validate}</span>
+                </t:linkSubmit>
+				<a href="#" onclick="threadEditWindow.close();" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+			</div>
+        </t:form>
+    </div>
+</t:container>

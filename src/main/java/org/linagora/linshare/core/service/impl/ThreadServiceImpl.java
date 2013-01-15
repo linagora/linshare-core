@@ -2,21 +2,17 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.Entry;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagFilter;
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.TagRepository;
-import org.linagora.linshare.core.repository.ThreadEntryRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
@@ -281,6 +277,16 @@ public class ThreadServiceImpl implements ThreadService {
 		} catch (BusinessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void rename(Thread thread, String threadName) throws BusinessException {
+		thread.setName(threadName);
+		try {
+			threadRepository.update(thread);
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
 		}
 	}
 }
