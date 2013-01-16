@@ -489,10 +489,18 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
 
 -- Functionality : TAB_THREAD
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (45, false, false, 1, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (45, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false, false, 1, true);
 -- if a functionality is system, you will not be hable see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
+
+
+
+-- disable mime type filter functionality : bug
+UPDATE policy SET system = true where id=7;
+
+-- disable signature functionality : bug
+UPDATE policy SET system = true where id=9;
 
 
 
