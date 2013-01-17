@@ -59,16 +59,11 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
     @Path("/sharedocument/{targetMail}/{uuid}")
 	@Override
 	public void sharedocument(@PathParam("targetMail") String targetMail, @PathParam("uuid") String uuid, @DefaultValue("0") @QueryParam("securedShare") int securedShare) {
-		User actor;
 		try {
-			actor = webServiceShareFacade.checkAuthentication();
+			webServiceShareFacade.checkAuthentication();
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
 		} 
-		
-		if ((actor instanceof Guest  && !actor.getCanUpload())) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN,"You are not authorized to use this service");
-		}
 		
 		try {
 			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
