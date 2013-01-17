@@ -11,15 +11,16 @@ import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.linagora.linshare.webservice.test.soap.SoapService;
 import org.linagora.linshare.webservice.test.soap.BusinessException_Exception;
 import org.linagora.linshare.webservice.test.soap.Document;
 import org.linagora.linshare.webservice.test.soap.DocumentAttachement;
 import org.linagora.linshare.webservice.test.soap.SimpleLongValue;
+import org.linagora.linshare.webservice.test.soap.SoapService;
 import org.linagora.linshare.webservice.test.soap.SoapWebService;
 
-//@Ignore
+@Ignore
 public class SoapWebserviceTest extends TestCase {
 
 	public static final String WEBSERVICE_SOAP_URL = "http://localhost:8080/linshare/webservice/soap";

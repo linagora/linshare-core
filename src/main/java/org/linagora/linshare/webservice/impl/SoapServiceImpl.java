@@ -112,12 +112,7 @@ public class SoapServiceImpl extends WebserviceBase implements
 	// Shares
 	@Override
 	public void sharedocument(String targetMail, String uuid,int securedShare) throws BusinessException {
-		User actor = webServiceShareFacade.checkAuthentication(); //raise exception
-		
-		if ((actor instanceof Guest  && !actor.getCanUpload())) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
-		}
-		
+		webServiceShareFacade.checkAuthentication(); //raise exception
 		webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
 	}
 	

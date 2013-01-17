@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
@@ -75,8 +76,12 @@ public class WebServiceShareFacadeImpl implements WebServiceShareFacade {
 	
 	@Override
 	public void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException{
-		
+
 		User actor = getAuthentication();
+		
+		if ((actor instanceof Guest  && !actor.getCanUpload())) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+		}
  
 		// fetch the document
 		DocumentEntry documentEntry;
