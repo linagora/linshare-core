@@ -812,7 +812,7 @@
 				<sourceRoot>${project.basedir}/src/test/generated/cxf</sourceRoot>
 				<wsdlOptions>
 					<wsdlOption>
-						<wsdl>http://localhost:8080/linshare/webservice/soap/document?wsdl</wsdl>
+						<wsdl>http://localhost:8080/linshare/webservice/soap?wsdl</wsdl>
 						<extraargs>
 							<extraarg>-client</extraarg>
 							<extraarg>-verbose</extraarg>
@@ -822,6 +822,7 @@
 							<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
 						</extraargs>
 					</wsdlOption>
+<!--
 					<wsdlOption>
 						<wsdl>http://localhost:8080/linshare/webservice/soap/share?wsdl</wsdl>
 						<extraargs>
@@ -833,6 +834,7 @@
 							<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
 						</extraargs>
 					</wsdlOption>
+-->
 				</wsdlOptions>
 			</configuration>
 		</plugin>

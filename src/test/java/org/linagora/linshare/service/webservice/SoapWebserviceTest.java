@@ -11,23 +11,20 @@ import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
 
-import org.junit.Ignore;
 import org.junit.Test;
+import org.linagora.linshare.webservice.test.soap.SoapService;
 import org.linagora.linshare.webservice.test.soap.BusinessException_Exception;
 import org.linagora.linshare.webservice.test.soap.Document;
 import org.linagora.linshare.webservice.test.soap.DocumentAttachement;
-import org.linagora.linshare.webservice.test.soap.DocumentSoapService;
-import org.linagora.linshare.webservice.test.soap.DocumentSoapWebService;
-import org.linagora.linshare.webservice.test.soap.ShareSoapService;
-import org.linagora.linshare.webservice.test.soap.ShareSoapWebService;
 import org.linagora.linshare.webservice.test.soap.SimpleLongValue;
+import org.linagora.linshare.webservice.test.soap.SoapWebService;
 
-@Ignore
+//@Ignore
 public class SoapWebserviceTest extends TestCase {
 
-	public static final String WEBSERVICE_SOAP_URL = "http://localhost:8080/linshare/webservice/soap/";
-	public static final String WEBSERVICE_SOAP_URL_DOCUMENT = WEBSERVICE_SOAP_URL + "document";
-	public static final String WEBSERVICE_SOAP_URL_SHARE = WEBSERVICE_SOAP_URL + "share";
+	public static final String WEBSERVICE_SOAP_URL = "http://localhost:8080/linshare/webservice/soap";
+	public static final String WEBSERVICE_SOAP_URL_DOCUMENT = WEBSERVICE_SOAP_URL;
+	public static final String WEBSERVICE_SOAP_URL_SHARE = WEBSERVICE_SOAP_URL;
 	
 	public static final String USER = "bart.simpson@int1.linshare.dev";
 	public static final String PASSWORD = "secret";
@@ -43,7 +40,7 @@ public class SoapWebserviceTest extends TestCase {
 	@Test
 	public void testUserMaxFileSize() throws IOException, BusinessException_Exception {
 
-		DocumentSoapService proxy = getProxyToDocumentSoapWebService();
+		SoapService proxy = getProxyToSoapWebService();
 		SimpleLongValue slv = proxy.getUserMaxFileSize();
 		assertNotNull(slv);
 	}
@@ -51,7 +48,7 @@ public class SoapWebserviceTest extends TestCase {
 	@Test
 	public void testList() throws IOException, BusinessException_Exception {
 
-		DocumentSoapService proxy = getProxyToDocumentSoapWebService();
+		SoapService proxy = getProxyToSoapWebService();
 		
 		List<Document> list = proxy.getDocuments();
 		assertNotNull(list);
@@ -70,7 +67,7 @@ public class SoapWebserviceTest extends TestCase {
 		assertTrue(checkDocumentInList(newdoc));
 		
 		//now share it !
-		ShareSoapService proxy   = getProxyToShareSoapWebService();
+		SoapService proxy   = getProxyToSoapWebService();
 		proxy.sharedocument(SHARE_TO_USER, newdoc.getUuid(), 0);
 		
 		String fakeUid  = "00000000-0000-0000-0000-000000000000";
@@ -88,9 +85,9 @@ public class SoapWebserviceTest extends TestCase {
 	 * get a proxy to soap/document
 	 * @return
 	 */
-	private DocumentSoapService getProxyToDocumentSoapWebService() {
-		DocumentSoapWebService soap = new DocumentSoapWebService();
-		DocumentSoapService proxy = soap.getDocumentSoapServicePort();
+	private SoapService getProxyToSoapWebService() {
+		SoapWebService soap = new SoapWebService();
+		SoapService proxy = soap.getSoapServicePort();
 				
 		Map<String, Object> context = ((BindingProvider)proxy).getRequestContext();
 
@@ -101,22 +98,10 @@ public class SoapWebserviceTest extends TestCase {
 	    return proxy;
 	}
 	
-	private ShareSoapService getProxyToShareSoapWebService() {
-		ShareSoapWebService soap = new ShareSoapWebService();
-		ShareSoapService proxy = soap.getShareSoapServicePort();
-				
-		Map<String, Object> context = ((BindingProvider)proxy).getRequestContext();
-
-		context.put(BindingProvider.USERNAME_PROPERTY, USER);
-		context.put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
-	    context.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, WEBSERVICE_SOAP_URL_SHARE);
-	    return proxy;
-	}
-	
 	
 	private Document addDocument() throws FileNotFoundException, BusinessException_Exception{
 		
-		DocumentSoapService proxy = getProxyToDocumentSoapWebService();
+		SoapService proxy = getProxyToSoapWebService();
 				
 	    Document result = null;
 	    
@@ -144,7 +129,7 @@ public class SoapWebserviceTest extends TestCase {
 	
 	private boolean checkDocumentInList(Document newdoc) throws IOException, BusinessException_Exception {
 		
-		DocumentSoapService proxy = getProxyToDocumentSoapWebService();
+		SoapService proxy = getProxyToSoapWebService();
 		
 		List<Document> list = proxy.getDocuments();
 		

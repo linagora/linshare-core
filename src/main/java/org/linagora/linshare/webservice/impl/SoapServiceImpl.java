@@ -36,7 +36,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.webservice.SoapService;
-import org.linagora.linshare.webservice.ShareSoapService;
 import org.linagora.linshare.webservice.dto.Document;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
