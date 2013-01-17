@@ -36,12 +36,18 @@ import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
 
 
-
 @WebService
-public interface DocumentSoapService {
+public interface SoapService {
 
+	// Documents
 	public List<Document> getDocuments() throws BusinessException;
 	public SimpleLongValue getUserMaxFileSize() throws BusinessException;
 	public SimpleLongValue getAvailableSize() throws BusinessException;
 	public Document addDocumentXop(DocumentAttachement doca) throws BusinessException;
+	
+	// Shares
+	public void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException;
+	
+	// PluginManagment
+	public String getInformation() throws BusinessException;
 }
