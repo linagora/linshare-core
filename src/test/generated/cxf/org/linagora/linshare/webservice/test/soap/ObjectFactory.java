@@ -24,9 +24,21 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _SharedocumentResponse_QNAME = new QName("http://webservice.linshare.linagora.org/", "sharedocumentResponse");
+    private final static QName _GetDocuments_QNAME = new QName("http://webservice.linshare.linagora.org/", "getDocuments");
+    private final static QName _GetDocumentsResponse_QNAME = new QName("http://webservice.linshare.linagora.org/", "getDocumentsResponse");
     private final static QName _BusinessException_QNAME = new QName("http://webservice.linshare.linagora.org/", "BusinessException");
     private final static QName _Sharedocument_QNAME = new QName("http://webservice.linshare.linagora.org/", "sharedocument");
+    private final static QName _GetAvailableSize_QNAME = new QName("http://webservice.linshare.linagora.org/", "getAvailableSize");
+    private final static QName _GetUserMaxFileSize_QNAME = new QName("http://webservice.linshare.linagora.org/", "getUserMaxFileSize");
+    private final static QName _GetUserMaxFileSizeResponse_QNAME = new QName("http://webservice.linshare.linagora.org/", "getUserMaxFileSizeResponse");
+    private final static QName _AddDocumentXopResponse_QNAME = new QName("http://webservice.linshare.linagora.org/", "addDocumentXopResponse");
+    private final static QName _GetInformationResponse_QNAME = new QName("http://webservice.linshare.linagora.org/", "getInformationResponse");
+    private final static QName _Document_QNAME = new QName("http://webservice.linshare.linagora.org/", "Document");
+    private final static QName _SharedocumentResponse_QNAME = new QName("http://webservice.linshare.linagora.org/", "sharedocumentResponse");
+    private final static QName _GetAvailableSizeResponse_QNAME = new QName("http://webservice.linshare.linagora.org/", "getAvailableSizeResponse");
+    private final static QName _Return_QNAME = new QName("http://webservice.linshare.linagora.org/", "return");
+    private final static QName _GetInformation_QNAME = new QName("http://webservice.linshare.linagora.org/", "getInformation");
+    private final static QName _AddDocumentXop_QNAME = new QName("http://webservice.linshare.linagora.org/", "addDocumentXop");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.linagora.linshare.webservice.test.soap
@@ -44,11 +56,99 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetAvailableSizeResponse }
+     * 
+     */
+    public GetAvailableSizeResponse createGetAvailableSizeResponse() {
+        return new GetAvailableSizeResponse();
+    }
+
+    /**
+     * Create an instance of {@link Document }
+     * 
+     */
+    public Document createDocument() {
+        return new Document();
+    }
+
+    /**
+     * Create an instance of {@link GetInformation }
+     * 
+     */
+    public GetInformation createGetInformation() {
+        return new GetInformation();
+    }
+
+    /**
+     * Create an instance of {@link GetUserMaxFileSizeResponse }
+     * 
+     */
+    public GetUserMaxFileSizeResponse createGetUserMaxFileSizeResponse() {
+        return new GetUserMaxFileSizeResponse();
+    }
+
+    /**
+     * Create an instance of {@link AddDocumentXopResponse }
+     * 
+     */
+    public AddDocumentXopResponse createAddDocumentXopResponse() {
+        return new AddDocumentXopResponse();
+    }
+
+    /**
+     * Create an instance of {@link SimpleLongValue }
+     * 
+     */
+    public SimpleLongValue createSimpleLongValue() {
+        return new SimpleLongValue();
+    }
+
+    /**
+     * Create an instance of {@link AddDocumentXop }
+     * 
+     */
+    public AddDocumentXop createAddDocumentXop() {
+        return new AddDocumentXop();
+    }
+
+    /**
+     * Create an instance of {@link DocumentAttachement }
+     * 
+     */
+    public DocumentAttachement createDocumentAttachement() {
+        return new DocumentAttachement();
+    }
+
+    /**
+     * Create an instance of {@link GetDocuments }
+     * 
+     */
+    public GetDocuments createGetDocuments() {
+        return new GetDocuments();
+    }
+
+    /**
      * Create an instance of {@link Sharedocument }
      * 
      */
     public Sharedocument createSharedocument() {
         return new Sharedocument();
+    }
+
+    /**
+     * Create an instance of {@link GetInformationResponse }
+     * 
+     */
+    public GetInformationResponse createGetInformationResponse() {
+        return new GetInformationResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetAvailableSize }
+     * 
+     */
+    public GetAvailableSize createGetAvailableSize() {
+        return new GetAvailableSize();
     }
 
     /**
@@ -60,12 +160,37 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SharedocumentResponse }{@code >}}
+     * Create an instance of {@link GetDocumentsResponse }
      * 
      */
-    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "sharedocumentResponse")
-    public JAXBElement<SharedocumentResponse> createSharedocumentResponse(SharedocumentResponse value) {
-        return new JAXBElement<SharedocumentResponse>(_SharedocumentResponse_QNAME, SharedocumentResponse.class, null, value);
+    public GetDocumentsResponse createGetDocumentsResponse() {
+        return new GetDocumentsResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetUserMaxFileSize }
+     * 
+     */
+    public GetUserMaxFileSize createGetUserMaxFileSize() {
+        return new GetUserMaxFileSize();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetDocuments }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "getDocuments")
+    public JAXBElement<GetDocuments> createGetDocuments(GetDocuments value) {
+        return new JAXBElement<GetDocuments>(_GetDocuments_QNAME, GetDocuments.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetDocumentsResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "getDocumentsResponse")
+    public JAXBElement<GetDocumentsResponse> createGetDocumentsResponse(GetDocumentsResponse value) {
+        return new JAXBElement<GetDocumentsResponse>(_GetDocumentsResponse_QNAME, GetDocumentsResponse.class, null, value);
     }
 
     /**
@@ -84,6 +209,105 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "sharedocument")
     public JAXBElement<Sharedocument> createSharedocument(Sharedocument value) {
         return new JAXBElement<Sharedocument>(_Sharedocument_QNAME, Sharedocument.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetAvailableSize }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "getAvailableSize")
+    public JAXBElement<GetAvailableSize> createGetAvailableSize(GetAvailableSize value) {
+        return new JAXBElement<GetAvailableSize>(_GetAvailableSize_QNAME, GetAvailableSize.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetUserMaxFileSize }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "getUserMaxFileSize")
+    public JAXBElement<GetUserMaxFileSize> createGetUserMaxFileSize(GetUserMaxFileSize value) {
+        return new JAXBElement<GetUserMaxFileSize>(_GetUserMaxFileSize_QNAME, GetUserMaxFileSize.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetUserMaxFileSizeResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "getUserMaxFileSizeResponse")
+    public JAXBElement<GetUserMaxFileSizeResponse> createGetUserMaxFileSizeResponse(GetUserMaxFileSizeResponse value) {
+        return new JAXBElement<GetUserMaxFileSizeResponse>(_GetUserMaxFileSizeResponse_QNAME, GetUserMaxFileSizeResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddDocumentXopResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "addDocumentXopResponse")
+    public JAXBElement<AddDocumentXopResponse> createAddDocumentXopResponse(AddDocumentXopResponse value) {
+        return new JAXBElement<AddDocumentXopResponse>(_AddDocumentXopResponse_QNAME, AddDocumentXopResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetInformationResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "getInformationResponse")
+    public JAXBElement<GetInformationResponse> createGetInformationResponse(GetInformationResponse value) {
+        return new JAXBElement<GetInformationResponse>(_GetInformationResponse_QNAME, GetInformationResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Document }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "Document")
+    public JAXBElement<Document> createDocument(Document value) {
+        return new JAXBElement<Document>(_Document_QNAME, Document.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SharedocumentResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "sharedocumentResponse")
+    public JAXBElement<SharedocumentResponse> createSharedocumentResponse(SharedocumentResponse value) {
+        return new JAXBElement<SharedocumentResponse>(_SharedocumentResponse_QNAME, SharedocumentResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetAvailableSizeResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "getAvailableSizeResponse")
+    public JAXBElement<GetAvailableSizeResponse> createGetAvailableSizeResponse(GetAvailableSizeResponse value) {
+        return new JAXBElement<GetAvailableSizeResponse>(_GetAvailableSizeResponse_QNAME, GetAvailableSizeResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SimpleLongValue }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "return")
+    public JAXBElement<SimpleLongValue> createReturn(SimpleLongValue value) {
+        return new JAXBElement<SimpleLongValue>(_Return_QNAME, SimpleLongValue.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetInformation }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "getInformation")
+    public JAXBElement<GetInformation> createGetInformation(GetInformation value) {
+        return new JAXBElement<GetInformation>(_GetInformation_QNAME, GetInformation.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddDocumentXop }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://webservice.linshare.linagora.org/", name = "addDocumentXop")
+    public JAXBElement<AddDocumentXop> createAddDocumentXop(AddDocumentXop value) {
+        return new JAXBElement<AddDocumentXop>(_AddDocumentXop_QNAME, AddDocumentXop.class, null, value);
     }
 
 }
