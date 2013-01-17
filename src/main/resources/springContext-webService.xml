@@ -20,17 +20,18 @@
 	<!-- SOAP  -->
 
 
-	<bean id="documentSoapService" class="org.linagora.linshare.webservice.impl.DocumentSoapServiceImpl">
+	<bean id="soapService" class="org.linagora.linshare.webservice.impl.SoapServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
-	</bean>
-	
-	<bean id="shareSoapService" class="org.linagora.linshare.webservice.impl.ShareSoapServiceImpl">
 		<constructor-arg ref="webServiceShareFacade" />
 	</bean>
+	
+<!-- 	<bean id="shareSoapService" class="org.linagora.linshare.webservice.impl.ShareSoapServiceImpl"> -->
+<!-- 		<constructor-arg ref="webServiceShareFacade" /> -->
+<!-- 	</bean> -->
 
 
-	<bean id="pluginManagmentSoapService" class="org.linagora.linshare.webservice.impl.PluginManagmentSoapServiceImpl">
-	</bean>
+<!-- 	<bean id="pluginManagmentSoapService" class="org.linagora.linshare.webservice.impl.PluginManagmentSoapServiceImpl"> -->
+<!-- 	</bean> -->
 	
 	
 	<bean id="soapExceptionInterceptor" class="org.linagora.linshare.webservice.interceptor.SoapExceptionInterceptor" />
@@ -50,8 +51,8 @@
 	</cxf:bus>
 
 
-	<jaxws:endpoint id="documentEndpoint" implementor="#documentSoapService"
-		address="/soap/document">
+	<jaxws:endpoint id="soapEndpoint" implementor="#soapService"
+		address="/soap">
 		<jaxws:properties>
 			<entry key="mtom-enabled" value="true" />
 			<entry key="attachment-directory" value="${webservice.attachment-directory}" />
@@ -64,7 +65,8 @@
 		</jaxws:outFaultInterceptors>
 	</jaxws:endpoint>  
 	
- 	<jaxws:endpoint id="shareEndpoint" implementor="#shareSoapService" address="/soap/share" >
+ 	<!--  
+ 	 <jaxws:endpoint id="shareEndpoint" implementor="#shareSoapService" address="/soap/share" >
 		<jaxws:outFaultInterceptors>
 			<ref bean="soapExceptionInterceptor" />
 		</jaxws:outFaultInterceptors> 	
@@ -75,6 +77,7 @@
 			<ref bean="soapExceptionInterceptor" />
 		</jaxws:outFaultInterceptors> 	
  	</jaxws:endpoint>
+ 	 -->
 
 
 	<!-- REST  -->

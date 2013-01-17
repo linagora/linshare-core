@@ -29,27 +29,42 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.ws.soap.MTOM;
 
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
-import org.linagora.linshare.webservice.DocumentSoapService;
+import org.linagora.linshare.core.facade.WebServiceShareFacade;
+import org.linagora.linshare.webservice.SoapService;
+import org.linagora.linshare.webservice.ShareSoapService;
 import org.linagora.linshare.webservice.dto.Document;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
-@WebService(serviceName = "DocumentSoapWebService", endpointInterface = "org.linagora.linshare.webservice.DocumentSoapService", targetNamespace = WebserviceBase.NAME_SPACE_NS, portName = "DocumentSoapServicePort")
+@WebService(serviceName = "SoapWebService", endpointInterface = "org.linagora.linshare.webservice.SoapService",
+	targetNamespace = WebserviceBase.NAME_SPACE_NS, portName = "SoapServicePort")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT,parameterStyle = ParameterStyle.WRAPPED ,use = SOAPBinding.Use.LITERAL)
 @MTOM
-public class DocumentSoapServiceImpl extends WebserviceBase implements
-		DocumentSoapService {
+public class SoapServiceImpl extends WebserviceBase implements
+		SoapService {
 
 
-	private WebServiceDocumentFacade webServiceDocumentFacade;
+	private final WebServiceDocumentFacade webServiceDocumentFacade;
 
-	public DocumentSoapServiceImpl(
-			final WebServiceDocumentFacade webServiceDocumentFacade) {
+	private final WebServiceShareFacade webServiceShareFacade;
+	
+	
+	
+	public SoapServiceImpl(
+			final WebServiceDocumentFacade webServiceDocumentFacade, final WebServiceShareFacade webServiceShareFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
+		this.webServiceShareFacade = webServiceShareFacade;
 	}
 
+	
+	
+	// Documents
+	
 	/**
 	 * get the files of the user
 	 * @throws BusinessException 
@@ -93,5 +108,28 @@ public class DocumentSoapServiceImpl extends WebserviceBase implements
 		webServiceDocumentFacade.checkAuthentication();
 		return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
 	}
-
+	
+	
+	// Shares
+	@Override
+	public void sharedocument(String targetMail, String uuid,int securedShare) throws BusinessException {
+		User actor = webServiceShareFacade.checkAuthentication(); //raise exception
+		
+		if ((actor instanceof Guest  && !actor.getCanUpload())) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+		}
+		
+		webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
+	}
+	
+	
+	
+	
+	// PluginManagment
+	@WebMethod(operationName = "getInformation")
+	// **soap
+	@Override
+	public String getInformation() throws BusinessException {
+		return "This API is still in developpement";
+	}
 }
