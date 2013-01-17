@@ -12,20 +12,38 @@
  *   GNU Affero General Public License for more details.
  *
  *   You should have received a copy of the GNU Affero General Public
- *   License along with Linshare.  If not, see
+ *   License along with Foobar.  If not, see
  *                                    <http://www.gnu.org/licenses/>.
  *
  *   (c) 2008 Groupe Linagora - http://linagora.org
  *
 */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.webservice.dto;
 
-import javax.ws.rs.Path;
-import org.linagora.linshare.webservice.dto.SimpleStringValue;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@Path("/rest/plugin")
-public interface PluginManagmentRestService {
-
-	public SimpleStringValue getInformation();
+@XmlRootElement(name = "return")
+public class SimpleStringValue {
 	
+	private String value;
+
+	public SimpleStringValue() {
+		super();
+	}
+
+	public SimpleStringValue(String value) {
+		super();
+		this.value = value;
+	}
+
+	@XmlElement(name = "value")
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 }

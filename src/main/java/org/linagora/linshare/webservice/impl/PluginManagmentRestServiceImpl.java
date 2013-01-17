@@ -4,7 +4,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
+import org.linagora.linshare.webservice.dto.SimpleStringValue;
 import org.linagora.linshare.webservice.PluginManagmentRestService;
 
 public class PluginManagmentRestServiceImpl extends WebserviceBase implements PluginManagmentRestService {
@@ -14,7 +14,7 @@ public class PluginManagmentRestServiceImpl extends WebserviceBase implements Pl
     @Path("/information")
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Override
-	public String getInformation() {
-		return "undefined";
+	public SimpleStringValue getInformation() {
+		return new SimpleStringValue("undefined");
 	}
 }
