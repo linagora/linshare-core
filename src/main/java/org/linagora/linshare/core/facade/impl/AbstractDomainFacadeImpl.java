@@ -130,7 +130,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
         LdapUserProvider provider = null;
         String baseDn = domainVo.getDifferentialKey();
-        if (!baseDn.isEmpty() && domainPattern != null && ldapConn != null) {
+        if (baseDn != null && !baseDn.isEmpty() && domainPattern != null && ldapConn != null) {
             provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
         }
 
