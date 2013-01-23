@@ -2,13 +2,15 @@
 <t:MyBorderLayout t:title="message:pages.signature.title" t:identifier="signature"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 		function signature(){
-			var hashes = document.form.signContent.value;
+			var signatureform = document.getElementById("signatureform");
+			var hashes = signatureform.signContent.value;
 			var signatures = document.applets[0].sign(hashes,"${userSignature.signerKeystoreTypeName}","${userSignature.alias}",navigator.userAgent,"${userSignature.oidSignaturePolicy}");
-			document.form.signContent.value=signatures;
-		}
-	</script>
+			signatureform.signContent.value=signatures;
+			
+        }
+    </script>
 
 	<!-- Main content -->
 
@@ -69,7 +71,7 @@
 				</tbody>
 			</table>
 
-			<t:form>
+			<t:form t:id="signatureform">
 				<t:textfield t:id="signContent"  style="display:none"/>		
 				<t:submit t:id="sign" onclick="signature();" title="${message:pages.signature.signdocument.button.sign.title}" value="${message:pages.signature.signdocument.button.sign}" />&nbsp;
 				<t:submit t:id="cancel" value="${message:pages.signature.signdocument.button.cancel}" />

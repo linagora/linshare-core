@@ -72,12 +72,13 @@ public class Signature {
 		this.certNotAfter = null;
 	}
 	
-	public Signature(String uuid, String name, Calendar creationDate, Account signer, Document doc, Long size,X509Certificate signerCertificate) {
+	public Signature(String uuid, String name, Calendar creationDate, Calendar modificationDate, Account signer, Document doc, Long size,X509Certificate signerCertificate) {
 		super();
 		this.uuid = uuid;
 		this.name = name;
 		this.type = MIMETYPE;
 		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
 		this.signer = signer;
 		this.document = doc;
 		this.size = size;

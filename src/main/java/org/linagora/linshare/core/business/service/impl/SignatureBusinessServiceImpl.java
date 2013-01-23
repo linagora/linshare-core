@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.linagora.linshare.core.business.service.SignatureBusinessService;
@@ -56,7 +57,9 @@ public class SignatureBusinessServiceImpl implements SignatureBusinessService {
 		Signature entity = null;
 		try {
 			// create signature in db
-			entity = new Signature(uuid, fileName, new GregorianCalendar(), owner, document, size, signerCertificate);
+			Calendar now = new GregorianCalendar();
+			
+			entity = new Signature(uuid, fileName, now, now, owner, document, size, signerCertificate);
 			signatureRepository.create(entity);
 			
 			document.getSignatures().add(entity);
