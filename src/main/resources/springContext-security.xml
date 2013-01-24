@@ -50,11 +50,6 @@
 
 	</bean>
 
-	<bean id="authenticationProcessingFilterEntryPoint" class="org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint">
-		<property name="loginFormUrl" value="/pages/login.jsf" />
-		<property name="forceHttps" value="false" />
-	</bean>
-
 	<!-- REMEMBER-ME SERVICE DEFINITION -->
 	<bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
 		<property name="key" value="springRocks" />
