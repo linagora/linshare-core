@@ -27,10 +27,14 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.view.tapestry.pages.administration.Index;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Logout {
 
-	@SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(Logout.class);
+	
 	@SessionState
 	private UserVo userDetailsVo;
 
@@ -42,6 +46,7 @@ public class Logout {
 	
 	public void onActivate(){
 
+		logger.info("logout user : " + userDetailsVo.getMail() + "(" + userDetailsVo.getLsUid() + ")");
 		userDetailsVo=null;
 //		requestGlobals.getHTTPServletRequest().getSession().invalidate(); //already done by j_spring_security_logout
 		try {
