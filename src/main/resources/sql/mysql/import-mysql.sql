@@ -485,6 +485,11 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false
 -- if a functionality is system, you will not be able see/modify its parameters
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
 
+-- Functionality : RESTRICTED_GUEST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (24, true, 'RESTRICTED_GUEST', 47, 48, 1);
+
 
 
 -- LinShare version

@@ -114,6 +114,8 @@ public interface FunctionalityService {
 	public Functionality getAntivirusFunctionality(AbstractDomain domain);
 	public Functionality getAnonymousUrlFunctionality(AbstractDomain domain);
 	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain);
+	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
+	public Functionality getForceGuestRestrictionFunctionality(AbstractDomain domain);
 	public Functionality getSignatureFunctionality(AbstractDomain domain);
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
@@ -146,6 +148,27 @@ public interface FunctionalityService {
 	 * @return
 	 */
 	public boolean getDefaultSauValue(String domainIdentifier);
+	
+	/**
+	 * return the default value for RestrictedGuest
+	 * @param domain : the current domain identifier
+	 * @return
+	 */
+	public boolean getDefaultRestrictedGuestValue(String domainIdentifier);
+
+	/**
+	 * Check if RestrictedGuest is mandatory
+	 * @param domain : the current domain identifier
+	 * @return 
+	 */
+	public boolean isRestrictedGuestMadatory(String domainIdentifier);
+	
+	/**
+	 * Check if RestrictedGuest is allowed
+	 * @param domain : the current domain identifier
+	 * @return 
+	 */
+	public boolean isRestrictedGuestAllowed(String domainIdentifier);
 
 	/**
 	 * Return the status of the custom logo  in root domain
@@ -158,5 +181,5 @@ public interface FunctionalityService {
 	 * @return the status
 	 */
 	public String getCustomLogoUrlInRootDomain() throws BusinessException;
-	
+
 }

@@ -244,5 +244,4 @@ public interface UserFacade {
 	 */
 	public boolean isAdminForThisUser(UserVo actorVo, UserVo userToManageVo) throws BusinessException ;
     
-	
 }

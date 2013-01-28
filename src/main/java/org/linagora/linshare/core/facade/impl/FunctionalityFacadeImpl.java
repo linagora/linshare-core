@@ -250,4 +250,16 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		}
 		return false;
 	}
+
+
+	@Override
+	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
+		return functionalityService.getDefaultRestrictedGuestValue(domainIdentifier);
+	}
+
+
+	@Override
+	public boolean isRestrictedGuestEnabled(String domainIdentifier) {
+		return functionalityService.isRestrictedGuestAllowed(domainIdentifier);
+	}
 }

@@ -158,6 +158,9 @@ public class GuestEditForm {
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 	
+	@Property
+	private boolean showRestricted;
+	
 	
 	private XSSFilter filter;
 
@@ -168,10 +171,13 @@ public class GuestEditForm {
 	@SetupRender
 	void init() throws BusinessException {
 		recipientsSearch = MailCompletionService.formatLabel(userLoggedIn);
-
-		if (userLoggedIn.isRestricted()) {
-			restrictedGuest=true;
-		}
+		
+    	GuestDomainVo guestDomainVo = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
+    	if (guestDomainVo != null){
+    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(guestDomainVo.getIdentifier());
+			restrictedGuest = functionalityFacade.getDefaultRestrictedGuestValue(guestDomainVo.getIdentifier()) || userLoggedIn.isRestricted();
+    	}
+    	
 		guestsAllowedToCreateGuest = false;
 		autocompleteMin = functionalityFacade.completionThreshold(userLoggedIn.getDomainIdentifier());
 	}
@@ -309,7 +315,7 @@ public class GuestEditForm {
 
 			boolean allowedToCreateGuest = guestsAllowedToCreateGuest;
         	
-        	guestVo = userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest,comment, userLoggedIn);
+        	guestVo = userFacade.createGuest(mail, firstName, lastName, uploadGranted, allowedToCreateGuest, comment, userLoggedIn);
 		} catch (BusinessException e) { 
 			logger.error("Can't create Guest : " + mail);
 			logger.debug(e.toString());
