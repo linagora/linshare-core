@@ -118,7 +118,7 @@
 	</bean>
 
 	<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<constructor-arg value="/" />
+		<constructor-arg value="/LogoutSso" />
 		<constructor-arg>
 			<list>
 				<ref bean="rememberMeService" />
