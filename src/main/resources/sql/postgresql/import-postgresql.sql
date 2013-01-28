@@ -494,7 +494,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, true, 'FORCE_GUEST_RESTRICTION', 49, 50, 1);
 
 -- LinShare version
-INSERT INTO version (id,description) VALUES (1,'1.0.0');
+INSERT INTO version (id,description) VALUES (1,'1.1.0');
 
 -- Sequence for hibernate
 SELECT setval('hibernate_sequence', 100);
