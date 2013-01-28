@@ -23,4 +23,4 @@ UPDATE policy SET system = false where id=7;
 UPDATE policy SET system = false where id=9;
 
 -- LinShare version
-INSERT INTO linshare_version (id,description) VALUES ((SELECT nextVal('hibernate_sequence')),'1.1.0');
+INSERT INTO version (id,description) VALUES ((SELECT nextVal('hibernate_sequence')),'1.1.0');

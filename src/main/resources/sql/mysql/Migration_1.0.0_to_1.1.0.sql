@@ -18,4 +18,4 @@ UPDATE policy SET system = false where id=7;
 UPDATE policy SET system = false where id=9;
 
 -- LinShare version
-INSERT INTO linshare_version (description) VALUES ('1.1.0');
+INSERT INTO version (description) VALUES ('1.1.0');
