@@ -500,11 +500,3 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 -- LinShare version
 INSERT INTO version (id,description) VALUES (1,'1.0.1');
 
-
--- disable mime type filter functionality : bug
-UPDATE policy SET system = true where id=7;
-
--- disable signature functionality : bug
-UPDATE policy SET system = true where id=9;
-
-

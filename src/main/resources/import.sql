@@ -505,11 +505,3 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, true, 'FORCE_GUEST_RESTRICTION', 49, 50, 1);
 
 
--- disable mime type filter functionality : bug
-UPDATE policy SET system = true where id=7;
-
--- disable signature functionality : bug
-UPDATE policy SET system = true where id=9;
-
-
-
