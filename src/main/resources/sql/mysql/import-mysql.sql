@@ -498,5 +498,5 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 
 
 -- LinShare version
-INSERT INTO version (id,description) VALUES (1,'1.0.1');
+INSERT INTO version (id,description) VALUES (1,'1.1.0');
 
