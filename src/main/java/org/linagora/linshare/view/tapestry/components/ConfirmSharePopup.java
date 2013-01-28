@@ -243,7 +243,6 @@ public class ConfirmSharePopup{
 		showSecureSharingCheckBox = shareFacade.isVisibleSecuredAnonymousUrlCheckBox(userVo.getDomainIdentifier());
 		if(showSecureSharingCheckBox) 
 			secureSharing = shareFacade.getDefaultSecuredAnonymousUrlCheckBoxValue(userVo.getDomainIdentifier());
-		
 	}
 	
 	private boolean checkCryptedFiles() {

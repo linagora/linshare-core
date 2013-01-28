@@ -611,7 +611,17 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SECURED_ANONYMOUS_URL);
 	}
-	
+
+	@Override
+	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.RESTRICTED_GUEST);
+	}
+
+	@Override
+	public Functionality getForceGuestRestrictionFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.FORCE_GUEST_RESTRICTION);
+	}
+
 	@Override
 	public SizeUnitValueFunctionality getUserMaxFileSizeFunctionality(AbstractDomain domain) {
 		return new SizeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.FILESIZE_MAX));
@@ -666,7 +676,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public boolean isSauAllowed(String domainIdentifier) { 
+	public boolean isSauAllowed(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality funcAU = getAnonymousUrlFunctionality(domain);
 		// We check if Anonymous Url are activated.
@@ -677,21 +687,44 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		return false;
 	}
 	
-
 	@Override
-	public boolean isSauMadatory(String domainIdentifier) { 
+	public boolean isSauMadatory(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
 		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
 	}
-	
-	
 	
 	@Override
 	public boolean getDefaultSauValue(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality func = getSecuredAnonymousUrlFunctionality(domain);
 		return func.getActivationPolicy().getStatus();
+	}
+	
+	
+	@Override
+	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
+		Functionality func = getForceGuestRestrictionFunctionality(domain);
+		return func.getActivationPolicy().getStatus();
+	}
+	
+	@Override
+	public boolean isRestrictedGuestAllowed(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
+		Functionality funcRG = getRestrictedGuestFunctionality(domain);
+		if (funcRG.getActivationPolicy().getPolicy().equals(Policies.ALLOWED)) {
+			Functionality funcFGR = getForceGuestRestrictionFunctionality(domain);
+			return funcFGR.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isRestrictedGuestMadatory(String domainIdentifier) {
+		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
+		Functionality func = getForceGuestRestrictionFunctionality(domain);
+		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
 	}
 	
 	@Override

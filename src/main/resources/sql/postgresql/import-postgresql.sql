@@ -463,7 +463,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
 
--- Functionality : SECURE_URL
+-- Functionality : SECURED_ANONYMOUS_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
@@ -483,6 +483,15 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (46, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (23, true, 'TAB_THREAD', 45, 46, 1);
 
 
+-- Functionality : RESTRICTED_GUEST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (24, true, 'RESTRICTED_GUEST', 47, 48, 1);
+
+-- Functionality : FORCE_GUEST_RESTRICTION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (49, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, true, 'FORCE_GUEST_RESTRICTION', 49, 50, 1);
 
 -- LinShare version
 INSERT INTO version (id,description) VALUES (1,'1.0.0');

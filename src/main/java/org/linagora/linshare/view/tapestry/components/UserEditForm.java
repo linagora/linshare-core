@@ -146,6 +146,9 @@ public class UserEditForm {
     private boolean restrictedEditGuest;
     
     @Property
+    private boolean showRestricted;
+    
+    @Property
     private boolean userRestrictedGuest;
 	
 	@Persist("flash")
@@ -207,9 +210,9 @@ public class UserEditForm {
 	    		usertype = currentUser.getUserType();
 	    		userGuest = usertype.equals(AccountType.GUEST); //to set friendly title on account
 	    		userDomain = currentUser.getDomainIdentifier();
+	    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(userDomain);
 	    		restrictedEditGuest = currentUser.isRestricted();
-	    		userRestrictedGuest = currentUser.isRestricted();
-	    		if (currentUser.isGuest()&&currentUser.isRestricted()) {
+	    		if (currentUser.isGuest() && currentUser.isRestricted()) {
 	    			List<UserVo> contacts = null;
 					try {
 						contacts = userFacade.fetchGuestContacts(currentUser.getLsUid());

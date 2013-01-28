@@ -23,6 +23,9 @@ public interface FunctionalityFacade {
 	public boolean isEnableHelpTab(String domainIdentifier);
 	public boolean isEnableThreadTab(String domainIdentifier);
 	
+	public boolean getDefaultRestrictedGuestValue(String domainIdentifier);
+	public boolean isRestrictedGuestEnabled(String domainIdentifier);
+	
 	/**
 	 * Check if the policy "Allowed guest" is enabled
 	 * 
