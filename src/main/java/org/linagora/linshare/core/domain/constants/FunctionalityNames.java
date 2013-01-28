@@ -25,6 +25,5 @@ public interface FunctionalityNames {
 	public static final String TAB_THREAD = "TAB_THREAD";
 	public static final String SHARE_NOTIFICATION_BEFORE_EXPIRATION = "SHARE_NOTIFICATION_BEFORE_EXPIRATION";
 	public static final String RESTRICTED_GUEST = "RESTRICTED_GUEST";
-	public static final String FORCE_GUEST_RESTRICTION = "FORCE_GUEST_RESTRICTION";
 
 }

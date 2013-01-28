@@ -705,7 +705,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	@Override
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality func = getForceGuestRestrictionFunctionality(domain);
+		Functionality func = getRestrictedGuestFunctionality(domain);
 		return func.getActivationPolicy().getStatus();
 	}
 	
@@ -713,11 +713,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public boolean isRestrictedGuestAllowed(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
 		Functionality funcRG = getRestrictedGuestFunctionality(domain);
-		if (funcRG.getActivationPolicy().getStatus()) {
-			Functionality funcFGR = getForceGuestRestrictionFunctionality(domain);
-			return funcFGR.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
-		}
-		return false;
+		return funcRG.getActivationPolicy().getPolicy().equals(Policies.ALLOWED);
 	}
 	
 	@Override
