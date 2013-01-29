@@ -115,7 +115,6 @@ public interface FunctionalityService {
 	public Functionality getAnonymousUrlFunctionality(AbstractDomain domain);
 	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain);
 	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
-	public Functionality getForceGuestRestrictionFunctionality(AbstractDomain domain);
 	public Functionality getSignatureFunctionality(AbstractDomain domain);
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
