@@ -65,11 +65,11 @@ public class AllowedContactRepositoryImpl extends AbstractRepositoryImpl<Allowed
 				String firstNameQ = firstName==null?"":firstName;
 				String lastNameQ = lastName==null?"":lastName;
 				
-				String queryString = "select ac from AllowedContact ac join ac.contact as contact where ac.owner= :guest and LOWER(contact.login) like :login and LOWER(contact.firstName) like :firstName and LOWER(contact.lastName) like :lastName";
+				String queryString = "select ac from AllowedContact ac join ac.contact as contact where ac.owner= :guest and LOWER(contact.mail) like :mail and LOWER(contact.firstName) like :firstName and LOWER(contact.lastName) like :lastName";
 
 				Query query = session.createQuery(queryString);
 			    query.setParameter("guest", guest);
-			    query.setParameter("login", '%'+mailQ.toLowerCase()+'%');
+			    query.setParameter("mail", '%'+mailQ.toLowerCase()+'%');
 			    query.setParameter("firstName", '%'+firstNameQ.toLowerCase()+'%');
 			    query.setParameter("lastName", '%'+lastNameQ.toLowerCase()+'%');
 			    
