@@ -618,11 +618,6 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public Functionality getForceGuestRestrictionFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.FORCE_GUEST_RESTRICTION);
-	}
-
-	@Override
 	public SizeUnitValueFunctionality getUserMaxFileSizeFunctionality(AbstractDomain domain) {
 		return new SizeUnitValueFunctionality((UnitValueFunctionality)getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.FILESIZE_MAX));
 	}
@@ -719,7 +714,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	@Override
 	public boolean isRestrictedGuestMadatory(String domainIdentifier) {
 		AbstractDomain domain = abstractDomainRepository.findById(domainIdentifier);
-		Functionality func = getForceGuestRestrictionFunctionality(domain);
+		Functionality func = getRestrictedGuestFunctionality(domain);
 		return func.getActivationPolicy().getPolicy().equals(Policies.MANDATORY);
 	}
 	
