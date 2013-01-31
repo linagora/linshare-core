@@ -210,7 +210,7 @@ public class UserEditForm {
 	    		usertype = currentUser.getUserType();
 	    		userGuest = usertype.equals(AccountType.GUEST); //to set friendly title on account
 	    		userDomain = currentUser.getDomainIdentifier();
-	    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(userDomain);
+	    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(userLoggedIn.getDomainIdentifier());
 	    		restrictedEditGuest = currentUser.isRestricted();
 	    		if (currentUser.isGuest() && currentUser.isRestricted()) {
 	    			List<UserVo> contacts = null;
