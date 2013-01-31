@@ -159,7 +159,7 @@ if [ -z $g_main_function ] ; then
 	test_linshare
 
 	# Creation de la version avec installeur.
-	#build_installer
+	build_installer
 
 	# Creation de la version sans SSO
 	build_classic
