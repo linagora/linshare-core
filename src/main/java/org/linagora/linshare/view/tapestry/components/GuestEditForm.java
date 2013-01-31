@@ -174,8 +174,8 @@ public class GuestEditForm {
 		
     	GuestDomainVo guestDomainVo = domainFacade.findGuestDomain(userLoggedIn.getDomainIdentifier());
     	if (guestDomainVo != null){
-    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(guestDomainVo.getIdentifier());
-			restrictedGuest = functionalityFacade.getDefaultRestrictedGuestValue(guestDomainVo.getIdentifier()) || userLoggedIn.isRestricted();
+    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(userLoggedIn.getDomainIdentifier());
+			restrictedGuest = functionalityFacade.getDefaultRestrictedGuestValue(userLoggedIn.getDomainIdentifier()) || userLoggedIn.isRestricted();
     	}
     	
 		guestsAllowedToCreateGuest = false;
