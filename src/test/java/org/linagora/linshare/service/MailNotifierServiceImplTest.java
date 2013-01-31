@@ -73,7 +73,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     	String txtContent = "content";
     	String locale = "en";
     	String fromUser = "foobar@foodomain.com";
-    	String fromDomain = "linshare@foodomain.com";
+    	String fromDomain = LINSHARE_MAIL;
     	String recipient = "johndoe@unknow.com";
     	
     	MailContainer mailContainer = new MailContainer(locale,txtContent,subject);
