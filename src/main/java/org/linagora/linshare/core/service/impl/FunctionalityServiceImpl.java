@@ -586,6 +586,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TIME_STAMPING);
 	}
+	
+	@Override
+	public StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain) {
+		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.DOMAIN_MAIL);
+	}
 
 	@Override
 	public Functionality getMimeTypeFunctionality(AbstractDomain domain) {

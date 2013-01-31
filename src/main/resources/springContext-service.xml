@@ -141,12 +141,11 @@
 	<bean name="notifierService" class="org.linagora.linshare.core.service.impl.MailNotifierServiceImpl">
 		<constructor-arg index="0" value="${mail.smtp.host}" />
 		<constructor-arg index="1" value="${mail.smtp.port}" />
-		<constructor-arg index="2" value="${mail.smtp.sender}" />
-		<constructor-arg index="3" value="${mail.smtp.user}" />
-		<constructor-arg index="4" value="${mail.smtp.password}" />
-		<constructor-arg index="5" value="${mail.smtp.auth.needed}" />
-		<constructor-arg index="6" value="${mail.smtp.charset}" />
-		<constructor-arg index="7" value="${linshare.logo.mails.visible}" />
+		<constructor-arg index="2" value="${mail.smtp.user}" />
+		<constructor-arg index="3" value="${mail.smtp.password}" />
+		<constructor-arg index="4" value="${mail.smtp.auth.needed}" />
+		<constructor-arg index="5" value="${mail.smtp.charset}" />
+		<constructor-arg index="6" value="${linshare.logo.mails.visible}" />
 	</bean>
 
 	<bean name="enciphermentService" class="org.linagora.linshare.core.service.impl.EnciphermentServiceAesCryptImpl">
@@ -172,6 +171,7 @@
 		<constructor-arg value="${linshare.mails.html.container}" />
 		<constructor-arg value="${linshare.mails.htmlwithoutlogo.container}" />
 		<constructor-arg value="${linshare.logo.mails.visible}" />
+		<constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">

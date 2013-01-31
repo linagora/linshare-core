@@ -45,6 +45,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,17 +67,20 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	
 	private final boolean displayLogo;
 	
+	private final AbstractDomainService abstractDomainService;
+	
 
 	public MailContentBuildingServiceImpl(final String urlBase, 
 			final String urlInternal, final String mailContentTxt,
 			final String mailContentHTML, final String mailContentHTMLWithoutLogo,
-			final boolean displayLogo) throws BusinessException {
+			final boolean displayLogo, AbstractDomainService abstractDomainService) throws BusinessException {
 		this.pUrlBase = urlBase;
 		this.pUrlInternal = urlInternal;
         this.mailContentTxt = mailContentTxt;
         this.mailContentHTML = mailContentHTML;
         this.mailContentHTMLWithoutLogo = mailContentHTMLWithoutLogo;
         this.displayLogo = displayLogo;
+        this.abstractDomainService = abstractDomainService;
 	}
 
 	
@@ -192,6 +196,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 		// reply mail
 		mailContainer.setReplyTo(sender.getMail());
+		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(sender.getDomain()));
 				
 		return buildMailContainerSetProperties(sender, mailContainer, shareEntry.getRecipient());
 	}
@@ -224,6 +231,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// reply mail
 		mailContainer.setReplyTo(sender.getMail());
 				
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(sender.getDomain()));
+		
 		return buildMailContainerSetProperties(sender, mailContainer, shareEntry.getAnonymousUrl().getContact());
 	}
 	
@@ -250,6 +260,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 		// recipient mail
 		mailContainer.setRecipient(sender.getMail());
+		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(sender.getDomain()));
 
 		// sender and recipient are the same person.
 		return buildMailContainerSetProperties(sender, mailContainer, sender);
@@ -281,6 +294,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// reply mail
 		mailContainer.setReplyTo(sender.getMail());
 		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(sender.getDomain()));
+
 		return buildMailContainerSetProperties(sender, mailContainer, shareEntry.getAnonymousUrl().getContact());
 	}
 	
@@ -309,6 +325,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// reply mail
 		mailContainer.setReplyTo(sender.getMail());
 		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(shareEntry.getRecipient().getDomain()));
+
 		return buildMailContainerSetProperties(sender, mailContainer, shareEntry.getRecipient());
 	}
 	
@@ -335,6 +354,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// reply mail
 		mailContainer.setReplyTo(sender.getMail());
 		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(shareEntry.getRecipient().getDomain()));
+
 		return buildMailContainerSetProperties(sender, mailContainer, shareEntry.getRecipient());
 	}
 	
@@ -359,6 +381,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		// recipient mail
 		mailContainer.setRecipient(sender.getMail());
+		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(sender.getDomain()));
 		
 		return buildMailContainerSetProperties(sender, mailContainer, sender);
 	}	
@@ -405,6 +430,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// recipient mail
 		mailContainer.setRecipient(recipient.getMail());
 		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
+
 		return buildMailContainerSetProperties(sender, mailContainer, recipient, inputMailContainer.getPersonalMessage());
 	}	
 	
@@ -455,6 +483,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// reply mail
 		mailContainer.setReplyTo(sender.getMail());
 		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(sender.getDomain()));
+
 		return buildMailContainerSetProperties(sender, mailContainer, contact, inputMailContainer.getPersonalMessage());
 	}
 	
@@ -474,6 +505,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		// recipient mail
 		mailContainer.setRecipient(recipient.getMail());
+		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
 		
 		return buildMailContainerSetProperties(recipient, mailContainer, recipient);
 	}
@@ -505,6 +539,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// reply mail
 		mailContainer.setReplyTo(sender.getMail());
 		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
+		
 		return buildMailContainerSetProperties(sender, mailContainer, recipient);
 	}
 
@@ -526,6 +563,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		// recipient mail
 		mailContainer.setRecipient(sender.getMail());
+		
+		// domain mail
+		mailContainer.setFrom(abstractDomainService.getDomainMail(sender.getDomain()));
 		
 		return buildMailContainerSetProperties(sender, mailContainer, sender);
 	}	
