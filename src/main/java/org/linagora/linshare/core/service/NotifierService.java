@@ -35,22 +35,24 @@ public interface NotifierService {
 	
 	/**
 	 * Send notification to a recipient.
+	 * @param smtpSender TODO
 	 * @param replyTo user who send the mail. can be null. if null put generic Linshare account.
 	 * @param recipient
 	 * @param subject
-	 * @param textContent alternative mail with text content
 	 * @param htmlContent html mail content
+	 * @param textContent alternative mail with text content
 	 * @throws SendFailedException 
 	 */
-    public void sendNotification(String replyTo,String recipient, String subject, String htmlContent,String textContent) throws SendFailedException;
+    public void sendNotification(String smtpSender,String replyTo, String recipient, String subject,String htmlContent, String textContent) throws SendFailedException;
     
     /**
+     * @param smtpSender TODO
      * @param replyTo user who send the mail. can be null. if null put generic Linshare account.
      * @param recipient the recipient mail
      * @param mailContainer the mail container
      * @throws SendFailedException 
      */
-    public void sendNotification(String replyTo,String recipient, MailContainer mailContainer) throws SendFailedException;
+    public void sendNotification(String smtpSender,String replyTo, String recipient, MailContainer mailContainer) throws SendFailedException;
 
     
     /**

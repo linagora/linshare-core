@@ -561,4 +561,13 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		return findGuestDomain(top);
 	}
+	
+	@Override
+	public String getDomainMail(AbstractDomain domain) {
+		if (domain == null) {
+			logger.debug("No Domain found.");
+			return null;
+		}
+		return functionalityService.getDomainMailFunctionality(domain).getValue();
+	}
 }

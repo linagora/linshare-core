@@ -73,13 +73,14 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     	String txtContent = "content";
     	String locale = "en";
     	String fromUser = "foobar@foodomain.com";
+    	String fromDomain = "linshare@foodomain.com";
     	String recipient = "johndoe@unknow.com";
     	
     	MailContainer mailContainer = new MailContainer(locale,txtContent,subject);
     	mailContainer.setContentHTML("");
     	mailContainer.setContentTXT("");
     	
-    	mailNotifierService.sendNotification(fromUser, recipient, mailContainer);
+    	mailNotifierService.sendNotification(fromDomain, fromUser, recipient, mailContainer);
     	
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(0);
@@ -96,7 +97,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
         	Assert.fail();
         }
         
-        mailNotifierService.sendNotification(fromUser, recipient, subject, "<span>htmlContent</span>", txtContent);
+        mailNotifierService.sendNotification(fromDomain, fromUser, recipient, subject, "<span>htmlContent</span>", txtContent);
         
         if (wiser.getMessages().size() > 0) {
             WiserMessage wMsg = wiser.getMessages().get(1);

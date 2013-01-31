@@ -35,6 +35,7 @@ public class MailContainerWithRecipient extends MailContainer {
 	
 	private String recipient;
 	private String replyTo;
+	private String from;
 
 	private StringBuffer bufferTXT = new StringBuffer();
 	private StringBuffer bufferHTML = new StringBuffer();
@@ -44,6 +45,7 @@ public class MailContainerWithRecipient extends MailContainer {
 		super(mailContainer);
 		this.recipient		=	mailContainer.getRecipient();
 		this.replyTo 		=	mailContainer.getReplyTo();
+		this.from			=	mailContainer.getFrom();
 	}
 	
 	/**
@@ -80,6 +82,14 @@ public class MailContainerWithRecipient extends MailContainer {
 		this.replyTo = replyTo;
 	}
 	
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
 	
 	/**
 	 * Stuffs 

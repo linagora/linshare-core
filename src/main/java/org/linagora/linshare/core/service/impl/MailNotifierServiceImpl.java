@@ -64,9 +64,6 @@ public class MailNotifierServiceImpl implements NotifierService {
 	/** The smtp user. */
 	private final String smtpUser;
 
-	/** The sender identity. */
-	private final String smtpSender;
-
 	/** The smtp password. */
 	private final String smtpPassword;
 
@@ -90,11 +87,10 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 * multipart/alternative
 	 */
 	public MailNotifierServiceImpl(String smtpServer, int smtpPort,
-			String smtpSender, String smtpUser, String smtpPassword,
-			boolean needsAuth, String charset, boolean displayLogo) {
+			String smtpUser, String smtpPassword, boolean needsAuth,
+			String charset, boolean displayLogo) {
 		this.smtpServer = smtpServer;
 		this.smtpPort = smtpPort;
-		this.smtpSender = smtpSender;
 		this.smtpUser = smtpUser;
 		this.smtpPassword = smtpPassword;
 		this.needsAuth = needsAuth;
@@ -104,7 +100,6 @@ public class MailNotifierServiceImpl implements NotifierService {
 
 	/**
 	 * Send notification to a recipient.
-	 * 
 	 * @param recipient
 	 *            notification recipient.
 	 * @param subject
@@ -113,7 +108,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 *            content.
 	 */
 	@Override
-	public void sendNotification(String replyTo, String recipient, String subject, String htmlContent, String textContent) throws SendFailedException{
+	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent, String textContent) throws SendFailedException{
 
 		// get the mail session
 		Session session = getMailSession();
@@ -254,8 +249,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 * Send notification giving a mailContainer object.
 	 */
 	@Override
-	public void sendNotification(String replyTo, String recipient, MailContainer mailContainer) throws SendFailedException{
-		sendNotification(replyTo, recipient, mailContainer.getSubject(), mailContainer.getContentHTML(), mailContainer.getContentTXT());
+	public void sendNotification(String smtpSender, String replyTo, String recipient, MailContainer mailContainer) throws SendFailedException{
+		sendNotification(smtpSender, replyTo, recipient, mailContainer.getSubject(), mailContainer.getContentHTML(), mailContainer.getContentTXT());
 
 	}
 	
@@ -272,7 +267,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 			
 			for (MailContainerWithRecipient mailContainer : mailContainerWithRecipient) {
 				try {
-					sendNotification(mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
+					sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
 				} catch (SendFailedException e) {
 					unknownRecipients.add(mailContainer.getRecipient());
 					logger.debug(e.toString());
@@ -297,7 +292,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 			logger.error("can not send mails, no recipient");
 		} else {
 			try {
-				sendNotification(mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
+				sendNotification(mailContainer.getFrom(), mailContainer.getReplyTo(), mailContainer.getRecipient(), mailContainer);
 			} catch (SendFailedException e) {
 				logger.error("Addresses unreachables : " + mailContainer.getRecipient());
 				throw new BusinessException(BusinessErrorCode.RELAY_HOST_NOT_ENABLE, "Address Unreachable " + mailContainer.getRecipient());

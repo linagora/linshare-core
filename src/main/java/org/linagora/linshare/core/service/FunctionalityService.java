@@ -109,6 +109,7 @@ public interface FunctionalityService {
 	
 	
 	public StringValueFunctionality getTimeStampingFunctionality(AbstractDomain domain);
+	public StringValueFunctionality getDomainMailFunctionality(AbstractDomain domain);
 	public Functionality getMimeTypeFunctionality(AbstractDomain domain);
 	public Functionality getEnciphermentFunctionality(AbstractDomain domain);
 	public Functionality getAntivirusFunctionality(AbstractDomain domain);

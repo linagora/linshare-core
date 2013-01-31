@@ -101,4 +101,11 @@ public interface AbstractDomainService {
 	public boolean userCanCreateGuest(User user);
 	public boolean canCreateGuestDomain(AbstractDomain domain) ;
 	public boolean hasRightsToShareWithExternals(User sender) throws BusinessException;
+	
+	/**
+	 * Retrieve the mail address for notifications (smtp sender)
+	 * @param domain
+	 * @return the mail
+	 */
+	public String getDomainMail(AbstractDomain domain);
 }
