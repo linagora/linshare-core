@@ -125,13 +125,14 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     	String contentTxt = "content";
     	String locale = "en";
     	String fromUser = "foobar@foodomain.com";
+    	String fromDomain = LINSHARE_MAIL;
     	String recipient = "johndoe@unknow.com";
     	String recipient2 = "janesmith@unknow.com";
     	
     	MailContainer mailContainer = new MailContainer(locale,contentTxt,subject);
     	
-    	MailContainerWithRecipient mailContainerWithRecipient = new MailContainerWithRecipient(mailContainer, recipient);;
-    	MailContainerWithRecipient mailContainerWithRecipient2 = new MailContainerWithRecipient(mailContainer, recipient2);;
+    	MailContainerWithRecipient mailContainerWithRecipient = new MailContainerWithRecipient(mailContainer, recipient, fromUser, fromDomain);
+    	MailContainerWithRecipient mailContainerWithRecipient2 = new MailContainerWithRecipient(mailContainer, recipient2, fromUser, fromDomain);
 
     	List<MailContainerWithRecipient> mailContainerWithRecipientList = new ArrayList<MailContainerWithRecipient>();
     	
