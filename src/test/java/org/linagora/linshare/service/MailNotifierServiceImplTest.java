@@ -131,8 +131,8 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
     	
     	MailContainer mailContainer = new MailContainer(locale,contentTxt,subject);
     	
-    	MailContainerWithRecipient mailContainerWithRecipient = new MailContainerWithRecipient(mailContainer, recipient, fromUser, fromDomain);
-    	MailContainerWithRecipient mailContainerWithRecipient2 = new MailContainerWithRecipient(mailContainer, recipient2, fromUser, fromDomain);
+    	MailContainerWithRecipient mailContainerWithRecipient = new MailContainerWithRecipient(mailContainer, recipient, LINSHARE_MAIL, fromDomain);
+    	MailContainerWithRecipient mailContainerWithRecipient2 = new MailContainerWithRecipient(mailContainer, recipient2, LINSHARE_MAIL, fromDomain);
 
     	List<MailContainerWithRecipient> mailContainerWithRecipientList = new ArrayList<MailContainerWithRecipient>();
     	
@@ -147,7 +147,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 
             assertNotNull("message was null", msg);
             assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+            assertEquals("'From' address did not match", fromDomain, msg.getFrom()[0].toString());
             assertEquals("'To' address did not match", recipient,
                 msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
             assertEquals("'ReplyTo' address did not match", LINSHARE_MAIL,
@@ -179,7 +179,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 
             assertNotNull("message was null", msg);
             assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+            assertEquals("'From' address did not match", fromDomain, msg.getFrom()[0].toString());
             assertEquals("'To' address did not match", recipient,
                 msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
             assertEquals("'ReplyTo' address did not match", fromUser,
@@ -190,7 +190,7 @@ public class MailNotifierServiceImplTest extends AbstractTransactionalJUnit4Spri
 
             assertNotNull("message was null", msg);
             assertEquals("'Subject' did not match", subject, msg.getSubject());
-            assertEquals("'From' address did not match", LINSHARE_MAIL, msg.getFrom()[0].toString());
+            assertEquals("'From' address did not match", fromDomain, msg.getFrom()[0].toString());
             assertEquals("'To' address did not match", recipient2,
                 msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
             assertEquals("'ReplyTo' address did not match", fromUser,
