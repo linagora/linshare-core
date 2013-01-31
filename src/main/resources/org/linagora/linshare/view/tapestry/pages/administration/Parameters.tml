@@ -100,7 +100,14 @@
 								<td colspan="2"><h2>${message:pages.administration.index.other.title}</h2></td>
 							</tr>
 						</t:if>
-							
+
+                        <t:if test="showDomainMail">
+							<tr>
+								<td class="label"><t:label for="domainMail" class="edit-form-label">${message:pages.administration.functionality.domain_mail}</t:label></td>
+								<td class="input"><t:textfield t:id="domainMail" size="50" class="edit-form-field" /></td>
+							</tr>
+						</t:if>
+
 						<t:if test="ShowCustomLogo">
 							<tr>
 								<td class="label"><t:label for="customLogo" class="edit-form-label">${message:pages.administration.functionality.custom_logo}</t:label></td>

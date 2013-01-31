@@ -189,11 +189,20 @@ public class Parameters {
 	@Persist
 	@Property
 	private StringValueFunctionalityVo timeStampingFunctionality;
-
 	@Property
 	private boolean showTimeStamping = false;
 	@Property
 	private String timeStampingUrl;
+	
+	
+	//	DOMAIN_MAIL
+	@Persist
+	@Property
+	private StringValueFunctionalityVo domainMailFunctionality;
+	@Property
+	private boolean showDomainMail = false;
+	@Property
+	private String domainMail;
 		
 	 
 	//	CUSTOM_LOGO
@@ -296,22 +305,22 @@ public class Parameters {
 		        if (shareExpiryRules == null) {
 		            shareExpiryRules = new ArrayList<ShareExpiryRule>();
 		        }
-				
 			} else if(functionality.getIdentifier().equals(FunctionalityNames.TIME_STAMPING)) {
 				timeStampingFunctionality = (StringValueFunctionalityVo)functionality;
 				showTimeStamping = true;
 				timeStampingUrl = timeStampingFunctionality.getValue();
-				
 			} else if(functionality.getIdentifier().equals(FunctionalityNames.CUSTOM_LOGO)) {
 				customLogoFunctionality = (StringValueFunctionalityVo) functionality;
 				showCustomLogo = true;
 				customLogo = customLogoFunctionality.getValue();
-				
 			} else if(functionality.getIdentifier().equals(FunctionalityNames.COMPLETION)) {
 				completionFunctionality = (IntegerValueFunctionalityVo) functionality;
 				showCompletion = true;
 				autoCompleteThreshold = completionFunctionality.getValue();
-				
+			} else if (functionality.getIdentifier().equals(FunctionalityNames.DOMAIN_MAIL)) {
+				domainMailFunctionality = (StringValueFunctionalityVo) functionality;
+				showDomainMail = true;
+				domainMail = domainMailFunctionality.getValue();
 			} else {
 				logger.error("Unknown Functionality Form for : " + functionality.getIdentifier());
 			}
@@ -354,9 +363,11 @@ public class Parameters {
 		if(customLogoFunctionality != null ){
 			customLogoFunctionality.setValue(customLogo);
 		}
-		
 		if(completionFunctionality != null ){
 			completionFunctionality.setValue(autoCompleteThreshold);
+		}
+		if (domainMailFunctionality != null) {
+			domainMailFunctionality.setValue(domainMail);
 		}
 
 		logger.debug("functionalities.size : " + functionalities.size());
@@ -369,17 +380,11 @@ public class Parameters {
 	
 	
 	public boolean getNeedAccountParameterTitle() {
-		if(showUserMaxFileSize || showGlobalQuota || showUserQuota || showGuestAccountExpiryTime) {
-			return true;
-		}
-		return false;
+		return showUserMaxFileSize || showGlobalQuota || showUserQuota || showGuestAccountExpiryTime;
 	}
 	
 	public boolean getNeedOtherTitle() {
-		if(showCustomLogo || showTimeStamping || showCompletion) {
-			return true;
-		}
-		return false;
+		return showDomainMail || showCustomLogo || showTimeStamping || showCompletion;
 	}
 	
 	
