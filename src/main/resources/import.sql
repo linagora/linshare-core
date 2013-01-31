@@ -500,8 +500,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (24, true, 'RESTRICTED_GUEST', 47, 48, 1);
 
 -- Functionality : DOMAIN_MAIL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (47, true, true, 0, true);
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (48, false, false, 2, false);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 47, 48, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (7, 'linshare-noreply@linagora.com');
-
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (49, true, true, 0, true);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false, false, 2, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 49, 50, 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');

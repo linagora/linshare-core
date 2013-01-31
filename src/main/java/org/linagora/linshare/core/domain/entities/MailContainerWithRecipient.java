@@ -53,9 +53,11 @@ public class MailContainerWithRecipient extends MailContainer {
 	 * 
 	 * @param mailContainer
 	 */
-	public MailContainerWithRecipient(MailContainer mailContainer, String recipient) {
+	public MailContainerWithRecipient(MailContainer mailContainer, String recipient, String replyTo, String from) {
 		super(mailContainer);
-		this.recipient=recipient;
+		this.recipient		=	recipient;
+		this.replyTo 		=	replyTo;
+		this.from			=	from;
 	}
 
 	public MailContainerWithRecipient(String locale) {
