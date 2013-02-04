@@ -327,7 +327,6 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 				
 			long userQuota = userQuotaFunctionality.getPlainSize();
 			
-			// FIXME : user quota need to create a specific finder for better performance
 			Set<Entry> entries = account.getEntries();
 			for (Entry entry : entries) {
 				if(entry.getEntryType().equals(EntryType.DOCUMENT)) {

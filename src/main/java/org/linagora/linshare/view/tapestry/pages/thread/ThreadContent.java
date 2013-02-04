@@ -112,7 +112,7 @@ public class ThreadContent {
 
 	@SuppressWarnings("unchecked")
 	@SetupRender
-	public void setupRender() {
+	public void setupRender() throws BusinessException {
 		logger.debug("Setup Render begins");
 		
 		threadName = selectedThread.getName();
@@ -138,8 +138,7 @@ public class ThreadContent {
 				}
 				break;
 			default:
-				// TODO : can't be there, throw an exception
-				break;
+				throw new BusinessException("Can't generate the thread content tree view. Tree depth should be in [1..3] but is " + view.getDepth());
 			}
 		}
 		switch (depth) {
@@ -155,8 +154,7 @@ public class ThreadContent {
 		case 3:
 			break;
 		default:
-			// TODO : can't be there, throw an exception
-			break;
+			throw new BusinessException("Can't generate the thread content tree view. Tree depth should be in [1..3] but is " + depth);
 		}
 		children = root != null ? Collections.list(root.children()) : new ArrayList<DefaultMutableTreeNode>();
 	}

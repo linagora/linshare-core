@@ -298,7 +298,6 @@ public class GuestEditForm {
 			customMessage = filter.clean(customMessage);
 			if (filter.hasError()) {
 				logger.debug("XSSFilter found some tags and striped them.");
-		    	// FIXME aucun message affiche
 				businessMessagesManagementService.notify(filter.getWarningMessage());
 			}
 		} catch (BusinessException e) {

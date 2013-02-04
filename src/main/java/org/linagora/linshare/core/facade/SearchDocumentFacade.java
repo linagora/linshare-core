@@ -54,7 +54,7 @@ public interface SearchDocumentFacade {
 
 	/**
 	 * same function as retrieveDocumentContainsCriterion but we limit search to shared document
-	 * @param actorVo TODO
+	 * @param actorVo
 	 * @param searchDocumentCriterion
 	 * @return
 	 */
