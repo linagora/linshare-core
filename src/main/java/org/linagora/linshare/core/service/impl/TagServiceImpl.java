@@ -28,7 +28,6 @@ public class TagServiceImpl implements TagService {
 	
 	@Override
 	public Tag findByOwnerAndName(Account actor, Thread owner, String name) throws BusinessException {
-		// TODO : check if the actor is a thread member
 		return tagBusinessService.findByOwnerAndName(owner, name);
 	}
 	
@@ -45,7 +44,6 @@ public class TagServiceImpl implements TagService {
 	
 	@Override
 	public void setTagToThreadEntries(Account actor, Thread owner, List<ThreadEntry> threadEntries, String tagName, String value) throws BusinessException {
-		// TODO : check if the actor is a thread member
 		Tag tag = findByOwnerAndName(actor, owner, tagName);
 		if (tag != null) {
 			for (ThreadEntry threadEntry : threadEntries) {

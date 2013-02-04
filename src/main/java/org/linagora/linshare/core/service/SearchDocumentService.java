@@ -39,7 +39,7 @@ public interface SearchDocumentService {
 	 * Retrieve all document corresponding to criterion using matching (contains).
 	 * Warning the user matches always exactly. 
 	 * Only string values in the vo will use the matching (not the size).
-	 * @param actor TODO
+	 * @param actor
 	 * @return all document for criterion
 	 * before in the List it can be mixed with DocumentVo and ShareDocumentVo.
 	 * now we limit to DocumentVo
@@ -49,7 +49,7 @@ public interface SearchDocumentService {
 	/**
 	 * same function as retrieveDocumentContainsCriterion
 	 * but limit to share only
-	 * @param actor TODO
+	 * @param actor
 	 * @param searchDocumentCriterion
 	 * @return list of ShareDocumentVo
 	 */

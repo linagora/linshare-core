@@ -144,22 +144,16 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion) {
-		
-		
 		final QueryParameter queryParameter = buildQuery(searchDocumentCriterion, ANYWHERE);
 		
 		return getHibernateTemplate().executeFind(new HibernateCallback<List<DocumentEntry>>() {
 			public List<DocumentEntry> doInHibernate(final Session session) throws HibernateException, SQLException {
-				
 				StringBuilder queryString = new StringBuilder("select docEntry from DocumentEntry docEntry join docEntry.entryOwner account join docEntry.document doc ");
-				
 				final Query query = session.createQuery(queryString.append(queryParameter.getQuery()).toString());
-				
 				// Put the objects in the query
 				for (String key : queryParameter.getKey()) {
 					query.setParameter(key, queryParameter.getParameter(key));
 				}
-				
 				return query.setCacheable(true).list();
 			}
 		});
