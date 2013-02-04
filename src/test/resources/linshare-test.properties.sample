@@ -11,7 +11,6 @@ role.user=simple
 role.public=public
 
 mail.smtp.host=smtp.yourdomain.com
-mail.smtp.sender=linShare@yourdomain.com
 mail.smtp.user=user
 mail.smtp.password=password
 mail.smtp.auth.needed=false
