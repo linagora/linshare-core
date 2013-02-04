@@ -39,7 +39,12 @@
 			<sec:filter-chain pattern="/download.downloadthemall/**" filters="none" />
 			<sec:filter-chain pattern="/localDecrypt/**" filters="none" />
 
-			<sec:filter-chain pattern="/webservice/soap/*?wsdl*" filters="none" />
+			<!-- allow soap wsdl to be public with these rule -->
+			<sec:filter-chain pattern="/webservice/soap?wsdl" filters="none" />
+			<sec:filter-chain pattern="/webservice/?_wadl" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
+			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
+			
 			<sec:filter-chain pattern="/webservice/**"
 				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
 			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
