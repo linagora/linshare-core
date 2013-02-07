@@ -39,7 +39,7 @@ public class DocumentUtils {
 			bof = new BufferedOutputStream(new FileOutputStream(tempFile));
 
 			// Transfer bytes from in to out
-			byte[] buf = new byte[20480];
+			byte[] buf = new byte[64 * 4096]; // 256Kio
 			int len;
 			while ((len = stream.read(buf)) > 0) {
 				bof.write(buf, 0, len);
