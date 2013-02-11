@@ -140,7 +140,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		ShareLogEntry logEntry = new ShareLogEntry(actor, shareEntry, LogAction.SHARE_DELETE, "Deleting anonymous share" );
 		logEntryService.create(logEntry);
 		
-		//TODO AnonymousShareEntry mail notification
+		//FIXME AnonymousShareEntry mail notification
 //		notifierService.sendAllNotifications(mailElementsFactory.buildMailAnonymousDownload(actor, mailContainer, docs, email, recipient)
 	}
 	
@@ -191,7 +191,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		try {
 			notifierService.sendAllNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
 		} catch (BusinessException e) {
-				logger.error("Error while trying to notify upcoming outdated share", e);
+			logger.error("Error while trying to notify upcoming outdated share", e);
 		}
 		
 	}

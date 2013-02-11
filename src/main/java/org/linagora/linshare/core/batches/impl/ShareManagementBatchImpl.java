@@ -233,8 +233,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 	        List<ShareEntry> shares = shareEntryRepository.findUpcomingExpiredEntries(day);
 	        logger.info(shares.size() + " upcoming (in "+ day.toString()+" days) outdated share(s) found to be notified.");
 	        for (ShareEntry share : shares) {
-	        	
-	        	if (share.getDownloaded() >= 1) {
+	        	if (share.getDownloaded() < 1) {
 	        		shareEntryService.sendUpcomingOutdatedShareEntryNotification(systemAccount, share, day);
 	        	}
 	        }
@@ -243,7 +242,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 	        logger.info(anonymousShareEntries.size() + " upcoming (in "+day.toString()+" days) outdated anonymous share Url(s) found to be notified.");
 	        
 	        for (AnonymousShareEntry anonymousShareEntry : anonymousShareEntries) {
-	        	if(anonymousShareEntry.getDownloaded() >= 1) {
+	        	if(anonymousShareEntry.getDownloaded() < 1) {
 	        		anonymousShareEntryService.sendUpcomingOutdatedShareEntryNotification(systemAccount, anonymousShareEntry, day);
 	        	}
 			}
