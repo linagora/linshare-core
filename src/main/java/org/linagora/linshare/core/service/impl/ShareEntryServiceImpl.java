@@ -326,7 +326,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		try {
 			notifierService.sendAllNotification(mailContentBuildingService.buildMailUpcomingOutdatedShare(shareEntry, days));
 		} catch (BusinessException e) {
-				logger.error("Error while trying to notify upcoming outdated share", e);
+			logger.error("Error while trying to notify upcoming outdated share", e);
 		}
 	}
 }
