@@ -447,7 +447,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
-		// TODO : mail is useless, use getLsUuid and remove it
 		Guest guest = guestRepository.findByLsUuid(guestUuid);
 		User owner = userRepository.findByLsUuid(ownerVo.getLsUid());
 		
@@ -471,7 +470,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void updateUserRole(String userUuid, String domain, String mail, Role role, UserVo ownerVo) throws BusinessException{
-		// TODO : mail is useless, use getLsUuid and remove it
 		User user = userRepository.findByLsUuid(userUuid);
 		if(user == null) {
 			logger.debug("User " + mail + " was not found in the database. Searching in directories ...");
@@ -491,9 +489,8 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void updateUserLocale(String domain, String mail, String locale) {
-		// TODO : mail is useless, use getLsUuid and remove it
-		User user = userRepository.findByMailAndDomain(domain,mail);
+	public void updateUserLocale(String uuid, String mail, String locale) {
+		User user = userRepository.findByLsUuid(uuid);
 		if(user == null) {
 			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user " + mail);
 		 }
@@ -510,11 +507,10 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public void changePassword(String login, String oldPassword, String newPassword) throws BusinessException {
-		// TODO : mail is useless, use getLsUuid and remove it
-		User user = userRepository.findByMail(login);
+	public void changePassword(String uuid, String mail, String oldPassword, String newPassword) throws BusinessException {
+		User user = userRepository.findByLsUuid(uuid);
 		if (user == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a user with the login " + login);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a user with the login " + mail);
 		}
 		
 		if (!user.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes()))) {
@@ -527,10 +523,10 @@ public class UserServiceImpl implements UserService {
 	
 
 	@Override
-	public void resetPassword(String login) throws BusinessException {
-		Guest guest = guestRepository.findByMail(login);
+	public void resetPassword(String uuid, String mail) throws BusinessException {
+		Guest guest = guestRepository.findByLsUuid(uuid);
 		if (guest == null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + login);
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find a guest with the login " + mail);
 		}
 		
 		// generate a password.
