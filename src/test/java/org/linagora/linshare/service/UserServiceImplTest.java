@@ -440,7 +440,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 	public void testChangePassword() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		AbstractDomain rootDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlRootDomain);
-		Internal user1 = new Internal("John","Doe","user1@linpki.org", null);
+		Guest user1 = new Guest("John","Doe","user1@linpki.org");
 		user1.setDomain(rootDomain);
 		
 		String oldPassword = new String("password");
@@ -451,7 +451,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		userService.saveOrUpdateUser(user1);
 		String newPassword = new String("newPassword");
 		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
-		userService.changePassword("user1@linpki.org", oldPassword, newPassword);
+		userService.changePassword(user1.getLsUuid(), "user1@linpki.org", oldPassword, newPassword);
 		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(newPassword.getBytes())));
 		
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -482,7 +482,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 				HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 		
 		guestRepository.create(guest);
-		userService.resetPassword("user3@linpki.org");
+		userService.resetPassword(guest.getLsUuid(), "user3@linpki.org");
 		Assert.assertFalse(guest.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 		
 		logger.debug(LinShareTestConstants.END_TEST);

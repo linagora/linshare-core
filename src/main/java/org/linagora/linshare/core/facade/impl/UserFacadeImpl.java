@@ -235,7 +235,7 @@ public class UserFacadeImpl implements UserFacade {
     		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Only a guest or superadmin may change its password");
     	}
     	
-    	userService.changePassword(user.getLogin(), oldPassword, newPassword);
+    	userService.changePassword(user.getLsUid(), user.getMail(), oldPassword, newPassword);
     	
     }
 
@@ -244,7 +244,7 @@ public class UserFacadeImpl implements UserFacade {
     		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user type is wrong, only a guest may change its password");
     	}
     	
-    	userService.resetPassword(user.getLogin());		
+    	userService.resetPassword(user.getLsUid(), user.getMail());		
 	}
 
 	public void setGuestContactRestriction(String uuid, List<String> mailContacts) throws BusinessException {

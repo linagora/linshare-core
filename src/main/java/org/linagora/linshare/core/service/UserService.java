@@ -120,23 +120,25 @@ public interface UserService {
 	 * @param mail : the user email
 	 * @param locale : the new local
 	 */
-	public void updateUserLocale(String domain, String mail, String locale);
+	public void updateUserLocale(String uuid, String mail, String locale);
 	
 	/**
 	 * change a guest or superadmin password
-	 * @param login
+	 * @param mail TODO
 	 * @param oldPassword
 	 * @param newPassword
+	 * @param login
 	 * @throws BusinessException : AUTHENTICATION_ERROR if the password supplied is wrong
 	 */
-	public void changePassword(String uuid, String oldPassword, String newPassword) throws BusinessException;
+	public void changePassword(String uuid, String mail, String oldPassword, String newPassword) throws BusinessException;
 	
 	/**
 	 * Reset a guest password
+	 * @param mail TODO
 	 * @param login
 	 * @throws BusinessException
 	 */
-	public void resetPassword(String uuid) throws BusinessException;
+	public void resetPassword(String uuid, String mail) throws BusinessException;
 	
 	/**
 	 * Update a guest as restricted and set his list of contacts
