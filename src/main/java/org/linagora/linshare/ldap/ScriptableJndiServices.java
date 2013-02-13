@@ -353,7 +353,6 @@ public class ScriptableJndiServices extends ScriptableObject {
 	protected Map<String, List<String>> _entry(final String dn, final String filter) throws NamingException {
 		Map<String, List<String>> entry = jndiServices.entry(dn, filter);
 		if(entry == null) {
-			// TODO : HOOK : TO be fix.
 			logger.error("jndiServices.entry(dn, filter) is null");
 			entry = new HashMap<String, List<String>>();
 		}

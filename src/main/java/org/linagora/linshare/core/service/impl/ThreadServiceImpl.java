@@ -117,65 +117,60 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void addMember(Thread thread, User user, boolean readOnly) {
+	public void addMember(Thread thread, User user, boolean readOnly) throws BusinessException {
 		ThreadMember member = new ThreadMember(!readOnly, false, user, thread);
 		thread.getMyMembers().add(member);
-		// XXX : error handling
 		try {
 			threadRepository.update(thread);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			throw e;
 		}
 	}
 
 	@Override
-	public void updateMember(ThreadMember member, boolean admin, boolean canUpload) {
+	public void updateMember(ThreadMember member, boolean admin, boolean canUpload) throws BusinessException {
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
-		// XXX : error handling
 		try {
 			threadMemberRepository.update(member);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			throw e;
 		}
 	}
 	
 	@Override
-	public void deleteMember(Thread thread, ThreadMember member) {
+	public void deleteMember(Thread thread, ThreadMember member) throws BusinessException {
 		thread.getMyMembers().remove(member);
-		// XXX : error handling
 		try {
 			threadRepository.update(thread);
 			threadMemberRepository.delete(member);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			throw e;
 		}
 	}
 	
 	@Override
-	public void deleteAllMembers(Thread thread) {
+	public void deleteAllMembers(Thread thread) throws BusinessException {
 		Object[] myMembers = thread.getMyMembers().toArray();
 		
 		for (Object threadMember : myMembers) {
 			thread.getMyMembers().remove(threadMember);
-			// XXX : error handling
 			try {
 				threadRepository.update(thread);
 				threadMemberRepository.delete((ThreadMember) threadMember);
 			} catch (BusinessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
+				throw e;
 			}
 		}
 
 	}
 	
 	@Override
-	public void deleteAllUserMemberships(User user) {
-		// XXX : error handling
+	public void deleteAllUserMemberships(User user) throws BusinessException {
 		List <ThreadMember> memberships = threadMemberRepository.findAllUserMemberships(user);
 		for (ThreadMember threadMember : memberships) {
 			deleteMember(threadMember.getThread(), threadMember);
@@ -183,81 +178,74 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 	
 	@Override
-	public void deleteThreadView(User user, Thread thread, ThreadView threadView) {
+	public void deleteThreadView(User user, Thread thread, ThreadView threadView) throws BusinessException {
 		thread.getThreadViews().remove(threadView);
-		// XXX : error handling
 		try {
 			threadRepository.update(thread);
 			threadViewRepository.delete(threadView);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			throw e;
 		}
 	}
 
 	@Override
-	public void deleteAllThreadViews(User user, Thread thread) {
+	public void deleteAllThreadViews(User user, Thread thread) throws BusinessException {
 		Object[] myThreadViews = thread.getThreadViews().toArray();
 		
 		for (Object threadView : myThreadViews) {
 			thread.getThreadViews().remove(threadView);
-			// XXX : error handling
 			try {
 				threadRepository.update(thread);
 				threadViewRepository.delete((ThreadView) threadView);
 			} catch (BusinessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
+				throw e;
 			}
 		}
 	}
 	
 	@Override
-	public void deleteTagFilter(User user, Thread thread, TagFilter filter) {
+	public void deleteTagFilter(User user, Thread thread, TagFilter filter) throws BusinessException {
 		thread.getThreadViews().remove(filter);
-		// XXX : error handling
 		try {
 			threadRepository.update(thread);
-			// TagRepository.delete(Filer);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			throw e;
 		}
 	}
 	
 	@Override
-	public void deleteTag(User user, Thread thread, Tag tag) {
+	public void deleteTag(User user, Thread thread, Tag tag) throws BusinessException {
 		thread.getTags().remove(tag);
-		// XXX : error handling
 		try {
 			threadRepository.update(thread);
 			tagRepository.delete(tag);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			throw e;
 		}
 	}
 	
 	@Override
-	public void deleteAllTags(User user, Thread thread) {
+	public void deleteAllTags(User user, Thread thread) throws BusinessException {
 		Object[] myTags = thread.getTags().toArray();
 		
 		for (Object tag : myTags) {
 			thread.getTags().remove(tag);
-			// XXX : error handling
 			try {
 				threadRepository.update(thread);
 				tagRepository.delete((Tag) tag);
 			} catch (BusinessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
+				throw e;
 			}
 		}
 	}
 	
 	@Override
-	public void deleteThread(User user, Thread thread) {
-		// XXX : error handling
+	public void deleteThread(User user, Thread thread) throws BusinessException {
 		try {
 			// Delete all entries
 			documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
@@ -265,7 +253,6 @@ public class ThreadServiceImpl implements ThreadService {
 			threadRepository.update(thread);
 			// Deleting members
 			this.deleteAllMembers(thread);
-
 			// Deleting views
 			thread.setCurrentThreadView(null);
 			threadRepository.update(thread);
@@ -275,8 +262,8 @@ public class ThreadServiceImpl implements ThreadService {
 			// Deleting the thread
 			threadRepository.delete(thread);
 		} catch (BusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			throw e;
 		}
 	}
 

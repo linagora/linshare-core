@@ -115,7 +115,7 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		threadService.create(datas.getUser2(), ThreadEntryServiceImplTest.THREAD_2);
 	}
 	
-	private void deleteAllThreads() {
+	private void deleteAllThreads() throws BusinessException {
 		for (Thread thread : threads) {
 			for (ThreadMember m : thread.getMyMembers()) {
 				if (m.getAdmin()) {

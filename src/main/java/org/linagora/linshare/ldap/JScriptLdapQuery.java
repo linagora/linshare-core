@@ -178,7 +178,6 @@ public class JScriptLdapQuery {
 		Map<String, Object> unitParams = new HashMap<String, Object>();
 		unitParams.put("dn", dn);
 		Map<String, List<String>> retMap = jScriptEvaluator.evalToEntryMap(unitCommand, unitParams);
-		// TODO : HOOK : TO be fix.
 		if(retMap == null) {
 			logger.error("dnToUser: retMap is null");
 			return null;
