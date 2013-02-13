@@ -375,7 +375,6 @@ public class UserServiceImpl implements UserService {
 		List<User> result=new ArrayList<User>();
 		logger.debug("adding guests to the return list");
 
-		// TODO : It is not the better way ... but it works.
     	List<Guest> list = guestRepository.searchGuestAnyWhere(mail, firstName, lastName);
        	logger.debug("Guest found : size : " + list.size());
        	
