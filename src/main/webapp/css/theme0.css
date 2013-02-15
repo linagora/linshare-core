@@ -3790,5 +3790,45 @@ input.ck-kaptcha {
 	display: none;
 }
 
+
+/**
+ * Fix auto complete position for IE 10
+ */
+
+.ie10 #home #quickShareForm .t-autocomplete-menu {
+	top:72px !important;
+	left:385px !important;
+}
+
+.ie10 #files #confirmWindowContent .t-autocomplete-menu {
+	top:372px !important;
+	left:72px !important;
+}
+
+.ie10 #fileSearch #simpleSearchForm .t-autocomplete-menu {
+	top:185px !important;
+	left:18px !important;
+}
+
+.ie10 #userSearch #userSearchForm .t-autocomplete-menu {
+	top:185px !important;
+	left:18px !important;
+}
+
+.ie10 #history #formReport #targetCriterion .t-autocomplete-menu {
+	top:147px !important;
+	left:145px !important;
+}
+
+.ie10 #audit #formReport #actorCriterion .t-autocomplete-menu {
+	top:147px !important;
+	left:145px !important;
+}
+
+.ie10 #audit #formReport #targetCriterion .t-autocomplete-menu {
+	top:147px !important;
+	left:451px !important;
+}
+
 /***************************************************************************/
 /* EOF */
