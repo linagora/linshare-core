@@ -147,40 +147,43 @@ public class MyBorderLayout {
     /* ***********************************************************
 	 *                Properties & injected symbol, ASO, etc
 	 ************************************************************ */
-	 
+ 
 	@SessionState
 	@Property
 	private UserVo userVo;
-	
+
 	@Property
 	private boolean userVoExists;
-	
+
 	@SuppressWarnings("unused")
 	@Property
 	private boolean admin;
-	
+
 	@SuppressWarnings("unused")
 	@Property
 	private boolean superadmin;
-	
+
 	@SuppressWarnings("unused")
 	@Property
 	private boolean userExt;
-	
+
 	@SuppressWarnings("unused")
 	@Property
 	private boolean user;
-	
+
 	@SuppressWarnings("unused")
 	@Property
 	private List<Locale> excludeLocales;
-	
+
 	@Property
 	private List<Locale> includeLocales;
-	
+
+	@Property
+	private String ie10Script;
+
 	@Property
 	private String ie9Css;
-	
+
 	@Property
 	private String ie8Css;
 
@@ -234,16 +237,22 @@ public class MyBorderLayout {
 			customLogoUrl = domainFacade.getCustomLogoUrlInRootDomain();
 		}
 
-		ie9Css="<!--[if IE 9]><link href='"+ie9CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
+		ie10Script = "<script> " +
+				"if(Function('/*@cc_on return document.documentMode===10@*/')()){" +
+					"document.documentElement.className+=' ie10';" +
+				"}" +
+				"</script>";
 		
-		ie8Css="<!--[if IE 8]><link href='"+ie8CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
+		ie9Css = "<!--[if IE 9]><link href='"+ie9CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
+		
+		ie8Css = "<!--[if IE 8]><link href='"+ie8CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
 
-		ie7Css="<!--[if IE 7]><link href='"+ie7CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
+		ie7Css = "<!--[if IE 7]><link href='"+ie7CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
 
-		ie6Css="<!--[if lte IE 6]><link href='"+ie6CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
+		ie6Css = "<!--[if lte IE 6]><link href='"+ie6CssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/><![endif]-->";
 //				+ "<script src='"+ie6DDPNGAsset.toClientURL()+"' ></script><script>DD_belatedPNG.fix('img, h1, a.button, a.button span');</script><![endif]--> ";
 		
-		defaultCss="<link href='"+defaultCssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>";
+		defaultCss = "<link href='"+defaultCssAsset.toClientURL()+"' rel='stylesheet' type='text/css'/>";
 		includeLocales = new ArrayList<Locale>();
 		includeLocales.add(Locale.FRENCH);
 		includeLocales.add(Locale.ENGLISH);

@@ -13,6 +13,7 @@
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />
         <t:outputraw value="defaultCss" />
+        <t:outputraw value="ie10Script" />
         <t:outputraw value="ie9Css" />
         <t:outputraw value="ie8Css" />
         <t:outputraw value="ie7Css" />
