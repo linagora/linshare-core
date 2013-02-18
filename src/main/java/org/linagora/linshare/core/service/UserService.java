@@ -124,7 +124,7 @@ public interface UserService {
 	
 	/**
 	 * change a guest or superadmin password
-	 * @param mail TODO
+	 * @param mail
 	 * @param oldPassword
 	 * @param newPassword
 	 * @param login
@@ -134,7 +134,7 @@ public interface UserService {
 	
 	/**
 	 * Reset a guest password
-	 * @param mail TODO
+	 * @param mail
 	 * @param login
 	 * @throws BusinessException
 	 */

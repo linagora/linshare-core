@@ -74,6 +74,7 @@ public class DaoAuthProvider implements UserDetailsService {
         	password = account.getPassword();
         
         	// If the password field is not set (only Ldap user), we set it to an empty string.
+        	// XXX : code etrange, a verifier
         	if (!AccountType.INTERNAL.equals(account) && password==null) password=""; 
         }
 		
