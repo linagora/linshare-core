@@ -147,5 +147,6 @@
 		<constructor-arg ref="documentEntryService" />
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="shareFacade" />
+		<constructor-arg ref="shareEntryService" />
 	</bean>
 </beans>

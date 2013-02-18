@@ -17,7 +17,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.linagora.linshare.webservice.dto.Document;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
@@ -72,13 +72,13 @@ public class RestWebserviceTest extends TestCase {
 		xop.setDocument(new DataHandler(new ByteArrayDataSource(data,
 				"application/octet-stream")));
 		client.accept("application/xml");
-		Document res = client.post(xop, Document.class);
+		DocumentDto res = client.post(xop, DocumentDto.class);
 		System.out.println("resultat new Document: " + res);
 
 		assertNotNull(res);
 		assertEquals("fichier.htm", res.getName());
 		
-		return res.getId();
+		return res.getUuid();
 	}
 
 	@Test
@@ -93,8 +93,8 @@ public class RestWebserviceTest extends TestCase {
 		WebClient client = bean.createWebClient();
 		client.path("document/list.xml");
 		client.type("text/xml").accept("text/xml");
-		Collection<? extends Document> r = client.getCollection(Document.class);
-		for (Document document : r) {
+		Collection<? extends DocumentDto> r = client.getCollection(DocumentDto.class);
+		for (DocumentDto document : r) {
 			System.out.println(document);
 		}
 	}

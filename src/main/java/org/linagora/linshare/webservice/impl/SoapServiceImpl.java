@@ -36,7 +36,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.webservice.SoapService;
-import org.linagora.linshare.webservice.dto.Document;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
@@ -71,7 +71,7 @@ public class SoapServiceImpl extends WebserviceBase implements
 	@WebMethod(operationName = "getDocuments")
 	// **soap
 	@Override
-	public List<Document> getDocuments() throws BusinessException {
+	public List<DocumentDto> getDocuments() throws BusinessException {
 		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.getDocuments();
 	}
@@ -87,7 +87,7 @@ public class SoapServiceImpl extends WebserviceBase implements
 	@WebMethod(operationName = "addDocumentXop")
 	// **soap
 	@Override
-	public Document addDocumentXop(DocumentAttachement doca) throws BusinessException {
+	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException {
 		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.addDocumentXop(doca);
 	}
