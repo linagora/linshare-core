@@ -30,6 +30,7 @@ import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.webservice.dto.UserDto;
 
 
 /**
@@ -56,4 +57,7 @@ public interface SoapService {
 	
 	// Threads
 	public List<ThreadDto> getAllMyThread() throws BusinessException;
+	
+	// Users
+	public List<UserDto> getUsers() throws BusinessException;
 }

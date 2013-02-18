@@ -33,12 +33,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.core.facade.WebServiceThreadFacade;
+import org.linagora.linshare.core.facade.WebServiceUserFacade;
 import org.linagora.linshare.webservice.SoapService;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.webservice.dto.UserDto;
 
 @WebService(serviceName = "SoapWebService", endpointInterface = "org.linagora.linshare.webservice.SoapService",
 	targetNamespace = WebserviceBase.NAME_SPACE_NS, portName = "SoapServicePort")
@@ -54,12 +56,16 @@ public class SoapServiceImpl extends WebserviceBase implements
 	
 	private final WebServiceThreadFacade webServiceThreadFacade;
 	
+	private final WebServiceUserFacade webServiceUserFacade;
 	
 	public SoapServiceImpl(
-			final WebServiceDocumentFacade webServiceDocumentFacade, final WebServiceShareFacade webServiceShareFacade, WebServiceThreadFacade webServiceThreadFacade) {
+			final WebServiceDocumentFacade webServiceDocumentFacade, final WebServiceShareFacade webServiceShareFacade,
+			WebServiceThreadFacade webServiceThreadFacade,
+			WebServiceUserFacade webServiceUserFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 		this.webServiceShareFacade = webServiceShareFacade;
 		this.webServiceThreadFacade = webServiceThreadFacade;
+		this.webServiceUserFacade = webServiceUserFacade;
 	}
 
 	
@@ -150,8 +156,19 @@ public class SoapServiceImpl extends WebserviceBase implements
 		webServiceThreadFacade.checkAuthentication();
 		return webServiceThreadFacade.getAllMyThread();
 	}
+
+
+
 	
 	
+	
+	// Users
+	
+	@Override
+	public List<UserDto> getUsers() throws BusinessException {
+		webServiceUserFacade.checkAuthentication();
+		return webServiceUserFacade.getUsers();
+	}
 	
 	
 }
