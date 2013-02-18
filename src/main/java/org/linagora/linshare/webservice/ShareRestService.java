@@ -25,6 +25,8 @@ import java.util.List;
 
 import javax.ws.rs.Path;
 
+import org.linagora.linshare.webservice.dto.ShareDto;
+
 
 /**
  * Interface for the Share service
@@ -53,5 +55,10 @@ public interface ShareRestService {
 	
 
 	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String message) ;
+	
+	
+//	public List<ShareDto> getMyOwnShares();
+	public List<ShareDto> getReceivedShares();
+	
 	
 }

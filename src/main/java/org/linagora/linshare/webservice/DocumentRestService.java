@@ -26,7 +26,7 @@ import java.util.List;
 import javax.ws.rs.Path;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.webservice.dto.Document;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
@@ -39,9 +39,9 @@ import org.linagora.linshare.webservice.dto.SimpleLongValue;
 @Path("/rest/document")
 public interface DocumentRestService {
 
-	public List<Document> getDocuments();
+	public List<DocumentDto> getDocuments();
 	public SimpleLongValue getUserMaxFileSize();
 	public SimpleLongValue getAvailableSize();
-	public Document uploadfile(InputStream theFile, String fileComment, String givenFileName, MultipartBody body);
-	public Document addDocumentXop(DocumentAttachement doca);
+	public DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body);
+	public DocumentDto addDocumentXop(DocumentAttachement doca);
 }

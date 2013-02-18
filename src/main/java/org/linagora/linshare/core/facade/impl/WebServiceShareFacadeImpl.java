@@ -26,6 +26,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
@@ -37,6 +38,8 @@ import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
+import org.linagora.linshare.core.service.ShareEntryService;
+import org.linagora.linshare.webservice.dto.ShareDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -47,13 +50,16 @@ public class WebServiceShareFacadeImpl implements WebServiceShareFacade {
 	private final DocumentEntryService documentEntryService;
 	private final AccountService accountService;
 	private final ShareFacade shareFacade;
+	private final ShareEntryService shareEntryService;
 
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceShareFacadeImpl.class);
 
-	public WebServiceShareFacadeImpl(final DocumentEntryService documentEntryService, final AccountService accountService, final ShareFacade shareFacade) {
+	public WebServiceShareFacadeImpl(final DocumentEntryService documentEntryService, final AccountService accountService, final ShareFacade shareFacade,
+			final ShareEntryService shareEntryService) {
 		this.documentEntryService = documentEntryService;
 		this.accountService = accountService;
 		this.shareFacade = shareFacade;
+		this.shareEntryService = shareEntryService;
 	}
 
 	@Override
@@ -67,6 +73,32 @@ public class WebServiceShareFacadeImpl implements WebServiceShareFacade {
 
 		return actor;
 	}
+
+	@Override
+	public List<ShareDto> getReceivedShares() throws BusinessException {
+		User actor = getAuthentication();
+		 
+		List<ShareEntry> shares = shareEntryService.findAllMyShareEntries(actor, actor); 
+ 
+		if (shares == null) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND, "No such share");
+		}
+		
+		return convertShareEntryList (shares);
+	}
+
+	private static List<ShareDto> convertShareEntryList(List<ShareEntry> input) {
+	
+		if (input == null)
+			return null;
+	
+		List<ShareDto> output = new ArrayList<ShareDto>();
+		for (ShareEntry var : input) {
+			output.add(new ShareDto(var));
+		}
+		return output;
+	}
+
 
 	@Override
 	public void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException {

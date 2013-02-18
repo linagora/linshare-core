@@ -38,7 +38,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.webservice.DocumentRestService;
-import org.linagora.linshare.webservice.dto.Document;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
@@ -62,10 +62,10 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) // application/xml application/json 
 	@Override
-	public List<Document> getDocuments()
+	public List<DocumentDto> getDocuments()
     {
 		
-		List<Document> docs = null;
+		List<DocumentDto> docs = null;
 		
 		try {
 			webServiceDocumentFacade.checkAuthentication();
@@ -87,7 +87,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Override
-	public Document uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "comment", required = false) String fileComment, @Multipart(value = "filename",required = false) String givenFileName, MultipartBody body) {
+	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "description", required = false) String description, @Multipart(value = "filename",required = false) String givenFileName, MultipartBody body) {
 		
 		User actor = null;
 		try {
@@ -116,7 +116,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		}
 		
 		//comment can not be null ?
-		String comment = (fileComment == null)? "":fileComment;
+		String comment = (description == null)? "":description;
 		
 		try {
 			return webServiceDocumentFacade.uploadfile(theFile, filename, comment);
@@ -136,9 +136,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Consumes(MediaType.MULTIPART_FORM_DATA) 
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Override
-    public Document addDocumentXop(DocumentAttachement doca) {
+    public DocumentDto addDocumentXop(DocumentAttachement doca) {
 		
-		Document doc = null;
+		DocumentDto doc = null;
 		
 		try {
 			webServiceDocumentFacade.checkAuthentication(); //raise exception

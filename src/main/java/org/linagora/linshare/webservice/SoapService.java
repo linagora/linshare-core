@@ -25,7 +25,7 @@ import java.util.List;
 import javax.jws.WebService;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.Document;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
@@ -40,10 +40,10 @@ import org.linagora.linshare.webservice.dto.SimpleLongValue;
 public interface SoapService {
 
 	// Documents
-	public List<Document> getDocuments() throws BusinessException;
+	public List<DocumentDto> getDocuments() throws BusinessException;
 	public SimpleLongValue getUserMaxFileSize() throws BusinessException;
 	public SimpleLongValue getAvailableSize() throws BusinessException;
-	public Document addDocumentXop(DocumentAttachement doca) throws BusinessException;
+	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
 	
 	// Shares
 	public void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException;

@@ -39,7 +39,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.webservice.dto.Document;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	
 	
 	@Override
-	public List<Document> getDocuments() throws BusinessException {
+	public List<DocumentDto> getDocuments() throws BusinessException {
 		User actor = getAuthentication();
 		 
 		List<DocumentEntry> docs;
@@ -78,7 +78,7 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 
 	
 	@Override
-	public Document uploadfile(InputStream fi, String filename, String fileComment) throws BusinessException{
+	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException{
 		DocumentEntry res;
 		FileInputStream tempfi = null;
 		File tempFile = null;
@@ -90,7 +90,7 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 			tempFile = getTempFile(fi,filename);
 			tempfi = new FileInputStream(tempFile);
 			res =  documentEntryService.createDocumentEntry(actor, tempfi, tempFile.length(), filename);
-			documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), fileComment);
+			documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), description);
 		} catch (BusinessException e) {
 			throw e;
 		} catch (FileNotFoundException e) {
@@ -109,7 +109,7 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 			}
 		}
 		
-		return new Document(res);
+		return new DocumentDto(res);
 	}
 	
 
@@ -129,7 +129,7 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	
 
 	@Override
-	public Document addDocumentXop(DocumentAttachement doca)  throws BusinessException {
+	public DocumentDto addDocumentXop(DocumentAttachement doca)  throws BusinessException {
     	DocumentEntry res;
     	FileInputStream tempfi = null;
     	File tempFile = null;
@@ -166,7 +166,7 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 			}
 		}
 		
-		return new Document(res);
+		return new DocumentDto(res);
 	}
 	
 	@Override
@@ -245,14 +245,14 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	}
 
 	
-	private static List<Document> convertDocumentEntryList(List<DocumentEntry> input) {
+	private static List<DocumentDto> convertDocumentEntryList(List<DocumentEntry> input) {
 
 		if (input == null)
 			return null;
 
-		List<Document> output = new ArrayList<Document>();
+		List<DocumentDto> output = new ArrayList<DocumentDto>();
 		for (DocumentEntry var : input) {
-			output.add(new Document(var));
+			output.add(new DocumentDto(var));
 		}
 		return output;
 	}
