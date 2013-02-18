@@ -23,6 +23,7 @@
 	<bean id="soapService" class="org.linagora.linshare.webservice.impl.SoapServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
 		<constructor-arg ref="webServiceShareFacade" />
+		<constructor-arg ref="webServiceThreadFacade" />
 	</bean>
 	
 <!-- 	<bean id="shareSoapService" class="org.linagora.linshare.webservice.impl.ShareSoapServiceImpl"> -->
@@ -92,12 +93,17 @@
 	
 	<bean id="pluginManagmentRestService" class="org.linagora.linshare.webservice.impl.PluginManagmentRestServiceImpl">
 	</bean>
+	
+	<bean id="threadRestService" class="org.linagora.linshare.webservice.impl.ThreadRestServiceImpl">
+		<constructor-arg ref="webServiceThreadFacade" />
+	</bean>
 
 	<jaxrs:server id="restContainer" address="/">
 		<jaxrs:serviceBeans>
 			<ref bean="documentRestService" />
 			<ref bean="shareRestService" />
 			<ref bean="pluginManagmentRestService" />
+			<ref bean="threadRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
