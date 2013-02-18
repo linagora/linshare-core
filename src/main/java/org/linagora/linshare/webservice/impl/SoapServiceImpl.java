@@ -29,16 +29,16 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.ws.soap.MTOM;
 
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
+import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.webservice.SoapService;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
+import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
+import org.linagora.linshare.webservice.dto.ThreadDto;
 
 @WebService(serviceName = "SoapWebService", endpointInterface = "org.linagora.linshare.webservice.SoapService",
 	targetNamespace = WebserviceBase.NAME_SPACE_NS, portName = "SoapServicePort")
@@ -52,12 +52,14 @@ public class SoapServiceImpl extends WebserviceBase implements
 
 	private final WebServiceShareFacade webServiceShareFacade;
 	
+	private final WebServiceThreadFacade webServiceThreadFacade;
 	
 	
 	public SoapServiceImpl(
-			final WebServiceDocumentFacade webServiceDocumentFacade, final WebServiceShareFacade webServiceShareFacade) {
+			final WebServiceDocumentFacade webServiceDocumentFacade, final WebServiceShareFacade webServiceShareFacade, WebServiceThreadFacade webServiceThreadFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 		this.webServiceShareFacade = webServiceShareFacade;
+		this.webServiceThreadFacade = webServiceThreadFacade;
 	}
 
 	
@@ -116,6 +118,16 @@ public class SoapServiceImpl extends WebserviceBase implements
 		webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
 	}
 	
+	@WebMethod(operationName = "getReceivedShares")
+	// **soap
+	@Override
+	public List<ShareDto> getReceivedShares() throws BusinessException {
+		webServiceShareFacade.checkAuthentication();
+		return webServiceShareFacade.getReceivedShares();
+	}
+
+
+	
 	
 	
 	
@@ -126,4 +138,20 @@ public class SoapServiceImpl extends WebserviceBase implements
 	public String getInformation() throws BusinessException {
 		return "This API is still in developpement";
 	}
+
+
+	
+	
+	
+	// Threads
+
+	@Override
+	public List<ThreadDto> getAllMyThread() throws BusinessException {
+		webServiceThreadFacade.checkAuthentication();
+		return webServiceThreadFacade.getAllMyThread();
+	}
+	
+	
+	
+	
 }

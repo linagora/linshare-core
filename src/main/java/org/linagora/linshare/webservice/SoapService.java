@@ -25,9 +25,11 @@ import java.util.List;
 import javax.jws.WebService;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
+import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
+import org.linagora.linshare.webservice.dto.ThreadDto;
 
 
 /**
@@ -47,7 +49,11 @@ public interface SoapService {
 	
 	// Shares
 	public void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException;
+	public List<ShareDto> getReceivedShares() throws BusinessException;
 	
 	// PluginManagment
 	public String getInformation() throws BusinessException;
+	
+	// Threads
+	public List<ThreadDto> getAllMyThread() throws BusinessException;
 }

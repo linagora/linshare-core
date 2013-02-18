@@ -149,4 +149,8 @@
 		<constructor-arg ref="shareFacade" />
 		<constructor-arg ref="shareEntryService" />
 	</bean>
+	<bean id="webServiceThreadFacade" class="org.linagora.linshare.core.facade.impl.WebServiceThreadFacadeImpl">
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="accountService" />
+	</bean>
 </beans>
