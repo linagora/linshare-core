@@ -20,58 +20,58 @@
 */
 package org.linagora.linshare.webservice.dto;
 
-import java.util.Calendar;
-
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
 
 @XmlRootElement(name = "Document")
-public class Document {
+public class DocumentDto extends EntryDto {
 
-	private String id;
-	private String name;
-	private Calendar creation;
+	private Boolean ciphered;
 	
+	private String type;
 	
-	public Document(DocumentEntry de) {
-		
-		if(de==null) return;
-		this.id = de.getUuid();
-		this.name = de.getName();
-		this.creation = de.getCreationDate();
-	}
-	
-	public Document() {
+	private Long size;
+
+	public DocumentDto(DocumentEntry de) {
+		super(de);
+		this.ciphered = de.getCiphered();
+		this.type = de.getDocument().getType();
+		this.size = de.getDocument().getSize();
 	}
 	
-	@XmlElement(name = "uuid")
-	@JsonProperty("uuid") 
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Calendar getCreation() {
-		return creation;
-	}
-	public void setCreation(Calendar creation) {
-		this.creation = creation;
+	public DocumentDto() {
+		super();
 	}
 	
+	public String getType() {
+		return type;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public Long getSize() {
+		return size;
+	}
+	
+	public void setSize(Long size) {
+		this.size = size;
+	}
+	
+	public Boolean getCiphered() {
+		return ciphered;
+	}
+
+	public void setCiphered(Boolean ciphered) {
+		this.ciphered = ciphered;
+	}
+
 	@Override
 	public String toString() {
-		return "Document [id=" + id + ", name=" + name + ", creation=" + creation + "]";
+		return "Document [id=" + uuid + ", name=" + name + ", creation=" + creationDate + "]";
 	}
 	
 }
