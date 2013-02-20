@@ -25,7 +25,7 @@ public class WebServiceUserFacadeImpl implements WebServiceUserFacade {
 	public List<UserDto> getUsers() throws BusinessException {
 		User actor = getAuthentication();
 		List<UserDto> res = new ArrayList<UserDto>();
-		
+		// we return all users without any filters
 		List<User> users = userService.searchUser(null, null, null, null, actor);
 		for (User user : users) {
 			res.add(new UserDto(user));

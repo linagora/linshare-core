@@ -352,7 +352,6 @@
 		</dependency>
 
 		<!-- bridje logs from commons loggings to slf4j -->
-
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
@@ -364,8 +363,8 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4j-release-version}</version>
 		</dependency>
-
-
+		
+		<!-- Mime type detection tools. -->
 		<dependency>
 			<groupId>org.semanticdesktop</groupId>
 			<artifactId>rdf2go.api</artifactId>
@@ -376,7 +375,11 @@
 			<artifactId>aperture</artifactId>
 			<version>1.2.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>1.3</version>
+		</dependency>
 
 		<!-- Jack Rabbit dependencies -->
 		<dependency>
