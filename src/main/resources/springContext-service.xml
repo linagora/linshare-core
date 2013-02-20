@@ -15,10 +15,6 @@
 	<bean id="templating" class="org.linagora.linshare.view.tapestry.services.impl.MailTemplating">
 	</bean>
 
-	<!-- aperture -->
-	<bean id="mimeTypeMagicNumberDao" class="org.linagora.linshare.core.dao.apperture.MimeTypeMagicNumberImpl">
-	</bean>
-
 	<bean id="logEntryService" class="org.linagora.linshare.core.service.impl.LogEntryServiceImpl">
 		<constructor-arg index="0" ref="logEntryRepository" />
 	</bean>
@@ -91,12 +87,6 @@
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">
 		<constructor-arg ref="functionalityService" />
 	</bean>
-
-
-	<!-- to be deleted <bean id="securedUrlService" class="org.linagora.linshare.core.service.impl.SecuredUrlServiceImpl"> <constructor-arg 
-		ref="anonymousUrlRepository"/> <constructor-arg ref="shareExpiryDateService"/> <constructor-arg value="download"/> <constructor-arg 
-		ref="logEntryService" /> </bean> -->
-
 
 	<bean id="entryService" class="org.linagora.linshare.core.service.impl.EntryServiceImpl">
 		<constructor-arg ref="documentEntryService" />
