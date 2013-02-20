@@ -57,8 +57,6 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	 * All @Ignore are caused by the hibernate file AllowedMimeType which is not load correctly
 	 * 
 	 */
-	
-	@Ignore
 	@Test
 	public void testCreateAllowedMimeType() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -80,7 +78,6 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	@Ignore
 	@Test
 	public void testIsAllowed() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -96,7 +93,6 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 
 	}
 	
-	@Ignore
 	@Test
 	public void testGiveStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -112,7 +108,6 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 
 	}
 	
-	@Ignore
 	@Test
 	public void testSaveOrUpdateAllowedMimeType() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
