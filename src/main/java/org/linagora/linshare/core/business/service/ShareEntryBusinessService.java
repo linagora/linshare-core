@@ -20,4 +20,6 @@ public interface ShareEntryBusinessService {
 	
 	public List<ShareEntry> findAllMyShareEntries(User owner);
 	
+	public void addDownload(ShareEntry entry) throws BusinessException;
+	
 }

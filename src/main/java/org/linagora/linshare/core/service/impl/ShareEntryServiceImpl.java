@@ -211,6 +211,10 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	        
 	        logger.info("delete share : " + share.getUuid());
 	        
+	        if (share.getDownloaded() < 1) {
+	        	notifierService.sendAllNotification(mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
+	        }
+	        
 	        shareEntryBusinessService.deleteShare(share);
 	        
 	        return newDocumentEntry;
@@ -296,6 +300,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			}
 			ShareLogEntry logEntry = new ShareLogEntry(actor, shareEntry, LogAction.SHARE_DOWNLOAD, "Download of a sharing");
 			logEntryService.create(logEntry);
+			shareEntryBusinessService.addDownload(shareEntry);
 			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
 		} catch (BusinessException e) {
 			logger.error("Can't find share for thumbnail : " + shareEntryUuid + " : " + e.getMessage());

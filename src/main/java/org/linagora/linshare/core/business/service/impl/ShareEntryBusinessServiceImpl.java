@@ -104,4 +104,11 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 	}
 
 
+	@Override
+	public void addDownload(ShareEntry entry) throws BusinessException {
+		entry.setDownloaded(entry.getDownloaded() + 1);
+		shareEntryRepository.update(entry);
+	}
+
+
 }

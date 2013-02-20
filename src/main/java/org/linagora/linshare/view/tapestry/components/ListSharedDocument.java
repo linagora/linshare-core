@@ -271,9 +271,9 @@ public class ListSharedDocument {
 			
 			//send an email to the owner if it is the first time the document is downloaded
 			if (!alreadyDownloaded) {
-				notifyOwnerByEmail(currentSharedDocumentVo);
 				componentdocuments=shareFacade.getAllSharingReceivedByUser(user); //maj valeur downloaded dans le VO
 			}
+			
 			
 			return new FileStreamResponse(currentSharedDocumentVo,stream);
 		}
@@ -335,10 +335,6 @@ public class ListSharedDocument {
             businessMessagesManagementService.notify(e);
         }
         
-        //send an email to the owner if it is the first time the document is downloaded
-		if (!alreadyDownloaded) 
-			notifyOwnerByEmail(shareDocumentVo);
-		
         if (copyDone) {
             businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
                 MessageSeverity.INFO));
@@ -481,10 +477,6 @@ public class ListSharedDocument {
 	            businessMessagesManagementService.notify(e);
 	        }
 	        
-	        //send an email to the owner if it is the first time the document is downloaded
-			if (!alreadyDownloaded) 
-				notifyOwnerByEmail(shareDocumentVo);
-			
 	        if (copyDone) {
 	            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
 	                MessageSeverity.INFO));
