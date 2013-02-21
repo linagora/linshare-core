@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 @Path("/rest/threads")
 public interface ThreadRestService {

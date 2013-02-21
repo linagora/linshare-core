@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -11,6 +12,7 @@ import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -54,6 +56,16 @@ public class WebServiceThreadFacadeImpl implements WebServiceThreadFacade {
 		List<Thread> list = threadService.findAll();
 		for (Thread thread : list) {
 			res.add(new ThreadDto(thread));
+		}
+		return res;
+	}
+
+	@Override
+	public List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException {
+		Thread thread = threadService.findByLsUuid(uuid);
+		List<ThreadMemberDto> res = new ArrayList<ThreadMemberDto>();
+		for (ThreadMember member : thread.getMyMembers()) {
+			res.add(new ThreadMemberDto(member));
 		}
 		return res;
 	}
