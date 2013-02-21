@@ -32,7 +32,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.entities.AllowedMimeType;
 import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
+import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
+import org.semanticdesktop.aperture.util.IOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.CharacterData;
@@ -44,11 +49,14 @@ import org.xml.sax.SAXException;
 
 public class MimeTypeMagicNumberImpl implements MimeTypeMagicNumberDao {
 	
+	private Logger logger = LoggerFactory.getLogger(MimeTypeMagicNumberImpl.class);
 	
-	private Logger log = LoggerFactory.getLogger(MimeTypeMagicNumberImpl.class);
 	private static final String MAGIC_MIME_FILE ="/org/semanticdesktop/aperture/mime/identifier/magic/mimetypes.xml";
 	
+	private final MimeTypeIdentifier mimeTypeIdentifier;
+	
 	public MimeTypeMagicNumberImpl() {
+		this.mimeTypeIdentifier = new MagicMimeTypeIdentifier();
 	}
 	
 	public List<AllowedMimeType> getAllSupportedMimeType() {
@@ -77,7 +85,7 @@ public class MimeTypeMagicNumberImpl implements MimeTypeMagicNumberDao {
 				Element line = (Element) mimetype.item(0);
 				
 				mimeTypeStr = getCharacterDataFromElement(line);
-				if (log.isTraceEnabled()) log.trace("mimeType: "+ mimeTypeStr);
+				if (logger.isTraceEnabled()) logger.trace("mimeType: "+ mimeTypeStr);
 
 				NodeList extensions = descriptionElement
 						.getElementsByTagName("extensions");
@@ -85,7 +93,7 @@ public class MimeTypeMagicNumberImpl implements MimeTypeMagicNumberDao {
 					line = (Element) extensions.item(0);
 					extensionsStr = getCharacterDataFromElement(line);
 					
-					if (log.isTraceEnabled()) log.trace("extensions: "+ extensionsStr);
+					if (logger.isTraceEnabled()) logger.trace("extensions: "+ extensionsStr);
 				}
 				
 				oneAllowedMimeType = new AllowedMimeType(i,mimeTypeStr,extensionsStr,MimeTypeStatus.AUTHORISED);
@@ -93,11 +101,11 @@ public class MimeTypeMagicNumberImpl implements MimeTypeMagicNumberDao {
 			}
 
 		} catch (ParserConfigurationException e) {
-			log.error("ParserConfigurationException", e);
+			logger.error("ParserConfigurationException", e);
 		} catch (SAXException e) {
-			log.error("SAXException",e);
+			logger.error("SAXException",e);
 		} catch (IOException e) {
-			log.error("IOException",e);
+			logger.error("IOException",e);
 		}
 		
 		return mimetypesList;
@@ -113,4 +121,31 @@ public class MimeTypeMagicNumberImpl implements MimeTypeMagicNumberDao {
 		return "?";
 	}
 
+	@Override
+	public String getMimeType(InputStream theFileInputStream) throws BusinessException {
+		byte[] bytes;
+		try {
+			if(theFileInputStream.markSupported()) {
+				theFileInputStream.mark(mimeTypeIdentifier.getMinArrayLength()+1);
+			}
+			bytes = IOUtil.readBytes(theFileInputStream, mimeTypeIdentifier.getMinArrayLength());
+			if(theFileInputStream.markSupported()) {
+				theFileInputStream.reset();
+			}
+		} catch (IOException e) {
+			logger.error("Could not read the uploaded file !", e);
+			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND, "Could not read the uploaded file.");
+		}
+
+		// let the MimeTypeIdentifier determine the MIME type of this file
+		String mimeType = mimeTypeIdentifier.identify(bytes, null, null);
+		logger.debug("Mime type found : " + mimeType);
+		if(mimeType == null) {
+			mimeType = "data";
+		}
+		return mimeType;
+		
+	}
+
+	
 }

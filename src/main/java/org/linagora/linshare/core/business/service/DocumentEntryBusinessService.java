@@ -1,6 +1,5 @@
 package org.linagora.linshare.core.business.service;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Calendar;
@@ -22,8 +21,6 @@ public interface DocumentEntryBusinessService {
 	 * @param theFileStream
 	 * @return
 	 */
-	public String getMimeType(BufferedInputStream theFileStream)  throws BusinessException;
-	
 	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException;
 	
 	public DocumentEntry updateDocumentEntry(Account owner, DocumentEntry docEntry, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException ;
