@@ -70,6 +70,7 @@
 		<constructor-arg ref="functionalityService" />
 		<constructor-arg ref="mimeTypeService" />
 		<constructor-arg ref="clamavVirusScannerService" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
 	</bean>
 	
 	<bean id="threadEntryService" class="org.linagora.linshare.core.service.impl.ThreadEntryServiceImpl">
@@ -82,6 +83,7 @@
 		<constructor-arg ref="clamavVirusScannerService" />
 		<constructor-arg ref="tagBusinessService" />
 		<constructor-arg ref="threadMemberRepository" />
+		<constructor-arg ref="mimeTypeMagicNumberDao" />
 	</bean>
 
 	<bean id="shareExpiryDateService" class="org.linagora.linshare.core.service.impl.ShareExpiryDateServiceImpl">

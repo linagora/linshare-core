@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.business.service.TagBusinessService;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -68,9 +69,12 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final VirusScannerService virusScannerService;
 	private final TagBusinessService tagBusinessService;
 	private final ThreadMemberRepository threadMemberRepository;
+	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 	
 	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService, ThreadMemberRepository threadMemberRepository) {
+			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService,
+			VirusScannerService virusScannerService, TagBusinessService tagBusinessService, 
+			ThreadMemberRepository threadMemberRepository, MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -81,6 +85,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		this.virusScannerService = virusScannerService;
 		this.tagBusinessService = tagBusinessService;
 		this.threadMemberRepository = threadMemberRepository;
+		this.mimeTypeIdentifier = mimeTypeIdentifier;
 	}
 
 	@Override
@@ -88,7 +93,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 		
 		BufferedInputStream bufStream = new BufferedInputStream(stream);
-		String mimeType = documentEntryBusinessService.getMimeType(bufStream);
+		String mimeType = mimeTypeIdentifier.getMimeType(bufStream);
 		
 		DocumentUtils util = new DocumentUtils();
 		File tempFile =  util.getFileFromBufferedInputStream(bufStream, fileName);

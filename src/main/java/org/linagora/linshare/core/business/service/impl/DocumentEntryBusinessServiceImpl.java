@@ -44,9 +44,6 @@ import org.linagora.linshare.core.repository.ThreadEntryRepository;
 import org.linagora.linshare.core.service.TimeStampingService;
 import org.linagora.linshare.core.utils.AESCrypt;
 import org.linagora.linshare.core.utils.DocumentUtils;
-import org.semanticdesktop.aperture.mime.identifier.MimeTypeIdentifier;
-import org.semanticdesktop.aperture.mime.identifier.magic.MagicMimeTypeIdentifier;
-import org.semanticdesktop.aperture.util.IOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +53,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	
 	private static final Logger logger = LoggerFactory.getLogger(DocumentEntryBusinessServiceImpl.class);
 
-	private final MimeTypeIdentifier mimeTypeIdentifier;
 	private final FileSystemDao fileSystemDao;
 	private final TimeStampingService timeStampingService;
 	private final DocumentEntryRepository documentEntryRepository;
@@ -70,7 +66,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	public DocumentEntryBusinessServiceImpl(FileSystemDao fileSystemDao, TimeStampingService timeStampingService, DocumentEntryRepository documentEntryRepository, DocumentRepository documentRepository, 
 			AccountRepository<Account> accountRepository, SignatureBusinessService signatureBusinessService, ThreadEntryRepository threadEntryRepository, TagBusinessService tagBusinessService) {
 		super();
-		this.mimeTypeIdentifier = new MagicMimeTypeIdentifier();
 		this.fileSystemDao = fileSystemDao;
 		this.timeStampingService = timeStampingService;
 		this.documentEntryRepository = documentEntryRepository;
@@ -81,29 +76,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		this.tagBusinessService = tagBusinessService;
 	}
 
-	
-	@Override
-	public String getMimeType(BufferedInputStream theFileStream) throws BusinessException {
-		byte[] bytes;
-		theFileStream.mark(mimeTypeIdentifier.getMinArrayLength()+1);
-		try {
-			bytes = IOUtil.readBytes(theFileStream, mimeTypeIdentifier.getMinArrayLength());
-			theFileStream.reset();
-		} catch (IOException e) {
-			logger.error("Could not read the uploaded file !", e);
-			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND, "Could not read the uploaded file.");
-		}
-
-		// let the MimeTypeIdentifier determine the MIME type of this file
-		String mimeType = mimeTypeIdentifier.identify(bytes, null, null);
-		logger.debug("Mime type found : " + mimeType);
-		if(mimeType == null) {
-			mimeType = "data";
-		}
-		return mimeType;
-	}
-	
-	
 	@Override
 	public DocumentEntry createDocumentEntry(Account owner, File myFile, Long size, String fileName, Boolean checkIfIsCiphered, String timeStampingUrl, String mimeType, Calendar expirationDate) throws BusinessException {
 		

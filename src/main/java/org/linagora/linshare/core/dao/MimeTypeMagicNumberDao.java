@@ -20,9 +20,11 @@
 */
 package org.linagora.linshare.core.dao;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AllowedMimeType;
+import org.linagora.linshare.core.exception.BusinessException;
 
 
 public interface MimeTypeMagicNumberDao {
@@ -32,5 +34,8 @@ public interface MimeTypeMagicNumberDao {
 	 * @return a list of all AllowedMimeType
 	 */
 	public List<AllowedMimeType> getAllSupportedMimeType();
+	
+	public String getMimeType(InputStream theFileInputStream) throws BusinessException;
+	
 }
 

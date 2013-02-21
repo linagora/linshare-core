@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -51,11 +52,13 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final FunctionalityService functionalityService;
 	private final MimeTypeService mimeTypeService;
 	private final VirusScannerService virusScannerService;
-	
+	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
+
 	
 	
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityService functionalityService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService) {
+			FunctionalityService functionalityService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService,
+			MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -63,6 +66,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		this.functionalityService = functionalityService;
 		this.mimeTypeService = mimeTypeService;
 		this.virusScannerService = virusScannerService;
+		this.mimeTypeIdentifier = mimeTypeIdentifier;
 	}
 
 
@@ -71,7 +75,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 		
 		BufferedInputStream bufStream = new BufferedInputStream(stream);
-		String mimeType = documentEntryBusinessService.getMimeType(bufStream);
+		String mimeType = mimeTypeIdentifier.getMimeType(bufStream);
 		checkSpace(size, fileName, actor);
 		
 		DocumentUtils util = new DocumentUtils();
@@ -129,7 +133,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		String originalFileName = originalEntry.getName();
 		long oldDocSize = originalEntry.getDocument().getSize();
 		BufferedInputStream bufStream = new BufferedInputStream(stream);
-		String mimeType = documentEntryBusinessService.getMimeType(bufStream);
+		String mimeType = mimeTypeIdentifier.getMimeType(bufStream);
 		checkSpace(size, fileName, actor);
 		
 		DocumentUtils util = new DocumentUtils();
