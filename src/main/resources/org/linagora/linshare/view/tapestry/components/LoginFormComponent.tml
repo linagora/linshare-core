@@ -5,6 +5,9 @@
 			<span class="userName">${userName}</span>
 			${message:global.space}
 			<a href="${springLogoutLink}" title="${message:pages.index.link.logout}">${message:pages.index.link.logout}</a>
+			<t:if test="linshareLicenceTerm">
+				<div id="rights"><p>${message:pages.index.rights}</p></div>
+			</t:if>
 		</div>
 	<t:parameter name="else">
 		<t:pagelink page="password/reset">${message:pages.index.link.password}</t:pagelink>

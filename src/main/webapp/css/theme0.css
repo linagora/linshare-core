@@ -562,6 +562,30 @@ strong {
 	font-weight: bold;
 }
 
+div#rights {
+	background-color: lightblue;
+	text-align: justify;
+	border: solid 1px;
+	border-radius: 10px;
+	margin: 5px;
+	padding: 5px;
+	font-style: normal;
+	font-size: 12px;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+div#messagePanel div#rights {
+	background-color: white;
+	border: solid 2px lightgrey;
+	border-radius: 15px;
+	width: 600px;
+	margin: 5px auto;
+}
+
+#home div#messagePanel div#rights p{
+	margin: 1em auto;
+}
 
 /*--------------------------------------------------------------------------
 * Components > Localizer

@@ -75,15 +75,17 @@ public class LoginFormComponent {
     @Persist
     private String domain;
     
-    
 	@Inject @Symbol("sso.button.hide")
 	@Property
 	private boolean ssoButtonHide;
     
-    
 	@Inject @Symbol("linshare.domain.visible")
 	@Property
 	private boolean domainVisible;
+
+	@Inject @Symbol("linshare.display.licenceTerm")
+	@Property
+	private boolean linshareLicenceTerm;
 	
 	@Inject
 	private HttpServletRequest httpServletRequest;
