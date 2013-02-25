@@ -20,11 +20,6 @@
 */
 package org.linagora.linshare.core.facade.impl;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -39,8 +34,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -80,33 +75,14 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	@Override
 	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException{
 		DocumentEntry res;
-		FileInputStream tempfi = null;
-		File tempFile = null;
 		
 		try {
 			User actor = getAuthentication();
-			
-			//here we need tempFile to evaluate length of the stream ...
-			tempFile = getTempFile(fi,filename);
-			tempfi = new FileInputStream(tempFile);
-			res =  documentEntryService.createDocumentEntry(actor, tempfi, tempFile.length(), filename);
+
+			res =  documentEntryService.createDocumentEntry(actor, fi, filename);
 			documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), description);
 		} catch (BusinessException e) {
 			throw e;
-		} catch (FileNotFoundException e) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "unable to upload", e);
-		} catch (IOException e) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "unable to upload", e);
-		} finally {
-			if (tempfi != null)
-				try {
-					tempfi.close();
-				} catch (IOException e) {
-					logger.error(e.toString());
-				}
-			if (!tempFile.delete()) {
-				tempFile.deleteOnExit();
-			}
 		}
 		
 		return new DocumentDto(res);
@@ -131,20 +107,13 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	@Override
 	public DocumentDto addDocumentXop(DocumentAttachement doca)  throws BusinessException {
     	DocumentEntry res;
-    	FileInputStream tempfi = null;
-    	File tempFile = null;
     	
     	try {
-    		// TODO : Use DocumentUtils to get tempFile
     		User actor = getAuthentication();
     		DataHandler dh = doca.getDocument();
     		InputStream in = dh.getInputStream();
-			 
-			//here we need tempFile to evaluate length of the stream ...
-			tempFile = getTempFile(in, doca.getFilename());
-			tempfi = new FileInputStream(tempFile);
 			
-			res =  documentEntryService.createDocumentEntry(actor, tempfi, tempFile.length(), doca.getFilename());
+			res =  documentEntryService.createDocumentEntry(actor, in, doca.getFilename());
 			
 			//mandatory ?
 		 	String comment = (doca.getComment() == null)? "" : doca.getComment();
@@ -154,17 +123,6 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 			throw  new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "unable to upload",e);
 		} catch (BusinessException e) {
 			throw e;
-		} finally {
-			if (tempfi != null) {
-				try {
-					tempfi.close();
-				} catch (IOException e) {
-					logger.error(e.toString());
-				}
-			}
-			if (!tempFile.delete()) {
-				tempFile.deleteOnExit();
-			}
 		}
 		
 		return new DocumentDto(res);
@@ -200,40 +158,6 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	
 	
 	//#############  utility methods
-	
-	private File getTempFile(InputStream stream, String fileName) throws IOException {
-		
-		File tempFile = null;
-		BufferedOutputStream bof = null;
-			
-			try {
-				int splitIdx = fileName.lastIndexOf('.');
-				String extension = "";
-				if(splitIdx>-1){
-					extension = fileName.substring(splitIdx, fileName.length());
-				}
-				
-				tempFile = File.createTempFile("linshare", extension); //we need to keep the extension for the thumbnail generator
-				bof = new BufferedOutputStream(new FileOutputStream(tempFile));
-				
-				// Transfer bytes from in to out
-				byte[] buf = new byte[20480];
-				int len;
-				while ((len = stream.read(buf)) > 0) {
-					bof.write(buf, 0, len);
-				}
-
-				bof.flush();
-				
-			} catch (IOException e) {
-				throw e;
-			} finally {
-				if(bof!=null) bof.close();
-			}
-		
-		return tempFile;
-	}
-	
 	
 	private User getAuthentication() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 

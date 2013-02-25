@@ -40,7 +40,7 @@ public interface DocumentFacade {
 	 * @return DocumentVo : the created document
 	 * @throws BusinessException  FILE_TOO_LARGE if the file is too large to fit in user's space
 	 */
-	public DocumentVo insertFile(InputStream file,long size, String fileName,UserVo owner) throws BusinessException;
+	public DocumentVo insertFile(InputStream file,String fileName, UserVo owner) throws BusinessException;
 		
 	/**
 	 * Retrieve a DocumentVo given the user login and the id of the doc

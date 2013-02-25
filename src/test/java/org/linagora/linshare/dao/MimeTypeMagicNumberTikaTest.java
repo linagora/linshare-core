@@ -1,8 +1,6 @@
 package org.linagora.linshare.dao;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 
 import junit.framework.Assert;

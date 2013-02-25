@@ -91,10 +91,10 @@ public class DocumentFacadeImpl implements DocumentFacade {
 
 
 	@Override
-	public DocumentVo insertFile(InputStream file, long size, String fileName, UserVo owner) throws BusinessException {
+	public DocumentVo insertFile(InputStream in, String fileName, UserVo owner) throws BusinessException {
 		logger.debug("insert files for document entries");
 		Account actor = accountService.findByLsUid(owner.getLsUid());
-		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, file, size, fileName);
+		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, in, fileName);
 		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}
 
