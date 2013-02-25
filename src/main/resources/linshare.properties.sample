@@ -83,6 +83,7 @@ sso.cas.url.login=http://localhost:8081/cas-server-webapp-3.3.5/login
 sso.cas.url.serviceId=http://localhost:8080/linshare/j_spring_cas_security_check
 # LemonLDAP::NG / SiteMinder HTTP request authenticator
 sso.header.user=Auth-User
+# comma separated list of ip address to be trusted :  
 sso.header.allowfrom=127.0.0.1
 
 

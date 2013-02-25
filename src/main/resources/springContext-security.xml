@@ -155,7 +155,7 @@
 
 	<bean id="restAuthenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
 		<property name="realmName">
-			<value>Name Of Your Realm</value>
+			<value>Name Of Your LinShare Realm</value>
 		</property>
 	</bean>
 
