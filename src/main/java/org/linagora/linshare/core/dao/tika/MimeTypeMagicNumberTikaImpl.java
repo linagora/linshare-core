@@ -1,6 +1,10 @@
 package org.linagora.linshare.core.dao.tika;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +20,7 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.entities.AllowedMimeType;
 import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +88,37 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 
 	@Override
 	public String getMimeType(File file) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		BufferedInputStream bufStream = null;
+		FileInputStream f = null;
+		String mimeType = null;
+		try {
+			f = new FileInputStream(file);
+			bufStream = new BufferedInputStream(f);
+			mimeType = this.getMimeType(bufStream);
+		} catch (FileNotFoundException e) {
+			logger.error("Could not read the uploaded file !", e);
+			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND, "Could not read the uploaded file.");
+		} finally {
+			if (f != null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (bufStream != null) {
+				try {
+					bufStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if(mimeType == null) {
+			mimeType = "data";
+		}
+		logger.debug("Mime type found : " + mimeType);
+		return mimeType;
 	}
 
 }

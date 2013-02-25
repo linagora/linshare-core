@@ -1,6 +1,5 @@
 package org.linagora.linshare.core.service.impl;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Calendar;
@@ -25,7 +24,6 @@ import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
-import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SizeUnitValueFunctionality;
 import org.linagora.linshare.core.domain.objects.TimeUnitValueFunctionality;
@@ -68,12 +66,12 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	}
 
 	@Override
-	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, Long size, String fileName) throws BusinessException {
+	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, String fileName) throws BusinessException {
 
 		DocumentUtils util = new DocumentUtils();
 		File tempFile = util.getTempFile(stream, fileName);
+		Long size = tempFile.length(); 
 		DocumentEntry docEntry = null;
-
 
 		try {
 			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);

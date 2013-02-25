@@ -160,8 +160,8 @@ public class FileUploader {
 //                }
 
                 try {
-                    DocumentVo document = documentFacade.insertFile(uploadedFile.getStream(), uploadedFile.getSize(),
-                        uploadedFile.getFileName(), userDetails);
+                    DocumentVo document = documentFacade.insertFile(uploadedFile.getStream(), uploadedFile.getFileName(),
+                        userDetails);
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_OK,
                         MessageSeverity.INFO, uploadedFile.getFileName()));
 

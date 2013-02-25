@@ -117,7 +117,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		createFunctionalities();
 		
 		Account actor = jane;
-		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, size, fileName);
+		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, fileName);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) != null);
 		
 		Document aDocument = aDocumentEntry.getDocument();
@@ -227,7 +227,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		Account actor = jane;
 		User owner = jane;
 		createFunctionalities();
-		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, size, fileName);
+		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, fileName);
 		List<DocumentEntry> documents = documentEntryService.findAllMyDocumentEntries(actor, owner);
 		Assert.assertTrue(documents.contains(aDocumentEntry));
 		logger.debug(LinShareTestConstants.END_TEST);
@@ -238,7 +238,7 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Account actor = jane;
 		createFunctionalities();
-		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, size, fileName);
+		aDocumentEntry = documentEntryService.createDocumentEntry(actor, stream, fileName);
 		aDocumentEntry.getDocument().setSignatures(new HashSet<Signature>());
 		documentEntryService.deleteDocumentEntry(actor, aDocumentEntry);
 		Assert.assertTrue(documentEntryRepository.findById(aDocumentEntry.getUuid()) == null);

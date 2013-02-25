@@ -11,7 +11,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DocumentEntryService {
 	
-	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, Long size, String fileName) throws BusinessException;
+	public DocumentEntry createDocumentEntry(Account actor, InputStream stream, String fileName) throws BusinessException;
 	
 	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException ;
 	
