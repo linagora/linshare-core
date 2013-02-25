@@ -22,6 +22,8 @@ package org.linagora.linshare.view.tapestry.objects;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.services.Response;
@@ -112,7 +114,7 @@ public class FileStreamResponse implements StreamResponse{
         //but in not general public cache servers, before handing it off the plugin, e.g. Adobe Acrobat, to handle it.
 		
 		response.setContentLength(this.size);
-        response.setHeader("Content-disposition", "attachment; filename=\""+this.fileName+"\"");
+        response.setHeader("Content-disposition", getContentDispositionHeader());
         response.setHeader("Content-Transfer-Encoding","none");
         
         //Pragma is a HTTP 1.0 directive that was retained in HTTP 1.1 for backward compatibility.
@@ -136,5 +138,27 @@ public class FileStreamResponse implements StreamResponse{
         
         //response.setHeader("Cache-Control","private,must-revalidate,max-age=0,post-check=0, pre-check=0");
         //response.setIntHeader("Expires", 0); //HTTP 1.0 directive that was retained for backward compatibility
+	}
+
+	private String getContentDispositionHeader() {
+		String encodeFileName = null;
+		try {
+			URI uri = new URI(null, null, this.fileName, null);
+			encodeFileName = uri.toASCIIString();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("attachment; ");
+		
+		// Adding filename using the old way for old browser compatibility
+		sb.append("filename=\""+this.fileName+"\"; ");
+		
+		// Adding UTF-8 encoded filename. If the browser do not support this parameter, it will use the old way.
+		if(encodeFileName != null) {
+			sb.append("filename*= UTF-8''" + encodeFileName);
+		}
+		return sb.toString();
 	}
 }
