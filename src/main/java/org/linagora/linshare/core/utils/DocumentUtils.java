@@ -1,10 +1,10 @@
 package org.linagora.linshare.core.utils;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
@@ -16,16 +16,17 @@ public class DocumentUtils {
 	private static final Logger logger = LoggerFactory.getLogger(DocumentUtils.class);
 	
 	
-	public File getFileFromBufferedInputStream(BufferedInputStream stream, String fileName) {
+	public File getTempFile(InputStream stream, String fileName) {
 		// Copy the input stream to a temporary file for safe use
 		File tempFile = null;
 		BufferedOutputStream bof = null;
+		
+		//extract extension
 		int splitIdx = fileName.lastIndexOf('.');
 		String extension = "";
 		if(splitIdx>-1){
 			extension = fileName.substring(splitIdx, fileName.length());
 		}
-		
 		logger.debug("Found extension :"+extension);
 
 		try {
@@ -45,16 +46,13 @@ public class DocumentUtils {
 				bof.write(buf, 0, len);
 				logger.debug("len buf : " + len);
 			}
-
 			bof.flush();
 
 		} catch (IOException e) {
 			if (tempFile != null && tempFile.exists())
 				tempFile.delete();
-			throw new TechnicalException(TechnicalErrorCode.GENERIC,
-					"couldn't create a temporary file");
+			throw new TechnicalException(TechnicalErrorCode.GENERIC, "couldn't create a temporary file");
 		} finally {
-
 			if (stream != null) {
 				try {
 					stream.close();
@@ -62,7 +60,6 @@ public class DocumentUtils {
 					e.printStackTrace();
 				}
 			}
-
 			if (bof != null) {
 				try {
 					bof.close();
@@ -73,5 +70,4 @@ public class DocumentUtils {
 		}
 		return tempFile;
 	}
-	
 }

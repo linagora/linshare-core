@@ -135,6 +135,7 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
     	File tempFile = null;
     	
     	try {
+    		// TODO : Use DocumentUtils to get tempFile
     		User actor = getAuthentication();
     		DataHandler dh = doca.getDocument();
     		InputStream in = dh.getInputStream();
