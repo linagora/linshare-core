@@ -46,7 +46,7 @@
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
 			<sec:filter-chain pattern="/webservice/**"
-				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter, lemonLDAPFilter, basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
 			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
 			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
 			<sec:filter-chain pattern="/**"
@@ -163,7 +163,7 @@
 
 	<bean id="restAuthenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
 		<property name="realmName">
-			<value>Name Of Your Realm</value>
+			<value>Name Of Your LinShare Realm</value>
 		</property>
 	</bean>
 
@@ -231,11 +231,7 @@
 	<bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" />
 
 	<bean id="lemonLDAPFilter" class="org.linagora.linshare.auth.PreAuthenticationHeader">
-		<property name="authorizedAddresses">
-			<list>
-				<value>${sso.header.allowfrom}</value>
-			</list>
-		</property>
+		<constructor-arg value="${sso.header.allowfrom}" />
 		<property name="principalRequestHeader" value="${sso.header.user}" />
 		<property name="authenticationManager" ref="authenticationManager" />
 	</bean>

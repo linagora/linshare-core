@@ -21,6 +21,7 @@
  */
 package org.linagora.linshare.auth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import org.springframework.util.Assert;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * This Spring Security filter is designed to filter authentication
@@ -44,6 +47,17 @@ public class PreAuthenticationHeader extends RequestHeaderAuthenticationFilter {
 	private List<String> authorizedAddresses;
 	
 	private static Logger logger = LoggerFactory.getLogger(PreAuthenticationHeader.class);
+
+	public PreAuthenticationHeader(String authorizedAddressesList) {
+		super();
+		if( authorizedAddressesList!=null ) {
+			@SuppressWarnings("unchecked")
+			List<String> asList = Arrays.asList(authorizedAddressesList.split(","));
+			this.authorizedAddresses = asList;		
+		} else {
+			this.authorizedAddresses = new ArrayList<String>();
+		}
+	}
 
 	@Override
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
