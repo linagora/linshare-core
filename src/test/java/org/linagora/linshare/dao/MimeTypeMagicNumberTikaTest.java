@@ -60,10 +60,8 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		try {
 
 		File f = new File("/home/fred/workspace_trunk/test.ods");
-		FileInputStream is = new FileInputStream(f);
 		logger.debug("filename " + f.getName());
-		BufferedInputStream buff = new BufferedInputStream(is);
-		String mime = mimeTypeService.getMimeType(buff);
+		String mime = mimeTypeService.getMimeType(f);
 		Assert.assertEquals("application/vnd.oasis.opendocument.spreadsheet", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -80,10 +78,8 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		try {
 
 		File f = new File("/home/fred/logo-mysql-110x57.jpg");
-		FileInputStream is = new FileInputStream(f);
 		logger.debug("filename " + f.getName());
-		BufferedInputStream buff = new BufferedInputStream(is);
-		String mime = mimeTypeService.getMimeType(buff);
+		String mime = mimeTypeService.getMimeType(f);
 		Assert.assertEquals("image/jpeg", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -100,10 +96,8 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		try {
 
 		File f = new File("/home/fred/workspace_trunk/M1_M2_2Demande_agrement12-13.docx");
-		FileInputStream is = new FileInputStream(f);
 		logger.debug("filename " + f.getName());
-		BufferedInputStream buff = new BufferedInputStream(is);
-		String mime = mimeTypeService.getMimeType(buff);
+		String mime = mimeTypeService.getMimeType(f);
 		Assert.assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -120,10 +114,8 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		try {
 
 		File f = new File("/home/fred/test.py");
-		FileInputStream is = new FileInputStream(f);
 		logger.debug("filename " + f.getName());
-		BufferedInputStream buff = new BufferedInputStream(is);
-		String mime = mimeTypeService.getMimeType(buff);
+		String mime = mimeTypeService.getMimeType(f);
 		Assert.assertEquals("text/x-python", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
