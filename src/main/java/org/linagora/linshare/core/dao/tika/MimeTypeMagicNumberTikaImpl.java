@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.dao.tika;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,12 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 			logger.debug(e.getCause().toString());
 		}
 		return "data";
+	}
+
+	@Override
+	public String getMimeType(File file) throws BusinessException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

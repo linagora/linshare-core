@@ -20,7 +20,6 @@
  */
 package org.linagora.linshare.core.service.impl;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
@@ -57,9 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ThreadEntryServiceImpl implements ThreadEntryService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ThreadEntryServiceImpl.class);
-			
+
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 	private final LogEntryService logEntryService;
 	private final AbstractDomainService abstractDomainService;
@@ -70,10 +68,9 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	private final TagBusinessService tagBusinessService;
 	private final ThreadMemberRepository threadMemberRepository;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
-	
+
 	public ThreadEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService,
-			VirusScannerService virusScannerService, TagBusinessService tagBusinessService, 
+			FunctionalityService functionalityService, MimeTypeService mimeTypeService, AccountService accountService, VirusScannerService virusScannerService, TagBusinessService tagBusinessService,
 			ThreadMemberRepository threadMemberRepository, MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
@@ -90,44 +87,51 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 	@Override
 	public ThreadEntry createThreadEntry(Account actor, Thread thread, InputStream stream, Long size, String fileName) throws BusinessException {
-		AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
-		
-		BufferedInputStream bufStream = new BufferedInputStream(stream);
-		String mimeType = mimeTypeIdentifier.getMimeType(bufStream);
-		
 		DocumentUtils util = new DocumentUtils();
-		File tempFile =  util.getFileFromBufferedInputStream(bufStream, fileName);
-		
-		// check if the file MimeType is allowed
-		Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
-		if (mimeFunctionality.getActivationPolicy().getStatus()) {
-			mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
-		}
-		
-		Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
-		if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-			// TODO antivirus check for thread entries
-//			checkVirus(fileName, actor, stream);
-		}
+		File tempFile = util.getTempFile(stream, fileName);
+		ThreadEntry threadEntry = null;
 
-		// want a timestamp on doc ?
-		String timeStampingUrl = null;
-		StringValueFunctionality timeStampingFunctionality = functionalityService.getTimeStampingFunctionality(domain);
-		if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
-			 timeStampingUrl = timeStampingFunctionality.getValue();
+		try {
+			String mimeType = mimeTypeIdentifier.getMimeType(tempFile);
+			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
+
+			// check if the file MimeType is allowed
+			Functionality mimeFunctionality = functionalityService.getMimeTypeFunctionality(domain);
+			if (mimeFunctionality.getActivationPolicy().getStatus()) {
+				mimeTypeService.checkFileMimeType(fileName, mimeType, actor);
+			}
+
+			Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
+			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
+				// TODO antivirus check for thread entries
+				// checkVirus(fileName, actor, tempFile);
+			}
+
+			// want a timestamp on doc ?
+			String timeStampingUrl = null;
+			StringValueFunctionality timeStampingFunctionality = functionalityService.getTimeStampingFunctionality(domain);
+			if (timeStampingFunctionality.getActivationPolicy().getStatus()) {
+				timeStampingUrl = timeStampingFunctionality.getValue();
+			}
+
+			Functionality enciphermentFunctionality = functionalityService.getEnciphermentFunctionality(domain);
+			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
+
+			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType);
+
+			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file in a thread", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry
+					.getDocument().getType());
+			logEntryService.create(logEntry);
+
+			tagBusinessService.runTagFiltersOnThreadEntry(actor, thread, threadEntry);
+		} finally {
+			try{
+				logger.debug("deleting temp file : " + tempFile.getName());
+				tempFile.delete(); // remove the temporary file
+			} catch (Exception e) {
+				logger.error("can not delete temp file : " + e.getMessage());
+			}
 		}
-	
-		Functionality enciphermentFunctionality = functionalityService.getEnciphermentFunctionality(domain);
-		Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
-		
-		ThreadEntry threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType);
-	
-		FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file in a thread", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry.getDocument().getType());
-		logEntryService.create(logEntry);
-
-		tempFile.delete(); // remove the temporary file
-
-		tagBusinessService.runTagFiltersOnThreadEntry(actor, thread, threadEntry);
 
 		return threadEntry;
 	}
@@ -135,7 +139,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	@Override
 	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
-		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User)actor)) {
+		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
 		}
 		return threadEntry;
@@ -144,23 +148,23 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	@Override
 	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException {
 		try {
-			if (!this.isAdmin((Thread) threadEntry.getEntryOwner(), (User)actor)) {
+			if (!this.isAdmin((Thread) threadEntry.getEntryOwner(), (User) actor)) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
 			}
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a thread entry", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry.getDocument().getType());
+			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a thread entry", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry.getDocument()
+					.getType());
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
-			
+
 		} catch (IllegalArgumentException e) {
-			logger.error("Could not delete file " + threadEntry.getName()
-					+ " of user " + actor.getLsUuid() + ", reason : ", e);
+			logger.error("Could not delete file " + threadEntry.getName() + " of user " + actor.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}
 
 	@Override
 	public List<ThreadEntry> findAllThreadEntries(Account actor, Thread thread) throws BusinessException {
-		if (!this.isThreadMember(thread, (User)actor)) {
+		if (!this.isThreadMember(thread, (User) actor)) {
 			return new ArrayList<ThreadEntry>();
 		}
 		return documentEntryBusinessService.findAllThreadEntries(thread);
@@ -168,12 +172,12 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 	@Override
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Account actor, Thread thread, String[] names) {
-		if (!this.isThreadMember(thread, (User)actor)) {
+		if (!this.isThreadMember(thread, (User) actor)) {
 			return new ArrayList<ThreadEntry>();
 		}
 		return documentEntryBusinessService.findAllThreadEntriesTaggedWith(thread, names);
 	}
-	
+
 	@Override
 	public InputStream getDocumentStream(Account actor, String uuid) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(uuid);
@@ -181,7 +185,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
 			return null;
 		}
-		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User)actor)) {
+		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
 		}
 		return documentEntryBusinessService.getDocumentStream(threadEntry);
@@ -194,7 +198,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + uuid);
 			return null;
 		}
-		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User)owner)) {
+		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) owner)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this document.");
 		}
 		return documentEntryBusinessService.getThreadEntryThumbnailStream(threadEntry);
@@ -208,7 +212,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			return false;
 		}
 
-		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User)actor)) {
+		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) actor)) {
 			return false;
 		}
 		String thmbUUID = threadEntry.getDocument().getThmbUuid();
@@ -218,26 +222,26 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	@Override
 	public void updateFileProperties(Account actor, String threadEntryUuid, String fileComment) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
-		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User)actor)) {
+		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User) actor)) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
 		}
 		documentEntryBusinessService.updateFileProperties(threadEntry, fileComment);
 	}
-	
+
 	/**
 	 * PERMISSIONS
 	 */
-	
+
 	private boolean isThreadMember(Thread thread, User user) {
 		ThreadMember threadMember = threadMemberRepository.findUserThreadMember(thread, user);
 		return threadMember != null;
 	}
-	
+
 	private boolean isAdmin(Thread thread, User user) {
 		ThreadMember threadMember = threadMemberRepository.findUserThreadMember(thread, user);
 		return threadMember.getAdmin();
 	}
-	
+
 	private boolean canUpload(Thread thread, User user) {
 		ThreadMember threadMember = threadMemberRepository.findUserThreadMember(thread, user);
 		return threadMember.getCanUpload();

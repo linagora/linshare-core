@@ -20,6 +20,10 @@
 */
 package org.linagora.linshare.core.dao.apperture;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -139,13 +143,49 @@ public class MimeTypeMagicNumberImpl implements MimeTypeMagicNumberDao {
 
 		// let the MimeTypeIdentifier determine the MIME type of this file
 		String mimeType = mimeTypeIdentifier.identify(bytes, null, null);
-		logger.debug("Mime type found : " + mimeType);
 		if(mimeType == null) {
 			mimeType = "data";
 		}
+		logger.debug("Mime type found : " + mimeType);
 		return mimeType;
 		
 	}
 
+	@Override
+	public String getMimeType(File file) throws BusinessException {
+		BufferedInputStream bufStream = null;
+		FileInputStream f = null;
+		String mimeType = null;
+		try {
+			f = new FileInputStream(file);
+			bufStream = new BufferedInputStream(f);
+			mimeType = this.getMimeType(bufStream);
+		} catch (FileNotFoundException e) {
+			logger.error("Could not read the uploaded file !", e);
+			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND, "Could not read the uploaded file.");
+		} finally {
+			if (f != null) {
+				try {
+					f.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (bufStream != null) {
+				try {
+					bufStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		if(mimeType == null) {
+			mimeType = "data";
+		}
+		logger.debug("Mime type found : " + mimeType);
+		return mimeType;
+	}
+
+	
 	
 }

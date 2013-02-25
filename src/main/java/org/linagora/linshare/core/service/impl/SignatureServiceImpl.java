@@ -1,6 +1,5 @@
 package org.linagora.linshare.core.service.impl;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
@@ -40,14 +39,22 @@ public class SignatureServiceImpl implements SignatureService {
 
 	@Override
 	public Signature createSignature(Account actor, Document document, InputStream stream, Long size, String fileName, X509Certificate signerCertificate) throws BusinessException {
-		BufferedInputStream bufStream = new BufferedInputStream(stream);
 		DocumentUtils util = new DocumentUtils();
-		File tempFile =  util.getFileFromBufferedInputStream(bufStream, fileName);
-		String mimeType = "text/xml";
-		Signature signature = signatureBusinessService.createSignature(actor, document, tempFile, size, fileName, mimeType, signerCertificate);
-		FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_SIGN, "signature of a file", fileName, document.getSize(), mimeType);
-		logEntryService.create(logEntry);
-		tempFile.delete(); // remove the temporary file
+		File tempFile =  util.getTempFile(stream, fileName);
+		Signature signature = null;
+		try {
+			String mimeType = "text/xml";
+			signature = signatureBusinessService.createSignature(actor, document, tempFile, size, fileName, mimeType, signerCertificate);
+			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_SIGN, "signature of a file", fileName, document.getSize(), mimeType);
+			logEntryService.create(logEntry);
+		} finally {
+			try{
+				logger.debug("deleting temp file : " + tempFile.getName());
+				tempFile.delete(); // remove the temporary file
+			} catch (Exception e) {
+				logger.error("can not delete temp file : " + e.getMessage());
+			}
+		}
 		return signature;
 	}
 	
