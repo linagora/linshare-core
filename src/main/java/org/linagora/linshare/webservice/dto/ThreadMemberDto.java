@@ -29,7 +29,7 @@ public class ThreadMemberDto {
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();
 		this.role = (member.getAdmin() ? Roles.ADMIN : member.getCanUpload() ?
-				Roles.NORMAL : Roles.RESTRICTED).name();
+				Roles.NORMAL : Roles.RESTRICTED).name().toLowerCase();
 		this.userUuid = member.getUser().getLsUuid();
 		this.threadUuid = member.getThread().getLsUuid();
 	}
