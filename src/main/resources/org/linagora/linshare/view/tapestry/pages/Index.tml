@@ -64,6 +64,9 @@
 
 			<div id="messagePanel" class="login">
 				<p>${message:pages.index.pleaselogin}</p>
+				<t:if test="linshareLicenceTerm">
+					<div id="rights"><p>${message:pages.index.rights}</p></div>
+				</t:if>
 			</div><!-- id="messagePanel" -->
 
 

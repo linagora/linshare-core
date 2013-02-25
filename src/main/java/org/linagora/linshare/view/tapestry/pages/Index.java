@@ -35,6 +35,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
@@ -95,6 +96,10 @@ public class Index {
     private UserVo userVo;
     @Property
     private boolean userVoExists;
+    
+	@Inject @Symbol("linshare.display.licenceTerm")
+	@Property
+	private boolean linshareLicenceTerm;
 
 	@Property
     private String welcomeText;
