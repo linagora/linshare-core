@@ -12,4 +12,6 @@ import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 public interface ThreadRestService {
 
 	public List<ThreadDto> getAllMyThread() throws BusinessException;
+
+	public ThreadDto getThread(String uuid) throws BusinessException;
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -11,6 +12,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.webservice.ThreadRestService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestService {
 
@@ -39,5 +41,20 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 		return threads; 
 	}
 
+	@Path("/{uuid}")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	// application/xml application/json
+	@Override
+	public ThreadDto getThread(@PathParam("uuid") String uuid) throws BusinessException {
+		ThreadDto thread;
+		try {
+			webServiceThreadFacade.checkAuthentication();
+			thread = webServiceThreadFacade.getThread(uuid);
+		} catch (BusinessException e) {
+			throw analyseFaultREST(e);
+		}
+		return thread;
+	}
 
 }

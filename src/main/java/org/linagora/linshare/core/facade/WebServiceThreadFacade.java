@@ -11,5 +11,5 @@ public interface WebServiceThreadFacade {
 
 	public User checkAuthentication() throws BusinessException;
 	public List<ThreadDto> getAllMyThread() throws BusinessException;
-	public List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException; 
+	public ThreadDto getThread(String uuid) throws BusinessException; 
 }

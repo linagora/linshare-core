@@ -61,12 +61,9 @@ public class WebServiceThreadFacadeImpl implements WebServiceThreadFacade {
 	}
 
 	@Override
-	public List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException {
+	public ThreadDto getThread(String uuid) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(uuid);
-		List<ThreadMemberDto> res = new ArrayList<ThreadMemberDto>();
-		for (ThreadMember member : thread.getMyMembers()) {
-			res.add(new ThreadMemberDto(member));
-		}
+		ThreadDto res = new ThreadDto(thread, thread.getMyMembers());
 		return res;
 	}
 
