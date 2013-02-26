@@ -1,10 +1,13 @@
 package org.linagora.linshare.dao;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,14 +56,14 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 
 	@Test
 	public void testMimeTypeDetection1() {
-		
+
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
-
-		File f = new File("/home/fred/workspace_trunk/test.ods");
-		logger.debug("filename " + f.getName());
-		String mime = mimeTypeService.getMimeType(f);
-		Assert.assertEquals("application/vnd.oasis.opendocument.spreadsheet", mime);
+			URL url = Thread.currentThread().getContextClassLoader().getResource("fichier.test.1.ods");
+			File f = new File(url.getPath());
+			logger.debug("filename " + f.getName());
+			String mime = mimeTypeService.getMimeType(f);
+			Assert.assertEquals("application/vnd.oasis.opendocument.spreadsheet", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
@@ -71,14 +74,15 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 
 	@Test
 	public void testMimeTypeDetection2() {
-		
+
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
 
-		File f = new File("/home/fred/logo-mysql-110x57.jpg");
-		logger.debug("filename " + f.getName());
-		String mime = mimeTypeService.getMimeType(f);
-		Assert.assertEquals("image/jpeg", mime);
+			URL url = Thread.currentThread().getContextClassLoader().getResource("fichier.test.1.png");
+			File f = new File(url.getPath());
+			logger.debug("filename " + f.getName());
+			String mime = mimeTypeService.getMimeType(f);
+			Assert.assertEquals("image/png", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
@@ -86,17 +90,17 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testMimeTypeDetection3() {
-		
+
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
-
-		File f = new File("/home/fred/workspace_trunk/M1_M2_2Demande_agrement12-13.docx");
-		logger.debug("filename " + f.getName());
-		String mime = mimeTypeService.getMimeType(f);
-		Assert.assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", mime);
+			URL url = Thread.currentThread().getContextClassLoader().getResource("fichier.test.1.docx");
+			File f = new File(url.getPath());
+			logger.debug("filename " + f.getName());
+			String mime = mimeTypeService.getMimeType(f);
+			Assert.assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
@@ -104,17 +108,18 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 	@Test
 	public void testMimeTypeDetection4() {
-		
+
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		try {
 
-		File f = new File("/home/fred/test.py");
-		logger.debug("filename " + f.getName());
-		String mime = mimeTypeService.getMimeType(f);
-		Assert.assertEquals("text/x-python", mime);
+			URL url = Thread.currentThread().getContextClassLoader().getResource("fichier.test.1.py");
+			File f = new File(url.getPath());
+			logger.debug("filename " + f.getName());
+			String mime = mimeTypeService.getMimeType(f);
+			Assert.assertEquals("text/x-python", mime);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.debug(e.getCause().toString());
@@ -122,5 +127,5 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		}
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-	
+
 }
