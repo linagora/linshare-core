@@ -20,26 +20,19 @@
 */
 package org.linagora.linshare.webservice.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.linagora.linshare.core.domain.entities.Guest;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.webservice.ShareRestService;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,17 +40,13 @@ import org.slf4j.LoggerFactory;
 
 public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService{
 
-	
-	
 	private static final Logger logger = LoggerFactory.getLogger(ShareRestServiceImpl.class);
 	
 	private final WebServiceShareFacade webServiceShareFacade;
 	
-	
 	public ShareRestServiceImpl(final WebServiceShareFacade facade){
 		this.webServiceShareFacade = facade;
 	}
-
 	
 	/**
 	 * get the files of the user
@@ -80,7 +69,6 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		
 		return shares;
     }
-
 	
 	@GET
     @Path("/sharedocument/{targetMail}/{uuid}")
@@ -98,43 +86,4 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 			throw analyseFaultREST(e);
 		}
 	}
-	
-	
-	@POST
-    @Path("/multiplesharedocuments")
-	@Override
-	public void multiplesharedocuments(@FormParam("targetMail") String targetMail, @FormParam("file") List<String> uuid, @FormParam("securedShare") @DefaultValue("0") int securedShare, @FormParam("message")  @DefaultValue("") String message) {
-		
-		User actor;
-		
-		try {
-			actor = webServiceShareFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
-		} 
- 
-		if ((actor instanceof Guest  && !actor.getCanUpload())) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN,"You are not authorized to use this service");
-		}
-		
-		
-		//check not empty values
-		List<String> uuidValues = new ArrayList<String>();
-		for (String identifier : uuid) {
-			if(identifier!=null && !identifier.isEmpty()) uuidValues.add(identifier);
-		}
-		if(uuidValues.size()==0){
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing parameter file");
-		}
-		
- 
-		try {
-			webServiceShareFacade.multiplesharedocuments(targetMail, uuidValues, securedShare, message);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
-		}
- 
-	}
-	
-
 }
