@@ -36,7 +36,7 @@ import org.linagora.linshare.webservice.dto.SimpleLongValue;
  */
 
 
-@Path("/rest/document")
+@Path("/rest/documents")
 public interface DocumentRestService {
 
 	public List<DocumentDto> getDocuments();

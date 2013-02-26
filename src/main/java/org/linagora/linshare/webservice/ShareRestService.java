@@ -34,7 +34,7 @@ import org.linagora.linshare.webservice.dto.ShareDto;
  * Allows for creation of a sharing
  */
 
-@Path("/rest/share")
+@Path("/rest/shares")
 public interface ShareRestService {
 
 	/**
@@ -52,13 +52,6 @@ public interface ShareRestService {
 	 */
 	public void sharedocument(String targetMail, String uuid, int securedShare);
 	
-	
-
-	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String message) ;
-	
-	
 //	public List<ShareDto> getMyOwnShares();
 	public List<ShareDto> getReceivedShares();
-	
-	
 }

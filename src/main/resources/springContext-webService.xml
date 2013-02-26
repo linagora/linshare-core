@@ -91,7 +91,8 @@
 		<constructor-arg ref="webServiceShareFacade" />
 	</bean>
 	
-	<bean id="pluginManagmentRestService" class="org.linagora.linshare.webservice.impl.PluginManagmentRestServiceImpl">
+	<bean id="pluginCompatibilityRestService" class="org.linagora.linshare.webservice.impl.PluginCompatibilityRestServiceImpl">
+		<constructor-arg ref="webServiceShareFacade" />
 	</bean>
 	
 	<bean id="threadRestService" class="org.linagora.linshare.webservice.impl.ThreadRestServiceImpl">
@@ -110,7 +111,7 @@
 		<jaxrs:serviceBeans>
 			<ref bean="documentRestService" />
 			<ref bean="shareRestService" />
-			<ref bean="pluginManagmentRestService" />
+			<ref bean="pluginCompatibilityRestService" />
 			<ref bean="threadRestService" />
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />

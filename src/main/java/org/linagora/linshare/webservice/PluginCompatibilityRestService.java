@@ -20,12 +20,15 @@
 */
 package org.linagora.linshare.webservice;
 
+import java.util.List;
+
 import javax.ws.rs.Path;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
 
-@Path("/rest/plugin")
-public interface PluginManagmentRestService {
+@Path("/rest")
+public interface PluginCompatibilityRestService {
 
 	public SimpleStringValue getInformation();
 	
+	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String message);
 }
