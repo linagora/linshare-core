@@ -7,9 +7,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
-@Path("/rest/threadss")
+@Path("/rest/threads/members")
 public interface ThreadMemberRestService {
-
-	List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException;
 
 }

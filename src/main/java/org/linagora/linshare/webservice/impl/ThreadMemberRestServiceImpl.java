@@ -21,20 +21,4 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements Threa
 		this.webServiceThreadFacade = webServiceThreadFacade;
 	}
 
-	@Path("/{uuid}/members")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	// application/xml application/json
-	@Override
-	public List<ThreadMemberDto> getAllThreadMembers(@PathParam("uuid") String uuid) throws BusinessException {
-		List<ThreadMemberDto> members = null;
-		try {
-			webServiceThreadFacade.checkAuthentication();
-			members = webServiceThreadFacade.getAllThreadMembers(uuid);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
-		}
-		return members;
-	}
-
 }

@@ -1,8 +1,13 @@
 package org.linagora.linshare.webservice.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
+@XmlRootElement(name = "ThreadMember")
 public class ThreadMemberDto {
+	
+	private Long id;
 	
 	private String role;
 	
@@ -26,12 +31,21 @@ public class ThreadMemberDto {
 	
 	public ThreadMemberDto(ThreadMember member) {
 		super();
+		this.id = member.getId();
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();
 		this.role = (member.getAdmin() ? Roles.ADMIN : member.getCanUpload() ?
 				Roles.NORMAL : Roles.RESTRICTED).name().toLowerCase();
 		this.userUuid = member.getUser().getLsUuid();
 		this.threadUuid = member.getThread().getLsUuid();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getRole() {
