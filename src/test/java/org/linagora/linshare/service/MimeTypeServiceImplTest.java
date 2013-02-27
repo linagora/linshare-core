@@ -55,6 +55,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
@@ -93,8 +94,8 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	public void testCreateAllowedMimeType() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AllowedMimeType mime1 = new AllowedMimeType((long)1,"zip","zip",MimeTypeStatus.AUTHORISED);
-		AllowedMimeType mime2 = new AllowedMimeType((long)2,"rar","rar",MimeTypeStatus.AUTHORISED);
+		AllowedMimeType mime1 = new AllowedMimeType("zip","zip",MimeTypeStatus.AUTHORISED);
+		AllowedMimeType mime2 = new AllowedMimeType("rar","rar",MimeTypeStatus.AUTHORISED);
 		
 		List<AllowedMimeType> newlist = new ArrayList<AllowedMimeType>();
 		
@@ -104,8 +105,6 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 		mimeTypeService.createAllowedMimeType(newlist);
 		
 		Assert.assertTrue(mimeTypeService.getAllowedMimeType().size() == newlist.size());
-		Assert.assertTrue(mimeTypeService.getAllowedMimeType().get(0) == newlist.get(0));
-		Assert.assertTrue(mimeTypeService.getAllowedMimeType().get(1) == newlist.get(1));
 
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
@@ -114,7 +113,7 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	public void testIsAllowed() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AllowedMimeType mime1 = new AllowedMimeType((long)1,"zip","zip",MimeTypeStatus.AUTHORISED);
+		AllowedMimeType mime1 = new AllowedMimeType("zip","zip",MimeTypeStatus.AUTHORISED);
 		List<AllowedMimeType> newlist = new ArrayList<AllowedMimeType>();
 		newlist.add(mime1);	
 		
@@ -129,7 +128,7 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	public void testGiveStatus() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AllowedMimeType mime1 = new AllowedMimeType((long)1,"zip","zip",MimeTypeStatus.AUTHORISED);
+		AllowedMimeType mime1 = new AllowedMimeType("zip","zip",MimeTypeStatus.AUTHORISED);
 		List<AllowedMimeType> newlist = new ArrayList<AllowedMimeType>();
 		newlist.add(mime1);	
 		
@@ -144,20 +143,12 @@ public class MimeTypeServiceImplTest extends AbstractTransactionalJUnit4SpringCo
 	public void testSaveOrUpdateAllowedMimeType() throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		AllowedMimeType mime1 = new AllowedMimeType((long)1,"zip","zip",MimeTypeStatus.AUTHORISED);
+		AllowedMimeType mime1 = new AllowedMimeType("zip","zip",MimeTypeStatus.AUTHORISED);
 		List<AllowedMimeType> newlist = new ArrayList<AllowedMimeType>();
 		newlist.add(mime1);	
 		mimeTypeService.saveOrUpdateAllowedMimeType(newlist);
 		
 		Assert.assertTrue(mimeTypeService.getAllowedMimeType().get(0) == newlist.get(0));
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
-	@Test
-	public void testgetAllSupportedMimeType() throws BusinessException {
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		
-		Assert.assertTrue(mimeTypeService.getAllSupportedMimeType().size()>0);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 

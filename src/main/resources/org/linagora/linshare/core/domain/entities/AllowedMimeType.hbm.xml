@@ -8,7 +8,7 @@
   </typedef>
   <class name="AllowedMimeType" table="allowed_mimetype">
   	<id name="id" type="long">
-      <column name="id" not-null="true" index="index_allowed_mime_type_id"/>
+      <generator class="native"></generator>
     </id>
     <property column="extensions" name="extensions"/>
     <property column="mimetype" name="mimetype"/>

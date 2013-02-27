@@ -42,15 +42,8 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MimeTypeService {
 
-        /**
-         * find all supported mime type supplied by the implementation (apperture)
-         * @return
-         * @throws BusinessException
-         */
-		public List<AllowedMimeType>  getAllSupportedMimeType() throws BusinessException;
-        
 		/**
-		 * return allowed mime type from database
+		 * return allowed mime type from database, is no allowed mime type is present, we load a list form Apache Rika referential.
 		 * @return
 		 * @throws BusinessException
 		 */

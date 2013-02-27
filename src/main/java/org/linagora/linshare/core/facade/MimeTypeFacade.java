@@ -43,9 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
  */
 public interface MimeTypeFacade {
 
-    public List<AllowedMimeTypeVO>  getAllSupportedMimeType() throws BusinessException;
     public List<AllowedMimeTypeVO>  getAllowedMimeType() throws BusinessException;
     public boolean isAllowed(String mimeType);
-    public void createAllowedMimeType(List<AllowedMimeTypeVO> newlist) throws BusinessException;
     public void saveOrUpdateAllowedMimeType(List<AllowedMimeTypeVO> list) throws BusinessException;
 }

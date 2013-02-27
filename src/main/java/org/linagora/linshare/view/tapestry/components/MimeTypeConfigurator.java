@@ -49,6 +49,8 @@ import org.linagora.linshare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MimeTypeFacade;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 @SupportsInformalParameters
 @Import(library = { "MimeTypeConfigurator.js" })
 
@@ -97,17 +99,9 @@ public class MimeTypeConfigurator {
      ************************************************************ */
 	@SetupRender
 	void init() throws BusinessException {
-        
 		if (numberOfRow==0) numberOfRow = 10; 
-		
-		if(supportedMimeType==null) supportedMimeType = mimeTypeFacade.getAllowedMimeType(); //read from database
-        
-        if(supportedMimeType.size()==0){
-        	supportedMimeType = mimeTypeFacade.getAllSupportedMimeType(); //read from provider if table is empty
-        }
-        
+		supportedMimeType = mimeTypeFacade.getAllowedMimeType(); 
         totalSize = supportedMimeType.size();
-        
 	}
 	
 	@AfterRender
@@ -119,7 +113,6 @@ public class MimeTypeConfigurator {
             
         	//mimeTypeFacade.createAllowedMimeType(selected);
         	mimeTypeFacade.saveOrUpdateAllowedMimeType(supportedMimeType);
-        
         } catch (BusinessException e) {
             e.printStackTrace();
         }
