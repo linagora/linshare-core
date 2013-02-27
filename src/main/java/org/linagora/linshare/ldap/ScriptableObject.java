@@ -1,35 +1,47 @@
 /*
- * LinShare is an open source filesharing software, part of the LinPKI software
- * suite, developed by Linagora.
+ ****************************************************************************
+ * Ldap Synchronization Connector provides tools to synchronize
+ * electronic identities from a list of data sources including
+ * any database with a JDBC connector, another LDAP directory,
+ * flat files...
+ *
+ *                  ==LICENSE NOTICE==
  * 
- * Copyright (C) 2013 LINAGORA
+ * Copyright (c) 2008 - 2011 LSC Project 
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+
+ *    * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the LSC Project nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
  * 
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version, provided you comply with the Additional Terms applicable for
- * LinShare software by Linagora pursuant to Section 7 of the GNU Affero General
- * Public License, subsections (b), (c), and (e), pursuant to which you must
- * notably (i) retain the display of the “LinShare™” trademark/logo at the top
- * of the interface window, the display of the “You are using the Open Source
- * and free version of LinShare™, powered by Linagora © 2009–2013. Contribute to
- * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
- * e-mails sent with the Program, (ii) retain all hypertext links between
- * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
- * refrain from infringing Linagora intellectual property rights over its
- * trademarks and commercial brands. Other Additional Terms apply, see
- * <http://www.linagora.com/licenses/> for more details.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU Affero General Public License and
- * its applicable Additional Terms for LinShare along with this program. If not,
- * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
- * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
- * applicable to LinShare software.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *                  ==LICENSE NOTICE==
+ *
+ *               (c) 2008 - 2011 LSC Project
+ *         Sebastien Bahloul <seb@lsc-project.org>
+ *         Thomas Chemineau <thomas@lsc-project.org>
+ *         Jonathan Clarke <jon@lsc-project.org>
+ *         Remy-Christophe Schermesser <rcs@lsc-project.org>
+ ****************************************************************************
  */
 package org.linagora.linshare.ldap;
 
