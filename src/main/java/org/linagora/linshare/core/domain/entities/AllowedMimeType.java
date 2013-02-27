@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-public class AllowedMimeType {
+public class AllowedMimeType implements Comparable<AllowedMimeType>{
 
 	private long id;
 	private String extensions;
@@ -41,11 +41,10 @@ public class AllowedMimeType {
 	private MimeTypeStatus status;
 	
 	public AllowedMimeType() {
-		this(-1,null,null,MimeTypeStatus.AUTHORISED);
+		this(null,null,MimeTypeStatus.AUTHORISED);
 	}
 
-	public AllowedMimeType(long id,String mimetype,String extensions,MimeTypeStatus status) {
-		this.id = id;
+	public AllowedMimeType(String mimetype,String extensions,MimeTypeStatus status) {
 		this.extensions = extensions;
 		this.mimetype = mimetype;
 		this.status = status;
@@ -81,6 +80,11 @@ public class AllowedMimeType {
 
 	public void setStatus(MimeTypeStatus status) {
 		this.status = status;
+	}
+
+	@Override
+	public int compareTo(AllowedMimeType o) {
+		return this.mimetype.compareTo(o.getMimetype());
 	}
 
 }

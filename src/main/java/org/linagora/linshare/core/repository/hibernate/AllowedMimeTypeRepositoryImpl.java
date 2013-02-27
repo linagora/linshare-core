@@ -36,6 +36,7 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.AllowedMimeType;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -50,8 +51,9 @@ public class AllowedMimeTypeRepositoryImpl extends AbstractRepositoryImpl<Allowe
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(AllowedMimeType entity) {
-		DetachedCriteria det = DetachedCriteria.forClass( AllowedMimeType.class )
-		.add(Restrictions.eq( "id", entity.getId() ) );
+		DetachedCriteria det = DetachedCriteria.forClass( AllowedMimeType.class );
+		det.add(Restrictions.eq( "id", entity.getId() ) );
+		det.addOrder(Order.asc("mimetype"));
 		return det;
 	}
 
@@ -60,8 +62,7 @@ public class AllowedMimeTypeRepositoryImpl extends AbstractRepositoryImpl<Allowe
         return mimes;
 	}
 
-	public void saveOrUpdateMimeType(List<AllowedMimeType> list)
-			throws BusinessException {
+	public void saveOrUpdateMimeType(List<AllowedMimeType> list) throws BusinessException {
 		for (AllowedMimeType allowedMimeType : list) {
 			getHibernateTemplate().saveOrUpdate(allowedMimeType);
 		}

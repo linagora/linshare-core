@@ -34,13 +34,11 @@
 package org.linagora.linshare.dao;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +58,7 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 
 	private static Logger logger = LoggerFactory.getLogger(MimeTypeMagicNumberTikaTest.class);
 
-	@Qualifier("mimeTypeMagicNumberDao2")
+	@Qualifier("mimeTypeMagicNumberDao")
 	@Autowired
 	private MimeTypeMagicNumberDao mimeTypeService;
 

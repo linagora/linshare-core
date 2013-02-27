@@ -76,16 +76,13 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 
 		MimeTypes defaultMimeTypes = MimeTypes.getDefaultMimeTypes();
 		SortedSet<MediaType> types = defaultMimeTypes.getMediaTypeRegistry().getTypes();
-		int i = 0;
 		for (MediaType mediaType : types) {
-			i++;
 			AllowedMimeType oneAllowedMimeType = null;
-
 			String strMimeType = mediaType.toString();
 			String extension;
 			try {
 				extension = defaultMimeTypes.forName(strMimeType).getExtension();
-				oneAllowedMimeType = new AllowedMimeType(i, strMimeType, extension, MimeTypeStatus.AUTHORISED);
+				oneAllowedMimeType = new AllowedMimeType(strMimeType, extension, MimeTypeStatus.AUTHORISED);
 				mimetypesList.add(oneAllowedMimeType);
 			} catch (MimeTypeException e) {
 				logger.error("Can not find extension(s) for mime type : " + strMimeType);

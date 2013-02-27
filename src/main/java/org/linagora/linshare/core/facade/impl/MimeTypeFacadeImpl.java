@@ -42,40 +42,36 @@ import org.linagora.linshare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MimeTypeFacade;
 import org.linagora.linshare.core.service.MimeTypeService;
+import org.linagora.linshare.core.service.impl.MimeTypeServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MimeTypeFacadeImpl implements MimeTypeFacade {
+	
+	private static final Logger logger = LoggerFactory.getLogger(MimeTypeFacadeImpl.class);
 
 	private MimeTypeService mimeTypeService;
-	
-	
+
 	private Transformer<AllowedMimeType, AllowedMimeTypeVO> allowedMimeTypeTransformer;
 
 	public MimeTypeFacadeImpl(MimeTypeService mimeTypeService) {
 		this.mimeTypeService = mimeTypeService;
-		this.allowedMimeTypeTransformer =  new AllowedMimeTypeTransformer();
-		
+		this.allowedMimeTypeTransformer = new AllowedMimeTypeTransformer();
+
 	}
 
-	public List<AllowedMimeTypeVO> getAllSupportedMimeType()
-			throws BusinessException {
-		return allowedMimeTypeTransformer.disassembleList(mimeTypeService.getAllSupportedMimeType());
-	}
-
+	@Override
 	public List<AllowedMimeTypeVO> getAllowedMimeType() throws BusinessException {
 		return allowedMimeTypeTransformer.disassembleList(mimeTypeService.getAllowedMimeType());
 	}
 
+	@Override
 	public boolean isAllowed(String mimeType) {
 		return mimeTypeService.isAllowed(mimeType);
 	}
 
-	public void createAllowedMimeType(List<AllowedMimeTypeVO> list)
-			throws BusinessException {
-		 mimeTypeService.createAllowedMimeType(allowedMimeTypeTransformer.assembleList(list));
-	}
-
-	public void saveOrUpdateAllowedMimeType(List<AllowedMimeTypeVO> list)
-			throws BusinessException {
+	@Override
+	public void saveOrUpdateAllowedMimeType(List<AllowedMimeTypeVO> list) throws BusinessException {
 		mimeTypeService.saveOrUpdateAllowedMimeType(allowedMimeTypeTransformer.assembleList(list));
 	}
 

@@ -46,58 +46,60 @@ import org.linagora.linshare.core.service.MimeTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 public class MimeTypeServiceImpl implements MimeTypeService {
 
-    Logger logger = LoggerFactory.getLogger(MimeTypeServiceImpl.class);
-    
-    /**
-     * database allowed mimetype
-     */
-    private final AllowedMimeTypeRepository allowedMimeTypeRepository;
+	private static final Logger logger = LoggerFactory.getLogger(MimeTypeServiceImpl.class);
 
-    /**
-     * supported mimetype by the provider implementation
-     */
-    private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
+	/**
+	 * database allowed mimetype
+	 */
+	private final AllowedMimeTypeRepository allowedMimeTypeRepository;
 
-    
-    /** Constructor.
-     * @param userRepository repository.
-     */
-    public MimeTypeServiceImpl(AllowedMimeTypeRepository allowedMimeTypeRepository, MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
-        this.allowedMimeTypeRepository = allowedMimeTypeRepository;
-        this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
-    }
+	/**
+	 * supported mimetype by the provider implementation
+	 */
+	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
 
-    
-    @Override
-	public List<AllowedMimeType> getAllSupportedMimeType()
-			throws BusinessException {
-		return mimeTypeMagicNumberDao.getAllSupportedMimeType();
+	/**
+	 * Constructor.
+	 * 
+	 * @param userRepository
+	 *            repository.
+	 */
+	public MimeTypeServiceImpl(AllowedMimeTypeRepository allowedMimeTypeRepository, MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
+		this.allowedMimeTypeRepository = allowedMimeTypeRepository;
+		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
 	}
 
-	
 	@Override
 	public List<AllowedMimeType> getAllowedMimeType() throws BusinessException {
-		return allowedMimeTypeRepository.findAll();
+
+		//reading from database
+		List<AllowedMimeType> list = allowedMimeTypeRepository.findAll();
+		if(list.size() == 0) {
+			// reading from provider if table is empty
+			list = mimeTypeMagicNumberDao.getAllSupportedMimeType();
+		}
+		Collections.sort(list);
+		return list;
 	}
 
-	
 	@Override
 	public void createAllowedMimeType(List<AllowedMimeType> newlist) throws IllegalArgumentException, BusinessException {
-		
+
 		List<AllowedMimeType> oldlist = allowedMimeTypeRepository.findAll();
-		
+
 		for (AllowedMimeType one : oldlist) {
 			allowedMimeTypeRepository.delete(one);
 		}
-		
+
 		for (AllowedMimeType one : newlist) {
 			allowedMimeTypeRepository.create(one);
 		}
 	}
-	
-	
+
 	@Override
 	public boolean isAllowed(String mimeType) {
 
@@ -106,43 +108,39 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 		List<AllowedMimeType> list = allowedMimeTypeRepository.findByMimeType(mimeType);
 		if (list != null && list.size() != 0) {
 			for (AllowedMimeType allowedMimeType : list) {
-				if(allowedMimeType.getStatus()!=MimeTypeStatus.AUTHORISED)
-				res = false;
+				if (allowedMimeType.getStatus() != MimeTypeStatus.AUTHORISED)
+					res = false;
 			}
 		} else {
-			res = false; //list is empty for this mime Type
+			res = false; // list is empty for this mime Type
 		}
-		
+
 		return res;
 	}
 
-	
 	@Override
-	public void saveOrUpdateAllowedMimeType(List<AllowedMimeType> list)
-			throws BusinessException {
+	public void saveOrUpdateAllowedMimeType(List<AllowedMimeType> list) throws BusinessException {
 		allowedMimeTypeRepository.saveOrUpdateMimeType(list);
 	}
 
-	
 	@Override
 	public MimeTypeStatus giveStatus(String mimeType) {
-		
+
 		MimeTypeStatus statusToReturn = MimeTypeStatus.DENIED;
 		List<AllowedMimeType> list = allowedMimeTypeRepository.findByMimeType(mimeType);
-		
+
 		if (list != null && list.size() != 0) {
 			statusToReturn = list.get(0).getStatus();
-			//type mime exists in database (same as apperture at this time)
-			//so check admin configuration
+			// type mime exists in database (same as apperture at this time)
+			// so check admin configuration
 		} else {
-			//type mime does not exist in database
+			// type mime does not exist in database
 			statusToReturn = MimeTypeStatus.AUTHORISED;
 		}
-		
+
 		return statusToReturn;
 	}
-	
-	
+
 	@Override
 	public void checkFileMimeType(String fileName, String mimeType, Account owner) throws BusinessException {
 		// use mimetype filtering
@@ -154,20 +152,19 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 		if (mimeType != null) {
 			MimeTypeStatus status = giveStatus(mimeType);
 
-			if (status==MimeTypeStatus.DENIED) {
+			if (status == MimeTypeStatus.DENIED) {
 				if (logger.isDebugEnabled())
 					logger.debug("mimetype not allowed: " + mimeType);
-                String[] extras = {fileName};
-				throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED,"This kind of file is not allowed: " + mimeType, extras);
-			} else if(status==MimeTypeStatus.WARN){
+				String[] extras = { fileName };
+				throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "This kind of file is not allowed: " + mimeType, extras);
+			} else if (status == MimeTypeStatus.WARN) {
 				if (logger.isInfoEnabled())
-					logger.info("mimetype warning: " + mimeType + "for user: "+owner.getLsUuid());
+					logger.info("mimetype warning: " + mimeType + "for user: " + owner.getLsUuid());
 			}
 		} else {
-			//type mime is null ?
-            String[] extras = {fileName};
-			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
-                "type mime is empty for this file" + mimeType, extras);
+			// type mime is null ?
+			String[] extras = { fileName };
+			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "type mime is empty for this file" + mimeType, extras);
 		}
 	}
 

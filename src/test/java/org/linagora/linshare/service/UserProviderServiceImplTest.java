@@ -43,7 +43,6 @@ import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
-import org.linagora.linshare.core.domain.vo.DomainPatternVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +52,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
 		"classpath:springContext-repository.xml",
+		"classpath:springContext-dao.xml",
 		"classpath:springContext-service.xml",
 		"classpath:springContext-business-service.xml",
 		"classpath:springContext-facade.xml",
@@ -62,11 +62,6 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		})
 public class UserProviderServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
-	private static String rootDomainName = "Domain0";
-	private static String topDomainName = "Domain0.1";
-	private static String subDomainName = "Domain0.1.1";
-	private static String domainePolicyName0 = "TestAccessPolicy0";
-
 	private static String baseDn = "dc=nodomain,dc=com";
 	private static String identifier= "ID_LDAP_DE_TEST2";
 	private static String identifierP= "ID_PARAM_DE_TEST2";

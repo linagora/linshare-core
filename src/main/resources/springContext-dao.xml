@@ -7,12 +7,8 @@
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
 	default-autowire="no">
 
-	<!-- aperture -->
-	<bean id="mimeTypeMagicNumberDao" class="org.linagora.linshare.core.dao.apperture.MimeTypeMagicNumberImpl">
-	</bean>
-	
 	<!-- apache tika -->
-	<bean id="mimeTypeMagicNumberDao2" class="org.linagora.linshare.core.dao.tika.MimeTypeMagicNumberTikaImpl">
+	<bean id="mimeTypeMagicNumberDao" class="org.linagora.linshare.core.dao.tika.MimeTypeMagicNumberTikaImpl">
 	</bean>
 	
 </beans>
