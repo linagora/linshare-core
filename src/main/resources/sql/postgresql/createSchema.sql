@@ -25,7 +25,7 @@ CREATE TABLE account (
 CREATE TABLE allowed_mimetype (
   id          int8 NOT NULL, 
   extensions varchar(255), 
-  mimetype   varchar(255), 
+  mimetype   varchar(255) UNIQUE, 
   status     int4, 
   CONSTRAINT linshare_allowed_mimetype_pkey 
     PRIMARY KEY (id));
