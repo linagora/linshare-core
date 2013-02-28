@@ -494,7 +494,7 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			<version>1.4.5</version>
+			<version>1.4.6</version>
 		</dependency>
 		<dependency>
 			<groupId>quartz</groupId>
@@ -586,7 +586,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -727,7 +727,7 @@
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-jaxrs</artifactId>
-			<version>1.9.9</version>
+			<version>1.9.11</version>
 		</dependency>
 	</dependencies>
 
@@ -1453,7 +1453,7 @@
 		<jackrabbit-release-version>1.4</jackrabbit-release-version>
 		<jackrabbit-core-version>1.4.13-LINAGORA</jackrabbit-core-version>
 		<slf4j-release-version>1.7.2</slf4j-release-version>
-		<cxf.version>2.7.0</cxf.version>
+		<cxf.version>2.7.3</cxf.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>
