@@ -27,22 +27,17 @@
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
 	
-<!-- 	<bean id="shareSoapService" class="org.linagora.linshare.webservice.impl.ShareSoapServiceImpl"> -->
-<!-- 		<constructor-arg ref="webServiceShareFacade" /> -->
-<!-- 	</bean> -->
-
-
-<!-- 	<bean id="pluginManagmentSoapService" class="org.linagora.linshare.webservice.impl.PluginManagmentSoapServiceImpl"> -->
-<!-- 	</bean> -->
-	
+	<bean id="MTOMUploadSoapService" class="org.linagora.linshare.webservice.impl.MTOMUploadSoapServiceImpl">
+		<constructor-arg ref="webServiceDocumentFacade" />
+	</bean>
 	
 	<bean id="soapExceptionInterceptor" class="org.linagora.linshare.webservice.interceptor.SoapExceptionInterceptor" />
 
 
-
 	<cxf:bus>
 		<cxf:features>
-			<!--<cxf:logging /> -->
+		<!-- Could be uncommented : inbound cxf messages and outbound cxf messages are written to stdout.  -->
+<!-- 			<cxf:logging />  -->
 		</cxf:features>
 		
 		<cxf:inInterceptors />
@@ -53,8 +48,14 @@
 	</cxf:bus>
 
 
-	<jaxws:endpoint id="soapEndpoint" implementor="#soapService"
-		address="/soap">
+	<jaxws:endpoint id="soapEndpoint" implementor="#soapService" address="/soap">
+		<jaxws:outFaultInterceptors>
+			<ref bean="soapExceptionInterceptor" />
+		</jaxws:outFaultInterceptors>
+	</jaxws:endpoint>  
+	
+	
+	<jaxws:endpoint id="MTOMUploadEndpoint" implementor="#MTOMUploadSoapService" address="/upload">
 		<jaxws:properties>
 			<entry key="mtom-enabled" value="true" />
 			<entry key="attachment-directory" value="${webservice.attachment-directory}" />
@@ -67,20 +68,6 @@
 		</jaxws:outFaultInterceptors>
 	</jaxws:endpoint>  
 	
- 	<!--  
- 	 <jaxws:endpoint id="shareEndpoint" implementor="#shareSoapService" address="/soap/share" >
-		<jaxws:outFaultInterceptors>
-			<ref bean="soapExceptionInterceptor" />
-		</jaxws:outFaultInterceptors> 	
- 	</jaxws:endpoint>
- 	
- 	<jaxws:endpoint id="pluginManagmentEndpoint" implementor="#pluginManagmentSoapService" address="/soap/plugin" >
-		<jaxws:outFaultInterceptors>
-			<ref bean="soapExceptionInterceptor" />
-		</jaxws:outFaultInterceptors> 	
- 	</jaxws:endpoint>
- 	 -->
-
 
 	<!-- REST  -->
 	<bean id="documentRestService" class="org.linagora.linshare.webservice.impl.DocumentRestServiceImpl">
