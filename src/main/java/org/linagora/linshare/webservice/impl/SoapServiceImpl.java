@@ -35,12 +35,10 @@ package org.linagora.linshare.webservice.impl;
 
 import java.util.List;
 
-import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.soap.MTOM;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
@@ -48,7 +46,6 @@ import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.core.facade.WebServiceUserFacade;
 import org.linagora.linshare.webservice.SoapService;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
@@ -58,7 +55,6 @@ import org.linagora.linshare.webservice.dto.UserDto;
 @WebService(serviceName = "SoapWebService", endpointInterface = "org.linagora.linshare.webservice.SoapService",
 	targetNamespace = WebserviceBase.NAME_SPACE_NS, portName = "SoapServicePort")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT,parameterStyle = ParameterStyle.WRAPPED ,use = SOAPBinding.Use.LITERAL)
-@MTOM
 public class SoapServiceImpl extends WebserviceBase implements
 		SoapService {
 
@@ -95,22 +91,6 @@ public class SoapServiceImpl extends WebserviceBase implements
 	public List<DocumentDto> getDocuments() throws BusinessException {
 		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.getDocuments();
-	}
-
-	/**
-	 * here we use XOP method for large file upload
-	 * 
-	 * @param doca
-	 * @throws BusinessException 
-	 */
-
-	@Oneway
-	@WebMethod(operationName = "addDocumentXop")
-	// **soap
-	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.addDocumentXop(doca);
 	}
 
 	@WebMethod(operationName = "getUserMaxFileSize")
