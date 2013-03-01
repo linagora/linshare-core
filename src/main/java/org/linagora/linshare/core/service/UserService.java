@@ -249,7 +249,8 @@ public interface UserService {
     public List<User> findUsersInDB(String domain);
     
     /**
-	 * This method is designed to search in all existing domains, and create an user entity in the database if it was a successful research(got one only hit)  
+	 * This method is designed to search in all existing domains, and create an user entity in the database if it was a successful research(got one only hit).
+	 * This method is designed to be used by the authentication provider in order to find and/or create a user.
 	 * @param mail : this parameter should be unique in directories
 	 * @return User entity
 	 */

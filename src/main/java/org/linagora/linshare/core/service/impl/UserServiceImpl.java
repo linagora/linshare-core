@@ -879,8 +879,17 @@ public class UserServiceImpl implements UserService {
     			logger.error("Impossible to create an user entity from unknown domain. The searchUserRecursivelyWithoutRestriction method returns null.");
     		}
     		return null;
+    	} else {
+    		// The user was found in the database, but we have to check if this user is still in the ldap.
+    		logger.debug("User '" + userDB.getMail() + "'found in database. Checking if he is still in the ldap");
+    		List<User> list = abstractDomainService.searchUserWithoutRestriction(userDB.getDomain(), userDB.getMail(), null, null);
+    		if(list.size()==1) {
+    			// the user still exists in the ldap, it is ok.
+    			return userDB;
+    		}
+    		logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
+    		return null;
     	}
-    	return userDB;
 	}
 
 	@Override
