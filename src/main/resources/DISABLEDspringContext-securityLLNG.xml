@@ -41,12 +41,18 @@
 
 			<!-- allow soap wsdl to be public with these rule -->
 			<sec:filter-chain pattern="/webservice/soap?wsdl" filters="none" />
+			<sec:filter-chain pattern="/webservice/soap?wsdl=SoapService.wsdl" filters="none" />
+			
+			<sec:filter-chain pattern="/webservice/upload?wsdl" filters="none" />
+			<sec:filter-chain pattern="/webservice/upload?wsdl=MTOMUploadSoapService.wsdl" filters="none" />
+			
 			<sec:filter-chain pattern="/webservice/?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
 			<sec:filter-chain pattern="/webservice/**"
 				filters="httpSessionIntegrationFilter, lemonLDAPFilter, basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
+				
 			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
 			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
 			<sec:filter-chain pattern="/**"
