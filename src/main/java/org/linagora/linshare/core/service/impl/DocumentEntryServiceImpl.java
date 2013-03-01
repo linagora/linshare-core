@@ -119,8 +119,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 			Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
-				checkVirus(fileName, actor, tempFile);
 			}
+			checkVirus(fileName, actor, tempFile);
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
@@ -534,6 +534,9 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			logger.error("File scan failed: antivirus enabled but not available ?");
 			logEntryService.create(LogEntryService.ERROR, logEntry);
 			throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED, "File scan failed", e);
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("antivirus scan result : " + checkStatus);
 		}
 		// check if the file contains virus
 		if (!checkStatus) {
