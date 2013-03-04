@@ -36,28 +36,42 @@ package org.linagora.linshare.core.facade.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceUserFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-public class WebServiceUserFacadeImpl implements WebServiceUserFacade {
+public class WebServiceUserFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceUserFacade {
 
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceUserFacadeImpl.class);
 	
 	private final UserService userService;
 	
-	public WebServiceUserFacadeImpl(UserService userService) {
-		super();
+	private final FunctionalityService functionalityService;
+	
+	public WebServiceUserFacadeImpl(final UserService userService, final AccountService accountService, FunctionalityService functionalityService) {
+		super(accountService);
 		this.userService = userService;
+		this.functionalityService = functionalityService;
 	}
 
+	@Override
+	public User checkAuthentication() throws BusinessException {
+		User user = super.checkAuthentication();
+		Functionality functionality = functionalityService.getUserTabFunctionality(user.getDomain());
+		if (!functionality.getActivationPolicy().getStatus()) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+		}
+		return user;
+	}
+	
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
 		User actor = getAuthentication();
@@ -67,30 +81,7 @@ public class WebServiceUserFacadeImpl implements WebServiceUserFacade {
 		for (User user : users) {
 			res.add(new UserDto(user));
 		}
+		logger.debug("user found : " + res.size());
 		return res;
 	}
-
-	private User getAuthentication() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
-	     String name =  (auth != null) ? auth.getName() : null; //get logged in username
-	     logger.debug("Authentication auth : " + name);
-	     if (name == null) {
-	    	 return null;
-	     }
-	     User user = userService.findByLsUid(name);
-	     return user;
-	}
-	
-	@Override
-	public User checkAuthentication() throws BusinessException {
-		
-		User actor = getAuthentication();
-		
-		if (actor== null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
-		}
-		
-		return actor;
-	}
-	
 }

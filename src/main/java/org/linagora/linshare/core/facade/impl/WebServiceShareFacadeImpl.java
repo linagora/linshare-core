@@ -55,36 +55,24 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-public class WebServiceShareFacadeImpl implements WebServiceShareFacade {
+public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceShareFacade {
 
-	private final DocumentEntryService documentEntryService;
-	private final AccountService accountService;
-	private final ShareFacade shareFacade;
-	private final ShareEntryService shareEntryService;
-
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceShareFacadeImpl.class);
+	
+	private final DocumentEntryService documentEntryService;
+	
+	private final ShareFacade shareFacade;
+	
+	private final ShareEntryService shareEntryService;
 
 	public WebServiceShareFacadeImpl(final DocumentEntryService documentEntryService, final AccountService accountService, final ShareFacade shareFacade,
 			final ShareEntryService shareEntryService) {
+		super(accountService);
 		this.documentEntryService = documentEntryService;
-		this.accountService = accountService;
 		this.shareFacade = shareFacade;
 		this.shareEntryService = shareEntryService;
-	}
-
-	@Override
-	public User checkAuthentication() throws BusinessException {
-
-		User actor = getAuthentication();
-
-		if (actor == null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
-		}
-
-		return actor;
 	}
 
 	@Override
@@ -207,17 +195,4 @@ public class WebServiceShareFacadeImpl implements WebServiceShareFacade {
 		}
 
 	}
-
-	// ############# utility methods
-
-	private User getAuthentication() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = (auth != null) ? auth.getName() : null; // get logged in username
-		logger.debug("Authentication auth : " + name);
-		if (name == null)
-			return null;
-		User user = (User) accountService.findByLsUid(name);
-		return user;
-	}
-
 }
