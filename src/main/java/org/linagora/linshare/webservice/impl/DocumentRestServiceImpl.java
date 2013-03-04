@@ -51,15 +51,17 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.webservice.DocumentRestService;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
 
-	
-	
+	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
+
 	private final WebServiceDocumentFacade webServiceDocumentFacade;
 	
 	
