@@ -80,13 +80,15 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	
 	private final boolean displayLogo;
 	
+	private final boolean insertLicenceTerm;
+	
 	private final AbstractDomainService abstractDomainService;
 	
 
 	public MailContentBuildingServiceImpl(final String urlBase, 
 			final String urlInternal, final String mailContentTxt,
 			final String mailContentHTML, final String mailContentHTMLWithoutLogo,
-			final boolean displayLogo, AbstractDomainService abstractDomainService) throws BusinessException {
+			final boolean displayLogo, AbstractDomainService abstractDomainService, boolean insertLicenceTerm) throws BusinessException {
 		this.pUrlBase = urlBase;
 		this.pUrlInternal = urlInternal;
         this.mailContentTxt = mailContentTxt;
@@ -94,6 +96,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         this.mailContentHTMLWithoutLogo = mailContentHTMLWithoutLogo;
         this.displayLogo = displayLogo;
         this.abstractDomainService = abstractDomainService;
+        this.insertLicenceTerm = insertLicenceTerm;
 	}
 
 	
@@ -719,7 +722,19 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 */
 	private MailTemplate buildTemplateFooter(User actor, Language language) throws BusinessException {
 		MailTemplate template = getMailTemplate(actor, language, MailTemplateEnum.FOOTER);
-        
+        if(insertLicenceTerm) {
+        	StringBuilder contentTXT = new StringBuilder(template.getContentTXT());
+        	StringBuilder contentHTML = new StringBuilder(template.getContentHTML());
+    		if (language.equals(Language.FRENCH)) {
+    			contentTXT.append("\r\nVous utilisez la version libre et gratuite de LinShare™ http://www.linshare.org,™, développée par Linagora © 2009-2013. Contribuez à la R&D du produit en souscrivant à une offre entreprise.\n\r");
+    			contentHTML.append("<br/>Vous utilisez la version libre et gratuite de <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, développée par Linagora © 2009-2013. Contribuez à la R&D du produit en souscrivant à une offre entreprise.<br/>");
+    		} else {
+    			contentTXT.append("\r\nYou are using the Open Source and free version of LinShare™, powered by Linagora © 2009-2013. Contribute to Linshare R&D by subscribing to an Enterprise offer.\n\r");
+    			contentHTML.append("<br/>You are using the Open Source and free version of <a href=\"http://www.linshare.org/\" title=\"LinShare\"><strong>LinShare</strong></a>™, powered by Linagora © 2009-2013. Contribute to Linshare R&D by subscribing to an Enterprise offer.<br/>");
+    		}
+    		template.setContentTXT(contentTXT.toString());
+    	    template.setContentHTML(contentHTML.toString());    		
+        }
         return template;
 	}
 	

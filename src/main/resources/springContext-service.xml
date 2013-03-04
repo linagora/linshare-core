@@ -164,6 +164,7 @@
 		<constructor-arg value="${linshare.mails.htmlwithoutlogo.container}" />
 		<constructor-arg value="${linshare.logo.mails.visible}" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg value="${linshare.display.licenceTerm}" />
 	</bean>
 
 	<bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
