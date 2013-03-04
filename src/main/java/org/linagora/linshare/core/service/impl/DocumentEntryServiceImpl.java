@@ -119,8 +119,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 			Functionality antivirusFunctionality = functionalityService.getAntivirusFunctionality(domain);
 			if (antivirusFunctionality.getActivationPolicy().getStatus()) {
+				checkVirus(fileName, actor, tempFile);
 			}
-			checkVirus(fileName, actor, tempFile);
 
 			// want a timestamp on doc ?
 			String timeStampingUrl = null;
