@@ -175,6 +175,7 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	private User getAuthentication() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
 	     String name =  (auth != null) ? auth.getName() : null; //get logged in username
+	     logger.debug("Authentication auth : " + name);
 	     if (name == null) {
 	    	 return null;
 	     }

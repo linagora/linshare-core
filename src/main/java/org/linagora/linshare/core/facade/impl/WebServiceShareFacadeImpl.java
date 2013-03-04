@@ -212,8 +212,8 @@ public class WebServiceShareFacadeImpl implements WebServiceShareFacade {
 
 	private User getAuthentication() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = (auth != null) ? auth.getName() : null; // get logged in
-																// username
+		String name = (auth != null) ? auth.getName() : null; // get logged in username
+		logger.debug("Authentication auth : " + name);
 		if (name == null)
 			return null;
 		User user = (User) accountService.findByLsUid(name);

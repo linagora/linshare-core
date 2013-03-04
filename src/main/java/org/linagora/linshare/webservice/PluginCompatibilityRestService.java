@@ -33,9 +33,13 @@
  */
 package org.linagora.linshare.webservice;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.Path;
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
 
 @Path("/rest")
@@ -44,4 +48,6 @@ public interface PluginCompatibilityRestService {
 	public SimpleStringValue getInformation();
 	
 	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String message);
+	
+	public DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body);
 }

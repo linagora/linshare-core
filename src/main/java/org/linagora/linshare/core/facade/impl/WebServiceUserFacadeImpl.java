@@ -42,11 +42,15 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceUserFacade;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class WebServiceUserFacadeImpl implements WebServiceUserFacade {
 
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceUserFacadeImpl.class);
+	
 	private final UserService userService;
 	
 	public WebServiceUserFacadeImpl(UserService userService) {
@@ -69,6 +73,7 @@ public class WebServiceUserFacadeImpl implements WebServiceUserFacade {
 	private User getAuthentication() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
 	     String name =  (auth != null) ? auth.getName() : null; //get logged in username
+	     logger.debug("Authentication auth : " + name);
 	     if (name == null) {
 	    	 return null;
 	     }

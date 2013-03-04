@@ -33,9 +33,11 @@
  */
 package org.linagora.linshare.webservice.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -45,18 +47,24 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
 import org.linagora.linshare.webservice.PluginCompatibilityRestService;
 
 public class PluginCompatibilityRestServiceImpl extends WebserviceBase implements PluginCompatibilityRestService {
 
+	private final WebServiceDocumentFacade webServiceDocumentFacade;
 	private final WebServiceShareFacade webServiceShareFacade;
 
-	public PluginCompatibilityRestServiceImpl(final WebServiceShareFacade facade){
+	public PluginCompatibilityRestServiceImpl(final WebServiceDocumentFacade webServiceDocumentFacade, final WebServiceShareFacade facade){
+		this.webServiceDocumentFacade = webServiceDocumentFacade;
 		this.webServiceShareFacade = facade;
 	}
 	
@@ -101,6 +109,53 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
 		}
- 
 	}
+	
+	/**
+	 * upload a file in user's space.
+	 * send file inside a form 
+	 */
+	@POST
+	@Path("/document/upload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Override
+	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "description", required = false) String description, @Multipart(value = "filename",required = false) String givenFileName, MultipartBody body) {
+		
+		User actor = null;
+		try {
+			actor = webServiceDocumentFacade.checkAuthentication();
+		} catch (BusinessException e) {
+			throw analyseFaultREST(e);
+		}
+		
+		if ((actor instanceof Guest  && !actor.getCanUpload())) {
+			throw giveRestException(HttpStatus.SC_FORBIDDEN,"You are not authorized to use this service");
+		}
+ 
+		if (theFile==null) {
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST,"Missing file (check parameter file)");
+		}	
+ 
+		
+		String filename;
+		
+		if(givenFileName==null || givenFileName.isEmpty()){
+			//parameter givenFileName is optional
+			//so need to search this information in the header of the attachement (with id file)
+			filename = body.getAttachment("file").getContentDisposition().getParameter("filename"); 
+		}  else {
+			filename = givenFileName;
+		}
+		
+		//comment can not be null ?
+		String comment = (description == null)? "":description;
+		
+		try {
+			return webServiceDocumentFacade.uploadfile(theFile, filename, comment);
+		} catch (BusinessException e) {
+			throw analyseFaultREST(e);
+		}
+	}
+	
 }

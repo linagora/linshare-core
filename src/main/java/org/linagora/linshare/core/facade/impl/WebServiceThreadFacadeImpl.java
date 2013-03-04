@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Thread;
-import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -45,12 +44,15 @@ import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class WebServiceThreadFacadeImpl implements WebServiceThreadFacade {
 
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceThreadFacadeImpl.class);
+	
 	private final ThreadService threadService;
 
 	private final AccountService accountService;
@@ -74,8 +76,8 @@ public class WebServiceThreadFacadeImpl implements WebServiceThreadFacade {
 
 	private User getAuthentication() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = (auth != null) ? auth.getName() : null; // get logged in
-																// username
+		String name = (auth != null) ? auth.getName() : null; // get logged in username
+		logger.debug("Authentication auth : " + name);
 		if (name == null) {
 			return null;
 		}
