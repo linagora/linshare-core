@@ -35,17 +35,13 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ShareDto;
 
 
-public interface WebServiceShareFacade {
-
+public interface WebServiceShareFacade extends WebServiceGenericFacade {
 
 	public void sharedocument (String targetMail, String uuid, int securedShare) throws BusinessException;
-
-	public User checkAuthentication() throws BusinessException;
 
 	void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt) throws BusinessException;
 

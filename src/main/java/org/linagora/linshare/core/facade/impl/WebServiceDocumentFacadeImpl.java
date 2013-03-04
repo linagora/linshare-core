@@ -54,15 +54,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
-    private static final Logger logger = LoggerFactory.getLogger(WebServiceDocumentFacade.class);
+public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceDocumentFacade {
+  
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceDocumentFacade.class);
     
 	private final DocumentEntryService documentEntryService;
-	private final AccountService accountService;
 
 	public WebServiceDocumentFacadeImpl(final DocumentEntryService documentEntryService, final AccountService accountService) {
+		super(accountService);
 		this.documentEntryService = documentEntryService;
-		this.accountService = accountService;
 	}
 	
 	
@@ -83,7 +83,6 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 		
 		return convertDocumentEntryList (docs);
 	}
-
 	
 	@Override
 	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException{
@@ -100,22 +99,6 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 		
 		return new DocumentDto(res);
 	}
-	
-
-	
-	@Override
-	public User checkAuthentication() throws BusinessException {
-		
-		User actor = getAuthentication();
-		
-		if (actor== null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
-		}
-		
-		return actor;
-	}
-	
-	
 
 	@Override
 	public DocumentDto addDocumentXop(DocumentAttachement doca)  throws BusinessException {
@@ -171,19 +154,6 @@ public class WebServiceDocumentFacadeImpl implements WebServiceDocumentFacade {
 	
 	
 	//#############  utility methods
-	
-	private User getAuthentication() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
-	     String name =  (auth != null) ? auth.getName() : null; //get logged in username
-	     logger.debug("Authentication auth : " + name);
-	     if (name == null) {
-	    	 return null;
-	     }
-	     User user = (User) accountService.findByLsUid(name);
-	     return user;
-	}
-
-	
 	private static List<DocumentDto> convertDocumentEntryList(List<DocumentEntry> input) {
 
 		if (input == null)
