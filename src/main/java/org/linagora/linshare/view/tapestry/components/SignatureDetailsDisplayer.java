@@ -113,7 +113,7 @@ public class SignatureDetailsDisplayer {
 	private PersistentLocale persistentLocale;
 	
     
-	public Zone getShowSignature(String docidentifier) {
+	public Zone getShowSignature(String docidentifier) throws BusinessException {
 		
 		currentdoc = documentFacade.getDocument(userVo.getLogin(), docidentifier);
 		
@@ -140,7 +140,7 @@ public class SignatureDetailsDisplayer {
 	 * Format the creation date for good displaying using DateFormatUtils of apache commons lib.
 	 * @return creation date the date in localized format.
 	 */
-	public String getCreationDate(){
+	public String getCreationDateCustom(){
 		if (signature!=null)
 			{
 				String pattern = messages.get("global.pattern.timestamp");

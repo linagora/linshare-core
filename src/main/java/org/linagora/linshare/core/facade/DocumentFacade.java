@@ -105,8 +105,9 @@ public interface DocumentFacade {
 	 * @param currentSigner current UserVo
 	 * @param document document to check
 	 * @return true if the document is signed by the user
+	 * @throws BusinessException 
 	 */
-	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo document);
+	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo document) throws BusinessException;
 	/**
 	 * check if the document is already signed by someone.
 	 * @param userlogin 

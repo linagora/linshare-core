@@ -25,9 +25,9 @@
 
 		<div id="signDocumentlist">
 			<t:grid source="signatures" row="signature"
-				add="signerInfo, creationDate, action"
-				exclude="identifier,cert,certNotAfter,mail,certSubjectDn,certIssuerDn,certValidity,completeName,name,size,persistenceId"
-				reorder="signerInfo, creationDate">
+				add="signerInfo, creationDateCustom, action"
+				exclude="identifier,cert,certNotAfter,creationDate,mail,certSubjectDn,certIssuerDn,certValidity,completeName,name,size,persistenceId"
+				reorder="signerInfo, creationDateCustom">
 
 
 				<!-- Header definition -->
@@ -57,8 +57,8 @@
 					<span class="certIssuerDn">${message:components.signaturedetailsdisplayer.grid.certIssuerDnLabel} ${signature.certIssuerDn}</span>
 				</t:parameter>
 					
-				<t:parameter t:name="creationDateCell">
-					<span class="creationDate">${creationDate}</span>
+				<t:parameter t:name="creationDateCustomCell">
+					<span class="creationDate">${creationDateCustom}</span>
 				</t:parameter>
 					
 				<t:parameter t:name="actionCell">

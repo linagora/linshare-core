@@ -212,25 +212,22 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	
 
 	@Override
-	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo documentVo){
+	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo documentVo) throws BusinessException{
 		
-//		TODO : Fix signature : just write a finder 
-//		User currentSignerDoc =  userRepository.findByLsUid(currentSigner.getLogin());
-//		
-//		Document doc = documentService.getDocument(document.getIdentifier());
-//		List<Signature> signatures = doc.getSignatures();
-//		
-//		boolean res = false;
-//		
-//		for (Signature signature : signatures) {
-//			if (signature.getSigner().equals(currentSignerDoc)) {
-//				res = true;
-//				break;
-//			}
-//		}
-//		
-//		return res;
-		return false;
+		Account actor = accountService.findByLsUid(currentSigner.getLsUid());
+		DocumentEntry doc = documentEntryService.findById(actor, documentVo.getIdentifier());
+		Set<Signature> signatures = doc.getDocument().getSignatures();
+		
+		boolean res = false;
+		
+		for (Signature signature : signatures) {
+			if (signature.getSigner().equals(actor)) {
+				res = true;
+				break;
+			}
+		}
+		
+		return res;
 	}
 	
 	

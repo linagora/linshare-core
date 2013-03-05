@@ -597,7 +597,7 @@ public class ListDocument {
 		return warningSignature.getShowWarning();
 	}
 
-	public Zone onActionFromShowSignature(String docidentifier) {
+	public Zone onActionFromShowSignature(String docidentifier) throws BusinessException {
 		return signatureDetailsDisplayer.getShowSignature(docidentifier);
 	}
 	
@@ -741,7 +741,7 @@ public class ListDocument {
 		return (null == documents || documents.isEmpty());
 	}
 
-	public boolean isDocumentSignedByCurrentUser() {
+	public boolean isDocumentSignedByCurrentUser() throws BusinessException {
 		return documentFacade.isSignedDocumentByCurrentUser(user, document);
 	}
 
