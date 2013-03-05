@@ -55,7 +55,7 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 
 	@Path("/list")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, "application/json;charset=UTF-8"})
 	// application/xml application/json
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {

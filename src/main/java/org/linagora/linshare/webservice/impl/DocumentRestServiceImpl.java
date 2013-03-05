@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
 	private final WebServiceDocumentFacade webServiceDocumentFacade;
@@ -75,7 +76,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	 */
 	@Path("/list")
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) // application/xml application/json 
+	@Produces({MediaType.APPLICATION_XML, "application/json;charset=UTF-8" }) // application/xml application/json 
 	@Override
 	public List<DocumentDto> getDocuments()
     {

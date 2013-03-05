@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService{
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(ShareRestServiceImpl.class);
 	
 	private final WebServiceShareFacade webServiceShareFacade;
@@ -66,7 +67,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	 */
 	@Path("/list")
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) // application/xml application/json 
+	@Produces({MediaType.APPLICATION_XML, "application/json;charset=UTF-8" }) // application/xml application/json 
 	@Override
 	public List<ShareDto> getReceivedShares()
     {
