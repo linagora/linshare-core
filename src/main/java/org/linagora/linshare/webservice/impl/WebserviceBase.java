@@ -38,6 +38,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -45,41 +47,47 @@ import org.linagora.linshare.core.exception.BusinessException;
  */
 public class WebserviceBase {
 
-	
-	//REST
-	
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger(WebserviceBase.class);
+
+	// REST
+
 	protected WebApplicationException giveRestException(int httpErrorCode, String message) {
-		return giveRestException(httpErrorCode,message,null);
+		return giveRestException(httpErrorCode, message, null);
 	}
-	protected WebApplicationException giveRestException(int httpErrorCode, String message,Throwable cause) {
-		if(cause==null)
+
+	protected WebApplicationException giveRestException(int httpErrorCode, String message, Throwable cause) {
+		if (cause == null)
 			return new WebApplicationException(Response.status(httpErrorCode).entity(message).build());
 		else
-		return new WebApplicationException(cause, Response.status(httpErrorCode).entity(message).build());
+			return new WebApplicationException(cause, Response.status(httpErrorCode).entity(message).build());
 	}
-	
+
 	protected WebApplicationException analyseFaultREST(BusinessException e) {
-		
-		
-		//TODO locale in WebApplicationException ?
-		
+
+		// TODO locale in WebApplicationException ?
 		WebApplicationException w;
-		
-		//BusinessException have a look to BusinessErrorCode
-		switch (e.getErrorCode()){
-		case WEBSERVICE_FAULT: w=giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR,e.getMessage(),e);
-		case WEBSERVICE_UNAUTHORIZED: w=giveRestException(HttpStatus.SC_FORBIDDEN,e.getMessage());
-		case WEBSERVICE_NOT_FOUND: w=giveRestException(HttpStatus.SC_NOT_FOUND,e.getMessage());
+
+		// BusinessException have a look to BusinessErrorCode
+		switch (e.getErrorCode()) {
+		case WEBSERVICE_FAULT:
+			w = giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
+			break;
+		case WEBSERVICE_UNAUTHORIZED:
+			w = giveRestException(HttpStatus.SC_FORBIDDEN, e.getMessage());
+			break;
+		case WEBSERVICE_NOT_FOUND:
+			w = giveRestException(HttpStatus.SC_NOT_FOUND, e.getMessage());
+			break;
 		default:
-			w=giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR,e.getMessage(),e);
+			w = giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
 		}
-		
+
 		return w;
 	}
-	
-	
-	//SOAP
-	
+
+	// SOAP
+
 	public static final String NAME_SPACE_NS = "http://org/linagora/linshare/webservice/";
-	
+
 }
