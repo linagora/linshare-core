@@ -45,7 +45,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.webservice.ThreadRestService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
-import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestService {
 
@@ -60,7 +59,7 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	 */
 	@Path("/list")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, "application/json;charset=UTF-8" })
 	// application/xml application/json
 	@Override
 	public List<ThreadDto> getAllMyThread() throws BusinessException {
