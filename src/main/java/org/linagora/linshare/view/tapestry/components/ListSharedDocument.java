@@ -329,7 +329,7 @@ public class ListSharedDocument {
 		return userDetailsDisplayer.getShowUser(mail);	
 	}
 	
-	public Zone onActionFromShowSignature(String docidentifier) {
+	public Zone onActionFromShowSignature(String docidentifier) throws BusinessException {
 		return signatureDetailsDisplayer.getShowSignature(docidentifier);
 	}
 	
@@ -543,10 +543,10 @@ public class ListSharedDocument {
 		return shareDocument.getSender().getFirstName()+" "+shareDocument.getSender().getLastName();
 	}
 
-	public boolean isDocumentSignedByCurrentUser(){
+	public boolean isDocumentSignedByCurrentUser() throws BusinessException{
 		return documentFacade.isSignedDocumentByCurrentUser(user, shareDocument);
 	}
-	public boolean isDocumentNotSignedByCurrentUserAndDocNotEncrypted(){
+	public boolean isDocumentNotSignedByCurrentUserAndDocNotEncrypted() throws BusinessException{
 		return !shareDocument.getEncrypted() && !isDocumentSignedByCurrentUser();
 	}
 	
