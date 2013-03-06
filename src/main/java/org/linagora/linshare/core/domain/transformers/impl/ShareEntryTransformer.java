@@ -67,7 +67,7 @@ public class ShareEntryTransformer implements Transformer<ShareEntry, ShareDocum
 				share.getCreationDate(),
 				share.getExpirationDate(),
 				share.getType(),
-				sender.getLsUid(),
+				sender.getLsUuid(),
 				share.getDocumentEntry().getCiphered(),
 				true,
 				share.getSize(),

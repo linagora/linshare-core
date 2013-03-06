@@ -77,7 +77,7 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	}
 
 	public List<DocumentVo> retrieveDocument(UserVo userVo) {
-		User user = (User) accountService.findByLsUid(userVo.getLsUid());
+		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
 		try {
 			List<DocumentEntry> documentEntries = documentEntryService.findAllMyDocumentEntries(user, user);
 			return documentEntryTransformer.disassembleList(documentEntries);
@@ -89,12 +89,12 @@ public class SearchDocumentFacadeImpl implements SearchDocumentFacade{
 	}
 
 	public List<DocumentVo> retrieveDocumentContainsCriterion(UserVo actorVo, SearchDocumentCriterion searchDocumentCriterion) {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		return documentEntryTransformer.disassembleList(searchDocumentService.retrieveDocumentContainsCriterion(actor, searchDocumentCriterion));
 	}
 
 	public List<ShareDocumentVo> retrieveShareDocumentContainsCriterion(UserVo actorVo, SearchDocumentCriterion searchDocumentCriterion) {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		return shareEntryTransformer.disassembleList(this.searchDocumentService.retrieveShareDocumentContainsCriterion(actor, searchDocumentCriterion));
 		
 	}

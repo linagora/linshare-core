@@ -181,7 +181,7 @@ public class ShareEntryRepositoryImpl extends AbstractRepositoryImpl<ShareEntry>
 		
 		QueryParameter queryParameter = new QueryParameter();
 		queryParameter.appendToQuery(" recipient.lsUuid=:lsUuid " );
-		queryParameter.addParameter("lsUuid", searchDocumentCriterion.getUser().getLsUid());
+		queryParameter.addParameter("lsUuid", searchDocumentCriterion.getUser().getLsUuid());
 		
 		if(null!=searchDocumentCriterion.getName()){
 			queryParameter.appendToQuery(" lower(share.name) like lower(:name) " );

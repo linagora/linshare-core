@@ -51,7 +51,7 @@ public class AccountFacadeImpl implements AccountFacade {
 	@Override
 	public UserVo loadUserDetails(String uid) throws BusinessException {
 //		Account account = userService.searchAndCreateUserEntityFromUnkownDirectory(mail);
-		Account account = accountService.findByLsUid(uid);
+		Account account = accountService.findByLsUuid(uid);
     	if (account != null) {
     		return new UserVo(account);
     	}

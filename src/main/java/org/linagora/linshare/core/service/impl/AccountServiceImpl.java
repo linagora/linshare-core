@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
 
 
 	@Override
-	public Account findByLsUid(String uid) {
+	public Account findByLsUuid(String uid) {
 		Account acc = accountRepository.findByLsUuid(uid);
 		// TODO : Remove this : Temporary hook for compatibility
 		if (acc == null) {

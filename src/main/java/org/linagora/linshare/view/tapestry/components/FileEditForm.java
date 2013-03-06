@@ -181,7 +181,7 @@ public class FileEditForm {
 		}
 		if(reset) return;
 
-        documentFacade.updateFileProperties(userLoggedIn.getLsUid(), editFileWithUuid, fileName, fileComment);
+        documentFacade.updateFileProperties(userLoggedIn.getLsUuid(), editFileWithUuid, fileName, fileComment);
         shareSessionObjects.addMessage(messages.get("component.fileEditForm.action.update.confirm"));
         componentResources.triggerEvent("resetListFiles", null, null);
 	}

@@ -968,7 +968,7 @@ public class ListDocument {
 		InputStream stream = null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(documents, docID);
         try {
-			stream = documentFacade.getDocumentThumbnail(user.getLsUid(), currentDocumentVo.getIdentifier());
+			stream = documentFacade.getDocumentThumbnail(user.getLsUuid(), currentDocumentVo.getIdentifier());
 	    } catch (Exception e) {
 			logger.error("Trying to get a thumbnail linked to a document which doesn't exist anymore");
 		}

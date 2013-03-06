@@ -59,7 +59,7 @@ public class Logout {
 	
 	public void onActivate(){
 
-		logger.info("logout user : " + userDetailsVo.getMail() + "(" + userDetailsVo.getLsUid() + ")");
+		logger.info("logout user : " + userDetailsVo.getMail() + "(" + userDetailsVo.getLsUuid() + ")");
 		userDetailsVo=null;
 //		requestGlobals.getHTTPServletRequest().getSession().invalidate(); //already done by j_spring_security_logout
 		try {
