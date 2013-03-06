@@ -93,7 +93,7 @@ public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 	}
 	
 	public String getLsUuid() {
-		return user.getLsUid();
+		return user.getLsUuid();
 	}
 
 	@Override

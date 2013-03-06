@@ -337,11 +337,11 @@ public class GuestEditForm {
         	
         try {
         	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
-        		userFacade.addGuestContactRestriction(userLoggedIn.getLsUid(), guestVo.getLsUid());
+        		userFacade.addGuestContactRestriction(userLoggedIn.getLsUuid(), guestVo.getLsUuid());
         	}
         	
         	if (restrictedGuest || userLoggedIn.isRestricted()) { // a restricted guest can only create restricted guests
-        		userFacade.setGuestContactRestriction(guestVo.getLsUid(), recipientsEmail);
+        		userFacade.setGuestContactRestriction(guestVo.getLsUuid(), recipientsEmail);
         	}
             shareSessionObjects.addMessage(messages.get("components.guestEditForm.action.add.confirm"));
         } catch (BusinessException e) { //bad contact for contacts list
@@ -350,7 +350,7 @@ public class GuestEditForm {
         	List<String> contactMailList = new ArrayList<String>();
         	contactMailList.add(userLoggedIn.getMail());
         	try {
-				userFacade.setGuestContactRestriction(guestVo.getLsUid(), contactMailList); //default: set guest contact restriction with the owner
+				userFacade.setGuestContactRestriction(guestVo.getLsUuid(), contactMailList); //default: set guest contact restriction with the owner
 			} catch (BusinessException e1) {
 				e1.printStackTrace();
 			}

@@ -136,7 +136,7 @@ public class UserFacadeImpl implements UserFacade {
      * @return a list of matching users.
      */
     public List<UserVo> searchUser(String mail, String firstName, String lastName, UserVo currentUser) throws BusinessException {
-    	User owner =  (User)accountService.findByLsUid(currentUser.getLogin());
+    	User owner =  (User)accountService.findByLsUuid(currentUser.getLogin());
     	
     	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
         return getUserVoList(users);
@@ -200,7 +200,7 @@ public class UserFacadeImpl implements UserFacade {
         try {
 			userService.deleteUser(login, actor);
 		} catch (BusinessException e) {
-			logger.error("can't delete user : " + actorVo.getLsUid() + " : " + e.getMessage());
+			logger.error("can't delete user : " + actorVo.getLsUuid() + " : " + e.getMessage());
 			logger.debug(e.toString());
 		}
     }
@@ -248,7 +248,7 @@ public class UserFacadeImpl implements UserFacade {
     		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Only a guest or superadmin may change its password");
     	}
     	
-    	userService.changePassword(user.getLsUid(), user.getMail(), oldPassword, newPassword);
+    	userService.changePassword(user.getLsUuid(), user.getMail(), oldPassword, newPassword);
     	
     }
 
@@ -257,7 +257,7 @@ public class UserFacadeImpl implements UserFacade {
     		throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user type is wrong, only a guest may change its password");
     	}
     	
-    	userService.resetPassword(user.getLsUid(), user.getMail());		
+    	userService.resetPassword(user.getLsUuid(), user.getMail());		
 	}
 
 	public void setGuestContactRestriction(String uuid, List<String> mailContacts) throws BusinessException {

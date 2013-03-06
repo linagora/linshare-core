@@ -429,7 +429,7 @@ public class ListThreadDocument {
             }
         }
         try {
-        	stream = threadEntryFacade.getDocumentThumbnail(user.getLsUid(), current.getIdentifier());
+        	stream = threadEntryFacade.getDocumentThumbnail(user.getLsUuid(), current.getIdentifier());
         } catch (Exception e) {
 			logger.error("Trying to get a thumbnail linked to a document which doesn't exist anymore");
 		}

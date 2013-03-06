@@ -98,7 +98,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException {
 		logger.debug("insert file for thread entries");
 		
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, stream, size, fileName);
@@ -108,7 +108,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	
 	@Override
 	public void copyDocinThread(UserVo actorVo, ThreadVo threadVo, DocumentVo documentVo) throws BusinessException {
-		Account owner = accountService.findByLsUid(documentVo.getOwnerLogin());
+		Account owner = accountService.findByLsUuid(documentVo.getOwnerLogin());
 		InputStream stream = documentEntryService.getDocumentStream(owner , documentVo.getIdentifier());
 		insertFile(actorVo, threadVo, stream, documentVo.getSize(), documentVo.getFileName());
 	}
@@ -126,7 +126,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public List<ThreadVo> getAllMyThread(UserVo actorVo) {
 		//TODO: To be optimized (find my threads using UserVo as research entry point than all threads).
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		logger.debug("actor : " + actor.getAccountReprentation());
 		List<Thread> all = threadService.findAll();
 		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
@@ -146,7 +146,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo) {
 		//TODO: To be optimized (find my threads using UserVo as research entry point than all threads).
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		logger.debug("actor : " + actor.getAccountReprentation());
 		List<Thread> all = threadService.findAll();
 		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
@@ -167,7 +167,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo, ThreadVo threadVo) throws BusinessException {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		List<ThreadEntry> threadEntries = threadEntryService.findAllThreadEntries(actor, thread);
 		
@@ -180,7 +180,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo, ThreadVo threadVo, TagVo[] tags) throws BusinessException {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		String[] names = new String[tags.length];
 		for (int i = 0; i < names.length; ++i) {
@@ -196,7 +196,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name) throws BusinessException {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		
 		Tag tag = tagService.findByOwnerAndName(actor, thread, name);
@@ -210,7 +210,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo, List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags) throws BusinessException {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		
 		if (userCanUpload(actorVo, threadVo) || userIsAdmin(actorVo, threadVo)) {
@@ -227,13 +227,13 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public InputStream retrieveFileStream(ThreadEntryVo entry, String lsUid) throws BusinessException {
-		Account actor = accountService.findByLsUid(lsUid);
+		Account actor = accountService.findByLsUuid(lsUid);
 		return threadEntryService.getDocumentStream(actor, entry.getIdentifier());
 	}
 
 	@Override
 	public InputStream retrieveFileStream(ThreadEntryVo entry, UserVo actorVo) throws BusinessException {
-		return retrieveFileStream(entry, actorVo.getLsUid());
+		return retrieveFileStream(entry, actorVo.getLsUuid());
 	}
 
 
@@ -243,7 +243,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			logger.error("Can't find user with null parameter.");
 			return false;
 		}		
-		Account actor = accountService.findByLsUid(lsUid);
+		Account actor = accountService.findByLsUuid(lsUid);
 		if(actor == null) {
 			logger.error("Can't find logged user.");
 			return false;
@@ -258,7 +258,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			logger.error("Can't find user with null parameter.");
 			return null;
 		}
-		Account actor = accountService.findByLsUid(actorUuid);
+		Account actor = accountService.findByLsUuid(actorUuid);
 		if(actor == null) {
 			logger.error("Can't find logged user.");
 			return null;
@@ -274,7 +274,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public void removeDocument(UserVo actorVo, ThreadEntryVo threadEntryVo) throws BusinessException {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		ThreadEntry threadEntry = threadEntryService.findById(actor, threadEntryVo.getIdentifier());
 		if (actor != null) {
 			try {
@@ -291,7 +291,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public ThreadEntryVo findById(UserVo actorVo, String threadEntryUuid) throws BusinessException {
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		ThreadEntry threadEntry = threadEntryService.findById(actor, threadEntryUuid);
 		if (threadEntry != null)
 			return new ThreadEntryVo(threadEntry);
@@ -300,7 +300,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public boolean isMember(ThreadVo threadVo, UserVo userVo) throws BusinessException {
-		User user = (User) accountService.findByLsUid(userVo.getLsUid());
+		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
 		return member != null;
@@ -308,7 +308,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	
 	@Override
 	public boolean userCanUpload(UserVo userVo, ThreadVo threadVo) throws BusinessException {
-		User user = (User) accountService.findByLsUid(userVo.getLsUid());
+		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
 		if (member != null)
@@ -318,7 +318,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) throws BusinessException {
-		User user = (User) accountService.findByLsUid(userVo.getLsUid());
+		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
 		if (member != null)
@@ -342,10 +342,10 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		try {
 			if (userIsAdmin(actorVo, threadVo)) {
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-				User user = (User) accountService.findByLsUid(newMember.getLsUid());
+				User user = (User) accountService.findByLsUuid(newMember.getLsUuid());
 				List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
 				for (ThreadMemberVo member : members) {
-					if (member.getUser().getLsUid().equals(user.getLsUuid())) {
+					if (member.getUser().getLsUuid().equals(user.getLsUuid())) {
 						// TODO error duplicate member
 						return;
 					}
@@ -362,7 +362,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		try {
 			if (userIsAdmin(actorVo, threadVo)) {
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-				User user = (User) accountService.findByLsUid(memberVo.getLsUuid());
+				User user = (User) accountService.findByLsUuid(memberVo.getLsUuid());
 				ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
 				if (member == null) {
 					// member doesn't exist
@@ -378,7 +378,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public List<ThreadVo> getAllMyAdminThread(UserVo actorVo) throws BusinessException {
 		List<ThreadVo> res = new ArrayList<ThreadVo>();
-		User actor = (User) accountService.findByLsUid(actorVo.getLsUid());
+		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
 		if (actor == null) {
 			logger.error("Can't find logged user.");
 		}
@@ -393,7 +393,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public boolean isUserAdminOfAnyThread(UserVo actorVo) throws BusinessException {
-		User actor = (User) accountService.findByLsUid(actorVo.getLsUid());
+		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
 		if (actor == null) {
 			logger.error("Can't find logged user.");
 			return false;
@@ -409,7 +409,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			logger.error("guests are not authorised to create a thread");
 			return;
 		}
-		Account actor = accountService.findByLsUid(actorVo.getLsUid());
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		if (actor != null) {
 			threadService.create(actor, name);
 		}
@@ -424,12 +424,12 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			logger.error("not authorised");
 			return;
 		}
-		threadService.deleteThread((User)accountService.findByLsUid(actorVo.getLsUid()), thread);
+		threadService.deleteThread((User)accountService.findByLsUuid(actorVo.getLsUuid()), thread);
 	}
 
 	@Override
 	public void updateFileProperties(String lsUid, String threadEntryUuid, String fileComment) {
-		Account actor = accountService.findByLsUid(lsUid);
+		Account actor = accountService.findByLsUuid(lsUid);
 		if(fileComment == null) {
 			fileComment = "";
 		}
@@ -442,7 +442,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public ThreadEntryVo getThreadEntry(String login, String threadEntryUuid) {
-		Account actor = accountService.findByLsUid(login);
+		Account actor = accountService.findByLsUuid(login);
 		if(actor != null) {
 			ThreadEntry entry;
 			try {

@@ -207,7 +207,7 @@ public class UserEditForm {
 		if(editUserWithMail!=null){
 		
 			for (UserVo oneUser : users) {
-				if(oneUser.getLsUid().equals(editUserWithMail)) {
+				if(oneUser.getLsUuid().equals(editUserWithMail)) {
 					currentUser = userFacade.loadUserDetails(oneUser.getMail(), oneUser.getDomainIdentifier());
 					break;
 				}
@@ -228,7 +228,7 @@ public class UserEditForm {
 	    		if (currentUser.isGuest() && currentUser.isRestricted()) {
 	    			List<UserVo> contacts = null;
 					try {
-						contacts = userFacade.fetchGuestContacts(currentUser.getLsUid());
+						contacts = userFacade.fetchGuestContacts(currentUser.getLsUuid());
 					} catch (BusinessException e) {
 						e.printStackTrace();
 					}
@@ -365,9 +365,9 @@ public class UserEditForm {
 
         try {
         	if(userGuest) {    	
-        		userFacade.updateGuest(currentUser.getLsUid(), userDomain, mail, firstName, lastName,uploadGranted,createGuestGranted, userLoggedIn);
+        		userFacade.updateGuest(currentUser.getLsUuid(), userDomain, mail, firstName, lastName,uploadGranted,createGuestGranted, userLoggedIn);
         	} else {
-        		userFacade.updateUserRole(currentUser.getLsUid(), userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
+        		userFacade.updateUserRole(currentUser.getLsUuid(), userDomain, mail, SelectableRole.fromSelectableRole(role), userLoggedIn);
         	}
         } catch (BusinessException e) {
             // should never occur.
@@ -382,14 +382,14 @@ public class UserEditForm {
 				
 				
 				if (restrictedEditGuest && !guest.isRestricted()) { //toogle restricted to true
-					userFacade.setGuestContactRestriction(guest.getLsUid(), recipientsEmail);
+					userFacade.setGuestContactRestriction(guest.getLsUuid(), recipientsEmail);
 					
 				} else if (!restrictedEditGuest && guest.isRestricted()) { //toogle restricted to false
-					userFacade.removeGuestContactRestriction(guest.getLsUid());
+					userFacade.removeGuestContactRestriction(guest.getLsUuid());
 					
 				} else if (restrictedEditGuest && guest.isRestricted()) { //maybe user add new contact
 					if (!intialContacts.equalsIgnoreCase(recipientsSearch)) {
-						userFacade.setGuestContactRestriction(guest.getLsUid(), recipientsEmail);
+						userFacade.setGuestContactRestriction(guest.getLsUuid(), recipientsEmail);
 					}
 				}				
 		        shareSessionObjects.addMessage(messages.get("components.userEditForm.action.update.confirm"));

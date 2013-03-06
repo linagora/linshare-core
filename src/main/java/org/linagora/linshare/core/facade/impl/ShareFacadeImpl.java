@@ -129,7 +129,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	private SuccessesAndFailsItems<ShareDocumentVo> createSharing(UserVo actorVo, List<DocumentVo> documents, List<UserVo> recipientsVo, Calendar expirationDate) throws BusinessException {
 		logger.debug("createSharing:Begin");
 		
-		User actor = userService.findByLsUid(actorVo.getLsUid());
+		User actor = userService.findByLsUid(actorVo.getLsUuid());
 		
 		List<User> recipients = new ArrayList<User>();
 		
@@ -195,7 +195,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
 	public List<ShareDocumentVo> getAllSharingReceivedByUser(UserVo recipientVo) {
-		User actor = userService.findByLsUid(recipientVo.getLsUid());
+		User actor = userService.findByLsUid(recipientVo.getLsUuid());
 		
 		if (actor == null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
@@ -209,7 +209,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo senderVo, DocumentVo documentVo) {
 		
-		User actor = userService.findByLsUid(senderVo.getLsUid());
+		User actor = userService.findByLsUid(senderVo.getLsUuid());
 		if (actor==null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
@@ -228,7 +228,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public Map<String, Calendar> getAnonymousSharingsByUserAndFile(UserVo senderVo, DocumentVo documentVo) {
 		
-		User actor = userService.findByLsUid(senderVo.getLsUid());
+		User actor = userService.findByLsUid(senderVo.getLsUuid());
 		if (actor==null) {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 		}
@@ -251,14 +251,14 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	@Override
 	public void deleteSharing(ShareDocumentVo share, UserVo actorVo) throws BusinessException {
-		User actor = userService.findByLsUid(actorVo.getLsUid());
+		User actor = userService.findByLsUid(actorVo.getLsUuid());
 		shareEntryService.deleteShare(actor, share.getIdentifier());
 	}
 
 	
 	@Override
     public DocumentVo createLocalCopy(ShareDocumentVo shareDocumentVo, UserVo userVo) throws BusinessException {
-		User actor = userService.findByLsUid(userVo.getLsUid());
+		User actor = userService.findByLsUid(userVo.getLsUuid());
 		DocumentEntry documentEntry = shareEntryService.copyDocumentFromShare(shareDocumentVo.getIdentifier(), actor);
 		return documentEntryTransformer.disassemble(documentEntry);
     }
@@ -278,7 +278,7 @@ public class ShareFacadeImpl implements ShareFacade {
 			UserVo actorVo, List<DocumentVo> documents, List<String> recipientsEmailInput, boolean secureSharing, MailContainer mailContainer, Calendar expiryDateSelected) throws BusinessException {
     	logger.debug("createSharingWithMailUsingRecipientsEmail");
     	
-    	User sender = userService.findByLsUid(actorVo.getLsUid());
+    	User sender = userService.findByLsUid(actorVo.getLsUuid());
     	
 		SuccessesAndFailsItems<ShareDocumentVo> result = new SuccessesAndFailsItems<ShareDocumentVo>();
 
@@ -412,7 +412,7 @@ public class ShareFacadeImpl implements ShareFacade {
 
 	@Override
 	public ShareDocumentVo getShareDocumentVoByUuid(UserVo actorVo, String uuid) throws BusinessException {
-		User actor = userService.findByLsUid(actorVo.getLsUid());
+		User actor = userService.findByLsUid(actorVo.getLsUuid());
 		return shareEntryTransformer.disassemble(shareEntryService.findByUuid(actor, uuid));
 	}
 
@@ -420,7 +420,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public void updateShareComment(UserVo actorVo, String uuid, String comment) throws IllegalArgumentException, BusinessException {
 		logger.debug("updateShareComment:" + uuid);
-		User actor = userService.findByLsUid(actorVo.getLsUid());
+		User actor = userService.findByLsUid(actorVo.getLsUuid());
 		ShareEntry shareEntry = shareEntryService.findByUuid(actor, uuid);
 		shareEntry.setComment(comment);
 		logger.debug("comment : " + comment);
@@ -430,7 +430,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
     public boolean shareHasThumbnail(UserVo actorVo, String shareEntryUuid) {
-		String lsUid = actorVo.getLsUid();
+		String lsUid = actorVo.getLsUuid();
 		if(lsUid == null) {
 			logger.error("Can't find user with null parameter.");
 			return false;
@@ -447,7 +447,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	@Override
     public InputStream getShareThumbnailStream(UserVo actorVo, String shareEntryUuid) {
-		String lsUid = actorVo.getLsUid();
+		String lsUid = actorVo.getLsUuid();
 		if(lsUid == null) {
 			logger.error("Can't find user with null parametter.");
 			return null;
@@ -471,7 +471,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public InputStream getShareStream(UserVo actorVo, String shareEntryUuid) throws BusinessException {
 		logger.debug("downloading share : " + shareEntryUuid);
-		String lsUid = actorVo.getLsUid();
+		String lsUid = actorVo.getLsUuid();
 		if(lsUid == null) {
 			logger.error("Can't find user with null parametter.");
 			return null;
@@ -496,7 +496,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	@Override
 	public boolean isSignedShare(UserVo actorVo, ShareDocumentVo shareVo) {
 		boolean res = false;
-		User actor = userService.findByLsUid(actorVo.getLsUid());
+		User actor = userService.findByLsUid(actorVo.getLsUuid());
 		try {
 			ShareEntry share = shareEntryService.findByUuid(actor, shareVo.getIdentifier());
 			Set<Signature> signatures = share.getDocumentEntry().getDocument().getSignatures();

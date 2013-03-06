@@ -43,7 +43,7 @@ public interface AccountService {
      * @param uid user identifier, should be lsUuid (or mail for compatibility, but this will be remove asap.)
      * @return
      */
-    public Account findByLsUid(String uuid);
+    public Account findByLsUuid(String uuid);
  
     public Account update(Account account) throws BusinessException;
     

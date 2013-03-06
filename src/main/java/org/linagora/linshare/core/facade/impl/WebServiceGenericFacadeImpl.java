@@ -28,7 +28,7 @@ public class WebServiceGenericFacadeImpl implements WebServiceGenericFacade {
 	     if (name == null) {
 	    	 return null;
 	     }
-	     User user = (User) accountService.findByLsUid(name);
+	     User user = (User) accountService.findByLsUuid(name);
 	     return user;
 	}
 	

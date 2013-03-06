@@ -183,7 +183,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
 		
 		QueryParameter queryParameter = new QueryParameter();
 		queryParameter.appendToQuery(" docEntry.entryOwner.lsUuid=:lsUuid " );
-		queryParameter.addParameter("lsUuid", searchDocumentCriterion.getUser().getLsUid());
+		queryParameter.addParameter("lsUuid", searchDocumentCriterion.getUser().getLsUuid());
 		
 		if (null != searchDocumentCriterion.getName()) {
 			queryParameter.appendToQuery(" lower(docEntry.name) like lower(:name) " );

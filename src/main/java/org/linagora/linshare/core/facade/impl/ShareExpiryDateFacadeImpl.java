@@ -67,12 +67,12 @@ public class ShareExpiryDateFacadeImpl implements ShareExpiryDateFacade {
 	}
 
 	public Calendar computeMinShareExpiryDateOfList(List<DocumentVo> docsVo, UserVo ownerVo) {
-		if(ownerVo.getLsUid() == null) {
+		if(ownerVo.getLsUuid() == null) {
 			logger.error("Can't find user with null parametter.");
 			return null;
 		}
 		
-		Account account = accountService.findByLsUid(ownerVo.getLsUid());
+		Account account = accountService.findByLsUuid(ownerVo.getLsUuid());
 		if(account == null) {
 			logger.error("Can't find logged user.");
 			return null;
@@ -91,12 +91,12 @@ public class ShareExpiryDateFacadeImpl implements ShareExpiryDateFacade {
 
 	public Calendar computeShareExpiryDate(DocumentVo documentVo, UserVo ownerVo) {
 		
-		if(ownerVo.getLsUid() == null) {
+		if(ownerVo.getLsUuid() == null) {
 			logger.error("Can't find user with null parametter.");
 			return null;
 		}
 		
-		Account account = accountService.findByLsUid(ownerVo.getLsUid());
+		Account account = accountService.findByLsUuid(ownerVo.getLsUuid());
 		if(account == null) {
 			logger.error("Can't find logged user.");
 			return null;

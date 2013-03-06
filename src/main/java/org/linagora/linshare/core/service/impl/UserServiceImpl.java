@@ -460,7 +460,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
 		Guest guest = guestRepository.findByLsUuid(guestUuid);
-		User owner = userRepository.findByLsUuid(ownerVo.getLsUid());
+		User owner = userRepository.findByLsUuid(ownerVo.getLsUuid());
 		
 		boolean hasRightToDeleteThisUser = isAdminForThisUser(owner, guest.getDomainId(), guest.getMail());
 		
@@ -492,7 +492,7 @@ public class UserServiceImpl implements UserService {
 		if(user == null) {
 			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user : " + mail + " in domain : " + domain);
 		} else {
-			User owner = userRepository.findByLsUuid(ownerVo.getLsUid());
+			User owner = userRepository.findByLsUuid(ownerVo.getLsUuid());
 			user.setRole(role);
 			userRepository.update(user);
 			UserLogEntry logEntry = new UserLogEntry(owner, LogAction.USER_UPDATE, "Update of a guest:" + user.getMail(), user);

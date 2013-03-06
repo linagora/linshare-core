@@ -172,7 +172,7 @@ public class ThreadEntryEditForm {
 		}
 		if(reset) return;
 
-        threadEntryFacade.updateFileProperties(userLoggedIn.getLsUid(), threadEntryUuid, fileComment);
+        threadEntryFacade.updateFileProperties(userLoggedIn.getLsUuid(), threadEntryUuid, fileComment);
         shareSessionObjects.addMessage(messages.get("component.fileEditForm.action.update.confirm"));
         componentResources.triggerEvent("resetListFiles", null, null);
 	}

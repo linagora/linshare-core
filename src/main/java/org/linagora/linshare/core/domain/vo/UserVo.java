@@ -188,7 +188,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	}
 	
 	// the getter represent the real content of this variable.
-	public String getLsUid() {
+	public String getLsUuid() {
 		return login;
 	}
 
