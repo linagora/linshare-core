@@ -61,14 +61,14 @@ public class AccountServiceImpl implements AccountService {
 
 
 	@Override
-	public Account findByLsUuid(String uid) {
-		Account acc = accountRepository.findByLsUuid(uid);
+	public Account findByLsUuid(String uuid) {
+		Account acc = accountRepository.findByLsUuid(uuid);
 		// TODO : Remove this : Temporary hook for compatibility
 		if (acc == null) {
-			acc = userRepository.findByMail(uid);
+			acc = userRepository.findByMail(uuid);
 		}
 		if(acc == null) {
-			logger.error("Can't find logged user  : " + uid);
+			logger.error("Can't find logged user  : " + uuid);
 		}
 		return acc;
 	}
