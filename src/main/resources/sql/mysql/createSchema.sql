@@ -44,6 +44,7 @@ CREATE TABLE document (
   uuid          varchar(255) NOT NULL UNIQUE,
   creation_date timestamp NOT NULL,
   type          varchar(255) NOT NULL,
+  check_mime_type  bit DEFAULT false NOT NULL, 
   size          bigint(8) NOT NULL,
   thmb_uuid     varchar(255),
   timestamp     blob,

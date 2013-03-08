@@ -12,6 +12,7 @@
 		<property name="uuid" column="uuid" index="document3" type="string" length="255" not-null="true" lazy="false" />
 		<property name="creationDate" column="creation_date" type="calendar" not-null="true" lazy="false" />
 		<property name="type" column="type" type="string" length="255" not-null="true" lazy="false" />
+		<property name="checkMimeType" column="check_mime_type" type="boolean" not-null="true" lazy="false" />
 		<property name="size" column="size" type="long" not-null="true" lazy="false" />
 		<property name="thmbUuid" column="thmb_uuid" type="string" length="255" not-null="false" lazy="false" />
 		<property access="field" column="timestamp" name="timeStamp" type="binary" length="65535" />

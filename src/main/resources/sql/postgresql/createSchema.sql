@@ -48,6 +48,7 @@ CREATE TABLE document (
   uuid          varchar(255) NOT NULL UNIQUE, 
   creation_date timestamp(6) NOT NULL, 
   type          varchar(255) NOT NULL, 
+  check_mime_type  bool DEFAULT false NOT NULL, 
   size          int8 NOT NULL, 
   thmb_uuid     varchar(255), 
   timestamp     bytea, 
