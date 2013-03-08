@@ -57,9 +57,14 @@ public class Document implements Serializable {
 	private Calendar creationDate;
 	
 	/**
-	 * the document type.
+	 * the document mime type.
 	 */
 	private String type;
+	
+	/**
+	 * technical field, used by detection mime type batch.
+	 */
+	private Boolean checkMimeType;
 	
 	/**
 	 * the document file size
@@ -84,6 +89,8 @@ public class Document implements Serializable {
 
 	private ThreadEntry threadEntry;
 	
+
+	
 	
 	
 	/* Constructors */
@@ -97,6 +104,7 @@ public class Document implements Serializable {
 		this.size = size;
 		this.timeStamp = null;
 		this.thmbUuid = null;
+		this.checkMimeType = false;
 	}
 	
 	/**
@@ -115,6 +123,7 @@ public class Document implements Serializable {
 		this.size = size;
 		this.timeStamp = null;
 		this.thmbUuid = null;
+		this.checkMimeType = false;
 	}	
 	
 	@Override
@@ -216,5 +225,13 @@ public class Document implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Boolean getCheckMimeType() {
+		return checkMimeType;
+	}
+
+	public void setCheckMimeType(Boolean checkMimeType) {
+		this.checkMimeType = checkMimeType;
 	}
 }
