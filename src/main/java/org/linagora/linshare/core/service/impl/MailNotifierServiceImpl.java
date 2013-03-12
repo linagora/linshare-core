@@ -91,6 +91,9 @@ public class MailNotifierServiceImpl implements NotifierService {
 	
 	/** Display LinShare logo ? */
 	private final boolean displayLogo;
+	
+	/** Display LinShare logo ? */
+	private final boolean displayLicenceLogo;
 
 	/** Class logger */
 	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
@@ -101,7 +104,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 */
 	public MailNotifierServiceImpl(String smtpServer, int smtpPort,
 			String smtpUser, String smtpPassword, boolean needsAuth,
-			String charset, boolean displayLogo) {
+			String charset, boolean displayLogo, boolean displayLicenceLogo) {
 		this.smtpServer = smtpServer;
 		this.smtpPort = smtpPort;
 		this.smtpUser = smtpUser;
@@ -109,6 +112,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 		this.needsAuth = needsAuth;
 		this.charset = charset;
 		this.displayLogo = displayLogo;
+		this.displayLicenceLogo = displayLicenceLogo;
 	}
 
 	/**
@@ -173,14 +177,19 @@ public class MailNotifierServiceImpl implements NotifierService {
 			html_mp.addBodyPart(rel_bph);
 
 			// inline image ?
-			if (displayLogo) {
+			if (displayLogo || displayLicenceLogo ) {
 				String cid = "image.part.1@linshare.org";
 				MimeBodyPart rel_bpi = new MimeBodyPart();
 			
 				// Initialize and add the image file to the html body part
 				rel_bpi.setFileName("mail_logo.png");
 				rel_bpi.setText("linshare");
-				URL resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo.png");
+				URL resource  = null;
+				if(displayLicenceLogo) {
+					resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo_licence.png");
+				} else {
+					resource = getClass().getResource("/org/linagora/linshare/core/service/mail_logo.png");
+				}
 				if(resource == null) {
 					logger.error("Embedded logo was not found.");
 					throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION, "Error sending notification : embedded logo was not found.");

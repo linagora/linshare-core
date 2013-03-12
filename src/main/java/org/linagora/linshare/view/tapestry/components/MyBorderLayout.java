@@ -91,32 +91,26 @@ public class MyBorderLayout {
 	/**
 	 * Widgets in the sideBar
 	 */
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block searchWidget;
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block infoWidget;
 
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block actionsWidget;
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block shareWidget;
 	
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block eventsWidget;
 
-	@SuppressWarnings("unused")
 	@Parameter(required=false,defaultPrefix = BindingConstants.BLOCK)
 	@Property
 	private Block membersWidget;
@@ -168,23 +162,18 @@ public class MyBorderLayout {
 	@Property
 	private boolean userVoExists;
 
-	@SuppressWarnings("unused")
 	@Property
 	private boolean admin;
 
-	@SuppressWarnings("unused")
 	@Property
 	private boolean superadmin;
 
-	@SuppressWarnings("unused")
 	@Property
 	private boolean userExt;
 
-	@SuppressWarnings("unused")
 	@Property
 	private boolean user;
 
-	@SuppressWarnings("unused")
 	@Property
 	private List<Locale> excludeLocales;
 
@@ -216,10 +205,13 @@ public class MyBorderLayout {
 	@Property
 	private boolean enableChromeForIE;
 
-	@SuppressWarnings("unused")
 	@Inject @Symbol("linshare.logo.webapp.visible")
 	@Property
 	private boolean linshareLogoVisible;
+	
+	@Inject @Symbol("linshare.display.licenceTerm")
+	@Property
+	private boolean linshareLicenceTerm;
 	
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
 	private static final String groupsLabelKey = "components.myborderlayout.group.title";
@@ -380,6 +372,13 @@ public class MyBorderLayout {
 				return true;
 			}
 			return functionalityFacade.isEnableHelpTab(userVo.getDomainIdentifier());
+		}
+		return false;
+	}
+	
+	public boolean getDisplayLogo() {
+		if(linshareLicenceTerm || linshareLogoVisible) {
+			return true;
 		}
 		return false;
 	}

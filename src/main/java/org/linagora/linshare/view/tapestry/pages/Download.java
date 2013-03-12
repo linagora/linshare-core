@@ -114,7 +114,10 @@ public class Download {
 	@Inject @Symbol("linshare.logo.webapp.visible")
 	@Property
 	private boolean linshareLogoVisible;
-
+	
+	@Inject @Symbol("linshare.display.licenceTerm")
+	@Property
+	private boolean linshareLicenceTerm;
 	
 	
 	@Inject
@@ -242,4 +245,10 @@ public class Download {
 		return FileUtils.getFriendlySize(document.getSize(), messages);
 	}
 
+	public boolean getDisplayLogo() {
+		if(linshareLicenceTerm || linshareLogoVisible) {
+			return true;
+		}
+		return false;
+	}
 }
