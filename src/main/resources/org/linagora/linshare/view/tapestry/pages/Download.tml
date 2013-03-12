@@ -12,10 +12,16 @@
 				<t:if test="containsDocuments">
 				<br /><br />
 				<center>
-					<t:if test="linshareLogoVisible">
-						<img src="../images/logo_linshare_large.png" alt="LinShare" />
+					<t:if test="displayLogo">
+						<t:if test="linshareLicenceTerm">
+							<img src="${asset:context:images/logo_licence_linshare_large.png}" alt="${message:global.appName}" />
+						<t:parameter name="else">
+							<img src="${asset:context:images/logo_linshare_large.png}" alt="${message:global.appName}" />
+						</t:parameter>
+						</t:if>
 						<br /><br />
 					</t:if>
+					
 					<div id="blocDLheader">&nbsp;</div>
 					<div id="blocDL">
 						<ul>
