@@ -7,9 +7,7 @@
 			<a href="${springLogoutLink}" title="${message:pages.index.link.logout}">${message:pages.index.link.logout}</a>
 			<t:if test="linshareLicenceTerm">
 				<div id="rights">	
-				${message:pages.index.rights1}
-				<a href="${message:pages.index.rights.link.url}">LinShare</a>
-				${message:pages.index.rights2} 
+				${message:pages.index.rights1} <a href="${message:pages.index.rights.link.url}">LinShare</a>${message:pages.index.rights2} 
 				</div>
 			</t:if>
 		</div>
