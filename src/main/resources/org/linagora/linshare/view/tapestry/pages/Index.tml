@@ -67,9 +67,7 @@
 				<t:if test="linshareLicenceTerm">
 					<div id="rights">
 						<p>
-							${message:pages.index.rights1}
-							<a href="${message:pages.index.rights.link.url}">LinShare</a>
-							${message:pages.index.rights2}
+							${message:pages.index.rights1} <a href="${message:pages.index.rights.link.url}">LinShare</a>${message:pages.index.rights2}
 						</p>
 					</div>
 				</t:if>
