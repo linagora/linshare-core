@@ -232,6 +232,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public DocumentEntry duplicateDocumentEntry(Account actor, String docEntryUuid) throws BusinessException {
 		DocumentEntry documentEntry = documentEntryBusinessService.findById(docEntryUuid);
+		DocumentEntry ret = null;
 		// TODO : Check the current doc entry id is shared with the actor (if
 		// not, you should not have the right to duplicate it)
 		// if (!documentEntry.getEntryOwner().equals(actor)) {
@@ -251,7 +252,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		}
 
 		// We need to set an expiration date in case of file cleaner activation.
-		documentEntryBusinessService.duplicateDocumentEntry(documentEntry, actor, timeStampingUrl, getDocumentExpirationDate(domain));
+		ret = documentEntryBusinessService.duplicateDocumentEntry(documentEntry, actor, timeStampingUrl, getDocumentExpirationDate(domain));
 
 		FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
 				.getType());
@@ -259,7 +260,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 		addDocSizeToGlobalUsedQuota(documentEntry.getDocument(), domain);
 
-		return documentEntry;
+		return ret;
 	}
 
 	@Override
