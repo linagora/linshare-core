@@ -49,8 +49,10 @@
 
 				<!-- Quick share popup -->
 				<t:quickSharePopup t:eventName="sharePopupEvent" />
+
+                <!-- Quick forward popup -->
+                <t:quickForwardPopup t:documentsVo="prop:shareSessionObjects.documents" />
 			</div>
-			
 		</t:if>
 
 
@@ -86,9 +88,6 @@
 
 
 	<!-- Popups -->
-
-    <!-- Quick forward popup -->
-    <t:quickForwardPopup t:documentsVo="prop:shareSessionObjects.documents" />
 
 	<!-- Quick share popup -->
 	<!-- Cf. in div id="pageContent" -->
