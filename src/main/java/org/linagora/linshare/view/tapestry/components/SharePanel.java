@@ -145,15 +145,15 @@ public class SharePanel {
 	 */
 	@SetupRender
 	public void init() {
-		if(listObject==null){
-			listObject=new ArrayList<Object>();
+		if (listObject == null) {
+			listObject = new ArrayList<Object>();
 		}
-		indexObject=-1;
+		indexObject = -1;
 
-		if (listObject.size()>0) {
+		if (listObject.size() > 0) {
 			columnList = columns.split(",");
 			
-			for (int i=0; i<columnList.length; i++) {
+			for (int i = 0; i < columnList.length; ++i) {
 				columnList[i] = columnList[i].trim();
 			}
 			shareModel = beanModelSource.createDisplayModel(listObject.get(0).getClass(), componentResources.getMessages());
@@ -200,8 +200,7 @@ public class SharePanel {
 	 * The id of this event is "deleteFromSharePanel"
 	 * @param identifier
 	 */
-	public void onActionFromDelete(Integer identifier){
-		
+	public void onActionFromDelete(Integer identifier) {
 		Object[] objects=new Object[1];
 		objects[0]=listObject.get(identifier);
 		componentResources.getContainer().getComponentResources().triggerEvent("deleteFromSharePanel", objects, null);
@@ -213,15 +212,15 @@ public class SharePanel {
 	 * The event is triggered when the shared link is pressed.
 	 * @param identifier
 	 */
-	public void onSuccess(){
+	public void onSuccess() {
 		if (reset) {
 			componentResources.getContainer().getComponentResources().triggerEvent("clearListObject",null, null);
 			return;
 		}
 		
-		if(null!=listObject){
+		if (null != listObject) {
 			componentResources.getContainer().getComponentResources().triggerEvent("sharePanel", listObject.toArray(), null);
-		}else{
+		} else {
 			throw new TechnicalException(TechnicalErrorCode.GENERIC,"the parameter list is null !");
 		}
 	}
@@ -230,7 +229,7 @@ public class SharePanel {
 	 * Return the indexObject for the object displayed in the grid.
 	 * @return indexObject.
 	 */
-	public Integer getIndexObject(){
+	public Integer getIndexObject() {
 		return ++indexObject;
 	}
 	
@@ -238,7 +237,7 @@ public class SharePanel {
 	 * Show the actions list if the listObject is not empty.
 	 * @return boolean true if the components is not empty.
 	 */
-	public boolean isElements(){
+	public boolean isElements() {
 		return !listObject.isEmpty();
 	}
 		

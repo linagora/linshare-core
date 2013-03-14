@@ -3194,7 +3194,7 @@ div.closeUploadPopup {
 }
 #confirmWindowContent form#confirmshare textarea#textarea,
 #confirmWindowContent form#confirmshare textarea#textarea_0 {
-		width: 98.1%;
+    width: 98.1%;
 	margin-top: 5px;
 }
 
@@ -3271,7 +3271,75 @@ form#quickShareForm textarea.recipientsPattern {
 }
 form#quickShareForm textarea#textarea,
 form#quickShareForm textarea#textarea_0 {
-		width: 98.1%;
+    width: 98.1%;
+	margin-top: 5px;
+}
+
+/*--------------------------------------------------------------------------
+* Popups > Quick forward
+*/
+
+/* Files list */
+
+#quickForwardWindowContent div.filesList {
+	text-align: left;
+}
+
+#quickForwardWindowContent table {
+	width: 92.0%;
+	margin: .25em auto;
+	background-color: #EAF1F5;
+	font-size: 1.2em;
+}
+
+#quickForwardWindowContent table tr {
+	margin: .5em;
+	border: 1px solid #5A93AF !important;
+}
+
+#quickForwardWindowContent table tr th {
+	padding: .25em .5em !important;
+}
+#quickForwardWindowContent table tr th a:link,
+#quickForwardWindowContent table tr th a:visited {
+	text-decoration: none;
+}
+#quickForwardWindowContent table tr th a:hover,
+#quickForwardWindowContent table tr th a:focus,
+#quickForwardWindowContent table tr th a:active {
+	text-decoration: underline;
+}
+#quickForwardWindowContent table tr th a img {
+	margin-top: -.2em;
+	margin-left: .4em;
+	vertical-align: middle;
+}
+
+#quickForwardWindowContent table tr td {
+	padding: .25em .5em !important;
+	white-space: nowrap;
+	text-align: left;
+}
+
+/* Form : input */
+
+form#quickForwardForm input.checkbox {
+	/*position: relative;*/
+	top: .2em;
+	margin-top: 1em;
+	margin-left: .5em;
+	text-align: left !important;
+}
+
+/* Form : textarea */
+
+#quickForwardWindowContent form#quickForwardForm textarea.recipientsPattern {
+	width: 94.7%;		/* Without throbber = 98.1% */
+	margin-top: 5px;
+}
+#quickForwardWindowContent form#quickForwardForm textarea#textarea,
+#quickForwardWindowContent form#quickForwardForm textarea#textarea_0 {
+    width: 98.1%;
 	margin-top: 5px;
 }
 

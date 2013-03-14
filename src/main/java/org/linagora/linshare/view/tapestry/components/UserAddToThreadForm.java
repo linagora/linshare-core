@@ -120,7 +120,6 @@ public class UserAddToThreadForm {
 		if (threads == null && newMemberList != null && newMemberList.size() > 0) {
 			try {
 				threadsAllowed.addAll(threadEntryFacade.getAllMyAdminThread(userLoggedIn));
-				// TODO XXX HACK : considers there's only one member in the list
 				threadsAllowed.removeAll(threadEntryFacade.getAllMyThread(newMemberList.get(0)));
 			} catch (BusinessException e) {
 				logger.error("cannot retrieve user infos" + e.getMessage());
@@ -129,7 +128,6 @@ public class UserAddToThreadForm {
 		}
 		else {
 			threadsAllowed.addAll(threads);
-			// TODO XXX HACK : considers there's only one member in the list
 			if (newMemberList != null && newMemberList.size() > 0)
 				threadsAllowed.removeAll(threadEntryFacade.getAllMyThread(newMemberList.get(0)));
 		}

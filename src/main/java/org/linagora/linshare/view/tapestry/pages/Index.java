@@ -40,7 +40,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -53,6 +55,7 @@ import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
@@ -81,18 +84,28 @@ public class Index {
      ************************************************************ */
     @Inject
     private ShareFacade shareFacade;
+
     @Inject
     private AbstractDomainFacade domainFacade;
+
 	@Inject
 	private PageRenderLinkSource linkFactory;
+
     @Inject
     private PersistentLocale persistentLocale;
+
     @Inject
     private Request request;
+
 	@Inject
 	private Messages messages;
+
+    @Environmental
+    private JavaScriptSupport renderSupport;
+
     @Inject
     private Response response;
+ 
 	@Inject
 	private Logger logger;
 	
@@ -127,6 +140,9 @@ public class Index {
 	/** used to prevent the clearing of documentsVo with search*/
 	private boolean flag;
 
+	@Persist
+	private boolean finishForwarding;
+
 
     /* ***********************************************************
      *                   Event handlers&processing
@@ -139,10 +155,8 @@ public class Index {
 		return null;
 	}
 	
-    @SuppressWarnings("unused")
     @SetupRender
     private void initList() throws BusinessException {
-    	
         if (!userVoExists) {
         	Locale locale = WelcomeMessageUtils.getNormalisedLocale(persistentLocale.get(), request.getLocale(), null);
         	Language language = WelcomeMessageUtils.getLanguageFromLocale(locale);
@@ -170,6 +184,66 @@ public class Index {
 
         }
         
+    }
+    
+	/**
+	 * Show the popup if it should be shown
+	 */
+    @AfterRender
+    public void postInit() {
+    	if (finishForwarding) {
+    		//show the share window popup
+    		renderSupport.addScript(String.format("quickForwardWindow.showCenter(true)"));
+    		finishForwarding = false;
+    	}
+    }
+    
+    /**
+     * Call the forward popup
+     * Invoked when the user submit the basket form
+     * @param elements : a DocumentVo[] of files to forward
+     */
+    @OnEvent(value="sharePanel")
+    public void onForward(Object[] elements) {
+    	finishForwarding = true;
+    }
+
+	/**
+	 * Remove the document from the share list
+	 * @param object : object[0] contains a the DocumentVo
+	 */
+	@OnEvent(value="deleteFromSharePanel")
+	public void deleteSharePanel(Object[] object) {
+		shareSessionObjects.removeDocument((DocumentVo)object[0]);
+		
+	}
+
+	/**
+	 * Clear the shared document list
+	 */
+	@OnEvent(value="clearListObject")
+	public void clearList() {
+		shareSessionObjects = new ShareSessionObjects();
+	}
+
+	/**
+	 * Add the document list in the shared list
+	 * Invoked when the user click on the multi share button 
+	 * @param object : a DocumentVo[] of files to forward
+	 */
+    @OnEvent(value = "eventForwardFromListDocument")
+    private void forwardFromList(Object[] object) throws BusinessException {
+		DocumentVo doc;
+		
+		if (shareSessionObjects.isComeFromSharePopup()) {
+			shareSessionObjects.getDocuments().clear();
+			shareSessionObjects.setComeFromSharePopup(false);
+		}
+		for (Object currentObject : object) {
+			doc = (DocumentVo)currentObject;
+			shareSessionObjects.addDocument(doc);
+		}
+		shareSessionObjects.setMultipleSharing(true); //enable to multiple file sharing
     }
 
     @OnEvent(value = "eventDeleteUniqueFromListDocument")

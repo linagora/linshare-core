@@ -35,6 +35,7 @@ package org.linagora.linshare.view.tapestry.pages.files;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadBase;
@@ -200,7 +201,7 @@ public class Index {
 		if (fileMessage==null) {
 			fileMessage = "";
 		}
-		
+		logger.debug("TIME UPLOAD : " + System.currentTimeMillis());
 	}
 	
 	@CleanupRender

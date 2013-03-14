@@ -49,7 +49,6 @@
 
 				<!-- Quick share popup -->
 				<t:quickSharePopup t:eventName="sharePopupEvent" />
-
 			</div>
 			
 		</t:if>
@@ -88,9 +87,11 @@
 
 	<!-- Popups -->
 
+    <!-- Quick forward popup -->
+    <t:quickForwardPopup t:documentsVo="prop:shareSessionObjects.documents" />
+
 	<!-- Quick share popup -->
 	<!-- Cf. in div id="pageContent" -->
-
 
 
 	<!-- Widgets -->
@@ -103,7 +104,7 @@
 		</t:widget>
 	</t:if>
 	</t:parameter>
-	
+
 	<!-- Actions widget -->
 	<t:parameter name="actionsWidget">
 		<t:if test="shares">
@@ -112,6 +113,15 @@
 			</t:widget>
 		</t:if>
 	</t:parameter>
-	
+
+	<!-- Share widget -->
+	<t:parameter name="shareWidget">
+		<t:if test="shareSessionObjects.notEmpty">
+			<t:widget widgetId="shareWidget" title="${message:components.widget.shareWidget.title}">
+				<t:sharePanel listObject="prop:shareSessionObjects.documents" columns="fileName"
+					label="${message:pages.user.fileSearch.sharePanel.label}" />
+			</t:widget>
+		</t:if>
+	</t:parameter>
 
 </t:MyBorderLayout>

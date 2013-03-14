@@ -356,13 +356,13 @@ public class ListSharedDocument {
     }
     
 	public Object onSuccessFromSearch() {
-		if (listSelected.size()<1) {
+		if (listSelected.size() < 1) {
             businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.NOFILE_SELECTED,
                     MessageSeverity.WARNING));
     		return null;
 		}
 		
-		actionbutton =  ActionFromBarDocument.fromString(action);
+		actionbutton = ActionFromBarDocument.fromString(action);
 		
 		switch (actionbutton) {
 		case DELETE_ACTION:
@@ -379,6 +379,11 @@ public class ListSharedDocument {
 			break;
 		case COPY_ACTION:
 			copyFromListDocument(listSelected);
+			break;
+		case FORWARD_ACTION:
+			componentResources.getContainer().getComponentResources()
+					.triggerEvent("eventForwardFromListDocument",
+							listSelected.toArray(), null);
 			break;
 		case DECRYPT_ACTION:
 			List<Object> decryptParameters = new ArrayList<Object>();
