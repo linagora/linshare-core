@@ -1,0 +1,82 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!--[if IE 9]> 
+		<style>
+			div.t-autocomplete-menu{
+				position: absolute !important;
+				top: 378px !important;
+				left: 72px !important;
+			}
+		</style>
+    <![endif]-->
+
+    <div t:id="quickForwardWindow">
+	<div class="confirmPopup">
+        <h2>${message:components.quickForwardPopup.title}</h2>
+        <hr />
+
+        <t:form t:id="quickForwardForm">
+            <t:errors/>
+
+            <div class="${cssClassNumber}"></div>
+                <div class="description"><p>${message:components.quickForwardPopup.panelUpload.description}</p></div>
+                <div class="filesList">
+                    <t:grid t:id="documentsSelected" source="documentsVo" row="documentSelected" include="fileName">
+                        <t:parameter t:name="empty">
+                            <br /><strong>${message:components.quickForwardWindow.empty}</strong>
+                        </t:parameter>
+
+                        <t:parameter t:name="fileNameHeader">
+                            ${message:components.quickForwardWindow.name}
+                        </t:parameter>
+                    </t:grid>
+                </div>
+            <div class="clear"></div>
+            <hr />
+
+			<div class="${cssClassNumber}"></div>
+			<div class="description"><p>${message:components.quickForwardPopup.description}</p></div>
+			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false"
+                t:options="{duration:0.3}"
+				t:subject="${message:components.quickForwardPopup.panelRecipients.subject}">
+				<t:textarea t:id="recipientsPatternForwardPopup" t:value="recipientsSearch" validate="required"
+					t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens=","
+					class="recipientsPattern" 
+					title="${message:components.quickForwardPopup.texarea.recipients.title}" />
+			</div>
+			<div class="clear"></div>
+			<t:if test="showSecureSharingCheckBox">
+                <t:label for="secureSharing" class="edit-form-label">
+                    ${message:components.quickForwardPopup.secureSharing}
+                </t:label>
+                <t:checkbox t:id="secureSharing" class="edit-form-field checkbox" />
+			</t:if>
+			<hr />
+
+			<div class="${cssClassNumber}"></div>
+			<div class="description"><p>${message:components.quickForwardPopup.panelMessage.description}</p></div>
+			<div t:type="ck/SlidingPanel" t:id="panelSubject" t:closed="true"
+                t:options="{duration:0.3}"
+				t:subject="${message:components.quickForwardPopup.panelSubject.subject}">
+				<t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field"  title="${message:components.quickForwardPopup.texarea.message.title}" />
+			</div>
+			<br />
+			<div t:type="ck/SlidingPanel" t:id="panelMessage" t:closed="true"
+                t:options="{duration:0.3}"
+				t:subject="${message:components.quickForwardPopup.panelMessage.subject}">
+				<t:textarea rows="8" value="textAreaValue"  title="${message:components.quickForwardPopup.texarea.message.title}" />
+			</div>
+			<div class="clear"></div>
+			<hr />
+
+            <div class="button">
+                <t:linkSubmit class="button">
+                    <span><img src="${asset:context:images/icons/add-member.png}" alt=""/> ${message:global.button.add}</span>
+                </t:linkSubmit>
+                <a href="#" onclick="quickForwardWindow.close();" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/> ${message:global.button.cancel}</span></a>
+            </div>
+			<div class="clear"></div>
+        </t:form>
+    </div>
+    </div>
+</t:container>
