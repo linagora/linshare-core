@@ -137,7 +137,7 @@
 		<dependency>
 			<groupId>org.linagora</groupId>
 			<artifactId>LinThumbnail</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-jdk14</artifactId>
@@ -146,6 +146,8 @@
 			</exclusions>
 		</dependency>
 
+		<!-- 
+		 -->
 
 		<!-- A dependency on either JUnit or TestNG is required, or the surefire 
 			plugin (which runs the tests) will fail, preventing Maven from packaging 

@@ -100,8 +100,13 @@ public class MimeTypeMagicNumberTikaImpl implements MimeTypeMagicNumberDao {
 			Parser parser = new AutoDetectParser();
 			try {
 				parser.parse(theFileInputStream, contenthandler, metadata, null);
-			} catch (Exception e) {
-			}
+            } catch (Exception e) {
+                logger.debug("some exceptions could be raised in this case : " + e.getMessage());
+                if (e.getCause() != null) logger.debug(e.getCause().toString());
+            } catch (java.lang.NoSuchMethodError e) {
+                logger.debug("some exceptions could be raised in this case : " + e.getMessage());
+                if (e.getCause() != null) logger.debug(e.getCause().toString());
+            }
 			String stringMimeType = metadata.get(Metadata.CONTENT_TYPE);
 			logger.debug("Mime type : " + stringMimeType);
 
