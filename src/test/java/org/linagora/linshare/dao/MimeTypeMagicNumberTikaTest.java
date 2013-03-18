@@ -36,9 +36,7 @@ package org.linagora.linshare.dao;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -159,4 +157,23 @@ public class MimeTypeMagicNumberTikaTest extends AbstractJUnit4SpringContextTest
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testMimeTypeDetection5() throws BusinessException {
+
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		try {
+			URL url = Thread.currentThread().getContextClassLoader().getResource("fichier.test.1.pdf");
+			File f = new File(url.getPath());
+			logger.debug("filename " + f.getName());
+			String mime = mimeTypeService.getMimeType(f);
+			Assert.assertEquals("application/pdf", mime);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			logger.debug(e.getCause().toString());
+			Assert.assertEquals(true, false);
+		}
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+
+		
 }
