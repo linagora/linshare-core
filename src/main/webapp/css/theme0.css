@@ -1,11 +1,11 @@
 /*
  * LinShare - Large files secured sharing system
  * CSS custom style
- * Report changes to: info@linagora.com
+ * Report changes to: linshare@linagora.com
  *
  * Language: all
  * Encoding: UTF-8
- * 2009-12-22, LINAGORA Group
+ * 2013-03-19, LINAGORA Group
  */
 
 
@@ -566,8 +566,14 @@ strong {
 div#rights {
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 5px 5px 5px 5px;
+  border-radius: 5px;
+  -o-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  -o-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   color: #555555;
   font-size: 10px;
   font-style: normal;
@@ -582,10 +588,16 @@ div#messagePanel div#rights {
   border-color: #DDDDDD #DDDDDD #AAAAAA;
   border-image: none;
   border-left: 1px solid #DDDDDD;
-  border-radius: 8px 8px 8px 8px;
   border-right: 1px solid #DDDDDD;
   border-top: 1px solid #DDDDDD;
+  border-radius: 8px;
+  -o-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  -o-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   font-size: 9px;
   margin: 5px auto;
   width: 730px;
