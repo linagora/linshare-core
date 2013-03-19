@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -43,8 +44,6 @@ import org.linagora.linshare.core.repository.DocumentRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> implements DocumentRepository {
-
-	
 	
 	public DocumentRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -72,4 +71,14 @@ public class DocumentRepositoryImpl extends AbstractRepositoryImpl<Document> imp
             throw new IllegalStateException("Id must be unique");
         }
     }
+
+	@Override
+	public List<Document> findAllMimeTypeCheckNeededDocuments() {
+		List<Document> docs = findByCriteria(Restrictions.eq("checkMimeType", Boolean.TRUE));
+		if (docs == null) {
+			logger.error("the result is null ! this should not happen.");
+			return new ArrayList<Document>();
+		}
+		return docs;
+	}
 }

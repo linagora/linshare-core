@@ -145,10 +145,10 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 	public void checkFileMimeType(String fileName, String mimeType, Account owner) throws BusinessException {
 		// use mimetype filtering
 		if (logger.isDebugEnabled()) {
-			logger.debug("2)check the type mime:" + mimeType);
+			logger.debug("2)check the mimetype:" + mimeType);
 		}
 
-		// if we refuse some type of mime type
+		// if we refuse some typemime
 		if (mimeType != null) {
 			MimeTypeStatus status = giveStatus(mimeType);
 
@@ -162,9 +162,9 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 					logger.info("mimetype warning: " + mimeType + "for user: " + owner.getLsUuid());
 			}
 		} else {
-			// type mime is null ?
+			// mimetype is null ?
 			String[] extras = { fileName };
-			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "type mime is empty for this file" + mimeType, extras);
+			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "mimetype is empty for this file" + mimeType, extras);
 		}
 	}
 

@@ -37,6 +37,7 @@
         <constructor-arg ref="functionalityService" />
         <constructor-arg ref="entryService" />
         <constructor-arg ref="documentEntryBusinessService" />
+        <constructor-arg ref="mimeTypeMagicNumberDao" />
     </bean>
 
 	<!-- Don't use that with Jackrabbit 1.4 !! -->

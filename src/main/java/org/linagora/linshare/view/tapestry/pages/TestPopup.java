@@ -37,6 +37,7 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
 import org.linagora.linshare.core.batches.UserManagementBatch;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
@@ -142,12 +143,16 @@ public class TestPopup {
 	@Inject
 	private UserManagementBatch userManagementBatch;
 	
+	@Inject
+	private DocumentManagementBatch documentManagementBatch;
+	
 	
 	
 	void onActionFromTest1()
     {
 		logger.debug("begin method onActionFromTest1");
 		shareManagementBatch.cleanOutdatedShares();
+		documentManagementBatch.checkDocumentsMimeType();
 		logger.debug("endmethod onActionFromTest1");
     }
 	
@@ -166,7 +171,6 @@ public class TestPopup {
 //		}
 //		logger.debug("endmethod onActionFromTest2");
     }
-	
 	
 	
 }

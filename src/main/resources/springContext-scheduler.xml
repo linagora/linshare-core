@@ -31,6 +31,19 @@
         <property name="cronExpression" value="${job.shares.cron.expression}"/>
     </bean>
 
+    <bean id="checkDocumentsMimeTypeJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="org.linagora.linshare.core.job.quartz.CheckDocumentsMimeType"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="batch" value-ref="documentManagementBatch"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="checkDocumentsMimeTypeJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="checkDocumentsMimeTypeJob"/>
+        <property name="cronExpression" value="${job.mimetype.cron.expression}"/>
+    </bean>
+
 
     <bean id="notifyOutdatedSharesJob" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass" value="org.linagora.linshare.core.job.quartz.NotifyOutdatedShares"/>
@@ -91,6 +104,7 @@
             <list>
                 <ref bean="cleanOutdatedGuestsJobTrigger"/>
                 <ref bean="cleanOutdatediSharesJobTrigger"/>
+                <ref bean="checkDocumentsMimeTypeJobTrigger"/>
                 <ref bean="notifyOutdatedSharesJobTrigger"/>
                 <ref bean="cleanInconsistentDocumentEntriesJobTrigger"/>
                 <ref bean="cleanJcrUnusedFilesJobTrigger"/>

@@ -35,6 +35,8 @@ package org.linagora.linshare.core.repository;
 
 
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Document;
 
 
@@ -51,4 +53,7 @@ public interface DocumentRepository extends AbstractRepository<Document>{
      */
 	public Document findByUuid(String identifier);
 	
+	
+	public List<Document> findAllMimeTypeCheckNeededDocuments();
+
 }
