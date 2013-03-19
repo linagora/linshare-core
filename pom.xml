@@ -519,12 +519,12 @@
 			<artifactId>utils</artifactId>
 			<version>0.3</version>
 		</dependency>
-		<!-- 
 		<dependency>
 			<groupId>org.linagora.linkit</groupId>
 			<artifactId>flexUploadComponent</artifactId>
 			<version>0.8</version>
 		</dependency>
+		<!-- 
 		 -->
 
 <!--
