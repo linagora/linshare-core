@@ -394,7 +394,7 @@ public class ListThreadDocument {
 
     public boolean getCanUpload(){
     	try {
-    		logger.error(threadEntryFacade.userCanUpload(user, threadVo) + "AAAAAA");
+    		logger.debug(String.valueOf(threadEntryFacade.userCanUpload(user, threadVo)));
 			return threadEntryFacade.userCanUpload(user, threadVo);
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
