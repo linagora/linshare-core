@@ -47,4 +47,10 @@ public interface DocumentManagementBatch {
      * Delete old documents when strong box disallowed
      */
     public void cleanOldDocuments();
+
+
+    /**
+     * Check documents MIME type and update it accordingly
+     */
+	public void checkDocumentsMimeType();
 }

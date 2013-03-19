@@ -41,6 +41,7 @@ import java.util.List;
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.dao.FileSystemDao;
+import org.linagora.linshare.core.dao.MimeTypeMagicNumberDao;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Document;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -79,12 +80,14 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	private final MailContentBuildingService mailBuilder;
 	private final FunctionalityService functionalityService;
 	private final EntryService entryService;
+	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
 
 	
 	
 	public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
 			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated, NotifierService notifierService,
-			MailContentBuildingService mailBuilder, FunctionalityService functionalityService, EntryService entryService, DocumentEntryBusinessService documentEntryBusinessService) {
+			MailContentBuildingService mailBuilder, FunctionalityService functionalityService, EntryService entryService, DocumentEntryBusinessService documentEntryBusinessService,
+			MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
 		super();
 		this.documentRepository = documentRepository;
 		this.documentEntryRepository = documentEntryRepository;
@@ -97,6 +100,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		this.functionalityService = functionalityService;
 		this.entryService = entryService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
+		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
 	}
 
 	//    public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryService documentEntryService,
@@ -180,6 +184,28 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
     			logger.warn("expired document with shares found : " + documentEntry.getUuid());
     		}
 		}
+	}
+	
+	@Override
+	public void checkDocumentsMimeType() {
+		logger.info("checkDocumentEntriesMimeType : begin");
+		List<Document> docs = documentRepository.findAllMimeTypeCheckNeededDocuments();
+		
+		logger.info("Found " + docs.size() + " document(s) in need of a MIME type check.");
+		for (Document doc : docs) {
+			try {
+				logger.debug("retrieve from JackRabbit : " + doc.getUuid());
+				String type = mimeTypeMagicNumberDao.getMimeType(fileSystemDao.getFileContentByUUID(doc.getUuid()));
+				doc.setType(type);
+				doc.setCheckMimeType(false);
+				documentRepository.update(doc);
+				logger.info("Changing document : " + doc.getUuid() + " Mime Type to " + type);
+			} catch (BusinessException e) {
+				logger.error("Can't find file with uuid : " + doc.getUuid() + " : " + e.getMessage());
+				logger.debug(e.toString());
+			}
+		}
+		logger.info("checkDocumentEntriesMimeType : batch ended");
 	}
 	
 	private void sendUpcomingDeletionNotification(DocumentEntry document, Integer days) {

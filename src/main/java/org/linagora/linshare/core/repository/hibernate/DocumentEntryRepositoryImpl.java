@@ -57,6 +57,13 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<DocumentEntry> implements DocumentEntryRepository {
 	
+	private final static int BEGIN = 0;
+	
+	private final static int END = 1;
+	
+	private final static int ANYWHERE = 2;
+	
+	
 	public DocumentEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
@@ -152,8 +159,7 @@ public class DocumentEntryRepositoryImpl extends AbstractRepositoryImpl<Document
         }
         return entries;
 	}
-
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DocumentEntry> retrieveUserDocumentEntriesWithMatchCriterion(SearchDocumentCriterion searchDocumentCriterion) {

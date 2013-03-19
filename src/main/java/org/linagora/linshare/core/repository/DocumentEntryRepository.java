@@ -41,13 +41,6 @@ import org.linagora.linshare.core.domain.vo.SearchDocumentCriterion;
 
 public interface DocumentEntryRepository extends AbstractRepository<DocumentEntry>{
 	
-	final static int BEGIN=0;
-	
-	final static int END=1;
-	
-	final static int ANYWHERE=2;
-	
-	
 	 /** Find a document using its uuid.
      * @param  uuid
      * @return found document (null if no document found).
