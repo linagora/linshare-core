@@ -55,6 +55,12 @@
       <property access="field" name="targetDomain" not-null="false" type="string" column="target_domain"/>
       <property access="field" name="expirationDate" not-null="false" type="calendar" column="expiration_date"/>
     </subclass>
+    <subclass discriminator-value="thread" name="org.linagora.linshare.core.domain.entities.ThreadLogEntry">
+      <property access="field" index="index_threadlog_entry_file_name" name="fileName" not-null="false" type="string" column="file_name" />
+      <property access="field" name="fileType" not-null="false" type="string" column="file_type"/>
+      <property access="field" name="fileSize" not-null="false" type="long" column="file_size"/>
+      <property access="field" name="threadName" not-null="false" type="string" column="target_firstname"/>
+    </subclass>
     <subclass discriminator-value="antivirus" name="org.linagora.linshare.core.domain.entities.AntivirusLogEntry" />
   </class>
 </hibernate-mapping>

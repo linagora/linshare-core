@@ -49,6 +49,7 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
+import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -131,11 +132,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType);
-
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_UPLOAD, "Creation of a file in a thread", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry
-					.getDocument().getType());
-			logEntryService.create(logEntry);
-
+			logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
 			tagBusinessService.runTagFiltersOnThreadEntry(actor, thread, threadEntry);
 		} finally {
 			try{
@@ -164,11 +161,9 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			if (!this.isAdmin((Thread) threadEntry.getEntryOwner(), (User) actor)) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
 			}
-			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a thread entry", threadEntry.getName(), threadEntry.getDocument().getSize(), threadEntry.getDocument()
-					.getType());
-			logEntryService.create(LogEntryService.INFO, logEntry);
+			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_ENTRY, "Deleting a thread entry.");
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
-
+			logEntryService.create(log);
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + threadEntry.getName() + " of user " + actor.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");

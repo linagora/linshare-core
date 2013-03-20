@@ -343,14 +343,16 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			if (userIsAdmin(actorVo, threadVo)) {
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(newMember.getLsUuid());
+				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
+				
 				for (ThreadMemberVo member : members) {
 					if (member.getUser().getLsUuid().equals(user.getLsUuid())) {
 						// TODO error duplicate member
 						return;
 					}
 				}
-				threadService.addMember(thread, user, readOnly);
+				threadService.addMember(actor, thread, user, readOnly);
 			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
