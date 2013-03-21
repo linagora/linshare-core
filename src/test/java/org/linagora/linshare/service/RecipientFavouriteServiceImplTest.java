@@ -48,7 +48,7 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
 import org.linagora.linshare.core.repository.UserRepository;
-import org.linagora.linshare.core.repository.hibernate.RecipientFavouriteRepository;
+import org.linagora.linshare.core.repository.hibernate.RecipientFavouriteRepositoryImpl;
 import org.linagora.linshare.core.service.RecipientFavouriteService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class RecipientFavouriteServiceImplTest extends AbstractTransactionalJUni
 	
 	@Qualifier("recipientFavouriteRepository")
 	@Autowired
-	private RecipientFavouriteRepository favouriteRepository;	
+	private RecipientFavouriteRepositoryImpl favouriteRepository;	
 	
 	@Autowired
 	private FunctionalityRepository functionalityRepository;

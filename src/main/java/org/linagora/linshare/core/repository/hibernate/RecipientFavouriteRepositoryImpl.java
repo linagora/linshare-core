@@ -47,9 +47,9 @@ import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.repository.FavouriteRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class RecipientFavouriteRepository extends AbstractRepositoryImpl<RecipientFavourite> implements FavouriteRepository<String,User, RecipientFavourite> {
+public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<RecipientFavourite> implements FavouriteRepository<String,User, RecipientFavourite> {
 
-	public RecipientFavouriteRepository(HibernateTemplate hibernateTemplate) {
+	public RecipientFavouriteRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
 
