@@ -328,7 +328,7 @@ public class UserServiceImpl implements UserService {
 			allowedContactRepository.deleteAllByUserBothSides(userToDelete);
 			
 			//clear all thread memberships
-			threadService.deleteAllUserMemberships(userToDelete);
+			threadService.deleteAllUserMemberships(actor, userToDelete);
 			
 //			// clearing all signatures
 //			Set<Signature> ownSignatures = userToDelete.getOwnSignatures();

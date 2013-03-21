@@ -68,7 +68,7 @@ public interface ThreadService {
 	
 	public void deleteAllMembers(Account actor, Thread thread) throws BusinessException;
 
-	public void deleteAllUserMemberships(User user) throws BusinessException;
+	public void deleteAllUserMemberships(Account actor, User user) throws BusinessException;
 
 	public void deleteThread(User actor, Thread thread) throws BusinessException;
 

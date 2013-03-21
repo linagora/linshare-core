@@ -110,7 +110,7 @@ public class ThreadServiceImpl implements ThreadService {
 		thread = new Thread(actor.getDomain(), actor, name);
 		threadRepository.create(thread);
 		logEntryService.create(new ThreadLogEntry(actor, thread,
-				LogAction.THREAD_CREATE, "Creaetion of a new thread."));
+				LogAction.THREAD_CREATE, "Creation of a new thread."));
 		
 		// creating default view
 		threadView = new ThreadView(thread);
@@ -224,10 +224,10 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 	
 	@Override
-	public void deleteAllUserMemberships(User user) throws BusinessException {
+	public void deleteAllUserMemberships(Account actor, User user) throws BusinessException {
 		List <ThreadMember> memberships = threadMemberRepository.findAllUserMemberships(user);
 		for (ThreadMember threadMember : memberships) {
-			deleteMember(null, threadMember.getThread(), threadMember);
+			deleteMember(actor, threadMember.getThread(), threadMember);
 		}
 	}
 	
