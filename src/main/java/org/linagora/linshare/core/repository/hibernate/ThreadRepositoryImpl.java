@@ -50,12 +50,20 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 
     @Override
     protected DetachedCriteria getNaturalKeyCriteria(Thread entity) {
-        DetachedCriteria det = DetachedCriteria.forClass(Thread.class).add(Restrictions.eq("lsUuid", entity.getLsUuid()));
+        DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+        det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
+     // filter enable thread only.
+        det.add(Restrictions.eq("enable", true));
         return det;
     }
 
 	@Override
 	public List<Thread> findAll() {
-		return super.findAll();
+		// filter enable thread only.
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+        det.add(Restrictions.eq("enable", true));
+        //query
+		List<Thread> results = findByCriteria(det);
+		return results;
 	}
 }
