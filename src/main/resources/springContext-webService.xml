@@ -43,7 +43,7 @@
 		<cxf:inInterceptors />
 		<cxf:outInterceptors />
 		<cxf:outFaultInterceptors>
-			<!--<ref bean="soapExceptionInterceptor" />-->
+			<ref bean="soapExceptionInterceptor" />
 		</cxf:outFaultInterceptors>
 	</cxf:bus>
 

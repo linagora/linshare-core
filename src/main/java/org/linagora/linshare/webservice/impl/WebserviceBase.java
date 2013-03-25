@@ -76,6 +76,12 @@ public class WebserviceBase {
 		case WEBSERVICE_UNAUTHORIZED:
 			w = giveRestException(HttpStatus.SC_FORBIDDEN, e.getMessage());
 			break;
+		case NOT_AUTHORIZED:
+			w = giveRestException(HttpStatus.SC_FORBIDDEN, e.getMessage());
+			break;
+		case USER_NOT_FOUND:
+			w = giveRestException(HttpStatus.SC_NOT_FOUND, e.getMessage());
+			break;
 		case WEBSERVICE_NOT_FOUND:
 			w = giveRestException(HttpStatus.SC_NOT_FOUND, e.getMessage());
 			break;
