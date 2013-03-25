@@ -325,10 +325,13 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void rename(Thread thread, String threadName) throws BusinessException {
+	public void rename(User actor, Thread thread, String threadName) throws BusinessException {
+		String oldname = thread.getName();
 		thread.setName(threadName);
 		try {
 			threadRepository.update(thread);
+			logEntryService.create(new ThreadLogEntry(actor, thread,
+					LogAction.THREAD_RENAME, "Renamed thread from " + oldname + " to " + threadName));
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage());
 		}

@@ -60,6 +60,7 @@
       <property access="field" name="fileType" not-null="false" type="string" column="file_type"/>
       <property access="field" name="fileSize" not-null="false" type="long" column="file_size"/>
       <property access="field" name="threadName" not-null="false" type="string" column="target_firstname"/>
+      <property access="field" name="uuid" not-null="false" type="string" column="target_lastname"/>
     </subclass>
     <subclass discriminator-value="antivirus" name="org.linagora.linshare.core.domain.entities.AntivirusLogEntry" />
   </class>
