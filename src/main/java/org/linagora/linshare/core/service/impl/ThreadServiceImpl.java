@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.LogAction;
@@ -46,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.TagRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
@@ -59,22 +61,20 @@ import org.slf4j.LoggerFactory;
 public class ThreadServiceImpl implements ThreadService {
 
 	final private static Logger logger = LoggerFactory.getLogger(ThreadServiceImpl.class);
-	
+
 	private final ThreadRepository threadRepository;
-	
+
 	private final ThreadViewRepository threadViewRepository;
-	
+
 	private final ThreadMemberRepository threadMemberRepository;
-	
+
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private final TagRepository tagRepository;
-	
+
 	private final LogEntryService logEntryService;
-    
-	
-	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository,
-			ThreadMemberRepository threadMemberRepository, TagRepository tagRepository,
+
+	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository, ThreadMemberRepository threadMemberRepository, TagRepository tagRepository,
 			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService) {
 		super();
 		this.threadRepository = threadRepository;
@@ -84,7 +84,7 @@ public class ThreadServiceImpl implements ThreadService {
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
 	}
-	
+
 	@Override
 	public Thread findByLsUuid(String uuid) {
 		Thread thread = threadRepository.findByLsUuid(uuid);
@@ -106,28 +106,26 @@ public class ThreadServiceImpl implements ThreadService {
 		Thread thread = null;
 		ThreadView threadView = null;
 		ThreadMember member = null;
-		
+
 		thread = new Thread(actor.getDomain(), actor, name);
 		threadRepository.create(thread);
-		logEntryService.create(new ThreadLogEntry(actor, thread,
-				LogAction.THREAD_CREATE, "Creation of a new thread."));
-		
+		logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
+
 		// creating default view
 		threadView = new ThreadView(thread);
 		threadViewRepository.create(threadView);
 		thread.getThreadViews().add(threadView);
 		threadRepository.update(thread);
-		
+
 		// setting default view
 		thread.setCurrentThreadView(threadView);
 		threadRepository.update(thread);
-		
+
 		// creator = first member = default admin
-		member = new ThreadMember(true, true, (User)actor, thread);
+		member = new ThreadMember(true, true, (User) actor, thread);
 		thread.getMyMembers().add(member);
 		threadRepository.update(thread);
-		logEntryService.create(new ThreadLogEntry(actor, member,
-				LogAction.THREAD_ADD_MEMBER, "Creating the first member of the newly created thread."));
+		logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER, "Creating the first member of the newly created thread."));
 	}
 
 	@Override
@@ -147,7 +145,7 @@ public class ThreadServiceImpl implements ThreadService {
 		}
 		return threadMemberRepository.findUserThreadMember(thread, user);
 	}
-	
+
 	@Override
 	public List<Thread> getThreadListIfAdmin(User user) throws BusinessException {
 		List<ThreadMember> memberships = threadMemberRepository.findAllUserAdminMemberships(user);
@@ -166,12 +164,23 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException {
+
+		
+		ThreadMember member2 = getThreadMemberFromUser(thread, (User)actor);
+		if(member2 != null && !member2.getAdmin()) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "you are not authorize to add member to this thread.");
+		}
+		
+		ThreadMember member3 = getThreadMemberFromUser(thread, user);
+		if(member3 != null) {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "you are not authorize to add member to this thread. Already exists.");
+		}
+		
 		ThreadMember member = new ThreadMember(!readOnly, false, user, thread);
 		thread.getMyMembers().add(member);
 		try {
 			threadRepository.update(thread);
-			logEntryService.create(new ThreadLogEntry(actor, member,
-					LogAction.THREAD_ADD_MEMBER, "Adding a new member in a thread."));
+			logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER, "Adding a new member in a thread."));
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			throw e;
@@ -189,13 +198,12 @@ public class ThreadServiceImpl implements ThreadService {
 			throw e;
 		}
 	}
-	
+
 	@Override
 	public void deleteMember(Account actor, Thread thread, ThreadMember member) throws BusinessException {
 		thread.getMyMembers().remove(member);
 		try {
-			ThreadLogEntry log = new ThreadLogEntry(actor, member,
-					LogAction.THREAD_REMOVE_MEMBER, "Deleting a member in a thread.");
+			ThreadLogEntry log = new ThreadLogEntry(actor, member, LogAction.THREAD_REMOVE_MEMBER, "Deleting a member in a thread.");
 			threadRepository.update(thread);
 			threadMemberRepository.delete(member);
 			logEntryService.create(log);
@@ -204,11 +212,11 @@ public class ThreadServiceImpl implements ThreadService {
 			throw e;
 		}
 	}
-	
+
 	@Override
 	public void deleteAllMembers(Account actor, Thread thread) throws BusinessException {
 		Object[] myMembers = thread.getMyMembers().toArray();
-		
+
 		for (Object threadMember : myMembers) {
 			thread.getMyMembers().remove(threadMember);
 			try {
@@ -219,18 +227,17 @@ public class ThreadServiceImpl implements ThreadService {
 				throw e;
 			}
 		}
-		logEntryService.create(new ThreadLogEntry(actor, thread,
-				LogAction.THREAD_REMOVE_MEMBER, "Deleting all members in a thread."));
+		logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_REMOVE_MEMBER, "Deleting all members in a thread."));
 	}
-	
+
 	@Override
 	public void deleteAllUserMemberships(Account actor, User user) throws BusinessException {
-		List <ThreadMember> memberships = threadMemberRepository.findAllUserMemberships(user);
+		List<ThreadMember> memberships = threadMemberRepository.findAllUserMemberships(user);
 		for (ThreadMember threadMember : memberships) {
 			deleteMember(actor, threadMember.getThread(), threadMember);
 		}
 	}
-	
+
 	@Override
 	public void deleteThreadView(User user, Thread thread, ThreadView threadView) throws BusinessException {
 		thread.getThreadViews().remove(threadView);
@@ -246,7 +253,7 @@ public class ThreadServiceImpl implements ThreadService {
 	@Override
 	public void deleteAllThreadViews(User user, Thread thread) throws BusinessException {
 		Object[] myThreadViews = thread.getThreadViews().toArray();
-		
+
 		for (Object threadView : myThreadViews) {
 			thread.getThreadViews().remove(threadView);
 			try {
@@ -258,7 +265,7 @@ public class ThreadServiceImpl implements ThreadService {
 			}
 		}
 	}
-	
+
 	@Override
 	public void deleteTagFilter(User user, Thread thread, TagFilter filter) throws BusinessException {
 		thread.getThreadViews().remove(filter);
@@ -269,7 +276,7 @@ public class ThreadServiceImpl implements ThreadService {
 			throw e;
 		}
 	}
-	
+
 	@Override
 	public void deleteTag(User user, Thread thread, Tag tag) throws BusinessException {
 		thread.getTags().remove(tag);
@@ -281,11 +288,11 @@ public class ThreadServiceImpl implements ThreadService {
 			throw e;
 		}
 	}
-	
+
 	@Override
 	public void deleteAllTags(User user, Thread thread) throws BusinessException {
 		Object[] myTags = thread.getTags().toArray();
-		
+
 		for (Object tag : myTags) {
 			thread.getTags().remove(tag);
 			try {
@@ -297,12 +304,11 @@ public class ThreadServiceImpl implements ThreadService {
 			}
 		}
 	}
-	
+
 	@Override
 	public void deleteThread(User actor, Thread thread) throws BusinessException {
 		try {
-			ThreadLogEntry log = new ThreadLogEntry(actor, thread,
-					LogAction.THREAD_DELETE, "Deleting a thread.");
+			ThreadLogEntry log = new ThreadLogEntry(actor, thread, LogAction.THREAD_DELETE, "Deleting a thread.");
 			// Delete all entries
 			documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
 			thread.setEntries(null);

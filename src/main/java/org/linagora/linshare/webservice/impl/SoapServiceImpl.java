@@ -40,6 +40,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
@@ -50,6 +51,7 @@ import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 @WebService(serviceName = "SoapWebService", endpointInterface = "org.linagora.linshare.webservice.SoapService",
@@ -151,17 +153,18 @@ public class SoapServiceImpl extends WebserviceBase implements
 	}
 
 
-
+	@Override
+	public void addMember(ThreadMemberDto member) throws BusinessException {
+		User actor = webServiceThreadFacade.checkAuthentication();
+		webServiceThreadFacade.addMember(actor, member.getThreadUuid(), member.getUserDomainId(), member.getUserMail(), member.isReadonly());
+	}
 	
 	
 	
 	// Users
-	
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
 		webServiceUserFacade.checkAuthentication();
 		return webServiceUserFacade.getUsers();
 	}
-	
-	
 }

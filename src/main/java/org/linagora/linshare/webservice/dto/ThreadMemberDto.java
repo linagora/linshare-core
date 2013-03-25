@@ -50,7 +50,13 @@ public class ThreadMemberDto {
 	
 	private String userUuid;
 	
+	private String userMail;
+	
+	private String userDomainId;
+	
 	private String threadUuid;
+	
+	private boolean readonly;
 	
 	private static enum Roles {
 		NORMAL,
@@ -69,8 +75,11 @@ public class ThreadMemberDto {
 		this.lastName = member.getUser().getLastName();
 		this.role = (member.getAdmin() ? Roles.ADMIN : member.getCanUpload() ?
 				Roles.NORMAL : Roles.RESTRICTED).name().toLowerCase();
+		this.readonly = ! member.getCanUpload();
 		this.userUuid = member.getUser().getLsUuid();
 		this.threadUuid = member.getThread().getLsUuid();
+		this.userMail = member.getUser().getMail();
+		this.userDomainId = member.getUser().getDomainId();
 	}
 
 	public Long getId() {
@@ -119,5 +128,29 @@ public class ThreadMemberDto {
 
 	public void setThreadUuid(String threadUuid) {
 		this.threadUuid = threadUuid;
+	}
+
+	public String getUserMail() {
+		return userMail;
+	}
+
+	public void setUserMail(String userMail) {
+		this.userMail = userMail;
+	}
+
+	public String getUserDomainId() {
+		return userDomainId;
+	}
+
+	public void setUserDomainId(String userDomainId) {
+		this.userDomainId = userDomainId;
+	}
+
+	public boolean isReadonly() {
+		return readonly;
+	}
+
+	public void setReadonly(boolean readonly) {
+		this.readonly = readonly;
 	}
 }

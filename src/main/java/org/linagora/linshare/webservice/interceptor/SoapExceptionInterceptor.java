@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.interceptor;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;
 import org.apache.cxf.common.injection.NoJSR250Annotations;
@@ -66,6 +67,26 @@ public class SoapExceptionInterceptor extends AbstractSoapInterceptor {
 		fault.setFaultCode(createQName(e.getErrorCode().getCode()));
 		//we set the BusinessException
 		fault.setMessage(e.getMessage());
+		
+		switch (e.getErrorCode()) {
+		case WEBSERVICE_FAULT:
+			fault.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+			break;
+		case WEBSERVICE_UNAUTHORIZED:
+			fault.setStatusCode(HttpStatus.SC_FORBIDDEN);
+			break;
+		case NOT_AUTHORIZED:
+			fault.setStatusCode(HttpStatus.SC_FORBIDDEN);
+			break;
+		case USER_NOT_FOUND:
+			fault.setStatusCode(HttpStatus.SC_NOT_FOUND);
+			break;
+		case WEBSERVICE_NOT_FOUND:
+			fault.setStatusCode(HttpStatus.SC_NOT_FOUND);
+			break;
+		default:
+			fault.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+		}
 	}
  
 	private static QName createQName(int errorCode) {

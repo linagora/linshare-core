@@ -73,7 +73,14 @@ public class ThreadMemberRepositoryImpl extends AbstractRepositoryImpl<ThreadMem
 		criteria.add(Restrictions.eq("thread", thread));
 		criteria.add(Restrictions.eq("user", user));
 		entries = findByCriteria(criteria);
-		return entries.get(0);
+		
+		if (entries == null || entries.isEmpty()) {
+            return null;
+        } else if (entries.size() == 1) {
+            return entries.get(0);
+        } else {
+            throw new IllegalStateException("Thread member must be unique");
+        }
     }
 	@Override
 	public List<ThreadMember> findAllUserMemberships(User user) {

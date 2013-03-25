@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
@@ -45,6 +46,7 @@ import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +57,16 @@ public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl impl
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceThreadFacadeImpl.class);
 	
 	private final ThreadService threadService;
+	
+	private final UserService userService;
 
 	private final FunctionalityService functionalityService;
 
-	public WebServiceThreadFacadeImpl(ThreadService threadService, AccountService accountService , FunctionalityService functionalityService) {
+	public WebServiceThreadFacadeImpl(ThreadService threadService, AccountService accountService , UserService userService, FunctionalityService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -90,4 +95,13 @@ public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl impl
 		ThreadDto res = new ThreadDto(thread, thread.getMyMembers());
 		return res;
 	}
+
+	@Override
+	public void addMember(Account actor, String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
+		Thread thread = threadService.findByLsUuid(threadUuid);
+		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, actor.getDomainId());
+		threadService.addMember(actor, thread, user, readonly);
+	}
+	
+	
 }

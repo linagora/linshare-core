@@ -35,15 +35,21 @@ package org.linagora.linshare.webservice.impl;
 
 import java.util.List;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.webservice.ThreadMemberRestService;
+import org.linagora.linshare.webservice.dto.AccountDto;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 public class ThreadMemberRestServiceImpl extends WebserviceBase implements ThreadMemberRestService {
@@ -54,4 +60,17 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements Threa
 		this.webServiceThreadFacade = webServiceThreadFacade;
 	}
 
+	@GET
+    @Path("/add/{threadUuid}/{domainId}/{mail}")
+	@Override
+	public void addMember(@PathParam("threadUuid") String threadUuid, @PathParam("domainId") String domainId, 
+			@PathParam("mail") String mail, @DefaultValue("false") @QueryParam("readonly") boolean readonly) {
+		User actor = null;
+		try {
+			actor = webServiceThreadFacade.checkAuthentication();
+			webServiceThreadFacade.addMember(actor, threadUuid, domainId, mail, readonly);
+		} catch (BusinessException e) {
+			throw analyseFaultREST(e);
+		}
+	}
 }
