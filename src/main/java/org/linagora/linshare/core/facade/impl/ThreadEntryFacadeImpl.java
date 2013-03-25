@@ -473,10 +473,11 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		ThreadVo threadVo = new ThreadVo(thread);
+		User actor = (User) accountService.findByLsUuid(userVo.getLsUuid());
 		if (!this.userIsAdmin(userVo, threadVo)) {
 			logger.error("Not authorised to get the thread " + threadUuid);
 			throw new BusinessException("Not authorised to get the thread " + threadUuid);
 		}
-		threadService.rename(thread, threadName);
+		threadService.rename(actor, thread, threadName);
 	}
 }

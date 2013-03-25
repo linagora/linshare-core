@@ -12,27 +12,33 @@ public class ThreadLogEntry extends FileLogEntry {
 
 	private String threadName;
 	
+	private String uuid;
+	
 	/*
 	 * Default constructor for Hibernate
 	 */
 	protected ThreadLogEntry() {
 		super();
 		this.threadName = null;
+		this.uuid = null;
 	}
 	
 	public ThreadLogEntry(Account actor, Thread thread, LogAction logAction, String description) {
 		super(actor, logAction, description, null, null, null);
 		this.threadName = thread.getName();
+		this.threadName = thread.getLsUuid();
 	}
 	
 	public ThreadLogEntry(Account actor, ThreadEntry threadEntry, LogAction logAction, String description) {
 		super(actor, logAction, description, threadEntry.getName(), threadEntry.getSize(), threadEntry.getType());
 		this.threadName = ((Thread) threadEntry.getEntryOwner()).getName();
+		this.threadName = ((Thread) threadEntry.getEntryOwner()).getLsUuid();
 	}
 
 	public ThreadLogEntry(Account actor, ThreadMember threadMember, LogAction logAction, String description) {
 		super(actor, logAction, description, null, null, null);
 		this.threadName = threadMember.getThread().getName();
+		this.threadName = threadMember.getThread().getLsUuid();
 	}
 
 	public String getThreadName() {
@@ -41,5 +47,13 @@ public class ThreadLogEntry extends FileLogEntry {
 
 	public void setThreadName(String threadName) {
 		this.threadName = threadName;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }
