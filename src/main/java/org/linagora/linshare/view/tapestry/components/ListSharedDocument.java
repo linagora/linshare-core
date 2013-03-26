@@ -275,18 +275,17 @@ public class ListSharedDocument {
 
 		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments, uuid);
 		
-		System.out.println("ENTERING ONACTIONFROMDOWNLOAD.");
 		if (null == currentSharedDocumentVo) {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		} else {
 			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
 			InputStream stream = shareFacade.getShareStream(user, currentSharedDocumentVo.getIdentifier());
 			
-			System.out.println("IS_DL : " + currentSharedDocumentVo.getDownloaded());
-			//send an email to the owner if it is the first time the document is downloaded
+			// send an email to the owner if it is the first time the document is downloaded
 			if (!alreadyDownloaded) {
+				logger.info("First download of this shar, notify the owner of it.");
 				notifyOwnerByEmail(currentSharedDocumentVo);
-				componentdocuments = shareFacade.getAllSharingReceivedByUser(user); //maj valeur downloaded dans le VO
+				componentdocuments = shareFacade.getAllSharingReceivedByUser(user); // maj valeur downloaded dans le VO
 			}
 			return new FileStreamResponse(currentSharedDocumentVo, stream);
 		}
@@ -310,11 +309,12 @@ public class ListSharedDocument {
 		currentUuid = uuid;
 		ShareDocumentVo shareddoc = searchDocumentVoByUUid(componentdocuments,uuid);
 		
-		if(null==shareddoc){
+		if (null==shareddoc) {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
-		}else{
+		} else {
 			// context is shared document
-			return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", new Object[]{DocToSignContext.SHARED.toString(),shareddoc.getIdentifier()});
+			return linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy",
+					new Object[]{DocToSignContext.SHARED.toString(), shareddoc.getIdentifier()});
 		}
 	}
 
@@ -337,7 +337,6 @@ public class ListSharedDocument {
     	logger.debug("onActionFromCopy");
         ShareDocumentVo shareDocumentVo = searchDocumentVoByUUid(componentdocuments, docIdentifier);
         boolean copyDone = false;
-        boolean alreadyDownloaded = shareDocumentVo.getDownloaded();
         
         //create the copy of the document and remove it from the received documents
         try {
@@ -349,16 +348,16 @@ public class ListSharedDocument {
         }
         
         if (copyDone) {
-            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
-                MessageSeverity.INFO));
+            businessMessagesManagementService.notify(new BusinessUserMessage(
+            		BusinessUserMessageType.LOCAL_COPY_OK, MessageSeverity.INFO));
             componentResources.triggerEvent("resetListFiles", null, null);
         }
     }
     
 	public Object onSuccessFromSearch() {
 		if (listSelected.size() < 1) {
-            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.NOFILE_SELECTED,
-                    MessageSeverity.WARNING));
+            businessMessagesManagementService.notify(new BusinessUserMessage(
+            		BusinessUserMessageType.NOFILE_SELECTED, MessageSeverity.WARNING));
     		return null;
 		}
 		
