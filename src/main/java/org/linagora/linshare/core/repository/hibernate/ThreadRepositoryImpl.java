@@ -52,7 +52,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
     protected DetachedCriteria getNaturalKeyCriteria(Thread entity) {
         DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
         det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
-     // filter enable thread only.
+        // filter enable thread only.
         det.add(Restrictions.eq("enable", true));
         return det;
     }

@@ -49,8 +49,6 @@ import org.linagora.linshare.core.domain.vo.AllowedMimeTypeVO;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MimeTypeFacade;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
 @SupportsInformalParameters
 @Import(library = { "MimeTypeConfigurator.js" })
 
