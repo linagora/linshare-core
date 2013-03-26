@@ -55,12 +55,11 @@ public class ShareEntryTransformer implements Transformer<ShareEntry, ShareDocum
 
 	@Override
 	public ShareDocumentVo disassemble(ShareEntry share) {
-		
 		UserVo sender = new UserVo(share.getEntryOwner());
 		UserVo recipient = new UserVo(share.getRecipient());
 		boolean downloaded = false;
-		if(share.getDownloaded() >= 1) downloaded = true;
-		
+		if (share.getDownloaded() >= 1)
+			downloaded = true;
 		return new ShareDocumentVo(share.getUuid(), 
 				share.getName(),
 				share.getComment(),

@@ -275,16 +275,18 @@ public class ListSharedDocument {
 
 		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments, uuid);
 		
-		if (null==currentSharedDocumentVo){
+		System.out.println("ENTERING ONACTIONFROMDOWNLOAD.");
+		if (null == currentSharedDocumentVo) {
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
 		} else {
 			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
 			InputStream stream = shareFacade.getShareStream(user, currentSharedDocumentVo.getIdentifier());
 			
+			System.out.println("IS_DL : " + currentSharedDocumentVo.getDownloaded());
 			//send an email to the owner if it is the first time the document is downloaded
 			if (!alreadyDownloaded) {
-				componentdocuments = shareFacade.getAllSharingReceivedByUser(user); //maj valeur downloaded dans le VO
 				notifyOwnerByEmail(currentSharedDocumentVo);
+				componentdocuments = shareFacade.getAllSharingReceivedByUser(user); //maj valeur downloaded dans le VO
 			}
 			return new FileStreamResponse(currentSharedDocumentVo, stream);
 		}
