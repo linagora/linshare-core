@@ -173,7 +173,9 @@ public class ThreadServiceImpl implements ThreadService {
 		
 		ThreadMember member3 = getThreadMemberFromUser(thread, user);
 		if(member3 != null) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "you are not authorize to add member to this thread. Already exists.");
+			logger.warn("The current " + user.getAccountReprentation() + " user is already member of the thread : " + thread.getAccountReprentation());
+			return;
+//			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "you are not authorize to add member to this thread. Already exists.");
 		}
 		
 		ThreadMember member = new ThreadMember(!readOnly, false, user, thread);
