@@ -26,19 +26,19 @@ public class ThreadLogEntry extends FileLogEntry {
 	public ThreadLogEntry(Account actor, Thread thread, LogAction logAction, String description) {
 		super(actor, logAction, description, null, null, null);
 		this.threadName = thread.getName();
-		this.threadName = thread.getLsUuid();
+		this.uuid = thread.getLsUuid();
 	}
 	
 	public ThreadLogEntry(Account actor, ThreadEntry threadEntry, LogAction logAction, String description) {
 		super(actor, logAction, description, threadEntry.getName(), threadEntry.getSize(), threadEntry.getType());
 		this.threadName = ((Thread) threadEntry.getEntryOwner()).getName();
-		this.threadName = ((Thread) threadEntry.getEntryOwner()).getLsUuid();
+		this.uuid = ((Thread) threadEntry.getEntryOwner()).getLsUuid();
 	}
 
 	public ThreadLogEntry(Account actor, ThreadMember threadMember, LogAction logAction, String description) {
 		super(actor, logAction, description, null, null, null);
 		this.threadName = threadMember.getThread().getName();
-		this.threadName = threadMember.getThread().getLsUuid();
+		this.uuid = threadMember.getThread().getLsUuid();
 	}
 
 	public String getThreadName() {
