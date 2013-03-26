@@ -35,8 +35,8 @@ package org.linagora.linshare.view.tapestry.pages.files;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Arrays;
 
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.tapestry5.Link;
@@ -74,100 +74,95 @@ import org.linagora.linshare.view.tapestry.services.MyMultipartDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-
-
-
 /**
- * Page to upload files, search for documents, and handle the sharing
- * Rely heavily on uploader, sharePanelComponent and searchComponent
- * This page handles all the mechanics behind these component, all the communication
- * is done through event :
- * - clearListObject : clear the current document share list
- * - eventDocument : launched by search component, contains in object[0] the resulting List<DocumentVo>
- * - eventDeleteFromListDocument : delete all the documents contained DocumentVo[] from the repository
- * - eventShare : add all the the documents contained DocumentVo[] in the sharing
- * - eventDeleteUniqueFromListDocument : delete the unique document whom UUID is object[0] from the repository
- * - eventShareUniqueFromListDocument : add the unique document whom UUID is object[0] in the current sharing
- * - eventReorderList : reorder the list of Document.
- * - deleteFromSharePanel : delete from the sharing the DocumentVo contained in object[0]
+ * Page to upload files, search for documents, and handle the sharing Rely
+ * heavily on uploader, sharePanelComponent and searchComponent This page
+ * handles all the mechanics behind these component, all the communication is
+ * done through event : - clearListObject : clear the current document share
+ * list - eventDocument : launched by search component, contains in object[0]
+ * the resulting List<DocumentVo> - eventDeleteFromListDocument : delete all the
+ * documents contained DocumentVo[] from the repository - eventShare : add all
+ * the the documents contained DocumentVo[] in the sharing -
+ * eventDeleteUniqueFromListDocument : delete the unique document whom UUID is
+ * object[0] from the repository - eventShareUniqueFromListDocument : add the
+ * unique document whom UUID is object[0] in the current sharing -
+ * eventReorderList : reorder the list of Document. - deleteFromSharePanel :
+ * delete from the sharing the DocumentVo contained in object[0]
  * 
  * - sharePopupEvent : create the sharing, using the session objects
  * 
  * This page handles as well the Upload exception for the multipart decoder
  * 
  * @author ncharles
- *
+ * 
  */
-@Import(library={"Index.js"})
+@Import(library = { "Index.js" })
 public class Index {
 
 	public final static Logger logger = LoggerFactory.getLogger(Index.class);
 
-    @SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
 
-    private boolean shareSessionObjectsExists;
+	private boolean shareSessionObjectsExists;
 
 	@SessionState
 	@Property
 	private UserVo userVo;
 
-    @InjectComponent
-    private FileUploader fileUploader;    
-    
-    /* ***********************************************************
-     *                      Injected services
-     ************************************************************ */
-	
-	@Component(parameters = {"style=bluelighting", "show=false","width=600", "height=250"})
+	@InjectComponent
+	private FileUploader fileUploader;
+
+	/* ***********************************************************
+	 * Injected services
+	 * ***********************************************************
+	 */
+
+	@Component(parameters = { "style=bluelighting", "show=false", "width=600", "height=250" })
 	private WindowWithEffects windowUpload;
-    
+
 	@Inject
 	private SearchDocumentFacade searchDocumentFacade;
 
 	@Inject
-	private DocumentFacade documentFacade; 
-	
+	private DocumentFacade documentFacade;
+
 	@Inject
 	private Messages messages;
 
-    @Inject
-    private Response response;
-    
-    @Environmental
-    private JavaScriptSupport renderSupport;
-    
 	@Inject
-    private AbstractDomainFacade domainFacade;
-	
+	private Response response;
+
+	@Environmental
+	private JavaScriptSupport renderSupport;
+
+	@Inject
+	private AbstractDomainFacade domainFacade;
+
 	@Inject
 	private MyMultipartDecoder myMultipartDecoder;
-	
-	
+
 	@Inject
 	private PageRenderLinkSource linkFactory;
-	
-    
-	/* ***********************************************************
-     *                Properties & injected symbol, ASO, etc
-     ************************************************************ */
 
+	/* ***********************************************************
+	 * Properties & injected symbol, ASO, etc
+	 * ***********************************************************
+	 */
 
 	@Property
 	@Persist
 	/** the document list passed to the listDocument component, containing ShareDocumentVo or DocumentVo */
 	private List<DocumentVo> listDocumentsVo;
-	
-	
+
 	@Persist
 	/** used to prevent the clearing of documentsVo */
 	private boolean flag;
-	
+
 	@Persist
 	private boolean flagFinishShare;
-	
+
 	@Persist
 	private boolean flagGroupShare;
 
@@ -177,472 +172,484 @@ public class Index {
 	@Property
 	@Persist
 	private boolean advanced;
-	
+
 	@Persist
 	@Property
 	private boolean inSearch;
 
 	/* ***********************************************************
-	 *                       Phase processing
-	 ************************************************************ */
-
+	 * Phase processing
+	 * ***********************************************************
+	 */
 
 	@SetupRender
-	private void initList(){
+	private void initList() {
 		if (!shareSessionObjectsExists) {
-            shareSessionObjects = new ShareSessionObjects();
-        }
-    
-		if(!flag){
-			listDocumentsVo=searchDocumentFacade.retrieveDocument(userVo);
-			
+			shareSessionObjects = new ShareSessionObjects();
 		}
-		
-		if (fileMessage==null) {
+
+		if (!flag) {
+			listDocumentsVo = searchDocumentFacade.retrieveDocument(userVo);
+
+		}
+
+		if (fileMessage == null) {
 			fileMessage = "";
 		}
 		logger.debug("TIME UPLOAD : " + System.currentTimeMillis());
 	}
-	
+
 	@CleanupRender
-	private void initFlag(){
+	private void initFlag() {
 		shareSessionObjects.setMessages(new ArrayList<String>());
-		//flag=false;
+		// flag=false;
 	}
 
+	/* ***********************************************************
+	 * Event handlers&processing
+	 * ***********************************************************
+	 */
 
-    /* ***********************************************************
-     *                   Event handlers&processing
-     ************************************************************ */
-	
 	/**
-	 * This is when the upload fails.
-	 * It must be in the page, and not in the component
-	 * @throws BusinessException 
+	 * This is when the upload fails. It must be in the page, and not in the
+	 * component
+	 * 
+	 * @throws BusinessException
 	 */
 	public Object onUploadException(Throwable cause) throws BusinessException {
 		if (cause instanceof FileUploadBase.FileSizeLimitExceededException) {
-			shareSessionObjects.addError(String.format(messages.get("pages.upload.FileSizeLimitExceededException"),
-					FileUtils.getFriendlySize(documentFacade.getUserMaxFileSize(userVo), messages)));
-			
+			shareSessionObjects.addError(String.format(messages.get("pages.upload.FileSizeLimitExceededException"), FileUtils.getFriendlySize(documentFacade.getUserMaxFileSize(userVo), messages)));
+
 		}
 		myMultipartDecoder.cleanException();
 		return this;
 	}
-	
-	
+
 	/**
 	 * Sharing process between this page and user page.
 	 */
-    @OnEvent(value="sharePanel")
-    public void onShare(Object[] elements) {
-    	flagFinishShare=true;
-    }
-	
+	@OnEvent(value = "sharePanel")
+	public void onShare(Object[] elements) {
+		flagFinishShare = true;
+	}
+
 	/**
 	 * Clear the shared document list
 	 */
-	@OnEvent(value="clearListObject")
-	public void clearList(){
+	@OnEvent(value = "clearListObject")
+	public void clearList() {
 		reinitASO();
 	}
-    
-    @OnEvent(value="resetListFiles")
-    public void resetListFiles(Object[] o1) {
-		inSearch=false;
-		listDocumentsVo=searchDocumentFacade.retrieveDocument(userVo);
-    }
-    
-    @OnEvent(value="inFileSearch")
-    public void inSearch(Object[] o1) {
-    	inSearch = true;
-    }
-	
+
+	@OnEvent(value = "resetListFiles")
+	public void resetListFiles(Object[] o1) {
+		inSearch = false;
+		listDocumentsVo = searchDocumentFacade.retrieveDocument(userVo);
+	}
+
+	@OnEvent(value = "inFileSearch")
+	public void inSearch(Object[] o1) {
+		inSearch = true;
+	}
+
 	/**
 	 * The search component returns a document list, and we store it
-	 * @param object : object[0] contains a List<DocumentVo>
+	 * 
+	 * @param object
+	 *            : object[0] contains a List<DocumentVo>
 	 */
 	@SuppressWarnings("unchecked")
-	@OnEvent(value="eventDocument")
-	public void initListDoc(Object[] object){
-		flag=true;
-		this.listDocumentsVo = (List<DocumentVo>)Arrays.copyOf(object,1)[0];
+	@OnEvent(value = "eventDocument")
+	public void initListDoc(Object[] object) {
+		flag = true;
+		this.listDocumentsVo = (List<DocumentVo>) Arrays.copyOf(object, 1)[0];
 	}
-	
+
 	/**
-	 * Delete the document from the repository/facade 
-	 * Invoked when a user clicks on "delete" button in the searched document list
-	 * It also removes the documents from the shared list 
-	 * @param object a DocumentVo[]
+	 * Delete the document from the repository/facade Invoked when a user clicks
+	 * on "delete" button in the searched document list It also removes the
+	 * documents from the shared list
+	 * 
+	 * @param object
+	 *            a DocumentVo[]
 	 */
-	@OnEvent(value="eventDeleteFromListDocument")
-	public void deleteFromListDocument(Object[] object){
-		 
-		boolean flagError=false;
-		for(Object currentObject : object){
+	@OnEvent(value = "eventDeleteFromListDocument")
+	public void deleteFromListDocument(Object[] object) {
+
+		boolean flagError = false;
+		for (Object currentObject : object) {
 			try {
-				documentFacade.removeDocument(userVo,((DocumentVo)currentObject));
-				
+				documentFacade.removeDocument(userVo, ((DocumentVo) currentObject));
+
 			} catch (BusinessException e) {
-				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"),
-						((DocumentVo)currentObject).getFileName()) );
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"), ((DocumentVo) currentObject).getFileName()));
 				logger.debug(e.toString());
 			}
-			shareSessionObjects.removeDocument((DocumentVo)currentObject);
+			shareSessionObjects.removeDocument((DocumentVo) currentObject);
 		}
 
-		if(null != object && object.length > 0 && !flagError){
-			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),object.length));
-					
+		if (null != object && object.length > 0 && !flagError) {
+			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"), object.length));
+
 			resetListFiles(null);
 		}
 	}
-	
-	
+
 	/**
-	 * crypt the list of documents
-	 * Invoked when a user clicks on "encrypt/decrypt" button in the searched document list
-	 * @param object a DocumentVo[]
+	 * crypt the list of documents Invoked when a user clicks on
+	 * "encrypt/decrypt" button in the searched document list
+	 * 
+	 * @param object
+	 *            a DocumentVo[]
 	 */
 	@SuppressWarnings("unchecked")
-	@OnEvent(value="eventCryptListDocFromListDocument")
-	public void cryptListDoc(Object[] object){
-		 
+	@OnEvent(value = "eventCryptListDocFromListDocument")
+	public void cryptListDoc(Object[] object) {
+
 		String pass = (String) object[0];
 		List<DocumentVo> listDocToEncrypt = (List<DocumentVo>) object[1];
-		
-		boolean ko = false; //if one problem exist in encrypt/decrypt many files
-		int numberIgnore = 0;  
-		
-		for(DocumentVo currentObject:listDocToEncrypt){
+
+		boolean ko = false; // if one problem exist in encrypt/decrypt many
+							// files
+		int numberIgnore = 0;
+
+		for (DocumentVo currentObject : listDocToEncrypt) {
 			try {
-				if(!currentObject.getEncrypted()&&!currentObject.getShared()){
-						documentFacade.encryptDocument(currentObject, userVo,pass);
+				if (!currentObject.getEncrypted() && !currentObject.getShared()) {
+					documentFacade.encryptDocument(currentObject, userVo, pass);
 				} else {
-					numberIgnore++; //if it exists an entry which is already encrypted ignore it
+					numberIgnore++; // if it exists an entry which is already
+									// encrypted ignore it
 				}
-				
+
 			} catch (BusinessException e) {
 				ko = true;
-				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.crypt"),
-						(currentObject).getFileName()) );
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.crypt"), (currentObject).getFileName()));
 				logger.debug(e.toString());
 			}
-			
+
 		}
-		
-		if(!ko && numberIgnore<listDocToEncrypt.size()) shareSessionObjects.addMessage(messages.get("pages.index.message.success.crypt"));
-		if(numberIgnore>0) shareSessionObjects.addWarning(messages.get("pages.index.message.crypt.ignoreFile"));
-		
+
+		if (!ko && numberIgnore < listDocToEncrypt.size())
+			shareSessionObjects.addMessage(messages.get("pages.index.message.success.crypt"));
+		if (numberIgnore > 0)
+			shareSessionObjects.addWarning(messages.get("pages.index.message.crypt.ignoreFile"));
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@OnEvent(value="eventDecryptListDocFromListDocument")
-	public void decryptListDoc(Object[] object){
-		
+	@OnEvent(value = "eventDecryptListDocFromListDocument")
+	public void decryptListDoc(Object[] object) {
+
 		String pass = (String) object[0];
 		List<DocumentVo> listDocToDecrypt = (List<DocumentVo>) object[1];
-		
-		boolean ko = false; //if one problem exist in encrypt/decrypt many files
-		int numberIgnore = 0;  
-		
-		for(DocumentVo currentObject:listDocToDecrypt){
+
+		boolean ko = false; // if one problem exist in encrypt/decrypt many
+							// files
+		int numberIgnore = 0;
+
+		for (DocumentVo currentObject : listDocToDecrypt) {
 			try {
-				if(currentObject.getEncrypted()&&!currentObject.getShared()){
-						documentFacade.decryptDocument(currentObject, userVo,pass);
+				if (currentObject.getEncrypted() && !currentObject.getShared()) {
+					documentFacade.decryptDocument(currentObject, userVo, pass);
 				} else {
-					numberIgnore++; //if it exists an entry which is already encrypted ignore it
+					numberIgnore++; // if it exists an entry which is already
+									// encrypted ignore it
 				}
 			} catch (BusinessException e) {
 				ko = true;
-				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.decrypt"),
-						(currentObject).getFileName()) );
+				shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.decrypt"), (currentObject).getFileName()));
 				logger.debug(e.toString());
 			}
-			
+
 		}
-		
-		if(!ko && numberIgnore<listDocToDecrypt.size()) shareSessionObjects.addMessage(messages.get("pages.index.message.success.decrypt"));
-		if(numberIgnore>0) shareSessionObjects.addWarning(messages.get("pages.index.message.decrypt.ignoreFile"));
+
+		if (!ko && numberIgnore < listDocToDecrypt.size())
+			shareSessionObjects.addMessage(messages.get("pages.index.message.success.decrypt"));
+		if (numberIgnore > 0)
+			shareSessionObjects.addWarning(messages.get("pages.index.message.decrypt.ignoreFile"));
 	}
-	
-	
+
 	/**
 	 * crypt one doc
+	 * 
 	 * @param object
 	 */
-	@OnEvent(value="eventCryptOneDocFromListDocument")
+	@OnEvent(value = "eventCryptOneDocFromListDocument")
 	public void cryptOneDoc(Object[] object) {
 		String pass = (String) object[0];
 		DocumentVo currentDocumentVo = (DocumentVo) object[1];
 
 		if (currentDocumentVo.getShared()) {
-			//do nothing on shared document
-			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.failed.crypt.sharedFile"),(currentDocumentVo).getFileName()));
+			// do nothing on shared document
+			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.failed.crypt.sharedFile"), (currentDocumentVo).getFileName()));
 		} else {
-			//ignore already encrypted file
-			if(!currentDocumentVo.getEncrypted()){ 
+			// ignore already encrypted file
+			if (!currentDocumentVo.getEncrypted()) {
 				try {
-					documentFacade.encryptDocument(currentDocumentVo, userVo,pass);
+					documentFacade.encryptDocument(currentDocumentVo, userVo, pass);
 					shareSessionObjects.addMessage(messages.get("pages.index.message.success.crypt"));
 				} catch (BusinessException e) {
-					shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.crypt"),
-							(currentDocumentVo).getFileName()) );
-					logger.debug(e.toString());
-				}
-			}	
-		}		
-	}
-	
-	/**
-	 * decrypt one doc
-	 * @param object
-	 */
-	@OnEvent(value="eventDecryptOneDocFromListDocument")
-	public void decryptOneDoc(Object[] object){
-			
-		String pass = (String) object[0];
-		DocumentVo currentDocumentVo = (DocumentVo) object[1];
-
-		if(currentDocumentVo.getShared()) {
-			//do nothing on shared document
-			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.failed.decrypt.sharedFile"),(currentDocumentVo).getFileName()));
-		} else {
-			//ignore decrypted file !
-			if(currentDocumentVo.getEncrypted()){ 
-				try {
-					documentFacade.decryptDocument(currentDocumentVo, userVo,pass);
-					shareSessionObjects.addMessage(messages.get("pages.index.message.success.decrypt"));
-				} catch (BusinessException e) {
-					shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.decrypt"),
-							(currentDocumentVo).getFileName()) );
+					shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.crypt"), (currentDocumentVo).getFileName()));
 					logger.debug(e.toString());
 				}
 			}
-		}	
+		}
 	}
-	
-	
+
 	/**
-	 * sign the document 
-	 * Invoked when a user clicks on "sign" button in the searched document list
-	 * @param object a DocumentVo[]
+	 * decrypt one doc
+	 * 
+	 * @param object
 	 */
-	@OnEvent(value="eventSignatureFromListDocument")
-	public void signatureFromListDocument(Object[] object){
+	@OnEvent(value = "eventDecryptOneDocFromListDocument")
+	public void decryptOneDoc(Object[] object) {
+
+		String pass = (String) object[0];
+		DocumentVo currentDocumentVo = (DocumentVo) object[1];
+
+		if (currentDocumentVo.getShared()) {
+			// do nothing on shared document
+			shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.failed.decrypt.sharedFile"), (currentDocumentVo).getFileName()));
+		} else {
+			// ignore decrypted file !
+			if (currentDocumentVo.getEncrypted()) {
+				try {
+					documentFacade.decryptDocument(currentDocumentVo, userVo, pass);
+					shareSessionObjects.addMessage(messages.get("pages.index.message.success.decrypt"));
+				} catch (BusinessException e) {
+					shareSessionObjects.addError(String.format(messages.get("pages.index.message.failed.decrypt"), (currentDocumentVo).getFileName()));
+					logger.debug(e.toString());
+				}
+			}
+		}
+	}
+
+	/**
+	 * sign the document Invoked when a user clicks on "sign" button in the
+	 * searched document list
+	 * 
+	 * @param object
+	 *            a DocumentVo[]
+	 */
+	@OnEvent(value = "eventSignatureFromListDocument")
+	public void signatureFromListDocument(Object[] object) {
 
 		List<String> identifiers = new ArrayList<String>();
-		
-		//context is a list of document (tab files)
+
+		// context is a list of document (tab files)
 		identifiers.add(DocToSignContext.DOCUMENT.toString());
-		
-		for(Object currentObject:object){
-			DocumentVo doc =  (DocumentVo) currentObject;
-			
-			if(doc.getEncrypted()) {
+
+		for (Object currentObject : object) {
+			DocumentVo doc = (DocumentVo) currentObject;
+
+			if (doc.getEncrypted()) {
 				shareSessionObjects.addWarning(String.format(messages.get("pages.index.message.signature.encryptedFiles")));
-				return; //quit
+				return; // quit
 			} else {
 				identifiers.add(doc.getIdentifier());
 			}
 		}
-		
-        Link mylink = linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", identifiers.toArray());
-		
-        try {
-            response.sendRedirect(mylink);
-        } catch (IOException ex) {
-            throw new TechnicalException("Bad URL" + ex);
-        }
-		
+
+		Link mylink = linkFactory.createPageRenderLinkWithContext("signature/SelectPolicy", identifiers.toArray());
+
+		try {
+			response.sendRedirect(mylink);
+		} catch (IOException ex) {
+			throw new TechnicalException("Bad URL" + ex);
+		}
+
 	}
 
-
 	/**
-	 * Add the document list in the shared list
-	 * Invoked when the user click on the multi share button 
-	 * @param object : a DocumentVo[]
+	 * Add the document list in the shared list Invoked when the user click on
+	 * the multi share button
+	 * 
+	 * @param object
+	 *            : a DocumentVo[]
 	 */
-	@OnEvent(value="eventShare")
-	public void initShareList(Object[] object){
-		
+	@OnEvent(value = "eventShare")
+	public void initShareList(Object[] object) {
+
 		DocumentVo doc;
-		
+
 		if (shareSessionObjects.isComeFromSharePopup()) {
 			shareSessionObjects.getDocuments().clear();
 			shareSessionObjects.setComeFromSharePopup(false);
 		}
-		
-		for(Object currentObject:object) {
-			doc = (DocumentVo)currentObject;
-			
+
+		for (Object currentObject : object) {
+			doc = (DocumentVo) currentObject;
+
 			shareSessionObjects.addDocument(doc);
 		}
 
-		shareSessionObjects.setMultipleSharing(true); //enable to multiple file sharing
+		shareSessionObjects.setMultipleSharing(true); // enable to multiple file
+														// sharing
 	}
 
 	/**
-	 * Delete a unique document from the repository
-	 * It also removes the document from the shared list
-	 * Invoked when a user click on the action delete button 
-	 * @param object : object[0] is the UUID of the document to be deleted
+	 * Delete a unique document from the repository It also removes the document
+	 * from the shared list Invoked when a user click on the action delete
+	 * button
+	 * 
+	 * @param object
+	 *            : object[0] is the UUID of the document to be deleted
 	 * @throws BusinessException
-	 */	
-	@OnEvent(value="eventDeleteUniqueFromListDocument")
+	 */
+	@OnEvent(value = "eventDeleteUniqueFromListDocument")
 	public void deleteUniqueFromListDocument(Object[] object) throws BusinessException {
 		try {
-	
-			DocumentVo documentVo=getDocumentByUUIDInList((String)object[0]);
-			if(null!=documentVo){
+
+			DocumentVo documentVo = getDocumentByUUIDInList((String) object[0]);
+			if (null != documentVo) {
 				documentFacade.removeDocument(userVo, documentVo);
 				shareSessionObjects.removeDocument(documentVo);
-				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"),
-						documentVo.getFileName()) );
+				shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"), documentVo.getFileName()));
 			} else {
-				throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid");
+				throw new BusinessException(BusinessErrorCode.INVALID_UUID, "invalid uuid");
 			}
 		} catch (BusinessException e) {
-			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid",e);
+			throw new BusinessException(BusinessErrorCode.INVALID_UUID, "invalid uuid", e);
 		}
 	}
 
-
 	/**
-	 * Add a unique document in the share list
-	 * Invoked when the user click on the unique share button
-	 * @param object : object[0] contains the document UUID
+	 * Add a unique document in the share list Invoked when the user click on
+	 * the unique share button
+	 * 
+	 * @param object
+	 *            : object[0] contains the document UUID
 	 * @throws BusinessException
 	 */
-	@OnEvent(value="eventShareUniqueFromListDocument")
+	@OnEvent(value = "eventShareUniqueFromListDocument")
 	public void shareUniqueFromListDocument(Object[] object) throws BusinessException {
-		DocumentVo documentVoTemp=null;
+		DocumentVo documentVoTemp = null;
 
-		for(DocumentVo currentDocumentVo:this.listDocumentsVo){
-			if(currentDocumentVo.getIdentifier().equals((String)object[0])){
-				documentVoTemp=currentDocumentVo;
+		for (DocumentVo currentDocumentVo : this.listDocumentsVo) {
+			if (currentDocumentVo.getIdentifier().equals((String) object[0])) {
+				documentVoTemp = currentDocumentVo;
 				break;
 			}
 		}
-		if(null!=documentVoTemp){
-				//enable direct sharing on this document
-				flagFinishShare=true;
-				shareSessionObjects.setComeFromSharePopup(true);
-				shareSessionObjects.getDocuments().clear(); //delete all other doc
-				shareSessionObjects.addDocument(documentVoTemp);
-				shareSessionObjects.setMultipleSharing(false);
-			}
+		if (null != documentVoTemp) {
+			// enable direct sharing on this document
+			flagFinishShare = true;
+			shareSessionObjects.setComeFromSharePopup(true);
+			shareSessionObjects.getDocuments().clear(); // delete all other doc
+			shareSessionObjects.addDocument(documentVoTemp);
+			shareSessionObjects.setMultipleSharing(false);
+		}
 
 	}
-	
-	@OnEvent(value="eventShareWithGroupUniqueFromListDocument")
+
+	@OnEvent(value = "eventShareWithGroupUniqueFromListDocument")
 	public void shareUniqueWithGroupFromListDocument(Object[] object) throws BusinessException {
-		
-//		if(groupFacade.findByUser(user.getLogin()) == null){
-//			
-//		}
-		DocumentVo documentVoTemp=null;
 
-		for(DocumentVo currentDocumentVo:this.listDocumentsVo){
-			if(currentDocumentVo.getIdentifier().equals((String)object[0])){
-				documentVoTemp=currentDocumentVo;
+		// if(groupFacade.findByUser(user.getLogin()) == null){
+		//
+		// }
+		DocumentVo documentVoTemp = null;
+
+		for (DocumentVo currentDocumentVo : this.listDocumentsVo) {
+			if (currentDocumentVo.getIdentifier().equals((String) object[0])) {
+				documentVoTemp = currentDocumentVo;
 				break;
 			}
 		}
-		if(null!=documentVoTemp){
-				//enable direct sharing on this document
-				flagGroupShare=true;
-				shareSessionObjects.setComeFromSharePopup(true);
-				shareSessionObjects.getDocuments().clear(); //delete all other doc
-				shareSessionObjects.addDocument(documentVoTemp);
-				shareSessionObjects.setMultipleSharing(false);
+		if (null != documentVoTemp) {
+			// enable direct sharing on this document
+			flagGroupShare = true;
+			shareSessionObjects.setComeFromSharePopup(true);
+			shareSessionObjects.getDocuments().clear(); // delete all other doc
+			shareSessionObjects.addDocument(documentVoTemp);
+			shareSessionObjects.setMultipleSharing(false);
 		}
 
 	}
-	
-	@OnEvent(value="eventGroupShare")
+
+	@OnEvent(value = "eventGroupShare")
 	public void shareWithGroupFromListDocument(Object[] object) throws BusinessException {
-		shareSessionObjects.getDocuments().clear(); //delete all other doc
-		flagGroupShare=true;
+		shareSessionObjects.getDocuments().clear(); // delete all other doc
+		flagGroupShare = true;
 		shareSessionObjects.setMultipleSharing(false);
-		
+
 		for (Object docObj : object) {
-			DocumentVo documentVoTemp=(DocumentVo) docObj;
-			if(null!=documentVoTemp){
+			DocumentVo documentVoTemp = (DocumentVo) docObj;
+			if (null != documentVoTemp) {
 				shareSessionObjects.addDocument(documentVoTemp);
 			}
 		}
 	}
-	
+
 	/**
 	 * Remove the document from the share list
-	 * @param object : object[0] contains a the DocumentVo
+	 * 
+	 * @param object
+	 *            : object[0] contains a the DocumentVo
 	 */
-	@OnEvent(value="deleteFromSharePanel")
-	public void deleteSharePanel(Object[] object){
-		shareSessionObjects.removeDocument((DocumentVo)object[0]);
-		
+	@OnEvent(value = "deleteFromSharePanel")
+	public void deleteSharePanel(Object[] object) {
+		shareSessionObjects.removeDocument((DocumentVo) object[0]);
+
 	}
-	
-	
-	@OnEvent(value="eventToggleAdvancedSearchSorterComponent")
-	public void toggleAdvancedSearch(Object[] object){
+
+	@OnEvent(value = "eventToggleAdvancedSearchSorterComponent")
+	public void toggleAdvancedSearch(Object[] object) {
 		advanced = (Boolean) object[0];
-		flag=!flag;
+		flag = !flag;
 	}
-	
-	
-	private void reinitASO(){
-        shareSessionObjects = new ShareSessionObjects();      
+
+	private void reinitASO() {
+		shareSessionObjects = new ShareSessionObjects();
 	}
-	
+
 	/**
 	 * show the popup if it is to be shown
 	 */
-    @AfterRender
-    public void afterRender() {
-    	
-    	if (flagFinishShare) {
-    		
-    		//show the share window popup
-             renderSupport.addScript(String.format("confirmWindow.showCenter(true)"));
-            flagFinishShare=false;
-    	}
-    	
-    	if (flagGroupShare) {
-            renderSupport.addScript(String.format("groupShareWindow.showCenter(true)"));
-            flagGroupShare=false;
-    	}
+	@AfterRender
+	public void afterRender() {
 
-    }
-    
-    
-    private DocumentVo getDocumentByUUIDInList(String UUId) {
-    	for (DocumentVo doc : listDocumentsVo) {
+		if (flagFinishShare) {
+
+			// show the share window popup
+			renderSupport.addScript(String.format("confirmWindow.showCenter(true)"));
+			flagFinishShare = false;
+		}
+
+		if (flagGroupShare) {
+			renderSupport.addScript(String.format("groupShareWindow.showCenter(true)"));
+			flagGroupShare = false;
+		}
+
+	}
+
+	private DocumentVo getDocumentByUUIDInList(String UUId) {
+		for (DocumentVo doc : listDocumentsVo) {
 			if ((doc.getIdentifier()).equals(UUId)) {
 				return doc;
 			}
 		}
-    	throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE, "Could not find the document" );
-    }
-    
-    public String getJSonId() {
-        return windowUpload.getJSONId();
-    }
-    
-    public boolean isDisplayUploadButton() {
-    	return (userVo.isUpload());
-    }
-    
-    public String getPageTitle() {
-    	return messages.get("components.myborderlayout.file.title");
-    }
-    
-    Object onException(Throwable cause) {
-    	shareSessionObjects.addError(messages.get("global.exception.message"));
-    	logger.error(cause.getMessage());
-    	cause.printStackTrace();
-    	return this;
-    }
+		throw new TechnicalException(TechnicalErrorCode.DATA_INCOHERENCE, "Could not find the document");
+	}
+
+	public String getJSonId() {
+		return windowUpload.getJSONId();
+	}
+
+	public boolean isDisplayUploadButton() {
+		return (userVo.isUpload());
+	}
+
+	public String getPageTitle() {
+		return messages.get("components.myborderlayout.file.title");
+	}
+
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
+	}
 
 }
