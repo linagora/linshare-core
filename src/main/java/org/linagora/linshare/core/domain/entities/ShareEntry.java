@@ -92,10 +92,10 @@ public class ShareEntry extends Entry{
 	}
 
 	public void incrementDownload() {
-		downloaded+=1;
+		++downloaded;
 	}
 	
-	/* usefull getters */
+	/* useful getters */
 	public long getSize() {
 		return documentEntry.getSize();
 	}

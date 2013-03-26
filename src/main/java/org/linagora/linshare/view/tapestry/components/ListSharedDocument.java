@@ -273,22 +273,20 @@ public class ListSharedDocument {
 			return null;
 		}
 
-		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments,uuid);
+		ShareDocumentVo currentSharedDocumentVo=searchDocumentVoByUUid(componentdocuments, uuid);
 		
-		if(null==currentSharedDocumentVo){
+		if (null==currentSharedDocumentVo){
 			throw new BusinessException(BusinessErrorCode.INVALID_UUID,"invalid uuid for this user");
-		}else{
+		} else {
 			boolean alreadyDownloaded = currentSharedDocumentVo.getDownloaded();
-			
 			InputStream stream = shareFacade.getShareStream(user, currentSharedDocumentVo.getIdentifier());
 			
 			//send an email to the owner if it is the first time the document is downloaded
 			if (!alreadyDownloaded) {
-				componentdocuments=shareFacade.getAllSharingReceivedByUser(user); //maj valeur downloaded dans le VO
+				componentdocuments = shareFacade.getAllSharingReceivedByUser(user); //maj valeur downloaded dans le VO
+				notifyOwnerByEmail(currentSharedDocumentVo);
 			}
-			
-			
-			return new FileStreamResponse(currentSharedDocumentVo,stream);
+			return new FileStreamResponse(currentSharedDocumentVo, stream);
 		}
 
 	}
@@ -482,9 +480,8 @@ public class ListSharedDocument {
 	public void copyFromListDocument(List<ShareDocumentVo> shares) {
 		logger.debug("copyFromListDocument");
 		 
-		for(ShareDocumentVo shareDocumentVo:shares){
+		for (ShareDocumentVo shareDocumentVo:shares){
 	        boolean copyDone = false;
-	        boolean alreadyDownloaded = shareDocumentVo.getDownloaded();
 	        
 	        //create the copy of the document and remove it from the received documents
 	        try {
@@ -494,10 +491,9 @@ public class ListSharedDocument {
 	            // process business exception. Can be thrown if no space left or wrong mime type.
 	            businessMessagesManagementService.notify(e);
 	        }
-	        
 	        if (copyDone) {
-	            businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.LOCAL_COPY_OK,
-	                MessageSeverity.INFO));
+	            businessMessagesManagementService.notify(new BusinessUserMessage(
+	            		BusinessUserMessageType.LOCAL_COPY_OK, MessageSeverity.INFO));
 	        }
 		}
         componentResources.triggerEvent("resetListFiles", null, null);

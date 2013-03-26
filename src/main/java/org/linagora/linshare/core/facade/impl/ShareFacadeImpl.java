@@ -202,7 +202,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		ArrayList<ShareEntry> arrayList = new ArrayList<ShareEntry>(actor.getShareEntries());
 		logger.debug("AllSharingReceived size : " + arrayList.size());
-		return shareEntryTransformer.disassembleList(arrayList);		
+		return shareEntryTransformer.disassembleList(arrayList);
 	}
 
 	
