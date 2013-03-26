@@ -49,7 +49,8 @@ public enum ActionFromBarDocument
 	public static ActionFromBarDocument fromString(String item) {
 		try {
 			return ActionFromBarDocument.valueOf(item);
-		} catch (IllegalArgumentException iae) {
+		} catch (RuntimeException e) {
+			// could be NullPointerException or IllegalArgumentException
 			return ActionFromBarDocument.NO_ACTION;
 		}
 	}
