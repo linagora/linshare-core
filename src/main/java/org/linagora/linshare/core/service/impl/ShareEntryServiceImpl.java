@@ -231,13 +231,11 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		}
 		
 		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor)) {
-			
 			 //log the copy
 			ShareLogEntry logEntryShare = new ShareLogEntry(actor, share, LogAction.SHARE_COPY, "Copy of a sharing");
 			logEntryService.create(logEntryShare);
 			
 			DocumentEntry newDocumentEntry = documentEntryService.duplicateDocumentEntry(actor, share.getDocumentEntry().getUuid());
-			
 			
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Remove a received sharing (Copy of a sharing)"); 
 	        logEntryService.create(logEntry);
@@ -247,7 +245,6 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	        if (share.getDownloaded() < 1) {
 	        	notifierService.sendAllNotification(mailContentBuildingService.buildMailRegisteredDownloadWithOneRecipient(share));
 	        }
-	        
 	        shareEntryBusinessService.deleteShare(share);
 	        
 	        return newDocumentEntry;
