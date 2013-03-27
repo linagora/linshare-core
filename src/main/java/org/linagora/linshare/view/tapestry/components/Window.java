@@ -51,9 +51,6 @@ import org.chenillekit.tapestry.core.base.AbstractWindow;
  */
 public class Window extends AbstractWindow
 {
-	@Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
-	private String name;
-	
 	@Environmental
 	private JavaScriptSupport renderSupport;
 
@@ -114,18 +111,5 @@ public class Window extends AbstractWindow
 
 		if (isShow())
 			renderSupport.addScript("%s.show%s(%s);", getClientId(), isCenter() ? "Center" : "", isModal());
-	}
-	
-	@Override
-	public String getClientId() {
-		return (name == null ? super.getClientId() : renderSupport.allocateClientId(name));
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 }
