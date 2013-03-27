@@ -62,9 +62,6 @@ public class ConfirmPopup {
 	@Parameter(required=false,defaultPrefix=BindingConstants.LITERAL)
 	private Object[] context;
 	
-	@Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
-	private String id;
-	
 	@Component(parameters = {"style=bluelighting", "show=false","width=500", "height=100"})
 	private WindowWithEffects window_confirm;
 	
@@ -76,12 +73,6 @@ public class ConfirmPopup {
 
 	@Inject
 	private ComponentResources componentResources;
-	
-	
-	@SetupRender
-	public void init() {
-		window_confirm.setName(id);
-	}
 	
 	
     /* ***********************************************************
