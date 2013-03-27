@@ -131,6 +131,17 @@ public class ShareLogEntry extends FileLogEntry {
 		this.expirationDate = expirationDate;
 	}
 	
+	/*
+	 * Wrapper for ease of use
+	 * 
+	 * This constructor is used for Share Download logging
+	 */
+	public ShareLogEntry(Account actor, LogAction logAction, String description, ShareEntry shareEntry, Account target) {
+		this(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing", shareEntry.getDocumentEntry().getName(),
+				shareEntry.getDocumentEntry().getSize(), shareEntry.getDocumentEntry().getType(),
+				shareEntry.getEntryOwner(), shareEntry.getExpirationDate());
+	}
+	
 	public String getTargetMail() {
 		return targetMail;
 	}
