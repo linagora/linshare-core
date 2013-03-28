@@ -24,6 +24,7 @@ else
 	echo "INFO dumping data to dump.linshare.configuration.sql."
 fi
 
+
 pg_dump -U linshare -a --insert --column-inserts --attribute-inserts \
 --table ldap_connection \
 --table domain_pattern \
@@ -38,4 +39,13 @@ else
 	echo
 	echo "INFO : dump done."
 fi
+
+
+cp dump.linshare.configuration.sql{,.bak}
+sed -i -e '/INSERT INTO domain_pattern (domain_pattern_id, identifier, description, auth_command, search_user_command, system, auto_complete_command) VALUES (1,/ d' dump.linshare.configuration.sql
+
+sed -i -e '/INSERT INTO domain_abstract (id, type, identifier, label, enable, template, description, default_role, default_locale, used_space, user_provider_id, domain_policy_id, parent_id, messages_configuration_id, auth_show_order) VALUES (1,/ d' dump.linshare.configuration.sql
+
+sed -i -e '/INSERT INTO ldap_attribute (id, domain_pattern_id, field, attribute, sync, system, enable) VALUES (.*, 1,/ d' dump.linshare.configuration.sql
+echo "INFO : removing default datas."
 

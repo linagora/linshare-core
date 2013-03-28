@@ -34,6 +34,7 @@ echo "
 DROP DATABASE IF EXISTS ${l_database};
 DROP DATABASE IF EXISTS ${l_database}_data;
 
+CREATE USER linshare WITH PASSWORD 'linshare';
 
 CREATE DATABASE ${l_database}
   WITH OWNER = linshare
@@ -42,6 +43,7 @@ CREATE DATABASE ${l_database}
        LC_COLLATE = '${l_locale}'
        LC_CTYPE = '${l_locale}'
        CONNECTION LIMIT = -1;
+GRANT ALL ON DATABASE ${l_database} TO linshare;
 
 CREATE DATABASE ${l_database}_data
   WITH OWNER = linshare
@@ -51,7 +53,6 @@ CREATE DATABASE ${l_database}_data
        LC_CTYPE = '${l_locale}'
        CONNECTION LIMIT = -1;
 
-GRANT ALL ON DATABASE ${l_database} TO linshare;
 GRANT ALL ON DATABASE ${l_database}_data TO linshare;
 "
 
