@@ -31,41 +31,51 @@
         </div>
 
         <div id="pageContent">
-            <t:grid source="members" row="member" include="fullName,mail" add="type,edit" >
-                
+            <t:grid source="members" row="member" include="fullName,mail" add="type,edit,delete" >
                 <p:typeCell>
-                	<t:delegate to="type" />
+                    <t:delegate to="type" />
 
 		            <t:block id="adminBlock">
-		            	<span><img src="${asset:context:images/icons/usertype-threadadmin.png}" alt="${message:pages.thread.userType.admin}" title="${message:pages.thread.userType.admin}"/></span>
+                        <span><img src="${asset:context:images/icons/usertype-threadadmin.png}" alt="${message:pages.thread.userType.admin}" title="${message:pages.thread.userType.admin}"/></span>
 		            </t:block>
-		            
-		           	<t:block id="userBlock">
-		           		<span><img src="${asset:context:images/icons/usertype-internalsimple.png}" alt="${message:pages.thread.userType.user}" title="${message:pages.thread.userType.user}"/></span>
+
+                    <t:block id="userBlock">
+                        <span><img src="${asset:context:images/icons/usertype-internalsimple.png}" alt="${message:pages.thread.userType.user}" title="${message:pages.thread.userType.user}"/></span>
 		            </t:block>
-		            
-		           	<t:block id="restrictedUserBlock">
-		            	<span><img src="${asset:context:images/icons/usertype-userrestricted.png}" alt="${message:pages.thread.userType.userRestricted}" title="${message:pages.thread.userType.userRestricted}"/></span>
+
+                    <t:block id="restrictedUserBlock">
+                        <span><img src="${asset:context:images/icons/usertype-userrestricted.png}" alt="${message:pages.thread.userType.userRestricted}" title="${message:pages.thread.userType.userRestricted}"/></span>
 		            </t:block>
                 </p:typeCell>
-                
+
+                <p:deleteCellHeader>
+                    ${message:pages.thread.member.delete}
+                </p:deleteCellHeader>
+
                 <p:editCell>
-                    <t:actionLink t:id="editMember" t:context="${member.lsUuid}" t:zone="memberEditFormZone"
-                            title="${message:pages.thread.editUserType}">
+                    <t:actionLink t:id="editMember" t:context="${member.lsUuid}" t:zone="memberEditFormZone">
                         <span onclick="memberEditWindow.showCenter(true)">
-                            <img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
+                            <img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
+                                title="${message:pages.thread.editUserType}" />
                         </span>
                     </t:actionLink>
                 </p:editCell>
-                
+
+                <p:deleteCell>
+                    <t:actionLink t:id="deleteMember" t:context="${member.lsUuid}" t:zone="zoneConfirmDelete">
+                        <span onclick="window_confirm_0.showCenter(true);">
+                            <img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
+                                title="${message:pages.thread.member.delete}" />
+                        </span>
+                    </t:actionLink>
+                </p:deleteCell>
             </t:grid>
         </div><!-- id="list" -->
 
         <t:pageLink page="thread/ThreadContent" class="button" title="${message:pages.thread.admin.back}">
             <span><img src="${asset:context:images/icons/cancel.png}" alt="" /> ${message:pages.thread.admin.back}</span>
         </t:pageLink>
-        
-        
+
 	    <!-- Popups -->
 
         <div style="display:none">
@@ -77,8 +87,7 @@
         <div t:id="memberEditWindow">
             <t:zone id="memberEditFormZone" update="show" />
         </div>
-        
-        
+
         <div style="display:none">
             <t:zone t:id="threadEditTemplateZone">
                 <t:threadEditForm currentThread="currentThread" />
@@ -88,9 +97,15 @@
         <div t:id="threadEditWindow">
             <t:zone id="threadEditFormZone" update="show" />
         </div>
-	
+
 	    <!-- Delete thread confirm popup -->
-	    <t:confirmPopup t:eventName="deleteThreadPopupEvent" t:messageLabel="${message:pages.thread.admin.confirmDelete}"/>
+        <t:confirmPopup t:eventName="deleteThreadPopupEvent"
+            t:messageLabel="${message:pages.thread.admin.confirmDelete}"/>
+
+	    <!-- Delete member confirm popup -->
+        <t:zone t:id="zoneConfirmDelete" />
+        <t:confirmPopup t:eventName="deleteMemberPopupEvent"
+            t:messageLabel="${message:pages.thread.admin.confirmDelete}"/>
 
 		<!-- <t:threadEditForm t:editThreadWithUuid="${currentThread.lsUuid}" /> -->
     </div>

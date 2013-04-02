@@ -96,6 +96,9 @@ public class AdminThread {
 	@Property
 	private ThreadMemberVo member;
 	
+	@Persist
+	private ThreadMemberVo toDelete;
+	
     @Inject
     private Messages messages;
     
@@ -164,7 +167,19 @@ public class AdminThread {
     	logger.info("Trying to edit current thread ");
     	return threadEditTemplateZone;
     }
-
+    
+    public void onActionFromDeleteMember(String identifier) {
+    	logger.info("Trying to delete a member.");
+    	for (ThreadMemberVo m : members) {
+    		logger.debug(m.getLsUuid() + " compared to parameter " + identifier);
+			if (m.getLsUuid().equals(identifier)) {
+				selectedMemberId = identifier;
+				toDelete = m;
+				logger.info("Trying to delete " + toDelete.getLsUuid());
+			}
+		}
+    }
+    
 	@OnEvent(value="deleteThreadPopupEvent")
 	public void deleteCurrentThread() {
 		try {
@@ -173,5 +188,10 @@ public class AdminThread {
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
+	}
+
+	@OnEvent(value="deleteMemberPopupEvent")
+	public void deleteMember() {
+		threadEntryFacade.deleteMember(currentThread, userVo, toDelete);
 	}
 }

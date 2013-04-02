@@ -47,7 +47,7 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @param id
 	 * @return the ThreadMember
 	 */
-	public ThreadMember findById(String id);
+	public ThreadMember findById(long id);
 
 	/**
 	 * Find ThreadMember corresponding to a User

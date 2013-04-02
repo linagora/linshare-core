@@ -93,6 +93,8 @@ public interface ThreadEntryFacade {
 
 	public void addMember(ThreadVo threadVo, UserVo actorVo, UserVo newMember, boolean readOnly);
 
+	public void deleteMember(ThreadVo threadVo, UserVo actorVo, ThreadMemberVo memberVo);
+
 	public boolean isUserAdminOfAnyThread(UserVo actorVo) throws BusinessException;
 
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo);

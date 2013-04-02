@@ -129,11 +129,7 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public ThreadMember getThreadMemberById(String id) throws BusinessException {
-		if (id == null) {
-			logger.debug("id is null");
-			return null;
-		}
+	public ThreadMember getThreadMemberById(long id) throws BusinessException {
 		return threadMemberRepository.findById(id);
 	}
 
