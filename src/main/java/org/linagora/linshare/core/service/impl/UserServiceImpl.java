@@ -501,8 +501,8 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void updateUserLocale(String uuid, String mail, String locale) {
-		User user = userRepository.findByLsUuid(uuid);
+	public void updateUserLocale(String domainId, String mail, String locale) throws BusinessException {
+		User user = findOrCreateUser(mail, domainId);
 		if(user == null) {
 			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user " + mail);
 		 }

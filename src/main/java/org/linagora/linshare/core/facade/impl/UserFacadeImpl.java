@@ -209,7 +209,7 @@ public class UserFacadeImpl implements UserFacade {
 		return userRepository.findMails(beginWith);
 	}
 
-	public void updateUserLocale(UserVo user, String locale) {
+	public void updateUserLocale(UserVo user, String locale) throws BusinessException {
 		userService.updateUserLocale(user.getDomainIdentifier(),user.getMail(), locale);
 	}
 

@@ -132,8 +132,9 @@ public interface UserFacade {
 	 * Update a user locale
 	 * @param user
 	 * @param locale
+	 * @throws BusinessException 
 	 */
-	public void updateUserLocale(UserVo user, String locale);
+	public void updateUserLocale(UserVo user, String locale) throws BusinessException;
 	
 	
     /** Load a User.
