@@ -132,8 +132,9 @@ public interface UserService {
 	 * Update a user locale
 	 * @param mail : the user email
 	 * @param locale : the new local
+	 * @throws BusinessException 
 	 */
-	public void updateUserLocale(String uuid, String mail, String locale);
+	public void updateUserLocale(String domainId, String mail, String locale) throws BusinessException;
 	
 	/**
 	 * change a guest or superadmin password

@@ -169,6 +169,7 @@ public class UserConfig {
 	
 	void onSuccessFromConfigUserform() throws BusinessException {
 		userFacade.updateUserLocale(userVo,currentLocale);
+		userVo = userFacade.findUserByLsUuid(userVo, userVo.getLsUuid());
 		userVo = userFacade.findUserInDb(userVo.getMail(), userVo.getDomainIdentifier());
 		persistentLocale.set(LocaleUtils.toLocale(currentLocale));
 	}
