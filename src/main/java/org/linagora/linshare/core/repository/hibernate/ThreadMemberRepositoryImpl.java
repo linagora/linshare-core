@@ -55,7 +55,7 @@ public class ThreadMemberRepositoryImpl extends AbstractRepositoryImpl<ThreadMem
 	}
 
 	@Override
-	public ThreadMember findById(String id) {
+	public ThreadMember findById(long id) {
 		List<ThreadMember> entries = findByCriteria(Restrictions.eq("id", id));
         if (entries == null || entries.isEmpty()) {
             return null;

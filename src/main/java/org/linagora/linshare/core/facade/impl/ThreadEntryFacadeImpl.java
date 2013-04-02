@@ -352,6 +352,21 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
+	public void deleteMember(ThreadVo threadVo, UserVo actorVo, ThreadMemberVo memberVo) {
+		try {
+			if (userIsAdmin(actorVo, threadVo)) {
+					Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+					Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
+					User user = (User) accountService.findByLsUuid(memberVo.getUser().getLsUuid());
+					ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
+					threadService.deleteMember(actor, thread, member);
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
+	@Override
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo) {
 		try {
 			if (userIsAdmin(actorVo, threadVo)) {
@@ -472,4 +487,5 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		}
 		threadService.rename(actor, thread, threadName);
 	}
+
 }

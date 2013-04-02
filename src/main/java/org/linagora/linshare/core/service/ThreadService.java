@@ -52,7 +52,7 @@ public interface ThreadService {
 
 	public void create(Account actor, String name) throws BusinessException;
 	
-	public ThreadMember getThreadMemberById(String id) throws BusinessException;
+	public ThreadMember getThreadMemberById(long id) throws BusinessException;
 	
 	public ThreadMember getThreadMemberFromUser(Thread thread, User user) throws BusinessException;
 
