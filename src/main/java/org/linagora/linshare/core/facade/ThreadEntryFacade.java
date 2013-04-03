@@ -89,7 +89,7 @@ public interface ThreadEntryFacade {
 
 	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) throws BusinessException;
 
-	public List<ThreadVo> getAllMyAdminThread(UserVo actorVo) throws BusinessException;
+	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo) throws BusinessException;
 
 	public void addMember(ThreadVo threadVo, UserVo actorVo, UserVo newMember, boolean readOnly);
 

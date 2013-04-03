@@ -225,7 +225,7 @@ public class UserSearchResults {
         if (userAddToThreadList == null) {
             userAddToThreadList = new ArrayList<UserVo>();
         }
-        threads = threadEntryFacade.getAllMyAdminThread(userLoggedIn);
+        threads = threadEntryFacade.getAllMyThreadWhereAdmin(userLoggedIn);
         if (users == null || users.size() == 0) {
             if (userLoggedIn.isSuperAdmin() && showBreakedUsers) {
                 users = userFacade.searchAllBreakedUsers(userLoggedIn);

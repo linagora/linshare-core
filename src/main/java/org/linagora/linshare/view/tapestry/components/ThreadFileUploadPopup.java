@@ -286,7 +286,7 @@ public class ThreadFileUploadPopup {
 	}
 	
 	public String getDisplay() {
-		if (index>=currentSize) {
+		if (index >= currentSize) {
 			return "none";
 		} else {
 			return "block";

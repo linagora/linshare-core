@@ -38,8 +38,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagFilter;
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -97,7 +99,7 @@ public class ThreadServiceImpl implements ThreadService {
 	@Override
 	public List<Thread> findAll() {
 		List<Thread> all = threadRepository.findAll();
-		logger.debug("count : " + all.size());
+		logger.debug("Total of thread found : " + all.size());
 		return all;
 	}
 
@@ -107,6 +109,7 @@ public class ThreadServiceImpl implements ThreadService {
 		ThreadView threadView = null;
 		ThreadMember member = null;
 
+		logger.debug("User " + actor.getAccountReprentation() + " trying to create new thread named " + name);
 		thread = new Thread(actor.getDomain(), actor, name);
 		threadRepository.create(thread);
 		logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
@@ -125,7 +128,8 @@ public class ThreadServiceImpl implements ThreadService {
 		member = new ThreadMember(true, true, (User) actor, thread);
 		thread.getMyMembers().add(member);
 		threadRepository.update(thread);
-		logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER, "Creating the first member of the newly created thread."));
+		logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER,
+				"Creating the first member of the newly created thread."));
 	}
 
 	@Override
@@ -135,48 +139,59 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public ThreadMember getThreadMemberFromUser(Thread thread, User user) throws BusinessException {
-		if (thread == null || user == null) {
-			logger.debug("null parameter");
-			return null;
-		}
+		logger.debug("Seeking membership from user " + user.getAccountReprentation() + " in thread "
+				+ thread.getAccountReprentation());
 		return threadMemberRepository.findUserThreadMember(thread, user);
 	}
-
+	
 	@Override
-	public List<Thread> getThreadListIfAdmin(User user) throws BusinessException {
-		List<ThreadMember> memberships = threadMemberRepository.findAllUserAdminMemberships(user);
-		List<Thread> res = new ArrayList<Thread>();
-		for (ThreadMember membership : memberships) {
-			res.add(membership.getThread());
-		}
-		return res;
+	public List<Thread> findAllWhereMember(User user) {
+		List<Thread> ret =  threadRepository.findAllWhereMember(user);
+		logger.debug("thread where user " + user.getAccountReprentation() + " is member found : "
+				+ (ret != null ? ret.size() : 0));
+		return ret != null ? ret : new ArrayList<Thread>();
 	}
 
 	@Override
-	public boolean hasAnyThreadWhereIsAdmin(User user) {
-		List<ThreadMember> memberships = threadMemberRepository.findAllUserAdminMemberships(user);
-		return memberships != null && !memberships.isEmpty();
+	public List<Thread> findAllWhereAdmin(User user) {
+		List<Thread> ret =  threadRepository.findAllWhereAdmin(user);
+		logger.debug("thread where user " + user.getAccountReprentation() + " is admin found : "
+				+ (ret != null ? ret.size() : 0));
+		return ret != null ? ret : new ArrayList<Thread>();
+	}
+
+	@Override
+	public List<Thread> findAllWhereCanUpload(User user) {
+		List<Thread> ret =  threadRepository.findAllWhereCanUpload(user);
+		logger.debug("thread where user " + user.getAccountReprentation() + " can upload found : "
+				+ (ret != null ? ret.size() : 0));
+		return ret != null ? ret : new ArrayList<Thread>();
+	}
+
+	@Override
+	public boolean hasAnyWhereAdmin(User user) {
+		return threadMemberRepository.isUserAdminOfAny(user);
+	}
+	
+	@Override
+	public boolean isUserAdmin(User user, Thread thread) {
+		return threadMemberRepository.isUserAdmin(user, thread);
 	}
 
 	@Override
 	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException {
-
+		// permission check
+		checkUserIsAdmin(actor, thread);
 		
-		ThreadMember member2 = getThreadMemberFromUser(thread, (User)actor);
-		if(member2 != null && !member2.getAdmin()) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "you are not authorize to add member to this thread.");
-		}
-		
-		ThreadMember member3 = getThreadMemberFromUser(thread, user);
-		if(member3 != null) {
+		ThreadMember member = getThreadMemberFromUser(thread, user);
+		if (member != null) {
 			logger.warn("The current " + user.getAccountReprentation() + " user is already member of the thread : " + thread.getAccountReprentation());
-			return;
-//			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "you are not authorize to add member to this thread. Already exists.");
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "you are not authorize to add member to this thread. Already exists.");
 		}
 		
-		ThreadMember member = new ThreadMember(!readOnly, false, user, thread);
-		thread.getMyMembers().add(member);
+		member = new ThreadMember(!readOnly, false, user, thread);
 		try {
+			thread.getMyMembers().add(member);
 			threadRepository.update(thread);
 			logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER, "Adding a new member in a thread."));
 		} catch (BusinessException e) {
@@ -186,7 +201,10 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void updateMember(ThreadMember member, boolean admin, boolean canUpload) throws BusinessException {
+	public void updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(actor, member.getThread());
+	
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
 		try {
@@ -199,6 +217,9 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void deleteMember(Account actor, Thread thread, ThreadMember member) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(actor, thread);
+		
 		thread.getMyMembers().remove(member);
 		try {
 			ThreadLogEntry log = new ThreadLogEntry(actor, member, LogAction.THREAD_REMOVE_MEMBER, "Deleting a member in a thread.");
@@ -213,6 +234,9 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void deleteAllMembers(Account actor, Thread thread) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(actor, thread);
+		
 		Object[] myMembers = thread.getMyMembers().toArray();
 
 		for (Object threadMember : myMembers) {
@@ -238,6 +262,9 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void deleteThreadView(User user, Thread thread, ThreadView threadView) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(user, thread);
+		
 		thread.getThreadViews().remove(threadView);
 		try {
 			threadRepository.update(thread);
@@ -250,6 +277,9 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void deleteAllThreadViews(User user, Thread thread) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(user, thread);
+		
 		Object[] myThreadViews = thread.getThreadViews().toArray();
 
 		for (Object threadView : myThreadViews) {
@@ -266,6 +296,9 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void deleteTagFilter(User user, Thread thread, TagFilter filter) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(user, thread);
+		
 		thread.getThreadViews().remove(filter);
 		try {
 			threadRepository.update(thread);
@@ -277,6 +310,9 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void deleteTag(User user, Thread thread, Tag tag) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(user, thread);
+		
 		thread.getTags().remove(tag);
 		try {
 			threadRepository.update(thread);
@@ -289,6 +325,9 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void deleteAllTags(User user, Thread thread) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(user, thread);
+		
 		Object[] myTags = thread.getTags().toArray();
 
 		for (Object tag : myTags) {
@@ -305,20 +344,23 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void deleteThread(User actor, Thread thread) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(actor, thread);
+		
 		try {
 			ThreadLogEntry log = new ThreadLogEntry(actor, thread, LogAction.THREAD_DELETE, "Deleting a thread.");
 			// Delete all entries
 			documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
 			thread.setEntries(null);
 			threadRepository.update(thread);
-			// Deleting members
-			this.deleteAllMembers(actor, thread);
 			// Deleting views
 			thread.setCurrentThreadView(null);
 			threadRepository.update(thread);
 			this.deleteAllThreadViews(actor, thread);
 			// Deleting tags
 			this.deleteAllTags(actor, thread);
+			// Deleting members
+			this.deleteAllMembers(actor, thread);
 			// Deleting the thread
 			threadRepository.delete(thread);
 			logEntryService.create(log);
@@ -330,6 +372,9 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public void rename(User actor, Thread thread, String threadName) throws BusinessException {
+		// permission check
+		checkUserIsAdmin(actor, thread);
+		
 		String oldname = thread.getName();
 		thread.setName(threadName);
 		try {
@@ -338,6 +383,28 @@ public class ThreadServiceImpl implements ThreadService {
 					LogAction.THREAD_RENAME, "Renamed thread from " + oldname + " to " + threadName));
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage());
+		}
+	}
+	
+	
+    /* ***********************************************************
+     *                   Helpers
+     ************************************************************ */
+	
+	
+	/**
+	 * Check if actor is admin of the thread and so has the right to perform any action.
+	 * Throw a BusinessException if the actor isn't authorized to modify the thread.
+	 */
+	private void checkUserIsAdmin(Account actor, Thread thread) throws BusinessException {
+		if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM)) {
+			return; // superadmin or system accounts have all rights
+		}
+		if (!isUserAdmin((User) actor, thread)) {
+			logger.error("Actor: " + actor.getAccountReprentation() + " isn't admin of the Thread: "
+					+ thread.getAccountReprentation());
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
+					"you are not authorized to perform this action on this thread.");
 		}
 	}
 }

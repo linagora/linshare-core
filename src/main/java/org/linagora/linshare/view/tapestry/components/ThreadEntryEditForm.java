@@ -155,7 +155,7 @@ public class ThreadEntryEditForm {
         return true;
     }
     
-     public void onSelectedFromReset(){
+     public void onSelectedFromReset() {
     	 reset =  true;
      }
 
@@ -183,7 +183,7 @@ public class ThreadEntryEditForm {
     
     
     @CleanupRender
-    public void cleanupRender(){
+    public void cleanupRender() {
     	editForm.clearErrors();
     }
     
@@ -191,7 +191,7 @@ public class ThreadEntryEditForm {
         return fileEditTemplateZone;
     }
     
-    public String getJSONId(){
+    public String getJSONId() {
     	return fileEditWindow.getJSONId();
     }
     
@@ -204,8 +204,7 @@ public class ThreadEntryEditForm {
     	return fileEditWindow.getJavascriptOpenPopup();
     }
     
-    public String getZoneClientId()
-    {
+    public String getZoneClientId() {
     	if(_assignedZoneClientId == null) {
     		_assignedZoneClientId = "zone"+_pageRenderSupport.allocateClientId(id); 
     	}
@@ -217,9 +216,8 @@ public class ThreadEntryEditForm {
 		initFormToEdit();
 	}
 	
-    private void initFormToEdit(){
-		 
-		if(threadEntryUuid != null){
+    private void initFormToEdit() {
+		if(threadEntryUuid != null) {
 		    	ThreadEntryVo doc = threadEntryFacade.getThreadEntry(userLoggedIn.getLogin(), threadEntryUuid);
 		    	fileComment = doc.getFileComment();
 		}

@@ -119,7 +119,7 @@ public class UserAddToThreadForm {
 		threadsAllowed = new ArrayList<ThreadVo>();
 		if (threads == null && newMemberList != null && newMemberList.size() > 0) {
 			try {
-				threadsAllowed.addAll(threadEntryFacade.getAllMyAdminThread(userLoggedIn));
+				threadsAllowed.addAll(threadEntryFacade.getAllMyThreadWhereAdmin(userLoggedIn));
 				threadsAllowed.removeAll(threadEntryFacade.getAllMyThread(newMemberList.get(0)));
 			} catch (BusinessException e) {
 				logger.error("cannot retrieve user infos" + e.getMessage());

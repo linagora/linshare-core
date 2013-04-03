@@ -73,4 +73,21 @@ public interface ThreadMemberRepository extends AbstractRepository<ThreadMember>
 	 * @return the ThreadMember
 	 */
 	public List<ThreadMember> findAllUserAdminMemberships(User user);
+
+	/**
+	 * Find if the User is admin of any Thread
+	 * 
+	 * @param user
+	 * @return true if user is admin of any Thread
+	 */
+	boolean isUserAdminOfAny(User user);
+	
+	/**
+	 * FInd if the user is admin of the thread
+	 * 
+	 * @param user
+	 * @param thread
+	 * @return true if user is admin of the thread
+	 */
+	boolean isUserAdmin(User user, Thread thread);
 }

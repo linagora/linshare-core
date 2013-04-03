@@ -157,7 +157,7 @@ public class Index {
 		return 0;
 	}
 	
-    Object onException(Throwable cause) {
+    public Object onException(Throwable cause) {
         shareSessionObjects.addError(messages.get("global.exception.message"));
         logger.error(cause.getMessage());
         cause.printStackTrace();
