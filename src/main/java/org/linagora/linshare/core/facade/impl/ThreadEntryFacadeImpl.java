@@ -100,9 +100,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		
 		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		
 		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, stream, size, fileName);
-
 		return new ThreadEntryVo(threadEntry);
 	}
 	
@@ -125,44 +123,68 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public List<ThreadVo> getAllMyThread(UserVo actorVo) {
-		//TODO: To be optimized (find my threads using UserVo as research entry point than all threads).
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		logger.debug("actor : " + actor.getAccountReprentation());
-		List<Thread> all = threadService.findAll();
 		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
-		for (Thread thread : all) {
-			List<User> userMembers = new ArrayList<User>();
-			for (ThreadMember threadMember : thread.getMyMembers()) {
-				userMembers.add(threadMember.getUser());
-			}
-			if (userMembers.contains(actor)) {
-				logger.debug("thread name " + thread.getName());
-				res.add(new ThreadVo(thread));
-			}
+		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
+	
+		if (actor == null) {
+			logger.error("Can't find logged in user.");
+			return res;
+		}
+		logger.debug("actor : " + actor.getAccountReprentation());
+		for (Thread thread : threadService.findAllWhereMember(actor)) {
+			res.add(new ThreadVo(thread));
 		}
 		return res;
 	}
 
 	@Override
 	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo) {
-		//TODO: To be optimized (find my threads using UserVo as research entry point than all threads).
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		logger.debug("actor : " + actor.getAccountReprentation());
-		List<Thread> all = threadService.findAll();
 		List<ThreadVo> res = new ArrayList<ThreadVo>(); 
-		for (Thread thread : all) {
-			List<User> userMembers = new ArrayList<User>();
-			for (ThreadMember threadMember : thread.getMyMembers()) {
-				if (threadMember.getCanUpload()) {
-					userMembers.add(threadMember.getUser());
-				}
-			}
-			if (userMembers.contains(actor)) {
-				logger.debug("thread name " + thread.getName());
-				res.add(new ThreadVo(thread));
-			}
+		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
+	
+		if (actor == null) {
+			logger.error("Can't find logged in user.");
+			return res;
+		}
+		logger.debug("actor : " + actor.getAccountReprentation());
+		for (Thread thread : threadService.findAllWhereCanUpload(actor)) {
+			res.add(new ThreadVo(thread));
 		}
 		return res;
+	}
+
+	@Override
+	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo) throws BusinessException {
+		List<ThreadVo> res = new ArrayList<ThreadVo>();
+		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
+	
+		if (actor == null) {
+			logger.error("Can't find logged in user.");
+			return res;
+		}
+		logger.debug("actor : " + actor.getAccountReprentation());
+		for (Thread thread : threadService.findAllWhereAdmin(actor)) {
+			res.add(new ThreadVo(thread));
+		}
+		return res;
+	}
+
+	@Override
+	public boolean isUserAdminOfAnyThread(UserVo actorVo) throws BusinessException {
+		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
+	
+		if (actor == null) {
+			logger.error("Can't find logged user.");
+			return false;
+		}
+		return threadService.hasAnyWhereAdmin(actor);
+	}
+	
+	@Override
+	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) throws BusinessException {
+		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		return threadService.isUserAdmin(user, thread);
 	}
 
 	@Override
@@ -317,16 +339,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) throws BusinessException {
-		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
-		if (member != null)
-			return member.getAdmin();
-		return false;
-	}
-
-	@Override
 	public List<ThreadMemberVo> getThreadMembers(ThreadVo threadVo) throws BusinessException {
 		Set<ThreadMember> threadMembers = threadService.findByLsUuid(threadVo.getLsUuid()).getMyMembers();
 		List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
@@ -370,44 +382,20 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo) {
 		try {
 			if (userIsAdmin(actorVo, threadVo)) {
+				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(memberVo.getLsUuid());
 				ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
 				if (member == null) {
-					// member doesn't exist
+					logger.error("Member not found. User: " + user.getAccountReprentation()
+							+ "; Thread: " + thread.getAccountReprentation());
 					return;
 				}
-				threadService.updateMember(member, memberVo.isAdmin(), memberVo.isCanUpload());
+				threadService.updateMember(actor, member, memberVo.isAdmin(), memberVo.isCanUpload());
 			}
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
-	}
-
-	@Override
-	public List<ThreadVo> getAllMyAdminThread(UserVo actorVo) throws BusinessException {
-		List<ThreadVo> res = new ArrayList<ThreadVo>();
-		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
-		if (actor == null) {
-			logger.error("Can't find logged user.");
-		}
-		else {
-			List<Thread> tmp = threadService.getThreadListIfAdmin(actor);
-			for (Thread thread : tmp) {
-				res.add(new ThreadVo(thread));
-			}
-		}
-		return res;
-	}
-
-	@Override
-	public boolean isUserAdminOfAnyThread(UserVo actorVo) throws BusinessException {
-		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
-		if (actor == null) {
-			logger.error("Can't find logged user.");
-			return false;
-		}
-		return threadService.hasAnyThreadWhereIsAdmin(actor);
 	}
 
 	@Override

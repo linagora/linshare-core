@@ -35,8 +35,35 @@ package org.linagora.linshare.core.repository;
 
 
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.User;
 
 public interface ThreadRepository extends AccountRepository<Thread> {
+
+	/**
+	 * Find all Thread where the actor is member
+	 * 
+	 * @param actor
+	 * @return the list of Thread where actor is member
+	 */
+	List<Thread> findAllWhereMember(User actor);
+	
+	/**
+	 * Find all Thread where the actor is admin
+	 * 
+	 * @param actor
+	 * @return the list of Thread where actor is admin
+	 */
+	List<Thread> findAllWhereAdmin(User actor);
+
+	/**
+	 * Find all Thread where the actor can upload
+	 * 
+	 * @param actor
+	 * @return the list of Thread where actor can upload
+	 */
+	List<Thread> findAllWhereCanUpload(User actor);
 	
 } 

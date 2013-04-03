@@ -56,13 +56,19 @@ public interface ThreadService {
 	
 	public ThreadMember getThreadMemberFromUser(Thread thread, User user) throws BusinessException;
 
-	public List<Thread> getThreadListIfAdmin(User user) throws BusinessException;
+	public List<Thread> findAllWhereMember(User user);
+	
+	public List<Thread> findAllWhereAdmin(User user);
+
+	public List<Thread> findAllWhereCanUpload(User user);
+
+	public boolean hasAnyWhereAdmin(User user);
+
+	public boolean isUserAdmin(User user, Thread thread);
 
 	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException;
 
-	public boolean hasAnyThreadWhereIsAdmin(User user);
-
-	public void updateMember(ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
+	public void updateMember(Account actor, ThreadMember member, boolean admin, boolean canUpload) throws BusinessException;
 
 	public void deleteMember(Account actor, Thread thread, ThreadMember member) throws BusinessException;
 	

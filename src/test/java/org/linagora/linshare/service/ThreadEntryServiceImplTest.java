@@ -174,10 +174,10 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 	public void testFindAdmin() throws BusinessException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 
-		Assert.assertTrue(threadService.hasAnyThreadWhereIsAdmin(datas.getUser1()));
-		Assert.assertEquals(threadService.getThreadListIfAdmin(datas.getUser1()).size(), 1);
+		Assert.assertTrue(threadService.hasAnyWhereAdmin(datas.getUser1()));
+		Assert.assertEquals(threadService.findAllWhereAdmin(datas.getUser1()).size(), 1);
 		threadService.create(datas.getUser1(), ThreadEntryServiceImplTest.THREAD_1 + "_" + 1);
-		Assert.assertEquals(threadService.getThreadListIfAdmin(datas.getUser1()).size(), 2);
+		Assert.assertEquals(threadService.findAllWhereAdmin(datas.getUser1()).size(), 2);
 
 		logger.info(LinShareTestConstants.END_TEST);
 	}

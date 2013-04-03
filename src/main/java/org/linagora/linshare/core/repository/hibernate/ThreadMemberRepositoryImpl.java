@@ -33,14 +33,19 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class ThreadMemberRepositoryImpl extends AbstractRepositoryImpl<ThreadMember> implements ThreadMemberRepository {
@@ -101,4 +106,40 @@ public class ThreadMemberRepositoryImpl extends AbstractRepositoryImpl<ThreadMem
 		return entries;
 	}
 	
+	@Override
+	public boolean isUserAdminOfAny(User user) {
+		List<ThreadMember> entries = null;
+		final DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+		
+		// query
+		det.add(Restrictions.eq("user", user));
+		det.add(Restrictions.eq("admin", true));
+		
+		// limiting to only one match, fetching all matches is unnecessary
+		entries = getHibernateTemplate().execute(
+				new HibernateCallback<List<ThreadMember>>() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public List<ThreadMember> doInHibernate(final Session session)
+							throws HibernateException, SQLException {
+						return det.getExecutableCriteria(session).setCacheable(true)
+								.setMaxResults(1).list();
+					}
+				});
+		return entries != null && entries.size() > 0;
+		
+	}
+
+	@Override
+	public boolean isUserAdmin(User user, Thread thread) {
+		List<ThreadMember> entries = null;
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadMember.class);
+		
+		// query
+		det.add(Restrictions.eq("user", user));
+		det.add(Restrictions.eq("thread", thread));
+		det.add(Restrictions.eq("admin", true));
+		entries = findByCriteria(det);
+		return entries != null && entries.size() > 0;
+	}
 }
