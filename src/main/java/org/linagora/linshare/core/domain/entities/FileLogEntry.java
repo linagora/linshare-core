@@ -37,20 +37,19 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 
 /**
  * Log class for uploading/deleting/expiring files
+ * 
  * @author ncharles
- *
+ * 
  */
 public class FileLogEntry extends LogEntry {
 
-	
 	private static final long serialVersionUID = -7747367540741943254L;
 
 	protected String fileName;
-	
-	protected Long fileSize;
-	
-	protected String fileType;
 
+	protected Long fileSize;
+
+	protected String fileType;
 
 	protected FileLogEntry() {
 		super();
@@ -58,28 +57,34 @@ public class FileLogEntry extends LogEntry {
 		this.fileSize = null;
 		this.fileType = null;
 	}
-	
-	
-	public FileLogEntry(Account actor, LogAction logAction, String description, String fileName, Long fileSize, String fileType) {
+
+	public FileLogEntry(Account actor, LogAction logAction, String description,
+			String fileName, Long fileSize, String fileType) {
 		super(actor, logAction, description);
 		this.fileName = fileName;
 		this.fileSize = fileSize;
 		this.fileType = fileType;
 	}
-	
-	
+
 	public String getFileName() {
 		return fileName;
 	}
-	
 
 	public Long getFileSize() {
 		return fileSize;
 	}
 
-	
 	public String getFileType() {
 		return fileType;
 	}
 	
+	/**
+	 * Format:
+	 * 	USER_ACTIVITY:logAction:actorDomain:actorMail:description:file=fileName,size=fileSize
+	 */
+	@Override
+	public String toString() {
+		return super.toString() + ":file=" + fileName + ",size=" + fileSize;
+	}
+
 }
