@@ -76,7 +76,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		
         //query
-        det.createAlias("MyMembers", "member");
+        det.createAlias("myMembers", "member");
         det.add(Restrictions.eq("member.user", actor));
 		List<Thread> results = findByCriteria(det);
 		return results;
@@ -100,7 +100,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		
         //query
-        det.createAlias("MyMembers", "member");
+        det.createAlias("myMembers", "member");
         det.add(Restrictions.eq("member.user", actor));
         det.add(Restrictions.eq("member.canUpload", true));
 		List<Thread> results = findByCriteria(det);
