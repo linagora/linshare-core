@@ -193,5 +193,14 @@ public class AdminThread {
 	@OnEvent(value="deleteMemberPopupEvent")
 	public void deleteMember() {
 		threadEntryFacade.deleteMember(currentThread, userVo, toDelete);
+	
+		// refresh list
+		try {
+			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(currentThread);
+			members = tmp;
+		} catch (BusinessException e) {
+    		logger.error(e.getMessage());
+    		logger.debug(e.toString());
+		}
 	}
 }

@@ -43,9 +43,6 @@ public interface LogEntryService {
 	final public int WARN= LocationAwareLogger.WARN_INT;
 	final public int ERROR= LocationAwareLogger.ERROR_INT;
 	
-	final public String USER_ACTIVITY_MARK = "USER_ACTIVITY";
-	
-
 	/**
 	 * 
 	 * @param level : logger level like INFO, WARN
