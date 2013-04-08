@@ -83,8 +83,9 @@ function init_context ()
 	echo_linshare "Building LinShare ${g_version} distribution"
 	echo_linshare "Creating distrib dir..."
 	cd $(dirname $0)
-	rm -f ${g_distribution_dir}/*
+	rm -rf ${g_distribution_dir}/
 	mkdir -p ${g_distribution_dir}
+	exit 0
 }
 
 function end_context () 
