@@ -173,7 +173,8 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 		ShareLogEntry logEntry = new ShareLogEntry(actor, shareEntry, LogAction.SHARE_DELETE, "Deleting anonymous share" );
 		logEntryService.create(logEntry);
 		
-		notifierService.sendAllNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
+		// TODO : anonymous share deletion notification
+		// notifierService.sendAllNotification();
 	}
 	
 	
