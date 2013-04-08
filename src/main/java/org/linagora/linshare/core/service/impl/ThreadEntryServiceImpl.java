@@ -132,7 +132,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			Boolean checkIfIsCiphered = enciphermentFunctionality.getActivationPolicy().getStatus();
 
 			threadEntry = documentEntryBusinessService.createThreadEntry(thread, tempFile, size, fileName, checkIfIsCiphered, timeStampingUrl, mimeType);
-			logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
+			logEntryService.create(new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_UPLOAD_ENTRY, "Uploading a file in a thread."));
 			tagBusinessService.runTagFiltersOnThreadEntry(actor, thread, threadEntry);
 		} finally {
 			try{
