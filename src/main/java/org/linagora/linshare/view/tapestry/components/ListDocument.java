@@ -773,7 +773,7 @@ public class ListDocument {
 	}
 	
 	/**
-	 * remove all carriage retrun for chenille kit tool tip
+	 * remove all carriage return for chenille kit tool tip
 	 * @return
 	 */
 	public String getFormatedComment() {

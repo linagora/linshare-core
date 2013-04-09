@@ -290,24 +290,22 @@ public class UserServiceImpl implements UserService {
     
     @Override
 	public boolean isAdminForThisUser(Account actor, String userDomainToManage, String userMailToManage) {
-		if(actor.getRole().equals(Role.SUPERADMIN)) {
+		if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM)) {
 			return true;
-		} else if(actor.getRole().equals(Role.SYSTEM)) {
-			return true;
-		} else if(actor.getRole().equals(Role.ADMIN)) {
+		} else if (actor.getRole().equals(Role.ADMIN)) {
 			List<String> allMyDomain = abstractDomainService.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());
 			for (String domain : allMyDomain) {
-				if(domain.equals(userDomainToManage)) {
+				if (domain.equals(userDomainToManage)) {
 					return true;
 				}
 			}
 		}
 		
 		User user = findUserInDB(userDomainToManage, userMailToManage);
-		if(user instanceof Guest) {
+		if (user instanceof Guest) {
 			// At this point the actor object could be an entity or a proxy. No idea why it happens. 
 			// That is why we compare IDs.
-			if(actor.getId() == ((Guest)user).getOwner().getId()) {
+			if (actor.getId() == ((Guest)user).getOwner().getId()) {
 				return true;
 			}
 		}

@@ -95,10 +95,11 @@ import org.slf4j.LoggerFactory;
 public class ListSharedDocument {
 
 	private static final Logger logger = LoggerFactory.getLogger(ListSharedDocument.class);
+	
 	/***********************************
 	 * Parameters
 	 ***********************************/
-	/**r
+	/**
 	 * The user owner for the document list.
 	 */
 	@Parameter(required=true,defaultPrefix=BindingConstants.PROP)
@@ -685,25 +686,25 @@ public class ListSharedDocument {
 		InputStream stream=null;
 		DocumentVo currentDocumentVo = searchDocumentVoByUUid(componentdocuments,
 				docID);
-			stream = shareFacade.getShareThumbnailStream(user, currentDocumentVo.getIdentifier());
-			if (stream==null) return;
+		stream = shareFacade.getShareThumbnailStream(user, currentDocumentVo.getIdentifier());
+		if (stream == null)
+			return;
 		OutputStream os = null;
-			response.setDateHeader("Expires", 0);
-			response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-			response.setHeader("Cache-Control", "post-check=0, pre-check=0");
-			response.setHeader("Pragma", "no-cache");
-			try {
+		response.setDateHeader("Expires", 0);
+		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+		response.setHeader("Cache-Control", "post-check=0, pre-check=0");
+		response.setHeader("Pragma", "no-cache");
+		try {
 			os = response.getOutputStream("image/png");
-				BufferedImage bufferedImage=ImageIO.read(stream);
-				if (bufferedImage!=null)
-					ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, os);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		 finally {
-
+			BufferedImage bufferedImage=ImageIO.read(stream);
+			if (bufferedImage != null)
+				ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, os);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
 			try {
-				if (os!=null) {
+				if (os != null) {
 					os.flush();
 					os.close();
 				}
@@ -715,7 +716,7 @@ public class ListSharedDocument {
 	}
 	
 	/**
-	 * remove all carriage retrun for chenille kit tool tip
+	 * remove all carriage return for chenille kit tool tip
 	 * @return
 	 */
 	public String getFormatedComment() {

@@ -49,12 +49,11 @@ public enum Role {
     }
 
     public static Role fromInt(int value) {
-        switch(value) {
-            case 0 : return SIMPLE;
-            case 1 : return ADMIN;
-            case 2 : return SYSTEM;
-            case 3 : return SUPERADMIN;
-            default : throw new IllegalArgumentException("Doesn't match an existing Role");
-        }
+    	for (Role role : values()) {
+    		if (role.value == value) {
+    			return role;
+    		}
+		}
+    	throw new IllegalArgumentException("Doesn't match an existing Role");
     }
 }

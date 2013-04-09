@@ -310,9 +310,9 @@ public class Index {
     }
 
     
-   Object onActivate(Object obj) {
-	   return ErrorNotFound.class;
-   } 
+    public Object onActivate(Object obj) {
+    	return ErrorNotFound.class;
+    } 
    
 	@CleanupRender
 	private void initFlag(){
@@ -325,6 +325,7 @@ public class Index {
 		flag=!flag;
 		advanced = (Boolean) object[0];
 	}
+	
 	/**
 	 * The search component returns a document list, and we store it
 	 * @param object : object[0] contains a List<DocumentVo>
@@ -351,7 +352,7 @@ public class Index {
     	return messages.get("components.myborderlayout.home.title");
     }
     
-    Object onException(Throwable cause) {
+    public Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());
     	cause.printStackTrace();

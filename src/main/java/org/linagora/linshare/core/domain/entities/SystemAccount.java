@@ -39,7 +39,7 @@ public class SystemAccount extends Account {
 
 	public SystemAccount() {
 		super();
-		role = Role.SUPERADMIN;
+		role = Role.SYSTEM;
 	}
 
 	@Override

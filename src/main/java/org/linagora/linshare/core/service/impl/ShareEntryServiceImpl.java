@@ -196,7 +196,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	
 	@Override
 	public void deleteShare(SystemAccount actor, ShareEntry share) throws BusinessException {
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() ) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isTechnicalAccount()) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
 	        logEntryService.create(logEntry);
 	        
@@ -263,7 +263,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			logger.error("Share not found : " + shareUuid);
 			throw new BusinessException(BusinessErrorCode.SHARED_DOCUMENT_NOT_FOUND, "Share entry not found : " + shareUuid);
 		}
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin()) {
+		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isTechnicalAccount()) {
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
