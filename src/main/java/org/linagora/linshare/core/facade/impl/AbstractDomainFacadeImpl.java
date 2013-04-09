@@ -99,7 +99,9 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         if(actorVo !=null) {
             User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
             if(actor != null) {
-                if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.ADMIN)) {
+                if (actor.getRole().equals(Role.SUPERADMIN)
+                		|| actor.getRole().equals(Role.SYSTEM)
+                		|| actor.getRole().equals(Role.ADMIN)) {
                     return true;
                 }
                 logger.error("you are not authorised.");

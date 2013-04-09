@@ -566,9 +566,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private boolean isOwnerOrAdmin(Account actor, Account user) {
 		if (actor.equals(user)) {
 			return true;
-		} else if (actor.getRole().equals(Role.SUPERADMIN)) {
-			return true;
-		} else if (actor.getRole().equals(Role.SYSTEM)) {
+		} else if (actor.getRole().equals(Role.SUPERADMIN) || actor.getRole().equals(Role.SYSTEM)) {
 			return true;
 		} else if (actor.getRole().equals(Role.ADMIN)) {
 			List<String> allMyDomain = abstractDomainService.getAllMyDomainIdentifiers(actor.getDomain().getIdentifier());

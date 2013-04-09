@@ -114,9 +114,7 @@ public abstract class Account {
 	}
 	
 	public boolean isTechnicalAccount() {
-		// FIXME TODO XXX HACK
-		// return this.getRole().equals(Role.SYSTEM);
-		return this.getRole().equals(Role.SUPERADMIN);
+		 return this.getRole().equals(Role.SYSTEM);
 	}
 
 	public long getId() {
