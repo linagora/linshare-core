@@ -149,6 +149,8 @@ public class Index {
      ************************************************************ */
 	
 	public Object onActivate() {
+		if (shareSessionObjects != null)
+			shareSessionObjects.checkDocumentsTypeIntegrity(ShareDocumentVo.class);
 		if (userVoExists && userVo.isSuperAdmin()) {
 			return org.linagora.linshare.view.tapestry.pages.user.Index.class;
 		}
