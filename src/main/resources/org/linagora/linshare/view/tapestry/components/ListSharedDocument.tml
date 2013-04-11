@@ -106,7 +106,7 @@
 				<!--span class="creationDate">${creationDate},</span>${message:global.space}-->
 				<span class="friendlySize">${friendlySize},</span>${message:global.space}
 				<span class="sharedBy">${message:components.listSharedDocument.grid.sharedBy}
-					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.login">
+					<t:actionlink t:id="showUser" zone="userDetailsZone" title="${message:pages.user.search.popup.welcome}" context="shareDocument.sender.mail">
 						<span onclick="userDetailsWindow.showCenter(true);">${sharedBy}</span>
 					</t:actionlink>
 				</span>
