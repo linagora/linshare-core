@@ -58,6 +58,7 @@ import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -181,13 +182,18 @@ public class Index {
 	 * Phase processing
 	 * ***********************************************************
 	 */
-
+	
+	public void onActivate() {
+		if (shareSessionObjects != null)
+			shareSessionObjects.checkDocumentsTypeIntegrity(DocumentVo.class);
+	}
+	
 	@SetupRender
 	private void initList() {
 		if (!shareSessionObjectsExists) {
 			shareSessionObjects = new ShareSessionObjects();
 		}
-
+		
 		if (!flag) {
 			listDocumentsVo = searchDocumentFacade.retrieveDocument(userVo);
 

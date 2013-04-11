@@ -189,6 +189,18 @@ public class ShareSessionObjects {
 		this.comeFromSharePopup = comeFromSharePopup;
 	}
 	
-	
-	
+	/**
+	 * This method check if there's only the wanted class type in documents
+	 * 
+	 * @param clazz the wanted class type
+	 */
+
+	public void checkDocumentsTypeIntegrity(Class<? extends DocumentVo> clazz) {
+		for (DocumentVo document : documents) {
+			if (!document.getClass().equals(clazz)) {
+				documents.clear();
+				return;
+			}
+		}
+	}
 }
