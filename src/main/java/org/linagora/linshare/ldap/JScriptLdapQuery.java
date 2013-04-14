@@ -228,7 +228,9 @@ public class JScriptLdapQuery {
 		String mail = retMap.get(getUserMail()).get(0);
     	String firstName = retMap.get(getUserFirstName()).get(0);
         String lastName = retMap.get(getUserLastName()).get(0);
-        String ldapUid = retMap.get(getLdapUid()).get(0);
+        String ldapUid = null;
+        List<String> uids = retMap.get(getLdapUid());
+        if (uids != null && ! uids.isEmpty())		ldapUid = uids.get(0);
         User user = new Internal(firstName, lastName, mail, ldapUid);
 		return user;
 	}
