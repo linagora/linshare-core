@@ -85,7 +85,6 @@ function init_context ()
 	cd $(dirname $0)
 	rm -rf ${g_distribution_dir}/
 	mkdir -p ${g_distribution_dir}
-	exit 0
 }
 
 function end_context () 
