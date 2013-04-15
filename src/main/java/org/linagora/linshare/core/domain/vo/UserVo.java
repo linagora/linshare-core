@@ -268,58 +268,60 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	}
 
 	@Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final UserVo other = (UserVo) obj;
-        if ((this.login == null) ? (other.login != null) : !this.login.equals(other.login)) {
-            return false;
-        }
-        if ((this.firstName == null) ? (other.firstName != null) : !this.firstName.equals(other.firstName)) {
-            return false;
-        }
-        if ((this.lastName == null) ? (other.lastName != null) : !this.lastName.equals(other.lastName)) {
-            return false;
-        }
-        if ((this.mail == null) ? (other.mail != null) : !this.mail.equals(other.mail)) {
-            return false;
-        }
-        if (this.userType != other.userType) {
-            return false;
-        }
-        if (this.role != other.role) {
-            return false;
-        }
-        if (this.upload != other.upload) {
-            return false;
-        }
-        if (this.createGuest != other.createGuest) {
-            return false;
-        }
-        if ((this.domainIdentifier == null) ? (other.domainIdentifier != null) : !this.domainIdentifier.equals(other.domainIdentifier)) {
-            return false;
-        }
-        return true;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((domainIdentifier == null) ? 0 : domainIdentifier.hashCode());
+		result = prime * result
+				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + ((mail == null) ? 0 : mail.hashCode());
+		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		result = prime * result
+				+ ((userType == null) ? 0 : userType.hashCode());
+		return result;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + (this.login != null ? this.login.hashCode() : 0);
-        hash = 47 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
-        hash = 47 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
-        hash = 47 * hash + (this.mail != null ? this.mail.hashCode() : 0);
-        hash = 47 * hash + (this.userType != null ? this.userType.hashCode() : 0);
-        hash = 47 * hash + (this.role != null ? this.role.hashCode() : 0);
-        hash = 47 * hash + (this.domainIdentifier != null ? this.domainIdentifier.hashCode() : 0);
-        return hash;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof UserVo))
+			return false;
+		UserVo other = (UserVo) obj;
+		if (domainIdentifier == null) {
+			if (other.domainIdentifier != null)
+				return false;
+		} else if (!domainIdentifier.equals(other.domainIdentifier))
+			return false;
+		if (firstName == null) {
+			if (other.firstName != null)
+				return false;
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		if (mail == null) {
+			if (other.mail != null)
+				return false;
+		} else if (!mail.equals(other.mail))
+			return false;
+		if (role != other.role)
+			return false;
+		if (userType != other.userType)
+			return false;
+		return true;
+	}
 
-    public String toString() {
+	public String toString() {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("\nlogin : ").append(login);
         stringBuffer.append("\nfirst name : ").append(firstName);
@@ -331,7 +333,8 @@ public class UserVo implements Serializable, Comparable<UserVo> {
         return stringBuffer.toString();
     }
     
-    public String getFullName() {
+
+	public String getFullName() {
     	return this.firstName + " " + this.lastName;
     }
     
