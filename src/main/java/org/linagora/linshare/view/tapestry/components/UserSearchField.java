@@ -240,7 +240,6 @@ public class UserSearchField {
 		} catch (BusinessException e) {
 			logger.error("Error while trying to autocomplete", e);
 		}
-
 		return new ArrayList<UserVo>(userSet);
 	}
 

@@ -412,9 +412,9 @@ public class UserServiceImpl implements UserService {
 		logger.debug("result internals list : size : " + internals.size());
 		for (User ldapuser : internals) {
 			User userdb = userRepository.findByMail(ldapuser.getMail());
-			if (userdb!=null)  ldapuser.setRole(userdb.getRole());
+			if (userdb != null)
+				ldapuser.setRole(userdb.getRole());
 		}
-		
 		return internals;
 	}
     
