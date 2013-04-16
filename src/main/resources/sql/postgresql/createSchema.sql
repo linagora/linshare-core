@@ -318,11 +318,6 @@ CREATE TABLE thread_member (
   modification_date timestamp(6) NOT NULL, 
   user_id           int8 NOT NULL, 
   PRIMARY KEY (id));
-CREATE TABLE thread_member_history (
-  id              int8 NOT NULL, 
-  creation_date  timestamp(6) NOT NULL, 
-  operation_type int4 NOT NULL, 
-  PRIMARY KEY (id));
 CREATE TABLE unit (
   id          int8 NOT NULL, 
   unit_type  int4 NOT NULL, 
@@ -374,23 +369,12 @@ CREATE TABLE view_context (
 CREATE TABLE welcome_texts (
   messages_configuration_id int8 NOT NULL, 
   welcome_text              text, 
-  language_id               int4
-);
+  language_id               int4);
 CREATE TABLE allowed_contact (
   id          int8 NOT NULL, 
   account_id int8 NOT NULL, 
   contact_id int8 NOT NULL, 
   PRIMARY KEY (id));
-CREATE TABLE account_thread_member_history (
-  Accountid               int8 NOT NULL, 
-  thread_member_historyid int8 NOT NULL, 
-  PRIMARY KEY (Accountid, 
-  thread_member_historyid));
-CREATE TABLE thread_thread_member_history (
-  Threadaccount_id        int8 NOT NULL, 
-  thread_member_historyid int8 NOT NULL, 
-  PRIMARY KEY (Threadaccount_id, 
-  thread_member_historyid));
 CREATE TABLE technical_account_permission_domain_abstract (
   technical_account_permission_id int8 NOT NULL, 
   domain_abstract_id              int8 NOT NULL, 
