@@ -51,4 +51,4 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User> implemen
         DetachedCriteria det = DetachedCriteria.forClass(User.class).add(Restrictions.eq("lsUuid", user.getLsUuid()));
         return det;
     }
-} 
+}
