@@ -43,6 +43,7 @@ import javax.naming.NamingException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.constants.LinShareTestConstants;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
@@ -103,6 +104,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
+	@Ignore
 	@Test
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
