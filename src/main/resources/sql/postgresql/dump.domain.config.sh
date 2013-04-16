@@ -55,8 +55,17 @@ sed -i -e '/INSERT INTO domain_abstract (id, type, identifier, label, enable, te
 # removing default ldap attributes (import-postgresql.sql script)
 sed -i -e '/INSERT INTO ldap_attribute (id, domain_pattern_id, field, attribute, sync, system, enable) VALUES (.*, 1,/ d' ${g_dumpfile}
 
-# substitution of all id by the linshare sequence
-sed -i -r 's/\) VALUES \([0-9]+,/) VALUES ( (SELECT nextVal('hibernate_sequence')) , /g' ${g_dumpfile}
+# reset used space for every domain.
+echo "UPDATE domain_abstract SET used_space=0;" >> ${g_dumpfile}
+
+# Set current sequence.
+sequence=$(grep -Eo "\) VALUES \([ ]*[0-9]+"  ${g_dumpfile} |grep -Eo "[0-9]+"|sort -u -n|tail -n1)
+echo -e "SELECT setval('hibernate_sequence', $sequence);\n" >> ${g_dumpfile}
+
+
+
+
 
 echo "INFO : removing default datas."
+
 
