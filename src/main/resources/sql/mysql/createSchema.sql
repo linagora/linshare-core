@@ -367,11 +367,9 @@ CREATE TABLE view_context (
   description text NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
 CREATE TABLE welcome_texts (
-  Id                        bigint(8) NOT NULL AUTO_INCREMENT,
   messages_configuration_id bigint(8) NOT NULL,
   welcome_text              text,
-  language_id               int(4),
-  PRIMARY KEY (Id)) CHARACTER SET UTF8;
+  language_id               int(4)) CHARACTER SET UTF8;
 CREATE TABLE allowed_contact (
   id         bigint(8) NOT NULL AUTO_INCREMENT,
   account_id bigint(8) NOT NULL,
