@@ -144,6 +144,7 @@ public class GuestEditForm {
 	private boolean guestsAllowedToCreateGuest;
     
     @Property
+    @Persist("flash")
     private boolean restrictedGuest;
 
     @Property
@@ -336,6 +337,7 @@ public class GuestEditForm {
 		}
         	
         try {
+        	// TODO : need some heavy refactoring
         	if (userLoggedIn.isRestricted()) { //user restricted needs to see the guest he has created
         		userFacade.addGuestContactRestriction(userLoggedIn.getLsUuid(), guestVo.getLsUuid());
         	}
