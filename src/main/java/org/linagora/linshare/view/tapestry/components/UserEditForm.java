@@ -225,7 +225,8 @@ public class UserEditForm {
 	    		userDomain = currentUser.getDomainIdentifier();
 	    		showRestricted = functionalityFacade.isRestrictedGuestEnabled(userLoggedIn.getDomainIdentifier());
 	    		restrictedEditGuest = currentUser.isRestricted();
-	    		if (currentUser.isGuest() && currentUser.isRestricted()) {
+	    		userRestrictedGuest = currentUser.isGuest() && currentUser.isRestricted();
+	    		if (userRestrictedGuest) {
 	    			List<UserVo> contacts = null;
 					try {
 						contacts = userFacade.fetchGuestContacts(currentUser.getLsUuid());
