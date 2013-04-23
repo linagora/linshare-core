@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.constants.EntryType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.Entry;
+import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
@@ -250,7 +251,7 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		return documentEntryService.getUserMaxFileSize(account);
 	}
 	
-	
+	// FIXME : ugly
 	@Override
 	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) throws BusinessException {
 		List<DisplayableAccountOccupationEntryVo> result = new ArrayList<DisplayableAccountOccupationEntryVo>();
@@ -419,4 +420,18 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		return documentEntryService.getGlobalQuota(actor);
 	}
 	
+	@Override
+	public MimeTypeStatus getMimeTypeStatus(String login, String uuid) {
+		Account actor = accountService.findByLsUuid(login);
+		if (actor != null) {
+			DocumentEntry entry;
+			try {
+				entry = documentEntryService.findById(actor, uuid);
+				return documentEntryService.getDocumentMimeTypeStatus(entry);
+			} catch (BusinessException e) {
+				logger.error("can't get document : " + e.getMessage());
+			}
+		}
+		return null;
+	}
 }

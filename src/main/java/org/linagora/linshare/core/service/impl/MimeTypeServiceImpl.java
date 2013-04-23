@@ -148,6 +148,7 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 			logger.debug("2)check the mimetype:" + mimeType);
 		}
 
+		String[] extras = { fileName };
 		// if we refuse some typemime
 		if (mimeType != null) {
 			MimeTypeStatus status = giveStatus(mimeType);
@@ -155,7 +156,6 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 			if (status == MimeTypeStatus.DENIED) {
 				if (logger.isDebugEnabled())
 					logger.debug("mimetype not allowed: " + mimeType);
-				String[] extras = { fileName };
 				throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "This kind of file is not allowed: " + mimeType, extras);
 			} else if (status == MimeTypeStatus.WARN) {
 				if (logger.isInfoEnabled())
@@ -163,9 +163,17 @@ public class MimeTypeServiceImpl implements MimeTypeService {
 			}
 		} else {
 			// mimetype is null ?
-			String[] extras = { fileName };
-			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "mimetype is empty for this file" + mimeType, extras);
+			throw new BusinessException(BusinessErrorCode.FILE_MIME_NOT_ALLOWED, "Mimetype is empty for this file" + mimeType, extras);
 		}
+	}
+	
+	@Override
+	public boolean checkFileWarningMimeType(String mimeType) {
+		// use mimetype filtering
+		if (logger.isDebugEnabled()) {
+			logger.debug("2)check the mimetype:" + mimeType);
+		}
+		return giveStatus(mimeType).equals(MimeTypeStatus.WARN);
 	}
 
 }

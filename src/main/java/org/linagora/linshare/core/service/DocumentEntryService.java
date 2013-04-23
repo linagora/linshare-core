@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -142,5 +143,7 @@ public interface DocumentEntryService {
 	public void renameDocumentEntry(Account actor, String docEntryUuid, String newName) throws BusinessException ;
 	
 	public void updateFileProperties(Account actor, String docEntryUuid, String newName, String fileComment) throws BusinessException;
+
+	public MimeTypeStatus getDocumentMimeTypeStatus(DocumentEntry entry);
 	
 }
