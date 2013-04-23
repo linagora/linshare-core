@@ -54,6 +54,7 @@ import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.LogEntry;
+import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
 import org.linagora.linshare.core.domain.entities.SystemAccount;
@@ -560,6 +561,11 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		long newUsedQuota = domain.getUsedSpace().longValue() - docSize;
 		domain.setUsedSpace(newUsedQuota);
 		abstractDomainService.updateDomain(domain);
+	}
+	
+	@Override
+	public MimeTypeStatus getDocumentMimeTypeStatus(DocumentEntry entry) {
+		return mimeTypeService.giveStatus(entry.getType());
 	}
 
 	// FIXME : code duplication

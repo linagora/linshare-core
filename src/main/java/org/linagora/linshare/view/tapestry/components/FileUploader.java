@@ -48,6 +48,7 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
+import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -175,6 +176,16 @@ public class FileUploader {
                 try {
                     DocumentVo document = documentFacade.insertFile(uploadedFile.getStream(), uploadedFile.getFileName(),
                         userDetails);
+                    MimeTypeStatus status = documentFacade.getMimeTypeStatus(userDetails.getLsUuid(), document.getIdentifier());
+                    
+                    if (status.equals(MimeTypeStatus.WARN)) {
+                    	String[] extras = {
+                    			uploadedFile.getFileName(),
+                    			uploadedFile.getContentType()
+                    	};
+                    	messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.MIME_TYPE_WARNING,
+                    			MessageSeverity.WARNING, extras));
+                    }
                     messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_OK,
                         MessageSeverity.INFO, uploadedFile.getFileName()));
 

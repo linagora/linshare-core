@@ -82,6 +82,23 @@ public interface MimeTypeService {
 		public MimeTypeStatus giveStatus(String mimeType);
 		
 		
+		/**
+		 * Check a file mime type status, throw exception if it is denied. Useful for file creation control.
+		 * 
+		 * @param fileName
+		 * @param mimeType
+		 * @param owner
+		 * @throws BusinessException
+		 */
 		public void checkFileMimeType(String fileName, String mimeType, Account owner) throws BusinessException;
+
+
+		/**
+		 * Check if a file mime type has warning status. Useful for user message.
+		 * @param mimeType
+		 * 
+		 * @return true if file mime type has warning status
+		 */
+		boolean checkFileWarningMimeType(String mimeType);
 
 }

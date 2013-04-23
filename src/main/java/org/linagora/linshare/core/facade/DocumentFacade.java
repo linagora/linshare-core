@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
@@ -237,6 +238,14 @@ public interface DocumentFacade {
 	 * @throws BusinessException
 	 */
 	public boolean isUserQuotaActive(UserVo user) throws BusinessException;
+
+	/**
+	 * return the Mime type status of a document
+	 * @param login
+	 * @param uuid
+	 * @return
+	 */
+	public MimeTypeStatus getMimeTypeStatus(String login, String uuid);
 	
 	
 }
