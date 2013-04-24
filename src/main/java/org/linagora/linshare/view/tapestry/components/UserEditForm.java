@@ -156,12 +156,14 @@ public class UserEditForm {
     private String userDomain;
     
     @Property
+	@Persist
     private boolean restrictedEditGuest;
     
     @Property
     private boolean showRestricted;
     
     @Property
+	@Persist
     private boolean userRestrictedGuest;
 	
 	@Persist("flash")
@@ -378,7 +380,7 @@ public class UserEditForm {
 		if (userGuest) {
 			try {
 				
-				UserVo guest = userFacade.findGuestByLsUuid(userLoggedIn, editUserWithMail);
+				UserVo guest = userFacade.findGuestByLsUuid(userLoggedIn, currentUser.getLsUuid());
 				logger.debug("current guest : " + guest);
 				
 				
