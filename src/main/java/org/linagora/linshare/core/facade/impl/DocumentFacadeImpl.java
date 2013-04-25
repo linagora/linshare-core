@@ -50,6 +50,7 @@ import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransfor
 import org.linagora.linshare.core.domain.transformers.impl.SignatureTransformer;
 import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -229,7 +230,6 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		
 		return res;
 	}
-	
 	
 	
 	@Override

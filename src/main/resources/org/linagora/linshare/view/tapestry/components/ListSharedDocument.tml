@@ -221,6 +221,11 @@
 
 	<t:userDetailsDisplayer />
 
-		<t:signatureDetailsDisplayer />
+		<!-- <t:signatureDetailsDisplayer /> -->
+		
+
+  		<div t:id="signatureDetailsDisplayer"/>
+
+		
 
 </t:container>

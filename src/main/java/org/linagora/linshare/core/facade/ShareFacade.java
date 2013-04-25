@@ -34,14 +34,19 @@
 package org.linagora.linshare.core.facade;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.MailContainer;
+import org.linagora.linshare.core.domain.entities.Signature;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
+import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -206,6 +211,12 @@ public interface ShareFacade {
 	public InputStream getShareStream(UserVo actorVo, String shareEntryUuid) throws BusinessException;
 	
 	public boolean isSignedShare(UserVo actorVo, ShareDocumentVo shareVo);
+	
+	public boolean isSignedShare(UserVo actorVo, String shareVoIdentifier);
+	
+	public SignatureVo getSignature(UserVo actorVo, ShareDocumentVo documentVo);
+
+	public List<SignatureVo> getAllSignatures(UserVo actorVo, ShareDocumentVo documentVo);
 	
 }
 

@@ -64,6 +64,7 @@
 		<constructor-arg ref="anonymousShareEntryService" />
 		<constructor-arg value="${linshare.info.url.base}" />
 		<constructor-arg value="${linshare.info.url.internal}" />
+		<constructor-arg ref="signatureTransformer" />
 	</bean>
 
 	<bean name="shareExpiryDateFacade" class="org.linagora.linshare.core.facade.impl.ShareExpiryDateFacadeImpl">

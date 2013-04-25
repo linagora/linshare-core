@@ -40,6 +40,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.vo.DisplayableAccountOccupationEntryVo;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -109,6 +110,7 @@ public interface DocumentFacade {
 	 * @throws BusinessException 
 	 */
 	public boolean isSignedDocumentByCurrentUser(UserVo currentSigner, DocumentVo document) throws BusinessException;
+	
 	/**
 	 * check if the document is already signed by someone.
 	 * @param userlogin 
