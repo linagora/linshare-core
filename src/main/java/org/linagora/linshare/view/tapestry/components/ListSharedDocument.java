@@ -49,6 +49,7 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.StreamResponse;
+import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
@@ -162,7 +163,7 @@ public class ListSharedDocument {
 	@InjectComponent
 	private UserDetailsDisplayer userDetailsDisplayer;
 	
-	@InjectComponent
+	@Component(parameters={ "share=true" })
 	private SignatureDetailsDisplayer signatureDetailsDisplayer;
 	
 	@InjectComponent
@@ -547,7 +548,7 @@ public class ListSharedDocument {
 	}
 
 	public boolean isDocumentSignedByCurrentUser() throws BusinessException{
-		return documentFacade.isSignedDocumentByCurrentUser(user, shareDocument);
+		return shareFacade.isSignedShare(user, shareDocument);
 	}
 	public boolean isDocumentNotSignedByCurrentUserAndDocNotEncrypted() throws BusinessException{
 		return !shareDocument.getEncrypted() && !isDocumentSignedByCurrentUser();

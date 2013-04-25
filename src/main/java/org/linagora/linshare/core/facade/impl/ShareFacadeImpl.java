@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
 import org.linagora.linshare.core.domain.entities.Contact;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
@@ -54,8 +55,10 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.transformers.impl.DocumentEntryTransformer;
 import org.linagora.linshare.core.domain.transformers.impl.ShareEntryTransformer;
+import org.linagora.linshare.core.domain.transformers.impl.SignatureTransformer;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
+import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -100,6 +103,8 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final AnonymousShareEntryService anonymousShareEntryService;
 	
+	private final SignatureTransformer signatureTransformer;
+	
 	private final String urlBase;
 	
 	private final String urlInternal;
@@ -108,7 +113,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	public ShareFacadeImpl(ShareEntryTransformer shareEntryTransformer, UserRepository<User> userRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
 			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
-			String urlBase, String urlInternal) {
+			String urlBase, String urlInternal, SignatureTransformer signatureTransformer) {
 		super();
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;
@@ -123,6 +128,7 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.anonymousShareEntryService = anonymousShareEntryService;
 		this.urlBase = urlBase;
 		this.urlInternal = urlInternal;
+		this.signatureTransformer = signatureTransformer;
 	}
 	
 
@@ -506,5 +512,55 @@ public class ShareFacadeImpl implements ShareFacade {
 		}
 		return res;
 	}
+
+
+	@Override
+	public boolean isSignedShare(UserVo actorVo, String shareVoIdentifier) {
+		boolean res = false;
+		User actor = userService.findByLsUid(actorVo.getLsUuid());
+		try {
+			ShareEntry share = shareEntryService.findByUuid(actor, shareVoIdentifier);
+			Set<Signature> signatures = share.getDocumentEntry().getDocument().getSignatures();
+			if(signatures!=null && signatures.size()>0) res = true;
+		} catch (BusinessException e) {
+			logger.error("Can't find document : " + shareVoIdentifier + ": " + e.getMessage());
+		}
+		return res;
+	}
+
+
+	@Override
+	public SignatureVo getSignature(UserVo actorVo, ShareDocumentVo documentVo) {
+		User actor = userService.findByLsUid(actorVo.getLsUuid());
+		try {
+			ShareEntry share = shareEntryService.findByUuid(actor, documentVo.getIdentifier());
+			
+			SignatureVo res = null;
+			for (Signature signature : share.getDocumentEntry().getDocument().getSignatures()) {
+				if (signature.getSigner().equals(actor)) {
+					res = signatureTransformer.disassemble(signature);
+					break;
+				}
+			}
+			return res;
+		} catch (BusinessException e) {
+			logger.error("Can't find document : " + documentVo.getIdentifier() + ": " + e.getMessage());
+		}
+		return null;
+	}
+
+
+	@Override
+	public List<SignatureVo> getAllSignatures(UserVo actorVo, ShareDocumentVo documentVo) {
+		User actor = userService.findByLsUid(actorVo.getLsUuid());
+		try {
+			ShareEntry share = shareEntryService.findByUuid(actor, documentVo.getIdentifier());
+			return signatureTransformer.disassembleList(new ArrayList<Signature>(share.getDocumentEntry().getDocument().getSignatures()));
+		} catch (BusinessException e) {
+			logger.error("Can't find document : " + documentVo.getIdentifier() + ": " + e.getMessage());
+		}
+		return null;
+	}
+	
 	
 }

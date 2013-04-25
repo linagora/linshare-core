@@ -205,8 +205,6 @@ public class ListDocument {
 	@Property(write = false)
 	@InjectComponent
 	private WarningDisplayer warningSignature;
-	
-	
 
 	@InjectComponent
 	private SignatureDetailsDisplayer signatureDetailsDisplayer;

@@ -43,6 +43,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -51,11 +52,13 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.SignatureVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DocumentFacade;
+import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.utils.ArchiveZipStream;
 import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 
@@ -67,44 +70,48 @@ import org.linagora.linshare.view.tapestry.objects.FileStreamResponse;
 public class SignatureDetailsDisplayer {
 	
 	
-    @SuppressWarnings("unused")
     @Component(parameters = {"style=bluelighting", "show=false", "width=900", "height=400"})
     private WindowWithEffects signatureDetailsWindow;
-    	
+    
+    @Parameter (value="false")
+    private boolean share;
+    
     @InjectComponent
     private Zone signatureDetailsTemplateZone;
     
     @Inject
     private DocumentFacade documentFacade;
+
+    @Inject
+    private ShareFacade shareFacade;
+  
     
     @SessionState
     @Property
     private UserVo userVo;
     
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
     private List<SignatureVo> signatures;
 	
-	@SuppressWarnings("unused")
 	@Property
 	@Persist
 	private SignatureVo signature;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private boolean isSignedByCurrentUser;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private SignatureVo userOwnsignature;
 	
-	@SuppressWarnings("unused")
 	@Property
 	private String currentfileName;
 	
 	@Persist
 	private DocumentVo currentdoc; //keep the doc associated to all signatures we are going to display
+
+	@Persist
+	private ShareDocumentVo shareDocumentVo; //keep the doc associated to all signatures we are going to display
 	
     @Inject
     private Messages messages;
@@ -113,17 +120,23 @@ public class SignatureDetailsDisplayer {
 	private PersistentLocale persistentLocale;
 	
     
-	public Zone getShowSignature(String docidentifier) throws BusinessException {
+	public Zone getShowSignature(String uuidIdentifier) throws BusinessException {
 		
-		currentdoc = documentFacade.getDocument(userVo.getLogin(), docidentifier);
-		
-		currentfileName = currentdoc.getFileName();
-		
-		isSignedByCurrentUser = documentFacade.isSignedDocumentByCurrentUser(userVo, currentdoc);
-		userOwnsignature = documentFacade.getSignature(userVo, currentdoc);
-		
-		signatures = documentFacade.getAllSignatures(userVo, currentdoc);
-		
+		// Fix : very very ugly.
+		if(share) {
+			shareDocumentVo = shareFacade.getShareDocumentVoByUuid(userVo, uuidIdentifier);
+			currentfileName = shareDocumentVo.getFileName();
+			currentdoc = documentFacade.getDocument(userVo.getLogin(), shareDocumentVo.getIdentifier());
+			isSignedByCurrentUser = shareFacade.isSignedShare(userVo, uuidIdentifier);
+			userOwnsignature = shareFacade.getSignature(userVo, shareDocumentVo);
+			signatures = shareFacade.getAllSignatures(userVo, shareDocumentVo);
+		} else {
+			currentdoc = documentFacade.getDocument(userVo.getLogin(), uuidIdentifier);
+			isSignedByCurrentUser = documentFacade.isSignedDocumentByCurrentUser(userVo, currentdoc);
+			currentfileName = currentdoc.getFileName();
+			userOwnsignature = documentFacade.getSignature(userVo, currentdoc);
+			signatures = documentFacade.getAllSignatures(userVo, currentdoc);
+		}
 	    return signatureDetailsTemplateZone;
 	}
 	
@@ -188,8 +201,15 @@ public class SignatureDetailsDisplayer {
 			
 			Map<String,InputStream> map = new HashMap<String, InputStream>();
 
-			map.put(currentdoc.getFileName(), documentFacade.retrieveFileStream(currentdoc, userVo.getLogin()));
-			
+			// Fix : very very ugly.
+			String archiveName;
+			if(share) {
+				map.put(shareDocumentVo.getFileName(), shareFacade.getShareStream(userVo, shareDocumentVo.getIdentifier()));
+				archiveName = "signed_" + shareDocumentVo.getFileName() + ".zip";
+			} else {
+				map.put(currentdoc.getFileName(), documentFacade.retrieveFileStream(currentdoc, userVo.getLogin()));
+				archiveName = "signed_" + currentdoc.getFileName() + ".zip";
+			}
 			for (SignatureVo oneSignature : signatures) {
 				String fileName = oneSignature.getName()+"_"+oneSignature.getPersistenceId()+".xml";
 				map.put(fileName, documentFacade.retrieveSignatureFileStream(oneSignature));
@@ -198,7 +218,6 @@ public class SignatureDetailsDisplayer {
 			//prepare an archive zip
 			ArchiveZipStream ai = new ArchiveZipStream(map);
 			
-			String archiveName = "signed_" + currentdoc.getFileName() + ".zip";
 			
 			return (new FileStreamResponse(ai,archiveName));
 	}
