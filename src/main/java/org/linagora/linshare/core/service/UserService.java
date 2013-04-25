@@ -244,7 +244,7 @@ public interface UserService {
 	
     public User findUnkownUserInDB(String mail);
     
-    public User findByLsUid(String lsUid);
+    public User findByLsUuid(String lsUuid);
     
 	public User findUserInDB(String domain, String mail);
     public List<User> findUsersInDB(String domain);

@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
