@@ -57,14 +57,14 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 	
 	@Override
 	public void increment(UserVo ownerVo, List<String> recipients) throws LinShareNotSuchElementException, BusinessException {
-		User owner = userService.findByLsUid(ownerVo.getLsUuid());
+		User owner = userService.findByLsUuid(ownerVo.getLsUuid());
 		service.increment(owner, recipients);
 	}
 	
 
 	@Override
 	public List<String> allRecipientsOrderedByWeightDesc(UserVo ownerVo) throws BusinessException{
-		User owner = userService.findByLsUid(ownerVo.getLsUuid());
+		User owner = userService.findByLsUuid(ownerVo.getLsUuid());
 		return service.recipientsOrderedByWeightDesc(owner);
 	}
 	
@@ -74,7 +74,7 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 		
 		if(recipients.size()==0) return recipients;
 		
-		User owner = userService.findByLsUid(ownerVo.getLsUuid());
+		User owner = userService.findByLsUuid(ownerVo.getLsUuid());
 		if(owner!=null){
 			ArrayList<String> recipientsMail=new ArrayList<String>();
 
@@ -101,7 +101,7 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 	
 	@Override
 	public List<UserVo> findRecipientFavorite(String matchStartWith,UserVo ownerVo) throws BusinessException {
-		User owner = userService.findByLsUid(ownerVo.getLsUuid());
+		User owner = userService.findByLsUuid(ownerVo.getLsUuid());
 		List<String> mails = service.findRecipientFavorite(matchStartWith, owner);
 		ArrayList<UserVo> favoriteList=new ArrayList<UserVo>();
 		for (String email : mails) {

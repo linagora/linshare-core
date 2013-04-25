@@ -229,8 +229,8 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-	public User findByLsUid(String lsUid) {
-    	return userRepository.findByLsUuid(lsUid);
+	public User findByLsUuid(String lsUuid) {
+    	return userRepository.findByLsUuid(lsUuid);
 	}
 
 	@Override
