@@ -113,17 +113,17 @@
 			<artifactId>tapestry-upload</artifactId>
 			<version>${tapestry-release-version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.chenillekit</groupId>
-			<artifactId>chenillekit-tapestry</artifactId>
-			<version>1.3.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>javassist</artifactId>
-					<groupId>jboss</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>org.chenillekit</groupId>
+            <artifactId>chenillekit-tapestry</artifactId>
+            <version>1.3.2-r760-linagora1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javassist</artifactId>
+                    <groupId>jboss</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>com.google.code</groupId>
 			<artifactId>kaptcha</artifactId>
