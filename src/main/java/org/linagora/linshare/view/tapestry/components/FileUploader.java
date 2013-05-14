@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.view.tapestry.components;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -48,6 +47,7 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.upload.services.UploadedFile;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.MimeTypeStatus;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -61,179 +61,207 @@ import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 
-
-
 /**
- * Component used to display the multiple uploader
- * This component my throw two exceptions, fatal, that are to be catched :
- * - FileUploadBase.FileSizeLimitExceededException : if a file is too large
- * - FileUploadBase.SizeLimitExceededException : if the total upload is too large
+ * Component used to display the multiple uploader This component my throw two
+ * exceptions, fatal, that are to be catched : -
+ * FileUploadBase.FileSizeLimitExceededException : if a file is too large -
+ * FileUploadBase.SizeLimitExceededException : if the total upload is too large
+ * 
  * @author ncharles
- *
+ * 
  */
 @SupportsInformalParameters
 public class FileUploader {
 
-    private static final long DEFAULT_MAX_FILE_SIZE = 52428800;
+	private static final long DEFAULT_MAX_FILE_SIZE = 52428800;
 
 	/* ***********************************************************
-     *                         Parameters
-     ************************************************************ */
-    @Parameter(required=false)
-    @Property(write=false)
-    private String divId;
+	 * Parameters***********************************************************
+	 */
+	@Parameter(required = false)
+	@Property(write = false)
+	private String divId;
 
-    @Parameter(required=false, value="true")
-    @Property(write=false)
-    private String showSendButton;
+	@Parameter(required = false, value = "true")
+	@Property(write = false)
+	private String showSendButton;
 
-    /* ***********************************************************
-     *                      Injected services
-     ************************************************************ */
-	
+	/* ***********************************************************
+	 * Injected services
+	 * ***********************************************************
+	 */
+
 	@Inject
 	private DocumentFacade documentFacade;
-	
-    @Inject
-    private BusinessMessagesManagementService messagesManagementService;
+
+	@Inject
+	private BusinessMessagesManagementService messagesManagementService;
 
 	@Inject
 	private AbstractDomainFacade domainFacade;
 
-    @Inject
-    private BusinessMessagesManagementService businessMessagesManagementService;
+	@Inject
+	private BusinessMessagesManagementService businessMessagesManagementService;
 
-    @Inject
-    private Logger logger;
+	@Inject
+	private Logger logger;
 
-    @Inject
-    private ComponentResources componentResources;
-    
+	@Inject
+	private ComponentResources componentResources;
+
 	@Inject
 	private Messages messages;
 
 	/* ***********************************************************
-     *                Properties & injected symbol, ASO, etc
-     ************************************************************ */
-	
+	 * Properties & injected symbol, ASO, etc
+	 * ***********************************************************
+	 */
+
 	@SessionState
 	private UserVo userDetails;
 
-    /* ***********************************************************
-     *                   Event handlers&processing
-     ************************************************************ */
+	@Property
+	private String customTitle;
+
+	@Property
+	private String maxSize;
 	
+	/* ***********************************************************
+	 * Event handlers&processing
+	 * ***********************************************************
+	 */
+
 	@SetupRender
-	void setupRender() {
+	void setupRender() throws BusinessException {
+		customTitle = messages.get("components.uploadFile.title");
+		long max = documentFacade.getUserMaxFileSize(userDetails);
+		long free = documentFacade.getUserAvailableQuota(userDetails);
+		maxSize = "";
+		if (max != LinShareConstants.defaultMaxFileSize) {
+			maxSize += messages.format("components.fileuploader.max",
+					FileUtils.getFriendlySize(max, messages));
+		}
+		if (free != LinShareConstants.defaultFreeSpace) {
+			maxSize += maxSize.length() > 0 ? " " : "";
+			maxSize += messages.format("components.fileuploader.free",
+					FileUtils.getFriendlySize(free, messages));
+		}
 	}
-	
-    @AfterRender
-    public void afterRender() {
-    }
 
-
+	@AfterRender
+	public void afterRender() {
+	}
 
 	/**
-	 * Prior to validating the form, we need to initialise all the arrays
+	 * Prior to validating the form, we need to initialize all the arrays
 	 */
 	public void onPrepare() {
 	}
-	  
-    @OnEvent(value = "fileUploaded")
-    public void processFilesUploaded(Object[] context) {
-    	boolean toUpdate=false;
 
-        for (int i = 0; i < context.length; i++) {
-            UploadedFile uploadedFile = (UploadedFile) context[i];
-            if (uploadedFile != null) {
-            	if (uploadedFile.getSize() > getMaxFileSize()) {
-            		messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_WITH_FILE_TOO_LARGE,
-                            MessageSeverity.ERROR, 
-                            uploadedFile.getFileName(), 
-                            FileUtils.getFriendlySize(uploadedFile.getSize(),messages),
-                            FileUtils.getFriendlySize(getMaxFileSize(),messages)));
-            		continue;
-            	}
-            	if (uploadedFile.getSize() > getUserFreeSpace()) {
-            		messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_NOT_ENOUGH_SPACE,
-                            MessageSeverity.ERROR, 
-                            uploadedFile.getFileName(), 
-                            FileUtils.getFriendlySize(uploadedFile.getSize(),messages),
-                            FileUtils.getFriendlySize(getUserFreeSpace(),messages)));
-            		continue;
-            	}
+	@OnEvent(value = "fileUploaded")
+	public void processFilesUploaded(Object[] context) {
+		boolean toUpdate = false;
 
-//                String mimeType;
-//                try {
-//                    mimeType = documentFacade.getMimeType(uploadedFile.getStream(), uploadedFile.getFilePath());
-//                    if (null == mimeType) {
-//                        mimeType = uploadedFile.getContentType();
-//                    }
-//                } catch (BusinessException e) {
-//                    mimeType = uploadedFile.getContentType();
-//                }
+		for (int i = 0; i < context.length; i++) {
+			UploadedFile uploadedFile = (UploadedFile) context[i];
+			if (uploadedFile != null) {
+				if (uploadedFile.getSize() > getMaxFileSize()) {
+					messagesManagementService.notify(new BusinessUserMessage(
+							BusinessUserMessageType.UPLOAD_WITH_FILE_TOO_LARGE,
+							MessageSeverity.ERROR, uploadedFile.getFileName(),
+							FileUtils.getFriendlySize(uploadedFile.getSize(),
+									messages), FileUtils.getFriendlySize(
+									getMaxFileSize(), messages)));
+					continue;
+				}
+				if (uploadedFile.getSize() > getUserFreeSpace()) {
+					messagesManagementService.notify(new BusinessUserMessage(
+							BusinessUserMessageType.UPLOAD_NOT_ENOUGH_SPACE,
+							MessageSeverity.ERROR, uploadedFile.getFileName(),
+							FileUtils.getFriendlySize(uploadedFile.getSize(),
+									messages), FileUtils.getFriendlySize(
+									getUserFreeSpace(), messages)));
+					continue;
+				}
 
-                try {
-                    DocumentVo document = documentFacade.insertFile(uploadedFile.getStream(), uploadedFile.getFileName(),
-                        userDetails);
-                    MimeTypeStatus status = documentFacade.getMimeTypeStatus(userDetails.getLsUuid(), document.getIdentifier());
-                    
-                    if (status.equals(MimeTypeStatus.WARN)) {
-                    	String[] extras = {
-                    			uploadedFile.getFileName(),
-                    			uploadedFile.getContentType()
-                    	};
-                    	messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.MIME_TYPE_WARNING,
-                    			MessageSeverity.WARNING, extras));
-                    }
-                    messagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.UPLOAD_OK,
-                        MessageSeverity.INFO, uploadedFile.getFileName()));
+				// String mimeType;
+				// try {
+				// mimeType =
+				// documentFacade.getMimeType(uploadedFile.getStream(),
+				// uploadedFile.getFilePath());
+				// if (null == mimeType) {
+				// mimeType = uploadedFile.getContentType();
+				// }
+				// } catch (BusinessException e) {
+				// mimeType = uploadedFile.getContentType();
+				// }
 
-                    // Notify the add of a file.
-                    Object[] addedFile = {document};
-                    componentResources.triggerEvent("fileAdded", addedFile, null);
-                    toUpdate=true;
-                } catch (BusinessException e) {
-                    messagesManagementService.notify(e);
-                }
-            }
-        }
-        if (toUpdate) 
-        	componentResources.triggerEvent("resetListFiles", null, null);
-    }
-	
-    /* ***********************************************************
-     *                   Helpers
-     ************************************************************ */
-	
-    public long getUserFreeSpace() {
-    	long res = 0;
-        try {
+				try {
+					DocumentVo document = documentFacade.insertFile(
+							uploadedFile.getStream(),
+							uploadedFile.getFileName(), userDetails);
+					MimeTypeStatus status = documentFacade.getMimeTypeStatus(
+							userDetails.getLsUuid(), document.getIdentifier());
+
+					if (status.equals(MimeTypeStatus.WARN)) {
+						String[] extras = { uploadedFile.getFileName(),
+								uploadedFile.getContentType() };
+						messagesManagementService
+								.notify(new BusinessUserMessage(
+										BusinessUserMessageType.MIME_TYPE_WARNING,
+										MessageSeverity.WARNING, extras));
+					}
+					messagesManagementService.notify(new BusinessUserMessage(
+							BusinessUserMessageType.UPLOAD_OK,
+							MessageSeverity.INFO, uploadedFile.getFileName()));
+
+					// Notify the add of a file.
+					Object[] addedFile = { document };
+					componentResources.triggerEvent("fileAdded", addedFile,
+							null);
+					toUpdate = true;
+				} catch (BusinessException e) {
+					messagesManagementService.notify(e);
+				}
+			}
+		}
+		if (toUpdate)
+			componentResources.triggerEvent("resetListFiles", null, null);
+	}
+
+	/* ***********************************************************
+	 * Helpers***********************************************************
+	 */
+
+	public long getUserFreeSpace() {
+		long res = 0;
+		try {
 			res = documentFacade.getUserAvailableQuota(userDetails);
 		} catch (BusinessException e) {
 			messagesManagementService.notify(e);
 		}
 		return res;
-    }
+	}
 
-    public long getMaxFileSize() {
-        long maxFileSize = DEFAULT_MAX_FILE_SIZE;
-        try {
-            maxFileSize = documentFacade.getUserMaxFileSize(userDetails);
-        } catch (BusinessException e) {
-            // value has not been defined. We use the default value.
-        	e.printStackTrace();
-        }
-        return maxFileSize;
-    }
+	public long getMaxFileSize() {
+		long maxFileSize = DEFAULT_MAX_FILE_SIZE;
+		try {
+			maxFileSize = documentFacade.getUserMaxFileSize(userDetails);
+		} catch (BusinessException e) {
+			// value has not been defined. We use the default value.
+			e.printStackTrace();
+		}
+		return maxFileSize;
+	}
 
-    private void readFileStream(UploadedFile file) {
-        try {
-            // read the complete stream.
-            InputStream stream = file.getStream();
-            while (stream.read() != -1); // NOPMD by matthieu on 24/02/10 10:19
-        } catch (IOException ex) {
-            logger.error(ex.toString());
-        }
-    }
+	private void readFileStream(UploadedFile file) {
+		try {
+			// read the complete stream.
+			InputStream stream = file.getStream();
+			while (stream.read() != -1)
+				; // NOPMD by matthieu on 24/02/10 10:19
+		} catch (IOException ex) {
+			logger.error(ex.toString());
+		}
+	}
 }
