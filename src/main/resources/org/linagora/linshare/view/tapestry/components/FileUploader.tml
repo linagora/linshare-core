@@ -1,8 +1,13 @@
 <t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-    <div class="form-upload-container">
-        <t:linkit.uploadcomponent t:id="uploadComponent" divid="inherit:divId" leftspace="userFreeSpace"
-            maxfilesize="maxFileSize" showsendbutton="prop:showSendButton"/>
+    <h2>${customTitle}</h2>
+    <hr />
+    <div class="description"><p>${maxSize}</p></div>
+    <div class="notitle">
+        <div class="form-upload-container">
+            <t:linkit.uploadcomponent t:id="uploadComponent" divid="inherit:divId" leftspace="userFreeSpace"
+                maxfilesize="maxFileSize" showsendbutton="prop:showSendButton"/>
+        </div>
     </div>
 
 </t:container>
