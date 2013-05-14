@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.repository.LogEntryRepository;
@@ -146,6 +147,8 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		if (logCriteria.getFileExtension() != null) {
 			criteria.add(Restrictions.like("fileName", logCriteria.getFileExtension(), MatchMode.END).ignoreCase());
 		}
+		
+		criteria.addOrder(Order.desc("actionDate"));
 		
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
