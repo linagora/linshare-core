@@ -203,6 +203,10 @@
 					
 					<!-- Grid : Cell -->
 
+					<t:parameter name="actionDateCell">
+						${actionDate}
+					</t:parameter>
+
 					<t:parameter name="targetMailCell">
 						<span t:type="ck/Tooltip" title="message:pages.history.index.result.targetMailTooltip" 
 							value="${logEntry.targetFirstName} ${logEntry.targetLastName}">

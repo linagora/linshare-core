@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.view.tapestry.pages.history;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -302,6 +303,11 @@ public class Index {
     public Object onActionFromApplicationAudit() {
         return auditPage;
     }
+    
+	public String getActionDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(logEntry.getActionDate().getTime());
+	}
 
 	public CriterionMatchMode getFileNameMatchModeStart() { return CriterionMatchMode.START; }
 	public CriterionMatchMode getFileNameMatchModeAnywhere() { return CriterionMatchMode.ANYWHERE; }
