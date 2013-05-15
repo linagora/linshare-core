@@ -49,11 +49,11 @@ public enum Language {
     }
 
     public static Language fromInt(int value) {
-        switch(value) {
-            case 0 : return DEFAULT;
-            case 1 : return FRENCH;
-            case 2 : return DUTCH;
-            default : throw new IllegalArgumentException("Doesn't match an existing Language");
-        }
+    	for (Language lang : values()) {
+    		if (lang.value == value) {
+    			return lang;
+    		}
+    	}
+    	throw new IllegalArgumentException("Doesn't match an existing Language");
     }
 }

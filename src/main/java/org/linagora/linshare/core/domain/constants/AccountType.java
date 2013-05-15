@@ -51,14 +51,11 @@ public enum AccountType {
 	}
 
 	public static AccountType fromInt(int value) {
-        switch (value) {
-            case 2: return AccountType.INTERNAL;
-            case 3: return AccountType.GUEST;
-            case 4: return AccountType.TECHNICALACCOUNT;
-            case 5: return AccountType.THREAD;
-            case 6: return AccountType.ROOT;
-            case 7: return AccountType.SYSTEM;
-            default : throw new IllegalArgumentException("Doesn't match an existing AccountType");
-        }
+		for (AccountType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match an existing AccountType");
 	}
 }

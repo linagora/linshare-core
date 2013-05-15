@@ -48,11 +48,11 @@ public enum MimeTypeStatus {
 	}
 
 	public static MimeTypeStatus fromInt(int value) {
-        switch (value) {
-            case 0: return MimeTypeStatus.AUTHORISED;
-            case 1: return MimeTypeStatus.DENIED;
-            case 2: return MimeTypeStatus.WARN;
-            default : throw new IllegalArgumentException("Doesn't match an existing MimeTypeStatus");
-        }
+		for (MimeTypeStatus status : values()) {
+			if (status.value == value) {
+				return status;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match an existing MimeTypeStatus");
 	}
 }

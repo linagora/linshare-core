@@ -47,11 +47,11 @@ public enum Policies {
     }
 
     public static Policies fromInt(int value) {
-        switch(value) {
-            case 0 : return MANDATORY;
-            case 1 : return ALLOWED;
-            case 2 : return FORBIDDEN;
-            default : throw new IllegalArgumentException("Doesn't match an existing Policy");
-        }
+		for (Policies policy : values()) {
+			if (policy.value == value) {
+				return policy;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match an existing Policy");
     }
 }

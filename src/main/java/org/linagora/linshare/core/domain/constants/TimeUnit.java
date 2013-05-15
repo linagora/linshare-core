@@ -61,11 +61,11 @@ public enum TimeUnit {
     	}
     }
     public static TimeUnit fromInt(int value) {
-        switch(value) {
-            case 0 : return DAY;
-            case 1 : return WEEK;
-            case 2 : return MONTH;
-            default : throw new IllegalArgumentException("Doesn't match an existing TimeUnit");
-        }
+		for (TimeUnit unit : values()) {
+			if (unit.value == value) {
+				return unit;
+			}
+		}
+        throw new IllegalArgumentException("Doesn't match an existing TimeUnit");
     }
 }

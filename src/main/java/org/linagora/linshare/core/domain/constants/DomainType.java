@@ -48,12 +48,11 @@ public enum DomainType {
 	}
 
 	public static DomainType fromInt(int value) {
-        switch (value) {
-            case 0: return DomainType.ROOTDOMAIN;
-            case 1: return DomainType.TOPDOMAIN;
-            case 2: return DomainType.SUBDOMAIN;
-            case 3: return DomainType.GUESTDOMAIN;
-            default : throw new IllegalArgumentException("Doesn't match an existing DomainType");
-        }
+		for (DomainType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match an existing DomainType");
 	}
 }
