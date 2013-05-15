@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.linagora</groupId>
 	<artifactId>linshare</artifactId>
@@ -53,26 +54,26 @@
 				<role>Manager</role>
 			</roles>
 		</developer>
-        <developer>
-            <id>ctjhoa</id>
-            <name>Camille Tjhoa</name>
-            <email>ctjhoa@linagora.com</email>
-            <organization>LINAGORA</organization>
-            <organizationUrl>http://www.linagora.com/</organizationUrl>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>nbertrand</id>
-            <name>Nicolas Bertrand</name>
-            <email>nbertrand@linagora.com</email>
-            <organization>LINAGORA</organization>
-            <organizationUrl>http://www.linagora.com/</organizationUrl>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </developer>
+		<developer>
+			<id>ctjhoa</id>
+			<name>Camille Tjhoa</name>
+			<email>ctjhoa@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>nbertrand</id>
+			<name>Nicolas Bertrand</name>
+			<email>nbertrand@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<mailingLists>
 		<mailingList>
@@ -113,17 +114,17 @@
 			<artifactId>tapestry-upload</artifactId>
 			<version>${tapestry-release-version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.chenillekit</groupId>
-            <artifactId>chenillekit-tapestry</artifactId>
-            <version>1.3.2-r760-linagora1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javassist</artifactId>
-                    <groupId>jboss</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+		<dependency>
+			<groupId>org.chenillekit</groupId>
+			<artifactId>chenillekit-tapestry</artifactId>
+			<version>1.3.2-r760-linagora1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javassist</artifactId>
+					<groupId>jboss</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>com.google.code</groupId>
 			<artifactId>kaptcha</artifactId>
@@ -146,13 +147,11 @@
 			</exclusions>
 		</dependency>
 
-		<!-- 
-		 -->
+		<!-- -->
 
-		<!-- A dependency on either JUnit or TestNG is required, or the surefire 
-			plugin (which runs the tests) will fail, preventing Maven from packaging 
-			the WAR. Tapestry includes a large number of testing facilities designed 
-			for use with TestNG (http://testng.org/), so it's recommended. -->
+		<!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests) will fail, preventing Maven 
+			from packaging the WAR. Tapestry includes a large number of testing facilities designed for use with TestNG (http://testng.org/), so 
+			it's recommended. -->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -247,8 +246,7 @@
 					<groupId>org.springframework</groupId>
 					<artifactId>spring</artifactId>
 				</exclusion>
-				<!-- artefact groupId has been renamed from aparzev to com.aparzev. See 
-					below -->
+				<!-- artefact groupId has been renamed from aparzev to com.aparzev. See below -->
 				<exclusion>
 					<groupId>aparzev</groupId>
 					<artifactId>doka</artifactId>
@@ -318,29 +316,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		<dependency>
-               <groupId>org.springframework.security</groupId>
-               <artifactId>spring-security-config</artifactId>
-               <version>${spring-security-release-version}</version>
-               <scope>runtime</scope>
-       </dependency>
-		
-		
 
-<!-- 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core-tiger</artifactId>
+			<artifactId>spring-security-config</artifactId>
 			<version>${spring-security-release-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<scope>runtime</scope>
 		</dependency>
- -->
+
+
+
+		<!-- <dependency> <groupId>org.springframework.security</groupId> <artifactId>spring-security-core-tiger</artifactId> <version>${spring-security-release-version}</version> 
+			<exclusions> <exclusion> <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> </exclusion> </exclusions> </dependency> -->
 		<!-- SL4J: Logger API and choose LOG4J implementation -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -365,7 +352,7 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4j-release-version}</version>
 		</dependency>
-		
+
 		<!-- Mime type detection tools. -->
 		<dependency>
 			<groupId>org.semanticdesktop</groupId>
@@ -467,7 +454,7 @@
 			<version>2.0.0</version>
 			<classifier>asl</classifier>
 		</dependency>
-		 <dependency>
+		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.1</version>
@@ -524,18 +511,8 @@
 			<artifactId>flexUploadComponent</artifactId>
 			<version>0.9</version>
 		</dependency>
-<!--
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.4.3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.1.3</version>
-		</dependency>
--->
+		<!-- <dependency> <groupId>com.thoughtworks.xstream</groupId> <artifactId>xstream</artifactId> <version>1.4.3</version> </dependency> 
+			<dependency> <groupId>com.sun.xml.bind</groupId> <artifactId>jaxb-impl</artifactId> <version>2.1.3</version> </dependency> -->
 		<dependency>
 			<groupId>com.sun.xml.messaging.saaj</groupId>
 			<artifactId>saaj-impl</artifactId>
@@ -558,13 +535,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.linagora</groupId>
-			<artifactId>RestMarshaller</artifactId>
-			<version>1.0-dev-b2</version>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>org.linagora</groupId> <artifactId>RestMarshaller</artifactId> <version>1.0-dev-b2</version> </dependency> -->
 		<dependency>
 			<groupId>javax.annotations</groupId>
 			<artifactId>jsr250-api</artifactId>
@@ -705,8 +676,8 @@
 			<artifactId>antisamy</artifactId>
 			<version>1.4</version>
 		</dependency>
-		
-		<!-- ###### web services #######-->
+
+		<!-- ###### web services ####### -->
 		<!-- cxf rest jaxrs -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -733,26 +704,26 @@
 	</dependencies>
 
 	<build>
-	  <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.8.1</version>
-                    <configuration>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
-                    <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-	</pluginManagement>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.8.1</version>
+					<configuration>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 
 		<finalName>linshare</finalName>
 		<plugins>
@@ -804,45 +775,34 @@
 				</executions>
 			</plugin>
 
-			
-			<!--generate stub client SOAP for test purpose 
-			mvn cxf-codegen:wsdl2java
-			-->
-		<plugin>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-codegen-plugin</artifactId>
-			<version>${cxf.version}</version>
-			<configuration>
-				<sourceRoot>${project.basedir}/src/test/generated/cxf</sourceRoot>
-				<wsdlOptions>
-					<wsdlOption>
-						<wsdl>http://localhost:8080/linshare/webservice/soap?wsdl</wsdl>
-						<extraargs>
-							<extraarg>-client</extraarg>
-							<extraarg>-verbose</extraarg>
-							<extraarg>-p</extraarg>
-							<extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
-							<extraarg>-p</extraarg>
-							<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
-						</extraargs>
-					</wsdlOption>
-<!--
-					<wsdlOption>
-						<wsdl>http://localhost:8080/linshare/webservice/soap/share?wsdl</wsdl>
-						<extraargs>
-							<extraarg>-client</extraarg>
-							<extraarg>-verbose</extraarg>
-							<extraarg>-p</extraarg>
-							<extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
-							<extraarg>-p</extraarg>
-							<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
-						</extraargs>
-					</wsdlOption>
--->
-				</wsdlOptions>
-			</configuration>
-		</plugin>
-			
+
+			<!--generate stub client SOAP for test purpose mvn cxf-codegen:wsdl2java -->
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>${cxf.version}</version>
+				<configuration>
+					<sourceRoot>${project.basedir}/src/test/generated/cxf</sourceRoot>
+					<wsdlOptions>
+						<wsdlOption>
+							<wsdl>http://localhost:8080/linshare/webservice/soap?wsdl</wsdl>
+							<extraargs>
+								<extraarg>-client</extraarg>
+								<extraarg>-verbose</extraarg>
+								<extraarg>-p</extraarg>
+								<extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg>
+								<extraarg>-p</extraarg>
+								<extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg>
+							</extraargs>
+						</wsdlOption>
+						<!-- <wsdlOption> <wsdl>http://localhost:8080/linshare/webservice/soap/share?wsdl</wsdl> <extraargs> <extraarg>-client</extraarg> 
+							<extraarg>-verbose</extraarg> <extraarg>-p</extraarg> <extraarg>http://org/linagora/linshare/webservice/=org.linagora.linshare.webservice.test.soap</extraarg> 
+							<extraarg>-p</extraarg> <extraarg>http://webservice.linshare.linagora.org/=org.linagora.linshare.webservice.test.soap</extraarg> </extraargs> 
+							</wsdlOption> -->
+					</wsdlOptions>
+				</configuration>
+			</plugin>
+
 
 			<!-- Run the application using "mvn jetty:run" -->
 			<plugin>
@@ -852,19 +812,16 @@
 				<configuration>
 					<!-- Log to the console. -->
 					<requestLog implementation="org.mortbay.jetty.NCSARequestLog">
-						<!-- This doesn't do anything for Jetty, but is a workaround for a 
-							Maven bug that prevents the requestLog from being set. -->
+						<!-- This doesn't do anything for Jetty, but is a workaround for a Maven bug that prevents the requestLog from being set. -->
 						<append>true</append>
 					</requestLog>
 				</configuration>
 			</plugin>
 
 
-			<!-- This changes the WAR file packaging so that what would normally go 
-				into WEB-INF/classes is instead packaged as WEB-INF/lib/securedShare.jar. 
-				This is necessary for Tapestry to be able to search for page and component 
-				classes at startup. Only certain application servers require this configuration, 
-				please see the documentation at the Tapestry 5 project page (http://tapestry.apache.org/tapestry5/). -->
+			<!-- This changes the WAR file packaging so that what would normally go into WEB-INF/classes is instead packaged as WEB-INF/lib/securedShare.jar. 
+				This is necessary for Tapestry to be able to search for page and component classes at startup. Only certain application servers require 
+				this configuration, please see the documentation at the Tapestry 5 project page (http://tapestry.apache.org/tapestry5/). -->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1007,29 +964,21 @@
 
 	<reporting>
 
-		<!-- Adds a report detailing the components, mixins and base classes defined 
-			by this module. -->
+		<!-- Adds a report detailing the components, mixins and base classes defined by this module. -->
 		<plugins>
-		  <plugin>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-project-info-reports-plugin</artifactId> 
-		    <version>2.0.1</version>
-		  </plugin>
-		  <plugin>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-javadoc-plugin</artifactId>
-		    <version>1.9</version>
-		  </plugin>
-		<!-- it does not seem to work 
-		  <plugin>
-				<groupId>org.apache.tapestry</groupId>
-				<artifactId>tapestry-component-report</artifactId>
-				<version>${tapestry-release-version}</version>
-				<configuration>
-						<rootPackage>org.linagora.linshare.view.tapestry</rootPackage>
-				</configuration>
-		  </plugin>
-		-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.0.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>1.9</version>
+			</plugin>
+			<!-- it does not seem to work <plugin> <groupId>org.apache.tapestry</groupId> <artifactId>tapestry-component-report</artifactId> 
+				<version>${tapestry-release-version}</version> <configuration> <rootPackage>org.linagora.linshare.view.tapestry</rootPackage> </configuration> 
+				</plugin> -->
 		</plugins>
 	</reporting>
 	<profiles>
@@ -1335,12 +1284,11 @@
 	</profiles>
 
 	<repositories>
-		<!-- This can be commented out when the tapestry-release-version is a not 
-			a snapshot. The non-snapshot Tapestry artifacts are distributed through the 
-			central repository at ibiblio. -->
+		<!-- This can be commented out when the tapestry-release-version is a not a snapshot. The non-snapshot Tapestry artifacts are distributed 
+			through the central repository at ibiblio. -->
 
-		<!-- <repository> <id>tapestry-snapshots</id> <url>http://tapestry.formos.com/maven-snapshot-repository/</url> 
-			<snapshots> <enabled>true</enabled> </snapshots> </repository> -->
+		<!-- <repository> <id>tapestry-snapshots</id> <url>http://tapestry.formos.com/maven-snapshot-repository/</url> <snapshots> <enabled>true</enabled> 
+			</snapshots> </repository> -->
 		<repository>
 			<id>chenillekit</id>
 			<url>http://www.chenillekit.org/mvnrepo/release/</url>
@@ -1372,7 +1320,7 @@
 
 		<repository>
 			<id>IBiblio-mirror</id>
-            <url>http://www.ibiblio.org/pub/mirrors/maven/mule/dependencies/maven2/</url>
+			<url>http://www.ibiblio.org/pub/mirrors/maven/mule/dependencies/maven2/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -1412,7 +1360,7 @@
 		</repository>
 		<repository>
 			<id>Maven Central Repository</id>
-            <url>http://repo1.maven.org/maven2</url>
+			<url>http://repo1.maven.org/maven2</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
