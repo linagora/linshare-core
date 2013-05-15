@@ -34,9 +34,11 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -91,11 +93,19 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		
 		
 		if ((logCriteria.getActorMails()!=null) && (logCriteria.getActorMails().size()>0)) {
-			criteria.add(Restrictions.in("actorMail", logCriteria.getActorMails()));
+			Disjunction or = Restrictions.disjunction();
+			for (String mail : logCriteria.getActorMails()) {
+				or.add(Restrictions.like("actorMail", mail, MatchMode.ANYWHERE));
+			}
+			criteria.add(or);
 		}
 		
 		if ((logCriteria.getTargetMails()!=null) && (logCriteria.getTargetMails().size()>0)) {
-			criteria.add(Restrictions.in("targetMail", logCriteria.getTargetMails()));
+			Disjunction or = Restrictions.disjunction();
+			for (String mail : logCriteria.getTargetMails()) {
+				or.add(Restrictions.like("targetMail", mail, MatchMode.ANYWHERE));
+			}
+			criteria.add(or);
 		}
 		
 		if ((logCriteria.getActorFirstname()!=null) && (logCriteria.getActorFirstname().length()>0)) {
