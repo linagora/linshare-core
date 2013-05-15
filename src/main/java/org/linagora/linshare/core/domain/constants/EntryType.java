@@ -49,13 +49,12 @@ public enum EntryType {
 	}
 
 	public static EntryType fromInt(int value) {
-        switch (value) {
-            case 1: return EntryType.DOCUMENT;
-            case 2: return EntryType.SHARE;
-            case 3: return EntryType.ANONYMOUS_SHARE;
-            case 4: return EntryType.THREAD;
-            default : throw new IllegalArgumentException("Doesn't match an existing EntryType");
+		for (EntryType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
         }
+		throw new IllegalArgumentException("Doesn't match an existing EntryType");
 	}
 	
 	

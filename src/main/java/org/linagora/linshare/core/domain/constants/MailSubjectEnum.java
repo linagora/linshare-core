@@ -65,50 +65,11 @@ public enum MailSubjectEnum {
 	}
 
 	public static MailSubjectEnum fromInt(final int value) {
-		MailSubjectEnum ret = null;
-		switch (value) {
-		case 0:
-			ret = ANONYMOUS_DOWNLOAD;
-			break;
-		case 1:
-			ret = REGISTERED_DOWNLOAD;
-			break;
-		case 2:
-			ret = NEW_GUEST;
-			break;
-		case 3:
-			ret = RESET_PASSWORD;
-			break;
-		case 4:
-			ret = NEW_SHARING;
-			break;
-		case 5:
-			ret = SHARED_DOC_UPDATED;
-			break;
-		case 6:
-			ret = NEW_GROUP_SHARING;
-			break;
-		case 7:
-			ret = MEMBERSHIP_REQUEST_STATUS;
-			break;
-		case 8:
-			ret = NEW_GROUP_MEMBER;
-			break;
-		case 9:
-			ret = GROUP_SHARING_DELETED;
-			break;
-		case 10:
-			ret = SHARED_DOC_DELETED;
-			break;
-		case 11:
-			ret = SHARED_DOC_UPCOMING_OUTDATED;
-			break;
-		case 12:
-			ret = DOC_UPCOMING_OUTDATED;
-			break;
-		default:
-			throw new IllegalArgumentException("Doesn't match an existing MailSubjects");
+		for (MailSubjectEnum subject : values()) {
+			if (subject.value == value) {
+				return subject;
+			}
 		}
-		return ret;
+		throw new IllegalArgumentException("Doesn't match an existing MailSubjects");
 	}
 }

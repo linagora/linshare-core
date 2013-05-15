@@ -73,74 +73,11 @@ public enum MailTemplateEnum {
 	}
 
 	public static MailTemplateEnum fromInt(final int value) {
-		MailTemplateEnum ret = null;
-		switch (value) {
-		case 0:
-			ret = GREETINGS;
-			break;
-		case 1:
-			ret = FOOTER;
-			break;
-		case 2:
-			ret = CONFIRM_DOWNLOAD_ANONYMOUS;
-			break;
-		case 3:
-			ret = CONFIRM_DOWNLOAD_REGISTERED;
-			break;
-		case 4:
-			ret = LINSHARE_URL;
-			break;
-		case 5:
-			ret = FILE_DOWNLOAD_URL;
-			break;
-		case 6:
-			ret = DECRYPT_URL;
-			break;
-		case 7:
-			ret = PERSONAL_MESSAGE;
-			break;
-		case 8:
-			ret = GUEST_INVITATION;
-			break;
-		case 9:
-			ret = ACCOUNT_DESCRIPTION;
-			break;
-		case 10:
-			ret = SHARE_NOTIFICATION;
-			break;
-		case 11:
-			ret = PASSWORD_GIVING;
-			break;
-		case 12:
-			ret = FILE_UPDATED;
-			break;
-		case 13:
-			ret = GROUP_SHARE_NOTIFICATION;
-			break;
-		case 14:
-			ret = GROUP_NEW_MEMBER;
-			break;
-		case 15:
-			ret = GROUP_MEMBERSHIP_STATUS;
-			break;
-		case 16:
-			ret = GROUP_SHARE_DELETED;
-			break;
-		case 17:
-			ret = SHARED_FILE_DELETED;
-			break;
-		case 18:
-			ret = SECURED_URL_UPCOMING_OUTDATED;
-			break;
-		case 19:
-			ret = SHARED_DOC_UPCOMING_OUTDATED;
-			break;
-		case 20:
-			ret = DOC_UPCOMING_OUTDATED;
-			break;
-		default:
-			throw new IllegalArgumentException("Doesn't match an existing MailTemplates");
+		for (MailTemplateEnum template : values()) {
+			if (template.value == value) {
+				return template;
+			}
 		}
-		return ret;
+		throw new IllegalArgumentException("Doesn't match an existing MailTemplates");
 	}
 }

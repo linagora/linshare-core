@@ -48,10 +48,11 @@ public enum TagType {
     }
 
     public static TagType fromInt(int value) {
-        switch(value) {
-            case 0 : return SIMPLE;
-            case 1 : return ENUM;
-            default : throw new IllegalArgumentException("Doesn't match an existing type of tag");
-        }
+		for (TagType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
+		}
+        throw new IllegalArgumentException("Doesn't match an existing type of Tag");
     }
 }
