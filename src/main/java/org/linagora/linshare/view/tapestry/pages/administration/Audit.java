@@ -139,7 +139,8 @@ public class Audit {
 	/**
 	 * the list of traces matching the request
 	 */
-	@Persist @Property
+	@Persist("flash")
+	@Property
 	private List<DisplayableLogEntryVo> logEntries;
 	
 	@Property //used in the tml for the grid
@@ -154,7 +155,7 @@ public class Audit {
 	private boolean reset;
 	
 	@Property
-	@Persist
+	@Persist("flash")
 	private LogCriteriaBean criteria;
 	
 	@Persist
