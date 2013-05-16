@@ -101,15 +101,8 @@ public class Index {
 	@Environmental
 	private FormSupport formSupport;
 	
-
-	@InjectComponent
-	private TextArea targetMails;
-	
 	@Component
 	private Form formReport;
-
-    @InjectPage
-    private org.linagora.linshare.view.tapestry.pages.history.Index historyPage;
 
     @InjectPage
     private org.linagora.linshare.view.tapestry.pages.administration.Audit auditPage;
@@ -137,7 +130,7 @@ public class Index {
 	/**
 	 * the list of traces matching the request
 	 */
-	@Persist 
+	@Persist("flash") 
 	@Property
 	private List<DisplayableLogEntryVo> logEntries;
 	
@@ -150,7 +143,7 @@ public class Index {
 	private boolean displayGrid;
 	
 	@Property
-	@Persist
+	@Persist("flash")
 	private LogCriteriaBean criteria;
 	
 	@SessionState
