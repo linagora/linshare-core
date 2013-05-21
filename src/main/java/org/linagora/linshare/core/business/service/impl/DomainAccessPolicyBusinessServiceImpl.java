@@ -31,16 +31,58 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.repository;
+package org.linagora.linshare.core.business.service.impl;
 
+
+import java.util.List;
+import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
+import org.linagora.linshare.core.repository.DomainAccessRuleRepository;
 
-public interface DomainAccessPolicyRepository extends AbstractRepository<DomainAccessPolicy> {
+public class DomainAccessPolicyBusinessServiceImpl implements DomainAccessPolicyBusinessService{
 	
-	public DomainAccessPolicy findById(long id);
+	private final DomainAccessPolicyRepository domainAccessPolicyRepository;
+	private final DomainAccessRuleRepository domainAccessRuleRepository;
 	
-	public DomainAccessPolicy create(DomainAccessPolicy entity) throws BusinessException;
-
-	public DomainAccessPolicy update(DomainAccessPolicy entity) throws BusinessException ;
+	public DomainAccessPolicyBusinessServiceImpl(DomainAccessPolicyRepository domainAccessPolicyRepository,DomainAccessRuleRepository domainAccessRuleRepository){
+		super();
+		this.domainAccessPolicyRepository=domainAccessPolicyRepository;
+		this.domainAccessRuleRepository=domainAccessRuleRepository;
+		
+	}
+	@Override
+	public DomainAccessPolicy findDomainAccessPolicyById(long id){
+		return domainAccessPolicyRepository.findById(id);
+	}
+	
+	@Override 
+	public void createDomainAccessPolicy(List<DomainAccessRule> domainAccessRules) throws BusinessException{
+		DomainAccessPolicy domainAccessPolicy=new DomainAccessPolicy();
+		domainAccessPolicy.setRules(domainAccessRules);
+		domainAccessPolicyRepository.create(domainAccessPolicy);
+	}
+	
+	@Override 
+	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
+		domainAccessPolicyRepository.update(domainAccessPolicy);
+	}
+	
+	@Override
+	public void deleteDomainAccesspolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
+		
+	}
+	
+	@Override
+	public List<DomainAccessRule> findAllDomainAccessRule(){
+		return domainAccessRuleRepository.findAll();
+	}
+	
+	@Override
+	public DomainAccessRule findDomainAccessRuleById(long id){
+		return domainAccessRuleRepository.findById(id);
+	}
+		
 }

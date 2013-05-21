@@ -31,67 +31,59 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.business.service.impl;
 
-import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import java.util.List;
 
-public class DomainPolicy {
-	
-	/**
-	 * Database persistence identifier
-	 */
-	private long persistenceId;
-	
-	private String identifier;
-	
-	private DomainAccessPolicy domainAccessPolicy;
-	
-	private String description;
+import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
+import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.DomainPolicyRepository;
 
-	public DomainPolicy() {
+public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessService{
+
+	private final DomainPolicyRepository domainPolicyRepository;
+	
+	public DomainPolicyBusinessServiceImpl(DomainPolicyRepository domainPolicyRepository)
+	{
 		super();
+		this.domainPolicyRepository=domainPolicyRepository;
 	}
 	
-    public DomainPolicy(DomainPolicyVo domainPolicyVo) {
-        this.identifier = domainPolicyVo.getIdentifier();
-        this.description = domainPolicyVo.getPolicyDescription();
+    @Override
+    public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException{
+        DomainPolicy createdPolicy = domainPolicyRepository.create(domainPolicy);
+        return createdPolicy;
     }
 	
-	public String getIdentifier() {
-		return identifier;
+    @Override
+    public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
+        DomainPolicy policy = domainPolicyRepository.findById(domainPolicy.getIdentifier());
+        policy.setDescription(domainPolicy.getDescription());
+        policy.setDomainAccessPolicy(domainPolicy.getDomainAccessPolicy());
+        domainPolicyRepository.update(policy);
+    }
+    
+	@Override
+	public DomainPolicy retrieveDomainPolicy(String identifier){
+		return domainPolicyRepository.findById(identifier);
 	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	
+	@Override
+	public List<DomainPolicy> findAllDomainPolicy()  {
+		return domainPolicyRepository.findAll();
 	}
-
-	public String getDescription() {
-		return description;
+	
+	@Override
+	public List<String> findAllIdentifiers() {
+		return domainPolicyRepository.findAllIdentifiers();
 	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	
+	@Override
+	public void deletePolicy(String policyToDelete) throws IllegalArgumentException, BusinessException{
+		DomainPolicy policy=retrieveDomainPolicy(policyToDelete);
+		domainPolicyRepository.delete(policy);
 	}
-
-	public DomainAccessPolicy getDomainAccessPolicy() {
-		return domainAccessPolicy;
-	}
-
-	public void setDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) {
-		this.domainAccessPolicy = domainAccessPolicy;
-	}
-
-	public DomainPolicy(String identifier, DomainAccessPolicy policy) {
-		super();
-		this.identifier = identifier;
-		this.domainAccessPolicy = policy;
-	}
-
-	public long getPersistenceId() {
-		return persistenceId;
-	}
-
-	public void setPersistenceId(long persistenceId) {
-		this.persistenceId = persistenceId;
-	}
+	
 }

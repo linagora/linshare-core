@@ -33,12 +33,17 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.repository.DomainAccessRuleRepository;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class DomainAccessRuleRepositoryImpl extends AbstractRepositoryImpl<DomainAccessRule> implements DomainAccessRuleRepository {
@@ -65,4 +70,5 @@ public class DomainAccessRuleRepositoryImpl extends AbstractRepositoryImpl<Domai
 				Restrictions.eq("id", entity.getPersistenceId()));
 		return det;
 	}
+	
 }

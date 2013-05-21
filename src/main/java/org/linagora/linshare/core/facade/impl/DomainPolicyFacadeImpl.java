@@ -33,9 +33,12 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.core.service.DomainPolicyService;
 
@@ -56,8 +59,17 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 
 
 	@Override
-	public List<DomainPolicy> getAllDomainPolicy() {
-		return domainPolicyService.getAllDomainPolicy();
+	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException{
+		return domainPolicyService.findAllDomainPolicy();
 	}
 
+    @Override
+    public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException{
+        List<DomainPolicyVo> res = new ArrayList<DomainPolicyVo>();
+        for (DomainPolicy policy : domainPolicyService.findAllDomainPolicy()) {
+            res.add(new DomainPolicyVo(policy));
+        }
+        return res;
+    }
+	
 }

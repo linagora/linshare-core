@@ -31,32 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.view.tapestry.beans;
 
-import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import java.util.List;
 
-public class DomainPolicy {
-	
-	/**
-	 * Database persistence identifier
-	 */
-	private long persistenceId;
-	
+import org.apache.tapestry5.beaneditor.Validate;
+import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+
+public class DomainPolicyCriteriaBean {
+
 	private String identifier;
+	private String policyDescription;
+	private List<DomainAccessRuleType> domainAccessRuleType;
 	
-	private DomainAccessPolicy domainAccessPolicy;
 	
-	private String description;
-
-	public DomainPolicy() {
-		super();
+	public DomainPolicyCriteriaBean(){
 	}
 	
-    public DomainPolicy(DomainPolicyVo domainPolicyVo) {
-        this.identifier = domainPolicyVo.getIdentifier();
-        this.description = domainPolicyVo.getPolicyDescription();
-    }
+	public DomainPolicyCriteriaBean(String identifier, String policyDescription,
+			List<DomainAccessRuleType> domainAccessRuleType)
+	{
+		this.setIdentifier(identifier);
+		this.setPolicyDescription(policyDescription);
+		this.setDomainAccessRuleType(domainAccessRuleType);
+	}
 	
+	@Validate("required")
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -65,33 +65,20 @@ public class DomainPolicy {
 		this.identifier = identifier;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getPolicyDescription() {
+		return policyDescription;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setPolicyDescription(String policyDescription) {
+		this.policyDescription = policyDescription;
 	}
 
-	public DomainAccessPolicy getDomainAccessPolicy() {
-		return domainAccessPolicy;
+	public List<DomainAccessRuleType> getDomainAccessRuleType() {
+		return domainAccessRuleType;
 	}
 
-	public void setDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) {
-		this.domainAccessPolicy = domainAccessPolicy;
+	public void setDomainAccessRuleType(List<DomainAccessRuleType> domainAccessRuleType) {
+		this.domainAccessRuleType = domainAccessRuleType;
 	}
-
-	public DomainPolicy(String identifier, DomainAccessPolicy policy) {
-		super();
-		this.identifier = identifier;
-		this.domainAccessPolicy = policy;
-	}
-
-	public long getPersistenceId() {
-		return persistenceId;
-	}
-
-	public void setPersistenceId(long persistenceId) {
-		this.persistenceId = persistenceId;
-	}
+	
 }

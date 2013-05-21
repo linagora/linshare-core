@@ -44,7 +44,7 @@ public class AllowDomain extends DomainAccessRule {
 	/*
 	 * A default constructor is needed for hibernate for loading entities, 
 	 * but you can not persist this entity without setting up a domain.
-	 * That is why this contructor is private.
+	 * That is why this constructor is private.
 	 */
 	@SuppressWarnings("unused")
 	private AllowDomain() {
@@ -55,7 +55,7 @@ public class AllowDomain extends DomainAccessRule {
 		super();
 		this.domain = domain;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "My type is : " + String.valueOf(AllowDomain.class) + "(" + domain.getIdentifier() + ")";

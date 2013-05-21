@@ -31,67 +31,24 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.business.service;
 
-import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import java.util.List;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.exception.BusinessException;
 
-public class DomainPolicy {
+public interface DomainPolicyBusinessService {
 	
-	/**
-	 * Database persistence identifier
-	 */
-	private long persistenceId;
+    public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException ;
 	
-	private String identifier;
+	public DomainPolicy retrieveDomainPolicy(String identifier);
 	
-	private DomainAccessPolicy domainAccessPolicy;
+    public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException ;
 	
-	private String description;
-
-	public DomainPolicy() {
-		super();
-	}
+	public List<String> findAllIdentifiers();
 	
-    public DomainPolicy(DomainPolicyVo domainPolicyVo) {
-        this.identifier = domainPolicyVo.getIdentifier();
-        this.description = domainPolicyVo.getPolicyDescription();
-    }
+	public void deletePolicy(String policyToDelete) throws IllegalArgumentException, BusinessException ;
 	
-	public String getIdentifier() {
-		return identifier;
-	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public DomainAccessPolicy getDomainAccessPolicy() {
-		return domainAccessPolicy;
-	}
-
-	public void setDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) {
-		this.domainAccessPolicy = domainAccessPolicy;
-	}
-
-	public DomainPolicy(String identifier, DomainAccessPolicy policy) {
-		super();
-		this.identifier = identifier;
-		this.domainAccessPolicy = policy;
-	}
-
-	public long getPersistenceId() {
-		return persistenceId;
-	}
-
-	public void setPersistenceId(long persistenceId) {
-		this.persistenceId = persistenceId;
-	}
+	public List<DomainPolicy> findAllDomainPolicy()  ;
+	
 }

@@ -121,7 +121,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			logger.debug("creation of a TopDomain without an UserProvider.");
 		}
 		
-		DomainPolicy policy = domainPolicyService.findById(domain.getPolicy().getIdentifier());
+		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domain.getPolicy().getIdentifier());
 		
 		if(policy == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,"This new domain has a wrong domain policy identifier.");
@@ -286,7 +286,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			}
 		}
 
-		DomainPolicy policy = domainPolicyService.findById(domain.getPolicy().getIdentifier());
+		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domain.getPolicy().getIdentifier());
 
 		if(policy == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_POLICY_NOT_FOUND,"This new domain has a wrong domain policy identifier.");
