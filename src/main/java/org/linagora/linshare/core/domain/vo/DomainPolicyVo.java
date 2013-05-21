@@ -31,46 +31,58 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.vo;
 
-import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import org.apache.tapestry5.beaneditor.Validate;
+import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 
-public class DomainPolicy {
-	
-	/**
-	 * Database persistence identifier
-	 */
-	private long persistenceId;
-	
+public class DomainPolicyVo {
+
 	private String identifier;
-	
+	private String policyDescription;
 	private DomainAccessPolicy domainAccessPolicy;
 	
-	private String description;
-
-	public DomainPolicy() {
-		super();
+	public DomainPolicyVo(){		
 	}
 	
-    public DomainPolicy(DomainPolicyVo domainPolicyVo) {
-        this.identifier = domainPolicyVo.getIdentifier();
-        this.description = domainPolicyVo.getPolicyDescription();
-    }
+	public DomainPolicyVo(DomainPolicy policy){
+		
+		this.identifier=policy.getIdentifier();
+		this.policyDescription=policy.getDescription();
+		this.setDomainAccessPolicy(policy.getDomainAccessPolicy());
+	}
 	
+	public DomainPolicyVo(String identifier,String description){
+		
+		this.identifier=identifier;
+		this.policyDescription=description;
+		this.domainAccessPolicy=null;
+	}
+	
+	
+	@Validate("required")
 	public String getIdentifier() {
 		return identifier;
 	}
 
 	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+		if(identifier != null)
+			this.identifier = identifier.trim();
+        else
+			this.identifier = identifier;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getPolicyDescription() {
+		return policyDescription;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setPolicyDescription(String description) {
+		if(description != null)
+			this.policyDescription = description.trim();
+		else
+			this.policyDescription = description;
 	}
 
 	public DomainAccessPolicy getDomainAccessPolicy() {
@@ -79,19 +91,5 @@ public class DomainPolicy {
 
 	public void setDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) {
 		this.domainAccessPolicy = domainAccessPolicy;
-	}
-
-	public DomainPolicy(String identifier, DomainAccessPolicy policy) {
-		super();
-		this.identifier = identifier;
-		this.domainAccessPolicy = policy;
-	}
-
-	public long getPersistenceId() {
-		return persistenceId;
-	}
-
-	public void setPersistenceId(long persistenceId) {
-		this.persistenceId = persistenceId;
 	}
 }

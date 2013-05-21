@@ -57,6 +57,7 @@ import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
+import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.domain.vo.SubDomainVo;
@@ -161,7 +162,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
         DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainVo.getPatternIdentifier());
         LDAPConnection ldapConn = userProviderService.retrieveLDAPConnection(domainVo.getLdapIdentifier());
-        DomainPolicy policy = domainPolicyService.findById(domainVo.getPolicyIdentifier());
+        DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domainVo.getPolicyIdentifier());
 
         LdapUserProvider provider = null;
         String baseDn = domainVo.getDifferentialKey();
@@ -382,6 +383,11 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
+    public List<String> findAllDomainPoliciesIdentifiers() {
+    	return domainPolicyService.getAllDomainPolicyIdentifiers();
+    }
+    
+    @Override
     public List<String> findAllUserDomainPatternIdentifiers() {
         return userProviderService.findAllUserDomainPatternIdentifiers();
     }
@@ -408,6 +414,15 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         }
         return res;
     }
+    
+    @Override
+    public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException{
+        List<DomainPolicyVo> res = new ArrayList<DomainPolicyVo>();
+        for (DomainPolicy policy : domainPolicyService.findAllDomainPolicy()) {
+            res.add(new DomainPolicyVo(policy));
+        }
+        return res;
+    }
 
     @Override
     public List<DomainPatternVo> findAllSystemDomainPatterns() throws BusinessException {
@@ -428,12 +443,37 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         }
     }
 
+   @Override
+   public void createDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
+        if(isAuthorized(actorVo)) {
+            DomainPolicy domainPolicy = new DomainPolicy(domainPolicyVo);
+            domainPolicyService.createDomainPolicy(domainPolicy);
+        } else {
+            throw new BusinessException("You are not authorized to create a domain policy.");
+        }
+    }
+    
     @Override
     public DomainPatternVo retrieveDomainPattern(String identifier) throws BusinessException {
         DomainPattern pattern = userProviderService.retrieveDomainPattern(identifier);
         return new DomainPatternVo(pattern);
     }
 
+    @Override
+    public DomainPolicyVo retrieveDomainPolicy(String identifier) throws BusinessException {
+        DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(identifier);
+        return new DomainPolicyVo(policy);
+    }
+    
+   
+   @Override
+   public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
+       if(isAuthorized(actorVo)) {
+           domainPolicyService.updateDomainPolicy(new DomainPolicy(domainPolicyVo));
+       } else {
+           throw new BusinessException("You are not authorized to update a domain policy.");
+       }
+   }
     @Override
     public void updateDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException {
         if(isAuthorized(actorVo)) {
@@ -514,6 +554,23 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         return userProviderService.connectionIsDeletable(connectionToDelete);
     }
 
+    @Override
+    public void deletePolicy(String policyToDelete, UserVo actorVo) throws BusinessException {
+        if(isAuthorized(actorVo)) {
+            domainPolicyService.deletePolicy(policyToDelete);
+        } else {
+            throw new BusinessException("You are not authorized to delete a policy.");
+        }
+    }
+
+    @Override
+    public boolean policyIsDeletable(String policyToDelete, UserVo actorVo) {
+        if(actorVo == null) {
+            logger.error("actor object is null.");
+        }
+        return domainPolicyService.policyIsDeletable(policyToDelete);
+    }
+    
     @Override
     public boolean isCustomLogoActive(UserVo actorVo) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(actorVo.getDomainIdentifier());

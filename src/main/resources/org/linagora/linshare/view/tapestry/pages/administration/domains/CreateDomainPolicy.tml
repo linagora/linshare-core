@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.domains.index.createdomainpolicy.index" t:identifier="domains" t:currentHighlight="domains"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+	<!-- Main content -->
+	
+	<div id="content">
+
+		<h1>${message:pages.administration.domains.index.createdomainpolicy.index}</h1>
+		
+		<t:messagePanel />	
+		
+		<div id="pageContent">
+			
+			<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+			
+			
+			<!-- FORM -->
+
+				<t:beanEditForm t:id="informations" t:object="domainPolicy" submitlabel="message:global.button.validate">
+								<p:identifier>
+									<t:label for="identifier"/>
+                    				<t:textfield t:id="identifier" value="domainPolicy.identifier" disabled="inModify"/>
+								</p:identifier>
+
+								<p:policyDescription>
+									<t:label for="policyDescription"/>&nbsp;
+                    				<t:textfield t:id="policyDescription" value="domainPolicy.policyDescription"/>
+								</p:policyDescription>
+				</t:beanEditForm>
+				
+			<t:form t:id="formReport">
+				<div class="error">
+					<t:errors />
+				</div>
+				<div class="policyForm">
+				<t:pageLink page="administration/domains/SelectRules" context="domainPolicy.identifier"
+						title="${message:pages.administration.domains.DomainPolicy.form.add}">
+						<img src="${asset:context:images/popupImages/plus.png}" alt="" />
+				</t:pageLink>
+				<p><t:actionlink t:id="removeRule" class="button button_wide"><span><img src="${asset:context:images/popupImages/less.png}" alt=""/>${message:pages.administration.domains.DomainPolicy.form.remove}</span></t:actionlink></p>
+				</div>
+				<br></br><br></br>
+				<p>${message:pages.administration.domains.index.DomainPolicy.help}</p>
+								
+				<ul id="sortable">
+                <t:loop source="domainNames" value="ruleIdentifier" index="indexRule">
+                <li class="ui-state-default" >
+                <span id="position" >${indexRule}</span><span id="ruleIdentifier" >${ruleIdentifier}</span><span class="ui-icon ui-icon-arrowthick-2-n-s" ></span>
+                </li>
+                </t:loop>
+            </ul>
+				<br></br>
+				<input type="submit" value="Submit"/>
+			</t:form>	
+
+		
+		</div>
+
+	</div><!-- id="content" -->
+
+</t:MyBorderLayout>

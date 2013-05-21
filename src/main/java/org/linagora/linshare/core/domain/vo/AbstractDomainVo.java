@@ -55,8 +55,6 @@ public class AbstractDomainVo {
 	
 	@NonVisual
 	protected boolean enable = true;
-
-	protected String policyIdentifier;
 	
 	@NonVisual 
 	protected Long usedSpace = new Long(0);
@@ -69,6 +67,8 @@ public class AbstractDomainVo {
 	protected String patternIdentifier;
 	
 	protected String ldapIdentifier;
+	
+	protected String policyIdentifier;
 
 	public AbstractDomainVo() {
 	}

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.domains.index.createdomainpolicy.selectdomain.index" t:identifier="domains" t:currentHighlight="domains"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+	<!-- Main content -->
+	
+	<div id="content">
+id:${domainpolicy.identifier}
+rule:${rule}
+		<h1>${message:pages.administration.domains.index.createdomainpolicy.selectdomain.index}</h1>
+		
+		<t:messagePanel />	
+		
+		<div id="pageContent">
+			<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+			
+			<!-- FORM -->         
+
+			<form t:type="form">
+			
+				<div class="error">
+					<t:errors />
+				</div>     
+			<div>
+            <t:label for="domainSelection"/>:
+            <select t:type="select" t:id="domainSelection" t:model="domains"></select>
+            <input type="submit" value="Submit"/>
+            </div>
+        </form>
+		</div>
+
+	</div><!-- id="content" -->
+
+</t:MyBorderLayout>

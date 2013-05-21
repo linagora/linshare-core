@@ -44,10 +44,12 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
+import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +67,10 @@ public class Index {
 
     @Inject
     private AbstractDomainFacade domainFacade;
-
+    
+    @Inject
+    private DomainPolicyFacade domainPolicyFacade;
+    
     @SessionState
     private UserVo loginUser;
 
@@ -80,6 +85,13 @@ public class Index {
     @Persist
     @Property
     private List<LDAPConnectionVo> ldapConnections;
+    
+    @Persist
+    @Property
+    private List<DomainPolicyVo> policies;
+    
+    @Property
+    private DomainPolicyVo domainPolicy;
 
     @Property
     private AbstractDomainVo domain;
@@ -109,12 +121,17 @@ public class Index {
     @Property
     @Persist(value="flash")
     private String connectionToDelete;
+    
+    @Property
+    @Persist(value="flash")
+    private String policyToDelete;
 
     @SetupRender
     public void init() throws BusinessException {
         domains = domainFacade.findAllTopDomain();
         domainPatterns = domainFacade.findAllUserDomainPatterns();
         ldapConnections = domainFacade.findAllLDAPConnections();
+        policies = domainFacade.findAllDomainPolicies();
     }
 
     @OnEvent(value="domainDeleteEvent")
@@ -134,7 +151,13 @@ public class Index {
         domainFacade.deleteConnection(connectionToDelete, loginUser);
         ldapConnections = domainFacade.findAllLDAPConnections();
     }
-
+    
+    @OnEvent(value="policyDeleteEvent")
+    public void deletePolicy() throws BusinessException {
+        domainFacade.deletePolicy(policyToDelete, loginUser);
+        policies = domainFacade.findAllDomainPolicies();
+    }
+    
     public boolean getConnectionIsDeletable() throws BusinessException {
         return domainFacade.connectionIsDeletable(ldapConnection.getIdentifier(), loginUser);
     }
@@ -143,6 +166,10 @@ public class Index {
         return domainFacade.patternIsDeletable(domainPattern.getIdentifier(), loginUser);
     }
 
+    public boolean getPolicyIsDeletable() throws BusinessException {
+        return domainFacade.policyIsDeletable(domainPolicy.getIdentifier(), loginUser);
+    }
+    
     public String getConnectionIdentifier() {
         return domain.getLdapIdentifier();
     }
@@ -150,7 +177,11 @@ public class Index {
     public String getPatternIdentifier() {
         return domain.getPatternIdentifier();
     }
-
+    
+    public String getPolicyIdentifier() {
+        return domain.getPolicyIdentifier();
+    }
+    
     public void onActionFromDeleteDomain(String domain) {
         this.domainToDelete = domain;
     }
@@ -161,6 +192,10 @@ public class Index {
 
     public void onActionFromDeleteConnection(String connection) {
         this.connectionToDelete = connection;
+    }
+    
+    public void onActionFromDeletePolicy(String policy) {
+        this.policyToDelete = policy;
     }
 
     Object onException(Throwable cause) {

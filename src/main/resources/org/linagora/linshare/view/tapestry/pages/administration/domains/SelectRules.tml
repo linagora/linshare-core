@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.domains.index.createdomainpolicy.selectrule.index" t:identifier="domains" t:currentHighlight="domains"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+	<!-- Main content -->
+		id:${rule}
+		<div id="content">
+
+
+		<h1>${message:pages.administration.domains.index.createdomainpolicy.selectrule.index}</h1>
+		
+		<t:messagePanel />	
+		
+		<div id="pageContent">
+		
+		<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>     
+		       
+        <form t:type="form" id="formReport">
+        		<div class="error">
+				<t:errors />
+				</div>
+				<div>
+           			<t:label for="rule"/>:
+            		<select t:type="select" t:id="rule"/>
+            		<t:linkSubmit t:id="next" class="button button_wide"><span>${message:global.button.next}</span></t:linkSubmit>
+        		</div>
+        </form>
+		</div>
+	
+		</div><!-- id="content" -->
+		
+		
+		
+
+</t:MyBorderLayout>

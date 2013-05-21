@@ -36,10 +36,12 @@ package org.linagora.linshare.core.facade;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainPolicyFacade {
 
 	public List<String> getAllDomainPolicyIdentifiers();
-	public List<DomainPolicy> getAllDomainPolicy();
-	
+	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException;
+	public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException;
 }

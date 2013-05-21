@@ -31,7 +31,6 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry
                 <t:linkSubmit class="button" ><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
                 <span> </span>
                 <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
-
             </div>
         </form>
 
