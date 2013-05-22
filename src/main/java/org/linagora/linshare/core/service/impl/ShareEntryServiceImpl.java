@@ -115,8 +115,9 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			updateGuestExpirationDate(recipient);
 		}
 		
-		ShareLogEntry logEntry = new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file");
-	    logEntryService.create(logEntry);
+	    logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
+	    logEntryService.create(new ShareLogEntry(
+	    		recipient, LogAction.SHARE_RECEIVED, "Reveicing a shared file", createShare, sender));
 	    
 		return createShare;
 	}
