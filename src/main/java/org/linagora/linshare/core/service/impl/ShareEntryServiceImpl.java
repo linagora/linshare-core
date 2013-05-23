@@ -330,7 +330,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share.");
 			}
 			ShareLogEntry logEntryActor = new ShareLogEntry(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing", shareEntry, shareEntry.getEntryOwner());
-			ShareLogEntry logEntryTarget = new ShareLogEntry(shareEntry.getEntryOwner(), LogAction.SHARE_DOWNLOAD, "Sharing donwloaded by " + actor.getMail(), shareEntry, actor);
+			ShareLogEntry logEntryTarget = new ShareLogEntry(shareEntry.getEntryOwner(), LogAction.SHARE_DOWNLOADED, "Sharing donwloaded by " + actor.getMail(), shareEntry, actor);
 			logEntryService.create(logEntryActor);
 			logEntryService.create(logEntryTarget);
 			shareEntryBusinessService.addDownload(shareEntry);

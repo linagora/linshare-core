@@ -97,6 +97,15 @@ public class UserLogEntry extends LogEntry {
 		this(actor, logAction, description, target, null);
 	}
 	
+	public UserLogEntry(String actorMail, LogAction logAction, String description, String targetMail) {
+		super(actorMail, "", "", "", logAction, description);
+		this.targetMail = targetMail;
+		this.targetDomain = "";
+		this.targetFirstname = "";
+		this.targetLastname = "";
+		this.expirationDate = null;
+	}
+	
 	public String getTargetMail() {
 		return targetMail;
 	}
