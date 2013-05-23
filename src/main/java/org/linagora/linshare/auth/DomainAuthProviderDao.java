@@ -42,10 +42,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linagora.linshare.auth.exceptions.BadDomainException;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.UserLogEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -64,10 +67,10 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 	
 	private UserService userService;
 	private AbstractDomainService abstractDomainService;
+	private LogEntryService logEntryService;
 	
     private final static Log logger = LogFactory.getLog(DomainAuthProviderDao.class);
     
-	
 	public AbstractDomainService getAbstractDomainService() {
 		return abstractDomainService;
 	}
@@ -82,6 +85,14 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
+	}
+	
+	public LogEntryService getLogEntryService() {
+		return logEntryService;
+	}
+
+	public void setLogEntryService(LogEntryService logEntryService) {
+		this.logEntryService = logEntryService;
 	}
 	
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
@@ -116,20 +127,33 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 				logger.debug("Can't find the user in the directory. Search in DB.");
 				
 				foundUser = userService.findUserInDB(domainIdentifier,login);
-				if (foundUser != null && !foundUser.getAccountType().equals(AccountType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
-					logger.debug("User found in DB but authentification failed");
-					throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), domainIdentifier);
-				} else {
-					logger.debug("Can't find the user in DB, BadDomainException for : " + domainIdentifier);
-					throw new BadDomainException(e.getMessage(), domainIdentifier);
+				try {
+					if (foundUser != null && !foundUser.getAccountType().equals(AccountType.INTERNAL) && domainIdentifier.equals(foundUser.getDomainId())) {
+						logger.debug("User found in DB but authentification failed");
+						logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad credentials", foundUser));
+						throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), domainIdentifier);
+					} else {
+						logger.debug("Can't find the user in DB, BadDomainException for : " + domainIdentifier);
+						logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad domain", foundUser));
+						throw new BadDomainException(e.getMessage(), domainIdentifier);
+					}
+				} catch (BusinessException be) {
+					logger.error("Couldn't log an authentication failure");
+					logger.debug(be.getMessage());
 				}
 			} catch (Exception e) {
 				throw new AuthenticationServiceException("Could not authenticate user: "+login, e);
 			}
 			
 			if(foundUser == null) {
-			      throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-			          "Bad credentials"), domainIdentifier);
+				try {
+					logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad credentials", foundUser));
+				} catch(BusinessException be) {
+					logger.error("Couldn't log an authentication failure");
+					logger.debug(be.getMessage());
+				}
+				throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
+						"Bad credentials"), domainIdentifier);
 			} 
 		}
 		
@@ -171,6 +195,12 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 					logger.debug("User found in DB : " + foundUser.getMail());
 			
 					if(foundUser.getDomain() == null) {
+						try {
+							logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad credentials", foundUser));
+						} catch(BusinessException be) {
+							logger.error("Couldn't log an authentication failure");
+							logger.debug(be.getMessage());
+						}
 						logger.error("The user found in the database contain a null domain reference.");
 						throw new BadCredentialsException("Could not retrieve user : "+login);
 					}
@@ -180,10 +210,22 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 						logger.debug("The user domain stored in DB was : " + domainIdentifier);
 						foundUser = abstractDomainService.auth(foundUser.getDomain(), login, password);
 					} catch (NameNotFoundException e) {
+						try {
+							logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad domain", foundUser));
+						} catch(BusinessException be) {
+							logger.error("Couldn't log an authentication failure");
+							logger.debug(e.getMessage());
+						}
 						throw new BadDomainException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
 					} catch (IOException e) {
 						throw new AuthenticationServiceException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
 					} catch (NamingException e) {
+						try {
+							logEntryService.create(new UserLogEntry(foundUser, LogAction.USER_AUTH_FAILED, "Bad credentials", foundUser));
+						} catch(BusinessException be) {
+							logger.error("Couldn't log an authentication failure");
+							logger.debug(be.getMessage());
+						}
 						throw new BadCredentialsException("Could not retrieve user : "+login+" in domain : "+domainIdentifier, e);
 					}
 				}
@@ -194,8 +236,14 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 		
 		// invisible domain and user not found (uid login or found in no domain)
 		if (foundUser == null || domainIdentifier == null) {
+			try {
+				logEntryService.create(new UserLogEntry(login, LogAction.USER_AUTH_FAILED, "Bad credentials", login));
+			} catch(BusinessException be) {
+				logger.error("Couldn't log an authentication failure");
+				logger.debug(be.getMessage());
+			}
 			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials",
-	          "Bad credentials, no domain specified and user found in no domain"), domainIdentifier);
+					"Bad credentials, no domain specified and user found in no domain"), domainIdentifier);
 		}
 
 		// invisible domain and user found or visible domain and user found
@@ -207,6 +255,12 @@ public class DomainAuthProviderDao extends AbstractUserDetailsAuthenticationProv
 			// retrieve the guest account. if the two user are in the same domain, we can't
 			// do anything I think...
 			if (!domainIdentifier.equals(user.getDomainId())) {
+				try {
+					logEntryService.create(new UserLogEntry(user, LogAction.USER_AUTH_FAILED, "Bad domain", user));
+				} catch(BusinessException be) {
+					logger.error("Couldn't log an authentication failure");
+					logger.debug(be.getMessage());
+				}
 				throw new BadDomainException("User "+user.getMail()+" was found but not in the domain referenced in DB (DB: "+user.getDomainId()+", found: "+domainIdentifier);
 			}
 			
