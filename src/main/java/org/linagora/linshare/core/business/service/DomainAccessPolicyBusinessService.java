@@ -41,16 +41,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainAccessPolicyBusinessService {
 
-	public DomainAccessPolicy findDomainAccessPolicyById(long id);
-	
-	public void createDomainAccessPolicy(List<DomainAccessRule> domainAccessRules) throws BusinessException;
-	
+	public DomainAccessPolicy retrieveDomainAccessPolicy(long id);
+	public List<DomainAccessPolicy> findAllDomainAccessPolicy();
+	public DomainAccessPolicy createDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException;
 	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException;
+	public void deleteDomainAccesspolicy(long persistenceID) throws BusinessException;
 	
-	public void deleteDomainAccesspolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException;
 	
 	public List<DomainAccessRule> findAllDomainAccessRule();
-	
 	public DomainAccessRule findDomainAccessRuleById(long id);
 	
 }

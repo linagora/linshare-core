@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.domains.index.createdomainpolicy.index" t:identifier="domains" t:currentHighlight="domains"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+	<!-- Main content -->
+	
+	<div id="content">
+
+		<h1>${message:pages.administration.domains.index.createdomainpolicy.index}</h1>
+		
+		<t:messagePanel />	
+		
+		<div id="pageContent">
+			
+			<!-- FORM -->
+		<t:form id="form">
+			
+					<p><t:label for="identifier"/>:&nbsp;
+                    <t:textfield t:id="identifier" value="domainPolicy.identifier" Disabled="true"/></p>
+					
+					<p><t:label for="policyDescription"/>:&nbsp;
+                    <t:textfield t:id="policyDescription" value="domainPolicy.policyDescription"/></p>
+                    
+				<t:if test="ruleNames">
+					
+					<p>			
+						<t:pageLink page="administration/domains/SelectRules" context="domainPolicy.identifier"
+							title="${message:pages.administration.domains.DomainPolicy.form.add}">
+							<img src="${asset:context:images/popupImages/plus.png}" alt="" />
+						</t:pageLink>
+						${message:pages.administration.domains.DomainPolicy.form.add}
+					</p>
+					<p>${message:pages.administration.domains.index.DomainPolicy.help}</p>
+					
+					<ul id="sortable">
+                		<t:loop source="ruleNames" value="ruleIdentifier" index="indexRule">
+                			<li class="ui-state-default" >
+                			<span id="position" >${indexRule}</span><span id="ruleIdentifier" >${ruleIdentifier}</span>
+							<span class="ui-icon ui-icon-arrowthick-2-n-s" ></span> &nbsp;
+							<span>				
+							   <t:eventLink event="remove" context="ruleIdentifier">
+							     <img src="${asset:context:images/popupImages/less.png}" alt=""/>
+							   </t:eventLink>
+							</span>
+                			</li>
+                		</t:loop>
+            		</ul>
+            		<p:else>
+            			${message:pages.administration.domains.index.DomainPolicy.help2}
+            			<t:pageLink page="administration/domains/SelectRules" context="domainPolicy.identifier">
+						${message:global.button.click}
+						</t:pageLink>
+            		</p:else>	
+            	</t:if>
+            		
+            		<p><input type="submit"  value="Validate"/>&nbsp;
+            		<input t:type="Submit" t:id="cancel" value="Cancel"/></p>
+		</t:form>	
+		</div>
+
+	</div><!-- id="content" -->
+
+</t:MyBorderLayout>

@@ -5,14 +5,11 @@
 	<!-- Main content -->
 	
 	<div id="content">
-id:${domainpolicy.identifier}
-rule:${rule}
 		<h1>${message:pages.administration.domains.index.createdomainpolicy.selectdomain.index}</h1>
 		
 		<t:messagePanel />	
 		
 		<div id="pageContent">
-			<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
 			
 			<!-- FORM -->         
 
@@ -21,11 +18,18 @@ rule:${rule}
 				<div class="error">
 					<t:errors />
 				</div>     
+				
+				<p>${message:pages.administration.domains.index.createdomainpolicy.selectdomain.help}
+				${rule} rule on it :
+				</p>
+				
 			<div>
             <t:label for="domainSelection"/>:
             <select t:type="select" t:id="domainSelection" t:model="domains"></select>
-            <input type="submit" value="Submit"/>
             </div>
+            
+            <p><input type="submit" value="Validate"/>
+            <input t:type="Submit" t:id="cancel" value="Cancel"/></p>
         </form>
 		</div>
 

@@ -39,6 +39,7 @@ public enum DomainAccessRuleType {
 
 	private int value;
 
+	
 	private DomainAccessRuleType(int value) {
 		this.value = value;
 	}
@@ -47,7 +48,7 @@ public enum DomainAccessRuleType {
 		return value;
 	}
 
-	public static DomainAccessRuleType fromInt(int value) {
+	public DomainAccessRuleType fromInt(int value) {
         switch (value) {
             case 0: return DomainAccessRuleType.ALLOW_ALL;
             case 1: return DomainAccessRuleType.DENY_ALL;

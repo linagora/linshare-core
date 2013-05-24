@@ -47,8 +47,9 @@ public interface DomainPolicyBusinessService {
 	
 	public List<String> findAllIdentifiers();
 	
-	public void deletePolicy(String policyToDelete) throws IllegalArgumentException, BusinessException ;
-	
 	public List<DomainPolicy> findAllDomainPolicy()  ;
 	
+	public void deletePolicy(String policyToDelete) throws BusinessException;
+	
+	public boolean policyIsDeletable(String policyToDelete);
 }

@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
@@ -93,7 +94,10 @@ public interface AbstractDomainFacade {
     public void deletePolicy(String policyToDelete, UserVo actorVo) throws BusinessException ;
     public boolean policyIsDeletable(String policyToDelete, UserVo actor) ;
 
-
+    public void createDomainAccessPolicy(UserVo actorVo, DomainAccessPolicy domainPolicyVo) throws BusinessException ;
+    public void updateDomainAccessPolicy(UserVo actorVo, DomainAccessPolicy domainPolicyVo) throws BusinessException ;
+    public List<DomainAccessPolicy> findAllDomainAccessPolicy();
+    
     public List<String> findAllLDAPConnectionIdentifiers();
     public List<LDAPConnectionVo> findAllLDAPConnections() throws BusinessException ;
     public LDAPConnectionVo createLDAPConnection(UserVo actorVo, LDAPConnectionVo ldapConnectionVo) throws BusinessException ;

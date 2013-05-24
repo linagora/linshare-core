@@ -57,7 +57,7 @@ public class DenyDomain extends DomainAccessRule {
 
 	@Override
 	public String toString() {
-		return "My type is : " + String.valueOf(DenyDomain.class) + "(" + domain.getIdentifier() + ")";
+		return "Deny (" + domain.getIdentifier() + ")";
 	}
 
 	public AbstractDomain getDomain() {

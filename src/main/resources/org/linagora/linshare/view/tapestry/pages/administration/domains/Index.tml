@@ -92,18 +92,18 @@
 			<h2>${message:pages.administration.domains.index.domainPolicies}</h2>
 		 	  <t:grid source="policies" include="identifier, policyDescription" add="actions" row="domainPolicy">
 			  	<t:parameter name="actionsCell">
-			  		<t:pageLink page="administration/domains/CreateDomainPolicy" context="domainPolicy.identifier"
+			  		<t:pageLink page="administration/domains/ManageDomainPolicy" context="domainPolicy.identifier"
 						title="${message:pages.administration.domains.index.connection.edit.button}">
 						<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
 			 	 	</t:pageLink>
-			 	 		<t:if test="policyIsDeletable">
+					<t:if test="policyIsDeletable">
 			 	 		<t:actionLink t:id="deletePolicy" context="domainPolicy.identifier" t:zone="zoneConfirmDelete"
 			 	 			title="${message:pages.administration.domains.index.policy.delete.button}">
 			 	 			<span onclick="window_confirm_2.showCenter(true)">
 							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
 							</span>
 						</t:actionLink>
-						</t:if>
+					</t:if>
 			 	</t:parameter>
 			  </t:grid>
 		
@@ -125,7 +125,8 @@
         
     <t:confirmPopup
         t:messageLabel="${message:pages.administration.domains.index.policy.delete.ask}"
-        t:eventName="connectionDeleteEvent" t:windowId="confirm4" />
+        t:eventName="policyDeleteEvent" t:windowId="confirm4" />
+        
     <t:zone t:id="zoneConfirmDelete" />
 
 </t:MyBorderLayout>
