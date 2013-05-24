@@ -56,6 +56,17 @@ public class DomainAccessPolicy {
 	public DomainAccessPolicy() {
 		super();
 	}
+	public DomainAccessPolicy(long persistenceId) {
+		super();
+		this.persistenceId=persistenceId;
+		this.rules=null;
+	}
+	
+	public DomainAccessPolicy(DomainAccessPolicy policy) {
+		super();
+		this.persistenceId=policy.getPersistenceId();
+		this.rules=policy.getRules();
+	}
 
 	public List<DomainAccessRule> getRules() {
 		return rules;

@@ -42,6 +42,8 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
@@ -132,6 +134,17 @@ public class Index {
         domainPatterns = domainFacade.findAllUserDomainPatterns();
         ldapConnections = domainFacade.findAllLDAPConnections();
         policies = domainFacade.findAllDomainPolicies();
+        /*for(DomainPolicyVo current : policies){
+		logger.debug("id:" + current.getDomainAccessPolicy().getPersistenceId());
+		logger.debug("rules:" + current.getDomainAccessPolicy().getRules());
+        }*/
+        
+        List<DomainAccessPolicy> accesses=domainFacade.findAllDomainAccessPolicy();
+        for(DomainAccessPolicy current : accesses){
+    		logger.debug("id:" + current.getPersistenceId());
+    		logger.debug("rules:" + current.getRules());
+            }
+        
     }
 
     @OnEvent(value="domainDeleteEvent")

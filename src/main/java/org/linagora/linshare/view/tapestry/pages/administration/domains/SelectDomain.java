@@ -38,6 +38,7 @@ package org.linagora.linshare.view.tapestry.pages.administration.domains;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -47,10 +48,16 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.domain.entities.GuestDomain;
+import org.linagora.linshare.core.domain.entities.RootDomain;
+import org.linagora.linshare.core.domain.entities.SubDomain;
+import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -70,13 +77,16 @@ public class SelectDomain {
 	private static Logger logger = LoggerFactory.getLogger(SelectDomain.class);
 	
 	@Property
-	@Persist
+	@SessionState
     private DomainPolicyVo domainPolicy;
 	
     @Persist
     @Property
     private List<String> domains;
 	
+	@Property
+    private AbstractDomainVo domainVo;
+    
     @Inject
     private AbstractDomainFacade domainFacade;
     
@@ -95,7 +105,15 @@ public class SelectDomain {
 	@Validate("required")
     private String domainSelection;
 
-	
+    @InjectPage
+    private org.linagora.linshare.view.tapestry.pages.administration.domains.SelectRules selectRulepage;
+    
+    @InjectPage
+    private org.linagora.linshare.view.tapestry.pages.administration.domains.ManageDomainPolicy manageDomainPolicypage;
+    
+    @Property
+    private boolean cancel;
+    
 
 	@SetupRender
 	public void init() {
@@ -110,17 +128,6 @@ public class SelectDomain {
         return SelectRules.class;
     }
     
-    void onActivate(DomainAccessRuleType rule/*,String identifier*/) throws BusinessException{
-    	this.set(rule);
-    	/*logger.debug("domainPolicyIdentifier:" + identifier);
-    	if (identifier != null) {
-		domainPolicy = domainFacade.retrieveDomainPolicy(identifier);
-    	} 	
-    	else {
-			domainPolicy = null;
-		}*/
-    }
-    
     public DomainAccessRule fromDomainAccessRuleTypeToDomainAccessRule(DomainAccessRuleType rule, AbstractDomain domain)
     {
     	switch (rule.toInt()) {
@@ -131,16 +138,53 @@ public class SelectDomain {
     	}
     }
     
+    void onSelectedFromCancel() {
+        
+    	cancel=true;
+    }
     
-    public Object onSuccess() {
+    public AbstractDomain fromDomainType(AbstractDomainVo domainVo)
+    	{
+        	switch(domainVo.getType().toInt()){
+            case 0: return new RootDomain(domainVo.getIdentifier(),domainVo.getLabel());
+            case 1: return new TopDomain(domainVo.getIdentifier(),domainVo.getLabel());
+            case 2: return new SubDomain(domainVo.getIdentifier(),domainVo.getLabel());
+            case 3: return new GuestDomain(domainVo.getIdentifier(),domainVo.getLabel());
+            default : throw new IllegalArgumentException("Doesn't match an existing DomainType");
+        	}
+        }
 
-    	return null;
+   public Object onSuccess() {
+    	if(cancel==false)
+    	{
+    	try{
+    	domainVo=domainFacade.retrieveDomain(domainSelection);
+		} catch (BusinessException e) {
+			logger.error("Can not retrieve domain : " + e.getMessage());
+			logger.debug(e.toString());}
+    	AbstractDomain selectedDomain=this.fromDomainType(domainVo);
+    	DomainAccessRule selectedRule=this.fromDomainAccessRuleTypeToDomainAccessRule(rule,selectedDomain);
+		if(domainPolicy.getDomainAccessPolicy()!=null){
+		domainPolicy.getDomainAccessPolicy().addRule(selectedRule);}
+		else{
+			domainPolicy.setDomainAccessPolicy(new DomainAccessPolicy());
+			domainPolicy.getDomainAccessPolicy().addRule(selectedRule);}
+		try {
+		domainFacade.updateDomainAccessPolicy(loginUser,domainPolicy.getDomainAccessPolicy());
+		domainFacade.updateDomainPolicy(loginUser,domainPolicy);
+		} catch (BusinessException e) {
+			logger.error("Can not update domain policy : " + e.getMessage());
+			logger.debug(e.toString());}
+    	return manageDomainPolicypage;
+    	}
+    	return selectRulepage;
     }
 
-    public void set(DomainAccessRuleType rule){
+    public void set(DomainAccessRuleType rule)
+    {
     	this.rule=rule;
     }
-
+    
 	Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());

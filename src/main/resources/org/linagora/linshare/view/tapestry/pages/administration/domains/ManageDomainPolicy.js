@@ -9,7 +9,7 @@ jQuery(document).ready(function(){
 			var tmp_tabPos = "";
 			jQuery(list.find("li")).each(function(){
 				jQuery(this).find("span#position").text(pos);
-				tmp_tabPos+= jQuery(this).find("span#domainName").text() + ";";
+				tmp_tabPos+= jQuery(this).find("span#rules").text() + ";";
 				pos++;
 				
 			});

@@ -210,7 +210,11 @@ public class AbstractDomainRepositoryImplTest extends AbstractJUnit4SpringContex
 		logger.debug("Current pattern object: " + domainPattern.toString());
 
 		
-		LdapUserProvider provider = new LdapUserProvider("",ldapconnexion,domainPattern);
+		DomainPolicy domainPolicy = new DomainPolicy(identifierP, "blabla",null);
+		domainPatternRepository.create(domainPattern);
+		logger.debug("Current pattern object: " + domainPattern.toString());
+		
+		LdapUserProvider provider = new LdapUserProvider("",ldapconnexion,domainPattern,domainPolicy);
 		userProviderRepository.create(provider);
 		
 		SubDomain subDomain= new SubDomain(subDomainName,"My root domain",(TopDomain)currentTopDomain);

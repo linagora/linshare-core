@@ -35,19 +35,15 @@
 package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 
-import java.util.List;
 
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.Validate;
-import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Request;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
@@ -75,7 +71,7 @@ public class SelectRules {
     private AbstractDomainFacade domainFacade;
     
 	@Property
-	@Persist
+	@SessionState
     private DomainPolicyVo domainPolicy;
     
 	@Property
@@ -89,12 +85,13 @@ public class SelectRules {
     private org.linagora.linshare.view.tapestry.pages.administration.domains.SelectDomain selectDomainpage;
     
     @InjectPage
-    private org.linagora.linshare.view.tapestry.pages.administration.domains.CreateDomainPolicy createDomainPolicypage;
+    private org.linagora.linshare.view.tapestry.pages.administration.domains.ManageDomainPolicy manageDomainpage;
     
     @Inject
     private Messages messages;
 
-    
+    @Property
+    private boolean cancel;
 	
 	@SetupRender
 	public void init() {
@@ -128,25 +125,38 @@ public class SelectRules {
     	}
     }
     
-    public Object onSuccess() {  
-    	
-    	if(rule.toInt() == 2 || rule.toInt() == 3 ){
-    		selectDomainpage.set(rule);
-    	return selectDomainpage;
-    
-    	}
-    	else{ 
-    		DomainAccessRule selectedRule=this.fromDomainAccessRuleTypeToDomainAccessRule(rule);
-    		if(domainPolicy.getDomainAccessPolicy()!=null){
-    		domainPolicy.getDomainAccessPolicy().addRule(selectedRule);}
-    		else{
-    			domainPolicy.setDomainAccessPolicy(new DomainAccessPolicy());
-    			domainPolicy.getDomainAccessPolicy().addRule(selectedRule);}
-    		}
-    		return createDomainPolicypage;
+    void onSelectedFromCancel() {
+        
+    	cancel=true;
     }
     
-	
+    public Object onSuccess() {  
+    	
+    	if(cancel==false)
+    	{
+    		if(rule.toInt() == 2 || rule.toInt() == 3 ){
+    			selectDomainpage.set(rule);
+    			return selectDomainpage;
+    			}
+    		else{ 
+    			DomainAccessRule selectedRule=this.fromDomainAccessRuleTypeToDomainAccessRule(rule);
+    			if(domainPolicy.getDomainAccessPolicy()!=null){
+    				domainPolicy.getDomainAccessPolicy().addRule(selectedRule);}
+    			else{
+    				domainPolicy.setDomainAccessPolicy(new DomainAccessPolicy());
+    				domainPolicy.getDomainAccessPolicy().addRule(selectedRule);}
+    		try {
+    		domainFacade.updateDomainAccessPolicy(loginUser,domainPolicy.getDomainAccessPolicy());
+    		domainFacade.updateDomainPolicy(loginUser,domainPolicy);
+    		} catch (BusinessException e) {
+    			logger.error("Can not update domain policy : " + e.getMessage());
+    			logger.debug(e.toString());}
+    		}
+    		return Index.class;
+    	}
+    	return manageDomainpage;
+    }
+    
     
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
@@ -154,5 +164,6 @@ public class SelectRules {
     	cause.printStackTrace();
     	return this;
     }
+
     
 }

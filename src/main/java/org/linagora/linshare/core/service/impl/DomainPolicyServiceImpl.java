@@ -46,7 +46,6 @@ import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DomainPolicyService;
@@ -65,8 +64,15 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		this.domainAccessPolicyBusinessService = domainAccessPolicyBusinessService;
 	}
 
-
+	@Override
+	public void deletePolicy(String policyToDelete) throws BusinessException{
+		domainPolicyBusinessService.deletePolicy(policyToDelete);
+	}
 	
+	@Override
+	public boolean policyIsDeletable(String policyToDelete){
+		return domainPolicyBusinessService.policyIsDeletable(policyToDelete);
+	}
 	
     @Override
     public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
@@ -95,14 +101,15 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	}
 	
 	@Override
-	public DomainAccessPolicy findDomainAccessPolicyById(long id){
-		return domainAccessPolicyBusinessService.findDomainAccessPolicyById(id);
+	public DomainAccessPolicy retrieveDomainAccessPolicy(long id){
+		return domainAccessPolicyBusinessService.retrieveDomainAccessPolicy(id);
 	}
 	
-	@Override
-	public void createDomainAccessPolicy(List<DomainAccessRule> domainAccessRules) throws BusinessException{
-		domainAccessPolicyBusinessService.createDomainAccessPolicy(domainAccessRules);
-	}
+    @Override
+    public DomainAccessPolicy createDomainAccessPolicy(DomainAccessPolicy domainPolicy) throws BusinessException {
+        DomainAccessPolicy createdPolicy = domainAccessPolicyBusinessService.createDomainAccessPolicy(domainPolicy);
+        return createdPolicy;
+    }
 	
 	@Override
 	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
@@ -110,8 +117,8 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	}
 	
 	@Override
-	public void deleteDomainAccesspolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
-		domainAccessPolicyBusinessService.deleteDomainAccesspolicy(domainAccessPolicy);
+	public void deleteDomainAccesspolicy(long id) throws BusinessException{
+		domainAccessPolicyBusinessService.deleteDomainAccesspolicy(id);
 	}
 	
 	@Override
@@ -119,43 +126,14 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		return domainAccessPolicyBusinessService.findAllDomainAccessRule();
 	}
 	
+	public List<DomainAccessPolicy> findAllDomainAccessPolicy(){
+		return domainAccessPolicyBusinessService.findAllDomainAccessPolicy();
+	}
+	
 	@Override
 	public DomainAccessRule findDomainAccessRuleById(long id){
 		return domainAccessPolicyBusinessService.findDomainAccessRuleById(id);
-	}
-	
-	
-    @Override
-    public void deletePolicy(String policyToDelete) throws BusinessException {
-        if (!policyIsDeletable(policyToDelete)) {
-            throw new BusinessException("Cannot delete policy because still used by domains");
-        }
-
-        DomainPolicy policy = retrieveDomainPolicy(policyToDelete);
-        if(policy == null) {
-            logger.error("Policy not found: " + policyToDelete);
-        } else {
-            logger.debug("delete policy : " + policyToDelete);
-            domainPolicyBusinessService.deletePolicy(policyToDelete);
-        }
-    }
-    
-    @Override
-    public boolean policyIsDeletable(String policyToDelete) {
-        List<DomainPolicy> list=domainPolicyBusinessService.findAllDomainPolicy();
-        boolean used = false;
-        for (DomainPolicy current : list) {
-            if (current.getIdentifier().equals(policyToDelete)) {
-                used = true;
-                break;
-            }
-        }
-        return (!used);
-    }
-	
-	
-	
-	
+	}	
 	
 	private List<AbstractDomain> getAuthorizedDomain(AbstractDomain domain, List<DomainAccessRule> rules) {
 		Set<AbstractDomain> set = new HashSet<AbstractDomain>();

@@ -297,18 +297,21 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		LdapUserProvider provider = entity.getUserProvider();
 		DomainPattern domainPattern = null;
 		LDAPConnection ldapConn = null;
+		DomainPolicy domainPolicy =null;
 		String baseDn = null;
+		
 		
 		if(domain.getUserProvider()!=null) {
 			domainPattern = domain.getUserProvider().getPattern();
 			ldapConn = domain.getUserProvider().getLdapconnexion();
+			domainPolicy = domain.getPolicy();
 			baseDn = domain.getUserProvider().getBaseDn();
 		}
 		if(baseDn != null && domainPattern != null && ldapConn != null) {
 			logger.debug("Update domain with provider");
 			if(provider == null) {
 				logger.debug("Update domain with provider creation ");
-				provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
+				provider = new LdapUserProvider(baseDn, ldapConn, domainPattern,domainPolicy);
 				userProviderService.create(provider);
 				entity.setUserProvider(provider);
 			} else {
@@ -316,6 +319,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				provider.setBaseDn(baseDn);
 				provider.setLdapconnexion(ldapConn);
 				provider.setPattern(domainPattern);
+				provider.setPolicy(domainPolicy);
 				userProviderService.update(provider);
 			}
 			abstractDomainRepository.update(entity);

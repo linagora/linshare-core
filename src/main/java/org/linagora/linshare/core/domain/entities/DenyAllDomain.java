@@ -43,7 +43,7 @@ public class DenyAllDomain extends DomainAccessRule {
 	
 	@Override
 	public String toString() {
-		return "My type is : " + String.valueOf(DenyAllDomain.class);
+		return  "Deny All Domains";
 	}
 
 	@Override

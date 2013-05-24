@@ -47,10 +47,14 @@ public class TopDomain extends AbstractDomain {
 		this.defaultLocale="en";
 		this.parentDomain=rootDomain;
 	}
-	
-	public TopDomain(String identifier, String label, LDAPConnection ldapConn, DomainPattern domainPattern, String baseDn) {
+	public TopDomain(String identifier, String label) {
+		super(identifier, label);
+		this.defaultRole=Role.ADMIN;
+		this.defaultLocale="en";
+	}
+	public TopDomain(String identifier, String label, LDAPConnection ldapConn, DomainPattern domainPattern, String baseDn, DomainPolicy policy) {
 		this(identifier,label,null);
-		this.userProvider = new LdapUserProvider(baseDn,ldapConn,domainPattern);
+		this.userProvider = new LdapUserProvider(baseDn,ldapConn,domainPattern,policy);
 	}
 	
 	public TopDomain(TopDomainVo topDomain) {

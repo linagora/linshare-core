@@ -58,7 +58,7 @@ public class AllowDomain extends DomainAccessRule {
 	
 	@Override
 	public String toString() {
-		return "My type is : " + String.valueOf(AllowDomain.class) + "(" + domain.getIdentifier() + ")";
+		return "Allow Domain (" + domain.getIdentifier() + ")";
 	}
 
 	public AbstractDomain getDomain() {

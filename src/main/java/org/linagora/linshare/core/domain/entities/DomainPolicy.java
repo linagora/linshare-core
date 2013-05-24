@@ -52,6 +52,12 @@ public class DomainPolicy {
 		super();
 	}
 	
+	public DomainPolicy(String identifier,String description,DomainAccessPolicy domainAccessPolicy) {
+        this.identifier = identifier;
+        this.description = description;
+        this.domainAccessPolicy=domainAccessPolicy;
+	}
+	
     public DomainPolicy(DomainPolicyVo domainPolicyVo) {
         this.identifier = domainPolicyVo.getIdentifier();
         this.description = domainPolicyVo.getPolicyDescription();

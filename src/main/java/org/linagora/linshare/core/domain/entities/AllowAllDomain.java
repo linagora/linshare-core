@@ -42,7 +42,8 @@ public class AllowAllDomain extends DomainAccessRule {
 	
 	@Override
 	public String toString() {
-		return "My type is : " + String.valueOf(AllowAllDomain.class);
+		String value=new String("Allow All Domains");
+		return value;
 	}
 
 	@Override

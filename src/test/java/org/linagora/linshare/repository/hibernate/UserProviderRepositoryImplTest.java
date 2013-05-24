@@ -43,6 +43,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.LdapUserProvider;
@@ -78,6 +79,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	//Objects
 	private LDAPConnection ldapconnexion;
 	private DomainPattern pattern;
+	private DomainPolicy policy;
 	
 	
 	@Before
@@ -142,7 +144,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		int actualCount = ldapUserProviderRepository.findAll().size();
 		
 		
-		LdapUserProvider provider = new LdapUserProvider(baseDn,ldapconnexion,pattern);
+		LdapUserProvider provider = new LdapUserProvider(baseDn,ldapconnexion,pattern, policy);
 		ldapUserProviderRepository.create(provider);
 		Assert.assertNotNull(provider.getPersistenceId());
 		

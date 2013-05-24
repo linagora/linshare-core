@@ -36,19 +36,26 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
-import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
+import org.linagora.linshare.core.repository.UserProviderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessService{
 
-	private final DomainPolicyRepository domainPolicyRepository;
+    private static final Logger logger = LoggerFactory.getLogger(DomainPolicyBusinessServiceImpl.class);
 	
-	public DomainPolicyBusinessServiceImpl(DomainPolicyRepository domainPolicyRepository)
+	private final DomainPolicyRepository domainPolicyRepository;
+    private final UserProviderRepository userProviderRepository;
+	
+	public DomainPolicyBusinessServiceImpl(DomainPolicyRepository domainPolicyRepository,UserProviderRepository userProviderRepository)
 	{
 		super();
 		this.domainPolicyRepository=domainPolicyRepository;
+		this.userProviderRepository=userProviderRepository;
 	}
 	
     @Override
@@ -65,6 +72,28 @@ public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessServ
         domainPolicyRepository.update(policy);
     }
     
+    
+    @Override
+    public void deletePolicy(String policyToDelete) throws BusinessException {
+        if (!policyIsDeletable(policyToDelete)) {
+            throw new BusinessException("Cannot delete policy because still used by domains");
+        }
+
+        DomainPolicy policy = retrieveDomainPolicy(policyToDelete);
+        if(policy == null) {
+        	logger.error("Policy not found: " + policyToDelete);
+        } else {
+            logger.debug("delete policy: " + policyToDelete);
+            domainPolicyRepository.delete(policy);
+        }
+    }
+    
+    @Override
+    public boolean policyIsDeletable(String policyToDelete) {
+    	if(policyToDelete.equals("DefaultDomainPolicy")){return false;}
+    	else return true;
+    }
+    
 	@Override
 	public DomainPolicy retrieveDomainPolicy(String identifier){
 		return domainPolicyRepository.findById(identifier);
@@ -78,12 +107,6 @@ public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessServ
 	@Override
 	public List<String> findAllIdentifiers() {
 		return domainPolicyRepository.findAllIdentifiers();
-	}
-	
-	@Override
-	public void deletePolicy(String policyToDelete) throws IllegalArgumentException, BusinessException{
-		DomainPolicy policy=retrieveDomainPolicy(policyToDelete);
-		domainPolicyRepository.delete(policy);
 	}
 	
 }

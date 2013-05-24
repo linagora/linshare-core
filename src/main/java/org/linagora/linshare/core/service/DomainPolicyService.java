@@ -48,16 +48,18 @@ public interface DomainPolicyService {
     public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
 	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException;
 	public List<String> getAllDomainPolicyIdentifiers();
-	public DomainAccessPolicy findDomainAccessPolicyById(long id);
-	public void createDomainAccessPolicy(List<DomainAccessRule> domainAccessRules) throws BusinessException;
+	public void deletePolicy(String policyToDelete) throws BusinessException;
+	public boolean policyIsDeletable(String policyToDelete);
+	
+	
+	public DomainAccessPolicy retrieveDomainAccessPolicy(long id);
+	public List<DomainAccessPolicy> findAllDomainAccessPolicy();
+    public DomainAccessPolicy createDomainAccessPolicy(DomainAccessPolicy domainPolicy) throws BusinessException ;
 	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException;
-	public void deleteDomainAccesspolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException;
+	public void deleteDomainAccesspolicy(long id) throws BusinessException;
+	
 	public List<DomainAccessRule> findAllDomainAccessRule();
 	public DomainAccessRule findDomainAccessRuleById(long id);
-	
-    public boolean policyIsDeletable(String policyToDelete);
-     public void deletePolicy(String policyToDelete) throws BusinessException;
-     
 	
 	/**
 	 * This method returns true if we have the right to communicate with itself.

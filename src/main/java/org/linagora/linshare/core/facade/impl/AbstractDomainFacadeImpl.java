@@ -43,6 +43,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -167,7 +168,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         LdapUserProvider provider = null;
         String baseDn = domainVo.getDifferentialKey();
         if (baseDn != null && !baseDn.isEmpty() && domainPattern != null && ldapConn != null) {
-            provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
+            provider = new LdapUserProvider(baseDn, ldapConn, domainPattern,policy);
         }
 
         if(domainVo instanceof TopDomainVo) {
@@ -398,6 +399,11 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
+    public List<DomainAccessPolicy> findAllDomainAccessPolicy(){
+    	return domainPolicyService.findAllDomainAccessPolicy();
+    }
+    
+    @Override
     public List<DomainPatternVo> findAllDomainPatterns() throws BusinessException {
         List<DomainPatternVo> res = new ArrayList<DomainPatternVo>();
         for (DomainPattern domainPattern : userProviderService.findAllDomainPatterns()) {
@@ -452,7 +458,16 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
             throw new BusinessException("You are not authorized to create a domain policy.");
         }
     }
-    
+   @Override
+   public void createDomainAccessPolicy(UserVo actorVo, DomainAccessPolicy domainPolicyVo) throws BusinessException {
+       if(isAuthorized(actorVo)) {
+           DomainAccessPolicy domainPolicy = new DomainAccessPolicy(domainPolicyVo);
+           domainPolicyService.createDomainAccessPolicy(domainPolicy);
+       } else {
+           throw new BusinessException("You are not authorized to create a domain policy.");
+       }
+   }
+   
     @Override
     public DomainPatternVo retrieveDomainPattern(String identifier) throws BusinessException {
         DomainPattern pattern = userProviderService.retrieveDomainPattern(identifier);
@@ -474,6 +489,16 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
            throw new BusinessException("You are not authorized to update a domain policy.");
        }
    }
+   
+   @Override
+   public void updateDomainAccessPolicy(UserVo actorVo, DomainAccessPolicy domainPolicyVo) throws BusinessException {
+       if(isAuthorized(actorVo)) {
+           domainPolicyService.updateDomainAccessPolicy(new DomainAccessPolicy(domainPolicyVo));
+       } else {
+           throw new BusinessException("You are not authorized to update a domain policy.");
+       }
+   }
+   
     @Override
     public void updateDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException {
         if(isAuthorized(actorVo)) {

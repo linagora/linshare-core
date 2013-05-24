@@ -3,7 +3,6 @@
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 
 	<!-- Main content -->
-		id:${rule}
 		<div id="content">
 
 
@@ -13,23 +12,22 @@
 		
 		<div id="pageContent">
 		
-		<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>     
-		       
+		
         <form t:type="form" id="formReport">
         		<div class="error">
 				<t:errors />
 				</div>
+						<p>${message:pages.administration.domains.index.createdomainpolicy.selectrule.help}:</p>
 				<div>
            			<t:label for="rule"/>:
             		<select t:type="select" t:id="rule"/>
-            		<t:linkSubmit t:id="next" class="button button_wide"><span>${message:global.button.next}</span></t:linkSubmit>
         		</div>
+				<p><input type="submit" value="Validate"/>&nbsp;
+				<input t:type="Submit" t:id="cancel" value="Cancel"/></p>
         </form>
+        
 		</div>
 	
 		</div><!-- id="content" -->
-		
-		
-		
 
 </t:MyBorderLayout>
