@@ -30,70 +30,65 @@
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
- */
-package org.linagora.linshare.view.tapestry.pages.administration.domains;
+*/
+package org.linagora.linshare.core.domain.vo;
 
+import java.util.ArrayList;
+import java.util.List;
 
-
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
-import org.linagora.linshare.core.domain.vo.DomainAccessPolicyVo;
-import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.DomainPolicyFacade;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
-
-public class CreateDomainPolicy {
-
-	private static Logger logger = LoggerFactory.getLogger(CreateDomainPolicy.class);
+public class DomainAccessPolicyVo {
 	
-    @Inject
-    private DomainPolicyFacade domainPolicyFacade;
-    
-	@Property
-	@Persist
-    private DomainPolicyVo domainPolicy;
-   
-	@SessionState
-    private UserVo loginUser;
+	private List<DomainAccessRule> rules;
+	private long id;
 	
-    @Inject
-    private Messages messages;
-    
-    
-	@SetupRender
-	public void init() {
-			domainPolicy=new DomainPolicyVo();
+
+	public DomainAccessPolicyVo(){		
 	}
 	
-	public Object onCanceledFromForm(){
-		 domainPolicy=null;
-		 return Index.class;
-	}
-	
-	public Object onvalidateFromForm() {
+	public DomainAccessPolicyVo(DomainAccessPolicy policy){
 		
-		try {
-				DomainAccessPolicyVo accessPolicy=new DomainAccessPolicyVo(new DomainAccessPolicy());
-				domainPolicy.setDomainAccessPolicy(accessPolicy);
-				domainPolicyFacade.createDomainPolicy(loginUser,domainPolicy);
-		} catch (BusinessException e) {
-			logger.error("Can not create domain access policy : " + e.getMessage());
-			logger.debug(e.toString());
+		this.rules=policy.getRules();
+		this.id=policy.getPersistenceId();
+	}
+	
+	public List<DomainAccessRule> getRules() {
+		return rules;
+	}
+
+	public void setRules(List<DomainAccessRule> rules) {
+		this.rules = rules;
+	}
+	public void addRule(DomainAccessRule rule) {
+		if(this.rules == null) {
+			this.rules = new ArrayList<DomainAccessRule>();
+		}
+		this.rules.add(rule);
+	}
+	
+	
+	public boolean compareList(List<DomainAccessRule> rules)
+	{
+		int ok=0;
+		for(DomainAccessRule rule: rules)
+		{
+			for(DomainAccessRule rule2: this.getRules())
+			{
+				if(rule.toString().equalsIgnoreCase(rule2.toString())){ok++;}
 			}
-		
-		domainPolicy=null;
-        return Index.class;
+		}
+		if(ok == rules.size()){ return true;}
+		else return false;
+	}
+	
+	public long getId() {
+		return id;
 	}
 
-
-
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 }

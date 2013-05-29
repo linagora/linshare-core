@@ -42,8 +42,6 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
@@ -133,18 +131,7 @@ public class Index {
         domains = domainFacade.findAllTopDomain();
         domainPatterns = domainFacade.findAllUserDomainPatterns();
         ldapConnections = domainFacade.findAllLDAPConnections();
-        policies = domainFacade.findAllDomainPolicies();
-        /*for(DomainPolicyVo current : policies){
-		logger.debug("id:" + current.getDomainAccessPolicy().getPersistenceId());
-		logger.debug("rules:" + current.getDomainAccessPolicy().getRules());
-        }*/
-        
-        List<DomainAccessPolicy> accesses=domainFacade.findAllDomainAccessPolicy();
-        for(DomainAccessPolicy current : accesses){
-    		logger.debug("id:" + current.getPersistenceId());
-    		logger.debug("rules:" + current.getRules());
-            }
-        
+        policies = domainPolicyFacade.findAllDomainPolicies();  
     }
 
     @OnEvent(value="domainDeleteEvent")
@@ -167,8 +154,8 @@ public class Index {
     
     @OnEvent(value="policyDeleteEvent")
     public void deletePolicy() throws BusinessException {
-        domainFacade.deletePolicy(policyToDelete, loginUser);
-        policies = domainFacade.findAllDomainPolicies();
+    	domainPolicyFacade.deletePolicy(policyToDelete, loginUser);
+        policies = domainPolicyFacade.findAllDomainPolicies();
     }
     
     public boolean getConnectionIsDeletable() throws BusinessException {
@@ -180,7 +167,7 @@ public class Index {
     }
 
     public boolean getPolicyIsDeletable() throws BusinessException {
-        return domainFacade.policyIsDeletable(domainPolicy.getIdentifier(), loginUser);
+    	return domainPolicyFacade.policyIsDeletable(domainPolicy.getIdentifier(), loginUser);
     }
     
     public String getConnectionIdentifier() {

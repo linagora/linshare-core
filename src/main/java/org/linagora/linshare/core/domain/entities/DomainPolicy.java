@@ -61,6 +61,7 @@ public class DomainPolicy {
     public DomainPolicy(DomainPolicyVo domainPolicyVo) {
         this.identifier = domainPolicyVo.getIdentifier();
         this.description = domainPolicyVo.getPolicyDescription();
+        this.domainAccessPolicy=new DomainAccessPolicy(domainPolicyVo.getDomainAccessPolicy());
     }
 	
 	public String getIdentifier() {

@@ -34,20 +34,25 @@
 
 package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
 
 import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.facade.DomainPolicyFacade;
+import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 
 @Import(library = {"../../../components/jquery/jquery-1.7.2.js","../../../components/jquery/jquery.ui.core.js","../../../components/jquery/jquery.ui.widget.min.js","../../../components/jquery/jquery.ui.mouse.min.js","../../../components/jquery/jquery.ui.sortable.min.js","ManageDomainPolicy.js"}, stylesheet={"../../../components/jquery/jquery-ui-1.8.21.custom.css","ManageDomainPolicy.css"})
@@ -55,12 +60,16 @@ public class ManageDomainPolicy {
 	
 	private static Logger logger = LoggerFactory.getLogger(ManageDomainPolicy.class);
 	
-    @Inject
-    private AbstractDomainFacade domainFacade;
+	@SessionState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
 	
+    @Inject
+    private DomainPolicyFacade domainPolicyFacade;
+	
+	@SessionState(create=false)
 	@Property
-	@Persist
-    private DomainPolicyVo domainPolicy;
+	private DomainPolicyVo domainPolicy;
 
 	@SessionState
     private UserVo loginUser;
@@ -74,63 +83,67 @@ public class ManageDomainPolicy {
     @Property 
     private int indexRule;
 
-    @Property
-    private long id; 
-    
     @Property 
     private boolean cancel;
     
+    @Inject
+    private Messages messages;
     
     public String[] getRuleNames(){
-/*
+
     	List<DomainAccessRule> rules = domainPolicy.getDomainAccessPolicy().getRules();
     	List<String> ruleNames=new ArrayList<String>();
     	for (DomainAccessRule rule : rules) {
     		ruleNames.add(rule.toString());
     	}
     	if(ruleNames!=null){ return ruleNames.toArray(new String[ruleNames.size()]);}
-    	*/
+    	
     	return null;
     }
 
+
 	public void onActivate(String identifier) throws BusinessException {
-        logger.debug("domainPolicyIdentifier:" + identifier);
-		domainPolicy = domainFacade.retrieveDomainPolicy(identifier);
-		id=domainPolicy.getDomainAccessPolicy().getPersistenceId();
-		logger.debug("domainPolicyIdentifier:" + id);
+		logger.debug("domainPolicyIdentifier:" + identifier);
+		domainPolicy = domainPolicyFacade.retrieveDomainPolicy(identifier);
 	}
 
 
     public Object onRemove(String _ruleIdentifier) {
     	Iterator<DomainAccessRule> it =domainPolicy.getDomainAccessPolicy().getRules().iterator();
+    	boolean delete=false;
     	while(it.hasNext()){
     		DomainAccessRule rule=it.next();
-    		if(rule.toString().equals(_ruleIdentifier)){ it.remove();}
+    		if(rule.toString().equals(_ruleIdentifier) && delete == false)
+    		{
+    			it.remove();
+    			delete=true;
+    		}
     	}
-    	
-    	try {
-    	domainFacade.updateDomainAccessPolicy(loginUser, domainPolicy.getDomainAccessPolicy());
-		} catch (BusinessException e) {
-			logger.error("Can not update domain policy : " + e.getMessage());
-			logger.debug(e.toString());}
-
     	return null;
     }
 	
     void onSelectedFromCancel() { cancel = true; }
 	
 	public Object onSuccess(){
-		 
+
 		if(cancel==true){
 		 domainPolicy=null;
 		}
 		else{
 			try {
-				domainFacade.updateDomainPolicy(loginUser,domainPolicy);
+				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
 		} catch (BusinessException e) {
 			logger.error("Can not update domain policy : " + e.getMessage());
 			logger.debug(e.toString());}
+			domainPolicy=null;
 		}
 		return Index.class;
 	}
+    Object onException(Throwable cause) {
+    	shareSessionObjects.addError(messages.get("global.exception.message"));
+    	logger.error(cause.getMessage());
+    	cause.printStackTrace();
+    	return this;
+    }
+	
 }

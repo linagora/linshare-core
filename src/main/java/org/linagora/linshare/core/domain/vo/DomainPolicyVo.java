@@ -34,15 +34,13 @@
 package org.linagora.linshare.core.domain.vo;
 
 import org.apache.tapestry5.beaneditor.Validate;
-import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 
 public class DomainPolicyVo {
 
 	private String identifier;
 	private String policyDescription;
-	private DomainAccessPolicy domainAccessPolicy;
+	private DomainAccessPolicyVo domainAccessPolicy;
 	
 	public DomainPolicyVo(){		
 	}
@@ -51,7 +49,7 @@ public class DomainPolicyVo {
 		
 		this.identifier=policy.getIdentifier();
 		this.policyDescription=policy.getDescription();
-		this.setDomainAccessPolicy(policy.getDomainAccessPolicy());
+		this.domainAccessPolicy=new DomainAccessPolicyVo(policy.getDomainAccessPolicy());
 	}
 	
 	public DomainPolicyVo(String identifier,String description){
@@ -85,11 +83,12 @@ public class DomainPolicyVo {
 			this.policyDescription = description;
 	}
 
-	public DomainAccessPolicy getDomainAccessPolicy() {
+	public DomainAccessPolicyVo getDomainAccessPolicy() {
 		return domainAccessPolicy;
 	}
 
-	public void setDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) {
+	public void setDomainAccessPolicy(DomainAccessPolicyVo domainAccessPolicy) {
 		this.domainAccessPolicy = domainAccessPolicy;
 	}
+
 }

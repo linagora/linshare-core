@@ -128,6 +128,7 @@
 
 	<bean name="domainPolicyFacade" class="org.linagora.linshare.core.facade.impl.DomainPolicyFacadeImpl">
 		<constructor-arg ref="domainPolicyService" />
+		<constructor-arg ref="userAndDomainMultiService" />
 	</bean>
 
 	<bean name="functionalityFacade" class="org.linagora.linshare.core.facade.impl.FunctionalityFacadeImpl">

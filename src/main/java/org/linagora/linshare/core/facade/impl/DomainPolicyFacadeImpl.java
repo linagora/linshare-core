@@ -36,33 +36,58 @@ package org.linagora.linshare.core.facade.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.DomainAccessPolicyVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.core.service.DomainPolicyService;
+import org.linagora.linshare.core.service.UserAndDomainMultiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 
-	private final DomainPolicyService domainPolicyService;
+    private static final Logger logger = LoggerFactory.getLogger(DomainPolicyFacadeImpl.class);
 	
-	public DomainPolicyFacadeImpl(DomainPolicyService domainPolicyService) {
-		super();
-		this.domainPolicyService = domainPolicyService;
-	}
-
-
+	private final DomainPolicyService domainPolicyService;
+    private final UserAndDomainMultiService userAndDomainMultiService;
+	
+    
+    public DomainPolicyFacadeImpl(DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService) {
+        super();
+        this.domainPolicyService = domainPolicyService;
+        this.userAndDomainMultiService = userAndDomainMultiService;
+    }
+    
+    private boolean isAuthorized(UserVo actorVo) throws BusinessException {
+        if(actorVo !=null) {
+            User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
+            if(actor != null) {
+                if (actor.getRole().equals(Role.SUPERADMIN)
+                		|| actor.getRole().equals(Role.SYSTEM)
+                		|| actor.getRole().equals(Role.ADMIN)) {
+                    return true;
+                }
+                logger.error("you are not authorised.");
+            } else {
+                logger.error("isAuthorized:actor object is null.");
+            }
+        } else {
+            logger.error("isAuthorized:actorVo object is null.");
+        }
+        return false;
+    }
+	
 	@Override
-	public List<String> getAllDomainPolicyIdentifiers() {
-		return domainPolicyService.getAllDomainPolicyIdentifiers();
-	}
-
-
-	@Override
-	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException{
-		return domainPolicyService.findAllDomainPolicy();
-	}
-
+    public List<String> findAllDomainPoliciesIdentifiers() {
+    	return domainPolicyService.getAllDomainPolicyIdentifiers();
+    }
+    
     @Override
     public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException{
         List<DomainPolicyVo> res = new ArrayList<DomainPolicyVo>();
@@ -71,5 +96,70 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
         }
         return res;
     }
-	
+    
+    @Override
+    public List<DomainAccessPolicy> findAllDomainAccessPolicy(){
+    	return domainPolicyService.findAllDomainAccessPolicy();
+    }
+    
+    @Override
+    public void createDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
+         if(isAuthorized(actorVo)) {
+             DomainPolicy domainPolicy = new DomainPolicy(domainPolicyVo);
+             domainPolicyService.createDomainPolicy(domainPolicy);
+         } else {
+             throw new BusinessException("You are not authorized to create a domain policy.");
+         }
+     }
+    @Override
+    public void createDomainAccessPolicy(UserVo actorVo, DomainAccessPolicyVo domainPolicyVo) throws BusinessException {
+        if(isAuthorized(actorVo)) {
+            DomainAccessPolicy domainPolicy = new DomainAccessPolicy(domainPolicyVo);
+            domainPolicyService.createDomainAccessPolicy(domainPolicy);
+        } else {
+            throw new BusinessException("You are not authorized to create a domain policy.");
+        }
+    }
+    
+    @Override
+    public DomainPolicyVo retrieveDomainPolicy(String identifier) throws BusinessException {
+        DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(identifier);
+        return new DomainPolicyVo(policy);
+    }
+    
+   
+   @Override
+   public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
+       if(isAuthorized(actorVo)){
+           domainPolicyService.updateDomainPolicy(new DomainPolicy(domainPolicyVo));
+       } else {
+           throw new BusinessException("You are not authorized to update a domain policy.");
+       }
+   }
+   
+   @Override
+   public void updateDomainAccessPolicy(UserVo actorVo, DomainAccessPolicyVo domainAccessPolicyVo) throws BusinessException {
+       if(isAuthorized(actorVo)){
+           domainPolicyService.updateDomainAccessPolicy(new DomainAccessPolicy(domainAccessPolicyVo));
+       } else {
+           throw new BusinessException("You are not authorized to update a domain policy.");
+       }
+   }
+   
+   @Override
+   public void deletePolicy(String policyToDelete, UserVo actorVo) throws BusinessException {
+       if(isAuthorized(actorVo)) {
+           domainPolicyService.deletePolicy(policyToDelete);
+       } else {
+           throw new BusinessException("You are not authorized to delete a policy.");
+       }
+   }
+
+   @Override
+   public boolean policyIsDeletable(String policyToDelete, UserVo actorVo) {
+       if(actorVo == null) {
+           logger.error("actor object is null.");
+       }
+       return domainPolicyService.policyIsDeletable(policyToDelete);
+   }
 }

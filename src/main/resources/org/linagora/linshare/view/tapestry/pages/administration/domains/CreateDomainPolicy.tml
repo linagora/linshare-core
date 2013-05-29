@@ -25,6 +25,7 @@
 									<t:label for="policyDescription"/>&nbsp;
                     				<t:textfield t:id="policyDescription" value="domainPolicy.policyDescription"/>
 								</p:policyDescription>
+								
 				</t:beanEditForm>
 		</div>
 

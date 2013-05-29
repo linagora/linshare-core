@@ -37,10 +37,8 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
-import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
-import org.linagora.linshare.core.repository.UserProviderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,13 +47,11 @@ public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessServ
     private static final Logger logger = LoggerFactory.getLogger(DomainPolicyBusinessServiceImpl.class);
 	
 	private final DomainPolicyRepository domainPolicyRepository;
-    private final UserProviderRepository userProviderRepository;
 	
-	public DomainPolicyBusinessServiceImpl(DomainPolicyRepository domainPolicyRepository,UserProviderRepository userProviderRepository)
+	public DomainPolicyBusinessServiceImpl(DomainPolicyRepository domainPolicyRepository)
 	{
 		super();
 		this.domainPolicyRepository=domainPolicyRepository;
-		this.userProviderRepository=userProviderRepository;
 	}
 	
     @Override
@@ -66,9 +62,11 @@ public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessServ
 	
     @Override
     public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
-        DomainPolicy policy = domainPolicyRepository.findById(domainPolicy.getIdentifier());
+
+    	DomainPolicy policy = domainPolicyRepository.findById(domainPolicy.getIdentifier());
         policy.setDescription(domainPolicy.getDescription());
-        policy.setDomainAccessPolicy(domainPolicy.getDomainAccessPolicy());
+        policy.getDomainAccessPolicy().getRules().clear();
+        policy.getDomainAccessPolicy().setRules(domainPolicy.getDomainAccessPolicy().getRules());
         domainPolicyRepository.update(policy);
     }
     
