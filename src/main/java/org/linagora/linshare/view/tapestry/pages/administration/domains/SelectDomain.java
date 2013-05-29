@@ -37,22 +37,18 @@ package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 import java.util.List;
 
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.Validate;
-import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.RootDomain;
@@ -76,9 +72,9 @@ public class SelectDomain {
 
 	private static Logger logger = LoggerFactory.getLogger(SelectDomain.class);
 	
+	@SessionState(create=false)
 	@Property
-	@SessionState
-    private DomainPolicyVo domainPolicy;
+	private DomainPolicyVo domainPolicy;
 	
     @Persist
     @Property
@@ -162,19 +158,12 @@ public class SelectDomain {
 		} catch (BusinessException e) {
 			logger.error("Can not retrieve domain : " + e.getMessage());
 			logger.debug(e.toString());}
+    	
     	AbstractDomain selectedDomain=this.fromDomainType(domainVo);
     	DomainAccessRule selectedRule=this.fromDomainAccessRuleTypeToDomainAccessRule(rule,selectedDomain);
-		if(domainPolicy.getDomainAccessPolicy()!=null){
-		domainPolicy.getDomainAccessPolicy().addRule(selectedRule);}
-		else{
-			domainPolicy.setDomainAccessPolicy(new DomainAccessPolicy());
-			domainPolicy.getDomainAccessPolicy().addRule(selectedRule);}
-		try {
-		domainFacade.updateDomainAccessPolicy(loginUser,domainPolicy.getDomainAccessPolicy());
-		domainFacade.updateDomainPolicy(loginUser,domainPolicy);
-		} catch (BusinessException e) {
-			logger.error("Can not update domain policy : " + e.getMessage());
-			logger.debug(e.toString());}
+		
+    	domainPolicy.getDomainAccessPolicy().addRule(selectedRule);
+   
     	return manageDomainPolicypage;
     	}
     	return selectRulepage;

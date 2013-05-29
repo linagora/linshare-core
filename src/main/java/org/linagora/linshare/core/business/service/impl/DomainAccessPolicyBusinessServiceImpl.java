@@ -77,8 +77,9 @@ public class DomainAccessPolicyBusinessServiceImpl implements DomainAccessPolicy
 	@Override 
 	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
         DomainAccessPolicy policy = domainAccessPolicyRepository.findById(domainAccessPolicy.getPersistenceId());
+        policy.getRules().clear();
         policy.setRules(domainAccessPolicy.getRules());
-		domainAccessPolicyRepository.update(domainAccessPolicy);
+        domainAccessPolicyRepository.update(policy);
 	}
 	
 	@Override
@@ -91,10 +92,6 @@ public class DomainAccessPolicyBusinessServiceImpl implements DomainAccessPolicy
     		domainAccessPolicyRepository.delete(policy);
         }
 	}
-	
-	
-	
-	
 	
 	@Override
 	public List<DomainAccessRule> findAllDomainAccessRule(){

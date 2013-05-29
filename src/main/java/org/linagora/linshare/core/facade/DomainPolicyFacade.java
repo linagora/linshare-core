@@ -35,13 +35,24 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.vo.DomainAccessPolicyVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainPolicyFacade {
 
-	public List<String> getAllDomainPolicyIdentifiers();
-	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException;
-	public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException;
+    public void createDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException ;
+    public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException ;
+    public DomainPolicyVo retrieveDomainPolicy(String identifier) throws BusinessException;
+    public void deletePolicy(String policyToDelete, UserVo actorVo) throws BusinessException ;
+    public boolean policyIsDeletable(String policyToDelete, UserVo actor) ;
+
+    public void createDomainAccessPolicy(UserVo actorVo, DomainAccessPolicyVo domainPolicy) throws BusinessException ;
+    public List<DomainAccessPolicy> findAllDomainAccessPolicy();
+    public void updateDomainAccessPolicy(UserVo actorVo, DomainAccessPolicyVo domainPolicyVo) throws BusinessException ;
+    
+    public List<String> findAllDomainPoliciesIdentifiers();
+    public List<DomainPolicyVo> findAllDomainPolicies()throws BusinessException;
 }

@@ -82,8 +82,15 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	
     @Override
     public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
-    	domainPolicyBusinessService.createDomainPolicy(domainPolicy);
+
+    		domainPolicyBusinessService.updateDomainPolicy(domainPolicy);
     }
+    
+	
+	@Override
+	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
+		domainAccessPolicyBusinessService.updateDomainAccessPolicy(domainAccessPolicy);
+	}
     
     @Override
     public DomainPolicy retrieveDomainPolicy(String identifier) throws BusinessException{
@@ -110,11 +117,6 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
         DomainAccessPolicy createdPolicy = domainAccessPolicyBusinessService.createDomainAccessPolicy(domainPolicy);
         return createdPolicy;
     }
-	
-	@Override
-	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
-		domainAccessPolicyBusinessService.updateDomainAccessPolicy(domainAccessPolicy);
-	}
 	
 	@Override
 	public void deleteDomainAccesspolicy(long id) throws BusinessException{

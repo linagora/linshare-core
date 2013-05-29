@@ -35,12 +35,10 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.MessagesConfiguration;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
-import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -74,11 +72,9 @@ public interface AbstractDomainFacade {
 
     public List<String> findAllDomainIdentifiers();
     public List<String> findAllDomainPatternIdentifiers();
-    public List<String> findAllDomainPoliciesIdentifiers();
     public List<String> findAllUserDomainPatternIdentifiers();
     public List<String> findAllSystemDomainPatternIdentifiers();
     public List<DomainPatternVo> findAllDomainPatterns() throws BusinessException ;
-    public List<DomainPolicyVo> findAllDomainPolicies()throws BusinessException;	
     public List<DomainPatternVo> findAllSystemDomainPatterns() throws BusinessException;
     public List<DomainPatternVo> findAllUserDomainPatterns() throws BusinessException;
     
@@ -87,16 +83,6 @@ public interface AbstractDomainFacade {
     public void updateDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException ;
     public void deletePattern(String patternToDelete, UserVo actorVo) throws BusinessException ;
     public boolean patternIsDeletable(String patternToDelete, UserVo actor) ;
-    
-    public void createDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException ;
-    public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException ;
-    public DomainPolicyVo retrieveDomainPolicy(String identifier) throws BusinessException;
-    public void deletePolicy(String policyToDelete, UserVo actorVo) throws BusinessException ;
-    public boolean policyIsDeletable(String policyToDelete, UserVo actor) ;
-
-    public void createDomainAccessPolicy(UserVo actorVo, DomainAccessPolicy domainPolicyVo) throws BusinessException ;
-    public void updateDomainAccessPolicy(UserVo actorVo, DomainAccessPolicy domainPolicyVo) throws BusinessException ;
-    public List<DomainAccessPolicy> findAllDomainAccessPolicy();
     
     public List<String> findAllLDAPConnectionIdentifiers();
     public List<LDAPConnectionVo> findAllLDAPConnections() throws BusinessException ;
