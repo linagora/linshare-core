@@ -99,8 +99,20 @@ public class DomainAccessPolicyBusinessServiceImpl implements DomainAccessPolicy
 	}
 
 	@Override
-	public DomainAccessRule findDomainAccessRuleById(long id){
+	public DomainAccessRule retrieveDomainAccessRule(long id){
 		return domainAccessRuleRepository.findById(id);
+	}
+	
+	@Override
+	public void deleteDomainAccessRule(long persistenceID) throws BusinessException{
+		
+		DomainAccessRule rule =retrieveDomainAccessRule(persistenceID);
+        if(rule == null) {
+        	logger.error("rule not found: " + persistenceID);
+        } else {
+            logger.debug("delete rule: " + persistenceID);
+    		domainAccessRuleRepository.delete(rule);
+        }
 	}
 		
 }

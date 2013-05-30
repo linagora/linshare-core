@@ -34,6 +34,8 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.vo.AllowDomainVo;
+import org.linagora.linshare.core.domain.vo.TopDomainVo;
 
 
 
@@ -72,5 +74,9 @@ public class AllowDomain extends DomainAccessRule {
 	@Override
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.ALLOW;
+	}
+	
+	public AllowDomain(AllowDomainVo allowDomain) {
+		super(allowDomain);
 	}
 }

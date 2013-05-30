@@ -45,6 +45,8 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
+import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -89,6 +91,9 @@ public class ManageDomainPolicy {
     @Inject
     private Messages messages;
     
+	@Property
+	private String tabPos;
+    
     public String[] getRuleNames(){
 
     	List<DomainAccessRule> rules = domainPolicy.getDomainAccessPolicy().getRules();
@@ -110,12 +115,19 @@ public class ManageDomainPolicy {
 
     public Object onRemove(String _ruleIdentifier) {
     	Iterator<DomainAccessRule> it =domainPolicy.getDomainAccessPolicy().getRules().iterator();
+    	DomainAccessRuleVo deleteRule=new DomainAccessRuleVo();
     	boolean delete=false;
     	while(it.hasNext()){
     		DomainAccessRule rule=it.next();
     		if(rule.toString().equals(_ruleIdentifier) && delete == false)
     		{
+    			deleteRule.setDescription(rule.toString());
     			it.remove();
+    	    	try {
+    				domainPolicyFacade.deleteDomainAccessRule(deleteRule,domainPolicy);
+    			} catch (BusinessException e) {
+    				e.printStackTrace();
+    			}
     			delete=true;
     		}
     	}
@@ -124,20 +136,40 @@ public class ManageDomainPolicy {
 	
     void onSelectedFromCancel() { cancel = true; }
 	
-	public Object onSuccess(){
+	public Object onSuccess() throws BusinessException{
 
 		if(cancel==true){
 		 domainPolicy=null;
 		}
 		else{
+			/*if(tabPos!=null)
+			{
+				List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
+				DomainAccessRuleVo ruleVo; 
+				String[] ruleNames = tabPos.split(";");
+				int i=0;
+		
+				for (String ruleName : ruleNames){
+					if(!ruleName.isEmpty()){
+						ruleVo = new DomainAccessRuleVo();
+						ruleVo.setAuthShowOrder(new Long(i));
+						ruleVo.setDescription(ruleName);
+						rulesVo.add(ruleVo);	
+					}
+					i++;
+				}
+				domainPolicyFacade.updateAllRulesForAuthShowOrder(loginUser, rulesVo ,domainPolicy);
+			}*/
 			try {
 				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
-		} catch (BusinessException e) {
-			logger.error("Can not update domain policy : " + e.getMessage());
-			logger.debug(e.toString());}
-			domainPolicy=null;
+			} catch (BusinessException e) {
+				e.printStackTrace();
+			}
+				domainPolicy=null;	
 		}
 		return Index.class;
+		
+		
 	}
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));

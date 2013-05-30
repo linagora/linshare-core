@@ -34,17 +34,33 @@
 package org.linagora.linshare.core.facade.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.AllowAllDomain;
+import org.linagora.linshare.core.domain.entities.AllowDomain;
+import org.linagora.linshare.core.domain.entities.DenyAllDomain;
+import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
+import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
+import org.linagora.linshare.core.domain.vo.AllowDomainVo;
+import org.linagora.linshare.core.domain.vo.DenyDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessPolicyVo;
+import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DomainPolicyFacade;
+import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.slf4j.Logger;
@@ -56,12 +72,14 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 	
 	private final DomainPolicyService domainPolicyService;
     private final UserAndDomainMultiService userAndDomainMultiService;
+    private final AbstractDomainService abstractDomainService;
 	
     
-    public DomainPolicyFacadeImpl(DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService) {
+    public DomainPolicyFacadeImpl(DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService, AbstractDomainService abstractDomainService) {
         super();
         this.domainPolicyService = domainPolicyService;
         this.userAndDomainMultiService = userAndDomainMultiService;
+        this.abstractDomainService=abstractDomainService;
     }
     
     private boolean isAuthorized(UserVo actorVo) throws BusinessException {
@@ -162,4 +180,62 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
        }
        return domainPolicyService.policyIsDeletable(policyToDelete);
    }
+   
+  @Override
+  public DomainAccessRule setDomainAccessRule(DomainAccessRuleVo ruleVo, AbstractDomainVo domainVo) throws BusinessException
+  {
+	  AbstractDomain domain = abstractDomainService.retrieveDomain(domainVo.getIdentifier());
+	  if(ruleVo instanceof AllowDomainVo) {  return new AllowDomain(domain);
+	  }
+
+	  else return new DenyDomain(domain);
+
+  }
+  
+  @Override
+  public DomainAccessRule setDomainAccessRuleSimple(DomainAccessRuleVo ruleVo) throws BusinessException
+  {
+	  if(ruleVo instanceof AllowAllDomainVo) { return new AllowAllDomain();
+	  }
+	  
+	  else return new DenyAllDomain();
+  }
+  
+  public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo)throws BusinessException{
+	  
+	  DomainPolicy policy=domainPolicyService.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
+		Iterator<DomainAccessRule> it =policy.getDomainAccessPolicy().getRules().iterator();
+		boolean next=true;
+		while(it.hasNext() && next==true){
+  		DomainAccessRule rule=it.next();
+    	if(rule.toString().equals(ruleVo.getDescription())){ 
+    		  domainPolicyService.deleteDomainAccessRule(policy,rule.getPersistenceId());
+    		  next=false;
+    	  }
+      }
+
+  }
+  
+  
+  /*
+  @Override
+  public void updateAllRulesForAuthShowOrder(UserVo actorVo,List<DomainAccessRuleVo> rulesVo,DomainPolicyVo policyVo) throws BusinessException{
+      if(isAuthorized(actorVo)) {
+          for (DomainAccessRuleVo rule : rulesVo) {
+              updateRuleForAuthShowOrder(rule,policyVo);
+          }
+      }
+  }
+  
+  private void updateRuleForAuthShowOrder(DomainAccessRuleVo ruleVo,DomainPolicyVo policyVo) throws BusinessException{
+      
+      for(DomainAccessRule rule : policyVo.getDomainAccessPolicy().getRules())
+      {
+    	  if(rule.toString().equals(ruleVo.getDescription())){ 
+    		rule.setAuthShowOrder(ruleVo.getAuthShowOrder());
+    	  }
+      }
+
+  }*/
+  
 }

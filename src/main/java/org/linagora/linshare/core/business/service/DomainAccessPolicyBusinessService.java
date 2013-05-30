@@ -49,6 +49,7 @@ public interface DomainAccessPolicyBusinessService {
 	
 	
 	public List<DomainAccessRule> findAllDomainAccessRule();
-	public DomainAccessRule findDomainAccessRuleById(long id);
+	public DomainAccessRule retrieveDomainAccessRule(long id);
+	public void deleteDomainAccessRule(long persistenceID)throws BusinessException;
 	
 }

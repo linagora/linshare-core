@@ -120,7 +120,6 @@ public class ManageDomain {
 		
 		for (String domainName : domainNames) {
 			if(!domainName.isEmpty()){
-				
 				abstractDomainVo = new AbstractDomainVo();
 				abstractDomainVo.setAuthShowOrder(new Long(i));
 				abstractDomainVo.setIdentifier(domainName);

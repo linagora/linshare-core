@@ -45,6 +45,9 @@
                 			</li>
                 		</t:loop>
             		</ul>
+            		
+            		<input t:type="TextField" t:id="tabPos" style="display:none" />
+            		
             		<p:else>
             			${message:pages.administration.domains.index.DomainPolicy.help2}
             			<t:pageLink page="administration/domains/SelectRules" context="domainPolicy.identifier">

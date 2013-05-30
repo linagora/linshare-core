@@ -47,8 +47,14 @@ import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
+import org.linagora.linshare.core.domain.vo.AllowDomainVo;
+import org.linagora.linshare.core.domain.vo.DenyAllDomainVo;
+import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,13 +66,18 @@ public class SelectRules {
     @Property
     private ShareSessionObjects shareSessionObjects;
 
-
 	private static Logger logger = LoggerFactory.getLogger(SelectRules.class);
     
 	@SessionState(create=false)
 	@Property
     private DomainPolicyVo domainPolicy;
-    
+
+    @Inject
+    private DomainPolicyFacade domainPolicyFacade;
+	
+    @Property
+    private DomainAccessRuleVo ruleVo;
+	
 	@Property
 	@Validate("required")
     private DomainAccessRuleType rule;
@@ -123,8 +134,22 @@ public class SelectRules {
     			return selectDomainpage;
     			}
     		else{ 
-    				DomainAccessRule selectedRule=this.fromDomainAccessRuleTypeToDomainAccessRule(rule);
-    				domainPolicy.getDomainAccessPolicy().addRule(selectedRule);
+    	    	if(rule.toInt() ==0){	
+    	    		ruleVo=new AllowAllDomainVo();
+    	    		try{
+    	    		domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRuleSimple(ruleVo));
+    	    		} catch (BusinessException e) {
+    	    			logger.error("Can not retrieve domain : " + e.getMessage());
+    	    			logger.debug(e.toString());}
+    	    	}
+    	    	else {
+    	    		ruleVo=new DenyAllDomainVo();
+    	    		try{
+    	    		domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRuleSimple(ruleVo));
+    	    		} catch (BusinessException e) {
+    	    			logger.error("Can not retrieve domain : " + e.getMessage());
+    	    			logger.debug(e.toString());}
+    	    	}
     			}
     		
         	return manageDomainpage;

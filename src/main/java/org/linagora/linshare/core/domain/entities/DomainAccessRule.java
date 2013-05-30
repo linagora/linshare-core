@@ -34,6 +34,8 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
+import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 
 
 public abstract class DomainAccessRule {
@@ -43,6 +45,8 @@ public abstract class DomainAccessRule {
 	private long persistenceId;
 	
 	private String regexp;
+	
+	//protected Long authShowOrder;
 	
 	public DomainAccessRule() {
 	}
@@ -62,6 +66,20 @@ public abstract class DomainAccessRule {
 	public void setRegexp(String regexp) {
 		this.regexp = regexp;
 	}
+	
+	public DomainAccessRule(DomainAccessRuleVo d) {
+		this.regexp=d.getRegexp();
+		//this.authShowOrder=new Long(1);
+	}
+	/*
+
+	public Long getAuthShowOrder() {
+		return authShowOrder;
+	}
+
+	public void setAuthShowOrder(Long authShowOrder) {
+		this.authShowOrder = authShowOrder;
+	}*/
 	
 	public abstract DomainAccessRuleType getDomainAccessRuleType();
 }
