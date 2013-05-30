@@ -30,51 +30,53 @@
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
- */
-package org.linagora.linshare.core.domain.entities;
+*/
 
-import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.vo.DenyDomainVo;
+package org.linagora.linshare.core.domain.vo;
 
+import org.apache.tapestry5.beaneditor.NonVisual;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
-public class DenyDomain extends DomainAccessRule {
+public class DomainAccessRuleVo {
 
-	private AbstractDomain domain;
+	private String regexp;
+	private String description;
 	
+	/*@NonVisual 
+	protected Long authShowOrder = new Long(1);
+	*/
+	public DomainAccessRuleVo(){
+	}
+	
+	public DomainAccessRuleVo(DomainAccessRule rule)
+	{
+		this.regexp=rule.getRegexp();
+		this.description=rule.toString();
+		//this.setAuthShowOrder(rule.getAuthShowOrder());
+	}
+
+	public String getRegexp() {
+		return regexp;
+	}
+	public void setRegexp(String regexp) {
+		this.regexp = regexp;
+	}
 	/*
-	 * A default constructor is needed for hibernate for loading entities, 
-	 * but you can not persist this entity without setting up a domain.
-	 * That is why this contructor is private.
-	 */
-	@SuppressWarnings("unused")
-	private DenyDomain() {
-		super();
+
+	public Long getAuthShowOrder() {
+		return authShowOrder;
 	}
 
-	public DenyDomain(AbstractDomain domain) {
-		super();
-		this.domain = domain;
+	public void setAuthShowOrder(Long authShowOrder) {
+		this.authShowOrder = authShowOrder;
+	}*/
+
+	public String getDescription() {
+		return description;
 	}
 
-	@Override
-	public String toString() {
-		return "Deny (" + domain.getIdentifier() + ")";
-	}
-
-	public AbstractDomain getDomain() {
-		return domain;
-	}
-
-	public void setDomain(AbstractDomain domain) {
-		this.domain = domain;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
-	@Override
-	public DomainAccessRuleType getDomainAccessRuleType() {
-		return DomainAccessRuleType.DENY;
-	}
-	
-	public DenyDomain(DenyDomainVo denyDomain) {
-		super(denyDomain);
-	}
 }

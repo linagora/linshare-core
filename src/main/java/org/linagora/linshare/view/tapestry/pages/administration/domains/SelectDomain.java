@@ -55,10 +55,14 @@ import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
+import org.linagora.linshare.core.domain.vo.AllowDomainVo;
+import org.linagora.linshare.core.domain.vo.DenyDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,6 +89,12 @@ public class SelectDomain {
     
     @Inject
     private AbstractDomainFacade domainFacade;
+    
+    @Inject
+    private DomainPolicyFacade domainPolicyFacade;
+    
+    @Property
+    private DomainAccessRuleVo ruleVo;
     
     @SessionState
     private UserVo loginUser;
@@ -123,33 +133,12 @@ public class SelectDomain {
         domainPolicy=null;
         return SelectRules.class;
     }
-    
-    public DomainAccessRule fromDomainAccessRuleTypeToDomainAccessRule(DomainAccessRuleType rule, AbstractDomain domain)
-    {
-    	switch (rule.toInt()) {
 
-        case 2: return new AllowDomain(domain);
-        case 3: return new DenyDomain(domain);
-        default : throw new IllegalArgumentException("Doesn't match an existing DomainAccessRuleType");
-    	}
-    }
-    
     void onSelectedFromCancel() {
         
     	cancel=true;
     }
-    
-    public AbstractDomain fromDomainType(AbstractDomainVo domainVo)
-    	{
-        	switch(domainVo.getType().toInt()){
-            case 0: return new RootDomain(domainVo.getIdentifier(),domainVo.getLabel());
-            case 1: return new TopDomain(domainVo.getIdentifier(),domainVo.getLabel());
-            case 2: return new SubDomain(domainVo.getIdentifier(),domainVo.getLabel());
-            case 3: return new GuestDomain(domainVo.getIdentifier(),domainVo.getLabel());
-            default : throw new IllegalArgumentException("Doesn't match an existing DomainType");
-        	}
-        }
-
+     
    public Object onSuccess() {
     	if(cancel==false)
     	{
@@ -158,12 +147,23 @@ public class SelectDomain {
 		} catch (BusinessException e) {
 			logger.error("Can not retrieve domain : " + e.getMessage());
 			logger.debug(e.toString());}
-    	
-    	AbstractDomain selectedDomain=this.fromDomainType(domainVo);
-    	DomainAccessRule selectedRule=this.fromDomainAccessRuleTypeToDomainAccessRule(rule,selectedDomain);
-		
-    	domainPolicy.getDomainAccessPolicy().addRule(selectedRule);
-   
+    	if(rule.toInt() ==2){	
+    		ruleVo=new AllowDomainVo(domainVo.getIdentifier());
+    		try{
+    		domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
+    		} catch (BusinessException e) {
+    			logger.error("Can not retrieve domain : " + e.getMessage());
+    			logger.debug(e.toString());}
+    	}
+    	else {
+    		ruleVo=new DenyDomainVo(domainVo.getIdentifier());
+    		try{
+    		domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
+    		} catch (BusinessException e) {
+    			logger.error("Can not retrieve domain : " + e.getMessage());
+    			logger.debug(e.toString());}
+    	}
+
     	return manageDomainPolicypage;
     	}
     	return selectRulepage;

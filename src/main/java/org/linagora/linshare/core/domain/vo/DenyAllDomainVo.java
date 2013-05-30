@@ -31,50 +31,13 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.domain.vo;
 
-import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.vo.DenyDomainVo;
+public class DenyAllDomainVo extends DomainAccessRuleVo{
 
-
-public class DenyDomain extends DomainAccessRule {
-
-	private AbstractDomain domain;
-	
-	/*
-	 * A default constructor is needed for hibernate for loading entities, 
-	 * but you can not persist this entity without setting up a domain.
-	 * That is why this contructor is private.
-	 */
-	@SuppressWarnings("unused")
-	private DenyDomain() {
+	public DenyAllDomainVo(){
 		super();
 	}
-
-	public DenyDomain(AbstractDomain domain) {
-		super();
-		this.domain = domain;
-	}
-
-	@Override
-	public String toString() {
-		return "Deny (" + domain.getIdentifier() + ")";
-	}
-
-	public AbstractDomain getDomain() {
-		return domain;
-	}
-
-	public void setDomain(AbstractDomain domain) {
-		this.domain = domain;
-	}
 	
-	@Override
-	public DomainAccessRuleType getDomainAccessRuleType() {
-		return DomainAccessRuleType.DENY;
-	}
 	
-	public DenyDomain(DenyDomainVo denyDomain) {
-		super(denyDomain);
-	}
 }

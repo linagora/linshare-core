@@ -59,7 +59,8 @@ public interface DomainPolicyService {
 	public void deleteDomainAccesspolicy(long id) throws BusinessException;
 	
 	public List<DomainAccessRule> findAllDomainAccessRule();
-	public DomainAccessRule findDomainAccessRuleById(long id);
+	public DomainAccessRule retrieveDomainAccessRule(long id);
+	public void deleteDomainAccessRule(DomainPolicy policy,long persistenceID) throws BusinessException;
 	
 	/**
 	 * This method returns true if we have the right to communicate with itself.

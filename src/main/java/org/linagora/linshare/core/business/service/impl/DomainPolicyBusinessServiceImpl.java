@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.slf4j.Logger;

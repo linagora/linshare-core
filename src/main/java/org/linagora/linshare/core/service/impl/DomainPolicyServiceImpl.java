@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -133,9 +134,26 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	}
 	
 	@Override
-	public DomainAccessRule findDomainAccessRuleById(long id){
-		return domainAccessPolicyBusinessService.findDomainAccessRuleById(id);
-	}	
+	public DomainAccessRule retrieveDomainAccessRule(long id){
+		return domainAccessPolicyBusinessService.retrieveDomainAccessRule(id);
+	}
+	
+	@Override
+	public void deleteDomainAccessRule(DomainPolicy policy,long persistenceID) throws BusinessException{
+		Iterator<DomainAccessRule> it =policy.getDomainAccessPolicy().getRules().iterator();
+		boolean next=true;
+		while(it.hasNext() && next==true){
+    		DomainAccessRule rule=it.next();
+    		if(rule.getPersistenceId() == persistenceID)
+    		{
+    			logger.debug("Remove rule:"+rule.toString()+" with id:"+rule.getPersistenceId());
+    			it.remove();
+    			next=false;
+    		}
+    	}
+		domainAccessPolicyBusinessService.deleteDomainAccessRule(persistenceID);
+	}
+	
 	
 	private List<AbstractDomain> getAuthorizedDomain(AbstractDomain domain, List<DomainAccessRule> rules) {
 		Set<AbstractDomain> set = new HashSet<AbstractDomain>();
