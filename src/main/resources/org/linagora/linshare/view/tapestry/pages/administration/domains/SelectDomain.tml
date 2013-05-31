@@ -20,7 +20,6 @@
 				</div>     
 				
 				<p>${message:pages.administration.domains.index.createdomainpolicy.selectdomain.help}
-				${rule} rule on it :
 				</p>
 				
 			<div>
@@ -28,8 +27,8 @@
             <select t:type="select" t:id="domainSelection" t:model="domains"></select>
             </div>
             
-            <p><input type="submit" value="Validate"/>
-            <input t:type="Submit" t:id="cancel" value="Cancel"/></p>
+            <p><input type="submit" value="${message:global.button.validate}"/>
+            <input t:type="Submit" t:id="cancel" value="${message:global.button.cancel}"/></p>
         </form>
 		</div>
 

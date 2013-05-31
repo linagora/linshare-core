@@ -64,6 +64,7 @@
 	
 	<bean id="domainPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainPolicyBusinessServiceImpl">
 		<constructor-arg ref="domainPolicyRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
 	</bean>
 
 </beans>

@@ -22,8 +22,8 @@
            			<t:label for="rule"/>:
             		<select t:type="select" t:id="rule"/>
         		</div>
-				<p><input type="submit" value="Validate"/>&nbsp;
-				<input t:type="Submit" t:id="cancel" value="Cancel"/></p>
+				<p><input type="submit" value="${message:global.button.validate}"/>&nbsp;
+				<input t:type="Submit" t:id="cancel" value="${message:global.button.validate}"/></p>
         </form>
         
 		</div>
