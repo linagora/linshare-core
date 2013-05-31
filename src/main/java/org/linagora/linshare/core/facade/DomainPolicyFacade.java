@@ -61,6 +61,6 @@ public interface DomainPolicyFacade {
     public DomainAccessRule setDomainAccessRule(DomainAccessRuleVo ruleVo, AbstractDomainVo domainVo) throws BusinessException;
     public DomainAccessRule setDomainAccessRuleSimple(DomainAccessRuleVo ruleVo) throws BusinessException;
     public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo)throws BusinessException;
-    
-    //public void updateAllRulesForAuthShowOrder(UserVo actorVo,List<DomainAccessRuleVo> rulesVo,DomainPolicyVo policyVo) throws BusinessException;
+    public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId) throws BusinessException;
+    public List<DomainAccessRule> sortDomainAccessRules(List<DomainAccessRuleVo> rulesVo);
 }

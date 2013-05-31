@@ -21,7 +21,7 @@
 					<p><t:label for="policyDescription"/>:&nbsp;
                     <t:textfield t:id="policyDescription" value="domainPolicy.policyDescription"/></p>
                     
-				<t:if test="ruleNames">
+				<t:if test="rulesList">
 					
 					<p>			
 						<t:pageLink page="administration/domains/SelectRules" context="domainPolicy.identifier"
@@ -33,12 +33,13 @@
 					<p>${message:pages.administration.domains.index.DomainPolicy.help}</p>
 					
 					<ul id="sortable">
-                		<t:loop source="ruleNames" value="ruleIdentifier" index="indexRule">
+                		<t:loop source="rulesList" value="rule" index="indexRule" formState="none">
                 			<li class="ui-state-default" >
-                			<span id="position" >${indexRule}</span><span id="ruleIdentifier" >${ruleIdentifier}</span>
+                			<span id="position" >${indexRule}</span><span id="ruleDescription" >${rule.description}</span>
+                			<span id="ruleIdentifier" style="display:none" >${rule.persistenceId}</span>
 							<span class="ui-icon ui-icon-arrowthick-2-n-s" ></span> &nbsp;
 							<span>				
-							   <t:eventLink event="remove" context="ruleIdentifier">
+							   <t:eventLink event="remove" context="rule.persistenceId">
 							     <img src="${asset:context:images/popupImages/less.png}" alt=""/>
 							   </t:eventLink>
 							</span>
