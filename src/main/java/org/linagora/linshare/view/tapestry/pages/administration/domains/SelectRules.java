@@ -48,7 +48,6 @@ import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
-import org.linagora.linshare.core.domain.vo.AllowDomainVo;
 import org.linagora.linshare.core.domain.vo.DenyAllDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
