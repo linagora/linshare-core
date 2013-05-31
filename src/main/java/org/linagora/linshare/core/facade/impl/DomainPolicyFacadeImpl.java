@@ -145,6 +145,11 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
         return new DomainPolicyVo(policy);
     }
     
+    @Override
+    public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId) throws BusinessException {
+        DomainAccessRule rule = domainPolicyService.retrieveDomainAccessRule(persistenceId);
+        return new DomainAccessRuleVo(rule);
+    }
    
    @Override
    public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
@@ -208,7 +213,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 		boolean next=true;
 		while(it.hasNext() && next==true){
   		DomainAccessRule rule=it.next();
-    	if(rule.toString().equals(ruleVo.getDescription())){ 
+    	if(rule.getPersistenceId()==ruleVo.getPersistenceId()){ 
     		  domainPolicyService.deleteDomainAccessRule(policy,rule.getPersistenceId());
     		  next=false;
     	  }
@@ -216,26 +221,14 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 
   }
   
-  
-  /*
-  @Override
-  public void updateAllRulesForAuthShowOrder(UserVo actorVo,List<DomainAccessRuleVo> rulesVo,DomainPolicyVo policyVo) throws BusinessException{
-      if(isAuthorized(actorVo)) {
-          for (DomainAccessRuleVo rule : rulesVo) {
-              updateRuleForAuthShowOrder(rule,policyVo);
-          }
-      }
+  public List<DomainAccessRule> sortDomainAccessRules(List<DomainAccessRuleVo> rulesVo)
+  {
+	  List<DomainAccessRule>list=new ArrayList<DomainAccessRule>();
+	  for(DomainAccessRuleVo ruleVo : rulesVo){
+	  DomainAccessRule rule = domainPolicyService.retrieveDomainAccessRule(ruleVo.getPersistenceId());
+	  list.add(rule);
+	  }
+	  return list;
   }
-  
-  private void updateRuleForAuthShowOrder(DomainAccessRuleVo ruleVo,DomainPolicyVo policyVo) throws BusinessException{
-      
-      for(DomainAccessRule rule : policyVo.getDomainAccessPolicy().getRules())
-      {
-    	  if(rule.toString().equals(ruleVo.getDescription())){ 
-    		rule.setAuthShowOrder(ruleVo.getAuthShowOrder());
-    	  }
-      }
-
-  }*/
   
 }

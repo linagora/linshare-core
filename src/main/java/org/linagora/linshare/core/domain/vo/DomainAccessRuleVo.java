@@ -34,17 +34,14 @@
 
 package org.linagora.linshare.core.domain.vo;
 
-import org.apache.tapestry5.beaneditor.NonVisual;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
 public class DomainAccessRuleVo {
 
 	private String regexp;
+	private long persistenceId;
 	private String description;
 	
-	/*@NonVisual 
-	protected Long authShowOrder = new Long(1);
-	*/
 	public DomainAccessRuleVo(){
 	}
 	
@@ -52,7 +49,7 @@ public class DomainAccessRuleVo {
 	{
 		this.regexp=rule.getRegexp();
 		this.description=rule.toString();
-		//this.setAuthShowOrder(rule.getAuthShowOrder());
+		this.persistenceId=rule.getPersistenceId();
 	}
 
 	public String getRegexp() {
@@ -61,22 +58,21 @@ public class DomainAccessRuleVo {
 	public void setRegexp(String regexp) {
 		this.regexp = regexp;
 	}
-	/*
-
-	public Long getAuthShowOrder() {
-		return authShowOrder;
-	}
-
-	public void setAuthShowOrder(Long authShowOrder) {
-		this.authShowOrder = authShowOrder;
-	}*/
-
+	
 	public String getDescription() {
 		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public long getPersistenceId() {
+		return persistenceId;
+	}
+
+	public void setPersistenceId(long persistenceId) {
+		this.persistenceId = persistenceId;
 	}
 	
 }

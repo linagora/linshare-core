@@ -80,7 +80,10 @@ public class ManageDomainPolicy {
     private String _rules;
 	
     @Property
-    private String _ruleIdentifier;
+    private DomainAccessRuleVo _rule;
+    
+    @Property
+    private long _ruleIdentifier;
     
     @Property 
     private int indexRule;
@@ -94,34 +97,34 @@ public class ManageDomainPolicy {
 	@Property
 	private String tabPos;
     
-    public String[] getRuleNames(){
-
-    	List<DomainAccessRule> rules = domainPolicy.getDomainAccessPolicy().getRules();
-    	List<String> ruleNames=new ArrayList<String>();
-    	for (DomainAccessRule rule : rules) {
-    		ruleNames.add(rule.toString());
-    	}
-    	if(ruleNames!=null){ return ruleNames.toArray(new String[ruleNames.size()]);}
-    	
-    	return null;
-    }
-
-
+	
+	
+	
+	public List<DomainAccessRuleVo> getRulesList(){
+		
+		List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
+		for(DomainAccessRule rules : domainPolicy.getDomainAccessPolicy().getRules())
+		{
+			rulesVo.add(new DomainAccessRuleVo(rules));
+		}
+		return rulesVo;
+	}
+	
+	
 	public void onActivate(String identifier) throws BusinessException {
 		logger.debug("domainPolicyIdentifier:" + identifier);
 		domainPolicy = domainPolicyFacade.retrieveDomainPolicy(identifier);
 	}
 
-
-    public Object onRemove(String _ruleIdentifier) {
+   public Object onRemove(long _ruleIdentifier) {
     	Iterator<DomainAccessRule> it =domainPolicy.getDomainAccessPolicy().getRules().iterator();
     	DomainAccessRuleVo deleteRule=new DomainAccessRuleVo();
     	boolean delete=false;
     	while(it.hasNext()){
     		DomainAccessRule rule=it.next();
-    		if(rule.toString().equals(_ruleIdentifier) && delete == false)
+    		if(rule.getPersistenceId() == _ruleIdentifier && delete == false)
     		{
-    			deleteRule.setDescription(rule.toString());
+    			deleteRule.setPersistenceId(rule.getPersistenceId());
     			it.remove();
     	    	try {
     				domainPolicyFacade.deleteDomainAccessRule(deleteRule,domainPolicy);
@@ -142,24 +145,24 @@ public class ManageDomainPolicy {
 		 domainPolicy=null;
 		}
 		else{
-			/*if(tabPos!=null)
-			{
+			
+			if(tabPos != null){
+				
+				String[] domainIdentifiers = tabPos.split(";");
 				List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
 				DomainAccessRuleVo ruleVo; 
-				String[] ruleNames = tabPos.split(";");
-				int i=0;
-		
-				for (String ruleName : ruleNames){
-					if(!ruleName.isEmpty()){
-						ruleVo = new DomainAccessRuleVo();
-						ruleVo.setAuthShowOrder(new Long(i));
-						ruleVo.setDescription(ruleName);
-						rulesVo.add(ruleVo);	
+				
+				for (String domainIdentifier : domainIdentifiers) {
+					if(!domainIdentifier.isEmpty()){
+						
+						ruleVo =domainPolicyFacade.retrieveDomainAccessRule(Long.parseLong(domainIdentifier));
+						rulesVo.add(ruleVo);
 					}
-					i++;
 				}
-				domainPolicyFacade.updateAllRulesForAuthShowOrder(loginUser, rulesVo ,domainPolicy);
-			}*/
+				domainPolicy.getDomainAccessPolicy().getRules().clear();
+				domainPolicy.getDomainAccessPolicy().setRules(domainPolicyFacade.sortDomainAccessRules(rulesVo));
+			}
+			
 			try {
 				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
 			} catch (BusinessException e) {

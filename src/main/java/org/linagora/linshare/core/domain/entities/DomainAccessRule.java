@@ -46,7 +46,6 @@ public abstract class DomainAccessRule {
 	
 	private String regexp;
 	
-	//protected Long authShowOrder;
 	
 	public DomainAccessRule() {
 	}
@@ -69,17 +68,9 @@ public abstract class DomainAccessRule {
 	
 	public DomainAccessRule(DomainAccessRuleVo d) {
 		this.regexp=d.getRegexp();
-		//this.authShowOrder=new Long(1);
-	}
-	/*
-
-	public Long getAuthShowOrder() {
-		return authShowOrder;
+		this.persistenceId=d.getPersistenceId();
 	}
 
-	public void setAuthShowOrder(Long authShowOrder) {
-		this.authShowOrder = authShowOrder;
-	}*/
 	
 	public abstract DomainAccessRuleType getDomainAccessRuleType();
 }
