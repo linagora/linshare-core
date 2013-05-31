@@ -59,7 +59,6 @@ public class CreateDomainPolicy {
     private DomainPolicyFacade domainPolicyFacade;
     
 	@Property
-	@Persist
     private DomainPolicyVo domainPolicy;
    
 	@SessionState
@@ -71,12 +70,14 @@ public class CreateDomainPolicy {
     
 	@SetupRender
 	public void init() {
+			
+			domainPolicy=null;
 			domainPolicy=new DomainPolicyVo();
 	}
 	
-	public Object onCanceledFromForm(){
-		 domainPolicy=null;
-		 return Index.class;
+	public Object onActionFromCancel() {
+		domainPolicy = null;
+		return Index.class;
 	}
 	
 	public Object onvalidateFromForm() {

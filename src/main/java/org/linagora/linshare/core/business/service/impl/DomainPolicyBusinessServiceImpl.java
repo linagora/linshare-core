@@ -36,8 +36,10 @@ package org.linagora.linshare.core.business.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DomainPolicyBusinessService;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +49,13 @@ public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessServ
     private static final Logger logger = LoggerFactory.getLogger(DomainPolicyBusinessServiceImpl.class);
 	
 	private final DomainPolicyRepository domainPolicyRepository;
+	private final AbstractDomainRepository abstractDomainRepository;
 	
-	public DomainPolicyBusinessServiceImpl(DomainPolicyRepository domainPolicyRepository)
+	public DomainPolicyBusinessServiceImpl(DomainPolicyRepository domainPolicyRepository,AbstractDomainRepository abstractDomainRepository)
 	{
 		super();
 		this.domainPolicyRepository=domainPolicyRepository;
+		this.abstractDomainRepository=abstractDomainRepository;
 	}
 	
     @Override
@@ -88,8 +92,15 @@ public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessServ
     
     @Override
     public boolean policyIsDeletable(String policyToDelete) {
-    	if(policyToDelete.equals("DefaultDomainPolicy")){return false;}
-    	else return true;
+    	List<AbstractDomain> list = abstractDomainRepository.findAll();
+        boolean used = false;
+        for (AbstractDomain domain : list) {
+            if (domain.getPolicy().getIdentifier().equals(policyToDelete)) {
+                used = true;
+                break;
+            }
+        }
+        return (!used);
     }
     
 	@Override

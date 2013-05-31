@@ -6,7 +6,7 @@
 	
 	<div id="content">
 
-		<h1>${message:pages.administration.domains.index.createdomainpolicy.index}</h1>
+		<h1>${message:pages.administration.domains.index.createdomainpolicy.index}: ${domainPolicy.identifier}</h1>
 		
 		<t:messagePanel />	
 		
@@ -57,8 +57,8 @@
             		</p:else>	
             	</t:if>
             		
-            		<p><input type="submit"  value="Validate"/>&nbsp;
-            		<input t:type="Submit" t:id="cancel" value="Cancel"/></p>
+            		<p><input type="submit"  value="${message:global.button.validate}"/>&nbsp;
+            		<input t:type="Submit" t:id="cancel" value="${message:global.button.cancel}"/></p>
 		</t:form>	
 		</div>
 
