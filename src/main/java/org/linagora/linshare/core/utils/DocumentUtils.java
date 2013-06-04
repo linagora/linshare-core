@@ -75,9 +75,11 @@ public class DocumentUtils {
 			// Transfer bytes from in to out
 			byte[] buf = new byte[64 * 4096]; // 256Kio
 			int len;
+			int total_len=0;
 			while ((len = stream.read(buf)) > 0) {
 				bof.write(buf, 0, len);
-				logger.debug("len buf : " + len);
+				total_len += len;
+				logger.debug("data read : " + total_len);
 			}
 			bof.flush();
 
