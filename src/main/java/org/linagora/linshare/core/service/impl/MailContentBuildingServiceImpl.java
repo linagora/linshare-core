@@ -60,7 +60,6 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
-import org.opends.server.tools.makeldif.LastNameTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
