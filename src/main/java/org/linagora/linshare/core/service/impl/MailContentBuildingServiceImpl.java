@@ -60,6 +60,7 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
+import org.opends.server.tools.makeldif.LastNameTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +85,62 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	
 	private final AbstractDomainService abstractDomainService;
 	
+	class ContactRepresentation {
+		private String mail;
+		private String firstName;
+		private String lastName;
+		
+		public ContactRepresentation(String mail, String firstName, String lastName) {
+			super();
+			this.mail = clean(mail);
+			this.firstName = clean(firstName);
+			this.lastName = clean(lastName);
+		}
+		
+		public ContactRepresentation(String mail){
+			this.mail = clean(mail);
+			this.firstName = null;
+			this.lastName = null;
+		}
+		
+		public ContactRepresentation(User user){
+			this.mail = clean(user.getMail());
+			this.firstName = clean(user.getFirstName());
+			this.lastName = clean(user.getLastName());
+		}
+
+		public ContactRepresentation(Account account){
+			this.mail = clean(account.getAccountReprentation());
+			if(account instanceof User) {
+				User user = (User)account;
+				this.firstName = clean(user.getFirstName());
+				this.lastName = clean(user.getLastName());
+				this.mail = clean(user.getMail());
+			}
+		}
+		
+		
+		private String clean(String value) {
+			if(value == null) return null;
+			if(value.trim().equals("")) return null;
+			return value;
+		}
+		
+		public String getContactRepresntation() {
+			if (this.firstName == null || this.lastName == null) {
+				return this.mail;
+			} else {
+				StringBuilder str = new StringBuilder();
+				str.append(this.firstName);
+				str.append(" ");
+				str.append(this.lastName);
+				str.append(" (");
+				str.append(this.mail);
+				str.append(")");
+				return str.toString(); 
+			}
+		}
+	}
 
 	public MailContentBuildingServiceImpl(final String urlBase, 
 			final String urlInternal, final String mailContentTxt,
@@ -135,25 +192,42 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 	/**
 	 * Retrieve the mail subject from config.
-	 * 
 	 * @param language the language of the email
-	 * @param mailSubject the enum key
+	 * @param mailSubjectEnum the enum key
+	 * @param contactRepresentation TODO
+	 * 
 	 * @return the MailSubject object
 	 * @throws BusinessException when no mail subject was found for the given enum key
 	 */
-	private MailSubject getMailSubject(User actor, Language language, MailSubjectEnum mailSubject) throws BusinessException {
+	private MailSubject getMailSubject(User actor, Language language, MailSubjectEnum mailSubjectEnum, ContactRepresentation contactRepresentation) throws BusinessException {
 		AbstractDomain domain = actor.getDomain();
 		Set<MailSubject> subjects = domain.getMessagesConfiguration().getMailSubjects();
+		MailSubject mailSubject = null;
 		
 		for (MailSubject mailSubject_ : subjects) {
-			if (mailSubject_.getLanguage().equals(language) && mailSubject_.getMailSubject().equals(mailSubject)) {
-				return new MailSubject(mailSubject_);
+			if (mailSubject_.getLanguage().equals(language) && mailSubject_.getMailSubject().equals(mailSubjectEnum)) {
+				mailSubject = new MailSubject(mailSubject_);
+				break;
 			}
 		}
-
-		logger.error("Bad mail subject "+ mailSubject.name() +" for language " + language.name());
-		throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad mail subject "+ mailSubject.name() +" for language " + language.name());
+		
+		if(mailSubject == null) {
+			logger.error("Bad mail subject "+ mailSubjectEnum.name() +" for language " + language.name());
+			throw new TechnicalException(TechnicalErrorCode.MAIL_EXCEPTION,"Bad mail subject "+ mailSubjectEnum.name() +" for language " + language.name());
+		}
+		
+		if(contactRepresentation != null) {
+			String contentTXT = mailSubject.getContent();
+			contentTXT = StringUtils.replace(contentTXT, "${actorRepresentation}", contactRepresentation.getContactRepresntation());
+			mailSubject.setContent(contentTXT);
+		}
+		return mailSubject;
 	}
+	
+	private MailSubject getMailSubject(User actor, Language language, MailSubjectEnum mailSubjectEnum) throws BusinessException {
+		return getMailSubject(actor, language, mailSubjectEnum, null);
+	}
+	
 
 	
 	/**
@@ -294,6 +368,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		User sender = (User) shareEntry.getEntryOwner();
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
 		String linShareRootUrl = shareEntry.getAnonymousUrl().getFullUrl(pUrlBase);
+		String recipient = shareEntry.getAnonymousUrl().getContact().getMail();
 		
 		// file updated notification
 		mailContainer.appendTemplate(buildTemplateFileUpdated(sender, mailContainer.getLanguage(), sender, shareEntry.getDocumentEntry(), oldDocName, fileSizeTxt));
@@ -302,10 +377,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		mailContainer.appendTemplate(buildTemplateFileDownloadURL(sender, mailContainer.getLanguage(), linShareRootUrl));
 		
 		// subject
-		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPDATED));
+		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPDATED, new ContactRepresentation(sender)));
 		
 		// recipient mail
-		mailContainer.setRecipient(shareEntry.getAnonymousUrl().getContact().getMail());
+		mailContainer.setRecipient(recipient);
 		
 		// reply mail
 		mailContainer.setReplyTo(sender.getMail());
@@ -333,7 +408,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		mailContainer.appendTemplate(buildTemplateFileDownloadURL(sender, mailContainer.getLanguage(), linShareRootUrl));
 		
 		// subject
-		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPDATED));
+		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_UPDATED, new ContactRepresentation(sender)));
 		
 		// recipient mail
 		mailContainer.setRecipient(shareEntry.getRecipient().getMail());
@@ -362,7 +437,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		mailContainer.appendTemplate(buildTemplateSharedFileDeleted(sender, mailContainer.getLanguage(), shareEntry, sender));
 		
 		// subject
-		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_DELETED));
+		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.SHARED_DOC_DELETED, new ContactRepresentation(actor)));
 		
 		// recipient mail
 		mailContainer.setRecipient(shareEntry.getRecipient().getMail());
@@ -393,7 +468,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		mailContainer.appendTemplate(buildTemplateConfirmDownloadAnonymous(sender, mailContainer.getLanguage(), documentName, email));
 		
 		// subject
-		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.ANONYMOUS_DOWNLOAD));
+		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.ANONYMOUS_DOWNLOAD, new ContactRepresentation(email)));
 		
 		// recipient mail
 		mailContainer.setRecipient(sender.getMail());
@@ -437,7 +512,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 			// this means subject was filled by users 
 			mailContainer.setSubject(subjectContent);
 		} else {
-			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING));
+			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING, new ContactRepresentation(sender)));
 		}
 		
 		// reply mail
@@ -490,7 +565,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 			// this means subject was filled by users 
 			mailContainer.setSubject(subjectContent);
 		} else {
-			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING));
+			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING, new ContactRepresentation(sender)));
 		}
 		
 		// recipient mail
@@ -575,7 +650,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		mailContainer.appendTemplate(buildTemplateConfirmDownloadRegistered(sender, mailContainer.getLanguage(), documentName, shareEntry.getRecipient()));
 		
 		// subject
-		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.REGISTERED_DOWNLOAD));
+		mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.REGISTERED_DOWNLOAD, new ContactRepresentation(shareEntry.getRecipient())));
 		
 		// recipient mail
 		mailContainer.setRecipient(sender.getMail());
