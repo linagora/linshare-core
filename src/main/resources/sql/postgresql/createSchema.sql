@@ -603,8 +603,6 @@ CREATE INDEX signature_index
   ON signature (id);
 CREATE UNIQUE INDEX signature_i 
   ON signature (uuid);
-CREATE INDEX thread_member_history_operation_type 
-  ON thread_member_history (operation_type);
 CREATE INDEX unit_index 
   ON unit (id);
 CREATE INDEX user_provider_ldap_index 
