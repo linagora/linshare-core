@@ -1290,14 +1290,6 @@
 		<!-- <repository> <id>tapestry-snapshots</id> <url>http://tapestry.formos.com/maven-snapshot-repository/</url> <snapshots> <enabled>true</enabled> 
 			</snapshots> </repository> -->
 		<repository>
-			<id>chenillekit</id>
-			<url>http://www.chenillekit.org/mvnrepo/release/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-
-		<repository>
 			<id>linagora</id>
 			<url>http://repo.linpki.org/nexus/content/repositories/public/</url>
 		</repository>
