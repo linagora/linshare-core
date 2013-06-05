@@ -31,19 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
-import javax.ws.rs.Path;
-
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
-@Path("/rest/threads")
-public interface ThreadRestService {
+public interface WebServiceThreadMemberFacade extends WebServiceGenericFacade {
 
-	public List<ThreadDto> getAllMyThread() throws BusinessException;
-
-	public ThreadDto getThread(String uuid) throws BusinessException;
+	public List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException;
 }

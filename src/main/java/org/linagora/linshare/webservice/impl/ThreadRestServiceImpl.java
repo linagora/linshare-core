@@ -60,7 +60,6 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@Path("/list")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, "application/json;charset=UTF-8" })
-	// application/xml application/json
 	@Override
 	public List<ThreadDto> getAllMyThread() throws BusinessException {
 		List<ThreadDto> threads = null;
@@ -76,7 +75,6 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@Path("/{uuid}")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	// application/xml application/json
 	@Override
 	public ThreadDto getThread(@PathParam("uuid") String uuid) throws BusinessException {
 		ThreadDto thread;
