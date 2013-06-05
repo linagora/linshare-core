@@ -31,19 +31,40 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.core.facade.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.Path;
-
+import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.core.facade.WebServiceThreadMemberFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Path("/rest/threads")
-public interface ThreadRestService {
+public class WebServiceThreadMemberFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceThreadMemberFacade {
 
-	public List<ThreadDto> getAllMyThread() throws BusinessException;
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceThreadMemberFacadeImpl.class);
+	
+	private final ThreadService threadService;
+	
+	public WebServiceThreadMemberFacadeImpl(ThreadService threadService, AccountService accountService) {
+		super(accountService);
+		this.threadService = threadService;
+	}
 
-	public ThreadDto getThread(String uuid) throws BusinessException;
+	@Override
+	public List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException {
+		Thread thread = threadService.findByLsUuid(uuid);
+		List<ThreadMemberDto> res = new ArrayList<ThreadMemberDto>();
+		for (ThreadMember member : thread.getMyMembers()) {
+			res.add(new ThreadMemberDto(member));
+		}
+		return res;
+	}
 }

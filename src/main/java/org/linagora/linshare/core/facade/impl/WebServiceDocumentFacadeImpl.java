@@ -51,8 +51,6 @@ import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceDocumentFacade {
   
@@ -64,8 +62,7 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 		super(accountService);
 		this.documentEntryService = documentEntryService;
 	}
-	
-	
+
 	@Override
 	public List<DocumentDto> getDocuments() throws BusinessException {
 		User actor = getAuthentication();

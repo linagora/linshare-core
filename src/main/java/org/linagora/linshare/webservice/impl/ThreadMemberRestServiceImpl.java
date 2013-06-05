@@ -35,10 +35,8 @@ package org.linagora.linshare.webservice.impl;
 
 import java.util.List;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -48,16 +46,19 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceThreadFacade;
+import org.linagora.linshare.core.facade.WebServiceThreadMemberFacade;
 import org.linagora.linshare.webservice.ThreadMemberRestService;
-import org.linagora.linshare.webservice.dto.AccountDto;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
 public class ThreadMemberRestServiceImpl extends WebserviceBase implements ThreadMemberRestService {
 	
 	private WebServiceThreadFacade webServiceThreadFacade;
+	
+	private WebServiceThreadMemberFacade webServiceThreadMemberFacade;
 
-	public ThreadMemberRestServiceImpl(final WebServiceThreadFacade webServiceThreadFacade) {
+	public ThreadMemberRestServiceImpl(final WebServiceThreadFacade webServiceThreadFacade, final WebServiceThreadMemberFacade webServiceThreadMemberFacade) {
 		this.webServiceThreadFacade = webServiceThreadFacade;
+		this.webServiceThreadMemberFacade = webServiceThreadMemberFacade;
 	}
 
 	@GET
@@ -72,5 +73,20 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements Threa
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
 		}
+	}
+	
+	@Path("/list/{threadUuid}")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public List<ThreadMemberDto> getAllThreadMembers(@PathParam("threadUuid") String threadUuid) throws BusinessException {
+		List<ThreadMemberDto> members = null;
+		try {
+			webServiceThreadFacade.checkAuthentication();
+			members = webServiceThreadMemberFacade.getAllThreadMembers(threadUuid);
+		} catch (BusinessException e) {
+			throw analyseFaultREST(e);
+		}
+		return members;
 	}
 }

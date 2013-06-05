@@ -156,6 +156,10 @@
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="functionalityService" />
 	</bean>
+	<bean id="webServiceThreadMemberFacade" class="org.linagora.linshare.core.facade.impl.WebServiceThreadMemberFacadeImpl">
+		<constructor-arg ref="threadService" />
+		<constructor-arg ref="accountService" />
+	</bean>
 	<bean id="webServiceUserFacade" class="org.linagora.linshare.core.facade.impl.WebServiceUserFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="accountService" />
