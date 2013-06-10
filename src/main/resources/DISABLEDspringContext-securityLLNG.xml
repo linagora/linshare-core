@@ -162,7 +162,7 @@
 		</property>
 	</bean>
 
-	<bean id="restAuthenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+	<bean id="restAuthenticationEntryPoint" class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
 		<property name="realmName">
 			<value>Name Of Your LinShare Realm</value>
 		</property>
@@ -172,9 +172,7 @@
 		<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint" />
 	</bean>
 
-
 	<!-- AUTHENTICATION MANAGEMENT -->
-
 	<!-- Authentication manager -->
 	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
 		<property name="providers">
