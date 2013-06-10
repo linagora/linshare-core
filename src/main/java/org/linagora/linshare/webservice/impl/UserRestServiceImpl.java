@@ -56,7 +56,6 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 	@Path("/list")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, "application/json;charset=UTF-8"})
-	// application/xml application/json
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
 		List<UserDto> users = null;
@@ -68,5 +67,20 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 		}
 		return users;
 	}
+	
+	
+	@Path("/authorized")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, "application/json;charset=UTF-8"})
+	@Override
+	public Boolean isAuthorized() {
+		try {
+			webServiceUserFacade.checkAuthentication();
+			return true;
+		} catch (BusinessException e) {
+			return false;
+		}
+	}
+	
 
 }
