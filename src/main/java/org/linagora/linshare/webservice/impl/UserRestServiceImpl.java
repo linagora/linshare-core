@@ -78,7 +78,7 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 			webServiceUserFacade.checkAuthentication();
 			return true;
 		} catch (BusinessException e) {
-			return false;
+			throw analyseFaultREST(e);
 		}
 	}
 	
