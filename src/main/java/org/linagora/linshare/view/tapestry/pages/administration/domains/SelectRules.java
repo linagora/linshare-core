@@ -88,6 +88,9 @@ public class SelectRules {
     @InjectPage
     private org.linagora.linshare.view.tapestry.pages.administration.domains.ManageDomainPolicy manageDomainpage;
     
+    @Property
+    private boolean onTop;
+    
     @Inject
     private Messages messages;
 
@@ -116,35 +119,33 @@ public class SelectRules {
 
     
     public Object onSuccess() {  
-    	
     		if(rule.toInt() == 2 || rule.toInt() == 3 ){
     			selectDomainpage.set(rule);
+    			selectDomainpage.setChoice(onTop);
     			return selectDomainpage;
     			}
     		else{ 
-    	    	if(rule.toInt() ==0){	
-    	    		ruleVo=new AllowAllDomainVo();
-    	    		try{
-    	    		domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRuleSimple(ruleVo));
-    	    		} catch (BusinessException e) {
+    	    		if(rule.toInt() ==0){	
+    	    			ruleVo=new AllowAllDomainVo();
+    	    		} else {
+    	    			ruleVo=new DenyAllDomainVo();
+    	    			}
+    	    		if(onTop == true)
+    	    		{
+    	    			domainPolicyFacade.insertOnTop(domainPolicy, ruleVo);
+    	    		}else{
+    	    			try{
+    	    				domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRuleSimple(ruleVo));
+    	    			} catch (BusinessException e) {
     	    			logger.error("Can not retrieve domain : " + e.getMessage());
     	    			logger.debug(e.toString());}
-    	    	}
-    	    	else {
-    	    		ruleVo=new DenyAllDomainVo();
-    	    		try{
-    	    		domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRuleSimple(ruleVo));
-    	    		} catch (BusinessException e) {
-    	    			logger.error("Can not retrieve domain : " + e.getMessage());
-    	    			logger.debug(e.toString());}
-    	    	}
-    	    	try {
-    				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
-    				} catch (BusinessException e) {
+    	    			}
+    	    		try {
+    	    			domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
+    					} catch (BusinessException e) {
     					e.printStackTrace();
     				}
     			}
-    		
         	return manageDomainpage;
     }
     

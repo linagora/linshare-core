@@ -18,10 +18,17 @@
         		<div class="error">
 				<t:errors />
 				</div>
-						<p>${message:pages.administration.domains.index.createdomainpolicy.selectrule.help}:</p>
+						<p>${message:pages.administration.domains.index.createdomainpolicy.selectrule.help}</p>
 				<div>
            			<t:label for="rule"/>:
             		<select t:type="select" t:id="rule"/>
+        		</div>
+
+        		<div>
+        			<t:label for="onTop"/>:
+            		<input t:type="checkbox" type="checkbox" t:id="onTop"/>&nbsp;
+            		${message:pages.administration.domains.index.createdomainpolicy.selectrule.position}
+            		
         		</div>
 				<p><input type="submit" value="${message:global.button.validate}"/></p>
         </form>

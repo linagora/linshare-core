@@ -65,5 +65,9 @@ public interface DomainPolicyFacade {
     
     public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId) throws BusinessException;
     
+    public void insertOnTop(DomainPolicyVo policyVo,DomainAccessRuleVo ruleVo);
+    
+    public void insertOnTop(DomainPolicyVo policyVo,DomainAccessRuleVo ruleVo, AbstractDomainVo domainVo);
+    
     public void sortDomainAccessRules(DomainPolicyVo policyVo, List<DomainAccessRuleVo> rulesVo);
 }

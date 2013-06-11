@@ -108,8 +108,10 @@ public class SelectDomain {
     @InjectPage
     private org.linagora.linshare.view.tapestry.pages.administration.domains.ManageDomainPolicy manageDomainPolicypage;
     
+    @Persist
     @Property
-    private boolean cancel;
+    private boolean onTop;
+
     
     
 
@@ -119,16 +121,13 @@ public class SelectDomain {
 			domainPolicy = new DomainPolicyVo();
 		}
 		domains = domainFacade.findAllDomainIdentifiers();
+		logger.debug("onTop?:"+onTop);
 	}
 	
     public Object onActionFromCancel() {
         return SelectRules.class;
     }
 
-    void onSelectedFromCancel() {
-        
-    	cancel=true;
-    }
      
    public Object onSuccess() {
 
@@ -141,20 +140,21 @@ public class SelectDomain {
     		if(rule.toInt() ==2)
     		{	
     			ruleVo=new AllowDomainVo(domainVo.getIdentifier());
-    			try{
-    				domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
-    				} catch (BusinessException e) {
-    			logger.error("Can not retrieve domain : " + e.getMessage());
-    			logger.debug(e.toString());}
     		}else {
-    			ruleVo=new DenyDomainVo(domainVo.getIdentifier());
+    			ruleVo=new DenyDomainVo(domainVo.getIdentifier());}
+    			
+    		if(onTop==true)
+    		{
+    			domainPolicyFacade.insertOnTop(domainPolicy,ruleVo,domainVo);
+    		} else {
     			try{
     				domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
     				} catch (BusinessException e) {
     			logger.error("Can not retrieve domain : " + e.getMessage());
-    			logger.debug(e.toString());}
-    	}
-    	
+    			logger.debug(e.toString());
+    			}
+    		}
+    		
     	try {
 				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
 			} catch (BusinessException e) {
@@ -169,6 +169,10 @@ public class SelectDomain {
     	this.rule=rule;
     }
     
+    public void setChoice(boolean onTop)
+    {
+    	this.onTop=onTop;
+    }
 	Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());
