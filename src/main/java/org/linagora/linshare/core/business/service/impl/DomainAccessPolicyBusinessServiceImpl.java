@@ -34,12 +34,9 @@
 package org.linagora.linshare.core.business.service.impl;
 
 
-import java.util.List;
 import org.linagora.linshare.core.business.service.DomainAccessPolicyBusinessService;
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.DomainAccessPolicyRepository;
 import org.linagora.linshare.core.repository.DomainAccessRuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,54 +45,12 @@ public class DomainAccessPolicyBusinessServiceImpl implements DomainAccessPolicy
 	
     private static final Logger logger = LoggerFactory.getLogger(DomainAccessPolicyBusinessServiceImpl.class);
 	
-	private final DomainAccessPolicyRepository domainAccessPolicyRepository;
 	private final DomainAccessRuleRepository domainAccessRuleRepository;
 	
-	public DomainAccessPolicyBusinessServiceImpl(DomainAccessPolicyRepository domainAccessPolicyRepository,DomainAccessRuleRepository domainAccessRuleRepository){
+	public DomainAccessPolicyBusinessServiceImpl(DomainAccessRuleRepository domainAccessRuleRepository){
 		super();
-		this.domainAccessPolicyRepository=domainAccessPolicyRepository;
 		this.domainAccessRuleRepository=domainAccessRuleRepository;
 		
-	}
-	
-	@Override
-	public DomainAccessPolicy retrieveDomainAccessPolicy(long id){
-		return domainAccessPolicyRepository.findById(id);
-	}
-	
-	@Override
-	public List<DomainAccessPolicy> findAllDomainAccessPolicy()  {
-		return domainAccessPolicyRepository.findAll();
-	}
-	
-	@Override 
-	public DomainAccessPolicy createDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
-		DomainAccessPolicy createdPolicy = domainAccessPolicyRepository.create(domainAccessPolicy);
-		return createdPolicy;
-	}
-	
-	@Override 
-	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException{
-        DomainAccessPolicy policy = domainAccessPolicyRepository.findById(domainAccessPolicy.getPersistenceId());
-        policy.getRules().clear();
-        policy.setRules(domainAccessPolicy.getRules());
-        domainAccessPolicyRepository.update(policy);
-	}
-	
-	@Override
-	public void deleteDomainAccesspolicy(long persistenceID) throws BusinessException{
-        DomainAccessPolicy policy = retrieveDomainAccessPolicy(persistenceID);
-        if(policy == null) {
-        	logger.error("Policy not found: " + persistenceID);
-        } else {
-            logger.debug("delete policy: " + persistenceID);
-    		domainAccessPolicyRepository.delete(policy);
-        }
-	}
-	
-	@Override
-	public List<DomainAccessRule> findAllDomainAccessRule(){
-		return domainAccessRuleRepository.findAll();
 	}
 
 	@Override

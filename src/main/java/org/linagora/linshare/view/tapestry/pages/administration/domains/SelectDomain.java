@@ -65,7 +65,6 @@ public class SelectDomain {
     @Property
     private ShareSessionObjects shareSessionObjects;
 
-
 	private static Logger logger = LoggerFactory.getLogger(SelectDomain.class);
 	
 	@SessionState(create=false)
@@ -112,6 +111,7 @@ public class SelectDomain {
     @Property
     private boolean cancel;
     
+    
 
 	@SetupRender
 	public void init() {
@@ -122,7 +122,6 @@ public class SelectDomain {
 	}
 	
     public Object onActionFromCancel() {
-        domainPolicy=null;
         return SelectRules.class;
     }
 
@@ -132,33 +131,37 @@ public class SelectDomain {
     }
      
    public Object onSuccess() {
-    	if(cancel==false)
-    	{
-    	try{
-    	domainVo=domainFacade.retrieveDomain(domainSelection);
-		} catch (BusinessException e) {
+
+    		try{
+    			domainVo=domainFacade.retrieveDomain(domainSelection);
+    			} catch (BusinessException e) {
 			logger.error("Can not retrieve domain : " + e.getMessage());
 			logger.debug(e.toString());}
-    	if(rule.toInt() ==2){	
-    		ruleVo=new AllowDomainVo(domainVo.getIdentifier());
-    		try{
-    		domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
-    		} catch (BusinessException e) {
+    		
+    		if(rule.toInt() ==2)
+    		{	
+    			ruleVo=new AllowDomainVo(domainVo.getIdentifier());
+    			try{
+    				domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
+    				} catch (BusinessException e) {
+    			logger.error("Can not retrieve domain : " + e.getMessage());
+    			logger.debug(e.toString());}
+    		}else {
+    			ruleVo=new DenyDomainVo(domainVo.getIdentifier());
+    			try{
+    				domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
+    				} catch (BusinessException e) {
     			logger.error("Can not retrieve domain : " + e.getMessage());
     			logger.debug(e.toString());}
     	}
-    	else {
-    		ruleVo=new DenyDomainVo(domainVo.getIdentifier());
-    		try{
-    		domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
-    		} catch (BusinessException e) {
-    			logger.error("Can not retrieve domain : " + e.getMessage());
-    			logger.debug(e.toString());}
-    	}
+    	
+    	try {
+				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
+			} catch (BusinessException e) {
+			e.printStackTrace();
+			}
 
     	return manageDomainPolicypage;
-    	}
-    	return selectRulepage;
     }
 
     public void set(DomainAccessRuleType rule)

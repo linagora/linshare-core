@@ -42,7 +42,6 @@ import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Role;
@@ -50,7 +49,6 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
 import org.linagora.linshare.core.domain.vo.AllowDomainVo;
-import org.linagora.linshare.core.domain.vo.DomainAccessPolicyVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -82,9 +80,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
         if(actorVo !=null) {
             User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
             if(actor != null) {
-                if (actor.getRole().equals(Role.SUPERADMIN)
-                		|| actor.getRole().equals(Role.SYSTEM)
-                		|| actor.getRole().equals(Role.ADMIN)) {
+                if (actor.getRole().equals(Role.SUPERADMIN)) {
                     return true;
                 }
                 logger.error("you are not authorised.");
@@ -110,31 +106,18 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
         }
         return res;
     }
-    
+
     @Override
-    public List<DomainAccessPolicy> findAllDomainAccessPolicy(){
-    	return domainPolicyService.findAllDomainAccessPolicy();
-    }
-    
-    @Override
-    public void createDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
+    public DomainPolicyVo createDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
          if(isAuthorized(actorVo)) {
              DomainPolicy domainPolicy = new DomainPolicy(domainPolicyVo);
              domainPolicyService.createDomainPolicy(domainPolicy);
+             return new DomainPolicyVo(domainPolicy);
          } else {
              throw new BusinessException("You are not authorized to create a domain policy.");
-         }
+            }
      }
-    @Override
-    public void createDomainAccessPolicy(UserVo actorVo, DomainAccessPolicyVo domainPolicyVo) throws BusinessException {
-        if(isAuthorized(actorVo)) {
-            DomainAccessPolicy domainPolicy = new DomainAccessPolicy(domainPolicyVo);
-            domainPolicyService.createDomainAccessPolicy(domainPolicy);
-        } else {
-            throw new BusinessException("You are not authorized to create a domain policy.");
-        }
-    }
-    
+
     @Override
     public DomainPolicyVo retrieveDomainPolicy(String identifier) throws BusinessException {
         DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(identifier);
@@ -157,15 +140,6 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
    }
    
    @Override
-   public void updateDomainAccessPolicy(UserVo actorVo, DomainAccessPolicyVo domainAccessPolicyVo) throws BusinessException {
-       if(isAuthorized(actorVo)){
-           domainPolicyService.updateDomainAccessPolicy(new DomainAccessPolicy(domainAccessPolicyVo));
-       } else {
-           throw new BusinessException("You are not authorized to update a domain policy.");
-       }
-   }
-   
-   @Override
    public void deletePolicy(String policyToDelete, UserVo actorVo) throws BusinessException {
        if(isAuthorized(actorVo)) {
            domainPolicyService.deletePolicy(policyToDelete);
@@ -175,31 +149,32 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
    }
 
    @Override
-   public boolean policyIsDeletable(String policyToDelete, UserVo actorVo) {
-       if(actorVo == null) {
-           logger.error("actor object is null.");
-       }
+   public boolean policyIsDeletable(String policyToDelete, UserVo actorVo) throws BusinessException {
+       if(isAuthorized(actorVo)) {
        return domainPolicyService.policyIsDeletable(policyToDelete);
+       }
+       else return false;
    }
    
   @Override
   public DomainAccessRule setDomainAccessRule(DomainAccessRuleVo ruleVo, AbstractDomainVo domainVo) throws BusinessException
   {
 	  AbstractDomain domain = abstractDomainService.retrieveDomain(domainVo.getIdentifier());
-	  if(ruleVo instanceof AllowDomainVo) {  return new AllowDomain(domain);
-	  }
-
-	  else return new DenyDomain(domain);
-
+	  if(ruleVo instanceof AllowDomainVo) {  
+		  return new AllowDomain(domain);
+	  	}else{
+	  		return new DenyDomain(domain);
+	  		}
   }
   
   @Override
   public DomainAccessRule setDomainAccessRuleSimple(DomainAccessRuleVo ruleVo) throws BusinessException
   {
-	  if(ruleVo instanceof AllowAllDomainVo) { return new AllowAllDomain();
-	  }
-	  
-	  else return new DenyAllDomain();
+	  if(ruleVo instanceof AllowAllDomainVo) { 
+		  return new AllowAllDomain();
+	  } else {
+		  return new DenyAllDomain();
+		  }
   }
   
   public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo)throws BusinessException{
@@ -216,15 +191,15 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
       }
 
   }
-  
-  public List<DomainAccessRule> sortDomainAccessRules(List<DomainAccessRuleVo> rulesVo)
+  public void sortDomainAccessRules(DomainPolicyVo policyVo, List<DomainAccessRuleVo> rulesVo)
   {
 	  List<DomainAccessRule>list=new ArrayList<DomainAccessRule>();
 	  for(DomainAccessRuleVo ruleVo : rulesVo){
 	  DomainAccessRule rule = domainPolicyService.retrieveDomainAccessRule(ruleVo.getPersistenceId());
 	  list.add(rule);
 	  }
-	  return list;
+		policyVo.getDomainAccessPolicy().getRules().clear();
+		policyVo.getDomainAccessPolicy().setRules(list);
   }
   
 }

@@ -58,7 +58,6 @@
 	</bean>
 	
 	<bean id="domainAccessPolicyBusinessService" class="org.linagora.linshare.core.business.service.impl.DomainAccessPolicyBusinessServiceImpl">
-		<constructor-arg ref="domainAccessPolicyRepository" />
 		<constructor-arg ref="domainAccessRuleRepository" />
 	</bean>
 	

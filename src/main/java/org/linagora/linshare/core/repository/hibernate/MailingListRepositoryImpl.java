@@ -31,39 +31,40 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+
+package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.List;
-import org.linagora.linshare.core.domain.entities.DomainAccessRule;
-import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
-import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
-import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
-import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.exception.BusinessException;
 
-public interface DomainPolicyFacade {
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.repository.MailingListRepository;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 
-    public DomainPolicyVo createDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException ;
-    
-    public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException ;
-    
-    public DomainPolicyVo retrieveDomainPolicy(String identifier) throws BusinessException;
-    
-    public void deletePolicy(String policyToDelete, UserVo actorVo) throws BusinessException ;
-    
-    public boolean policyIsDeletable(String policyToDelete, UserVo actor) throws BusinessException;
-    
-    public List<String> findAllDomainPoliciesIdentifiers();
-    
-    public List<DomainPolicyVo> findAllDomainPolicies()throws BusinessException;
-    
-    public DomainAccessRule setDomainAccessRule(DomainAccessRuleVo ruleVo, AbstractDomainVo domainVo) throws BusinessException;
-    
-    public DomainAccessRule setDomainAccessRuleSimple(DomainAccessRuleVo ruleVo) throws BusinessException;
-    
-    public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo)throws BusinessException;
-    
-    public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId) throws BusinessException;
-    
-    public void sortDomainAccessRules(DomainPolicyVo policyVo, List<DomainAccessRuleVo> rulesVo);
+public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingList> implements MailingListRepository{
+
+	public MailingListRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
+	
+	@Override
+	public MailingList findById(long id) {
+		List<MailingList> mailingList = findByCriteria(Restrictions.eq("id", id));
+		if (mailingList == null || mailingList.isEmpty()) {
+			return null;
+		} else if (mailingList.size() == 1) {
+			return mailingList.get(0);
+		} else {
+			throw new IllegalStateException("Id must be unique");
+		}
+	}
+
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(MailingList entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(MailingList.class).add(
+				Restrictions.eq("id", entity.getPersistenceId()));
+		return det;
+	}
+	
 }

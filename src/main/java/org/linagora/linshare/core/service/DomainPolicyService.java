@@ -36,7 +36,6 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -44,22 +43,21 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface DomainPolicyService {
 
 	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException ;
+	
     public DomainPolicy retrieveDomainPolicy(String identifier) throws BusinessException;
+    
     public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
+    
 	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException;
+	
 	public List<String> getAllDomainPolicyIdentifiers();
+	
 	public void deletePolicy(String policyToDelete) throws BusinessException;
+	
 	public boolean policyIsDeletable(String policyToDelete);
 	
-	
-	public DomainAccessPolicy retrieveDomainAccessPolicy(long id);
-	public List<DomainAccessPolicy> findAllDomainAccessPolicy();
-    public DomainAccessPolicy createDomainAccessPolicy(DomainAccessPolicy domainPolicy) throws BusinessException ;
-	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException;
-	public void deleteDomainAccesspolicy(long id) throws BusinessException;
-	
-	public List<DomainAccessRule> findAllDomainAccessRule();
 	public DomainAccessRule retrieveDomainAccessRule(long id);
+	
 	public void deleteDomainAccessRule(DomainPolicy policy,long persistenceID) throws BusinessException;
 	
 	/**

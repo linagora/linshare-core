@@ -8,11 +8,13 @@
 
 		<h1>${message:pages.administration.domains.index.createdomainpolicy.index}</h1>
 		
+		
 		<t:messagePanel />	
 		
 		<div id="pageContent">
-			
-						<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+
+			<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+
 			<!-- FORM -->
 
 				<t:beanEditForm t:id="form" t:object="domainPolicy" submitlabel="message:global.button.validate">
@@ -23,7 +25,7 @@
 
 								<p:policyDescription>
 									<t:label for="policyDescription"/>&nbsp;
-                    				<t:textarea t:id="policyDescription" value="domainPolicy.policyDescription" cols="70"/>
+                    				<t:textarea t:id="policyDescription" value="domainPolicy.policyDescription" cols="70" rows="1"/>
 								</p:policyDescription>
 								
 				</t:beanEditForm>

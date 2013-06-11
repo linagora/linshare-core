@@ -47,11 +47,7 @@ public class SubDomain extends AbstractDomain {
 		this.defaultLocale="en";
 		this.parentDomain=topDomain;
 	}
-	public SubDomain(String identifier, String label) {
-		super(identifier, label);
-		this.defaultRole=Role.SIMPLE;
-		this.defaultLocale="en";
-	}
+
 	public SubDomain(SubDomainVo subDomain) {
 		super(subDomain);
 	}

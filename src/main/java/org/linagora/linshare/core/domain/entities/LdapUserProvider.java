@@ -54,19 +54,19 @@ public class LdapUserProvider {
 
 	private DomainPattern pattern;
 	
-	private DomainPolicy policy;
+
 
 	public LdapUserProvider() {
 	}
 	
 
 	public LdapUserProvider(String baseDn, LDAPConnection ldapconnexion,
-			DomainPattern pattern,DomainPolicy policy) {
+			DomainPattern pattern ){
 		super();
 		this.baseDn = baseDn;
 		this.ldapconnexion = ldapconnexion;
 		this.pattern = pattern;
-		this.policy = policy;
+
 	}
 
 	public DomainPattern getPattern() {
@@ -95,14 +95,7 @@ public class LdapUserProvider {
 
 	@Override
 	public String toString() {
-		return "LdapUserProvider : " + baseDn + " : " + ldapconnexion.getIdentifier() + " : " + pattern.getIdentifier()+ " : " + policy.getIdentifier();
+		return "LdapUserProvider : " + baseDn + " : " + ldapconnexion.getIdentifier() + " : " + pattern.getIdentifier()+ "" ;
 	}
 
-	public DomainPolicy getPolicy() {
-		return policy;
-	}
-
-	public void setPolicy(DomainPolicy policy) {
-		this.policy = policy;
-	}
 }

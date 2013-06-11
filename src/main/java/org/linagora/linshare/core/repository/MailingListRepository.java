@@ -31,54 +31,13 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.view.tapestry.beans;
 
-import java.util.List;
+package org.linagora.linshare.core.repository;
 
-import org.apache.tapestry5.beaneditor.Validate;
-import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.entities.MailingList;
 
-public class DomainPolicyCriteriaBean {
+public interface MailingListRepository extends AbstractRepository<MailingList> {
 
-	private String identifier;
-	private String policyDescription;
-	private List<DomainAccessRuleType> domainAccessRuleType;
-	
-	
-	public DomainPolicyCriteriaBean(){
-	}
-	
-	public DomainPolicyCriteriaBean(String identifier, String policyDescription,
-			List<DomainAccessRuleType> domainAccessRuleType)
-	{
-		this.setIdentifier(identifier);
-		this.setPolicyDescription(policyDescription);
-		this.setDomainAccessRuleType(domainAccessRuleType);
-	}
-	
-	@Validate("required")
-	public String getIdentifier() {
-		return identifier;
-	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public String getPolicyDescription() {
-		return policyDescription;
-	}
-
-	public void setPolicyDescription(String policyDescription) {
-		this.policyDescription = policyDescription;
-	}
-
-	public List<DomainAccessRuleType> getDomainAccessRuleType() {
-		return domainAccessRuleType;
-	}
-
-	public void setDomainAccessRuleType(List<DomainAccessRuleType> domainAccessRuleType) {
-		this.domainAccessRuleType = domainAccessRuleType;
-	}
-	
+	public MailingList findById(long id);
 }
+ 

@@ -79,8 +79,10 @@ public class DomainAccessPolicyVo {
 				if(rule.toString().equalsIgnoreCase(rule2.toString())){ok++;}
 			}
 		}
-		if(ok == rules.size()){ return true;}
-		else return false;
+		if(ok == rules.size()){ return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public long getId() {
