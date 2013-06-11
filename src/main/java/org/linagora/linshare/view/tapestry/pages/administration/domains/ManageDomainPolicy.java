@@ -112,7 +112,7 @@ public class ManageDomainPolicy {
 		domainPolicy = domainPolicyFacade.retrieveDomainPolicy(identifier);
 	}
 
-   public Object onRemove(long _ruleIdentifier) {
+    public Object onRemove(long _ruleIdentifier) {
     	Iterator<DomainAccessRule> it =domainPolicy.getDomainAccessPolicy().getRules().iterator();
     	DomainAccessRuleVo deleteRule=new DomainAccessRuleVo();
     	boolean delete=false;
@@ -133,10 +133,10 @@ public class ManageDomainPolicy {
     	return null;
     }
 	
-   public Object onActionFromCancel() {
+    public Object onActionFromCancel() {
        domainPolicy=null;
        return Index.class;
-   }
+    }
    
 	public Object onSuccess() throws BusinessException{
 
@@ -164,8 +164,8 @@ public class ManageDomainPolicy {
 				domainPolicy=null;	
 		return Index.class;
 		
-		
 	}
+	
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());
