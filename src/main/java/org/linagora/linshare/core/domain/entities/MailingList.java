@@ -31,36 +31,101 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
+
 package org.linagora.linshare.core.domain.entities;
 
-import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.vo.AllowDomainVo;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 
+public class MailingList {
 
-
-public class AllowDomain extends DomainAccessRule {
-
-	private AbstractDomain domain;
-	
-	/*
-	 * A default constructor is needed for hibernate for loading entities, 
-	 * but you can not persist this entity without setting up a domain.
-	 * That is why this constructor is private.
+	/**
+	 * Database persistence identifier
 	 */
-	@SuppressWarnings("unused")
-	private AllowDomain() {
+	private long persistenceId;
+	private String identifier;
+	private String description;
+	private boolean isPublic;
+	private User owner;
+	private AbstractDomain domain;
+	private List<String> mails;
+	
+	public MailingList(){
 		super();
 	}
 	
-	public AllowDomain(AbstractDomain domain) {
-		super();
-		this.domain = domain;
+	public MailingList(MailingList list)
+	{
+		this.persistenceId=list.getPersistenceId();
+		this.identifier=list.getIdentifier();
+		this.description=list.getDescription();
+		this.isPublic=list.isPublic();
+		this.owner=list.getOwner();
+		this.domain=list.getDomain();
+		this.mails=list.getMails();
 	}
 	
-	@Override
-	public String toString() {
-		return "Allow Domain (" + domain.getIdentifier() + ")";
+	public MailingList(MailingListVo list)
+	{
+		this.persistenceId=list.getPersistenceId();
+		this.identifier=list.getIdentifier();
+		this.description=list.getDescription();
+		this.isPublic=list.isPublic();
+		this.owner=list.getOwner();
+		this.domain=list.getDomain();
+		this.mails=list.getMails();
+	}
+	
+	
+	public MailingList(String identifier, List<String> mails)
+	{
+		this.identifier=identifier;
+		this.mails=mails;
+	}
+
+	public long getPersistenceId() {
+		return persistenceId;
+	}
+
+	public void setPersistenceId(long persistenceId) {
+		this.persistenceId = persistenceId;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+	
+	public String visibility(boolean isPublic) {
+		if(isPublic == true) return "Public";
+		else return "Private" ;
+	}
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
 
 	public AbstractDomain getDomain() {
@@ -70,13 +135,13 @@ public class AllowDomain extends DomainAccessRule {
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
 	}
-	
-	@Override
-	public DomainAccessRuleType getDomainAccessRuleType() {
-		return DomainAccessRuleType.ALLOW;
+
+	public List<String> getMails() {
+		return mails;
+	}
+
+	public void setMails(List<String> mails) {
+		this.mails = mails;
 	}
 	
-	public AllowDomain(AllowDomainVo allowDomain) {
-		super(allowDomain);
-	}
 }

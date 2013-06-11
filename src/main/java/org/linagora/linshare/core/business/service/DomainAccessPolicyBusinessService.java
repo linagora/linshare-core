@@ -33,23 +33,14 @@
  */
 package org.linagora.linshare.core.business.service;
 
-import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainAccessPolicyBusinessService {
-
-	public DomainAccessPolicy retrieveDomainAccessPolicy(long id);
-	public List<DomainAccessPolicy> findAllDomainAccessPolicy();
-	public DomainAccessPolicy createDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException;
-	public void updateDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) throws BusinessException;
-	public void deleteDomainAccesspolicy(long persistenceID) throws BusinessException;
 	
-	
-	public List<DomainAccessRule> findAllDomainAccessRule();
 	public DomainAccessRule retrieveDomainAccessRule(long id);
+	
 	public void deleteDomainAccessRule(long persistenceID)throws BusinessException;
 	
 }

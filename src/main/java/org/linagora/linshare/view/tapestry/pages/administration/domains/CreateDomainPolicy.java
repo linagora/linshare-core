@@ -35,7 +35,6 @@ package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 
 
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;

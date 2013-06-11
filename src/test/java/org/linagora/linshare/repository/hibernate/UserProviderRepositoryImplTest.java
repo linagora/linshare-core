@@ -144,7 +144,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		int actualCount = ldapUserProviderRepository.findAll().size();
 		
 		
-		LdapUserProvider provider = new LdapUserProvider(baseDn,ldapconnexion,pattern, policy);
+		LdapUserProvider provider = new LdapUserProvider(baseDn,ldapconnexion,pattern);
 		ldapUserProviderRepository.create(provider);
 		Assert.assertNotNull(provider.getPersistenceId());
 		

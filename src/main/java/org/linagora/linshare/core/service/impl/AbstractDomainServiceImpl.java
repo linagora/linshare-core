@@ -311,7 +311,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			logger.debug("Update domain with provider");
 			if(provider == null) {
 				logger.debug("Update domain with provider creation ");
-				provider = new LdapUserProvider(baseDn, ldapConn, domainPattern,domainPolicy);
+				provider = new LdapUserProvider(baseDn, ldapConn, domainPattern);
 				userProviderService.create(provider);
 				entity.setUserProvider(provider);
 			} else {
@@ -319,7 +319,6 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				provider.setBaseDn(baseDn);
 				provider.setLdapconnexion(ldapConn);
 				provider.setPattern(domainPattern);
-				provider.setPolicy(domainPolicy);
 				userProviderService.update(provider);
 			}
 			abstractDomainRepository.update(entity);

@@ -87,9 +87,6 @@ public class ManageDomainPolicy {
     @Property 
     private int indexRule;
 
-    @Property 
-    private boolean cancel;
-    
     @Inject
     private Messages messages;
     
@@ -136,30 +133,27 @@ public class ManageDomainPolicy {
     	return null;
     }
 	
-    void onSelectedFromCancel() { cancel = true; }
-	
+   public Object onActionFromCancel() {
+       domainPolicy=null;
+       return Index.class;
+   }
+   
 	public Object onSuccess() throws BusinessException{
 
-		if(cancel==true){
-		 domainPolicy=null;
-		}
-		else{
-			
 			if(tabPos != null){
 				
 				String[] domainIdentifiers = tabPos.split(";");
 				List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
 				DomainAccessRuleVo ruleVo; 
-				
+				logger.debug("rules:");
 				for (String domainIdentifier : domainIdentifiers) {
 					if(!domainIdentifier.isEmpty()){
-						
+						logger.debug(domainIdentifier);
 						ruleVo =domainPolicyFacade.retrieveDomainAccessRule(Long.parseLong(domainIdentifier));
 						rulesVo.add(ruleVo);
 					}
 				}
-				domainPolicy.getDomainAccessPolicy().getRules().clear();
-				domainPolicy.getDomainAccessPolicy().setRules(domainPolicyFacade.sortDomainAccessRules(rulesVo));
+				domainPolicyFacade.sortDomainAccessRules(domainPolicy,rulesVo);
 			}
 			
 			try {
@@ -168,7 +162,6 @@ public class ManageDomainPolicy {
 				e.printStackTrace();
 			}
 				domainPolicy=null;	
-		}
 		return Index.class;
 		
 		

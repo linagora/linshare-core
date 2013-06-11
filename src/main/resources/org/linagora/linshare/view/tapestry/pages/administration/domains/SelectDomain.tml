@@ -12,7 +12,7 @@
 		<div id="pageContent">
 			
 			<!-- FORM -->         
-
+						<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
 			<form t:type="form">
 			
 				<div class="error">
@@ -27,8 +27,7 @@
             <select t:type="select" t:id="domainSelection" t:model="domains"></select>
             </div>
             
-            <p><input type="submit" value="${message:global.button.validate}"/>
-            <input t:type="Submit" t:id="cancel" value="${message:global.button.cancel}"/></p>
+            <p><input type="submit" value="${message:global.button.validate}"/></p>
         </form>
 		</div>
 

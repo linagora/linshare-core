@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
-
-
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -93,20 +91,17 @@ public class SelectRules {
     @Inject
     private Messages messages;
 
-    @Property
-    private boolean cancel;
 	
+    
 	@SetupRender
 	public void init() {
 		if (domainPolicy == null) {
 			domainPolicy = new DomainPolicyVo();
 		}
-
 	}
 	
     public Object onActionFromCancel() {
-        domainPolicy=null;
-        return CreateDomainPolicy.class;
+        return ManageDomainPolicy.class;
     }
 	
     public DomainAccessRule fromDomainAccessRuleTypeToDomainAccessRule(DomainAccessRuleType rule)
@@ -118,16 +113,10 @@ public class SelectRules {
     	}
     }
     
-    void onSelectedFromCancel() {
-        
-    	cancel=true;
-    }
+
     
     public Object onSuccess() {  
     	
-
-    	if(cancel==false)
-    	{
     		if(rule.toInt() == 2 || rule.toInt() == 3 ){
     			selectDomainpage.set(rule);
     			return selectDomainpage;
@@ -149,11 +138,14 @@ public class SelectRules {
     	    			logger.error("Can not retrieve domain : " + e.getMessage());
     	    			logger.debug(e.toString());}
     	    	}
+    	    	try {
+    				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
+    				} catch (BusinessException e) {
+    					e.printStackTrace();
+    				}
     			}
     		
         	return manageDomainpage;
-    	}
-    	return manageDomainpage;
     }
     
     
