@@ -57,7 +57,7 @@
 	
 	<jaxws:endpoint id="MTOMUploadEndpoint" implementor="#MTOMUploadSoapService" address="/upload">
 		<jaxws:properties>
-			<entry key="mtom-enabled" value="true" />
+            <entry key="mtom-enabled" value="true" />
 			<entry key="attachment-directory" value="${webservice.attachment-directory}" />
 			<!-- data exceeding the memory threshold will be written to the directory 
 				specified in bytes -->
@@ -96,6 +96,10 @@
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
 
+	<bean id="fineUploaderService" class="org.linagora.linshare.fineuploader.impl.FineUploaderServiceImpl">
+		<constructor-arg ref="webServiceDocumentFacade" />
+	</bean>
+
 	<jaxrs:server id="restContainer" address="/">
 		<jaxrs:serviceBeans>
 			<ref bean="documentRestService" />
@@ -104,6 +108,7 @@
 			<ref bean="threadRestService" />
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
+			<ref bean="fineUploaderService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
