@@ -191,6 +191,49 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
       }
 
   }
+  
+  public void insertOnTop(DomainPolicyVo policyVo,DomainAccessRuleVo ruleVo)
+  {
+	  List<DomainAccessRule> list=new ArrayList<DomainAccessRule>();
+	  try {
+		list.add(this.setDomainAccessRuleSimple(ruleVo));
+	  } catch (BusinessException e) {
+		e.printStackTrace();
+	}
+	  for(DomainAccessRule current : policyVo.getDomainAccessPolicy().getRules())
+	  {
+		  list.add(current);
+	  }
+		policyVo.getDomainAccessPolicy().getRules().clear();
+		policyVo.getDomainAccessPolicy().setRules(list);
+	  logger.debug("my list:");
+	  for(DomainAccessRule current : policyVo.getDomainAccessPolicy().getRules())
+	  {
+		  logger.debug(current.toString());
+	  }
+  }
+  
+  public void insertOnTop(DomainPolicyVo policyVo,DomainAccessRuleVo ruleVo, AbstractDomainVo domainVo)
+  {
+	  List<DomainAccessRule> list=new ArrayList<DomainAccessRule>();
+	  try {
+		list.add(this.setDomainAccessRule(ruleVo,domainVo));
+	  } catch (BusinessException e) {
+		e.printStackTrace();
+	}
+	  for(DomainAccessRule current : policyVo.getDomainAccessPolicy().getRules())
+	  {
+		  list.add(current);
+	  }
+		policyVo.getDomainAccessPolicy().getRules().clear();
+		policyVo.getDomainAccessPolicy().setRules(list);
+	  logger.debug("my list:");
+	  for(DomainAccessRule current : policyVo.getDomainAccessPolicy().getRules())
+	  {
+		  logger.debug(current.toString());
+	  }
+  }
+  
   public void sortDomainAccessRules(DomainPolicyVo policyVo, List<DomainAccessRuleVo> rulesVo)
   {
 	  List<DomainAccessRule>list=new ArrayList<DomainAccessRule>();
