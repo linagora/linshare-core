@@ -311,23 +311,22 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	@Override
 	public void deleteDocumentEntry(Account actor, DocumentEntry documentEntry) throws BusinessException {
+		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentEntry.getUuid());
 		try {
 			if (!isOwnerOrAdmin(actor, documentEntry.getEntryOwner())) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
 			}
-
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. There's still existing shares.");
 			}
-
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
 
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
 					.getType());
+
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
-
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + documentEntry.getName() + " of user " + actor.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
@@ -336,11 +335,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	@Override
 	public long getUserMaxFileSize(Account account) throws BusinessException {
-
 		// if user is not in one domain = BOUM
-
 		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
-
 		SizeUnitValueFunctionality userMaxFileSizeFunctionality = functionalityService.getUserMaxFileSizeFunctionality(domain);
 
 		if (userMaxFileSizeFunctionality.getActivationPolicy().getStatus()) {

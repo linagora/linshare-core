@@ -64,7 +64,6 @@ public class WebserviceBase {
 	}
 
 	protected WebApplicationException analyseFaultREST(BusinessException e) {
-
 		// TODO locale in WebApplicationException ?
 		WebApplicationException w;
 
@@ -88,7 +87,6 @@ public class WebserviceBase {
 		default:
 			w = giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
 		}
-
 		return w;
 	}
 
