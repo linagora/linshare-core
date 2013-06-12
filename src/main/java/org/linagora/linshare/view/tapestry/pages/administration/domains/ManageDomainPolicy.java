@@ -104,12 +104,7 @@ public class ManageDomainPolicy {
 		List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
 		for(DomainAccessRule rules : domainPolicy.getDomainAccessPolicy().getRules())
 		{
-			if(persistentLocale.get().toString().equals("fr"))
-			{
 				rulesVo.add(new DomainAccessRuleVo(rules,persistentLocale));
-			} else {
-				rulesVo.add(new DomainAccessRuleVo(rules));
-			}
 		}
 		return rulesVo;
 	}
