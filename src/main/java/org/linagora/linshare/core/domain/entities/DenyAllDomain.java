@@ -46,6 +46,10 @@ public class DenyAllDomain extends DomainAccessRule {
 		return  "Deny All Domains";
 	}
 
+	public String toFrench() {
+		return  "Interdire tout les domaines";
+	}
+	
 	@Override
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.DENY_ALL;

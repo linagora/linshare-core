@@ -72,4 +72,9 @@ public abstract class DomainAccessRule {
 
 	
 	public abstract DomainAccessRuleType getDomainAccessRuleType();
+
+	public String toFrench() {
+		return null;
+	}
+
 }
