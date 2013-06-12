@@ -447,7 +447,7 @@ CREATE TABLE mailing_list (
   users_account_id   int8 NOT NULL, 
   isPublic           bool NOT NULL, 
   identifier         varchar(255) NOT NULL, 
-  description        varchar(255),  
+  description        text,  
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
   id              	 int8 NOT NULL,
