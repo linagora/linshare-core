@@ -6,7 +6,7 @@ SET default_with_oids = false;
 
 CREATE SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE START WITH 1 CACHE 1;
 CREATE TABLE account (
-  id                               int8 NOT NULL, 
+  id                               int8 NOT NULL,  
   domain_id                       int8 NOT NULL, 
   technical_account_permission_id int8, 
   owner_id                        int8, 
@@ -20,12 +20,14 @@ CREATE TABLE account (
   account_type                    int4 NOT NULL, 
   password                        varchar(255), 
   destroyed                       bool NOT NULL, 
+  thread_view_id                  int8, 
+  account_id                      int8,  
   CONSTRAINT account_pkey 
     PRIMARY KEY (id));
 CREATE TABLE allowed_mimetype (
   id          int8 NOT NULL, 
   extensions varchar(255), 
-  mimetype   varchar(255) UNIQUE, 
+  mimetype   varchar(255), 
   status     int4, 
   CONSTRAINT linshare_allowed_mimetype_pkey 
     PRIMARY KEY (id));
@@ -48,7 +50,6 @@ CREATE TABLE document (
   uuid          varchar(255) NOT NULL UNIQUE, 
   creation_date timestamp(6) NOT NULL, 
   type          varchar(255) NOT NULL, 
-  check_mime_type  bool DEFAULT false NOT NULL, 
   size          int8 NOT NULL, 
   thmb_uuid     varchar(255), 
   timestamp     bytea, 
@@ -57,7 +58,7 @@ CREATE TABLE document (
 CREATE TABLE document_entry (
   entry_id    int8 NOT NULL, 
   document_id int8 NOT NULL, 
-  ciphered    bool NOT NULL, 
+  ciphered    int2 NOT NULL, 
   PRIMARY KEY (entry_id), 
   CONSTRAINT "unique document entry" 
     UNIQUE (entry_id, document_id));
@@ -76,7 +77,7 @@ CREATE TABLE domain_abstract (
   domain_policy_id          int8 NOT NULL, 
   parent_id                 int8, 
   messages_configuration_id int8 NOT NULL, 
-  auth_show_order           int8 NOT NULL, 
+  auth_show_order           int8 NOT NULL,  
   CONSTRAINT linshare_domain_abstract_pkey 
     PRIMARY KEY (id));
 CREATE TABLE domain_access_policy (
@@ -110,7 +111,7 @@ CREATE TABLE domain_policy (
   CONSTRAINT linshare_domain_policy_pkey 
     PRIMARY KEY (id));
 CREATE TABLE entry (
-  id                int8 NOT NULL, 
+  id                 int8 NOT NULL, 
   owner_id          int8 NOT NULL, 
   creation_date     timestamp(6) NOT NULL, 
   modification_date timestamp(6) NOT NULL, 
@@ -193,14 +194,14 @@ CREATE TABLE mail_subjects (
   subject_id                int4 NOT NULL, 
   language_id               int4 NOT NULL, 
   content                   text
-);
+  );
 CREATE TABLE mail_templates (
   messages_configuration_id int8 NOT NULL, 
   template_id               int4 NOT NULL, 
   language_id               int4 NOT NULL, 
   content_html              text, 
   content_txt               text
-); 
+  );  
 CREATE TABLE messages_configuration (
   messages_configuration_id  int8 NOT NULL, 
   CONSTRAINT linshare_messages_configuration_pkey 
@@ -221,7 +222,7 @@ CREATE TABLE recipient_favourite (
   CONSTRAINT linshare_recipient_favourite_pkey 
     PRIMARY KEY (id));
 CREATE TABLE anonymous_url (
-  id         int8 NOT NULL, 
+  id          int8 NOT NULL, 
   url_path   varchar(255) NOT NULL, 
   uuid       varchar(255) NOT NULL UNIQUE, 
   password   varchar(255), 
@@ -341,7 +342,7 @@ CREATE TABLE users (
   CONSTRAINT user_pkey 
     PRIMARY KEY (account_id));
 CREATE TABLE user_provider_ldap (
-  id                 int8 NOT NULL, 
+  id                  int8 NOT NULL, 
   differential_key   varchar(255) NOT NULL, 
   domain_pattern_id  int8 NOT NULL, 
   ldap_connection_id int8 NOT NULL, 
@@ -349,8 +350,8 @@ CREATE TABLE user_provider_ldap (
     PRIMARY KEY (id));
 CREATE TABLE version (
   id           int8 NOT NULL, 
-  description text NOT NULL, 
-  CONSTRAINT linshare_allowed_contact_pkey 
+  description varchar(255) NOT NULL UNIQUE, 
+  CONSTRAINT linshare_version_pkey 
     PRIMARY KEY (id));
 CREATE TABLE views (
   id               int8 NOT NULL, 
@@ -366,10 +367,10 @@ CREATE TABLE view_context (
   name        varchar(255) NOT NULL, 
   description text NOT NULL, 
   PRIMARY KEY (id));
-CREATE TABLE welcome_texts (
+CREATE TABLE welcome_texts ( 
   messages_configuration_id int8 NOT NULL, 
   welcome_text              text, 
-  language_id               int4);
+  language_id               int4, 
 CREATE TABLE allowed_contact (
   id          int8 NOT NULL, 
   account_id int8 NOT NULL, 
@@ -409,6 +410,12 @@ CREATE TABLE technical_account_permission_account (
   technical_account_permission_id int8 NOT NULL, 
   account_id                      int8 NOT NULL, 
   PRIMARY KEY (technical_account_permission_id, 
+  mail varchar(255) NOT NULL UNIQUE, 
+  PRIMARY KEY (id));
+CREATE TABLE technical_account_permission_account (
+  technical_account_permission_id int8 NOT NULL, 
+  account_id                      int8 NOT NULL, 
+  PRIMARY KEY (technical_account_permission_id, 
   account_id));
 CREATE TABLE default_view (
   id               int8 NOT NULL, 
@@ -426,6 +433,7 @@ CREATE TABLE thread_view (
   id                 int8 NOT NULL, 
   thread_account_id int8 NOT NULL, 
   name              varchar(255) NOT NULL, 
+  account_id        int8, 
   PRIMARY KEY (id));
 CREATE TABLE thread_view_asso (
   id              int8 NOT NULL, 
@@ -433,6 +441,20 @@ CREATE TABLE thread_view_asso (
   thread_view_id int8 NOT NULL, 
   depth          int4 NOT NULL, 
   PRIMARY KEY (id));
+CREATE TABLE mailing_list (
+  id                  int8 NOT NULL, 
+  domain_abstract_id int8 NOT NULL, 
+  users_account_id   int8 NOT NULL, 
+  isPublic           bool NOT NULL, 
+  identifier         varchar(255) NOT NULL, 
+  description        varchar(255),  
+  PRIMARY KEY (id));
+CREATE TABLE mailing_list_contact (
+  id              	 int8 NOT NULL,
+  mailing_list_id int8 NOT NULL, 
+  mail            varchar(255), 
+  PRIMARY KEY (id, 
+  mailing_list_id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -506,7 +528,11 @@ ALTER TABLE view_tag_asso ADD CONSTRAINT FKview_tag_a218567 FOREIGN KEY (tag_id)
 ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie68184 FOREIGN KEY (thread_account_id) REFERENCES thread (account_id);
 ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie285846 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
 ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_id) REFERENCES tag (id);
+ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie557698 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE thread ADD CONSTRAINT FKthread957862 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
+ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li944248 FOREIGN KEY (users_account_id) REFERENCES users (account_id);
+ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mailing_list_contact ADD CONSTRAINT FKmailing_li272876 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 
