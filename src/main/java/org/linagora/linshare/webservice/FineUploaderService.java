@@ -1,4 +1,4 @@
-package org.linagora.linshare.fineuploader;
+package org.linagora.linshare.webservice;
 
 import java.io.InputStream;
 
