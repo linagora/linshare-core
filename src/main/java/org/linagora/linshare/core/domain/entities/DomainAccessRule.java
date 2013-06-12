@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 
@@ -73,7 +74,7 @@ public abstract class DomainAccessRule {
 	
 	public abstract DomainAccessRuleType getDomainAccessRuleType();
 
-	public String toFrench() {
+	public String toString(PersistentLocale persistentLocale) {
 		return null;
 	}
 

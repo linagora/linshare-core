@@ -46,19 +46,13 @@ public class DomainAccessRuleVo {
 	public DomainAccessRuleVo(){
 	}
 	
-	public DomainAccessRuleVo(DomainAccessRule rule)
-	{
-		this.regexp=rule.getRegexp();
-		this.description=rule.toString();
-		this.persistenceId=rule.getPersistenceId();
-	}
-	
 	public DomainAccessRuleVo(DomainAccessRule rule,PersistentLocale persistentLocale)
 	{
 		this.regexp=rule.getRegexp();
-		this.description=rule.toFrench();
+		this.description=rule.toString(persistentLocale);
 		this.persistenceId=rule.getPersistenceId();
 	}
+
 	public String getRegexp() {
 		return regexp;
 	}

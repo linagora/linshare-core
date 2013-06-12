@@ -127,7 +127,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
     @Override
     public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId) throws BusinessException {
         DomainAccessRule rule = domainPolicyService.retrieveDomainAccessRule(persistenceId);
-        return new DomainAccessRuleVo(rule);
+        return new DomainAccessRuleVo(rule,null);
     }
    
    @Override

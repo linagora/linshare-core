@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.vo.AllowDomainVo;
 
@@ -58,13 +59,11 @@ public class AllowDomain extends DomainAccessRule {
 		this.domain = domain;
 	}
 	
-	@Override
-	public String toString() {
-		return "Allow Domain (" + domain.getIdentifier() + ")";
-	}
-
-	public String toFrench(){
-		return " Autorise (" + domain.getIdentifier() + ")";
+	public String toString(PersistentLocale persistentLocale) {
+		if(persistentLocale.get().toString().equals("fr")){		
+			return " Autorise (" + domain.getIdentifier() + ")";
+		}
+		else return "Allow Domain (" + domain.getIdentifier() + ")";
 	}
 	
 	public AbstractDomain getDomain() {
