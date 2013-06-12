@@ -44,6 +44,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
@@ -72,6 +73,9 @@ public class ManageDomainPolicy {
 	@Property
 	private DomainPolicyVo domainPolicy;
 
+    @Inject
+    private PersistentLocale persistentLocale;
+	
 	@SessionState
     private UserVo loginUser;
 	
@@ -97,11 +101,15 @@ public class ManageDomainPolicy {
 	
 	
 	public List<DomainAccessRuleVo> getRulesList(){
-		
 		List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
 		for(DomainAccessRule rules : domainPolicy.getDomainAccessPolicy().getRules())
 		{
-			rulesVo.add(new DomainAccessRuleVo(rules));
+			if(persistentLocale.get().toString().equals("fr"))
+			{
+				rulesVo.add(new DomainAccessRuleVo(rules,persistentLocale));
+			} else {
+				rulesVo.add(new DomainAccessRuleVo(rules));
+			}
 		}
 		return rulesVo;
 	}

@@ -46,6 +46,10 @@ public class AllowAllDomain extends DomainAccessRule {
 		return value;
 	}
 
+	public String toFrench() {
+		String value=new String("Autoriser tout les domaines");
+		return value;
+	}
 	@Override
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.ALLOW_ALL;

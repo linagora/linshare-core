@@ -63,6 +63,10 @@ public class AllowDomain extends DomainAccessRule {
 		return "Allow Domain (" + domain.getIdentifier() + ")";
 	}
 
+	public String toFrench(){
+		return " Autorise (" + domain.getIdentifier() + ")";
+	}
+	
 	public AbstractDomain getDomain() {
 		return domain;
 	}

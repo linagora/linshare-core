@@ -61,6 +61,10 @@ public class DenyDomain extends DomainAccessRule {
 		return "Deny (" + domain.getIdentifier() + ")";
 	}
 
+	public String toFrench() {
+		return "Inderdit (" + domain.getIdentifier() + ")";
+	}
+
 	public AbstractDomain getDomain() {
 		return domain;
 	}
