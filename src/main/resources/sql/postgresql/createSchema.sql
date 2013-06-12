@@ -58,7 +58,7 @@ CREATE TABLE document (
 CREATE TABLE document_entry (
   entry_id    int8 NOT NULL, 
   document_id int8 NOT NULL, 
-  ciphered    int2 NOT NULL, 
+  ciphered    bool NOT NULL, 
   PRIMARY KEY (entry_id), 
   CONSTRAINT "unique document entry" 
     UNIQUE (entry_id, document_id));
@@ -370,7 +370,7 @@ CREATE TABLE view_context (
 CREATE TABLE welcome_texts ( 
   messages_configuration_id int8 NOT NULL, 
   welcome_text              text, 
-  language_id               int4, 
+  language_id               int4);
 CREATE TABLE allowed_contact (
   id          int8 NOT NULL, 
   account_id int8 NOT NULL, 
