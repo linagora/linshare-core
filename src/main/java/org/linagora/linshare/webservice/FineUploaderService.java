@@ -5,7 +5,7 @@ import java.io.InputStream;
 import javax.ws.rs.Path;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.webservice.dto.FineUploaderDto;
 
 @Path("/fineuploader/upload")
 public interface FineUploaderService {
@@ -19,7 +19,17 @@ public interface FineUploaderService {
 	 * @param body
 	 * @return
 	 */
-	public DocumentDto upload(InputStream file, String fileName,
+	public FineUploaderDto upload(InputStream file, String fileName,
 			MultipartBody body);
+
+	/**
+	 * Delete an existing file.
+	 * 
+	 * @param file
+	 * @param fileName
+	 * @param body
+	 * @return
+	 */
+	public FineUploaderDto delete(String uuid);
 
 }
