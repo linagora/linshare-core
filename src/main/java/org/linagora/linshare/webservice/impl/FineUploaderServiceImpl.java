@@ -1,4 +1,4 @@
-package org.linagora.linshare.fineuploader.impl;
+package org.linagora.linshare.webservice.impl;
 
 import java.io.InputStream;
 
@@ -15,9 +15,8 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
-import org.linagora.linshare.fineuploader.FineUploaderService;
+import org.linagora.linshare.webservice.FineUploaderService;
 import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.impl.WebserviceBase;
 
 public class FineUploaderServiceImpl extends WebserviceBase implements
 		FineUploaderService {

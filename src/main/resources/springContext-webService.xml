@@ -96,7 +96,7 @@
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
 
-	<bean id="fineUploaderService" class="org.linagora.linshare.fineuploader.impl.FineUploaderServiceImpl">
+	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.impl.FineUploaderServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
 	</bean>
 
