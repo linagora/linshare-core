@@ -65,10 +65,10 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 					.getParameter(FILE_NAME);
 		}
 		try {
-			return new FineUploaderDto(true, "", webServiceDocumentFacade
-					.uploadfile(file, fileName, "").getUuid());
+			DocumentDto doc = webServiceDocumentFacade.uploadfile(file, fileName, "");
+			return new FineUploaderDto(true, doc.getUuid());
 		} catch (BusinessException e) {
-			return new FineUploaderDto(false, e.getMessage(), null);
+			return new FineUploaderDto(false);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 			webServiceDocumentFacade.deleteFile(uuid);
 			return new FineUploaderDto(true);
 		} catch (BusinessException e) {
-			return new FineUploaderDto(false, e.getMessage());
+			return new FineUploaderDto(false);
 		}
 	}
 }

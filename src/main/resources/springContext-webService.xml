@@ -118,7 +118,7 @@
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
-			<!--<cxf:logging /> -->
+            <!--<cxf:logging />-->
 		</jaxrs:features>
 	</jaxrs:server>
 	

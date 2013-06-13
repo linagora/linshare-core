@@ -468,6 +468,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	@Override
 	public DocumentEntry findById(Account actor, String currentDocEntryUuid) throws BusinessException {
+		logger.debug("Trying to find document entry: " + currentDocEntryUuid);
 		DocumentEntry entry = documentEntryBusinessService.findById(currentDocEntryUuid);
 		if (entry == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Can not find document entry with uuid : " + currentDocEntryUuid);
@@ -476,6 +477,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		if (!isOwnerOrAdmin(actor, entry.getEntryOwner())) {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
 		}
+		logger.debug("Document entry found: " + entry.getUuid());
 		return entry;
 	}
 

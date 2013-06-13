@@ -108,6 +108,7 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl
 			User actor = getAuthentication();
 			DocumentEntry doc = documentEntryService.findById(actor, uuid);
 
+			logger.debug("Trying to delete document entry: " + doc.getUuid());
 			documentEntryService.deleteDocumentEntry(actor, doc);
 		} catch (BusinessException e) {
 			throw e;
