@@ -266,6 +266,19 @@
 			</exclusions>
 		</dependency>
 
+		
+		<dependency>
+			<groupId>org.linid.dm</groupId>
+			<artifactId>authorization</artifactId>
+			<version>2.0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-core</artifactId>

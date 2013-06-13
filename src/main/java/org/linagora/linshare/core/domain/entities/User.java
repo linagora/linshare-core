@@ -68,6 +68,20 @@ public abstract class User extends Account {
 
 	
 	public User() {
+		this.firstName = null;
+		this.lastName = null;
+		this.mail = null;
+		
+		this.lsUuid = null;
+		this.creationDate = new Date();
+		this.modificationDate = new Date();
+		this.role = Role.SIMPLE;
+		this.enable = true;
+		this.destroyed = false;
+		this.comment = "";
+		this.canUpload = true;
+		this.canCreateGuest = true;
+		this.restricted = false;
 	}
 	
 	public User(String firstName, String lastName, String mail) { 

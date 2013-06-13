@@ -60,8 +60,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 
 @ContextConfiguration(locations = { 
-		"classpath:springContext-test.xml",
-		"classpath:springContext-startopends.xml"
+		"classpath:springContext-test.xml"
+//		"classpath:springContext-startopends.xml"
 		})
 public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	
@@ -82,19 +82,24 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	@Before
 	public void setUp() throws Exception {
 		logger.debug(LinShareTestConstants.BEGIN_SETUP);
-		ldapConn = new LDAPConnection("testldap", "ldap://localhost:33389", "anonymous");
+		ldapConn = new LDAPConnection("testldap", "ldap://linshare-obm.linshare.team.services.par.lng:389", "anonymous");
 		attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(DomainPattern.USER_MAIL, new LdapAttribute(DomainPattern.USER_MAIL, "mail"));
 		attributes.put(DomainPattern.USER_FIRST_NAME, new LdapAttribute(DomainPattern.USER_FIRST_NAME, "givenName"));
 		attributes.put(DomainPattern.USER_LAST_NAME, new LdapAttribute(DomainPattern.USER_LAST_NAME, "sn"));
 		attributes.put(DomainPattern.USER_UID, new LdapAttribute(DomainPattern.USER_UID, "uid"));
 		pattern= new DomainPattern("testPattern", "testPattern", 
-				"ldap.entry(\"uid=\" + userId + \",ou=People,\" + domain, \"objectClass=*\");", 
-				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=*)(givenName=*)(sn=*))\");", 
-				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(givenName=*)(sn=*)(|(mail=\"+login+\")(uid=\"+login+\")))\");", 
-				"ldap.list(\"ou=People,\" + domain, \"(&(objectClass=*)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", 
-				attributes);
-		baseDn = "dc=linpki,dc=org";
+				" ", 
+				" ", 
+				"ldap.search(domain, \"(&(objectClass=obmUser)(givenName=*)(sn=*)(mail=\"+login+\"))\");", // auth command
+				"ldap.search(domain, \"(&(objectClass=obmUser)(mail=\"+mail+\")(givenName=*)(sn=*))\");", // search command 
+				attributes,
+				"ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(givenName=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(givenName=*)(sn=*))\");", // auto complete command
+				false);
+		baseDn = "ou=users,dc=int1.linshare.dev,dc=local";
+//		baseDn = "dc=int1.linshare.dev,dc=local";
+//		"ldap.search(domain, \"(&(objectClass=obmUser)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");", // search command 
+		
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
 	
@@ -108,7 +113,9 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		User user = ldapQueryService.auth(ldapConn, baseDn, pattern, "user1", "password1");
+		User user = ldapQueryService.auth(ldapConn, baseDn, pattern, "bart.simpson@int1.linshare.dev", "password1");
+		
+		
 		Assert.assertNotNull(user);
 		user = ldapQueryService.auth(ldapConn, baseDn, pattern, "user1", "bla");
 		Assert.assertNull(user);
@@ -116,7 +123,24 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		Assert.assertNotNull(user);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
-
+	
+	@Test
+	public void testFred() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		List<User> searchUser = ldapQueryService.searchUser(ldapConn, baseDn, pattern, "bart");
+		for (User user : searchUser) {
+			logger.debug(user.getAccountReprentation());
+			logger.debug(user.getMail());
+			logger.debug(user.getFirstName());
+			logger.debug(user.getLastName());
+			logger.debug(user.getLdapUid());
+		}
+		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	
+	@Ignore
 	@Test
 	public void testSearchUser() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
