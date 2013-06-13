@@ -7,23 +7,16 @@ public class FineUploaderDto {
 
 	private boolean success;
 
-	private String error;
-
 	private String newUuid;
 
-	public FineUploaderDto(boolean success, String reason, String newUuid) {
+	public FineUploaderDto(boolean success, String newUuid) {
 		super();
 		this.success = success;
-		this.error = reason;
 		this.newUuid = newUuid;
 	}
 
 	public FineUploaderDto(boolean success) {
-		new FineUploaderDto(success, "", "");
-	}
-
-	public FineUploaderDto(boolean success, String error) {
-		new FineUploaderDto(success, error, "");
+		this(success, "");
 	}
 
 	public boolean isSuccess() {
@@ -32,14 +25,6 @@ public class FineUploaderDto {
 
 	public void setSuccess(boolean success) {
 		this.success = success;
-	}
-
-	public String getError() {
-		return error;
-	}
-
-	public void setError(String error) {
-		this.error = error;
 	}
 
 	public String getNewUuid() {
