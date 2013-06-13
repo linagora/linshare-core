@@ -47,5 +47,9 @@ public interface LDAPQueryService {
 	
 	public User auth(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId, String userPasswd) throws BusinessException, NamingException, IOException;
 	public List<User> searchUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException;
+	public List<User> searchUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException;
+
+	public List<User> completeByMail(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException;
+	
 	
 }

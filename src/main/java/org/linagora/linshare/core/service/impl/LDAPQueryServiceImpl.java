@@ -34,47 +34,117 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
+import javax.naming.ldap.LdapContext;
 
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPQueryService;
-import org.linagora.linshare.ldap.JScriptEvaluator;
 import org.linagora.linshare.ldap.JScriptLdapQuery;
+import org.linid.dm.authorization.lql.JScriptEvaluator;
+import org.linid.dm.authorization.lql.LqlRequestCtx;
+import org.linid.dm.authorization.lql.dnlist.DnList;
+import org.linid.dm.authorization.lql.dnlist.IDnList;
+import org.mozilla.javascript.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.support.LdapContextSource;
+//import org.linagora.linshare.ldap.JScriptEvaluator;
+//import org.linagora.linshare.ldap.JScriptLdapQuery;
 
 public class LDAPQueryServiceImpl implements LDAPQueryService {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(LDAPQueryServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(LDAPQueryServiceImpl.class);
 	
-	private static final ThreadLocal < JScriptEvaluator > threadLocal = new ThreadLocal < JScriptEvaluator > () {
-		@Override 
-		protected JScriptEvaluator initialValue() {
-			return new JScriptEvaluator();
-		}
-	};
+	private DomainPattern domainPatternHack;
+	
+//	public LDAPQueryServiceImpl(IDnList dnList) {
+//		super();
+//		this.dnList = dnList;
+//	}
+	
+	
+	public LDAPQueryServiceImpl() {
+		super();
+		this.dnList = new DnList();
+		/* HACK */
+		Map<String, LdapAttribute>  attributes = new HashMap<String, LdapAttribute>();
+		attributes.put(DomainPattern.USER_MAIL, new LdapAttribute(DomainPattern.USER_MAIL, "mail"));
+		attributes.put(DomainPattern.USER_FIRST_NAME, new LdapAttribute(DomainPattern.USER_FIRST_NAME, "givenName"));
+		attributes.put(DomainPattern.USER_LAST_NAME, new LdapAttribute(DomainPattern.USER_LAST_NAME, "sn"));
+		attributes.put(DomainPattern.USER_UID, new LdapAttribute(DomainPattern.USER_UID, "uid"));
+		
+		this.domainPatternHack= new DomainPattern("testPattern", "testPattern", 
+				" ", 
+				" ", 
+				"ldap.search(domain, \"(&(objectClass=obmUser)(givenName=*)(sn=*)(mail=\"+login+\"))\");", // auth command
+				"ldap.search(domain, \"(&(objectClass=obmUser)(mail=\"+mail+\")(givenName=*)(sn=*))\");", // search command 
+				attributes,
+				"ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(givenName=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(givenName=*)(sn=*))\");", // auto complete command
+				false);
+	}
+	
+	/** The local LDAP facade used to evaluate LQL requests */
+	private ContextSource ldapContext;
 
-	public static JScriptEvaluator getCurrentThreadJSE() {
-		return threadLocal.get();
+	/** Local LDAP cache */
+	private IDnList dnList; 
+	
+	private ContextSource getLdapContext() {
+        return ldapContext;
 	}
 
+	public void setLdapContext(ContextSource ldapContext) {
+		this.ldapContext = ldapContext;
+	}
+	
+	public void setDnList(IDnList dnList) {
+		this.dnList = dnList;
+	}
+	
+	
+			
 	@Override
 	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userId, String userPasswd) throws BusinessException, NamingException, IOException {
-		LOGGER.debug("LDAPQueryServiceImpl.auth: BEGIN:" + userId + ", " + baseDn );
-		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
-		return query.auth(userId, userPasswd);
+		List<User> searchUser = this.searchUser(ldapConnection, baseDn, domainPatternHack, userId);
+		return searchUser.get(0);
 	}
-
 
 	@Override
-	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException {
-		LOGGER.debug("LDAPQueryServiceImpl.searchUser:" + mail + "," + firstName + "," + lastName + "," + baseDn);
-		JScriptLdapQuery query = new JScriptLdapQuery(getCurrentThreadJSE(),ldapConnection, baseDn, domainPattern);
-		return query.searchUser(mail, firstName, lastName);
+	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException,
+			IOException {
+		return this.searchUser(ldapConnection, baseDn, domainPatternHack, mail);
 	}
+
+	@Override
+	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException,
+			IOException {
+		
+		LdapContext ldapContext = (LdapContext)getLdapContext().getReadOnlyContext();
+
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("login", mail);
+		vars.put("domain", baseDn);
+		
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		
+		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
+		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPatternHack, dnList);
+		return query.searchUserFred(mail);
+	}
+
+	@Override
+	public List<User> completeByMail(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

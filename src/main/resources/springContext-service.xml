@@ -169,9 +169,6 @@
 		<constructor-arg value="${linshare.display.licenceTerm}" />
 	</bean>
 
-	<bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
-	</bean>
-
 	<bean name="userProviderService" class="org.linagora.linshare.core.service.impl.UserProviderServiceImpl">
 		<constructor-arg ref="userProviderRepository" />
 		<constructor-arg ref="domainPatternRepository" />

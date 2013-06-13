@@ -41,7 +41,20 @@
     	<constructor-arg index="1" value="${linshare.test.mail.recipient}"/>
     </bean>
     
+    
      <bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
+     	<property name="ldapContext" ref="contextSource" />
      </bean>
+     
+     <!-- LDAP DAO configuration -->
+        <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+            <property name="url" value="ldap://linshare-obm.linshare.team.services.par.lng:389" />
+              <property name="base" value="ou=users,dc=int1.linshare.dev,dc=local" />
+<!--             <property name="userDn" value="${ldap.root.dn}" /> -->
+<!--             <property name="password" value="${ldap.root.password}" /> -->
+            <property name="pooled" value="true" />
+            <!--  We do not use context binding with Acegi because we want to be independent from LDAP from auth -->
+            <!-- <property name="authenticationSource"><ref local="acegiAuthenticationSource" /></property> -->
+    </bean>
     
 </beans>
