@@ -126,7 +126,7 @@ public class JScriptLdapQuery {
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
 		List<User> users = new ArrayList<User>();
 		for (String string : results) {
-			logger.info("FREd: " + string);
+			logger.debug("FREd: " + string);
 			String dn = string +","+ baseDn;
 			users.add(dnToUserFred(lqlctx, dnList, dn, attributes));
 		}
@@ -151,7 +151,7 @@ public class JScriptLdapQuery {
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
 		List<User> users = new ArrayList<User>();
 		for (String string : results) {
-			logger.info("FREd: " + string);
+			logger.debug("FREd: " + string);
 			String dn = string +","+ baseDn;
 			User user = dnToUserFred(lqlctx, dnList, dn, attributes);
 			if(user != null)	users.add(user);
@@ -172,14 +172,14 @@ public class JScriptLdapQuery {
 			
 			User user = new Internal();;
 			for (String key : attributes.keySet()) {
-				logger.info("Key = " + key);
+				logger.debug("Key = " + key);
 			    LdapAttribute attr = attributes.get(key);
 			    String unitCommand = "ldap.attribute(dn, \"" + attr.getAttribute() + "\");";
-			    logger.info("unitCommand : " + unitCommand);
+			    logger.debug("unitCommand : " + unitCommand);
 			
 			    List<String> stringList = evaluator.evalToStringList(unitCommand, unitParams);
 			    for (String string : stringList) {
-			    	logger.info("value of attribute : " + attr.getAttribute() + " : " + string);
+			    	logger.debug("value of attribute : " + attr.getAttribute() + " : " + string);
 			    }
 
 			    if(key == "user_lastname") {
