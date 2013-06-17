@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade;
 import java.io.InputStream;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
@@ -44,8 +45,10 @@ import org.linagora.linshare.webservice.dto.DocumentDto;
 public interface WebServiceDocumentFacade extends WebServiceGenericFacade {
 	
 	public List<DocumentDto> getDocuments() throws BusinessException;
+	public DocumentDto getDocument(String uuid) throws BusinessException;
 	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
 	public Long getUserMaxFileSize() throws BusinessException;
 	public Long getAvailableSize() throws BusinessException;
 	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException;
+	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
 }

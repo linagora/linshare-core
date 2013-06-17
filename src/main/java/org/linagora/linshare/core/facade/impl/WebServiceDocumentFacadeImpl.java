@@ -82,6 +82,23 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 	}
 	
 	@Override
+	public DocumentDto getDocument(String uuid) throws BusinessException {
+		User actor = getAuthentication();
+		 
+		DocumentEntry doc;
+		try {
+			doc = documentEntryService.findById(actor, uuid);
+		} catch (BusinessException e) {
+			throw e;
+		}
+ 
+		if (doc == null) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND, "No such document");
+		}
+		return new DocumentDto(doc);
+	}
+
+	@Override
 	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException{
 		DocumentEntry res;
 		
@@ -148,8 +165,16 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 		return res;
 	}
 	
-	
-	
+	@Override
+	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
+		try {
+			User actor = getAuthentication();
+			return documentEntryService.getDocumentStream(actor, docEntryUuid);
+		} catch (BusinessException e) {
+			throw e;
+		}
+	}
+
 	//#############  utility methods
 	private static List<DocumentDto> convertDocumentEntryList(List<DocumentEntry> input) {
 
