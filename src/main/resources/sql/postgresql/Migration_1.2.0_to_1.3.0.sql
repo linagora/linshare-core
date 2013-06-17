@@ -6,12 +6,6 @@ SET client_min_messages = warning;
 SET default_with_oids = false;
 
 ALTER SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER TABLE account 
-  ADD COLUMN thread_view_id int8;
-ALTER TABLE account 
-  ADD COLUMN account_id int8;
-ALTER TABLE thread_view 
-  ADD COLUMN account_id int8;
 
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
@@ -27,7 +21,7 @@ CREATE TABLE mailing_list_contact (
   mail            varchar(255), 
   PRIMARY KEY (id, 
   mailing_list_id));
-ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie557698 FOREIGN KEY (account_id) REFERENCES account (id);
+
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKmailing_li272876 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
