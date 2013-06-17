@@ -3,10 +3,9 @@ SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 SET default_with_oids = false;
 
-
 CREATE SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE START WITH 1 CACHE 1;
 CREATE TABLE account (
-  id                               int8 NOT NULL,  
+  id                               int8 NOT NULL, 
   domain_id                       int8 NOT NULL, 
   technical_account_permission_id int8, 
   owner_id                        int8, 
@@ -21,7 +20,7 @@ CREATE TABLE account (
   password                        varchar(255), 
   destroyed                       bool NOT NULL, 
   thread_view_id                  int8, 
-  account_id                      int8,  
+  account_id                      int8, 
   CONSTRAINT account_pkey 
     PRIMARY KEY (id));
 CREATE TABLE allowed_mimetype (
@@ -46,13 +45,14 @@ CREATE TABLE cookie (
   CONSTRAINT linshare_cookie_pkey 
     PRIMARY KEY (cookie_id));
 CREATE TABLE document (
-  id             int8 NOT NULL, 
-  uuid          varchar(255) NOT NULL UNIQUE, 
-  creation_date timestamp(6) NOT NULL, 
-  type          varchar(255) NOT NULL, 
-  size          int8 NOT NULL, 
-  thmb_uuid     varchar(255), 
-  timestamp     bytea, 
+  id               int8 NOT NULL, 
+  uuid            varchar(255) NOT NULL UNIQUE, 
+  creation_date   timestamp(6) NOT NULL, 
+  type            varchar(255) NOT NULL, 
+  size            int8 NOT NULL, 
+  thmb_uuid       varchar(255), 
+  timestamp       bytea, 
+  check_mime_type bool DEFAULT 'false' NOT NULL, 
   CONSTRAINT linshare_document_pkey 
     PRIMARY KEY (id));
 CREATE TABLE document_entry (
@@ -77,7 +77,7 @@ CREATE TABLE domain_abstract (
   domain_policy_id          int8 NOT NULL, 
   parent_id                 int8, 
   messages_configuration_id int8 NOT NULL, 
-  auth_show_order           int8 NOT NULL,  
+  auth_show_order           int8 NOT NULL, 
   CONSTRAINT linshare_domain_abstract_pkey 
     PRIMARY KEY (id));
 CREATE TABLE domain_access_policy (
@@ -193,15 +193,13 @@ CREATE TABLE mail_subjects (
   messages_configuration_id int8 NOT NULL, 
   subject_id                int4 NOT NULL, 
   language_id               int4 NOT NULL, 
-  content                   text
-  );
+  content                   text);
 CREATE TABLE mail_templates (
   messages_configuration_id int8 NOT NULL, 
   template_id               int4 NOT NULL, 
   language_id               int4 NOT NULL, 
   content_html              text, 
-  content_txt               text
-  );  
+  content_txt               text);
 CREATE TABLE messages_configuration (
   messages_configuration_id  int8 NOT NULL, 
   CONSTRAINT linshare_messages_configuration_pkey 
@@ -299,8 +297,8 @@ CREATE TABLE tag_filter_rule (
   tag_rule_type int4 NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE thread (
-  name           varchar(255) NOT NULL, 
   account_id     int8 NOT NULL, 
+  name           varchar(255) NOT NULL, 
   thread_view_id int8, 
   PRIMARY KEY (account_id));
 CREATE TABLE thread_entry (
@@ -350,7 +348,7 @@ CREATE TABLE user_provider_ldap (
     PRIMARY KEY (id));
 CREATE TABLE version (
   id           int8 NOT NULL, 
-  description varchar(255) NOT NULL UNIQUE, 
+  description text NOT NULL UNIQUE, 
   CONSTRAINT linshare_version_pkey 
     PRIMARY KEY (id));
 CREATE TABLE views (
@@ -367,7 +365,7 @@ CREATE TABLE view_context (
   name        varchar(255) NOT NULL, 
   description text NOT NULL, 
   PRIMARY KEY (id));
-CREATE TABLE welcome_texts ( 
+CREATE TABLE welcome_texts (
   messages_configuration_id int8 NOT NULL, 
   welcome_text              text, 
   language_id               int4);
@@ -410,12 +408,6 @@ CREATE TABLE technical_account_permission_account (
   technical_account_permission_id int8 NOT NULL, 
   account_id                      int8 NOT NULL, 
   PRIMARY KEY (technical_account_permission_id, 
-  mail varchar(255) NOT NULL UNIQUE, 
-  PRIMARY KEY (id));
-CREATE TABLE technical_account_permission_account (
-  technical_account_permission_id int8 NOT NULL, 
-  account_id                      int8 NOT NULL, 
-  PRIMARY KEY (technical_account_permission_id, 
   account_id));
 CREATE TABLE default_view (
   id               int8 NOT NULL, 
@@ -441,16 +433,17 @@ CREATE TABLE thread_view_asso (
   thread_view_id int8 NOT NULL, 
   depth          int4 NOT NULL, 
   PRIMARY KEY (id));
+
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
-  users_account_id   int8 NOT NULL, 
-  is_public           bool NOT NULL, 
+  user_id            int8 NOT NULL, 
+  is_public          bool NOT NULL, 
   identifier         varchar(255) NOT NULL, 
-  description        text,  
+  description        text NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
-  id              	 int8 NOT NULL,
+  id              int8 NOT NULL, 
   mailing_list_id int8 NOT NULL, 
   mail            varchar(255), 
   PRIMARY KEY (id, 
@@ -529,8 +522,7 @@ ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie68184 FOREIGN KEY (thread_acc
 ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie285846 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
 ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_id) REFERENCES tag (id);
 ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie557698 FOREIGN KEY (account_id) REFERENCES account (id);
-ALTER TABLE thread ADD CONSTRAINT FKthread957862 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
-ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li944248 FOREIGN KEY (users_account_id) REFERENCES users (account_id);
+ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKmailing_li272876 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
 CREATE UNIQUE INDEX account_lsuid_index 
@@ -629,13 +621,9 @@ CREATE INDEX signature_index
   ON signature (id);
 CREATE UNIQUE INDEX signature_i 
   ON signature (uuid);
-CREATE INDEX thread_member_history_operation_type 
-  ON thread_member_history (operation_type);
 CREATE INDEX unit_index 
   ON unit (id);
 CREATE INDEX user_provider_ldap_index 
   ON user_provider_ldap (id);
-CREATE UNIQUE INDEX version_i 
-  ON version (description);
 CREATE INDEX welcome_texts_i 
   ON welcome_texts (messages_configuration_id);
