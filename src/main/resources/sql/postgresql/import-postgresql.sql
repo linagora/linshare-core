@@ -494,6 +494,11 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 49, 50, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');
 
+-- Functionality : TAB_LIST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (54, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (26, true, 'TAB_LIST', 53, 54, 1);
+
 -- LinShare version
 INSERT INTO version (id,description) VALUES (1,'1.1.0');
 

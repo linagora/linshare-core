@@ -32,56 +32,8 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.repository.hibernate;
+package org.linagora.linshare.view.tapestry.pages.lists;
 
-import junit.framework.Assert;
-import org.junit.Test;
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.MailingListRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+public class Index {
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml",
-		"classpath:springContext-datasource.xml",
-        "classpath:springContext-repository.xml"})
-public class MailingListRepositoryImplTest extends AbstractJUnit4SpringContextTests {
-
-	@Autowired
-	private MailingListRepository mailingListRepository;
-	
-	private static String mailingListName0 = "TestMailingList0";
-	private static String[] mails = {"toto@mail.fr","tata@mail.fr"};
-	
-	@Test
-	public void testCreateMailingList1() throws BusinessException{
-		
-		MailingList current=new MailingList(mailingListName0,mails);
-		logger.debug("Current listId : " + current.getIdentifier());
-		logger.debug("Mails:");
-		for(String actual : current.getMails())
-		{
-			logger.debug(actual);
-		}
-
-		current.setPublic(true);
-		logger.debug("Visibility: "+current.isPublic());
-		current.setDescription("yoyo");
-
-		mailingListRepository.create(current);
-		Assert.assertNotNull(current.getPersistenceId());
-		
-		MailingList myList = mailingListRepository.findById(current.getPersistenceId());
-		Assert.assertTrue(myList != null );
-		logger.debug("My name is : " + myList.getIdentifier());
-		logger.debug("Mails:" );
-		for(String actual : myList.getMails())
-		{
-			logger.debug(actual);
-		}
-		logger.debug("My visibility: "+myList.visibility(myList.isPublic()));
-
-		mailingListRepository.delete(myList);
-	}
 }

@@ -35,7 +35,6 @@
 
 package org.linagora.linshare.core.domain.vo;
 
-import java.util.List;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
@@ -48,7 +47,7 @@ public class MailingListVo {
 	private boolean isPublic;
 	private User owner;
 	private AbstractDomain domain;
-	private List<String> mails;
+	private String[] mails;
 	
 	public MailingListVo(){
 	}
@@ -75,7 +74,7 @@ public class MailingListVo {
 	}
 	
 	public MailingListVo(long id, String identifier, String description, 
-			boolean isPublic, User owner, AbstractDomain domain, List<String> mails)
+			boolean isPublic, User owner, AbstractDomain domain, String[] mails)
 	{
 		this.persistenceId=id;
 		this.identifier=identifier;
@@ -122,10 +121,10 @@ public class MailingListVo {
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
 	}
-	public List<String> getMails() {
+	public String[] getMails() {
 		return mails;
 	}
-	public void setMails(List<String> mails) {
+	public void setMails(String[] mails) {
 		this.mails = mails;
 	}
 	

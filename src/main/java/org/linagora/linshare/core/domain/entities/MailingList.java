@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 
@@ -49,7 +48,7 @@ public class MailingList {
 	private boolean isPublic;
 	private User owner;
 	private AbstractDomain domain;
-	private List<String> mails;
+	private String[] mails;
 	
 	public MailingList(){
 		super();
@@ -78,7 +77,7 @@ public class MailingList {
 	}
 	
 	
-	public MailingList(String identifier, List<String> mails)
+	public MailingList(String identifier, String[] mails)
 	{
 		this.identifier=identifier;
 		this.mails=mails;
@@ -136,11 +135,11 @@ public class MailingList {
 		this.domain = domain;
 	}
 
-	public List<String> getMails() {
+	public String[] getMails() {
 		return mails;
 	}
 
-	public void setMails(List<String> mails) {
+	public void setMails(String[] mails) {
 		this.mails = mails;
 	}
 	

@@ -32,56 +32,21 @@
  * applicable to LinShare software.
  */
 
-package org.linagora.linshare.repository.hibernate;
+package org.linagora.linshare.core.service;
 
-import junit.framework.Assert;
-import org.junit.Test;
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.repository.MailingListRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml",
-		"classpath:springContext-datasource.xml",
-        "classpath:springContext-repository.xml"})
-public class MailingListRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+public interface MailingListService {
 
-	@Autowired
-	private MailingListRepository mailingListRepository;
-	
-	private static String mailingListName0 = "TestMailingList0";
-	private static String[] mails = {"toto@mail.fr","tata@mail.fr"};
-	
-	@Test
-	public void testCreateMailingList1() throws BusinessException{
-		
-		MailingList current=new MailingList(mailingListName0,mails);
-		logger.debug("Current listId : " + current.getIdentifier());
-		logger.debug("Mails:");
-		for(String actual : current.getMails())
-		{
-			logger.debug(actual);
-		}
-
-		current.setPublic(true);
-		logger.debug("Visibility: "+current.isPublic());
-		current.setDescription("yoyo");
-
-		mailingListRepository.create(current);
-		Assert.assertNotNull(current.getPersistenceId());
-		
-		MailingList myList = mailingListRepository.findById(current.getPersistenceId());
-		Assert.assertTrue(myList != null );
-		logger.debug("My name is : " + myList.getIdentifier());
-		logger.debug("Mails:" );
-		for(String actual : myList.getMails())
-		{
-			logger.debug(actual);
-		}
-		logger.debug("My visibility: "+myList.visibility(myList.isPublic()));
-
-		mailingListRepository.delete(myList);
-	}
+    public MailingList createMailingList(MailingList mailingList) throws BusinessException;
+    public MailingList retrieveMailingList(long persistenceId);
+    public List<MailingList> findAllMailingList();
+    public List<MailingList> findAllMailingListByUser(User user);
+    public void deleteMailingList(long persistenceId) throws BusinessException;
+    public void updateMailingList(MailingList listToUpdate) throws BusinessException;
+    
 }
