@@ -122,4 +122,8 @@
 		<constructor-arg ref="hibernateTemplate" />
 	</bean>
 	
+	<bean name="mailingListRepository" class="org.linagora.linshare.core.repository.hibernate.MailingListRepositoryImpl">
+		<constructor-arg ref="hibernateTemplate" />
+	</bean>
+	
 </beans>

@@ -271,6 +271,7 @@ public class MyBorderLayout {
 		MenuEntry domainMenu;
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
+		MenuEntry listMenu;
 		
 		// Menu : Home / File 
 		homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
@@ -288,6 +289,12 @@ public class MyBorderLayout {
 		// Menu : Domains
 		domainMenu = new MenuEntry(response.encodeURL("administration/domains/index"),messages.get("components.myborderlayout.administration.domains.title"),null,null,"domains");
 		
+		// Menu : Lists
+		if(superadmin) {
+			listMenu = new MenuEntry(response.encodeURL("administration/lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
+		} else {
+			listMenu = new MenuEntry(response.encodeURL("lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
+		}
 		// Menu : History / Audit
 		if(superadmin) {
 			auditMenu = new MenuEntry(response.encodeURL("administration/audit"),messages.get("components.myborderlayout.audit.title"),null,null,"audit");
@@ -326,6 +333,8 @@ public class MyBorderLayout {
 				menu.addMenuEntry(adminMenu);
 			if (superadmin)
 				menu.addMenuEntry(domainMenu);			
+			if (showListTab())
+				menu.addMenuEntry(listMenu);
 			if (showAuditTab())
 				menu.addMenuEntry(auditMenu);
 			if (showHelpTab())
@@ -372,6 +381,16 @@ public class MyBorderLayout {
 				return true;
 			}
 			return functionalityFacade.isEnableHelpTab(userVo.getDomainIdentifier());
+		}
+		return false;
+	}
+	
+	boolean showListTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			if(superadmin) {
+				return true;
+			}
+			return functionalityFacade.isEnableListTab(userVo.getDomainIdentifier());
 		}
 		return false;
 	}

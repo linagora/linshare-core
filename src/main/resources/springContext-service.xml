@@ -211,5 +211,9 @@
 	<bean name="tagService" class="org.linagora.linshare.core.service.impl.TagServiceImpl">
 		<constructor-arg ref="tagBusinessService" />
 	</bean>
+	
+		<bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
+		<constructor-arg ref="mailingListBusinessService" />
+	</bean>
 
 </beans>

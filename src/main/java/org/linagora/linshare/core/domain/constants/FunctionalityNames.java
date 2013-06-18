@@ -53,6 +53,7 @@ public interface FunctionalityNames {
 	public static final String USER_CAN_UPLOAD = "USER_CAN_UPLOAD";
 	public static final String COMPLETION = "COMPLETION";
 	public static final String TAB_HELP = "TAB_HELP";
+	public static final String TAB_LIST = "TAB_LIST";
 	public static final String TAB_AUDIT = "TAB_AUDIT";
 	public static final String TAB_USER = "TAB_USER";
 	public static final String TAB_THREAD = "TAB_THREAD";

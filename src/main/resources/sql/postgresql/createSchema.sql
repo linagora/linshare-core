@@ -443,7 +443,7 @@ CREATE TABLE mailing_list (
   description        text NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
-  id              int8 NOT NULL, 
+  id              int4 NOT NULL, 
   mailing_list_id int8 NOT NULL, 
   mail            varchar(255), 
   PRIMARY KEY (id, 
