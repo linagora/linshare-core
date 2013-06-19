@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.index.title" t:identifier="home" t:currentHighlight="home" 
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+	<!-- Main content -->
+
+	<div id="content">
+
+        <h1>Upload</h1>
+
+        <div id="examples">
+            <div class="example">
+                <h3>Upload files</h3>
+                <ul id="uploader" class="unstyled"></ul>
+            </div>
+            <a href="/linshare/files" class="button">
+                <span><img src="${asset:context:images/icons/cancel.png}" alt=""/>Quitter sans partager (TODO)</span>
+            </a>
+            <form method="POST" action="/linshare/webservice/rest/shares/sharealldocuments/">
+                <input id='uuids' name="uuids" type="hidden"/>
+                <input name="target" type="text"/>
+                <input name="secured" type="checkbox"/>
+                <textarea name="message"/>
+                <input type="submit">
+                    <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
+                </input>
+            </form>
+        </div>
+
+	</div>
+</t:MyBorderLayout>
