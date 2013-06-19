@@ -36,66 +36,86 @@ package org.linagora.linshare.webservice.impl;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
+import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.webservice.ShareRestService;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService{
+public class ShareRestServiceImpl extends WebserviceBase implements
+		ShareRestService {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(ShareRestServiceImpl.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(ShareRestServiceImpl.class);
+
 	private final WebServiceShareFacade webServiceShareFacade;
-	
-	public ShareRestServiceImpl(final WebServiceShareFacade facade){
+
+	public ShareRestServiceImpl(final WebServiceShareFacade facade) {
 		this.webServiceShareFacade = facade;
 	}
-	
+
 	/**
 	 * get the files of the user
 	 */
 	@Path("/list")
 	@GET
-	@Produces({MediaType.APPLICATION_XML, "application/json;charset=UTF-8" }) // application/xml application/json 
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<ShareDto> getReceivedShares()
-    {
-		
+	public List<ShareDto> getReceivedShares() {
 		List<ShareDto> shares = null;
-		
+
 		try {
 			webServiceShareFacade.checkAuthentication();
 			shares = webServiceShareFacade.getReceivedShares();
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
 		}
-		
 		return shares;
-    }
-	
+	}
+
+	// FIXME: shouldn't be GET but POST or PUT
 	@GET
-    @Path("/sharedocument/{targetMail}/{uuid}")
+	@Path("/sharedocument/{targetMail}/{uuid}")
 	@Override
-	public void sharedocument(@PathParam("targetMail") String targetMail, @PathParam("uuid") String uuid, @DefaultValue("0") @QueryParam("securedShare") int securedShare) {
+	public void sharedocument(@PathParam("targetMail") String targetMail,
+			@PathParam("uuid") String uuid,
+			@DefaultValue("0") @QueryParam("securedShare") int securedShare) {
 		try {
 			webServiceShareFacade.checkAuthentication();
+			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
-		} 
-		
+		}
+	}
+
+	@POST
+	@Path("/sharealldocuments")
+	@Override
+	public void sharealldocuments(@FormParam("target") String target,
+			@FormParam("uuids") String uuids,
+			@FormParam("secured") @DefaultValue("0") int secured,
+			@FormParam("message") @DefaultValue("") String message) {
 		try {
-			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
+			webServiceShareFacade.checkAuthentication();
+			if (uuids.isEmpty()) {
+				throw giveRestException(HttpStatus.SC_BAD_REQUEST,
+						"Missing parameter uuids");
+			}
+			webServiceShareFacade.multiplesharedocuments(target,
+					StringJoiner.split(uuids, ","), secured, message);
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
 		}
