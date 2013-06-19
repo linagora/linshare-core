@@ -1,4 +1,9 @@
 var uuids = new Array();
+var submit = false;
+
+var toggleSubmitOn = function() {
+    submit = true;
+};
 
 jQuery(document).ready(function() {
     // init
@@ -6,7 +11,6 @@ jQuery(document).ready(function() {
 
     // when file are uploading
     var progressHandler = function(id, fileName) {
-        jQuery("#share").hide();
         console.log("progressHandler: A new upload is in progress");
     };
 
@@ -19,9 +23,6 @@ jQuery(document).ready(function() {
     var deleteHandler = function(id) {
         // remove item from list of uploaded items to share
         uuids.splice(uuids.indexOf(uploader.getUuid(id)), 1);
-        if (uuids.length == 0) {
-            jQuery("#share").hide();
-        }
     };
 
     // when file uploading is completed
@@ -32,8 +33,13 @@ jQuery(document).ready(function() {
         }
         if (uploader.getInProgress() == 0) {
             console.log("All upload are completed");
-            jQuery("#share").show();
             jQuery("#uuids").attr("value", uuids.join());
+            if (submit) {
+                setTimeout(function() {
+                    jQuery('#shareform').submit();
+                    submit = false;
+                }, 3000);
+            }
         }
     };
 
