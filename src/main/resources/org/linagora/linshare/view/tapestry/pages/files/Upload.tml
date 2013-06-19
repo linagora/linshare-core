@@ -4,9 +4,9 @@
 
     <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 
-	<!-- Main content -->
+    <!-- Main content -->
 
-	<div id="content">
+    <div id="content">
 
         <h1>Upload</h1>
 
@@ -18,16 +18,31 @@
             <a href="/linshare/files" class="button">
                 <span><img src="${asset:context:images/icons/cancel.png}" alt=""/>Quitter sans partager (TODO)</span>
             </a>
-            <form method="POST" action="/linshare/webservice/rest/shares/sharealldocuments/">
+            <form id="shareform" method="POST" action="/linshare/webservice/rest/shares/sharealldocuments/">
                 <input id='uuids' name="uuids" type="hidden"/>
-                <input name="target" type="text"/>
+
+                <label for="target" class="edit-form-label">
+                    ${message:components.quickSharePopup.panelRecipients.description}
+                </label>
+                <textarea name="target"/>
+
+                <label for="secured" class="edit-form-label">
+                    ${message:components.confirmSharePopup.secureSharing}
+                </label>
                 <input name="secured" type="checkbox"/>
+
+                <label for="secured" class="edit-form-label">
+                    ${message:components.quickSharePopup.texarea.message.title}
+                </label>
                 <textarea name="message"/>
-                <input type="submit">
-                    <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
-                </input>
+
+                <div class="button">
+                    <a class="button" onclick="toggleSubmitOn();">
+                        <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
+                    </a>
+                </div>
             </form>
         </div>
 
-	</div>
+    </div>
 </t:MyBorderLayout>
