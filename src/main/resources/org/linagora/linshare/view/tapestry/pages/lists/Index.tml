@@ -1,6 +1,53 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="lists" t:currentHighlight="lists"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
-
+	
 	<!-- Main content -->
+	
+		<div id="content">
+
+		<h1>${message:components.myborderlayout.list.title}</h1>
+		<t:pageLink page="lists/ManageMailingList" class="button">
+			<span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/>
+			${message:pages.lists.create}</span>
+		</t:pageLink>
+		
+		<br></br><br></br><br></br><br></br>
+		
+		<t:form id="form">
+        	<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}"/>
+        			<br></br>
+					<br></br>
+        	<t:actionLink class="button" t:id="searchall"><span>${message:global.button.searchAll}</span></t:actionLink>
+        	<t:linkSubmit class="button"><span>${message:global.button.search}</span></t:linkSubmit>
+		</t:form>
+		
+		<br></br><br></br>
+		
+		<t:if t:test="displayGrid">
+		<t:grid source="lists" include="identifier, listDescription" add="actions" row="list">
+			 <t:parameter name="actionsCell">
+			  	<t:if test="listIsDeletable">
+			  		<t:pageLink page="lists/ManageMailingList" context="list.persistenceId"
+						title="${message:pages.lists.index.list.edit.button}">
+						<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
+			 		 </t:pageLink>
+			 	 		<t:actionLink t:id="deleteList" context="list.persistenceId" t:zone="zoneConfirmDelete"
+			 	 			title="${message:pages.lists.index.list.delete.button}">
+			 	 			<span onclick="window_confirm.showCenter(true)">
+							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+							</span>
+						</t:actionLink>
+					</t:if>
+			 </t:parameter>
+	    </t:grid>
+	    </t:if>
+		</div><!-- id="content" -->
+	
+	    <t:confirmPopup
+        t:messageLabel="${message:pages.lists.delete.ask}"
+        t:eventName="listDeleteEvent" t:windowId="confirm1" />
+	    <t:zone t:id="zoneConfirmDelete" />
+	
+	
 	</t:MyBorderLayout>

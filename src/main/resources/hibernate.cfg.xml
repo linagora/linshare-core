@@ -31,6 +31,7 @@
     <mapping resource="org/linagora/linshare/core/domain/entities/LdapAttribute.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/TechnicalAccountPermission.hbm.xml"/>
     <mapping resource="org/linagora/linshare/core/domain/entities/MailingList.hbm.xml"/>
+    <mapping resource="org/linagora/linshare/core/domain/entities/MailingListContact.hbm.xml"/>
 
 
 	<mapping resource="org/linagora/linshare/core/domain/entities/Entry.hbm.xml"/> 

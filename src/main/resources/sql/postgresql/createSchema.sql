@@ -433,7 +433,6 @@ CREATE TABLE thread_view_asso (
   thread_view_id int8 NOT NULL, 
   depth          int4 NOT NULL, 
   PRIMARY KEY (id));
-
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
@@ -443,11 +442,11 @@ CREATE TABLE mailing_list (
   description        text NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
-  id              int4 NOT NULL, 
-  mailing_list_id int8 NOT NULL, 
-  mail            varchar(255), 
-  PRIMARY KEY (id, 
-  mailing_list_id));
+  id                 int8 NOT NULL, 
+  mailing_list_id   int8 NOT NULL, 
+  mail              varchar(255) NOT NULL, 
+  mailing_list_index int4, 
+  PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -524,7 +523,7 @@ ALTER TABLE thread_view_asso ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_
 ALTER TABLE thread_view ADD CONSTRAINT FKthread_vie557698 FOREIGN KEY (account_id) REFERENCES account (id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
-ALTER TABLE mailing_list_contact ADD CONSTRAINT FKmailing_li272876 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
+ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
 CREATE UNIQUE INDEX account_lsuid_index 
   ON account (ls_uuid);
 CREATE UNIQUE INDEX account_ls_uuid 

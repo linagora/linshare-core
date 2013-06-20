@@ -52,19 +52,12 @@ public class MailingListRepositoryImplTest extends AbstractJUnit4SpringContextTe
 	private MailingListRepository mailingListRepository;
 	
 	private static String mailingListName0 = "TestMailingList0";
-	private static String[] mails = {"toto@mail.fr","tata@mail.fr"};
 	
 	@Test
 	public void testCreateMailingList1() throws BusinessException{
 		
-		MailingList current=new MailingList(mailingListName0,mails);
+		MailingList current=new MailingList(mailingListName0);
 		logger.debug("Current listId : " + current.getIdentifier());
-		logger.debug("Mails:");
-		for(String actual : current.getMails())
-		{
-			logger.debug(actual);
-		}
-
 		current.setPublic(true);
 		logger.debug("Visibility: "+current.isPublic());
 		current.setDescription("yoyo");
@@ -75,11 +68,6 @@ public class MailingListRepositoryImplTest extends AbstractJUnit4SpringContextTe
 		MailingList myList = mailingListRepository.findById(current.getPersistenceId());
 		Assert.assertTrue(myList != null );
 		logger.debug("My name is : " + myList.getIdentifier());
-		logger.debug("Mails:" );
-		for(String actual : myList.getMails())
-		{
-			logger.debug(actual);
-		}
 		logger.debug("My visibility: "+myList.visibility(myList.isPublic()));
 
 		mailingListRepository.delete(myList);

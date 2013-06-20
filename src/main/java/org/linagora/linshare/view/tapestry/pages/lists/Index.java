@@ -34,6 +34,139 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
-public class Index {
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.OnEvent;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListFacade;
+import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.pages.lists.Index;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Index {
+	
+    private static Logger logger = LoggerFactory.getLogger(Index.class);
+
+    @SessionState
+    @Property
+    private ShareSessionObjects shareSessionObjects;
+    
+    @SessionState
+    private UserVo loginUser;
+    
+    @Inject
+    private Messages messages;
+    
+    @Persist
+    @Property
+    private List<MailingListVo> lists;
+	
+    @Property
+    private MailingListVo list;
+    
+    @Property
+    @Persist(value="flash")
+    private long listToDelete;
+    
+    @Inject
+    private MailingListFacade mailingListFacade; 
+    
+	@Persist 
+	@Property(write=false)
+	private boolean displayGrid;
+	
+	@Property
+	private int autocompleteMin;
+	
+	@Property
+	private String targetLists;
+    
+	@Inject
+	private FunctionalityFacade functionalityFacade;
+	
+	private boolean searchAll;
+	
+	
+    @SetupRender
+    public void init() throws BusinessException {
+		if(displayGrid == false){
+    	autocompleteMin = functionalityFacade.completionThreshold(loginUser.getDomainIdentifier());
+    	lists= mailingListFacade.findAllMailingListByUser(loginUser);
+		}
+    }
+    
+    @CleanupRender
+    public void end() throws BusinessException {
+    	displayGrid = false;
+    }
+    
+    public boolean getListIsDeletable() throws BusinessException {
+    	list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
+    	if(loginUser.getMail().equals(list.getOwner().getMail())){
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public void onActionFromDeleteList(long persistenceId) {
+    	this.listToDelete = persistenceId;
+    }
+    
+    @OnEvent(value="listDeleteEvent")
+    public void deleteList() throws BusinessException {
+    	mailingListFacade.deleteMailingList(listToDelete);
+        lists = mailingListFacade.findAllMailingListByUser(loginUser);
+    }
+	/**
+	 * AutoCompletion for search field.
+	 * @param value the value entered by the user
+	 * @return list the list of string matched by value.
+	 * @throws BusinessException 
+	 */
+	/*public List<String> onProvideCompletionsFromTargetMails(String value){
+		List<String> res = new ArrayList<String>();
+		try {
+			List<MailingListVo> founds = userFacade.searchUser(value, null, null, null, userVo);
+			if (founds != null && founds.size() > 0) {
+				for (MailingListVo listVo : founds) {
+					res.add(listVo.getIdentifier());
+				}
+			}
+		} catch (BusinessException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}*/
+    
+	Object onActionFromSearchall() throws BusinessException { searchAll = true; return onSuccessFromForm();}
+    
+    public Object onSuccessFromForm() throws BusinessException {	
+    		if(searchAll) {
+        	lists= mailingListFacade.findAllMailingListByUser(loginUser);
+    		} else {
+    			lists = mailingListFacade.findAllMailingListByIdentifier(targetLists, loginUser);
+    		}
+    	
+    	displayGrid = true;
+    	return null;
+    }
+    
+    Object onException(Throwable cause) {
+        shareSessionObjects.addError(messages.get("global.exception.message"));
+        logger.error(cause.getMessage());
+        cause.printStackTrace();
+        return this;
+    }
 }

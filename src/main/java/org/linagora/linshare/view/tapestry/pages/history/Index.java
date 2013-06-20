@@ -194,7 +194,6 @@ public class Index {
 				for (String mail : criteria.getTargetMails()) {
 					targetListMails += mail + ",";
 				}
-				
 			}
 		}
 	}

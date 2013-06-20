@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+<class name="MailingListContact" table="mailing_list_contact" lazy="false">
+		<id name="persistenceId" type="long">
+			<column name="id" not-null="true"/>
+			<generator class="native" />
+		</id>
+		<property access="field" name="mail" column="mail" type="string" length="255" not-null="true" lazy="false"/>
+		</class>
+</hibernate-mapping>
