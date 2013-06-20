@@ -10,12 +10,13 @@
 	
 	<property access="field" name="isPublic" column="is_public" type="boolean" not-null="true" lazy="false"/>
 	<property access="field" name="identifier" column="identifier" type="string" length="255" not-null="true" lazy="false"/>
-	<property access="field" name="description" column="description" type="text" not-null="true" lazy="false"/>
-	<array name="mails" table="mailing_list_contact" cascade="all">
-		<key column="mailing_list_id"/>
-		<index column="id" type="integer"/>
-		<element column="mail" type="string" length="255"/>
-	</array>
+	<property access="field" name="description" column="description" type="text" lazy="false"/>
+	
+	<list name="mailingListContact" lazy="true" cascade="save-update,lock" inverse="false">
+	<key column="mailing_list_id" not-null="true"/>
+	<list-index column="mailing_list_index"/>
+	<one-to-many class="org.linagora.linshare.core.domain.entities.MailingListContact"/>
+	</list>
 	
 	<many-to-one name="domain" class="org.linagora.linshare.core.domain.entities.AbstractDomain"
 	column="domain_abstract_id"  lazy="no-proxy" cascade="lock"></many-to-one>

@@ -35,19 +35,21 @@
 
 package org.linagora.linshare.core.domain.vo;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import java.util.List;
+
+import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 
 public class MailingListVo {
 
 	private long persistenceId;
 	private String identifier;
-	private String description;
+	private String listDescription;
 	private boolean isPublic;
-	private User owner;
-	private AbstractDomain domain;
-	private String[] mails;
+	private UserVo owner;
+	private AbstractDomainVo domain;
+	private List<MailingListContact> mails;
 	
 	public MailingListVo(){
 	}
@@ -56,17 +58,17 @@ public class MailingListVo {
 		
 		this.persistenceId=list.getPersistenceId();
 		this.identifier=list.getIdentifier();
-		this.description=list.getDescription();
+		this.listDescription=list.getDescription();
 		this.isPublic=list.isPublic();
-		this.owner=list.getOwner();
-		this.domain=list.getDomain();
+		this.owner=new UserVo(list.getOwner());
+		this.domain=new AbstractDomainVo(list.getDomain());
 		this.mails=list.getMails();
 	}
 	
 	public MailingListVo(MailingListVo list){
 		this.persistenceId=list.getPersistenceId();
 		this.identifier=list.getIdentifier();
-		this.description=list.getDescription();
+		this.listDescription=list.getListDescription();
 		this.isPublic=list.isPublic();
 		this.owner=list.getOwner();
 		this.domain=list.getDomain();
@@ -74,11 +76,11 @@ public class MailingListVo {
 	}
 	
 	public MailingListVo(long id, String identifier, String description, 
-			boolean isPublic, User owner, AbstractDomain domain, String[] mails)
+			boolean isPublic, UserVo owner, AbstractDomainVo domain, List<MailingListContact> mails)
 	{
 		this.persistenceId=id;
 		this.identifier=identifier;
-		this.description=description;
+		this.listDescription=description;
 		this.isPublic=isPublic;
 		this.owner=owner;
 		this.domain=domain;
@@ -91,17 +93,19 @@ public class MailingListVo {
 	public void setPersistenceId(long persistenceId) {
 		this.persistenceId = persistenceId;
 	}
+	
+	@Validate("required")
 	public String getIdentifier() {
 		return identifier;
 	}
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
-	public String getDescription() {
-		return description;
+	public String getListDescription() {
+		return listDescription;
 	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setListDescription(String description) {
+		this.listDescription = description;
 	}
 	public boolean isPublic() {
 		return isPublic;
@@ -109,22 +113,22 @@ public class MailingListVo {
 	public void setPublic(boolean isPublic) {
 		this.isPublic = isPublic;
 	}
-	public User getOwner() {
+	public UserVo getOwner() {
 		return owner;
 	}
-	public void setOwner(User owner) {
+	public void setOwner(UserVo owner) {
 		this.owner = owner;
 	}
-	public AbstractDomain getDomain() {
+	public AbstractDomainVo getDomain() {
 		return domain;
 	}
-	public void setDomain(AbstractDomain domain) {
+	public void setDomain(AbstractDomainVo domain) {
 		this.domain = domain;
 	}
-	public String[] getMails() {
+	public List<MailingListContact> getMails() {
 		return mails;
 	}
-	public void setMails(String[] mails) {
+	public void setMails(List<MailingListContact> mails) {
 		this.mails = mails;
 	}
 	

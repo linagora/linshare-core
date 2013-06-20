@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +50,13 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 
     private static final Logger logger = LoggerFactory.getLogger(MailingListBusinessServiceImpl.class);
 	private final MailingListRepository mailingListRepository;
+	private final MailingListContactRepository mailingListContactRepository;
 	
-	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository)
+	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository, MailingListContactRepository mailingListContactRepository)
 	{
 		super();
 		this.mailingListRepository=mailingListRepository;
+		this.mailingListContactRepository=mailingListContactRepository;
 	}
 	
     @Override
@@ -75,7 +78,8 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     @Override
     public List<MailingList> findAllMailingListByUser(User user) {
     	List<MailingList> myList = new ArrayList<MailingList>();
-    	for(MailingList current: mailingListRepository.findAll()) {
+    	List<MailingList> list =mailingListRepository.findAll();
+    	for(MailingList current : list ) {
     		if((current.getOwner().equals(user)) || ((current.getDomain().equals(user.getDomain())) && (current.isPublic()==true))) {
     			myList.add(current);
     		}
@@ -108,4 +112,5 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     	
     	mailingListRepository.update(list);
     }
+    
 }

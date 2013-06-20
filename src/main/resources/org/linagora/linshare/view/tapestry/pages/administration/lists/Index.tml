@@ -3,4 +3,11 @@
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 
 	<!-- Main content -->
+	
+		<div id="content">
+
+		<h1>${message:components.myborderlayout.list.title}</h1>
+		
+		</div><!-- id="content" -->
+	
 	</t:MyBorderLayout>

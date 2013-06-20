@@ -35,7 +35,10 @@
 package org.linagora.linshare.core.domain.entities;
 
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.vo.MailingListVo;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 
 public class MailingList {
 
@@ -48,7 +51,7 @@ public class MailingList {
 	private boolean isPublic;
 	private User owner;
 	private AbstractDomain domain;
-	private String[] mails;
+	private List<MailingListContact> mailingListContact;
 	
 	public MailingList(){
 		super();
@@ -62,25 +65,22 @@ public class MailingList {
 		this.isPublic=list.isPublic();
 		this.owner=list.getOwner();
 		this.domain=list.getDomain();
-		this.mails=list.getMails();
+		this.mailingListContact=list.getMails();
 	}
 	
 	public MailingList(MailingListVo list)
 	{
 		this.persistenceId=list.getPersistenceId();
 		this.identifier=list.getIdentifier();
-		this.description=list.getDescription();
+		this.description=list.getListDescription();
 		this.isPublic=list.isPublic();
-		this.owner=list.getOwner();
-		this.domain=list.getDomain();
-		this.mails=list.getMails();
+		this.mailingListContact=list.getMails();
 	}
 	
 	
-	public MailingList(String identifier, String[] mails)
+	public MailingList(String identifier)
 	{
 		this.identifier=identifier;
-		this.mails=mails;
 	}
 
 	public long getPersistenceId() {
@@ -135,12 +135,12 @@ public class MailingList {
 		this.domain = domain;
 	}
 
-	public String[] getMails() {
-		return mails;
+	public List<MailingListContact> getMails() {
+		return mailingListContact;
 	}
 
-	public void setMails(String[] mails) {
-		this.mails = mails;
+	public void setMails(List<MailingListContact> mailingListContact) {
+		this.mailingListContact = mailingListContact;
 	}
 	
 }
