@@ -15,7 +15,6 @@
 	  
      <!-- LDAP DAO configuration -->
         <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-<!--    <bean id="contextSource" class="org.linid.dm.sample.ldap.PpolicyContextSource">-->
             <property name="url" value="ldap://linshare-obm.linshare.team.services.par.lng:389" />
               <property name="base" value="ou=users,dc=int1.linshare.dev,dc=local" />
 <!--             <property name="userDn" value="${ldap.root.dn}" /> -->
@@ -25,6 +24,24 @@
             <!-- <property name="authenticationSource"><ref local="acegiAuthenticationSource" /></property> -->
     </bean>
     
+        <bean id="contextSource_insee" class="org.springframework.ldap.core.support.LdapContextSource">
+            <property name="url" value="ldap://10.75.128.208:389" />
+              <property name="base" value="ou=People,o=insee,c=fr" />
+<!--             <property name="userDn" value="${ldap.root.dn}" /> -->
+<!--             <property name="password" value="${ldap.root.password}" /> -->
+            <property name="pooled" value="true" />
+    </bean>
     
+<!-- 
+ <bean id="ehcacheForLqlAuthzDnList" class="org.linid.dm.authorization.lql.dnlist.EhcacheDnList">
+        <property name="cache">
+            <bean factory-bean="ehcacheManager" factory-method="getCache">
+                <constructor-arg value="lqlAuthzDnListCache" />
+            </bean>
+        </property>
+    </bean>
+ -->
+    
+        
 
 </beans>

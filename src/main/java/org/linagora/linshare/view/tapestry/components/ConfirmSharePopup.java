@@ -71,6 +71,7 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareExpiryDateFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
@@ -200,6 +201,9 @@ public class ConfirmSharePopup{
 	
 	@Inject
 	private UserFacade userFacade;
+
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 
 	@Inject
 	private PersistentLocale persistentLocale;
@@ -343,40 +347,13 @@ public class ConfirmSharePopup{
 	 * @return list of users.
 	 */
 	private List<UserVo> performSearch(String input) {
-
-
-		Set<UserVo> userSet = new HashSet<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
-
-        
 		try {
-			if (input != null) {
-	            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userVo));
-	        }
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userVo));
-
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userVo));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), userVo));
-			
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), userVo);
+			return userAutoCompleteFacade.autoCompleteUserSortedByFavorites(userVo, input);
 		} catch (BusinessException e) {
-			logger.error("Failed to search user on ConfirmSharePopup", e);
+			logger.error("Failed to autocomplete user on ConfirmSharePopup", e);
 		}
 		return new ArrayList<UserVo>();
 	}
-	
 	
 	
 	public void onValidateFormFromConfirmshare() throws BusinessException {

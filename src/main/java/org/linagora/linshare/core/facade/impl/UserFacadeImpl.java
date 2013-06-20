@@ -129,7 +129,7 @@ public class UserFacadeImpl implements UserFacade {
 	}
     
 
-    /** Search a user.
+	/** Search a user.
      * @param mail user email.
      * @param firstName user first name.
      * @param lastName user last name.

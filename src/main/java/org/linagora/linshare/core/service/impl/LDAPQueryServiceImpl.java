@@ -76,19 +76,55 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		super();
 		this.dnList = new DnList();
 		/* HACK */
+		initObm1();
+		
+		
+	}
+	
+	private void initObm1() {
 		Map<String, LdapAttribute>  attributes = new HashMap<String, LdapAttribute>();
 		attributes.put(DomainPattern.USER_MAIL, new LdapAttribute(DomainPattern.USER_MAIL, "mail"));
 		attributes.put(DomainPattern.USER_FIRST_NAME, new LdapAttribute(DomainPattern.USER_FIRST_NAME, "givenName"));
 		attributes.put(DomainPattern.USER_LAST_NAME, new LdapAttribute(DomainPattern.USER_LAST_NAME, "sn"));
 		attributes.put(DomainPattern.USER_UID, new LdapAttribute(DomainPattern.USER_UID, "uid"));
+
 		
+//		complete on mail
+		String a ="(|(mail=pattern)(first=pattern)(last=pattern))";
+//		complete on first and/or last)
+		// pattern{1,2} = pattern.split(' ')
+//		String b ="(&(mail=*)(|(first=pattern1)(last=pattern2))(|(first=pattern2)(last=pattern1)))";
+		String b ="(&(mail=*)(|(first=pattern1)(last=pattern2))(|(first=pattern2)(last=pattern1)))";
+
+		
+		
+		String autocomplete1 = "ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(givenName=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(givenName=*)(sn=*))\");";
+//		"(&(objectClass=inetOrgPerson)(mail=${pattern1})(|(&(givenName=${pattern2})(sn=${pattern3}))(&(givenName=${pattern3})(sn=${pattern2}))))"
+		String autocomplete2="ldap.search(domain, \"&(objectClass=inetOrgPerson)(mail=\" + pattern1 + \")(|(&(givenName=\" + pattern2 + \")(sn=\" + pattern3 + \"))(&(givenName=\" + pattern3 + \")(sn=\" + pattern2 + \"))))\")";
 		this.domainPatternHack= new DomainPattern("testPattern", "testPattern", 
 				" ", 
 				" ", 
 				"ldap.search(domain, \"(&(objectClass=obmUser)(givenName=*)(sn=*)(mail=\"+login+\"))\");", // auth command
 				"ldap.search(domain, \"(&(objectClass=obmUser)(mail=\"+mail+\")(givenName=*)(sn=*))\");", // search command 
 				attributes,
-				"ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(givenName=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(givenName=*)(sn=*))\");", // auto complete command
+				autocomplete2,// auto complete command
+				false);
+	}
+	
+	private void initInsee() {
+		Map<String, LdapAttribute>  attributes = new HashMap<String, LdapAttribute>();
+		attributes.put(DomainPattern.USER_MAIL, new LdapAttribute(DomainPattern.USER_MAIL, "mail"));
+		attributes.put(DomainPattern.USER_FIRST_NAME, new LdapAttribute(DomainPattern.USER_FIRST_NAME, "sn"));
+		attributes.put(DomainPattern.USER_LAST_NAME, new LdapAttribute(DomainPattern.USER_LAST_NAME, "cn"));
+		attributes.put(DomainPattern.USER_UID, new LdapAttribute(DomainPattern.USER_UID, "uid"));
+		
+		this.domainPatternHack= new DomainPattern("testPattern", "testPattern", 
+				" ", 
+				" ", 
+				"ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+login+\"))\");", // auth command
+				"ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+mail+\"))\");", // search command 
+				attributes,
+				"ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(cn=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(cn=*)(sn=*))\");", // auto complete command
 				false);
 	}
 	
@@ -109,7 +145,6 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	public void setDnList(IDnList dnList) {
 		this.dnList = dnList;
 	}
-	
 	
 			
 	@Override
