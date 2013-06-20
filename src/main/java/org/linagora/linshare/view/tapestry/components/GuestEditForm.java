@@ -60,6 +60,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.pages.user.Index;
@@ -172,6 +173,9 @@ public class GuestEditForm {
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 	
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
+	
 	@Property
 	private boolean showRestricted;
 	
@@ -221,37 +225,12 @@ public class GuestEditForm {
 	 * @throws BusinessException 
 	 */
 	private List<UserVo> performSearch(String input) throws BusinessException {
-
-
-		Set<UserVo> userSet = new HashSet<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
+		try {
+			return userAutoCompleteFacade.autoCompleteUserSortedByFavorites(userLoggedIn, input);
+		} catch (BusinessException e) {
+			logger.error("Failed to autocomplete user on ConfirmSharePopup", e);
 		}
-
-//        if (input != null) {
-//            userSet.addAll(userFacade.searchUserForRestrictedGuestEditionForm(input.trim(), null, null, mail));
-//        }
-//		userSet.addAll(userFacade.searchUserForRestrictedGuestEditionForm(null, firstName_, lastName_, mail));
-//		userSet.addAll(userFacade.searchUserForRestrictedGuestEditionForm(null, lastName_, firstName_,  mail));
-		
-		
-		if (input != null) {
-			userSet.addAll(userFacade.searchUser(input.trim(), null, null,userLoggedIn));
-		}
-		userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userLoggedIn));
-		userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userLoggedIn));
-		
-		return new ArrayList<UserVo>(userSet);
+		return new ArrayList<UserVo>();
 	}
 	
 

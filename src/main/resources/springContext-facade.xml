@@ -11,6 +11,11 @@
 	<bean name="accountFacade" class="org.linagora.linshare.core.facade.impl.AccountFacadeImpl">
 		<constructor-arg ref="accountService" />
 	</bean>
+	
+	
+	<bean name="userAutoCompleteFacade" class="org.linagora.linshare.core.facade.impl.UserAutoCompleteFacadeImpl">
+		<constructor-arg ref="userService" />
+	</bean>
 
 
 	<bean name="userFacade" class="org.linagora.linshare.core.facade.impl.UserFacadeImpl">

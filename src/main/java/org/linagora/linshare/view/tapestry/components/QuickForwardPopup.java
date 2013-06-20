@@ -28,6 +28,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
@@ -111,6 +112,9 @@ public class QuickForwardPopup {
 
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
+	
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 
 	@Inject
 	private FunctionalityFacade functionalityFacade;
@@ -254,29 +258,10 @@ public class QuickForwardPopup {
 	 * @return list of users.
 	 */
 	private List<UserVo> performSearch(String input) {
-		Set<UserVo> userSet = new HashSet<UserVo>();
-		String firstName_ = null;
-		String lastName_ = null;
-
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
 		try {
-			if (input != null) {
-	            userSet.addAll(userFacade.searchUser(input.trim(), null, null,userLoggedIn));
-	        }
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, userLoggedIn));
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,  userLoggedIn));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), userLoggedIn));
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), userLoggedIn);
+			return userAutoCompleteFacade.autoCompleteUserSortedByFavorites(userLoggedIn, input);
 		} catch (BusinessException e) {
-			logger.error("Failed to search user on ConfirmSharePopup", e);
+			logger.error("Failed to autocomplete user on ConfirmSharePopup", e);
 		}
 		return new ArrayList<UserVo>();
 	}

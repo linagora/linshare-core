@@ -65,8 +65,10 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.SearchDocumentFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.enums.SharedType;
+import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +111,8 @@ public class SearchFile {
 	 *                      Injected services
 	 ************************************************************ */
 
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 	
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
@@ -392,24 +396,17 @@ public class SearchFile {
 	 * @return
 	 */
 	public List<String> onProvideCompletionsFromSharedFrom(String input) {
-		List<UserVo> searchResults;
-		try {
-			searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input),userTemp);
-			
-			List<String> elements = new ArrayList<String>();
-			for (UserVo user : searchResults) {
-	            String email = user.getMail();
-	            if (!elements.contains(email)) {
-	                elements.add(email);
-	            }
-			}
+		List<UserVo> searchResults = performSearch(input);
 
-			return elements;
-		} catch (BusinessException e) {
-			logger.error("Error while trying to provide completion", e);
+		List<String> elements = new ArrayList<String>();
+		for (UserVo user : searchResults) {
+			 String completeName = MailCompletionService.formatLabel(user);
+            if (!elements.contains(completeName)) {
+                elements.add(completeName);
+            }
 		}
-		
-		return new ArrayList<String>();
+
+		return elements;
 	}
 	
 	/** Perform a user search using the user search pattern.
@@ -417,19 +414,12 @@ public class SearchFile {
 	 * @return list of users.
 	 */
 	private List<UserVo> performSearch(String input) {
-
-
-		Set<UserVo> userSet = new HashSet<UserVo>();
-
-        if (input != null) {
-            try {
-				userSet.addAll(userFacade.searchUser(input.trim(), null, null, userTemp));
-			} catch (BusinessException e) {
-				logger.error("Error while trying to search user", e);
-			}
-        }
-
-		return new ArrayList<UserVo>(userSet);
+		try {
+			return userAutoCompleteFacade.autoCompleteUserSortedByFavorites(userlogin, input);
+		} catch (BusinessException e) {
+			logger.error("Failed to autocomplete user on ConfirmSharePopup", e);
+		}
+		return new ArrayList<UserVo>();
 	}
 	
 	

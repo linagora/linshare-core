@@ -113,8 +113,8 @@ public class JScriptLdapQuery {
 	public List<User> complete(String pattern) throws NamingException {
 		
 		Map<String, Object> vars = new HashMap<String, Object>();
-		vars.put("pattern", addExpansionCharacters(pattern));
 		vars.put("domain", baseDn);
+		vars.put("pattern", addExpansionCharacters(pattern));
 		
 		
 		// searching ldap directory with pattern 

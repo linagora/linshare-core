@@ -379,21 +379,34 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return users;
 	}
 	
-	private  List<User> searchUserWithDomainPolicies(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
+	
+	
+	@Override
+	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException {
+		logger.debug("Begin autoCompleteUserWithDomainPolicies");
+		List<User> users = new ArrayList<User>();
+		
+		AbstractDomain domain = retrieveDomain(domainIdentifier);
+		if(domain != null) {
+			users.addAll(autoCompleteUserWithDomainPolicies(domain, mail, firstName, lastName));
+		} else {
+			logger.error("Can not find domain : " + domainIdentifier + ". This domain does not exist.");
+		}
+		logger.debug("End autoCompleteUserWithDomainPolicies");
+		return users;
+	}
+	
+
+	private  List<User> autoCompleteUserWithDomainPolicies(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 
 		List<AbstractDomain> allAuthorizedDomain = domainPolicyService.getAllAuthorizedDomain(domain);
 		for (AbstractDomain d : allAuthorizedDomain) {
 			
+			// if the current domain is linked to a UserProvider, we perform a search.
 			if(d.getUserProvider() != null) {
 				try {
-					List<User> list = userProviderService.searchUser(d.getUserProvider(),mail,firstName,lastName);
-					// For each user, we set the domain which he came from.
-					for (User user : list) {
-						user.setDomain(d);
-						user.setRole(d.getDefaultRole());
-					}
-					users.addAll(list);
+					users.addAll(userProviderService.searchUser(d.getUserProvider(),mail,firstName,lastName));
 				} catch (NamingException e) {
 					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
 					logger.error(e.toString());
@@ -405,10 +418,9 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 				logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
 			}
 		}
-
 		return users;
 	}
-
+	
 	@Override
 	public List<User> searchUserRecursivelyWithoutRestriction(String mail, String firstName, String lastName) throws BusinessException {
 		List<User> users = new ArrayList<User>();
@@ -465,15 +477,45 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	@Override
 	public List<User> searchUserWithDomainPolicies(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException {
 		logger.debug("Begin searchUserRecursivelyWithDomainPolicies");
-		AbstractDomain domain = retrieveDomain(domainIdentifier);
-		if(domain == null) {
-			logger.error("Impossible to find domain : " + domainIdentifier + ". This domain does not exist.");
-			return null;
-		}
-		
 		List<User> users = new ArrayList<User>();
-		users.addAll(searchUserWithDomainPolicies(domain, mail, firstName, lastName));
+		
+		AbstractDomain domain = retrieveDomain(domainIdentifier);
+		if(domain != null) {
+			users.addAll(searchUserWithDomainPolicies(domain, mail, firstName, lastName));
+		} else {
+			logger.error("Impossible to find domain : " + domainIdentifier + ". This domain does not exist.");
+		}
 		logger.debug("End searchUserRecursivelyWithDomainPolicies");
+		return users;
+	}
+	
+	private  List<User> searchUserWithDomainPolicies(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
+		List<User> users = new ArrayList<User>();
+
+		List<AbstractDomain> allAuthorizedDomain = domainPolicyService.getAllAuthorizedDomain(domain);
+		for (AbstractDomain d : allAuthorizedDomain) {
+			
+			if(d.getUserProvider() != null) {
+				try {
+					List<User> list = userProviderService.searchUser(d.getUserProvider(),mail,firstName,lastName);
+					// For each user, we set the domain which he came from.
+					for (User user : list) {
+						user.setDomain(d);
+						user.setRole(d.getDefaultRole());
+					}
+					users.addAll(list);
+				} catch (NamingException e) {
+					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
+					logger.error(e.toString());
+				} catch (IOException e) {
+					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
+					logger.error(e.toString());
+				}
+			} else {
+				logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
+			}
+		}
+
 		return users;
 	}
 
