@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
@@ -46,5 +47,9 @@ public interface WebServiceShareFacade extends WebServiceGenericFacade {
 	void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt) throws BusinessException;
 
 	public List<ShareDto> getReceivedShares() throws BusinessException;
+	
+	public ShareDto getReceivedShare(String shareEntryUuid) throws BusinessException;
+	
+	public InputStream getDocumentStream(String shareEntryUuid) throws BusinessException;
 	
 }

@@ -67,12 +67,7 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 	public List<DocumentDto> getDocuments() throws BusinessException {
 		User actor = getAuthentication();
 		 
-		List<DocumentEntry> docs;
-		try {
-			docs = documentEntryService.findAllMyDocumentEntries(actor, actor);
-		} catch (BusinessException e) {
-			throw e;
-		}
+		List<DocumentEntry> docs = documentEntryService.findAllMyDocumentEntries(actor, actor);
  
 		if (docs == null) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND, "No such document");
@@ -85,12 +80,7 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 	public DocumentDto getDocument(String uuid) throws BusinessException {
 		User actor = getAuthentication();
 		 
-		DocumentEntry doc;
-		try {
-			doc = documentEntryService.findById(actor, uuid);
-		} catch (BusinessException e) {
-			throw e;
-		}
+		DocumentEntry doc = documentEntryService.findById(actor, uuid);
  
 		if (doc == null) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND, "No such document");
@@ -100,17 +90,9 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 
 	@Override
 	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException{
-		DocumentEntry res;
-		
-		try {
-			User actor = getAuthentication();
-
-			res =  documentEntryService.createDocumentEntry(actor, fi, filename);
-			documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), description);
-		} catch (BusinessException e) {
-			throw e;
-		}
-		
+		User actor = getAuthentication();
+		DocumentEntry res =  documentEntryService.createDocumentEntry(actor, fi, filename);
+		documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), description);
 		return new DocumentDto(res);
 	}
 
@@ -131,8 +113,6 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 			documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), comment);
 		} catch (IOException e) {
 			throw  new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "unable to upload",e);
-		} catch (BusinessException e) {
-			throw e;
 		}
 		
 		return new DocumentDto(res);
@@ -140,39 +120,20 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 	
 	@Override
 	public Long getUserMaxFileSize() throws BusinessException {
-		
-		Long res;
-		
-		try {
-			User actor = getAuthentication();
-			res = documentEntryService.getUserMaxFileSize(actor);
-		} catch (BusinessException e) {
-			throw e;
-		}
-		return res;
+		User actor = getAuthentication();
+		return documentEntryService.getUserMaxFileSize(actor);
 	}
 	
 	@Override
 	public Long getAvailableSize() throws BusinessException {
-		Long res;
-		
-		try {
-			User actor = getAuthentication();
-			res = documentEntryService.getAvailableSize(actor);
-		} catch (BusinessException e) {
-			throw e;
-		}
-		return res;
+		User actor = getAuthentication();
+		return documentEntryService.getAvailableSize(actor);
 	}
 	
 	@Override
 	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
-		try {
-			User actor = getAuthentication();
-			return documentEntryService.getDocumentStream(actor, docEntryUuid);
-		} catch (BusinessException e) {
-			throw e;
-		}
+		User actor = getAuthentication();
+		return documentEntryService.getDocumentStream(actor, docEntryUuid);
 	}
 
 	//#############  utility methods
