@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.ErrorDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +64,16 @@ public class WebserviceBase {
 			return new WebApplicationException(cause, Response.status(httpErrorCode).entity(message).build());
 	}
 
+	protected WebApplicationException analyseFault(Exception e) {
+		if(e instanceof BusinessException) {
+			BusinessException bu = (BusinessException)e;
+			ErrorDto errorDto = new ErrorDto(bu.getErrorCode().getCode(), e.getMessage());
+			return new WebApplicationException(e, Response.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
+		}
+		ErrorDto errorDto = new ErrorDto(-1, e.toString());
+		return new WebApplicationException(e, Response.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
+	}
+	
 	protected WebApplicationException analyseFaultREST(BusinessException e) {
 
 		// TODO locale in WebApplicationException ?
