@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.webservice.dto.ShareDto;
 
@@ -67,4 +68,5 @@ public interface ShareRestService {
 	
 //	public List<ShareDto> getMyOwnShares();
 	public List<ShareDto> getReceivedShares();
+	public Response getDocumentStream(String uuid);
 }
