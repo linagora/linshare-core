@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.CleanupRender;
@@ -98,12 +97,15 @@ public class Index {
 	
 	private boolean searchAll;
 	
+	private boolean emptyList ;
+	
 	
     @SetupRender
     public void init() throws BusinessException {
 		if(displayGrid == false){
     	autocompleteMin = functionalityFacade.completionThreshold(loginUser.getDomainIdentifier());
     	lists= mailingListFacade.findAllMailingListByUser(loginUser);
+    	setEmptyList(lists.isEmpty());
 		}
     }
     
@@ -128,6 +130,9 @@ public class Index {
     public void deleteList() throws BusinessException {
     	mailingListFacade.deleteMailingList(listToDelete);
         lists = mailingListFacade.findAllMailingListByUser(loginUser);
+        if(!lists.isEmpty()){ 
+        	displayGrid = true;
+        }
     }
 	/**
 	 * AutoCompletion for search field.
@@ -158,8 +163,9 @@ public class Index {
     		} else {
     			lists = mailingListFacade.findAllMailingListByIdentifier(targetLists, loginUser);
     		}
-    	
+    	if(!lists.isEmpty()) {
     	displayGrid = true;
+    	}
     	return null;
     }
     
@@ -169,4 +175,12 @@ public class Index {
         cause.printStackTrace();
         return this;
     }
+
+	public boolean isEmptyList() {
+		return emptyList;
+	}
+
+	public void setEmptyList(boolean emptyList) {
+		this.emptyList = emptyList;
+	}
 }

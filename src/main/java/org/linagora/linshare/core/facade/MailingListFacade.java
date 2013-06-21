@@ -15,4 +15,5 @@ public interface MailingListFacade {
     public void deleteMailingList(long persistenceId) throws BusinessException;
     public void updateMailingList(MailingListVo mailingListVo) throws BusinessException;
     public List<MailingListVo> findAllMailingListByIdentifier(String identifier, UserVo actorVo) throws BusinessException ;
+    public boolean mailingListIdentifierUnicity(MailingListVo toCreate,UserVo actorVo)throws BusinessException;
 }

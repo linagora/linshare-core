@@ -11,7 +11,7 @@ public class MailingListContactVo {
 	}
 	
 	public MailingListContactVo(MailingListContactVo MailingListContact) {
-		this.mail = MailingListContact.getMails();
+		this.mail = MailingListContact.getMail();
 		this.persistenceId = MailingListContact.getPersistenceId();
 	}
 	
@@ -28,11 +28,11 @@ public class MailingListContactVo {
 		this.persistenceId = persistenceId;
 	}
 
-	public String getMails() {
+	public String getMail() {
 		return mail;
 	}
 
-	public void setMails(String mail) {
+	public void setMail(String mail) {
 		this.mail = mail;
 	}
 }
