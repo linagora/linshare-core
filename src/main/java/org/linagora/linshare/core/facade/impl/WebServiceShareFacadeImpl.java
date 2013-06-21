@@ -101,7 +101,6 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl imple
 		return output;
 	}
 
-
 	@Override
 	public void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException {
 
@@ -157,11 +156,14 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl imple
 
 	@Override
 	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt) throws BusinessException {
-
-		User actor = getAuthentication();
-
 		List<String> listRecipient = new ArrayList<String>();
 		listRecipient.add(targetMail);
+		this.multiplesharedocuments(listRecipient, uuid, securedShare, messageOpt);
+	}
+	
+	@Override
+	public void multiplesharedocuments(List<String> mails, List<String> uuid, int securedShare, String messageOpt) throws BusinessException {
+		User actor = getAuthentication();
 
 		List<DocumentVo> listDoc = new ArrayList<DocumentVo>();
 
@@ -186,7 +188,7 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl imple
 		SuccessesAndFailsItems<ShareDocumentVo> successes;
 
 		try {
-			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(uo, listDoc, listRecipient, (securedShare == 1), mailContainer);
+			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(uo, listDoc, mails, (securedShare == 1), mailContainer);
 		} catch (BusinessException e) {
 			throw e;
 		}
@@ -194,10 +196,9 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl imple
 		if ((successes.getSuccessesItem() == null) || ((successes.getFailsItem() != null) && (successes.getFailsItem().size() > 0))) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "Could not share the document");
 		}
-
+		
 	}
 
-	
 	@Override
 	public ShareDto getReceivedShare(String shareEntryUuid) throws BusinessException {
 		User actor = getAuthentication();

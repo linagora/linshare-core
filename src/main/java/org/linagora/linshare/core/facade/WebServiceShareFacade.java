@@ -45,6 +45,8 @@ public interface WebServiceShareFacade extends WebServiceGenericFacade {
 	public void sharedocument (String targetMail, String uuid, int securedShare) throws BusinessException;
 
 	void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt) throws BusinessException;
+	
+	void multiplesharedocuments(List<String> mails, List<String> uuid, int securedShare, String messageOpt) throws BusinessException;
 
 	public List<ShareDto> getReceivedShares() throws BusinessException;
 	
