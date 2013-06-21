@@ -37,7 +37,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -49,7 +51,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.webservice.ShareRestService;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
@@ -76,7 +77,6 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Override
 	public List<ShareDto> getReceivedShares()
     {
-		
 		List<ShareDto> shares = null;
 		
 		try {
@@ -95,12 +95,19 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	public void sharedocument(@PathParam("targetMail") String targetMail, @PathParam("uuid") String uuid, @DefaultValue("0") @QueryParam("securedShare") int securedShare) {
 		try {
 			webServiceShareFacade.checkAuthentication();
+			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
-		} 
-		
+		}
+	}
+
+	@POST
+    @Path("/multiplesharedocuments")
+	@Override
+	public void multiplesharedocuments(@FormParam("mail") List<String> targetMails, @FormParam("file")  List<String> uuids, @DefaultValue("0") @QueryParam("securedShare") int securedShare, @FormParam("message")  @DefaultValue("") String message) {
 		try {
-			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
+			webServiceShareFacade.checkAuthentication();
+			webServiceShareFacade.multiplesharedocuments(targetMails, uuids, securedShare, message);
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
 		}
