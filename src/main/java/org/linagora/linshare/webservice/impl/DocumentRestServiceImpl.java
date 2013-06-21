@@ -59,6 +59,7 @@ import org.linagora.linshare.webservice.DocumentRestService;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,60 +82,15 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		try {
 			webServiceDocumentFacade.checkAuthentication();
 			DocumentDto documentDto = webServiceDocumentFacade.getDocument(uuid);
-			ResponseBuilder response = Response.ok((Object) webServiceDocumentFacade.getDocumentStream(uuid));
-			response.header("Content-Disposition", getContentDispositionHeader(documentDto.getName()));
-	        response.header("Content-Type",documentDto.getType());
-	        response.header("Content-Transfer-Encoding","binary");
-	        
-			//BUG WITH IE WHEN PRAGMA IS NO-CACHE solution is:
-	        //The proper solution to IE cache issues is to declare the attachment as "Pragma: private"
-	        //and "Cache-Control: private, must-revalidate" in the HTTP Response.
-	        //This allows MS-IE to save the content as a temporary file in its local cache,
-	        //but in not general public cache servers, before handing it off the plugin, e.g. Adobe Acrobat, to handle it.
-			
-			//Pragma is a HTTP 1.0 directive that was retained in HTTP 1.1 for backward compatibility.
-	        //no-cache prevent caching in proxy
-	        response.header("Pragma","private"); 
-	        
-	        
-	        //cache-control: private. It instructs proxies in the path not to cache the page. But it permits browsers to cache the page.
-	        //must-revalidate means the browser must revalidate the page against the server before serving it from cache
-	        
-	        //post-check Defines an interval in seconds after which an entity must be checked for freshness.
-	        //The check may happen after the user is shown the resource but ensures that on the next roundtrip
-	        //the cached copy will be up-to-date
-	        //pre-check Defines an interval in seconds after
-	        //which an entity must be checked for freshness prior to showing the user the resource.
-	        
-	        response.header("Cache-Control","private,must-revalidate, post-check=0, pre-check=0");
-	        
+			InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
+			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(), documentDto.getType());
 			return response.build();
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
 		}
 	}
 	
-	private String getContentDispositionHeader(String fileName) {
-		String encodeFileName = null;
-		try {
-			URI uri = new URI(null, null, fileName, null);
-			encodeFileName = uri.toASCIIString();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append("attachment; ");
-		
-		// Adding filename using the old way for old browser compatibility
-		sb.append("filename=\""+fileName+"\"; ");
-		
-		// Adding UTF-8 encoded filename. If the browser do not support this parameter, it will use the old way.
-		if(encodeFileName != null) {
-			sb.append("filename*= UTF-8''" + encodeFileName);
-		}
-		return sb.toString();
-	}
+	
 
 	/**
 	 * get the files of the user
