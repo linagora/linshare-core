@@ -34,8 +34,6 @@
 package org.linagora.linshare.webservice.impl;
 
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -85,8 +83,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 			InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
 			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(), documentDto.getType());
 			return response.build();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 	}
 	
@@ -107,10 +105,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		try {
 			webServiceDocumentFacade.checkAuthentication();
 			docs = webServiceDocumentFacade.getDocuments();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
-
 		return docs;
 	}
 
@@ -125,39 +122,34 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "description", required = false) String description,
 			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) {
 
-		User actor = null;
 		try {
-			actor = webServiceDocumentFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
-		}
+			User actor = webServiceDocumentFacade.checkAuthentication();
 
-		if ((actor instanceof Guest && !actor.getCanUpload())) {
-			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
-		}
-
-		if (theFile == null) {
-			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
-		}
-
-		String filename;
-
-		if (givenFileName == null || givenFileName.isEmpty()) {
-			// parameter givenFileName is optional
-			// so need to search this information in the header of the
-			// attachement (with id file)
-			filename = body.getAttachment("file").getContentDisposition().getParameter("filename");
-		} else {
-			filename = givenFileName;
-		}
-
-		// comment can not be null ?
-		String comment = (description == null) ? "" : description;
-
-		try {
+			if ((actor instanceof Guest && !actor.getCanUpload())) {
+				throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
+			}
+	
+			if (theFile == null) {
+				throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+			}
+	
+			String filename;
+	
+			if (givenFileName == null || givenFileName.isEmpty()) {
+				// parameter givenFileName is optional
+				// so need to search this information in the header of the
+				// attachement (with id file)
+				filename = body.getAttachment("file").getContentDisposition().getParameter("filename");
+			} else {
+				filename = givenFileName;
+			}
+	
+			// comment can not be null ?
+			String comment = (description == null) ? "" : description;
+	
 			return webServiceDocumentFacade.uploadfile(theFile, filename, comment);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 	}
 
@@ -179,10 +171,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		try {
 			webServiceDocumentFacade.checkAuthentication(); // raise exception
 			doc = webServiceDocumentFacade.addDocumentXop(doca);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
-
 		return doc;
 	}
 
@@ -196,10 +187,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		try {
 			webServiceDocumentFacade.checkAuthentication();
 			sv = new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
-
 		return sv;
 	}
 
@@ -214,10 +204,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		try {
 			webServiceDocumentFacade.checkAuthentication();
 			sv = new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
-
 		return sv;
 	}
 
