@@ -47,4 +47,6 @@ public interface MailingListBusinessService {
     public void deleteMailingList(long persistenceId) throws BusinessException;
     public void updateMailingList(MailingList listToUpdate) throws BusinessException;
     
+    
+    
 }

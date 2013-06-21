@@ -13,23 +13,35 @@
 			</p:else>
 		</t:if>
 		
-			<!-- FORM -->
-			
+				
 		<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
-		<t:form id="form">
 		<br></br>
-		<p><t:label for="identifier"/>:&nbsp;
-        <t:textfield t:id="identifier" value="mailingList.identifier" Disabled="inModify"/></p>
-		<br></br>			
-		<p><t:label for="listDescription"/>:&nbsp;
-        <t:textarea t:id="listDescription" value="mailingList.listDescription" cols="40" rows="1"/></p>
-        <br></br>
-        <p><t:label for="visibilitySelection"/>:&nbsp;
-        <select t:type="select" t:id="visibilitySelection" t:model="literal:Private,Public"></select></p>
-        <br></br>	
-        <p><input type="submit"  value="${message:global.button.validate}"/></p>
-        </t:form>         
 		
+			<!-- FORM -->
+		<t:form id="form">
+				<fieldset class="title_criteria_zone" id="formCriterion">
+			<legend align="top" class="palette">${message:pages.lists.info}</legend>
+		<br></br>
+				<t:if test="inModify">
+			<p:else>
+			<p><t:label for="identifier"/>:&nbsp;
+        	<t:textfield t:id="identifier" value="mailingList.identifier" disabled="inModify"/></p>
+			</p:else>
+		</t:if>
+		<br></br>			
+			<p><t:label for="listDescription"/>:&nbsp;
+        	<t:textarea t:id="listDescription" value="mailingList.listDescription" cols="40" rows="1"/></p>
+        <br></br>
+        	<p><t:label for="visibilitySelection"/>:&nbsp;
+        	<select t:type="select" t:id="visibilitySelection" t:model="literal:Private,Public"></select></p>
+        <br></br>	
+        	<p>${message:pages.history.index.form.targetMail}&nbsp;<t:textarea t:id="targetMails" t:value="targetListMails" t:mixins="autoComplete" t:minChars="${autocompleteMin}" t:tokens="literal:," cols="40"/></p>
+        <br></br>	
+        	<p><input type="submit"  value="${message:global.button.validate}"/></p>
+        </fieldset>
+		
+        </t:form>         
+        
 		</div><!-- id="content" -->
 		
 	</t:MyBorderLayout>

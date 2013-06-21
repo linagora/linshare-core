@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
@@ -102,7 +103,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     public void updateMailingList(MailingList listToUpdate) throws BusinessException{
     	
     	MailingList list = retrieveMailingList(listToUpdate.getPersistenceId());
-    	
+    	logger.debug("lol");
     	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setDescription(listToUpdate.getDescription());
     	list.setPublic(listToUpdate.isPublic());

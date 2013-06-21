@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="lists" t:currentHighlight="lists"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+	
+	<!-- Main content -->
+			
+		<div id="content">
+		
+		<h1>${mailingList.identifier}</h1>
+		<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+		
+		<t:if test="isEmpty">
+						${message:pages.lists.empty}
+			<p:else>
+			<t:grid source="lists" include="mail" row="list"> </t:grid>
+			</p:else>
+		</t:if>
+		</div><!-- id="content" -->
+		
+	</t:MyBorderLayout>

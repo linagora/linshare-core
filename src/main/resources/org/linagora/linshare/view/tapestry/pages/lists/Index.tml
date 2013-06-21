@@ -13,7 +13,9 @@
 		</t:pageLink>
 		
 		<br></br><br></br><br></br><br></br>
-		
+		<t:if t:test="emptyList">
+		${message:pages.lists.noList}
+		<p:else>
 		<t:form id="form">
         	<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}"/>
         			<br></br>
@@ -21,11 +23,17 @@
         	<t:actionLink class="button" t:id="searchall"><span>${message:global.button.searchAll}</span></t:actionLink>
         	<t:linkSubmit class="button"><span>${message:global.button.search}</span></t:linkSubmit>
 		</t:form>
+		</p:else>
+		</t:if>
 		
+				
 		<br></br><br></br>
 		
 		<t:if t:test="displayGrid">
 		<t:grid source="lists" include="identifier, listDescription" add="actions" row="list">
+			 <t:parameter name="identifierCell">
+			 <t:pageLink page="lists/DisplayMailingList" context="list.persistenceId">${list.identifier}</t:pageLink>
+			 </t:parameter>
 			 <t:parameter name="actionsCell">
 			  	<t:if test="listIsDeletable">
 			  		<t:pageLink page="lists/ManageMailingList" context="list.persistenceId"
