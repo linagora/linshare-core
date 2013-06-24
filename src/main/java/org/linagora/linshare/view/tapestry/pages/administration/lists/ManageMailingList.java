@@ -45,6 +45,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -86,6 +87,10 @@ public class ManageMailingList {
 	@Validate("required")
 	@Property
 	private String visibilitySelection;
+	
+	@Validate("required")
+	@Property
+	private VisibilityType visibility;
 	
 	
 	@Property
@@ -176,6 +181,12 @@ public class ManageMailingList {
 				
 				domain = domainFacade.retrieveDomain(newUser.getDomainIdentifier());
 				mailingList.setDomain(domain);
+			}
+			
+			if(visibility.toString().equals("Public")) {
+				mailingList.setPublic(true);
+			} else {
+				mailingList.setPublic(false);
 			}
 			
 			mailingListFacade.updateMailingList(mailingList);
