@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+
 public class MailingListContact {
 
 	private long persistenceId;
@@ -11,6 +13,11 @@ public class MailingListContact {
 	
 	public MailingListContact(MailingListContact mailingListContact) {
 		this.mail = mailingListContact.getMails();
+		this.persistenceId = mailingListContact.getPersistenceId();
+	}
+	
+	public MailingListContact(MailingListContactVo mailingListContact){
+		this.mail = mailingListContact.getMail();
 		this.persistenceId = mailingListContact.getPersistenceId();
 	}
 	

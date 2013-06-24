@@ -36,7 +36,10 @@ package org.linagora.linshare.view.tapestry.pages.lists;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
@@ -47,11 +50,13 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
+import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,14 +99,19 @@ public class ManageMailingList {
 	private String targetListMails;
 	
 	@Property
+	private String newOwner;
+	
+	@Property
 	private int autocompleteMin=3;
+	
+	@Inject
+	private RecipientFavouriteFacade recipientFavouriteFacade;
 	
 	@SetupRender
 	public void init() {
 			if(mailingList == null) {
 				mailingList=new MailingListVo();
 			}
-			logger.debug("inModify init:"+inModify);
 	}
 	
 	public void onActivate(long persistenceId) throws BusinessException {
@@ -112,11 +122,21 @@ public class ManageMailingList {
 			inModify = false;
 			mailingList = null;
 		}
-		logger.debug("inModify activ:"+inModify);
+		
+		if(!mailingList.getMails().isEmpty()){
+			for(MailingListContact current : mailingList.getMails()){
+				MailingListContactVo currentVo = new MailingListContactVo(current);
+				if(targetListMails == null){
+					targetListMails = currentVo.getMail();
+				} else {
+				targetListMails = targetListMails+","+currentVo.getMail();
+				}
+			}
+		}
     }
 	
 	/**
-	 * AutoCompletion for name field.
+	 * AutoCompletion for mail field.
 	 * @param value the value entered by the user
 	 * @return list the list of string matched by value.
 	 */
@@ -135,6 +155,61 @@ public class ManageMailingList {
 		return res;
 	}
 
+	public List<String> onProvideCompletionsFromOwner(String input) {
+		List<UserVo> searchResults;
+
+		List<String> elements = new ArrayList<String>();
+		try {
+			searchResults = recipientFavouriteFacade.recipientsOrderedByWeightDesc(performSearch(input),loginUser);
+
+			for (UserVo user : searchResults) {
+	            String completeName = user.getFirstName().trim() + " " + user.getLastName().trim();
+	            if (!elements.contains(completeName)) {
+	                elements.add(completeName);
+	            }
+			}
+
+			return elements;
+		} catch (BusinessException e) {
+			logger.error("Error while trying to autocomplete", e);
+		}
+		return elements;
+	}
+	
+	/** Perform a user search using the user search pattern.
+	 * @param input user search pattern.
+	 * @return list of users.
+	 */
+	private List<UserVo> performSearch(String input) {
+		Set<UserVo> userSet = new HashSet<UserVo>();
+
+		String firstName_ = null;
+		String lastName_ = null;
+
+		if (input != null && input.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
+			if (stringTokenizer.hasMoreTokens()) {
+				firstName_ = stringTokenizer.nextToken();
+				if (stringTokenizer.hasMoreTokens()) {
+					lastName_ = stringTokenizer.nextToken();
+				}
+			}
+		}
+		
+		try {
+	        if (input != null) {
+	            userSet.addAll(userFacade.searchUser(input.trim(), null, null, null, loginUser));
+	            userSet.addAll(userFacade.searchUser(null, firstName_, lastName_, null, loginUser));
+	            userSet.addAll(userFacade.searchUser(null, lastName_, firstName_, null, loginUser));
+	        } else {
+	        	userSet.addAll(userFacade.searchUser(null, null, null, null, loginUser));
+	        }
+		} catch (BusinessException e) {
+			logger.error("Error while trying to autocomplete", e);
+		}
+		return new ArrayList<UserVo>(userSet);
+	}
+	
 	
     public Object onActionFromCancel() {
         mailingList=null;
@@ -143,9 +218,7 @@ public class ManageMailingList {
      }
 
 	public Object onSuccess() throws BusinessException{
-		logger.debug("inModify sucess:"+inModify);
 		if(inModify == true){
-		/*	mailingList.getMails().clear();
 			List<MailingListContact> mails = new ArrayList<MailingListContact>();
 			if ((targetListMails != null) &&(targetListMails.length()>0)) {
 				for(String current : Arrays.asList(targetListMails.split(","))) {
@@ -153,9 +226,41 @@ public class ManageMailingList {
 					mails.add(contact);
 				}
 				mailingList.setMails(mails);
-			}*/
-			logger.debug("description:"+mailingList.getListDescription());
-			mailingListFacade.updateMailingList(mailingList);
+			}
+			List<MailingListContactVo> add =new ArrayList<MailingListContactVo>();
+			add = mailingListFacade.getListOfMailAdd(mailingList);
+			
+			List<MailingListContactVo> remove =new ArrayList<MailingListContactVo>();
+			remove = mailingListFacade.getListOfMailRemove(mailingList);
+
+			mailingList.getMails().clear();
+			for(MailingListContactVo current : remove) {
+				mailingListFacade.deleteMailingListContact(current.getPersistenceId());
+			}
+			
+			mailingList.getMails().clear();
+			for(MailingListContactVo contactVo : add) {
+				mailingList.getMails().add(new MailingListContact(contactVo));
+			}
+			if(newOwner != null) {
+				List<UserVo> list = new ArrayList<UserVo>();
+				list = performSearch(newOwner);
+				UserVo newUser = list.get(0);
+				mailingList.setOwner(newUser);
+				mailingListFacade.checkUniqueId(mailingList, newUser);
+				
+				   
+				domain = domainFacade.retrieveDomain(newUser.getDomainIdentifier());
+				mailingList.setDomain(domain);
+				
+			}
+			else {
+				mailingList.setOwner(loginUser);
+				domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
+				mailingList.setDomain(domain);
+			}
+			
+			 mailingListFacade.updateMailingList(mailingList);
 		}
 		else {
 			mailingList.setOwner(loginUser);
@@ -178,8 +283,12 @@ public class ManageMailingList {
 			}
 			
 			if(mailingListFacade.mailingListIdentifierUnicity(mailingList, loginUser)){
-				logger.debug("exist?"+mailingListFacade.mailingListIdentifierUnicity(mailingList, loginUser));
+			mailingListFacade.checkUniqueId(mailingList,loginUser);
 			mailingListFacade.createMailingList(mailingList);
+			}
+			else{
+				mailingListFacade.checkUniqueId(mailingList,loginUser);
+				mailingListFacade.createMailingList(mailingList);
 			}
 		}
 		mailingList=null;

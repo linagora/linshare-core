@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -13,9 +15,13 @@ import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MailingListFacadeImpl implements MailingListFacade {
 
+	private static Logger logger = LoggerFactory.getLogger(MailingListFacadeImpl.class);
+	
 	private final MailingListService mailingListService;
     private final UserAndDomainMultiService userAndDomainMultiService;
     private final AbstractDomainService abstractDomainService;
@@ -71,7 +77,12 @@ public class MailingListFacadeImpl implements MailingListFacade {
     
     @Override
     public void updateMailingList(MailingListVo mailingListVo) throws BusinessException {
-    	mailingListService.updateMailingList(new MailingList(mailingListVo));
+    	MailingList mailingList=new MailingList(mailingListVo);
+    	User actor = userAndDomainMultiService.findOrCreateUser(mailingListVo.getOwner().getMail(),mailingListVo.getOwner().getDomainIdentifier());
+    	mailingList.setOwner(actor);
+  	  	AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomain().getIdentifier());
+  	  	mailingList.setDomain(domain);
+    	mailingListService.updateMailingList(mailingList);
     }
     
     @Override
@@ -94,4 +105,76 @@ public class MailingListFacadeImpl implements MailingListFacade {
    		return list.isEmpty();
    	}
     
+   @Override
+   public List<MailingListContactVo> getListOfMailAdd(MailingListVo list) throws BusinessException {
+	   List<MailingListContactVo> contact =new ArrayList<MailingListContactVo>();
+	   MailingListVo mailingList= retrieveMailingList(list.getPersistenceId());
+	   for(MailingListContact current : list.getMails()) {
+		   boolean exist=false;
+		   for(MailingListContact current2 : mailingList.getMails()) {
+			   if(current.getMails().equals(current2.getMails())) {
+				   exist = true;
+			   }
+		   }
+		   if(exist == false) {
+			   contact.add(new MailingListContactVo(current));
+		   }
+	   }
+	   return contact;
+   }
+   
+   @Override
+   public List<MailingListContactVo> getListOfMailRemove(MailingListVo list) throws BusinessException {
+	   List<MailingListContactVo> contact =new ArrayList<MailingListContactVo>();
+	   MailingListVo mailingList= retrieveMailingList(list.getPersistenceId());
+	   for(MailingListContact current : mailingList.getMails()) {
+		   boolean exist=false;
+		   for(MailingListContact current2 : list.getMails()) {
+			   if(current.getMails().equals(current2.getMails())) {
+				   exist = true;
+			   }
+		   }
+		   if(exist == false) {
+			   contact.add(new MailingListContactVo(current));
+		   }
+	   }
+	   return contact;
+   }
+   
+	@Override
+	public void deleteMailingListContact(long persistenceId) throws BusinessException{ 
+		mailingListService.deleteMailingListContact(persistenceId);
+	}
+	
+   @Override
+   public MailingListContactVo retrieveMailingListContact(long persistenceId) {
+   		return new MailingListContactVo(mailingListService.retrieveMailingListContact(persistenceId));
+   }
+   
+   @Override
+   public void checkUniqueId(MailingListVo listVo,UserVo user) throws BusinessException {
+	   List<MailingListVo> list = new ArrayList<MailingListVo>();
+	   list = findAllMailingListByOwner(user);
+	   int i = 0;
+	   String copy = listVo.getIdentifier();
+	   for(MailingListVo current : list){
+			logger.debug("toCreateid:"+listVo.getIdentifier()+" inListid:"+current.getIdentifier());   
+		   while(current.getIdentifier().equals(listVo.getIdentifier())){
+					   listVo.setIdentifier(copy+i);   
+						i++;
+		   }
+	   }
+   }
+   
+   @Override
+   public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException{
+	   List<MailingListVo> list = new ArrayList<MailingListVo>();
+	   List<MailingList> listFromDb = new ArrayList<MailingList>();
+	   User actor = userAndDomainMultiService.findOrCreateUser(user.getMail(),user.getDomainIdentifier());
+	   listFromDb = mailingListService.findAllMailingListByOwner(actor);
+	   for(MailingList current : listFromDb){
+		   list.add(new MailingListVo(current));
+	   }
+	   return list;
+   }
 }

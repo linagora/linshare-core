@@ -35,6 +35,8 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
@@ -49,16 +51,46 @@ import org.slf4j.LoggerFactory;
 
 public class MailingListBusinessServiceImpl implements MailingListBusinessService {
 
+
+class ComparateurMailingList implements Comparator<MailingList> {
+	public int compare(MailingList s1, MailingList s2){
+                //tri desc
+		if (s1.getIdentifier().compareTo(s2. getIdentifier()) == 1) {
+			return -1;
+		} else if (s1.getIdentifier().compareTo(s2. getIdentifier()) == -1) {
+			return 1;        	
+		} else {
+			return 0;
+		}
+	}      
+}
+	
+	
     private static final Logger logger = LoggerFactory.getLogger(MailingListBusinessServiceImpl.class);
 	private final MailingListRepository mailingListRepository;
 	private final MailingListContactRepository mailingListContactRepository;
-	
+
 	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository, MailingListContactRepository mailingListContactRepository)
 	{
 		super();
 		this.mailingListRepository=mailingListRepository;
 		this.mailingListContactRepository=mailingListContactRepository;
 	}
+	
+	@Override
+	public void deleteMailingListContact(long persistenceId) throws BusinessException{ 
+    	MailingListContact mailToDelete = retrieveMailingListContact(persistenceId);
+    	if (mailToDelete == null) {
+    		logger.error("mail not found");
+    	} else {
+    		mailingListContactRepository.delete(mailToDelete);
+    	}
+	}
+	
+    @Override
+    public MailingListContact retrieveMailingListContact(long persistenceId) {
+    	return mailingListContactRepository.findById(persistenceId);
+    }
 	
     @Override
     public MailingList createMailingList(MailingList mailingList) throws BusinessException{
@@ -85,6 +117,20 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     			myList.add(current);
     		}
     	}
+    	Collections.reverse(myList);
+    	return myList;
+    }
+    
+    @Override
+    public List<MailingList> findAllMailingListByOwner(User user) {
+    	List<MailingList> myList = new ArrayList<MailingList>();
+    	List<MailingList> list =mailingListRepository.findAll();
+    	for(MailingList current : list ) {
+    		if((current.getOwner().equals(user))) {
+    			myList.add(current);
+    		}
+    	}
+    	Collections.reverse(myList);
     	return myList;
     }
     
@@ -103,14 +149,16 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     public void updateMailingList(MailingList listToUpdate) throws BusinessException{
     	
     	MailingList list = retrieveMailingList(listToUpdate.getPersistenceId());
-    	logger.debug("lol");
-    	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setDescription(listToUpdate.getDescription());
+    	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setPublic(listToUpdate.isPublic());
+
+    	for(MailingListContact current : listToUpdate.getMails()) {
+    		list.getMails().add(current);
+    	}
     	list.setDomain(listToUpdate.getDomain());
     	list.setOwner(listToUpdate.getOwner());
-    	list.setMails(listToUpdate.getMails());
-    	
+    
     	mailingListRepository.update(list);
     }
     
