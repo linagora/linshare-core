@@ -31,23 +31,83 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.business.service;
 
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
-import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
+package org.linagora.linshare.view.tapestry.pages.administration.lists;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public interface MailingListBusinessService {
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.entities.MailingListContact;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.MailingListFacade;
 
-    public MailingList createMailingList(MailingList mailingList) throws BusinessException;
-    public MailingList retrieveMailingList(long persistenceId);
-    public List<MailingList> findAllMailingList();
-    public List<MailingList> findAllMailingListByUser(User user);
-    public void deleteMailingList(long persistenceId) throws BusinessException;
-    public void updateMailingList(MailingList listToUpdate) throws BusinessException;
-    public List<MailingList> findAllMailingListByOwner(User user);
-    public void deleteMailingListContact(long persistenceId) throws BusinessException;
-    public MailingListContact retrieveMailingListContact(long persistenceId);
+public class DisplayMailingList {
+	
+    @Inject
+    private MailingListFacade mailingListFacade;
+	
+	@SessionState(create=false)
+    @Property
+    private MailingListVo mailingList;
+	
+	private List<MailingListContactVo> lists;
+	
+	private MailingListContactVo list;
+	
+    @SessionState
+    private UserVo loginUser;
+    
+    private boolean isEmpty;
+	
+	@InjectPage
+	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
+	
+	public void onActivate(long persistenceId) throws BusinessException {
+		if (persistenceId != 0) {
+			mailingList = mailingListFacade.retrieveMailingList(persistenceId);
+		} else {
+			mailingList = null;
+		}
+		
+		isEmpty = mailingList.getMails().isEmpty();
+		if(!isEmpty) {
+			lists = new ArrayList<MailingListContactVo>();
+			for(MailingListContact contact : mailingList.getMails()) {
+				MailingListContactVo current = new MailingListContactVo(contact);
+				lists.add(current);
+			}
+		}
+	}
+	
+    public Object onActionFromCancel() {
+        mailingList=null;
+        return index;
+     }
+
+    public boolean getIsEmpty(){
+    	return isEmpty;
+    }
+    
+	public List<MailingListContactVo> getLists() {
+		return lists;
+	}
+
+	public void setLists(List<MailingListContactVo> lists) {
+		this.lists = lists;
+	}
+
+	public MailingListContactVo getList() {
+		return list;
+	}
+	
+	public void setList(MailingListContactVo list) {
+		this.list = list;
+	}
 }

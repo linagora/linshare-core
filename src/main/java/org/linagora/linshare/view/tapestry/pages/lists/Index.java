@@ -34,9 +34,11 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -63,6 +65,7 @@ public class Index {
     private ShareSessionObjects shareSessionObjects;
     
     @SessionState
+    @Property
     private UserVo loginUser;
     
     @Inject
@@ -92,6 +95,9 @@ public class Index {
 	@Property
 	private String targetLists;
     
+    @InjectPage
+    private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
+	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 	
@@ -140,10 +146,11 @@ public class Index {
 	 * @return list the list of string matched by value.
 	 * @throws BusinessException 
 	 */
-	/*public List<String> onProvideCompletionsFromTargetMails(String value){
+	public List<String> onProvideCompletionsFromSearch(String value){
 		List<String> res = new ArrayList<String>();
+		
 		try {
-			List<MailingListVo> founds = userFacade.searchUser(value, null, null, null, userVo);
+			List<MailingListVo> founds = mailingListFacade.findAllMailingListByUser(loginUser);
 			if (founds != null && founds.size() > 0) {
 				for (MailingListVo listVo : founds) {
 					res.add(listVo.getIdentifier());
@@ -153,7 +160,7 @@ public class Index {
 			e.printStackTrace();
 		}
 		return res;
-	}*/
+	}
     
 	Object onActionFromSearchall() throws BusinessException { searchAll = true; return onSuccessFromForm();}
     
@@ -176,6 +183,10 @@ public class Index {
         return this;
     }
 
+    public Object onActionFromAdministrationList() {
+        return index;
+    }
+    
 	public boolean isEmptyList() {
 		return emptyList;
 	}

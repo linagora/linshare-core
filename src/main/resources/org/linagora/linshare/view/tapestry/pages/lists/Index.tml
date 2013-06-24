@@ -6,6 +6,22 @@
 	
 		<div id="content">
 
+
+		<!-- Action bar -->
+
+		<div id="actionBar">
+			<h4>Actions</h4>
+			<ul>
+				<li>	<t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
+				</li>
+				<t:if test="${loginUser.administrator}">
+				<li>
+					<t:actionlink t:id="administrationList" class="button button_wide"><span><img src="${asset:context:images/icons/tango-applications-system.png}" alt=""/> ${message:pages.administration.lists.index.admin}</span></t:actionlink>
+				</li>
+				</t:if>
+			</ul>
+		</div><!-- id="actionBar" -->
+
 		<!-- Page content -->
 
 		<div id="pageContent">
