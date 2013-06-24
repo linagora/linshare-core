@@ -99,6 +99,20 @@ public class MailingListFacadeImpl implements MailingListFacade {
     	return list;	
     }
     
+    @Override
+    public List<MailingListVo> findAllMailingListByIdentifier(String identifier) throws BusinessException {
+    	List<MailingListVo> list = new ArrayList<MailingListVo>();
+    	List<MailingListVo> listByUser = new ArrayList<MailingListVo>();
+    	listByUser = findAllMailingList();
+    	for(MailingListVo current : listByUser) {
+    		if(current.getIdentifier().equals(identifier)) {
+    			list.add(current);
+    		}
+    	}
+    	
+    	return list;	
+    }
+    
    @Override
    public boolean mailingListIdentifierUnicity(MailingListVo toCreate,UserVo actorVo) throws BusinessException {
    		List<MailingListVo> list = findAllMailingListByIdentifier(toCreate.getIdentifier(), actorVo);

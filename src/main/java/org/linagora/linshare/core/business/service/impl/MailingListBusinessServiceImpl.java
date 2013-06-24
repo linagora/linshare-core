@@ -105,7 +105,10 @@ class ComparateurMailingList implements Comparator<MailingList> {
     
     @Override
     public List<MailingList> findAllMailingList() {
-    	return mailingListRepository.findAll();
+    	List<MailingList> myList = new ArrayList<MailingList>();
+    	myList = mailingListRepository.findAll();
+    	Collections.reverse(myList);
+    	return myList;
     }
     
     @Override
