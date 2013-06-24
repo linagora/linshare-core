@@ -30,8 +30,8 @@
 			<p><t:label for="listDescription"/>:&nbsp;
         	<t:textarea t:id="listDescription" value="mailingList.listDescription" cols="40" rows="1"/></p>
         <br></br>
-        	<p><t:label for="visibilitySelection"/>:&nbsp;
-        	<select t:type="select" t:id="visibilitySelection" t:model="literal:Private,Public"></select></p>
+        	<p><t:label for="visibility"/>:&nbsp;
+        	<select t:type="select" t:id="visibility"></select></p>
         	<t:if test="inModify">
         		<br></br>	
         	    <p><t:label for="owner"/>:&nbsp;
