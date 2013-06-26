@@ -59,6 +59,11 @@ public class MailingListServiceImpl implements MailingListService {
     }
     
 	@Override
+    public MailingListContact createMailingListContact(MailingListContact mailingListContact) throws BusinessException {
+    	return mailingListBusinessService.createMailingListContact(mailingListContact);
+    }
+	
+	@Override
     public MailingList retrieveMailingList(long persistenceId) {
     	return mailingListBusinessService.retrieveMailingList(persistenceId);
     }

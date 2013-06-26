@@ -50,4 +50,5 @@ public interface MailingListBusinessService {
     public List<MailingList> findAllMailingListByOwner(User user);
     public void deleteMailingListContact(long persistenceId) throws BusinessException;
     public MailingListContact retrieveMailingListContact(long persistenceId);
+    public MailingListContact createMailingListContact(MailingListContact mailingListContact) throws BusinessException;
 }

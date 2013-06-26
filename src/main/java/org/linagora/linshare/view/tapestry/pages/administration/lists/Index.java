@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.CleanupRender;
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -71,7 +70,7 @@ public class Index {
     @Inject
     private Messages messages;
     
-    @Persist
+    @SessionState
     @Property
     private List<MailingListVo> lists;
 	
@@ -85,7 +84,8 @@ public class Index {
     @Inject
     private MailingListFacade mailingListFacade; 
     
-	@Persist 
+    
+	@Persist
 	@Property(write=false)
 	private boolean displayGrid;
 	
@@ -94,14 +94,11 @@ public class Index {
 	
 	@Property
 	private String targetLists;
-    
-    @InjectPage
-    private org.linagora.linshare.view.tapestry.pages.lists.Index index;
 	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 	
-	private boolean searchAll;
+	private boolean displayAllLists;
 
 	
 	
@@ -155,10 +152,10 @@ public class Index {
 		return res;
 	}
     
-	Object onActionFromSearchall() throws BusinessException { searchAll = true; return onSuccessFromForm();}
+	Object onActionFromDisplayAllLists() throws BusinessException { displayAllLists = true; return onSuccessFromForm();}
     
     public Object onSuccessFromForm() throws BusinessException {	
-    		if(searchAll) {
+    		if(displayAllLists) {
         	lists= mailingListFacade.findAllMailingList();
     		} else {
     			lists = mailingListFacade.findAllMailingListByIdentifier(targetLists);
@@ -175,10 +172,12 @@ public class Index {
         cause.printStackTrace();
         return this;
     }
-    
-    public Object onActionFromCancel() {
-        list=null;
-        return index;
-     }
+
+	public boolean isDisplayGrid() {
+		return displayGrid;
+	}
+	public void setDisplayGrid(boolean displayGrid) {
+		this.displayGrid = displayGrid;
+	}
 
 }

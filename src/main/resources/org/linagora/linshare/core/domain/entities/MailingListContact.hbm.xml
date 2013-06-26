@@ -7,5 +7,6 @@
 			<generator class="native" />
 		</id>
 		<property access="field" name="mail" column="mail" type="string" length="255" not-null="true" lazy="false"/>
+		<property access="field" name="display" column="display" type="string" length="255" not-null="true" lazy="false"/>
 		</class>
 </hibernate-mapping>

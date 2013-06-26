@@ -443,8 +443,9 @@ CREATE TABLE mailing_list (
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
   id                 int8 NOT NULL, 
-  mailing_list_id   int8 NOT NULL, 
-  mail              varchar(255) NOT NULL, 
+  mailing_list_id    int8 NOT NULL, 
+  mail               varchar(255) NOT NULL, 
+  display            varchar(255) NOT NULL, 
   mailing_list_index int4, 
   PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
