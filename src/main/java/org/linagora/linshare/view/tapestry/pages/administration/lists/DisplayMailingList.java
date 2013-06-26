@@ -65,6 +65,8 @@ public class DisplayMailingList {
     private UserVo loginUser;
     
     private boolean isEmpty;
+    
+    
 	
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
@@ -86,8 +88,9 @@ public class DisplayMailingList {
 		}
 	}
 	
-    public Object onActionFromCancel() {
+    public Object onActionFromBack() {
         mailingList=null;
+        index.setDisplayGrid(true);
         return index;
      }
 

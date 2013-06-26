@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.CleanupRender;
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -57,100 +56,102 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Index {
-	
-    private static Logger logger = LoggerFactory.getLogger(Index.class);
 
-    @SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
-    
-    @SessionState
-    @Property
-    private UserVo loginUser;
-    
-    @Inject
-    private Messages messages;
-    
-    @Persist
-    @Property
-    private List<MailingListVo> lists;
-	
-    @Property
-    private MailingListVo list;
-    
-    @Property
-    @Persist(value="flash")
-    private long listToDelete;
-    
-    @Inject
-    private MailingListFacade mailingListFacade; 
-    
-	@Persist 
-	@Property(write=false)
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
+
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
+
+	@SessionState
+	@Property
+	private UserVo loginUser;
+
+	@Inject
+	private Messages messages;
+
+	@SessionState
+	@Property
+	private List<MailingListVo> lists;
+
+	@Property
+	private MailingListVo list;
+
+	@Property
+	@Persist(value = "flash")
+	private long listToDelete;
+
+	@Inject
+	private MailingListFacade mailingListFacade;
+
+	@Persist
+	@Property(write = false)
 	private boolean displayGrid;
-	
+
 	@Property
 	private int autocompleteMin;
-	
+
 	@Property
 	private String targetLists;
-    
-    @InjectPage
-    private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
-	
+
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-	
-	private boolean searchAll;
-	
-	private boolean emptyList ;
-	
-	
-    @SetupRender
-    public void init() throws BusinessException {
-		if(displayGrid == false){
-    	autocompleteMin = functionalityFacade.completionThreshold(loginUser.getDomainIdentifier());
-    	lists= mailingListFacade.findAllMailingListByUser(loginUser);
-    	setEmptyList(lists.isEmpty());
+
+	private boolean displayAllLists;
+
+	private boolean emptyList;
+
+	@SetupRender
+	public void init() throws BusinessException {
+		if (displayGrid == false) {
+			autocompleteMin = functionalityFacade.completionThreshold(loginUser
+					.getDomainIdentifier());
+			lists = mailingListFacade.findAllMailingListByUser(loginUser);
+			setEmptyList(lists.isEmpty());
 		}
-    }
-    
-    @CleanupRender
-    public void end() throws BusinessException {
-    	displayGrid = false;
-    }
-    
-    public boolean getListIsDeletable() throws BusinessException {
-    	list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
-    	if(loginUser.getMail().equals(list.getOwner().getMail())){
-    		return true;
-    	}
-    	return false;
-    }
-    
-    public void onActionFromDeleteList(long persistenceId) {
-    	this.listToDelete = persistenceId;
-    }
-    
-    @OnEvent(value="listDeleteEvent")
-    public void deleteList() throws BusinessException {
-    	mailingListFacade.deleteMailingList(listToDelete);
-        lists = mailingListFacade.findAllMailingListByUser(loginUser);
-        if(!lists.isEmpty()){ 
-        	displayGrid = true;
-        }
-    }
+	}
+
+	@CleanupRender
+	public void end() throws BusinessException {
+		displayGrid = false;
+	}
+
+	public boolean getListIsDeletable() throws BusinessException {
+		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
+		if (loginUser.getMail().equals(list.getOwner().getMail())) {
+			return true;
+		}
+		return false;
+	}
+
+	public void onActionFromDeleteList(long persistenceId) {
+		this.listToDelete = persistenceId;
+	}
+
+	@OnEvent(value = "listDeleteEvent")
+	public void deleteList() throws BusinessException {
+		mailingListFacade.deleteMailingList(listToDelete);
+		lists = mailingListFacade.findAllMailingListByUser(loginUser);
+		if (!lists.isEmpty()) {
+			displayGrid = true;
+		}
+		list=null;
+	}
+
 	/**
 	 * AutoCompletion for search field.
-	 * @param value the value entered by the user
+	 * 
+	 * @param value
+	 *            the value entered by the user
 	 * @return list the list of string matched by value.
-	 * @throws BusinessException 
+	 * @throws BusinessException
 	 */
-	public List<String> onProvideCompletionsFromSearch(String value){
+	public List<String> onProvideCompletionsFromSearch(String value) {
 		List<String> res = new ArrayList<String>();
-		
+
 		try {
-			List<MailingListVo> founds = mailingListFacade.findAllMailingListByUser(loginUser);
+			List<MailingListVo> founds = mailingListFacade
+					.findAllMailingListByUser(loginUser);
 			if (founds != null && founds.size() > 0) {
 				for (MailingListVo listVo : founds) {
 					res.add(listVo.getIdentifier());
@@ -161,37 +162,44 @@ public class Index {
 		}
 		return res;
 	}
-    
-	Object onActionFromSearchall() throws BusinessException { searchAll = true; return onSuccessFromForm();}
-    
-    public Object onSuccessFromForm() throws BusinessException {	
-    		if(searchAll) {
-        	lists= mailingListFacade.findAllMailingListByUser(loginUser);
-    		} else {
-    			lists = mailingListFacade.findAllMailingListByIdentifier(targetLists, loginUser);
-    		}
-    	if(!lists.isEmpty()) {
-    	displayGrid = true;
-    	}
-    	return null;
-    }
-    
-    Object onException(Throwable cause) {
-        shareSessionObjects.addError(messages.get("global.exception.message"));
-        logger.error(cause.getMessage());
-        cause.printStackTrace();
-        return this;
-    }
 
-    public Object onActionFromAdministrationList() {
-        return index;
-    }
-    
+	Object onActionFromDisplayAllLists() throws BusinessException {
+		displayAllLists = true;
+		return onSuccessFromForm();
+	}
+
+	public Object onSuccessFromForm() throws BusinessException {
+		if (displayAllLists) {
+			lists = mailingListFacade.findAllMailingListByUser(loginUser);
+		} else {
+			lists = mailingListFacade.findAllMailingListByIdentifier(
+					targetLists, loginUser);
+		}
+		if (!lists.isEmpty()) {
+			displayGrid = true;
+		}
+		return null;
+	}
+
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
+	}
+
 	public boolean isEmptyList() {
 		return emptyList;
 	}
 
 	public void setEmptyList(boolean emptyList) {
 		this.emptyList = emptyList;
+	}
+	
+	public boolean isDisplayGrid() {
+		return displayGrid;
+	}
+	public void setDisplayGrid(boolean displayGrid) {
+		this.displayGrid = displayGrid;
 	}
 }

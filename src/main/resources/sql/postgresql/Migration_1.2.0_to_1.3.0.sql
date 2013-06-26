@@ -18,7 +18,8 @@ CREATE TABLE mailing_list (
 CREATE TABLE mailing_list_contact (
   id               int8 NOT NULL, 
   mailing_list_id int8 NOT NULL, 
-  mail            varchar(255) NOT NULL, 
+  mail            varchar(255) NOT NULL,
+  display            varchar(255) NOT NULL, 
   mailing_list_index int4, 
   PRIMARY KEY (id));
 

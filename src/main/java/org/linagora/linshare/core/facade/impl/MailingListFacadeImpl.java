@@ -51,6 +51,15 @@ public class MailingListFacadeImpl implements MailingListFacade {
     	return mailingListVo ;
     }
     
+	@Override
+    public MailingListContactVo createMailingListContact(MailingListContactVo mailingListContact) throws BusinessException {
+    	MailingListContact mailingList= new MailingListContact(mailingListContact);
+    	mailingListService.createMailingListContact(mailingList);
+    	return mailingListContact;
+    	
+    }
+    
+    
     @Override
     public List<MailingListVo> findAllMailingList() {
     	List<MailingListVo> list =new ArrayList<MailingListVo>();

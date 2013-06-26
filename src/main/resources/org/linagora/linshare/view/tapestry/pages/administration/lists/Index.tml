@@ -8,20 +8,31 @@
 
 		<h1>${message:components.myborderlayout.list.title}</h1>
 				<br></br>
-			<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
-				<br></br><br></br><br></br>
 
 		<t:form id="form">
-        		<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}"/>
-        				<br></br>
-						<br></br>
-        		<t:actionLink style="margin-right:30px" class="button" t:id="searchall"><span>${message:global.button.searchAll}</span></t:actionLink>
-        		<t:linkSubmit class="button"><span>${message:global.button.search}</span></t:linkSubmit>
+			<fieldset class="title_criteria_zone" id="searchCriterion">
+			<legend align="top" class="palette">${message:global.button.search}</legend>
+        		<table>
+					<tr>
+						<td>
+							<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}"/>
+						</td>
+						<td>
+						    <t:linkSubmit style="margin-left:10px" class="button"><span>${message:global.button.search}</span></t:linkSubmit>
+						</td>
+					</tr>
+					<tr>
+						<td>
+        					<t:actionLink style="margin-left:30px" class="button" t:id="displayAllLists"
+        					title="${message:global.button.displayAll}">
+        					<span>${message:global.button.displayAll}</span></t:actionLink>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
 		</t:form>
-
-		
-				
-		<br></br><br></br>
+			
+		<br></br><br></br><br></br><br></br><br></br><br></br><br></br>
 		
 		<t:if t:test="displayGrid">
 		<t:grid source="lists" include="identifier, listDescription" add="actions" row="list">

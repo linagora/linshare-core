@@ -19,8 +19,11 @@
 		
 			<!-- FORM -->
 		<t:form id="form">
+			<fieldset class="title_criteria_zone" id="listCriterion">
 				<t:if test="inModify">
+				<legend align="top" class="palette">${message:global.button.update}</legend>
 			<p:else>
+				<legend align="top" class="palette">${message:pages.lists.createList}</legend>
 			<br></br>
 			<p><t:label for="identifier"/>:&nbsp;
         	<t:textfield t:id="identifier" value="mailingList.identifier" disabled="inModify"/></p>
@@ -30,19 +33,23 @@
 			<p><t:label for="listDescription"/>:&nbsp;
         	<t:textarea t:id="listDescription" value="mailingList.listDescription" cols="40" rows="1"/></p>
         <br></br>
-        	<p><t:label for="visibility"/>:&nbsp;
-        	<select t:type="select" t:id="visibility"></select></p>
+            <t:if test="inModify">
+            <p>${message:pages.lists.currentVisibility}: ${currentVisibility}</p>
+            </t:if>
+        	<t:label for="visibility"/>:&nbsp;
+        	<select t:type="select" t:id="visibility"></select>
         	<t:if test="inModify">
         		<br></br>	
-        	    <p><t:label for="owner"/>:&nbsp;
-            <t:textfield t:id="owner" t:value="newOwner" t:mixins="autocomplete" t:minChars="${autocompleteMin}" class="userSearchPattern"/></p>
+        	    <p><fieldset class="title_criteria_zone" id="searchCriterion">
+			<legend align="top" class="palette">${message:pages.lists.owner}</legend>
+				<p>${message:pages.lists.currentOwner}:  ${mailingList.owner.firstName} ${mailingList.owner.lastName}</p>
+        		<p><t:label for="owner"/>&nbsp;
+            	<t:textfield t:id="owner" t:value="newOwner" t:mixins="autocomplete" t:minChars="${autocompleteMin}" class="userSearchPattern"/></p>
+			</fieldset></p>
 		</t:if>
-        <br></br>	
-              <p>${message:pages.history.index.form.targetMail}&nbsp;
-        	<t:textarea t:id="targetMails" t:value="targetListMails" t:mixins="autoComplete" t:minChars="${autocompleteMin}" t:tokens="literal:," cols="40"/></p>
-        <br></br>
+        <br></br><br></br><br></br><br></br><br></br>
         	<p><input type="submit"  value="${message:global.button.validate}"/></p>
-		
+		</fieldset>
         </t:form>         
         
 		</div><!-- id="content" -->

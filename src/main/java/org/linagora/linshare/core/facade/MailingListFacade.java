@@ -1,6 +1,7 @@
 package org.linagora.linshare.core.facade;
 
 import java.util.List;
+
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -22,6 +23,7 @@ public interface MailingListFacade {
     
     public void deleteMailingListContact(long persistenceId) throws BusinessException;
     public MailingListContactVo retrieveMailingListContact(long persistenceId);
+    public MailingListContactVo createMailingListContact(MailingListContactVo mailingListContact) throws BusinessException ;
     
     public void checkUniqueId(MailingListVo listVo,UserVo user)  throws BusinessException ;
     public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException ;

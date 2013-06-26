@@ -43,9 +43,7 @@ import java.util.StringTokenizer;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -80,18 +78,8 @@ public class ManageMailingList {
 	@Inject
 	private UserFacade userFacade;
     
-	
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
-	
-	@Validate("required")
-	@Property
-	private String visibilitySelection;
-	
-	@Validate("required")
-	@Property
-	private VisibilityType visibility;
-	
 	
 	@Property
 	private String newOwner;
@@ -167,31 +155,32 @@ public class ManageMailingList {
 	
     public Object onActionFromCancel() {
         mailingList=null;
+        index.setDisplayGrid(true);
         return index;
      }
 
 	public Object onSuccess() throws BusinessException{
-		
+		List<UserVo> list = new ArrayList<UserVo>();
+		logger.debug("new owner:"+newOwner);
 			if(newOwner != null) {
-				List<UserVo> list = new ArrayList<UserVo>();
 				list = performSearch(newOwner);
-				UserVo newUser = list.get(0);
-				mailingList.setOwner(newUser);
-				mailingListFacade.checkUniqueId(mailingList, newUser);
+				for(UserVo current : list){
+					logger.debug("user:"+current.getFullName());
+				}
+				if(list!=null) {
+					UserVo newUser = list.get(0);
+					mailingList.setOwner(newUser);
+					mailingListFacade.checkUniqueId(mailingList, newUser);
 				
-				domain = domainFacade.retrieveDomain(newUser.getDomainIdentifier());
-				mailingList.setDomain(domain);
+					domain = domainFacade.retrieveDomain(newUser.getDomainIdentifier());
+					mailingList.setDomain(domain);
+				}
 			}
 			
-			if(visibility.toString().equals("Public")) {
-				mailingList.setPublic(true);
-			} else {
-				mailingList.setPublic(false);
-			}
-			
-			mailingListFacade.updateMailingList(mailingList);
+			// mailingListFacade.updateMailingList(mailingList);
 			 
 				mailingList=null;
+		        index.setDisplayGrid(true);
 				return index;
 		}
 }

@@ -6,43 +6,45 @@
 	
 		<div id="content">
 
-
-		<!-- Action bar -->
-
-		<div id="actionBar">
-			<h4>Actions</h4>
-			<ul>
-				<li>	<t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
-				</li>
-				<t:if test="${loginUser.administrator}">
-				<li>
-					<t:actionlink t:id="administrationList" class="button button_wide"><span><img src="${asset:context:images/icons/tango-applications-system.png}" alt=""/> ${message:pages.administration.lists.index.admin}</span></t:actionlink>
-				</li>
-				</t:if>
-			</ul>
-		</div><!-- id="actionBar" -->
-
 		<!-- Page content -->
 
 		<div id="pageContent">
 
 		<h1>${message:components.myborderlayout.list.title}</h1>
+		<br></br><br></br>
 		<t:pageLink page="lists/ManageMailingList" class="button">
 			<span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/>
 			${message:pages.lists.create}</span>
 		</t:pageLink>
 		
-		<br></br><br></br><br></br><br></br>
+		<br></br><br></br><br></br>
 		<t:if t:test="emptyList">
 		${message:pages.lists.noList}
 		<p:else>
-		<t:form id="form">
-        		<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}"/>
-        				<br></br>
-						<br></br>
-        		<t:actionLink style="margin-right:30px" class="button" t:id="searchall"><span>${message:global.button.searchAll}</span></t:actionLink>
-        		<t:linkSubmit class="button"><span>${message:global.button.search}</span></t:linkSubmit>
+				<t:form id="form">
+			<fieldset class="title_criteria_zone" id="searchCriterion">
+			<legend align="top" class="palette">${message:global.button.search}</legend>
+        		<table>
+					<tr>
+						<td>
+							<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}"/>
+						</td>
+						<td>
+						    <t:linkSubmit style="margin-left:10px" class="button"><span>${message:global.button.search}</span></t:linkSubmit>
+						</td>
+					</tr>
+					<tr>
+						<td>
+        					<t:actionLink style="margin-left:30px" class="button" t:id="displayAllLists"
+        					title="${message:global.button.displayAll}">
+        					<span>${message:global.button.displayAll}</span></t:actionLink>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
 		</t:form>
+			
+		<br></br><br></br><br></br><br></br><br></br>
 		</p:else>
 		</t:if>
 		
@@ -52,7 +54,8 @@
 		<t:if t:test="displayGrid">
 		<t:grid source="lists" include="identifier, listDescription" add="actions" row="list">
 			 <t:parameter name="identifierCell">
-			 <t:pageLink page="lists/DisplayMailingList" context="list.persistenceId">${list.identifier}</t:pageLink>
+			 <t:pageLink page="lists/DisplayMailingList" context="list.persistenceId"
+			 title="${message:pages.lists.link}">${list.identifier}</t:pageLink>
 			 </t:parameter>
 			 <t:parameter name="actionsCell">
 			  	<t:if test="listIsDeletable">

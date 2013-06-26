@@ -6,20 +6,28 @@ public class MailingListContactVo {
 
 	private long persistenceId;
 	private String mail;
-	
-	public MailingListContactVo(){
+	private String display;
+
+	public MailingListContactVo() {
 	}
-	
-	public MailingListContactVo(MailingListContactVo MailingListContact) {
-		this.mail = MailingListContact.getMail();
-		this.persistenceId = MailingListContact.getPersistenceId();
+
+	public MailingListContactVo(MailingListContactVo mailingListContact) {
+		this.mail = mailingListContact.getMail();
+		this.persistenceId = mailingListContact.getPersistenceId();
+		this.display = mailingListContact.getDisplay();
 	}
-	
+
 	public MailingListContactVo(MailingListContact mail) {
 		this.persistenceId = mail.getPersistenceId();
 		this.mail = mail.getMails();
+		this.display = mail.getDisplay();
 	}
-	
+
+	public MailingListContactVo(String mail, String display) {
+		this.mail = mail;
+		this.display = display;
+	}
+
 	public long getPersistenceId() {
 		return persistenceId;
 	}
@@ -34,5 +42,13 @@ public class MailingListContactVo {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public String getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(String display) {
+		this.display = display;
 	}
 }

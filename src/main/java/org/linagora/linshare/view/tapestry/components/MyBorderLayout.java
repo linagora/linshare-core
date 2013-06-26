@@ -272,6 +272,7 @@ public class MyBorderLayout {
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
 		MenuEntry listMenu;
+		MenuEntry listAdminMenu;
 		
 		// Menu : Home / File 
 		homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
@@ -289,18 +290,19 @@ public class MyBorderLayout {
 		// Menu : Domains
 		domainMenu = new MenuEntry(response.encodeURL("administration/domains/index"),messages.get("components.myborderlayout.administration.domains.title"),null,null,"domains");
 		
-		// Menu : Lists
-		if(superadmin) {
-			listMenu = new MenuEntry(response.encodeURL("administration/lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
-		} else {
-			listMenu = new MenuEntry(response.encodeURL("lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
-		}
 		// Menu : History / Audit
 		if(superadmin) {
 			auditMenu = new MenuEntry(response.encodeURL("administration/audit"),messages.get("components.myborderlayout.audit.title"),null,null,"audit");
 		} else {
 			auditMenu = new MenuEntry(response.encodeURL("history/index"),messages.get("components.myborderlayout.history.title"),null,null,"history");
 		}
+		
+		// Menu : ListsAdmin
+		listAdminMenu = new MenuEntry(response.encodeURL("administration/lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
+				
+		// Menu : Lists	
+		listMenu = new MenuEntry(response.encodeURL("lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
+				
 		
 		// Menu : Help
 		helpMenu = new MenuEntry(response.encodeURL("help/index"),messages.get("components.myborderlayout.help.title"),null,null,"help");
@@ -333,8 +335,13 @@ public class MyBorderLayout {
 				menu.addMenuEntry(adminMenu);
 			if (superadmin)
 				menu.addMenuEntry(domainMenu);			
-			if (showListTab())
-				menu.addMenuEntry(listMenu);
+			if (showListTab()){
+				if(superadmin){
+					menu.addMenuEntry(listAdminMenu);
+				} else {
+					menu.addMenuEntry(listMenu);
+				}
+			}
 			if (showAuditTab())
 				menu.addMenuEntry(auditMenu);
 			if (showHelpTab())

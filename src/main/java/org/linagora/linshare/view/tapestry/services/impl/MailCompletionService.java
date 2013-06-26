@@ -59,7 +59,7 @@ public class MailCompletionService {
 	public static String formatLabel(final UserVo user) {
 		StringBuffer buf = new StringBuffer();
 		
-		if(user.getLastName()!=null&&user.getFirstName()!=null){
+		if(user.getLastName()!=null && user.getFirstName()!=null){
 			//uservo from USER table or ldap
 			buf.append('"').append(user.getLastName().trim()).append(' ').append(user.getFirstName().trim()).append('"');
 			buf.append(" <").append(user.getMail()).append(">,");

@@ -79,7 +79,7 @@ class ComparateurMailingList implements Comparator<MailingList> {
 	
 	@Override
 	public void deleteMailingListContact(long persistenceId) throws BusinessException{ 
-    	MailingListContact mailToDelete = retrieveMailingListContact(persistenceId);
+		MailingListContact mailToDelete = retrieveMailingListContact(persistenceId);
     	if (mailToDelete == null) {
     		logger.error("mail not found");
     	} else {
@@ -99,6 +99,13 @@ class ComparateurMailingList implements Comparator<MailingList> {
     }
     
     @Override
+    public MailingListContact createMailingListContact(MailingListContact mailingListContact) throws BusinessException{
+        MailingListContact createdList = mailingListContactRepository.create(mailingListContact);
+        return createdList;
+    }
+    
+    
+    @Override
     public MailingList retrieveMailingList(long persistenceId) {
     	return mailingListRepository.findById(persistenceId);
     }
@@ -107,7 +114,7 @@ class ComparateurMailingList implements Comparator<MailingList> {
     public List<MailingList> findAllMailingList() {
     	List<MailingList> myList = new ArrayList<MailingList>();
     	myList = mailingListRepository.findAll();
-    	Collections.reverse(myList);
+    	//Collections.reverse(myList);
     	return myList;
     }
     
@@ -120,7 +127,7 @@ class ComparateurMailingList implements Comparator<MailingList> {
     			myList.add(current);
     		}
     	}
-    	Collections.reverse(myList);
+    	//Collections.reverse(myList);
     	return myList;
     }
     
@@ -133,7 +140,7 @@ class ComparateurMailingList implements Comparator<MailingList> {
     			myList.add(current);
     		}
     	}
-    	Collections.reverse(myList);
+    	//Collections.reverse(myList);
     	return myList;
     }
     
