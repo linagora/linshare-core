@@ -100,6 +100,8 @@ public class Index {
 	
 	private boolean displayAllLists;
 
+
+	private boolean emptyList;
 	
 	
     @SetupRender
@@ -107,8 +109,13 @@ public class Index {
 		if(displayGrid == false){
     	autocompleteMin = functionalityFacade.completionThreshold(loginUser.getDomainIdentifier());
     	lists= mailingListFacade.findAllMailingList();
+		setEmptyList(lists.isEmpty());
 		} else {
 			lists = mailingListFacade.findAllMailingList();
+			setEmptyList(lists.isEmpty());
+			if(isEmptyList()){
+				displayGrid =false;
+			}
 		}
     }
     @CleanupRender
@@ -174,6 +181,14 @@ public class Index {
         cause.printStackTrace();
         return this;
     }
+    
+	public boolean isEmptyList() {
+		return emptyList;
+	}
+
+	public void setEmptyList(boolean emptyList) {
+		this.emptyList = emptyList;
+	}
 
 	public boolean isDisplayGrid() {
 		return displayGrid;
