@@ -38,13 +38,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.naming.NamingException;
-import javax.naming.ServiceUnavailableException;
 
+import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.Internal;
-import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linid.dm.authorization.lql.JScriptEvaluator;
@@ -104,6 +105,25 @@ public class JScriptLdapQuery {
 		}
 	}
 	
+	
+	private void logLqlQuery(String command, String pattern) {
+		if(logger.isDebugEnabled()) {
+			logger.debug("autocomplete command " + command);
+			logger.debug("pattern: " + pattern);
+			logger.debug("ldap filter : " + command.replaceAll("\"[ ]*[+][ ]*pattern[ ]*[+][ ]*\"", pattern));
+		}
+	}
+	
+	private void logLqlQuery(String command, String first_name, String last_name) {
+		if(logger.isDebugEnabled()) {
+			logger.debug("autocomplete command " + command);
+			logger.debug("first_name: " + first_name);
+			logger.debug("last_name: " + last_name);
+			String cmd 	=  command.replaceAll("\"[ ]*[+][ ]*last_name[ ]*[+][ ]*\"", last_name);
+			cmd 		=  cmd.replaceAll("\"[ ]*[+][ ]*first_name[ ]*[+][ ]*\"", first_name);
+			logger.debug("ldap filter : " + cmd);
+		}
+	}
 	/**
 	 * 
 	 * @param pattern : could be first name, surname, or mail fragment.
@@ -111,17 +131,55 @@ public class JScriptLdapQuery {
 	 * @throws NamingException
 	 */
 	public List<User> complete(String pattern) throws NamingException {
+
+		// Getting lql expression for completion
+		String command = domainPattern.getAutoCompleteCommand();
+		pattern = addExpansionCharacters(pattern);
 		
+		// Setting lql query parameters 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
-		vars.put("pattern", addExpansionCharacters(pattern));
+		vars.put("pattern", pattern);
+		logLqlQuery(command, pattern);
 		
-		
-		// searching ldap directory with pattern 
+		// searching ldap directory with pattern
 		List<String> results = this.evaluate(domainPattern.getAutoCompleteCommand(), vars);
 
+		// converting resulting dn to User object 
+		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
+		List<User> users = new ArrayList<User>();
+		for (String string : results) {
+			logger.debug("FREd: " + string);
+			String dn = string +","+ baseDn;
+			users.add(dnToUserFred(lqlctx, dnList, dn, attributes));
+		}
+		return users;
+	}
+	
+	/**
+	 * 
+	 * @param pattern : could be first name, surname, or mail fragment.
+	 * @return
+	 * @throws NamingException
+	 */
+	public List<User> complete(String first_name, String last_name) throws NamingException {
 		
-
+		// Getting lql expression for completion
+		String command = domainPattern.getAutoCompleteCommand2();
+		first_name = addExpansionCharacters(first_name);
+		last_name = addExpansionCharacters(last_name);
+		
+		// Setting lql query parameters 
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("domain", baseDn);
+		vars.put("first_name", first_name);
+		vars.put("last_name", last_name);
+		logLqlQuery(command, first_name, last_name);
+		
+		// searching ldap directory with pattern 
+		List<String> results = this.evaluate(command, vars);
+		
+		
 		// converting resulting dn to User object 
 		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
 		List<User> users = new ArrayList<User>();
@@ -263,7 +321,7 @@ public class JScriptLdapQuery {
 	 */
 	private String addExpansionCharacters(String string) {
 		if (string==null || string.length()<1){
-			string="";
+			string="*";
 		} else {
 			string = "*" + string + "*";
 		}

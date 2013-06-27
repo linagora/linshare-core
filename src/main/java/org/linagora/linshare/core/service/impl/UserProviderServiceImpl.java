@@ -216,6 +216,16 @@ public class UserProviderServiceImpl implements UserProviderService {
     }
 
     @Override
+    public List<User> autoCompleteUser(LdapUserProvider userProvider, String pattern) throws BusinessException, NamingException, IOException {
+        return ldapQueryService.completeUser(userProvider.getLdapconnexion(), userProvider.getBaseDn(), userProvider.getPattern(), pattern);
+    }
+    
+    @Override
+    public List<User> autoCompleteUser(LdapUserProvider userProvider, String firstName, String lastName) throws BusinessException, NamingException, IOException {
+    	return ldapQueryService.completeUser(userProvider.getLdapconnexion(), userProvider.getBaseDn(), userProvider.getPattern(), firstName, lastName);
+    }
+    
+    @Override
     public User auth(LdapUserProvider userProvider, String mail, String userPasswd)	throws BusinessException, NamingException, IOException {
         LdapUserProvider p = userProvider;
         if(p == null) {

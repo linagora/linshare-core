@@ -94,13 +94,20 @@ public interface AbstractDomainService {
 	/**
 	 * This method is designed to search a user in all authorized Domain and SubDomain. Use ONLY for completion
 	 * @param domainIdentifier
-	 * @param mail
-	 * @param firstName
-	 * @param lastName
+	 * @param pattern : first name, last name or mail fragment
 	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
 	 * @throws BusinessException
 	 */
-	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException;
+	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String pattern) throws BusinessException;
+	/**
+	 * This method is designed to search a user in all authorized Domain and SubDomain. Use ONLY for completion
+	 * @param domainIdentifier
+	 * @param firstName
+	 * @param lastName
+	 * @return
+	 * @throws BusinessException
+	 */
+	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String firstName, String lastName) throws BusinessException;
 	/**
 	 * This method is designed to search in all existing domains.
 	 * @param mail

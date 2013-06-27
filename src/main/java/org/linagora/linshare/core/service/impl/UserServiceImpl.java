@@ -472,13 +472,18 @@ public class UserServiceImpl implements UserService {
 
 	/**
 	 * @param actor : the current user performing this research.
-	 * @param mail : mail pattern. Not used if null.
+	 * @param pattern : mail pattern. Not used if null.
 	 * @param firstName : first name pattern. Not used if null.
 	 * @param lastName : last name pattern. Not used if null.
 	 * @return
 	 */
-	private List<User> completionSearchOnInternal(User actor, String mail, String firstName, String lastName) throws BusinessException {
-		List<User> internals = abstractDomainService.autoCompleteUserWithDomainPolicies(actor.getDomain().getIdentifier(), mail, firstName, lastName);
+	private List<User> completionSearchOnInternal(User actor, String pattern) throws BusinessException {
+		List<User> internals = abstractDomainService.autoCompleteUserWithDomainPolicies(actor.getDomain().getIdentifier(), pattern);
+		logger.debug("result internals list : size : " + internals.size());
+		return internals;
+	}
+	private List<User> completionSearchOnInternal(User actor,  String firstName, String lastName) throws BusinessException {
+		List<User> internals = abstractDomainService.autoCompleteUserWithDomainPolicies(actor.getDomain().getIdentifier(), firstName, lastName);
 		logger.debug("result internals list : size : " + internals.size());
 		return internals;
 	}
@@ -558,7 +563,7 @@ public class UserServiceImpl implements UserService {
 				lastName = stringTokenizer.nextToken();
 			}
 		}
-
+ 
 		// TODO : Only guest could be restricted ? why some internal could not be ?
 		if (currentActor.getAccountType() == AccountType.GUEST) { 
 			// RESTRICTED GUEST MUST NOT SEE ALL USERS
@@ -571,7 +576,13 @@ public class UserServiceImpl implements UserService {
 		users.addAll(completionSearchOnGuest(currentActor, mail, firstName, lastName));
 		
 		// completion on LDAP directory for internals
-		users.addAll(completionSearchOnInternal(currentActor, mail, firstName, lastName));
+		if(lastName == null) {
+			logger.debug("FRED: all");
+			users.addAll(completionSearchOnInternal(currentActor, mail));
+		} else {
+			logger.debug("FRED:first name and lastname");
+			users.addAll(completionSearchOnInternal(currentActor, firstName, lastName));
+		}
 		
 		logger.debug("End autoCompleteUser");
 		return users;

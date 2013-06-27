@@ -70,6 +70,10 @@ public interface UserProviderService {
 
     public List<User> searchUser(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException;
     public List<User> searchUser(LdapUserProvider userProvider, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException;
+    
+    public List<User> autoCompleteUser(LdapUserProvider userProvider, String pattern) throws BusinessException, NamingException, IOException;
+    public List<User> autoCompleteUser(LdapUserProvider userProvider, String firstName, String lastName) throws BusinessException, NamingException, IOException;
+    
     public User auth(LdapUserProvider userProvider,	String mail, String userPasswd) throws BusinessException, NamingException, IOException;
 
     public boolean patternIsDeletable(String patternToDelete);

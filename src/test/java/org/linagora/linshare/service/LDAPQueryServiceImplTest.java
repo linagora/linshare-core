@@ -60,7 +60,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 
 @ContextConfiguration(locations = { 
-		"classpath:springContext-test.xml"
+		"classpath:springContext-test.xml",
+		"classpath:springContext-ldap.xml"
 //		"classpath:springContext-startopends.xml"
 		})
 public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
@@ -127,15 +128,20 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testFred() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		List<User> searchUser = ldapQueryService.searchUser(ldapConn, baseDn, pattern, "bart");
+		
+		String mail = "homer";
+		String firstName= "homer";
+		String lastName = "";
+		List<User> searchUser = ldapQueryService.completeUser(ldapConn, baseDn, pattern, mail);
+		searchUser = ldapQueryService.completeUser(ldapConn, baseDn, pattern, firstName, lastName);
 		for (User user : searchUser) {
 			logger.debug(user.getAccountReprentation());
-			logger.debug(user.getMail());
-			logger.debug(user.getFirstName());
-			logger.debug(user.getLastName());
-			logger.debug(user.getLdapUid());
+//			logger.debug(user.getMail());
+//			logger.debug(user.getFirstName());
+//			logger.debug(user.getLastName());
+//			logger.debug(user.getLdapUid());
 		}
-		
+		logger.debug("searchUser size : " + searchUser.size());
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	

@@ -49,7 +49,12 @@ public class DomainPattern {
     private String authCommand;
     private String searchUserCommand;
     private String autoCompleteCommand;
+    private String autoCompleteCommand2;
     private Boolean system;
+    private Integer searchPageSize;
+    private Integer searchSizeLimit;
+    private Integer completionPageSize;
+    private Integer completionSizeLimit;
 
     private Map<String, LdapAttribute> attributes;
     
@@ -101,6 +106,24 @@ public class DomainPattern {
         this.attributes = attributes;
         this.autoCompleteCommand = autoCompleteCommand;
         this.system = system;
+	}
+	
+	public DomainPattern(String identifier, String description, String getUserCommand,
+            String getAllDomainUsersCommand, String authCommand, String searchUserCommand, Integer searchPageSize, Integer searchSizeLimit, Map<String, LdapAttribute> attributes,
+            String autoCompleteCommand, String autoCompleteCommand2, Integer completionPageSize, Integer completionSizeLimit, boolean system) {
+		super();
+		this.identifier = identifier;
+		this.description = description;
+		this.authCommand = authCommand;
+		this.searchUserCommand = searchUserCommand;
+        this.attributes = attributes;
+        this.autoCompleteCommand = autoCompleteCommand;
+        this.autoCompleteCommand2 = autoCompleteCommand2;
+        this.system = system;
+        this.searchSizeLimit = searchSizeLimit;
+        this.searchPageSize = searchPageSize;
+        this.completionSizeLimit = completionSizeLimit;
+        this.completionPageSize = completionPageSize;
 	}
 
 
@@ -173,4 +196,43 @@ public class DomainPattern {
 		return attributes.get(field).getAttribute();
 	}
 
+	public String getAutoCompleteCommand2() {
+		return autoCompleteCommand2;
+	}
+
+	public void setAutoCompleteCommand2(String autoCompleteCommand2) {
+		this.autoCompleteCommand2 = autoCompleteCommand2;
+	}
+
+	public Integer getCompletionPageSize() {
+		return completionPageSize;
+	}
+
+	public void setCompletionPageSize(Integer completionPageSize) {
+		this.completionPageSize = completionPageSize;
+	}
+
+	public Integer getSearchPageSize() {
+		return searchPageSize;
+	}
+
+	public void setSearchPageSize(Integer searchPageSize) {
+		this.searchPageSize = searchPageSize;
+	}
+
+	public Integer getCompletionSizeLimit() {
+		return completionSizeLimit;
+	}
+
+	public void setCompletionSizeLimit(Integer completionSizeLimit) {
+		this.completionSizeLimit = completionSizeLimit;
+	}
+
+	public Integer getSearchSizeLimit() {
+		return searchSizeLimit;
+	}
+
+	public void setSearchSizeLimit(Integer searchSizeLimit) {
+		this.searchSizeLimit = searchSizeLimit;
+	}
 }

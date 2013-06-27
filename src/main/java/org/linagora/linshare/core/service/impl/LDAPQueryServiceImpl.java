@@ -48,6 +48,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.LDAPQueryService;
 import org.linagora.linshare.ldap.JScriptLdapQuery;
+import org.linagora.linshare.ldap.LinShareDnList;
 import org.linid.dm.authorization.lql.JScriptEvaluator;
 import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.DnList;
@@ -66,6 +67,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	
 	private DomainPattern domainPatternHack;
 	
+	private String baseDnHack;
+	
 //	public LDAPQueryServiceImpl(IDnList dnList) {
 //		super();
 //		this.dnList = dnList;
@@ -74,9 +77,11 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	
 	public LDAPQueryServiceImpl() {
 		super();
-		this.dnList = new DnList();
+//		this.dnList = new LinShareDnList();
+//		this.dnList = new DnList();
 		/* HACK */
-		initObm1();
+//		initObm1();
+		initInsee();
 		
 		
 	}
@@ -100,7 +105,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		
 		String autocomplete1 = "ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(givenName=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(givenName=*)(sn=*))\");";
 //		"(&(objectClass=inetOrgPerson)(mail=${pattern1})(|(&(givenName=${pattern2})(sn=${pattern3}))(&(givenName=${pattern3})(sn=${pattern2}))))"
-		String autocomplete2="ldap.search(domain, \"&(objectClass=inetOrgPerson)(mail=\" + pattern1 + \")(|(&(givenName=\" + pattern2 + \")(sn=\" + pattern3 + \"))(&(givenName=\" + pattern3 + \")(sn=\" + pattern2 + \"))))\")";
+		String autocomplete2="ldap.search(domain, \"&(objectClass=inetOrgPerson)(mail=\" + mail + \")(|(&(givenName=\" + first_or_last_name1 + \")(sn=\" + first_or_last_name2 + \"))(&(givenName=\" + first_or_last_name2 + \")(sn=\" + first_or_last_name1 + \"))))\")";
 		this.domainPatternHack= new DomainPattern("testPattern", "testPattern", 
 				" ", 
 				" ", 
@@ -109,6 +114,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 				attributes,
 				autocomplete2,// auto complete command
 				false);
+		
+		baseDnHack = "ou=users,dc=int1.linshare.dev,dc=local";
 	}
 	
 	private void initInsee() {
@@ -118,21 +125,62 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		attributes.put(DomainPattern.USER_LAST_NAME, new LdapAttribute(DomainPattern.USER_LAST_NAME, "cn"));
 		attributes.put(DomainPattern.USER_UID, new LdapAttribute(DomainPattern.USER_UID, "uid"));
 		
+		String autocomplete1 = null;
+		String autocomplete2 = null;
+		
+		autocomplete1="ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\" + mail_pattern + \")" +
+				"(|(&(sn=\" + first_or_last_name1 + \")(cn=\" + first_or_last_name2 + \"))(&(sn=\" + first_or_last_name2 + \")(cn=\" + first_or_last_name1 + \"))))\")";
+		
+		autocomplete1="ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(cn=*)(sn=*)" +
+				"(|(&(sn=\" + first_or_last_name1 + \")(cn=\" + first_or_last_name2 + \"))" + // "first_name last_name"
+				"  (&(sn=\" + first_or_last_name2 + \")(cn=\" + first_or_last_name1 + \"))" + // "last_name first_name"
+				"  (|(mail=\" + mail_pattern + \")(sn=\" + first_or_last_name1 + \"))" +	  // "mail first_name
+				"))\")";
+		
+		autocomplete1="ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(cn=*)(sn=*)" +
+				"(|(&(sn=\" + first_or_last_name1 + \")(cn=\" + first_or_last_name2 + \"))" + // "first_name last_name"
+				"  (&(sn=\" + first_or_last_name2 + \")(cn=\" + first_or_last_name1 + \"))" + // "last_name first_name"
+				"  (|(mail=\" + mail_pattern + \")(sn=\" + first_or_last_name1 + \"))" +	  // "mail first_name
+				"))\")";
+		
+		autocomplete1="ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(cn=*)(sn=*)" +
+					"(|" +
+						"(mail=\" + pattern + \")" +
+						"(sn=\" + pattern + \")" +
+						"(cn=\" + pattern + \")" +
+					")" +
+				")\")";
+		
+		autocomplete2="ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=*)(cn=*)(sn=*)" +
+				"(|" +
+					"(&(sn=\" + first_name + \")(cn=\" + last_name + \"))" + // "first_name last_name"
+					"(&(sn=\" + last_name + \")(cn=\" + first_name + \"))" + // "last_name first_name"
+				"))\")";
+		
+		
 		this.domainPatternHack= new DomainPattern("testPattern", "testPattern", 
 				" ", 
 				" ", 
 				"ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+login+\"))\");", // auth command
-				"ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+mail+\"))\");", // search command 
+				"ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+mail+\"))\");", // search command
+				500,
+				2000,
 				attributes,
-				"ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(cn=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(cn=*)(sn=*))\");", // auto complete command
+//				"ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(cn=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(cn=*)(sn=*))\");", // auto complete command
+				autocomplete1,
+				autocomplete2,
+				20,
+				20,
 				false);
+		
+		baseDnHack = "ou=People,o=insee,c=fr";
 	}
 	
 	/** The local LDAP facade used to evaluate LQL requests */
 	private ContextSource ldapContext;
 
 	/** Local LDAP cache */
-	private IDnList dnList; 
+//	private IDnList dnList; 
 	
 	private ContextSource getLdapContext() {
         return ldapContext;
@@ -142,21 +190,21 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		this.ldapContext = ldapContext;
 	}
 	
-	public void setDnList(IDnList dnList) {
-		this.dnList = dnList;
-	}
+//	public void setDnList(IDnList dnList) {
+//		this.dnList = dnList;
+//	}
 	
 			
 	@Override
 	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userId, String userPasswd) throws BusinessException, NamingException, IOException {
-		List<User> searchUser = this.searchUser(ldapConnection, baseDn, domainPatternHack, userId);
+		List<User> searchUser = this.searchUser(ldapConnection, baseDnHack, domainPatternHack, userId);
 		return searchUser.get(0);
 	}
 
 	@Override
 	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException,
 			IOException {
-		return this.searchUser(ldapConnection, baseDn, domainPatternHack, mail);
+		return this.searchUser(ldapConnection, baseDnHack, domainPatternHack, mail);
 	}
 
 	@Override
@@ -167,19 +215,48 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("login", mail);
-		vars.put("domain", baseDn);
+		vars.put("domain", baseDnHack);
 		
 		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(domainPatternHack.getSearchPageSize(), domainPatternHack.getSearchSizeLimit());
 		
-		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
-		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPatternHack, dnList);
+		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDnHack + "' , motif (mail) : '" + mail + "'");
+		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDnHack, domainPatternHack, dnList);
 		return query.searchUserFred(mail);
 	}
 
 	@Override
-	public List<User> completeByMail(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<User> completeUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String pattern) throws BusinessException,
+			NamingException, IOException {
+		LdapContext ldapContext = (LdapContext)getLdapContext().getReadOnlyContext();
+
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("domain", baseDnHack);
+		vars.put("login", pattern);
+		
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(domainPatternHack.getCompletionPageSize(), domainPatternHack.getCompletionSizeLimit());
+		
+		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDnHack + "' , motif (pattern) : '" + pattern + "'");
+		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDnHack, domainPatternHack, dnList);
+		return query.complete(pattern);
 	}
+	
+	@Override
+	public List<User> completeUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String first_name, String last_name) throws BusinessException,
+	NamingException, IOException {
+		LdapContext ldapContext = (LdapContext)getLdapContext().getReadOnlyContext();
+		
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("domain", baseDnHack);
+		
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(domainPatternHack.getCompletionPageSize(), domainPatternHack.getCompletionSizeLimit());
+		
+		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDnHack + "' , motif (firstName lastName) : '" + first_name + "' et '" + last_name + "'");
+		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDnHack, domainPatternHack, dnList);
+		return query.complete(first_name, last_name);
+	}
+	
 	
 }
