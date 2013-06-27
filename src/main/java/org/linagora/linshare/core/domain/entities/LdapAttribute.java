@@ -47,6 +47,8 @@ public class LdapAttribute {
 	
 	private Boolean enable;
 	
+	// TODO : TO BE PERSIST
+	private Boolean completion;
 	
 	public LdapAttribute() {
 	}
@@ -58,6 +60,7 @@ public class LdapAttribute {
 		this.sync = sync;
 		this.system = system;
 		this.enable = enable;
+		this.completion = true;
 	}
 	
 	public LdapAttribute(String field, String attribute) {
@@ -67,6 +70,7 @@ public class LdapAttribute {
 		this.sync = false;
 		this.system = true;
 		this.enable = true;
+		this.completion = true;
 	}
 
 	@SuppressWarnings("unused")
@@ -129,5 +133,12 @@ public class LdapAttribute {
 	public Boolean getEnable() {
 		return enable;
 	}
-	
+
+	public Boolean getCompletion() {
+		return completion;
+	}
+
+	public void setCompletion(Boolean completion) {
+		this.completion = completion;
+	}
 }

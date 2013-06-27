@@ -33,17 +33,19 @@
  */
 package org.linagora.linshare.ldap;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
@@ -56,23 +58,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ldap.NameNotFoundException;
 
 public class JScriptLdapQuery {
-	
-	/** 	Attributes 		**/
-	
+
+	/** Attributes **/
+
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(JScriptLdapQuery.class);
-	
+
 	// Java to JavaScript Translator object
 	private JScriptEvaluator evaluator;
-	
+
 	private String baseDn;
-	
+
 	private DomainPattern domainPattern;
-	
+
 	private LqlRequestCtx lqlctx;
 
 	private IDnList dnList;
-	
+
 	/**
 	 * @param jScriptEvaluator
 	 * @param ldapJndiService
@@ -87,46 +89,53 @@ public class JScriptLdapQuery {
 		this.baseDn = baseDn;
 		this.domainPattern = domainPattern;
 	}
-	/** 	Methods 	**/
-	
 
-	public List<String> evaluate(String lqlExpression, Map<String, Object> attributes) throws NamingException {
+	/** Methods **/
+
+	public List<String> evaluate(String lqlExpression) throws NamingException {
 		try {
 			JScriptEvaluator evaluator = JScriptEvaluator.getInstance(lqlctx.getLdapCtx(), dnList);
-//			return evaluator.evalToStringList(lqlExpression, lqlctx.getVariables());
-			return evaluator.evalToStringList(lqlExpression, attributes);
+			return evaluator.evalToStringList(lqlExpression, lqlctx.getVariables());
 		} catch (IOException e) {
 			try {
 				lqlctx.renewLdapCtx();
 			} catch (NamingException e1) {
 				return null;
 			}
-			return evaluate(lqlExpression, attributes);
+			return evaluate(lqlExpression);
 		}
 	}
-	
-	
+
 	private void logLqlQuery(String command, String pattern) {
-		if(logger.isDebugEnabled()) {
-			logger.debug("autocomplete command " + command);
+		if (logger.isDebugEnabled()) {
+			logger.debug("lql command " + command);
 			logger.debug("pattern: " + pattern);
 			logger.debug("ldap filter : " + command.replaceAll("\"[ ]*[+][ ]*pattern[ ]*[+][ ]*\"", pattern));
 		}
 	}
-	
-	private void logLqlQuery(String command, String first_name, String last_name) {
-		if(logger.isDebugEnabled()) {
-			logger.debug("autocomplete command " + command);
+
+	private void logLqlQuery(String command, String mail, String first_name, String last_name) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("lql command " + command);
 			logger.debug("first_name: " + first_name);
 			logger.debug("last_name: " + last_name);
-			String cmd 	=  command.replaceAll("\"[ ]*[+][ ]*last_name[ ]*[+][ ]*\"", last_name);
-			cmd 		=  cmd.replaceAll("\"[ ]*[+][ ]*first_name[ ]*[+][ ]*\"", first_name);
+			String cmd = command.replaceAll("\"[ ]*[+][ ]*last_name[ ]*[+][ ]*\"", last_name);
+			cmd = cmd.replaceAll("\"[ ]*[+][ ]*first_name[ ]*[+][ ]*\"", first_name);
+			if (mail != null) {
+				cmd = cmd.replaceAll("\"[ ]*[+][ ]*mail[ ]*[+][ ]*\"", mail);
+			}
 			logger.debug("ldap filter : " + cmd);
 		}
 	}
+
+	private void logLqlQuery(String command, String first_name, String last_name) {
+		logLqlQuery(command, null, first_name, last_name);
+	}
+
 	/**
 	 * 
-	 * @param pattern : could be first name, surname, or mail fragment.
+	 * @param pattern
+	 *            : could be first name, last name, or mail fragment.
 	 * @return
 	 * @throws NamingException
 	 */
@@ -135,271 +144,241 @@ public class JScriptLdapQuery {
 		// Getting lql expression for completion
 		String command = domainPattern.getAutoCompleteCommand();
 		pattern = addExpansionCharacters(pattern);
-		
-		// Setting lql query parameters 
-		Map<String, Object> vars = new HashMap<String, Object>();
-		vars.put("domain", baseDn);
+
+		// Setting lql query parameters
+		Map<String, Object> vars = lqlctx.getVariables();
 		vars.put("pattern", pattern);
 		logLqlQuery(command, pattern);
-		
-		// searching ldap directory with pattern
-		List<String> results = this.evaluate(domainPattern.getAutoCompleteCommand(), vars);
 
-		// converting resulting dn to User object 
-		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
-		List<User> users = new ArrayList<User>();
-		for (String string : results) {
-			logger.debug("FREd: " + string);
-			String dn = string +","+ baseDn;
-			users.add(dnToUserFred(lqlctx, dnList, dn, attributes));
-		}
-		return users;
+		// searching ldap directory with pattern
+		List<String> dnResultList = this.evaluate(command);
+
+		// Building user list from dn (getting needed attributes)
+		return dnListToUsersList(dnResultList, true, true);
 	}
-	
+
 	/**
 	 * 
-	 * @param pattern : could be first name, surname, or mail fragment.
+	 * @param pattern
+	 *            : could be first name, surname, or mail fragment.
 	 * @return
 	 * @throws NamingException
 	 */
 	public List<User> complete(String first_name, String last_name) throws NamingException {
-		
+
 		// Getting lql expression for completion
 		String command = domainPattern.getAutoCompleteCommand2();
 		first_name = addExpansionCharacters(first_name);
 		last_name = addExpansionCharacters(last_name);
-		
-		// Setting lql query parameters 
-		Map<String, Object> vars = new HashMap<String, Object>();
-		vars.put("domain", baseDn);
+
+		// Setting lql query parameters
+		Map<String, Object> vars = lqlctx.getVariables();
 		vars.put("first_name", first_name);
 		vars.put("last_name", last_name);
 		logLqlQuery(command, first_name, last_name);
-		
-		// searching ldap directory with pattern 
-		List<String> results = this.evaluate(command, vars);
-		
-		
-		// converting resulting dn to User object 
-		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
-		List<User> users = new ArrayList<User>();
-		for (String string : results) {
-			logger.debug("FREd: " + string);
-			String dn = string +","+ baseDn;
-			users.add(dnToUserFred(lqlctx, dnList, dn, attributes));
-		}
-		return users;
+
+		// searching ldap directory with pattern
+		List<String> dnResultList = this.evaluate(command);
+
+		return dnListToUsersList(dnResultList, true, true);
 	}
-	
-	
+
 	/**
 	 * 
-	 * @param mail : mail fragment
-	 * @return
-	 * @throws NamingException
+	 * @param dnResultList
+	 *            : // list of dn without baseDn used by the previous search.
+	 * @param addBaseDn
+	 *            : the result list could contains partial dn list (dn without
+	 *            the base dn used during research)
+	 * @param completionMode TODO
+	 * @return List of user
 	 */
-	public List<User> searchUserFred(String mail) throws NamingException {
-
-		Map<String, Object> vars = new HashMap<String, Object>();
-		vars.put("mail", addExpansionCharacters(mail));
-		vars.put("domain", baseDn);
-		
-		List<String> results = this.evaluate(domainPattern.getSearchUserCommand(), vars);
-		
-		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
+	private List<User> dnListToUsersList(List<String> dnResultList, boolean addBaseDn, boolean completionMode) {
+		// converting resulting dn to User object
 		List<User> users = new ArrayList<User>();
-		for (String string : results) {
-			logger.debug("FREd: " + string);
-			String dn = string +","+ baseDn;
-			User user = dnToUserFred(lqlctx, dnList, dn, attributes);
-			if(user != null)	users.add(user);
+		for (String dn : dnResultList) {
+			if (addBaseDn)
+				dn = dn + "," + baseDn;
+			logger.debug("current dn: " + dn);
+			User dnToUser = dnToUser(dn, completionMode);
+			if (dnToUser != null) {
+				users.add(dnToUser);
+			}
 		}
 		return users;
 	}
 
+	private User dnToUser(String dn, boolean completionMode) {
 
-	
-	private User dnToUserFred(LqlRequestCtx ctx, IDnList dnList, String dn, Map<String, LdapAttribute> attributes) {
-		JScriptEvaluator evaluator;
+		// Initialization of bean introspection
+		BeanInfo beanInfo = null;
 		try {
-			// getting evaluator with cache for dn: we don't get dn here, just attributes. no need.
-			evaluator = JScriptEvaluator.getInstance(ctx.getLdapCtx(), null);
-			
-			Map<String, Object> unitParams = new HashMap<String, Object>();
-			unitParams.put("dn", dn);
-			
-			User user = new Internal();;
-			for (String key : attributes.keySet()) {
-				logger.debug("Key = " + key);
-			    LdapAttribute attr = attributes.get(key);
-			    String unitCommand = "ldap.attribute(dn, \"" + attr.getAttribute() + "\");";
-			    logger.debug("unitCommand : " + unitCommand);
-			
-			    List<String> stringList = evaluator.evalToStringList(unitCommand, unitParams);
-			    for (String string : stringList) {
-			    	logger.debug("value of attribute : " + attr.getAttribute() + " : " + string);
-			    }
+			beanInfo = Introspector.getBeanInfo(Internal.class);
+		} catch (IntrospectionException e) {
+			logger.error("Introspection of Internal user class impossible.");
+			logger.debug("message : " + e.getMessage());
+			return null;
+		}
 
-			    if(key == "user_lastname") {
-			    	user.setLastName(stringList.get(0));
-			    } else if(key == "user_firstname") {
-			    	user.setFirstName(stringList.get(0));
-			    } else if(key == "user_mail") {
-			    	user.setMail(stringList.get(0));
-			    } else if(key == "user_uid") {
-			    	user.setLdapUid(stringList.get(0));
-			    }
+		// return value
+		User user = new Internal();
+		// Attributes
+		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
+		for (String attr_key : attributes.keySet()) {
+			logger.debug("attr_key = " + attr_key);
+			LdapAttribute attr = attributes.get(attr_key);
+
+			// We test if the current attribute is activated and if it is needed
+			// for completion
+			if (attr.getEnable()) {
+				// completion mode or research mode.
+				if(completionMode) {
+					// Is attribute needed for completion ?
+					if (attr.getCompletion()) {
+						String curValue = getLdapAttributeValue(dn, attr);
+						if (curValue != null) {
+							// updating user property with current attribute value
+							if (!setUserAttribute(user, beanInfo, attr_key, curValue)) {
+								return null;
+							}
+						} else {
+							logger.error("Attribute : '" + attr.getAttribute() + "' can not be null, it is required for completion.");
+							return null;
+						}
+					}
+				} else {
+					String curValue = getLdapAttributeValue(dn, attr);
+					// Is attribute needed for completion ?
+					if (curValue != null) {
+						// updating user property with current attribute value
+						if (!setUserAttribute(user, beanInfo, attr_key, curValue)) {
+							return null;
+						}
+					} else {
+						if (attr.getSystem()) {
+							logger.error("Attribute : '" + attr.getAttribute() + "' can not be null, it is required by the system.");
+							return null;
+						} else {
+							logger.debug("Attribute : '" + attr.getAttribute() + "' is null.");
+						}
+					}
+				}
 			}
-			return user;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}
+		return user;
+	}
+
+	private boolean setUserAttribute(User user, BeanInfo beanInfo, String attr_key, String curValue) {
+		for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+			Method userSetter = pd.getWriteMethod();
+			String method = DomainPattern.USER_METHOD_MAPPING.get(attr_key);
+			if (userSetter != null && method.equals(userSetter.getName())) {
+				try {
+					userSetter.invoke(user, curValue);
+					return true;
+				} catch (Exception e) {
+					logger.error("Introspection : can not call method '" + userSetter.getName() + "' on User object.");
+					logger.debug("message : " + e.getMessage());
+					break;
+				}
+			}
+		}
+		return false;
+	}
+
+	private String getLdapAttributeValue(String dn, LdapAttribute attr) {
+		Map<String, Object> unitParams = new HashMap<String, Object>();
+		unitParams.put("dn", dn);
+		String unitCommand = "ldap.attribute(dn, \"" + attr.getAttribute() + "\");";
+		logger.debug("unitCommand : " + unitCommand);
+
+		// For each attribute, we get the values.
+		// Every attribute used by LinShare (mail, sn, givenName, ...
+		// should be single value)
+		List<String> attrValues = evaluator.evalToStringList(unitCommand, unitParams);
+		if (attrValues != null && !attrValues.isEmpty()) {
+			String curValue = attrValues.get(0);
+			logger.debug("value of attribute : " + attr.getAttribute() + " : " + curValue);
+			return curValue;
 		}
 		return null;
 	}
-	
-	
-	
+
 	/**
-	 * This method allow to search a user from part of his mail or/and first name or/and last name 
+	 * This method allow to search a user from part of his mail or/and first
+	 * name or/and last name
+	 * 
 	 * @param mail
-	 * @param firstName
-	 * @param lastName
+	 * @param first_name
+	 * @param last_name
 	 * @return
+	 * @throws NamingException
 	 */
-	public List<User> searchUser(String mail, String firstName,	String lastName) {
-		
+	public List<User> searchUser(String mail, String first_name, String last_name) throws NamingException {
+
+		// Getting lql expression for completion
 		String command = domainPattern.getSearchUserCommand();
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("mail", addExpansionCharacters(mail));
-		params.put("firstName", addExpansionCharacters(firstName));
-		params.put("lastName", addExpansionCharacters(lastName));
-		params.put("domain", baseDn);
-		List<String> uidList = evaluator.evalToStringList(command, params);
-		if(uidList == null) {
-			logger.error("searchUser:The uidList is null.");
-		}
-        return dnListToUsersList(uidList);
+		mail = addExpansionCharacters(mail);
+		first_name = addExpansionCharacters(first_name);
+		last_name = addExpansionCharacters(last_name);
+
+		// Setting lql query parameters
+		Map<String, Object> vars = lqlctx.getVariables();
+		vars.put("mail", mail);
+		vars.put("first_name", first_name);
+		vars.put("last_name", last_name);
+		logLqlQuery(command, mail, first_name, last_name);
+
+		// searching ldap directory with pattern
+		List<String> dnResultList = this.evaluate(command);
+
+		return dnListToUsersList(dnResultList, true, false);
 	}
-		
-	
+
 	/**
 	 * Ldap Authentification method
+	 * 
 	 * @param login
 	 * @param userPasswd
 	 * @return
 	 * @throws NamingException
 	 */
 	public User auth(String login, String userPasswd) throws NamingException {
-	
+
 		String command = domainPattern.getAuthCommand();
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("login", login);
 		params.put("domain", baseDn);
 		List<String> retList = evaluator.evalToStringList(command, params);
-		
-		
+
 		if (retList == null || retList.size() < 1) {
-			throw new NameNotFoundException("No user found for login: "+login);
+			throw new NameNotFoundException("No user found for login: " + login);
 		} else if (retList.size() > 1) {
 			logger.error("The authentification query had returned more than one user !!!");
 			return null;
 		}
-		
-		//TODO FRED
-//		String dn = retList.get(0);
-//		if(ldapJndiService.auth(userPasswd, dn)) {
-//			return dnToUser(dn);
-//		}
+
+		// TODO FRED
+		// String dn = retList.get(0);
+		// if(ldapJndiService.auth(userPasswd, dn)) {
+		// return dnToUser(dn);
+		// }
 		return null;
 	}
-		
+
 	/**
-	 * This method is designed to add expansion characters to the input string. 
-	 * @param string : any string
-	 * @return 
+	 * This method is designed to add expansion characters to the input string.
+	 * 
+	 * @param string
+	 *            : any string
+	 * @return
 	 */
 	private String addExpansionCharacters(String string) {
-		if (string==null || string.length()<1){
-			string="*";
+		if (string == null || string.length() < 1) {
+			string = "*";
 		} else {
 			string = "*" + string + "*";
 		}
 		return string;
-	}
-
-	
-	/**
-	 * Create an user list from an dn list 
-	 * @param dnList
-	 * @return
-	 */
-	private List<User> dnListToUsersList(List<String> dnList) {
-		List<User> users = new ArrayList<User>();
-		for (String string : dnList) {
-			User user = dnToUser(string);
-			if(user != null) {
-				users.add(user);
-			}
-		}
-		return users;
-	}
-
-	/**
-	 * This method retrieve user informations from user ldap dn and build an user object.  
-	 * @param keys : Ldap user attribute list
-	 * @param string : Distinguish Name
-	 * @return
-	 */
-	private User dnToUser(String dn) {
-		// Config map.
-		Map<String, Object> unitParams = new HashMap<String, Object>();
-		unitParams.put("dn", dn);
-		// result map : attribute => values
-		Map<String, List<String>> retMap = new HashMap<String, List<String>>();
-		
-		for (String key : domainPattern.getAttributes().keySet()) {
-			String attr = domainPattern.getAttributes().get(key).getAttribute();
-			String unitCommand = "ldap.attribute(dn, \"" + attr + "\");";
-			logger.debug("unitCommand : " + unitCommand);
-			List<String> attrValues = evaluator.evalToStringList(unitCommand, unitParams);
-			if(logger.isDebugEnabled()) logger.debug("Attribute values : " + String.valueOf(attrValues));
-			retMap.put(key, attrValues);
-		}
-		return mapToUser(retMap);
-	}
-	
-	
-	/**
-	 * This method is designed to build a User object from a Ldap entry result.
-	 * @param retMap
-	 * @param keys
-	 * @return
-	 */
-	private User mapToUser(Map<String, List<String>> retMap) {
-		String mail = retMap.get(getUserMail()).get(0);
-    	String firstName = retMap.get(getUserFirstName()).get(0);
-        String lastName = retMap.get(getUserLastName()).get(0);
-        String ldapUid = null;
-        List<String> uids = retMap.get(getLdapUid());
-        if (uids != null && ! uids.isEmpty())		ldapUid = uids.get(0);
-        User user = new Internal(firstName, lastName, mail, ldapUid);
-		return user;
-	}
-
-	private Object getLdapUid() {
-		return domainPattern.getAttribute(DomainPattern.USER_UID).trim().toLowerCase();
-	}
-
-	private String getUserMail() {
-		return domainPattern.getAttribute(DomainPattern.USER_MAIL).trim().toLowerCase();
-	}
-	
-	private String getUserFirstName(){
-		return domainPattern.getAttribute(DomainPattern.USER_FIRST_NAME).trim().toLowerCase();
-	}
-	
-	private String getUserLastName(){
-		return domainPattern.getAttribute(DomainPattern.USER_LAST_NAME).trim().toLowerCase();
 	}
 }
