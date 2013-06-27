@@ -62,7 +62,16 @@ public class DomainPattern {
     public static final String USER_FIRST_NAME = "user_firstname";
     public static final String USER_LAST_NAME = "user_lastname";
     public static final String USER_UID = "user_uid";
-
+    
+    public static final Map<String , String> USER_METHOD_MAPPING = new HashMap<String , String>();
+    
+    static {
+    	USER_METHOD_MAPPING.put(DomainPattern.USER_LAST_NAME, "setLastName");
+    	USER_METHOD_MAPPING.put(DomainPattern.USER_FIRST_NAME, "setFirstName");
+    	USER_METHOD_MAPPING.put(DomainPattern.USER_MAIL, "setMail");
+    	USER_METHOD_MAPPING.put(DomainPattern.USER_UID, "setLdapUid");
+    };
+    
     protected DomainPattern() {
         this.identifier = null;
     }
@@ -193,7 +202,7 @@ public class DomainPattern {
 	}
 	
 	public String getAttribute(String field) {
-		return attributes.get(field).getAttribute();
+		return attributes.get(field).getAttribute().trim().toLowerCase();
 	}
 
 	public String getAutoCompleteCommand2() {
