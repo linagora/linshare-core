@@ -35,8 +35,10 @@
 package org.linagora.linshare.core.domain.entities;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 
@@ -74,7 +76,14 @@ public class MailingList {
 		this.identifier=list.getIdentifier();
 		this.description=list.getListDescription();
 		this.isPublic=list.isPublic();
-		this.mailingListContact=list.getMails();
+		if(!list.getMails().isEmpty()){
+			if(mailingListContact == null){
+				mailingListContact = new ArrayList<MailingListContact>();
+			}
+			for(MailingListContactVo current : list.getMails()) {
+				mailingListContact.add(new MailingListContact(current));
+			}
+		}
 	}
 	
 	

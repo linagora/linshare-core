@@ -10,7 +10,7 @@
 		<br></br>
 		<h2> ${message:pages.groups.members.type.owner}: ${mailingList.owner.firstName} ${mailingList.owner.lastName}</h2>
 		<br></br>
-			<t:form id="form">
+			<form t:type="form" t:id="form">
 				<fieldset class="title_criteria_zone" id="contactCriterion">
 				<legend align="top" class="palette">${message:pages.lists.addContact}</legend>
 				<p><t:label for="email"/>:&nbsp;
@@ -24,13 +24,59 @@
 		
         		<p><input type="submit"  value="${message:pages.lists.addContact}"/></p>
 				</fieldset>
-			</t:form>
-			
-		<br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>			
+			</form>
+	  <div class="clear"></div>
+
+			<form t:type="form" t:id="forms">
+				<fieldset style="width: 1000;" class="title_criteria_zone" id="userCriterion">
+				<legend align="top" class="palette">${message:pages.lists.addUser}</legend>		
+					<table>
+						<tr>
+							<td>
+							<t:textfield t:id="searchUser" t:value="recipientsSearch" t:size="30" t:mixins="autocomplete" 
+				    		t:minChars="${autocompleteMin}" class="recipientsPattern" 
+				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
+				    		</td>
+				    		<td>
+        					<input type="submit" style="margin-right:520px" value="${message:global.button.search}"/>
+        					</td>
+        				</tr>
+        			</table>
+        			
+        			
+        			<t:if t:test="displayGrid">
+        				<t:grid source="results"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
+	    					<t:parameter name="inListCell">
+			  					<t:if t:test="isInList">
+			  						<img src="${asset:context:images/icons/validate.png}"/>
+			  					<p:else>
+			  						<img src="${asset:context:images/icons/delete.png}"/>
+			  					</p:else>
+								</t:if>
+			 				</t:parameter>
+			 				<t:parameter name="addRemoveCell">
+			 					<t:if t:test="isInList">
+			 						<t:actionLink t:id="deleteUser" context="result.mail"
+			 	 						title="${message:pages.lists.index.list.display.delete.button}">
+										<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
+									</t:actionLink>
+			  					<p:else>
+			  						<t:actionLink t:id="addUser" context="result.mail"
+			 	 						title="${message:pages.lists.adduser}">
+										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.lists.adduser}" />
+									</t:actionLink>
+			  					</p:else>
+								</t:if>
+			 				</t:parameter>
+	    				</t:grid>
+        			</t:if>
+				</fieldset>
+			</form>
+	  <div class="clear"></div>
 		<t:if test="isEmpty">
 						${message:pages.lists.empty}
 			<p:else>
-			<t:grid source="lists" include="display" add="actions" row="list">
+			<t:grid source="lists" rowsPerPage="10" include="display" add="actions" row="list">
 			<t:parameter name="actionsCell">
 			 	 		<t:actionLink t:id="deleteContact" context="list.persistenceId" t:zone="zoneConfirmDelete"
 			 	 			title="${message:pages.lists.index.list.display.delete.button}">
@@ -42,7 +88,7 @@
 			 </t:grid>
 			</p:else>
 		</t:if>
-		<br></br>
+		<div class="clear"></div>
 		<t:actionLink t:id="back" class="button">
 		<span>${message:pages.thread.admin.back}</span>
 		</t:actionLink>
@@ -50,9 +96,11 @@
 		</div><!-- id="content" -->
 		
 		
-			    <t:confirmPopup
+		<t:confirmPopup
         t:messageLabel="${message:pages.lists.delete.display.ask}"
         t:eventName="contactDeleteEvent" t:windowId="confirm1" />
+        
+        
 	    <t:zone t:id="zoneConfirmDelete" />
 		
 	</t:MyBorderLayout>

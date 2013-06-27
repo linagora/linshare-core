@@ -41,7 +41,6 @@ import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -81,10 +80,7 @@ public class DisplayMailingList {
 		isEmpty = mailingList.getMails().isEmpty();
 		if(!isEmpty) {
 			lists = new ArrayList<MailingListContactVo>();
-			for(MailingListContact contact : mailingList.getMails()) {
-				MailingListContactVo current = new MailingListContactVo(contact);
-				lists.add(current);
-			}
+			lists = mailingList.getMails();
 		}
 	}
 	
