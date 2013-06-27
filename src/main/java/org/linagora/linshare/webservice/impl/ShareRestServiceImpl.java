@@ -101,23 +101,4 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 		}
 	}
 
-	@POST
-	@Path("/sharealldocuments")
-	@Override
-	public void sharealldocuments(@FormParam("target") String target,
-			@FormParam("uuids") String uuids,
-			@FormParam("secured") @DefaultValue("0") int secured,
-			@FormParam("message") @DefaultValue("") String message) {
-		try {
-			webServiceShareFacade.checkAuthentication();
-			if (uuids.isEmpty()) {
-				throw giveRestException(HttpStatus.SC_BAD_REQUEST,
-						"Missing parameter uuids");
-			}
-			webServiceShareFacade.multiplesharedocuments(target,
-					StringJoiner.split(uuids, ","), secured, message);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
-		}
-	}
 }

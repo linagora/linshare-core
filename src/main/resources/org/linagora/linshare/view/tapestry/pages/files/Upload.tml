@@ -1,13 +1,73 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<t:MyBorderLayout t:title="message:pages.index.title" t:identifier="home" t:currentHighlight="home" 
-    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.index.title" t:identifier="home" t:currentHighlight="home"
+xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet"
+    type="text/css" />
 
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <script>
+        var uuids = new Array();
+
+        var trySubmit = function() {
+            if (jQuery("#progress").val() == 0) {
+                if (jQuery("#is_submit").is(":checked")) {
+                    if (uuids.length != 0) {
+                        jQuery("#submitShare").click();
+                    }
+                }
+            }
+        }
+
+        var requestSubmit = function() {
+            jQuery("#is_submit").attr("checked", true);
+            trySubmit();
+        }
+
+        jQuery(document).ready(function() {
+            // init
+            jQuery("#is_submit").attr("checked", false);
+
+            var uploader = new qq.FineUploader({
+                element: jQuery('#uploader')[0],
+                debug: true,
+                request: {
+                    endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
+                },
+                callbacks: {
+                    onError: function(id, fileName, reason) {
+                        qq.log("id: " + id + ", fileName: " + fileName + ", reason: " + reason);
+                    },
+                    onDelete: function(id) {
+                        // remove item from list of uploaded items to share
+                        uuids.splice(uuids.indexOf(uploader.getUuid(id)), 1);
+                    },
+                    onProgess: function(id) {
+                        jQuery("#progress").attr("value", uploader.getInProgress());
+                    },
+                    onComplete: function(id, name, responseJSON) {
+                        if (responseJSON.success) {
+                            console.log(name + "upload sucesssful");
+                            uuids.push(uploader.getUuid(id));
+                        }
+                        jQuery("#progress").attr("value", uploader.getInProgress());
+                        if (uploader.getInProgress() == 0) {
+                            console.log("All upload are completed");
+                            jQuery("#uuids").attr("value", uuids.join());
+                        }
+                        trySubmit();
+                    }
+                },
+                deleteFile: {
+                    enabled: true,
+                    forceConfirm: true,
+                    endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
+                }
+            });
+        });
+    </script>
 
     <!-- Main content -->
-
     <div id="content">
-
         <h1>Upload</h1>
 
         <div id="examples">
@@ -15,34 +75,61 @@
                 <h3>Upload files</h3>
                 <ul id="uploader" class="unstyled"></ul>
             </div>
+
             <a href="/linshare/files" class="button">
-                <span><img src="${asset:context:images/icons/cancel.png}" alt=""/>Quitter sans partager (TODO)</span>
+                <span>
+                <img src="${asset:context:images/icons/cancel.png}" alt="" />Quitter sans partager (TODO)</span>
             </a>
-            <form id="shareform" method="POST" action="/linshare/webservice/rest/shares/sharealldocuments/">
-                <input id='uuids' name="uuids" type="hidden"/>
 
-                <label for="target" class="edit-form-label">
-                    ${message:components.quickSharePopup.panelRecipients.description}
-                </label>
-                <textarea name="target"/>
+            <t:form t:id="shareForm">
+                <t:errors />
 
-                <label for="secured" class="edit-form-label">
-                    ${message:components.confirmSharePopup.secureSharing}
-                </label>
-                <input name="secured" type="checkbox"/>
+                <!-- <t:zone t:id="shareZone"> -->
+                <t:textfield t:id='uuids' name="uuids" style="display:none" />
+                <t:checkbox t:id='is_submit' name="is_submit" style="display:none" />
+                <t:textfield t:id='progress' name="progress" style="display:none" />
+                <!-- </t:zone> -->
 
-                <label for="secured" class="edit-form-label">
-                    ${message:components.quickSharePopup.texarea.message.title}
-                </label>
-                <textarea name="message"/>
-
-                <div class="button">
-                    <a class="button" onclick="toggleSubmitOn();">
-                        <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/> ${message:global.button.share.cap}</span>
-                    </a>
+                <div class="description">
+                    <p>${message:components.quickSharePopup.panelRecipients.description}</p>
                 </div>
-            </form>
-        </div>
+                <div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false"
+                t:subject="${message:components.quickSharePopup.panelRecipients.subject}" t:options="{duration:0.3}">
+                    <t:textarea t:id="recipientsPattern" t:value="recipientsSearch" t:mixins="autocomplete"
+                    t:minChars="${autocompleteMin}" t:tokens="," class="recipientsPattern"
+                    title="${message:components.quickSharePopup.texarea.recipients.title}"
+                    onchange="rm_errorclass();" />
+                </div>
 
+                <div class="clear"></div>
+                <t:if test="showSecureSharingCheckBox">
+                    <t:label for="secureSharing" class="edit-form-label">
+                    ${message:components.confirmSharePopup.secureSharing}</t:label>
+                    <t:checkbox t:id="secureSharing" class="edit-form-field checkbox" />
+                </t:if>
+                <hr />
+
+                <div class="description">
+                    <p>${message:components.quickSharePopup.panelMessage.description}</p>
+                </div>
+                <t:textfield t:id="textAreaSubjectValue" size="100" class="edit-form-field"
+                title="${message:components.quickSharePopup.texarea.message.title}"
+                onkeypress="if (event.keyCode == 13) return false;" />
+                <br />
+
+                <t:textarea rows="8" value="textAreaValue"
+                title="${message:components.quickSharePopup.texarea.message.title}" />
+                <hr />
+                <div class="button">
+                    <input name="submitShare" id="submitShare" type="submit" style="display:none" />
+                    <a id="formShareSubmit" class="button" onclick="requestSubmit()">
+                        <span>
+                        <img src="${asset:context:images/icons/share-on-small.png}"
+                        alt="" />${message:global.button.share.cap}</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+            </t:form>
+        </div>
     </div>
 </t:MyBorderLayout>

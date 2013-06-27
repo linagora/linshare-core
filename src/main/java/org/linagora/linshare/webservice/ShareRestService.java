@@ -69,6 +69,4 @@ public interface ShareRestService {
 	// public List<ShareDto> getMyOwnShares();
 	public List<ShareDto> getReceivedShares();
 
-	public void sharealldocuments(String target, String uuids, int secured,
-			String message);
 }
