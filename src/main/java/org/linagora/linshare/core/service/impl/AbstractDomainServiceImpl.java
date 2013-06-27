@@ -382,13 +382,28 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	
 	
 	@Override
-	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException {
+	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String pattern) throws BusinessException {
 		logger.debug("Begin autoCompleteUserWithDomainPolicies");
 		List<User> users = new ArrayList<User>();
 		
 		AbstractDomain domain = retrieveDomain(domainIdentifier);
 		if(domain != null) {
-			users.addAll(autoCompleteUserWithDomainPolicies(domain, mail, firstName, lastName));
+			users.addAll(autoCompleteUserWithDomainPolicies(domain, pattern));
+		} else {
+			logger.error("Can not find domain : " + domainIdentifier + ". This domain does not exist.");
+		}
+		logger.debug("End autoCompleteUserWithDomainPolicies");
+		return users;
+	}
+	
+	@Override
+	public List<User> autoCompleteUserWithDomainPolicies(String domainIdentifier, String firstName, String lastName) throws BusinessException {
+		logger.debug("Begin autoCompleteUserWithDomainPolicies");
+		List<User> users = new ArrayList<User>();
+		
+		AbstractDomain domain = retrieveDomain(domainIdentifier);
+		if(domain != null) {
+			users.addAll(autoCompleteUserWithDomainPolicies(domain, firstName, lastName));
 		} else {
 			logger.error("Can not find domain : " + domainIdentifier + ". This domain does not exist.");
 		}
@@ -397,7 +412,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 	
 
-	private  List<User> autoCompleteUserWithDomainPolicies(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
+	private  List<User> autoCompleteUserWithDomainPolicies(AbstractDomain domain, String pattern) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 
 		List<AbstractDomain> allAuthorizedDomain = domainPolicyService.getAllAuthorizedDomain(domain);
@@ -406,7 +421,31 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 			// if the current domain is linked to a UserProvider, we perform a search.
 			if(d.getUserProvider() != null) {
 				try {
-					users.addAll(userProviderService.searchUser(d.getUserProvider(),mail,firstName,lastName));
+					users.addAll(userProviderService.autoCompleteUser(d.getUserProvider(), pattern));
+				} catch (NamingException e) {
+					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
+					logger.error(e.toString());
+				} catch (IOException e) {
+					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
+					logger.error(e.toString());
+				}
+			} else {
+				logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
+			}
+		}
+		return users;
+	}
+	
+	private  List<User> autoCompleteUserWithDomainPolicies(AbstractDomain domain, String firstName, String lastName) throws BusinessException {
+		List<User> users = new ArrayList<User>();
+		
+		List<AbstractDomain> allAuthorizedDomain = domainPolicyService.getAllAuthorizedDomain(domain);
+		for (AbstractDomain d : allAuthorizedDomain) {
+			
+			// if the current domain is linked to a UserProvider, we perform a search.
+			if(d.getUserProvider() != null) {
+				try {
+					users.addAll(userProviderService.autoCompleteUser(d.getUserProvider(), firstName, lastName));
 				} catch (NamingException e) {
 					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
 					logger.error(e.toString());

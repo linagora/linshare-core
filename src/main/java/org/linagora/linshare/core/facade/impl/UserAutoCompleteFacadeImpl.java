@@ -36,6 +36,7 @@ package org.linagora.linshare.core.facade.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -58,7 +59,8 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 	@Override
 	public List<UserVo> autoCompleteUser(UserVo currentUserVo, String pattern) throws BusinessException {
 		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
-		return getUserVoList(users);
+		// TODO : FMA : Use database configuration
+		return getUserVoList(users, 15, true);
 	}
 
 	@Override
@@ -68,25 +70,39 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 			// TODO : FIXME : FMA : add favorite sort.
 //		userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input, userVo));
 //		return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), userVo);
-			
-		return getUserVoList(users);
+		
+		// TODO : FMA : Use database configuration	
+		return getUserVoList(users, 15, true);
 	}
 
 	/***********************/
 	/** Utility functions **/
 	/***********************/
 
+	class EmptyUserVo extends UserVo {
+		private static final long serialVersionUID = 1188489032838386296L;
+		public EmptyUserVo() {
+			super(null, null, null, "...", AccountType.INTERNAL);
+		}
+	}
 	/**
 	 * Convert a list of Users to a list of UserVo.
 	 * 
 	 * @param users
 	 *            a list of users.
+	 * @param addEmptyUser TODO
 	 * @return a list of UserVo.
 	 */
-	private List<UserVo> getUserVoList(List<User> users) {
+	private List<UserVo> getUserVoList(List<User> users, int limit, boolean addEmptyUser) {
 		List<UserVo> userVOs = new ArrayList<UserVo>();
+		int count = 0;
 		for (User user : users) {
 			userVOs.add(new UserVo(user));
+			count ++;
+			if(count == limit) {
+				if(addEmptyUser)	userVOs.add(new EmptyUserVo());
+				break;
+			}
 		}
 		return userVOs;
 	}
