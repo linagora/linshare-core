@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
@@ -94,7 +95,16 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 	
 	@Override
-	public void deleteMailingListContact(long persistenceId) throws BusinessException{ 
+	public void deleteMailingListContact(MailingList list,long persistenceId) throws BusinessException{ 
+		Iterator<MailingListContact> it = list.getMails().iterator();
+		boolean next = true;
+		while (it.hasNext() && next == true) {
+			MailingListContact current =it.next();
+			if(current.getPersistenceId() == persistenceId){
+				it.remove();
+				next = false;
+			}
+		}
 		mailingListBusinessService.deleteMailingListContact(persistenceId);
 	}
 	

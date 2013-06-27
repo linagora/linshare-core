@@ -52,7 +52,7 @@ public class DomainAccessPolicyBusinessServiceImpl implements DomainAccessPolicy
 		this.domainAccessRuleRepository=domainAccessRuleRepository;
 		
 	}
-
+	
 	@Override
 	public DomainAccessRule retrieveDomainAccessRule(long id){
 		return domainAccessRuleRepository.findById(id);

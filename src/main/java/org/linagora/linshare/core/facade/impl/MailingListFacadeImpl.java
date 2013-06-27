@@ -45,6 +45,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
     	MailingList mailingList=new MailingList(mailingListVo);
         User actor = userAndDomainMultiService.findOrCreateUser(mailingListVo.getOwner().getMail(),mailingListVo.getOwner().getDomainIdentifier());
     	mailingList.setOwner(actor);
+    	mailingList.setMails(null);
   	  	AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomain().getIdentifier());
   	  	mailingList.setDomain(domain);
         mailingListService.createMailingList(mailingList);
@@ -127,46 +128,16 @@ public class MailingListFacadeImpl implements MailingListFacade {
    		List<MailingListVo> list = findAllMailingListByIdentifier(toCreate.getIdentifier(), actorVo);
    		return list.isEmpty();
    	}
-    
-   @Override
-   public List<MailingListContactVo> getListOfMailAdd(MailingListVo list) throws BusinessException {
-	   List<MailingListContactVo> contact =new ArrayList<MailingListContactVo>();
-	   MailingListVo mailingList= retrieveMailingList(list.getPersistenceId());
-	   for(MailingListContact current : list.getMails()) {
-		   boolean exist=false;
-		   for(MailingListContact current2 : mailingList.getMails()) {
-			   if(current.getMails().equals(current2.getMails())) {
-				   exist = true;
-			   }
-		   }
-		   if(exist == false) {
-			   contact.add(new MailingListContactVo(current));
-		   }
-	   }
-	   return contact;
-   }
-   
-   @Override
-   public List<MailingListContactVo> getListOfMailRemove(MailingListVo list) throws BusinessException {
-	   List<MailingListContactVo> contact =new ArrayList<MailingListContactVo>();
-	   MailingListVo mailingList= retrieveMailingList(list.getPersistenceId());
-	   for(MailingListContact current : mailingList.getMails()) {
-		   boolean exist=false;
-		   for(MailingListContact current2 : list.getMails()) {
-			   if(current.getMails().equals(current2.getMails())) {
-				   exist = true;
-			   }
-		   }
-		   if(exist == false) {
-			   contact.add(new MailingListContactVo(current));
-		   }
-	   }
-	   return contact;
-   }
    
 	@Override
-	public void deleteMailingListContact(long persistenceId) throws BusinessException{ 
-		mailingListService.deleteMailingListContact(persistenceId);
+	public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException{ 
+		MailingList list =new MailingList(listVo);
+		mailingListService.deleteMailingListContact(list,persistenceId);
+    	User actor = userAndDomainMultiService.findOrCreateUser(listVo.getOwner().getMail(),listVo.getOwner().getDomainIdentifier());
+    	list.setOwner(actor);
+  	  	AbstractDomain domain = abstractDomainService.retrieveDomain(listVo.getDomain().getIdentifier());
+  	  	list.setDomain(domain);
+		mailingListService.updateMailingList(list);
 	}
 	
    @Override

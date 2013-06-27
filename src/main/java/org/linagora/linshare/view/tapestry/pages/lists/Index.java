@@ -108,6 +108,12 @@ public class Index {
 					.getDomainIdentifier());
 			lists = mailingListFacade.findAllMailingListByUser(loginUser);
 			setEmptyList(lists.isEmpty());
+		} else {
+			lists = mailingListFacade.findAllMailingListByUser(loginUser);
+			setEmptyList(lists.isEmpty());
+			if(isEmptyList()){
+				displayGrid =false;
+			}
 		}
 	}
 

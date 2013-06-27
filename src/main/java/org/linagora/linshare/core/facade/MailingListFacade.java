@@ -18,10 +18,8 @@ public interface MailingListFacade {
     public List<MailingListVo> findAllMailingListByIdentifier(String identifier, UserVo actorVo) throws BusinessException ;
     public List<MailingListVo> findAllMailingListByIdentifier(String identifier) throws BusinessException ;
     public boolean mailingListIdentifierUnicity(MailingListVo toCreate,UserVo actorVo)throws BusinessException;
-    public List<MailingListContactVo> getListOfMailAdd(MailingListVo list) throws BusinessException ;
-    public List<MailingListContactVo> getListOfMailRemove(MailingListVo list) throws BusinessException ;
     
-    public void deleteMailingListContact(long persistenceId) throws BusinessException;
+    public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException;
     public MailingListContactVo retrieveMailingListContact(long persistenceId);
     public MailingListContactVo createMailingListContact(MailingListContactVo mailingListContact) throws BusinessException ;
     

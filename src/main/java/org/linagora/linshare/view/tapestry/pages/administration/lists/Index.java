@@ -107,6 +107,8 @@ public class Index {
 		if(displayGrid == false){
     	autocompleteMin = functionalityFacade.completionThreshold(loginUser.getDomainIdentifier());
     	lists= mailingListFacade.findAllMailingList();
+		} else {
+			lists = mailingListFacade.findAllMailingList();
 		}
     }
     @CleanupRender

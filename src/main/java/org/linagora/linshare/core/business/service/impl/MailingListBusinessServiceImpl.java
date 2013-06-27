@@ -163,9 +163,9 @@ class ComparateurMailingList implements Comparator<MailingList> {
     	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setPublic(listToUpdate.isPublic());
 
-    	for(MailingListContact current : listToUpdate.getMails()) {
-    		list.getMails().add(current);
-    	}
+    	list.getMails().clear();
+    	list.setMails(listToUpdate.getMails());
+    	
     	list.setDomain(listToUpdate.getDomain());
     	list.setOwner(listToUpdate.getOwner());
     

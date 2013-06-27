@@ -20,7 +20,7 @@ CREATE TABLE mailing_list_contact (
   mailing_list_id int8 NOT NULL, 
   mail            varchar(255) NOT NULL,
   display            varchar(255) NOT NULL, 
-  mailing_list_index int4, 
+  mailing_list_contact_index int4, 
   PRIMARY KEY (id));
 
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
