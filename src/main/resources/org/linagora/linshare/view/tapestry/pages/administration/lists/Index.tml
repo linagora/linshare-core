@@ -8,7 +8,9 @@
 
 		<h1>${message:components.myborderlayout.list.title}</h1>
 				<br></br>
-
+		<t:if t:test="emptyList">
+		${message:pages.lists.noList.admin}
+		<p:else>
 		<t:form id="form">
 			<fieldset class="title_criteria_zone" id="searchCriterion">
 			<legend align="top" class="palette">${message:global.button.search}</legend>
@@ -53,6 +55,9 @@
 			 </t:parameter>
 	    </t:grid>
 	    </t:if>
+	    
+	    </p:else>
+		</t:if>
 	    
 		</div><!-- id="content" -->
 	
