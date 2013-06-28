@@ -23,6 +23,6 @@ public interface MailingListFacade {
     public MailingListContactVo retrieveMailingListContact(long persistenceId);
     public MailingListContactVo createMailingListContact(MailingListContactVo mailingListContact) throws BusinessException ;
     
-    public void checkUniqueId(MailingListVo listVo,UserVo user)  throws BusinessException ;
+    public String checkUniqueId(String value,UserVo user)  throws BusinessException ;
     public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException ;
 }
