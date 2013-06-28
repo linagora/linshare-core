@@ -56,7 +56,8 @@ public class LinShareDnList extends DnList {
 		SearchControls scs = new SearchControls();
 		scs.setSearchScope(scope);
 		// ManageReferralControl ?
-
+//		scs.setDerefLinkFlag(false);
+		
 		try {
 			// Setting pagination control.
 			ldapCtx.setRequestControls(new Control[] { new PagedResultsControl(searchPageSize, Control.CRITICAL) });

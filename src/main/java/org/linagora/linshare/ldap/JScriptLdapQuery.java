@@ -45,9 +45,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
+import javax.naming.ldap.InitialLdapContext;
 
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.Internal;
+import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.domain.entities.LdapAttribute;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linid.dm.authorization.lql.JScriptEvaluator;
@@ -55,7 +57,9 @@ import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.ldap.core.support.LdapContextSource;
 
 public class JScriptLdapQuery {
 
@@ -75,6 +79,8 @@ public class JScriptLdapQuery {
 
 	private IDnList dnList;
 
+	private BeanInfo beanInfo;
+
 	/**
 	 * @param jScriptEvaluator
 	 * @param ldapJndiService
@@ -88,6 +94,14 @@ public class JScriptLdapQuery {
 		this.evaluator = JScriptEvaluator.getInstance(ctx.getLdapCtx(), dnList);
 		this.baseDn = baseDn;
 		this.domainPattern = domainPattern;
+
+		try {
+			this.beanInfo = Introspector.getBeanInfo(Internal.class);
+		} catch (IntrospectionException e) {
+			logger.error("Introspection of Internal user class impossible.");
+			logger.debug("message : " + e.getMessage());
+		}
+
 	}
 
 	/** Methods **/
@@ -110,7 +124,9 @@ public class JScriptLdapQuery {
 		if (logger.isDebugEnabled()) {
 			logger.debug("lql command " + command);
 			logger.debug("pattern: " + pattern);
-			logger.debug("ldap filter : " + command.replaceAll("\"[ ]*[+][ ]*pattern[ ]*[+][ ]*\"", pattern));
+			String cmd = command.replaceAll("\"[ ]*[+][ ]*pattern[ ]*[+][ ]*\"", pattern);
+			cmd = cmd.replaceAll("\"[ ]*[+][ ]*mail[ ]*[+][ ]*\"", pattern);
+			logger.debug("ldap filter : " + cmd);
 		}
 	}
 
@@ -190,7 +206,8 @@ public class JScriptLdapQuery {
 	 * @param addBaseDn
 	 *            : the result list could contains partial dn list (dn without
 	 *            the base dn used during research)
-	 * @param completionMode TODO
+	 * @param completionMode
+	 *            TODO
 	 * @return List of user
 	 */
 	private List<User> dnListToUsersList(List<String> dnResultList, boolean addBaseDn, boolean completionMode) {
@@ -211,12 +228,8 @@ public class JScriptLdapQuery {
 	private User dnToUser(String dn, boolean completionMode) {
 
 		// Initialization of bean introspection
-		BeanInfo beanInfo = null;
-		try {
-			beanInfo = Introspector.getBeanInfo(Internal.class);
-		} catch (IntrospectionException e) {
-			logger.error("Introspection of Internal user class impossible.");
-			logger.debug("message : " + e.getMessage());
+		if (beanInfo == null) {
+			logger.error("Introspection of Internal user class impossible. Bean inspector is not initialised.");
 			return null;
 		}
 
@@ -232,13 +245,14 @@ public class JScriptLdapQuery {
 			// for completion
 			if (attr.getEnable()) {
 				// completion mode or research mode.
-				if(completionMode) {
+				if (completionMode) {
 					// Is attribute needed for completion ?
 					if (attr.getCompletion()) {
 						String curValue = getLdapAttributeValue(dn, attr);
 						if (curValue != null) {
-							// updating user property with current attribute value
-							if (!setUserAttribute(user, beanInfo, attr_key, curValue)) {
+							// updating user property with current attribute
+							// value
+							if (!setUserAttribute(user, attr_key, curValue)) {
 								return null;
 							}
 						} else {
@@ -251,7 +265,7 @@ public class JScriptLdapQuery {
 					// Is attribute needed for completion ?
 					if (curValue != null) {
 						// updating user property with current attribute value
-						if (!setUserAttribute(user, beanInfo, attr_key, curValue)) {
+						if (!setUserAttribute(user, attr_key, curValue)) {
 							return null;
 						}
 					} else {
@@ -268,7 +282,7 @@ public class JScriptLdapQuery {
 		return user;
 	}
 
-	private boolean setUserAttribute(User user, BeanInfo beanInfo, String attr_key, String curValue) {
+	private boolean setUserAttribute(User user, String attr_key, String curValue) {
 		for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
 			Method userSetter = pd.getWriteMethod();
 			String method = DomainPattern.USER_METHOD_MAPPING.get(attr_key);
@@ -343,26 +357,42 @@ public class JScriptLdapQuery {
 	 * @return
 	 * @throws NamingException
 	 */
-	public User auth(String login, String userPasswd) throws NamingException {
+	public User auth(LDAPConnection ldapConnection, String login, String userPasswd) throws NamingException {
 
 		String command = domainPattern.getAuthCommand();
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("login", login);
-		params.put("domain", baseDn);
-		List<String> retList = evaluator.evalToStringList(command, params);
+		Map<String, Object> vars = lqlctx.getVariables();
+		vars.put("login", login);
+		logLqlQuery(command, login);
 
-		if (retList == null || retList.size() < 1) {
+		// searching ldap directory with pattern
+		// InvalidSearchFilterException
+		List<String> dnResultList = this.evaluate(command);
+
+		if (dnResultList == null || dnResultList.size() < 1) {
 			throw new NameNotFoundException("No user found for login: " + login);
-		} else if (retList.size() > 1) {
+		} else if (dnResultList.size() > 1) {
 			logger.error("The authentification query had returned more than one user !!!");
 			return null;
 		}
 
-		// TODO FRED
-		// String dn = retList.get(0);
-		// if(ldapJndiService.auth(userPasswd, dn)) {
-		// return dnToUser(dn);
-		// }
+		String userDn = dnResultList.get(0) + "," + baseDn;
+		LdapContextSource ldapContextSource = new LdapContextSource();
+		ldapContextSource.setUrl(ldapConnection.getProviderUrl());
+		ldapContextSource.setBase(baseDn);
+		ldapContextSource.setUserDn(userDn);
+		ldapContextSource.setPassword(userPasswd);
+
+		try {
+			ldapContextSource.afterPropertiesSet();
+			// Getting new context : trying to bind user dn and password
+			ldapContextSource.getContext(userDn, userPasswd);
+			return dnToUser(userDn, false);
+		} catch (AuthenticationException e) {
+			logger.error("Can not set ldap context: " + e.getExplanation());
+		} catch (Exception e) {
+			logger.error("Can not set ldap context");
+			logger.debug(e.getMessage());
+		}
 		return null;
 	}
 
