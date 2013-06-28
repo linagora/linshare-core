@@ -159,6 +159,7 @@ class ComparateurMailingList implements Comparator<MailingList> {
     public void updateMailingList(MailingList listToUpdate) throws BusinessException{
     	
     	MailingList list = retrieveMailingList(listToUpdate.getPersistenceId());
+    	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setDescription(listToUpdate.getDescription());
     	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setPublic(listToUpdate.isPublic());

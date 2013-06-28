@@ -37,9 +37,12 @@
 		<br></br><br></br><br></br><br></br><br></br><br></br><br></br>
 		
 		<t:if t:test="displayGrid">
-		<t:grid source="lists" include="identifier, listDescription" add="actions" row="list">
+		<t:grid source="lists" include="identifier, listDescription " add="ownership,actions" row="list">
 			 <t:parameter name="identifierCell">
 			 <t:pageLink page="administration/lists/DisplayMailingList" context="list.persistenceId">${list.identifier}</t:pageLink>
+			 </t:parameter>
+			 <t:parameter name="ownershipCell">
+			 	${list.owner.firstName} ${list.owner.lastName}
 			 </t:parameter>
 			 <t:parameter name="actionsCell">
 			  		<t:pageLink page="administration/lists/ManageMailingList" context="list.persistenceId"

@@ -98,7 +98,6 @@ public class MailingListVo {
 		this.persistenceId = persistenceId;
 	}
 
-	@Validate("required")
 	public String getIdentifier() {
 		return identifier;
 	}

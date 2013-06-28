@@ -146,18 +146,18 @@ public class MailingListFacadeImpl implements MailingListFacade {
    }
    
    @Override
-   public void checkUniqueId(MailingListVo listVo,UserVo user) throws BusinessException {
+   public String checkUniqueId(String value,UserVo user) throws BusinessException {
 	   List<MailingListVo> list = new ArrayList<MailingListVo>();
 	   list = findAllMailingListByOwner(user);
 	   int i = 0;
-	   String copy = listVo.getIdentifier();
-	   for(MailingListVo current : list){
-			logger.debug("toCreateid:"+listVo.getIdentifier()+" inListid:"+current.getIdentifier());   
-		   while(current.getIdentifier().equals(listVo.getIdentifier())){
-					   listVo.setIdentifier(copy+i);   
+	   String copy = value;
+	   for(MailingListVo current : list){  
+		   while(current.getIdentifier().equals(copy)){
+					   copy = value+i;  
 						i++;
 		   }
 	   }
+	   return copy;
    }
    
    @Override
