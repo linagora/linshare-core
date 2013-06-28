@@ -11,5 +11,6 @@
 		<property name="sync" column="sync" type="boolean" not-null="true" lazy="false"/>
 		<property name="system" column="system" type="boolean" not-null="true" lazy="false"/>
 		<property name="enable" column="enable" type="boolean" not-null="true" lazy="false"/>
+		<property name="completion" column="completion" type="boolean" not-null="true" lazy="false"/>
 	</class>
 </hibernate-mapping>

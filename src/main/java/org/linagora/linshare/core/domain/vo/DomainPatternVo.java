@@ -50,13 +50,18 @@ public class DomainPatternVo {
 	private String userFirstName;
 	private String userLastName;
     private String ldapUid;
-
-    @NonVisual
-    private String autoCompleteCommand;
+    
+    private String autoCompleteCommandOnAllAttributes;
+    private String autoCompleteCommandOnFirstAndLastName;
+    private Integer searchPageSize;
+    private Integer searchSizeLimit;
+    private Integer completionPageSize;
+    private Integer completionSizeLimit;
+    
 
     @NonVisual
     private boolean system;
-
+    
 	public DomainPatternVo() {
 	}
 
@@ -65,7 +70,6 @@ public class DomainPatternVo {
 		this.patternDescription = domainPattern.getDescription();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
-        this.autoCompleteCommand = domainPattern.getAutoCompleteCommand();
         this.system = domainPattern.getSystem();
 
         Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
@@ -73,9 +77,34 @@ public class DomainPatternVo {
         this.userFirstName = attributes.get(DomainPattern.USER_FIRST_NAME).getAttribute();
         this.userLastName = attributes.get(DomainPattern.USER_LAST_NAME).getAttribute();
         this.ldapUid = attributes.get(DomainPattern.USER_UID).getAttribute();
+        
+        this.autoCompleteCommandOnAllAttributes = domainPattern.getAutoCompleteCommandOnAllAttributes();
+		this.autoCompleteCommandOnFirstAndLastName = domainPattern.getAutoCompleteCommandOnFirstAndLastName();
+		this.searchPageSize = domainPattern.getSearchPageSize();
+		this.searchSizeLimit = domainPattern.getSearchSizeLimit();
+		this.completionPageSize = domainPattern.getCompletionPageSize();
+		this.completionSizeLimit = domainPattern.getCompletionSizeLimit();
+	}
+	
+	
+
+    public DomainPatternVo(String identifier, String patternDescription, String authCommand, String searchUserCommand, String userMail, String userFirstName, String userLastName, String ldapUid,
+			String autoCompleteCommandOnAllAttributes, String autoCompleteCommandOnFirstAndLastName, Integer searchPageSize, Integer searchSizeLimit, Integer completionPageSize,
+			Integer completionSizeLimit, String autoCompleteCommand, boolean system) {
+		super();
+		this.identifier = identifier;
+		this.patternDescription = patternDescription;
+		this.authCommand = authCommand;
+		this.searchUserCommand = searchUserCommand;
+		this.userMail = userMail;
+		this.userFirstName = userFirstName;
+		this.userLastName = userLastName;
+		this.ldapUid = ldapUid;
+		
+		this.system = system;
 	}
 
-    /*
+	/*
      * Legacy constructor for compatibility with Linshare 0.11
      */
 	public DomainPatternVo(String identifier, String description,
@@ -95,7 +124,7 @@ public class DomainPatternVo {
 
 	public DomainPatternVo(String identifier, String description, String getUserCommand,
             String getAllDomainUsersCommand, String authCommand, String searchUserCommand, String mail,
-            String firstName, String lastName, String ldapUid, String autoCompleteCommand, boolean system) {
+            String firstName, String lastName, String ldapUid, boolean system) {
 		super();
 		this.identifier = identifier;
 		this.patternDescription = description;
@@ -105,7 +134,6 @@ public class DomainPatternVo {
 		this.userFirstName = firstName;
 		this.userLastName = lastName;
         this.ldapUid = ldapUid;
-        this.autoCompleteCommand = autoCompleteCommand;
         this.system = system;
 	}
 
@@ -198,33 +226,82 @@ public class DomainPatternVo {
 		return ldapUid;
 	}
 
-	public void setAutoCompleteCommand(String autoCompleteCommand) {
-		if(autoCompleteCommand != null)
-			this.autoCompleteCommand = autoCompleteCommand.trim();
-		else
-			this.autoCompleteCommand = autoCompleteCommand;
-	}
-
-
-	@Validate("required")
-	public String getAutoCompleteCommand() {
-		return autoCompleteCommand;
-	}
+//	public void setAutoCompleteCommand(String autoCompleteCommand) {
+//		if(autoCompleteCommand != null)
+//			this.autoCompleteCommand = autoCompleteCommand.trim();
+//		else
+//			this.autoCompleteCommand = autoCompleteCommand;
+//	}
 
 
 	public boolean getSystem() {
 		return system;
 	}
 
-
 	public void setSystem(boolean system) {
         this.system = system;
 	}
-
 
 	@Override
 	public String toString() {
 		return identifier;
 	}
 
+	@Validate("required")
+	public String getAutoCompleteCommandOnAllAttributes() {
+		return autoCompleteCommandOnAllAttributes;
+	}
+
+	public void setAutoCompleteCommandOnAllAttributes(String autoCompleteCommandOnAllAttributes) {
+		this.autoCompleteCommandOnAllAttributes = autoCompleteCommandOnAllAttributes;
+	}
+
+	@Validate("required")
+	public String getAutoCompleteCommandOnFirstAndLastName() {
+		return autoCompleteCommandOnFirstAndLastName;
+	}
+
+	public void setAutoCompleteCommandOnFirstAndLastName(String autoCompleteCommandOnFirstAndLastName) {
+		this.autoCompleteCommandOnFirstAndLastName = autoCompleteCommandOnFirstAndLastName;
+	}
+
+	@Validate("required")
+	public Integer getSearchPageSize() {
+		return searchPageSize;
+	}
+
+	public void setSearchPageSize(Integer searchPageSize) {
+		this.searchPageSize = searchPageSize;
+	}
+
+	@Validate("required")
+	public Integer getSearchSizeLimit() {
+		return searchSizeLimit;
+	}
+
+	public void setSearchSizeLimit(Integer searchSizeLimit) {
+		this.searchSizeLimit = searchSizeLimit;
+	}
+
+	@Validate("required")
+	public Integer getCompletionPageSize() {
+		return completionPageSize;
+	}
+
+	public void setCompletionPageSize(Integer completionPageSize) {
+		this.completionPageSize = completionPageSize;
+	}
+
+	@Validate("required")
+	public Integer getCompletionSizeLimit() {
+		return completionSizeLimit;
+	}
+
+	public void setCompletionSizeLimit(Integer completionSizeLimit) {
+		this.completionSizeLimit = completionSizeLimit;
+	}
+
+	public void setLdapUid(String ldapUid) {
+		this.ldapUid = ldapUid;
+	}
 }

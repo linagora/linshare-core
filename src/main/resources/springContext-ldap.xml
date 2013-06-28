@@ -8,40 +8,10 @@
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
 	default-autowire="no">
 
-	  <bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
-     	<property name="ldapContext" ref="contextSource_insee" />
-     </bean>
-	
-	  
-     <!-- LDAP DAO configuration -->
-        <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-            <property name="url" value="ldap://linshare-obm.linshare.team.services.par.lng:389" />
-              <property name="base" value="ou=users,dc=int1.linshare.dev,dc=local" />
-<!--             <property name="userDn" value="${ldap.root.dn}" /> -->
-<!--             <property name="password" value="${ldap.root.password}" /> -->
-            <property name="pooled" value="true" />
-            <!--  We do not use context binding with Acegi because we want to be independent from LDAP from auth -->
-            <!-- <property name="authenticationSource"><ref local="acegiAuthenticationSource" /></property> -->
-    </bean>
-    
-        <bean id="contextSource_insee" class="org.springframework.ldap.core.support.LdapContextSource">
-            <property name="url" value="ldap://10.75.128.208:389" />
-              <property name="base" value="ou=People,o=insee,c=fr" />
-<!--             <property name="userDn" value="cn=Manager,o=insee,c=fr" /> -->
-<!--             <property name="password" value="secret" /> -->
-            <property name="pooled" value="true" />
-    </bean>
-    
-<!-- 
- <bean id="ehcacheForLqlAuthzDnList" class="org.linid.dm.authorization.lql.dnlist.EhcacheDnList">
-        <property name="cache">
-            <bean factory-bean="ehcacheManager" factory-method="getCache">
-                <constructor-arg value="lqlAuthzDnListCache" />
-            </bean>
-        </property>
-    </bean>
- -->
-    
-        
+	<bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
+	</bean>
+
+	<!-- <bean id="ehcacheForLqlAuthzDnList" class="org.linid.dm.authorization.lql.dnlist.EhcacheDnList"> <property name="cache"> <bean 
+		factory-bean="ehcacheManager" factory-method="getCache"> <constructor-arg value="lqlAuthzDnListCache" /> </bean> </property> </bean> -->
 
 </beans>

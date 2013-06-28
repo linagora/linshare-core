@@ -142,7 +142,7 @@ public class JScriptLdapQuery {
 	public List<User> complete(String pattern) throws NamingException {
 
 		// Getting lql expression for completion
-		String command = domainPattern.getAutoCompleteCommand();
+		String command = domainPattern.getAutoCompleteCommandOnAllAttributes();
 		pattern = addExpansionCharacters(pattern);
 
 		// Setting lql query parameters
@@ -167,7 +167,7 @@ public class JScriptLdapQuery {
 	public List<User> complete(String first_name, String last_name) throws NamingException {
 
 		// Getting lql expression for completion
-		String command = domainPattern.getAutoCompleteCommand2();
+		String command = domainPattern.getAutoCompleteCommandOnFirstAndLastName();
 		first_name = addExpansionCharacters(first_name);
 		last_name = addExpansionCharacters(last_name);
 
