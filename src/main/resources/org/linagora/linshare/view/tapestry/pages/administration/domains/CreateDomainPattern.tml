@@ -31,6 +31,14 @@
 					<t:label for="searchUserCommand"/>
                     <t:textarea t:id="searchUserCommand" value="domainPattern.searchUserCommand" cols="70"/>
 				</p:searchUserCommand>
+				<p:autoCompleteCommandOnAllAttributes>
+					<t:label for="autoCompleteCommandOnAllAttributes"/>
+                    <t:textarea t:id="autoCompleteCommandOnAllAttributes" value="domainPattern.autoCompleteCommandOnAllAttributes" cols="70"/>
+				</p:autoCompleteCommandOnAllAttributes>
+				<p:autoCompleteCommandOnFirstAndLastName>
+					<t:label for="autoCompleteCommandOnFirstAndLastName"/>
+                    <t:textarea t:id="autoCompleteCommandOnFirstAndLastName" value="domainPattern.autoCompleteCommandOnFirstAndLastName" cols="70"/>
+				</p:autoCompleteCommandOnFirstAndLastName>
 			</t:beanEditForm>
 
 		</div>

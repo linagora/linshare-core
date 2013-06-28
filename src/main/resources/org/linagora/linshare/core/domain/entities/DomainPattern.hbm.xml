@@ -10,7 +10,14 @@
     <property column="description" name="description"/>
     <property column="auth_command" name="authCommand" not-null="true" type="text" />
     <property column="search_user_command" name="searchUserCommand" not-null="true" type="text" />
-    <property column="auto_complete_command" name="autoCompleteCommand" not-null="true" type="text" />
+    <property column="auto_complete_command_on_all_attributes" name="autoCompleteCommandOnAllAttributes" not-null="true" type="text" />
+    <property column="auto_complete_command_on_first_and_last_name" name="autoCompleteCommandOnFirstAndLastName" not-null="true" type="text" />
+    
+    <property column="search_page_size" name="searchPageSize" not-null="true" />
+    <property column="search_size_limit" name="searchSizeLimit" not-null="true" />
+    <property column="completion_page_size" name="completionPageSize" not-null="true" />
+    <property column="completion_size_limit" name="completionSizeLimit" not-null="true" />
+    
     <property column="system" name="system"/>
     <map name="attributes" lazy="false" cascade="all" inverse="false">
         <key column="domain_pattern_id" not-null="true"/>

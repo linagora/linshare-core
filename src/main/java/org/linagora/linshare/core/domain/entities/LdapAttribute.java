@@ -47,30 +47,29 @@ public class LdapAttribute {
 	
 	private Boolean enable;
 	
-	// TODO : TO BE PERSIST
 	private Boolean completion;
 	
 	public LdapAttribute() {
 	}
 	
-	public LdapAttribute(String field, String attribute, Boolean sync, Boolean system, Boolean enable) {
+	public LdapAttribute(String field, String attribute, Boolean sync, Boolean system, Boolean enable, Boolean completion) {
 		super();
 		this.field = field;
 		this.attribute = attribute;
 		this.sync = sync;
 		this.system = system;
 		this.enable = enable;
-		this.completion = true;
+		this.completion = completion;
 	}
 	
-	public LdapAttribute(String field, String attribute) {
+	public LdapAttribute(String field, String attribute, boolean completion) {
 		super();
 		this.field = field;
 		this.attribute = attribute;
 		this.sync = false;
 		this.system = true;
 		this.enable = true;
-		this.completion = true;
+		this.completion = completion;
 	}
 
 	@SuppressWarnings("unused")

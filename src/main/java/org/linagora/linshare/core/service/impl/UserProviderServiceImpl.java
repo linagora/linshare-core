@@ -183,6 +183,12 @@ public class UserProviderServiceImpl implements UserProviderService {
         pattern.setDescription(domainPattern.getDescription());
         pattern.setAuthCommand(domainPattern.getAuthCommand());
         pattern.setSearchUserCommand(domainPattern.getSearchUserCommand());
+        pattern.setAutoCompleteCommandOnAllAttributes(domainPattern.getAutoCompleteCommandOnAllAttributes());
+        pattern.setAutoCompleteCommandOnFirstAndLastName(domainPattern.getAutoCompleteCommandOnFirstAndLastName());
+        pattern.setCompletionPageSize(domainPattern.getCompletionPageSize());
+        pattern.setCompletionSizeLimit(domainPattern.getCompletionSizeLimit());
+        pattern.setSearchPageSize(domainPattern.getSearchPageSize());
+        pattern.setSearchSizeLimit(domainPattern.getSearchSizeLimit());
         pattern.getAttributes().get(DomainPattern.USER_FIRST_NAME).setAttribute(domainPattern.getAttributes().get(DomainPattern.USER_FIRST_NAME).getAttribute());
         pattern.getAttributes().get(DomainPattern.USER_LAST_NAME).setAttribute(domainPattern.getAttributes().get(DomainPattern.USER_LAST_NAME).getAttribute());
         pattern.getAttributes().get(DomainPattern.USER_MAIL).setAttribute(domainPattern.getAttributes().get(DomainPattern.USER_MAIL).getAttribute());

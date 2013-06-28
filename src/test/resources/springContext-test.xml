@@ -1,60 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
-       default-autowire="no">
-    
-      <bean id="propertyPlaceholder" class="org.linagora.linshare.core.utils.PropertyPlaceholderConfigurer">
-    	<property name="ignoreResourceNotFound" value="true"/>
-    	<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
-    	
-    	 <property name="properties">
-		    <props>
-		      <prop key="virusscanner.clamav.host" />
-		      <prop key="virusscanner.clamav.port">3310</prop>
-		      <prop key="tsa.url" />
-		      <!--  Override this property if you want to set properties outside the webapp -->
-		      <prop key="LINSHARE_HOME" >target/</prop>
-		    </props>
-		  </property>
-        <property name="locations">
-            <list>
-                <value>classpath:linshare-default.properties</value>
-                <value>classpath:linshare-mailContainer.properties</value>
-                <value>classpath:linshare.properties</value>
-                <value>classpath:jackRabbit.properties</value>
-                <value>classpath:linshare-test.properties</value>
-                <value>classpath:CAS.bin.export</value>
-            </list>
-        </property>
-    </bean>
-    
-    
-    
-    <bean id="mailTestRetriever" class="org.linagora.linshare.common.service.impl.MailTestRetrieverImpl">
-    	<constructor-arg index="0" value="${linshare.test.mail.sender}"/>
-    	<constructor-arg index="1" value="${linshare.test.mail.recipient}"/>
-    </bean>
-    
-    
-     <bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
-     	<property name="ldapContext" ref="contextSource" />
-     </bean>
-     
-     <!-- LDAP DAO configuration -->
-        <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-            <property name="url" value="ldap://linshare-obm.linshare.team.services.par.lng:389" />
-              <property name="base" value="ou=users,dc=int1.linshare.dev,dc=local" />
-<!--             <property name="userDn" value="${ldap.root.dn}" /> -->
-<!--             <property name="password" value="${ldap.root.password}" /> -->
-            <property name="pooled" value="true" />
-            <!--  We do not use context binding with Acegi because we want to be independent from LDAP from auth -->
-            <!-- <property name="authenticationSource"><ref local="acegiAuthenticationSource" /></property> -->
-    </bean>
-    
+	default-autowire="no">
+
+	<bean id="propertyPlaceholder" class="org.linagora.linshare.core.utils.PropertyPlaceholderConfigurer">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+
+		<property name="properties">
+			<props>
+				<prop key="virusscanner.clamav.host" />
+				<prop key="virusscanner.clamav.port">3310</prop>
+				<prop key="tsa.url" />
+				<!-- Override this property if you want to set properties outside the webapp -->
+				<prop key="LINSHARE_HOME">target/</prop>
+			</props>
+		</property>
+		<property name="locations">
+			<list>
+				<value>classpath:linshare-default.properties</value>
+				<value>classpath:linshare-mailContainer.properties</value>
+				<value>classpath:linshare.properties</value>
+				<value>classpath:jackRabbit.properties</value>
+				<value>classpath:linshare-test.properties</value>
+				<value>classpath:CAS.bin.export</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="mailTestRetriever" class="org.linagora.linshare.common.service.impl.MailTestRetrieverImpl">
+		<constructor-arg index="0" value="${linshare.test.mail.sender}" />
+		<constructor-arg index="1" value="${linshare.test.mail.recipient}" />
+	</bean>
+
+	<bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">
+	</bean>
+
 </beans>

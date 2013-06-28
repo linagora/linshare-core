@@ -44,13 +44,14 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface LDAPQueryService {
-	
-	public User auth(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String userId, String userPasswd) throws BusinessException, NamingException, IOException;
-	public List<User> searchUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException, IOException;
-	public List<User> searchUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException;
 
-	public List<User> completeUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String pattern) throws BusinessException, NamingException, IOException;
-	public List<User> completeUser(LDAPConnection ldapConnection,	String baseDn, DomainPattern domainPattern, String firstName, String lastName) throws BusinessException, NamingException, IOException;
-	
-	
+	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userId, String userPasswd) throws BusinessException, NamingException, IOException;
+
+	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String firstName, String lastName) throws BusinessException, NamingException,
+			IOException;
+
+	public List<User> completeUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String pattern) throws BusinessException, NamingException, IOException;
+
+	public List<User> completeUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String firstName, String lastName) throws BusinessException, NamingException, IOException;
+
 }
