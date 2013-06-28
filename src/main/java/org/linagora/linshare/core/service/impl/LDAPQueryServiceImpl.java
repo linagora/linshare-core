@@ -88,12 +88,18 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 	@Override
 	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userLogin, String userPasswd) throws BusinessException, NamingException, IOException {
+		
+		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
+
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
-		vars.put("login", userLogin);
 
-		List<User> searchUser = this.searchUser(ldapConnection, baseDn, domainPattern, userLogin, null, null);
-		return searchUser.get(0);
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
+
+		logger.debug("LDAPQueryServiceImpl.authUser: baseDn: '" + baseDn + "' , login : '" + userLogin + "'");
+		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+		return query.auth(ldapConnection, userLogin, userPasswd);
 	}
 
 	@Override
