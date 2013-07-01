@@ -169,7 +169,7 @@ public class UserServiceImpl implements UserService {
 		if (guestDomain != null) {
 
 			// We need to check that the guest email isn't registered
-			List<User> listUsers = abstractDomainService.searchUserRecursivelyWithoutRestriction(ownerDomain, mail, "", "");
+			List<User> listUsers = abstractDomainService.searchUserRecursivelyWithoutRestriction(ownerDomain, mail);
 			if (listUsers != null) {
 				if (listUsers.size() > 0) {
 					throw new BusinessException(BusinessErrorCode.DUPLICATE_USER_ENTRY, "A user with the same email already exists");
@@ -612,25 +612,20 @@ public class UserServiceImpl implements UserService {
 			users.addAll(completionSearchForGuest(mail, firstName, lastName, currentUser));
 		}
 		if (null == userType || userType.equals(AccountType.INTERNAL)) {
-			users.addAll(completionSearchInternal(mail, firstName, lastName, currentUser));
+			List<User> internals = abstractDomainService.searchUserWithDomainPolicies(currentUser.getDomain().getIdentifier(), mail, firstName, lastName);
+			logger.debug("result internals list : size : " + internals.size());
+			for (User ldapuser : internals) {
+				User userdb = userRepository.findByMail(ldapuser.getMail());
+				if (userdb != null)
+					ldapuser.setRole(userdb.getRole());
+			}
+			users.addAll(internals);
 		}
 
 		logger.debug("End searchUser");
 		return users;
 	}
 
-	@Override
-	public List<User> searchUserForRestrictedGuestEditionForm(String mail, String firstName, String lastName, User currentGuest) throws BusinessException {
-
-		logger.debug("Begin searchUserForRestrictedGuestEditionForm");
-		List<User> users = new ArrayList<User>();
-
-		users.addAll(completionSearchForGuest(mail, firstName, lastName, currentGuest));
-		users.addAll(completionSearchInternal(mail, firstName, lastName, currentGuest));
-
-		logger.debug("End searchUserForRestrictedGuestEditionForm");
-		return users;
-	}
 
 	@Override
 	public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
@@ -879,7 +874,7 @@ public class UserServiceImpl implements UserService {
 																										// these
 																										// accounts
 					try {
-						List<User> found = abstractDomainService.searchUserWithoutRestriction(user.getDomain(), user.getMail(), null, null);
+						List<User> found = abstractDomainService.searchUserWithoutRestriction(user.getDomain(), user.getMail());
 						if (found == null || found.size() != 1) {
 							internalsBreaked.add(user);
 						}
@@ -955,7 +950,7 @@ public class UserServiceImpl implements UserService {
 
 		User user = userRepository.findByMailAndDomain(abstractDomain.getIdentifier(), mail);
 		if (user == null) {
-			List<User> users = abstractDomainService.searchUserWithoutRestriction(abstractDomain, mail, "", "");
+			List<User> users = abstractDomainService.searchUserWithoutRestriction(abstractDomain, mail);
 			if (users != null) {
 				if (users.size() == 1) {
 					user = users.get(0);
@@ -1016,7 +1011,7 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByMailAndDomain(domainId, mail);
 
 		if (user == null) {
-			List<User> users = abstractDomainService.searchUserRecursivelyWithoutRestriction(domainId, mail, "", "");
+			List<User> users = abstractDomainService.searchUserRecursivelyWithoutRestriction(domainId, mail);
 			if (users != null && users.size() == 1) {
 				user = users.get(0);
 				saveOrUpdateUser(user);
@@ -1035,7 +1030,7 @@ public class UserServiceImpl implements UserService {
 		User userDB = userRepository.findByMail(mail);
 		if (userDB == null) {
 			// search user mail in all directories
-			List<User> users = abstractDomainService.searchUserRecursivelyWithoutRestriction(mail, "", "");
+			List<User> users = abstractDomainService.searchUserRecursivelyWithoutRestriction(mail);
 
 			if (users != null) {
 				if (users.size() == 1) {
@@ -1057,7 +1052,7 @@ public class UserServiceImpl implements UserService {
 			// The user was found in the database, but we have to check if this
 			// user is still in the ldap.
 			logger.debug("User '" + userDB.getMail() + "'found in database. Checking if he is still in the ldap");
-			List<User> list = abstractDomainService.searchUserWithoutRestriction(userDB.getDomain(), userDB.getMail(), null, null);
+			List<User> list = abstractDomainService.searchUserWithoutRestriction(userDB.getDomain(), userDB.getMail());
 			if (list.size() == 1) {
 				// the user still exists in the ldap, it is ok.
 				return userDB;

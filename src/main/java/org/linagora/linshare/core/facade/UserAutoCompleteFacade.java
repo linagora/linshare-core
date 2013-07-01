@@ -60,4 +60,14 @@ public interface UserAutoCompleteFacade {
      */
     List<UserVo> autoCompleteUserSortedByFavorites(UserVo currentUserVo, String pattern) throws BusinessException;
     
+    
+    /**
+     * auto complete a mail address from mail fragment.
+     * @param currentUserVo
+     * @param pattern
+     * @return
+     * @throws BusinessException
+     */
+    List<String> autoCompleteMail(UserVo currentUserVo, String pattern) throws BusinessException;
+    
 }

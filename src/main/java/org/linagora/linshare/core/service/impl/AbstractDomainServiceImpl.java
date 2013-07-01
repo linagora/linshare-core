@@ -333,12 +333,12 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 	
 	@Override
-	public List<User> searchUserWithoutRestriction(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
+	public List<User> searchUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		
 		if(domain.getUserProvider() != null) {
 			try {
-				List<User> list = userProviderService.searchUser(domain.getUserProvider(),mail,firstName,lastName);
+				List<User> list = userProviderService.searchUser(domain.getUserProvider(), mail);
 				// For each user, we set the domain which he came from.
 				for (User user : list) {
 					user.setDomain(domain);
@@ -363,17 +363,17 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	
 	
 
-	private  List<User> searchUserRecursivelyWithoutRestriction(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
+	private  List<User> searchUserRecursivelyWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		
 		try {
-			users.addAll(searchUserWithoutRestriction(domain, mail, firstName, lastName));
+			users.addAll(searchUserWithoutRestriction(domain, mail));
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
 
 		for (AbstractDomain subDomain : domain.getSubdomain()) {
-			users.addAll(searchUserRecursivelyWithoutRestriction(subDomain, mail, firstName, lastName));
+			users.addAll(searchUserRecursivelyWithoutRestriction(subDomain, mail));
 		}
 		
 		return users;
@@ -461,10 +461,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 	
 	@Override
-	public List<User> searchUserRecursivelyWithoutRestriction(String mail, String firstName, String lastName) throws BusinessException {
+	public List<User> searchUserRecursivelyWithoutRestriction(String mail) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 		
-		users.addAll(searchUserRecursivelyWithoutRestriction(getUniqueRootDomain(), mail, firstName, lastName));
+		users.addAll(searchUserRecursivelyWithoutRestriction(getUniqueRootDomain(), mail));
 		
 		return users;
 	}
@@ -480,7 +480,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		// search user mail in in specific directory and all its SubDomain
-		List<User> users = searchUserRecursivelyWithoutRestriction(domain, mail, "", "");
+		List<User> users = searchUserRecursivelyWithoutRestriction(domain, mail);
 		
 		if (users != null) {
 			if(users.size() == 1) {
@@ -499,7 +499,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public List<User> searchUserRecursivelyWithoutRestriction(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException {
+	public List<User> searchUserRecursivelyWithoutRestriction(String domainIdentifier, String mail) throws BusinessException {
 		logger.debug("Begin searchUserRecursivelyWithoutRestriction");
 		AbstractDomain domain = retrieveDomain(domainIdentifier);
 		if(domain == null) {
@@ -508,7 +508,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 		
 		List<User> users = new ArrayList<User>();
-		users.addAll(searchUserRecursivelyWithoutRestriction(domain, mail, firstName, lastName));
+		users.addAll(searchUserRecursivelyWithoutRestriction(domain, mail));
 		logger.debug("End searchUserRecursivelyWithoutRestriction");
 		return users;
 	}

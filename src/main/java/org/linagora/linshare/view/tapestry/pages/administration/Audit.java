@@ -65,6 +65,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.LogEntryFacade;
+import org.linagora.linshare.core.facade.UserAutoCompleteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.utils.FileUtils;
 import org.linagora.linshare.view.tapestry.beans.LogCriteriaBean;
@@ -96,6 +97,9 @@ public class Audit {
 
 	@Inject
 	private LogEntryFacade logEntryFacade;
+	
+	@Inject
+	private UserAutoCompleteFacade userAutoCompleteFacade;
 	
 	
 	@Inject
@@ -257,32 +261,31 @@ public class Audit {
 	 * @return list the list of string matched by value.
 	 */
 	public List<String> onProvideCompletionsFromActorMails(String value){
-		List<String> res = new ArrayList<String>();
-		try {
-			List<UserVo> founds = userFacade.searchUser(value, null, null, null, userLoggedIn);
-			if (founds != null && founds.size() > 0) {
-				for (UserVo userVo : founds) {
-					res.add(userVo.getMail());
-				}
-			}
-		} catch (BusinessException e) {
-			e.printStackTrace();
-		}
-		return res;
+		return autoCompleteMail(value);
 	}
+
 	/**
 	 * AutoCompletion for name field.
 	 * @param value the value entered by the user
 	 * @return list the list of string matched by value.
 	 */
 	public List<String> onProvideCompletionsFromTargetMails(String value){
-		return onProvideCompletionsFromActorMails(value);
+		return autoCompleteMail(value);
 	}
 
 	/* ***********************************************************
 	 *                          Helpers
 	 ************************************************************ */
 	
+	private List<String> autoCompleteMail(String value) {
+		List<String> res = new ArrayList<String>();
+		try {
+			res = userAutoCompleteFacade.autoCompleteMail(userLoggedIn, value);
+		} catch (BusinessException e) {
+			logger.error("Can not autocomplete mails" + e.getMessage());
+		}
+		return res;
+	}
 
 	public Date getBeforeDate() {
 		return null == criteria.getBeforeDate() ? null : criteria.getBeforeDate().getTime();

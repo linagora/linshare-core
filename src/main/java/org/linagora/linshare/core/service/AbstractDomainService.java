@@ -111,12 +111,10 @@ public interface AbstractDomainService {
 	/**
 	 * This method is designed to search in all existing domains.
 	 * @param mail
-	 * @param firstName
-	 * @param lastName
 	 * @return An user object (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
 	 * @throws BusinessException
 	 */
-	public List<User> searchUserRecursivelyWithoutRestriction(String mail, String firstName, String lastName) throws BusinessException;
+	public List<User> searchUserRecursivelyWithoutRestriction(String mail) throws BusinessException;
 	
 	/**
 	 * This method is designed to search in a particular domain and its SubDomain.
@@ -125,7 +123,7 @@ public interface AbstractDomainService {
 	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name and last name). It is not an entity !
 	 * @throws BusinessException
 	 */
-	public List<User> searchUserRecursivelyWithoutRestriction(String domainIdentifier, String mail, String firstName, String lastName) throws BusinessException;
+	public List<User> searchUserRecursivelyWithoutRestriction(String domainIdentifier, String mail) throws BusinessException;
 	
 	
 	/**
@@ -135,8 +133,7 @@ public interface AbstractDomainService {
 	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name, last name, domain and default role). It is not an entity !
 	 * @throws BusinessException
 	 */
-	public List<User> searchUserWithoutRestriction(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException;
-	
+	public List<User> searchUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException;
 	
 	
 	/**
