@@ -147,14 +147,6 @@ public class UserFacadeImpl implements UserFacade {
 		return getUserVoList(userService.searchUser(mail, firstName, lastName, userType, owner));
 	}
 
-
-    @Override
-	public List<UserVo> searchUserForRestrictedGuestEditionForm(String mail, String firstName, String lastName, String currentGuestEmail) throws BusinessException {
-    	User guest = userRepository.findByMail(currentGuestEmail);
-    	List<User> users = userService.searchUserForRestrictedGuestEditionForm(mail, firstName, lastName, guest);
-        return getUserVoList(users);
-	}
-
 	/** Get all guests created by a user.
      * @param mail owner mail.
      * @return the list of guests created by their owner.

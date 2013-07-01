@@ -359,29 +359,6 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 	
-	
-	@Test
-	public void testSearchUserForRestrictedGuestEditionForm() throws BusinessException{
-		logger.info(LinShareTestConstants.BEGIN_TEST);
-		AbstractDomain subDomain = abstractDomainRepository.findById(LoadingServiceTestDatas.sqlSubDomain);
-		Functionality fonc = new Functionality(FunctionalityNames.GUESTS,
-				false,
-				new Policy(Policies.ALLOWED, true),
-				new Policy(Policies.ALLOWED, true),
-				subDomain);
-		
-		functionalityRepository.create(fonc);
-		subDomain.addFunctionality(fonc);
-		Internal user2 = new Internal("Jane","Smith","user2@linpki.org", null);
-		user2.setDomain(subDomain);
-		user2.setCanCreateGuest(true);
-		
-		userService.saveOrUpdateUser(user2);
-		Guest guest = userService.createGuest("guest1@linpki.org", "Guest", "Doe", "guest1@linpki.org", true, false, "", user2.getLsUuid(), user2.getDomainId());
-		Assert.assertTrue(userService.searchUserForRestrictedGuestEditionForm("user2@linpki.org","Jane","Smith", guest).get(0).getMail().equals(user2.getMail()));
-		logger.debug(LinShareTestConstants.END_TEST);
-	}
-	
 	@Test
 	public void testUpdateGuest()throws BusinessException{
 		logger.info(LinShareTestConstants.BEGIN_TEST);

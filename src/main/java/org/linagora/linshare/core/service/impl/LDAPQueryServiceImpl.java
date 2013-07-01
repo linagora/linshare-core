@@ -101,6 +101,23 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
 		return query.auth(ldapConnection, userLogin, userPasswd);
 	}
+	
+	
+
+	@Override
+	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
+		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
+
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("domain", baseDn);
+
+		LqlRequestCtx lqlctx = new LqlRequestCtx(ldapContext, vars, true);
+		IDnList dnList = new LinShareDnList(domainPattern.getSearchPageSize(), domainPattern.getSearchSizeLimit());
+
+		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
+		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
+		return query.searchUser(mail);
+	}
 
 	@Override
 	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail, String first_name, String last_name) throws BusinessException,

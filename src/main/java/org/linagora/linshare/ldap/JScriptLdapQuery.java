@@ -207,7 +207,8 @@ public class JScriptLdapQuery {
 	 *            : the result list could contains partial dn list (dn without
 	 *            the base dn used during research)
 	 * @param completionMode
-	 *            TODO
+	 *            : completion mode return a user object with only mail, firstname, and lastname set.
+	 *            Otherwise all defined attributes will be search and set (mail, firstname, lastname, uid, ...)
 	 * @return List of user
 	 */
 	private List<User> dnListToUsersList(List<String> dnResultList, boolean addBaseDn, boolean completionMode) {
@@ -335,6 +336,33 @@ public class JScriptLdapQuery {
 		mail = addExpansionCharacters(mail);
 		first_name = addExpansionCharacters(first_name);
 		last_name = addExpansionCharacters(last_name);
+
+		// Setting lql query parameters
+		Map<String, Object> vars = lqlctx.getVariables();
+		vars.put("mail", mail);
+		vars.put("first_name", first_name);
+		vars.put("last_name", last_name);
+		logLqlQuery(command, mail, first_name, last_name);
+
+		// searching ldap directory with pattern
+		List<String> dnResultList = this.evaluate(command);
+
+		return dnListToUsersList(dnResultList, true, false);
+	}
+	
+	/**
+	 * This method allow to search a user from part of his mail.
+	 * @param mail
+	 * @return
+	 * @throws NamingException
+	 */
+	public List<User> searchUser(String mail) throws NamingException {
+
+		// Getting lql expression for completion
+		String command = domainPattern.getSearchUserCommand();
+		mail = addExpansionCharacters(mail);
+		String first_name = "*";
+		String last_name = "*";
 
 		// Setting lql query parameters
 		Map<String, Object> vars = lqlctx.getVariables();

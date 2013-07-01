@@ -86,15 +86,6 @@ public interface UserService {
     List<User> searchUser(String mail, String firstName, String lastName,AccountType userType,User currentUser) throws BusinessException;
     
     /**
-     * Search available user for editing restricted email list owned by guest.
-     * @param mail
-     * @param currentGuest
-     * @return
-     * @throws BusinessException
-     */
-    public List<User> searchUserForRestrictedGuestEditionForm(String mail, String firstName, String lastName, User currentGuest) throws BusinessException;
-    	
-    /**
      * Delete a User (and all the corresponding share )
      * @param login
      * @param actor 

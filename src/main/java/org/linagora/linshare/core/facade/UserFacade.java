@@ -106,19 +106,6 @@ public interface UserFacade {
      */
     List<UserVo> searchGuest(String mail);
     
-    
-    /**
-     * 
-     * @param mail
-     * @param currentGuest
-     * @return
-     * @throws BusinessException
-     */
-    List<UserVo> searchUserForRestrictedGuestEditionForm(String mail, String firstName, String lastName, String currentGuestEmail) throws BusinessException;
-    
-    
-    
-
     /** Delete a guest, purge an internal user.
      * @param login login of the user to delete.
      * @param owner : the actor that has to be the guest creator or an admin of the application

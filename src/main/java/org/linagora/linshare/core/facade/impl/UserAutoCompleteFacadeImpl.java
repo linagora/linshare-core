@@ -59,6 +59,7 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 	@Override
 	public List<UserVo> autoCompleteUser(UserVo currentUserVo, String pattern) throws BusinessException {
 		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
+		logger.debug("nb result for completion : " + users.size());
 		// TODO : FMA : Use database configuration
 		return getUserVoList(users, 15, true);
 	}
@@ -66,6 +67,7 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 	@Override
 	public List<UserVo> autoCompleteUserSortedByFavorites(UserVo currentUserVo, String pattern) throws BusinessException {
 		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
+		logger.debug("nb result for completion : " + users.size());
 			
 			// TODO : FIXME : FMA : add favorite sort.
 //		userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input, userVo));
@@ -74,6 +76,19 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 		// TODO : FMA : Use database configuration	
 		return getUserVoList(users, 15, true);
 	}
+
+	
+	@Override
+	public List<String> autoCompleteMail(UserVo currentUserVo, String pattern) throws BusinessException {
+		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
+		logger.debug("nb result for completion : " + users.size());
+		List<String> res = new ArrayList<String>();
+		for (User user : users) {
+			res.add(user.getMail());
+		}
+		return res;
+	}
+
 
 	/***********************/
 	/** Utility functions **/
