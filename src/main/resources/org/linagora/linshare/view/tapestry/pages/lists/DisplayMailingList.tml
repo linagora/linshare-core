@@ -6,10 +6,50 @@
 			
 		<div id="content">
 		
-		<h1>${mailingList.identifier}</h1>
+		<h1>${mailingList.identifier} (${mailingList.owner.firstName} ${mailingList.owner.lastName}) </h1>
 		<br></br>
-		<h2> ${message:pages.groups.members.type.owner}: ${mailingList.owner.firstName} ${mailingList.owner.lastName}</h2>
-		<br></br>
+		<h2> ${message:pages.administration.displayLists.index}</h2>
+				<t:if test="isEmpty">
+						${message:pages.lists.empty}
+			<p:else>
+			<t:grid source="contacts" rowsPerPage="15" include="firstName,lastName,mail" add="actions" row="contact">
+			<t:parameter name="actionsCell">
+			 	 		<t:actionLink t:id="editContact" context="contact.mail"
+			 	 			href="#formBis"
+			 	 			title="${message:pages.lists.index.list.contact.edit.button}">
+							<img src="${asset:context:images/icons/edit.png}" alt="${message:pages.lists.index.list.contact.edit.button}" />
+						</t:actionLink>
+			 	 		<t:actionLink t:id="deleteContact" context="contact.mail" t:zone="zoneConfirmDelete"
+			 	 			title="${message:pages.lists.index.list.display.delete.button}">
+			 	 			<span onclick="window_confirm.showCenter(true)">
+							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+							</span>
+						</t:actionLink>
+			</t:parameter>
+			 </t:grid>
+			</p:else>
+		</t:if>
+		<div class="clear"></div>
+		
+		<t:if test="inModify">
+		
+			<form t:type="form" t:id="formBis">
+				<fieldset class="title_criteria_zone" id="contactCriterion">
+				<legend align="top" class="palette">${message:pages.lists.index.list.contact.edit.button}</legend>
+				<p><t:label for="email"/>:&nbsp;
+        		<t:textfield t:id="emailBis" value="email"/></p><br></br>
+				
+				<p><t:label for="firstName"/>:&nbsp;
+        		<t:textfield t:id="firstNameBis" value="firstName"/></p><br></br>
+   		
+   				<p><t:label for="lastName"/>:&nbsp;
+        		<t:textfield t:id="lastNameBis" value="lastName"/></p><br></br>
+		
+        		<p><input type="submit"  value="${message:pages.lists.index.list.contact.edit.button}"/>
+        		<input t:type="submit" t:id="reset" value="${message:global.button.reset}"/></p>
+				</fieldset>
+			</form>
+		<p:else>
 			<form t:type="form" t:id="form">
 				<fieldset class="title_criteria_zone" id="contactCriterion">
 				<legend align="top" class="palette">${message:pages.lists.addContact}</legend>
@@ -25,6 +65,9 @@
         		<p><input type="submit"  value="${message:pages.lists.addContact}"/></p>
 				</fieldset>
 			</form>
+		</p:else>
+		</t:if>
+			
 	  <div class="clear"></div>
 
 			<form t:type="form" t:id="forms">
@@ -73,22 +116,6 @@
 				</fieldset>
 			</form>
 	  <div class="clear"></div>
-		<t:if test="isEmpty">
-						${message:pages.lists.empty}
-			<p:else>
-			<t:grid source="lists" rowsPerPage="10" include="display" add="actions" row="list">
-			<t:parameter name="actionsCell">
-			 	 		<t:actionLink t:id="deleteContact" context="list.persistenceId" t:zone="zoneConfirmDelete"
-			 	 			title="${message:pages.lists.index.list.display.delete.button}">
-			 	 			<span onclick="window_confirm.showCenter(true)">
-							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
-							</span>
-						</t:actionLink>
-			</t:parameter>
-			 </t:grid>
-			</p:else>
-		</t:if>
-		<div class="clear"></div>
 		<t:actionLink t:id="back" class="button">
 		<span>${message:pages.thread.admin.back}</span>
 		</t:actionLink>

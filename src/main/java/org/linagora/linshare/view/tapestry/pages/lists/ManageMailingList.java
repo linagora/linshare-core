@@ -121,6 +121,8 @@ public class ManageMailingList {
 	public void init() {
 		if (mailingList == null) {
 			mailingList = new MailingListVo();
+			mailingList.setIdentifier("");
+			mailingList.setListDescription("");
 		}
 	}
 
@@ -153,8 +155,8 @@ public class ManageMailingList {
 	public Object onActionFromCancel() {
 		mailingList = null;
 		inModify = false;
-		index.setDisplayGrid(true);
 		oldIdentifier = null;
+		index.setFromCreate(false);
 		return index;
 	}
 
@@ -189,7 +191,7 @@ public class ManageMailingList {
 				mailingList.setDomain(domain);
 				
 			mailingListFacade.updateMailingList(mailingList);
-			index.setDisplayGrid(true);
+			index.setFromCreate(false);
 			
 		} else {
 			mailingList.setOwner(loginUser);
@@ -207,10 +209,9 @@ public class ManageMailingList {
 			
 
 				mailingListFacade.createMailingList(mailingList);
-				
-				
-			index.setDisplayGrid(false);
+				index.setFromCreate(true);
 		}
+		inModify = false;
 		mailingList = null;
 		return index;
 	}

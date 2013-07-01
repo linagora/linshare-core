@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -57,6 +58,13 @@ public class DisplayMailingList {
     private MailingListVo mailingList;
 	
 	private List<MailingListContactVo> lists;
+	
+	@Persist
+	@Property
+	private List<UserVo> contacts;
+
+	@Property
+	private UserVo contact;
 	
 	private MailingListContactVo list;
 	
@@ -81,12 +89,15 @@ public class DisplayMailingList {
 		if(!isEmpty) {
 			lists = new ArrayList<MailingListContactVo>();
 			lists = mailingList.getMails();
+			contacts = new ArrayList<UserVo>();
+			for(MailingListContactVo current :lists){
+				contacts.add(mailingListFacade.getUserFromDisplay(current.getDisplay()));
+			}
 		}
 	}
 	
     public Object onActionFromBack() {
         mailingList=null;
-        index.setDisplayGrid(true);
         return index;
      }
 

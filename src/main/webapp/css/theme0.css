@@ -1376,6 +1376,15 @@ table.t-data-grid {
 
 /* Page content */
 
+#content h2 {
+	margin: .75em auto;
+	color: #3D697F;
+	font-size: 1.20em;
+	margin-bottom: 10px;
+	padding-bottom: 3px;
+	border-bottom: solid #b0d6ee 1px;
+}
+
 #pageContent h2 {
 	margin: .75em auto;
 	color: #3D697F;

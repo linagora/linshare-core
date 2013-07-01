@@ -28,6 +28,18 @@ public class MailingListContactRepositoryImpl extends AbstractRepositoryImpl<Mai
 	}
 
 	@Override
+	public MailingListContact findByMail(String mail) {
+		List<MailingListContact> mailingList = findByCriteria(Restrictions.eq("mail", mail));
+		if (mailingList == null || mailingList.isEmpty()) {
+			return null;
+		} else if (mailingList.size() == 1) {
+			return mailingList.get(0);
+		} else {
+			throw new IllegalStateException("Id must be unique");
+		}
+	}
+	
+	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailingListContact entity) {
 		DetachedCriteria det = DetachedCriteria.forClass(MailingListContact.class).add(
 				Restrictions.eq("id", entity.getPersistenceId()));

@@ -78,7 +78,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.restricted = false;
 		this.domainIdentifier = null;
 	}
-
+	
 	public UserVo(Account account) {
 		this.login = account.getLsUuid();
 		this.userType = account.getAccountType();

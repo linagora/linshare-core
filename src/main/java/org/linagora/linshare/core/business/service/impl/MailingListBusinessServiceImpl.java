@@ -111,6 +111,11 @@ class ComparateurMailingList implements Comparator<MailingList> {
     }
     
     @Override
+    public MailingListContact retrieveMailingListContact(String mail){
+    	return mailingListContactRepository.findByMail(mail);
+    }
+    
+    @Override
     public List<MailingList> findAllMailingList() {
     	List<MailingList> myList = new ArrayList<MailingList>();
     	myList = mailingListRepository.findAll();
@@ -171,6 +176,13 @@ class ComparateurMailingList implements Comparator<MailingList> {
     	list.setOwner(listToUpdate.getOwner());
     
     	mailingListRepository.update(list);
+    }
+    
+    public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException {
+    	MailingListContact contact = retrieveMailingListContact(contactToUpdate.getPersistenceId());
+    	contact.setMails(contactToUpdate.getMails());
+    	contact.setDisplay(contactToUpdate.getDisplay());
+    	mailingListContactRepository.update(contact);
     }
     
 }

@@ -84,12 +84,8 @@ public class Index {
 	@Inject
 	private MailingListFacade mailingListFacade;
 
-	@Persist
-	@Property(write = false)
-	private boolean displayGrid;
-
 	@Property
-	private int autocompleteMin;
+	private int autocompleteMin=3;
 
 	@Property
 	private String targetLists;
@@ -97,30 +93,27 @@ public class Index {
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 
-	private boolean displayAllLists;
-
 	private boolean emptyList;
+	
+	@Persist
+	@Property
+	private String criteriaOnSearch;
+	
+	@Persist
+	private boolean inSearch;
+	
+	@Persist
+	private boolean fromCreate;
 
 	@SetupRender
 	public void init() throws BusinessException {
-		if (displayGrid == false) {
-			autocompleteMin = functionalityFacade.completionThreshold(loginUser
-					.getDomainIdentifier());
+		if(inSearch == false || fromCreate == true){
 			lists = mailingListFacade.findAllMailingListByUser(loginUser);
-			setEmptyList(lists.isEmpty());
-		} else {
-			lists = mailingListFacade.findAllMailingListByUser(loginUser);
-			setEmptyList(lists.isEmpty());
-			if(isEmptyList()){
-				displayGrid =false;
 			}
-		}
+			setEmptyList(lists.isEmpty());
+			criteriaOnSearch = "all";
 	}
 
-	@CleanupRender
-	public void end() throws BusinessException {
-		displayGrid = false;
-	}
 
 	public boolean getListIsDeletable() throws BusinessException {
 		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
@@ -138,52 +131,73 @@ public class Index {
 	public void deleteList() throws BusinessException {
 		mailingListFacade.deleteMailingList(listToDelete);
 		lists = mailingListFacade.findAllMailingListByUser(loginUser);
-		if (!lists.isEmpty()) {
-			displayGrid = true;
-		}
 		list=null;
 	}
 
 	/**
 	 * AutoCompletion for search field.
-	 * 
-	 * @param value
-	 *            the value entered by the user
+	 * @param value the value entered by the user
 	 * @return list the list of string matched by value.
-	 * @throws BusinessException
+	 * @throws BusinessException 
 	 */
-	public List<String> onProvideCompletionsFromSearch(String value) {
-		List<String> res = new ArrayList<String>();
-
-		try {
-			List<MailingListVo> founds = mailingListFacade
-					.findAllMailingListByUser(loginUser);
-			if (founds != null && founds.size() > 0) {
-				for (MailingListVo listVo : founds) {
-					res.add(listVo.getIdentifier());
-				}
-			}
-		} catch (BusinessException e) {
-			e.printStackTrace();
+	public List<String> onProvideCompletionsFromSearch(String input) {
+		List<MailingListVo> searchResults = performSearch(input);
+		List<String> elements = new ArrayList<String>();
+		for (MailingListVo current: searchResults) {
+			String completeName = current.getIdentifier();
+				elements.add(completeName);
 		}
-		return res;
+		return elements;
 	}
-
-	Object onActionFromDisplayAllLists() throws BusinessException {
-		displayAllLists = true;
-		return onSuccessFromForm();
+	
+	/**
+	 * Perform a list search.
+	 * 
+	 * @param input
+	 *            list search pattern.
+	 * @return list of lists.
+	 */
+	private List<MailingListVo> performSearch(String input) {
+		List<MailingListVo> list = new ArrayList<MailingListVo>();
+		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
+		list = mailingListFacade.findAllMailingList();
+		for(MailingListVo current : list){
+			if(current.getIdentifier().indexOf(input) != -1){
+				finalList.add(current);
+			}
+		}
+		return finalList;
 	}
+	
 
 	public Object onSuccessFromForm() throws BusinessException {
-		if (displayAllLists) {
-			lists = mailingListFacade.findAllMailingListByUser(loginUser);
-		} else {
-			lists = mailingListFacade.findAllMailingListByIdentifier(
-					targetLists, loginUser);
-		}
-		if (!lists.isEmpty()) {
-			displayGrid = true;
-		}
+    	inSearch = true;
+    	if(targetLists!=null){
+    		lists.clear();
+    		lists = performSearch(targetLists);
+    		if(criteriaOnSearch.equals("public")){
+    			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
+    			lists.clear();
+    			for(MailingListVo current : finalList){
+    				if(current.isPublic() == true){
+    					lists.add(current);
+    				}
+    			}
+    		}
+    		else if(criteriaOnSearch.equals("private")){
+    			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
+    			lists.clear();
+    			for(MailingListVo current : finalList){
+    				if(current.isPublic() == false){
+    					lists.add(current);
+    				}
+    			}
+    		}
+    	}
+    	else {
+    		lists=new ArrayList<MailingListVo>();
+    	}
+    	fromCreate = false;
 		return null;
 	}
 
@@ -202,10 +216,17 @@ public class Index {
 		this.emptyList = emptyList;
 	}
 	
-	public boolean isDisplayGrid() {
-		return displayGrid;
+	public String getPublic() { return "public"; }
+	public String getPrivate() { return "private"; }
+	public String getAll() { return "all"; }
+
+
+	public boolean isFromCreate() {
+		return fromCreate;
 	}
-	public void setDisplayGrid(boolean displayGrid) {
-		this.displayGrid = displayGrid;
+
+
+	public void setFromCreate(boolean fromCreate) {
+		this.fromCreate = fromCreate;
 	}
 }

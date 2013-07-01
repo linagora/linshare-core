@@ -28,6 +28,10 @@ public class MailingListContactVo {
 		this.display = display;
 	}
 
+	public MailingListContactVo(String mail) {
+		this.mail = mail;
+	}
+	
 	public long getPersistenceId() {
 		return persistenceId;
 	}

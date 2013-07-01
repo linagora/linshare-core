@@ -68,6 +68,11 @@ public class MailingListServiceImpl implements MailingListService {
     public MailingList retrieveMailingList(long persistenceId) {
     	return mailingListBusinessService.retrieveMailingList(persistenceId);
     }
+	
+	@Override
+    public MailingListContact retrieveMailingListContact(String mail){
+		return mailingListBusinessService.retrieveMailingListContact(mail);
+	}
     
 	@Override
     public List<MailingList> findAllMailingList() {
@@ -87,6 +92,11 @@ public class MailingListServiceImpl implements MailingListService {
 	@Override
     public void updateMailingList(MailingList listToUpdate) throws BusinessException {
 		mailingListBusinessService.updateMailingList(listToUpdate);
+	}
+	
+	@Override
+	public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException {
+		mailingListBusinessService.updateMailingListContact(contactToUpdate);
 	}
 	
 	@Override

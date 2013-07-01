@@ -6,14 +6,13 @@
 			
 		<div id="content">
 		
-		<h1>${mailingList.identifier}</h1>
+		<h1>${mailingList.identifier} (${mailingList.owner.firstName} ${mailingList.owner.lastName})</h1>
 		<br></br>
-		<h2> ${message:pages.groups.members.type.owner}: ${mailingList.owner.firstName} ${mailingList.owner.lastName}</h2>
-		<br></br>
+			<h2>${message:pages.administration.displayLists.index}</h2>
 		<t:if test="isEmpty">
 						${message:pages.lists.empty}
 			<p:else>
-			<t:grid source="lists" include="display" row="list"> </t:grid>
+			<t:grid source="contacts" rowsPerPage="20" include="firstName,lastName,mail" row="contact"> </t:grid>
 			</p:else>
 		</t:if>
 		
