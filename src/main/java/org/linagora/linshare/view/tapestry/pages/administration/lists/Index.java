@@ -35,8 +35,12 @@
 package org.linagora.linshare.view.tapestry.pages.administration.lists;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -50,8 +54,11 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
+import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
 import org.linagora.linshare.view.tapestry.pages.administration.lists.Index;
+import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,44 +91,39 @@ public class Index {
     @Inject
     private MailingListFacade mailingListFacade; 
     
-    
-	@Persist
-	@Property(write=false)
-	private boolean displayGrid;
-	
 	@Property
-	private int autocompleteMin;
+	private int autocompleteMin=3;
+	
+	@Inject
+	private RecipientFavouriteFacade recipientFavouriteFacade;
+	
+	@Persist
+	@Property
+	private String criteriaOnSearch;
 	
 	@Property
 	private String targetLists;
 	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-	
-	private boolean displayAllLists;
 
 
 	private boolean emptyList;
 	
+	@Persist
+	private boolean inSearch;
+	
 	
     @SetupRender
     public void init() throws BusinessException {
-		if(displayGrid == false){
-    	autocompleteMin = functionalityFacade.completionThreshold(loginUser.getDomainIdentifier());
-    	lists= mailingListFacade.findAllMailingList();
-		setEmptyList(lists.isEmpty());
-		} else {
+    	if(inSearch == false){
 			lists = mailingListFacade.findAllMailingList();
-			setEmptyList(lists.isEmpty());
-			if(isEmptyList()){
-				displayGrid =false;
 			}
-		}
+			setEmptyList(lists.isEmpty());
+			criteriaOnSearch = "all";
+
     }
-    @CleanupRender
-    public void end() throws BusinessException {
-    	displayGrid = false;
-    }
+
     
     public boolean getListIsDeletable() throws BusinessException {
     	list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
@@ -139,38 +141,71 @@ public class Index {
     public void deleteList() throws BusinessException {
     	mailingListFacade.deleteMailingList(listToDelete);
         lists = mailingListFacade.findAllMailingList();
-        if(!lists.isEmpty()){ 
-        	displayGrid = true;
-        }
     }
+    
+    
 	/**
 	 * AutoCompletion for search field.
 	 * @param value the value entered by the user
 	 * @return list the list of string matched by value.
 	 * @throws BusinessException 
 	 */
-	public List<String> onProvideCompletionsFromSearch(String value){
-		List<String> res = new ArrayList<String>();
-		
-			List<MailingListVo> founds = mailingListFacade.findAllMailingList();
-			if (founds != null && founds.size() > 0) {
-				for (MailingListVo listVo : founds) {
-					res.add(listVo.getIdentifier());
-				}
-			}
-		return res;
+	public List<String> onProvideCompletionsFromSearch(String input) {
+		List<MailingListVo> searchResults = performSearch(input);
+		List<String> elements = new ArrayList<String>();
+		for (MailingListVo current: searchResults) {
+			String completeName = current.getIdentifier();
+				elements.add(completeName);
+		}
+		return elements;
 	}
-    
-	Object onActionFromDisplayAllLists() throws BusinessException { displayAllLists = true; return onSuccessFromForm();}
+	
+	/**
+	 * Perform a list search.
+	 * 
+	 * @param input
+	 *            list search pattern.
+	 * @return list of lists.
+	 */
+	private List<MailingListVo> performSearch(String input) {
+		List<MailingListVo> list = new ArrayList<MailingListVo>();
+		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
+		list = mailingListFacade.findAllMailingList();
+		for(MailingListVo current : list){
+			if(current.getIdentifier().indexOf(input) != -1){
+				finalList.add(current);
+			}
+		}
+		return finalList;
+	}
+	
     
     public Object onSuccessFromForm() throws BusinessException {	
-    		if(displayAllLists) {
-        	lists= mailingListFacade.findAllMailingList();
-    		} else {
-    			lists = mailingListFacade.findAllMailingListByIdentifier(targetLists);
+    	inSearch = true;
+    	if(targetLists!=null){
+    		lists.clear();
+    		lists = performSearch(targetLists);
+    		if(criteriaOnSearch.equals("public")){
+    			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
+    			lists.clear();
+    			for(MailingListVo current : finalList){
+    				if(current.isPublic() == true){
+    					lists.add(current);
+    				}
+    			}
     		}
-    	if(!lists.isEmpty()) {
-    	displayGrid = true;
+    		else if(criteriaOnSearch.equals("private")){
+    			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
+    			lists.clear();
+    			for(MailingListVo current : finalList){
+    				if(current.isPublic() == false){
+    					lists.add(current);
+    				}
+    			}
+    		}
+    	}
+    	else {
+    		lists=new ArrayList<MailingListVo>();
     	}
     	return null;
     }
@@ -182,19 +217,17 @@ public class Index {
         return this;
     }
     
+	public String getPublic() { return "public"; }
+	public String getPrivate() { return "private"; }
+	public String getAll() { return "all"; }
+    
+    
 	public boolean isEmptyList() {
 		return emptyList;
 	}
 
 	public void setEmptyList(boolean emptyList) {
 		this.emptyList = emptyList;
-	}
-
-	public boolean isDisplayGrid() {
-		return displayGrid;
-	}
-	public void setDisplayGrid(boolean displayGrid) {
-		this.displayGrid = displayGrid;
 	}
 
 }

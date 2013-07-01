@@ -198,7 +198,6 @@ public class ManageMailingList {
 	
     public Object onActionFromCancel() {
         mailingList=null;
-        index.setDisplayGrid(true);
 		oldIdentifier = null;
 		oldOwner = null;
         return index;
@@ -233,7 +232,6 @@ public class ManageMailingList {
 			 mailingListFacade.updateMailingList(mailingList);
 			 
 				mailingList=null;
-		        index.setDisplayGrid(true);
 				return index;
 		}
 }

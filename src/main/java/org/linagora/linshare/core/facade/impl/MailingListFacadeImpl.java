@@ -15,6 +15,7 @@ import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
+import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +97,11 @@ public class MailingListFacadeImpl implements MailingListFacade {
     }
     
     @Override
+    public void updateMailingListContact(MailingListContactVo contactToUpdate) throws BusinessException {
+    	mailingListService.updateMailingListContact(new MailingListContact(contactToUpdate));
+    }
+    
+    @Override
     public List<MailingListVo> findAllMailingListByIdentifier(String identifier, UserVo actorVo) throws BusinessException {
     	List<MailingListVo> list = new ArrayList<MailingListVo>();
     	List<MailingListVo> listByUser = new ArrayList<MailingListVo>();
@@ -146,6 +152,11 @@ public class MailingListFacadeImpl implements MailingListFacade {
    }
    
    @Override
+   public MailingListContactVo retrieveMailingListContact(String mail){
+	   return new MailingListContactVo(mailingListService.retrieveMailingListContact(mail));
+   }
+   
+   @Override
    public String checkUniqueId(String value,UserVo user) throws BusinessException {
 	   List<MailingListVo> list = new ArrayList<MailingListVo>();
 	   list = findAllMailingListByOwner(user);
@@ -170,5 +181,29 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		   list.add(new MailingListVo(current));
 	   }
 	   return list;
+   }
+   
+   @Override
+   public List<MailingListVo> copyList(List<MailingListVo> list) {
+	   List<MailingListVo> copy = new ArrayList<MailingListVo>();
+	   for(MailingListVo current : list) { 
+			  copy.add(current);
+	   }
+	return copy;	
+   }
+   
+   @Override
+   public UserVo getUserFromDisplay(String display) {	
+	   int index1 = display.indexOf("<");
+	   String fullName  = display.substring(1, index1-2);
+	   
+	   int index2 = fullName.indexOf(" ");
+	   String lastName = fullName.substring(0,index2);
+	   String firstName = fullName.substring(index2+1);		
+	   
+	   int index3 = display.indexOf(">");
+	   String email  = display.substring(index1+1, index3);
+	   
+	   return new UserVo(email, firstName, lastName);
    }
 }

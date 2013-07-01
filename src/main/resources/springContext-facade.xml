@@ -91,6 +91,7 @@
 	<bean name="recipientFavouriteFacade" class="org.linagora.linshare.core.facade.impl.RecipientFavouriteFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="recipientFavouriteService" />
+		<constructor-arg ref="mailingListService" />
 	</bean>
 
 	<!-- Definition of the transformers -->

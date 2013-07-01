@@ -48,7 +48,10 @@ public interface MailingListBusinessService {
     public void deleteMailingList(long persistenceId) throws BusinessException;
     public void updateMailingList(MailingList listToUpdate) throws BusinessException;
     public List<MailingList> findAllMailingListByOwner(User user);
-    public void deleteMailingListContact(long persistenceId) throws BusinessException;
+    
+    public MailingListContact retrieveMailingListContact(String mail);
     public MailingListContact retrieveMailingListContact(long persistenceId);
     public MailingListContact createMailingListContact(MailingListContact mailingListContact) throws BusinessException;
+    public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException;
+    public void deleteMailingListContact(long persistenceId) throws BusinessException;
 }
