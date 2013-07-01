@@ -187,15 +187,8 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		return getHibernateTemplate().executeFind(new HibernateCallback() {
 			public Object doInHibernate(final Session session)
 			throws HibernateException, SQLException {
-				
-						
 				final Query query = session.createQuery("select u.mail from User u where lower(u.mail) like :mail");
-				
-				
-				query.setParameter("mail", beginWith+"%");
-				
-				
-				
+				query.setParameter("mail", "%" + beginWith + "%");
 				return query.setCacheable(true).list();
 			}
 		});
