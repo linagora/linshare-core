@@ -62,6 +62,9 @@ public class LinShareDnList extends DnList {
 			// Setting pagination control.
 			ldapCtx.setRequestControls(new Control[] { new PagedResultsControl(searchPageSize, Control.CRITICAL) });
 			
+			// No attributes will be return.
+			scs.setReturningAttributes(new String [] { });
+			
 			NamingEnumeration<SearchResult> results = ldapCtx.search(base, filter, scs);
 			while (results != null && results.hasMore()) {
 				SearchResult entry = (SearchResult) results.next();
