@@ -868,14 +868,14 @@ public class UserServiceImpl implements UserService {
 		List<User> users = userRepository.findAll();
 		List<User> internalsBreaked = new ArrayList<User>();
 
+		logger.debug("System is about to process internal user existence test : " + users.size());
 		for (User user : users) {
 			if (user.getAccountType().equals(AccountType.INTERNAL)) {
 				if (!(user.getRole().equals(Role.SYSTEM) || user.getRole().equals(Role.SUPERADMIN))) { // hide
 																										// these
 																										// accounts
 					try {
-						List<User> found = abstractDomainService.searchUserWithoutRestriction(user.getDomain(), user.getMail());
-						if (found == null || found.size() != 1) {
+						if(!abstractDomainService.isExistUserWithoutRestriction(user.getDomain(), user.getMail())) {
 							internalsBreaked.add(user);
 						}
 					} catch (BusinessException e) {

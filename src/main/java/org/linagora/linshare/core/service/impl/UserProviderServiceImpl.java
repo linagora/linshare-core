@@ -232,6 +232,11 @@ public class UserProviderServiceImpl implements UserProviderService {
     }
     
     @Override
+	public Boolean isExistUser(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException {
+    	return ldapQueryService.isExistUser(userProvider.getLdapconnexion(), userProvider.getBaseDn(), userProvider.getPattern(), mail);
+	}
+
+	@Override
     public User auth(LdapUserProvider userProvider, String mail, String userPasswd)	throws BusinessException, NamingException, IOException {
         LdapUserProvider p = userProvider;
         if(p == null) {

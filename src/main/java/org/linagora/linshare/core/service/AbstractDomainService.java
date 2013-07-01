@@ -135,6 +135,14 @@ public interface AbstractDomainService {
 	 */
 	public List<User> searchUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException;
 	
+	/**
+	 * Test if a user exists or not in ldap.
+	 * @param domain
+	 * @param mail
+	 * @return true if a user exists
+	 * @throws BusinessException
+	 */
+	public Boolean isExistUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException;
 	
 	/**
 	 * This method is designed to search in a particular domain and its SubDomain.

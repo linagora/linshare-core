@@ -133,7 +133,6 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.debug(LinShareTestConstants.END_TEARDOWN);
 	}
 	
-//	@Ignore
 	@Test
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
@@ -148,6 +147,23 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 //		Assert.assertNotNull(user);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
+	
+	@Test
+	public void testSearch2() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+//		User user = ldapQueryService.auth(ldapConn, baseDn, pattern, "bart.simpson@int1.linshare.dev", "password1");
+		Boolean user = ldapQueryService.isExistUser(ldapConn, baseDn, pattern, "uafieyee@linagora.com");
+		
+		
+		
+		Assert.assertEquals(user, true);
+//		user = ldapQueryService.auth(ldapConn, baseDn, pattern, "user1", "bla");
+//		Assert.assertNull(user);
+//		user = ldapQueryService.auth(ldapConn, baseDn, pattern, "user1@linpki.org", "password1");
+//		Assert.assertNotNull(user);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
 	
 	@Test
 	public void testFred() throws BusinessException, NamingException, IOException {

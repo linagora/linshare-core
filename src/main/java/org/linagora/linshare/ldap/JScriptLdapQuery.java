@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
-import javax.naming.ldap.InitialLdapContext;
 
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.Internal;
@@ -376,6 +375,32 @@ public class JScriptLdapQuery {
 
 		return dnListToUsersList(dnResultList, true, false);
 	}
+	
+	public Boolean isExistUser(String mail) throws NamingException {
+
+		// Getting lql expression for completion
+		String command = domainPattern.getSearchUserCommand();
+		if (mail == null || mail.length() < 1) {
+			return false;
+		}
+		String first_name = "*";
+		String last_name = "*";
+
+		// Setting lql query parameters
+		Map<String, Object> vars = lqlctx.getVariables();
+		vars.put("mail", mail);
+		vars.put("first_name", first_name);
+		vars.put("last_name", last_name);
+		logLqlQuery(command, mail, first_name, last_name);
+
+		// searching ldap directory with pattern
+		List<String> dnResultList = this.evaluate(command);
+		if(dnResultList != null && !dnResultList.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+	
 
 	/**
 	 * Ldap Authentification method
@@ -417,6 +442,7 @@ public class JScriptLdapQuery {
 			return dnToUser(userDn, false);
 		} catch (AuthenticationException e) {
 			logger.error("Can not set ldap context: " + e.getExplanation());
+			logger.debug(e.getMessage());
 		} catch (Exception e) {
 			logger.error("Can not set ldap context");
 			logger.debug(e.getMessage());
