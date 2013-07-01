@@ -512,10 +512,15 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	private void checkSpace(long size, String fileName, Account owner) throws BusinessException {
 		// check the user quota
-		if (getAvailableSize(owner) < size) {
-			logger.info("The file  " + fileName + " is too large to fit in " + owner.getLsUuid() + " user's space");
+		if (size > getUserMaxFileSize(owner)) {
+			logger.info("The file  " + fileName + " is larger than " + owner.getLsUuid() + " user's max file size.");
 			String[] extras = { fileName };
-			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space", extras);
+			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is larger than user's max file size.", extras);
+		}
+		if (getAvailableSize(owner) < size) {
+			logger.info("The file  " + fileName + " is too large to fit in " + owner.getLsUuid() + " user's space.");
+			String[] extras = { fileName };
+			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space.", extras);
 		}
 	}
 

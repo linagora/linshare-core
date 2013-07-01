@@ -30,6 +30,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
             var uploader = new qq.FineUploader({
                 element: jQuery('#uploader')[0],
                 debug: true,
+                maxConnections: 1,
                 request: {
                     endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
                 },
