@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
 public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 
 	final private static Logger logger = LoggerFactory.getLogger(UserAutoCompleteFacadeImpl.class);
-	
+
 	private UserService userService;
-	
+
 	public UserAutoCompleteFacadeImpl(UserService userService) {
 		super();
 		this.userService = userService;
@@ -60,7 +60,7 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 	public List<UserVo> autoCompleteUser(UserVo currentUserVo, String pattern) throws BusinessException {
 		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
-		// TODO : FMA : Use database configuration
+		// TODO : FMA : Use database configuration for auto complete limit
 		return getUserVoList(users, 15, true);
 	}
 
@@ -68,27 +68,24 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 	public List<UserVo> autoCompleteUserSortedByFavorites(UserVo currentUserVo, String pattern) throws BusinessException {
 		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
-			
-			// TODO : FIXME : FMA : add favorite sort.
-//		userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input, userVo));
-//		return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), userVo);
-		
-		// TODO : FMA : Use database configuration	
+
+		// TODO : FIXME : FMA : add favorite sort.
+		// userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input,
+		// userVo));
+		// return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new
+		// ArrayList<UserVo>(userSet), userVo);
+
+		// TODO : FMA : Use database configuration for auto complete limit
 		return getUserVoList(users, 15, true);
 	}
 
-	
 	@Override
 	public List<String> autoCompleteMail(UserVo currentUserVo, String pattern) throws BusinessException {
 		List<User> users = userService.autoCompleteUser(currentUserVo.getLogin(), pattern);
 		logger.debug("nb result for completion : " + users.size());
-		List<String> res = new ArrayList<String>();
-		for (User user : users) {
-			res.add(user.getMail());
-		}
-		return res;
+		// TODO : FMA : Use database configuration for auto complete limit
+		return getMailList(users, 15);
 	}
-
 
 	/***********************/
 	/** Utility functions **/
@@ -96,16 +93,21 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 
 	class EmptyUserVo extends UserVo {
 		private static final long serialVersionUID = 1188489032838386296L;
+
 		public EmptyUserVo() {
 			super(null, null, null, "...", AccountType.INTERNAL);
 		}
 	}
+
 	/**
 	 * Convert a list of Users to a list of UserVo.
 	 * 
 	 * @param users
 	 *            a list of users.
-	 * @param addEmptyUser TODO
+	 * @param limit
+	 * 			set the max element to be return
+	 * @param addEmptyUser
+	 *            TODO
 	 * @return a list of UserVo.
 	 */
 	private List<UserVo> getUserVoList(List<User> users, int limit, boolean addEmptyUser) {
@@ -113,12 +115,27 @@ public class UserAutoCompleteFacadeImpl implements UserAutoCompleteFacade {
 		int count = 0;
 		for (User user : users) {
 			userVOs.add(new UserVo(user));
-			count ++;
-			if(count == limit) {
-				if(addEmptyUser)	userVOs.add(new EmptyUserVo());
+			count++;
+			if (count == limit) {
+				if (addEmptyUser)
+					userVOs.add(new EmptyUserVo());
 				break;
 			}
 		}
 		return userVOs;
+	}
+	
+	private List<String> getMailList(List<User> users, int limit) {
+		int count = 0;
+		List<String> res = new ArrayList<String>();
+		for (User user : users) {
+			res.add(user.getMail());
+			count++;
+			if (count == limit) {
+				res.add("...");
+				break;
+			}
+		}
+		return res;
 	}
 }
