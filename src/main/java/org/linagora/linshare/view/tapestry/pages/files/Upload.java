@@ -106,6 +106,10 @@ public class Upload {
 
 	@Property
 	private String contextPath;
+	
+	@Persist("flash")
+	@Property
+	private String errors;
 
 	/* ***********************************************************
 	 * Injected services
@@ -142,6 +146,7 @@ public class Upload {
 
 	void onActivate() {
 		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
+		errors = "";
 	}
 
 	@SetupRender
@@ -165,119 +170,142 @@ public class Upload {
 
 	void onSubmitFromShareForm() throws BusinessException {
 		/*
-		 * XXX FIXME TODO HACK : same code as QuickSharePopup ... it's not just smelly
+		 * XXX FIXME TODO HACK : same code as QuickSharePopup ... it's not just
+		 * smelly
 		 */
 		logger.debug("uuids = " + uuids);
-		    	filter = new XSSFilter(shareSessionObjects, shareForm, antiSamyPolicy, messages);
-    	try {
-    		textAreaSubjectValue = filter.clean(textAreaSubjectValue);
-    		textAreaValue = filter.clean(textAreaValue);
-    		if (filter.hasError()) {
-    			logger.debug("XSSFilter found some tags and striped them.");
-    			businessMessagesManagementService.notify(filter.getWarningMessage());
-    		}
-    	} catch (BusinessException e) {
-    		businessMessagesManagementService.notify(e);
-    	}
-    	//VALIDATE
+		filter = new XSSFilter(shareSessionObjects, shareForm, antiSamyPolicy,
+				messages);
+		try {
+			textAreaSubjectValue = filter.clean(textAreaSubjectValue);
+			textAreaValue = filter.clean(textAreaValue);
+			if (filter.hasError()) {
+				logger.debug("XSSFilter found some tags and striped them.");
+				businessMessagesManagementService.notify(filter
+						.getWarningMessage());
+			}
+		} catch (BusinessException e) {
+			businessMessagesManagementService.notify(e);
+		}
+		// VALIDATE
 
-    	boolean sendErrors = false;
-		  	
-    	try{
-    		List<DocumentVo> addedDocuments = new ArrayList<DocumentVo>();
-			List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+		boolean sendErrors = false;
+
+		try {
+			List<DocumentVo> addedDocuments = new ArrayList<DocumentVo>();
+			List<String> recipients = MailCompletionService
+					.parseEmails(recipientsSearch);
 			List<String> recipientsEmail;
 
-			String badFormatEmail =  "";
-			
-			for	(String uuid : StringJoiner.split(uuids, ",")) {
-				DocumentVo d = documentFacade.getDocument(userVo.getLogin(), uuid);
-				
+			String badFormatEmail = "";
+
+			for (String uuid : StringJoiner.split(uuids, ",")) {
+				DocumentVo d = documentFacade.getDocument(userVo.getLogin(),
+						uuid);
+
 				if (d == null) {
 					// shouldn't be there
-					logger.error("Error document with uuid: " + uuid + " not found.");
+					logger.error("Error document with uuid: " + uuid
+							+ " not found.");
 				}
 				addedDocuments.add(d);
 			}
-			
+
 			for (String recipient : recipients) {
-				if (!MailCompletionService.MAILREGEXP.matcher(recipient.toUpperCase()).matches()){
+				if (!MailCompletionService.MAILREGEXP.matcher(
+						recipient.toUpperCase()).matches()) {
 					badFormatEmail = badFormatEmail + recipient + " ";
 					sendErrors = true;
 				}
 			}
-			
-			if(sendErrors) {
-				businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_BADMAIL,
-	                MessageSeverity.ERROR, badFormatEmail));
+
+			if (sendErrors) {
+				businessMessagesManagementService
+						.notify(new BusinessUserMessage(
+								BusinessUserMessageType.QUICKSHARE_BADMAIL,
+								MessageSeverity.ERROR, badFormatEmail));
 				addedDocuments = new ArrayList<DocumentVo>();
 				return;
 			} else {
 				recipientsEmail = recipients;
 			}
-	    	
-	    	
-	    	if (addedDocuments == null || addedDocuments.size() == 0) {
-	    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE, MessageSeverity.ERROR));
+
+			if (addedDocuments == null || addedDocuments.size() == 0) {
+				businessMessagesManagementService
+						.notify(new BusinessUserMessage(
+								BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE,
+								MessageSeverity.ERROR));
 				return;
-	    	}
-	    	
-	
-	    	
-			//PROCESS SHARE
-			
-	    	Boolean errorOnAddress = false;
-	    	
+			}
+
+			// PROCESS SHARE
+
+			Boolean errorOnAddress = false;
+
 			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
 			try {
-				MailContainer mailContainer = new MailContainer(userVo.getLocale(), textAreaValue, textAreaSubjectValue);
-				sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, addedDocuments, recipientsEmail, secureSharing, mailContainer,null);
-			
+				MailContainer mailContainer = new MailContainer(
+						userVo.getLocale(), textAreaValue, textAreaSubjectValue);
+				sharing = shareFacade
+						.createSharingWithMailUsingRecipientsEmailAndExpiryDate(
+								userVo, addedDocuments, recipientsEmail,
+								secureSharing, mailContainer, null);
+
 			} catch (BusinessException e1) {
-				
-				// IF RELAY IS DISABLE ON SMTP SERVER 
-				if(e1.getErrorCode() == BusinessErrorCode.RELAY_HOST_NOT_ENABLE){
-					logger.error("Could not create sharing, relay host is disable : ", e1);
-					
-					String buffer =  "";
+
+				// IF RELAY IS DISABLE ON SMTP SERVER
+				if (e1.getErrorCode() == BusinessErrorCode.RELAY_HOST_NOT_ENABLE) {
+					logger.error(
+							"Could not create sharing, relay host is disable : ",
+							e1);
+
+					String buffer = "";
 					String sep = "";
 					for (String extra : e1.getExtras()) {
 						buffer = buffer + sep + extra;
 						sep = ", ";
 					}
-					businessMessagesManagementService.notify(new BusinessUserMessage(
-			                BusinessUserMessageType.UNREACHABLE_MAIL_ADDRESS, MessageSeverity.ERROR, buffer));
+					businessMessagesManagementService
+							.notify(new BusinessUserMessage(
+									BusinessUserMessageType.UNREACHABLE_MAIL_ADDRESS,
+									MessageSeverity.ERROR, buffer));
 					errorOnAddress = true;
 				} else {
 					logger.error("Could not create sharing, caught a BusinessException.");
 					logger.error(e1.getMessage());
 					businessMessagesManagementService.notify(e1);
-					
-			        // reset list of documents
-			        addedDocuments = new ArrayList<DocumentVo>();
-			        return;
+
+					// reset list of documents
+					addedDocuments = new ArrayList<DocumentVo>();
+					return;
 				}
 			}
-	
-			
+
 			if (sharing.getFailsItem().size() > 0) {
-	    		businessMessagesManagementService.notify(new BusinessUserMessage(
-	                BusinessUserMessageType.QUICKSHARE_FAILED, MessageSeverity.ERROR));
+				businessMessagesManagementService
+						.notify(new BusinessUserMessage(
+								BusinessUserMessageType.QUICKSHARE_FAILED,
+								MessageSeverity.ERROR));
 			} else if (errorOnAddress) {
 				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-				businessMessagesManagementService.notify(new BusinessUserMessage(
-	                BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
+				businessMessagesManagementService
+						.notify(new BusinessUserMessage(
+								BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS,
+								MessageSeverity.WARNING));
 			} else {
 				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-				businessMessagesManagementService.notify(new BusinessUserMessage(
-	                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
+				businessMessagesManagementService
+						.notify(new BusinessUserMessage(
+								BusinessUserMessageType.QUICKSHARE_SUCCESS,
+								MessageSeverity.INFO));
 			}
 
-    	}catch (NullPointerException e3) {
-    		logger.error("No Email in textarea", e3);
-    		businessMessagesManagementService.notify(new BusinessUserMessage(
-                    BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
-		}		
+		} catch (NullPointerException e3) {
+			logger.error("No Email in textarea", e3);
+			businessMessagesManagementService.notify(new BusinessUserMessage(
+					BusinessUserMessageType.QUICKSHARE_NOMAIL,
+					MessageSeverity.ERROR));
+		}
 	}
 
 	List<String> onProvideCompletionsFromRecipientsPattern(String input) {
