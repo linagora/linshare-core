@@ -31,18 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.core.facade.admin.impl;
 
-import java.util.List;
+import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.admin.WebServiceAdminFacade;
+import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
+import org.linagora.linshare.core.service.AccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Path;
+public class WebServiceAdminFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceAdminFacade {
 
-import org.linagora.linshare.webservice.dto.ThreadDto;
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceAdminFacadeImpl.class);
+	
+	public WebServiceAdminFacadeImpl(final AccountService accountService) {
+		super(accountService);
+	}
 
-@Path("/rest/threads")
-public interface ThreadRestService {
-
-	public List<ThreadDto> getAllMyThread();
-
-	public ThreadDto getThread(String uuid);
+	@Override
+	public User checkAuthentication() throws BusinessException {
+		User user = super.checkAuthentication();
+		if (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPERADMIN) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+		}
+		return user;
+	}
 }

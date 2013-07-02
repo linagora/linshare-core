@@ -31,18 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
-
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.admin.WebServiceAdminFacade;
+import org.linagora.linshare.webservice.admin.AdminRestService;
+import org.linagora.linshare.webservice.impl.WebserviceBase;
 
-@Path("/rest/threads")
-public interface ThreadRestService {
+public class AdminRestServiceImpl extends WebserviceBase implements AdminRestService {
 
-	public List<ThreadDto> getAllMyThread();
+	private final WebServiceAdminFacade webServiceAdminFacade;
 
-	public ThreadDto getThread(String uuid);
+	public AdminRestServiceImpl(final WebServiceAdminFacade webServiceAdminFacade) {
+		this.webServiceAdminFacade = webServiceAdminFacade;
+	}
+	
+	@Path("/authorized")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public Boolean isAuthorized() {
+		try {
+			webServiceAdminFacade.checkAuthentication();
+			return true;
+		} catch (BusinessException e) {
+			throw analyseFault(e);
+		}
+	}
 }

@@ -31,18 +31,11 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.core.facade.admin;
 
-import java.util.List;
+import org.linagora.linshare.core.facade.WebServiceGenericFacade;
 
-import javax.ws.rs.Path;
 
-import org.linagora.linshare.webservice.dto.ThreadDto;
-
-@Path("/rest/threads")
-public interface ThreadRestService {
-
-	public List<ThreadDto> getAllMyThread();
-
-	public ThreadDto getThread(String uuid);
+public interface WebServiceAdminFacade extends WebServiceGenericFacade {
+	
 }

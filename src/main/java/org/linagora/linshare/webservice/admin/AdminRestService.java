@@ -31,18 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
-
-import java.util.List;
+package org.linagora.linshare.webservice.admin;
 
 import javax.ws.rs.Path;
 
-import org.linagora.linshare.webservice.dto.ThreadDto;
+@Path("/rest/admin")
+public interface AdminRestService {
 
-@Path("/rest/threads")
-public interface ThreadRestService {
-
-	public List<ThreadDto> getAllMyThread();
-
-	public ThreadDto getThread(String uuid);
+	public Boolean isAuthorized();
 }

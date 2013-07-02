@@ -73,7 +73,8 @@ public class WebserviceBase {
 		ErrorDto errorDto = new ErrorDto(-1, e.toString());
 		return new WebApplicationException(e, Response.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
 	}
-	
+
+	@Deprecated
 	protected WebApplicationException analyseFaultREST(BusinessException e) {
 
 		// TODO locale in WebApplicationException ?

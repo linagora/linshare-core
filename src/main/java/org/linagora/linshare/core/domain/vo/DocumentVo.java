@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 import org.linagora.linshare.core.domain.entities.AnonymousShareEntry;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
 
 public class DocumentVo implements Serializable, Comparable {
 
@@ -91,6 +92,23 @@ public class DocumentVo implements Serializable, Comparable {
 	
 	private final String fileComment;
 	
+	public DocumentVo(DocumentEntry documentEntry) {
+		super();
+		this.identifier = documentEntry.getUuid();
+		this.fileName = documentEntry.getName();
+		this.creationDate = (Calendar)documentEntry.getCreationDate().clone();
+		if(documentEntry.getExpirationDate() != null) {
+			this.expirationDate = (Calendar)documentEntry.getExpirationDate().clone();
+		} else {
+			this.expirationDate = null;
+		}
+		this.ownerLogin = documentEntry.getEntryOwner().getLsUuid();
+		this.encrypted = documentEntry.getCiphered();
+		this.shared = documentEntry.isShared();
+		this.type = documentEntry.getType();
+		this.size = documentEntry.getSize();
+		this.fileComment = documentEntry.getComment();
+	}
 	
 	public DocumentVo(String identifier,String name, String fileComment, Calendar creationDate,
 			Calendar expirationDate,String type, String ownerLogin, Boolean encrypted,
@@ -99,7 +117,7 @@ public class DocumentVo implements Serializable, Comparable {
 		this.identifier=identifier;
 		this.fileName = name;
 		this.creationDate = (Calendar)creationDate.clone();
-		if(expirationDate !=null) {
+		if(expirationDate != null) {
 			this.expirationDate = (Calendar)expirationDate.clone();
 		} else {
 			this.expirationDate = null;

@@ -37,13 +37,12 @@ import java.util.List;
 
 import javax.ws.rs.Path;
 
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
-@Path("/rest/threads/members")
+@Path("/rest/thread_members")
 public interface ThreadMemberRestService {
 
 	public void addMember(String threadUuid, String domainId, String mail, boolean readonly);
 		
-	public List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException;
+	public List<ThreadMemberDto> getAllThreadMembers(String uuid);
 }

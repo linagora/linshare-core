@@ -41,7 +41,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceThreadFacade;
 import org.linagora.linshare.webservice.ThreadRestService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
@@ -57,17 +56,17 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	/**
 	 * get the files of the user
 	 */
-	@Path("/list")
+	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, "application/json;charset=UTF-8" })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<ThreadDto> getAllMyThread() throws BusinessException {
+	public List<ThreadDto> getAllMyThread() {
 		List<ThreadDto> threads = null;
 		try {
 			webServiceThreadFacade.checkAuthentication();
 			threads = webServiceThreadFacade.getAllMyThread();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 		return threads; 
 	}
@@ -76,13 +75,13 @@ public class ThreadRestServiceImpl extends WebserviceBase implements ThreadRestS
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public ThreadDto getThread(@PathParam("uuid") String uuid) throws BusinessException {
+	public ThreadDto getThread(@PathParam("uuid") String uuid) {
 		ThreadDto thread;
 		try {
 			webServiceThreadFacade.checkAuthentication();
 			thread = webServiceThreadFacade.getThread(uuid);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 		return thread;
 	}
