@@ -875,7 +875,7 @@ public class UserServiceImpl implements UserService {
 																										// these
 																										// accounts
 					try {
-						if(!abstractDomainService.isExistUserWithoutRestriction(user.getDomain(), user.getMail())) {
+						if(!abstractDomainService.isUserExist(user.getDomain(), user.getMail())) {
 							internalsBreaked.add(user);
 						}
 					} catch (BusinessException e) {

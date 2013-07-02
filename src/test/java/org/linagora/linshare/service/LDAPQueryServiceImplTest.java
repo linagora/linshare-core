@@ -34,6 +34,7 @@
 package org.linagora.linshare.service;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,8 +137,11 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date date_before = new Date();
 //		User user = ldapQueryService.auth(ldapConn, baseDn, pattern, "bart.simpson@int1.linshare.dev", "password1");
 		User user = ldapQueryService.auth(ldapConn, baseDn, pattern, "uafieyee@linagora.com", "secret");
+		Date date_after = new Date();
+		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		
 		
 		Assert.assertNotNull(user);
@@ -151,10 +155,13 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testSearch2() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date date_before = new Date();
+		
 //		User user = ldapQueryService.auth(ldapConn, baseDn, pattern, "bart.simpson@int1.linshare.dev", "password1");
-		Boolean user = ldapQueryService.isExistUser(ldapConn, baseDn, pattern, "uafieyee@linagora.com");
+		Boolean user = ldapQueryService.isUserExist(ldapConn, baseDn, pattern, "uafieyee@linagora.com");
 		
-		
+		Date date_after = new Date();
+		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()));
 		
 		Assert.assertEquals(user, true);
 //		user = ldapQueryService.auth(ldapConn, baseDn, pattern, "user1", "bla");
