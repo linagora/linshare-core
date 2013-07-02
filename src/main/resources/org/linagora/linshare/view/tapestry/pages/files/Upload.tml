@@ -87,11 +87,16 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
             <t:form t:id="shareForm">
                 <t:errors />
 
-                <!-- <t:zone t:id="shareZone"> -->
+                <!--upload and share client logic-->
                 <t:textfield t:id='uuids' name="uuids" style="display:none" />
                 <t:checkbox t:id='is_submit' name="is_submit" style="display:none" />
                 <t:textfield t:id='progress' name="progress" style="display:none" />
-                <!-- </t:zone> -->
+
+                <!--error message handling-->
+                <t:zone t:id="errorZone"> 
+                    <t:textfield t:id='errorCode' name="errorCode" style="display:none" />
+                    <t:actionLink t:id='error' style="display:none" />
+                </t:zone> 
 
                 <div class="description">
                     <p>${message:components.quickSharePopup.panelRecipients.description}</p>

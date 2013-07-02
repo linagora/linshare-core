@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
@@ -13,6 +14,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
@@ -106,10 +108,16 @@ public class Upload {
 
 	@Property
 	private String contextPath;
-	
+
 	@Persist("flash")
 	@Property
 	private String errors;
+
+	@Property
+	private String errorCode;
+
+	@Component
+	private Zone errorZone;
 
 	/* ***********************************************************
 	 * Injected services
@@ -319,6 +327,18 @@ public class Upload {
 			}
 		}
 		return elements;
+	}
+
+	Zone onActionFromError() {
+		// XXX HACK : using default error code, should analyze server response
+		businessMessagesManagementService.notify(new BusinessException(
+				BusinessErrorCode.UNKNOWN, ""));
+		errors = StringJoiner
+				.join(businessMessagesManagementService
+						.getBusinessMessages(messages), ",");
+		// XXX HACK : ensuring we always got the last error
+		businessMessagesManagementService.reset();
+		return errorZone;
 	}
 
 	/*
