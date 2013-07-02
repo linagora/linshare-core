@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.ShareEntry;
+import org.linagora.linshare.core.domain.entities.User;
 
 
 @XmlRootElement(name = "Share")
@@ -43,7 +44,7 @@ public class ShareDto extends EntryDto {
 
 	private Long downloaded;
 	
-	private String recipientLsUuid;
+	private UserDto recipient;
 	
 	private DocumentDto documentDto;
 	
@@ -55,7 +56,8 @@ public class ShareDto extends EntryDto {
 		super(shareEntry);
 		this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
 		this.downloaded = shareEntry.getDownloaded();
-		this.recipientLsUuid = shareEntry.getRecipient().getLsUuid();
+		this.recipient = new UserDto(shareEntry.getRecipient());
+		this.owner = new UserDto((User) shareEntry.getEntryOwner());
 	}
 	
 	public ShareDto() {
@@ -70,12 +72,12 @@ public class ShareDto extends EntryDto {
 		this.downloaded = downloaded;
 	}
 
-	public String getRecipientLsUuid() {
-		return recipientLsUuid;
+	public UserDto getRecipient() {
+		return recipient;
 	}
 
-	public void setRecipientLsUuid(String recipientLsUuid) {
-		this.recipientLsUuid = recipientLsUuid;
+	public void setRecipient(UserDto recipient) {
+		this.recipient = recipient;
 	}
 
 	public DocumentDto getDocumentDto() {

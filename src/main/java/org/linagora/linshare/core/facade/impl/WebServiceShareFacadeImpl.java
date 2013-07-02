@@ -217,7 +217,7 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl imple
 			// give personal message and subject in WS in the future? null at this
 			// time
 
-			mails.add(share.getRecipientLsUuid());
+			mails.add(share.getRecipient().getUuid());
 		}
 		String subject = null;
 		MailContainer mailContainer = new MailContainer(actor.getExternalMailLocale(), message, subject);
