@@ -37,10 +37,11 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
+import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
 
@@ -57,4 +58,5 @@ public interface DocumentRestService {
 	public SimpleLongValue getAvailableSize();
 	public DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body);
 	public DocumentDto addDocumentXop(DocumentAttachement doca);
+	public Response getDocumentStream(String uuid);
 }

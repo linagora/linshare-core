@@ -71,12 +71,7 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl
 	public List<DocumentDto> getDocuments() throws BusinessException {
 		User actor = getAuthentication();
 
-		List<DocumentEntry> docs;
-		try {
-			docs = documentEntryService.findAllMyDocumentEntries(actor, actor);
-		} catch (BusinessException e) {
-			throw e;
-		}
+		List<DocumentEntry> docs = documentEntryService.findAllMyDocumentEntries(actor, actor);
 
 		if (docs == null) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
@@ -134,8 +129,6 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl
 		} catch (IOException e) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
 					"unable to upload", e);
-		} catch (BusinessException e) {
-			throw e;
 		}
 		return new DocumentDto(res);
 	}

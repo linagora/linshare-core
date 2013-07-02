@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -219,5 +220,15 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
 					"Could not share the document");
 		}
+	@Override
+	public ShareDto getReceivedShare(String shareEntryUuid) throws BusinessException {
+		User actor = getAuthentication();
+		return new ShareDto(shareEntryService.findByUuid(actor, shareEntryUuid));
+	}
+
+	@Override
+	public InputStream getDocumentStream(String shareEntryUuid) throws BusinessException {
+		User actor = getAuthentication();
+		return shareEntryService.getShareStream(actor, shareEntryUuid);
 	}
 }
