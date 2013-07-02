@@ -359,10 +359,10 @@ public class JScriptLdapQuery {
 	/**
 	 * This method allow to find a user from his mail (entire mail, not a fragment).
 	 * @param mail
-	 * @return
+	 * @return a user
 	 * @throws NamingException
 	 */
-	public List<User> findUser(String mail) throws NamingException {
+	public User findUser(String mail) throws NamingException {
 
 		// Getting lql expression for completion
 		String command = domainPattern.getSearchUserCommand();
@@ -382,7 +382,12 @@ public class JScriptLdapQuery {
 		// searching ldap directory with pattern
 		List<String> dnResultList = this.evaluate(command);
 
-		return dnListToUsersList(dnResultList, true, false);
+		if(dnResultList.size() == 1) {
+			return dnToUser(dnResultList.get(0), false);
+		} else if(dnResultList.size() > 1) {
+			logger.error("mail must be unique ! " + mail);
+		}
+		return null;
 	}
 	
 	/**

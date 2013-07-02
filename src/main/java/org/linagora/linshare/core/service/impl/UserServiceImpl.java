@@ -946,18 +946,13 @@ public class UserServiceImpl implements UserService {
 		logger.debug("End saveOrUpdateUser");
 	}
 
-	private User findOrCreateUserWithDomainPolicies(String mail, AbstractDomain abstractDomain) throws BusinessException {
+	private User findOrCreateUserWithDomainPolicies(AbstractDomain abstractDomain, String mail) throws BusinessException {
 
 		User user = userRepository.findByMailAndDomain(abstractDomain.getIdentifier(), mail);
 		if (user == null) {
-			List<User> users = abstractDomainService.searchUserWithoutRestriction(abstractDomain, mail);
-			if (users != null) {
-				if (users.size() == 1) {
-					user = users.get(0);
-					saveOrUpdateUser(user);
-				} else if (users.size() >= 2) {
-					logger.error("Multiple results for user : " + mail);
-				}
+			user = abstractDomainService.findUserWithoutRestriction(abstractDomain, mail);
+			if (user != null) {
+				saveOrUpdateUser(user);
 			}
 		}
 		return user;
@@ -977,7 +972,7 @@ public class UserServiceImpl implements UserService {
 		// supposed to be here.
 		for (AbstractDomain abstractDomain : allAuthorizedDomains) {
 			if (abstractDomain.getIdentifier().equals(domainId)) {
-				user = findOrCreateUserWithDomainPolicies(mail, abstractDomain);
+				user = findOrCreateUserWithDomainPolicies(abstractDomain, mail);
 				// We don't need to continue
 				break;
 			}
@@ -986,7 +981,7 @@ public class UserServiceImpl implements UserService {
 		if (user == null) {
 			// Now we search in all authorized domains.
 			for (AbstractDomain abstractDomain : allAuthorizedDomains) {
-				user = findOrCreateUserWithDomainPolicies(mail, abstractDomain);
+				user = findOrCreateUserWithDomainPolicies(abstractDomain, mail);
 				if (user != null) {
 					// We don't need to continue
 					break;
@@ -1052,8 +1047,7 @@ public class UserServiceImpl implements UserService {
 			// The user was found in the database, but we have to check if this
 			// user is still in the ldap.
 			logger.debug("User '" + userDB.getMail() + "'found in database. Checking if he is still in the ldap");
-			List<User> list = abstractDomainService.searchUserWithoutRestriction(userDB.getDomain(), userDB.getMail());
-			if (list.size() == 1) {
+			if(abstractDomainService.isUserExist(userDB.getDomain(), userDB.getMail())) {
 				// the user still exists in the ldap, it is ok.
 				return userDB;
 			}

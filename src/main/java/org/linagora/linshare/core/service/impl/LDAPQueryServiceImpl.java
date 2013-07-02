@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,10 +88,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 	@Override
 	public User auth(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String userLogin, String userPasswd) throws BusinessException, NamingException, IOException {
-//		Date date = new Date();
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
-//		Date date2 = new Date();
-//		logger.info("diff : " + String.valueOf(date.getTime() - date2.getTime()));
 
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
@@ -104,13 +100,11 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
 		return query.auth(ldapConnection, userLogin, userPasswd);
 	}
-	
-	
 
 	@Override
-	public List<User> searchUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
+	public User findUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
-		
+
 		Map<String, Object> vars = new HashMap<String, Object>();
 		vars.put("domain", baseDn);
 
@@ -185,7 +179,4 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
 		return query.isUserExist(mail);
 	}
-	
-	
-
 }

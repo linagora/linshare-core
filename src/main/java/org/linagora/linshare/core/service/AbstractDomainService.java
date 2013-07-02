@@ -133,7 +133,7 @@ public interface AbstractDomainService {
 	 * @return An user object List (Ldap entry) containing directory informations. (mail, first name, last name, domain and default role). It is not an entity !
 	 * @throws BusinessException
 	 */
-	public List<User> searchUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException;
+	public User findUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException;
 	
 	/**
 	 * Test if a user exists or not in ldap. This method does not test domain policies.
