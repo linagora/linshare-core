@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Path;
@@ -64,7 +65,7 @@ public interface ShareRestService {
 	 * @throws IOException : in case of failure
 	 * 
 	 */
-	public void multiplesharedocuments(List<String> targetMails, List<String> uuids, int securedShare, String message);
+	public void multiplesharedocuments(ArrayList<ShareDto> shares, boolean secured, String message);
 	
 	public void sharedocument(String targetMail, String uuid, int securedShare);
 	

@@ -43,24 +43,26 @@ import org.linagora.linshare.core.domain.entities.Entry;
 public class EntryDto {
 
 	protected String uuid;
-	
+
 	protected String name;
-	
+
 	protected String description;
-	
+
 	protected String owner;
-	
+
 	protected Calendar creationDate;
-	
+
 	protected Calendar modificationDate;
-	
+
 	protected Calendar expirationDate;
-	
+
 	public EntryDto() {
 	}
-	
+
 	public EntryDto(Entry entry) {
-		if(entry==null) return;
+		if (entry == null) {
+			return;
+		}
 		this.uuid = entry.getUuid();
 		this.name = entry.getName();
 		this.creationDate = entry.getCreationDate();
@@ -125,5 +127,5 @@ public class EntryDto {
 	public void setExpirationDate(Calendar expirationDate) {
 		this.expirationDate = expirationDate;
 	}
-	
+
 }

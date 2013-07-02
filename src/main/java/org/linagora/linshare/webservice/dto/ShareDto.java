@@ -41,52 +41,25 @@ import org.linagora.linshare.core.domain.entities.ShareEntry;
 @XmlRootElement(name = "Share")
 public class ShareDto extends EntryDto {
 
-	private Boolean ciphered;
-	
-	private String type;
-	
-	private Long size;
-	
 	private Long downloaded;
 	
-	private String receiver;
+	private String recipientLsUuid;
 	
+	private DocumentDto documentDto;
+	
+	private int secured;
+	
+	private String message;
 
-	public ShareDto(ShareEntry de) {
-		super(de);
-		this.ciphered = de.getDocumentEntry().getCiphered();
-		this.type = de.getDocumentEntry().getDocument().getType();
-		this.size = de.getDocumentEntry().getDocument().getSize();
-		this.downloaded = de.getDownloaded();
-		this.receiver = de.getRecipient().getLsUuid();
+	public ShareDto(ShareEntry shareEntry) {
+		super(shareEntry);
+		this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
+		this.downloaded = shareEntry.getDownloaded();
+		this.recipientLsUuid = shareEntry.getRecipient().getLsUuid();
 	}
 	
 	public ShareDto() {
 		super();
-	}
-
-	public Boolean getCiphered() {
-		return ciphered;
-	}
-
-	public void setCiphered(Boolean ciphered) {
-		this.ciphered = ciphered;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public Long getSize() {
-		return size;
-	}
-
-	public void setSize(Long size) {
-		this.size = size;
 	}
 
 	public Long getDownloaded() {
@@ -97,11 +70,39 @@ public class ShareDto extends EntryDto {
 		this.downloaded = downloaded;
 	}
 
-	public String getReceiver() {
-		return receiver;
+	public String getRecipientLsUuid() {
+		return recipientLsUuid;
 	}
 
-	public void setReceiver(String receiver) {
-		this.receiver = receiver;
+	public void setRecipientLsUuid(String recipientLsUuid) {
+		this.recipientLsUuid = recipientLsUuid;
+	}
+
+	public DocumentDto getDocumentDto() {
+		return documentDto;
+	}
+
+	public void setDocumentDto(DocumentDto documentDto) {
+		this.documentDto = documentDto;
+	}
+
+	public String getType() {
+		return this.documentDto.getType();
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public int getSecured() {
+		return secured;
+	}
+
+	public void setSecured(int secured) {
+		this.secured = secured;
 	}
 }

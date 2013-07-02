@@ -51,12 +51,11 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
+import org.linagora.linshare.webservice.PluginCompatibilityRestService;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
-import org.linagora.linshare.webservice.PluginCompatibilityRestService;
 
 public class PluginCompatibilityRestServiceImpl extends WebserviceBase implements PluginCompatibilityRestService {
 
@@ -85,8 +84,8 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		
 		try {
 			actor = webServiceShareFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		} 
  
 		if ((actor instanceof Guest  && !actor.getCanUpload())) {
@@ -99,15 +98,15 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		for (String identifier : uuid) {
 			if(identifier!=null && !identifier.isEmpty()) uuidValues.add(identifier);
 		}
-		if(uuidValues.size()==0){
+		if (uuidValues.size() == 0) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing parameter file");
 		}
 		
  
 		try {
 			webServiceShareFacade.multiplesharedocuments(targetMail, uuidValues, securedShare, message);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 	}
 	
@@ -125,22 +124,22 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		User actor = null;
 		try {
 			actor = webServiceDocumentFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 		
 		if ((actor instanceof Guest  && !actor.getCanUpload())) {
 			throw giveRestException(HttpStatus.SC_FORBIDDEN,"You are not authorized to use this service");
 		}
  
-		if (theFile==null) {
+		if (theFile == null) {
 			throw giveRestException(HttpStatus.SC_BAD_REQUEST,"Missing file (check parameter file)");
 		}	
  
 		
 		String filename;
 		
-		if(givenFileName==null || givenFileName.isEmpty()){
+		if (givenFileName == null || givenFileName.isEmpty()) {
 			//parameter givenFileName is optional
 			//so need to search this information in the header of the attachement (with id file)
 			filename = body.getAttachment("file").getContentDisposition().getParameter("filename"); 
@@ -149,12 +148,12 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		}
 		
 		//comment can not be null ?
-		String comment = (description == null)? "":description;
+		String comment = (description == null)? "" : description;
 		
 		try {
 			return webServiceDocumentFacade.uploadfile(theFile, filename, comment);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 	}
 	
