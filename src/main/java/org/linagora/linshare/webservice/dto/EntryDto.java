@@ -48,7 +48,7 @@ public class EntryDto {
 
 	protected String description;
 
-	protected String owner;
+	protected AccountDto owner;
 
 	protected Calendar creationDate;
 
@@ -69,7 +69,7 @@ public class EntryDto {
 		this.modificationDate = entry.getModificationDate();
 		this.expirationDate = entry.getExpirationDate();
 		this.description = entry.getComment();
-		this.owner = entry.getEntryOwner().getLsUuid();
+		this.owner = new AccountDto(entry.getEntryOwner());
 	}
 
 	public String getUuid() {
@@ -96,11 +96,11 @@ public class EntryDto {
 		this.description = description;
 	}
 
-	public String getOwner() {
+	public AccountDto getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(AccountDto owner) {
 		this.owner = owner;
 	}
 

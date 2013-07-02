@@ -93,7 +93,7 @@
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
 	
-	<bean id="adminRestService" class="org.linagora.linshare.webservice.impl.AdminRestServiceImpl">
+	<bean id="adminRestService" class="org.linagora.linshare.webservice.admin.impl.AdminRestServiceImpl">
 		<constructor-arg ref="webServiceAdminFacade" />
 	</bean>
 
@@ -127,9 +127,9 @@
 			<!-- <jaxrs:inInterceptors> -->
 			<!-- <ref bean="logInbound" /> -->
 			<!-- </jaxrs:inInterceptors> -->
-			<!-- <jaxrs:outInterceptors> -->
-			<!-- <ref bean="logOutbound" /> -->
-			<!-- </jaxrs:outInterceptors> -->
+			<jaxrs:outInterceptors>
+				<ref bean="logOutbound" />
+			</jaxrs:outInterceptors>
 	</jaxrs:server>
 
 	<!-- enable json with jackson (not the default jettison) -->
