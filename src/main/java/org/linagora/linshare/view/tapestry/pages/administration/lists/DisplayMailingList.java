@@ -47,8 +47,13 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
+import org.linagora.linshare.view.tapestry.pages.lists.Index;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DisplayMailingList {
+	
+	private static Logger logger = LoggerFactory.getLogger(DisplayMailingList.class);
 	
     @Inject
     private MailingListFacade mailingListFacade;
@@ -72,11 +77,11 @@ public class DisplayMailingList {
     private UserVo loginUser;
     
     private boolean isEmpty;
-    
-    
 	
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
+
+	
 	
 	public void onActivate(long persistenceId) throws BusinessException {
 		if (persistenceId != 0) {
@@ -96,9 +101,9 @@ public class DisplayMailingList {
 		}
 	}
 	
-    public Object onActionFromBack() {
+    public Object onActionFromBack() throws BusinessException {
         mailingList=null;
-        return index;
+        	return index;
      }
 
     public boolean getIsEmpty(){

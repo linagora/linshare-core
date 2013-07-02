@@ -107,6 +107,7 @@ public class Index {
 
 	@SetupRender
 	public void init() throws BusinessException {
+		
 		if(inSearch == false || fromCreate == true){
 			lists = mailingListFacade.findAllMailingListByUser(loginUser);
 			}
@@ -121,6 +122,10 @@ public class Index {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean getUserIsOwner() throws BusinessException {
+		return loginUser.equals(list.getOwner());
 	}
 
 	public void onActionFromDeleteList(long persistenceId) {
@@ -140,7 +145,7 @@ public class Index {
 	 * @return list the list of string matched by value.
 	 * @throws BusinessException 
 	 */
-	public List<String> onProvideCompletionsFromSearch(String input) {
+	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
 		List<MailingListVo> searchResults = performSearch(input);
 		List<String> elements = new ArrayList<String>();
 		for (MailingListVo current: searchResults) {
@@ -156,11 +161,12 @@ public class Index {
 	 * @param input
 	 *            list search pattern.
 	 * @return list of lists.
+	 * @throws BusinessException 
 	 */
-	private List<MailingListVo> performSearch(String input) {
+	private List<MailingListVo> performSearch(String input) throws BusinessException {
 		List<MailingListVo> list = new ArrayList<MailingListVo>();
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		list = mailingListFacade.findAllMailingList();
+		list = mailingListFacade.findAllMailingListByUser(loginUser);
 		for(MailingListVo current : list){
 			if(current.getIdentifier().indexOf(input) != -1){
 				finalList.add(current);

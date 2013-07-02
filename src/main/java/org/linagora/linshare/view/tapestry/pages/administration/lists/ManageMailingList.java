@@ -41,10 +41,12 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
@@ -100,6 +102,9 @@ public class ManageMailingList {
 	
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
+	
+    @Component
+    private Form form;
 	
 	
 	public void onActivate(long persistenceId) throws BusinessException {
@@ -169,33 +174,27 @@ public class ManageMailingList {
 		return new ArrayList<UserVo>();
 	}
 	
-    void onValidation(String value) throws ValidationException, BusinessException {
-        if (value != null) {
-            if (!value.substring(0,1).matches("[A-Za-z]+")) {
-            
-                throw new ValidationException("Identifier must started with a letter");
-            }
-            
-            
+   boolean onValidate(String value) throws ValidationException, BusinessException {
+    	if (value != null) {
             if(!mailingList.getOwner().equals(oldOwner)){
                 String copy = mailingListFacade.checkUniqueId(value,mailingList.getOwner());
                 if (!copy.equals(value)) {
-                	throw new ValidationException(mailingList.getOwner().getFullName()+" already has a list with this identifier,please choose an available (ex: "+copy+")");
+                	return false;
                 }
             }
             else {
                 if(!value.equals(oldIdentifier)){
                 	String copy = mailingListFacade.checkUniqueId(value,mailingList.getOwner());
                 	if (!copy.equals(value)) {
-                		throw new ValidationException(mailingList.getOwner().getFullName()+" already has a list with this identifier,please choose an available (ex: "+copy+")");
+                		return false;
                 	}
                 }
             }
         }
+    	return true;
 
     }
-	
-	
+   
     public Object onActionFromCancel() {
         mailingList=null;
 		oldIdentifier = null;
@@ -226,11 +225,15 @@ public class ManageMailingList {
 				mailingList.setDomain(domain);
 			}
 		}
-		
-			onValidation(mailingList.getIdentifier());
-		
+			if(onValidate(mailingList.getIdentifier())){
 			 mailingListFacade.updateMailingList(mailingList);
-			 
+			}
+			else{ 
+            	String copy = mailingListFacade.checkUniqueId(mailingList.getIdentifier(),mailingList.getOwner());
+				form.recordError(mailingList.getOwner().getFullName()+" already has a list with this identifier,please choose an available (ex: "+copy+")");
+				mailingList.setOwner(oldOwner);
+				return null;
+			}
 				mailingList=null;
 				return index;
 		}

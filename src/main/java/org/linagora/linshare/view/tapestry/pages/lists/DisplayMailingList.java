@@ -349,6 +349,11 @@ public class DisplayMailingList {
 		return inList;
 	}
 
+	public boolean getUserIsOwner(){
+		return loginUser.equals(mailingList.getOwner());
+	}
+	
+	
 	public void onActionFromAddUser(String mail) throws BusinessException {
 
 		UserVo selectedUser = userFacade.findUserFromAuthorizedDomainOnly(
