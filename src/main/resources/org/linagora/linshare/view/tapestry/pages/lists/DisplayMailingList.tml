@@ -9,6 +9,8 @@
 		<h1>${mailingList.identifier} (${mailingList.owner.firstName} ${mailingList.owner.lastName}) </h1>
 		<br></br>
 		<h2> ${message:pages.administration.displayLists.index}</h2>
+
+		<t:if test="UserIsOwner">
 				<t:if test="isEmpty">
 						${message:pages.lists.empty}
 			<p:else>
@@ -115,6 +117,10 @@
         			</t:if>
 				</fieldset>
 			</form>
+		<p:else>
+		<t:grid source="contacts" rowsPerPage="15" include="firstName,lastName,mail"></t:grid>
+		</p:else>
+		</t:if>
 	  <div class="clear"></div>
 		<t:actionLink t:id="back" class="button">
 		<span>${message:pages.thread.admin.back}</span>

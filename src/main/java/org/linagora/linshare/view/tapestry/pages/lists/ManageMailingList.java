@@ -35,10 +35,8 @@
 package org.linagora.linshare.view.tapestry.pages.lists;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
+
 
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -116,7 +114,7 @@ public class ManageMailingList {
 
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
-
+	
 	@SetupRender
 	public void init() {
 		if (mailingList == null) {
