@@ -31,24 +31,39 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.webservice.dto;
 
-import java.io.InputStream;
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.Account;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
+@XmlRootElement(name = "Error")
+public class ErrorDto {
 
-
-public interface WebServiceDocumentFacade extends WebServiceGenericFacade {
+	protected String message;
 	
-	public List<DocumentDto> getDocuments() throws BusinessException;
-	public DocumentDto getDocument(String uuid) throws BusinessException;
-	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
-	public Long getUserMaxFileSize() throws BusinessException;
-	public Long getAvailableSize() throws BusinessException;
-	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException;
-	public void deleteFile(String uuid) throws BusinessException;
+	protected int errCode;
+
+	public ErrorDto() {
+		
+	}
+	public ErrorDto(int errCode, String message) {
+		super();
+		this.message = message;
+		this.errCode = errCode;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public int getErrCode() {
+		return errCode;
+	}
+
+	public void setErrCode(int errCode) {
+		this.errCode = errCode;
+	}
 }

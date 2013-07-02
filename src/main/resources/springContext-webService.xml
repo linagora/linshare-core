@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-	xmlns:jaxws="http://cxf.apache.org/jaxws"
-	xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:cxf="http://cxf.apache.org/core"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -15,9 +13,9 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-	
-	
-	<!-- SOAP  -->
+
+
+	<!-- SOAP -->
 
 
 	<bean id="soapService" class="org.linagora.linshare.webservice.impl.SoapServiceImpl">
@@ -26,20 +24,20 @@
 		<constructor-arg ref="webServiceThreadFacade" />
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
-	
+
 	<bean id="MTOMUploadSoapService" class="org.linagora.linshare.webservice.impl.MTOMUploadSoapServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
 	</bean>
-	
+
 	<bean id="soapExceptionInterceptor" class="org.linagora.linshare.webservice.interceptor.SoapExceptionInterceptor" />
 
 
 	<cxf:bus>
 		<cxf:features>
-		<!-- Could be uncommented : inbound cxf messages and outbound cxf messages are written to stdout.  -->
-<!-- 			<cxf:logging />  -->
+			<!-- Could be uncommented : inbound cxf messages and outbound cxf messages are written to stdout. -->
+			<!-- <cxf:logging /> -->
 		</cxf:features>
-		
+
 		<cxf:inInterceptors />
 		<cxf:outInterceptors />
 		<cxf:outFaultInterceptors>
@@ -52,42 +50,41 @@
 		<jaxws:outFaultInterceptors>
 			<ref bean="soapExceptionInterceptor" />
 		</jaxws:outFaultInterceptors>
-	</jaxws:endpoint>  
-	
-	
+	</jaxws:endpoint>
+
+
 	<jaxws:endpoint id="MTOMUploadEndpoint" implementor="#MTOMUploadSoapService" address="/upload">
 		<jaxws:properties>
             <entry key="mtom-enabled" value="true" />
 			<entry key="attachment-directory" value="${webservice.attachment-directory}" />
-			<!-- data exceeding the memory threshold will be written to the directory 
-				specified in bytes -->
+			<!-- data exceeding the memory threshold will be written to the directory specified in bytes -->
 			<entry key="attachment-memory-threshold" value="${webservice.attachment-memory-threshold}" />
 		</jaxws:properties>
 		<jaxws:outFaultInterceptors>
 			<ref bean="soapExceptionInterceptor" />
 		</jaxws:outFaultInterceptors>
-	</jaxws:endpoint>  
-	
+	</jaxws:endpoint>
 
-	<!-- REST  -->
+
+	<!-- REST -->
 	<bean id="documentRestService" class="org.linagora.linshare.webservice.impl.DocumentRestServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
 	</bean>
-	
+
 	<bean id="shareRestService" class="org.linagora.linshare.webservice.impl.ShareRestServiceImpl">
 		<constructor-arg ref="webServiceShareFacade" />
 	</bean>
-	
+
 	<bean id="pluginCompatibilityRestService" class="org.linagora.linshare.webservice.impl.PluginCompatibilityRestServiceImpl">
 		<constructor-arg ref="webServiceShareFacade" />
 		<constructor-arg ref="webServiceDocumentFacade" />
 	</bean>
-	
+
 	<bean id="threadRestService" class="org.linagora.linshare.webservice.impl.ThreadRestServiceImpl">
 		<constructor-arg ref="webServiceThreadFacade" />
 	</bean>
 
-    <bean id="threadMemberRestService" class="org.linagora.linshare.webservice.impl.ThreadMemberRestServiceImpl">
+	<bean id="threadMemberRestService" class="org.linagora.linshare.webservice.impl.ThreadMemberRestServiceImpl">
 		<constructor-arg ref="webServiceThreadFacade" />
 		<constructor-arg ref="webServiceThreadMemberFacade" />
 	</bean>
@@ -116,13 +113,23 @@
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
+			<!-- <bean class="org.linagora.linshare.webservice.interceptor.LinShareWebApplicationExceptionMapper"> </bean> -->
+			<!-- <bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper"> -->
+			<!-- <property name="printStackTrace" value="true" /> -->
+			<!-- </bean> -->
 		</jaxrs:providers>
 		<jaxrs:features>
             <!--<cxf:logging />-->
 		</jaxrs:features>
+			<!-- <jaxrs:inInterceptors> -->
+			<!-- <ref bean="logInbound" /> -->
+			<!-- </jaxrs:inInterceptors> -->
+			<!-- <jaxrs:outInterceptors> -->
+			<!-- <ref bean="logOutbound" /> -->
+			<!-- </jaxrs:outInterceptors> -->
 	</jaxrs:server>
-	
-	<!-- enable json with jackson (not the default jettison)-->
-	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+
+	<!-- enable json with jackson (not the default jettison) -->
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
 
 </beans>

@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.impl;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
@@ -44,6 +45,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -51,6 +54,7 @@ import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.webservice.ShareRestService;
 import org.linagora.linshare.webservice.dto.ShareDto;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +99,8 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 			@DefaultValue("0") @QueryParam("securedShare") int securedShare) {
 		try {
 			webServiceShareFacade.checkAuthentication();
-			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
+			webServiceShareFacade.checkAuthentication();
+			webServiceShareFacade.multiplesharedocuments(targetMails, uuids, securedShare, message);
 		} catch (BusinessException e) {
 			throw analyseFaultREST(e);
 		}

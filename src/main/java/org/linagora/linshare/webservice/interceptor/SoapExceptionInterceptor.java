@@ -52,6 +52,7 @@ public class SoapExceptionInterceptor extends AbstractSoapInterceptor {
 		super(Phase.PRE_LOGICAL);
 	}
  
+	@Override
 	public void handleMessage(SoapMessage message) throws Fault {
 		Fault fault = (Fault) message.getContent(Exception.class);
 		Throwable ex = fault.getCause();
