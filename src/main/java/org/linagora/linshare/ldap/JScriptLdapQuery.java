@@ -40,6 +40,7 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,8 +108,14 @@ public class JScriptLdapQuery {
 
 	public List<String> evaluate(String lqlExpression) throws NamingException {
 		try {
+			Date date_before = new Date();
 			JScriptEvaluator evaluator = JScriptEvaluator.getInstance(lqlctx.getLdapCtx(), dnList);
-			return evaluator.evalToStringList(lqlExpression, lqlctx.getVariables());
+			List<String> evalToStringList = evaluator.evalToStringList(lqlExpression, lqlctx.getVariables());
+			if(logger.isDebugEnabled()) {
+				Date date_after = new Date();
+				logger.debug("diff : " + String.valueOf(date_after.getTime() - date_before.getTime()));
+			}
+			return evalToStringList;
 		} catch (IOException e) {
 			try {
 				lqlctx.renewLdapCtx();
@@ -163,7 +170,7 @@ public class JScriptLdapQuery {
 		// Setting lql query parameters
 		Map<String, Object> vars = lqlctx.getVariables();
 		vars.put("pattern", pattern);
-		logLqlQuery(command, pattern);
+		if (logger.isDebugEnabled()) logLqlQuery(command, pattern);
 
 		// searching ldap directory with pattern
 		List<String> dnResultList = this.evaluate(command);
@@ -341,7 +348,7 @@ public class JScriptLdapQuery {
 		vars.put("mail", mail);
 		vars.put("first_name", first_name);
 		vars.put("last_name", last_name);
-		logLqlQuery(command, mail, first_name, last_name);
+		if (logger.isDebugEnabled()) logLqlQuery(command, mail, first_name, last_name);
 
 		// searching ldap directory with pattern
 		List<String> dnResultList = this.evaluate(command);
@@ -350,16 +357,18 @@ public class JScriptLdapQuery {
 	}
 	
 	/**
-	 * This method allow to search a user from part of his mail.
+	 * This method allow to find a user from his mail (entire mail, not a fragment).
 	 * @param mail
 	 * @return
 	 * @throws NamingException
 	 */
-	public List<User> searchUser(String mail) throws NamingException {
+	public List<User> findUser(String mail) throws NamingException {
 
 		// Getting lql expression for completion
 		String command = domainPattern.getSearchUserCommand();
-		mail = addExpansionCharacters(mail);
+		if (mail == null || mail.length() < 1) {
+			return null;
+		}
 		String first_name = "*";
 		String last_name = "*";
 
@@ -368,7 +377,7 @@ public class JScriptLdapQuery {
 		vars.put("mail", mail);
 		vars.put("first_name", first_name);
 		vars.put("last_name", last_name);
-		logLqlQuery(command, mail, first_name, last_name);
+		if (logger.isDebugEnabled()) logLqlQuery(command, mail, first_name, last_name);
 
 		// searching ldap directory with pattern
 		List<String> dnResultList = this.evaluate(command);
@@ -376,7 +385,13 @@ public class JScriptLdapQuery {
 		return dnListToUsersList(dnResultList, true, false);
 	}
 	
-	public Boolean isExistUser(String mail) throws NamingException {
+	/**
+	 * test if a user exists using his mail.  (entire mail, not a fragment)
+	 * @param mail
+	 * @return
+	 * @throws NamingException
+	 */
+	public Boolean isUserExist(String mail) throws NamingException {
 
 		// Getting lql expression for completion
 		String command = domainPattern.getSearchUserCommand();
@@ -391,7 +406,7 @@ public class JScriptLdapQuery {
 		vars.put("mail", mail);
 		vars.put("first_name", first_name);
 		vars.put("last_name", last_name);
-		logLqlQuery(command, mail, first_name, last_name);
+		if (logger.isDebugEnabled()) logLqlQuery(command, mail, first_name, last_name);
 
 		// searching ldap directory with pattern
 		List<String> dnResultList = this.evaluate(command);
@@ -415,7 +430,7 @@ public class JScriptLdapQuery {
 		String command = domainPattern.getAuthCommand();
 		Map<String, Object> vars = lqlctx.getVariables();
 		vars.put("login", login);
-		logLqlQuery(command, login);
+		if (logger.isDebugEnabled())  logLqlQuery(command, login);
 
 		// searching ldap directory with pattern
 		// InvalidSearchFilterException

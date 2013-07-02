@@ -362,10 +362,10 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	}
 
 	@Override
-	public Boolean isExistUserWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException {
+	public Boolean isUserExist(AbstractDomain domain, String mail) throws BusinessException {
 		if(domain.getUserProvider() != null) {
 			try {
-				return userProviderService.isExistUser(domain.getUserProvider(), mail);
+				return userProviderService.isUserExist(domain.getUserProvider(), mail);
 			} catch (NamingException e) {
 				logger.error("Error while searching for a user in domain {}", domain.getIdentifier());
 				logger.error(e.toString());

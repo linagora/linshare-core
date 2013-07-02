@@ -62,19 +62,23 @@ public class LinShareDnList extends DnList {
 			// Setting pagination control.
 			ldapCtx.setRequestControls(new Control[] { new PagedResultsControl(searchPageSize, Control.CRITICAL) });
 			
-			// No attributes will be return.
-			scs.setReturningAttributes(new String [] { });
+			// No attributes will be return. Official LDAP syntax
+			scs.setReturningAttributes(new String [] { "1.1" }); 
 			
 			NamingEnumeration<SearchResult> results = ldapCtx.search(base, filter, scs);
 			while (results != null && results.hasMore()) {
 				SearchResult entry = (SearchResult) results.next();
-				logger.debug("entry name : " + entry.getName());
-				logger.debug("entry attributes : " + entry.getAttributes());
+				if(logger.isDebugEnabled()) {
+					logger.debug("entry name : " + entry.getName());
+					logger.debug("entry attributes : " + entry.getAttributes());
+				}
 
 				// Handle the entry's response controls (if any)
 				if (entry instanceof HasControls) {
 					Control[] controls = ((HasControls) entry).getControls();
-					logger.debug("entry name has controls " + controls.toString());
+					if(logger.isDebugEnabled()) {
+						logger.debug("entry name has controls " + controls.toString());
+					}
 				}
 
 				// String dn = results.next().getName();
