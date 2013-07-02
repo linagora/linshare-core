@@ -369,19 +369,21 @@ public class UserServiceImpl implements UserService {
 	private List<User> completionSearchForRestrictedGuest(Guest actor, String mail, String firstname, String lastname) {
 		List<User> users = new ArrayList<User>();
 		logger.debug("special search for restricted guest ");
-		
-		//TODO : FIXME : OPTIMISATION NEEDED : This method should return a User list instead of AllowedContact.
+
+		// TODO : FIXME : OPTIMISATION NEEDED : This method should return a User
+		// list instead of AllowedContact.
 		List<AllowedContact> contacts = allowedContactRepository.searchContact(mail, firstname, lastname, actor);
 		for (AllowedContact allowedContact : contacts) {
 			users.add(allowedContact.getContact());
 		}
 		logger.debug("End searchUser(restricted guests)");
-		
+
 		return users;
 	}
-	
+
 	/**
-	 * @deprecated function used by completion and research method. Now it is only used by research method. Should be refactor.
+	 * @deprecated function used by completion and research method. Now it is
+	 *             only used by research method. Should be refactor.
 	 * @param mail
 	 * @param firstName
 	 * @param lastName
@@ -404,20 +406,26 @@ public class UserServiceImpl implements UserService {
 		return users;
 	}
 
-
 	/**
-	 * TODO : FIXME : OPTIMISATION NEEDED : This method should be refactor to search guests domain by domain
-	 * @param actor : the current user performing this research.
-	 * @param mail : mail pattern. Not used if null.
-	 * @param firstName : first name pattern. Not used if null.
-	 * @param lastName : last name pattern. Not used if null.
+	 * TODO : FIXME : OPTIMISATION NEEDED : This method should be refactor to
+	 * search guests domain by domain
+	 * 
+	 * @param actor
+	 *            : the current user performing this research.
+	 * @param mail
+	 *            : mail pattern. Not used if null.
+	 * @param firstName
+	 *            : first name pattern. Not used if null.
+	 * @param lastName
+	 *            : last name pattern. Not used if null.
 	 * @return
 	 */
 	private List<User> completionSearchOnGuest(User actor, String mail, String firstName, String lastName) {
 		List<User> result = new ArrayList<User>();
 		logger.debug("adding guests to the return list");
 
-//		TODO : FIXME : OPTIMISATION NEEDED : This method should be refactor to search guests domain by domain
+		// TODO : FIXME : OPTIMISATION NEEDED : This method should be refactor
+		// to search guests domain by domain
 		List<Guest> list = guestRepository.searchGuestAnyWhere(mail, firstName, lastName);
 		logger.debug("Guest found : size : " + list.size());
 
@@ -439,7 +447,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * @deprecated function used by completion and research method. Now it is only used by research method. Should be refactor.
+	 * @deprecated function used by completion and research method. Now it is
+	 *             only used by research method. Should be refactor.
 	 * @param mail
 	 * @param firstName
 	 * @param lastName
@@ -471,10 +480,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * @param actor : the current user performing this research.
-	 * @param pattern : mail pattern. Not used if null.
-	 * @param firstName : first name pattern. Not used if null.
-	 * @param lastName : last name pattern. Not used if null.
+	 * @param actor
+	 *            : the current user performing this research.
+	 * @param pattern
+	 *            : mail pattern. Not used if null.
+	 * @param firstName
+	 *            : first name pattern. Not used if null.
+	 * @param lastName
+	 *            : last name pattern. Not used if null.
 	 * @return
 	 */
 	private List<User> completionSearchOnInternal(User actor, String pattern) throws BusinessException {
@@ -482,30 +495,10 @@ public class UserServiceImpl implements UserService {
 		logger.debug("result internals list : size : " + internals.size());
 		return internals;
 	}
-	private List<User> completionSearchOnInternal(User actor,  String firstName, String lastName) throws BusinessException {
+
+	private List<User> completionSearchOnInternal(User actor, String firstName, String lastName) throws BusinessException {
 		List<User> internals = abstractDomainService.autoCompleteUserWithDomainPolicies(actor.getDomain().getIdentifier(), firstName, lastName);
 		logger.debug("result internals list : size : " + internals.size());
-		return internals;
-	}
-	
-	/**
-	 * @deprecated function used by completion and research method. Now it is only used by research method. Should be refactor.  
-	 * @param mail
-	 * @param firstName
-	 * @param lastName
-	 * @param currentUser
-	 * @return
-	 * @throws BusinessException
-	 */
-	private List<User> completionSearchInternal(String mail, String firstName, String lastName, User currentUser) throws BusinessException {
-		logger.debug("adding internals to the return list");
-		List<User> internals = abstractDomainService.searchUserWithDomainPolicies(currentUser.getDomain().getIdentifier(), mail, firstName, lastName);
-		logger.debug("result internals list : size : " + internals.size());
-		for (User ldapuser : internals) {
-			User userdb = userRepository.findByMail(ldapuser.getMail());
-			if (userdb != null)
-				ldapuser.setRole(userdb.getRole());
-		}
 		return internals;
 	}
 
@@ -525,19 +518,17 @@ public class UserServiceImpl implements UserService {
 		}
 		throw new IllegalArgumentException("Argument is empty or null : " + String.valueOf(arg));
 	}
-	
+
 	private User findUser(String lsUuid) throws BusinessException {
 		lsUuid = this.checkArgument(lsUuid);
 		User user = userRepository.findByLsUuid(lsUuid);
-		if(user == null) {
-			String errMsg = "Can not find current actor : " + lsUuid; 
+		if (user == null) {
+			String errMsg = "Can not find current actor : " + lsUuid;
 			logger.error(errMsg);
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, errMsg);
 		}
 		return user;
 	}
-	
-	
 
 	@Override
 	public List<User> autoCompleteUser(String currentActorUuid, String pattern) throws BusinessException {
@@ -555,7 +546,7 @@ public class UserServiceImpl implements UserService {
 		String lastName = null;
 
 		// Splitting pattern into firstName and lastName
-		// First argument is the first name, the second if exists is last name 
+		// First argument is the first name, the second if exists is last name
 		StringTokenizer stringTokenizer = new StringTokenizer(pattern, " ");
 		if (stringTokenizer.hasMoreTokens()) {
 			firstName = stringTokenizer.nextToken();
@@ -563,27 +554,28 @@ public class UserServiceImpl implements UserService {
 				lastName = stringTokenizer.nextToken();
 			}
 		}
- 
-		// TODO : Only guest could be restricted ? why some internal could not be ?
-		if (currentActor.getAccountType() == AccountType.GUEST) { 
+
+		// TODO : Only guest could be restricted ? why some internal could not
+		// be ?
+		if (currentActor.getAccountType() == AccountType.GUEST) {
 			// RESTRICTED GUEST MUST NOT SEE ALL USERS
 			if (currentActor.isRestricted()) {
-				return completionSearchForRestrictedGuest((Guest)currentActor, pattern, firstName, lastName);
+				return completionSearchForRestrictedGuest((Guest) currentActor, pattern, firstName, lastName);
 			}
 		}
 
 		// completion on database for guests
 		users.addAll(completionSearchOnGuest(currentActor, mail, firstName, lastName));
-		
+
 		// completion on LDAP directory for internals
-		if(lastName == null) {
+		if (lastName == null) {
 			logger.debug("FRED: all");
 			users.addAll(completionSearchOnInternal(currentActor, mail));
 		} else {
 			logger.debug("FRED:first name and lastname");
 			users.addAll(completionSearchOnInternal(currentActor, firstName, lastName));
 		}
-		
+
 		logger.debug("End autoCompleteUser");
 		return users;
 
@@ -614,18 +606,12 @@ public class UserServiceImpl implements UserService {
 		if (null == userType || userType.equals(AccountType.INTERNAL)) {
 			List<User> internals = abstractDomainService.searchUserWithDomainPolicies(currentUser.getDomain().getIdentifier(), mail, firstName, lastName);
 			logger.debug("result internals list : size : " + internals.size());
-			for (User ldapuser : internals) {
-				User userdb = userRepository.findByMail(ldapuser.getMail());
-				if (userdb != null)
-					ldapuser.setRole(userdb.getRole());
-			}
 			users.addAll(internals);
 		}
 
 		logger.debug("End searchUser");
 		return users;
 	}
-
 
 	@Override
 	public void updateGuest(String guestUuid, String domain, String mail, String firstName, String lastName, Boolean canUpload, Boolean canCreateGuest, UserVo ownerVo) throws BusinessException {
@@ -875,7 +861,7 @@ public class UserServiceImpl implements UserService {
 																										// these
 																										// accounts
 					try {
-						if(!abstractDomainService.isUserExist(user.getDomain(), user.getMail())) {
+						if (!abstractDomainService.isUserExist(user.getDomain(), user.getMail())) {
 							internalsBreaked.add(user);
 						}
 					} catch (BusinessException e) {
@@ -946,10 +932,22 @@ public class UserServiceImpl implements UserService {
 		logger.debug("End saveOrUpdateUser");
 	}
 
-	private User findOrCreateUserWithDomainPolicies(AbstractDomain abstractDomain, String mail) throws BusinessException {
-
+	/**
+	 * This method search a user on 1 domain without domain policy restriction.
+	 * if found, the user is persist on database. Before the search on
+	 * UserProvider, we check if user is not yet present in the database.
+	 * 
+	 * @param abstractDomain
+	 * @param mail
+	 *            : the user mail, not a fragment.
+	 * @return a user, null if not found.
+	 * @throws BusinessException
+	 */
+	private User findOrCreateUserWithoutRestriction(AbstractDomain abstractDomain, String mail) throws BusinessException {
 		User user = userRepository.findByMailAndDomain(abstractDomain.getIdentifier(), mail);
 		if (user == null) {
+			// user was not found in database.
+			// looking for it in userProvider (LDAP).
 			user = abstractDomainService.findUserWithoutRestriction(abstractDomain, mail);
 			if (user != null) {
 				saveOrUpdateUser(user);
@@ -959,29 +957,29 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findOrCreateUserWithDomainPolicies(String mail, String domainId, String ActorDomainId) throws BusinessException {
-
+	public User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException {
 		User user = null;
 
-		if (ActorDomainId == null) {
-			ActorDomainId = domainId;
+		if (actorDomainId == null) {
+			actorDomainId = domainId;
 		}
-		List<AbstractDomain> allAuthorizedDomains = abstractDomainService.getAllAuthorizedDomains(ActorDomainId);
+		List<AbstractDomain> allAuthorizedDomains = abstractDomainService.getAllAuthorizedDomains(actorDomainId);
+		AbstractDomain domain = abstractDomainService.retrieveDomain(domainId);
 
-		// We test the domainId parameter, the user we are looking for is
-		// supposed to be here.
-		for (AbstractDomain abstractDomain : allAuthorizedDomains) {
-			if (abstractDomain.getIdentifier().equals(domainId)) {
-				user = findOrCreateUserWithDomainPolicies(abstractDomain, mail);
-				// We don't need to continue
-				break;
-			}
+		if (allAuthorizedDomains.contains(domain)) {
+			user = findOrCreateUserWithoutRestriction(domain, mail);
 		}
 
+		// test if user was found 
 		if (user == null) {
+			// User was not found in the given domain (parameter)
 			// Now we search in all authorized domains.
 			for (AbstractDomain abstractDomain : allAuthorizedDomains) {
-				user = findOrCreateUserWithDomainPolicies(abstractDomain, mail);
+				if(abstractDomain.equals(domain)) {
+					// no need to search, already done.
+					continue;
+				}
+				user = findOrCreateUserWithoutRestriction(abstractDomain, mail);
 				if (user != null) {
 					// We don't need to continue
 					break;
@@ -990,14 +988,14 @@ public class UserServiceImpl implements UserService {
 		}
 
 		if (user == null) {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user " + mail + " could not be found ! (domain id:" + domainId + ", starting point:" + ActorDomainId + ")");
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user " + mail + " could not be found ! (domain id:" + domainId + ", starting point:" + actorDomainId + ")");
 		}
 		return user;
 	}
 
 	@Override
 	public User findOrCreateUserWithDomainPolicies(String mail, String domainId) throws BusinessException {
-		return findOrCreateUserWithDomainPolicies(mail, domainId, null);
+		return findOrCreateUserWithDomainPolicies(domainId, mail, null);
 	}
 
 	@Override
@@ -1047,7 +1045,7 @@ public class UserServiceImpl implements UserService {
 			// The user was found in the database, but we have to check if this
 			// user is still in the ldap.
 			logger.debug("User '" + userDB.getMail() + "'found in database. Checking if he is still in the ldap");
-			if(abstractDomainService.isUserExist(userDB.getDomain(), userDB.getMail())) {
+			if (abstractDomainService.isUserExist(userDB.getDomain(), userDB.getMail())) {
 				// the user still exists in the ldap, it is ok.
 				return userDB;
 			}

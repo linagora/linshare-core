@@ -42,7 +42,6 @@ import javax.naming.NamingException;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.constants.LinShareConstants;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
@@ -59,6 +58,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.MessagesRepository;
+import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -75,14 +75,20 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	private final FunctionalityService functionalityService;
 	private final UserProviderService userProviderService;
 	private final MessagesRepository messagesRepository;
+	private final UserRepository<User> userRepository;
+	
+
+
 
 	public AbstractDomainServiceImpl(AbstractDomainRepository abstractDomainRepository, DomainPolicyService domainPolicyService, FunctionalityService functionalityService,
-			UserProviderService userProviderRepository, MessagesRepository messagesRepository) {
+			UserProviderService userProviderService, MessagesRepository messagesRepository, UserRepository<User> userRepository) {
+		super();
 		this.abstractDomainRepository = abstractDomainRepository;
 		this.domainPolicyService = domainPolicyService;
 		this.functionalityService = functionalityService;
-		this.userProviderService = userProviderRepository;
+		this.userProviderService = userProviderService;
 		this.messagesRepository = messagesRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -371,7 +377,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		return false;
 	}
 
-	private List<User> searchUserRecursivelyWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException {
+	private List<User> findUserRecursivelyWithoutRestriction(AbstractDomain domain, String mail) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 
 		try {
@@ -381,7 +387,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		for (AbstractDomain subDomain : domain.getSubdomain()) {
-			users.addAll(searchUserRecursivelyWithoutRestriction(subDomain, mail));
+			users.addAll(findUserRecursivelyWithoutRestriction(subDomain, mail));
 		}
 
 		return users;
@@ -471,7 +477,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	public List<User> searchUserRecursivelyWithoutRestriction(String mail) throws BusinessException {
 		List<User> users = new ArrayList<User>();
 
-		users.addAll(searchUserRecursivelyWithoutRestriction(getUniqueRootDomain(), mail));
+		users.addAll(findUserRecursivelyWithoutRestriction(getUniqueRootDomain(), mail));
 
 		return users;
 	}
@@ -487,7 +493,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		// search user mail in in specific directory and all its SubDomain
-		List<User> users = searchUserRecursivelyWithoutRestriction(domain, mail);
+		List<User> users = findUserRecursivelyWithoutRestriction(domain, mail);
 
 		if (users != null) {
 			if (users.size() == 1) {
@@ -515,7 +521,7 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 		}
 
 		List<User> users = new ArrayList<User>();
-		users.addAll(searchUserRecursivelyWithoutRestriction(domain, mail));
+		users.addAll(findUserRecursivelyWithoutRestriction(domain, mail));
 		logger.debug("End searchUserRecursivelyWithoutRestriction");
 		return users;
 	}
@@ -543,13 +549,21 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 
 			if (d.getUserProvider() != null) {
 				try {
-					List<User> list = userProviderService.searchUser(d.getUserProvider(), mail, firstName, lastName);
+					List<User> ldapUserList = userProviderService.searchUser(d.getUserProvider(), mail, firstName, lastName);
 					// For each user, we set the domain which he came from.
-					for (User user : list) {
-						user.setDomain(d);
-						user.setRole(d.getDefaultRole());
+					for (User ldapUser : ldapUserList) {
+						User userDb = userRepository.findByMailAndDomain(d.getIdentifier(), ldapUser.getMail());
+						if (userDb != null) {
+							users.add(userDb);
+						} else {
+							// this two attributes must be set in order to let ihm (tapestry) find 
+							// - if user is admin or not (in the result list)
+							// - the domain who came from the user.
+							ldapUser.setDomain(d);
+							ldapUser.setRole(d.getDefaultRole());
+							users.add(ldapUser);
+						}
 					}
-					users.addAll(list);
 				} catch (NamingException e) {
 					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
 					logger.error(e.toString());

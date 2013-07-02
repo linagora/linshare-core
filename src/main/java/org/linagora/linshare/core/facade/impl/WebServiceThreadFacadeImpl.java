@@ -55,14 +55,14 @@ public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl impl
 
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(WebServiceThreadFacadeImpl.class);
-	
+
 	private final ThreadService threadService;
-	
+
 	private final UserService userService;
 
 	private final FunctionalityService functionalityService;
 
-	public WebServiceThreadFacadeImpl(ThreadService threadService, AccountService accountService , UserService userService, FunctionalityService functionalityService) {
+	public WebServiceThreadFacadeImpl(ThreadService threadService, AccountService accountService, UserService userService, FunctionalityService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
@@ -99,9 +99,7 @@ public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl impl
 	@Override
 	public void addMember(Account actor, String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(threadUuid);
-		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, actor.getDomainId());
+		User user = userService.findOrCreateUserWithDomainPolicies(domainId, mail, actor.getDomainId());
 		threadService.addMember(actor, thread, user, readonly);
 	}
-	
-	
 }

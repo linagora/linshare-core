@@ -233,15 +233,15 @@ public interface UserService {
     /** Find a  user (based on mail address).
      * Search first in database, then on ldap if not found, but only in authorized domains. The starting point of the research is domainId.
      * If the user isn't found on DB, then it is created from the ldap info
-     * @param mail user mail.
      * @param domainId domain identifier.
-     * @param ActorDomainId domain identifier, it is useful to determine which domains we are authorized to search in. 
+     * @param mail user mail.
+     * @param actorDomainId domain identifier, it is useful to determine which domains we are authorized to search in. 
      * if this parameter is null, domainId is used as starting point for the research.
      * @return founded user.
      * @throws BusinessException if the user could not be found
      * @throws TechnicalError if the user cannot be created
      */
-    public User findOrCreateUserWithDomainPolicies(String mail, String domainId, String ActorDomainId) throws BusinessException ;
+    public User findOrCreateUserWithDomainPolicies(String domainId, String mail, String actorDomainId) throws BusinessException ;
 	
     public User findUnkownUserInDB(String mail);
     

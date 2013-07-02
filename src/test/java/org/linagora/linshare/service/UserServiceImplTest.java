@@ -715,7 +715,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		
 		userService.saveOrUpdateUser(user2);
 		
-		Assert.assertEquals(user1, userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LoadingServiceTestDatas.sqlRootDomain, LoadingServiceTestDatas.sqlSubDomain));
+		Assert.assertEquals(user1, userService.findOrCreateUserWithDomainPolicies(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain));
 
 		
 		DomainPolicy domainPolicy = new DomainPolicy("domainPolicy", new DomainAccessPolicy());
@@ -730,7 +730,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		abstractDomainRepository.update(subDomain);		
 		
 		try{
-			userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LoadingServiceTestDatas.sqlRootDomain, LoadingServiceTestDatas.sqlSubDomain);
+			userService.findOrCreateUserWithDomainPolicies(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org", LoadingServiceTestDatas.sqlSubDomain);
 			
 			logger.error("Test shouldn't go here because findOrCreateUserWithDomainPolicies should rise a exception");
 			Assert.fail();
@@ -738,7 +738,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 			logger.debug("Test succeed"); 
 		}
 		
-		User foundUser = userService.findOrCreateUserWithDomainPolicies("user1@linpki.org", LoadingServiceTestDatas.sqlRootDomain, null);
+		User foundUser = userService.findOrCreateUserWithDomainPolicies(LoadingServiceTestDatas.sqlRootDomain, "user1@linpki.org", null);
 		Assert.assertEquals(foundUser, user1);
 
 		logger.debug(LinShareTestConstants.END_TEST);
