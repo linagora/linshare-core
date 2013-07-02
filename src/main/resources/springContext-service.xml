@@ -192,6 +192,7 @@
 		<constructor-arg ref="domainPolicyService" />
 		<constructor-arg ref="userProviderService" />
 		<constructor-arg ref="messagesRepository" />
+		<constructor-arg ref="userRepository" />
 	</bean>
 
 	<bean name="userAndDomainMultiService" class="org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl">
