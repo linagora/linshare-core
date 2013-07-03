@@ -76,7 +76,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares()
-    {
+	
 		List<ShareDto> shares = null;
 		
 		try {
@@ -87,10 +87,10 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		}
 		
 		return shares;
-    }
+	}
 	
 	@GET
-    @Path("/sharedocument/{targetMail}/{uuid}")
+	@Path("/sharedocument/{targetMail}/{uuid}")
 	@Override
 	public void sharedocument(@PathParam("targetMail") String targetMail, @PathParam("uuid") String uuid, @DefaultValue("0") @QueryParam("securedShare") int securedShare) {
 		try {
@@ -102,7 +102,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	}
 
 	@POST
-    @Path("/multiplesharedocuments")
+	@Path("/multiplesharedocuments")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Override
 	public void multiplesharedocuments(ArrayList<ShareDto> shares, @QueryParam("secured") boolean secured, @QueryParam("message") String message) {
