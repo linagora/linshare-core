@@ -33,6 +33,8 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.Calendar;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.ShareEntry;
@@ -40,24 +42,47 @@ import org.linagora.linshare.core.domain.entities.User;
 
 
 @XmlRootElement(name = "Share")
-public class ShareDto extends EntryDto {
+public class ShareDto {
 
-	private Long downloaded;
+	protected String uuid;
+
+	protected String name;
+
+	protected String description;
+
+	protected UserDto owner;
+
+	protected Calendar creationDate;
+
+	protected Calendar modificationDate;
+
+	protected Calendar expirationDate;
+
+	protected Long downloaded;
 	
-	private UserDto recipient;
+	protected UserDto recipient;
 	
-	private DocumentDto documentDto;
+	protected DocumentDto documentDto;
 	
-	private int secured;
+	protected int secured;
 	
 	private String message;
 
 	public ShareDto(ShareEntry shareEntry) {
-		super(shareEntry);
+		super();
+		if (shareEntry == null) {
+			return;
+		}
+		this.uuid = shareEntry.getUuid();
+		this.name = shareEntry.getName();
+		this.creationDate = shareEntry.getCreationDate();
+		this.modificationDate = shareEntry.getModificationDate();
+		this.expirationDate = shareEntry.getExpirationDate();
+		this.description = shareEntry.getComment();
+		this.owner = new UserDto((User) shareEntry.getEntryOwner());
 		this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
 		this.downloaded = shareEntry.getDownloaded();
 		this.recipient = new UserDto(shareEntry.getRecipient());
-		this.owner = new UserDto((User) shareEntry.getEntryOwner());
 	}
 	
 	public ShareDto() {
@@ -106,5 +131,61 @@ public class ShareDto extends EntryDto {
 
 	public void setSecured(int secured) {
 		this.secured = secured;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public UserDto getOwner() {
+		return owner;
+	}
+
+	public void setOwner(UserDto owner) {
+		this.owner = owner;
+	}
+
+	public Calendar getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Calendar creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Calendar getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Calendar modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	public Calendar getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Calendar expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 }
