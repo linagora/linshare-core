@@ -50,5 +50,5 @@ public interface WebServiceDocumentFacade extends WebServiceGenericFacade {
 	public Long getUserMaxFileSize() throws BusinessException;
 	public Long getAvailableSize() throws BusinessException;
 	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException;
-	public void deleteFile(String uuid) throws BusinessException;
+	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
 }

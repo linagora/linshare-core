@@ -52,17 +52,13 @@ import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl
-		implements WebServiceDocumentFacade {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(WebServiceDocumentFacade.class);
-
+public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceDocumentFacade {
+  
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceDocumentFacade.class);
+    
 	private final DocumentEntryService documentEntryService;
 
-	public WebServiceDocumentFacadeImpl(
-			final DocumentEntryService documentEntryService,
-			final AccountService accountService) {
+	public WebServiceDocumentFacadeImpl(final DocumentEntryService documentEntryService, final AccountService accountService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
 	}
@@ -70,98 +66,79 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl
 	@Override
 	public List<DocumentDto> getDocuments() throws BusinessException {
 		User actor = getAuthentication();
-
+		 
 		List<DocumentEntry> docs = documentEntryService.findAllMyDocumentEntries(actor, actor);
-
+ 
 		if (docs == null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
-					"No such document");
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND, "No such document");
 		}
-		return convertDocumentEntryList(docs);
+		
+		return convertDocumentEntryList (docs);
+	}
+	
+	@Override
+	public DocumentDto getDocument(String uuid) throws BusinessException {
+		User actor = getAuthentication();
+		 
+		DocumentEntry doc = documentEntryService.findById(actor, uuid);
+ 
+		if (doc == null) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND, "No such document");
+		}
+		return new DocumentDto(doc);
 	}
 
 	@Override
-	public DocumentDto uploadfile(InputStream fi, String filename,
-			String description) throws BusinessException {
-		DocumentEntry res;
-
-		try {
-			User actor = getAuthentication();
-
-			res = documentEntryService.createDocumentEntry(actor, fi, filename);
-			documentEntryService.updateFileProperties(actor, res.getUuid(),
-					res.getName(), description);
-		} catch (BusinessException e) {
-			throw e;
-		}
+	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException{
+		User actor = getAuthentication();
+		DocumentEntry res =  documentEntryService.createDocumentEntry(actor, fi, filename);
+		documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), description);
 		return new DocumentDto(res);
 	}
 
 	@Override
-	public void deleteFile(String uuid) throws BusinessException {
-		try {
-			User actor = getAuthentication();
-			DocumentEntry doc = documentEntryService.findById(actor, uuid);
-
-			logger.debug("Trying to delete document entry: " + doc.getUuid());
-			documentEntryService.deleteDocumentEntry(actor, doc);
-		} catch (BusinessException e) {
-			throw e;
-		}
-	}
-
-	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
-			throws BusinessException {
-		DocumentEntry res;
-
-		try {
-			User actor = getAuthentication();
-			DataHandler dh = doca.getDocument();
-			InputStream in = dh.getInputStream();
-			String comment = (doca.getComment() == null) ? "" : doca
-					.getComment();
-
-			res = documentEntryService.createDocumentEntry(actor, in,
-					doca.getFilename());
-			documentEntryService.updateFileProperties(actor, res.getUuid(),
-					res.getName(), comment);
+	public DocumentDto addDocumentXop(DocumentAttachement doca)  throws BusinessException {
+    	DocumentEntry res;
+    	
+    	try {
+    		User actor = getAuthentication();
+    		DataHandler dh = doca.getDocument();
+    		InputStream in = dh.getInputStream();
+			
+			res =  documentEntryService.createDocumentEntry(actor, in, doca.getFilename());
+			
+			//mandatory ?
+		 	String comment = (doca.getComment() == null)? "" : doca.getComment();
+			
+			documentEntryService.updateFileProperties(actor, res.getUuid(), res.getName(), comment);
 		} catch (IOException e) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
-					"unable to upload", e);
+			throw  new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "unable to upload",e);
 		}
+		
 		return new DocumentDto(res);
 	}
-
+	
 	@Override
 	public Long getUserMaxFileSize() throws BusinessException {
-		Long res;
-
-		try {
-			User actor = getAuthentication();
-			res = documentEntryService.getUserMaxFileSize(actor);
-		} catch (BusinessException e) {
-			throw e;
-		}
-		return res;
+		User actor = getAuthentication();
+		return documentEntryService.getUserMaxFileSize(actor);
 	}
-
+	
 	@Override
 	public Long getAvailableSize() throws BusinessException {
-		Long res;
-
-		try {
-			User actor = getAuthentication();
-			res = documentEntryService.getAvailableSize(actor);
-		} catch (BusinessException e) {
-			throw e;
-		}
-		return res;
+		User actor = getAuthentication();
+		return documentEntryService.getAvailableSize(actor);
+	}
+	
+	@Override
+	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
+		User actor = getAuthentication();
+		return documentEntryService.getDocumentStream(actor, docEntryUuid);
 	}
 
-	// ############# utility methods
-	private static List<DocumentDto> convertDocumentEntryList(
-			List<DocumentEntry> input) {
+	//#############  utility methods
+	private static List<DocumentDto> convertDocumentEntryList(List<DocumentEntry> input) {
+
 		if (input == null)
 			return null;
 

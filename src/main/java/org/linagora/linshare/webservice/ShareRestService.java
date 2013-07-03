@@ -42,35 +42,34 @@ import javax.ws.rs.core.Response;
 
 import org.linagora.linshare.webservice.dto.ShareDto;
 
+
 /**
- * Interface for the Share service REST jaxRS interface Allows for creation of a
- * sharing
+ * Interface for the Share service
+ * REST jaxRS interface
+ * Allows for creation of a sharing
  */
 
 @Path("/rest/shares")
 public interface ShareRestService {
 
 	/**
-	 * Share a document with a user Returns are : -> HttpStatus.SC_UNAUTHORIZED
-	 * if the user is not authentified -> HttpStatus.SC_FORBIDDEN if the user is
-	 * a guest without upload right -> HttpStatus.SC_NOT_FOUND if either the
-	 * document or the target user are not found -> HttpStatus.SC_METHOD_FAILURE
-	 * if the sharing cannot be created (maybe not a proper return type) ->
-	 * HttpStatus.SC_OK if the sharing is successful
-	 * 
-	 * @param targetMail
-	 *            : the email of the target
-	 * @param uuid
-	 *            : the uuid of the document to be shared
-	 * @throws IOException
-	 *             : in case of failure
+	 * Share a document with a user
+	 * Returns are :
+	 * -> HttpStatus.SC_UNAUTHORIZED if the user is not authentified
+	 * -> HttpStatus.SC_FORBIDDEN if the user is a guest without upload right
+	 * -> HttpStatus.SC_NOT_FOUND if either the document or the target user are not found
+	 * -> HttpStatus.SC_METHOD_FAILURE if the sharing cannot be created (maybe not a proper return type)
+	 * -> HttpStatus.SC_OK if the sharing is successful
+	 * @param targetMail : the email of the target
+	 * @param uuid : the uuid of the document to be shared
+	 * @throws IOException : in case of failure
 	 * 
 	 */
 	public void multiplesharedocuments(ArrayList<ShareDto> shares, boolean secured, String message);
 	
 	public void sharedocument(String targetMail, String uuid, int securedShare);
-
-	// public List<ShareDto> getMyOwnShares();
+	
+//	public List<ShareDto> getMyOwnShares();
 	public List<ShareDto> getReceivedShares();
-
+	public Response getDocumentStream(String uuid);
 }

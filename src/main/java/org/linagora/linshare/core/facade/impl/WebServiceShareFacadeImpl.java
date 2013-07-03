@@ -53,27 +53,22 @@ import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.ShareEntryService;
-import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
-		implements WebServiceShareFacade {
+public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceShareFacade {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory
-			.getLogger(WebServiceShareFacadeImpl.class);
-
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceShareFacadeImpl.class);
+	
 	private final DocumentEntryService documentEntryService;
-
+	
 	private final ShareFacade shareFacade;
-
+	
 	private final ShareEntryService shareEntryService;
 
-	public WebServiceShareFacadeImpl(
-			final DocumentEntryService documentEntryService,
-			final AccountService accountService, final ShareFacade shareFacade,
+	public WebServiceShareFacadeImpl(final DocumentEntryService documentEntryService, final AccountService accountService, final ShareFacade shareFacade,
 			final ShareEntryService shareEntryService) {
 		super(accountService);
 		this.documentEntryService = documentEntryService;
@@ -84,23 +79,21 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 	@Override
 	public List<ShareDto> getReceivedShares() throws BusinessException {
 		User actor = getAuthentication();
-
-		List<ShareEntry> shares = shareEntryService.findAllMyShareEntries(
-				actor, actor);
-
+		 
+		List<ShareEntry> shares = shareEntryService.findAllMyShareEntries(actor, actor); 
+ 
 		if (shares == null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
-					"No such share");
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND, "No such share");
 		}
-
-		return convertShareEntryList(shares);
+		
+		return convertShareEntryList (shares);
 	}
 
 	private static List<ShareDto> convertShareEntryList(List<ShareEntry> input) {
-
+	
 		if (input == null)
 			return null;
-
+	
 		List<ShareDto> output = new ArrayList<ShareDto>();
 		for (ShareEntry var : input) {
 			output.add(new ShareDto(var));
@@ -109,15 +102,12 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 	}
 
 	@Override
-	public void sharedocument(String targetMail, String uuid, int securedShare)
-			throws BusinessException {
+	public void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException {
 
 		User actor = getAuthentication();
 
 		if ((actor instanceof Guest && !actor.getCanUpload())) {
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
-					"You are not authorized to use this service");
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
 		}
 
 		// fetch the document
@@ -129,17 +119,11 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 		}
 
 		if (documentEntry == null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
-					"Document not found");
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND, "Document not found");
 		}
 
-		DocumentVo docVo = new DocumentVo(documentEntry.getUuid(),
-				documentEntry.getName(), documentEntry.getComment(),
-				documentEntry.getCreationDate(),
-				documentEntry.getExpirationDate(), documentEntry.getType(),
-				documentEntry.getEntryOwner().getLsUuid(),
-				documentEntry.getCiphered(), documentEntry.getShareEntries()
-						.size() > 0, documentEntry.getSize());
+		DocumentVo docVo = new DocumentVo(documentEntry.getUuid(), documentEntry.getName(), documentEntry.getComment(), documentEntry.getCreationDate(), documentEntry.getExpirationDate(),
+				documentEntry.getType(), documentEntry.getEntryOwner().getLsUuid(), documentEntry.getCiphered(), documentEntry.getShareEntries().size() > 0, documentEntry.getSize());
 
 		List<DocumentVo> listDoc = new ArrayList<DocumentVo>();
 		listDoc.add(docVo);
@@ -153,38 +137,39 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 		// time
 		String message = null;
 		String subject = null;
-		MailContainer mailContainer = new MailContainer(
-				actor.getExternalMailLocale(), message, subject);
+		MailContainer mailContainer = new MailContainer(actor.getExternalMailLocale(), message, subject);
 
 		UserVo uo = new UserVo(actor);
 
 		try {
-			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(
-					uo, listDoc, listRecipient, (securedShare == 1),
-					mailContainer);
+			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(uo, listDoc, listRecipient, (securedShare == 1), mailContainer);
 
 		} catch (BusinessException e) {
 			throw e;
 		}
 
-		if ((successes.getSuccessesItem() == null)
-				|| ((successes.getFailsItem() != null) && (successes
-						.getFailsItem().size() > 0))) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
-					"Could not share the document");
+		if ((successes.getSuccessesItem() == null) || ((successes.getFailsItem() != null) && (successes.getFailsItem().size() > 0))) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "Could not share the document");
 		}
 
 	}
 
 	@Override
-	public void multiplesharedocuments(String targetMail, List<String> uuid,
-			int securedShare, String messageOpt) throws BusinessException {
-		User actor = getAuthentication();
+	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt) throws BusinessException {
 		List<String> listRecipient = new ArrayList<String>();
-		List<DocumentVo> listDoc = new ArrayList<DocumentVo>();
-		DocumentEntry documentEntry; // fetch the document
+		listRecipient.add(targetMail);
+		this.multiplesharedocuments(listRecipient, uuid, securedShare, messageOpt);
+	}
+	
+	@Override
+	public void multiplesharedocuments(List<String> mails, List<String> uuid, int securedShare, String messageOpt) throws BusinessException {
+		User actor = getAuthentication();
 
-		listRecipient.addAll(StringJoiner.split(targetMail, ","));
+		List<DocumentVo> listDoc = new ArrayList<DocumentVo>();
+
+		// fetch the document
+		DocumentEntry documentEntry;
+
 		for (String onefileid : uuid) {
 			documentEntry = documentEntryService.findById(actor, onefileid);
 			DocumentVo documentVo = new DocumentVo(documentEntry);
@@ -195,9 +180,10 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 		// time
 		String message = (messageOpt == null) ? "" : messageOpt;
 		String subject = null;
-		MailContainer mailContainer = new MailContainer(
-				actor.getExternalMailLocale(), message, subject);
+		MailContainer mailContainer = new MailContainer(actor.getExternalMailLocale(), message, subject);
+
 		UserVo actorVo = new UserVo(actor);
+
 		SuccessesAndFailsItems<ShareDocumentVo> successes;
 
 		try {
@@ -205,11 +191,9 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 		} catch (BusinessException e) {
 			throw e;
 		}
-		if ((successes.getSuccessesItem() == null)
-				|| ((successes.getFailsItem() != null) && (successes
-						.getFailsItem().size() > 0))) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
-					"Could not share the document");
+
+		if ((successes.getSuccessesItem() == null) || ((successes.getFailsItem() != null) && (successes.getFailsItem().size() > 0))) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "Could not share the document");
 		}
 		
 	}

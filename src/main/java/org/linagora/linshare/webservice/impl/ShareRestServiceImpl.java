@@ -50,24 +50,24 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
-import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.webservice.ShareRestService;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ShareRestServiceImpl extends WebserviceBase implements
-		ShareRestService {
 
 public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
 
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger(ShareRestServiceImpl.class);
+	
 	private final WebServiceShareFacade webServiceShareFacade;
-
-	public ShareRestServiceImpl(final WebServiceShareFacade facade) {
+	
+	public ShareRestServiceImpl(final WebServiceShareFacade facade){
 		this.webServiceShareFacade = facade;
 	}
-
+	
 	/**
 	 * get the files of the user
 	 */
@@ -78,13 +78,14 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	public List<ShareDto> getReceivedShares() {
 	
 		List<ShareDto> shares = null;
-
+		
 		try {
 			webServiceShareFacade.checkAuthentication();
 			shares = webServiceShareFacade.getReceivedShares();
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
+		
 		return shares;
 	}
 	
