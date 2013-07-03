@@ -121,7 +121,7 @@
 			<!-- </bean> -->
 		</jaxrs:providers>
 		<jaxrs:features>
-			<cxf:logging />
+<!-- 			<cxf:logging /> -->
 		</jaxrs:features>
 <!-- 		
 			<jaxrs:inInterceptors>
