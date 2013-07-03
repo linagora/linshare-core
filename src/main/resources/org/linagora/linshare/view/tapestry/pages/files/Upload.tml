@@ -8,8 +8,6 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <script>
         var uuids = new Array();
 
-        var errors = [ $errors ];
-
         var trySubmit = function() {
             if (jQuery("#progress").val() == 0) {
                 if (jQuery("#is_submit").is(":checked")) {
@@ -33,12 +31,14 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 element: jQuery('#uploader')[0],
                 debug: true,
                 maxConnections: 1,
+                disableCancelForFormUploads: true,
                 request: {
                     endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
                 },
                 callbacks: {
                     onError: function(id, fileName, reason) {
                         qq.log("id: " + id + ", fileName: " + fileName + ", reason: " + reason);
+                        jQuery("#error").click();
                     },
                     onDelete: function(id) {
                         // remove item from list of uploaded items to share
@@ -64,6 +64,17 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     enabled: true,
                     forceConfirm: true,
                     endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
+                },
+                text: {
+                    uploadButton: "${message:pages.files.upload.uploadButton}",
+                    cancelButton: "${message:pages.files.upload.cancelButton}",
+                    retryButton: "${message:pages.files.upload.retryButton}",
+                    deleteButton: "${message:pages.files.upload.deleteButton}",
+                    failUpload: "${message:pages.files.upload.failUpload}",
+                    dragZone: "${message:pages.files.upload.dragZone}",
+                    dropProcessing: "${message:pages.files.upload.dropProcessing}",
+                    formatProgress: "${message:pages.files.upload.formatProgress}",
+                    waitingForResponse: "${message:pages.files.upload.waitingForResponse}"
                 }
             });
         });
@@ -91,12 +102,6 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 <t:textfield t:id='uuids' name="uuids" style="display:none" />
                 <t:checkbox t:id='is_submit' name="is_submit" style="display:none" />
                 <t:textfield t:id='progress' name="progress" style="display:none" />
-
-                <!--error message handling-->
-                <t:zone t:id="errorZone"> 
-                    <t:textfield t:id='errorCode' name="errorCode" style="display:none" />
-                    <t:actionLink t:id='error' style="display:none" />
-                </t:zone> 
 
                 <div class="description">
                     <p>${message:components.quickSharePopup.panelRecipients.description}</p>

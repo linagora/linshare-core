@@ -75,7 +75,14 @@ public class BusinessMessagesManagementServiceImpl implements BusinessMessagesMa
     }
 
     public List<String> getBusinessMessages(Messages messages) {
+    	return getMessages(messages, true);
+    }
 
+    public List<String> getRawBusinessMessages(Messages messages) {
+    	return getMessages(messages, false);
+    }
+    
+    private List<String> getMessages(Messages messages, boolean severity) {
         List<String> errorMessages = new ArrayList<String>();
 
         // First we process business exceptions :
@@ -83,15 +90,14 @@ public class BusinessMessagesManagementServiceImpl implements BusinessMessagesMa
             String key = ERROR_CODE_PREFIX + businessException.getErrorCode().toString().toLowerCase();
             String message = messages.get(key);
             message = formatMessage(message, businessException.getExtras());
-            errorMessages.add(addSeverityStyle(message, MessageSeverity.ERROR));
+            errorMessages.add(severity ? addSeverityStyle(message, MessageSeverity.ERROR) : message);
         }
-
         // Now we have to manage business user messages :
         for (BusinessUserMessage businessUserMessage : getBusinessInformativeContentBundle().getBusinessUserMessages()) {
             String key = BUSINESS_MESSAGE_PREFIX + businessUserMessage.getBusinessUserMessageType().toString().toLowerCase();
             String message = messages.get(key);
             message = formatMessage(message, businessUserMessage.getExtras());
-            errorMessages.add(addSeverityStyle(message, businessUserMessage.getSeverity()));
+            errorMessages.add(severity ? addSeverityStyle(message, businessUserMessage.getSeverity()) : message);
         }
         return errorMessages;
     }
