@@ -65,12 +65,15 @@ import org.apache.tapestry5.upload.services.UploadedFile;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserFacade;
@@ -128,6 +131,9 @@ public class QuickSharePopup{
 	@Property
 	private String recipientsSearch;
 	
+	@Property
+	private String listRecipientsSearch;
+	
 	@Persist("flash")
 	@Property
 	private boolean secureSharing;
@@ -147,7 +153,6 @@ public class QuickSharePopup{
 	
 	@Property
 	private UploadedFile file;
-    
     
 	private List<String> successFiles;
 	private Map<String,BusinessException> failFiles;
@@ -169,6 +174,9 @@ public class QuickSharePopup{
 	
 	@Inject
 	private DocumentFacade documentFacade;
+	
+	@Inject
+	private MailingListFacade mailingListFacade;
 	
 	@Inject
     private JavaScriptSupport renderSupport;
@@ -313,9 +321,47 @@ public class QuickSharePopup{
 		}
 		return new ArrayList<UserVo>();
 	}
+
+	public List<String> onProvideCompletionsFromListRecipientsPatternQuickSharePopup(String input) throws BusinessException {
+		List<MailingListVo> searchResults = performSearchForMailingList(input);
+		List<String> elements = new ArrayList<String>();
+		for (MailingListVo current: searchResults) {
+			if(current.getOwner().equals(userVo)){
+				String completeName = "\""+current.getIdentifier()+"\" (Me)";
+				elements.add(completeName);
+			} else {
+				String completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
+				elements.add(completeName);
+			}
+		}
+		return elements;
+	}
+	
+	/**
+	 * Perform a list search.
+	 * 
+	 * @param input
+	 *            list search pattern.
+	 * @return list of lists.
+	 * @throws BusinessException 
+	 */
+	private List<MailingListVo> performSearchForMailingList(String input) throws BusinessException {
+		List<MailingListVo> list = new ArrayList<MailingListVo>();
+		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
+		list = mailingListFacade.findAllMailingListByUser(userVo);
+		for(MailingListVo current : list){
+			if(current.getIdentifier().indexOf(input) != -1){
+				finalList.add(current);
+			}
+		}
+		return finalList;
+	}
+	
 	
 	
     public void onSuccessFromQuickShareForm() throws BusinessException {
+    	
+    	
     	filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy, messages);
     	try {
     		textAreaSubjectValue = filter.clean(textAreaSubjectValue);
@@ -332,8 +378,14 @@ public class QuickSharePopup{
     	boolean sendErrors = false;
 		  	
     	try{
-	    	
 			List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+			List<MailingListVo> mailingListSelected = new ArrayList<MailingListVo>();
+			mailingListSelected = mailingListFacade.getMailingListFromQuickShare(listRecipientsSearch,userVo);
+			for(MailingListVo current : mailingListSelected){
+				for(MailingListContactVo currentContact : current.getMails()){
+					recipients.add(currentContact.getMail());
+				}
+			}
 			String badFormatEmail =  "";
 			
 			for (String recipient : recipients) {
@@ -408,7 +460,7 @@ public class QuickSharePopup{
 				businessMessagesManagementService.notify(new BusinessUserMessage(
 	                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
 			}
-
+			
     	}catch (NullPointerException e3) {
     		logger.error("No Email in textarea", e3);
     		businessMessagesManagementService.notify(new BusinessUserMessage(

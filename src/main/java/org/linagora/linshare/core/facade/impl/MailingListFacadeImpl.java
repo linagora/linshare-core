@@ -206,4 +206,43 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	   
 	   return new UserVo(email, firstName, lastName);
    }
+   
+   @Override
+   public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user){
+	   String[] recipients = mailingLists.replaceAll(";", ",").split(",");
+		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
+		if(mailingLists.startsWith("\"") && mailingLists.endsWith(")")){
+		for (String oneMailingList : recipients) {
+			   int index1 = oneMailingList.indexOf("(");
+			   String owner = oneMailingList.substring(index1+1, oneMailingList.length()-1);
+			   
+			   int index2 = oneMailingList.indexOf(" ");
+			   String identifier = oneMailingList.substring(1, index2-1);
+			   
+			   if(owner.equals("Me")){
+				   owner = user.getFullName();
+			   }
+			   
+			   MailingListVo current =new MailingListVo();
+			   current= retrieveMailingListByOwnerAndIdentifier(identifier,owner);
+			   finalList.add(current);
+		}
+		
+	} else {
+		finalList = null;
+	}
+	   return finalList;
+   }
+   
+   @Override
+   public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName){
+	   List<MailingList> listFromDb = new ArrayList<MailingList>();
+	   listFromDb = mailingListService.findAllMailingList();
+	   for(MailingList current : listFromDb){
+		   if((current.getIdentifier().equals(identifier)) && ((current.getOwner().getFirstName()+" "+current.getOwner().getLastName()).equals(ownerFullName))){
+			   return new MailingListVo(current);
+		   }
+	   }
+	   return null;
+   }
 }

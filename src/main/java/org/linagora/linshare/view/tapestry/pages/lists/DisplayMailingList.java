@@ -173,17 +173,15 @@ public class DisplayMailingList {
 		List<UserVo> fromAuthorized = new ArrayList<UserVo>();
 
 		for(UserVo current :searchResults){
-			if(userFacade.findUserFromAuthorizedDomainOnly(loginUser.getDomainIdentifier(),current.getMail()) != null){
+			if((userFacade.findUserFromAuthorizedDomainOnly(loginUser.getDomainIdentifier(),current.getMail()) != null) && !(current.equals(loginUser))){;
 				fromAuthorized.add(current);
 			}
 		}
 		
 		List<String> elements = new ArrayList<String>();
 		for (UserVo user : fromAuthorized) {
-			logger.debug("current user: "+user.getFullName());
 			String completeName = MailCompletionService.formatLabel(user);
 			if (!elements.contains(completeName)) {
-				logger.debug("add user: "+user.getFullName());
 				elements.add(completeName);
 			}
 		}
@@ -322,7 +320,7 @@ public class DisplayMailingList {
 			results = new ArrayList<UserVo>();
 
 			for(UserVo current :searchResults){
-				if(userFacade.findUserFromAuthorizedDomainOnly(loginUser.getDomainIdentifier(),current.getMail()) != null){
+				if((userFacade.findUserFromAuthorizedDomainOnly(loginUser.getDomainIdentifier(),current.getMail()) != null) && !(current.equals(loginUser))){
 					results.add(current);
 				}
 			}
