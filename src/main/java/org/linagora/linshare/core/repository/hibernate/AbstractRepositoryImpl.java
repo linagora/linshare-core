@@ -122,7 +122,6 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
             throw new IllegalArgumentException("Entity must not be null");
         }
         // check that entity is not transient :
-        hibernateTemplate.merge(entity);
         load(entity);
         hibernateTemplate.update(entity);
         return entity;

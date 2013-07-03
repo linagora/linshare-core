@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.AllowDomain;
@@ -125,9 +126,9 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
     }
     
     @Override
-    public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId) throws BusinessException {
+    public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId,PersistentLocale persistentLocale) throws BusinessException {
         DomainAccessRule rule = domainPolicyService.retrieveDomainAccessRule(persistenceId);
-        return new DomainAccessRuleVo(rule,null);
+        return new DomainAccessRuleVo(rule,persistentLocale);
     }
    
    @Override

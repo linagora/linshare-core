@@ -16,9 +16,8 @@
 			
 						<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
 		<t:form id="form">
-					<fieldset class="title_criteria_zone" id="targetCriterion">
-					<p><t:label for="identifier"/>:&nbsp;
-                    <t:textfield t:id="identifier" value="domainPolicy.identifier" Disabled="true"/></p>
+			<fieldset class="title_criteria_zone" id="searchCriterion">
+			<legend align="top" class="palette">${message:global.button.update}</legend>
 					
 					<p><t:label for="policyDescription"/>:&nbsp;
                     <t:textarea t:id="policyDescription" value="domainPolicy.policyDescription" cols="70" rows="1"/></p>
@@ -58,8 +57,8 @@
 						</t:pageLink>
             		</p:else>	
             	</t:if>
-            		
-            		<p><input type="submit"  value="${message:global.button.validate}"/></p>
+            		<br></br>
+            		<input type="submit"  value="${message:global.button.validate}"/>
             	</fieldset>
 		</t:form>	
 		</div>

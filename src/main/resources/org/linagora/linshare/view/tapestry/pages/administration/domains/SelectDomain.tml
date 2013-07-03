@@ -14,20 +14,22 @@
 			<!-- FORM -->         
 						<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
 			<form t:type="form">
-			
+			<fieldset class="title_criteria_zone" id="searchCriterion">
+			<legend align="top" class="palette">${message:pages.administration.domains.index.createdomainpolicy.selectrule.index}</legend>
 				<div class="error">
 					<t:errors />
 				</div>     
 				
 				<p>${message:pages.administration.domains.index.createdomainpolicy.selectdomain.help}
 				</p>
-				
+				<br></br>
 			<div>
             <t:label for="domainSelection"/>:
             <select t:type="select" t:id="domainSelection" t:model="domains"></select>
             </div>
-            
+            <br></br>
             <p><input type="submit" value="${message:global.button.validate}"/></p>
+        </fieldset>
         </form>
 		</div>
 
