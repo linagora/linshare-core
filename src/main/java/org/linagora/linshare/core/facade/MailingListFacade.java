@@ -30,4 +30,6 @@ public interface MailingListFacade {
     public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException ;
     public List<MailingListVo> copyList(List<MailingListVo> list);
     public UserVo getUserFromDisplay(String display);
+    public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user);
+    public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName);
 }

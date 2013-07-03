@@ -93,9 +93,9 @@
         				<t:grid source="results"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
 	    					<t:parameter name="inListCell">
 			  					<t:if t:test="isInList">
-			  						<img src="${asset:context:images/icons/validate.png}"/>
+			  						<img src="${asset:context:images/icons/validate-mini.png}"/>
 			  					<p:else>
-			  						<img src="${asset:context:images/icons/delete.png}"/>
+			  						<img src="${asset:context:images/icons/absent-small.png}"/>
 			  					</p:else>
 								</t:if>
 			 				</t:parameter>

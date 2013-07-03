@@ -141,20 +141,16 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	private List<AbstractDomain> getAuthorizedDomain(
 			Set<AbstractDomain> domains, List<DomainAccessRule> rules) {
 
-		logger.debug("Begin getAuthorizedDomain");
 
 		List<AbstractDomain> includes = new ArrayList<AbstractDomain>();
 		List<AbstractDomain> excludes = new ArrayList<AbstractDomain>();
 
-		logger.debug("domainAccessRule list size : " + rules.size());
 
 		String debug = "";
 		for (AbstractDomain d : domains) {
 			debug += d.getIdentifier() + ", ";
 
 		}
-		logger.debug("input domain list size : " + domains.size() + " : "
-				+ debug);
 
 		for (AbstractDomain domain : domains) {
 			logger.debug("check:domain : " + domain.toString());
@@ -208,7 +204,6 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 			}
 		}
 
-		logger.debug("End getAuthorizedDomain");
 		return includes;
 	}
 
