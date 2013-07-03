@@ -40,6 +40,7 @@ import java.util.List;
 
 
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
@@ -152,7 +153,7 @@ public class ManageDomainPolicy {
 				for (String domainIdentifier : domainIdentifiers) {
 					if(!domainIdentifier.isEmpty()){
 						logger.debug(domainIdentifier);
-						ruleVo =domainPolicyFacade.retrieveDomainAccessRule(Long.parseLong(domainIdentifier));
+						ruleVo =domainPolicyFacade.retrieveDomainAccessRule(Long.parseLong(domainIdentifier),persistentLocale);
 						rulesVo.add(ruleVo);
 					}
 				}

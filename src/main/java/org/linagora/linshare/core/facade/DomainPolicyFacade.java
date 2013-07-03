@@ -34,6 +34,8 @@
 package org.linagora.linshare.core.facade;
 
 import java.util.List;
+
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
@@ -63,7 +65,7 @@ public interface DomainPolicyFacade {
     
     public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo)throws BusinessException;
     
-    public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId) throws BusinessException;
+    public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId,PersistentLocale persistentLocale) throws BusinessException;
     
     public void insertOnTop(DomainPolicyVo policyVo,DomainAccessRuleVo ruleVo);
     
