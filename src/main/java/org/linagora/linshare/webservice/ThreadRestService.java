@@ -37,13 +37,12 @@ import java.util.List;
 
 import javax.ws.rs.Path;
 
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 
 @Path("/rest/threads")
 public interface ThreadRestService {
 
-	public List<ThreadDto> getAllMyThread() throws BusinessException;
+	public List<ThreadDto> getAllMyThread();
 
-	public ThreadDto getThread(String uuid) throws BusinessException;
+	public ThreadDto getThread(String uuid);
 }

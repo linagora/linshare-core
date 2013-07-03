@@ -31,46 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.core.facade.admin.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.admin.WebServiceAdminFacade;
+import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
+import org.linagora.linshare.core.service.AccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+public class WebServiceAdminFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceAdminFacade {
 
-import org.linagora.linshare.webservice.dto.ShareDto;
-
-/**
- * Interface for the Share service REST jaxRS interface Allows for creation of a
- * sharing
- */
-
-@Path("/rest/shares")
-public interface ShareRestService {
-
-	/**
-	 * Share a document with a user Returns are : -> HttpStatus.SC_UNAUTHORIZED
-	 * if the user is not authentified -> HttpStatus.SC_FORBIDDEN if the user is
-	 * a guest without upload right -> HttpStatus.SC_NOT_FOUND if either the
-	 * document or the target user are not found -> HttpStatus.SC_METHOD_FAILURE
-	 * if the sharing cannot be created (maybe not a proper return type) ->
-	 * HttpStatus.SC_OK if the sharing is successful
-	 * 
-	 * @param targetMail
-	 *            : the email of the target
-	 * @param uuid
-	 *            : the uuid of the document to be shared
-	 * @throws IOException
-	 *             : in case of failure
-	 * 
-	 */
-	public void multiplesharedocuments(ArrayList<ShareDto> shares, boolean secured, String message);
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceAdminFacadeImpl.class);
 	
-	public void sharedocument(String targetMail, String uuid, int securedShare);
+	public WebServiceAdminFacadeImpl(final AccountService accountService) {
+		super(accountService);
+	}
 
-	// public List<ShareDto> getMyOwnShares();
-	public List<ShareDto> getReceivedShares();
-
+	@Override
+	public User checkAuthentication() throws BusinessException {
+		User user = super.checkAuthentication();
+		if (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPERADMIN) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+		}
+		return user;
+	}
 }

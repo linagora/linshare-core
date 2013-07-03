@@ -92,6 +92,10 @@
 	<bean id="userRestService" class="org.linagora.linshare.webservice.impl.UserRestServiceImpl">
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
+	
+	<bean id="adminRestService" class="org.linagora.linshare.webservice.admin.impl.AdminRestServiceImpl">
+		<constructor-arg ref="webServiceAdminFacade" />
+	</bean>
 
 	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.impl.FineUploaderServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
@@ -105,7 +109,7 @@
 			<ref bean="threadRestService" />
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
-			<ref bean="fineUploaderService" />
+			<ref bean="adminRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
@@ -113,23 +117,25 @@
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
-			<!-- <bean class="org.linagora.linshare.webservice.interceptor.LinShareWebApplicationExceptionMapper"> </bean> -->
 			<!-- <bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper"> -->
 			<!-- <property name="printStackTrace" value="true" /> -->
 			<!-- </bean> -->
 		</jaxrs:providers>
 		<jaxrs:features>
-            <!--<cxf:logging />-->
+<!-- 			<cxf:logging /> -->
 		</jaxrs:features>
-			<!-- <jaxrs:inInterceptors> -->
-			<!-- <ref bean="logInbound" /> -->
-			<!-- </jaxrs:inInterceptors> -->
-			<!-- <jaxrs:outInterceptors> -->
-			<!-- <ref bean="logOutbound" /> -->
-			<!-- </jaxrs:outInterceptors> -->
+<!-- 		
+			<jaxrs:inInterceptors>
+				<ref bean="logInbound" />
+			</jaxrs:inInterceptors>
+-->
+<!--
+ 			<jaxrs:outInterceptors> 
+				<ref bean="logOutbound" />
+			</jaxrs:outInterceptors>
+-->
 	</jaxrs:server>
 
 	<!-- enable json with jackson (not the default jettison) -->
 	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
-
 </beans>

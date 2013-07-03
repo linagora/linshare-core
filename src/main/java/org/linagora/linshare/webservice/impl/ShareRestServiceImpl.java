@@ -34,10 +34,11 @@
 package org.linagora.linshare.webservice.impl;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -48,8 +49,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceShareFacade;
 import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.webservice.ShareRestService;
@@ -61,9 +60,7 @@ import org.slf4j.LoggerFactory;
 public class ShareRestServiceImpl extends WebserviceBase implements
 		ShareRestService {
 
-	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareRestServiceImpl.class);
+public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
 
 	private final WebServiceShareFacade webServiceShareFacade;
 
@@ -74,36 +71,60 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 	/**
 	 * get the files of the user
 	 */
-	@Path("/list")
+	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares() {
+	
 		List<ShareDto> shares = null;
 
 		try {
 			webServiceShareFacade.checkAuthentication();
 			shares = webServiceShareFacade.getReceivedShares();
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 		return shares;
 	}
-
-	// FIXME: shouldn't be GET but POST or PUT
+	
 	@GET
 	@Path("/sharedocument/{targetMail}/{uuid}")
 	@Override
-	public void sharedocument(@PathParam("targetMail") String targetMail,
-			@PathParam("uuid") String uuid,
-			@DefaultValue("0") @QueryParam("securedShare") int securedShare) {
+	public void sharedocument(@PathParam("targetMail") String targetMail, @PathParam("uuid") String uuid, @DefaultValue("0") @QueryParam("securedShare") int securedShare) {
 		try {
 			webServiceShareFacade.checkAuthentication();
-			webServiceShareFacade.checkAuthentication();
-			webServiceShareFacade.multiplesharedocuments(targetMails, uuids, securedShare, message);
-		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
+		} catch (Exception e) {
+			throw analyseFault(e);
 		}
 	}
 
+	@POST
+	@Path("/multiplesharedocuments")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Override
+	public void multiplesharedocuments(ArrayList<ShareDto> shares, @QueryParam("secured") boolean secured, @QueryParam("message") String message) {
+		try {
+			webServiceShareFacade.checkAuthentication();
+			webServiceShareFacade.multiplesharedocuments(shares, secured, message);
+		} catch (Exception e) {
+			throw analyseFault(e);
+		}
+	}
+
+	@Path("/download/{uuid}")
+	@GET
+	@Override
+	public Response getDocumentStream(@PathParam("uuid") String shareUuid) {
+		try {
+			webServiceShareFacade.checkAuthentication();
+			ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
+			InputStream documentStream = webServiceShareFacade.getDocumentStream(shareUuid);
+			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, shareDto.getName(), shareDto.getType());
+			return response.build();
+		} catch (Exception e) {
+			throw analyseFault(e);
+		}
+	}
 }

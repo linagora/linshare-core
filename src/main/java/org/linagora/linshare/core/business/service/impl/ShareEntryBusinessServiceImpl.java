@@ -139,7 +139,7 @@ public class ShareEntryBusinessServiceImpl implements ShareEntryBusinessService 
 
 	@Override
 	public void addDownload(ShareEntry entry) throws BusinessException {
-		entry.incrementDownload();
+		entry.incrementDownloaded();
 		shareEntryRepository.update(entry);
 	}
 
