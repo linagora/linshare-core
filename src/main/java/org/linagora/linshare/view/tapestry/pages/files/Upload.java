@@ -109,16 +109,6 @@ public class Upload {
 	@Property
 	private String contextPath;
 
-	@Persist("flash")
-	@Property
-	private String errors;
-
-	@Property
-	private String errorCode;
-
-	@Component
-	private Zone errorZone;
-
 	/* ***********************************************************
 	 * Injected services
 	 * ***********************************************************
@@ -154,7 +144,6 @@ public class Upload {
 
 	void onActivate() {
 		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
-		errors = "";
 	}
 
 	@SetupRender
@@ -327,18 +316,6 @@ public class Upload {
 			}
 		}
 		return elements;
-	}
-
-	Zone onActionFromError() {
-		// XXX HACK : using default error code, should analyze server response
-		businessMessagesManagementService.notify(new BusinessException(
-				BusinessErrorCode.UNKNOWN, ""));
-		errors = StringJoiner
-				.join(businessMessagesManagementService
-						.getBusinessMessages(messages), ",");
-		// XXX HACK : ensuring we always got the last error
-		businessMessagesManagementService.reset();
-		return errorZone;
 	}
 
 	/*
