@@ -136,6 +136,18 @@ public class WebServiceDocumentFacadeImpl extends WebServiceGenericFacadeImpl im
 		return documentEntryService.getDocumentStream(actor, docEntryUuid);
 	}
 
+	@Override
+	public void deleteFile(String uuid) throws BusinessException {
+		try {
+			User actor = getAuthentication();
+			DocumentEntry doc = documentEntryService.findById(actor, uuid);
+		
+			documentEntryService.deleteDocumentEntry(actor, doc);
+		} catch (BusinessException e) {
+			throw e;
+		}
+	}
+
 	//#############  utility methods
 	private static List<DocumentDto> convertDocumentEntryList(List<DocumentEntry> input) {
 
