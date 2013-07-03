@@ -110,6 +110,7 @@
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
 			<ref bean="adminRestService" />
+			<ref bean="fineUploaderService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

@@ -49,7 +49,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 		try {
 			actor = webServiceDocumentFacade.checkAuthentication();
 		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+			throw analyseFault(e);
 		}
 		if (actor instanceof Guest && !actor.getCanUpload()) {
 			throw giveRestException(HttpStatus.SC_FORBIDDEN,
@@ -83,7 +83,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 		try {
 			actor = webServiceDocumentFacade.checkAuthentication();
 		} catch (BusinessException e) {
-			throw analyseFaultREST(e);
+			throw analyseFault(e);
 		}
 		if (actor instanceof Guest && !actor.getCanUpload()) {
 			throw giveRestException(HttpStatus.SC_FORBIDDEN,
