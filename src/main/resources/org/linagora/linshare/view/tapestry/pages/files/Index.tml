@@ -18,12 +18,11 @@
 			<h4>Actions</h4>
 			<ul>
 				<t:if test="displayUploadButton">
-				<li>
-					<a href="#" class="button" onclick="windowUpload.showCenter(true);">
-						<span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/>
-							${message:pages.files.upload.addbutton}</span>
-					</a>
-				</li>
+                <li>
+                    <t:pageLink page="files/upload" class="button" title="${message:pages.files.upload.addbutton}">
+                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt="" /> ${message:pages.files.upload.addbutton}</span>
+                    </t:pageLink>
+                </li>
 				<t:parameter name="else"><t:linkit.Comment> * KEEP IT, XHTML validation * </t:linkit.Comment>
 				<li>&nbsp;</li>
 				</t:parameter>

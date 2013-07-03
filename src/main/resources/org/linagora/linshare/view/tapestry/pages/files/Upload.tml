@@ -95,7 +95,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 <img src="${asset:context:images/icons/cancel.png}" alt="" />Quitter sans partager (TODO)</span>
             </a>
 
-            <t:form t:id="shareForm">
+            <t:form t:id="quickShareForm">
                 <t:errors />
 
                 <!--upload and share client logic-->

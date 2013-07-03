@@ -69,7 +69,7 @@ public class Upload {
 
 	@InjectComponent
 	@Property
-	private Form shareForm;
+	private Form quickShareForm;
 
 	// @InjectComponent
 	// private Zone shareZone;
@@ -158,20 +158,20 @@ public class Upload {
 		}
 	}
 
-	void onValidateFromShareForm() {
+	void onValidateFromQuickShareForm() {
 		is_submit = true;
 		if (progress > 0) {
 			return; // some uploads are still in progress
 		}
 	}
 
-	void onSubmitFromShareForm() throws BusinessException {
+	Object onSubmitFromQuickShareForm() throws BusinessException {
 		/*
 		 * XXX FIXME TODO HACK : same code as QuickSharePopup ... it's not just
 		 * smelly
 		 */
 		logger.debug("uuids = " + uuids);
-		filter = new XSSFilter(shareSessionObjects, shareForm, antiSamyPolicy,
+		filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy,
 				messages);
 		try {
 			textAreaSubjectValue = filter.clean(textAreaSubjectValue);
@@ -222,7 +222,7 @@ public class Upload {
 								BusinessUserMessageType.QUICKSHARE_BADMAIL,
 								MessageSeverity.ERROR, badFormatEmail));
 				addedDocuments = new ArrayList<DocumentVo>();
-				return;
+				return Upload.class;
 			} else {
 				recipientsEmail = recipients;
 			}
@@ -232,7 +232,7 @@ public class Upload {
 						.notify(new BusinessUserMessage(
 								BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE,
 								MessageSeverity.ERROR));
-				return;
+				return Upload.class;
 			}
 
 			// PROCESS SHARE
@@ -274,7 +274,7 @@ public class Upload {
 
 					// reset list of documents
 					addedDocuments = new ArrayList<DocumentVo>();
-					return;
+					return Upload.class;
 				}
 			}
 
@@ -303,6 +303,7 @@ public class Upload {
 					BusinessUserMessageType.QUICKSHARE_NOMAIL,
 					MessageSeverity.ERROR));
 		}
+		return Index.class;
 	}
 
 	List<String> onProvideCompletionsFromRecipientsPattern(String input) {
