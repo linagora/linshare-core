@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.User;
 
 
 @XmlRootElement(name = "Document")
@@ -52,6 +53,7 @@ public class DocumentDto extends EntryDto {
 		this.ciphered = de.getCiphered();
 		this.type = de.getDocument().getType();
 		this.size = de.getDocument().getSize();
+		this.owner = new UserDto((User) de.getEntryOwner());
 	}
 	
 	public DocumentDto() {
