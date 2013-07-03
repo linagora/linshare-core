@@ -75,7 +75,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<ShareDto> getReceivedShares()
+	public List<ShareDto> getReceivedShares() {
 	
 		List<ShareDto> shares = null;
 		
