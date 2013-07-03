@@ -31,46 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.webservice.admin.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.webservice.dto.ShareDto;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.admin.WebServiceAdminFacade;
+import org.linagora.linshare.webservice.admin.AdminRestService;
+import org.linagora.linshare.webservice.impl.WebserviceBase;
 
-/**
- * Interface for the Share service REST jaxRS interface Allows for creation of a
- * sharing
- */
+public class AdminRestServiceImpl extends WebserviceBase implements AdminRestService {
 
-@Path("/rest/shares")
-public interface ShareRestService {
+	private final WebServiceAdminFacade webServiceAdminFacade;
 
-	/**
-	 * Share a document with a user Returns are : -> HttpStatus.SC_UNAUTHORIZED
-	 * if the user is not authentified -> HttpStatus.SC_FORBIDDEN if the user is
-	 * a guest without upload right -> HttpStatus.SC_NOT_FOUND if either the
-	 * document or the target user are not found -> HttpStatus.SC_METHOD_FAILURE
-	 * if the sharing cannot be created (maybe not a proper return type) ->
-	 * HttpStatus.SC_OK if the sharing is successful
-	 * 
-	 * @param targetMail
-	 *            : the email of the target
-	 * @param uuid
-	 *            : the uuid of the document to be shared
-	 * @throws IOException
-	 *             : in case of failure
-	 * 
-	 */
-	public void multiplesharedocuments(ArrayList<ShareDto> shares, boolean secured, String message);
+	public AdminRestServiceImpl(final WebServiceAdminFacade webServiceAdminFacade) {
+		this.webServiceAdminFacade = webServiceAdminFacade;
+	}
 	
-	public void sharedocument(String targetMail, String uuid, int securedShare);
-
-	// public List<ShareDto> getMyOwnShares();
-	public List<ShareDto> getReceivedShares();
-
+	@Path("/authorized")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public Boolean isAuthorized() {
+		try {
+			webServiceAdminFacade.checkAuthentication();
+			return true;
+		} catch (BusinessException e) {
+			throw analyseFault(e);
+		}
+	}
 }

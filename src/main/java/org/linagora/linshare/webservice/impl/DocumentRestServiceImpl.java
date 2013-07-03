@@ -51,7 +51,6 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
 import org.linagora.linshare.webservice.DocumentRestService;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
@@ -73,7 +72,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 	}
 
-	@Path("/download/{uuid}")
+	@Path("/{uuid}/download")
 	@GET
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String uuid) {
@@ -93,9 +92,9 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	/**
 	 * get the files of the user
 	 */
-	@Path("/list")
+	@Path("/")
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, "application/json;charset=UTF-8" })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	// application/xml application/json
 	@Override
 	public List<DocumentDto> getDocuments() {
@@ -115,7 +114,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	 * upload a file in user's space. send file inside a form
 	 */
 	@POST
-	@Path("/upload")
+	@Path("/")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override

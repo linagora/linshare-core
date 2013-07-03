@@ -165,4 +165,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityService" />
 	</bean>
+		<bean id="webServiceAdminFacade" class="org.linagora.linshare.core.facade.admin.impl.WebServiceAdminFacadeImpl">
+		<constructor-arg ref="accountService" />
+	</bean>
 </beans>

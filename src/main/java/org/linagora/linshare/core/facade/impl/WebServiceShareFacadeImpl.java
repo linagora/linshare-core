@@ -187,15 +187,8 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 		listRecipient.addAll(StringJoiner.split(targetMail, ","));
 		for (String onefileid : uuid) {
 			documentEntry = documentEntryService.findById(actor, onefileid);
-			DocumentVo docVo = new DocumentVo(documentEntry.getUuid(),
-					documentEntry.getName(), documentEntry.getComment(),
-					documentEntry.getCreationDate(),
-					documentEntry.getExpirationDate(), documentEntry.getType(),
-					documentEntry.getEntryOwner().getLsUuid(),
-					documentEntry.getCiphered(), documentEntry
-							.getShareEntries().size() > 0,
-					documentEntry.getSize());
-			listDoc.add(docVo);
+			DocumentVo documentVo = new DocumentVo(documentEntry);
+			listDoc.add(documentVo);
 		}
 
 		// give personal message and subject in WS in the future? null at this
@@ -204,13 +197,11 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 		String subject = null;
 		MailContainer mailContainer = new MailContainer(
 				actor.getExternalMailLocale(), message, subject);
-		UserVo uo = new UserVo(actor);
+		UserVo actorVo = new UserVo(actor);
 		SuccessesAndFailsItems<ShareDocumentVo> successes;
 
 		try {
-			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(
-					uo, listDoc, listRecipient, (securedShare == 1),
-					mailContainer);
+			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(actorVo, listDoc, mails, (securedShare == 1), mailContainer);
 		} catch (BusinessException e) {
 			throw e;
 		}
@@ -220,6 +211,45 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
 					"Could not share the document");
 		}
+		
+	}
+	
+	@Override
+	public void multiplesharedocuments(List<ShareDto> shares, boolean secured, String message) throws BusinessException {
+		User actor = getAuthentication();
+		UserVo actorVo = new UserVo(actor);
+
+		ArrayList<DocumentVo> listDoc = new ArrayList<DocumentVo>();
+		ArrayList<String> mails = new ArrayList<String>();
+		
+		// FIXME XXX TODO HACK : Workaround to re-use tapestry facade. Refactor and remove Vo when tapestry will be removed
+		for (ShareDto share : shares) {
+			// fetch the document
+			DocumentEntry documentEntry = documentEntryService.findById(actor, share.getDocumentDto().getUuid());
+			
+			DocumentVo documentVo = new DocumentVo(documentEntry);
+			listDoc.add(documentVo);
+			
+			// give personal message and subject in WS in the future? null at this
+			// time
+
+			mails.add(share.getRecipient().getUuid());
+		}
+		String subject = null;
+		MailContainer mailContainer = new MailContainer(actor.getExternalMailLocale(), message, subject);
+		SuccessesAndFailsItems<ShareDocumentVo> successes;
+		try {
+			successes = shareFacade.createSharingWithMailUsingRecipientsEmail(actorVo, listDoc, mails, secured, mailContainer);
+		} catch (BusinessException e) {
+			throw e;
+		}
+
+		if ((successes.getSuccessesItem() == null) || ((successes.getFailsItem() != null) && (successes.getFailsItem().size() > 0))) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT, "Could not share the document");
+		}
+
+	}
+
 	@Override
 	public ShareDto getReceivedShare(String shareEntryUuid) throws BusinessException {
 		User actor = getAuthentication();
