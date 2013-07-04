@@ -86,6 +86,10 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     dropProcessing: "${message:pages.files.upload.dropProcessing}",
                     formatProgress: "${message:pages.files.upload.formatProgress}",
                     waitingForResponse: "${message:pages.files.upload.waitingForResponse}"
+                },
+                validation: {
+                	sizeLimit: ${maxFileSize}
+//                	itemLimit: ${maxCountFile} 
                 }
             });
         });
