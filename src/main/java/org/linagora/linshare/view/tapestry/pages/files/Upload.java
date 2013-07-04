@@ -28,6 +28,8 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserFacade;
+import org.linagora.linshare.core.utils.FileUtils;
+import org.linagora.linshare.core.utils.FileUtils.Unit;
 import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.QuickSharePopup;
@@ -40,6 +42,8 @@ import org.linagora.linshare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import org.linagora.linshare.core.utils.FileUtils;
+//import org.linagora.linshare.core.utils.FileUtils.Unit;
 
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
 		"../../components/fineuploader/fineuploader-3.6.4.js",
@@ -50,6 +54,9 @@ public class Upload {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(QuickSharePopup.class);
+	
+	// illimited file size
+	private static final long DEFAULT_MAX_FILE_SIZE = 0;
 
 	/* ***********************************************************
 	 * Parameters ***********************************************************
@@ -316,7 +323,39 @@ public class Upload {
 		}
 		return elements;
 	}
+	
+	public long getMaxFileSize() {
+		long maxFileSize = DEFAULT_MAX_FILE_SIZE;
+		try {
+			long freeSpace = documentFacade.getUserAvailableQuota(userVo);
+			maxFileSize = documentFacade.getUserMaxFileSize(userVo);
+			if (freeSpace < maxFileSize) {
+				maxFileSize = freeSpace;
+			}
+			logger.debug("max size file : " + FileUtils.getFriendlySize(maxFileSize, messages));
+		} catch (BusinessException e) {
+			logger.error("Can not set user maximum size for a file : " + e.getLocalizedMessage());
+			// value has not been defined. We use the default value.
+		}
+		return maxFileSize;
+	}
 
+	public long getMaxCountFile() {
+		long maxCountFile = 0 ;
+		try {
+			long freeSpace = documentFacade.getUserAvailableQuota(userVo);
+			long maxFileSize = documentFacade.getUserMaxFileSize(userVo);
+			maxCountFile = freeSpace / freeSpace;
+			logger.debug("max size : " + FileUtils.getFriendlySize(maxFileSize, messages));
+			logger.debug("free space : " + FileUtils.getFriendlySize(maxCountFile,messages));
+			logger.debug("max count file : " + maxCountFile);
+		} catch (BusinessException e) {
+			logger.error("Can not set user maximum size for a file : " + e.getLocalizedMessage());
+			// value has not been defined. We use the default value.
+		}
+		return maxCountFile;
+		
+	}
 	/*
 	 * Helpers
 	 */
