@@ -15,7 +15,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
             document.getElementById('recipientsPattern').className.replace( /(?:^|\s)t-error(?!\S)/ , '' );
         }
 
-        var trySubmit = function() {
+        var tryReturn = function() {
             return (jQuery("#progress").val() == 0);
         }
 
