@@ -33,9 +33,14 @@
  */
 package org.linagora.linshare.core.facade.admin;
 
+import java.util.List;
+
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.WebServiceGenericFacade;
+import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
+public interface WebServiceDomainPatternFacade extends WebServiceGenericFacade {
 
-public interface WebServiceAdminFacade extends WebServiceGenericFacade {
+	public List<DomainPatternDto> getDomainPatterns() throws BusinessException;
 	
 }

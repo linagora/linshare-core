@@ -31,23 +31,41 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.webservice.admin.impl;
 
-import java.io.InputStream;
 import java.util.List;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.core.facade.admin.WebServiceDomainPatternFacade;
+import org.linagora.linshare.webservice.admin.DomainPatternRestService;
+import org.linagora.linshare.webservice.dto.DomainPatternDto;
+import org.linagora.linshare.webservice.impl.WebserviceBase;
 
+public class DomainPatternRestServiceImpl extends WebserviceBase implements DomainPatternRestService {
 
-public interface WebServiceDocumentFacade extends WebServiceGenericFacade {
+	private final WebServiceDomainPatternFacade webServiceDomainPatternFacade;
 	
-	public List<DocumentDto> getDocuments() throws BusinessException;
-	public DocumentDto getDocument(String uuid) throws BusinessException;
-	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
-	public Long getUserMaxFileSize() throws BusinessException;
-	public Long getAvailableSize() throws BusinessException;
-	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException;
-	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
+	public DomainPatternRestServiceImpl(final WebServiceDomainPatternFacade webServiceDomainPatternFacade) {
+		this.webServiceDomainPatternFacade = webServiceDomainPatternFacade;
+	}
+	
+	@Path("/")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
+		List<DomainPatternDto> domainPatterns = null;
+		try {
+			webServiceDomainPatternFacade.checkAuthentication();
+			domainPatterns = webServiceDomainPatternFacade.getDomainPatterns();
+		} catch (BusinessException e) {
+			throw analyseFault(e);
+		}
+		return domainPatterns;
+	}
 }

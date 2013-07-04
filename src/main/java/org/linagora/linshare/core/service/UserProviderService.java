@@ -49,7 +49,6 @@ public interface UserProviderService {
     public List<String> findAllDomainPatternIdentifiers();
     public List<String> findAllUserDomainPatternIdentifiers();
     public List<String> findAllSystemDomainPatternIdentifiers();
-    public List<DomainPattern> findAllDomainPatterns() throws BusinessException;
     public List<DomainPattern> findAllUserDomainPattern() throws BusinessException;
     public List<DomainPattern> findAllSystemDomainPattern() throws BusinessException;
     public DomainPattern createDomainPattern(DomainPattern domainPattern) throws BusinessException;

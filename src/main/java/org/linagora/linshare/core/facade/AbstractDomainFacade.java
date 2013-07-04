@@ -74,7 +74,6 @@ public interface AbstractDomainFacade {
     public List<String> findAllDomainPatternIdentifiers();
     public List<String> findAllUserDomainPatternIdentifiers();
     public List<String> findAllSystemDomainPatternIdentifiers();
-    public List<DomainPatternVo> findAllDomainPatterns() throws BusinessException ;	
     public List<DomainPatternVo> findAllSystemDomainPatterns() throws BusinessException;
     public List<DomainPatternVo> findAllUserDomainPatterns() throws BusinessException;
     public void createDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException ;

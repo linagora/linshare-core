@@ -39,15 +39,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.admin.WebServiceAdminFacade;
+import org.linagora.linshare.core.facade.admin.WebServiceAdminGenericFacade;
 import org.linagora.linshare.webservice.admin.AdminRestService;
 import org.linagora.linshare.webservice.impl.WebserviceBase;
 
 public class AdminRestServiceImpl extends WebserviceBase implements AdminRestService {
 
-	private final WebServiceAdminFacade webServiceAdminFacade;
+	private final WebServiceAdminGenericFacade webServiceAdminFacade;
 
-	public AdminRestServiceImpl(final WebServiceAdminFacade webServiceAdminFacade) {
+	public AdminRestServiceImpl(final WebServiceAdminGenericFacade webServiceAdminFacade) {
 		this.webServiceAdminFacade = webServiceAdminFacade;
 	}
 	

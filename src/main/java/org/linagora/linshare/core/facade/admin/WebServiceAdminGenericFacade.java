@@ -31,23 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.core.facade.admin;
 
-import java.io.InputStream;
-import java.util.List;
-
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.core.facade.WebServiceGenericFacade;
 
 
-public interface WebServiceDocumentFacade extends WebServiceGenericFacade {
+public interface WebServiceAdminGenericFacade extends WebServiceGenericFacade {
 	
-	public List<DocumentDto> getDocuments() throws BusinessException;
-	public DocumentDto getDocument(String uuid) throws BusinessException;
-	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
-	public Long getUserMaxFileSize() throws BusinessException;
-	public Long getAvailableSize() throws BusinessException;
-	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException;
-	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
+	public User checkAuthentication() throws BusinessException;
 }
