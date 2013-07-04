@@ -29,12 +29,14 @@
 				<h4>Actions</h4>
 				<ul>
                     <li>
+                    <!-- now it is over for you, damn popup !	
                         <t:if test="userVo.upload">
                             <a href="#" class="button" onclick="quickShareWindow.showCenter(true);">
                                 <span><img src="${asset:context:images/icons/share-on-small.png}" alt=""/>
                                     ${message:pages.files.quickshare.button}</span>
                             </a>
                         </t:if>
+                        -->
                     </li>
 				</ul>
 			</div><!-- id="actionBar" -->
