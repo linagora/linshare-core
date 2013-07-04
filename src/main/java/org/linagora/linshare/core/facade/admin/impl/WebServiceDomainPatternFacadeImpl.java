@@ -31,23 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.facade;
+package org.linagora.linshare.core.facade.admin.impl;
 
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
+import org.linagora.linshare.core.facade.admin.WebServiceDomainPatternFacade;
+import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
+public class WebServiceDomainPatternFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceDomainPatternFacade {
 
-public interface WebServiceDocumentFacade extends WebServiceGenericFacade {
-	
-	public List<DocumentDto> getDocuments() throws BusinessException;
-	public DocumentDto getDocument(String uuid) throws BusinessException;
-	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
-	public Long getUserMaxFileSize() throws BusinessException;
-	public Long getAvailableSize() throws BusinessException;
-	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException;
-	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
+	private final UserProviderService userProviderService;
+
+	public WebServiceDomainPatternFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
+		super(accountService);
+		this.userProviderService = userProviderService;
+	}
+
+	@Override
+	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
+		List<DomainPattern> domainPatterns = userProviderService.findAllUserDomainPattern();
+		List<DomainPatternDto> res = new ArrayList<DomainPatternDto>();
+		for (DomainPattern domainPattern : domainPatterns) {
+			res.add(new DomainPatternDto(domainPattern));
+		}
+		return res;
+	}
+
 }

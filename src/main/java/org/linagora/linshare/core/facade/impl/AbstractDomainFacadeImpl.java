@@ -392,15 +392,6 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
 
     @Override
-    public List<DomainPatternVo> findAllDomainPatterns() throws BusinessException {
-        List<DomainPatternVo> res = new ArrayList<DomainPatternVo>();
-        for (DomainPattern domainPattern : userProviderService.findAllDomainPatterns()) {
-            res.add(new DomainPatternVo(domainPattern));
-        }
-        return res;
-    }
-
-    @Override
     public List<DomainPatternVo> findAllUserDomainPatterns() throws BusinessException {
         List<DomainPatternVo> res = new ArrayList<DomainPatternVo>();
         for (DomainPattern domainPattern : userProviderService.findAllUserDomainPattern()) {

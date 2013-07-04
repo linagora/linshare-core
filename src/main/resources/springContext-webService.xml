@@ -94,7 +94,11 @@
 	</bean>
 	
 	<bean id="adminRestService" class="org.linagora.linshare.webservice.admin.impl.AdminRestServiceImpl">
-		<constructor-arg ref="webServiceAdminFacade" />
+		<constructor-arg ref="webServiceAdminGenericFacade" />
+	</bean>
+	
+	<bean id="domainPatternRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPatternRestServiceImpl">
+		<constructor-arg ref="webServiceDomainPatternFacade" />
 	</bean>
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
@@ -109,6 +113,7 @@
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
 			<ref bean="adminRestService" />
+			<ref bean="domainPatternRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
