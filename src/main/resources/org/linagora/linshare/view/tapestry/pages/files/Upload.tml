@@ -105,7 +105,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
         <t:form t:id="quickShareForm" class="form-horizontal">
             <fieldset>  
-                <legend>${message:pages.files.upload.share.title}</legend>  
+              	<h1>${message:pages.files.upload.share.title}</h1>
                 <t:errors />
 
                 <!--upload and share client logic-->
