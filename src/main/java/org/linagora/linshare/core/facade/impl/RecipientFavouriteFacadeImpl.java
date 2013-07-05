@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
@@ -50,12 +49,10 @@ public class RecipientFavouriteFacadeImpl implements RecipientFavouriteFacade{
 
 	private RecipientFavouriteService service;
 	private UserService userService;
-	private MailingListService mailingListService;
 
-	public RecipientFavouriteFacadeImpl(UserService userService,RecipientFavouriteService service,MailingListService mailingListService){
+	public RecipientFavouriteFacadeImpl(UserService userService,RecipientFavouriteService service){
 		this.service=service;
 		this.userService=userService;
-		this.mailingListService = mailingListService;
 	}
 
 	

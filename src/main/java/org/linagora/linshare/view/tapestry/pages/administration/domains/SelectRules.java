@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
 import org.linagora.linshare.core.domain.vo.DenyAllDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
@@ -130,7 +131,12 @@ public class SelectRules {
     	    				domainPolicy.getDomainAccessPolicy().addRule(ruleVo);
     	    		}
     	    			domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
-    				}
+    	    			domainPolicy = domainPolicyFacade.retrieveDomainPolicy(domainPolicy.getIdentifier());
+    	    			for(DomainAccessRuleVo current : domainPolicy.getDomainAccessPolicy().getRules()){
+    	    				logger.debug("rule ID: "+current.getPersistenceId());
+    	    				current.setDescription(current.toDisplay(persistentLocale));
+    	    			}
+    		}
         	return manageDomainpage;
     }
     

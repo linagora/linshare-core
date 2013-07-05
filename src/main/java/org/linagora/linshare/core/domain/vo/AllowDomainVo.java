@@ -51,6 +51,11 @@ public class AllowDomainVo extends DomainAccessRuleVo {
 			return "Allow Domain (" + getDomainIdentifier() + ")";
 	}
 	
+	public AllowDomainVo(AllowDomain allow) {
+		this.setPersistenceId(allow.getPersistenceId());
+		this.setDomainIdentifier(allow.getDomain().getIdentifier());
+	}
+	
 	public AllowDomainVo(AbstractDomainVo entity) {
 		this.domainIdentifier = entity.getIdentifier();
 	}

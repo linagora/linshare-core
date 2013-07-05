@@ -89,9 +89,6 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	@Override
 	public void updateDomainPolicy(DomainPolicy domainPolicy)
 			throws BusinessException {
-		for(DomainAccessRule current :domainPolicy.getDomainAccessPolicy().getRules()){
-			logger.debug("rule: ");
-		}
 		domainPolicyBusinessService.updateDomainPolicy(domainPolicy);
 	}
 

@@ -36,12 +36,22 @@ package org.linagora.linshare.core.domain.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.AllowAllDomain;
+import org.linagora.linshare.core.domain.entities.AllowDomain;
+import org.linagora.linshare.core.domain.entities.DenyAllDomain;
+import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
+import org.linagora.linshare.core.facade.impl.DomainPolicyFacadeImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DomainAccessPolicyVo {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(DomainAccessPolicyVo.class);
+	
 	private List<DomainAccessRuleVo> rules;
 	private long id;
 
@@ -52,8 +62,29 @@ public class DomainAccessPolicyVo {
 
 		rules = new ArrayList<DomainAccessRuleVo>();
 		for (DomainAccessRule current : policy.getRules()) {
-				rules.add(new DomainAccessRuleVo(current));
-			}
+			
+			if(current instanceof AllowDomain){
+				AllowDomain allow = new AllowDomain(((AllowDomain) current).getDomain());
+				allow.setPersistenceId(current.getPersistenceId());
+				AllowDomainVo allowDomain = new AllowDomainVo(allow);
+				rules.add(allowDomain);
+				
+			} else if(current instanceof AllowAllDomain){
+				AllowAllDomainVo allowAllDomain = new AllowAllDomainVo();
+				allowAllDomain.setPersistenceId(current.getPersistenceId());
+				rules.add(allowAllDomain);
+				
+			}else if(current instanceof DenyDomain){
+				DenyDomainVo denyDomain = new DenyDomainVo(((DenyDomain) current).getDomain().getIdentifier());
+				denyDomain.setPersistenceId(current.getPersistenceId());
+				rules.add(denyDomain);
+				
+			} else if(current instanceof DenyAllDomain){
+				DenyAllDomainVo denyAllDomain = new DenyAllDomainVo();
+				denyAllDomain.setPersistenceId(current.getPersistenceId());
+				rules.add(denyAllDomain);
+			}	
+		}
 		this.id = policy.getPersistenceId();
 	}
 

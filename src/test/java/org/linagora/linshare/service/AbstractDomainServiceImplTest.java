@@ -89,7 +89,6 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 	
 	private LDAPConnection ldapconnexion;
 	private DomainPattern domainPattern;
-	private DomainPolicy policy;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -126,7 +125,7 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 	@Test
 	public void testCreateTopDomain() {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
-		TopDomain topDomain = new TopDomain(topDomaineName,"label",ldapconnexion,domainPattern,baseDn,policy);
+		TopDomain topDomain = new TopDomain(topDomaineName,"label",ldapconnexion,domainPattern,baseDn);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 		
@@ -158,7 +157,7 @@ public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTe
 			Assert.fail("Can't get initial data (domain pattern and ldap connection");
 		}
 		
-		TopDomain topDomain = new TopDomain(topDomaineName+"1","label",myldapconnexion,mydomainPattern,baseDn,policy);
+		TopDomain topDomain = new TopDomain(topDomaineName+"1","label",myldapconnexion,mydomainPattern,baseDn);
 		DomainPolicy policy = domainPolicyRepository.findById(LinShareConstants.defaultDomainPolicyIdentifier);
 		topDomain.setPolicy(policy);
 		

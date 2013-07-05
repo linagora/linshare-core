@@ -79,7 +79,6 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 	//Objects
 	private LDAPConnection ldapconnexion;
 	private DomainPattern pattern;
-	private DomainPolicy policy;
 	
 	
 	@Before
