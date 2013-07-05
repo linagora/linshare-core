@@ -34,10 +34,17 @@
 
 package org.linagora.linshare.core.repository;
 
+import java.util.List;
+
 import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.User;
 
 public interface MailingListRepository extends AbstractRepository<MailingList> {
 
 	public MailingList findById(long id);
+	
+	public MailingList findByIdentifier(String identifier);
+	
+	public List<MailingList> findallMyList(User user);
 }
  

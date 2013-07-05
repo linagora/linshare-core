@@ -33,39 +33,28 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.vo.AllowDomainVo;
-
-
-
 
 public class AllowDomain extends DomainAccessRule {
 
 	private AbstractDomain domain;
-	
+
 	/*
-	 * A default constructor is needed for hibernate for loading entities, 
-	 * but you can not persist this entity without setting up a domain.
-	 * That is why this constructor is private.
+	 * A default constructor is needed for hibernate for loading entities, but
+	 * you can not persist this entity without setting up a domain. That is why
+	 * this constructor is private.
 	 */
 	@SuppressWarnings("unused")
 	private AllowDomain() {
 		super();
 	}
-	
+
 	public AllowDomain(AbstractDomain domain) {
 		super();
 		this.domain = domain;
 	}
-	
-	public String toString(PersistentLocale persistentLocale) {
-		if(persistentLocale.get().toString().equals("fr")){		
-			return " Autorise (" + domain.getIdentifier() + ")";
-		}
-		else return "Allow Domain (" + domain.getIdentifier() + ")";
-	}
-	
+
 	public AbstractDomain getDomain() {
 		return domain;
 	}
@@ -73,12 +62,12 @@ public class AllowDomain extends DomainAccessRule {
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
 	}
-	
+
 	@Override
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.ALLOW;
 	}
-	
+
 	public AllowDomain(AllowDomainVo allowDomain) {
 		super(allowDomain);
 	}

@@ -45,6 +45,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.AllowDomainVo;
@@ -78,6 +79,9 @@ public class SelectDomain {
 	@Property
     private AbstractDomainVo domainVo;
     
+    @Inject
+    private PersistentLocale persistentLocale;
+	
     @Inject
     private AbstractDomainFacade domainFacade;
     
@@ -141,18 +145,14 @@ public class SelectDomain {
     		{	
     			ruleVo=new AllowDomainVo(domainVo.getIdentifier());
     		}else {
-    			ruleVo=new DenyDomainVo(domainVo.getIdentifier());}
+    			ruleVo=new DenyDomainVo(domainVo.getIdentifier());
+    		}
     			
     		if(onTop==true)
     		{
     			domainPolicyFacade.insertOnTop(domainPolicy,ruleVo,domainVo);
     		} else {
-    			try{
-    				domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRule(ruleVo, domainVo));
-    				} catch (BusinessException e) {
-    			logger.error("Can not retrieve domain : " + e.getMessage());
-    			logger.debug(e.toString());
-    			}
+    			domainPolicy.getDomainAccessPolicy().addRule(ruleVo);
     		}
     		
     	try {

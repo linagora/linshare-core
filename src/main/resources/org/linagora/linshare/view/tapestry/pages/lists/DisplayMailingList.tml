@@ -6,7 +6,7 @@
 			
 		<div id="content">
 		
-		<h1>${mailingList.identifier} (${mailingList.owner.firstName} ${mailingList.owner.lastName}) </h1>
+		<h1>${message:pages.lists.index}: ${mailingList.identifier} - ${mailingList.owner.firstName} ${mailingList.owner.lastName} </h1>
 		<br></br>
 		<h2> ${message:pages.administration.displayLists.index}</h2>
 
@@ -78,12 +78,12 @@
 					<table>
 						<tr>
 							<td>
-							<t:textfield t:id="searchUser" t:value="recipientsSearch" t:size="30" t:mixins="autocomplete" 
+							<t:textfield t:id="searchUser" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
 				    		t:minChars="${autocompleteMin}" class="recipientsPattern" 
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    		</td>
 				    		<td>
-        					<input type="submit" style="margin-right:520px" value="${message:global.button.search}"/>
+        					<input type="submit" style="margin-right:400px" value="${message:global.button.search}"/>
         					</td>
         				</tr>
         			</table>

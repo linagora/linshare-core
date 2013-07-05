@@ -41,6 +41,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
@@ -74,6 +75,9 @@ public class SelectRules {
 	
     @Property
     private DomainAccessRuleVo ruleVo;
+    
+    @Inject
+    private PersistentLocale persistentLocale;
 	
 	@Property
 	@Validate("required")
@@ -106,19 +110,8 @@ public class SelectRules {
     public Object onActionFromCancel() {
         return ManageDomainPolicy.class;
     }
-	
-    public DomainAccessRule fromDomainAccessRuleTypeToDomainAccessRule(DomainAccessRuleType rule)
-    {
-    	switch (rule.toInt()) {
-        case 0: return new AllowAllDomain();
-        case 1: return new DenyAllDomain(); 
-        default : throw new IllegalArgumentException("Doesn't match an existing DomainAccessRuleType");
-    	}
-    }
-    
 
-    
-    public Object onSuccess() {  
+    public Object onSuccess() throws BusinessException {  
     		if(rule.toInt() == 2 || rule.toInt() == 3 ){
     			selectDomainpage.set(rule);
     			selectDomainpage.setChoice(onTop);
@@ -134,18 +127,10 @@ public class SelectRules {
     	    		{
     	    			domainPolicyFacade.insertOnTop(domainPolicy, ruleVo);
     	    		}else{
-    	    			try{
-    	    				domainPolicy.getDomainAccessPolicy().addRule(domainPolicyFacade.setDomainAccessRuleSimple(ruleVo));
-    	    			} catch (BusinessException e) {
-    	    			logger.error("Can not retrieve domain : " + e.getMessage());
-    	    			logger.debug(e.toString());}
-    	    			}
-    	    		try {
+    	    				domainPolicy.getDomainAccessPolicy().addRule(ruleVo);
+    	    		}
     	    			domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
-    					} catch (BusinessException e) {
-    					e.printStackTrace();
     				}
-    			}
         	return manageDomainpage;
     }
     

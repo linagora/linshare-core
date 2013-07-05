@@ -33,19 +33,17 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.vo.DenyDomainVo;
-
 
 public class DenyDomain extends DomainAccessRule {
 
 	private AbstractDomain domain;
-	
+
 	/*
-	 * A default constructor is needed for hibernate for loading entities, 
-	 * but you can not persist this entity without setting up a domain.
-	 * That is why this contructor is private.
+	 * A default constructor is needed for hibernate for loading entities, but
+	 * you can not persist this entity without setting up a domain. That is why
+	 * this contructor is private.
 	 */
 	@SuppressWarnings("unused")
 	private DenyDomain() {
@@ -55,14 +53,6 @@ public class DenyDomain extends DomainAccessRule {
 	public DenyDomain(AbstractDomain domain) {
 		super();
 		this.domain = domain;
-	}
-
-	@Override
-	public String toString(PersistentLocale persistentLocale) {
-		if(persistentLocale.get().toString().equals("fr")){		
-			return " Interdit (" + domain.getIdentifier() + ")";
-		}
-		else return "Deny Domain (" + domain.getIdentifier() + ")";
 	}
 
 	public String toFrench() {
@@ -76,12 +66,12 @@ public class DenyDomain extends DomainAccessRule {
 	public void setDomain(AbstractDomain domain) {
 		this.domain = domain;
 	}
-	
+
 	@Override
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.DENY;
 	}
-	
+
 	public DenyDomain(DenyDomainVo denyDomain) {
 		super(denyDomain);
 	}

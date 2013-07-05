@@ -33,10 +33,19 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
-public class AllowAllDomainVo extends DomainAccessRuleVo{
+import org.apache.tapestry5.services.PersistentLocale;
 
-	public AllowAllDomainVo(){
+public class AllowAllDomainVo extends DomainAccessRuleVo {
+
+	public AllowAllDomainVo() {
 		super();
 	}
-	
+
+	public String toDisplay(PersistentLocale persistentLocale) {
+		if (persistentLocale.get().toString().equals("fr")) {
+			return "Autoriser tout les domaines";
+		} else
+			return "Allow All Domains";
+	}
+
 }

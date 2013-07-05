@@ -6,7 +6,7 @@
 			
 		<div id="content">
 		
-		<h1>${mailingList.identifier} (${mailingList.owner.firstName} ${mailingList.owner.lastName})</h1>
+		<h1>${message:pages.lists.index}: ${mailingList.identifier} - ${mailingList.owner.firstName} ${mailingList.owner.lastName} </h1>
 		<br></br>
 			<h2>${message:pages.administration.displayLists.index}</h2>
 		<t:if test="isEmpty">

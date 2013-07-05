@@ -35,6 +35,7 @@
 package org.linagora.linshare.core.domain.vo;
 
 import org.apache.tapestry5.services.PersistentLocale;
+import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
 public class DomainAccessRuleVo {
@@ -49,10 +50,29 @@ public class DomainAccessRuleVo {
 	public DomainAccessRuleVo(DomainAccessRule rule,PersistentLocale persistentLocale)
 	{
 		this.regexp=rule.getRegexp();
-		this.description=rule.toString(persistentLocale);
+		this.description=this.toDisplay(persistentLocale);
 		this.persistenceId=rule.getPersistenceId();
 	}
 
+	public DomainAccessRuleVo(DomainAccessRuleVo rule,PersistentLocale persistentLocale)
+	{
+		this.regexp=rule.getRegexp();
+		this.description=this.toDisplay(persistentLocale);
+		this.persistenceId=rule.getPersistenceId();
+	}
+	
+	public DomainAccessRuleVo(DomainAccessRuleVo rule)
+	{
+		this.regexp=rule.getRegexp();
+		this.persistenceId=rule.getPersistenceId();
+	}
+	
+	public DomainAccessRuleVo(DomainAccessRule rule)
+	{
+		this.regexp=rule.getRegexp();
+		this.persistenceId=rule.getPersistenceId();
+	}
+	
 	public String getRegexp() {
 		return regexp;
 	}
@@ -76,4 +96,7 @@ public class DomainAccessRuleVo {
 		this.persistenceId = persistenceId;
 	}
 	
+	public String toDisplay(PersistentLocale persistentLocale) {
+		return null;
+	}
 }

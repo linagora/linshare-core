@@ -36,7 +36,6 @@ package org.linagora.linshare.core.facade;
 import java.util.List;
 
 import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
@@ -45,31 +44,28 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainPolicyFacade {
 
-    public DomainPolicyVo createDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException ;
-    
-    public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo) throws BusinessException ;
-    
-    public DomainPolicyVo retrieveDomainPolicy(String identifier) throws BusinessException;
-    
-    public void deletePolicy(String policyToDelete, UserVo actorVo) throws BusinessException ;
-    
-    public boolean policyIsDeletable(String policyToDelete, UserVo actor) throws BusinessException;
-    
-    public List<String> findAllDomainPoliciesIdentifiers();
-    
-    public List<DomainPolicyVo> findAllDomainPolicies()throws BusinessException;
-    
-    public DomainAccessRule setDomainAccessRule(DomainAccessRuleVo ruleVo, AbstractDomainVo domainVo) throws BusinessException;
-    
-    public DomainAccessRule setDomainAccessRuleSimple(DomainAccessRuleVo ruleVo) throws BusinessException;
-    
-    public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo)throws BusinessException;
-    
-    public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId,PersistentLocale persistentLocale) throws BusinessException;
-    
-    public void insertOnTop(DomainPolicyVo policyVo,DomainAccessRuleVo ruleVo);
-    
+	public void createDomainPolicy(UserVo actorVo,DomainPolicyVo domainPolicyVo) throws BusinessException;
+
+	public void updateDomainPolicy(UserVo actorVo, DomainPolicyVo domainPolicyVo)throws BusinessException;
+
+	public DomainPolicyVo retrieveDomainPolicy(String identifier)throws BusinessException;
+
+	public void deletePolicy(String policyToDelete, UserVo actorVo)throws BusinessException;
+
+	public boolean policyIsDeletable(String policyToDelete, UserVo actor)throws BusinessException;
+
+	public List<String> findAllDomainPoliciesIdentifiers();
+
+	public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException;
+
+	public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo) throws BusinessException;
+
+	public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId)throws BusinessException;
+	
+	public void insertOnTop(DomainPolicyVo policyVo, DomainAccessRuleVo ruleVo);
+
+	
     public void insertOnTop(DomainPolicyVo policyVo,DomainAccessRuleVo ruleVo, AbstractDomainVo domainVo);
-    
-    public void sortDomainAccessRules(DomainPolicyVo policyVo, List<DomainAccessRuleVo> rulesVo);
+	 
+	public void sortDomainAccessRules(DomainPolicyVo policyVo, List<DomainAccessRuleVo> rulesVo) throws BusinessException;
 }

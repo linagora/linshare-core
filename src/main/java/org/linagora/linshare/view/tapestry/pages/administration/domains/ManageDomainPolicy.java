@@ -40,13 +40,16 @@ import java.util.List;
 
 
 import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.domain.entities.AllowAllDomain;
+import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
+import org.linagora.linshare.core.domain.vo.AllowDomainVo;
+import org.linagora.linshare.core.domain.vo.DenyAllDomainVo;
+import org.linagora.linshare.core.domain.vo.DenyDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -103,34 +106,31 @@ public class ManageDomainPolicy {
 	
 	public List<DomainAccessRuleVo> getRulesList(){
 		List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
-		for(DomainAccessRule rules : domainPolicy.getDomainAccessPolicy().getRules())
-		{
-				rulesVo.add(new DomainAccessRuleVo(rules,persistentLocale));
-		}
+		rulesVo = domainPolicy.getDomainAccessPolicy().getRules();
 		return rulesVo;
 	}
 	
 	
 	public void onActivate(String identifier) throws BusinessException {
-		logger.debug("domainPolicyIdentifier:" + identifier);
 		domainPolicy = domainPolicyFacade.retrieveDomainPolicy(identifier);
+		for(DomainAccessRuleVo current : domainPolicy.getDomainAccessPolicy().getRules()){
+			logger.debug("rule:"+current);
+			current.setDescription(current.toDisplay(persistentLocale));
+			logger.debug("rule n°"+current.getPersistenceId()+" with desc: "+current.getDescription());
+		}
 	}
 
-    public Object onRemove(long _ruleIdentifier) {
-    	Iterator<DomainAccessRule> it =domainPolicy.getDomainAccessPolicy().getRules().iterator();
-    	DomainAccessRuleVo deleteRule=new DomainAccessRuleVo();
+    public Object onRemove(long _ruleIdentifier) throws BusinessException {
+    	Iterator<DomainAccessRuleVo> it =domainPolicy.getDomainAccessPolicy().getRules().iterator();
     	boolean delete=false;
     	while(it.hasNext()){
-    		DomainAccessRule rule=it.next();
+    		DomainAccessRuleVo rule=it.next();
     		if(rule.getPersistenceId() == _ruleIdentifier && delete == false)
     		{
+    			DomainAccessRuleVo deleteRule=new DomainAccessRuleVo();
     			deleteRule.setPersistenceId(rule.getPersistenceId());
     			it.remove();
-    	    	try {
-    				domainPolicyFacade.deleteDomainAccessRule(deleteRule,domainPolicy);
-    			} catch (BusinessException e) {
-    				e.printStackTrace();
-    			}
+    			domainPolicyFacade.deleteDomainAccessRule(deleteRule,domainPolicy);
     			delete=true;
     		}
     	}
@@ -153,13 +153,13 @@ public class ManageDomainPolicy {
 				for (String domainIdentifier : domainIdentifiers) {
 					if(!domainIdentifier.isEmpty()){
 						logger.debug(domainIdentifier);
-						ruleVo =domainPolicyFacade.retrieveDomainAccessRule(Long.parseLong(domainIdentifier),persistentLocale);
+						ruleVo =domainPolicyFacade.retrieveDomainAccessRule(Long.parseLong(domainIdentifier));
 						rulesVo.add(ruleVo);
 					}
 				}
 				domainPolicyFacade.sortDomainAccessRules(domainPolicy,rulesVo);
 			}
-			
+			logger.debug(domainPolicy.getPolicyDescription());
 			try {
 				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
 			} catch (BusinessException e) {

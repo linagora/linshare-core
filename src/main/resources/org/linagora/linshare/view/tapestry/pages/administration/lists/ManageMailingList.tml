@@ -20,7 +20,7 @@
 			     <br></br>
 				<p>${message:pages.lists.currentOwner}:  ${mailingList.owner.firstName} ${mailingList.owner.lastName}</p>
         		<p><t:label for="owner"/>&nbsp;
-            	<t:textfield t:id="owner" t:value="newOwner" t:mixins="autocomplete" t:size="30" t:minChars="${autocompleteMin}" class="userSearchPattern"/></p>
+            	<t:textfield t:id="owner" t:value="newOwner" t:mixins="autocomplete" t:size="50" t:minChars="${autocompleteMin}" class="userSearchPattern"/></p>
         		<br></br>
         		<input type="submit"  t:event="add" value="${message:global.button.validate}"/>
 			</fieldset>

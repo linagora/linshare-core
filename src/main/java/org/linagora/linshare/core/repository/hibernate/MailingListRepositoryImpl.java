@@ -34,11 +34,17 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
@@ -65,6 +71,42 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		DetachedCriteria det = DetachedCriteria.forClass(MailingList.class).add(
 				Restrictions.eq("id", entity.getPersistenceId()));
 		return det;
+	}
+
+	@Override
+	public MailingList findByIdentifier(String identifier) {
+		List<MailingList> mailingList = findByCriteria(Restrictions.eq("identifier", identifier));
+		if (mailingList == null || mailingList.isEmpty()) {
+			return null;
+		} else if (mailingList.size() == 1) {
+			return mailingList.get(0);
+		} else {
+			throw new IllegalStateException("Id must be unique");
+		}
+		
+	}
+
+	@Override
+	public List<MailingList> findallMyList(User user) {
+
+		// 
+		DetachedCriteria det = DetachedCriteria.forClass(MailingList.class);
+		det.add(Restrictions.or(Restrictions.eq("owner",user), 
+				Restrictions.and(Restrictions.eq("domain",user.getDomain()),
+						Restrictions.and(Restrictions.eq("isPublic",true), Restrictions.ne("owner",user)))
+						));
+		
+		List<MailingList> mailingList = findByCriteria(det);
+		if (mailingList == null || mailingList.isEmpty()) {
+			return new ArrayList<MailingList>();
+		};
+		
+		return mailingList;
+	}
+	
+	public MailingList update(MailingList entity) throws BusinessException {
+	    getHibernateTemplate().merge(entity);
+		return super.update(entity);
 	}
 	
 }
