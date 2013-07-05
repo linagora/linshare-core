@@ -97,15 +97,18 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <!-- Main content -->
     <div id="content">
-        <h1>${message:pages.files.upload.upload.title}</h1>
-
+        
+		<legend>${message:pages.files.upload.upload.title}</legend>
         <div class="example">
             <ul id="uploader" class="unstyled"></ul>
         </div>
 
         <t:form t:id="quickShareForm" class="form-horizontal">
             <fieldset>  
+                <legend>${message:pages.files.upload.share.title}</legend>
+                <!-- 
               	<h1>${message:pages.files.upload.share.title}</h1>
+                 -->  
                 <t:errors />
 
                 <!--upload and share client logic-->
@@ -186,6 +189,9 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
             <div class="form-actions" style="background-color: transparent"> 
                 <div class="button">
+                	<t:pageLink page="files" class="btn" onlick="tryReturn()">
+                        ${message:pages.files.upload.cancelButton}
+                    </t:pageLink>
                     <input name="submitShare" id="submitShare" type="submit" style="display:none" />
                     <a id="formShareSubmit" class="btn btn-primary" onclick="requestSubmit()">
                         <span>
@@ -193,9 +199,6 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                             ${message:global.button.share.cap}
                         </span>
                     </a>
-                    <t:pageLink page="files" class="btn" onlick="tryReturn()">
-                        ${message:pages.files.upload.cancelButton}
-                    </t:pageLink>
                 </div>
             </div> <!--form-actions-->
         </t:form>
