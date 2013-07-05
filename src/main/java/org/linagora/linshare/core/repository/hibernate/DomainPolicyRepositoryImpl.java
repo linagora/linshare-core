@@ -86,6 +86,7 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 					}
 				});
 	}
+	
 	public DomainPolicy update(DomainPolicy entity) throws BusinessException {
 	    getHibernateTemplate().merge(entity);
 		return super.update(entity);

@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.DomainPolicyService;
 import org.slf4j.Logger;
@@ -88,7 +89,9 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 	@Override
 	public void updateDomainPolicy(DomainPolicy domainPolicy)
 			throws BusinessException {
-
+		for(DomainAccessRule current :domainPolicy.getDomainAccessPolicy().getRules()){
+			logger.debug("rule: ");
+		}
 		domainPolicyBusinessService.updateDomainPolicy(domainPolicy);
 	}
 

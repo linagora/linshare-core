@@ -33,20 +33,17 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
-
 
 public abstract class DomainAccessRule {
 	/**
 	 * Database persistence identifier
 	 */
 	private long persistenceId;
-	
+
 	private String regexp;
-	
-	
+
 	public DomainAccessRule() {
 	}
 
@@ -65,16 +62,15 @@ public abstract class DomainAccessRule {
 	public void setRegexp(String regexp) {
 		this.regexp = regexp;
 	}
-	
+
 	public DomainAccessRule(DomainAccessRuleVo d) {
-		this.regexp=d.getRegexp();
-		this.persistenceId=d.getPersistenceId();
+		this.regexp = d.getRegexp();
+		this.persistenceId = d.getPersistenceId();
 	}
 
-	
 	public abstract DomainAccessRuleType getDomainAccessRuleType();
 
-	public String toString(PersistentLocale persistentLocale) {
+	public String toString() {
 		return null;
 	}
 

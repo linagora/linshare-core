@@ -33,24 +33,21 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.vo.DenyAllDomainVo;
 
 public class DenyAllDomain extends DomainAccessRule {
 
 	public DenyAllDomain() {
 		super();
 	}
-	
-	public String toString(PersistentLocale persistentLocale) {
-		if(persistentLocale.get().toString().equals("fr")){		
-			return "Interdire tout les domaines";
-		}
-		else return"Deny All Domains";
-	}
-	
+
 	@Override
 	public DomainAccessRuleType getDomainAccessRuleType() {
 		return DomainAccessRuleType.DENY_ALL;
+	}
+	
+	public DenyAllDomain(DenyAllDomainVo denyAll) {
+		super(denyAll);
 	}
 }

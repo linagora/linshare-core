@@ -30,7 +30,7 @@
  * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
-*/
+ */
 package org.linagora.linshare.core.domain.vo;
 
 import java.util.ArrayList;
@@ -38,53 +38,56 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 
 public class DomainAccessPolicyVo {
-	
-	private List<DomainAccessRule> rules;
-	private long id;
-	
 
-	public DomainAccessPolicyVo(){		
+	private List<DomainAccessRuleVo> rules;
+	private long id;
+
+	public DomainAccessPolicyVo() {
 	}
-	
-	public DomainAccessPolicyVo(DomainAccessPolicy policy){
-		
-		this.rules=policy.getRules();
-		this.id=policy.getPersistenceId();
+
+	public DomainAccessPolicyVo(DomainAccessPolicy policy) {
+
+		rules = new ArrayList<DomainAccessRuleVo>();
+		for (DomainAccessRule current : policy.getRules()) {
+				rules.add(new DomainAccessRuleVo(current));
+			}
+		this.id = policy.getPersistenceId();
 	}
-	
-	public List<DomainAccessRule> getRules() {
+
+	public List<DomainAccessRuleVo> getRules() {
 		return rules;
 	}
 
-	public void setRules(List<DomainAccessRule> rules) {
+	public void setRules(List<DomainAccessRuleVo> rules) {
 		this.rules = rules;
 	}
-	public void addRule(DomainAccessRule rule) {
-		if(this.rules == null) {
-			this.rules = new ArrayList<DomainAccessRule>();
+
+	public void addRule(DomainAccessRuleVo rule) {
+		if (this.rules == null) {
+			this.rules = new ArrayList<DomainAccessRuleVo>();
 		}
 		this.rules.add(rule);
 	}
-	
-	
-	public boolean compareList(List<DomainAccessRule> rules)
-	{
-		int ok=0;
-		for(DomainAccessRule rule: rules)
-		{
-			for(DomainAccessRule rule2: this.getRules())
-			{
-				if(rule.toString().equalsIgnoreCase(rule2.toString())){ok++;}
+
+	public boolean compareList(List<DomainAccessRuleVo> rules) {
+		int ok = 0;
+		for (DomainAccessRuleVo rule : rules) {
+			for (DomainAccessRuleVo rule2 : this.getRules()) {
+				if (rule.toString().equalsIgnoreCase(rule2.toString())) {
+					ok++;
+				}
 			}
 		}
-		if(ok == rules.size()){ return true;
+		if (ok == rules.size()) {
+			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -92,5 +95,5 @@ public class DomainAccessPolicyVo {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 }

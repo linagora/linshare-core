@@ -71,6 +71,7 @@ public class DisplayMailingList {
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 
+	@Persist
 	@Property
 	private String recipientsSearch;
 
@@ -309,9 +310,9 @@ public class DisplayMailingList {
 				int index1 = recipientsSearch.indexOf("<");
 				int index2 = recipientsSearch.indexOf(">");
 				
-				recipientsSearch = recipientsSearch.substring(index1+1, index2);
+				String next = recipientsSearch.substring(index1+1, index2);
 				UserVo selectedUser = userFacade.findUserFromAuthorizedDomainOnly(
-						loginUser.getDomainIdentifier(), recipientsSearch);
+						loginUser.getDomainIdentifier(), next);
 				results = new ArrayList<UserVo>();
 				results.add(selectedUser);
 			} else {

@@ -37,14 +37,20 @@ package org.linagora.linshare.view.tapestry.pages.lists;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -67,6 +73,9 @@ public class Index {
 	@Property
 	private UserVo loginUser;
 
+	@Inject
+	private PersistentLocale persistentLocale;
+	
 	@Inject
 	private Messages messages;
 
@@ -102,20 +111,21 @@ public class Index {
 	@Persist
 	private boolean inSearch;
 	
+	private boolean isPublic;
+	
 	@Persist
 	private boolean fromCreate;
 
+	
 	@SetupRender
 	public void init() throws BusinessException {
-		
 		if(inSearch == false || fromCreate == true){
-			lists = mailingListFacade.findAllMailingListByUser(loginUser);
+			lists = mailingListFacade.findAllMailingListByOwner(loginUser);
+			criteriaOnSearch = "private";
 			}
 			setEmptyList(lists.isEmpty());
-			criteriaOnSearch = "all";
 	}
-
-
+	
 	public boolean getListIsDeletable() throws BusinessException {
 		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
 		if (loginUser.getMail().equals(list.getOwner().getMail())) {
@@ -146,6 +156,7 @@ public class Index {
 	 * @throws BusinessException 
 	 */
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
+		logger.debug("criteria ? "+criteriaOnSearch);
 		List<MailingListVo> searchResults = performSearch(input);
 		List<String> elements = new ArrayList<String>();
 		for (MailingListVo current: searchResults) {
@@ -214,6 +225,16 @@ public class Index {
 		return this;
 	}
 
+	
+	public boolean getIsPublic() {
+		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
+		if(list.isPublic()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public boolean isEmptyList() {
 		return emptyList;
 	}

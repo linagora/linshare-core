@@ -223,8 +223,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 				   owner = user.getFullName();
 			   }
 			   
-			   MailingListVo current =new MailingListVo();
-			   current= retrieveMailingListByOwnerAndIdentifier(identifier,owner);
+			   MailingListVo current = retrieveMailingListByOwnerAndIdentifier(identifier,owner);
 			   finalList.add(current);
 		}
 		

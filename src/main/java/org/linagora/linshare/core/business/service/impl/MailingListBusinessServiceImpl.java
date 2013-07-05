@@ -125,15 +125,7 @@ class ComparateurMailingList implements Comparator<MailingList> {
     
     @Override
     public List<MailingList> findAllMailingListByUser(User user) {
-    	List<MailingList> myList = new ArrayList<MailingList>();
-    	List<MailingList> list =mailingListRepository.findAll();
-    	for(MailingList current : list ) {
-    		if((current.getOwner().equals(user)) || ((current.getDomain().equals(user.getDomain())) && (current.isPublic()==true))) {
-    			myList.add(current);
-    		}
-    	}
-    	//Collections.reverse(myList);
-    	return myList;
+    	return mailingListRepository.findallMyList(user);
     }
     
     @Override

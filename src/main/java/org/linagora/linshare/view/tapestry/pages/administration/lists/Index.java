@@ -110,6 +110,8 @@ public class Index {
 
 	private boolean emptyList;
 	
+	private boolean isPublic;
+	
 	@Persist
 	private boolean inSearch;
 	
@@ -117,7 +119,7 @@ public class Index {
     @SetupRender
     public void init() throws BusinessException {
     	if(inSearch == false){
-			lists = mailingListFacade.findAllMailingList();
+			lists = new ArrayList<MailingListVo>();
 			}
 			setEmptyList(lists.isEmpty());
 			criteriaOnSearch = "all";
@@ -154,7 +156,7 @@ public class Index {
 		List<MailingListVo> searchResults = performSearch(input);
 		List<String> elements = new ArrayList<String>();
 		for (MailingListVo current: searchResults) {
-			String completeName = current.getIdentifier();
+			String completeName = current.getIdentifier(); /*"\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";*/
 				elements.add(completeName);
 		}
 		return elements;
@@ -184,6 +186,11 @@ public class Index {
     	inSearch = true;
     	if(targetLists!=null){
     		lists.clear();
+    		/*if(targetLists.startsWith("\"") && targetLists.endsWith(")")){
+    			int index = targetLists.indexOf("(");
+    			String owner = targetLists.substring(index+1, targetLists.length()-1);
+    			targetLists = targetLists.substring(1,index-2);
+    		}*/
     		lists = performSearch(targetLists);
     		if(criteriaOnSearch.equals("public")){
     			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
@@ -216,6 +223,16 @@ public class Index {
         cause.printStackTrace();
         return this;
     }
+    
+	public boolean getIsPublic() {
+		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
+		if(list.isPublic()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
     
 	public String getPublic() { return "public"; }
 	public String getPrivate() { return "private"; }

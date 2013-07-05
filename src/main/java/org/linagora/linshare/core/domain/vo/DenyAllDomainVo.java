@@ -33,11 +33,19 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
-public class DenyAllDomainVo extends DomainAccessRuleVo{
+import org.apache.tapestry5.services.PersistentLocale;
 
-	public DenyAllDomainVo(){
+public class DenyAllDomainVo extends DomainAccessRuleVo {
+
+	public DenyAllDomainVo() {
 		super();
 	}
-	
-	
+
+	public String toDisplay(PersistentLocale persistentLocale) {
+		if (persistentLocale.get().toString().equals("fr")) {
+			return "Interdire tout les domaines";
+		} else
+			return "Deny All Domains";
+	}
+
 }
