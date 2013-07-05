@@ -43,6 +43,7 @@ import org.linagora.linshare.core.domain.entities.AllowAllDomain;
 import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DenyAllDomain;
 import org.linagora.linshare.core.domain.entities.DenyDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.entities.Role;
@@ -118,7 +119,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 	public void createDomainPolicy(UserVo actorVo,
 			DomainPolicyVo domainPolicyVo) throws BusinessException {
 		if (isAuthorized(actorVo)) {
-			DomainPolicy domainPolicy = new DomainPolicy(domainPolicyVo);
+			DomainPolicy domainPolicy = new DomainPolicy(domainPolicyVo.getIdentifier(),domainPolicyVo.getPolicyDescription(),new DomainAccessPolicy(domainPolicyVo.getDomainAccessPolicy()));
 			domainPolicyService.createDomainPolicy(domainPolicy);
 		} else {
 			throw new BusinessException(
@@ -158,17 +159,20 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 					
 	        policy.getDomainAccessPolicy().getRules().clear();
 	        for(DomainAccessRuleVo current : domainPolicyVo.getDomainAccessPolicy().getRules()){
-	    		if (current instanceof AllowDomainVo) {
-	    			AbstractDomain domain = abstractDomainService.retrieveDomain(domainPolicyVo.getIdentifier());
-	    			policy.getDomainAccessPolicy().addRule(new AllowDomain(domain));
-	    		} else if(current instanceof DenyDomainVo){
-	    			AbstractDomain domain = abstractDomainService.retrieveDomain(domainPolicyVo.getIdentifier());
-	    			policy.getDomainAccessPolicy().addRule(new DenyDomain(domain));
-	    		} else if(current instanceof AllowAllDomainVo){
-	    			policy.getDomainAccessPolicy().addRule(new AllowAllDomain());
-	    		} else {
-	    			policy.getDomainAccessPolicy().addRule(new DenyAllDomain());
-	    		}
+	        	if(current.getPersistenceId()==0){
+	        		if (current instanceof AllowDomainVo) {
+	        			AbstractDomain domain = abstractDomainService.retrieveDomain(((AllowDomainVo) current).getDomainIdentifier());
+	        			policy.getDomainAccessPolicy().addRule(new AllowDomain(domain));
+	        		} else if(current instanceof DenyDomainVo){
+	        			AbstractDomain domain = abstractDomainService.retrieveDomain(((DenyDomainVo) current).getDomainIdentifier());
+	        			policy.getDomainAccessPolicy().addRule(new DenyDomain(domain));
+	        		} else if(current instanceof AllowAllDomainVo){
+	        			policy.getDomainAccessPolicy().addRule(new AllowAllDomain());
+	        		} else {
+	        			policy.getDomainAccessPolicy().addRule(new DenyAllDomain());
+	        		}
+	        	}
+	        	else policy.getDomainAccessPolicy().addRule(domainPolicyService.retrieveDomainAccessRule(current.getPersistenceId()));
 	        }
 	       domainPolicyService.updateDomainPolicy(policy); 
 		}

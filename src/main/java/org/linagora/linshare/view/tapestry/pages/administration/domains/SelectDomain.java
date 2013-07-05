@@ -133,7 +133,7 @@ public class SelectDomain {
     }
 
      
-   public Object onSuccess() {
+   public Object onSuccess() throws BusinessException {
 
     		try{
     			domainVo=domainFacade.retrieveDomain(domainSelection);
@@ -154,14 +154,10 @@ public class SelectDomain {
     		} else {
     			domainPolicy.getDomainAccessPolicy().addRule(ruleVo);
     		}
-    		
-    	try {
 				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
-			} catch (BusinessException e) {
-			e.printStackTrace();
-			}
-
-    	return manageDomainPolicypage;
+				domainPolicy = domainPolicyFacade.retrieveDomainPolicy(domainPolicy.getIdentifier());
+				
+				return manageDomainPolicypage;
     }
 
     public void set(DomainAccessRuleType rule)

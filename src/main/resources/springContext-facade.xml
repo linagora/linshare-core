@@ -91,7 +91,6 @@
 	<bean name="recipientFavouriteFacade" class="org.linagora.linshare.core.facade.impl.RecipientFavouriteFacadeImpl">
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="recipientFavouriteService" />
-		<constructor-arg ref="mailingListService" />
 	</bean>
 
 	<!-- Definition of the transformers -->
@@ -164,7 +163,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityService" />
 	</bean>
-		<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
+	
+	<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
 		<constructor-arg ref="mailingListService" />
 		<constructor-arg ref="userAndDomainMultiService" />
 		<constructor-arg ref="abstractDomainService" />

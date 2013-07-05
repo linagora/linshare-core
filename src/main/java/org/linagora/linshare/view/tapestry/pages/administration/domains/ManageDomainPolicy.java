@@ -42,6 +42,7 @@ import java.util.List;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
@@ -102,11 +103,13 @@ public class ManageDomainPolicy {
 	private String tabPos;
     
 	
-	
-	
 	public List<DomainAccessRuleVo> getRulesList(){
 		List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
 		rulesVo = domainPolicy.getDomainAccessPolicy().getRules();
+		for(DomainAccessRuleVo current : rulesVo){
+			logger.debug("rule ID: "+current.getPersistenceId());
+			current.setDescription(current.toDisplay(persistentLocale));
+		}
 		return rulesVo;
 	}
 	
@@ -114,9 +117,7 @@ public class ManageDomainPolicy {
 	public void onActivate(String identifier) throws BusinessException {
 		domainPolicy = domainPolicyFacade.retrieveDomainPolicy(identifier);
 		for(DomainAccessRuleVo current : domainPolicy.getDomainAccessPolicy().getRules()){
-			logger.debug("rule:"+current);
 			current.setDescription(current.toDisplay(persistentLocale));
-			logger.debug("rule n°"+current.getPersistenceId()+" with desc: "+current.getDescription());
 		}
 	}
 
@@ -145,11 +146,9 @@ public class ManageDomainPolicy {
 	public Object onSuccess() throws BusinessException{
 
 			if(tabPos != null){
-				
 				String[] domainIdentifiers = tabPos.split(";");
 				List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
 				DomainAccessRuleVo ruleVo; 
-				logger.debug("rules:");
 				for (String domainIdentifier : domainIdentifiers) {
 					if(!domainIdentifier.isEmpty()){
 						logger.debug(domainIdentifier);
@@ -159,7 +158,6 @@ public class ManageDomainPolicy {
 				}
 				domainPolicyFacade.sortDomainAccessRules(domainPolicy,rulesVo);
 			}
-			logger.debug(domainPolicy.getPolicyDescription());
 			try {
 				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
 			} catch (BusinessException e) {
