@@ -48,7 +48,6 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -98,10 +97,12 @@ public class DisplayMailingList {
 	private UserVo contactForEdit;
 
 	@Persist
+	@Validate("required")
 	@Property
 	private String firstName;
 
 	@Persist
+	@Validate("required")
 	@Property
 	private String lastName;
 
@@ -174,7 +175,7 @@ public class DisplayMailingList {
 		List<UserVo> fromAuthorized = new ArrayList<UserVo>();
 
 		for(UserVo current :searchResults){
-			if((userFacade.findUserFromAuthorizedDomainOnly(loginUser.getDomainIdentifier(),current.getMail()) != null) && !(current.equals(loginUser))){;
+			if(!(current.equals(loginUser))){
 				fromAuthorized.add(current);
 			}
 		}
@@ -259,12 +260,13 @@ public class DisplayMailingList {
 		lastName = null;
 	}
 	
-	public void onSelectedFromResetSearch() throws BusinessException{		
+	public void onSelectedFromResetSearch() throws BusinessException{
 		recipientsSearch = null;
-		displayGrid = false;
+		results = null;
 	}
 	
 	public Object onSuccessFromForm() throws BusinessException {
+
 		String display = MailCompletionService.formatLabel(email, firstName,
 				lastName, false);
 
@@ -312,21 +314,16 @@ public class DisplayMailingList {
 		if (recipientsSearch != null) {
 			if(recipientsSearch.substring(recipientsSearch.length()-1).equals(">"))
 			{
-				int index1 = recipientsSearch.indexOf("<");
-				int index2 = recipientsSearch.indexOf(">");
+				UserVo tmp = mailingListFacade.getUserFromDisplay(recipientsSearch);
+				results = new ArrayList<UserVo>(userFacade.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), loginUser));
 				
-				String next = recipientsSearch.substring(index1+1, index2);
-				UserVo selectedUser = userFacade.findUserFromAuthorizedDomainOnly(
-						loginUser.getDomainIdentifier(), next);
-				results = new ArrayList<UserVo>();
-				results.add(selectedUser);
 			} else {
 			List<UserVo>searchResults = new ArrayList<UserVo>();
 			searchResults = performSearch(recipientsSearch);
 			results = new ArrayList<UserVo>();
 
 			for(UserVo current :searchResults){
-				if((userFacade.findUserFromAuthorizedDomainOnly(loginUser.getDomainIdentifier(),current.getMail()) != null) && !(current.equals(loginUser))){
+				if(!(current.equals(loginUser))){
 					results.add(current);
 				}
 			}
@@ -358,14 +355,12 @@ public class DisplayMailingList {
 	}
 	
 	
-	public void onActionFromAddUser(String mail) throws BusinessException {
-
-		UserVo selectedUser = userFacade.findUserFromAuthorizedDomainOnly(
-				loginUser.getDomainIdentifier(), mail);
+	public void onActionFromAddUser(String firstName, String lastName, String mail) throws BusinessException {
+		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName, lastName, loginUser);
 		if(selectedUser!=null){
 		String display = MailCompletionService.formatLabel(
-				selectedUser.getMail(), selectedUser.getFirstName(),
-				selectedUser.getLastName(), false);
+				selectedUser.get(0).getMail(), selectedUser.get(0).getFirstName(),
+				selectedUser.get(0).getLastName(), false);
 
 		MailingListContactVo newContact = new MailingListContactVo(mail,
 				display);
@@ -376,13 +371,12 @@ public class DisplayMailingList {
 		}
 	}
 
-	public void onActionFromDeleteUser(String mail) throws BusinessException {
-		UserVo selectedUser = userFacade.findUserFromAuthorizedDomainOnly(
-				loginUser.getDomainIdentifier(), mail);
+	public void onActionFromDeleteUser(String firstName, String lastName, String mail) throws BusinessException {
+		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName, lastName, loginUser);
 		if(selectedUser!=null){
 		String display = MailCompletionService.formatLabel(
-				selectedUser.getMail(), selectedUser.getFirstName(),
-				selectedUser.getLastName(), false);
+				selectedUser.get(0).getMail(), selectedUser.get(0).getFirstName(),
+				selectedUser.get(0).getLastName(), false);
 
 		for (MailingListContactVo current : mailingList.getMails()) {
 			if (current.getDisplay().equals(display)) {
@@ -424,10 +418,8 @@ public class DisplayMailingList {
 	@OnEvent(value = "contactDeleteEvent")
 	public void deleteList() throws BusinessException {
 		logger.debug("todelete:" + this.contactToDelete);
-		mailingListFacade
-				.deleteMailingListContact(mailingList, contactToDelete);
-		mailingList = mailingListFacade.retrieveMailingList(mailingList
-				.getPersistenceId());
+		mailingListFacade.deleteMailingListContact(mailingList, contactToDelete);
+		mailingList = mailingListFacade.retrieveMailingList(mailingList.getPersistenceId());
 	}
 
 	public boolean getIsEmpty() {

@@ -42,10 +42,10 @@
         		<t:textfield t:id="emailBis" value="email"/></p><br></br>
 				
 				<p><t:label for="firstName"/>:&nbsp;
-        		<t:textfield t:id="firstNameBis" value="firstName"/></p><br></br>
+        		<t:textfield t:id="firstNameBis" value="firstName" /></p><br></br>
    		
    				<p><t:label for="lastName"/>:&nbsp;
-        		<t:textfield t:id="lastNameBis" value="lastName"/></p><br></br>
+        		<t:textfield t:id="lastNameBis" value="lastName" /></p><br></br>
 		
         		<p><input type="submit"  value="${message:pages.lists.index.list.contact.edit.button}"/>
         		<input t:type="submit" t:id="reset" value="${message:global.button.reset}"/></p>
@@ -62,7 +62,7 @@
         		<t:textfield t:id="firstName" value="firstName"/></p><br></br>
    		
    				<p><t:label for="lastName"/>:&nbsp;
-        		<t:textfield t:id="lastName" value="lastName"/></p><br></br>
+        		<t:textfield t:id="lastName" value="lastName" /></p><br></br>
 		
         		<p><input type="submit"  value="${message:pages.lists.addContact}"/></p>
 				</fieldset>
@@ -104,12 +104,12 @@
 			 				</t:parameter>
 			 				<t:parameter name="addRemoveCell">
 			 					<t:if t:test="isInList">
-			 						<t:actionLink t:id="deleteUser" context="result.mail"
+			 						<t:actionLink t:id="deleteUser" context="[result.firstName,result.lastName,result.mail]"
 			 	 						title="${message:pages.lists.index.list.display.delete.button}">
 										<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
 									</t:actionLink>
 			  					<p:else>
-			  						<t:actionLink t:id="addUser" context="result.mail"
+			  						<t:actionLink t:id="addUser" context="[result.firstName,result.lastName,result.mail]"
 			 	 						title="${message:pages.lists.adduser}">
 										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.lists.adduser}" />
 									</t:actionLink>
