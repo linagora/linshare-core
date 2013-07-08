@@ -14,6 +14,7 @@ jQuery(document).ready(function(){
 				
 			});
 			jQuery("input#tabPos").val(tmp_tabPos);
+			console.log($("input#tabPos"));
 		}
 	});
 	jQuery("#sortable").disableSelection();

@@ -83,7 +83,10 @@
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    		</td>
 				    		<td>
-        					<input type="submit" style="margin-right:400px" value="${message:global.button.search}"/>
+        					<input type="submit" style="margin-right:5px" value="${message:global.button.search}"/>
+        					</td>
+        					<td>
+        					<input t:type="submit" t:id="resetSearch" style="margin-right:335px" value="${message:global.button.reset}"/>
         					</td>
         				</tr>
         			</table>
