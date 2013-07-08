@@ -45,9 +45,11 @@ import org.linagora.linshare.webservice.dto.SimpleStringValue;
 @Path("/rest")
 public interface PluginCompatibilityRestService {
 
-	public SimpleStringValue getInformation();
-	
-	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String message);
-	
-	public DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body);
+	SimpleStringValue getInformation();
+
+	void multiplesharedocuments(String targetMail, List<String> uuid,
+			int securedShare, String message);
+
+	DocumentDto uploadfile(InputStream theFile, String description,
+			String givenFileName, MultipartBody body);
 }

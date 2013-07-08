@@ -43,7 +43,7 @@ import org.linagora.linshare.webservice.dto.UserDto;
 @Path("/rest/users")
 public interface UserRestService {
 
-	public List<UserDto> getUsers() throws BusinessException;
+	List<UserDto> getUsers() throws BusinessException;
 	
-	public Boolean isAuthorized();
+	Boolean isAuthorized();
 }

@@ -40,5 +40,5 @@ import org.linagora.linshare.core.exception.BusinessException;
 @WebService
 public interface PluginManagmentSoapService {
 
-	public String getInformation() throws BusinessException;
+	String getInformation() throws BusinessException;
 }

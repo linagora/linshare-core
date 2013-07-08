@@ -65,11 +65,11 @@ public interface ShareRestService {
 	 * @throws IOException : in case of failure
 	 * 
 	 */
-	public void multiplesharedocuments(ArrayList<ShareDto> shares, boolean secured, String message);
+	void multiplesharedocuments(ArrayList<ShareDto> shares, boolean secured, String message);
 	
-	public void sharedocument(String targetMail, String uuid, int securedShare);
+	void sharedocument(String targetMail, String uuid, int securedShare);
 	
 //	public List<ShareDto> getMyOwnShares();
-	public List<ShareDto> getReceivedShares();
-	public Response getDocumentStream(String uuid);
+	List<ShareDto> getReceivedShares();
+	Response getDocumentStream(String uuid);
 }

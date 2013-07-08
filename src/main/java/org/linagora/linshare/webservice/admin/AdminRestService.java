@@ -38,5 +38,5 @@ import javax.ws.rs.Path;
 @Path("/rest/admin")
 public interface AdminRestService {
 
-	public Boolean isAuthorized();
+	Boolean isAuthorized();
 }

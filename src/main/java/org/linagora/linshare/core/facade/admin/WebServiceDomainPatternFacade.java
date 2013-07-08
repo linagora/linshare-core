@@ -41,6 +41,9 @@ import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
 public interface WebServiceDomainPatternFacade extends WebServiceGenericFacade {
 
-	public List<DomainPatternDto> getDomainPatterns() throws BusinessException;
-	
+	List<DomainPatternDto> getDomainPatterns() throws BusinessException;
+
+	void updateDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException;
+
+	void createDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException;
 }

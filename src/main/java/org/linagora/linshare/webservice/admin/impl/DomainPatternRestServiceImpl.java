@@ -35,7 +35,10 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -67,5 +70,31 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 			throw analyseFault(e);
 		}
 		return domainPatterns;
+	}
+
+	@Path("/")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Override
+	public void createDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
+		try {
+			webServiceDomainPatternFacade.checkAuthentication();
+			webServiceDomainPatternFacade.createDomainPattern(domainPattern);
+		} catch (BusinessException e) {
+			throw analyseFault(e);
+		}
+	}
+	
+	@Path("/")
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Override
+	public void updateDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
+		try {
+			webServiceDomainPatternFacade.checkAuthentication();
+			webServiceDomainPatternFacade.updateDomainPattern(domainPattern);
+		} catch (BusinessException e) {
+			throw analyseFault(e);
+		}
 	}
 }
