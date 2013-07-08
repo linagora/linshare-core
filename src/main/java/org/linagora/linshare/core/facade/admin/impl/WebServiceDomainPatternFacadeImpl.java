@@ -63,4 +63,14 @@ public class WebServiceDomainPatternFacadeImpl extends WebServiceGenericFacadeIm
 		return res;
 	}
 
+	@Override
+	public void updateDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		userProviderService.updateDomainPattern(new DomainPattern(domainPatternDto));
+	}
+
+	@Override
+	public void createDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		userProviderService.createDomainPattern(new DomainPattern(domainPatternDto));
+	}
+
 }

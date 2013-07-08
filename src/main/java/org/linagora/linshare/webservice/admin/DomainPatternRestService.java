@@ -43,5 +43,9 @@ import org.linagora.linshare.webservice.dto.DomainPatternDto;
 @Path("/rest/admin/domain_patterns")
 public interface DomainPatternRestService {
 
-	public List<DomainPatternDto> getDomainPatterns() throws BusinessException;
+	List<DomainPatternDto> getDomainPatterns() throws BusinessException;
+
+	void updateDomainPattern(DomainPatternDto domainPattern) throws BusinessException;
+
+	void createDomainPattern(DomainPatternDto domainPattern) throws BusinessException;
 }

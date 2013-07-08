@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.linagora.linshare.core.domain.vo.DomainPatternVo;
+import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
 public class DomainPattern {
     /**
@@ -89,6 +90,20 @@ public class DomainPattern {
         this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternVo.getLdapUid()));
     }
 
+    public DomainPattern(DomainPatternDto domainPatternDto) {
+        this.identifier = domainPatternDto.getIdentifier();
+        this.description = domainPatternDto.getDescription();
+        this.authCommand = domainPatternDto.getAuthCommand();
+        this.searchUserCommand = domainPatternDto.getSearchUserCommand();
+        this.autoCompleteCommand = "Not implemented yet";
+        this.system = false;
+        
+        this.attributes = new HashMap<String, LdapAttribute>();
+        this.attributes.put(USER_MAIL, 			new LdapAttribute(USER_MAIL,		domainPatternDto.getUserMail()));
+        this.attributes.put(USER_FIRST_NAME,	new LdapAttribute(USER_FIRST_NAME,	domainPatternDto.getUserFirstName()));
+        this.attributes.put(USER_LAST_NAME,		new LdapAttribute(USER_LAST_NAME,	domainPatternDto.getUserLastName()));
+        this.attributes.put(USER_UID,			new LdapAttribute(USER_UID,			domainPatternDto.getLdapUid()));
+    }
 
 	public DomainPattern(String identifier, String description, String getUserCommand,
             String getAllDomainUsersCommand, String authCommand, String searchUserCommand, Map<String, LdapAttribute> attributes,

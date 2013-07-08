@@ -44,19 +44,23 @@ import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
-
 /**
  * REST jaxRS interface
  */
 
-
 @Path("/rest/documents")
 public interface DocumentRestService {
 
-	public List<DocumentDto> getDocuments();
-	public SimpleLongValue getUserMaxFileSize();
-	public SimpleLongValue getAvailableSize();
-	public DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body);
-	public DocumentDto addDocumentXop(DocumentAttachement doca);
-	public Response getDocumentStream(String uuid);
+	List<DocumentDto> getDocuments();
+
+	SimpleLongValue getUserMaxFileSize();
+
+	SimpleLongValue getAvailableSize();
+
+	DocumentDto uploadfile(InputStream theFile, String description,
+			String givenFileName, MultipartBody body);
+
+	DocumentDto addDocumentXop(DocumentAttachement doca);
+
+	Response getDocumentStream(String uuid);
 }
