@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-
 import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -66,12 +65,11 @@ public class DomainAccessPolicyRepositoryImpl extends AbstractRepositoryImpl<Dom
 				Restrictions.eq("id", entity.getPersistenceId()));
 		return det;
 	}
-	
+
 	@Override
-	public DomainAccessPolicy create(DomainAccessPolicy entity) throws BusinessException {
+	public DomainAccessPolicy create(DomainAccessPolicy entity)	throws BusinessException {
 		return super.create(entity);
 	}
-	
 
 	@Override
 	public DomainAccessPolicy update(DomainAccessPolicy entity) throws BusinessException {

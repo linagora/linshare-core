@@ -125,7 +125,6 @@ public class SelectDomain {
 			domainPolicy = new DomainPolicyVo();
 		}
 		domains = domainFacade.findAllDomainIdentifiers();
-		logger.debug("onTop?:"+onTop);
 	}
 	
     public Object onActionFromCancel() {
@@ -150,7 +149,7 @@ public class SelectDomain {
     			
     		if(onTop==true)
     		{
-    			domainPolicyFacade.insertOnTop(domainPolicy,ruleVo,domainVo);
+    			domainPolicyFacade.insertOnTop(domainPolicy,ruleVo);
     		} else {
     			domainPolicy.getDomainAccessPolicy().addRule(ruleVo);
     		}
@@ -169,6 +168,7 @@ public class SelectDomain {
     {
     	this.onTop=onTop;
     }
+    
 	Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));
     	logger.error(cause.getMessage());

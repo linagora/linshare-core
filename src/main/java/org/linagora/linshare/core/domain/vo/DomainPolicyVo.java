@@ -41,34 +41,33 @@ public class DomainPolicyVo {
 	private String identifier;
 	private String policyDescription;
 	private DomainAccessPolicyVo domainAccessPolicy;
-	
-	public DomainPolicyVo(){		
+
+	public DomainPolicyVo() {
 	}
-	
-	public DomainPolicyVo(DomainPolicy policy){
-		
-		this.identifier=policy.getIdentifier();
-		this.policyDescription=policy.getDescription();
-		this.domainAccessPolicy=new DomainAccessPolicyVo(policy.getDomainAccessPolicy());
+
+	public DomainPolicyVo(DomainPolicy policy) {
+
+		this.identifier = policy.getIdentifier();
+		this.policyDescription = policy.getDescription();
+		this.domainAccessPolicy = new DomainAccessPolicyVo(policy.getDomainAccessPolicy());
 	}
-	
-	public DomainPolicyVo(String identifier,String description){
-		
-		this.identifier=identifier;
-		this.policyDescription=description;
-		this.domainAccessPolicy=null;
+
+	public DomainPolicyVo(String identifier, String description) {
+
+		this.identifier = identifier;
+		this.policyDescription = description;
+		this.domainAccessPolicy = null;
 	}
-	
-	
+
 	@Validate("required")
 	public String getIdentifier() {
 		return identifier;
 	}
 
 	public void setIdentifier(String identifier) {
-		if(identifier != null)
+		if (identifier != null)
 			this.identifier = identifier.trim();
-        else
+		else
 			this.identifier = identifier;
 	}
 
@@ -77,7 +76,7 @@ public class DomainPolicyVo {
 	}
 
 	public void setPolicyDescription(String description) {
-		if(description != null)
+		if (description != null)
 			this.policyDescription = description.trim();
 		else
 			this.policyDescription = description;

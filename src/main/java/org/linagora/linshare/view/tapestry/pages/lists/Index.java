@@ -61,6 +61,7 @@ import org.linagora.linshare.view.tapestry.pages.lists.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Import(library = {"../../components/jquery/jquery-1.7.2.js"})
 public class Index {
 
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
@@ -113,6 +114,9 @@ public class Index {
 	
 	private boolean isPublic;
 	
+	@Property
+	private String selectedRadioButton;
+	
 	@Persist
 	private boolean fromCreate;
 
@@ -156,7 +160,7 @@ public class Index {
 	 * @throws BusinessException 
 	 */
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		logger.debug("criteria ? "+criteriaOnSearch);
+		logger.debug("criteria ? "+selectedRadioButton);
 		List<MailingListVo> searchResults = performSearch(input);
 		List<String> elements = new ArrayList<String>();
 		for (MailingListVo current: searchResults) {

@@ -43,10 +43,6 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.entities.AllowAllDomain;
-import org.linagora.linshare.core.domain.entities.DenyAllDomain;
-import org.linagora.linshare.core.domain.entities.DomainAccessRule;
-import org.linagora.linshare.core.domain.entities.DomainPolicy;
 import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
 import org.linagora.linshare.core.domain.vo.DenyAllDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
@@ -139,7 +135,6 @@ public class SelectRules {
     		}
         	return manageDomainpage;
     }
-    
     
     Object onException(Throwable cause) {
     	shareSessionObjects.addError(messages.get("global.exception.message"));

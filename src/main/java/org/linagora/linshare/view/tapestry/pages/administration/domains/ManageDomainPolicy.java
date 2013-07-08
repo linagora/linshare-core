@@ -42,15 +42,9 @@ import java.util.List;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.domain.entities.AllowAllDomain;
-import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
-import org.linagora.linshare.core.domain.vo.AllowDomainVo;
-import org.linagora.linshare.core.domain.vo.DenyAllDomainVo;
-import org.linagora.linshare.core.domain.vo.DenyDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -107,12 +101,10 @@ public class ManageDomainPolicy {
 		List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
 		rulesVo = domainPolicy.getDomainAccessPolicy().getRules();
 		for(DomainAccessRuleVo current : rulesVo){
-			logger.debug("rule ID: "+current.getPersistenceId());
 			current.setDescription(current.toDisplay(persistentLocale));
 		}
 		return rulesVo;
 	}
-	
 	
 	public void onActivate(String identifier) throws BusinessException {
 		domainPolicy = domainPolicyFacade.retrieveDomainPolicy(identifier);
@@ -151,7 +143,6 @@ public class ManageDomainPolicy {
 				DomainAccessRuleVo ruleVo; 
 				for (String domainIdentifier : domainIdentifiers) {
 					if(!domainIdentifier.isEmpty()){
-						logger.debug(domainIdentifier);
 						ruleVo =domainPolicyFacade.retrieveDomainAccessRule(Long.parseLong(domainIdentifier));
 						rulesVo.add(ruleVo);
 					}

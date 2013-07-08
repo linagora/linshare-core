@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.domain.vo;
 
 import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.domain.entities.AllowDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
 public class DomainAccessRuleVo {

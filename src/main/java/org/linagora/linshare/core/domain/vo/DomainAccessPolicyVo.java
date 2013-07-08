@@ -43,15 +43,9 @@ import org.linagora.linshare.core.domain.entities.DenyDomain;
 import org.linagora.linshare.core.domain.entities.DomainAccessPolicy;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
-import org.linagora.linshare.core.facade.impl.DomainPolicyFacadeImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DomainAccessPolicyVo {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(DomainAccessPolicyVo.class);
-	
 	private List<DomainAccessRuleVo> rules;
 	private long id;
 

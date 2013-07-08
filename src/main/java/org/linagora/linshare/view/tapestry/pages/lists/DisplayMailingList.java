@@ -259,6 +259,11 @@ public class DisplayMailingList {
 		lastName = null;
 	}
 	
+	public void onSelectedFromResetSearch() throws BusinessException{		
+		recipientsSearch = null;
+		displayGrid = false;
+	}
+	
 	public Object onSuccessFromForm() throws BusinessException {
 		String display = MailCompletionService.formatLabel(email, firstName,
 				lastName, false);

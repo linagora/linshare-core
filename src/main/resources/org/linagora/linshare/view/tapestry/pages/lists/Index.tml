@@ -42,12 +42,18 @@
 				                    ${message:global.space}
 			               	</t:radiogroup>
 			               	
-			               			<script type="text/javascript">
-			<!--/*--><![CDATA[//><!--
+			               	<t:textfield t:id="selectedRadioButton" style="display:none" />
+			   <script type="text/javascript">
+				<!--/*--><![CDATA[//><!--
 				var init=function(){
-					document.getElementById('public').addEventListener('change', function(event){alert('public:'+event.target.checked)}, false);
-					document.getElementById('private').addEventListener('change', function(event){alert('private:'+event.target.checked)}, false);
-				document.getElementById('all').addEventListener('change', function(event){alert('all:'+event.target.checked)}, false);
+					var callback = function(event){
+						console.log(jQuery("input[name='searchCriteria']:checked").val());
+						jQuery("input#selectedRadioButton").val(jQuery("input[name='searchCriteria']:checked").val());
+						console.log( $("input#selectedRadioButton"));
+					};
+					document.getElementById('public').addEventListener('change', callback, false);
+					document.getElementById('private').addEventListener('change', callback, false);
+					document.getElementById('all').addEventListener('change', callback, false);
 				}
 				window.addEventListener('load', init, false);
 			//--><!]]>
