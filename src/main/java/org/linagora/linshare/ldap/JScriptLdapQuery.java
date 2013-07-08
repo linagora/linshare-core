@@ -60,6 +60,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.ldap.authentication.BindAuthenticator;
 
 public class JScriptLdapQuery {
 
@@ -468,6 +471,53 @@ public class JScriptLdapQuery {
 			logger.debug(e.getMessage());
 		}
 		return null;
+	}
+	
+	/**
+	 * Ldap Authentification method
+	 * 
+	 * @param login
+	 * @param userPasswd
+	 * @return
+	 * @throws NamingException
+	 */
+	public User auth2(LDAPConnection ldapConnection, String login, String userPasswd) throws NamingException {
+		
+		String command = domainPattern.getAuthCommand();
+		Map<String, Object> vars = lqlctx.getVariables();
+		vars.put("login", login);
+		if (logger.isDebugEnabled())  logLqlQuery(command, login);
+		
+		// searching ldap directory with pattern
+		// InvalidSearchFilterException
+		List<String> dnResultList = this.evaluate(command);
+		
+		if (dnResultList == null || dnResultList.size() < 1) {
+			throw new NameNotFoundException("No user found for login: " + login);
+		} else if (dnResultList.size() > 1) {
+			logger.error("The authentification query had returned more than one user !!!");
+			return null;
+		}
+		
+		String userDn = dnResultList.get(0) + "," + baseDn;
+		LdapContextSource ldapContextSource = new LdapContextSource();
+		ldapContextSource.setUrl(ldapConnection.getProviderUrl());
+
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDn, userPasswd);
+        
+        BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
+        authenticator.setUserDnPatterns(new String[]{"{0}"});
+        try {
+        	ldapContextSource.afterPropertiesSet();
+            authenticator.authenticate(authentication);
+        } catch (BadCredentialsException e) {
+        	logger.debug("auth failed : BadCredentialsException(" + userDn + ")");
+        	return null;
+        } catch (Exception e) {
+        	logger.error("auth failed for unexpected exception: " + e.getMessage());
+            return null;
+        }
+        return dnToUser(userDn, false);
 	}
 
 	/**
