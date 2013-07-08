@@ -27,11 +27,12 @@ public class WebServiceGenericFacadeImpl implements WebServiceGenericFacade {
 				.getAuthentication();
 		String name = (auth != null) ? auth.getName() : null; // get logged in
 																// username
-		logger.debug("Authentication auth : " + name);
+		logger.debug("Authentication with principal : " + name);
 		if (name == null) {
 			return null;
 		}
 		User user = (User) accountService.findByLsUuid(name);
+		logger.debug("Authenticated user : " + user.getAccountReprentation());
 		return user;
 	}
 
@@ -43,6 +44,7 @@ public class WebServiceGenericFacadeImpl implements WebServiceGenericFacade {
 					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
 					"You are not authorized to use this service");
 		}
+		
 		return actor;
 	}
 }

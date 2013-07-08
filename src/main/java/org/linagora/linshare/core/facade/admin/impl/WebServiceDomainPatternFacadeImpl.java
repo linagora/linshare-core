@@ -37,20 +37,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.admin.WebServiceDomainPatternFacade;
 import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebServiceDomainPatternFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceDomainPatternFacade {
 
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceDomainPatternFacadeImpl.class);
+	
 	private final UserProviderService userProviderService;
 
 	public WebServiceDomainPatternFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
 		super(accountService);
 		this.userProviderService = userProviderService;
+	}
+
+	@Override
+	public User checkAuthentication() throws BusinessException {
+		User user = super.checkAuthentication();
+		if (user.getRole() != Role.SUPERADMIN) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+		}
+		return user;
 	}
 
 	@Override
