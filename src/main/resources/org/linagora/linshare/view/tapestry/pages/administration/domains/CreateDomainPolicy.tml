@@ -18,6 +18,7 @@
 			<!-- FORM -->
 
 				<t:beanEditForm t:id="form" t:object="domainPolicy" submitlabel="message:global.button.validate">
+						 <t:errors banner="${message:pages.administration.userconfig.password.error}"/>
 								<p:identifier>
 									<t:label for="identifier"/>
                     				<t:textfield t:id="identifier" value="domainPolicy.identifier"/>

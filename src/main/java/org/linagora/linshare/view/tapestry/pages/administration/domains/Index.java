@@ -35,11 +35,13 @@ package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 import java.util.List;
 
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
@@ -62,6 +64,9 @@ public class Index {
     @Property
     private ShareSessionObjects shareSessionObjects;
 
+    @InjectComponent
+    private Grid grid;
+    
     @Inject
     private Messages messages;
 
@@ -132,6 +137,9 @@ public class Index {
         domainPatterns = domainFacade.findAllUserDomainPatterns();
         ldapConnections = domainFacade.findAllLDAPConnections();
         policies = domainPolicyFacade.findAllDomainPolicies();  
+        if (grid.getSortModel().getSortConstraints().isEmpty()) {
+            grid.getSortModel().updateSort("identifier");
+        }
     }
 
     @OnEvent(value="domainDeleteEvent")
