@@ -35,8 +35,6 @@
 package org.linagora.linshare.core.business.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
@@ -50,20 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MailingListBusinessServiceImpl implements MailingListBusinessService {
-
-
-class ComparateurMailingList implements Comparator<MailingList> {
-	public int compare(MailingList s1, MailingList s2){
-                //tri desc
-		if (s1.getIdentifier().compareTo(s2. getIdentifier()) == 1) {
-			return -1;
-		} else if (s1.getIdentifier().compareTo(s2. getIdentifier()) == -1) {
-			return 1;        	
-		} else {
-			return 0;
-		}
-	}      
-}
 	
 	
     private static final Logger logger = LoggerFactory.getLogger(MailingListBusinessServiceImpl.class);
@@ -99,13 +83,6 @@ class ComparateurMailingList implements Comparator<MailingList> {
     }
     
     @Override
-    public MailingListContact createMailingListContact(MailingListContact mailingListContact) throws BusinessException{
-        MailingListContact createdList = mailingListContactRepository.create(mailingListContact);
-        return createdList;
-    }
-    
-    
-    @Override
     public MailingList retrieveMailingList(long persistenceId) {
     	return mailingListRepository.findById(persistenceId);
     }
@@ -119,7 +96,6 @@ class ComparateurMailingList implements Comparator<MailingList> {
     public List<MailingList> findAllMailingList() {
     	List<MailingList> myList = new ArrayList<MailingList>();
     	myList = mailingListRepository.findAll();
-    	//Collections.reverse(myList);
     	return myList;
     }
     
@@ -137,7 +113,6 @@ class ComparateurMailingList implements Comparator<MailingList> {
     			myList.add(current);
     		}
     	}
-    	//Collections.reverse(myList);
     	return myList;
     }
     

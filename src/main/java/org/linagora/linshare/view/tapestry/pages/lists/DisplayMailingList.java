@@ -334,15 +334,12 @@ public class DisplayMailingList {
 	}
 
 	public boolean getIsInList() throws BusinessException {
-		String chain = "\"" + result.getLastName() + " "
-				+ result.getFirstName() + "\" <" + result.getMail() + ">";
-
 		boolean inList = false;
 		if (!mailingList.getMails().isEmpty()) {
 			List<MailingListContactVo> listing = new ArrayList<MailingListContactVo>();
 			listing = mailingList.getMails();
 			for (MailingListContactVo contact : listing) {
-				if (contact.getDisplay().equals(chain)) {
+				if (contact.getMail().equals(result.getMail())) {
 					inList = true;
 				}
 			}
@@ -374,12 +371,9 @@ public class DisplayMailingList {
 	public void onActionFromDeleteUser(String firstName, String lastName, String mail) throws BusinessException {
 		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName, lastName, loginUser);
 		if(selectedUser!=null){
-		String display = MailCompletionService.formatLabel(
-				selectedUser.get(0).getMail(), selectedUser.get(0).getFirstName(),
-				selectedUser.get(0).getLastName(), false);
-
+			
 		for (MailingListContactVo current : mailingList.getMails()) {
-			if (current.getDisplay().equals(display)) {
+			if (current.getMail().equals(selectedUser.get(0).getMail())) {
 				this.contactToDelete = current.getPersistenceId();
 			}
 		}

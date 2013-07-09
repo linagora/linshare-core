@@ -35,18 +35,16 @@
 package org.linagora.linshare.view.tapestry.pages.administration.lists;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
@@ -56,12 +54,11 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.enums.CriterionMatchMode;
 import org.linagora.linshare.view.tapestry.pages.administration.lists.Index;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Import(library = {"../../../components/jquery/jquery-1.7.2.js"})
 public class Index {
 	
     private static Logger logger = LoggerFactory.getLogger(Index.class);
@@ -94,6 +91,9 @@ public class Index {
 	@Property
 	private int autocompleteMin=3;
 	
+    @InjectComponent
+    private Grid grid;
+	
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 	
@@ -106,23 +106,24 @@ public class Index {
 	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-
-
+	
 	private boolean emptyList;
-	
-	private boolean isPublic;
-	
+
 	@Persist
 	private boolean inSearch;
-	
-	
-    @SetupRender
+
+
+	@SetupRender
     public void init() throws BusinessException {
     	if(inSearch == false){
 			lists = new ArrayList<MailingListVo>();
 			}
 			setEmptyList(lists.isEmpty());
-			criteriaOnSearch = "all";
+			if(!lists.isEmpty()){
+		        if (grid.getSortModel().getSortConstraints().isEmpty()) {
+		            grid.getSortModel().updateSort("identifier");
+		        }
+			}
 
     }
 
@@ -156,8 +157,20 @@ public class Index {
 		List<MailingListVo> searchResults = performSearch(input);
 		List<String> elements = new ArrayList<String>();
 		for (MailingListVo current: searchResults) {
-			String completeName = current.getIdentifier(); /*"\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";*/
+			if(criteriaOnSearch.equals("public")){
+				if(current.isPublic() == true){
+				String completeName = current.getIdentifier();
 				elements.add(completeName);
+				}
+			} else if(criteriaOnSearch.equals("private")){
+				if(current.isPublic() == false){
+					String completeName = current.getIdentifier();
+					elements.add(completeName);
+				}
+			} else {
+			String completeName = current.getIdentifier();
+				elements.add(completeName);
+			}
 		}
 		return elements;
 	}
@@ -181,16 +194,10 @@ public class Index {
 		return finalList;
 	}
 	
-    
     public Object onSuccessFromForm() throws BusinessException {	
     	inSearch = true;
     	if(targetLists!=null){
     		lists.clear();
-    		/*if(targetLists.startsWith("\"") && targetLists.endsWith(")")){
-    			int index = targetLists.indexOf("(");
-    			String owner = targetLists.substring(index+1, targetLists.length()-1);
-    			targetLists = targetLists.substring(1,index-2);
-    		}*/
     		lists = performSearch(targetLists);
     		if(criteriaOnSearch.equals("public")){
     			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
@@ -226,11 +233,7 @@ public class Index {
     
 	public boolean getIsPublic() {
 		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
-		if(list.isPublic()){
-			return true;
-		} else {
-			return false;
-		}
+		return list.isPublic(); 
 	}
 	
     
@@ -245,6 +248,10 @@ public class Index {
 
 	public void setEmptyList(boolean emptyList) {
 		this.emptyList = emptyList;
+	}
+	
+    public boolean isInSearch() {
+		return inSearch;
 	}
 
 }

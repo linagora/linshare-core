@@ -7,7 +7,6 @@
 		<div id="content">
 		
 		<h1>${message:pages.lists.index}: ${mailingList.identifier} - ${mailingList.owner.firstName} ${mailingList.owner.lastName} </h1>
-		<br></br>
 			<h2>${message:pages.administration.displayLists.index}</h2>
 		<t:if test="isEmpty">
 						${message:pages.lists.empty}
@@ -15,7 +14,7 @@
 			<t:grid source="contacts" rowsPerPage="20" include="firstName,lastName,mail" row="contact"> </t:grid>
 			</p:else>
 		</t:if>
-		
+		  <div class="clear"></div>
 		<t:actionLink t:id="back" class="button">
 		<span>${message:pages.thread.admin.back}</span>
 		</t:actionLink>

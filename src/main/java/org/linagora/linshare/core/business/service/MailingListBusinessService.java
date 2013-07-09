@@ -51,7 +51,6 @@ public interface MailingListBusinessService {
     
     public MailingListContact retrieveMailingListContact(String mail);
     public MailingListContact retrieveMailingListContact(long persistenceId);
-    public MailingListContact createMailingListContact(MailingListContact mailingListContact) throws BusinessException;
     public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException;
     public void deleteMailingListContact(long persistenceId) throws BusinessException;
 }

@@ -15,13 +15,9 @@ import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MailingListFacadeImpl implements MailingListFacade {
 
-	private static Logger logger = LoggerFactory.getLogger(MailingListFacadeImpl.class);
 	
 	private final MailingListService mailingListService;
     private final UserAndDomainMultiService userAndDomainMultiService;
@@ -52,15 +48,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
         mailingListService.createMailingList(mailingList);
     	return mailingListVo ;
     }
-    
-	@Override
-    public MailingListContactVo createMailingListContact(MailingListContactVo mailingListContact) throws BusinessException {
-    	MailingListContact mailingList= new MailingListContact(mailingListContact);
-    	mailingListService.createMailingListContact(mailingList);
-    	return mailingListContact;
-    	
-    }
-    
     
     @Override
     public List<MailingListVo> findAllMailingList() {
@@ -114,27 +101,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
     	
     	return list;	
     }
-    
-    @Override
-    public List<MailingListVo> findAllMailingListByIdentifier(String identifier) throws BusinessException {
-    	List<MailingListVo> list = new ArrayList<MailingListVo>();
-    	List<MailingListVo> listByUser = new ArrayList<MailingListVo>();
-    	listByUser = findAllMailingList();
-    	for(MailingListVo current : listByUser) {
-    		if(current.getIdentifier().equals(identifier)) {
-    			list.add(current);
-    		}
-    	}
-    	
-    	return list;	
-    }
-    
-   @Override
-   public boolean mailingListIdentifierUnicity(MailingListVo toCreate,UserVo actorVo) throws BusinessException {
-   		List<MailingListVo> list = findAllMailingListByIdentifier(toCreate.getIdentifier(), actorVo);
-   		return list.isEmpty();
-   	}
-   
+
 	@Override
 	public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException{ 
 		MailingList list =new MailingList(listVo);
@@ -145,11 +112,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
   	  	list.setDomain(domain);
 		mailingListService.updateMailingList(list);
 	}
-	
-   @Override
-   public MailingListContactVo retrieveMailingListContact(long persistenceId) {
-   		return new MailingListContactVo(mailingListService.retrieveMailingListContact(persistenceId));
-   }
    
    @Override
    public MailingListContactVo retrieveMailingListContact(String mail){

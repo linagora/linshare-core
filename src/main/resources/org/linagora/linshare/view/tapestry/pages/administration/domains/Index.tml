@@ -90,7 +90,7 @@
 			  </t:grid>
 			   
 			<h2>${message:pages.administration.domains.index.domainPolicies}</h2>
-		 	  <t:grid source="policies" include="identifier, policyDescription" add="actions" row="domainPolicy">
+		 	  <t:grid rowsPerPage="5" source="policies" include="identifier, policyDescription" add="actions" row="domainPolicy">
 			  	<t:parameter name="actionsCell">
 			  		<t:pageLink page="administration/domains/ManageDomainPolicy" context="domainPolicy.identifier"
 						title="${message:pages.administration.domains.index.policy.edit.button}">

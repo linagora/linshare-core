@@ -12,7 +12,7 @@
 		<br></br><br></br>
 			<!-- FORM -->
 		<t:form t:id="form">
-		 <t:errors/>
+		 <t:errors banner="${message:pages.administration.userconfig.password.error}"/>
 			<fieldset class="title_criteria_zone" id="searchCriterion">
 			<legend align="top" class="palette">${message:pages.lists.owner}</legend>
 				<p><t:label for="identifier"/>:&nbsp;

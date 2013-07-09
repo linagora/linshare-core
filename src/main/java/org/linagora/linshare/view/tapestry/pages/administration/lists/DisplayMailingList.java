@@ -47,13 +47,8 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
-import org.linagora.linshare.view.tapestry.pages.lists.Index;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DisplayMailingList {
-	
-	private static Logger logger = LoggerFactory.getLogger(DisplayMailingList.class);
 	
     @Inject
     private MailingListFacade mailingListFacade;
