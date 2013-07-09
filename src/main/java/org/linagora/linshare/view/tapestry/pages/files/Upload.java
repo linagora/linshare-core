@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
@@ -28,8 +29,6 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserFacade;
-import org.linagora.linshare.core.utils.FileUtils;
-import org.linagora.linshare.core.utils.FileUtils.Unit;
 import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.QuickSharePopup;
@@ -42,19 +41,18 @@ import org.linagora.linshare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.linagora.linshare.core.utils.FileUtils;
-//import org.linagora.linshare.core.utils.FileUtils.Unit;
 
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
 		"../../components/fineuploader/fineuploader-3.6.4.js",
-		"./fine-uploader/js/uploader-demo.js" }, stylesheet = {
+		"./fine-uploader/js/uploader-demo.js",
+		"../../components/bootstrap/js/bootstrap.js" }, stylesheet = {
 		"../../components/fineuploader/fineuploader-3.6.4.css",
 		"./fine-uploader/css/styles.css" })
 public class Upload {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(QuickSharePopup.class);
-	
+
 	// illimited file size
 	private static final long DEFAULT_MAX_FILE_SIZE = 0;
 
@@ -162,6 +160,14 @@ public class Upload {
 					.getDefaultSecuredAnonymousUrlCheckBoxValue(domainId);
 		}
 	}
+	
+	/*
+	 * Hack: force bootstrap css to be the last stylesheet loaded
+	 */
+	@Import(stylesheet = {"../../components/bootstrap/css/bootstrap.css" })
+	@CleanupRender
+	void cleanupRender() {
+	}
 
 	void onValidateFromQuickShareForm() {
 		is_submit = true;
@@ -176,8 +182,8 @@ public class Upload {
 		 * smelly
 		 */
 		logger.debug("uuids = " + uuids);
-		filter = new XSSFilter(shareSessionObjects, quickShareForm, antiSamyPolicy,
-				messages);
+		filter = new XSSFilter(shareSessionObjects, quickShareForm,
+				antiSamyPolicy, messages);
 		try {
 			textAreaSubjectValue = filter.clean(textAreaSubjectValue);
 			textAreaValue = filter.clean(textAreaValue);
@@ -323,39 +329,17 @@ public class Upload {
 		}
 		return elements;
 	}
-	
+
 	public long getMaxFileSize() {
-		long maxFileSize = DEFAULT_MAX_FILE_SIZE;
 		try {
-			long freeSpace = documentFacade.getUserAvailableQuota(userVo);
-			maxFileSize = documentFacade.getUserMaxFileSize(userVo);
-			if (freeSpace < maxFileSize) {
-				maxFileSize = freeSpace;
-			}
-			logger.debug("max size file : " + FileUtils.getFriendlySize(maxFileSize, messages));
+			return documentFacade.getUserAvailableSize(userVo);
 		} catch (BusinessException e) {
-			logger.error("Can not set user maximum size for a file : " + e.getLocalizedMessage());
-			// value has not been defined. We use the default value.
+			logger.error("Can not set user maximum size for a file : "
+					+ e.getLocalizedMessage());
 		}
-		return maxFileSize;
+		return DEFAULT_MAX_FILE_SIZE;
 	}
 
-	public long getMaxCountFile() {
-		long maxCountFile = 0 ;
-		try {
-			long freeSpace = documentFacade.getUserAvailableQuota(userVo);
-			long maxFileSize = documentFacade.getUserMaxFileSize(userVo);
-			maxCountFile = freeSpace / freeSpace;
-			logger.debug("max size : " + FileUtils.getFriendlySize(maxFileSize, messages));
-			logger.debug("free space : " + FileUtils.getFriendlySize(maxCountFile,messages));
-			logger.debug("max count file : " + maxCountFile);
-		} catch (BusinessException e) {
-			logger.error("Can not set user maximum size for a file : " + e.getLocalizedMessage());
-			// value has not been defined. We use the default value.
-		}
-		return maxCountFile;
-		
-	}
 	/*
 	 * Helpers
 	 */
