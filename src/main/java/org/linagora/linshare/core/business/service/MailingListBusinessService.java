@@ -42,15 +42,24 @@ import java.util.List;
 public interface MailingListBusinessService {
 
     public MailingList createMailingList(MailingList mailingList) throws BusinessException;
+    
     public MailingList retrieveMailingList(long persistenceId);
+    
     public List<MailingList> findAllMailingList();
+    
     public List<MailingList> findAllMailingListByUser(User user);
+    
     public void deleteMailingList(long persistenceId) throws BusinessException;
+    
     public void updateMailingList(MailingList listToUpdate) throws BusinessException;
+    
     public List<MailingList> findAllMailingListByOwner(User user);
     
     public MailingListContact retrieveMailingListContact(String mail);
+    
     public MailingListContact retrieveMailingListContact(long persistenceId);
+    
     public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException;
+    
     public void deleteMailingListContact(long persistenceId) throws BusinessException;
 }

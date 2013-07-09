@@ -267,11 +267,9 @@ public class DisplayMailingList {
 	
 	public Object onSuccessFromForm() throws BusinessException {
 
-		String display = MailCompletionService.formatLabel(email, firstName,
-				lastName, false);
+		String display = MailCompletionService.formatLabel(email, firstName,lastName, false);
 
-		MailingListContactVo newContact = new MailingListContactVo(email,
-				display);
+		MailingListContactVo newContact = new MailingListContactVo(email,display);
 		if(mailingList.getMails() == null){
 			List<MailingListContactVo> current = new ArrayList<MailingListContactVo>();
 			mailingList.setMails(current);
@@ -289,8 +287,7 @@ public class DisplayMailingList {
 
 	public Object onSuccessFromFormBis() throws BusinessException {
 		if(inModify == true){
-			String display = MailCompletionService.formatLabel(email, firstName,
-					lastName, false);
+			String display = MailCompletionService.formatLabel(email, firstName,lastName, false);
 
 			MailingListContactVo contact= mailingListFacade.retrieveMailingListContact(oldEmail);
 			contact.setDisplay(display);
@@ -355,16 +352,13 @@ public class DisplayMailingList {
 	public void onActionFromAddUser(String firstName, String lastName, String mail) throws BusinessException {
 		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName, lastName, loginUser);
 		if(selectedUser!=null){
-		String display = MailCompletionService.formatLabel(
-				selectedUser.get(0).getMail(), selectedUser.get(0).getFirstName(),
-				selectedUser.get(0).getLastName(), false);
+		String display = MailCompletionService.formatLabel(selectedUser.get(0).getMail(), selectedUser.get(0).getFirstName(),selectedUser.get(0).getLastName(), false);
 
 		MailingListContactVo newContact = new MailingListContactVo(mail,
 				display);
 		mailingList.addContact(newContact);
 		mailingListFacade.updateMailingList(mailingList);
-		mailingList = mailingListFacade.retrieveMailingList(mailingList
-				.getPersistenceId());
+		mailingList = mailingListFacade.retrieveMailingList(mailingList.getPersistenceId());
 		}
 	}
 
@@ -378,10 +372,8 @@ public class DisplayMailingList {
 			}
 		}
 
-		mailingListFacade.deleteMailingListContact(mailingList,
-				this.contactToDelete);
-		mailingList = mailingListFacade.retrieveMailingList(mailingList
-				.getPersistenceId());
+		mailingListFacade.deleteMailingListContact(mailingList,this.contactToDelete);
+		mailingList = mailingListFacade.retrieveMailingList(mailingList.getPersistenceId());
 		}
 	}
 

@@ -85,8 +85,6 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 
 	@Override
 	public List<MailingList> findallMyList(User user) {
-
-		// 
 		DetachedCriteria det = DetachedCriteria.forClass(MailingList.class);
 		det.add(Restrictions.or(Restrictions.eq("owner",user), 
 				Restrictions.and(Restrictions.eq("domain",user.getDomain()),
