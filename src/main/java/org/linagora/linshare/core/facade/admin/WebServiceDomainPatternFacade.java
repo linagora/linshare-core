@@ -46,4 +46,6 @@ public interface WebServiceDomainPatternFacade extends WebServiceGenericFacade {
 	void updateDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException;
 
 	void createDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException;
+
+	void deleteDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException;
 }

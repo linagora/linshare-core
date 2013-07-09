@@ -172,4 +172,8 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="userProviderService" />
 	</bean>
+	<bean id="webServiceLDAPConnectionFacade" class="org.linagora.linshare.core.facade.admin.impl.WebServiceLDAPConnectionFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userProviderService" />
+	</bean>
 </beans>

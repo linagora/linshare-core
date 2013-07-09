@@ -38,6 +38,7 @@ import java.util.Properties;
 import javax.naming.Context;
 
 import org.linagora.linshare.core.domain.vo.LDAPConnectionVo;
+import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
 public class LDAPConnection {
 	/**
@@ -57,6 +58,14 @@ public class LDAPConnection {
 		this.securityAuth = ldapConn.getSecurityAuth();
 		this.securityPrincipal = ldapConn.getSecurityPrincipal();
 		this.securityCredentials = ldapConn.getSecurityCredentials();
+	}
+	
+	public LDAPConnection(LDAPConnectionDto ldapConnectionDto) {
+		this.identifier = ldapConnectionDto.getIdentifier();
+		this.providerUrl = ldapConnectionDto.getProviderUrl();
+		this.securityAuth = ldapConnectionDto.getSecurityAuth();
+		this.securityPrincipal = ldapConnectionDto.getSecurityPrincipal();
+		this.securityCredentials = ldapConnectionDto.getSecurityCredentials();
 	}
 	
 	public long getPersistenceId() {

@@ -31,12 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin;
+package org.linagora.linshare.webservice;
 
 import javax.ws.rs.Path;
 
-@Path("/rest/admin")
-public interface AdminRestService {
+@Path("/rest/authentication")
+public interface AuthenticationRestService {
 
 	Boolean isAuthorized();
 }

@@ -31,36 +31,50 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.core.facade.admin.impl;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.LDAPConnection;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.admin.WebServiceAdminGenericFacade;
-import org.linagora.linshare.webservice.admin.AdminRestService;
-import org.linagora.linshare.webservice.impl.WebserviceBase;
+import org.linagora.linshare.core.facade.admin.WebServiceLDAPConnectionFacade;
+import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
-public class AdminRestServiceImpl extends WebserviceBase implements AdminRestService {
+public class WebServiceLDAPConnectionFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceLDAPConnectionFacade {
 
-	private final WebServiceAdminGenericFacade webServiceAdminFacade;
+	private final UserProviderService userProviderService;
 
-	public AdminRestServiceImpl(final WebServiceAdminGenericFacade webServiceAdminFacade) {
-		this.webServiceAdminFacade = webServiceAdminFacade;
+	public WebServiceLDAPConnectionFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
+		super(accountService);
+		this.userProviderService = userProviderService;
 	}
-	
-	@Path("/authorized")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+
 	@Override
-	public Boolean isAuthorized() {
-		try {
-			webServiceAdminFacade.checkAuthentication();
-			return true;
-		} catch (BusinessException e) {
-			throw analyseFault(e);
+	public List<LDAPConnectionDto> getLDAPConnections() throws BusinessException {
+		List<LDAPConnectionDto> ldapConnectionsDto = new ArrayList<LDAPConnectionDto>();
+		List<LDAPConnection> ldapConnections = userProviderService.findAllLDAPConnections();
+		for (LDAPConnection ldapConnection : ldapConnections) {
+			ldapConnectionsDto.add(new LDAPConnectionDto(ldapConnection));
 		}
+		return ldapConnectionsDto;
+	}
+
+	@Override
+	public void updateLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+		userProviderService.updateLDAPConnection(new LDAPConnection(ldapConnectionDto));
+	}
+
+	@Override
+	public void createLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+		userProviderService.createLDAPConnection(new LDAPConnection(ldapConnectionDto));
+	}
+
+	@Override
+	public void deleteLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+		userProviderService.deleteConnection(ldapConnectionDto.getIdentifier());
 	}
 }

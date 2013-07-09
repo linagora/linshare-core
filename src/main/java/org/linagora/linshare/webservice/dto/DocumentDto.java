@@ -45,27 +45,17 @@ import org.linagora.linshare.core.domain.entities.User;
 public class DocumentDto {
 
 	protected String uuid;
-
 	protected String name;
-
 	protected String description;
-
 	protected UserDto owner;
-
 	protected Calendar creationDate;
-
 	protected Calendar modificationDate;
-
 	protected Calendar expirationDate;
-	
 	protected Boolean ciphered;
-	
 	protected String type;
-	
 	protected Long size;
 	
 	public DocumentDto(DocumentEntry de) {
-		super();
 		if (de == null) {
 			return;
 		}
