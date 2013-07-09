@@ -45,31 +45,19 @@ import org.linagora.linshare.core.domain.entities.User;
 public class ShareDto {
 
 	protected String uuid;
-
 	protected String name;
-
 	protected String description;
-
 	protected UserDto owner;
-
 	protected Calendar creationDate;
-
 	protected Calendar modificationDate;
-
 	protected Calendar expirationDate;
-
 	protected Long downloaded;
-	
 	protected UserDto recipient;
-	
 	protected DocumentDto documentDto;
-	
 	protected int secured;
-	
 	private String message;
 
 	public ShareDto(ShareEntry shareEntry) {
-		super();
 		if (shareEntry == null) {
 			return;
 		}

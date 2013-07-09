@@ -36,6 +36,7 @@ package org.linagora.linshare.webservice.admin.impl;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -74,7 +75,7 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 
 	@Path("/")
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void createDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
 		try {
@@ -87,12 +88,25 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 	
 	@Path("/")
 	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
 		try {
 			webServiceDomainPatternFacade.checkAuthentication();
 			webServiceDomainPatternFacade.updateDomainPattern(domainPattern);
+		} catch (BusinessException e) {
+			throw analyseFault(e);
+		}
+	}
+	
+	@Path("/")
+	@DELETE
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public void deleteDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
+		try {
+			webServiceDomainPatternFacade.checkAuthentication();
+			webServiceDomainPatternFacade.deleteDomainPattern(domainPattern);
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}

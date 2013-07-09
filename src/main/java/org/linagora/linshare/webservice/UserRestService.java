@@ -44,6 +44,4 @@ import org.linagora.linshare.webservice.dto.UserDto;
 public interface UserRestService {
 
 	List<UserDto> getUsers() throws BusinessException;
-	
-	Boolean isAuthorized();
 }

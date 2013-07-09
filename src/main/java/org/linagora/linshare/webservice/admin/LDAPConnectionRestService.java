@@ -31,38 +31,23 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.dto;
+package org.linagora.linshare.webservice.admin;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
-@XmlRootElement(name = "Error")
-public class ErrorDto {
+import javax.ws.rs.Path;
 
-	protected String message;
-	protected int errCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
-	public ErrorDto(int errCode, String message) {
-		this.message = message;
-		this.errCode = errCode;
-	}
-	
-	public ErrorDto() {
-		super();
-	}
+@Path("/rest/admin/ldap_connections")
+public interface LDAPConnectionRestService {
 
-	public String getMessage() {
-		return message;
-	}
+	List<LDAPConnectionDto> getLDAPConnections() throws BusinessException;
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+	void updateLDAPConnection(LDAPConnectionDto ldapConnection) throws BusinessException;
 
-	public int getErrCode() {
-		return errCode;
-	}
+	void createLDAPConnection(LDAPConnectionDto ldapConnection) throws BusinessException;
 
-	public void setErrCode(int errCode) {
-		this.errCode = errCode;
-	}
+	void deleteLDAPConnection(LDAPConnectionDto ldapConnection) throws BusinessException;
 }

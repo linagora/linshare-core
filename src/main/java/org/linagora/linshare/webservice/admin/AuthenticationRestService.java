@@ -31,38 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.dto;
+package org.linagora.linshare.webservice.admin;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.ws.rs.Path;
 
-@XmlRootElement(name = "Error")
-public class ErrorDto {
+@Path("/rest/admin/authentication")
+public interface AuthenticationRestService {
 
-	protected String message;
-	protected int errCode;
-
-	public ErrorDto(int errCode, String message) {
-		this.message = message;
-		this.errCode = errCode;
-	}
-	
-	public ErrorDto() {
-		super();
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public int getErrCode() {
-		return errCode;
-	}
-
-	public void setErrCode(int errCode) {
-		this.errCode = errCode;
-	}
+	Boolean isAuthorized();
 }

@@ -89,4 +89,9 @@ public class WebServiceDomainPatternFacadeImpl extends WebServiceGenericFacadeIm
 		userProviderService.createDomainPattern(new DomainPattern(domainPatternDto));
 	}
 
+	@Override
+	public void deleteDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		userProviderService.deletePattern(domainPatternDto.getIdentifier());
+	}
+
 }

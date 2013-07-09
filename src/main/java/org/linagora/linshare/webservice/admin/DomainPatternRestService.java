@@ -48,4 +48,6 @@ public interface DomainPatternRestService {
 	void updateDomainPattern(DomainPatternDto domainPattern) throws BusinessException;
 
 	void createDomainPattern(DomainPatternDto domainPattern) throws BusinessException;
+
+	void deleteDomainPattern(DomainPatternDto domainPattern) throws BusinessException;
 }

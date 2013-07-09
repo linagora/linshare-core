@@ -44,21 +44,13 @@ import org.linagora.linshare.core.domain.entities.LdapAttribute;
 public class DomainPatternDto {
 
 	private String identifier;
-	
 	private String description;
-
 	private String authCommand;
-
 	private String searchUserCommand;
-
 	private String autoCompleteCommand;
-
 	private String userMail;
-
 	private String userFirstName;
-
 	private String userLastName;
-
 	private String ldapUid;
 	
 	public DomainPatternDto(DomainPattern domainPattern) {
@@ -66,7 +58,7 @@ public class DomainPatternDto {
 		this.description = domainPattern.getDescription();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
-        this.autoCompleteCommand = domainPattern.getAutoCompleteCommand();
+        this.autoCompleteCommand = "Not implemented yet";
         
         Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
         this.userMail = attributes.get(DomainPattern.USER_MAIL).getAttribute();
