@@ -145,6 +145,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     	mailingListRepository.update(list);
     }
     
+    @Override
     public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException {
     	MailingListContact contact = retrieveMailingListContact(contactToUpdate.getPersistenceId());
     	contact.setMails(contactToUpdate.getMails());
