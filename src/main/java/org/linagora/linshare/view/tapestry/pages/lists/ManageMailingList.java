@@ -170,7 +170,6 @@ public class ManageMailingList {
             		throw new ValidationException(String.format(messages.get("pages.list.manage.identifierExist"),copy));
             	}
             }
-
     }
 	
 	public Object onSuccess() throws BusinessException {

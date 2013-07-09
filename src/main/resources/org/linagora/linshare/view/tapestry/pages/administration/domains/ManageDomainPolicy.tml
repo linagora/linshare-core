@@ -14,7 +14,7 @@
 			
 			<!-- FORM -->
 			
-						<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+						<t:actionLink t:id="cancel">${message:pages.thread.admin.back}</t:actionLink>
 		<t:form id="form">
 			<fieldset class="title_criteria_zone" id="searchCriterion">
 			<legend align="top" class="palette">${message:global.button.update}</legend>

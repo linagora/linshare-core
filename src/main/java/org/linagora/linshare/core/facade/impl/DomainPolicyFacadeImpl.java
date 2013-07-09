@@ -85,7 +85,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 				if (actor.getRole().equals(Role.SUPERADMIN)) {
 					return true;
 				}
-				logger.error("you are not authorised.");
+				logger.error("you are not authorized.");
 			} else {
 				logger.error("isAuthorized:actor object is null.");
 			}
@@ -198,6 +198,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 			return false;
 	}
 
+	@Override
 	public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
 		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
 		Iterator<DomainAccessRule> it = policy.getDomainAccessPolicy().getRules().iterator();
@@ -211,7 +212,8 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 		}
 
 	}
-
+	
+	@Override
 	public void insertOnTop(DomainPolicyVo policyVo, DomainAccessRuleVo ruleVo) {
 		List<DomainAccessRuleVo> list = new ArrayList<DomainAccessRuleVo>();
 		list.add(ruleVo);
@@ -222,8 +224,8 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 		policyVo.getDomainAccessPolicy().setRules(list);
 	}
 
-	public void sortDomainAccessRules(DomainPolicyVo policyVo,
-		List<DomainAccessRuleVo> rulesVo) throws BusinessException {
+	@Override
+	public void sortDomainAccessRules(DomainPolicyVo policyVo,List<DomainAccessRuleVo> rulesVo) throws BusinessException {
 		List<DomainAccessRuleVo> list = new ArrayList<DomainAccessRuleVo>();
 		for (DomainAccessRuleVo ruleVo : rulesVo) {
 			DomainAccessRuleVo rule = this.retrieveDomainAccessRule(ruleVo.getPersistenceId());
@@ -233,4 +235,20 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 		policyVo.getDomainAccessPolicy().setRules(list);
 	}
 
+	@Override
+	public String checkIdentifierIsUnique(String value){
+		List<String> list = domainPolicyService.getAllDomainPolicyIdentifiers();
+		   int i = 0;
+		   String copy = value;
+		   for(String current : list){
+			   while(current.equals(copy)){
+				   copy = value+i;  
+					i++;
+			   }
+		   }
+		   return copy;
+	}
+	
+	
+	
 }

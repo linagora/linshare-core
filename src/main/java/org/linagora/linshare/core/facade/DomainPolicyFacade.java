@@ -63,4 +63,6 @@ public interface DomainPolicyFacade {
 	public void insertOnTop(DomainPolicyVo policyVo, DomainAccessRuleVo ruleVo);
 	 
 	public void sortDomainAccessRules(DomainPolicyVo policyVo, List<DomainAccessRuleVo> rulesVo) throws BusinessException;
+	
+	public String checkIdentifierIsUnique(String value);
 }
