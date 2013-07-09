@@ -1286,20 +1286,22 @@ div.dialog button img {
 * Objects > Button link 2  (gray squared)
 */
 
-.btn {
-	min-width: 22px;
-	min-height:22px;
-	margin : 3px;
-	padding: 3px;
-	background-color: rgb(243,242,235);
-	border-bottom: 1px solid #E6DFCF;
-	border-right: 1px solid #E6DFCF;
-	color: #A68C53;
-	text-align: center;
-	font-weight: bold;
-	font-size: 16px;
-	text-decoration: none;
-}
+/*
+ *.btn {
+ *    min-width: 22px;
+ *    min-height:22px;
+ *    margin : 3px;
+ *    padding: 3px;
+ *    background-color: rgb(243,242,235);
+ *    border-bottom: 1px solid #E6DFCF;
+ *    border-right: 1px solid #E6DFCF;
+ *    color: #A68C53;
+ *    text-align: center;
+ *    font-weight: bold;
+ *    font-size: 16px;
+ *    text-decoration: none;
+ *}
+ */
 
 
 /*--------------------------------------------------------------------------

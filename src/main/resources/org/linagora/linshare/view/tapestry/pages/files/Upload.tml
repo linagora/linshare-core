@@ -2,17 +2,13 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:MyBorderLayout t:title="message:pages.index.title" t:identifier="home" t:currentHighlight="files"
 xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet"
-    type="text/css" />
-
-    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js"></script>
 
     <script type="text/javascript" language="javascript">
         var uuids = new Array();
 
         var rm_errorclass = function(){
             document.getElementById('recipientsPattern').className = 
-            document.getElementById('recipientsPattern').className.replace( /(?:^|\s)t-error(?!\S)/ , '' );
+                document.getElementById('recipientsPattern').className.replace( /(?:^|\s)t-error(?!\S)/ , '' );
         }
 
         var tryReturn = function() {
@@ -89,26 +85,23 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 },
                 validation: {
                 	sizeLimit: ${maxFileSize}
-//                	itemLimit: ${maxCountFile} 
                 }
             });
+
+            // XXX HACK : css is for losers ;]
+            jQuery(".qq-upload-button").attr("class", "btn btn-primary")
         });
     </script>
 
     <!-- Main content -->
     <div id="content">
-        
-		<legend>${message:pages.files.upload.upload.title}</legend>
+        <legend>${message:pages.files.upload.upload.title}</legend>
         <div class="example">
             <ul id="uploader" class="unstyled"></ul>
         </div>
-
         <t:form t:id="quickShareForm" class="form-horizontal">
-            <fieldset>  
+            <fieldset>
                 <legend>${message:pages.files.upload.share.title}</legend>
-                <!-- 
-              	<h1>${message:pages.files.upload.share.title}</h1>
-                 -->  
                 <t:errors />
 
                 <!--upload and share client logic-->
@@ -118,89 +111,76 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
                 <div class="control-group">
                     <t:label for="recipientsPattern" class="control-label required">
-                        ${message:pages.files.upload.recipients.title}
-                    </t:label>
+                    ${message:pages.files.upload.recipients.title}</t:label>
                     <div class="controls">
                         <t:textarea t:id="recipientsPattern" t:value="recipientsSearch" t:mixins="autocomplete"
-                            t:minChars="${autocompleteMin}" t:tokens="," class="input-xxlarge"
-                            onchange="rm_errorclass();" />
-                        <p class="help-block">
-                            ${message:pages.files.upload.recipients.description}</p>
-                    </div> <!--controls-->
+                        t:minChars="${autocompleteMin}" t:tokens="," class="input-xxlarge"
+                        onchange="rm_errorclass();" />
+                        <p class="help-block">${message:pages.files.upload.recipients.description}</p>
+                    </div>
                 </div>
 
                 <div class="control-group">
                     <t:if test="showSecureSharingCheckBox">
                         <t:label for="secureSharing" class="control-label">
-                            ${message:pages.files.upload.secureSharing}
-                        </t:label>
+                        ${message:pages.files.upload.secureSharing}</t:label>
                         <div class="controls">
                             <label class="checkbox">
                                 <t:checkbox t:id="secureSharing" />
                                 <span class="help-inline">
-                                    ${message:pages.files.upload.secureSharing.description}
-                                </span>
+                                ${message:pages.files.upload.secureSharing.description}</span>
                             </label>
-                        </div> <!--controls-->
+                        </div>
                     </t:if>
-                </div> <!--control-group-->
-            </fieldset>
+                </div>
 
-            <fieldset>
                 <div class="accordion" id="accordionMessage">
                     <div class="accordion-group">
                         <div class="accordion-heading">
                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionMessage"
-                                href="#collapseOne">
-                                ${message:pages.files.upload.message.custom}
-                            </a>
+                            href="#collapseOne">${message:pages.files.upload.message.custom}</a>
                         </div>
+
                         <div id="collapseOne" class="accordion-body collapse">
                             <div class="accordion-inner">
                                 <div class="control-group">
                                     <div class="controls">
-                                        <p class="help-block">
-                                            ${message:pages.files.upload.message.description}
-                                        </p>
+                                        <p class="help-block">${message:pages.files.upload.message.description}</p>
                                     </div>
-                                </div> <!--control-group-->
+                                </div>
+
                                 <div class="control-group">
                                     <t:label for="textAreaSubjectValue" class="control-label">
-                                        ${message:pages.files.upload.subject.title}
-                                    </t:label>
+                                    ${message:pages.files.upload.subject.title}</t:label>
                                     <div class="controls">
                                         <t:textfield t:id="textAreaSubjectValue" size="100" class="input-xxlarge"
-                                            onkeypress="if (event.keyCode == 13) return false;" />
-                                    </div> <!--controls-->
-                                </div> <!--control-group-->
+                                        onkeypress="if (event.keyCode == 13) return false;" />
+                                    </div>
+                                </div>
+
                                 <div class="control-group">
                                     <t:label for="textAreaValue" class="control-label">
-                                        ${message:pages.files.upload.message.title}
-                                    </t:label>
+                                    ${message:pages.files.upload.message.title}</t:label>
                                     <div class="controls">
                                         <t:textarea rows="8" t:id="textAreaValue" class="input-xxlarge" />
                                     </div> <!--controls-->
-                                </div> <!--control-group-->
-                            </div> <!--accordion-inner-->
-                        </div> <!--collapseOne-->
-                    </div> <!--accordion-group-->
-                </div> <!--acordionMessage-->
-            </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="form-actions" style="background-color: transparent"> 
-                <div class="button">
-                	<t:pageLink page="files" class="btn" onlick="tryReturn()">
-                        ${message:pages.files.upload.cancelButton}
-                    </t:pageLink>
+                <div class="form-actions" style="background-color: transparent">
+                    <t:pageLink page="files" class="btn" onlick="tryReturn()">
+                    ${message:pages.files.upload.cancelButton}</t:pageLink>
                     <input name="submitShare" id="submitShare" type="submit" style="display:none" />
                     <a id="formShareSubmit" class="btn btn-primary" onclick="requestSubmit()">
                         <span>
-                            <img src="${asset:context:images/icons/share-on-small.png}" alt="" />
-                            ${message:global.button.share.cap}
-                        </span>
+                        <img src="${asset:context:images/icons/share-on-small.png}"
+                        alt="" />${message:global.button.share.cap}</span>
                     </a>
-                </div>
-            </div> <!--form-actions-->
+                </div> <!--form-actions-->
+            </fieldset>
         </t:form>
     </div>
 </t:MyBorderLayout>
