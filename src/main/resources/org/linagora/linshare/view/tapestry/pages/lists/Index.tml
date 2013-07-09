@@ -19,9 +19,9 @@
 		
 		<br></br><br></br><br></br>
 
-		<t:form id="form">
-			<fieldset class="title_criteria_zone" id="searchCriterion">
+				<fieldset class="title_criteria_zone" id="searchCriterion">
 			<legend align="top" class="palette">${message:global.button.search}</legend>
+					<t:form id="form">
         		<table>
 					<tr>
 						<td>
@@ -31,38 +31,19 @@
 						    <t:linkSubmit style="margin-left:10px" class="button"><span>${message:global.button.search}</span></t:linkSubmit>
 						</td>
 					</tr>
-										<tr>
-						<td>
+				</table>
+			</t:form>
+				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="public"/>&nbsp;<t:label for="public">${message:pages.list.radioGroupPub}</t:label>
+				                    <t:radio t:id="public" onclick="this.form.submit()"/>&nbsp;<t:label for="public">${message:pages.list.radioGroupPub}</t:label>
 				                    ${message:global.space}
-				                    <t:radio t:id="private" />&nbsp;<t:label for="private">${message:pages.list.radioGroupPriv}</t:label>
+				                    <t:radio t:id="private" onclick="this.form.submit()" />&nbsp;<t:label for="private">${message:pages.list.radioGroupPriv}</t:label>
 				                    ${message:global.space}				                    
-				                    <t:radio t:id="all" />&nbsp;<t:label for="all">${message:pages.list.radioGroupAll}</t:label>
+				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.list.radioGroupAll}</t:label>
 				                    ${message:global.space}
 			               	</t:radiogroup>
-			               	
-			               	<t:textfield t:id="selectedRadioButton" style="display:none" />
-			   <script type="text/javascript">
-				<!--/*--><![CDATA[//><!--
-				var init=function(){
-					var callback = function(event){
-						console.log(jQuery("input[name='searchCriteria']:checked").val());
-						jQuery("input#selectedRadioButton").val(jQuery("input[name='searchCriteria']:checked").val());
-						console.log( $("input#selectedRadioButton"));
-					};
-					document.getElementById('public').addEventListener('change', callback, false);
-					document.getElementById('private').addEventListener('change', callback, false);
-					document.getElementById('all').addEventListener('change', callback, false);
-				}
-				window.addEventListener('load', init, false);
-			//--><!]]>
-		</script>
-						</td>
-					</tr>
-				</table>
+			    </t:form>
 			</fieldset>
-		</t:form>
 			
 				  <div class="clear"></div>
 		<h2>${message:pages.administration.lists.index}</h2>
@@ -70,7 +51,7 @@
 		<t:if t:test="emptyList">
 		${message:pages.lists.nothing}
 		<p:else>
-		<t:grid source="lists" rowsPerPage="15"  include="identifier, listDescription, isPublic" add="ownership,actions" row="list">
+		<t:grid source="lists" rowsPerPage="10"  include="identifier, listDescription, isPublic" add="ownership,actions" row="list">
 			 <t:parameter name="identifierCell">
 			 <t:pageLink page="lists/DisplayMailingList" context="list.persistenceId"
 			 title="${message:pages.lists.link}">${list.identifier}</t:pageLink>

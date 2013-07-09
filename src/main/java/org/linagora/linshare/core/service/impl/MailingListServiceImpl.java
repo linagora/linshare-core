@@ -58,11 +58,6 @@ public class MailingListServiceImpl implements MailingListService {
     public MailingList createMailingList(MailingList mailingList) throws BusinessException {
     	return mailingListBusinessService.createMailingList(mailingList);
     }
-    
-	@Override
-    public MailingListContact createMailingListContact(MailingListContact mailingListContact) throws BusinessException {
-    	return mailingListBusinessService.createMailingListContact(mailingListContact);
-    }
 	
 	@Override
     public MailingList retrieveMailingList(long persistenceId) {
@@ -117,9 +112,4 @@ public class MailingListServiceImpl implements MailingListService {
 		}
 		mailingListBusinessService.deleteMailingListContact(persistenceId);
 	}
-	
-    @Override
-    public MailingListContact retrieveMailingListContact(long persistenceId) {
-    	return mailingListBusinessService.retrieveMailingListContact(persistenceId);
-    }
 }

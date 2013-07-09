@@ -45,6 +45,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
@@ -57,14 +58,9 @@ import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class ManageMailingList {
-
-	private static Logger logger = LoggerFactory
-			.getLogger(ManageMailingList.class);
 
 	@Inject
 	private MailingListFacade mailingListFacade;
@@ -100,6 +96,9 @@ public class ManageMailingList {
 	@Property
 	private VisibilityType visibility;
 
+    @Inject
+    private Messages messages;
+	
 	@Inject
 	private PersistentLocale persistentLocale;
 
@@ -162,16 +161,15 @@ public class ManageMailingList {
     void onValidateFromIdentifier(String value) throws ValidationException, BusinessException {
         if (value != null) {
             if (!value.substring(0,1).matches("[A-Za-z]+")) {
-            
-                throw new ValidationException("Identifier must started with a letter");
-            }
+					throw new ValidationException(String.format(messages.get("pages.list.manage.letter")));
+				}
+			}
             if(!value.equals(oldIdentifier)){
             	String copy = mailingListFacade.checkUniqueId(value, loginUser);
             	if (!copy.equals(value)) {
-            		throw new ValidationException("Identifier already exist, choose an available (ex: "+copy+")");
+            		throw new ValidationException(String.format(messages.get("pages.list.manage.identifierExist"),copy));
             	}
             }
-        }
 
     }
 	

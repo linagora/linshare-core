@@ -21,7 +21,7 @@
 					
            
 		<t:form id="form">
-		 <t:errors/>
+		 <t:errors banner="${message:pages.administration.userconfig.password.error}"/>
 			<fieldset class="title_criteria_zone" id="listCriterion">
 				<t:if test="inModify">
 					<legend align="top" class="palette">${message:global.button.update}</legend>

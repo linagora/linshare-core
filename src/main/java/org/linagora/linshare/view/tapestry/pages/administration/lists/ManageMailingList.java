@@ -47,7 +47,9 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Form;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -84,6 +86,12 @@ public class ManageMailingList {
 	@Persist
 	@Property
 	private UserVo oldOwner;
+	
+    @Inject
+    private Messages messages;
+    
+	@Inject
+	private PersistentLocale persistentLocale;
 	
     @Inject
     private AbstractDomainFacade domainFacade;
@@ -230,7 +238,8 @@ public class ManageMailingList {
 			}
 			else{ 
             	String copy = mailingListFacade.checkUniqueId(mailingList.getIdentifier(),mailingList.getOwner());
-				form.recordError(mailingList.getOwner().getFullName()+" already has a list with this identifier,please choose an available (ex: "+copy+")");
+					form.recordError(String.format(messages.get("pages.administration.changeOwner"), mailingList.getOwner().getFullName(),copy));
+
 				mailingList.setOwner(oldOwner);
 				return null;
 			}
