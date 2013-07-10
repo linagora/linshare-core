@@ -9,7 +9,8 @@
 
         function sendFiles() {
         	var textarea_size = document.getElementById('recipientsPatternQuickSharePopup').value.length;
-        	if(textarea_size != 0){
+        	var textarea_size2 = document.getElementById('listRecipientsPatternQuickSharePopup').value.length;
+        	if(textarea_size != 0 || textarea_size2 != 0){
         		
             	document.body.style.cursor="wait";
                 var link = document.getElementById('quickshare_send_link');
@@ -19,6 +20,7 @@
                 
         	}else{
         		document.getElementById('recipientsPatternQuickSharePopup').className += " t-error ";
+        		document.getElementById('listRecipientsPatternQuickSharePopup').className += " t-error ";
         	}
         }
 

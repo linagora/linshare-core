@@ -1,6 +1,7 @@
 <t:container
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 	
+	
 	<!--[if IE 9]> 
 		<style>
 			div.t-autocomplete-menu{
@@ -40,7 +41,7 @@
 			<div t:type="ck/SlidingPanel" t:id="panelRecipients" t:closed="false"
                 t:options="{duration:0.3}"
 				t:subject="${message:components.confirmSharePopup.panelRecipients.subject}">      
-				<t:textarea t:id="recipientsPatternSharePopup" t:value="recipientsSearch" validate="required"
+				<t:textarea t:id="recipientsPatternSharePopup" t:value="recipientsSearch"
 					t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens=","
 					class="recipientsPattern" 
 					title="${message:components.confirmSharePopup.texarea.recipients.title}" />

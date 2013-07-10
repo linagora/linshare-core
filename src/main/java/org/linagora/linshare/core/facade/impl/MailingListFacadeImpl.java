@@ -171,8 +171,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
    
    @Override
    public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user){
-	   String[] recipients = mailingLists.replaceAll(";", ",").split(",");
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
+	   if(mailingLists!=null){
+	   String[] recipients = mailingLists.replaceAll(";", ",").split(",");
 		if(mailingLists.startsWith("\"") && mailingLists.endsWith(")")){
 		for (String oneMailingList : recipients) {
 			   int index1 = oneMailingList.indexOf("(");
@@ -187,6 +188,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			   
 			   MailingListVo current = retrieveMailingListByOwnerAndIdentifier(identifier,owner);
 			   finalList.add(current);
+			}
 		}
 		
 	} else {
