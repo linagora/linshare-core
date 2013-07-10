@@ -429,12 +429,18 @@ public class ConfirmSharePopup{
     	
     	boolean sendErrors = false;
 		
-		List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+		List<String> recipients = new ArrayList<String>();
+		if(recipientsSearch != null){
+    		recipients = MailCompletionService.parseEmails(recipientsSearch);
+		}
+		
 		List<MailingListVo> mailingListSelected = new ArrayList<MailingListVo>();
+		if(!(mailingListSelected.isEmpty())){
 		mailingListSelected = mailingListFacade.getMailingListFromQuickShare(listRecipientsSearch,userVo);
-		for(MailingListVo current : mailingListSelected){
-			for(MailingListContactVo currentContact : current.getMails()){
-				recipients.add(currentContact.getMail());
+			for(MailingListVo current : mailingListSelected){
+				for(MailingListContactVo currentContact : current.getMails()){
+					recipients.add(currentContact.getMail());
+				}
 			}
 		}
 		String badFormatEmail =  "";
