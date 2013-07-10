@@ -125,8 +125,8 @@ public class ManageMailingList {
 
 	public List<String> onProvideCompletionsFromOwner(String input) {
 		List<UserVo> searchResults = performSearch(input);
-
 		List<String> elements = new ArrayList<String>();
+		
 		for (UserVo user : searchResults) {
 			String completeName = MailCompletionService.formatLabel(user);
 			if (!elements.contains(completeName)) {
@@ -163,19 +163,12 @@ public class ManageMailingList {
 
 		try {
 			if (input != null) {
-				userSet.addAll(userFacade.searchUser(input.trim(), null, null,
-						loginUser));
+				userSet.addAll(userFacade.searchUser(input.trim(), null, null,loginUser));
 			}
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,
-					loginUser));
-
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,
-					loginUser));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(
-					input.trim(), loginUser));
-
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(
-					new ArrayList<UserVo>(userSet), loginUser);
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,loginUser));
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,loginUser));
+			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), loginUser));
+			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), loginUser);
 		} catch (BusinessException e) {
 			logger.error("Error while searching user in QuickSharePopup", e);
 		}
@@ -189,8 +182,7 @@ public class ManageMailingList {
                 if (!copy.equals(value)) {
                 	return false;
                 }
-            }
-            else {
+            } else {
                 if(!value.equals(oldIdentifier)){
                 	String copy = mailingListFacade.checkUniqueId(value,mailingList.getOwner());
                 	if (!copy.equals(value)) {
@@ -200,7 +192,6 @@ public class ManageMailingList {
             }
         }
     	return true;
-
     }
    
     public Object onActionFromCancel() {
@@ -211,7 +202,6 @@ public class ManageMailingList {
      }
 
 	public Object onSuccess() throws BusinessException, ValidationException{
-		
 		if(newOwner!=null){
 			if (newOwner.substring(newOwner.length()-1).equals(">")) {
 				int index1 = newOwner.indexOf("<");
@@ -226,7 +216,7 @@ public class ManageMailingList {
 				domain = domainFacade.retrieveDomain(selectedUser
 						.getDomainIdentifier());
 				mailingList.setDomain(domain);
-			}else {
+			} else {
 				mailingList.setOwner(loginUser);
 				domain = domainFacade.retrieveDomain(loginUser
 					.getDomainIdentifier());
@@ -235,8 +225,7 @@ public class ManageMailingList {
 		}
 			if(onValidate(mailingList.getIdentifier())){
 			 mailingListFacade.updateMailingList(mailingList);
-			}
-			else{ 
+			} else{ 
             	String copy = mailingListFacade.checkUniqueId(mailingList.getIdentifier(),mailingList.getOwner());
 					form.recordError(String.format(messages.get("pages.administration.changeOwner"), mailingList.getOwner().getFullName(),copy));
 

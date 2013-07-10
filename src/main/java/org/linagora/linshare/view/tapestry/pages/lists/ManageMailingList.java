@@ -181,8 +181,7 @@ public class ManageMailingList {
 			}
 
 				mailingList.setOwner(loginUser);
-				domain = domainFacade.retrieveDomain(loginUser
-						.getDomainIdentifier());
+				domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
 				mailingList.setDomain(domain);
 				
 			mailingListFacade.updateMailingList(mailingList);
@@ -190,8 +189,7 @@ public class ManageMailingList {
 			
 		} else {
 			mailingList.setOwner(loginUser);
-			domain = domainFacade.retrieveDomain(loginUser
-					.getDomainIdentifier());
+			domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
 			mailingList.setDomain(domain);
 
 			if (visibility.toString().equals("Public")) {

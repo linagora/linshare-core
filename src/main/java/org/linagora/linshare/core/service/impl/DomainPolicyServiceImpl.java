@@ -112,8 +112,6 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		while (it.hasNext() && next == true) {
 			DomainAccessRule rule = it.next();
 			if (rule.getPersistenceId() == persistenceID) {
-				logger.debug("Remove rule:" + rule.toString() + " with id:"
-						+ rule.getPersistenceId());
 				it.remove();
 				next = false;
 			}

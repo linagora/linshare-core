@@ -6,7 +6,6 @@ public enum VisibilityType {
 
 	private int value;
 
-	
 	private VisibilityType(int value) {
 		this.value = value;
 	}

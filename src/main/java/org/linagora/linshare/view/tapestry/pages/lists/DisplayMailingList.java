@@ -150,6 +150,7 @@ public class DisplayMailingList {
 			lists = new ArrayList<MailingListContactVo>();
 			lists = mailingList.getMails();
 			contacts = new ArrayList<UserVo>();
+			
 			for(MailingListContactVo current :lists){
 				contacts.add(mailingListFacade.getUserFromDisplay(current.getDisplay()));
 			}
@@ -179,8 +180,8 @@ public class DisplayMailingList {
 				fromAuthorized.add(current);
 			}
 		}
-		
 		List<String> elements = new ArrayList<String>();
+		
 		for (UserVo user : fromAuthorized) {
 			String completeName = MailCompletionService.formatLabel(user);
 			if (!elements.contains(completeName)) {
@@ -217,19 +218,13 @@ public class DisplayMailingList {
 
 		try {
 			if (input != null) {
-				userSet.addAll(userFacade.searchUser(input.trim(), null, null,
-						loginUser));
+				userSet.addAll(userFacade.searchUser(input.trim(), null, null,loginUser));
 			}
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,
-					loginUser));
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,loginUser));
 
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,
-					loginUser));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(
-					input.trim(), loginUser));
-
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(
-					new ArrayList<UserVo>(userSet), loginUser);
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,loginUser));
+			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), loginUser));
+			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), loginUser);
 		} catch (BusinessException e) {
 			logger.error("Error while searching user in QuickSharePopup", e);
 		}
@@ -266,9 +261,7 @@ public class DisplayMailingList {
 	}
 	
 	public Object onSuccessFromForm() throws BusinessException {
-
 		String display = MailCompletionService.formatLabel(email, firstName,lastName, false);
-
 		MailingListContactVo newContact = new MailingListContactVo(email,display);
 		if(mailingList.getMails() == null){
 			List<MailingListContactVo> current = new ArrayList<MailingListContactVo>();
@@ -276,8 +269,7 @@ public class DisplayMailingList {
 		}
 		mailingList.addContact(newContact);
 		mailingListFacade.updateMailingList(mailingList);
-		mailingList = mailingListFacade.retrieveMailingList(mailingList
-				.getPersistenceId());
+		mailingList = mailingListFacade.retrieveMailingList(mailingList.getPersistenceId());
 
 		email = null;
 		firstName = null;
@@ -289,13 +281,12 @@ public class DisplayMailingList {
 		if(inModify == true){
 			String display = MailCompletionService.formatLabel(email, firstName,lastName, false);
 
-			MailingListContactVo contact= mailingListFacade.retrieveMailingListContact(oldEmail);
+			MailingListContactVo contact= mailingListFacade.retrieveMailingListContact(oldEmail,mailingList);
 			contact.setDisplay(display);
 			contact.setMail(email);
 			
 			mailingListFacade.updateMailingListContact(contact);
-			mailingList = mailingListFacade.retrieveMailingList(mailingList
-					.getPersistenceId());
+			mailingList = mailingListFacade.retrieveMailingList(mailingList.getPersistenceId());
 			inModify = false;
 			email = null;
 			oldEmail = null;
@@ -313,7 +304,6 @@ public class DisplayMailingList {
 			{
 				UserVo tmp = mailingListFacade.getUserFromDisplay(recipientsSearch);
 				results = new ArrayList<UserVo>(userFacade.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), loginUser));
-				
 			} else {
 			List<UserVo>searchResults = new ArrayList<UserVo>();
 			searchResults = performSearch(recipientsSearch);
@@ -335,6 +325,7 @@ public class DisplayMailingList {
 		if (!mailingList.getMails().isEmpty()) {
 			List<MailingListContactVo> listing = new ArrayList<MailingListContactVo>();
 			listing = mailingList.getMails();
+			
 			for (MailingListContactVo contact : listing) {
 				if (contact.getMail().equals(result.getMail())) {
 					inList = true;
@@ -378,7 +369,8 @@ public class DisplayMailingList {
 	}
 
 	public void onActionFromEditContact(String mail) {
-		for(MailingListContactVo current : this.lists){
+		
+		for(MailingListContactVo current : lists){
 			if(current.getMail().equals(mail)){
 				contactForEdit=mailingListFacade.getUserFromDisplay(current.getDisplay());
 			}
@@ -386,7 +378,6 @@ public class DisplayMailingList {
 		this.email = contactForEdit.getMail();
 		this.firstName = contactForEdit.getFirstName();
 		this.lastName = contactForEdit.getLastName();
-		
 		oldEmail = email;
 		inModify = true;
 		contactForEdit = null;
@@ -394,6 +385,7 @@ public class DisplayMailingList {
 	
 	
 	public void onActionFromDeleteContact(String mail) {
+		
 		for(MailingListContactVo current : this.lists){
 			if(current.getMail().equals(mail)){
 				this.contactToDelete = current.getPersistenceId();

@@ -80,6 +80,7 @@ public class MailingList {
 			if(mailingListContact == null){
 				mailingListContact = new ArrayList<MailingListContact>();
 			}
+			
 			for(MailingListContactVo current : list.getMails()) {
 				mailingListContact.add(new MailingListContact(current));
 			}
@@ -121,8 +122,11 @@ public class MailingList {
 	}
 	
 	public String visibility(boolean isPublic) {
-		if(isPublic == true) return "Public";
-		else return "Private" ;
+		if(isPublic == true){
+			return "Public";
+		} else {
+			return "Private" ;
+		}
 	}
 	public void setPublic(boolean isPublic) {
 		this.isPublic = isPublic;

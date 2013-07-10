@@ -125,6 +125,7 @@ public class Index {
 			lists = mailingListFacade.findAllMailingListByOwner(loginUser);
 			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
 			lists.clear();
+			
 			for(MailingListVo current : finalList){
 				if(current.isPublic() == false){
 					lists.add(current);
@@ -171,6 +172,7 @@ public class Index {
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
 		List<MailingListVo> searchResults = performSearch(input);
 		List<String> elements = new ArrayList<String>();
+		
 		for (MailingListVo current: searchResults) {
 			if(criteriaOnSearch.equals("public")){
 				if(current.isPublic() == true){
@@ -188,8 +190,7 @@ public class Index {
 			}
 		}
 		return elements;
-	}
-	
+	}	
 	
 	/**
 	 * Perform a list search.
@@ -203,6 +204,7 @@ public class Index {
 		List<MailingListVo> list = new ArrayList<MailingListVo>();
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
 		list = mailingListFacade.findAllMailingListByUser(loginUser);
+		
 		for(MailingListVo current : list){
 			if(current.getIdentifier().indexOf(input) != -1){
 				finalList.add(current);
@@ -210,7 +212,6 @@ public class Index {
 		}
 		return finalList;
 	}
-	
 
 	public Object onSuccessFromForm() throws BusinessException {
 		inSearch = true;
@@ -220,23 +221,23 @@ public class Index {
     		if(criteriaOnSearch.equals("public")){
     			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
     			lists.clear();
+    	
     			for(MailingListVo current : finalList){
     				if(current.isPublic() == true){
     					lists.add(current);
     				}
     			}
-    		}
-    		else if(criteriaOnSearch.equals("private")){
+    		} else if(criteriaOnSearch.equals("private")){
     			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
     			lists.clear();
+    			
     			for(MailingListVo current : finalList){
     				if(current.isPublic() == false){
     					lists.add(current);
     				}
     			}
     		}
-    	}
-    	else {
+    	} else {
     		lists=new ArrayList<MailingListVo>();
     	}
     	fromCreate = false;
@@ -268,16 +269,22 @@ public class Index {
 		this.emptyList = emptyList;
 	}
 	
-	public String getPublic() { return "public"; }
-	public String getPrivate() { return "private"; }
-	public String getAll() { return "all"; }
-
+	public String getPublic() { 
+		return "public"; 
+	}
+	
+	public String getPrivate() { 
+		return "private"; 
+	}
+	
+	public String getAll() { 
+		return "all"; 
+	}
 
 	public boolean isFromCreate() {
 		return fromCreate;
 	}
-
-
+	
 	public void setFromCreate(boolean fromCreate) {
 		this.fromCreate = fromCreate;
 	}

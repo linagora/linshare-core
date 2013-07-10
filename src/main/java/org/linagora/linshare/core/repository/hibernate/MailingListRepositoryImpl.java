@@ -88,14 +88,12 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		DetachedCriteria det = DetachedCriteria.forClass(MailingList.class);
 		det.add(Restrictions.or(Restrictions.eq("owner",user), 
 				Restrictions.and(Restrictions.eq("domain",user.getDomain()),
-						Restrictions.and(Restrictions.eq("isPublic",true), Restrictions.ne("owner",user)))
-						));
+						Restrictions.and(Restrictions.eq("isPublic",true), Restrictions.ne("owner",user)))));
 		
 		List<MailingList> mailingList = findByCriteria(det);
 		if (mailingList == null || mailingList.isEmpty()) {
 			return new ArrayList<MailingList>();
-		};
-		
+		}
 		return mailingList;
 	}
 	

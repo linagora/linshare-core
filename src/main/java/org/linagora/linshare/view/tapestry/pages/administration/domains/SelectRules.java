@@ -128,10 +128,6 @@ public class SelectRules {
     	    		}
     	    			domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
     	    			domainPolicy = domainPolicyFacade.retrieveDomainPolicy(domainPolicy.getIdentifier());
-    	    			for(DomainAccessRuleVo current : domainPolicy.getDomainAccessPolicy().getRules()){
-    	    				logger.debug("rule ID: "+current.getPersistenceId());
-    	    				current.setDescription(current.toDisplay(persistentLocale));
-    	    			}
     		}
         	return manageDomainpage;
     }

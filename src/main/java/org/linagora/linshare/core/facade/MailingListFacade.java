@@ -25,7 +25,7 @@ public interface MailingListFacade {
     
     public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException;
     
-    public MailingListContactVo retrieveMailingListContact(String mail);
+    public MailingListContactVo retrieveMailingListContact(String mail , MailingListVo list);
     
     public void updateMailingListContact(MailingListContactVo contactToUpdate) throws BusinessException;
     

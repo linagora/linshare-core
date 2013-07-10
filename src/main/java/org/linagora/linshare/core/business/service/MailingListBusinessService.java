@@ -54,9 +54,7 @@ public interface MailingListBusinessService {
     public void updateMailingList(MailingList listToUpdate) throws BusinessException;
     
     public List<MailingList> findAllMailingListByOwner(User user);
-    
-    public MailingListContact retrieveMailingListContact(String mail);
-    
+
     public MailingListContact retrieveMailingListContact(long persistenceId);
     
     public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException;
