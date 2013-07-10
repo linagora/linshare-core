@@ -230,7 +230,7 @@ public class AppModule
                     throws IOException
             {
                 long startTime = System.currentTimeMillis();
-                log.info(String.format("%s (XHR:%s) : %s", request.getMethod(), request.isXHR(), request.getPath()) + " ...");
+                log.debug(String.format("%s (XHR:%s) : %s", request.getMethod(), request.isXHR(), request.getPath()) + " ...");
                 try
                 {
                     // The responsibility of a filter is to invoke the corresponding method
