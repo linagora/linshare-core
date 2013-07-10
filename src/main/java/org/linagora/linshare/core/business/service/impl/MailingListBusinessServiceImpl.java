@@ -88,11 +88,6 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     }
     
     @Override
-    public MailingListContact retrieveMailingListContact(String mail){
-    	return mailingListContactRepository.findByMail(mail);
-    }
-    
-    @Override
     public List<MailingList> findAllMailingList() {
     	List<MailingList> myList = new ArrayList<MailingList>();
     	myList = mailingListRepository.findAll();
@@ -108,6 +103,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     public List<MailingList> findAllMailingListByOwner(User user) {
     	List<MailingList> myList = new ArrayList<MailingList>();
     	List<MailingList> list =mailingListRepository.findAll();
+    	
     	for(MailingList current : list ) {
     		if((current.getOwner().equals(user))) {
     			myList.add(current);

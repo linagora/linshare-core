@@ -65,8 +65,8 @@ public class MailingListServiceImpl implements MailingListService {
     }
 	
 	@Override
-    public MailingListContact retrieveMailingListContact(String mail){
-		return mailingListBusinessService.retrieveMailingListContact(mail);
+    public MailingListContact retrieveMailingListContact(long persistenceId) {
+		return mailingListBusinessService.retrieveMailingListContact(persistenceId);
 	}
     
 	@Override

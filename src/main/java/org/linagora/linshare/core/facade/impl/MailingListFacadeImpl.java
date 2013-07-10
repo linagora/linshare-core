@@ -52,6 +52,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
     @Override
     public List<MailingListVo> findAllMailingList() {
     	List<MailingListVo> list =new ArrayList<MailingListVo>();
+    	
     	for(MailingList current : mailingListService.findAllMailingList()) {
     		list.add(new MailingListVo(current));
     	}
@@ -62,6 +63,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
     public List<MailingListVo> findAllMailingListByUser(UserVo actorVo) throws BusinessException {
     	List<MailingListVo> list =new ArrayList<MailingListVo>();
         User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
+        
     	for(MailingList current : mailingListService.findAllMailingListByUser(actor)) {
     		list.add(new MailingListVo(current));
     	}
@@ -93,17 +95,17 @@ public class MailingListFacadeImpl implements MailingListFacade {
     	List<MailingListVo> list = new ArrayList<MailingListVo>();
     	List<MailingListVo> listByUser = new ArrayList<MailingListVo>();
     	listByUser = findAllMailingListByUser(actorVo);
+    	
     	for(MailingListVo current : listByUser) {
     		if(current.getIdentifier().equals(identifier)) {
     			list.add(current);
     		}
     	}
-    	
     	return list;	
     }
 
 	@Override
-	public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException{ 
+	public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException { 
 		MailingList list =new MailingList(listVo);
 		mailingListService.deleteMailingListContact(list,persistenceId);
     	User actor = userAndDomainMultiService.findOrCreateUser(listVo.getOwner().getMail(),listVo.getOwner().getDomainIdentifier());
@@ -114,8 +116,17 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
    
    @Override
-   public MailingListContactVo retrieveMailingListContact(String mail){
-	   return new MailingListContactVo(mailingListService.retrieveMailingListContact(mail));
+   public MailingListContactVo retrieveMailingListContact(String mail , MailingListVo list) {
+	   
+	   MailingList mailingList = mailingListService.retrieveMailingList(list.getPersistenceId());
+	   long persistenceId = 0;
+	   
+	   for(MailingListContact current : mailingList.getMails()){
+		   if(current.getMails().equals(mail)){
+			   persistenceId = current.getPersistenceId();
+		   }
+	   }
+	   return new MailingListContactVo(mailingListService.retrieveMailingListContact(persistenceId));
    }
    
    @Override
@@ -124,20 +135,22 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	   list = findAllMailingListByOwner(user);
 	   int i = 0;
 	   String copy = value;
+	   
 	   for(MailingListVo current : list){  
 		   while(current.getIdentifier().equals(copy)){
-					   copy = value+i;  
-						i++;
+			   copy = value+i;  
+			   i++;
 		   }
 	   }
 	   return copy;
    }
    
    @Override
-   public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException{
+   public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException {
 	   List<MailingListVo> list = new ArrayList<MailingListVo>();
 	   List<MailingList> listFromDb = new ArrayList<MailingList>();
 	   User actor = userAndDomainMultiService.findOrCreateUser(user.getMail(),user.getDomainIdentifier());
+	   
 	   listFromDb = mailingListService.findAllMailingListByOwner(actor);
 	   for(MailingList current : listFromDb){
 		   list.add(new MailingListVo(current));
@@ -148,8 +161,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
    @Override
    public List<MailingListVo> copyList(List<MailingListVo> list) {
 	   List<MailingListVo> copy = new ArrayList<MailingListVo>();
+	   
 	   for(MailingListVo current : list) { 
-			  copy.add(current);
+		   copy.add(current);
 	   }
 	return copy;	
    }
@@ -170,12 +184,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
    }
    
    @Override
-   public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user){
+   public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user) {
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
 	   if(mailingLists!=null){
 	   String[] recipients = mailingLists.replaceAll(";", ",").split(",");
-		if(mailingLists.startsWith("\"") && mailingLists.endsWith(")")){
-		for (String oneMailingList : recipients) {
+	   	if(mailingLists.startsWith("\"") && mailingLists.endsWith(")")){
+	   		
+	   		for (String oneMailingList : recipients) {
 			   int index1 = oneMailingList.indexOf("(");
 			   String owner = oneMailingList.substring(index1+1, oneMailingList.length()-1);
 			   
@@ -190,7 +205,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			   finalList.add(current);
 			}
 		}
-		
 	} else {
 		finalList = null;
 	}
@@ -198,9 +212,10 @@ public class MailingListFacadeImpl implements MailingListFacade {
    }
    
    @Override
-   public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName){
+   public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName) {
 	   List<MailingList> listFromDb = new ArrayList<MailingList>();
 	   listFromDb = mailingListService.findAllMailingList();
+	   
 	   for(MailingList current : listFromDb){
 		   if((current.getIdentifier().equals(identifier)) && ((current.getOwner().getFirstName()+" "+current.getOwner().getLastName()).equals(ownerFullName))){
 			   return new MailingListVo(current);

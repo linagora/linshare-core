@@ -62,6 +62,7 @@ public class MailingListVo {
 		this.owner = new UserVo(list.getOwner());
 		this.domain = new AbstractDomainVo(list.getDomain());
 		mails =new ArrayList<MailingListContactVo>();
+		
 		for(MailingListContact current : list.getMails()) {
 			mails.add(new MailingListContactVo(current));
 		}

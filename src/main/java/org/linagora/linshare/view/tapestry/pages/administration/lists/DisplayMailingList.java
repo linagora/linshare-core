@@ -77,7 +77,6 @@ public class DisplayMailingList {
 	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
 
 	
-	
 	public void onActivate(long persistenceId) throws BusinessException {
 		if (persistenceId != 0) {
 			mailingList = mailingListFacade.retrieveMailingList(persistenceId);
@@ -90,6 +89,7 @@ public class DisplayMailingList {
 			lists = new ArrayList<MailingListContactVo>();
 			lists = mailingList.getMails();
 			contacts = new ArrayList<UserVo>();
+			
 			for(MailingListContactVo current :lists){
 				contacts.add(mailingListFacade.getUserFromDisplay(current.getDisplay()));
 			}
@@ -98,7 +98,7 @@ public class DisplayMailingList {
 	
     public Object onActionFromBack() throws BusinessException {
         mailingList=null;
-        	return index;
+        return index;
      }
 
     public boolean getIsEmpty(){
