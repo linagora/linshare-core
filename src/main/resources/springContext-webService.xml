@@ -100,6 +100,11 @@
 	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.impl.FineUploaderServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
 	</bean>
+	
+	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
+	<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
+	<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
 
 	<jaxrs:server id="restContainer" address="/">
 		<jaxrs:serviceBeans>
@@ -125,16 +130,14 @@
 		<jaxrs:features>
 <!-- 			<cxf:logging /> -->
 		</jaxrs:features>
-<!-- 		
-			<jaxrs:inInterceptors>
-				<ref bean="logInbound" />
-			</jaxrs:inInterceptors>
--->
-<!--
- 			<jaxrs:outInterceptors> 
-				<ref bean="logOutbound" />
-			</jaxrs:outInterceptors>
--->
+		<jaxrs:inInterceptors>
+<!-- 			<ref bean="logInbound" /> -->
+			<ref bean="timingInInterceptor" />
+		</jaxrs:inInterceptors>
+			<jaxrs:outInterceptors> 
+<!-- 			<ref bean="logOutbound" /> -->
+			<ref bean="timingOutInterceptor" />
+		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
 	<!-- enable json with jackson (not the default jettison) -->
