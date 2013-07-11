@@ -217,6 +217,15 @@ public class Index {
 		inSearch = true;
     	if(targetLists!=null){
     		lists.clear();
+    		if(criteriaOnSearch.equals("private") && targetLists.equals("*")){
+    			List<MailingListVo> searchResults = mailingListFacade.findAllMailingListByOwner(loginUser);
+    			
+    			for (MailingListVo current: searchResults) {
+    				if(current.isPublic() == false){
+    					lists.add(current);
+    				}
+    			}
+    		} else {
     		lists = performSearch(targetLists);
     		if(criteriaOnSearch.equals("public")){
     			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
@@ -237,6 +246,7 @@ public class Index {
     				}
     			}
     		}
+    	} 
     	} else {
     		lists=new ArrayList<MailingListVo>();
     	}

@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.vo.AllowDomainVo;
 
 public class AllowDomain extends DomainAccessRule {
 
@@ -68,7 +67,4 @@ public class AllowDomain extends DomainAccessRule {
 		return DomainAccessRuleType.ALLOW;
 	}
 
-	public AllowDomain(AllowDomainVo allowDomain) {
-		super(allowDomain);
-	}
 }
