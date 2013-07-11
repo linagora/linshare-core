@@ -34,7 +34,6 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
-import org.linagora.linshare.core.domain.vo.DenyDomainVo;
 
 public class DenyDomain extends DomainAccessRule {
 
@@ -72,7 +71,4 @@ public class DenyDomain extends DomainAccessRule {
 		return DomainAccessRuleType.DENY;
 	}
 
-	public DenyDomain(DenyDomainVo denyDomain) {
-		super(denyDomain);
-	}
 }

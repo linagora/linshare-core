@@ -139,7 +139,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 		for (AbstractDomain domain : domains) {
 			logger.debug("check:domain : " + domain.toString());
 			for (DomainAccessRule domainAccessRule : rules) {
-				logger.debug("check:domainAccessRule : " + domainAccessRule.toString());
+				logger.debug("check:domainAccessRule : " + domainAccessRule.getDomainAccessRuleType().toString());
 				if (domainAccessRule.getDomainAccessRuleType().equals(DomainAccessRuleType.ALLOW_ALL)) {
 					// logger.debug("check:domainAccessRule : ALLOW_ALL");
 					// Allow domain without any check
@@ -175,6 +175,8 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 					if (denyDomain.getDomain().equals(domain) && !excludes.contains(domain)) {
 						logger.debug(" DENY : " + domain.getIdentifier());
 						excludes.add(domain);
+					} else {
+						includes.add(domain);
 					}
 				}
 			}

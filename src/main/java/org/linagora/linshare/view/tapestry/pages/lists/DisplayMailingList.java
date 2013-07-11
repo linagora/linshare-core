@@ -226,7 +226,7 @@ public class DisplayMailingList {
 			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), loginUser));
 			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), loginUser);
 		} catch (BusinessException e) {
-			logger.error("Error while searching user in QuickSharePopup", e);
+			logger.error("Error while searching user", e);
 		}
 		return new ArrayList<UserVo>();
 	}
