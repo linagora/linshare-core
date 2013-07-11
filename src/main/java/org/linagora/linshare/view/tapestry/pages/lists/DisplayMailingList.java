@@ -300,8 +300,7 @@ public class DisplayMailingList {
 	public Object onSuccessFromForms() throws BusinessException {
 		results = null;
 		if (recipientsSearch != null) {
-			if(recipientsSearch.substring(recipientsSearch.length()-1).equals(">"))
-			{
+			if(recipientsSearch.substring(recipientsSearch.length()-1).equals(">")) {
 				UserVo tmp = mailingListFacade.getUserFromDisplay(recipientsSearch);
 				results = new ArrayList<UserVo>(userFacade.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), loginUser));
 			} else {
@@ -345,8 +344,7 @@ public class DisplayMailingList {
 		if(selectedUser!=null){
 		String display = MailCompletionService.formatLabel(selectedUser.get(0).getMail(), selectedUser.get(0).getFirstName(),selectedUser.get(0).getLastName(), false);
 
-		MailingListContactVo newContact = new MailingListContactVo(mail,
-				display);
+		MailingListContactVo newContact = new MailingListContactVo(mail,display);
 		mailingList.addContact(newContact);
 		mailingListFacade.updateMailingList(mailingList);
 		mailingList = mailingListFacade.retrieveMailingList(mailingList.getPersistenceId());

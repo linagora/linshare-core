@@ -113,7 +113,7 @@ public class ManageMailingList {
 	
     @Component
     private Form form;
-	
+
 	
 	public void onActivate(long persistenceId) throws BusinessException {
 		if (persistenceId != 0) {
@@ -133,7 +133,6 @@ public class ManageMailingList {
 				elements.add(completeName);
 			}
 		}
-
 		return elements;
 	}
 
@@ -204,22 +203,15 @@ public class ManageMailingList {
 	public Object onSuccess() throws BusinessException, ValidationException{
 		if(newOwner!=null){
 			if (newOwner.substring(newOwner.length()-1).equals(">")) {
-				int index1 = newOwner.indexOf("<");
-				int index2 = newOwner.indexOf(">");
-				newOwner = newOwner.substring(index1+1, index2);
 				
-				UserVo selectedUser = userFacade.findUserFromAuthorizedDomainOnly(
-						loginUser.getDomainIdentifier(), newOwner);
-
-				
-				mailingList.setOwner(selectedUser);
-				domain = domainFacade.retrieveDomain(selectedUser
-						.getDomainIdentifier());
+				UserVo selectedUser = mailingListFacade.getUserFromDisplay(newOwner);
+				List<UserVo> users = userFacade.searchUser(selectedUser.getMail(), selectedUser.getFirstName(), selectedUser.getLastName(), loginUser);
+				mailingList.setOwner(users.get(0));
+				domain = domainFacade.retrieveDomain(users.get(0).getDomainIdentifier());
 				mailingList.setDomain(domain);
 			} else {
 				mailingList.setOwner(loginUser);
-				domain = domainFacade.retrieveDomain(loginUser
-					.getDomainIdentifier());
+				domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
 				mailingList.setDomain(domain);
 			}
 		}
@@ -232,7 +224,7 @@ public class ManageMailingList {
 				mailingList.setOwner(oldOwner);
 				return null;
 			}
-				mailingList=null;
-				return index;
-		}
+		mailingList=null;
+		return index;
+	}
 }
