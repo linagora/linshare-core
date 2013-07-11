@@ -14,20 +14,19 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailingListService;
-import org.linagora.linshare.core.service.UserAndDomainMultiService;
+import org.linagora.linshare.core.service.UserService;
 
 public class MailingListFacadeImpl implements MailingListFacade {
 
-	
 	private final MailingListService mailingListService;
-    private final UserAndDomainMultiService userAndDomainMultiService;
+    private final UserService userService;
     private final AbstractDomainService abstractDomainService;
     
-    public MailingListFacadeImpl(MailingListService mailingListService, UserAndDomainMultiService userAndDomainMultiService,AbstractDomainService abstractDomainService) {
+    public MailingListFacadeImpl(MailingListService mailingListService, UserService userService,AbstractDomainService abstractDomainService) {
         
     	super();
         this.mailingListService = mailingListService;
-        this.userAndDomainMultiService = userAndDomainMultiService;
+        this.userService = userService;
         this.abstractDomainService=abstractDomainService;
     }
     
@@ -40,7 +39,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
     @Override
     public MailingListVo createMailingList(MailingListVo mailingListVo) throws BusinessException {
     	MailingList mailingList=new MailingList(mailingListVo);
-        User actor = userAndDomainMultiService.findOrCreateUser(mailingListVo.getOwner().getMail(),mailingListVo.getOwner().getDomainIdentifier());
+        User actor = userService.findOrCreateUser(mailingListVo.getOwner().getMail(),mailingListVo.getOwner().getDomainIdentifier());
     	mailingList.setOwner(actor);
     	mailingList.setMails(null);
   	  	AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomain().getIdentifier());
@@ -62,7 +61,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
     @Override
     public List<MailingListVo> findAllMailingListByUser(UserVo actorVo) throws BusinessException {
     	List<MailingListVo> list =new ArrayList<MailingListVo>();
-        User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
+        User actor = userService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
         
     	for(MailingList current : mailingListService.findAllMailingListByUser(actor)) {
     		list.add(new MailingListVo(current));
@@ -78,7 +77,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
     @Override
     public void updateMailingList(MailingListVo mailingListVo) throws BusinessException {
     	MailingList mailingList=new MailingList(mailingListVo);
-    	User actor = userAndDomainMultiService.findOrCreateUser(mailingListVo.getOwner().getMail(),mailingListVo.getOwner().getDomainIdentifier());
+    	User actor = userService.findOrCreateUser(mailingListVo.getOwner().getMail(),mailingListVo.getOwner().getDomainIdentifier());
     	mailingList.setOwner(actor);
   	  	AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomain().getIdentifier());
   	  	mailingList.setDomain(domain);
@@ -108,7 +107,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException { 
 		MailingList list =new MailingList(listVo);
 		mailingListService.deleteMailingListContact(list,persistenceId);
-    	User actor = userAndDomainMultiService.findOrCreateUser(listVo.getOwner().getMail(),listVo.getOwner().getDomainIdentifier());
+    	User actor = userService.findOrCreateUser(listVo.getOwner().getMail(),listVo.getOwner().getDomainIdentifier());
     	list.setOwner(actor);
   	  	AbstractDomain domain = abstractDomainService.retrieveDomain(listVo.getDomain().getIdentifier());
   	  	list.setDomain(domain);
@@ -149,7 +148,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
    public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException {
 	   List<MailingListVo> list = new ArrayList<MailingListVo>();
 	   List<MailingList> listFromDb = new ArrayList<MailingList>();
-	   User actor = userAndDomainMultiService.findOrCreateUser(user.getMail(),user.getDomainIdentifier());
+	   User actor = userService.findOrCreateUser(user.getMail(),user.getDomainIdentifier());
 	   
 	   listFromDb = mailingListService.findAllMailingListByOwner(actor);
 	   for(MailingList current : listFromDb){
@@ -172,8 +171,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
    public UserVo getUserFromDisplay(String display) {	
 	   int index1 = display.indexOf("<");
 	   String fullName  = display.substring(1, index1-2);
-	   
-	   int index2 = fullName.indexOf(" ");
+	  
+	   int index2 = fullName.lastIndexOf(" ");
 	   String lastName = fullName.substring(0,index2);
 	   String firstName = fullName.substring(index2+1);		
 	   
@@ -185,7 +184,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
    
    @Override
    public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user) {
-		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
+	   List<MailingListVo> finalList = new ArrayList<MailingListVo>();
 	   if(mailingLists!=null){
 	   String[] recipients = mailingLists.replaceAll(";", ",").split(",");
 	   	if(mailingLists.startsWith("\"") && mailingLists.endsWith(")")){
@@ -200,7 +199,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			   if(owner.equals("Me")){
 				   owner = user.getFullName();
 			   }
-			   
 			   MailingListVo current = retrieveMailingListByOwnerAndIdentifier(identifier,owner);
 			   finalList.add(current);
 			}
@@ -221,6 +219,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			   return new MailingListVo(current);
 		   }
 	   }
-	   return null;
+	   return new MailingListVo();
    }
 }

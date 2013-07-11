@@ -58,7 +58,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.core.service.UserAndDomainMultiService;
+import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,20 +67,20 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 	private static final Logger logger = LoggerFactory.getLogger(DomainPolicyFacadeImpl.class);
 
 	private final DomainPolicyService domainPolicyService;
-	private final UserAndDomainMultiService userAndDomainMultiService;
+	private final UserService userService;
 	private final AbstractDomainService abstractDomainService;
 
-	public DomainPolicyFacadeImpl(DomainPolicyService domainPolicyService,UserAndDomainMultiService userAndDomainMultiService,
+	public DomainPolicyFacadeImpl(DomainPolicyService domainPolicyService,UserService userService,
 			AbstractDomainService abstractDomainService) {
 		super();
 		this.domainPolicyService = domainPolicyService;
-		this.userAndDomainMultiService = userAndDomainMultiService;
+		this.userService = userService;
 		this.abstractDomainService = abstractDomainService;
 	}
 
 	private boolean isAuthorized(UserVo actorVo) throws BusinessException {
 		if (actorVo != null) {
-			User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+			User actor = userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
 			if (actor != null) {
 				if (actor.getRole().equals(Role.SUPERADMIN)) {
 					return true;

@@ -165,21 +165,10 @@ public class Index {
 		List<String> elements = new ArrayList<String>();
 		
 		for (MailingListVo current: searchResults) {
-			if(criteriaOnSearch.equals("public")){
-				if(current.isPublic() == true){
-				String completeName = current.getIdentifier();
-				elements.add(completeName);
-				}
-			} else if(criteriaOnSearch.equals("private")){
-				if(current.isPublic() == false){
-					String completeName = current.getIdentifier();
-					elements.add(completeName);
-				}
-			} else {
-			String completeName = current.getIdentifier();
+			
+				String completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
 				elements.add(completeName);
 			}
-		}
 		return elements;
 	}
 	
@@ -207,24 +196,29 @@ public class Index {
     	inSearch = true;
     	if(targetLists!=null){
     		lists.clear();
-    		lists = performSearch(targetLists);
-    		if(criteriaOnSearch.equals("public")){
-    			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
-    			lists.clear();
+    		if(targetLists.startsWith("\"") && targetLists.endsWith(")")){
     			
-    			for(MailingListVo current : finalList){
-    				if(current.isPublic() == true){
-    					lists.add(current);
+    			lists = mailingListFacade.getMailingListFromQuickShare(targetLists, loginUser);	
+    		} else {
+    			lists = performSearch(targetLists);
+    			if(criteriaOnSearch.equals("public")){
+    				List<MailingListVo> finalList = mailingListFacade.copyList(lists);
+    				lists.clear();
+    			
+    				for(MailingListVo current : finalList){
+    					if(current.isPublic() == true){
+    						lists.add(current);
+    					}
     				}
     			}
-    		}
-    		else if(criteriaOnSearch.equals("private")){
-    			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
-    			lists.clear();
+    			else if(criteriaOnSearch.equals("private")){
+    				List<MailingListVo> finalList = mailingListFacade.copyList(lists);
+    				lists.clear();
     			
-    			for(MailingListVo current : finalList){
-    				if(current.isPublic() == false){
-    					lists.add(current);
+    				for(MailingListVo current : finalList){
+    					if(current.isPublic() == false){
+    						lists.add(current);
+    					}
     				}
     			}
     		}
