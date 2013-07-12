@@ -163,7 +163,6 @@ public class DisplayMailingList {
 		} else {
 			mailingList = null;
 		}
-	
 		email = null;
 		firstName = null;
 		lastName = null;
@@ -188,7 +187,6 @@ public class DisplayMailingList {
 				elements.add(completeName);
 			}
 		}
-
 		return elements;
 	}
 
