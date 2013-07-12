@@ -115,7 +115,7 @@ public class Index {
 
 	@SetupRender
     public void init() throws BusinessException {
-    	if(inSearch == false){
+		if(inSearch == false){
 			lists = new ArrayList<MailingListVo>();
 			}
 			setEmptyList(lists.isEmpty());

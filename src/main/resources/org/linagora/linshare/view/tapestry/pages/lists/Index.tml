@@ -25,7 +25,7 @@
         		<table>
 					<tr>
 						<td>
-							<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}"/>
+							<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}" t:validate="required"/>
 						</td>
 						<td>
 						    <t:linkSubmit style="margin-left:10px" class="button"><span>${message:global.button.search}</span></t:linkSubmit>
@@ -44,8 +44,8 @@
 			               	</t:radiogroup>
 			    </t:form>
 			</fieldset>
-			
 				  <div class="clear"></div>
+		${message:page.list.notification}
 		<h2>${message:pages.administration.lists.index}</h2>
 		
 		<t:if t:test="emptyList">
