@@ -31,47 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.webservice.admin;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.vo.TopDomainVo;
-import org.linagora.linshare.webservice.dto.DomainDto;
+import java.util.List;
 
-public class TopDomain extends AbstractDomain {
+import javax.ws.rs.Path;
 
-	public TopDomain() {
-	}
+import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, RootDomain rootDomain) {
-		super(identifier, label);
-		this.defaultRole = Role.ADMIN;
-		this.defaultLocale = "en";
-		this.parentDomain = rootDomain;
-	}
+@Path("/rest/admin/domain_policies")
+public interface DomainPolicyRestService {
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, LDAPConnection ldapConn,
-			DomainPattern domainPattern, String baseDn) {
-		this(identifier, label, null);
-		this.userProvider = new LdapUserProvider(baseDn, ldapConn,
-				domainPattern);
-	}
-
-	public TopDomain(TopDomainVo topDomain) {
-		super(topDomain);
-	}
-
-	public TopDomain(DomainDto domainDto, AbstractDomain parent) {
-		super(domainDto, parent);
-	}
-
-	@Override
-	public DomainType getDomainType() {
-		return DomainType.TOPDOMAIN;
-	}
+	List<DomainPolicyDto> getDomainPolicies();
 }

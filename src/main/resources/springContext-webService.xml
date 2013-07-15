@@ -109,6 +109,18 @@
 		<constructor-arg ref="webServiceLDAPConnectionFacade" />
 	</bean>
 
+	<bean id="domainRestServiceImpl" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
+		<constructor-arg ref="webServiceDomainFacade" />
+	</bean>
+
+	<bean id="domainPolicyRestServiceImpl" class="org.linagora.linshare.webservice.admin.impl.DomainPolicyRestServiceImpl">
+		<constructor-arg ref="webServiceDomainPolicyFacade" />
+	</bean>
+
+	<bean id="userRoleRestServiceImpl" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
+		<constructor-arg ref="webServiceUserRoleFacade" />
+	</bean>
+
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 	<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
@@ -126,6 +138,9 @@
 			<ref bean="adminAuthenticationRestService" />
 			<ref bean="domainPatternRestService" />
 			<ref bean="ldapConnectionRestService" />
+			<ref bean="domainRestServiceImpl" />
+			<ref bean="domainPolicyRestServiceImpl" />
+			<ref bean="userRoleRestServiceImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

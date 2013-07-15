@@ -31,60 +31,71 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.facade.admin.impl;
 
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.admin.WebServiceDomainFacade;
+import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
+import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
-public enum DomainType {
+public class WebServiceDomainFacadeImpl extends WebServiceGenericFacadeImpl
+		implements WebServiceDomainFacade {
 
-	ROOTDOMAIN(0) {
-		@Override
-		public RootDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
-			throw new IllegalAccessError("Should not be used with root domain");
-		}
-	},
-	TOPDOMAIN(1) {
-		@Override
-		public TopDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
-			return new TopDomain(domainDto, parent);
-		}
-	},
-	SUBDOMAIN(2) {
-		@Override
-		public SubDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
-			return new SubDomain(domainDto, parent);
-		}
-	},
-	GUESTDOMAIN(3) {
-		@Override
-		public GuestDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
-			return new GuestDomain(domainDto, parent);
-		}
-	};
+	private final AbstractDomainService abstractDomainService;
 
-	private int value;
-
-	private DomainType(int value) {
-		this.value = value;
+	public WebServiceDomainFacadeImpl(final AccountService accountService,
+			final AbstractDomainService abstractDomainService) {
+		super(accountService);
+		this.abstractDomainService = abstractDomainService;
 	}
 
-	public int toInt() {
-		return value;
+	@Override
+	public DomainDto getDomains() throws BusinessException {
+		RootDomain rootDomain = abstractDomainService.getUniqueRootDomain();
+		return new DomainDto(rootDomain);
 	}
 
-	public static DomainType fromInt(int value) {
-		for (DomainType type : values()) {
-			if (type.value == value) {
-				return type;
-			}
-		}
-		throw new IllegalArgumentException("Doesn't match an existing DomainType");
+	@Override
+	public void createDomain(DomainDto domainDto) throws BusinessException {
+		AbstractDomain domain = getDomain(domainDto);
+		switch (domain.getDomainType()) {
+		case TOPDOMAIN:
+			abstractDomainService.createTopDomain((TopDomain) domain);
+			break;
+		case SUBDOMAIN:
+			abstractDomainService.createSubDomain((SubDomain) domain);
+			break;
+		case GUESTDOMAIN:
+			abstractDomainService.createGuestDomain((GuestDomain) domain);
+			break;
+		default:
+			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE, "Try to create a root domain");
+		};
+	}
+
+	@Override
+	public void updateDomain(DomainDto domainDto) throws BusinessException {
+		AbstractDomain domain = getDomain(domainDto);
+		abstractDomainService.updateDomain(domain);
+	}
+
+	@Override
+	public void deleteDomain(DomainDto domainDto) throws BusinessException {
+		abstractDomainService.deleteDomain(domainDto.getIdentifier());
 	}
 	
-	public abstract AbstractDomain getDomain(DomainDto domainDto, AbstractDomain parent);
+	private AbstractDomain getDomain(DomainDto domainDto) throws BusinessException {
+		DomainType domainType = DomainType.valueOf(domainDto.getType());
+		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto.getParent());
+		return domainType.getDomain(domainDto, parent);
+	}
 }

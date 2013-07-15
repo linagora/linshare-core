@@ -31,47 +31,40 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.webservice.dto;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.vo.TopDomainVo;
-import org.linagora.linshare.webservice.dto.DomainDto;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class TopDomain extends AbstractDomain {
+import org.linagora.linshare.core.domain.entities.DomainPolicy;
 
-	public TopDomain() {
+@XmlRootElement(name = "DomainPolicy")
+public class DomainPolicyDto {
+
+	private String identifier;
+	private String description;
+	
+	public DomainPolicyDto(final DomainPolicy domainPolicy) {
+		this.identifier = domainPolicy.getIdentifier();
+		this.description = domainPolicy.getDescription();
+	}
+	
+	public DomainPolicyDto() {
+		super();
 	}
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, RootDomain rootDomain) {
-		super(identifier, label);
-		this.defaultRole = Role.ADMIN;
-		this.defaultLocale = "en";
-		this.parentDomain = rootDomain;
+	public String getIdentifier() {
+		return identifier;
 	}
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, LDAPConnection ldapConn,
-			DomainPattern domainPattern, String baseDn) {
-		this(identifier, label, null);
-		this.userProvider = new LdapUserProvider(baseDn, ldapConn,
-				domainPattern);
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
-	public TopDomain(TopDomainVo topDomain) {
-		super(topDomain);
+	public String getDescription() {
+		return description;
 	}
 
-	public TopDomain(DomainDto domainDto, AbstractDomain parent) {
-		super(domainDto, parent);
-	}
-
-	@Override
-	public DomainType getDomainType() {
-		return DomainType.TOPDOMAIN;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
