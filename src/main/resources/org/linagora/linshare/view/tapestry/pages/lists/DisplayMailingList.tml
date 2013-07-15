@@ -3,6 +3,12 @@
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 	
 	<!-- Main content -->
+	
+	 <script type="text/javascript">
+    function clearThis(target){
+        target.value= "";
+    }
+    </script>
 			
 		<div id="content">
 		
@@ -24,7 +30,7 @@
 			 	 		<t:actionLink t:id="deleteContact" context="contact.mail" t:zone="zoneConfirmDelete"
 			 	 			title="${message:pages.lists.index.list.display.delete.button}">
 			 	 			<span onclick="window_confirm.showCenter(true)">
-							<img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
+							<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
 							</span>
 						</t:actionLink>
 			</t:parameter>
@@ -78,15 +84,12 @@
 					<table>
 						<tr>
 							<td>
-							<t:textfield t:id="searchUser" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
-				    		t:minChars="${autocompleteMin}" class="recipientsPattern" 
+							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
+				    		t:minChars="${autocompleteMin}" class="recipientsPattern" onfocus="clearThis(this)"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    		</td>
 				    		<td>
-        					<input type="submit" style="margin-right:5px" value="${message:global.button.search}"/>
-        					</td>
-        					<td>
-        					<input t:type="submit" t:id="resetSearch" style="margin-right:320px" value="${message:global.button.reset}"/>
+        					<input type="submit" style="margin-right:380px" value="${message:global.button.search}"/>
         					</td>
         				</tr>
         			</table>

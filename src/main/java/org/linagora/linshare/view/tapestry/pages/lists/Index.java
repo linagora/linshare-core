@@ -94,6 +94,7 @@ public class Index {
 	@Property
 	private int autocompleteMin=3;
 
+	@Persist
 	@Property
 	private String targetLists;
 
@@ -121,7 +122,8 @@ public class Index {
 	
 	@SetupRender
 	public void init() throws BusinessException {
-		if(inSearch == false || fromCreate == true){
+		if(inSearch == false && fromCreate == false){
+			targetLists = "*";
 			lists = mailingListFacade.findAllMailingListByOwner(loginUser);
 			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
 			lists.clear();
@@ -131,7 +133,15 @@ public class Index {
 					lists.add(current);
 				}
 			}
+		}
+		if(fromCreate == true){
+			lists = mailingListFacade.findAllMailingListByOwner(loginUser);
+			for(MailingListVo current : lists){
+				if(current.isPublic() == true){
+					targetLists="";
+				}
 			}
+		} 
 			setEmptyList(lists.isEmpty());
 			if(!lists.isEmpty()){
 		        if (grid.getSortModel().getSortConstraints().isEmpty()) {
@@ -158,8 +168,14 @@ public class Index {
 
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
-		mailingListFacade.deleteMailingList(listToDelete);
-		lists = mailingListFacade.findAllMailingListByUser(loginUser);
+    	List<MailingListVo> copy = mailingListFacade.copyList(lists);
+    	mailingListFacade.deleteMailingList(listToDelete);
+    	lists.clear();
+    	for(MailingListVo current : copy){
+    		if(!(current.getPersistenceId() == listToDelete)){
+    			lists.add(current);
+    		}
+    	}
 		list=null;
 	}
 
@@ -226,12 +242,18 @@ public class Index {
     			
     			lists = mailingListFacade.getMailingListFromQuickShare(targetLists, loginUser);	
     		} else {
-    				if(criteriaOnSearch.equals("private") && targetLists.equals("*")){
-    					List<MailingListVo> searchResults = mailingListFacade.findAllMailingListByOwner(loginUser);
-    			
-    					for (MailingListVo current: searchResults) {
-    						if(current.isPublic() == false){
-    							lists.add(current);
+    				if(targetLists.equals("*")){
+    					List<MailingListVo> searchResults = mailingListFacade.findAllMailingListByUser(loginUser);
+    					if(criteriaOnSearch.equals("all")){
+    						lists =mailingListFacade.copyList(searchResults);
+    					} else {
+    						
+    						for (MailingListVo current: searchResults) {
+    							if(criteriaOnSearch.equals("private") && current.isPublic() == false){
+    								lists.add(current);
+    							} else if(criteriaOnSearch.equals("public") && current.isPublic() == true){
+    								lists.add(current);
+    							} 
     						}
     					}
     				} else {
