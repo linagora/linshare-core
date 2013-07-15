@@ -6,6 +6,8 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <script type="text/javascript" language="javascript">
         var uuids = new Array();
 
+        var sizeAvailable = ${maxFileSize};
+
         var rm_errorclass = function(){
             document.getElementById('recipientsPattern').className = 
                 document.getElementById('recipientsPattern').className.replace( /(?:^|\s)t-error(?!\S)/ , '' );
@@ -37,9 +39,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
             var uploader = new qq.FineUploader({
                 element: jQuery('#uploader')[0],
                 debug: true,
-                cancel: true,
                 maxConnections: 1,
-                disableCancelForFormUploads: true,
                 request: {
                     endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
                 },
@@ -59,6 +59,8 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         if (responseJSON.success) {
                             console.log(name + "upload sucesssful");
                             uuids.push(uploader.getUuid(id));
+                            sizeAvailable -= uploader.getSize(id);
+                            uploader._options.validation.sizeLimit = sizeAvailable;
                         }
                         jQuery("#progress").attr("value", uploader.getInProgress());
                         if (uploader.getInProgress() == 0) {
@@ -73,6 +75,16 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     forceConfirm: true,
                     endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
                 },
+                messages: {
+                    typeError: "${message:pages.files.upload.typeError}",
+                    sizeError: "${message:pages.files.upload.sizeError}",
+                    minSizeError: "${message:pages.files.upload.minSizeError}",
+                    emptyError: "${message:pages.files.upload.emptyError}",
+                    noFilesError: "${message:pages.files.upload.noFilesError}",
+                    tooManyItemsError: "${message:pages.files.upload.tooManyItemsError}",
+                    retryFailTooManyItems: "${message:pages.files.upload.retryFailTooManyItems}",
+                    onLeave: "${message:pages.files.upload.onLeave}"
+                },
                 text: {
                     uploadButton: "${message:pages.files.upload.uploadButton}",
                     cancelButton: "${message:pages.files.upload.cancelButton}",
@@ -85,7 +97,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     waitingForResponse: "${message:pages.files.upload.waitingForResponse}"
                 },
                 validation: {
-                	sizeLimit: ${maxFileSize}
+                    sizeLimit: sizeAvailable
                 }
             });
 
