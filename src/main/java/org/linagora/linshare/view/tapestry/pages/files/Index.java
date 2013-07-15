@@ -202,7 +202,6 @@ public class Index {
 		if (fileMessage == null) {
 			fileMessage = "";
 		}
-		logger.debug("TIME UPLOAD : " + System.currentTimeMillis());
 	}
 
 	@CleanupRender
