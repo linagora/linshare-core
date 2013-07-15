@@ -47,6 +47,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
@@ -61,8 +62,7 @@ import org.slf4j.LoggerFactory;
 
 public class DisplayMailingList {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(DisplayMailingList.class);
+	private static Logger logger = LoggerFactory.getLogger(DisplayMailingList.class);
 
 	@Inject
 	private MailingListFacade mailingListFacade;
@@ -132,6 +132,9 @@ public class DisplayMailingList {
 	@Persist(value = "flash")
 	private long contactToDelete;
 
+    @Inject
+    private Messages messages;
+    
 	@Property
 	private int autocompleteMin = 3;
 
@@ -145,6 +148,9 @@ public class DisplayMailingList {
 
 	@SetupRender
 	public void init() throws BusinessException {
+		if(recipientsSearch == null){	
+			recipientsSearch = String.format(messages.get("page.list.autocompletionInfo"));
+		}
 		isEmpty = mailingList.getMails().isEmpty();
 		if (!isEmpty) {
 			lists = new ArrayList<MailingListContactVo>();
@@ -251,11 +257,6 @@ public class DisplayMailingList {
 		firstName = null;
 		oldEmail = null;
 		lastName = null;
-	}
-	
-	public void onSelectedFromResetSearch() throws BusinessException{
-		recipientsSearch = null;
-		results = null;
 	}
 	
 	public Object onSuccessFromForm() throws BusinessException {

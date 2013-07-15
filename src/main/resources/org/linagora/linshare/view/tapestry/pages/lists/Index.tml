@@ -76,12 +76,12 @@
 			  	<t:if test="listIsDeletable">
 			  		<t:pageLink page="lists/ManageMailingList" context="list.persistenceId"
 						title="${message:pages.lists.index.list.edit.button}">
-						<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
+						<img src="${asset:context:images/icons/edit-button.png}" alt="${message:global.button.edit}" />
 			 		 </t:pageLink>
 			 	 		<t:actionLink t:id="deleteList" context="list.persistenceId" t:zone="zoneConfirmDelete"
 			 	 			title="${message:pages.lists.index.list.delete.button}">
 			 	 			<span onclick="window_confirm.showCenter(true)">
-							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+							<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
 							</span>
 						</t:actionLink>
 					</t:if>

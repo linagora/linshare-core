@@ -101,6 +101,7 @@ public class Index {
 	@Property
 	private String criteriaOnSearch;
 	
+	@Persist
 	@Property
 	private String targetLists;
 	
@@ -117,7 +118,8 @@ public class Index {
     public void init() throws BusinessException {
 		if(inSearch == false){
 			lists = new ArrayList<MailingListVo>();
-			}
+			targetLists ="*";
+		}
 			setEmptyList(lists.isEmpty());
 			if(!lists.isEmpty()){
 		        if (grid.getSortModel().getSortConstraints().isEmpty()) {
@@ -149,8 +151,15 @@ public class Index {
     
     @OnEvent(value="listDeleteEvent")
     public void deleteList() throws BusinessException {
+    	List<MailingListVo> copy = mailingListFacade.copyList(lists);
     	mailingListFacade.deleteMailingList(listToDelete);
-        lists = mailingListFacade.findAllMailingList();
+    	lists.clear();
+    	
+    	for(MailingListVo current : copy){
+    		if(!(current.getPersistenceId() == listToDelete)){
+    			lists.add(current);
+    		}
+    	}
     }
     
     
@@ -200,30 +209,44 @@ public class Index {
     			
     			lists = mailingListFacade.getMailingListFromQuickShare(targetLists, loginUser);	
     		} else {
+				if(targetLists.equals("*")){
+					List<MailingListVo> searchResults = mailingListFacade.findAllMailingList();
+					if(criteriaOnSearch.equals("all")){
+						lists =mailingListFacade.copyList(searchResults);
+					} else {
+						
+						for (MailingListVo current: searchResults) {
+							if(criteriaOnSearch.equals("private") && current.isPublic() == false){
+								lists.add(current);
+							} else if(criteriaOnSearch.equals("public") && current.isPublic() == true){
+								lists.add(current);
+							} 
+						}
+					}
+				} else {
     			lists = performSearch(targetLists);
-    			if(criteriaOnSearch.equals("public")){
+    				if(criteriaOnSearch.equals("public")){
+    					List<MailingListVo> finalList = mailingListFacade.copyList(lists);
+    					lists.clear();
+    			
+    					for(MailingListVo current : finalList){
+    						if(current.isPublic() == true){
+    							lists.add(current);
+    						}	
+    					}
+    				} else if(criteriaOnSearch.equals("private")){
     				List<MailingListVo> finalList = mailingListFacade.copyList(lists);
     				lists.clear();
     			
-    				for(MailingListVo current : finalList){
-    					if(current.isPublic() == true){
-    						lists.add(current);
+    					for(MailingListVo current : finalList){
+    						if(current.isPublic() == false){
+    							lists.add(current);
+    						}
     					}
     				}
-    			}
-    			else if(criteriaOnSearch.equals("private")){
-    				List<MailingListVo> finalList = mailingListFacade.copyList(lists);
-    				lists.clear();
-    			
-    				for(MailingListVo current : finalList){
-    					if(current.isPublic() == false){
-    						lists.add(current);
-    					}
-    				}
-    			}
+				}
     		}
-    	}
-    	else {
+    	} else {
     		lists=new ArrayList<MailingListVo>();
     	}
     	return null;

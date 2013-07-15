@@ -432,12 +432,14 @@ public class ConfirmSharePopup{
 		List<String> recipients = new ArrayList<String>();
 		if(recipientsSearch != null){
     		recipients = MailCompletionService.parseEmails(recipientsSearch);
+		} else {
+			recipientsSearch = listRecipientsSearch;
 		}
-		
-		List<MailingListVo> mailingListSelected = new ArrayList<MailingListVo>();
+		List<MailingListVo> mailingListSelected = mailingListFacade.getMailingListFromQuickShare(listRecipientsSearch,userVo);
 		if(!(mailingListSelected.isEmpty())){
-		mailingListSelected = mailingListFacade.getMailingListFromQuickShare(listRecipientsSearch,userVo);
+			
 			for(MailingListVo current : mailingListSelected){
+				
 				for(MailingListContactVo currentContact : current.getMails()){
 					recipients.add(currentContact.getMail());
 				}

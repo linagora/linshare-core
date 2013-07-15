@@ -179,11 +179,10 @@ public class ManageMailingList {
 			} else {
 				mailingList.setPublic(false);
 			}
-
 				mailingList.setOwner(loginUser);
 				domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
 				mailingList.setDomain(domain);
-				
+		
 			mailingListFacade.updateMailingList(mailingList);
 			index.setFromCreate(false);
 			
@@ -197,12 +196,11 @@ public class ManageMailingList {
 			} else {
 				mailingList.setPublic(false);
 			}
-			List<MailingListContactVo> current = new ArrayList<MailingListContactVo>();
-			mailingList.setMails(current);
+				List<MailingListContactVo> current = new ArrayList<MailingListContactVo>();
+				mailingList.setMails(current);
 			
-
-				mailingListFacade.createMailingList(mailingList);
-				index.setFromCreate(true);
+			mailingListFacade.createMailingList(mailingList);
+			index.setFromCreate(true);
 		}
 		inModify = false;
 		mailingList = null;

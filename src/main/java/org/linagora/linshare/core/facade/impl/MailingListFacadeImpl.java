@@ -204,7 +204,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			}
 		}
 	} else {
-		finalList = null;
+		finalList = new ArrayList<MailingListVo>() ;
 	}
 	   return finalList;
    }
