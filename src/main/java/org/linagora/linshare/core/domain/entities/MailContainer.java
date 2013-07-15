@@ -53,6 +53,10 @@ public class MailContainer {
 	protected String personalMessage;
 	protected Language language;
 
+	// Additional fields for Thunderbird plugin.
+	protected String inReplyTo = "";
+	protected String references = "";
+	
 	
 	/**
 	 * Copy constructor
@@ -165,6 +169,22 @@ public class MailContainer {
 	
 	public void setPersonalMessage(String personalMessage) {
 		this.personalMessage = personalMessage;
+	}
+
+	public String getInReplyTo() {
+		return inReplyTo;
+	}
+
+	public void setInReplyTo(String inReplyTo) {
+		this.inReplyTo = inReplyTo;
+	}
+
+	public String getReferences() {
+		return references;
+	}
+
+	public void setReferences(String references) {
+		this.references = references;
 	}
 	
 }

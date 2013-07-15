@@ -59,6 +59,21 @@ public interface NotifierService {
     public void sendNotification(String smtpSender, String replyTo, String recipient, String subject,String htmlContent, String textContent) throws SendFailedException;
     
     /**
+     * 
+     * Send notification to a recipient.
+	 * @param smtpSender the smtp sender mail, for the "From" field of the mail.
+	 * @param replyTo user who send the mail. can be null. if null put generic Linshare account.
+	 * @param recipient
+	 * @param subject
+	 * @param htmlContent html mail content
+	 * @param textContent alternative mail with text content
+     * @param inReplyTo : message ID
+     * @param references : message ID list
+     * @throws SendFailedException
+     */
+    public void sendNotification(String smtpSender, String replyTo, String recipient, String subject,String htmlContent, String textContent, String inReplyTo, String references) throws SendFailedException;
+    
+    /**
 	 * @param smtpSender the smtp sender mail, for the "From" field of the mail.
      * @param replyTo user who send the mail. can be null. if null put generic Linshare account.
      * @param recipient the recipient mail
