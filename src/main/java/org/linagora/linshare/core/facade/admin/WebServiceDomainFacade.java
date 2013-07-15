@@ -31,47 +31,19 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.core.facade.admin;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.vo.TopDomainVo;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.WebServiceGenericFacade;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
-public class TopDomain extends AbstractDomain {
+public interface WebServiceDomainFacade extends WebServiceGenericFacade {
 
-	public TopDomain() {
-	}
+	DomainDto getDomains() throws BusinessException;
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, RootDomain rootDomain) {
-		super(identifier, label);
-		this.defaultRole = Role.ADMIN;
-		this.defaultLocale = "en";
-		this.parentDomain = rootDomain;
-	}
+	void createDomain(DomainDto domain) throws BusinessException;
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, LDAPConnection ldapConn,
-			DomainPattern domainPattern, String baseDn) {
-		this(identifier, label, null);
-		this.userProvider = new LdapUserProvider(baseDn, ldapConn,
-				domainPattern);
-	}
+	void updateDomain(DomainDto domain) throws BusinessException;
 
-	public TopDomain(TopDomainVo topDomain) {
-		super(topDomain);
-	}
-
-	public TopDomain(DomainDto domainDto, AbstractDomain parent) {
-		super(domainDto, parent);
-	}
-
-	@Override
-	public DomainType getDomainType() {
-		return DomainType.TOPDOMAIN;
-	}
+	void deleteDomain(DomainDto domain) throws BusinessException;
 }

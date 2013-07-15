@@ -31,47 +31,38 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.webservice.admin.impl;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.vo.TopDomainVo;
-import org.linagora.linshare.webservice.dto.DomainDto;
+import java.util.List;
 
-public class TopDomain extends AbstractDomain {
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-	public TopDomain() {
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.admin.WebServiceUserRoleFacade;
+import org.linagora.linshare.webservice.admin.UserRoleRestService;
+import org.linagora.linshare.webservice.impl.WebserviceBase;
+
+public class UserRoleRestServiceImpl extends WebserviceBase implements UserRoleRestService {
+
+	private final WebServiceUserRoleFacade webServiceUserRoleFacade;
+	
+	public UserRoleRestServiceImpl(final WebServiceUserRoleFacade webServiceUserRoleFacade) {
+		this.webServiceUserRoleFacade = webServiceUserRoleFacade;
 	}
-
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, RootDomain rootDomain) {
-		super(identifier, label);
-		this.defaultRole = Role.ADMIN;
-		this.defaultLocale = "en";
-		this.parentDomain = rootDomain;
-	}
-
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, LDAPConnection ldapConn,
-			DomainPattern domainPattern, String baseDn) {
-		this(identifier, label, null);
-		this.userProvider = new LdapUserProvider(baseDn, ldapConn,
-				domainPattern);
-	}
-
-	public TopDomain(TopDomainVo topDomain) {
-		super(topDomain);
-	}
-
-	public TopDomain(DomainDto domainDto, AbstractDomain parent) {
-		super(domainDto, parent);
-	}
-
+	
+	@Path("/")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public DomainType getDomainType() {
-		return DomainType.TOPDOMAIN;
+	public List<String> getUserRoles() {
+		try {
+			webServiceUserRoleFacade.checkAuthentication();
+			return webServiceUserRoleFacade.getUserRoles();
+		} catch (BusinessException e) {
+			throw analyseFault(e);
+		}
 	}
 }

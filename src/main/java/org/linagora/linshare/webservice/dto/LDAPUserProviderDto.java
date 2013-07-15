@@ -31,47 +31,51 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.entities;
+package org.linagora.linshare.webservice.dto;
 
-import org.linagora.linshare.core.domain.constants.DomainType;
-import org.linagora.linshare.core.domain.vo.TopDomainVo;
-import org.linagora.linshare.webservice.dto.DomainDto;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class TopDomain extends AbstractDomain {
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 
-	public TopDomain() {
+@XmlRootElement(name = "LDAPUserProvider")
+public class LDAPUserProviderDto {
+
+	private String ldapConnectionId = "";
+	private String domainPatternId = "";
+	private String baseDn = "";
+	
+	public LDAPUserProviderDto(final LdapUserProvider ldapUserProvider) {
+		
+		this.ldapConnectionId = ldapUserProvider.getLdapconnexion().getIdentifier();
+		this.domainPatternId = ldapUserProvider.getPattern().getIdentifier();
+		this.baseDn = ldapUserProvider.getBaseDn();
+	}
+	
+	public LDAPUserProviderDto() {
+		super();
 	}
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, RootDomain rootDomain) {
-		super(identifier, label);
-		this.defaultRole = Role.ADMIN;
-		this.defaultLocale = "en";
-		this.parentDomain = rootDomain;
+	public String getLdapConnectionId() {
+		return ldapConnectionId;
 	}
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, LDAPConnection ldapConn,
-			DomainPattern domainPattern, String baseDn) {
-		this(identifier, label, null);
-		this.userProvider = new LdapUserProvider(baseDn, ldapConn,
-				domainPattern);
+	public void setLdapConnectionId(String ldapConnectionId) {
+		this.ldapConnectionId = ldapConnectionId;
 	}
 
-	public TopDomain(TopDomainVo topDomain) {
-		super(topDomain);
+	public String getDomainPatternId() {
+		return domainPatternId;
 	}
 
-	public TopDomain(DomainDto domainDto, AbstractDomain parent) {
-		super(domainDto, parent);
+	public void setDomainPatternId(String domainPatternId) {
+		this.domainPatternId = domainPatternId;
 	}
 
-	@Override
-	public DomainType getDomainType() {
-		return DomainType.TOPDOMAIN;
+	public String getBaseDn() {
+		return baseDn;
+	}
+
+	public void setBaseDn(String baseDn) {
+		this.baseDn = baseDn;
 	}
 }
