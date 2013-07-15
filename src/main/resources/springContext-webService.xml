@@ -70,7 +70,7 @@
 	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
-	
+
 	<bean id="documentRestService" class="org.linagora.linshare.webservice.impl.DocumentRestServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
 	</bean>
@@ -96,15 +96,15 @@
 	<bean id="userRestService" class="org.linagora.linshare.webservice.impl.UserRestServiceImpl">
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
-	
+
 	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.admin.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="webServiceAdminGenericFacade" />
 	</bean>
-	
+
 	<bean id="domainPatternRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPatternRestServiceImpl">
 		<constructor-arg ref="webServiceDomainPatternFacade" />
 	</bean>
-	
+
 	<bean id="ldapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
 		<constructor-arg ref="webServiceLDAPConnectionFacade" />
 	</bean>
@@ -144,8 +144,8 @@
 <!-- 			<ref bean="logInbound" /> -->
 			<ref bean="timingInInterceptor" />
 		</jaxrs:inInterceptors>
-			<jaxrs:outInterceptors> 
-<!-- 			<ref bean="logOutbound" /> -->
+		<jaxrs:outInterceptors>
+			<!-- <ref bean="logOutbound" /> -->
 			<ref bean="timingOutInterceptor" />
 		</jaxrs:outInterceptors>
 	</jaxrs:server>

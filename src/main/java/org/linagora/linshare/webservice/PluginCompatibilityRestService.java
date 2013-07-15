@@ -48,7 +48,7 @@ public interface PluginCompatibilityRestService {
 	SimpleStringValue getInformation();
 
 	void multiplesharedocuments(String targetMail, List<String> uuid,
-			int securedShare, String message);
+			int securedShare, String message, String inReplyTo, String references);
 
 	DocumentDto uploadfile(InputStream theFile, String description,
 			String givenFileName, MultipartBody body);
