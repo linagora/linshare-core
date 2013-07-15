@@ -95,19 +95,14 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	// application/xml application/json
 	@Override
 	public List<DocumentDto> getDocuments() {
-
-		List<DocumentDto> docs = null;
-
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			docs = webServiceDocumentFacade.getDocuments();
+			return webServiceDocumentFacade.getDocuments();
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return docs;
 	}
 
 	/**
@@ -120,7 +115,6 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Override
 	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "description", required = false) String description,
 			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) {
-
 		try {
 			User actor = webServiceDocumentFacade.checkAuthentication();
 
@@ -164,16 +158,12 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public DocumentDto addDocumentXop(DocumentAttachement doca) {
-
-		DocumentDto doc = null;
-
 		try {
 			webServiceDocumentFacade.checkAuthentication(); // raise exception
-			doc = webServiceDocumentFacade.addDocumentXop(doca);
+			return webServiceDocumentFacade.addDocumentXop(doca);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return doc;
 	}
 
 	@GET
@@ -181,15 +171,12 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public SimpleLongValue getUserMaxFileSize() {
-
-		SimpleLongValue sv = null;
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			sv = new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
+			return new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return sv;
 	}
 
 	@GET
@@ -197,16 +184,12 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public SimpleLongValue getAvailableSize() {
-
-		SimpleLongValue sv = null;
-
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			sv = new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
+			return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return sv;
 	}
 
 }
