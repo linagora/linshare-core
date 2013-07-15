@@ -34,4 +34,7 @@ UPDATE mail_subjects SET content = E'${actorRepresentation} gebruiker heeft een 
 UPDATE mail_subjects SET content = E'Een share zal binnenkort gewist worden.' WHERE messages_configuration_id = 1 AND subject_id = 11 AND language_id = 2;
 UPDATE mail_subjects SET content = E'Een bestand zal binnenkort gewist worden.' WHERE messages_configuration_id = 1 AND subject_id = 12 AND language_id = 2;
 
+-- LinShare version
+INSERT INTO version (id,description) VALUES ((SELECT nextVal('hibernate_sequence')),'1.3.0');
+
 COMMIT;

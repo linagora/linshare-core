@@ -28,3 +28,5 @@ UPDATE mail_subjects SET content = '${actorRepresentation} gebruiker heeft een g
 UPDATE mail_subjects SET content = '${actorRepresentation} gebruiker heeft een gedeeld bestand gewist' WHERE messages_configuration_id = 1 AND subject_id = 10 AND language_id = 2;
 UPDATE mail_subjects SET content = 'Een share zal binnenkort gewist worden.' WHERE messages_configuration_id = 1 AND subject_id = 11 AND language_id = 2;
 UPDATE mail_subjects SET content = 'Een bestand zal binnenkort gewist worden.' WHERE messages_configuration_id = 1 AND subject_id = 12 AND language_id = 2;
+
+INSERT INTO version (description) VALUES ('1.3.0');
