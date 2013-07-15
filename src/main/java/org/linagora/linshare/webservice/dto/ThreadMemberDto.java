@@ -41,21 +41,13 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 public class ThreadMemberDto {
 	
 	private Long id;
-	
 	private String role;
-	
 	private String firstName;
-	
 	private String lastName;
-	
 	private String userUuid;
-	
 	private String userMail;
-	
 	private String userDomainId;
-	
 	private String threadUuid;
-	
 	private boolean readonly;
 	
 	private static enum Roles {
@@ -64,12 +56,7 @@ public class ThreadMemberDto {
 		ADMIN;
 	}
 	
-	public ThreadMemberDto() {
-		super();
-	}
-	
 	public ThreadMemberDto(ThreadMember member) {
-		super();
 		this.id = member.getId();
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();
@@ -80,6 +67,10 @@ public class ThreadMemberDto {
 		this.threadUuid = member.getThread().getLsUuid();
 		this.userMail = member.getUser().getMail();
 		this.userDomainId = member.getUser().getDomainId();
+	}
+	
+	public ThreadMemberDto() {
+		super();
 	}
 
 	public Long getId() {

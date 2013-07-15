@@ -42,7 +42,7 @@ import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 @Path("/rest/thread_members")
 public interface ThreadMemberRestService {
 
-	public void addMember(String threadUuid, String domainId, String mail, boolean readonly);
+	void addMember(String threadUuid, String domainId, String mail, boolean readonly);
 		
-	public List<ThreadMemberDto> getAllThreadMembers(String uuid);
+	List<ThreadMemberDto> getAllThreadMembers(String uuid);
 }

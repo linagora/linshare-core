@@ -33,30 +33,65 @@
  */
 package org.linagora.linshare.core.facade.admin.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.admin.WebServiceAdminFacade;
+import org.linagora.linshare.core.facade.admin.WebServiceDomainPatternFacade;
 import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.webservice.dto.DomainPatternDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebServiceAdminFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceAdminFacade {
+public class WebServiceDomainPatternFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceDomainPatternFacade {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebServiceAdminFacadeImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceDomainPatternFacadeImpl.class);
 	
-	public WebServiceAdminFacadeImpl(final AccountService accountService) {
+	private final UserProviderService userProviderService;
+
+	public WebServiceDomainPatternFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
 		super(accountService);
+		this.userProviderService = userProviderService;
 	}
 
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
-		if (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPERADMIN) {
+		if (user.getRole() != Role.SUPERADMIN) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
 		}
 		return user;
 	}
+
+	@Override
+	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
+		List<DomainPattern> domainPatterns = userProviderService.findAllUserDomainPattern();
+		List<DomainPatternDto> res = new ArrayList<DomainPatternDto>();
+		for (DomainPattern domainPattern : domainPatterns) {
+			res.add(new DomainPatternDto(domainPattern));
+		}
+		return res;
+	}
+
+	@Override
+	public void updateDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		userProviderService.updateDomainPattern(new DomainPattern(domainPatternDto));
+	}
+
+	@Override
+	public void createDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		userProviderService.createDomainPattern(new DomainPattern(domainPatternDto));
+	}
+
+	@Override
+	public void deleteDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		userProviderService.deletePattern(domainPatternDto.getIdentifier());
+	}
+
 }

@@ -31,38 +31,35 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.dto;
+package org.linagora.linshare.webservice.impl;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-@XmlRootElement(name = "Error")
-public class ErrorDto {
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.WebServiceUserFacade;
+import org.linagora.linshare.webservice.AuthenticationRestService;
 
-	protected String message;
-	protected int errCode;
+public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
-	public ErrorDto(int errCode, String message) {
-		this.message = message;
-		this.errCode = errCode;
+	private final WebServiceUserFacade webServiceUserFacade;
+
+	public AuthenticationRestServiceImpl(final WebServiceUserFacade webServiceUserFacade) {
+		this.webServiceUserFacade = webServiceUserFacade;
 	}
 	
-	public ErrorDto() {
-		super();
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public int getErrCode() {
-		return errCode;
-	}
-
-	public void setErrCode(int errCode) {
-		this.errCode = errCode;
+	@Path("/authorized")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public Boolean isAuthorized() {
+		try {
+			webServiceUserFacade.checkAuthentication();
+			return true;
+		} catch (BusinessException e) {
+			throw analyseFault(e);
+		}
 	}
 }

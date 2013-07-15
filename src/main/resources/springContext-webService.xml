@@ -67,6 +67,10 @@
 
 
 	<!-- REST -->
+	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="webServiceUserFacade" />
+	</bean>
+
 	<bean id="documentRestService" class="org.linagora.linshare.webservice.impl.DocumentRestServiceImpl">
 		<constructor-arg ref="webServiceDocumentFacade" />
 	</bean>
@@ -92,15 +96,19 @@
 	<bean id="userRestService" class="org.linagora.linshare.webservice.impl.UserRestServiceImpl">
 		<constructor-arg ref="webServiceUserFacade" />
 	</bean>
-	
-	<bean id="adminRestService" class="org.linagora.linshare.webservice.admin.impl.AdminRestServiceImpl">
-		<constructor-arg ref="webServiceAdminFacade" />
+
+	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.admin.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="webServiceAdminGenericFacade" />
 	</bean>
 
-	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.impl.FineUploaderServiceImpl">
-		<constructor-arg ref="webServiceDocumentFacade" />
+	<bean id="domainPatternRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPatternRestServiceImpl">
+		<constructor-arg ref="webServiceDomainPatternFacade" />
 	</bean>
-	
+
+	<bean id="ldapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
+		<constructor-arg ref="webServiceLDAPConnectionFacade" />
+	</bean>
+
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 	<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
@@ -108,13 +116,16 @@
 
 	<jaxrs:server id="restContainer" address="/">
 		<jaxrs:serviceBeans>
+			<ref bean="authenticationRestService" />
 			<ref bean="documentRestService" />
 			<ref bean="shareRestService" />
 			<ref bean="pluginCompatibilityRestService" />
 			<ref bean="threadRestService" />
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
-			<ref bean="adminRestService" />
+			<ref bean="adminAuthenticationRestService" />
+			<ref bean="domainPatternRestService" />
+			<ref bean="ldapConnectionRestService" />
 			<ref bean="fineUploaderService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
@@ -134,8 +145,8 @@
 <!-- 			<ref bean="logInbound" /> -->
 			<ref bean="timingInInterceptor" />
 		</jaxrs:inInterceptors>
-			<jaxrs:outInterceptors> 
-<!-- 			<ref bean="logOutbound" /> -->
+		<jaxrs:outInterceptors>
+			<!-- <ref bean="logOutbound" /> -->
 			<ref bean="timingOutInterceptor" />
 		</jaxrs:outInterceptors>
 	</jaxrs:server>

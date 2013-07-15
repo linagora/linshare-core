@@ -1394,7 +1394,7 @@
 		<jackrabbit-release-version>1.4</jackrabbit-release-version>
 		<jackrabbit-core-version>1.4.13-LINAGORA</jackrabbit-core-version>
 		<slf4j-release-version>1.7.3</slf4j-release-version>
-		<cxf.version>2.7.3</cxf.version>
+		<cxf.version>2.7.5</cxf.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>

@@ -42,7 +42,7 @@ import org.linagora.linshare.webservice.dto.ThreadDto;
 @Path("/rest/threads")
 public interface ThreadRestService {
 
-	public List<ThreadDto> getAllMyThread();
+	List<ThreadDto> getAllMyThread();
 
-	public ThreadDto getThread(String uuid);
+	ThreadDto getThread(String uuid);
 }

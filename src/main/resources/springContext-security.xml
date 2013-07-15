@@ -140,6 +140,7 @@
 				<sec:intercept-url pattern="/**/administration/domains/**" access="ROLE_SUPERADMIN" />
 				<sec:intercept-url pattern="/**/administration/" access="ROLE_ADMIN" />
 				<sec:intercept-url pattern="/**/testpopup/" access="ROLE_ADMIN" />
+				<sec:intercept-url pattern="/**/webservice/rest/admin/**" access="ROLE_ADMIN" />
 				<sec:intercept-url pattern="/**" access="ROLE_AUTH" />
 			</sec:filter-security-metadata-source>
 		</property>
