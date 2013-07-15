@@ -155,14 +155,14 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl imple
 	}
 
 	@Override
-	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt) throws BusinessException {
+	public void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt, String inReplyToOpt, String referencesOpt) throws BusinessException {
 		List<String> listRecipient = new ArrayList<String>();
 		listRecipient.add(targetMail);
-		this.multiplesharedocuments(listRecipient, uuid, securedShare, messageOpt);
+		this.multiplesharedocuments(listRecipient, uuid, securedShare, messageOpt, inReplyToOpt, referencesOpt);
 	}
 	
 	@Override
-	public void multiplesharedocuments(List<String> mails, List<String> uuid, int securedShare, String messageOpt) throws BusinessException {
+	public void multiplesharedocuments(List<String> mails, List<String> uuid, int securedShare, String messageOpt, String inReplyToOpt, String referencesOpt) throws BusinessException {
 		User actor = getAuthentication();
 
 		List<DocumentVo> listDoc = new ArrayList<DocumentVo>();
@@ -179,8 +179,25 @@ public class WebServiceShareFacadeImpl extends WebServiceGenericFacadeImpl imple
 		// give personal message and subject in WS in the future? null at this
 		// time
 		String message = (messageOpt == null) ? "" : messageOpt;
+		
+		String inReplyTo = inReplyToOpt;
+		if (inReplyToOpt != null) {
+			if ("".equals(inReplyToOpt)) {
+				inReplyTo = null;
+			}
+		}
+		String references = referencesOpt;
+		if (referencesOpt != null) {
+			if ("".equals(referencesOpt)) {
+				references = null;
+			}
+		}
+		
 		String subject = null;
 		MailContainer mailContainer = new MailContainer(actor.getExternalMailLocale(), message, subject);
+		// Useful for Thunderbird plugin.
+		mailContainer.setReferences(references);
+		mailContainer.setInReplyTo(inReplyTo);;
 
 		UserVo actorVo = new UserVo(actor);
 

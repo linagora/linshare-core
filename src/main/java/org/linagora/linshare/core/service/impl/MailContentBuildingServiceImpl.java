@@ -522,6 +522,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		// domain mail
 		mailContainer.setFrom(abstractDomainService.getDomainMail(recipient.getDomain()));
+		
+		// Message IDs from Thunderbird Plugin
+		mailContainer.setInReplyTo(inputMailContainer.getInReplyTo());
+		mailContainer.setReferences(inputMailContainer.getReferences());
 
 		return buildMailContainerSetProperties(sender, mailContainer, recipient, inputMailContainer.getPersonalMessage());
 	}	
@@ -575,6 +579,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		// domain mail
 		mailContainer.setFrom(abstractDomainService.getDomainMail(sender.getDomain()));
+		
+		// Message IDs from Thunderbird Plugin
+		mailContainer.setInReplyTo(inputMailContainer.getInReplyTo());
+		mailContainer.setReferences(inputMailContainer.getReferences());
 
 		return buildMailContainerSetProperties(sender, mailContainer, contact, inputMailContainer.getPersonalMessage());
 	}

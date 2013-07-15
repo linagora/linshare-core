@@ -31,38 +31,32 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.dto;
+package org.linagora.linshare.core.facade.admin.impl;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.admin.WebServiceAdminGenericFacade;
+import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
+import org.linagora.linshare.core.service.AccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@XmlRootElement(name = "Error")
-public class ErrorDto {
+public class WebServiceAdminGenericFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceAdminGenericFacade {
 
-	protected String message;
-	protected int errCode;
-
-	public ErrorDto(int errCode, String message) {
-		this.message = message;
-		this.errCode = errCode;
-	}
+	private static final Logger logger = LoggerFactory.getLogger(WebServiceAdminGenericFacadeImpl.class);
 	
-	public ErrorDto() {
-		super();
+	public WebServiceAdminGenericFacadeImpl(final AccountService accountService) {
+		super(accountService);
 	}
 
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public int getErrCode() {
-		return errCode;
-	}
-
-	public void setErrCode(int errCode) {
-		this.errCode = errCode;
+	@Override
+	public User checkAuthentication() throws BusinessException {
+		User user = super.checkAuthentication();
+		if (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPERADMIN) {
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+		}
+		return user;
 	}
 }

@@ -72,13 +72,15 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Override
 	public SimpleStringValue getInformation() {
-		return new SimpleStringValue("undefined");
+		return new SimpleStringValue("api-version-1");
 	}
 	
 	@POST
     @Path("/share/multiplesharedocuments")
 	@Override
-	public void multiplesharedocuments(@FormParam("targetMail") String targetMail, @FormParam("file") List<String> uuid, @FormParam("securedShare") @DefaultValue("0") int securedShare, @FormParam("message")  @DefaultValue("") String message) {
+	public void multiplesharedocuments(@FormParam("targetMail") String targetMail, @FormParam("file") List<String> uuid, @FormParam("securedShare") @DefaultValue("0") int securedShare,
+			@FormParam("message")  @DefaultValue("") String message, @FormParam("inReplyTo")  @DefaultValue("") String inReplyTo, 
+			@FormParam("references")  @DefaultValue("") String references) {
 		
 		User actor;
 		
@@ -104,7 +106,7 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase implement
 		
  
 		try {
-			webServiceShareFacade.multiplesharedocuments(targetMail, uuidValues, securedShare, message);
+			webServiceShareFacade.multiplesharedocuments(targetMail, uuidValues, securedShare, message, inReplyTo, references);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}

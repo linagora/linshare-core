@@ -46,7 +46,6 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 public class ThreadDto extends AccountDto {
 
 	protected String name;
-	
 	protected List<ThreadMemberDto> members;
 
 	public ThreadDto(Thread thread) {

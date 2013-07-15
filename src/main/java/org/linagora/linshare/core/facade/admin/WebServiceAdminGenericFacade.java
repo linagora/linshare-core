@@ -31,38 +31,14 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.dto;
+package org.linagora.linshare.core.facade.admin;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.WebServiceGenericFacade;
 
-@XmlRootElement(name = "Error")
-public class ErrorDto {
 
-	protected String message;
-	protected int errCode;
-
-	public ErrorDto(int errCode, String message) {
-		this.message = message;
-		this.errCode = errCode;
-	}
+public interface WebServiceAdminGenericFacade extends WebServiceGenericFacade {
 	
-	public ErrorDto() {
-		super();
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public int getErrCode() {
-		return errCode;
-	}
-
-	public void setErrCode(int errCode) {
-		this.errCode = errCode;
-	}
+	public User checkAuthentication() throws BusinessException;
 }

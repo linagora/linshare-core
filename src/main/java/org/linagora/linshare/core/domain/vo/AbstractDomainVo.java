@@ -105,8 +105,6 @@ public class AbstractDomainVo {
 	
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
-		// Label temporary disable : no ihm use for now : to be done.   
-		this.label = identifier;
 	}
 
 	@Validate("required")
@@ -114,8 +112,7 @@ public class AbstractDomainVo {
 		return identifier;
 	}
 	
-//	@Validate("required")
-	@NonVisual 
+	@Validate("required")
 	public String getLabel() {
 		return label;
 	}

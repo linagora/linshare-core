@@ -146,12 +146,6 @@ public class UserProviderServiceImpl implements UserProviderService {
         return (!used);
     }
 
-
-    @Override
-    public List<DomainPattern> findAllDomainPatterns() throws BusinessException {
-        return domainPatternRepository.findAll();
-    }
-
     @Override
     public List<DomainPattern> findAllUserDomainPattern() throws BusinessException {
         return domainPatternRepository.findAllUserDomainPattern();

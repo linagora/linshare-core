@@ -165,7 +165,15 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityService" />
 	</bean>
-		<bean id="webServiceAdminFacade" class="org.linagora.linshare.core.facade.admin.impl.WebServiceAdminFacadeImpl">
+	<bean id="webServiceAdminGenericFacade" class="org.linagora.linshare.core.facade.admin.impl.WebServiceAdminGenericFacadeImpl">
 		<constructor-arg ref="accountService" />
+	</bean>
+	<bean id="webServiceDomainPatternFacade" class="org.linagora.linshare.core.facade.admin.impl.WebServiceDomainPatternFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userProviderService" />
+	</bean>
+	<bean id="webServiceLDAPConnectionFacade" class="org.linagora.linshare.core.facade.admin.impl.WebServiceLDAPConnectionFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="userProviderService" />
 	</bean>
 </beans>

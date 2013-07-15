@@ -35,34 +35,66 @@ package org.linagora.linshare.webservice.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "Error")
-public class ErrorDto {
+import org.linagora.linshare.core.domain.entities.LDAPConnection;
 
-	protected String message;
-	protected int errCode;
+@XmlRootElement(name = "LDAPConnection")
+public class LDAPConnectionDto {
 
-	public ErrorDto(int errCode, String message) {
-		this.message = message;
-		this.errCode = errCode;
+	private String identifier;
+	private String providerUrl;
+	private String securityAuth;
+	private String securityPrincipal;
+	private String securityCredentials;
+
+	public LDAPConnectionDto(LDAPConnection ldapConnection) {
+		this.identifier = ldapConnection.getIdentifier();
+		this.providerUrl = ldapConnection.getProviderUrl();
+		this.securityAuth = ldapConnection.getSecurityAuth();
+		this.securityPrincipal = ldapConnection.getSecurityPrincipal();
+		this.securityCredentials = ldapConnection.getSecurityCredentials();
 	}
 	
-	public ErrorDto() {
+	public LDAPConnectionDto() {
 		super();
 	}
 
-	public String getMessage() {
-		return message;
+	public String getIdentifier() {
+		return identifier;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
-	public int getErrCode() {
-		return errCode;
+	public String getProviderUrl() {
+		return providerUrl;
 	}
 
-	public void setErrCode(int errCode) {
-		this.errCode = errCode;
+	public void setProviderUrl(String providerUrl) {
+		this.providerUrl = providerUrl;
+	}
+
+	public String getSecurityAuth() {
+		return securityAuth;
+	}
+
+	public void setSecurityAuth(String securityAuth) {
+		this.securityAuth = securityAuth;
+	}
+
+	public String getSecurityPrincipal() {
+		return securityPrincipal;
+	}
+
+	public void setSecurityPrincipal(String securityPrincipal) {
+		this.securityPrincipal = securityPrincipal;
+	}
+
+	public String getSecurityCredentials() {
+		return securityCredentials;
+	}
+
+	public void setSecurityCredentials(String securityCredentials) {
+		this.securityCredentials = securityCredentials;
 	}
 }

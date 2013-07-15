@@ -12,33 +12,37 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class WebServiceGenericFacadeImpl implements WebServiceGenericFacade {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebServiceGenericFacadeImpl.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(WebServiceGenericFacadeImpl.class);
+
 	protected final AccountService accountService;
-	
+
 	public WebServiceGenericFacadeImpl(AccountService accountService) {
 		super();
 		this.accountService = accountService;
 	}
 
 	protected User getAuthentication() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
-	     String name =  (auth != null) ? auth.getName() : null; //get logged in username
-	     logger.debug("Authentication auth : " + name);
-	     if (name == null) {
-	    	 return null;
-	     }
-	     User user = (User) accountService.findByLsUuid(name);
-	     return user;
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
+		String name = (auth != null) ? auth.getName() : null; // get logged in
+																// username
+		logger.debug("Authentication with principal : " + name);
+		if (name == null) {
+			return null;
+		}
+		User user = (User) accountService.findByLsUuid(name);
+		logger.debug("Authenticated user : " + user.getAccountReprentation());
+		return user;
 	}
-	
+
 	@Override
 	public User checkAuthentication() throws BusinessException {
-		
 		User actor = getAuthentication();
-		
-		if (actor== null) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+		if (actor == null) {
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					"You are not authorized to use this service");
 		}
 		
 		return actor;
