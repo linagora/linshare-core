@@ -25,12 +25,12 @@ public class WebServiceGenericFacadeImpl implements WebServiceGenericFacade {
 	protected User getAuthentication() {
 		Authentication auth = SecurityContextHolder.getContext()
 				.getAuthentication();
-		String name = (auth != null) ? auth.getName() : null; // get logged in
-																// username
+		// get logged in username
+		String name = (auth != null) ? auth.getName() : null;
+
 		logger.debug("Authentication with principal : " + name);
-		if (name == null) {
+		if (name == null)
 			return null;
-		}
 		User user = (User) accountService.findByLsUuid(name);
 		logger.debug("Authenticated user : " + user.getAccountReprentation());
 		return user;
@@ -39,12 +39,11 @@ public class WebServiceGenericFacadeImpl implements WebServiceGenericFacade {
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User actor = getAuthentication();
-		if (actor == null) {
+
+		if (actor == null)
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
 					"You are not authorized to use this service");
-		}
-		
 		return actor;
 	}
 }

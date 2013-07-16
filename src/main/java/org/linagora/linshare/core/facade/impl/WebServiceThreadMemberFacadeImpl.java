@@ -46,22 +46,27 @@ import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebServiceThreadMemberFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceThreadMemberFacade {
+public class WebServiceThreadMemberFacadeImpl extends
+		WebServiceGenericFacadeImpl implements WebServiceThreadMemberFacade {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(WebServiceThreadMemberFacadeImpl.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(WebServiceThreadMemberFacadeImpl.class);
+
 	private final ThreadService threadService;
-	
-	public WebServiceThreadMemberFacadeImpl(ThreadService threadService, AccountService accountService) {
+
+	public WebServiceThreadMemberFacadeImpl(ThreadService threadService,
+			AccountService accountService) {
 		super(accountService);
 		this.threadService = threadService;
 	}
 
 	@Override
-	public List<ThreadMemberDto> getAllThreadMembers(String uuid) throws BusinessException {
+	public List<ThreadMemberDto> getAllThreadMembers(String uuid)
+			throws BusinessException {
 		Thread thread = threadService.findByLsUuid(uuid);
 		List<ThreadMemberDto> res = new ArrayList<ThreadMemberDto>();
+
 		for (ThreadMember member : thread.getMyMembers()) {
 			res.add(new ThreadMemberDto(member));
 		}
