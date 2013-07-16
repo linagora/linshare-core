@@ -43,14 +43,15 @@ public class LDAPUserProviderDto {
 	private String ldapConnectionId = "";
 	private String domainPatternId = "";
 	private String baseDn = "";
-	
+
 	public LDAPUserProviderDto(final LdapUserProvider ldapUserProvider) {
-		
-		this.ldapConnectionId = ldapUserProvider.getLdapconnexion().getIdentifier();
+
+		this.ldapConnectionId = ldapUserProvider.getLdapconnexion()
+				.getIdentifier();
 		this.domainPatternId = ldapUserProvider.getPattern().getIdentifier();
 		this.baseDn = ldapUserProvider.getBaseDn();
 	}
-	
+
 	public LDAPUserProviderDto() {
 		super();
 	}

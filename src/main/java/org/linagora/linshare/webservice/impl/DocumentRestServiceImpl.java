@@ -60,15 +60,17 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
+public class DocumentRestServiceImpl extends WebserviceBase implements
+		DocumentRestService {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(DocumentRestServiceImpl.class);
 
 	private final WebServiceDocumentFacade webServiceDocumentFacade;
 
-	
-	public DocumentRestServiceImpl(final WebServiceDocumentFacade webServiceDocumentFacade) {
+	public DocumentRestServiceImpl(
+			final WebServiceDocumentFacade webServiceDocumentFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 	}
 
@@ -78,16 +80,18 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	public Response getDocumentStream(@PathParam("uuid") String uuid) {
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			DocumentDto documentDto = webServiceDocumentFacade.getDocument(uuid);
-			InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
-			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(), documentDto.getType());
+			DocumentDto documentDto = webServiceDocumentFacade
+					.getDocument(uuid);
+			InputStream documentStream = webServiceDocumentFacade
+					.getDocumentStream(uuid);
+			ResponseBuilder response = DocumentStreamReponseBuilder
+					.getDocumentResponseBuilder(documentStream,
+							documentDto.getName(), documentDto.getType());
 			return response.build();
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}
-	
-	
 
 	/**
 	 * get the files of the user
@@ -95,19 +99,14 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	// application/xml application/json
 	@Override
 	public List<DocumentDto> getDocuments() {
-
-		List<DocumentDto> docs = null;
-
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			docs = webServiceDocumentFacade.getDocuments();
+			return webServiceDocumentFacade.getDocuments();
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return docs;
 	}
 
 	/**
@@ -118,35 +117,35 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "description", required = false) String description,
-			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) {
-
+	public DocumentDto uploadfile(
+			@Multipart(value = "file") InputStream theFile,
+			@Multipart(value = "description", required = false) String description,
+			@Multipart(value = "filename", required = false) String givenFileName,
+			MultipartBody body) {
 		try {
 			User actor = webServiceDocumentFacade.checkAuthentication();
+			String filename;
+			String comment = (description == null) ? "" : description;
 
 			if ((actor instanceof Guest && !actor.getCanUpload())) {
-				throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
+				throw giveRestException(HttpStatus.SC_FORBIDDEN,
+						"You are not authorized to use this service");
 			}
-	
 			if (theFile == null) {
-				throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+				throw giveRestException(HttpStatus.SC_BAD_REQUEST,
+						"Missing file (check parameter file)");
 			}
-	
-			String filename;
-	
 			if (givenFileName == null || givenFileName.isEmpty()) {
 				// parameter givenFileName is optional
 				// so need to search this information in the header of the
 				// attachement (with id file)
-				filename = body.getAttachment("file").getContentDisposition().getParameter("filename");
+				filename = body.getAttachment("file").getContentDisposition()
+						.getParameter("filename");
 			} else {
 				filename = givenFileName;
 			}
-	
-			// comment can not be null ?
-			String comment = (description == null) ? "" : description;
-	
-			return webServiceDocumentFacade.uploadfile(theFile, filename, comment);
+			return webServiceDocumentFacade.uploadfile(theFile, filename,
+					comment);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -164,16 +163,12 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public DocumentDto addDocumentXop(DocumentAttachement doca) {
-
-		DocumentDto doc = null;
-
 		try {
 			webServiceDocumentFacade.checkAuthentication(); // raise exception
-			doc = webServiceDocumentFacade.addDocumentXop(doca);
+			return webServiceDocumentFacade.addDocumentXop(doca);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return doc;
 	}
 
 	@GET
@@ -181,15 +176,13 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public SimpleLongValue getUserMaxFileSize() {
-
-		SimpleLongValue sv = null;
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			sv = new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
+			return new SimpleLongValue(
+					webServiceDocumentFacade.getUserMaxFileSize());
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return sv;
 	}
 
 	@GET
@@ -197,16 +190,13 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public SimpleLongValue getAvailableSize() {
-
-		SimpleLongValue sv = null;
-
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			sv = new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
+			return new SimpleLongValue(
+					webServiceDocumentFacade.getAvailableSize());
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return sv;
 	}
 
 }

@@ -48,17 +48,24 @@ import org.linagora.linshare.webservice.dto.DocumentDto;
 
 /**
  * All CXF Outbound Message will be using multipart format.
+ * 
  * @author fmartin
- *
+ * 
  */
-@WebService(serviceName = "MTOMUploadSoapService", endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService", targetNamespace = WebserviceBase.NAME_SPACE_NS, portName = "MTOMUploadSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT, parameterStyle = ParameterStyle.WRAPPED, use = SOAPBinding.Use.LITERAL)
+@WebService(serviceName = "MTOMUploadSoapService",
+			endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService",
+			targetNamespace = WebserviceBase.NAME_SPACE_NS,
+			portName = "MTOMUploadSoapServicePort")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
+			 parameterStyle = ParameterStyle.WRAPPED,
+			 use = SOAPBinding.Use.LITERAL)
 @MTOM
 public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
 
 	private final WebServiceDocumentFacade webServiceDocumentFacade;
 
-	public MTOMUploadSoapServiceImpl(WebServiceDocumentFacade webServiceDocumentFacade) {
+	public MTOMUploadSoapServiceImpl(
+			WebServiceDocumentFacade webServiceDocumentFacade) {
 		super();
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 	}
@@ -74,7 +81,8 @@ public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
 	@WebMethod(operationName = "addDocumentXop")
 	// **soap
 	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException {
+	public DocumentDto addDocumentXop(DocumentAttachement doca)
+			throws BusinessException {
 		webServiceDocumentFacade.checkAuthentication();
 		return webServiceDocumentFacade.addDocumentXop(doca);
 	}

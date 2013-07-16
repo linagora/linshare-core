@@ -48,14 +48,16 @@ import org.linagora.linshare.webservice.admin.DomainRestService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.impl.WebserviceBase;
 
-public class DomainRestServiceImpl extends WebserviceBase implements DomainRestService {
+public class DomainRestServiceImpl extends WebserviceBase implements
+		DomainRestService {
 
 	private final WebServiceDomainFacade webServiceDomainFacade;
-	
-	public DomainRestServiceImpl(final WebServiceDomainFacade webServiceDomainFacade) {
+
+	public DomainRestServiceImpl(
+			final WebServiceDomainFacade webServiceDomainFacade) {
 		this.webServiceDomainFacade = webServiceDomainFacade;
 	}
-	
+
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -68,7 +70,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 			throw analyseFault(e);
 		}
 	}
-	
+
 	@Path("/")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -81,7 +83,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 			throw analyseFault(e);
 		}
 	}
-	
+
 	@Path("/")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -94,7 +96,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 			throw analyseFault(e);
 		}
 	}
-	
+
 	@Path("/")
 	@DELETE
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

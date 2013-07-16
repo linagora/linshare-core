@@ -52,22 +52,24 @@ public class DomainPatternDto {
 	private String userFirstName;
 	private String userLastName;
 	private String ldapUid;
-	
+
 	public DomainPatternDto(DomainPattern domainPattern) {
 		this.identifier = domainPattern.getIdentifier();
 		this.description = domainPattern.getDescription();
 		this.authCommand = domainPattern.getAuthCommand();
 		this.searchUserCommand = domainPattern.getSearchUserCommand();
-        this.autoCompleteCommand = "Not implemented yet";
-        
-        Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
-        this.userMail = attributes.get(DomainPattern.USER_MAIL).getAttribute();
-        this.userFirstName = attributes.get(DomainPattern.USER_FIRST_NAME).getAttribute();
-        this.userLastName = attributes.get(DomainPattern.USER_LAST_NAME).getAttribute();
-        this.ldapUid = attributes.get(DomainPattern.USER_UID).getAttribute();
-		
+		this.autoCompleteCommand = "Not implemented yet";
+
+		Map<String, LdapAttribute> attributes = domainPattern.getAttributes();
+		this.userMail = attributes.get(DomainPattern.USER_MAIL).getAttribute();
+		this.userFirstName = attributes.get(DomainPattern.USER_FIRST_NAME)
+				.getAttribute();
+		this.userLastName = attributes.get(DomainPattern.USER_LAST_NAME)
+				.getAttribute();
+		this.ldapUid = attributes.get(DomainPattern.USER_UID).getAttribute();
+
 	}
-	
+
 	public DomainPatternDto() {
 		super();
 	}

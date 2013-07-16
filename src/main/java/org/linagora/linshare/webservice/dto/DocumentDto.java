@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.User;
 
-
 @XmlRootElement(name = "Document")
 public class DocumentDto {
 
@@ -54,7 +53,7 @@ public class DocumentDto {
 	protected Boolean ciphered;
 	protected String type;
 	protected Long size;
-	
+
 	public DocumentDto(DocumentEntry de) {
 		if (de == null) {
 			return;
@@ -70,27 +69,27 @@ public class DocumentDto {
 		this.owner = new UserDto((User) de.getEntryOwner());
 		this.size = de.getDocument().getSize();
 	}
-	
+
 	public DocumentDto() {
 		super();
 	}
-	
+
 	public String getType() {
 		return type;
 	}
-	
+
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	public Long getSize() {
 		return size;
 	}
-	
+
 	public void setSize(Long size) {
 		this.size = size;
 	}
-	
+
 	public Boolean getCiphered() {
 		return ciphered;
 	}
@@ -157,6 +156,7 @@ public class DocumentDto {
 
 	@Override
 	public String toString() {
-		return "Document [id=" + uuid + ", name=" + name + ", creation=" + creationDate + "]";
+		return "Document [id=" + uuid + ", name=" + name + ", creation="
+				+ creationDate + "]";
 	}
 }
