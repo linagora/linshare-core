@@ -51,18 +51,22 @@ import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceThreadFacade {
+public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl
+		implements WebServiceThreadFacade {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(WebServiceThreadFacadeImpl.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(WebServiceThreadFacadeImpl.class);
+
 	private final ThreadService threadService;
-	
+
 	private final UserService userService;
 
 	private final FunctionalityService functionalityService;
 
-	public WebServiceThreadFacadeImpl(ThreadService threadService, AccountService accountService , UserService userService, FunctionalityService functionalityService) {
+	public WebServiceThreadFacadeImpl(ThreadService threadService,
+			AccountService accountService, UserService userService,
+			FunctionalityService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
@@ -72,9 +76,13 @@ public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl impl
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
-		Functionality functionality = functionalityService.getUserTabFunctionality(user.getDomain());
+		Functionality functionality = functionalityService
+				.getUserTabFunctionality(user.getDomain());
+
 		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					"You are not authorized to use this service");
 		}
 		return user;
 	}
@@ -82,8 +90,8 @@ public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl impl
 	@Override
 	public List<ThreadDto> getAllMyThread() throws BusinessException {
 		List<ThreadDto> res = new ArrayList<ThreadDto>();
-		List<Thread> list = threadService.findAll();
-		for (Thread thread : list) {
+
+		for (Thread thread : threadService.findAll()) {
 			res.add(new ThreadDto(thread));
 		}
 		return res;
@@ -92,16 +100,18 @@ public class WebServiceThreadFacadeImpl extends WebServiceGenericFacadeImpl impl
 	@Override
 	public ThreadDto getThread(String uuid) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(uuid);
-		ThreadDto res = new ThreadDto(thread, thread.getMyMembers());
-		return res;
+
+		return new ThreadDto(thread, thread.getMyMembers());
 	}
 
 	@Override
-	public void addMember(Account actor, String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
+	public void addMember(Account actor, String threadUuid, String domainId,
+			String mail, boolean readonly) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(threadUuid);
-		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, actor.getDomainId());
+		User user = userService.findOrCreateUserWithDomainPolicies(mail,
+				domainId, actor.getDomainId());
+
 		threadService.addMember(actor, thread, user, readonly);
 	}
-	
-	
+
 }

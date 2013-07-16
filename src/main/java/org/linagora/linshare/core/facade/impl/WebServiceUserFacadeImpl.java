@@ -48,15 +48,19 @@ import org.linagora.linshare.webservice.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebServiceUserFacadeImpl extends WebServiceGenericFacadeImpl implements WebServiceUserFacade {
+public class WebServiceUserFacadeImpl extends WebServiceGenericFacadeImpl
+		implements WebServiceUserFacade {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebServiceUserFacadeImpl.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(WebServiceUserFacadeImpl.class);
+
 	private final UserService userService;
-	
+
 	private final FunctionalityService functionalityService;
-	
-	public WebServiceUserFacadeImpl(final UserService userService, final AccountService accountService, FunctionalityService functionalityService) {
+
+	public WebServiceUserFacadeImpl(final UserService userService,
+			final AccountService accountService,
+			FunctionalityService functionalityService) {
 		super(accountService);
 		this.userService = userService;
 		this.functionalityService = functionalityService;
@@ -65,19 +69,24 @@ public class WebServiceUserFacadeImpl extends WebServiceGenericFacadeImpl implem
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
-		Functionality functionality = functionalityService.getUserTabFunctionality(user.getDomain());
+		Functionality functionality = functionalityService
+				.getUserTabFunctionality(user.getDomain());
 		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					"You are not authorized to use this service");
 		}
 		return user;
 	}
-	
+
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
 		User actor = getAuthentication();
 		List<UserDto> res = new ArrayList<UserDto>();
 		// we return all users without any filters
-		List<User> users = userService.searchUser(null, null, null, null, actor);
+		List<User> users = userService
+				.searchUser(null, null, null, null, actor);
+
 		for (User user : users) {
 			res.add(new UserDto(user));
 		}
