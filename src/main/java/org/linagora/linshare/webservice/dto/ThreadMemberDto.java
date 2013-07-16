@@ -39,7 +39,7 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 
 @XmlRootElement(name = "ThreadMember")
 public class ThreadMemberDto {
-	
+
 	private Long id;
 	private String role;
 	private String firstName;
@@ -49,26 +49,25 @@ public class ThreadMemberDto {
 	private String userDomainId;
 	private String threadUuid;
 	private boolean readonly;
-	
+
 	private static enum Roles {
-		NORMAL,
-		RESTRICTED,
-		ADMIN;
+		NORMAL, RESTRICTED, ADMIN;
 	}
-	
+
 	public ThreadMemberDto(ThreadMember member) {
 		this.id = member.getId();
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();
-		this.role = (member.getAdmin() ? Roles.ADMIN : member.getCanUpload() ?
-				Roles.NORMAL : Roles.RESTRICTED).name().toLowerCase();
-		this.readonly = ! member.getCanUpload();
+		this.role = (member.getAdmin() ? Roles.ADMIN
+				: member.getCanUpload() ? Roles.NORMAL : Roles.RESTRICTED)
+				.name().toLowerCase();
+		this.readonly = !member.getCanUpload();
 		this.userUuid = member.getUser().getLsUuid();
 		this.threadUuid = member.getThread().getLsUuid();
 		this.userMail = member.getUser().getMail();
 		this.userDomainId = member.getUser().getDomainId();
 	}
-	
+
 	public ThreadMemberDto() {
 		super();
 	}

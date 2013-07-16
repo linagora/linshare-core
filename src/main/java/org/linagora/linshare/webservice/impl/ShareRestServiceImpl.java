@@ -56,43 +56,41 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
+public class ShareRestServiceImpl extends WebserviceBase implements
+		ShareRestService {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(ShareRestServiceImpl.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(ShareRestServiceImpl.class);
+
 	private final WebServiceShareFacade webServiceShareFacade;
-	
-	public ShareRestServiceImpl(final WebServiceShareFacade facade){
+
+	public ShareRestServiceImpl(final WebServiceShareFacade facade) {
 		this.webServiceShareFacade = facade;
 	}
-	
+
 	/**
 	 * get the files of the user
 	 */
 	@Path("/")
 	@GET
-	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<ShareDto> getReceivedShares() {
-	
-		List<ShareDto> shares = null;
-		
 		try {
 			webServiceShareFacade.checkAuthentication();
-			shares = webServiceShareFacade.getReceivedShares();
+			return webServiceShareFacade.getReceivedShares();
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		
-		return shares;
 	}
-	
+
 	@GET
 	@Path("/sharedocument/{targetMail}/{uuid}")
 	@Override
-	public void sharedocument(@PathParam("targetMail") String targetMail, @PathParam("uuid") String uuid, @DefaultValue("0") @QueryParam("securedShare") int securedShare) {
+	public void sharedocument(@PathParam("targetMail") String targetMail,
+			@PathParam("uuid") String uuid,
+			@DefaultValue("0") @QueryParam("securedShare") int securedShare) {
 		try {
 			webServiceShareFacade.checkAuthentication();
 			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
@@ -105,10 +103,13 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	@Path("/multiplesharedocuments")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Override
-	public void multiplesharedocuments(ArrayList<ShareDto> shares, @QueryParam("secured") boolean secured, @QueryParam("message") String message) {
+	public void multiplesharedocuments(ArrayList<ShareDto> shares,
+			@QueryParam("secured") boolean secured,
+			@QueryParam("message") String message) {
 		try {
 			webServiceShareFacade.checkAuthentication();
-			webServiceShareFacade.multiplesharedocuments(shares, secured, message);
+			webServiceShareFacade.multiplesharedocuments(shares, secured,
+					message);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -120,9 +121,13 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 	public Response getDocumentStream(@PathParam("uuid") String shareUuid) {
 		try {
 			webServiceShareFacade.checkAuthentication();
-			ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
-			InputStream documentStream = webServiceShareFacade.getDocumentStream(shareUuid);
-			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, shareDto.getName(), shareDto.getType());
+			ShareDto shareDto = webServiceShareFacade
+					.getReceivedShare(shareUuid);
+			InputStream documentStream = webServiceShareFacade
+					.getDocumentStream(shareUuid);
+			ResponseBuilder response = DocumentStreamReponseBuilder
+					.getDocumentResponseBuilder(documentStream,
+							shareDto.getName(), shareDto.getType());
 			return response.build();
 		} catch (Exception e) {
 			throw analyseFault(e);

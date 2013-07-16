@@ -49,43 +49,48 @@ import org.linagora.linshare.core.facade.WebServiceThreadMemberFacade;
 import org.linagora.linshare.webservice.ThreadMemberRestService;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
-public class ThreadMemberRestServiceImpl extends WebserviceBase implements ThreadMemberRestService {
-	
+public class ThreadMemberRestServiceImpl extends WebserviceBase implements
+		ThreadMemberRestService {
+
 	private WebServiceThreadFacade webServiceThreadFacade;
-	
+
 	private WebServiceThreadMemberFacade webServiceThreadMemberFacade;
 
-	public ThreadMemberRestServiceImpl(final WebServiceThreadFacade webServiceThreadFacade, final WebServiceThreadMemberFacade webServiceThreadMemberFacade) {
+	public ThreadMemberRestServiceImpl(
+			final WebServiceThreadFacade webServiceThreadFacade,
+			final WebServiceThreadMemberFacade webServiceThreadMemberFacade) {
 		this.webServiceThreadFacade = webServiceThreadFacade;
 		this.webServiceThreadMemberFacade = webServiceThreadMemberFacade;
 	}
 
 	@GET
-    @Path("/add/{threadUuid}/{domainId}/{mail}")
+	@Path("/add/{threadUuid}/{domainId}/{mail}")
 	@Override
-	public void addMember(@PathParam("threadUuid") String threadUuid, @PathParam("domainId") String domainId, 
-			@PathParam("mail") String mail, @DefaultValue("false") @QueryParam("readonly") boolean readonly) {
-		User actor = null;
+	public void addMember(@PathParam("threadUuid") String threadUuid,
+			@PathParam("domainId") String domainId,
+			@PathParam("mail") String mail,
+			@DefaultValue("false") @QueryParam("readonly") boolean readonly) {
 		try {
-			actor = webServiceThreadFacade.checkAuthentication();
-			webServiceThreadFacade.addMember(actor, threadUuid, domainId, mail, readonly);
+			User actor = webServiceThreadFacade.checkAuthentication();
+			webServiceThreadFacade.addMember(actor, threadUuid, domainId, mail,
+					readonly);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}
-	
+
 	@Path("/{threadUuid}/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<ThreadMemberDto> getAllThreadMembers(@PathParam("threadUuid") String threadUuid) {
-		List<ThreadMemberDto> members = null;
+	public List<ThreadMemberDto> getAllThreadMembers(
+			@PathParam("threadUuid") String threadUuid) {
 		try {
 			webServiceThreadFacade.checkAuthentication();
-			members = webServiceThreadMemberFacade.getAllThreadMembers(threadUuid);
+			return webServiceThreadMemberFacade
+					.getAllThreadMembers(threadUuid);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
-		return members;
 	}
 }

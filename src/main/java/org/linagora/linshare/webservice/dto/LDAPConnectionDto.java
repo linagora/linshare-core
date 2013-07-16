@@ -53,7 +53,7 @@ public class LDAPConnectionDto {
 		this.securityPrincipal = ldapConnection.getSecurityPrincipal();
 		this.securityCredentials = ldapConnection.getSecurityCredentials();
 	}
-	
+
 	public LDAPConnectionDto() {
 		super();
 	}

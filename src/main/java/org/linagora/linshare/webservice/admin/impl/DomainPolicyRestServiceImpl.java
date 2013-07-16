@@ -46,14 +46,16 @@ import org.linagora.linshare.webservice.admin.DomainPolicyRestService;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 import org.linagora.linshare.webservice.impl.WebserviceBase;
 
-public class DomainPolicyRestServiceImpl extends WebserviceBase implements DomainPolicyRestService {
+public class DomainPolicyRestServiceImpl extends WebserviceBase implements
+		DomainPolicyRestService {
 
 	private final WebServiceDomainPolicyFacade webServiceDomainPolicyFacade;
-	
-	public DomainPolicyRestServiceImpl(final WebServiceDomainPolicyFacade webServiceDomainPolicyFacade) {
+
+	public DomainPolicyRestServiceImpl(
+			final WebServiceDomainPolicyFacade webServiceDomainPolicyFacade) {
 		this.webServiceDomainPolicyFacade = webServiceDomainPolicyFacade;
 	}
-	
+
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

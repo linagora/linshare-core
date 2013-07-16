@@ -54,23 +54,26 @@ import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
-@WebService(serviceName = "SoapWebService", endpointInterface = "org.linagora.linshare.webservice.SoapService",
-	targetNamespace = WebserviceBase.NAME_SPACE_NS, portName = "SoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,parameterStyle = ParameterStyle.WRAPPED ,use = SOAPBinding.Use.LITERAL)
-public class SoapServiceImpl extends WebserviceBase implements
-		SoapService {
-
+@WebService(serviceName = "SoapWebService",
+			endpointInterface = "org.linagora.linshare.webservice.SoapService",
+			targetNamespace = WebserviceBase.NAME_SPACE_NS,
+			portName = "SoapServicePort")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
+			 parameterStyle = ParameterStyle.WRAPPED,
+			 use = SOAPBinding.Use.LITERAL)
+public class SoapServiceImpl extends WebserviceBase implements SoapService {
 
 	private final WebServiceDocumentFacade webServiceDocumentFacade;
 
 	private final WebServiceShareFacade webServiceShareFacade;
-	
+
 	private final WebServiceThreadFacade webServiceThreadFacade;
-	
+
 	private final WebServiceUserFacade webServiceUserFacade;
-	
+
 	public SoapServiceImpl(
-			final WebServiceDocumentFacade webServiceDocumentFacade, final WebServiceShareFacade webServiceShareFacade,
+			final WebServiceDocumentFacade webServiceDocumentFacade,
+			final WebServiceShareFacade webServiceShareFacade,
 			WebServiceThreadFacade webServiceThreadFacade,
 			WebServiceUserFacade webServiceUserFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
@@ -79,13 +82,12 @@ public class SoapServiceImpl extends WebserviceBase implements
 		this.webServiceUserFacade = webServiceUserFacade;
 	}
 
-	
-	
 	// Documents
-	
+
 	/**
 	 * get the files of the user
-	 * @throws BusinessException 
+	 * 
+	 * @throws BusinessException
 	 */
 	@WebMethod(operationName = "getDocuments")
 	// **soap
@@ -100,7 +102,8 @@ public class SoapServiceImpl extends WebserviceBase implements
 	@Override
 	public SimpleLongValue getUserMaxFileSize() throws BusinessException {
 		webServiceDocumentFacade.checkAuthentication();
-		return new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
+		return new SimpleLongValue(
+				webServiceDocumentFacade.getUserMaxFileSize());
 	}
 
 	@WebMethod(operationName = "getAvailableSize")
@@ -110,15 +113,15 @@ public class SoapServiceImpl extends WebserviceBase implements
 		webServiceDocumentFacade.checkAuthentication();
 		return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
 	}
-	
-	
+
 	// Shares
 	@Override
-	public void sharedocument(String targetMail, String uuid,int securedShare) throws BusinessException {
-		webServiceShareFacade.checkAuthentication(); //raise exception
+	public void sharedocument(String targetMail, String uuid, int securedShare)
+			throws BusinessException {
+		webServiceShareFacade.checkAuthentication(); // raise exception
 		webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
 	}
-	
+
 	@WebMethod(operationName = "getReceivedShares")
 	// **soap
 	@Override
@@ -127,11 +130,6 @@ public class SoapServiceImpl extends WebserviceBase implements
 		return webServiceShareFacade.getReceivedShares();
 	}
 
-
-	
-	
-	
-	
 	// PluginManagment
 	@WebMethod(operationName = "getInformation")
 	// **soap
@@ -140,10 +138,6 @@ public class SoapServiceImpl extends WebserviceBase implements
 		return "This API is still in developpement";
 	}
 
-
-	
-	
-	
 	// Threads
 
 	@Override
@@ -152,15 +146,14 @@ public class SoapServiceImpl extends WebserviceBase implements
 		return webServiceThreadFacade.getAllMyThread();
 	}
 
-
 	@Override
 	public void addMember(ThreadMemberDto member) throws BusinessException {
 		User actor = webServiceThreadFacade.checkAuthentication();
-		webServiceThreadFacade.addMember(actor, member.getThreadUuid(), member.getUserDomainId(), member.getUserMail(), member.isReadonly());
+		webServiceThreadFacade.addMember(actor, member.getThreadUuid(),
+				member.getUserDomainId(), member.getUserMail(),
+				member.isReadonly());
 	}
-	
-	
-	
+
 	// Users
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {

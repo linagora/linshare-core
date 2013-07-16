@@ -50,34 +50,36 @@ import org.linagora.linshare.webservice.admin.LDAPConnectionRestService;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 import org.linagora.linshare.webservice.impl.WebserviceBase;
 
-public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDAPConnectionRestService {
+public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
+		LDAPConnectionRestService {
 
 	private final WebServiceLDAPConnectionFacade webServiceLDAPConnectionFacade;
-	
-	public LDAPConnectionRestServiceImpl(final WebServiceLDAPConnectionFacade webServiceLDAPConnectionFacade) {
+
+	public LDAPConnectionRestServiceImpl(
+			final WebServiceLDAPConnectionFacade webServiceLDAPConnectionFacade) {
 		this.webServiceLDAPConnectionFacade = webServiceLDAPConnectionFacade;
 	}
-	
+
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<LDAPConnectionDto> getLDAPConnections() throws BusinessException {
-		List<LDAPConnectionDto> LDAPConnections = null;
+	public List<LDAPConnectionDto> getLDAPConnections()
+			throws BusinessException {
 		try {
 			webServiceLDAPConnectionFacade.checkAuthentication();
-			LDAPConnections = webServiceLDAPConnectionFacade.getLDAPConnections();
+			return webServiceLDAPConnectionFacade.getLDAPConnections();
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
-		return LDAPConnections;
 	}
 
 	@Path("/")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void createLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
+	public void createLDAPConnection(LDAPConnectionDto LDAPConnection)
+			throws BusinessException {
 		try {
 			webServiceLDAPConnectionFacade.checkAuthentication();
 			webServiceLDAPConnectionFacade.createLDAPConnection(LDAPConnection);
@@ -85,12 +87,13 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDA
 			throw analyseFault(e);
 		}
 	}
-	
+
 	@Path("/")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
+	public void updateLDAPConnection(LDAPConnectionDto LDAPConnection)
+			throws BusinessException {
 		try {
 			webServiceLDAPConnectionFacade.checkAuthentication();
 			webServiceLDAPConnectionFacade.updateLDAPConnection(LDAPConnection);
@@ -98,12 +101,13 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDA
 			throw analyseFault(e);
 		}
 	}
-	
+
 	@Path("/")
 	@DELETE
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void deleteLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
+	public void deleteLDAPConnection(LDAPConnectionDto LDAPConnection)
+			throws BusinessException {
 		try {
 			webServiceLDAPConnectionFacade.checkAuthentication();
 			webServiceLDAPConnectionFacade.deleteLDAPConnection(LDAPConnection);

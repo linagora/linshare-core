@@ -49,59 +49,59 @@ import org.slf4j.LoggerFactory;
 public class WebserviceBase {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(WebserviceBase.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(WebserviceBase.class);
 
 	// REST
 
-	protected WebApplicationException giveRestException(int httpErrorCode, String message) {
+	protected WebApplicationException giveRestException(int httpErrorCode,
+			String message) {
 		return giveRestException(httpErrorCode, message, null);
 	}
 
-	protected WebApplicationException giveRestException(int httpErrorCode, String message, Throwable cause) {
+	protected WebApplicationException giveRestException(int httpErrorCode,
+			String message, Throwable cause) {
 		if (cause == null)
-			return new WebApplicationException(Response.status(httpErrorCode).entity(message).build());
+			return new WebApplicationException(Response.status(httpErrorCode)
+					.entity(message).build());
 		else
-			return new WebApplicationException(cause, Response.status(httpErrorCode).entity(message).build());
+			return new WebApplicationException(cause, Response
+					.status(httpErrorCode).entity(message).build());
 	}
 
 	protected WebApplicationException analyseFault(Exception e) {
-		if(e instanceof BusinessException) {
-			BusinessException bu = (BusinessException)e;
-			ErrorDto errorDto = new ErrorDto(bu.getErrorCode().getCode(), e.getMessage());
-			return new WebApplicationException(e, Response.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
+		if (e instanceof BusinessException) {
+			BusinessException bu = (BusinessException) e;
+			ErrorDto errorDto = new ErrorDto(bu.getErrorCode().getCode(),
+					e.getMessage());
+			return new WebApplicationException(e, Response
+					.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
 		}
 		ErrorDto errorDto = new ErrorDto(-1, e.toString());
-		return new WebApplicationException(e, Response.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
+		return new WebApplicationException(e, Response
+				.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
 	}
 
 	@Deprecated
 	protected WebApplicationException analyseFaultREST(BusinessException e) {
-
-		// TODO locale in WebApplicationException ?
-		WebApplicationException w;
-
 		// BusinessException have a look to BusinessErrorCode
 		switch (e.getErrorCode()) {
 		case WEBSERVICE_FAULT:
-			w = giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
-			break;
+			return giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					e.getMessage(), e);
 		case WEBSERVICE_UNAUTHORIZED:
-			w = giveRestException(HttpStatus.SC_FORBIDDEN, e.getMessage());
-			break;
+			return giveRestException(HttpStatus.SC_FORBIDDEN, e.getMessage());
 		case NOT_AUTHORIZED:
-			w = giveRestException(HttpStatus.SC_FORBIDDEN, e.getMessage());
-			break;
+			return giveRestException(HttpStatus.SC_FORBIDDEN, e.getMessage());
 		case USER_NOT_FOUND:
-			w = giveRestException(HttpStatus.SC_NOT_FOUND, e.getMessage());
-			break;
+			return giveRestException(HttpStatus.SC_NOT_FOUND, e.getMessage());
 		case WEBSERVICE_NOT_FOUND:
-			w = giveRestException(HttpStatus.SC_NOT_FOUND, e.getMessage());
-			break;
+			return giveRestException(HttpStatus.SC_NOT_FOUND, e.getMessage());
 		default:
-			w = giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage(), e);
+			return giveRestException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+					e.getMessage(), e);
 		}
-
-		return w;
+		/* NOTREACHED */
 	}
 
 	// SOAP
