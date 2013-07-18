@@ -148,9 +148,7 @@ public class DisplayMailingList {
 
 	@SetupRender
 	public void init() throws BusinessException {
-		if(recipientsSearch == null){	
-			recipientsSearch = String.format(messages.get("page.list.autocompletionInfo"));
-		}
+
 		isEmpty = mailingList.getMails().isEmpty();
 		if (!isEmpty) {
 			lists = new ArrayList<MailingListContactVo>();
