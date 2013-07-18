@@ -56,10 +56,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.view.tapestry.beans.MenuEntry;
+import org.linagora.linshare.view.tapestry.pages.thread.AdminThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MyBorderLayout {
 
+	private static final Logger logger = LoggerFactory.getLogger(MyBorderLayout.class);
 
  	/* ***********************************************************
 	 *                         Parameters
@@ -266,6 +270,7 @@ public class MyBorderLayout {
 		MenuEntry homeMenu;
 		MenuEntry fileMenu;
 		MenuEntry userMenu;
+		MenuEntry threadAdminMenu;
 		MenuEntry threadMenu;
 		MenuEntry adminMenu;
 		MenuEntry domainMenu;
@@ -280,6 +285,8 @@ public class MyBorderLayout {
 		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
 	
 		// Menu : Thread
+
+		threadAdminMenu = new MenuEntry(response.encodeURL("administration/thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		threadMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		
 		// Menu : Administration
@@ -320,8 +327,13 @@ public class MyBorderLayout {
 			}
 			if (showUserTab())
 				menu.addMenuEntry(userMenu);
-			if (!superadmin && showThreadTab())
-				menu.addMenuEntry(threadMenu);
+			if (showThreadTab()){
+				if(superadmin){
+					menu.addMenuEntry(threadAdminMenu);
+				} else {
+					menu.addMenuEntry(threadMenu);
+				}
+			}
 			if (superadmin || admin)
 				menu.addMenuEntry(adminMenu);
 			if (superadmin)

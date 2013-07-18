@@ -353,9 +353,10 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public void addMember(ThreadVo threadVo, UserVo actorVo, UserVo newMember, boolean readOnly) {
 		try {
 			if (userIsAdmin(actorVo, threadVo)) {
+				logger.debug("yoyo");
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-				User user = (User) accountService.findByLsUuid(newMember.getLsUuid());
 				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
+				User user = (User) accountService.findByLsUuid(newMember.getLsUuid());
 				threadService.addMember(actor, thread, user, readOnly);
 			}
 		} catch (BusinessException e) {
@@ -476,4 +477,12 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		threadService.rename(actor, thread, threadName);
 	}
 
+	@Override
+	public String getThreadFromSearch(String input){
+		int index = input.indexOf("<");
+		String owner = input.substring(index+1, input.length()-1);
+		String threadName = input.substring(1,index-2);
+		
+		return threadName+"+"+owner;
+	}
 }
