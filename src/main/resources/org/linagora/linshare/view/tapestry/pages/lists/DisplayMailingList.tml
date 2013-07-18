@@ -3,12 +3,6 @@
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 	
 	<!-- Main content -->
-	
-	 <script type="text/javascript">
-    function clearThis(target){
-        target.value= "";
-    }
-    </script>
 			
 		<div id="content">
 		
@@ -85,7 +79,7 @@
 						<tr>
 							<td>
 							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
-				    		t:minChars="${autocompleteMin}" class="recipientsPattern" onfocus="clearThis(this)"
+				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    		</td>
 				    		<td>
