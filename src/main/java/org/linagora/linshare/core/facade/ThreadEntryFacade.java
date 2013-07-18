@@ -108,4 +108,6 @@ public interface ThreadEntryFacade {
 	public ThreadVo getThread(UserVo login, String threadUuid) throws BusinessException;
 
 	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException;
+
+	public String getThreadFromSearch(String input);
 }

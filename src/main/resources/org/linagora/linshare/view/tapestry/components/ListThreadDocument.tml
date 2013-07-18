@@ -9,8 +9,8 @@
 	<t:zone t:id="zoneTest"/>
 
 	<div id="list">
-
-		<h3>${title}</h3>
+	
+			<h2> ${message:pages.thread.content.files}</h2>
 
         <t:form t:id="search">
 
@@ -84,7 +84,7 @@
 					<t:if t:test="${canUpload}">
 					<t:actionLink t:id="fileEditProperties" t:zone="${threadEntryEdit.zoneClientId}" context="${threadEntry.identifier}">
 						<span onclick="literal:${threadEntryEdit.javascriptOpenPopup}">
-							<img src="${asset:context:images/icons/edit.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
+							<img src="${asset:context:images/icons/edit-button.png}" alt="" title="${message:components.listDocument.picture.fileEdit.title}" />
 						</span>
 	
 					</t:actionLink>
@@ -97,7 +97,7 @@
                         <t:actionLink t:id="delete" context="${threadEntry.identifier}" t:zone="zoneConfirmDelete"
                             title="${message:components.listThreadDocument.delete.title}">
                             <span onclick="window_confirm.showCenter(true)">
-                                <img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+                                <img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
                             </span>
                         </t:actionLink>
                     </t:if>

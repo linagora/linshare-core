@@ -111,6 +111,7 @@ public class ThreadServiceImpl implements ThreadService {
 
 		logger.debug("User " + actor.getAccountReprentation() + " trying to create new thread named " + name);
 		thread = new Thread(actor.getDomain(), actor, name);
+		thread.setOwner(actor);
 		threadRepository.create(thread);
 		logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
 

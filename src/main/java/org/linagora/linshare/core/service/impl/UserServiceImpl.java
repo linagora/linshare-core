@@ -152,7 +152,6 @@ public class UserServiceImpl implements UserService {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"Domain was not found");
 		}
 		
-		
 		User ownerUser = userRepository.findByLsUuid(ownerLogin); 
 		
 		if(ownerUser == null) {

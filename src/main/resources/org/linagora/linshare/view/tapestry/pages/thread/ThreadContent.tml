@@ -25,7 +25,7 @@
                 <t:if test="admin">
                     <li>
                         <t:actionLink t:id="admin" class="button" title="${message:pages.thread.admin.title}">
-                            <span><img src="${asset:context:images/icons/edit-small.png}" alt="" /> ${message:pages.thread.admin.title}</span>
+                            <span><img src="${asset:context:images/icons/edit-button.png}" alt="" /> ${message:pages.thread.admin.title}</span>
                         </t:actionLink>
                     </li>
                 </t:if>
