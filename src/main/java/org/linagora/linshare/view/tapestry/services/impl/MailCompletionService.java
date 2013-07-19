@@ -135,4 +135,18 @@ public class MailCompletionService {
 			return str.substring(deb+1, end).trim();
 		}
 	}
+	
+	
+	public static UserVo getUserFromDisplay(String display) {	
+		int index1 = display.indexOf("<");
+		String fullName  = display.substring(1, index1-2);
+	    int index2 = fullName.lastIndexOf(" ");
+		String lastName = fullName.substring(0,index2);
+		String firstName = fullName.substring(index2+1);
+		   
+		int index3 = display.indexOf(">");
+		String email  = display.substring(index1+1, index3);
+		   
+		return new UserVo(null, firstName, lastName,email,null);
+	   }
 }

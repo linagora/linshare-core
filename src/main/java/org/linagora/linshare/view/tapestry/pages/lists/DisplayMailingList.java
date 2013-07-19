@@ -156,7 +156,7 @@ public class DisplayMailingList {
 			contacts = new ArrayList<UserVo>();
 			
 			for(MailingListContactVo current :lists){
-				contacts.add(mailingListFacade.getUserFromDisplay(current.getDisplay()));
+				contacts.add(MailCompletionService.getUserFromDisplay(current.getDisplay()));
 			}
 		}
 	}
@@ -298,7 +298,7 @@ public class DisplayMailingList {
 		results = null;
 		if (recipientsSearch != null) {
 			if(recipientsSearch.substring(recipientsSearch.length()-1).equals(">")) {
-				UserVo tmp = mailingListFacade.getUserFromDisplay(recipientsSearch);
+				UserVo tmp = MailCompletionService.getUserFromDisplay(recipientsSearch);
 				results = new ArrayList<UserVo>(userFacade.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), loginUser));
 			} else {
 			List<UserVo>searchResults = new ArrayList<UserVo>();
@@ -367,7 +367,7 @@ public class DisplayMailingList {
 		
 		for(MailingListContactVo current : lists){
 			if(current.getMail().equals(mail)){
-				contactForEdit=mailingListFacade.getUserFromDisplay(current.getDisplay());
+				contactForEdit=MailCompletionService.getUserFromDisplay(current.getDisplay());
 			}
 		}
 		this.email = contactForEdit.getMail();

@@ -47,6 +47,7 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
+import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 
 public class DisplayMailingList {
 	
@@ -91,7 +92,7 @@ public class DisplayMailingList {
 			contacts = new ArrayList<UserVo>();
 			
 			for(MailingListContactVo current :lists){
-				contacts.add(mailingListFacade.getUserFromDisplay(current.getDisplay()));
+				contacts.add(MailCompletionService.getUserFromDisplay(current.getDisplay()));
 			}
 		}
 	}
