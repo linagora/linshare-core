@@ -136,7 +136,6 @@ public class Index {
 			}
     }
 
-    
     public boolean getListIsDeletable() throws BusinessException {
     	list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
     	if(loginUser.getMail().equals(list.getOwner().getMail())){
