@@ -204,7 +204,7 @@ public class ManageMailingList {
 		if(newOwner!=null){
 			if (newOwner.substring(newOwner.length()-1).equals(">")) {
 				
-				UserVo selectedUser = mailingListFacade.getUserFromDisplay(newOwner);
+				UserVo selectedUser = MailCompletionService.getUserFromDisplay(newOwner);
 				List<UserVo> users = userFacade.searchUser(selectedUser.getMail(), selectedUser.getFirstName(), selectedUser.getLastName(), loginUser);
 				mailingList.setOwner(users.get(0));
 				domain = domainFacade.retrieveDomain(users.get(0).getDomainIdentifier());

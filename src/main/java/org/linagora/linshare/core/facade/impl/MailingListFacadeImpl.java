@@ -168,21 +168,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
    }
    
    @Override
-   public UserVo getUserFromDisplay(String display) {	
-	   int index1 = display.indexOf("<");
-	   String fullName  = display.substring(1, index1-2);
-	  
-	   int index2 = fullName.lastIndexOf(" ");
-	   String lastName = fullName.substring(0,index2);
-	   String firstName = fullName.substring(index2+1);		
-	   
-	   int index3 = display.indexOf(">");
-	   String email  = display.substring(index1+1, index3);
-	   
-	   return new UserVo(email, firstName, lastName);
-   }
-   
-   @Override
    public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user) {
 	   List<MailingListVo> finalList = new ArrayList<MailingListVo>();
 	   if(mailingLists!=null){
