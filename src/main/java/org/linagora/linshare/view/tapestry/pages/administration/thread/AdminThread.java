@@ -154,9 +154,8 @@ public class AdminThread {
 	@Property
 	private UserVo result;
     
-    /*
-     * Assuming currentThread isn't be null
-     */
+
+	
     @SetupRender
     public void init() {
     	
@@ -172,18 +171,10 @@ public class AdminThread {
 		}
     }
     
-	/*
-	 * Handle page layout with Tapestry Blocks
-	 */
 	public Object getType() {
 		return (member.isAdmin() ? adminBlock : member.isCanUpload() ? userBlock : restrictedUserBlock);
 	}
     
-    /*
-     * Called externally before calling the page.
-     * Refer to Tapestry Documentation about passing data from page to page
-     * Setup render will fail if this is not called (currentThread would be null)
-     */
     public void setSelectedCurrentThread(ThreadVo currentThread) {
     	this.currentThread = currentThread;
     }
@@ -225,8 +216,6 @@ public class AdminThread {
 	public void deleteMember() {
 		UserVo owner = userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid());
 		threadEntryFacade.deleteMember(currentThread, owner, toDelete);
-	
-		// refresh list
 		try {
 			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(currentThread);
 			members = tmp;
@@ -235,11 +224,12 @@ public class AdminThread {
     		logger.debug(e.toString());
 		}
 	}
+	
 	public List<String> onProvideCompletionsFromSearchUser(String input) {
 		List<UserVo> searchResults = performSearch(input);
 		List<UserVo> fromAuthorized = new ArrayList<UserVo>();
 
-		for(UserVo current :searchResults){
+		for(UserVo current : searchResults){
 			if(!(current.equals(userVo))){
 				fromAuthorized.add(current);
 			}
@@ -255,20 +245,10 @@ public class AdminThread {
 		return elements;
 	}
 
-	/**
-	 * Perform a user search using the user search pattern.
-	 * 
-	 * @param input
-	 *            user search pattern.
-	 * @return list of users.
-	 */
 	private List<UserVo> performSearch(String input) {
-
 		Set<UserVo> userSet = new HashSet<UserVo>();
-
 		String firstName_ = null;
 		String lastName_ = null;
-
 		if (input != null && input.length() > 0) {
 			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
 			if (stringTokenizer.hasMoreTokens()) {
@@ -278,7 +258,6 @@ public class AdminThread {
 				}
 			}
 		}
-
 		try {
 			if (input != null) {
 				userSet.addAll(userFacade.searchUser(input.trim(), null, null,userVo));
@@ -407,7 +386,7 @@ public class AdminThread {
 		UserVo userToAdd = null;
 		if(selectedUser!=null){
 			
-			for (UserVo current :selectedUser ){
+			for (UserVo current : selectedUser ){
 					userToAdd = userFacade.findUser(current.getDomainIdentifier(), current.getMail());
 			}
 			UserVo owner = userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid());
@@ -428,7 +407,7 @@ public class AdminThread {
 		UserVo userToRemove = null;
 		if(selectedUser!=null){
 			
-			for (UserVo current :selectedUser ){
+			for (UserVo current : selectedUser ){
 					userToRemove = userFacade.findUser(current.getDomainIdentifier(), current.getMail());
 			}
 			UserVo owner = userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid());
