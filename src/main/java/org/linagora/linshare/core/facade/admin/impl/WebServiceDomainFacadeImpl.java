@@ -102,15 +102,17 @@ public class WebServiceDomainFacadeImpl extends WebServiceGenericFacadeImpl
 	}
 	
 	private AbstractDomain getDomain(DomainDto domainDto) throws BusinessException {
-		String baseDn = domainDto.getProviders().get(0).getBaseDn();
-		String domainPatternId = domainDto.getProviders().get(0).getDomainPatternId();
-		String ldapConnectionId = domainDto.getProviders().get(0).getLdapConnectionId();
-		LDAPConnection ldapConnection = userProviderService.retrieveLDAPConnection(ldapConnectionId);
-		DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainPatternId);	
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto.getParent());
 		AbstractDomain domain = domainType.getDomain(domainDto, parent);
-		domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection, domainPattern));
+		if (!domainDto.getProviders().isEmpty()) {
+			String baseDn = domainDto.getProviders().get(0).getBaseDn();
+			String domainPatternId = domainDto.getProviders().get(0).getDomainPatternId();
+			String ldapConnectionId = domainDto.getProviders().get(0).getLdapConnectionId();
+			LDAPConnection ldapConnection = userProviderService.retrieveLDAPConnection(ldapConnectionId);
+			DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainPatternId);	
+			domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection, domainPattern));
+		}
 		return domain;
 	}
 }
