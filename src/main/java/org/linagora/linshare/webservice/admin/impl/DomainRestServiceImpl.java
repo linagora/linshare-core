@@ -66,7 +66,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		try {
 			webServiceDomainFacade.checkAuthentication();
 			return webServiceDomainFacade.getDomains();
-		} catch (BusinessException e) {
+		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}
@@ -79,7 +79,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		try {
 			webServiceDomainFacade.checkAuthentication();
 			webServiceDomainFacade.createDomain(domain);
-		} catch (BusinessException e) {
+		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}
@@ -92,7 +92,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		try {
 			webServiceDomainFacade.checkAuthentication();
 			webServiceDomainFacade.updateDomain(domain);
-		} catch (BusinessException e) {
+		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}
@@ -105,7 +105,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		try {
 			webServiceDomainFacade.checkAuthentication();
 			webServiceDomainFacade.deleteDomain(domain);
-		} catch (BusinessException e) {
+		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}

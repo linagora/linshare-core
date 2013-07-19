@@ -35,7 +35,10 @@ package org.linagora.linshare.core.facade.admin.impl;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.GuestDomain;
+import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.LdapUserProvider;
 import org.linagora.linshare.core.domain.entities.RootDomain;
 import org.linagora.linshare.core.domain.entities.SubDomain;
 import org.linagora.linshare.core.domain.entities.TopDomain;
@@ -45,17 +48,22 @@ import org.linagora.linshare.core.facade.admin.WebServiceDomainFacade;
 import org.linagora.linshare.core.facade.impl.WebServiceGenericFacadeImpl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 
 public class WebServiceDomainFacadeImpl extends WebServiceGenericFacadeImpl
 		implements WebServiceDomainFacade {
 
 	private final AbstractDomainService abstractDomainService;
+	
+	private final UserProviderService userProviderService;
 
 	public WebServiceDomainFacadeImpl(final AccountService accountService,
-			final AbstractDomainService abstractDomainService) {
+			final AbstractDomainService abstractDomainService,
+			final UserProviderService userProviderService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
+		this.userProviderService = userProviderService;
 	}
 
 	@Override
@@ -94,8 +102,15 @@ public class WebServiceDomainFacadeImpl extends WebServiceGenericFacadeImpl
 	}
 	
 	private AbstractDomain getDomain(DomainDto domainDto) throws BusinessException {
+		String baseDn = domainDto.getProviders().get(0).getBaseDn();
+		String domainPatternId = domainDto.getProviders().get(0).getDomainPatternId();
+		String ldapConnectionId = domainDto.getProviders().get(0).getLdapConnectionId();
+		LDAPConnection ldapConnection = userProviderService.retrieveLDAPConnection(ldapConnectionId);
+		DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainPatternId);	
 		DomainType domainType = DomainType.valueOf(domainDto.getType());
 		AbstractDomain parent = abstractDomainService.retrieveDomain(domainDto.getParent());
-		return domainType.getDomain(domainDto, parent);
+		AbstractDomain domain = domainType.getDomain(domainDto, parent);
+		domain.setUserProvider(new LdapUserProvider(baseDn, ldapConnection, domainPattern));
+		return domain;
 	}
 }

@@ -38,8 +38,10 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
+@JsonIgnoreProperties({"route"})
 @XmlRootElement(name = "Domain")
 public class DomainDto {
 
