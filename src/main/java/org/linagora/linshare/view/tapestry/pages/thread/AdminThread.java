@@ -260,6 +260,7 @@ public class AdminThread {
     		logger.debug(e.toString());
 		}
 	}
+	
 	public List<String> onProvideCompletionsFromSearchUser(String input) {
 		List<UserVo> searchResults = performSearch(input);
 		List<UserVo> fromAuthorized = new ArrayList<UserVo>();

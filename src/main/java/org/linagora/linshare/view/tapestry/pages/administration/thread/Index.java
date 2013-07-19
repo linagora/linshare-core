@@ -35,7 +35,10 @@ package org.linagora.linshare.view.tapestry.pages.administration.thread;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
@@ -48,9 +51,11 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +75,9 @@ public class Index {
     private Messages messages;
     
     @Inject
+    private RecipientFavouriteFacade recipientFavouriteFacade;
+    
+    @Inject
     private UserFacade userFacade;
     
     @Inject
@@ -79,6 +87,14 @@ public class Index {
     @Property
     private String recipientsSearchThread;
 	
+    @Persist
+    @Property
+    private String recipientsSearchUser;
+    
+    @Persist
+    @Property
+    private String criteriaOnSearch;
+    
     @Property
     private int autocompleteMin = 3;
     
@@ -107,6 +123,7 @@ public class Index {
     	if(!inSearch){
     			recipientsSearchThread = "*";
     	    	threads = threadEntryFacade.getAllThread();
+    	    	criteriaOnSearch ="all";
     			inSearch=true;
 		}
     }
@@ -120,23 +137,11 @@ public class Index {
 		return 0;
 	}
     
-    /**
-	 * Format the creation date for good displaying using DateFormatUtils of
-	 * apache commons lib.
-	 * 
-	 * @return creation date the date in localized format.
-	 */
 	public String getCreationDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 		return formatter.format(currentThread.getCreationDate().getTime());
 	}
-	
-    /**
-	 * Format the modification date for good displaying using DateFormatUtils of
-	 * apache commons lib.
-	 * 
-	 * @return creation date the date in localized format.
-	 */
+
 	public String getModificationDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 		return formatter.format(currentThread.getModificationDate().getTime());
@@ -163,17 +168,111 @@ public class Index {
 		return elements;
     }
     
+	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
+		List<UserVo> searchResults = performSearch(input);
+		List<String> elements = new ArrayList<String>();
+		
+		for (UserVo user : searchResults) {
+			String completeName = MailCompletionService.formatLabel(user);
+			elements.add(completeName);
+			}
+
+		return elements;
+	}
+    
+	private List<UserVo> performSearch(String input) {
+
+		Set<UserVo> userSet = new HashSet<UserVo>();
+
+		String firstName_ = null;
+		String lastName_ = null;
+
+		if (input != null && input.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
+			if (stringTokenizer.hasMoreTokens()) {
+				firstName_ = stringTokenizer.nextToken();
+				if (stringTokenizer.hasMoreTokens()) {
+					lastName_ = stringTokenizer.nextToken();
+				}
+			}
+		}
+
+		try {
+			if (input != null) {
+				userSet.addAll(userFacade.searchUser(input.trim(), null, null,userVo));
+			}
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,userVo));
+
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,userVo));
+			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(),userVo));
+			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet),userVo);
+		} catch (BusinessException e) {
+			logger.error("Error while searching user", e);
+		}
+		return new ArrayList<UserVo>();
+	}
+    
     public void onSelectedFromStop() {
         inSearch = false;
-     }
-    
+    }
    
+    public void onSelectedFromReset() {
+    	criteriaOnSearch = "all";
+    	recipientsSearchUser = "";
+        inSearch = false;
+    }
+    
     public UserVo getOwner() throws BusinessException{
     	return userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid());
     }
     
-	public Object onSuccessFromFormSearch() throws BusinessException{
-		
+    public Object onSuccessFromFormSearchByUser() throws BusinessException {
+    	List<UserVo> users = new ArrayList<UserVo>();
+    	threads.clear();
+    	if(recipientsSearchUser.startsWith("\"") && recipientsSearchUser.endsWith(">")){
+    		
+    		users.add(MailCompletionService.getUserFromDisplay(recipientsSearchUser));
+        	for(UserVo current : users ){
+        		if(criteriaOnSearch.equals("admin")){
+        			
+        			List<UserVo> user = userFacade.searchUser(current.getMail(), current.getFirstName(), current.getLastName(), userVo);
+        			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
+        			threads = threadEntryFacade.getAllMyThreadWhereAdmin(currentUser);
+        		} else if(criteriaOnSearch.equals("simple")){
+        			
+        			List<UserVo> user = userFacade.searchUser(current.getMail(), current.getFirstName(), current.getLastName(), userVo);
+        			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
+        			List<ThreadVo> threadSimple  = threadEntryFacade.getAllMyThreadWhereCanUpload(currentUser);
+        			for(ThreadVo currentThread : threadSimple){
+        				if(!(threadEntryFacade.userIsAdmin(currentUser, currentThread))){
+        					threads.add(currentThread);
+        				}
+        			}
+        			
+        		} else if(criteriaOnSearch.equals("restricted")){
+        			
+        			List<UserVo> user = userFacade.searchUser(current.getMail(), current.getFirstName(), current.getLastName(), userVo);
+        			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
+        			
+        			List<ThreadVo> threadRestricted = threadEntryFacade.getAllMyThread(currentUser);
+        			for(ThreadVo currentThread : threadRestricted){
+        				if(!(threadEntryFacade.userIsAdmin(currentUser, currentThread)) && !(threadEntryFacade.userCanUpload(currentUser, currentThread))){
+        					threads.add(currentThread);
+        				}
+        			}
+        			
+        		} else {
+        				
+        			List<UserVo> user = userFacade.searchUser(current.getMail(), current.getFirstName(), current.getLastName(), userVo);
+        			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
+        			threads = threadEntryFacade.getAllMyThread(currentUser);
+        		}
+        	}
+    	}
+    	return null;
+    }
+    
+	public Object onSuccessFromFormSearch() throws BusinessException{	
 		if(inSearch){
 			threads.clear();
 			if(recipientsSearchThread.equals("*")){
@@ -206,7 +305,7 @@ public class Index {
 	
     public void onActionFromDeleteThread(String lsuuid,String ownerlsUuid) throws BusinessException {
     	this.threadToDelete= threadEntryFacade.getThread(userFacade.findUserByLsUuid(userVo,ownerlsUuid), lsuuid);
-		logger.debug("thread :"+threadToDelete.getLsUuid()+" user :"+threadToDelete.getOwnerLsUuid()+" name: "+ threadToDelete.getName());
+		logger.debug("thread to delete :"+threadToDelete.getName());
     }
 	
 	@OnEvent(value="deleteThreadEvent")
@@ -224,4 +323,21 @@ public class Index {
 			}
 		}
 	}
+	
+	public String getAdmin() { 
+		return "admin"; 
+	}
+	
+	public String getSimple() { 
+		return "simple"; 
+	}
+	
+	public String getrestricted() { 
+		return "restricted"; 
+	}
+	
+	public String getAll() { 
+		return "all"; 
+	}
+	
 }

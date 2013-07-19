@@ -258,7 +258,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return retrieveFileStream(entry, actorVo.getLsUuid());
 	}
 
-
 	@Override
 	public boolean documentHasThumbnail(String lsUid, String docId) {
 		if(lsUid == null) {
@@ -272,7 +271,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		}
 		return threadEntryService.documentHasThumbnail(actor, docId);
 	}
-
 
 	@Override
 	public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid) {
@@ -293,7 +291,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
     	return null;
 	}
 
-
 	@Override
 	public void removeDocument(UserVo actorVo, ThreadEntryVo threadEntryVo) throws BusinessException {
 		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
@@ -309,7 +306,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "The user couldn't be found");
 		}
 	}
-
 
 	@Override
 	public ThreadEntryVo findById(UserVo actorVo, String threadEntryUuid) throws BusinessException {
@@ -464,7 +460,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return threadVo;
 	}
 
-
 	@Override
 	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(threadUuid);
@@ -482,7 +477,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		int index = input.indexOf("<");
 		String owner = input.substring(index+1, input.length()-1);
 		String threadName = input.substring(1,index-2);
-		
 		return threadName+"+"+owner;
 	}
 }
