@@ -33,19 +33,34 @@
  */
 package org.linagora.linshare.webservice.admin;
 
+import java.util.List;
+
 import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainDto;
+import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
 @Path("/rest/admin/domains")
 public interface DomainRestService {
 
 	DomainDto getDomains() throws BusinessException;
-	
+
 	void updateDomain(DomainDto domain) throws BusinessException;
 
 	void createDomain(DomainDto domain) throws BusinessException;
 
 	void deleteDomain(DomainDto domain) throws BusinessException;
+
+	/*
+	 * Functionalities
+	 */
+	List<FunctionalityDto> getDomainFunctionalities(String domain)
+			throws BusinessException;
+
+	void updateDomainFunctionality(String domain, FunctionalityDto func)
+			throws BusinessException;
+
+	FunctionalityDto getDomainFunctionality(String domain,
+			String identifier) throws BusinessException;
 }

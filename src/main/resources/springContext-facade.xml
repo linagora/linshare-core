@@ -188,4 +188,8 @@
 	<bean id="webServiceUserRoleFacade" class="org.linagora.linshare.core.facade.admin.impl.WebServiceUserRoleFacadeImpl">
 		<constructor-arg ref="accountService" />
 	</bean>		
+	<bean id="webServiceFunctionalityFacade" class="org.linagora.linshare.core.facade.admin.impl.WebServiceFunctionalityFacadeImpl">
+        <constructor-arg ref="abstractDomainService" />
+        <constructor-arg ref="functionalityService" />
+	</bean>		
 </beans>
