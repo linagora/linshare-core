@@ -31,87 +31,59 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
+import org.linagora.linshare.core.domain.entities.DomainPattern;
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
-import org.linagora.linshare.webservice.admin.DomainPatternRestService;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DomainPatternRestServiceImpl extends WebserviceBase implements
-		DomainPatternRestService {
+public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements DomainPatternFacade {
 
-	private final DomainPatternFacade webServiceDomainPatternFacade;
+	private static final Logger logger = LoggerFactory.getLogger(DomainPatternFacadeImpl.class);
+	
+	private final UserProviderService userProviderService;
 
-	public DomainPatternRestServiceImpl(
-			final DomainPatternFacade webServiceDomainPatternFacade) {
-		this.webServiceDomainPatternFacade = webServiceDomainPatternFacade;
+	public DomainPatternFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
+		super(accountService);
+		this.userProviderService = userProviderService;
 	}
 
-	@Path("/")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			return webServiceDomainPatternFacade.getDomainPatterns();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
+		checkAuthentication(Role.SUPERADMIN);
+		List<DomainPattern> domainPatterns = userProviderService.findAllUserDomainPattern();
+		List<DomainPatternDto> res = new ArrayList<DomainPatternDto>();
+		for (DomainPattern domainPattern : domainPatterns) {
+			res.add(new DomainPatternDto(domainPattern));
 		}
+		return res;
 	}
 
-	@Path("/")
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void createDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.createDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void updateDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		userProviderService.updateDomainPattern(new DomainPattern(domainPatternDto));
 	}
 
-	@Path("/")
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.updateDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void createDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		userProviderService.createDomainPattern(new DomainPattern(domainPatternDto));
 	}
 
-	@Path("/")
-	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void deleteDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.deleteDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void deleteDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		userProviderService.deletePattern(domainPatternDto.getIdentifier());
 	}
+
 }

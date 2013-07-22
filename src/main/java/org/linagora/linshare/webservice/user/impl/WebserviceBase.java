@@ -31,67 +31,60 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.webservice.user.impl;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.soap.MTOM;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.webservice.MTOMUploadSoapService;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.webservice.dto.ErrorDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * All CXF Outbound Message will be using multipart format.
  * 
- * @author fmartin
- * 
+ * common utility methods for webservice implementation (rest, soap)
  */
-@WebService(serviceName = "MTOMUploadSoapService",
-			endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService",
-			targetNamespace = WebserviceBase.NAME_SPACE_NS,
-			portName = "MTOMUploadSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
-			 parameterStyle = ParameterStyle.WRAPPED,
-			 use = SOAPBinding.Use.LITERAL)
-@MTOM
-public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
+public class WebserviceBase {
 
-	private final DocumentFacade webServiceDocumentFacade;
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory
+			.getLogger(WebserviceBase.class);
 
-	public MTOMUploadSoapServiceImpl(
-			DocumentFacade webServiceDocumentFacade) {
-		super();
-		this.webServiceDocumentFacade = webServiceDocumentFacade;
+	// SOAP
+
+	public static final String NAME_SPACE_NS = "http://org/linagora/linshare/webservice/";
+	
+	// REST
+
+	protected WebApplicationException giveRestException(int httpErrorCode,
+			String message) {
+		return giveRestException(httpErrorCode, message, null);
 	}
 
-	/**
-	 * here we use XOP method for large file upload
-	 * 
-	 * @param doca
-	 * @throws BusinessException
-	 */
-
-	@Oneway
-	@WebMethod(operationName = "addDocumentXop")
-	// **soap
-	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
-			throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.addDocumentXop(doca);
+	protected WebApplicationException giveRestException(int httpErrorCode,
+			String message, Throwable cause) {
+		if (cause == null) {
+			return new WebApplicationException(Response.status(httpErrorCode)
+					.entity(message).build());
+		} else {
+			return new WebApplicationException(cause, Response
+					.status(httpErrorCode).entity(message).build());
+		}
 	}
 
-	@WebMethod(operationName = "getInformation")
-	// **soap
-	@Override
-	public String getInformation() throws BusinessException {
-		return "This API is still in developpement";
+	protected WebApplicationException analyseFault(Exception e) {
+		if (e instanceof BusinessException) {
+			BusinessException bu = (BusinessException) e;
+			ErrorDto errorDto = new ErrorDto(bu.getErrorCode().getCode(),
+					e.getMessage());
+			return new WebApplicationException(e, Response
+					.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
+		}
+		ErrorDto errorDto = new ErrorDto(-1, e.toString());
+		return new WebApplicationException(e, Response
+				.status(HttpStatus.SC_BAD_REQUEST).entity(errorDto).build());
 	}
+
 }

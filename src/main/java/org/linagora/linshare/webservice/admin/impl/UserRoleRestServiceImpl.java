@@ -40,17 +40,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.admin.WebServiceUserRoleFacade;
+import org.linagora.linshare.core.facade.webservice.admin.UserRoleFacade;
 import org.linagora.linshare.webservice.admin.UserRoleRestService;
-import org.linagora.linshare.webservice.impl.WebserviceBase;
+import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class UserRoleRestServiceImpl extends WebserviceBase implements UserRoleRestService {
 
-	private final WebServiceUserRoleFacade webServiceUserRoleFacade;
+	private final UserRoleFacade userRoleFacade;
 	
-	public UserRoleRestServiceImpl(final WebServiceUserRoleFacade webServiceUserRoleFacade) {
-		this.webServiceUserRoleFacade = webServiceUserRoleFacade;
+	public UserRoleRestServiceImpl(final UserRoleFacade userRoleFacade) {
+		this.userRoleFacade = userRoleFacade;
 	}
 	
 	@Path("/")
@@ -58,11 +57,6 @@ public class UserRoleRestServiceImpl extends WebserviceBase implements UserRoleR
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<String> getUserRoles() {
-		try {
-			webServiceUserRoleFacade.checkAuthentication();
-			return webServiceUserRoleFacade.getUserRoles();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+		return userRoleFacade.getUserRoles();
 	}
 }

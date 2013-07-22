@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.net.IDN;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -46,24 +45,24 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.admin.WebServiceDomainFacade;
-import org.linagora.linshare.core.facade.admin.WebServiceFunctionalityFacade;
+import org.linagora.linshare.core.facade.webservice.admin.DomainFacade;
+import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.webservice.admin.DomainRestService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
-import org.linagora.linshare.webservice.impl.WebserviceBase;
+import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class DomainRestServiceImpl extends WebserviceBase implements
 		DomainRestService {
 
-	private final WebServiceDomainFacade webServiceDomainFacade;
-	private final WebServiceFunctionalityFacade webServiceFunctionalityFacade;
+	private final DomainFacade domainFacade;
+	private final FunctionalityFacade functionalityFacade;
 
 	public DomainRestServiceImpl(
-			final WebServiceDomainFacade webServiceDomainFacade,
-			final WebServiceFunctionalityFacade webServiceFunctionalityFacade) {
-		this.webServiceDomainFacade = webServiceDomainFacade;
-		this.webServiceFunctionalityFacade = webServiceFunctionalityFacade;
+			final DomainFacade webServiceDomainFacade,
+			final FunctionalityFacade webServiceFunctionalityFacade) {
+		this.domainFacade = webServiceDomainFacade;
+		this.functionalityFacade = webServiceFunctionalityFacade;
 	}
 
 	@Path("/")
@@ -72,8 +71,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Override
 	public DomainDto getDomains() throws BusinessException {
 		try {
-			webServiceDomainFacade.checkAuthentication();
-			return webServiceDomainFacade.getDomains();
+			domainFacade.checkAuthentication();
+			return domainFacade.getDomains();
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -85,8 +84,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Override
 	public void createDomain(DomainDto domain) throws BusinessException {
 		try {
-			webServiceDomainFacade.checkAuthentication();
-			webServiceDomainFacade.createDomain(domain);
+			domainFacade.checkAuthentication();
+			domainFacade.createDomain(domain);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -98,8 +97,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Override
 	public void updateDomain(DomainDto domain) throws BusinessException {
 		try {
-			webServiceDomainFacade.checkAuthentication();
-			webServiceDomainFacade.updateDomain(domain);
+			domainFacade.checkAuthentication();
+			domainFacade.updateDomain(domain);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -111,8 +110,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Override
 	public void deleteDomain(DomainDto domain) throws BusinessException {
 		try {
-			webServiceDomainFacade.checkAuthentication();
-			webServiceDomainFacade.deleteDomain(domain);
+			domainFacade.checkAuthentication();
+			domainFacade.deleteDomain(domain);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -129,8 +128,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	public List<FunctionalityDto> getDomainFunctionalities(String domain)
 			throws BusinessException {
 		try {
-			webServiceFunctionalityFacade.checkAuthentication();
-			return webServiceFunctionalityFacade.getAll(domain);
+			functionalityFacade.checkAuthentication();
+			return functionalityFacade.getAll(domain);
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
@@ -143,8 +142,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	public FunctionalityDto getDomainFunctionality(String domain,
 			String identifier) throws BusinessException {
 		try {
-			webServiceFunctionalityFacade.checkAuthentication();
-			return webServiceFunctionalityFacade.get(domain, identifier);
+			functionalityFacade.checkAuthentication();
+			return functionalityFacade.get(domain, identifier);
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
@@ -157,8 +156,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	public void updateDomainFunctionality(String domain, FunctionalityDto func)
 			throws BusinessException {
 		try {
-			webServiceFunctionalityFacade.checkAuthentication();
-			webServiceFunctionalityFacade.update(domain, func);
+			functionalityFacade.checkAuthentication();
+			functionalityFacade.update(domain, func);
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
