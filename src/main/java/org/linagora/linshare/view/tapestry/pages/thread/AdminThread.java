@@ -263,22 +263,8 @@ public class AdminThread {
 	
 	public List<String> onProvideCompletionsFromSearchUser(String input) {
 		List<UserVo> searchResults = performSearch(input);
-		List<UserVo> fromAuthorized = new ArrayList<UserVo>();
 
-		for(UserVo current :searchResults){
-			if(!(current.equals(userVo))){
-				fromAuthorized.add(current);
-			}
-		}
-		List<String> elements = new ArrayList<String>();
-		
-		for (UserVo user : fromAuthorized) {
-			String completeName = MailCompletionService.formatLabel(user);
-			if (!elements.contains(completeName)) {
-				elements.add(completeName);
-			}
-		}
-		return elements;
+		return threadEntryFacade.onProvideCompletionsFromSearchUser(searchResults, userVo);
 	}
 
 	/**
@@ -321,28 +307,8 @@ public class AdminThread {
 	}
 
 	public List<String> onProvideCompletionsFromSearchMembers(String input) throws BusinessException {
-		List<UserVo> inList = new ArrayList<UserVo>();
 		List<UserVo> searchResults = performSearch(input);
-
-		for(UserVo current :searchResults){
-			if(!(threadEntryFacade.getThreadMembers(currentThread)).isEmpty()){
-				
-				for(ThreadMemberVo current2 : threadEntryFacade.getThreadMembers(currentThread)){
-					if(current2.getUser().getMail().equals(current.getMail())){
-						inList.add(current);
-					}
-				}
-			}
-		}
-		List<String> elements = new ArrayList<String>();
-		
-		for (UserVo user : inList) {
-			String completeName = MailCompletionService.formatLabel(user);
-			if (!elements.contains(completeName)) {
-				elements.add(completeName);
-			}
-		}
-		return elements;
+		return threadEntryFacade.onProvideCompletionsFromSearchMembers(searchResults, currentThread);
 	}
 	
 	public Object onSuccessFromFormSearch() throws BusinessException{

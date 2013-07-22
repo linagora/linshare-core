@@ -67,182 +67,169 @@ import org.slf4j.LoggerFactory;
 
 public class AdminThread {
 
-	private static final Logger logger = LoggerFactory.getLogger(AdminThread.class);
-	
-    @SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
+	private static final Logger logger = LoggerFactory
+			.getLogger(AdminThread.class);
 
-    @SessionState
-    @Property
-    private UserVo userVo;
-    
-    @Property
-    @Persist
-    private ThreadVo currentThread;
-    
-    @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=180"})
-    private WindowWithEffects memberEditWindow;
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
 
-    @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=180"})
-    private WindowWithEffects threadEditWindow;
-    
-    @InjectComponent
-    private ConfirmPopup confirmPopup;
-    
-    @InjectComponent
-    private Zone memberEditTemplateZone;
-    
-    @InjectComponent
-    private Zone threadEditTemplateZone;
-    
+	@SessionState
+	@Property
+	private UserVo userVo;
+
+	@Property
+	@Persist
+	private ThreadVo currentThread;
+
+	@Component(parameters = { "style=bluelighting", "show=false", "width=520",
+			"height=180" })
+	private WindowWithEffects memberEditWindow;
+
+	@Component(parameters = { "style=bluelighting", "show=false", "width=520",
+			"height=180" })
+	private WindowWithEffects threadEditWindow;
+
+	@InjectComponent
+	private ConfirmPopup confirmPopup;
+
+	@InjectComponent
+	private Zone memberEditTemplateZone;
+
+	@InjectComponent
+	private Zone threadEditTemplateZone;
+
 	@Property
 	@Persist
 	private List<ThreadMemberVo> members;
-	
+
 	@Property
 	private ThreadMemberVo member;
-	
+
 	@Persist
 	private ThreadMemberVo toDelete;
-	
-    @Inject
-    private Messages messages;
-    
-    @Inject
-    private ThreadEntryFacade threadEntryFacade;
 
-    @Inject
-    private UserFacade userFacade;
-    
-    @Inject
-    private RecipientFavouriteFacade recipientFavouriteFacade;
-    
-    @Persist
-    @Property
+	@Inject
+	private Messages messages;
+
+	@Inject
+	private ThreadEntryFacade threadEntryFacade;
+
+	@Inject
+	private UserFacade userFacade;
+
+	@Inject
+	private RecipientFavouriteFacade recipientFavouriteFacade;
+
+	@Persist
+	@Property
 	private String selectedMemberId;
-    
-    @Persist
-    @Property
-    private String recipientsSearch;
-    
-    @Persist
-    @Property
-    private String recipientsSearchMember;
-    
-    @Property
-    private int autocompleteMin = 3;
-    
+
+	@Persist
+	@Property
+	private String recipientsSearch;
+
+	@Persist
+	@Property
+	private String recipientsSearchMember;
+
+	@Property
+	private int autocompleteMin = 3;
+
 	@Inject
 	private Block adminBlock, userBlock, restrictedUserBlock;
-	
+
 	@Persist
 	@Property(write = false)
 	private boolean displayGrid;
 
 	@InjectPage
 	private Index index;
-	
+
 	@Persist
 	@Property(write = true)
 	private boolean inSearch;
-	
+
 	@Persist
 	@Property
 	private List<UserVo> results;
 
 	@Property
 	private UserVo result;
-    
 
-	
-    @SetupRender
-    public void init() {
-    	
-    	if(!inSearch){
-    		try {
-    			recipientsSearchMember = "*";
-    			members = threadEntryFacade.getThreadMembers(currentThread);
-    			inSearch=true;
-    		} catch (BusinessException e) {
-    			logger.error(e.getMessage());
-    			logger.debug(e.toString());
-    		}
+	@SetupRender
+	public void init() {
+
+		if (!inSearch) {
+			try {
+				recipientsSearchMember = "*";
+				members = threadEntryFacade.getThreadMembers(currentThread);
+				inSearch = true;
+			} catch (BusinessException e) {
+				logger.error(e.getMessage());
+				logger.debug(e.toString());
+			}
 		}
-    }
-    
-	public Object getType() {
-		return (member.isAdmin() ? adminBlock : member.isCanUpload() ? userBlock : restrictedUserBlock);
 	}
-    
-    public void setSelectedCurrentThread(ThreadVo currentThread) {
-    	this.currentThread = currentThread;
-    }
-    
-    public Zone onActionFromEditMember(String identifier) {
-    	logger.info("Trying to edit member with identifier : " + identifier);
-    	selectedMemberId = identifier;
-    	return memberEditTemplateZone;
-    }
-    
-    public Zone onActionFromEditThread() {
-    	logger.info("Trying to edit current thread ");
-    	return threadEditTemplateZone;
-    }
-    
-    public void onActionFromDeleteMember(String identifier) {
-    	logger.info("Trying to delete a member.");
 
-    	for (ThreadMemberVo m : members) {
-    		logger.debug(m.getLsUuid() + " compared to parameter " + identifier);
+	public Object getType() {
+		return (member.isAdmin() ? adminBlock
+				: member.isCanUpload() ? userBlock : restrictedUserBlock);
+	}
+
+	public void setSelectedCurrentThread(ThreadVo currentThread) {
+		this.currentThread = currentThread;
+	}
+
+	public Zone onActionFromEditMember(String identifier) {
+		logger.info("Trying to edit member with identifier : " + identifier);
+		selectedMemberId = identifier;
+		return memberEditTemplateZone;
+	}
+
+	public Zone onActionFromEditThread() {
+		logger.info("Trying to edit current thread ");
+		return threadEditTemplateZone;
+	}
+
+	public void onActionFromDeleteMember(String identifier) {
+		logger.info("Trying to delete a member.");
+
+		for (ThreadMemberVo m : members) {
+			logger.debug(m.getLsUuid() + " compared to parameter " + identifier);
 			if (m.getLsUuid().equals(identifier)) {
 				selectedMemberId = identifier;
 				toDelete = m;
 				logger.info("Trying to delete " + toDelete.getLsUuid());
 			}
 		}
-    }
-    
-    public Object onActionFromBack(){
-    	members = null;
-    	recipientsSearch = null;
-    	inSearch = false;
-    	displayGrid = false;
-    	results = null;
-    	return index;
-    }
+	}
 
-	@OnEvent(value="deleteMemberPopupEvent")
+	public Object onActionFromBack() {
+		members = null;
+		recipientsSearch = null;
+		inSearch = false;
+		displayGrid = false;
+		results = null;
+		return index;
+	}
+
+	@OnEvent(value = "deleteMemberPopupEvent")
 	public void deleteMember() {
-		UserVo owner = userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid());
-		threadEntryFacade.deleteMember(currentThread, owner, toDelete);
+		threadEntryFacade.deleteMember(currentThread, userVo, toDelete);
 		try {
-			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(currentThread);
-			members = tmp;
+			members= threadEntryFacade.getThreadMembers(currentThread);
+			
 		} catch (BusinessException e) {
-    		logger.error(e.getMessage());
-    		logger.debug(e.toString());
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
 		}
 	}
-	
+
 	public List<String> onProvideCompletionsFromSearchUser(String input) {
 		List<UserVo> searchResults = performSearch(input);
-		List<UserVo> fromAuthorized = new ArrayList<UserVo>();
 
-		for(UserVo current : searchResults){
-			if(!(current.equals(userVo))){
-				fromAuthorized.add(current);
-			}
-		}
-		List<String> elements = new ArrayList<String>();
-		
-		for (UserVo user : fromAuthorized) {
-			String completeName = MailCompletionService.formatLabel(user);
-			if (!elements.contains(completeName)) {
-				elements.add(completeName);
-			}
-		}
-		return elements;
+		return threadEntryFacade.onProvideCompletionsFromSearchUser(searchResults, userVo);
 	}
 
 	private List<UserVo> performSearch(String input) {
@@ -260,13 +247,18 @@ public class AdminThread {
 		}
 		try {
 			if (input != null) {
-				userSet.addAll(userFacade.searchUser(input.trim(), null, null,userVo));
+				userSet.addAll(userFacade.searchUser(input.trim(), null, null,
+						userVo));
 			}
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,userVo));
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,
+					userVo));
 
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,userVo));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(),userVo));
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet),userVo);
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,
+					userVo));
+			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(
+					input.trim(), userVo));
+			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(
+					new ArrayList<UserVo>(userSet), userVo);
 		} catch (BusinessException e) {
 			logger.error("Error while searching user", e);
 		}
@@ -274,44 +266,33 @@ public class AdminThread {
 	}
 
 	public List<String> onProvideCompletionsFromSearchMembers(String input) throws BusinessException {
-		List<UserVo> inList = new ArrayList<UserVo>();
 		List<UserVo> searchResults = performSearch(input);
-
-		for(UserVo current :searchResults){
-			if(!(threadEntryFacade.getThreadMembers(currentThread)).isEmpty()){
-				for(ThreadMemberVo current2 : threadEntryFacade.getThreadMembers(currentThread)){
-					if(current2.getUser().getMail().equals(current.getMail())){
-						inList.add(current);
-					}
-				}
-			}
-		}
-		List<String> elements = new ArrayList<String>();
-		
-		for (UserVo user : inList) {
-			String completeName = MailCompletionService.formatLabel(user);
-			if (!elements.contains(completeName)) {
-				elements.add(completeName);
-			}
-		}
-		return elements;
+		return threadEntryFacade.onProvideCompletionsFromSearchMembers(searchResults, currentThread);
 	}
-	
-	public Object onSuccessFromFormSearch() throws BusinessException{
-		if(inSearch){
+
+	public Object onSuccessFromFormSearch() throws BusinessException {
+		if (inSearch) {
 			members.clear();
-			if(recipientsSearchMember.equals("*")){
+			if (recipientsSearchMember.equals("*")) {
 				members = threadEntryFacade.getThreadMembers(currentThread);
 			} else {
-				if(recipientsSearchMember.startsWith("\"") && recipientsSearchMember.endsWith(">")){
-					UserVo selected = MailCompletionService.getUserFromDisplay(recipientsSearchMember);
-					List<UserVo> selected2 = new ArrayList<UserVo>(userFacade.searchUser(selected.getMail(),selected.getFirstName(),selected.getLastName(), userVo));
-					
-					for(UserVo current :selected2){
-						if(!(threadEntryFacade.getThreadMembers(currentThread)).isEmpty()){
-							
-							for(ThreadMemberVo current2 : threadEntryFacade.getThreadMembers(currentThread)){
-								if(current2.getUser().getMail().equals(current.getMail())){
+				if (recipientsSearchMember.startsWith("\"")
+						&& recipientsSearchMember.endsWith(">")) {
+					UserVo selected = MailCompletionService
+							.getUserFromDisplay(recipientsSearchMember);
+					List<UserVo> selected2 = new ArrayList<UserVo>(
+							userFacade.searchUser(selected.getMail(),
+									selected.getFirstName(),
+									selected.getLastName(), userVo));
+
+					for (UserVo current : selected2) {
+						if (!(threadEntryFacade.getThreadMembers(currentThread))
+								.isEmpty()) {
+
+							for (ThreadMemberVo current2 : threadEntryFacade
+									.getThreadMembers(currentThread)) {
+								if (current2.getUser().getMail()
+										.equals(current.getMail())) {
 									members.add(current2);
 								}
 							}
@@ -319,12 +300,15 @@ public class AdminThread {
 					}
 				} else {
 					List<UserVo> searchResults = performSearch(recipientsSearchMember);
-		
-					for(UserVo current :searchResults){
-						if(!(threadEntryFacade.getThreadMembers(currentThread)).isEmpty()){
-						
-							for(ThreadMemberVo current2 : threadEntryFacade.getThreadMembers(currentThread)){
-								if(current2.getUser().getMail().equals(current.getMail())){
+
+					for (UserVo current : searchResults) {
+						if (!(threadEntryFacade.getThreadMembers(currentThread))
+								.isEmpty()) {
+
+							for (ThreadMemberVo current2 : threadEntryFacade
+									.getThreadMembers(currentThread)) {
+								if (current2.getUser().getMail()
+										.equals(current.getMail())) {
 									members.add(current2);
 								}
 							}
@@ -335,24 +319,28 @@ public class AdminThread {
 		}
 		return null;
 	}
-	
-    public void onSelectedFromStop() {
-        inSearch = false;
-     }
-	
+
+	public void onSelectedFromStop() {
+		inSearch = false;
+	}
+
 	public Object onSuccessFromForm() throws BusinessException {
 		results = null;
 		if (recipientsSearch != null) {
-			if(recipientsSearch.substring(recipientsSearch.length()-1).equals(">")) {
-				UserVo tmp = MailCompletionService.getUserFromDisplay(recipientsSearch);
-				results = new ArrayList<UserVo>(userFacade.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), userVo));
+			if (recipientsSearch.substring(recipientsSearch.length() - 1)
+					.equals(">")) {
+				UserVo tmp = MailCompletionService
+						.getUserFromDisplay(recipientsSearch);
+				results = new ArrayList<UserVo>(userFacade.searchUser(
+						tmp.getMail(), tmp.getFirstName(), tmp.getLastName(),
+						userVo));
 			} else {
-				List<UserVo>searchResults = new ArrayList<UserVo>();
+				List<UserVo> searchResults = new ArrayList<UserVo>();
 				searchResults = performSearch(recipientsSearch);
 				results = new ArrayList<UserVo>();
 
-				for(UserVo current :searchResults){
-					if(!(current.equals(userVo))){
+				for (UserVo current : searchResults) {
+					if (!(current.equals(userVo))) {
 						results.add(current);
 					}
 				}
@@ -362,67 +350,76 @@ public class AdminThread {
 		return null;
 	}
 
-    public Object onSelectedFromReset() {
-       displayGrid = false;
-       recipientsSearch = null;
-       return null;
-    }
-    
+	public Object onSelectedFromReset() {
+		displayGrid = false;
+		recipientsSearch = null;
+		return null;
+	}
+
 	public boolean getIsInList() throws BusinessException {
 		boolean inList = false;
-		if(!(threadEntryFacade.getThreadMembers(currentThread)).isEmpty()){
-			
-			for(ThreadMemberVo current : threadEntryFacade.getThreadMembers(currentThread)){
-				if(current.getUser().getMail().equals(result.getMail())){
-					inList = true ;
+		if (!(threadEntryFacade.getThreadMembers(currentThread)).isEmpty()) {
+
+			for (ThreadMemberVo current : threadEntryFacade
+					.getThreadMembers(currentThread)) {
+				if (current.getUser().getMail().equals(result.getMail())) {
+					inList = true;
 				}
 			}
 		}
 		return inList;
 	}
-    
-	public void onActionFromAddUser(String firstName, String lastName, String mail) throws BusinessException {
-		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName, lastName, userVo);
+
+	public void onActionFromAddUser(String firstName, String lastName,
+			String mail) throws BusinessException {
+		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName,
+				lastName, userVo);
 		UserVo userToAdd = null;
-		if(selectedUser!=null){
-			
-			for (UserVo current : selectedUser ){
-					userToAdd = userFacade.findUser(current.getDomainIdentifier(), current.getMail());
+		if (selectedUser != null) {
+
+			for (UserVo current : selectedUser) {
+				userToAdd = userFacade.findUser(current.getDomainIdentifier(),
+						current.getMail());
 			}
-			UserVo owner = userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid());
-			
-			threadEntryFacade.addMember(currentThread, owner,userToAdd,true);
+
+			threadEntryFacade.addMember(currentThread, userVo, userToAdd, true);
 		}
-		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(threadEntryFacade.getThreadMembers(currentThread));
-		
-		for(ThreadMemberVo current : copy){
-			if(current.getUser().getLogin().equals(userToAdd.getLogin())){
+		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(
+				threadEntryFacade.getThreadMembers(currentThread));
+
+		for (ThreadMemberVo current : copy) {
+			if (current.getUser().getLogin().equals(userToAdd.getLogin())) {
 				members.add(current);
 			}
 		}
 	}
 
-	public void onActionFromDeleteUser(String firstName, String lastName, String mail) throws BusinessException {
-		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName, lastName, userVo);
+	public void onActionFromDeleteUser(String firstName, String lastName,
+			String mail) throws BusinessException {
+		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName,
+				lastName, userVo);
 		UserVo userToRemove = null;
-		if(selectedUser!=null){
-			
-			for (UserVo current : selectedUser ){
-					userToRemove = userFacade.findUser(current.getDomainIdentifier(), current.getMail());
+		if (selectedUser != null) {
+
+			for (UserVo current : selectedUser) {
+				userToRemove = userFacade.findUser(
+						current.getDomainIdentifier(), current.getMail());
 			}
-			UserVo owner = userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid());
-			
-			for(ThreadMemberVo current2 : threadEntryFacade.getThreadMembers(currentThread)){
-				if(userToRemove.getLsUuid().equals(current2.getLsUuid())){
-					threadEntryFacade.deleteMember(currentThread, owner, current2);
+
+			for (ThreadMemberVo current2 : threadEntryFacade
+					.getThreadMembers(currentThread)) {
+				if (userToRemove.getLsUuid().equals(current2.getLsUuid())) {
+					threadEntryFacade.deleteMember(currentThread, userVo,
+							current2);
 				}
 			}
 		}
-		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(threadEntryFacade.getThreadMembers(currentThread));
+		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(
+				threadEntryFacade.getThreadMembers(currentThread));
 		members.clear();
-		
-		for(ThreadMemberVo current : copy){
-			if(!(current.getUser().getLogin().equals(userToRemove.getLogin()))){
+
+		for (ThreadMemberVo current : copy) {
+			if (!(current.getUser().getLogin().equals(userToRemove.getLogin()))) {
 				members.add(current);
 			}
 		}

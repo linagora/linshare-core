@@ -66,7 +66,7 @@ public class MailCompletionService {
 		if(user.getLastName()!=null&&user.getFirstName()!=null){
 			//uservo from USER table or ldap
 			buf.append('"').append(user.getLastName().trim()).append(' ').append(user.getFirstName().trim()).append('"');
-			buf.append(" <").append(user.getMail()).append(">");
+			buf.append(" <").append(user.getMail()).append(">,");
 		} else {
 			//uservo from favorite table
 			buf.append(user.getMail()).append(',');
