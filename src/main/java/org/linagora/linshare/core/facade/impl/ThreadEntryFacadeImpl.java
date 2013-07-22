@@ -63,6 +63,7 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.TagService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -348,8 +349,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void addMember(ThreadVo threadVo, UserVo actorVo, UserVo newMember, boolean readOnly) {
 		try {
-			if (userIsAdmin(actorVo, threadVo)) {
-				logger.debug("yoyo");
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.getUserType().toString().equals("ROOT"))) {
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(newMember.getLsUuid());
@@ -363,7 +363,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void deleteMember(ThreadVo threadVo, UserVo actorVo, ThreadMemberVo memberVo) {
 		try {
-			if (userIsAdmin(actorVo, threadVo)) {
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.getUserType().toString().equals("ROOT")) ) {
 					Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 					Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 					User user = (User) accountService.findByLsUuid(memberVo.getUser().getLsUuid());
@@ -378,7 +378,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo) {
 		try {
-			if (userIsAdmin(actorVo, threadVo)) {
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.getUserType().toString().equals("ROOT"))) {
 				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(memberVo.getLsUuid());
@@ -414,7 +414,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		if (actorVo == null || threadVo == null)
 			return;
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		if (!userIsAdmin(actorVo, threadVo)) {
+		if (!userIsAdmin(actorVo, threadVo) && !(actorVo.getUserType().toString().equals("ROOT"))) {
 			logger.error("not authorised");
 			return;
 		}
@@ -453,7 +453,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public ThreadVo getThread(UserVo userVo, String threadUuid) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		ThreadVo threadVo = new ThreadVo(thread);
-		if (!this.isMember(threadVo, userVo)) {
+		if (!this.isMember(threadVo, userVo) && !(userVo.getUserType().toString().equals("ROOT"))) {
 			logger.error("Not authorised to get the thread " + threadUuid);
 			throw new BusinessException("Not authorised to get the thread " + threadUuid);
 		}
@@ -471,12 +471,37 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		}
 		threadService.rename(actor, thread, threadName);
 	}
-
+	
 	@Override
-	public String getThreadFromSearch(String input){
-		int index = input.indexOf("<");
-		String owner = input.substring(index+1, input.length()-1);
-		String threadName = input.substring(1,index-2);
-		return threadName+"+"+owner;
+	public List<String> onProvideCompletionsFromSearchUser(List<UserVo> searchResults , UserVo userVo) {
+		List<String> elements = new ArrayList<String>();
+
+		for(UserVo current :searchResults){
+			if(!(current.equals(userVo))){
+				String completeName = MailCompletionService.formatLabel(current).substring(0,MailCompletionService.formatLabel(current).length()-1);
+				if (!elements.contains(completeName)) {
+					elements.add(completeName);
+				}
+			}
+		}
+		return elements;
+	}
+	
+	@Override
+	public List<String> onProvideCompletionsFromSearchMembers(List<UserVo> searchResults,ThreadVo currentThread) throws BusinessException {
+	List<String> elements = new ArrayList<String>();
+		for (UserVo current : searchResults) {
+			if (!(this.getThreadMembers(currentThread)).isEmpty()) {
+				for (ThreadMemberVo current2 : this.getThreadMembers(currentThread)) {
+					if (current2.getUser().getMail().equals(current.getMail())) {
+						String completeName = MailCompletionService.formatLabel(current);
+						if (!elements.contains(completeName)) {
+							elements.add(completeName);
+						}
+					}
+				}
+			}
+		}
+		return elements;
 	}
 }

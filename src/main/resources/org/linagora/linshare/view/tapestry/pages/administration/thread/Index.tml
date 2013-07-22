@@ -32,7 +32,7 @@
        					</td>
         			</tr>
         		</table>
-        		${message:page.admin.thread.notification}
+        		${message:page.thread.admin.notification}
         		</fieldset>
         	</form>
 			<div class="clear"></div>
@@ -71,7 +71,7 @@
 			    </form>
         	</fieldset>
         			<div class="clear"></div>
-            <t:grid source="threads" row="currentThread" include="name, creationDate, modificationDate" add="owner,countDocuments,action"  rowsPerPage="10">
+            <t:grid source="threads" row="currentThread" include="name, creationDate, modificationDate" add="countDocuments,action"  rowsPerPage="10">
                 <p:nameCell>
                     <t:actionlink t:id="showThreadContent" context="currentThread.lsUuid"> ${currentThread.name}</t:actionlink>
                 </p:nameCell>
@@ -81,14 +81,11 @@
                 <p:creationDateCell>
                     <span class="creationDate">${creationDate}</span>
                 </p:creationDateCell>
-                <p:ownerCell>
-                    <span class="owner">${owner.fullName}</span>
-                </p:ownerCell>
                 <p:countDocumentsCell>
                 	<span class="countDocuments">${countDocuments}</span>
                 </p:countDocumentsCell>
                 <p:actionCell>
-                			<t:actionLink t:id="deleteThread" context="[currentThread.lsUuid,owner.lsUuid]" t:zone="zoneConfirmDelete"
+                			<t:actionLink t:id="deleteThread" context="currentThread.lsUuid" t:zone="zoneConfirmDelete"
 							title="${message:pages.thread.admin.deleteButton}">
 							<span onclick="window_confirm.showCenter(true)">
 								<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />

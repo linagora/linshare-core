@@ -162,7 +162,7 @@ public class Index {
 		
 		for(ThreadVo current : lists){
 			if(current.getName().startsWith(input)){
-				elements.add("\""+current.getName()+"\" <"+userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid()).getFullName()+">");
+				elements.add(current.getName());
 			}
 		}
 		return elements;
@@ -222,10 +222,6 @@ public class Index {
         inSearch = false;
     }
     
-    public UserVo getOwner() throws BusinessException{
-    	return userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid());
-    }
-    
     public Object onSuccessFromFormSearchByUser() throws BusinessException {
     	List<UserVo> users = new ArrayList<UserVo>();
     	threads.clear();
@@ -277,19 +273,6 @@ public class Index {
 			threads.clear();
 			if(recipientsSearchThread.equals("*")){
 				threads = threadEntryFacade.getAllThread();
-			} else if(recipientsSearchThread.startsWith("\"") && recipientsSearchThread.endsWith(">")){
-				String chain =  threadEntryFacade.getThreadFromSearch(recipientsSearchThread);
-				int index = chain.indexOf("+");
-				String threadName = chain.substring(0,index);
-				String owner = chain.substring(index+1,chain.length());
-				List<ThreadVo> lists = threadEntryFacade.getAllThread();
-				
-				for(ThreadVo current : lists){
-					if((current.getName().equals(threadName)) && (userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid()).getFullName().equals(owner))){
-						threads.add(current);
-					}
-				}
-				
 			} else {
 				List<ThreadVo> lists = threadEntryFacade.getAllThread();
 				
@@ -303,15 +286,15 @@ public class Index {
 		return null;
 	}
 	
-    public void onActionFromDeleteThread(String lsuuid,String ownerlsUuid) throws BusinessException {
-    	this.threadToDelete= threadEntryFacade.getThread(userFacade.findUserByLsUuid(userVo,ownerlsUuid), lsuuid);
+    public void onActionFromDeleteThread(String lsuuid) throws BusinessException {
+    	this.threadToDelete= threadEntryFacade.getThread(userVo, lsuuid);
 		logger.debug("thread to delete :"+threadToDelete.getName());
     }
 	
 	@OnEvent(value="deleteThreadEvent")
 	public void deleteThread() {
 		try {
-			threadEntryFacade.deleteThread(userFacade.findUserByLsUuid(userVo,threadToDelete.getOwnerLsUuid()),threadToDelete);
+			threadEntryFacade.deleteThread(userVo,threadToDelete);
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
