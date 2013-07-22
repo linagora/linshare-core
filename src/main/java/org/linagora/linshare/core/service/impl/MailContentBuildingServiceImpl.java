@@ -1251,6 +1251,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
         	logger.debug("ContentTXT : " + mailContainer.getContentTXT());
         }
         
+        // Message IDs from Thunderbird Plugin
+        mailContainer.setInReplyTo(inputMailContainer.getInReplyTo());
+        mailContainer.setReferences(inputMailContainer.getReferences());
+        
         return mailContainer;
 	}
 }
