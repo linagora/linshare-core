@@ -31,67 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.core.facade.webservice.user;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.soap.MTOM;
+import java.io.InputStream;
+import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.webservice.MTOMUploadSoapService;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.webservice.dto.ShareDto;
 
-/**
- * All CXF Outbound Message will be using multipart format.
- * 
- * @author fmartin
- * 
- */
-@WebService(serviceName = "MTOMUploadSoapService",
-			endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService",
-			targetNamespace = WebserviceBase.NAME_SPACE_NS,
-			portName = "MTOMUploadSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
-			 parameterStyle = ParameterStyle.WRAPPED,
-			 use = SOAPBinding.Use.LITERAL)
-@MTOM
-public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
 
-	private final DocumentFacade webServiceDocumentFacade;
+public interface ShareFacade extends GenericFacade {
 
-	public MTOMUploadSoapServiceImpl(
-			DocumentFacade webServiceDocumentFacade) {
-		super();
-		this.webServiceDocumentFacade = webServiceDocumentFacade;
-	}
+	public void sharedocument (String targetMail, String uuid, int securedShare) throws BusinessException;
 
-	/**
-	 * here we use XOP method for large file upload
-	 * 
-	 * @param doca
-	 * @throws BusinessException
-	 */
+	void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String messageOpt, String inReplyToOpt, String referencesOpt) throws BusinessException;
+	
+	void multiplesharedocuments(List<String> mails, List<String> uuid, int securedShare, String messageOpt, String inReplyToOpt, String referencesOpt) throws BusinessException;
+	
+	void multiplesharedocuments(List<ShareDto> shares, boolean secured, String message) throws BusinessException;
 
-	@Oneway
-	@WebMethod(operationName = "addDocumentXop")
-	// **soap
-	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
-			throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.addDocumentXop(doca);
-	}
-
-	@WebMethod(operationName = "getInformation")
-	// **soap
-	@Override
-	public String getInformation() throws BusinessException {
-		return "This API is still in developpement";
-	}
+	public List<ShareDto> getReceivedShares() throws BusinessException;
+	
+	public ShareDto getReceivedShare(String shareEntryUuid) throws BusinessException;
+	
+	public InputStream getDocumentStream(String shareEntryUuid) throws BusinessException;
+	
 }

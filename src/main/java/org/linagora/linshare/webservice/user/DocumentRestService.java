@@ -31,67 +31,36 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.webservice.user;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.soap.MTOM;
+import java.io.InputStream;
+import java.util.List;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.webservice.MTOMUploadSoapService;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.webservice.dto.SimpleLongValue;
 
 /**
- * All CXF Outbound Message will be using multipart format.
- * 
- * @author fmartin
- * 
+ * REST jaxRS interface
  */
-@WebService(serviceName = "MTOMUploadSoapService",
-			endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService",
-			targetNamespace = WebserviceBase.NAME_SPACE_NS,
-			portName = "MTOMUploadSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
-			 parameterStyle = ParameterStyle.WRAPPED,
-			 use = SOAPBinding.Use.LITERAL)
-@MTOM
-public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
 
-	private final DocumentFacade webServiceDocumentFacade;
+@Path("/rest/documents")
+public interface DocumentRestService {
 
-	public MTOMUploadSoapServiceImpl(
-			DocumentFacade webServiceDocumentFacade) {
-		super();
-		this.webServiceDocumentFacade = webServiceDocumentFacade;
-	}
+	List<DocumentDto> getDocuments();
 
-	/**
-	 * here we use XOP method for large file upload
-	 * 
-	 * @param doca
-	 * @throws BusinessException
-	 */
+	SimpleLongValue getUserMaxFileSize();
 
-	@Oneway
-	@WebMethod(operationName = "addDocumentXop")
-	// **soap
-	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
-			throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.addDocumentXop(doca);
-	}
+	SimpleLongValue getAvailableSize();
 
-	@WebMethod(operationName = "getInformation")
-	// **soap
-	@Override
-	public String getInformation() throws BusinessException {
-		return "This API is still in developpement";
-	}
+	DocumentDto uploadfile(InputStream theFile, String description,
+			String givenFileName, MultipartBody body);
+
+	DocumentDto addDocumentXop(DocumentAttachement doca);
+
+	Response getDocumentStream(String uuid);
 }

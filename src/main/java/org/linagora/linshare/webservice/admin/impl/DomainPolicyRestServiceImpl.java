@@ -41,19 +41,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.admin.WebServiceDomainPolicyFacade;
+import org.linagora.linshare.core.facade.webservice.admin.DomainPolicyFacade;
 import org.linagora.linshare.webservice.admin.DomainPolicyRestService;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
-import org.linagora.linshare.webservice.impl.WebserviceBase;
+import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 		DomainPolicyRestService {
 
-	private final WebServiceDomainPolicyFacade webServiceDomainPolicyFacade;
+	private final DomainPolicyFacade domainPolicyFacade;
 
 	public DomainPolicyRestServiceImpl(
-			final WebServiceDomainPolicyFacade webServiceDomainPolicyFacade) {
-		this.webServiceDomainPolicyFacade = webServiceDomainPolicyFacade;
+			final DomainPolicyFacade domainPolicyFacade) {
+		this.domainPolicyFacade = domainPolicyFacade;
 	}
 
 	@Path("/")
@@ -62,8 +62,8 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@Override
 	public List<DomainPolicyDto> getDomainPolicies() {
 		try {
-			webServiceDomainPolicyFacade.checkAuthentication();
-			return webServiceDomainPolicyFacade.getDomainPolicies();
+			domainPolicyFacade.checkAuthentication();
+			return domainPolicyFacade.getDomainPolicies();
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}

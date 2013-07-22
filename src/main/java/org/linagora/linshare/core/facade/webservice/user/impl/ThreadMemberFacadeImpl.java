@@ -31,67 +31,45 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.soap.MTOM;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.webservice.MTOMUploadSoapService;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * All CXF Outbound Message will be using multipart format.
- * 
- * @author fmartin
- * 
- */
-@WebService(serviceName = "MTOMUploadSoapService",
-			endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService",
-			targetNamespace = WebserviceBase.NAME_SPACE_NS,
-			portName = "MTOMUploadSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
-			 parameterStyle = ParameterStyle.WRAPPED,
-			 use = SOAPBinding.Use.LITERAL)
-@MTOM
-public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
+public class ThreadMemberFacadeImpl extends GenericFacadeImpl implements
+		ThreadMemberFacade {
 
-	private final DocumentFacade webServiceDocumentFacade;
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory
+			.getLogger(ThreadMemberFacadeImpl.class);
 
-	public MTOMUploadSoapServiceImpl(
-			DocumentFacade webServiceDocumentFacade) {
-		super();
-		this.webServiceDocumentFacade = webServiceDocumentFacade;
+	private final ThreadService threadService;
+
+	public ThreadMemberFacadeImpl(ThreadService threadService,
+			AccountService accountService) {
+		super(accountService);
+		this.threadService = threadService;
 	}
 
-	/**
-	 * here we use XOP method for large file upload
-	 * 
-	 * @param doca
-	 * @throws BusinessException
-	 */
-
-	@Oneway
-	@WebMethod(operationName = "addDocumentXop")
-	// **soap
 	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
+	public List<ThreadMemberDto> getAllThreadMembers(String uuid)
 			throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.addDocumentXop(doca);
-	}
+		Thread thread = threadService.findByLsUuid(uuid);
+		List<ThreadMemberDto> res = new ArrayList<ThreadMemberDto>();
 
-	@WebMethod(operationName = "getInformation")
-	// **soap
-	@Override
-	public String getInformation() throws BusinessException {
-		return "This API is still in developpement";
+		for (ThreadMember member : thread.getMyMembers()) {
+			res.add(new ThreadMemberDto(member));
+		}
+		return res;
 	}
 }

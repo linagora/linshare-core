@@ -31,38 +31,12 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.webservice.user;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
-import org.linagora.linshare.webservice.admin.AuthenticationRestService;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+@Path("/rest/authentication")
+public interface AuthenticationRestService {
 
-public class AuthenticationRestServiceImpl extends WebserviceBase implements
-		AuthenticationRestService {
-
-	private final AdminGenericFacade webServiceAdminFacade;
-
-	public AuthenticationRestServiceImpl(
-			final AdminGenericFacade webServiceAdminFacade) {
-		this.webServiceAdminFacade = webServiceAdminFacade;
-	}
-
-	@Path("/authorized")
-	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public Boolean isAuthorized() {
-		try {
-			webServiceAdminFacade.checkAuthentication();
-			return true;
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
-	}
+	Boolean isAuthorized();
 }

@@ -31,67 +31,54 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.soap.MTOM;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.LDAPConnection;
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.webservice.MTOMUploadSoapService;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.UserProviderService;
+import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
-/**
- * All CXF Outbound Message will be using multipart format.
- * 
- * @author fmartin
- * 
- */
-@WebService(serviceName = "MTOMUploadSoapService",
-			endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService",
-			targetNamespace = WebserviceBase.NAME_SPACE_NS,
-			portName = "MTOMUploadSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
-			 parameterStyle = ParameterStyle.WRAPPED,
-			 use = SOAPBinding.Use.LITERAL)
-@MTOM
-public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
+public class LDAPConnectionFacadeImpl extends AdminGenericFacadeImpl implements LDAPConnectionFacade {
 
-	private final DocumentFacade webServiceDocumentFacade;
+	private final UserProviderService userProviderService;
 
-	public MTOMUploadSoapServiceImpl(
-			DocumentFacade webServiceDocumentFacade) {
-		super();
-		this.webServiceDocumentFacade = webServiceDocumentFacade;
+	public LDAPConnectionFacadeImpl(final AccountService accountService, final UserProviderService userProviderService) {
+		super(accountService);
+		this.userProviderService = userProviderService;
 	}
 
-	/**
-	 * here we use XOP method for large file upload
-	 * 
-	 * @param doca
-	 * @throws BusinessException
-	 */
-
-	@Oneway
-	@WebMethod(operationName = "addDocumentXop")
-	// **soap
 	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
-			throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.addDocumentXop(doca);
+	public List<LDAPConnectionDto> getLDAPConnections() throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		List<LDAPConnectionDto> ldapConnectionsDto = new ArrayList<LDAPConnectionDto>();
+		List<LDAPConnection> ldapConnections = userProviderService.findAllLDAPConnections();
+		for (LDAPConnection ldapConnection : ldapConnections) {
+			ldapConnectionsDto.add(new LDAPConnectionDto(ldapConnection));
+		}
+		return ldapConnectionsDto;
 	}
 
-	@WebMethod(operationName = "getInformation")
-	// **soap
 	@Override
-	public String getInformation() throws BusinessException {
-		return "This API is still in developpement";
+	public void updateLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		userProviderService.updateLDAPConnection(new LDAPConnection(ldapConnectionDto));
+	}
+
+	@Override
+	public void createLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		userProviderService.createLDAPConnection(new LDAPConnection(ldapConnectionDto));
+	}
+
+	@Override
+	public void deleteLDAPConnection(LDAPConnectionDto ldapConnectionDto) throws BusinessException {
+		checkAuthentication(Role.SUPERADMIN);
+		userProviderService.deleteConnection(ldapConnectionDto.getIdentifier());
 	}
 }

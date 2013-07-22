@@ -17,16 +17,15 @@
 
 	<!-- SOAP -->
 
-
 	<bean id="soapService" class="org.linagora.linshare.webservice.impl.SoapServiceImpl">
-		<constructor-arg ref="webServiceDocumentFacade" />
-		<constructor-arg ref="webServiceShareFacade" />
-		<constructor-arg ref="webServiceThreadFacade" />
-		<constructor-arg ref="webServiceUserFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsShareFacade" />
+		<constructor-arg ref="wsThreadFacade" />
+		<constructor-arg ref="wsUserFacade" />
 	</bean>
-
+	
 	<bean id="MTOMUploadSoapService" class="org.linagora.linshare.webservice.impl.MTOMUploadSoapServiceImpl">
-		<constructor-arg ref="webServiceDocumentFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
 	<bean id="soapExceptionInterceptor" class="org.linagora.linshare.webservice.interceptor.SoapExceptionInterceptor" />
@@ -67,58 +66,59 @@
 
 
 	<!-- REST -->
-	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.impl.AuthenticationRestServiceImpl">
-		<constructor-arg ref="webServiceUserFacade" />
+	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.user.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
 	</bean>
 
-	<bean id="documentRestService" class="org.linagora.linshare.webservice.impl.DocumentRestServiceImpl">
-		<constructor-arg ref="webServiceDocumentFacade" />
+	<bean id="documentRestService" class="org.linagora.linshare.webservice.user.impl.DocumentRestServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
-	<bean id="shareRestService" class="org.linagora.linshare.webservice.impl.ShareRestServiceImpl">
-		<constructor-arg ref="webServiceShareFacade" />
+	<bean id="shareRestService" class="org.linagora.linshare.webservice.user.impl.ShareRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
 	</bean>
 
-	<bean id="pluginCompatibilityRestService" class="org.linagora.linshare.webservice.impl.PluginCompatibilityRestServiceImpl">
-		<constructor-arg ref="webServiceShareFacade" />
-		<constructor-arg ref="webServiceDocumentFacade" />
+	<bean id="pluginCompatibilityRestService" class="org.linagora.linshare.webservice.user.impl.PluginCompatibilityRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
-	<bean id="threadRestService" class="org.linagora.linshare.webservice.impl.ThreadRestServiceImpl">
-		<constructor-arg ref="webServiceThreadFacade" />
+	<bean id="threadRestService" class="org.linagora.linshare.webservice.user.impl.ThreadRestServiceImpl">
+		<constructor-arg ref="wsThreadFacade" />
 	</bean>
 
-	<bean id="threadMemberRestService" class="org.linagora.linshare.webservice.impl.ThreadMemberRestServiceImpl">
-		<constructor-arg ref="webServiceThreadFacade" />
-		<constructor-arg ref="webServiceThreadMemberFacade" />
+	<bean id="threadMemberRestService" class="org.linagora.linshare.webservice.user.impl.ThreadMemberRestServiceImpl">
+		<constructor-arg ref="wsThreadFacade" />
+		<constructor-arg ref="wsThreadMemberFacade" />
 	</bean>
 
-	<bean id="userRestService" class="org.linagora.linshare.webservice.impl.UserRestServiceImpl">
-		<constructor-arg ref="webServiceUserFacade" />
+	<bean id="userRestService" class="org.linagora.linshare.webservice.user.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
 	</bean>
 
 	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.admin.impl.AuthenticationRestServiceImpl">
-		<constructor-arg ref="webServiceAdminGenericFacade" />
+		<constructor-arg ref="wsAdminGenericFacade" />
 	</bean>
 
 	<bean id="domainPatternRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPatternRestServiceImpl">
-		<constructor-arg ref="webServiceDomainPatternFacade" />
+		<constructor-arg ref="wsAdminDomainPatternFacade" />
 	</bean>
 
 	<bean id="ldapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
-		<constructor-arg ref="webServiceLDAPConnectionFacade" />
+		<constructor-arg ref="wsAdminLDAPConnectionFacade" />
 	</bean>
 
-	<bean id="domainRestServiceImpl" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
-		<constructor-arg ref="webServiceDomainFacade" />
+	<bean id="domainRestService" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainFacade" />
+		<constructor-arg ref="wsAdminFunctionalityFacade" />
 	</bean>
 
-	<bean id="domainPolicyRestServiceImpl" class="org.linagora.linshare.webservice.admin.impl.DomainPolicyRestServiceImpl">
-		<constructor-arg ref="webServiceDomainPolicyFacade" />
+	<bean id="domainPolicyRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPolicyRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainPolicyFacade" />
 	</bean>
 
-	<bean id="userRoleRestServiceImpl" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
-		<constructor-arg ref="webServiceUserRoleFacade" />
+	<bean id="userRoleRestService" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
+		<constructor-arg ref="wsAdminUserRoleFacade" />
 	</bean>
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
@@ -138,9 +138,9 @@
 			<ref bean="adminAuthenticationRestService" />
 			<ref bean="domainPatternRestService" />
 			<ref bean="ldapConnectionRestService" />
-			<ref bean="domainRestServiceImpl" />
-			<ref bean="domainPolicyRestServiceImpl" />
-			<ref bean="userRoleRestServiceImpl" />
+			<ref bean="domainRestService" />
+			<ref bean="domainPolicyRestService" />
+			<ref bean="userRoleRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />

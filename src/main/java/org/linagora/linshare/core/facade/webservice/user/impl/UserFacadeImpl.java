@@ -31,67 +31,66 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.core.facade.webservice.user.impl;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.soap.MTOM;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.webservice.MTOMUploadSoapService;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.core.facade.webservice.user.UserFacade;
+import org.linagora.linshare.core.service.AccountService;
+import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.webservice.dto.UserDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * All CXF Outbound Message will be using multipart format.
- * 
- * @author fmartin
- * 
- */
-@WebService(serviceName = "MTOMUploadSoapService",
-			endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService",
-			targetNamespace = WebserviceBase.NAME_SPACE_NS,
-			portName = "MTOMUploadSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
-			 parameterStyle = ParameterStyle.WRAPPED,
-			 use = SOAPBinding.Use.LITERAL)
-@MTOM
-public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
+public class UserFacadeImpl extends GenericFacadeImpl
+		implements UserFacade {
 
-	private final DocumentFacade webServiceDocumentFacade;
+	private static final Logger logger = LoggerFactory
+			.getLogger(UserFacadeImpl.class);
 
-	public MTOMUploadSoapServiceImpl(
-			DocumentFacade webServiceDocumentFacade) {
-		super();
-		this.webServiceDocumentFacade = webServiceDocumentFacade;
+	private final UserService userService;
+
+	private final FunctionalityService functionalityService;
+
+	public UserFacadeImpl(final UserService userService,
+			final AccountService accountService,
+			FunctionalityService functionalityService) {
+		super(accountService);
+		this.userService = userService;
+		this.functionalityService = functionalityService;
 	}
 
-	/**
-	 * here we use XOP method for large file upload
-	 * 
-	 * @param doca
-	 * @throws BusinessException
-	 */
-
-	@Oneway
-	@WebMethod(operationName = "addDocumentXop")
-	// **soap
 	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
-			throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.addDocumentXop(doca);
+	public User checkAuthentication() throws BusinessException {
+		User user = super.checkAuthentication();
+		Functionality functionality = functionalityService
+				.getUserTabFunctionality(user.getDomain());
+		if (!functionality.getActivationPolicy().getStatus()) {
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					"You are not authorized to use this service");
+		}
+		return user;
 	}
 
-	@WebMethod(operationName = "getInformation")
-	// **soap
 	@Override
-	public String getInformation() throws BusinessException {
-		return "This API is still in developpement";
+	public List<UserDto> getUsers() throws BusinessException {
+		User actor = getAuthentication();
+		List<UserDto> res = new ArrayList<UserDto>();
+		// we return all users without any filters
+		List<User> users = userService
+				.searchUser(null, null, null, null, actor);
+
+		for (User user : users) {
+			res.add(new UserDto(user));
+		}
+		logger.debug("user found : " + res.size());
+		return res;
 	}
 }

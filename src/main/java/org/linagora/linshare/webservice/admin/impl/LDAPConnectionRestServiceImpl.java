@@ -44,20 +44,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.admin.WebServiceLDAPConnectionFacade;
+import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
 import org.linagora.linshare.webservice.admin.LDAPConnectionRestService;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
-import org.linagora.linshare.webservice.impl.WebserviceBase;
+import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 		LDAPConnectionRestService {
 
-	private final WebServiceLDAPConnectionFacade webServiceLDAPConnectionFacade;
+	private final LDAPConnectionFacade ldapConnectionFacade;
 
 	public LDAPConnectionRestServiceImpl(
-			final WebServiceLDAPConnectionFacade webServiceLDAPConnectionFacade) {
-		this.webServiceLDAPConnectionFacade = webServiceLDAPConnectionFacade;
+			final LDAPConnectionFacade ldapConnectionFacade) {
+		this.ldapConnectionFacade = ldapConnectionFacade;
 	}
 
 	@Path("/")
@@ -67,8 +68,8 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 	public List<LDAPConnectionDto> getLDAPConnections()
 			throws BusinessException {
 		try {
-			webServiceLDAPConnectionFacade.checkAuthentication();
-			return webServiceLDAPConnectionFacade.getLDAPConnections();
+			ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
+			return ldapConnectionFacade.getLDAPConnections();
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
@@ -81,8 +82,8 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 	public void createLDAPConnection(LDAPConnectionDto LDAPConnection)
 			throws BusinessException {
 		try {
-			webServiceLDAPConnectionFacade.checkAuthentication();
-			webServiceLDAPConnectionFacade.createLDAPConnection(LDAPConnection);
+			ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
+			ldapConnectionFacade.createLDAPConnection(LDAPConnection);
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
@@ -95,8 +96,8 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 	public void updateLDAPConnection(LDAPConnectionDto LDAPConnection)
 			throws BusinessException {
 		try {
-			webServiceLDAPConnectionFacade.checkAuthentication();
-			webServiceLDAPConnectionFacade.updateLDAPConnection(LDAPConnection);
+			ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
+			ldapConnectionFacade.updateLDAPConnection(LDAPConnection);
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
@@ -109,8 +110,8 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 	public void deleteLDAPConnection(LDAPConnectionDto LDAPConnection)
 			throws BusinessException {
 		try {
-			webServiceLDAPConnectionFacade.checkAuthentication();
-			webServiceLDAPConnectionFacade.deleteLDAPConnection(LDAPConnection);
+			ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
+			ldapConnectionFacade.deleteLDAPConnection(LDAPConnection);
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}

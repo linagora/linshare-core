@@ -31,85 +31,35 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.webservice.user.impl;
 
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
-import org.linagora.linshare.webservice.admin.DomainPatternRestService;
-import org.linagora.linshare.webservice.dto.DomainPatternDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.core.facade.webservice.user.UserFacade;
+import org.linagora.linshare.webservice.user.AuthenticationRestService;
 
-public class DomainPatternRestServiceImpl extends WebserviceBase implements
-		DomainPatternRestService {
+public class AuthenticationRestServiceImpl extends WebserviceBase implements
+		AuthenticationRestService {
 
-	private final DomainPatternFacade webServiceDomainPatternFacade;
+	private final UserFacade webServiceUserFacade;
 
-	public DomainPatternRestServiceImpl(
-			final DomainPatternFacade webServiceDomainPatternFacade) {
-		this.webServiceDomainPatternFacade = webServiceDomainPatternFacade;
+	public AuthenticationRestServiceImpl(
+			final UserFacade webServiceUserFacade) {
+		this.webServiceUserFacade = webServiceUserFacade;
 	}
 
-	@Path("/")
+	@Path("/authorized")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
+	public Boolean isAuthorized() {
 		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			return webServiceDomainPatternFacade.getDomainPatterns();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
-	}
-
-	@Path("/")
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void createDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.createDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
-	}
-
-	@Path("/")
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void updateDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.updateDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
-	}
-
-	@Path("/")
-	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void deleteDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.deleteDomainPattern(domainPattern);
+			webServiceUserFacade.checkAuthentication();
+			return true;
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}

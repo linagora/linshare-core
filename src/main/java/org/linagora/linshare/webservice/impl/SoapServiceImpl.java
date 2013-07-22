@@ -42,10 +42,10 @@ import javax.jws.soap.SOAPBinding.ParameterStyle;
 
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
-import org.linagora.linshare.core.facade.WebServiceShareFacade;
-import org.linagora.linshare.core.facade.WebServiceThreadFacade;
-import org.linagora.linshare.core.facade.WebServiceUserFacade;
+import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
+import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
+import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.webservice.SoapService;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.ShareDto;
@@ -53,6 +53,7 @@ import org.linagora.linshare.webservice.dto.SimpleLongValue;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.dto.UserDto;
+import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 @WebService(serviceName = "SoapWebService",
 			endpointInterface = "org.linagora.linshare.webservice.SoapService",
@@ -63,19 +64,19 @@ import org.linagora.linshare.webservice.dto.UserDto;
 			 use = SOAPBinding.Use.LITERAL)
 public class SoapServiceImpl extends WebserviceBase implements SoapService {
 
-	private final WebServiceDocumentFacade webServiceDocumentFacade;
+	private final DocumentFacade webServiceDocumentFacade;
 
-	private final WebServiceShareFacade webServiceShareFacade;
+	private final ShareFacade webServiceShareFacade;
 
-	private final WebServiceThreadFacade webServiceThreadFacade;
+	private final ThreadFacade webServiceThreadFacade;
 
-	private final WebServiceUserFacade webServiceUserFacade;
+	private final UserFacade webServiceUserFacade;
 
 	public SoapServiceImpl(
-			final WebServiceDocumentFacade webServiceDocumentFacade,
-			final WebServiceShareFacade webServiceShareFacade,
-			WebServiceThreadFacade webServiceThreadFacade,
-			WebServiceUserFacade webServiceUserFacade) {
+			final DocumentFacade webServiceDocumentFacade,
+			final ShareFacade webServiceShareFacade,
+			ThreadFacade webServiceThreadFacade,
+			UserFacade webServiceUserFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 		this.webServiceShareFacade = webServiceShareFacade;
 		this.webServiceThreadFacade = webServiceThreadFacade;

@@ -31,79 +31,79 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.webservice.user.impl;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
-import org.linagora.linshare.core.utils.StringPredicates;
-import org.linagora.linshare.webservice.PluginCompatibilityRestService;
+import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.dto.SimpleStringValue;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.webservice.dto.SimpleLongValue;
+import org.linagora.linshare.webservice.user.DocumentRestService;
+import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PluginCompatibilityRestServiceImpl extends WebserviceBase
-		implements PluginCompatibilityRestService {
+public class DocumentRestServiceImpl extends WebserviceBase implements
+		DocumentRestService {
+
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory
+			.getLogger(DocumentRestServiceImpl.class);
 
 	private final DocumentFacade webServiceDocumentFacade;
-	private final ShareFacade webServiceShareFacade;
 
-	public PluginCompatibilityRestServiceImpl(
-			final DocumentFacade webServiceDocumentFacade,
-			final ShareFacade facade) {
+	public DocumentRestServiceImpl(
+			final DocumentFacade webServiceDocumentFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
-		this.webServiceShareFacade = facade;
 	}
 
+	@Path("/{uuid}/download")
 	@GET
-	@Path("/plugin/information")
+	@Override
+	public Response getDocumentStream(@PathParam("uuid") String uuid) {
+		try {
+			webServiceDocumentFacade.checkAuthentication();
+			DocumentDto documentDto = webServiceDocumentFacade
+					.getDocument(uuid);
+			InputStream documentStream = webServiceDocumentFacade
+					.getDocumentStream(uuid);
+			ResponseBuilder response = DocumentStreamReponseBuilder
+					.getDocumentResponseBuilder(documentStream,
+							documentDto.getName(), documentDto.getType());
+			return response.build();
+		} catch (Exception e) {
+			throw analyseFault(e);
+		}
+	}
+
+	/**
+	 * get the files of the user
+	 */
+	@Path("/")
+	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public SimpleStringValue getInformation() {
-		return new SimpleStringValue("api-version-1");
-	}
-
-	@POST
-	@Path("/share/multiplesharedocuments")
-	@Override
-	public void multiplesharedocuments(
-			@FormParam("targetMail") String targetMail,
-			@FormParam("file") List<String> uuid,
-			@FormParam("securedShare") @DefaultValue("0") int securedShare,
-			@FormParam("message") @DefaultValue("") String message,
-			@FormParam("inReplyTo") @DefaultValue("") String inReplyTo,
-			@FormParam("references") @DefaultValue("") String references) {
-		User actor;
-
+	public List<DocumentDto> getDocuments() {
 		try {
-			actor = webServiceShareFacade.checkAuthentication();
-			if ((actor instanceof Guest && !actor.getCanUpload()))
-				throw giveRestException(HttpStatus.SC_FORBIDDEN,
-						"You are not authorized to use this service");
-			CollectionUtils.filter(uuid, StringPredicates.isNotBlank());
-			if (uuid.isEmpty())
-				throw giveRestException(HttpStatus.SC_BAD_REQUEST,
-						"Missing parameter file");
-			webServiceShareFacade.multiplesharedocuments(targetMail,
-					uuid, securedShare, message, inReplyTo, references);
+			webServiceDocumentFacade.checkAuthentication();
+			return webServiceDocumentFacade.getDocuments();
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -113,7 +113,7 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase
 	 * upload a file in user's space. send file inside a form
 	 */
 	@POST
-	@Path("/document/upload")
+	@Path("/")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
@@ -144,9 +144,56 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase
 			} else {
 				filename = givenFileName;
 			}
-			// comment can not be null ?
 			return webServiceDocumentFacade.uploadfile(theFile, filename,
 					comment);
+		} catch (Exception e) {
+			throw analyseFault(e);
+		}
+	}
+
+	/**
+	 * here we use XOP method for large file upload
+	 * 
+	 * @param doca
+	 */
+
+	@POST
+	@Path("/xop")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public DocumentDto addDocumentXop(DocumentAttachement doca) {
+		try {
+			webServiceDocumentFacade.checkAuthentication(); // raise exception
+			return webServiceDocumentFacade.addDocumentXop(doca);
+		} catch (Exception e) {
+			throw analyseFault(e);
+		}
+	}
+
+	@GET
+	@Path("/userMaxFileSize")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public SimpleLongValue getUserMaxFileSize() {
+		try {
+			webServiceDocumentFacade.checkAuthentication();
+			return new SimpleLongValue(
+					webServiceDocumentFacade.getUserMaxFileSize());
+		} catch (Exception e) {
+			throw analyseFault(e);
+		}
+	}
+
+	@GET
+	@Path("/availableSize")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public SimpleLongValue getAvailableSize() {
+		try {
+			webServiceDocumentFacade.checkAuthentication();
+			return new SimpleLongValue(
+					webServiceDocumentFacade.getAvailableSize());
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}

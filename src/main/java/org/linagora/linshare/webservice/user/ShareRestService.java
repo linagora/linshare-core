@@ -31,67 +31,45 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.webservice.user;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.soap.MTOM;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
-import org.linagora.linshare.webservice.MTOMUploadSoapService;
-import org.linagora.linshare.webservice.dto.DocumentAttachement;
-import org.linagora.linshare.webservice.dto.DocumentDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+
+import org.linagora.linshare.webservice.dto.ShareDto;
+
 
 /**
- * All CXF Outbound Message will be using multipart format.
- * 
- * @author fmartin
- * 
+ * Interface for the Share service
+ * REST jaxRS interface
+ * Allows for creation of a sharing
  */
-@WebService(serviceName = "MTOMUploadSoapService",
-			endpointInterface = "org.linagora.linshare.webservice.MTOMUploadSoapService",
-			targetNamespace = WebserviceBase.NAME_SPACE_NS,
-			portName = "MTOMUploadSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
-			 parameterStyle = ParameterStyle.WRAPPED,
-			 use = SOAPBinding.Use.LITERAL)
-@MTOM
-public class MTOMUploadSoapServiceImpl implements MTOMUploadSoapService {
 
-	private final DocumentFacade webServiceDocumentFacade;
-
-	public MTOMUploadSoapServiceImpl(
-			DocumentFacade webServiceDocumentFacade) {
-		super();
-		this.webServiceDocumentFacade = webServiceDocumentFacade;
-	}
+@Path("/rest/shares")
+public interface ShareRestService {
 
 	/**
-	 * here we use XOP method for large file upload
+	 * Share a document with a user
+	 * Returns are :
+	 * -> HttpStatus.SC_UNAUTHORIZED if the user is not authentified
+	 * -> HttpStatus.SC_FORBIDDEN if the user is a guest without upload right
+	 * -> HttpStatus.SC_NOT_FOUND if either the document or the target user are not found
+	 * -> HttpStatus.SC_METHOD_FAILURE if the sharing cannot be created (maybe not a proper return type)
+	 * -> HttpStatus.SC_OK if the sharing is successful
+	 * @param targetMail : the email of the target
+	 * @param uuid : the uuid of the document to be shared
+	 * @throws IOException : in case of failure
 	 * 
-	 * @param doca
-	 * @throws BusinessException
 	 */
-
-	@Oneway
-	@WebMethod(operationName = "addDocumentXop")
-	// **soap
-	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca)
-			throws BusinessException {
-		webServiceDocumentFacade.checkAuthentication();
-		return webServiceDocumentFacade.addDocumentXop(doca);
-	}
-
-	@WebMethod(operationName = "getInformation")
-	// **soap
-	@Override
-	public String getInformation() throws BusinessException {
-		return "This API is still in developpement";
-	}
+	void multiplesharedocuments(ArrayList<ShareDto> shares, boolean secured, String message);
+	
+	void sharedocument(String targetMail, String uuid, int securedShare);
+	
+//	public List<ShareDto> getMyOwnShares();
+	List<ShareDto> getReceivedShares();
+	Response getDocumentStream(String uuid);
 }

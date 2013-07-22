@@ -31,87 +31,57 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.webservice.user.impl;
 
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
-import org.linagora.linshare.webservice.admin.DomainPatternRestService;
-import org.linagora.linshare.webservice.dto.DomainPatternDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
+import org.linagora.linshare.webservice.dto.ThreadDto;
+import org.linagora.linshare.webservice.user.ThreadRestService;
 
-public class DomainPatternRestServiceImpl extends WebserviceBase implements
-		DomainPatternRestService {
+public class ThreadRestServiceImpl extends WebserviceBase implements
+		ThreadRestService {
 
-	private final DomainPatternFacade webServiceDomainPatternFacade;
+	private final ThreadFacade webServiceThreadFacade;
 
-	public DomainPatternRestServiceImpl(
-			final DomainPatternFacade webServiceDomainPatternFacade) {
-		this.webServiceDomainPatternFacade = webServiceDomainPatternFacade;
+	public ThreadRestServiceImpl(
+			final ThreadFacade webServiceThreadFacade) {
+		this.webServiceThreadFacade = webServiceThreadFacade;
 	}
 
+	/**
+	 * get the files of the user
+	 */
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
+	public List<ThreadDto> getAllMyThread() {
 		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			return webServiceDomainPatternFacade.getDomainPatterns();
-		} catch (BusinessException e) {
+			webServiceThreadFacade.checkAuthentication();
+			return webServiceThreadFacade.getAllMyThread();
+		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}
 
-	@Path("/")
-	@POST
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Path("/{uuid}")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void createDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
+	public ThreadDto getThread(@PathParam("uuid") String uuid) {
 		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.createDomainPattern(domainPattern);
-		} catch (BusinessException e) {
+			webServiceThreadFacade.checkAuthentication();
+			return webServiceThreadFacade.getThread(uuid);
+		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}
 
-	@Path("/")
-	@PUT
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void updateDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.updateDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
-	}
-
-	@Path("/")
-	@DELETE
-	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Override
-	public void deleteDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.deleteDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
-	}
 }

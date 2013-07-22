@@ -31,37 +31,65 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.admin.impl;
+package org.linagora.linshare.webservice.user.impl;
 
+import java.util.List;
+
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
-import org.linagora.linshare.webservice.admin.AuthenticationRestService;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
+import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
+import org.linagora.linshare.webservice.dto.ThreadMemberDto;
+import org.linagora.linshare.webservice.user.ThreadMemberRestService;
 
-public class AuthenticationRestServiceImpl extends WebserviceBase implements
-		AuthenticationRestService {
+public class ThreadMemberRestServiceImpl extends WebserviceBase implements
+		ThreadMemberRestService {
 
-	private final AdminGenericFacade webServiceAdminFacade;
+	private ThreadFacade webServiceThreadFacade;
 
-	public AuthenticationRestServiceImpl(
-			final AdminGenericFacade webServiceAdminFacade) {
-		this.webServiceAdminFacade = webServiceAdminFacade;
+	private ThreadMemberFacade webServiceThreadMemberFacade;
+
+	public ThreadMemberRestServiceImpl(
+			final ThreadFacade webServiceThreadFacade,
+			final ThreadMemberFacade webServiceThreadMemberFacade) {
+		this.webServiceThreadFacade = webServiceThreadFacade;
+		this.webServiceThreadMemberFacade = webServiceThreadMemberFacade;
 	}
 
-	@Path("/authorized")
+	@GET
+	@Path("/add/{threadUuid}/{domainId}/{mail}")
+	@Override
+	public void addMember(@PathParam("threadUuid") String threadUuid,
+			@PathParam("domainId") String domainId,
+			@PathParam("mail") String mail,
+			@DefaultValue("false") @QueryParam("readonly") boolean readonly) {
+		try {
+			User actor = webServiceThreadFacade.checkAuthentication();
+			webServiceThreadFacade.addMember(actor, threadUuid, domainId, mail,
+					readonly);
+		} catch (Exception e) {
+			throw analyseFault(e);
+		}
+	}
+
+	@Path("/{threadUuid}/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public Boolean isAuthorized() {
+	public List<ThreadMemberDto> getAllThreadMembers(
+			@PathParam("threadUuid") String threadUuid) {
 		try {
-			webServiceAdminFacade.checkAuthentication();
-			return true;
-		} catch (BusinessException e) {
+			webServiceThreadFacade.checkAuthentication();
+			return webServiceThreadMemberFacade
+					.getAllThreadMembers(threadUuid);
+		} catch (Exception e) {
 			throw analyseFault(e);
 		}
 	}
