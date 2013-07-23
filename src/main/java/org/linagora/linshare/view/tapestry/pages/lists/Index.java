@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.Import;
@@ -179,109 +178,15 @@ public class Index {
 		list=null;
 	}
 
-	/**
-	 * AutoCompletion for search field.
-	 * @param value the value entered by the user
-	 * @return list the list of string matched by value.
-	 * @throws BusinessException 
-	 */
+
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		List<MailingListVo> searchResults = performSearch(input);
-		List<String> elements = new ArrayList<String>();
-		
-		for (MailingListVo current: searchResults) {
-			if(criteriaOnSearch.equals("public")){
-				if(current.isPublic() == true){
-				String completeName;
-					if(!(current.getOwner().equals(loginUser))){
-				completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
-					} else {
-				completeName = "\""+current.getIdentifier()+"\" (Me)";	
-					}
-				elements.add(completeName);
-				}
-			} else if(criteriaOnSearch.equals("private")){
-				if(current.isPublic() == false){
-					String completeName = current.getIdentifier();
-					elements.add(completeName);
-				}
-			} else {
-			String completeName = current.getIdentifier();
-				elements.add(completeName);
-			}
-		}
-		return elements;
+		return mailingListFacade.onProvideCompletionsForSearchList(input, criteriaOnSearch, loginUser);
 	}	
-	
-	/**
-	 * Perform a list search.
-	 * 
-	 * @param input
-	 *            list search pattern.
-	 * @return list of lists.
-	 * @throws BusinessException 
-	 */
-	private List<MailingListVo> performSearch(String input) throws BusinessException {
-		List<MailingListVo> list = new ArrayList<MailingListVo>();
-		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		list = mailingListFacade.findAllMailingListByUser(loginUser);
-		
-		for(MailingListVo current : list){
-			if(current.getIdentifier().indexOf(input) != -1){
-				finalList.add(current);
-			}
-		}
-		return finalList;
-	}
 
 	public Object onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-    	if(targetLists!=null){
-    		lists.clear();
-    		if(targetLists.startsWith("\"") && targetLists.endsWith(")")){
-    			
-    			lists = mailingListFacade.getMailingListFromQuickShare(targetLists, loginUser);	
-    		} else {
-    				if(targetLists.equals("*")){
-    					List<MailingListVo> searchResults = mailingListFacade.findAllMailingListByUser(loginUser);
-    					if(criteriaOnSearch.equals("all")){
-    						lists =mailingListFacade.copyList(searchResults);
-    					} else {
-    						
-    						for (MailingListVo current: searchResults) {
-    							if(criteriaOnSearch.equals("private") && current.isPublic() == false){
-    								lists.add(current);
-    							} else if(criteriaOnSearch.equals("public") && current.isPublic() == true){
-    								lists.add(current);
-    							} 
-    						}
-    					}
-    				} else {
-    					lists = performSearch(targetLists);
-    					if(criteriaOnSearch.equals("public")){
-    						List<MailingListVo> finalList = mailingListFacade.copyList(lists);
-    						lists.clear();
-    	
-    				for(MailingListVo current : finalList){
-    					if(current.isPublic() == true){
-    						lists.add(current);
-    					}
-    				}
-    					} else if(criteriaOnSearch.equals("private")){
-    						List<MailingListVo> finalList = mailingListFacade.copyList(lists);
-    						lists.clear();
-    			
-    						for(MailingListVo current : finalList){
-    							if(current.isPublic() == false){
-    								lists.add(current);
-    							}
-    						}
-    					}
-    				} 
-    			}
-    	} else {
-    		lists=new ArrayList<MailingListVo>();
-    	}
+    	lists.clear();
+    	lists= mailingListFacade.setListFromSearch(targetLists,criteriaOnSearch,loginUser);
     	fromCreate = false;
 		return null;
 	}

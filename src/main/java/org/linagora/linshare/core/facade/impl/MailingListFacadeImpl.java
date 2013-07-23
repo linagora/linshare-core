@@ -16,8 +16,9 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
 
-public class MailingListFacadeImpl implements MailingListFacade {
 
+public class MailingListFacadeImpl implements MailingListFacade {
+	
 	private final MailingListService mailingListService;
     private final UserService userService;
     private final AbstractDomainService abstractDomainService;
@@ -206,4 +207,116 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	   }
 	   return new MailingListVo();
    }
+   
+   @Override
+   public List<String> onProvideCompletionsForSearchList(String input,String criteriaOnSearch,UserVo loginUser) throws BusinessException{
+	   List<MailingListVo> searchResults = performSearch(input,loginUser);
+	   List<String> elements = new ArrayList<String>();
+		
+		for (MailingListVo current: searchResults) {
+			if(criteriaOnSearch.equals("public")){
+				if(current.isPublic() == true){
+				String completeName;
+					if(!(current.getOwner().equals(loginUser))){
+				completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
+					} else {
+				completeName = "\""+current.getIdentifier()+"\" (Me)";	
+					}
+				elements.add(completeName);
+				}
+			} else if(criteriaOnSearch.equals("private")){
+				if(current.isPublic() == false){
+					String completeName;
+					if(!(current.getOwner().equals(loginUser))){
+					completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
+					} else {
+						completeName = "\""+current.getIdentifier()+"\" (Me)";	
+					}
+					elements.add(completeName);
+				}
+			} else {
+			String completeName = current.getIdentifier();
+				if(!(current.getOwner().equals(loginUser))){
+					completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
+				} else {
+					completeName = "\""+current.getIdentifier()+"\" (Me)";	
+				}
+				elements.add(completeName);
+			}
+		}
+		return elements;
+   }
+   
+   @Override
+   public List<MailingListVo> setListFromSearch(String targetLists, String criteriaOnSearch, UserVo loginUser) throws BusinessException{
+	   List<MailingListVo> lists = new ArrayList<MailingListVo>();
+	   List<MailingListVo> searchResults  = new ArrayList<MailingListVo>();
+	   if(targetLists!=null){
+		if(targetLists.startsWith("\"") && targetLists.endsWith(")")){
+			lists = this.getMailingListFromQuickShare(targetLists, loginUser);
+		} else {
+			if(targetLists.equals("*")){
+				if(loginUser.isSuperAdmin()){
+					searchResults = this.findAllMailingList();
+				} else {
+					searchResults = this.findAllMailingListByUser(loginUser);
+				}
+				if(criteriaOnSearch.equals("all")){
+					lists =this.copyList(searchResults);
+				} else {
+					
+					for (MailingListVo current: searchResults) {
+						if(criteriaOnSearch.equals("private") && current.isPublic() == false){
+							lists.add(current);
+						} else if(criteriaOnSearch.equals("public") && current.isPublic() == true){
+							lists.add(current);
+						} 
+					}
+				}
+			} else {
+			lists = performSearch(targetLists,loginUser);
+				if(criteriaOnSearch.equals("public")){
+					List<MailingListVo> finalList = this.copyList(lists);
+					lists.clear();
+			
+					for(MailingListVo current : finalList){
+						if(current.isPublic() == true){
+							lists.add(current);
+						}	
+					}
+				} else if(criteriaOnSearch.equals("private")){
+				List<MailingListVo> finalList = this.copyList(lists);
+				lists.clear();
+			
+					for(MailingListVo current : finalList){
+						if(current.isPublic() == false){
+							lists.add(current);
+						}
+					}
+				}
+			}
+		}
+	} else {
+		return new ArrayList<MailingListVo>();
+	}
+   	return lists;
+   }
+   
+   private List<MailingListVo> performSearch(String input,UserVo loginUser) throws BusinessException {
+		List<MailingListVo> list = new ArrayList<MailingListVo>();
+		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
+		if(loginUser.isSuperAdmin()){
+			list = this.findAllMailingList();
+		} else {
+		list = this.findAllMailingListByUser(loginUser);
+		}
+		
+		for(MailingListVo current : list){
+			if(current.getIdentifier().indexOf(input) != -1){
+				finalList.add(current);
+			}
+		}
+		return finalList;
+	}
+   
 }

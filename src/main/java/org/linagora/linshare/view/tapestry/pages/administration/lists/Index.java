@@ -161,93 +161,14 @@ public class Index {
     	}
     }
     
-    
-	/**
-	 * AutoCompletion for search field.
-	 * @param value the value entered by the user
-	 * @return list the list of string matched by value.
-	 * @throws BusinessException 
-	 */
-	public List<String> onProvideCompletionsFromSearch(String input) {
-		List<MailingListVo> searchResults = performSearch(input);
-		List<String> elements = new ArrayList<String>();
-		
-		for (MailingListVo current: searchResults) {
-			
-				String completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
-				elements.add(completeName);
-			}
-		return elements;
-	}
-	
-	/**
-	 * Perform a list search.
-	 * 
-	 * @param input
-	 *            list search pattern.
-	 * @return list of lists.
-	 */
-	private List<MailingListVo> performSearch(String input) {
-		List<MailingListVo> list = new ArrayList<MailingListVo>();
-		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		list = mailingListFacade.findAllMailingList();
-		
-		for(MailingListVo current : list){
-			if(current.getIdentifier().indexOf(input) != -1){
-				finalList.add(current);
-			}
-		}
-		return finalList;
+	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
+		return mailingListFacade.onProvideCompletionsForSearchList(input, criteriaOnSearch, loginUser);
 	}
 	
     public Object onSuccessFromForm() throws BusinessException {	
     	inSearch = true;
-    	if(targetLists!=null){
-    		lists.clear();
-    		if(targetLists.startsWith("\"") && targetLists.endsWith(")")){
-    			
-    			lists = mailingListFacade.getMailingListFromQuickShare(targetLists, loginUser);	
-    		} else {
-				if(targetLists.equals("*")){
-					List<MailingListVo> searchResults = mailingListFacade.findAllMailingList();
-					if(criteriaOnSearch.equals("all")){
-						lists =mailingListFacade.copyList(searchResults);
-					} else {
-						
-						for (MailingListVo current: searchResults) {
-							if(criteriaOnSearch.equals("private") && current.isPublic() == false){
-								lists.add(current);
-							} else if(criteriaOnSearch.equals("public") && current.isPublic() == true){
-								lists.add(current);
-							} 
-						}
-					}
-				} else {
-    			lists = performSearch(targetLists);
-    				if(criteriaOnSearch.equals("public")){
-    					List<MailingListVo> finalList = mailingListFacade.copyList(lists);
-    					lists.clear();
-    			
-    					for(MailingListVo current : finalList){
-    						if(current.isPublic() == true){
-    							lists.add(current);
-    						}	
-    					}
-    				} else if(criteriaOnSearch.equals("private")){
-    				List<MailingListVo> finalList = mailingListFacade.copyList(lists);
-    				lists.clear();
-    			
-    					for(MailingListVo current : finalList){
-    						if(current.isPublic() == false){
-    							lists.add(current);
-    						}
-    					}
-    				}
-				}
-    		}
-    	} else {
-    		lists=new ArrayList<MailingListVo>();
-    	}
+    	lists.clear();
+    	lists= mailingListFacade.setListFromSearch(targetLists,criteriaOnSearch,loginUser);
     	return null;
     }
     
