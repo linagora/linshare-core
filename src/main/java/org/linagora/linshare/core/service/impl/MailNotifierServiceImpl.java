@@ -124,11 +124,6 @@ public class MailNotifierServiceImpl implements NotifierService {
 	}
 	  
 	@Override
-	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent, String textContent) throws SendFailedException {
-		sendNotification(smtpSender, replyTo, recipient, subject, htmlContent, textContent, null, null);
-	}
-	
-	@Override
 	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent, String textContent, String inReplyTo, String references) throws SendFailedException {
 
 		// get the mail session
@@ -290,7 +285,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 */
 	@Override
 	public void sendNotification(String smtpSender, String replyTo, String recipient, MailContainer mailContainer) throws SendFailedException{
-		sendNotification(smtpSender, replyTo, recipient, mailContainer.getSubject(), mailContainer.getContentHTML(), mailContainer.getContentTXT());
+		sendNotification(smtpSender, replyTo, recipient, mailContainer.getSubject(), mailContainer.getContentHTML(), mailContainer.getContentTXT(), mailContainer.getInReplyTo(), mailContainer.getReferences());
 
 	}
 	

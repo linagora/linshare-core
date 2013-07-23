@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.linagora.linshare.core.domain.entities.ShareEntry;
 import org.linagora.linshare.core.domain.entities.User;
 
-
 @XmlRootElement(name = "Share")
 public class ShareDto {
 
@@ -72,7 +71,7 @@ public class ShareDto {
 		this.downloaded = shareEntry.getDownloaded();
 		this.recipient = new UserDto(shareEntry.getRecipient());
 	}
-	
+
 	public ShareDto() {
 		super();
 	}

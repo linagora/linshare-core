@@ -45,7 +45,6 @@ import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.dto.UserDto;
 
-
 /**
  * Soap interface
  */
@@ -55,20 +54,25 @@ public interface SoapService {
 
 	// Documents
 	List<DocumentDto> getDocuments() throws BusinessException;
+
 	SimpleLongValue getUserMaxFileSize() throws BusinessException;
+
 	SimpleLongValue getAvailableSize() throws BusinessException;
-	
+
 	// Shares
-	void sharedocument(String targetMail, String uuid, int securedShare) throws BusinessException;
+	void sharedocument(String targetMail, String uuid, int securedShare)
+			throws BusinessException;
+
 	List<ShareDto> getReceivedShares() throws BusinessException;
-	
+
 	// PluginManagment
 	String getInformation() throws BusinessException;
-	
+
 	// Threads
 	List<ThreadDto> getAllMyThread() throws BusinessException;
+
 	void addMember(ThreadMemberDto member) throws BusinessException;
-	
+
 	// Users
 	List<UserDto> getUsers() throws BusinessException;
 }

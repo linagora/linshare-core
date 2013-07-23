@@ -39,18 +39,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.admin.WebServiceAdminGenericFacade;
+import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.webservice.admin.AuthenticationRestService;
-import org.linagora.linshare.webservice.impl.WebserviceBase;
+import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
-public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
+public class AuthenticationRestServiceImpl extends WebserviceBase implements
+		AuthenticationRestService {
 
-	private final WebServiceAdminGenericFacade webServiceAdminFacade;
+	private final AdminGenericFacade webServiceAdminFacade;
 
-	public AuthenticationRestServiceImpl(final WebServiceAdminGenericFacade webServiceAdminFacade) {
+	public AuthenticationRestServiceImpl(
+			final AdminGenericFacade webServiceAdminFacade) {
 		this.webServiceAdminFacade = webServiceAdminFacade;
 	}
-	
+
 	@Path("/authorized")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
