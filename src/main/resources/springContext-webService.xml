@@ -121,8 +121,9 @@
 		<constructor-arg ref="wsAdminUserRoleFacade" />
 	</bean>
 
-	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.impl.FineUploaderServiceImpl">
-		<constructor-arg ref="webServiceDocumentFacade" />
+	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.user.impl.FineUploaderServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+	</bean>
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />

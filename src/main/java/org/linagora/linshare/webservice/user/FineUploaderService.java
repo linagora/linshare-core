@@ -1,4 +1,4 @@
-package org.linagora.linshare.webservice;
+package org.linagora.linshare.webservice.user;
 
 import java.io.InputStream;
 
