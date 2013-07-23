@@ -40,9 +40,15 @@ import javax.jws.soap.SOAPBinding.ParameterStyle;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.PluginManagmentSoapService;
+import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
-@WebService(serviceName = "PluginManagmentSoapService", endpointInterface = "org.linagora.linshare.webservice.PluginManagmentSoapService", targetNamespace = WebserviceBase.NAME_SPACE_NS, portName = "PluginManagmentSoapServicePort")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,parameterStyle = ParameterStyle.WRAPPED ,use = SOAPBinding.Use.LITERAL)
+@WebService(serviceName = "PluginManagmentSoapService",
+			endpointInterface = "org.linagora.linshare.webservice.PluginManagmentSoapService",
+			targetNamespace = WebserviceBase.NAME_SPACE_NS,
+			portName = "PluginManagmentSoapServicePort")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT,
+			 parameterStyle = ParameterStyle.WRAPPED,
+			 use = SOAPBinding.Use.LITERAL)
 public class PluginManagmentSoapServiceImpl implements PluginManagmentSoapService {
 
 	@WebMethod(operationName = "getInformation")

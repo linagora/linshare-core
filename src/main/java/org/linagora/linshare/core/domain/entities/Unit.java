@@ -81,6 +81,7 @@ public abstract class Unit<U> implements Cloneable {
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object clone() {
 		Unit<U> u = null;
 		    try {
@@ -116,7 +117,6 @@ public abstract class Unit<U> implements Cloneable {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void updateUnitFrom(Unit<?> unit) {
 		this.unitValue = (U) unit.getUnitValue();
 	}
