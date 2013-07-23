@@ -38,4 +38,9 @@ public interface MailingListFacade {
     public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user);
     
     public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName);
+    
+    public List<String> onProvideCompletionsForSearchList(String input,String criteriaOnSearch,UserVo loginUser) throws BusinessException;
+    
+    public List<MailingListVo> setListFromSearch(String targetLists, String criteriaOnSearch, UserVo loginUser) throws BusinessException;
+
 }
