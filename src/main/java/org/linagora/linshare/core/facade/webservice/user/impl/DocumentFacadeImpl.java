@@ -142,8 +142,19 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	public InputStream getDocumentStream(String docEntryUuid)
 			throws BusinessException {
 		User actor = getAuthentication();
-
 		return documentEntryService.getDocumentStream(actor, docEntryUuid);
+	}
+
+	@Override
+	public void deleteFile(String uuid) throws BusinessException {
+		try {
+			User actor = getAuthentication();
+			DocumentEntry doc = documentEntryService.findById(actor, uuid);
+		
+			documentEntryService.deleteDocumentEntry(actor, doc);
+		} catch (BusinessException e) {
+			throw e;
+		}
 	}
 
 	// ############# utility methods
