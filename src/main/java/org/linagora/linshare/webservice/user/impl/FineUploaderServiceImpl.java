@@ -1,4 +1,4 @@
-package org.linagora.linshare.webservice.impl;
+package org.linagora.linshare.webservice.user.impl;
 
 import java.io.InputStream;
 
@@ -16,10 +16,10 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.WebServiceDocumentFacade;
-import org.linagora.linshare.webservice.FineUploaderService;
+import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.FineUploaderDto;
+import org.linagora.linshare.webservice.user.FineUploaderService;
 
 public class FineUploaderServiceImpl extends WebserviceBase implements
 		FineUploaderService {
@@ -27,12 +27,12 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 	private static final String FILE = "qqfile";
 	private static final String FILE_NAME = "filename";
 
-	private final WebServiceDocumentFacade webServiceDocumentFacade;
+	private final DocumentFacade documentFacade;
 
 	public FineUploaderServiceImpl(
-			WebServiceDocumentFacade webServiceDocumentFacade) {
+			DocumentFacade documentFacade) {
 		super();
-		this.webServiceDocumentFacade = webServiceDocumentFacade;
+		this.documentFacade = documentFacade;
 	}
 
 	@Path("/receiver")
@@ -47,7 +47,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 
 		// Authentication, permission and error checking
 		try {
-			actor = webServiceDocumentFacade.checkAuthentication();
+			actor = documentFacade.checkAuthentication();
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
@@ -65,7 +65,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 					.getParameter(FILE_NAME);
 		}
 		try {
-			DocumentDto doc = webServiceDocumentFacade.uploadfile(file, fileName, "");
+			DocumentDto doc = documentFacade.uploadfile(file, fileName, "");
 			return new FineUploaderDto(true, doc.getUuid());
 		} catch (BusinessException e) {
 			return new FineUploaderDto(false);
@@ -81,7 +81,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 
 		// Authentication, permission and error checking
 		try {
-			actor = webServiceDocumentFacade.checkAuthentication();
+			actor = documentFacade.checkAuthentication();
 		} catch (BusinessException e) {
 			throw analyseFault(e);
 		}
@@ -94,7 +94,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 					"Missing file (check parameter file)");
 		}
 		try {
-			webServiceDocumentFacade.deleteFile(uuid);
+			documentFacade.deleteFile(uuid);
 			return new FineUploaderDto(true);
 		} catch (BusinessException e) {
 			return new FineUploaderDto(false);
