@@ -161,6 +161,16 @@ public interface DocumentFacade {
 	 * @return
 	 */
 	public Long getUserMaxFileSize(UserVo user) throws BusinessException;
+
+	/**
+	 * Return the current available size in byte for an upload
+	 * depending on user's quota or max file size.
+	 * 
+	 * @param userVo
+	 * @return the available size
+	 * @throws BusinessException
+	 */
+	public Long getUserAvailableSize(UserVo userVo) throws BusinessException;
 	
 	/**
 	 * Return the occupation of accounts statistics
@@ -248,6 +258,5 @@ public interface DocumentFacade {
 	 * @return
 	 */
 	public MimeTypeStatus getMimeTypeStatus(String login, String uuid);
-	
-	
+
 }

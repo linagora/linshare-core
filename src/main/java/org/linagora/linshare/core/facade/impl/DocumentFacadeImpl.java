@@ -251,6 +251,14 @@ public class DocumentFacadeImpl implements DocumentFacade {
 		return documentEntryService.getUserMaxFileSize(account);
 	}
 	
+	@Override
+	public Long getUserAvailableSize(UserVo userVo) throws BusinessException {
+		Account account = accountService.findByLsUuid(userVo.getLsUuid());
+
+		return Math.min(documentEntryService.getAvailableSize(account),
+				documentEntryService.getUserMaxFileSize(account));
+	}
+	
 	// FIXME : ugly
 	@Override
 	public List<DisplayableAccountOccupationEntryVo> getAccountOccupationStat(AccountOccupationCriteriaBean criteria) throws BusinessException {

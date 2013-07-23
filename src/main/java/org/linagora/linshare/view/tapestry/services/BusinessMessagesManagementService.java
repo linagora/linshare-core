@@ -58,6 +58,11 @@ public interface BusinessMessagesManagementService {
      */
     List<String> getBusinessMessages(Messages messages);
 
+    /** Get a non-formatted list of error messages.
+     * @return the list of error messages.
+     */
+    List<String> getRawBusinessMessages(Messages messages);
+
     /** Reset the list of error messages. */
     void reset();
 
