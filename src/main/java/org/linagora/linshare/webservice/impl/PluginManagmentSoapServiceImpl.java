@@ -40,7 +40,7 @@ import javax.jws.soap.SOAPBinding.ParameterStyle;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.PluginManagmentSoapService;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
+import org.linagora.linshare.webservice.WebserviceBase;
 
 @WebService(serviceName = "PluginManagmentSoapService",
 			endpointInterface = "org.linagora.linshare.webservice.PluginManagmentSoapService",

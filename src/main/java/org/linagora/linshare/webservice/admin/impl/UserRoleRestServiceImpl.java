@@ -41,8 +41,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.facade.webservice.admin.UserRoleFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRoleRestService;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class UserRoleRestServiceImpl extends WebserviceBase implements UserRoleRestService {
 

@@ -50,6 +50,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.user.ShareRestService;
 import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;

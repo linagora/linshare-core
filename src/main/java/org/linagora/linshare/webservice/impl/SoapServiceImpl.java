@@ -47,13 +47,13 @@ import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.webservice.SoapService;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.ShareDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.dto.UserDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 @WebService(serviceName = "SoapWebService",
 			endpointInterface = "org.linagora.linshare.webservice.SoapService",

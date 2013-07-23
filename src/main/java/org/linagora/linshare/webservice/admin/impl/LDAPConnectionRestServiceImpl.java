@@ -47,9 +47,9 @@ import javax.ws.rs.core.MediaType;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.LDAPConnectionFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.LDAPConnectionRestService;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 		LDAPConnectionRestService {
