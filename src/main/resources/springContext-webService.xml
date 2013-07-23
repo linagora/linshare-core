@@ -54,7 +54,7 @@
 
 	<jaxws:endpoint id="MTOMUploadEndpoint" implementor="#MTOMUploadSoapService" address="/upload">
 		<jaxws:properties>
-            <entry key="mtom-enabled" value="true" />
+			<entry key="mtom-enabled" value="true" />
 			<entry key="attachment-directory" value="${webservice.attachment-directory}" />
 			<!-- data exceeding the memory threshold will be written to the directory specified in bytes -->
 			<entry key="attachment-memory-threshold" value="${webservice.attachment-memory-threshold}" />
