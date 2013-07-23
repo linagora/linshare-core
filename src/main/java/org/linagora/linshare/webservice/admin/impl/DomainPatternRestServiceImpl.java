@@ -46,9 +46,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.DomainPatternFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainPatternRestService;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class DomainPatternRestServiceImpl extends WebserviceBase implements
 		DomainPatternRestService {

@@ -56,9 +56,9 @@ import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.core.utils.StringPredicates;
 import org.linagora.linshare.webservice.PluginCompatibilityRestService;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class PluginCompatibilityRestServiceImpl extends WebserviceBase
 		implements PluginCompatibilityRestService {

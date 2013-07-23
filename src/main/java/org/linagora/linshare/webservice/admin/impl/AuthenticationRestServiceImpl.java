@@ -40,8 +40,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
+import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.AuthenticationRestService;
-import org.linagora.linshare.webservice.user.impl.WebserviceBase;
 
 public class AuthenticationRestServiceImpl extends WebserviceBase implements
 		AuthenticationRestService {
