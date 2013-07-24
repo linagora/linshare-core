@@ -3,10 +3,9 @@ package org.linagora.linshare.core.facade.webservice.admin;
 import java.util.List;
 
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.GenericFacade;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
-public interface FunctionalityFacade extends GenericFacade {
+public interface FunctionalityFacade extends AdminGenericFacade {
 
 	FunctionalityDto get(String domain, String identifier)
 			throws BusinessException;

@@ -41,6 +41,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -58,8 +59,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	private final DomainFacade domainFacade;
 	private final FunctionalityFacade functionalityFacade;
 
-	public DomainRestServiceImpl(
-			final DomainFacade webServiceDomainFacade,
+	public DomainRestServiceImpl(final DomainFacade webServiceDomainFacade,
 			final FunctionalityFacade webServiceFunctionalityFacade) {
 		this.domainFacade = webServiceDomainFacade;
 		this.functionalityFacade = webServiceFunctionalityFacade;
@@ -121,11 +121,12 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	 * Functionalities
 	 */
 
-	@Path("{domain}/functionality")
+	@Path("/{domain}/functionality")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<FunctionalityDto> getDomainFunctionalities(String domain)
+	public List<FunctionalityDto> getDomainFunctionalities(
+			@PathParam(value = "domain") String domain)
 			throws BusinessException {
 		try {
 			functionalityFacade.checkAuthentication();
@@ -135,12 +136,14 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		}
 	}
 
-	@Path("{domain}/functionality/{identifier}")
+	@Path("/{domain}/functionality/{identifier}")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public FunctionalityDto getDomainFunctionality(String domain,
-			String identifier) throws BusinessException {
+	public FunctionalityDto getDomainFunctionality(
+			@PathParam(value = "domain") String domain,
+			@PathParam(value = "identifier") String identifier)
+			throws BusinessException {
 		try {
 			functionalityFacade.checkAuthentication();
 			return functionalityFacade.get(domain, identifier);
@@ -149,11 +152,12 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 		}
 	}
 
-	@Path("{domain}/functionality")
+	@Path("/{domain}/functionality")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateDomainFunctionality(String domain, FunctionalityDto func)
+	public void updateDomainFunctionality(
+			@PathParam(value = "domain") String domain, FunctionalityDto func)
 			throws BusinessException {
 		try {
 			functionalityFacade.checkAuthentication();
