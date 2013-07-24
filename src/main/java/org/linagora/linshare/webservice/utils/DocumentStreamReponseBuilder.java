@@ -42,11 +42,12 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 public class DocumentStreamReponseBuilder {
 
-	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType ) {
+	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType, Long fileSize ) {
 		ResponseBuilder response = Response.ok((Object) inputStream);
 		response.header("Content-Disposition", getContentDispositionHeader(fileName));
         response.header("Content-Type", mimeType);
         response.header("Content-Transfer-Encoding","binary");
+        response.header("Content-Length",fileSize);
         
 		//BUG WITH IE WHEN PRAGMA IS NO-CACHE solution is:
         //The proper solution to IE cache issues is to declare the attachment as "Pragma: private"
