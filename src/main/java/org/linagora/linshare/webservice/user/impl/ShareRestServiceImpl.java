@@ -128,7 +128,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 					.getDocumentStream(shareUuid);
 			ResponseBuilder response = DocumentStreamReponseBuilder
 					.getDocumentResponseBuilder(documentStream,
-							shareDto.getName(), shareDto.getType());
+							shareDto.getName(), shareDto.getType(), shareDto.getDocumentDto().getSize());
 			return response.build();
 		} catch (Exception e) {
 			throw analyseFault(e);

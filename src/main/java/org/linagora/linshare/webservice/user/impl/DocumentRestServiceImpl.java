@@ -87,7 +87,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 					.getDocumentStream(uuid);
 			ResponseBuilder response = DocumentStreamReponseBuilder
 					.getDocumentResponseBuilder(documentStream,
-							documentDto.getName(), documentDto.getType());
+							documentDto.getName(), documentDto.getType(), documentDto.getSize());
 			return response.build();
 		} catch (Exception e) {
 			throw analyseFault(e);
