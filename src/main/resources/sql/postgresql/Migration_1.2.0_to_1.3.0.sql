@@ -27,4 +27,10 @@ ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id)
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKmailing_li272876 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
 
+-- Functionality : TAB_LIST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (54, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (26, true, 'TAB_LIST', 53, 54, 1);
+
+
 COMMIT;
