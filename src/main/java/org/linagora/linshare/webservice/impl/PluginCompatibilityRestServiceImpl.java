@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.impl;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,9 +60,14 @@ import org.linagora.linshare.webservice.PluginCompatibilityRestService;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
+import org.linagora.linshare.webservice.user.impl.DocumentRestServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginCompatibilityRestServiceImpl extends WebserviceBase
 		implements PluginCompatibilityRestService {
+
+	private static final Logger logger = LoggerFactory.getLogger(PluginCompatibilityRestServiceImpl.class);
 
 	private final DocumentFacade webServiceDocumentFacade;
 	private final ShareFacade webServiceShareFacade;
@@ -124,7 +130,7 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase
 			MultipartBody body) {
 		try {
 			User actor = webServiceDocumentFacade.checkAuthentication();
-			String filename;
+			String fileName;
 			String comment = (description == null) ? "" : description;
 
 			if ((actor instanceof Guest && !actor.getCanUpload())) {
@@ -139,13 +145,21 @@ public class PluginCompatibilityRestServiceImpl extends WebserviceBase
 				// parameter givenFileName is optional
 				// so need to search this information in the header of the
 				// attachement (with id file)
-				filename = body.getAttachment("file").getContentDisposition()
+				fileName = body.getAttachment("file").getContentDisposition()
 						.getParameter("filename");
 			} else {
-				filename = givenFileName;
+				fileName = givenFileName;
 			}
+			
+			try {
+				byte[] bytes = fileName.getBytes("ISO-8859-1");
+				fileName = new String(bytes, "UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				logger.error("Can not encode file name " + e1.getMessage());
+			}
+			
 			// comment can not be null ?
-			return webServiceDocumentFacade.uploadfile(theFile, filename,
+			return webServiceDocumentFacade.uploadfile(theFile, fileName,
 					comment);
 		} catch (Exception e) {
 			throw analyseFault(e);
