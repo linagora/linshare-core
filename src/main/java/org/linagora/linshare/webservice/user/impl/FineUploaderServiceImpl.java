@@ -1,6 +1,7 @@
 package org.linagora.linshare.webservice.user.impl;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -21,9 +22,13 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.FineUploaderDto;
 import org.linagora.linshare.webservice.user.FineUploaderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FineUploaderServiceImpl extends WebserviceBase implements
 		FineUploaderService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(FineUploaderServiceImpl.class);
 
 	private static final String FILE = "qqfile";
 	private static final String FILE_NAME = "filename";
@@ -64,6 +69,13 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 		if (fileName == null || fileName.isEmpty()) {
 			fileName = body.getAttachment(FILE).getContentDisposition()
 					.getParameter(FILE_NAME);
+		}
+		
+		try {
+			byte[] bytes = fileName.getBytes("ISO-8859-1");
+			fileName = new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			logger.error("Can not encode file name " + e1.getMessage());
 		}
 		try {
 			DocumentDto doc = documentFacade.uploadfile(file, fileName, "");

@@ -34,6 +34,7 @@
 package org.linagora.linshare.webservice.user.impl;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -125,7 +126,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 			MultipartBody body) {
 		try {
 			User actor = webServiceDocumentFacade.checkAuthentication();
-			String filename;
+			String fileName;
 			String comment = (description == null) ? "" : description;
 
 			if ((actor instanceof Guest && !actor.getCanUpload())) {
@@ -140,12 +141,20 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 				// parameter givenFileName is optional
 				// so need to search this information in the header of the
 				// attachement (with id file)
-				filename = body.getAttachment("file").getContentDisposition()
+				fileName = body.getAttachment("file").getContentDisposition()
 						.getParameter("filename");
 			} else {
-				filename = givenFileName;
+				fileName = givenFileName;
 			}
-			return webServiceDocumentFacade.uploadfile(theFile, filename,
+			
+			try {
+				byte[] bytes = fileName.getBytes("ISO-8859-1");
+				fileName = new String(bytes, "UTF-8");
+			} catch (UnsupportedEncodingException e1) {
+				logger.error("Can not encode file name " + e1.getMessage());
+			}
+			
+			return webServiceDocumentFacade.uploadfile(theFile, fileName,
 					comment);
 		} catch (Exception e) {
 			throw analyseFault(e);
