@@ -394,9 +394,6 @@ public class MyBorderLayout {
 	
 	boolean showListTab() {
 		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
-			if(superadmin) {
-				return true;
-			}
 			return functionalityFacade.isEnableListTab(userVo.getDomainIdentifier());
 		}
 		return false;
