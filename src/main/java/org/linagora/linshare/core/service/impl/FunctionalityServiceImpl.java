@@ -684,7 +684,16 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public Functionality getUserTabFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_USER);
 	}
+	
+	@Override
+	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.THREAD_CREATION_PERMISSION);
+	}
 
+	@Override
+	public Functionality getUpdateFilesFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.UPDATE_FILES);
+	}
 	
 	@Override
 	public Functionality getAuditTabFunctionality(AbstractDomain domain) {
