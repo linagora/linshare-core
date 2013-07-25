@@ -79,6 +79,9 @@ public class Index {
     @Property
     private boolean showThreadTab;
     
+    @Property
+    private boolean showCreateButton;
+    
 
     /* ***********************************************************
      *                      Injected services
@@ -99,6 +102,7 @@ public class Index {
     	logger.debug("setupRender()");
     	threads = threadEntryFacade.getAllMyThread(userVo);
     	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
+    	showCreateButton = functionalityFacade.isEnableCreateThread(userVo.getDomainIdentifier());
     }
 
     public Object onActionFromShowThreadContent(String lsUuid) {
@@ -163,4 +167,5 @@ public class Index {
         cause.printStackTrace();
         return this;
     }
+    
 }

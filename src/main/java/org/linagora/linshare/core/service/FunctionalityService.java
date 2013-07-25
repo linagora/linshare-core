@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
@@ -150,6 +151,8 @@ public interface FunctionalityService {
 	public Functionality getSecuredAnonymousUrlFunctionality(AbstractDomain domain);
 	public Functionality getRestrictedGuestFunctionality(AbstractDomain domain);
 	public Functionality getSignatureFunctionality(AbstractDomain domain);
+	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain);
+	public Functionality getUpdateFilesFunctionality(AbstractDomain domain);
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
 	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
