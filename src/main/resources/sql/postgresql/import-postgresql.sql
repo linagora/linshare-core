@@ -467,10 +467,10 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (27, true, 'UPDATE_FILE', 55, 56, 1);
 
---Functionality : THREAD_CREATION_PERMISSION
+--Functionality : CREATE_THREAD_PERMISSION
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, true);
-INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (28, true, 'THREAD_CREATION_PERMISSION', 57, 58, 1);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (28, true, 'CREATE_THREAD_PERMISSION', 57, 58, 1);
 
 
 -- Functionality : SECURED_ANONYMOUS_URL

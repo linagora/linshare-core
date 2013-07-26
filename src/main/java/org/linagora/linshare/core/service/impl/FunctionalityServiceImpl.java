@@ -692,12 +692,12 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	
 	@Override
 	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.THREAD_CREATION_PERMISSION);
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.CREATE_THREAD_PERMISSION);
 	}
 
 	@Override
 	public Functionality getUpdateFilesFunctionality(AbstractDomain domain) {
-		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.UPDATE_FILES);
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.UPDATE_FILE);
 	}
 	
 	@Override
