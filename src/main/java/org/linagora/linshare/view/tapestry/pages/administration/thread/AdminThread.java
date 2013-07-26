@@ -227,9 +227,7 @@ public class AdminThread {
 	}
 
 	public List<String> onProvideCompletionsFromSearchUser(String input) {
-		List<UserVo> searchResults = performSearch(input);
-
-		return threadEntryFacade.onProvideCompletionsFromSearchUser(searchResults, userVo);
+		return threadEntryFacade.completionOnUsers(userVo, input);
 	}
 
 	private List<UserVo> performSearch(String input) {
@@ -266,8 +264,7 @@ public class AdminThread {
 	}
 
 	public List<String> onProvideCompletionsFromSearchMembers(String input) throws BusinessException {
-		List<UserVo> searchResults = performSearch(input);
-		return threadEntryFacade.onProvideCompletionsFromSearchMembers(searchResults, currentThread);
+		return threadEntryFacade.completionOnMembers(userVo, currentThread, input);
 	}
 
 	public Object onSuccessFromFormSearch() throws BusinessException {

@@ -109,6 +109,10 @@ public interface ThreadEntryFacade {
 
 	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException;
 
+	public List<String> completionOnUsers(UserVo actorVo, String pattern);
+	
+	public List<String> completionOnMembers(UserVo actorVo, ThreadVo currentThread, String pattern);
+	
 	public List<String> onProvideCompletionsFromSearchUser(List<UserVo> searchResults, UserVo userVo);
 	
 	public List<String> onProvideCompletionsFromSearchMembers(List<UserVo> searchResults,ThreadVo currentThread) throws BusinessException;
