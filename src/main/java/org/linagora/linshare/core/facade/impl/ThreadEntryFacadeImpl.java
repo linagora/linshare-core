@@ -36,8 +36,11 @@ package org.linagora.linshare.core.facade.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
@@ -63,6 +66,7 @@ import org.linagora.linshare.core.service.DocumentEntryService;
 import org.linagora.linshare.core.service.TagService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
+import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +87,10 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	
 	private final DocumentEntryService documentEntryService;
 	
+	private final UserService userService;
+	
 	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, ThreadEntryTransformer threadEntryTransformer,
-			TagService tagService, DocumentEntryService documentEntryService) {
+			TagService tagService, DocumentEntryService documentEntryService,UserService userService) {
 		super();
 		this.accountService = accountService;
 		this.threadService = threadService;
@@ -92,6 +98,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		this.threadEntryTransformer = threadEntryTransformer;
 		this.tagService = tagService;
 		this.documentEntryService = documentEntryService;
+		this.userService = userService;
 	}
 
 
@@ -487,6 +494,87 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return elements;
 	}
 	
+	private List<User> performSearch(User actor, String pattern) {
+		String firstName_ = null;
+		String lastName_ = null;
+
+		if (pattern != null && pattern.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(pattern, " ");
+			if (stringTokenizer.hasMoreTokens()) {
+				firstName_ = stringTokenizer.nextToken();
+				if (stringTokenizer.hasMoreTokens()) {
+					lastName_ = stringTokenizer.nextToken();
+				}
+			}
+		}
+
+		Set<User> userSet = new HashSet<User>();
+		try {
+			if (pattern != null) {
+				userSet.addAll(userService.searchUser(pattern.trim(), null, null,null, actor));
+			}
+			userSet.addAll(userService.searchUser(null, firstName_, lastName_, null, actor));
+			userSet.addAll(userService.searchUser(null, lastName_, firstName_, null, actor));
+			
+		} catch (BusinessException e) {
+			logger.error("Error while searching user", e);
+		}
+		return new ArrayList<User>(userSet);
+	}
+	
+	@Override
+	public List<String> completionOnUsers(UserVo actorVo, String pattern) {
+		User actor =  userService.findByLsUuid(actorVo.getLogin());
+		List<String> ret = new ArrayList<String>();
+		
+		List<User> userSet = performSearch(actor, pattern);
+		
+		for (User user : userSet) {
+			if(!(user.equals(actor))){
+				String completeName = MailCompletionService.formatLabel(new UserVo(user)).substring(0,MailCompletionService.formatLabel(new UserVo(user)).length()-1);
+				if (!ret.contains(completeName)) {
+					ret.add(completeName);
+				}
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public List<String> completionOnMembers(UserVo actorVo, ThreadVo currentThread, String pattern) {
+		User actor =  userService.findByLsUuid(actorVo.getLogin());
+		List<String> ret = new ArrayList<String>();
+		
+		List<User> userSet = performSearch(actor, pattern);
+		
+		for (User current : userSet) {
+			try {
+				if (!(this.getThreadMembers(currentThread)).isEmpty()) {
+					for (ThreadMemberVo current2 : this.getThreadMembers(currentThread)) {
+						if (current2.getUser().getMail().equals(current.getMail())) {
+							String completeName = MailCompletionService.formatLabel(new UserVo(current));
+							if (!ret.contains(completeName)) {
+								ret.add(completeName);
+							}
+						}
+					}
+				}
+			} catch (BusinessException e) {
+				logger.error(e.getMessage());
+			}
+		}
+		
+		for (User user : userSet) {
+			if(!(user.equals(actor))){
+				String completeName = MailCompletionService.formatLabel(new UserVo(user)).substring(0,MailCompletionService.formatLabel(new UserVo(user)).length()-1);
+				if (!ret.contains(completeName)) {
+					ret.add(completeName);
+				}
+			}
+		}
+		return ret;
+	}
+
 	@Override
 	public List<String> onProvideCompletionsFromSearchMembers(List<UserVo> searchResults,ThreadVo currentThread) throws BusinessException {
 	List<String> elements = new ArrayList<String>();

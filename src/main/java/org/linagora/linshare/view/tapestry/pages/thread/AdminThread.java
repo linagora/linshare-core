@@ -262,9 +262,7 @@ public class AdminThread {
 	}
 	
 	public List<String> onProvideCompletionsFromSearchUser(String input) {
-		List<UserVo> searchResults = performSearch(input);
-
-		return threadEntryFacade.onProvideCompletionsFromSearchUser(searchResults, userVo);
+		return threadEntryFacade.completionOnUsers(userVo, input);
 	}
 
 	/**
