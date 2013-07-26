@@ -245,10 +245,12 @@ public class MyBorderLayout {
 			if(domainFacade.isCustomLogoActive(userVo)) {
 				customLogoUrl = domainFacade.getCustomLogoUrl(userVo);
 			}
+			 if(functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier())) {
+					logoLink = domainFacade.getCustomLogoLink(userVo);
+			 }
+			
 		} else if (domainFacade.isCustomLogoActiveInRootDomain()) {
 			customLogoUrl = domainFacade.getCustomLogoUrlInRootDomain();
-		} else if(functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier())) {
-			logoLink = domainFacade.getCustomLogoLink(userVo);
 		}
 
 		ie10Script = "<script> " +

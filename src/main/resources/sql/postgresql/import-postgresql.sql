@@ -508,7 +508,7 @@ INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'li
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (29, false, 'LINK_LOGO', 59, 60, 1);
-INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'Index');
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
 
 -- LinShare version
 INSERT INTO version (id,description) VALUES (1,'1.1.0');
