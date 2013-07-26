@@ -130,7 +130,8 @@ public class ActivationPolicy {
         }
 
 		activationPolicies = functionalityFacade.getAllActivationPolicy(identifier);
-
+		for(PolicyVo current : activationPolicies){
+		logger.debug("func: "+ current.getFunctionalityIdentifier());}
 		return null;
 	}
 

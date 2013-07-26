@@ -46,5 +46,10 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (28, true, 'THREAD_CREATION_PERMISSION', 57, 58, 1);
 
+-- Functionality : LINK_LOGO
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (29, false, 'LINK_LOGO', 59, 60, 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'Index');
 
 COMMIT;
