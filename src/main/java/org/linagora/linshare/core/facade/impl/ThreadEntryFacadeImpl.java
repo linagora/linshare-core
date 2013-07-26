@@ -349,7 +349,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void addMember(ThreadVo threadVo, UserVo actorVo, UserVo newMember, boolean readOnly) {
 		try {
-			if (userIsAdmin(actorVo, threadVo) || (actorVo.getUserType().toString().equals("ROOT"))) {
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(newMember.getLsUuid());
@@ -363,7 +363,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void deleteMember(ThreadVo threadVo, UserVo actorVo, ThreadMemberVo memberVo) {
 		try {
-			if (userIsAdmin(actorVo, threadVo) || (actorVo.getUserType().toString().equals("ROOT")) ) {
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
 					Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 					Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 					User user = (User) accountService.findByLsUuid(memberVo.getUser().getLsUuid());
@@ -378,7 +378,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo) {
 		try {
-			if (userIsAdmin(actorVo, threadVo) || (actorVo.getUserType().toString().equals("ROOT"))) {
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
 				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(memberVo.getLsUuid());
@@ -414,7 +414,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		if (actorVo == null || threadVo == null)
 			return;
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		if (!userIsAdmin(actorVo, threadVo) && !(actorVo.getUserType().toString().equals("ROOT"))) {
+		if (!userIsAdmin(actorVo, threadVo) && !(actorVo.isSuperAdmin())){
 			logger.error("not authorised");
 			return;
 		}
@@ -453,7 +453,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public ThreadVo getThread(UserVo userVo, String threadUuid) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		ThreadVo threadVo = new ThreadVo(thread);
-		if (!this.isMember(threadVo, userVo) && !(userVo.getUserType().toString().equals("ROOT"))) {
+		if (!this.isMember(threadVo, userVo) && !(userVo.isSuperAdmin())) {
 			logger.error("Not authorised to get the thread " + threadUuid);
 			throw new BusinessException("Not authorised to get the thread " + threadUuid);
 		}

@@ -155,6 +155,7 @@ public interface FunctionalityService {
 	public Functionality getUpdateFilesFunctionality(AbstractDomain domain);
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain);
 	public StringValueFunctionality getCustomLogoFunctionality(AbstractDomain domain);
+	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain);
 	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain);
 	
 	public IntegerValueFunctionality getCompletionFunctionality(AbstractDomain domain);
@@ -217,5 +218,18 @@ public interface FunctionalityService {
 	 * @return the status
 	 */
 	public String getCustomLogoUrlInRootDomain() throws BusinessException;
+	
+	/**
+	 * Return the status of the custom link logo  in root domain
+	 * @return the status
+	 */
+	public boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException;
+	
+	/**
+	 * Return the status of the custom link logo  in root domain
+	 * @return the status
+	 */
+	public String getCustomLinkLogoInRootDomain() throws BusinessException;
+
 
 }

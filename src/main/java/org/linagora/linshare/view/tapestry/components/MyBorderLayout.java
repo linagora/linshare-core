@@ -50,13 +50,15 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Response;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.vo.FunctionalityVo;
+import org.linagora.linshare.core.domain.vo.StringValueFunctionalityVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.view.tapestry.beans.MenuEntry;
-import org.linagora.linshare.view.tapestry.pages.thread.AdminThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,6 +222,9 @@ public class MyBorderLayout {
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
 	private static final String groupsLabelKey = "components.myborderlayout.group.title";
 	
+	@Property
+	private String logoLink;
+	
 	
 	
 	@SuppressWarnings("unused")
@@ -347,6 +352,16 @@ public class MyBorderLayout {
 			if (showHelpTab())
 				menu.addMenuEntry(helpMenu);
 		}
+		if(getCustomLogoLink()){
+			List<FunctionalityVo> functionalities = functionalityFacade.getAllParameters(userVo.getDomainIdentifier());
+			
+			for (FunctionalityVo current : functionalities){
+				if(current.getIdentifier().equals(FunctionalityNames.LINK_LOGO)){
+					StringValueFunctionalityVo customLogoLinkFunctionality = (StringValueFunctionalityVo) current;
+					logoLink = customLogoLinkFunctionality.getValue();
+				}
+			}
+		}
 	}
 	
 	boolean showThreadTab() {
@@ -394,4 +409,9 @@ public class MyBorderLayout {
 		}
 		return false;
 	}
+	
+	public boolean getCustomLogoLink(){
+		return functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier());
+	}
+	
 }

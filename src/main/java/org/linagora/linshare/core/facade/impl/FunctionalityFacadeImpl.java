@@ -272,6 +272,19 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	}
 	
 	@Override
+	public boolean isEnableCustomLogoLink(String domainIdentifier){
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality customLogoLinkFunctionality = functionalityService.getCustomLinkLogoFunctionality(domain);
+			return customLogoLinkFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find custom logo link functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean isEnableCreateThread(String domainIdentifier){
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);

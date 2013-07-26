@@ -1,6 +1,7 @@
 <t:BorderLayout t:title="${message:global.appName} - ${title}" t:identifier="${identifier}"
                 t:pageSize="allPage" t:rightSize="high"
-                xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+                xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+                xmlns:p="tapestry:parameter">
 
 	<!-- HTML Head -->
 
@@ -29,11 +30,29 @@
 		<t:if test="displayLogo">
 			<t:if test="linshareLicenceTerm">
 				<div id="logo-linshare">
-					<t:pagelink page="Index"><span><img src="${asset:context:images/logo_licence_linshare.png}" alt="${message:global.appName}" /></span></t:pagelink>
+				<t:if test="customLogoLink">
+				    <a href="${logoLink}">
+				    	<span>
+				    		<img src="${asset:context:images/logo_licence_linshare.png}" alt="${message:global.appName}" />
+				    	</span>
+				    </a>
+					 <p:else>
+						<t:pagelink page="Index"><span><img src="${asset:context:images/logo_licence_linshare.png}" alt="${message:global.appName}" /></span></t:pagelink>
+					</p:else>
+				</t:if>
 				</div>
 			<t:parameter name="else">
 				<div id="logo-linshare">
-					<t:pagelink page="Index"><span><img src="${asset:context:images/logo_linshare.png}" alt="${message:global.appName}" /></span></t:pagelink>
+				<t:if test="customLogoLink">
+				    <a href="${logoLink}">
+				    	<span>
+				    		<img src="${asset:context:images/logo_licence_linshare.png}" alt="${message:global.appName}" />
+				    	</span>
+				    </a>
+					 <p:else>
+						<t:pagelink page="Index"><span><img src="${asset:context:images/logo_linshare.png}" alt="${message:global.appName}" /></span></t:pagelink>
+					</p:else>
+				</t:if>
 				</div>
 			</t:parameter>
 			</t:if>

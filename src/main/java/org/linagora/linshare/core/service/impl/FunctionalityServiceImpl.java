@@ -671,6 +671,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
+	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain) {
+		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.LINK_LOGO);
+	}
+	
+	@Override
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.USER_CAN_UPLOAD);
 	}
@@ -773,5 +778,15 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	@Override
 	public String getCustomLogoUrlInRootDomain() throws BusinessException {
 		return this.getCustomLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
+	}
+	
+	@Override
+	public boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException {
+		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
+	}
+	
+	@Override
+	public String getCustomLinkLogoInRootDomain() throws BusinessException {
+		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
 	}
 }

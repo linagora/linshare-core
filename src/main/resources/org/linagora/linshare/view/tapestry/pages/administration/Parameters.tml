@@ -115,6 +115,12 @@
 							</tr>
 						</t:if>
 						
+						<t:if test="ShowCustomLogoLink">
+							<tr>
+								<td class="label"><t:label for="customLogoLink" class="edit-form-label">${message:pages.administration.parameters.custom_logo_link}</t:label></td>
+								<td class="input"><t:textfield t:id="customLogoLink" size="50" class="edit-form-field" /></td>
+							</tr>
+						</t:if>
 							
 						<t:if test="ShowTimeStamping">
 							<tr>
