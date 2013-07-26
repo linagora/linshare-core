@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.webservice.user.impl;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -62,17 +63,13 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentRestServiceImpl extends WebserviceBase implements
-		DocumentRestService {
+public class DocumentRestServiceImpl extends WebserviceBase implements DocumentRestService {
 
-	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory
-			.getLogger(DocumentRestServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(DocumentRestServiceImpl.class);
 
 	private final DocumentFacade webServiceDocumentFacade;
 
-	public DocumentRestServiceImpl(
-			final DocumentFacade webServiceDocumentFacade) {
+	public DocumentRestServiceImpl(final DocumentFacade webServiceDocumentFacade) {
 		this.webServiceDocumentFacade = webServiceDocumentFacade;
 	}
 
@@ -82,13 +79,26 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public Response getDocumentStream(@PathParam("uuid") String uuid) {
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			DocumentDto documentDto = webServiceDocumentFacade
-					.getDocument(uuid);
-			InputStream documentStream = webServiceDocumentFacade
-					.getDocumentStream(uuid);
-			ResponseBuilder response = DocumentStreamReponseBuilder
-					.getDocumentResponseBuilder(documentStream,
-							documentDto.getName(), documentDto.getType(), documentDto.getSize());
+			DocumentDto documentDto = webServiceDocumentFacade.getDocument(uuid);
+			InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
+			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(),
+					documentDto.getType(), documentDto.getSize());
+			return response.build();
+		} catch (Exception e) {
+			throw analyseFault(e);
+		}
+	}
+
+	@Path("/{uuid}/thumbnail")
+	@GET
+	@Override
+	public Response getThumbnailStream(@PathParam("uuid") String docUuid) {
+		try {
+			webServiceDocumentFacade.checkAuthentication();
+			DocumentDto documentDto = webServiceDocumentFacade.getDocument(docUuid);
+			InputStream documentStream = webServiceDocumentFacade.getThumbnailStream(docUuid);
+			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName() + "_thumb.png",
+					"image/png");
 			return response.build();
 		} catch (Exception e) {
 			throw analyseFault(e);
@@ -119,43 +129,37 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public DocumentDto uploadfile(
-			@Multipart(value = "file") InputStream theFile,
+	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
 			@Multipart(value = "description", required = false) String description,
-			@Multipart(value = "filename", required = false) String givenFileName,
-			MultipartBody body) {
+			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) {
 		try {
 			User actor = webServiceDocumentFacade.checkAuthentication();
 			String fileName;
 			String comment = (description == null) ? "" : description;
 
 			if ((actor instanceof Guest && !actor.getCanUpload())) {
-				throw giveRestException(HttpStatus.SC_FORBIDDEN,
-						"You are not authorized to use this service");
+				throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
 			}
 			if (theFile == null) {
-				throw giveRestException(HttpStatus.SC_BAD_REQUEST,
-						"Missing file (check parameter file)");
+				throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
 			}
 			if (givenFileName == null || givenFileName.isEmpty()) {
 				// parameter givenFileName is optional
 				// so need to search this information in the header of the
 				// attachement (with id file)
-				fileName = body.getAttachment("file").getContentDisposition()
-						.getParameter("filename");
+				fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
 			} else {
 				fileName = givenFileName;
 			}
-			
+
 			try {
 				byte[] bytes = fileName.getBytes("ISO-8859-1");
 				fileName = new String(bytes, "UTF-8");
 			} catch (UnsupportedEncodingException e1) {
 				logger.error("Can not encode file name " + e1.getMessage());
 			}
-			
-			return webServiceDocumentFacade.uploadfile(theFile, fileName,
-					comment);
+
+			return webServiceDocumentFacade.uploadfile(theFile, fileName, comment);
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -188,8 +192,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public SimpleLongValue getUserMaxFileSize() {
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			return new SimpleLongValue(
-					webServiceDocumentFacade.getUserMaxFileSize());
+			return new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}
@@ -202,8 +205,7 @@ public class DocumentRestServiceImpl extends WebserviceBase implements
 	public SimpleLongValue getAvailableSize() {
 		try {
 			webServiceDocumentFacade.checkAuthentication();
-			return new SimpleLongValue(
-					webServiceDocumentFacade.getAvailableSize());
+			return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
 		} catch (Exception e) {
 			throw analyseFault(e);
 		}

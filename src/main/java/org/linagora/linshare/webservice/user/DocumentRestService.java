@@ -63,4 +63,6 @@ public interface DocumentRestService {
 	DocumentDto addDocumentXop(DocumentAttachement doca);
 
 	Response getDocumentStream(String uuid);
+	
+	Response getThumbnailStream(String uuid);
 }

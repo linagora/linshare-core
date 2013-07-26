@@ -139,10 +139,15 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	}
 
 	@Override
-	public InputStream getDocumentStream(String docEntryUuid)
-			throws BusinessException {
+	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException {
 		User actor = getAuthentication();
 		return documentEntryService.getDocumentStream(actor, docEntryUuid);
+	}
+
+	@Override
+	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException {
+		User actor = getAuthentication();
+		return documentEntryService.getDocumentThumbnailStream(actor, docEntryUuid);
 	}
 
 	@Override
