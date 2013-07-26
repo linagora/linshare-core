@@ -32,7 +32,9 @@ public class CORSRestServiceImpl extends WebserviceBase implements CORSRestServi
 	@GET
 	@Path("/")
 	@Override
-	public SimpleStringValue isCorsAuthorized() {
-		return new SimpleStringValue("none");
+	public Response isCorsAuthorized() {
+		ResponseBuilder response = Response.ok();
+		response.header("Content-Type", "text/plain; charset=UTF-8");
+		return response.build();
 	}
 }

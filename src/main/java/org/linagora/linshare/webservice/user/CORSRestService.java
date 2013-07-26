@@ -10,6 +10,6 @@ public interface CORSRestService {
 	
 	Response getOptions();
 	
-	SimpleStringValue isCorsAuthorized();
+	Response isCorsAuthorized();
 	
 }
