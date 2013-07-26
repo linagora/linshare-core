@@ -225,8 +225,6 @@ public class MyBorderLayout {
 	@Property
 	private String logoLink;
 	
-	
-	
 	@SuppressWarnings("unused")
 	@Inject
 	private Response response;
@@ -249,6 +247,8 @@ public class MyBorderLayout {
 			}
 		} else if (domainFacade.isCustomLogoActiveInRootDomain()) {
 			customLogoUrl = domainFacade.getCustomLogoUrlInRootDomain();
+		} else if(functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier())) {
+			logoLink = domainFacade.getCustomLogoLink(userVo);
 		}
 
 		ie10Script = "<script> " +
@@ -352,16 +352,6 @@ public class MyBorderLayout {
 			if (showHelpTab())
 				menu.addMenuEntry(helpMenu);
 		}
-		if(getCustomLogoLink()){
-			List<FunctionalityVo> functionalities = functionalityFacade.getAllParameters(userVo.getDomainIdentifier());
-			
-			for (FunctionalityVo current : functionalities){
-				if(current.getIdentifier().equals(FunctionalityNames.LINK_LOGO)){
-					StringValueFunctionalityVo customLogoLinkFunctionality = (StringValueFunctionalityVo) current;
-					logoLink = customLogoLinkFunctionality.getValue();
-				}
-			}
-		}
 	}
 	
 	boolean showThreadTab() {
@@ -411,7 +401,10 @@ public class MyBorderLayout {
 	}
 	
 	public boolean getCustomLogoLink(){
-		return functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier());
+		if(userVoExists){
+			return functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier());
+		}
+		return false;
 	}
 	
 }
