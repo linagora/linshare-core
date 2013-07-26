@@ -328,7 +328,6 @@ public class ListDocument {
 		activeSignature = documentFacade.isSignatureActive(user);
 		activeEncipherment = documentFacade.isEnciphermentActive(user);
 		showUpd = functionalityFacade.isEnableUpdateFiles(user.getDomainIdentifier());
-		logger.debug("upd:"+showUpd);
 		// if(model==null)
 		initModel();
 		buildTooltipValues();

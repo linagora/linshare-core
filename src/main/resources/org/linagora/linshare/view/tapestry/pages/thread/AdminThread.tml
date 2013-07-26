@@ -51,7 +51,7 @@
         			</tr>
         		</table>
         	</form>
-			${message:page.thread.notification}
+			${message:pages.thread.notification}
             <t:grid source="members" row="member" rowsPerPage="10" include="fullName,mail" add="type,edit,delete" >
                 <p:typeCell>
                     <t:delegate to="type" />
