@@ -46,6 +46,7 @@
 			
 			<sec:filter-chain pattern="/webservice/?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
 			<sec:filter-chain pattern="/webservice/**"

@@ -124,6 +124,9 @@
 	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.user.impl.FineUploaderServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
+	
+	<bean id="CORSRestService" class="org.linagora.linshare.webservice.user.impl.CORSRestServiceImpl">
+	</bean>
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
@@ -146,6 +149,7 @@
 			<ref bean="domainRestService" />
 			<ref bean="domainPolicyRestService" />
 			<ref bean="userRoleRestService" />
+			<ref bean="CORSRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
@@ -165,7 +169,7 @@
 			<ref bean="timingInInterceptor" />
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
-			<!-- <ref bean="logOutbound" /> -->
+<!-- 			<ref bean="logOutbound" /> -->
 			<ref bean="timingOutInterceptor" />
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
