@@ -33,6 +33,6 @@ public class CORSRestServiceImpl extends WebserviceBase implements CORSRestServi
 	@Path("/")
 	@Override
 	public SimpleStringValue isCorsAuthorized() {
-		return new SimpleStringValue();
+		return new SimpleStringValue("none");
 	}
 }
