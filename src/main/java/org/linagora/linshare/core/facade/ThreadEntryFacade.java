@@ -108,13 +108,19 @@ public interface ThreadEntryFacade {
 	public ThreadVo getThread(UserVo login, String threadUuid) throws BusinessException;
 
 	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException;
-
+	
 	public List<String> completionOnUsers(UserVo actorVo, String pattern);
 	
 	public List<String> completionOnMembers(UserVo actorVo, ThreadVo currentThread, String pattern);
 	
-	public List<String> onProvideCompletionsFromSearchUser(List<UserVo> searchResults, UserVo userVo);
+	public UserVo addUserToThread(String mail, String firstName, String lastName, UserVo currentUser, ThreadVo threadVo) throws BusinessException;
 	
-	public List<String> onProvideCompletionsFromSearchMembers(List<UserVo> searchResults,ThreadVo currentThread) throws BusinessException;
+	public UserVo removeUserToThread(String mail, String firstName, String lastName, UserVo currentUser, ThreadVo threadVo) throws BusinessException;
+	
+	public List<UserVo> getListForSearchUser(String input, UserVo userVo) throws BusinessException;
+	
+	public boolean userIsInList(ThreadVo currentThread, UserVo userVo) throws BusinessException;
+	
+	public List<ThreadMemberVo> getListForSearchMembers(String input, UserVo userVo, ThreadVo currentThread) throws BusinessException ;
 	
 }

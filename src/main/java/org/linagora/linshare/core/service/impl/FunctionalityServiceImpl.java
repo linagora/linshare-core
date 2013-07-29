@@ -721,6 +721,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION);
 	}
+	
+	@Override
+	public StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain) {
+		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.NOTIFICATION_URL);
+	}
 
 	@Override
 	public boolean isSauAllowed(String domainIdentifier) {
@@ -788,5 +793,15 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	@Override
 	public String getCustomLinkLogoInRootDomain() throws BusinessException {
 		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
+	}
+	
+	@Override
+	public boolean isCustomNotificationUrlActiveInRootDomain() throws BusinessException {
+		return this.getCustomNotificationUrlFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
+	}
+	
+	@Override
+	public String getCustomNotificationUrlInRootDomain() throws BusinessException {
+		return this.getCustomNotificationUrlFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
 	}
 }

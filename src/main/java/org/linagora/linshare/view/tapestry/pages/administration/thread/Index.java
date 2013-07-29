@@ -35,10 +35,7 @@ package org.linagora.linshare.view.tapestry.pages.administration.thread;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
@@ -169,48 +166,10 @@ public class Index {
     }
     
 	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
-		List<UserVo> searchResults = performSearch(input);
-		List<String> elements = new ArrayList<String>();
-		
-		for (UserVo user : searchResults) {
-			String completeName = MailCompletionService.formatLabel(user);
-			elements.add(completeName);
-			}
-
-		return elements;
+		return threadEntryFacade.completionOnUsers(userVo, input);
 	}
     
-	private List<UserVo> performSearch(String input) {
 
-		Set<UserVo> userSet = new HashSet<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
-
-		try {
-			if (input != null) {
-				userSet.addAll(userFacade.searchUser(input.trim(), null, null,userVo));
-			}
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,userVo));
-
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,userVo));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(),userVo));
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet),userVo);
-		} catch (BusinessException e) {
-			logger.error("Error while searching user", e);
-		}
-		return new ArrayList<UserVo>();
-	}
     
     public void onSelectedFromStop() {
         inSearch = false;
