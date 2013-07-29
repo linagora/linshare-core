@@ -32,7 +32,7 @@
        					</td>
         			</tr>
         		</table>
-        		${message:page.thread.admin.notification}
+        		${message:pages.thread.admin.notification}
         		</fieldset>
         	</form>
 			<div class="clear"></div>
