@@ -34,10 +34,8 @@
 package org.linagora.linshare.view.tapestry.pages.administration.thread;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
+
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.Component;
@@ -61,7 +59,6 @@ import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.linagora.linshare.view.tapestry.components.ConfirmPopup;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,89 +227,13 @@ public class AdminThread {
 		return threadEntryFacade.completionOnUsers(userVo, input);
 	}
 
-	private List<UserVo> performSearch(String input) {
-		Set<UserVo> userSet = new HashSet<UserVo>();
-		String firstName_ = null;
-		String lastName_ = null;
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
-		try {
-			if (input != null) {
-				userSet.addAll(userFacade.searchUser(input.trim(), null, null,
-						userVo));
-			}
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,
-					userVo));
-
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,
-					userVo));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(
-					input.trim(), userVo));
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(
-					new ArrayList<UserVo>(userSet), userVo);
-		} catch (BusinessException e) {
-			logger.error("Error while searching user", e);
-		}
-		return new ArrayList<UserVo>();
-	}
-
 	public List<String> onProvideCompletionsFromSearchMembers(String input) throws BusinessException {
 		return threadEntryFacade.completionOnMembers(userVo, currentThread, input);
 	}
 
 	public Object onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
-			members.clear();
-			if (recipientsSearchMember.equals("*")) {
-				members = threadEntryFacade.getThreadMembers(currentThread);
-			} else {
-				if (recipientsSearchMember.startsWith("\"")
-						&& recipientsSearchMember.endsWith(">")) {
-					UserVo selected = MailCompletionService
-							.getUserFromDisplay(recipientsSearchMember);
-					List<UserVo> selected2 = new ArrayList<UserVo>(
-							userFacade.searchUser(selected.getMail(),
-									selected.getFirstName(),
-									selected.getLastName(), userVo));
-
-					for (UserVo current : selected2) {
-						if (!(threadEntryFacade.getThreadMembers(currentThread))
-								.isEmpty()) {
-
-							for (ThreadMemberVo current2 : threadEntryFacade
-									.getThreadMembers(currentThread)) {
-								if (current2.getUser().getMail()
-										.equals(current.getMail())) {
-									members.add(current2);
-								}
-							}
-						}
-					}
-				} else {
-					List<UserVo> searchResults = performSearch(recipientsSearchMember);
-
-					for (UserVo current : searchResults) {
-						if (!(threadEntryFacade.getThreadMembers(currentThread))
-								.isEmpty()) {
-
-							for (ThreadMemberVo current2 : threadEntryFacade
-									.getThreadMembers(currentThread)) {
-								if (current2.getUser().getMail()
-										.equals(current.getMail())) {
-									members.add(current2);
-								}
-							}
-						}
-					}
-				}
-			}
+			members = threadEntryFacade.getListForSearchMembers(recipientsSearchMember, userVo, currentThread);
 		}
 		return null;
 	}
@@ -322,27 +243,7 @@ public class AdminThread {
 	}
 
 	public Object onSuccessFromForm() throws BusinessException {
-		results = null;
-		if (recipientsSearch != null) {
-			if (recipientsSearch.substring(recipientsSearch.length() - 1)
-					.equals(">")) {
-				UserVo tmp = MailCompletionService
-						.getUserFromDisplay(recipientsSearch);
-				results = new ArrayList<UserVo>(userFacade.searchUser(
-						tmp.getMail(), tmp.getFirstName(), tmp.getLastName(),
-						userVo));
-			} else {
-				List<UserVo> searchResults = new ArrayList<UserVo>();
-				searchResults = performSearch(recipientsSearch);
-				results = new ArrayList<UserVo>();
-
-				for (UserVo current : searchResults) {
-					if (!(current.equals(userVo))) {
-						results.add(current);
-					}
-				}
-			}
-		}
+		results = threadEntryFacade.getListForSearchUser(recipientsSearch, userVo);
 		displayGrid = true;
 		return null;
 	}
@@ -354,36 +255,14 @@ public class AdminThread {
 	}
 
 	public boolean getIsInList() throws BusinessException {
-		boolean inList = false;
-		if (!(threadEntryFacade.getThreadMembers(currentThread)).isEmpty()) {
-
-			for (ThreadMemberVo current : threadEntryFacade
-					.getThreadMembers(currentThread)) {
-				if (current.getUser().getMail().equals(result.getMail())) {
-					inList = true;
-				}
-			}
-		}
-		return inList;
+		return threadEntryFacade.userIsInList(currentThread, result);
 	}
 
-	public void onActionFromAddUser(String firstName, String lastName,
-			String mail) throws BusinessException {
-		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName,
-				lastName, userVo);
-		UserVo userToAdd = null;
-		if (selectedUser != null) {
+	public void onActionFromAddUser(String firstName, String lastName,String mail) throws BusinessException {
 
-			for (UserVo current : selectedUser) {
-				userToAdd = userFacade.findUser(current.getDomainIdentifier(),
-						current.getMail());
-			}
-
-			threadEntryFacade.addMember(currentThread, userVo, userToAdd, true);
-		}
-		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(
-				threadEntryFacade.getThreadMembers(currentThread));
-
+		UserVo userToAdd = threadEntryFacade.addUserToThread(mail, firstName, lastName, userVo, currentThread);
+		
+		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(threadEntryFacade.getThreadMembers(currentThread));
 		for (ThreadMemberVo current : copy) {
 			if (current.getUser().getLogin().equals(userToAdd.getLogin())) {
 				members.add(current);
@@ -393,24 +272,9 @@ public class AdminThread {
 
 	public void onActionFromDeleteUser(String firstName, String lastName,
 			String mail) throws BusinessException {
-		List<UserVo> selectedUser = userFacade.searchUser(mail, firstName,
-				lastName, userVo);
-		UserVo userToRemove = null;
-		if (selectedUser != null) {
-
-			for (UserVo current : selectedUser) {
-				userToRemove = userFacade.findUser(
-						current.getDomainIdentifier(), current.getMail());
-			}
-
-			for (ThreadMemberVo current2 : threadEntryFacade
-					.getThreadMembers(currentThread)) {
-				if (userToRemove.getLsUuid().equals(current2.getLsUuid())) {
-					threadEntryFacade.deleteMember(currentThread, userVo,
-							current2);
-				}
-			}
-		}
+		
+		UserVo userToRemove = threadEntryFacade.removeUserToThread(mail, firstName, lastName, userVo, currentThread);
+			
 		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(
 				threadEntryFacade.getThreadMembers(currentThread));
 		members.clear();

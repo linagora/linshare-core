@@ -62,5 +62,6 @@ public interface FunctionalityNames {
 	public static final String RESTRICTED_GUEST = "RESTRICTED_GUEST";
 	public static final String DOMAIN_MAIL = "DOMAIN_MAIL";
 	public static final String LINK_LOGO = "LINK_LOGO";
+	public static final String NOTIFICATION_URL = "NOTIFICATION_URL";
 	
 }

@@ -37,11 +37,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.aspectj.apache.bcel.generic.RETURN;
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Tag;
@@ -478,22 +478,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		}
 		threadService.rename(actor, thread, threadName);
 	}
-	
-	@Override
-	public List<String> onProvideCompletionsFromSearchUser(List<UserVo> searchResults , UserVo userVo) {
-		List<String> elements = new ArrayList<String>();
 
-		for(UserVo current :searchResults){
-			if(!(current.equals(userVo))){
-				String completeName = MailCompletionService.formatLabel(current).substring(0,MailCompletionService.formatLabel(current).length()-1);
-				if (!elements.contains(completeName)) {
-					elements.add(completeName);
-				}
-			}
-		}
-		return elements;
-	}
-	
 	private List<User> performSearch(User actor, String pattern) {
 		String firstName_ = null;
 		String lastName_ = null;
@@ -552,7 +537,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 				if (!(this.getThreadMembers(currentThread)).isEmpty()) {
 					for (ThreadMemberVo current2 : this.getThreadMembers(currentThread)) {
 						if (current2.getUser().getMail().equals(current.getMail())) {
-							String completeName = MailCompletionService.formatLabel(new UserVo(current));
+							String completeName = MailCompletionService.formatLabel(new UserVo(current)).substring(0,MailCompletionService.formatLabel(new UserVo(current)).length()-1);
 							if (!ret.contains(completeName)) {
 								ret.add(completeName);
 							}
@@ -575,21 +560,121 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return ret;
 	}
 
+	@Override	
+	public UserVo addUserToThread(String mail, String firstName, String lastName, UserVo currentUser, ThreadVo threadVo) throws BusinessException{
+		User owner =  (User)accountService.findByLsUuid(currentUser.getLogin());
+    	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
+    	Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		Account actor = accountService.findByLsUuid(currentUser.getLsUuid());
+    	User userToAdd = null;
+    	
+		if(users!=null){
+			
+			for (User current : users ){
+					userToAdd = userService.findOrCreateUser(current.getMail(), current.getDomainId());
+			}
+			threadService.addMember(actor,thread,userToAdd,true);
+		}
+		return new UserVo(userToAdd);
+	}
+	
+	@Override	
+	public UserVo removeUserToThread(String mail, String firstName, String lastName, UserVo currentUser, ThreadVo threadVo) throws BusinessException{
+		User owner =  (User)accountService.findByLsUuid(currentUser.getLogin());
+    	List<User> users = userService.searchUser(mail, firstName, lastName, null, owner);
+    	Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		Account actor = accountService.findByLsUuid(currentUser.getLsUuid());
+    	User userToRemove = null;
+    	
+		if (users != null) {
+
+			for (User current : users) {
+				userToRemove = userService.findOrCreateUser(current.getMail(), current.getDomainId());
+			}
+		}
+		
+		for (ThreadMemberVo current2 : this.getThreadMembers(threadVo)) {
+			if (userToRemove.getLsUuid().equals(current2.getLsUuid())) {
+				ThreadMember member = threadService.getThreadMemberFromUser(thread, userToRemove);
+				threadService.deleteMember(actor, thread, member);
+			}
+		}
+		return new UserVo(userToRemove);
+	}
+	
 	@Override
-	public List<String> onProvideCompletionsFromSearchMembers(List<UserVo> searchResults,ThreadVo currentThread) throws BusinessException {
-	List<String> elements = new ArrayList<String>();
-		for (UserVo current : searchResults) {
-			if (!(this.getThreadMembers(currentThread)).isEmpty()) {
-				for (ThreadMemberVo current2 : this.getThreadMembers(currentThread)) {
-					if (current2.getUser().getMail().equals(current.getMail())) {
-						String completeName = MailCompletionService.formatLabel(current);
-						if (!elements.contains(completeName)) {
-							elements.add(completeName);
+	public List<UserVo> getListForSearchUser(String input, UserVo userVo) throws BusinessException {
+		List<User> results = new ArrayList<User>();
+		List<UserVo> finalResults = new ArrayList<UserVo>();
+		User owner =  (User)accountService.findByLsUuid(userVo.getLogin());
+		if (input != null) {
+			if (input.startsWith("\"") && input.endsWith(">")) {
+				UserVo tmp = MailCompletionService.getUserFromDisplay(input);
+				results = userService.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), null, owner);
+			} else {
+				results = performSearch(owner, input);
+			}
+				for (User current : results) {
+					if (!(current.equals(owner))) {
+						finalResults.add(new UserVo(current));
+					}
+				}
+			}
+		return finalResults;
+	}
+	
+	@Override 	
+	public boolean userIsInList(ThreadVo currentThread, UserVo userVo) throws BusinessException {
+		boolean inList = false;
+		if(!(this.getThreadMembers(currentThread)).isEmpty()){
+			
+			for(ThreadMemberVo current : this.getThreadMembers(currentThread)){
+				if(current.getUser().getMail().equals(userVo.getMail())){
+					inList = true ;
+				}
+			}
+		}
+		return inList;
+	}
+	
+	@Override
+	public List<ThreadMemberVo> getListForSearchMembers(String input, UserVo userVo, ThreadVo currentThread) throws BusinessException {
+		List<ThreadMemberVo> finalResults = new ArrayList<ThreadMemberVo>();
+		User owner =  (User)accountService.findByLsUuid(userVo.getLogin());
+		
+		if (input.equals("*")) {
+			finalResults = this.getThreadMembers(currentThread);
+		} else {
+			if (input.startsWith("\"") && input.endsWith(">")) {
+				UserVo selected = MailCompletionService.getUserFromDisplay(input);
+				List<User> selected2 = userService.searchUser(selected.getMail(),selected.getFirstName(),selected.getLastName(),null, owner);
+
+				for (User current : selected2) {
+					if (!(this.getThreadMembers(currentThread)).isEmpty()) {
+
+						for (ThreadMemberVo current2 : this.getThreadMembers(currentThread)) {
+							if (current2.getUser().getMail().equals(current.getMail())) {
+								finalResults.add(current2);
+							}
+						}
+					}
+				}
+			} else {
+				List<User> searchResults = performSearch(owner,input);
+
+				for (User current : searchResults) {
+					if (!(this.getThreadMembers(currentThread)).isEmpty()) {
+
+						for (ThreadMemberVo current2 : this.getThreadMembers(currentThread)) {
+							if (current2.getUser().getMail().equals(current.getMail())) {
+								finalResults.add(current2);
+							}
 						}
 					}
 				}
 			}
 		}
-		return elements;
+		return finalResults;
 	}
 }
+	

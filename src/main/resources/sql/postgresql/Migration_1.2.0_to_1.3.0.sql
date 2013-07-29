@@ -34,7 +34,7 @@ UPDATE mail_subjects SET content = E'${actorRepresentation} gebruiker heeft een 
 UPDATE mail_subjects SET content = E'Een share zal binnenkort gewist worden.' WHERE messages_configuration_id = 1 AND subject_id = 11 AND language_id = 2;
 UPDATE mail_subjects SET content = E'Een bestand zal binnenkort gewist worden.' WHERE messages_configuration_id = 1 AND subject_id = 12 AND language_id = 2;
 
--- Add thread_creation and update_files functionality
+-- Add thread_creation,update_files,link_logo and notification_url functionalities
 
 --Functionality : UPDATE_FILE
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true, true, 1, false);
@@ -51,5 +51,11 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (29, false, 'LINK_LOGO', 59, 60, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
+
+--Functionality : NOTIFICATION_URL
+INSERT INTO policy(id,status,default_status,policy,system) VALUES(61,false,false,1,false);
+INSERT INTO policy(id,status,default_status,policy,system) VALUES(62,false,false,1,false);
+INSERT INTO functionality(id,system,identifier,policy_activation_id,policy_configuration_id,domain_id) VALUES(30,false,'NOTIFICATION_URL',61,62,1); 
+INSERT INTO functionality_string(functionality_id,string_value) VALUES (30,'http://localhost:8080/linshare/');
 
 COMMIT;
