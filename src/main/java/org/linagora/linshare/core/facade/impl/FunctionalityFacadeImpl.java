@@ -323,7 +323,6 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		return false;
 	}
 
-
 	@Override
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {
 		return functionalityService.getDefaultRestrictedGuestValue(domainIdentifier);
