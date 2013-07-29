@@ -160,14 +160,14 @@
 	</bean>
 
 	<bean name="mailContentBuildingService" class="org.linagora.linshare.core.service.impl.MailContentBuildingServiceImpl">
-		<constructor-arg value="${linshare.info.url.base}" />
-		<constructor-arg value="${linshare.info.url.internal}" />
 		<constructor-arg value="${linshare.mails.txt.container}" />
 		<constructor-arg value="${linshare.mails.html.container}" />
 		<constructor-arg value="${linshare.mails.htmlwithoutlogo.container}" />
 		<constructor-arg value="${linshare.logo.mails.visible}" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="functionalityService" />
 		<constructor-arg value="${linshare.display.licenceTerm}" />
+		
 	</bean>
 
 	<bean name="ldapQueryService" class="org.linagora.linshare.core.service.impl.LDAPQueryServiceImpl">

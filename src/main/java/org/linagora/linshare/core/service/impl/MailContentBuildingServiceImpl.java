@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linshare.core.domain.constants.MailTemplateEnum;
@@ -59,6 +58,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,10 +67,6 @@ import org.slf4j.LoggerFactory;
 public class MailContentBuildingServiceImpl implements MailContentBuildingService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(MailContentBuildingServiceImpl.class);
-	
-	private final String pUrlBase;
-	
-	private final String pUrlInternal;
 	
 	private final String mailContentTxt;
 	
@@ -83,6 +79,8 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	private final boolean insertLicenceTerm;
 	
 	private final AbstractDomainService abstractDomainService;
+	
+	private final FunctionalityService functionalityService;
 	
 	class ContactRepresentation {
 		private String mail;
@@ -141,18 +139,16 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		}
 	}
 
-	public MailContentBuildingServiceImpl(final String urlBase, 
-			final String urlInternal, final String mailContentTxt,
+	public MailContentBuildingServiceImpl(final String mailContentTxt,
 			final String mailContentHTML, final String mailContentHTMLWithoutLogo,
-			final boolean displayLogo, AbstractDomainService abstractDomainService, boolean insertLicenceTerm) throws BusinessException {
-		this.pUrlBase = urlBase;
-		this.pUrlInternal = urlInternal;
+			final boolean displayLogo, AbstractDomainService abstractDomainService,FunctionalityService functionalityService, boolean insertLicenceTerm) throws BusinessException {
         this.mailContentTxt = mailContentTxt;
         this.mailContentHTML = mailContentHTML;
         this.mailContentHTMLWithoutLogo = mailContentHTMLWithoutLogo;
         this.displayLogo = displayLogo;
         this.abstractDomainService = abstractDomainService;
         this.insertLicenceTerm = insertLicenceTerm;
+        this.functionalityService = functionalityService;
 	}
 
 	
@@ -166,20 +162,16 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * 
 	 */
 	private String getLinShareRootUrl(Account recipient) {
-		String linshareUrl = pUrlBase;
-		if(recipient.getAccountType().equals(AccountType.INTERNAL)) {
-			linshareUrl =  pUrlInternal;
-		}
-		return linshareUrl;
+		return functionalityService.getCustomNotificationUrlFunctionality(recipient.getDomain()).getValue();
 	}
 	
 	
-	private String getJwsEncryptUrlString() {
+	private String getJwsEncryptUrlString(User recipient) {
 		String jwsEncryptUrlString = "";
 		StringBuffer jwsEncryptUrl = new StringBuffer();
 		
-		jwsEncryptUrl.append(pUrlBase);
-		if (!pUrlBase.endsWith("/")) {
+		jwsEncryptUrl.append(functionalityService.getCustomNotificationUrlFunctionality(recipient.getDomain()).getValue());
+		if (!functionalityService.getCustomNotificationUrlFunctionality(recipient.getDomain()).getValue().endsWith("/")) {
 			jwsEncryptUrl.append('/');
 		}
 		jwsEncryptUrl.append("localDecrypt");
@@ -302,7 +294,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// sharing is only possible between users.
 		User sender = (User) shareEntry.getEntryOwner();
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
-		String linShareRootUrl = shareEntry.getAnonymousUrl().getFullUrl(pUrlBase);
+		String linShareRootUrl = shareEntry.getAnonymousUrl().getFullUrl(functionalityService.getCustomNotificationUrlFunctionality(sender.getDomain()).getValue());
 		
 
 		// expired share notification 
@@ -366,7 +358,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		User sender = (User) shareEntry.getEntryOwner();
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
-		String linShareRootUrl = shareEntry.getAnonymousUrl().getFullUrl(pUrlBase);
+		String linShareRootUrl = shareEntry.getAnonymousUrl().getFullUrl(functionalityService.getCustomNotificationUrlFunctionality(sender.getDomain()).getValue());
 		String recipient = shareEntry.getAnonymousUrl().getContact().getMail();
 		
 		// file updated notification
@@ -533,7 +525,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	@Override
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(MailContainer inputMailContainer, AnonymousUrl anonymousUrl, User sender) throws BusinessException {
 		
-		String linShareRootUrl = anonymousUrl.getFullUrl(pUrlBase);
+		String linShareRootUrl = anonymousUrl.getFullUrl(functionalityService.getCustomNotificationUrlFunctionality(sender.getDomain()).getValue());
 		Contact contact = anonymousUrl.getContact();
 		List<String> docNames = anonymousUrl.getDocumentNames();
 		boolean hasToDecrypt = anonymousUrl.oneDocumentIsEncrypted();
@@ -615,7 +607,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		mailContainer.appendTemplate(buildTemplateGuestInvitation(sender, mailContainer.getLanguage()));
 		
 		// download URL
-		mailContainer.appendTemplate(buildTemplateLinshareURL(sender, mailContainer.getLanguage(), pUrlBase));
+		mailContainer.appendTemplate(buildTemplateLinshareURL(sender, mailContainer.getLanguage(), functionalityService.getCustomNotificationUrlFunctionality(sender.getDomain()).getValue()));
 		
 		// download URL
 		mailContainer.appendTemplate(buildTemplateAccountDescription(sender, mailContainer.getLanguage(), recipient, password));
@@ -750,7 +742,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		String contentTXT = template.getContentTXT();
 		String contentHTML = template.getContentHTML();
 		
-		String jwsEncryptUrl = getJwsEncryptUrlString();
+		String jwsEncryptUrl = getJwsEncryptUrlString(actor);
 		contentTXT = StringUtils.replace(contentTXT, "${jwsEncryptUrl}", jwsEncryptUrl);
         contentHTML = StringUtils.replace(contentHTML, "${jwsEncryptUrl}", jwsEncryptUrl);
 		

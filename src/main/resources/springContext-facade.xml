@@ -63,8 +63,6 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityService" />
 		<constructor-arg ref="anonymousShareEntryService" />
-		<constructor-arg value="${linshare.info.url.base}" />
-		<constructor-arg value="${linshare.info.url.internal}" />
 		<constructor-arg ref="signatureTransformer" />
 	</bean>
 

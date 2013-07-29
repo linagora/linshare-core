@@ -35,7 +35,6 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.IntegerValueFunctionality;
@@ -233,16 +232,15 @@ public interface FunctionalityService {
 	public String getCustomLinkLogoInRootDomain() throws BusinessException;
 	
 	/**
-	 * Return the status of the custom link logo  in root domain
+	 * Return the status of the custom notification url  in root domain
 	 * @return the status
 	 */
-	public boolean isCustomNotificationUrlActiveInRootDomain() throws BusinessException;
+	public boolean isCustomNotificationURLActiveInRootDomain() throws BusinessException;
 	
 	/**
-	 * Return the status of the custom link logo  in root domain
+	 * Return the status of the custom Notification URL in root domain
 	 * @return the status
 	 */
-	public String getCustomNotificationUrlInRootDomain() throws BusinessException;
-
-
+	public String getCustomNotificationURLInRootDomain() throws BusinessException;
+	
 }
