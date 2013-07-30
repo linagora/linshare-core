@@ -497,10 +497,9 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		try {
 			if (pattern != null) {
 				userSet.addAll(userService.searchUser(pattern.trim(), null, null,null, actor));
+			} else {
+				userSet.addAll(userService.searchUser(null, firstName_, lastName_, null, actor));
 			}
-			userSet.addAll(userService.searchUser(null, firstName_, lastName_, null, actor));
-			userSet.addAll(userService.searchUser(null, lastName_, firstName_, null, actor));
-			
 		} catch (BusinessException e) {
 			logger.error("Error while searching user", e);
 		}
@@ -598,9 +597,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			}
 				for (User currentUser : results) {
 					if (!(currentUser.equals(owner))) {
-						if (!finalResults.contains(new UserVo(currentUser))) {
 							finalResults.add(new UserVo(currentUser));
-						}
 					}
 				}
 			}
