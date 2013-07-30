@@ -249,20 +249,23 @@ public class AdminThread {
 	}
 
 	public boolean getIsInList() throws BusinessException {
+		// check if user from searchList is thread member
 		return threadEntryFacade.isMember(currentThread, result);
 
 	}
 
-	public void onActionFromAddUser(String domain , String mail) throws BusinessException {
-
-		threadEntryFacade.addUserToThread(userVo, currentThread,domain , mail);
+	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
+		// adding new member to thread
+		threadEntryFacade.addUserToThread(userVo, currentThread, domain, mail);
+		// refresh list
 		members = threadEntryFacade.getThreadMembers(currentThread);
 
 	}
 
-	public void onActionFromDeleteUser(String domain , String mail) throws BusinessException {
-
-		threadEntryFacade.removeMemberFromThread(userVo, currentThread, domain , mail);
+	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {
+		// remove user from thread
+		threadEntryFacade.removeMemberFromThread(userVo, currentThread, domain, mail);
+		// refresh list
 		members = threadEntryFacade.getThreadMembers(currentThread);
 	}
 
