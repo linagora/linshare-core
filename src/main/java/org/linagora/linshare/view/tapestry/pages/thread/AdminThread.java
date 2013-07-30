@@ -63,77 +63,77 @@ import org.slf4j.LoggerFactory;
 public class AdminThread {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminThread.class);
-	
-    @SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
 
-    @SessionState
-    @Property
-    private UserVo userVo;
-    
-    @Property
-    @Persist
-    private ThreadVo currentThread;
-    
-    @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=180"})
-    private WindowWithEffects memberEditWindow;
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
 
-    @Component(parameters = {"style=bluelighting", "show=false", "width=520", "height=180"})
-    private WindowWithEffects threadEditWindow;
-    
-    @InjectComponent
-    private ConfirmPopup confirmPopup;
-    
-    @InjectComponent
-    private Zone memberEditTemplateZone;
-    
-    @InjectComponent
-    private Zone threadEditTemplateZone;
-    
+	@SessionState
+	@Property
+	private UserVo userVo;
+
+	@Property
+	@Persist
+	private ThreadVo currentThread;
+
+	@Component(parameters = { "style=bluelighting", "show=false", "width=520", "height=180" })
+	private WindowWithEffects memberEditWindow;
+
+	@Component(parameters = { "style=bluelighting", "show=false", "width=520", "height=180" })
+	private WindowWithEffects threadEditWindow;
+
+	@InjectComponent
+	private ConfirmPopup confirmPopup;
+
+	@InjectComponent
+	private Zone memberEditTemplateZone;
+
+	@InjectComponent
+	private Zone threadEditTemplateZone;
+
 	@Property
 	@Persist
 	private List<ThreadMemberVo> members;
-	
+
 	@Property
 	private ThreadMemberVo member;
-	
+
 	@Persist
 	private ThreadMemberVo toDelete;
-	
-    @Inject
-    private Messages messages;
-    
-    @Inject
-    private ThreadEntryFacade threadEntryFacade;
 
-    @Inject
-    private UserFacade userFacade;
-    
-    @Inject
-    private RecipientFavouriteFacade recipientFavouriteFacade;
-    
-    @Persist
-    @Property
+	@Inject
+	private Messages messages;
+
+	@Inject
+	private ThreadEntryFacade threadEntryFacade;
+
+	@Inject
+	private UserFacade userFacade;
+
+	@Inject
+	private RecipientFavouriteFacade recipientFavouriteFacade;
+
+	@Persist
+	@Property
 	private String selectedMemberId;
-    
-    @Persist
-    @Property
-    private String recipientsSearch;
-    
-    @Persist
-    @Property
-    private String recipientsSearchMember;
-    
-    @Property
-    private int autocompleteMin = 3;
-    
+
+	@Persist
+	@Property
+	private String recipientsSearch;
+
+	@Persist
+	@Property
+	private String recipientsSearchMember;
+
+	@Property
+	private int autocompleteMin = 3;
+
 	@Inject
 	private Block adminBlock, userBlock, restrictedUserBlock;
-	
+
 	@InjectPage
 	private ThreadContent threadContent;
-	
+
 	@Persist
 	@Property(write = false)
 	private boolean displayGrid;
@@ -141,36 +141,36 @@ public class AdminThread {
 	@Persist
 	@Property(write = true)
 	private boolean inSearch;
-	
+
 	@Persist
 	@Property
 	private List<UserVo> userSearchResults;
 
 	@Property
 	private UserVo result;
-    
-    /*
-     * Assuming currentThread isn't be null
-     */
-    @SetupRender
-    public void init() {
-    	if(!inSearch){
-    		try {
-    			recipientsSearchMember = "*";
-    			members = threadEntryFacade.getThreadMembers(currentThread);
-    			inSearch=true;
-    		} catch (BusinessException e) {
-    			logger.error(e.getMessage());
-    			logger.debug(e.toString());
-    		}
+
+	/*
+	 * Assuming currentThread isn't be null
+	 */
+	@SetupRender
+	public void init() {
+		if (!inSearch) {
+			try {
+				recipientsSearchMember = "*";
+				members = threadEntryFacade.getThreadMembers(currentThread);
+				inSearch = true;
+			} catch (BusinessException e) {
+				logger.error(e.getMessage());
+				logger.debug(e.toString());
+			}
 		}
-    }
-    
-    public Object onActivate() {
-    	if (currentThread == null) {
-    		return Index.class;
-    	}
-    	try {
+	}
+
+	public Object onActivate() {
+		if (currentThread == null) {
+			return Index.class;
+		}
+		try {
 			if (!threadEntryFacade.userIsAdmin(userVo, currentThread)) {
 				logger.info("Unauthorized");
 				return ThreadContent.class;
@@ -179,59 +179,59 @@ public class AdminThread {
 			e.printStackTrace();
 			return ThreadContent.class;
 		}
-    	return null;
-    }
-    
+		return null;
+	}
+
 	/*
 	 * Handle page layout with Tapestry Blocks
 	 */
 	public Object getType() {
 		return (member.isAdmin() ? adminBlock : member.isCanUpload() ? userBlock : restrictedUserBlock);
 	}
-    
-    /*
-     * Called externally before calling the page.
-     * Refer to Tapestry Documentation about passing data from page to page
-     * Setup render will fail if this is not called (currentThread would be null)
-     */
-    public void setSelectedCurrentThread(ThreadVo currentThread) {
-    	this.currentThread = currentThread;
-    }
-    
-    public Object onActionFromBack(){
-    	members = null;
-    	recipientsSearch = null;
-    	inSearch = false;
-    	displayGrid = false;
-    	userSearchResults = null;
-    	return threadContent;
-    }
-    
-    public Zone onActionFromEditMember(String identifier) {
-    	logger.info("Trying to edit member with identifier : " + identifier);
-    	selectedMemberId = identifier;
-    	return memberEditTemplateZone;
-    }
-    
-    public Zone onActionFromEditThread() {
-    	logger.info("Trying to edit current thread ");
-    	return threadEditTemplateZone;
-    }
-    
-    public void onActionFromDeleteMember(String identifier) {
-    	logger.info("Trying to delete a member.");
-    	
-    	for (ThreadMemberVo m : members) {
-    		logger.debug(m.getLsUuid() + " compared to parameter " + identifier);
+
+	/*
+	 * Called externally before calling the page. Refer to Tapestry
+	 * Documentation about passing data from page to page Setup render will fail
+	 * if this is not called (currentThread would be null)
+	 */
+	public void setSelectedCurrentThread(ThreadVo currentThread) {
+		this.currentThread = currentThread;
+	}
+
+	public Object onActionFromBack() {
+		members = null;
+		recipientsSearch = null;
+		inSearch = false;
+		displayGrid = false;
+		userSearchResults = null;
+		return threadContent;
+	}
+
+	public Zone onActionFromEditMember(String identifier) {
+		logger.info("Trying to edit member with identifier : " + identifier);
+		selectedMemberId = identifier;
+		return memberEditTemplateZone;
+	}
+
+	public Zone onActionFromEditThread() {
+		logger.info("Trying to edit current thread ");
+		return threadEditTemplateZone;
+	}
+
+	public void onActionFromDeleteMember(String identifier) {
+		logger.info("Trying to delete a member.");
+
+		for (ThreadMemberVo m : members) {
+			logger.debug(m.getLsUuid() + " compared to parameter " + identifier);
 			if (m.getLsUuid().equals(identifier)) {
 				selectedMemberId = identifier;
 				toDelete = m;
 				logger.info("Trying to delete " + toDelete.getLsUuid());
 			}
 		}
-    }
-    
-	@OnEvent(value="deleteThreadPopupEvent")
+	}
+
+	@OnEvent(value = "deleteThreadPopupEvent")
 	public void deleteCurrentThread() {
 		try {
 			threadEntryFacade.deleteThread(userVo, currentThread);
@@ -241,20 +241,20 @@ public class AdminThread {
 		}
 	}
 
-	@OnEvent(value="deleteMemberPopupEvent")
+	@OnEvent(value = "deleteMemberPopupEvent")
 	public void deleteMember() {
 		threadEntryFacade.deleteMember(currentThread, userVo, toDelete);
-	
+
 		// refresh list
 		try {
 			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(currentThread);
 			members = tmp;
 		} catch (BusinessException e) {
-    		logger.error(e.getMessage());
-    		logger.debug(e.toString());
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
 		}
 	}
-	
+
 	public List<String> onProvideCompletionsFromSearchUser(String input) {
 		return threadEntryFacade.completionOnUsers(userVo, input);
 	}
@@ -262,30 +262,30 @@ public class AdminThread {
 	public List<String> onProvideCompletionsFromSearchMembers(String input) throws BusinessException {
 		return threadEntryFacade.completionOnMembers(userVo, currentThread, input);
 	}
-	
+
 	public Object onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
-			members = threadEntryFacade.searchAmongMembers(userVo, currentThread,recipientsSearchMember);
+			members = threadEntryFacade.searchAmongMembers(userVo, currentThread, recipientsSearchMember);
 		}
 		return null;
 	}
-	
-    public void onSelectedFromStop() {
-        inSearch = false;
-     }
-	
+
+	public void onSelectedFromStop() {
+		inSearch = false;
+	}
+
 	public Object onSuccessFromForm() throws BusinessException {
-		userSearchResults = threadEntryFacade.searchAmongUsers(userVo,recipientsSearch);
+		userSearchResults = threadEntryFacade.searchAmongUsers(userVo, recipientsSearch);
 		displayGrid = true;
 		return null;
 	}
 
-    public Object onSelectedFromReset() {
-       displayGrid = false;
-       recipientsSearch = null;
-       return null;
-    }
-    
+	public Object onSelectedFromReset() {
+		displayGrid = false;
+		recipientsSearch = null;
+		return null;
+	}
+
 	public boolean getIsInList() throws BusinessException {
 		// check if user from searchList is thread member
 		return threadEntryFacade.isMember(currentThread, result);
