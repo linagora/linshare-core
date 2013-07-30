@@ -108,19 +108,62 @@ public interface ThreadEntryFacade {
 	public ThreadVo getThread(UserVo login, String threadUuid) throws BusinessException;
 
 	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException;
-	
+
+	/**
+	 * Provide completion for search User
+	 * @param actorVo
+	 * @param pattern
+	 * @return
+	 */
 	public List<String> completionOnUsers(UserVo actorVo, String pattern);
 	
+	/**
+	 * Provide completion for search thread member
+	 * @param actorVo
+	 * @param currentThread
+	 * @param pattern
+	 * @return
+	 */
 	public List<String> completionOnMembers(UserVo actorVo, ThreadVo currentThread, String pattern);
 	
-	public UserVo addUserToThread(String mail, String firstName, String lastName, UserVo currentUser, ThreadVo threadVo) throws BusinessException;
+	/**
+	 * Add User to thread
+	 * @param currentUser
+	 * @param threadVo
+	 * @param domain
+	 * @param mail
+	 * @throws BusinessException
+	 */
+	public void addUserToThread(UserVo currentUser, ThreadVo threadVo,String domain, String mail) throws BusinessException;
 	
-	public UserVo removeUserToThread(String mail, String firstName, String lastName, UserVo currentUser, ThreadVo threadVo) throws BusinessException;
+	/**
+	 * Remove member from thread
+	 * @param currentUser
+	 * @param threadVo
+	 * @param domain
+	 * @param mail
+	 * @throws BusinessException
+	 */
+	public void removeMemberFromThread(UserVo currentUser, ThreadVo threadVo,String domain, String mail) throws BusinessException;
 	
-	public List<UserVo> getListForSearchUser(String input, UserVo userVo) throws BusinessException;
 	
-	public boolean userIsInList(ThreadVo currentThread, UserVo userVo) throws BusinessException;
+	/**
+	 * Return list of users according to search input
+	 * @param userVo
+	 * @param input
+	 * @return
+	 * @throws BusinessException
+	 */
+	public List<UserVo> searchAmongUsers(UserVo userVo,String input) throws BusinessException;
 	
-	public List<ThreadMemberVo> getListForSearchMembers(String input, UserVo userVo, ThreadVo currentThread) throws BusinessException ;
+	/**
+	 * Return list of thread members according to search input
+	 * @param userVo
+	 * @param currentThread
+	 * @param input
+	 * @return
+	 * @throws BusinessException
+	 */
+	public List<ThreadMemberVo> searchAmongMembers(UserVo userVo, ThreadVo currentThread,String input) throws BusinessException;
 	
 }

@@ -109,7 +109,7 @@
         				</tr>
         			</table>
         			<t:if t:test="displayGrid">
-        				<t:grid source="results"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
+        				<t:grid source="userSearchResults"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
 	    				   <t:parameter name="inListCell">
 			  					<t:if t:test="isInList">
 			  						<img src="${asset:context:images/icons/validate-mini.png}"/>
@@ -120,12 +120,12 @@
 			 				</t:parameter>
 			 				<t:parameter name="addRemoveCell">
 			 					<t:if t:test="isInList">
-			 						<t:actionLink t:id="deleteUser" context="[result.firstName,result.lastName,result.mail]"
+			 						<t:actionLink t:id="deleteUser" context="[result.domainIdentifier,result.mail]"
 			 	 						title="${message:pages.thread.member.delete}">
 										<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
 									</t:actionLink>
 			  					<p:else>
-			  						<t:actionLink t:id="addUser" context="[result.firstName,result.lastName,result.mail]"
+			  						<t:actionLink t:id="addUser" context="[result.domainIdentifier,result.mail]"
 			 	 						title="${message:pages.thread.addUser}">
 										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.thread.adduser}" />
 									</t:actionLink>

@@ -116,7 +116,7 @@ public class ThreadMemberEditForm {
     public void onSuccessFromMemberForm() {
     	member.setAdmin(admin);
     	member.setCanUpload(canUpload);
-    	threadEntryFacade.updateMember(userFacade.findUserByLsUuid(userVo, currentThread.getOwnerLsUuid()), member, currentThread);
+    	threadEntryFacade.updateMember(userVo, member, currentThread);
     }
     
 	public void onSubmit() {
