@@ -127,7 +127,7 @@ public class Index {
     
 	public int getCountDocuments() {
 		try {
-			return threadEntryFacade.getAllThreadEntryVo(userFacade.findUserByLsUuid(userVo,currentThread.getOwnerLsUuid()), currentThread).size();
+			return threadEntryFacade.getAllThreadEntryVo(userVo, currentThread).size();
 		} catch (BusinessException e) {
 			e.printStackTrace();
 		}

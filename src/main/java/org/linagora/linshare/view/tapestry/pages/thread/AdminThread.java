@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.view.tapestry.pages.thread;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.Block;
@@ -145,7 +144,7 @@ public class AdminThread {
 	
 	@Persist
 	@Property
-	private List<UserVo> results;
+	private List<UserVo> userSearchResults;
 
 	@Property
 	private UserVo result;
@@ -204,7 +203,7 @@ public class AdminThread {
     	recipientsSearch = null;
     	inSearch = false;
     	displayGrid = false;
-    	results = null;
+    	userSearchResults = null;
     	return threadContent;
     }
     
@@ -266,7 +265,7 @@ public class AdminThread {
 	
 	public Object onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
-			members = threadEntryFacade.getListForSearchMembers(recipientsSearchMember, userVo, currentThread);
+			members = threadEntryFacade.searchAmongMembers(userVo, currentThread,recipientsSearchMember);
 		}
 		return null;
 	}
@@ -276,7 +275,7 @@ public class AdminThread {
      }
 	
 	public Object onSuccessFromForm() throws BusinessException {
-		results = threadEntryFacade.getListForSearchUser(recipientsSearch, userVo);
+		userSearchResults = threadEntryFacade.searchAmongUsers(userVo,recipientsSearch);
 		displayGrid = true;
 		return null;
 	}
@@ -288,35 +287,20 @@ public class AdminThread {
     }
     
 	public boolean getIsInList() throws BusinessException {
-		return threadEntryFacade.userIsInList(currentThread, result);
-	}
-    
-	public void onActionFromAddUser(String firstName, String lastName,String mail) throws BusinessException {
-
-		UserVo userToAdd = threadEntryFacade.addUserToThread(mail, firstName, lastName, userVo, currentThread);
-		
-		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(threadEntryFacade.getThreadMembers(currentThread));
-		for (ThreadMemberVo current : copy) {
-			if (current.getUser().getLogin().equals(userToAdd.getLogin())) {
-				members.add(current);
-			}
-		}
+		return threadEntryFacade.isMember(currentThread,result);
 	}
 
-	public void onActionFromDeleteUser(String firstName, String lastName,
-			String mail) throws BusinessException {
-		
-		UserVo userToRemove = threadEntryFacade.removeUserToThread(mail, firstName, lastName, userVo, currentThread);
-			
-		List<ThreadMemberVo> copy = new ArrayList<ThreadMemberVo>(
-				threadEntryFacade.getThreadMembers(currentThread));
-		members.clear();
+	public void onActionFromAddUser(String domain , String mail) throws BusinessException {
 
-		for (ThreadMemberVo current : copy) {
-			if (!(current.getUser().getLogin().equals(userToRemove.getLogin()))) {
-				members.add(current);
-			}
-		}
+		threadEntryFacade.addUserToThread(userVo, currentThread,domain , mail);
+		members = threadEntryFacade.getThreadMembers(currentThread);
+
+	}
+
+	public void onActionFromDeleteUser(String domain , String mail) throws BusinessException {
+
+		threadEntryFacade.removeMemberFromThread(userVo, currentThread, domain , mail);
+		members = threadEntryFacade.getThreadMembers(currentThread);
 	}
 
 }
