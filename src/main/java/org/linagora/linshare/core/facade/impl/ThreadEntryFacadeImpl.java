@@ -608,10 +608,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public List<ThreadMemberVo> searchAmongMembers(UserVo userVo, ThreadVo currentThread,String input) throws BusinessException {
 		List<ThreadMemberVo> finalResults = new ArrayList<ThreadMemberVo>();
 		User owner =  (User)accountService.findByLsUuid(userVo.getLogin());
-		
-		if (input.equals("*")) {
-			finalResults = this.getThreadMembers(currentThread);
-		} else {
+
 			if (input.startsWith("\"") && input.endsWith(">")) {
 				UserVo selected = MailCompletionService.getUserFromDisplay(input);
 				List<User> selected2 = userService.searchUser(selected.getMail(),selected.getFirstName(),selected.getLastName(),null, owner);
@@ -636,7 +633,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 					}
 				}
 			}
-		}
 		return finalResults;
 	}
 }
