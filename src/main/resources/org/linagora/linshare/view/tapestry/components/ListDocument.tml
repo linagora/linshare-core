@@ -44,7 +44,9 @@
 			</t:parameter>
 
 			<t:parameter t:name="updateDocHeader">
+				<t:if test="ShowUpd">
 				<abbr title="${message:components.listDocument.grid.update}">${message:components.listDocument.grid.update.abbr}</abbr>
+				</t:if>
 			</t:parameter>
 
 			<t:parameter t:name="fileEditHeader">

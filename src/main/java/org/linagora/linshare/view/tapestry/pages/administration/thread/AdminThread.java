@@ -227,7 +227,11 @@ public class AdminThread {
 
 	public Object onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
+			if (recipientsSearchMember.equals("*")) {
+				members = threadEntryFacade.getThreadMembers(currentThread);
+			} else {
 			members = threadEntryFacade.searchAmongMembers(userVo, currentThread, recipientsSearchMember);
+			}
 		}
 		return null;
 	}
