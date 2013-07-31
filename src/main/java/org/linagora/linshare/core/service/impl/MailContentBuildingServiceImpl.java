@@ -39,6 +39,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linshare.core.domain.constants.MailTemplateEnum;
@@ -263,7 +264,14 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// sharing is only possible between users.
 		User sender = (User) shareEntry.getEntryOwner();
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
-		String linShareRootUrl = getLinShareUrlForUser(sender);
+		User recipient =shareEntry.getRecipient();
+		String linShareRootUrl = null;
+		// check if recipient is user or mail
+		if(recipient.getDomain().getDomainType().equals(DomainType.GUESTDOMAIN)){
+			linShareRootUrl = getLinShareUrlForContact(recipient);
+		} else {
+			linShareRootUrl = getLinShareUrlForUser(sender);
+		}
 		
 
 		// expired share notification 
@@ -361,7 +369,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		
 		User sender = (User) shareEntry.getEntryOwner();
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
-		String linShareRootUrl = shareEntry.getAnonymousUrl().getFullUrl(functionalityService.getCustomNotificationUrlFunctionality(sender.getDomain()).getValue());
+		String linShareRootUrl = shareEntry.getAnonymousUrl().getFullUrl(getLinShareUrlForContact(sender));
 		String recipient = shareEntry.getAnonymousUrl().getContact().getMail();
 		
 		// file updated notification
@@ -393,8 +401,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	public MailContainerWithRecipient buildMailSharedDocumentUpdated(ShareEntry shareEntry, String oldDocName, String fileSizeTxt) throws BusinessException {
 		User sender = (User) shareEntry.getEntryOwner();
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
-		String linShareRootUrl = getLinShareUrlForContact(shareEntry.getRecipient());
-		
+		String linShareRootUrl = getLinShareUrlForContact(sender);
 		// file updated notification
 		mailContainer.appendTemplate(buildTemplateFileUpdated(sender, mailContainer.getLanguage(), sender, shareEntry.getDocumentEntry(), oldDocName, fileSizeTxt));
 		
@@ -479,12 +486,17 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 */
 	@Override
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(User sender, MailContainer inputMailContainer, User recipient, 
-			List<String> docNames, String linShareUrl, String linShareUrlParam, String password, boolean hasToDecrypt) throws BusinessException {
+			List<String> docNames, boolean hasToDecrypt) throws BusinessException {
 		
 		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(sender.getExternalMailLocale());
-		String linShareRootUrl = getLinShareUrlForContact(recipient);
-		
-		// share notification
+		String linShareRootUrl = null;
+		// check if recipient is user or mail
+			if(recipient.getDomain().getDomainType().equals(DomainType.GUESTDOMAIN)){
+				linShareRootUrl = getLinShareUrlForContact(recipient);
+			} else {
+				linShareRootUrl = getLinShareUrlForUser(sender);
+			}
+			// share notification
 		mailContainer.appendTemplate(buildTemplateShareNotification(sender, mailContainer.getLanguage(), docNames));
 		
 		// LinShare URL
@@ -493,11 +505,6 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		// Direct download Url
 		if(hasToDecrypt) {
 			mailContainer.appendTemplate(buildTemplateDecryptUrl(sender, mailContainer.getLanguage()));
-		}
-		
-		// Password notification
-		if(password != null && password.trim().length() > 0) {
-			mailContainer.appendTemplate(buildTemplatePasswordGiving(sender, mailContainer.getLanguage(), password));
 		}
 		
 		// subject
@@ -528,7 +535,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	@Override
 	public MailContainerWithRecipient buildMailNewSharingWithRecipient(MailContainer inputMailContainer, AnonymousUrl anonymousUrl, User sender) throws BusinessException {
 		
-		String linShareRootUrl = anonymousUrl.getFullUrl(functionalityService.getCustomNotificationUrlFunctionality(sender.getDomain()).getValue());
+		String linShareRootUrl = anonymousUrl.getFullUrl(getLinShareUrlForContact(sender));
 		Contact contact = anonymousUrl.getContact();
 		List<String> docNames = anonymousUrl.getDocumentNames();
 		boolean hasToDecrypt = anonymousUrl.oneDocumentIsEncrypted();
