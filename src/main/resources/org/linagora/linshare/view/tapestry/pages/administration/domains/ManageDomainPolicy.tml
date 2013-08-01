@@ -6,7 +6,7 @@
 	
 	<div id="content">
 
-		<h1>${message:pages.administration.domains.index.createdomainpolicy.index}: ${domainPolicy.identifier}</h1>
+		<h1>${message:pages.administration.domains.index.createdomainpolicy.index}: ${domainPolicyVo.identifier}</h1>
 		
 		<t:messagePanel />	
 		
@@ -15,24 +15,25 @@
 			<!-- FORM -->
 			
 						<t:actionLink t:id="cancel">${message:pages.thread.admin.back}</t:actionLink>
-		<t:form id="form">
+		<t:form t:id="form">
 			<fieldset class="title_criteria_zone" id="searchCriterion">
 			<legend align="top" class="palette">${message:global.button.update}</legend>
 					
 					<p><t:label for="policyDescription"/>:&nbsp;
-                    <t:textarea t:id="policyDescription" value="domainPolicy.policyDescription" cols="70" rows="1"/></p>
+                    <t:textarea t:id="policyDescription" value="domainPolicyVo.policyDescription" cols="70" rows="1"/></p>
                     
-				<t:if test="rulesList">
 					
 					<p>			
-						<t:pageLink page="administration/domains/SelectRules" context="domainPolicy.identifier"
-							title="${message:pages.administration.domains.DomainPolicy.form.add}">
+						<t:actionLink t:id="add" title="${message:pages.administration.domains.domainPolicy.form.add}">
 							<img src="${asset:context:images/popupImages/plus.png}" alt="" />
-						</t:pageLink>
-						${message:pages.administration.domains.DomainPolicy.form.add}
+						</t:actionLink>
+						${message:pages.administration.domains.domainPolicy.form.add}
 					</p>
-					<p>${message:pages.administration.domains.index.DomainPolicy.help}</p>
 					
+					<t:if test="rulesList">
+					
+					<p>${message:pages.administration.domains.index.domainPolicy.help}</p>
+	
 					<ul id="sortable">
                 		<t:loop source="rulesList" value="rule" index="indexRule" formState="none">
                 			<li class="ui-state-default" >
@@ -51,18 +52,41 @@
             		<input t:type="TextField" t:id="tabPos" style="display:none" />
             		
             		<p:else>
-            			${message:pages.administration.domains.index.DomainPolicy.help2}
-            			<t:pageLink page="administration/domains/SelectRules" context="domainPolicy.identifier">
-						${message:global.button.click}
-						</t:pageLink>
+            			${message:pages.administration.domains.index.domainPolicy.help2}
             		</p:else>	
             	</t:if>
             		<br></br>
             		<input type="submit"  value="${message:global.button.validate}"/>
             	</fieldset>
 		</t:form>	
+		
+				<div class="clear"></div>
+				<t:if test="showAddRuleForm">
+		 <form t:type="form" t:id="addRuleForm">
+        			<fieldset class="title_criteria_zone" id="searchCriterion">
+        				<legend align="top" class="palette">${message:pages.administration.domains.domainPolicy.form.add}</legend>
+        				
+        				<t:label for="ruleToAdd"/>:
+            			<select t:type="select" t:id="ruleToAdd"/>
+            			       <br></br><br></br>
+            		   <t:label for="domainSelection"/>:
+            			<select t:type="select" t:id="domainSelection" t:model="domains"></select>
+            			       <br></br><br></br>
+        			   <t:label for="onTop"/>:
+            			<input t:type="checkbox" type="checkbox" t:id="onTop"/>&nbsp;
+            		    ${message:pages.administration.domains.index.createdomainpolicy.selectrule.position}
+            		            			       <br></br><br></br>
+            		<input type="submit"  value="${message:pages.administration.domains.domainPolicy.form.add}"/>
+        			</fieldset>
+        </form>
+        </t:if>
 		</div>
 
+		<script type="text/javascript">
+   			 $(function() {
+        $("select").change(function() {
+	</script>
 	</div><!-- id="content" -->
+
 
 </t:MyBorderLayout>

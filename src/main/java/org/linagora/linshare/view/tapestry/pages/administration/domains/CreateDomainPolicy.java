@@ -87,7 +87,7 @@ public class CreateDomainPolicy {
 					throw new ValidationException(String.format(messages.get("pages.list.manage.letter")));
 				}
             
-            String copy = domainPolicyFacade.checkIdentifierIsUnique(value);
+            String copy = domainPolicyFacade.checkDomainPolicyIdentifierIsUnique(value);
         	if (!copy.equals(value)) {
         		throw new ValidationException(String.format(messages.get("pages.list.manage.identifierExist"),copy));
         	}
