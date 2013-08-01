@@ -50,7 +50,7 @@ public interface ThreadService {
 
 	public List<Thread> findAll();
 
-	public void create(Account actor, String name) throws BusinessException;
+	public Boolean create(Account actor, String name) throws BusinessException;
 	
 	public ThreadMember getThreadMemberById(long id) throws BusinessException;
 	

@@ -79,7 +79,7 @@ public class ThreadMembersComponent {
 	@SetupRender
 	public void init() {
 		try {
-			members = threadEntryFacade.getThreadMembers(thread);
+			members = threadEntryFacade.getThreadMembers(user, thread);
 		} catch (BusinessException e) {
 			logger.error("Cannot retrieve thread members : " + e.getMessage());
 			logger.debug(e.toString());
