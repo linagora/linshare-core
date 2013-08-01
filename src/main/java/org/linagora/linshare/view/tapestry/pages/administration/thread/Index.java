@@ -199,7 +199,7 @@ public class Index {
         			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
         			List<ThreadVo> threadSimple  = threadEntryFacade.getAllMyThreadWhereCanUpload(currentUser);
         			for(ThreadVo currentThread : threadSimple){
-        				if(!(threadEntryFacade.userIsAdmin(currentThread, currentUser))){
+        				if(!(threadEntryFacade.userIsAdmin(currentUser, currentThread))){
         					threads.add(currentThread);
         				}
         			}
@@ -211,7 +211,7 @@ public class Index {
         			
         			List<ThreadVo> threadRestricted = threadEntryFacade.getAllMyThread(currentUser);
         			for(ThreadVo currentThread : threadRestricted){
-        				if(!(threadEntryFacade.userIsAdmin(currentThread, currentUser)) && !(threadEntryFacade.userCanUpload(currentUser, currentThread))){
+        				if(!(threadEntryFacade.userIsAdmin(currentUser, currentThread)) && !(threadEntryFacade.userCanUpload(currentUser, currentThread))){
         					threads.add(currentThread);
         				}
         			}
