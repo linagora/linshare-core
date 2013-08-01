@@ -232,12 +232,6 @@ public interface FunctionalityService {
 	public String getCustomLinkLogoInRootDomain() throws BusinessException;
 	
 	/**
-	 * Return the status of the custom notification url  in root domain
-	 * @return the status
-	 */
-	public boolean isCustomNotificationURLActiveInRootDomain() throws BusinessException;
-	
-	/**
 	 * Return the status of the custom Notification URL in root domain
 	 * @return the status
 	 */
