@@ -31,7 +31,7 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.view.tapestry.pages.thread;
+package org.linagora.linshare.view.tapestry.pages.administration.thread;
 
 import java.util.List;
 
@@ -131,12 +131,12 @@ public class AdminThread {
 	@Inject
 	private Block adminBlock, userBlock, restrictedUserBlock;
 
-	@InjectPage
-	private ThreadContent threadContent;
-
 	@Persist
 	@Property(write = false)
 	private boolean displayGrid;
+
+	@InjectPage
+	private Index index;
 
 	@Persist
 	@Property(write = true)
@@ -149,11 +149,9 @@ public class AdminThread {
 	@Property
 	private UserVo result;
 
-	/*
-	 * Assuming currentThread isn't be null
-	 */
 	@SetupRender
 	public void init() {
+
 		if (!inSearch) {
 			try {
 				recipientsSearchMember = "*";
@@ -166,45 +164,12 @@ public class AdminThread {
 		}
 	}
 
-	public Object onActivate() {
-		if (currentThread == null) {
-			return Index.class;
-		}
-		try {
-			if (!threadEntryFacade.userIsAdmin(userLoggedIn, currentThread)) {
-				logger.info("Unauthorized");
-				return ThreadContent.class;
-			}
-		} catch (BusinessException e) {
-			e.printStackTrace();
-			return ThreadContent.class;
-		}
-		return null;
-	}
-
-	/*
-	 * Handle page layout with Tapestry Blocks
-	 */
 	public Object getType() {
 		return (member.isAdmin() ? adminBlock : member.isCanUpload() ? userBlock : restrictedUserBlock);
 	}
 
-	/*
-	 * Called externally before calling the page. Refer to Tapestry
-	 * Documentation about passing data from page to page Setup render will fail
-	 * if this is not called (currentThread would be null)
-	 */
 	public void setSelectedCurrentThread(ThreadVo currentThread) {
 		this.currentThread = currentThread;
-	}
-
-	public Object onActionFromBack() {
-		members = null;
-		recipientsSearch = null;
-		inSearch = false;
-		displayGrid = false;
-		userSearchResults = null;
-		return threadContent;
 	}
 
 	public Zone onActionFromEditMember(String identifier) {
@@ -231,24 +196,21 @@ public class AdminThread {
 		}
 	}
 
-	@OnEvent(value = "deleteThreadPopupEvent")
-	public void deleteCurrentThread() {
-		try {
-			threadEntryFacade.deleteThread(userLoggedIn, currentThread);
-			currentThread = null;
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-		}
+	public Object onActionFromBack() {
+		members = null;
+		recipientsSearch = null;
+		inSearch = false;
+		displayGrid = false;
+		userSearchResults = null;
+		return index;
 	}
 
 	@OnEvent(value = "deleteMemberPopupEvent")
 	public void deleteMember() {
 		threadEntryFacade.deleteMember(userLoggedIn, currentThread, toDelete);
-
-		// refresh list
 		try {
-			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
-			members = tmp;
+			members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
+
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			logger.debug(e.toString());
@@ -266,9 +228,9 @@ public class AdminThread {
 	public void onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
 			if (recipientsSearchMember.equals("*")) {
-				members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
+				members = threadEntryFacade.getThreadMembers(null, currentThread);
 			} else {
-				members = threadEntryFacade.searchAmongMembers(userLoggedIn, currentThread, recipientsSearchMember);
+			members = threadEntryFacade.searchAmongMembers(userLoggedIn, currentThread, recipientsSearchMember);
 			}
 		}
 	}
@@ -297,6 +259,7 @@ public class AdminThread {
 		threadEntryFacade.addUserToThread(userLoggedIn, currentThread, domain, mail);
 		// refresh list
 		members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
+
 	}
 
 	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {

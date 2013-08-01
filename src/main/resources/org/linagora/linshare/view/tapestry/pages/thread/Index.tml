@@ -19,15 +19,17 @@
             <h4>Actions</h4>
             <ul>
                 <li>
+                <t:if test="showCreateButton">
                     <t:pageLink page="thread/CreateThread" class="button" title="${message:pages.thread.index.addbutton}">
                         <span><img src="${asset:context:images/icons/create-group-mini.png}" alt="" /> ${message:pages.thread.index.addbutton}</span>
                     </t:pageLink>
+                </t:if>
                 </li>
             </ul>
         </div><!-- id="actionBar" -->
 
         <!-- Page content -->
-
+		<h2> ${message:pages.thread.admin.index.title}</h2>
         <div id="pageContent">
             <t:grid source="threads" row="currentThread" include="name, creationDate, modificationDate" add="countDocuments" rowsPerPage="10">
             

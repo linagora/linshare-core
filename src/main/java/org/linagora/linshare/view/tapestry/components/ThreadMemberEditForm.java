@@ -46,6 +46,7 @@ import org.linagora.linshare.core.domain.vo.ThreadMemberVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
+import org.linagora.linshare.core.facade.UserFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +69,9 @@ public class ThreadMemberEditForm {
     @Parameter(required = true, defaultPrefix = BindingConstants.PROP)
     @Property
     private ThreadVo currentThread;
+    
+    @Inject
+    private UserFacade userFacade;
     
     @Property
     @Persist
@@ -104,7 +108,7 @@ public class ThreadMemberEditForm {
     		}
     	}
     	if (member == null) {
-    		logger.error("Member doesn't existst. Can't find a user with this identifier in members list");
+    		logger.error("Member doesn't exist. Can't find a user with this identifier in members list");
     		member = new ThreadMemberVo();
     	}
     }

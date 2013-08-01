@@ -35,12 +35,12 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.Tag;
 import org.linagora.linshare.core.domain.entities.TagFilter;
@@ -55,6 +55,7 @@ import org.linagora.linshare.core.repository.TagRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
+import org.linagora.linshare.core.service.FunctionalityService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.slf4j.Logger;
@@ -72,12 +73,14 @@ public class ThreadServiceImpl implements ThreadService {
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
+	private final FunctionalityService functionalityService;
+	
 	private final TagRepository tagRepository;
 
 	private final LogEntryService logEntryService;
 
 	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository, ThreadMemberRepository threadMemberRepository, TagRepository tagRepository,
-			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService) {
+			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService,FunctionalityService functionalityService) {
 		super();
 		this.threadRepository = threadRepository;
 		this.threadViewRepository = threadViewRepository;
@@ -85,6 +88,7 @@ public class ThreadServiceImpl implements ThreadService {
 		this.tagRepository = tagRepository;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
+		this.functionalityService = functionalityService;
 	}
 
 	@Override
@@ -104,32 +108,46 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void create(Account actor, String name) throws BusinessException {
-		Thread thread = null;
-		ThreadView threadView = null;
-		ThreadMember member = null;
+	public Boolean create(Account actor, String name) throws BusinessException {
+		
+		boolean isGuest = actor.getAccountType().equals(AccountType.GUEST);
+		Functionality creation = functionalityService.getThreadCreationPermissionFunctionality(actor.getDomain());
+		if (creation.getActivationPolicy().getStatus() && !isGuest){
+			Thread thread = null;
+			ThreadView threadView = null;
+			ThreadMember member = null;
 
-		logger.debug("User " + actor.getAccountReprentation() + " trying to create new thread named " + name);
-		thread = new Thread(actor.getDomain(), actor, name);
-		threadRepository.create(thread);
-		logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
+			logger.debug("User " + actor.getAccountReprentation() + " trying to create new thread named " + name);
+			thread = new Thread(actor.getDomain(), actor, name);
+			threadRepository.create(thread);
+			logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_CREATE, "Creation of a new thread."));
 
-		// creating default view
-		threadView = new ThreadView(thread);
-		threadViewRepository.create(threadView);
-		thread.getThreadViews().add(threadView);
-		threadRepository.update(thread);
+			// creating default view
+			threadView = new ThreadView(thread);
+			threadViewRepository.create(threadView);
+			thread.getThreadViews().add(threadView);
+			threadRepository.update(thread);
 
-		// setting default view
-		thread.setCurrentThreadView(threadView);
-		threadRepository.update(thread);
+			// setting default view
+			thread.setCurrentThreadView(threadView);
+			threadRepository.update(thread);
 
-		// creator = first member = default admin
-		member = new ThreadMember(true, true, (User) actor, thread);
-		thread.getMyMembers().add(member);
-		threadRepository.update(thread);
-		logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER,
-				"Creating the first member of the newly created thread."));
+			// creator = first member = default admin
+			member = new ThreadMember(true, true, (User) actor, thread);
+			thread.getMyMembers().add(member);
+			threadRepository.update(thread);
+			logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER,
+					"Creating the first member of the newly created thread."));
+			return true;
+		} else {
+			logger.error("You can not create thread, you are not authorized.");
+			if (isGuest) {
+				logger.error("guests are not authorised to create a thread");
+			} else {
+				logger.error("The current domain does not allowed you to create thread.");
+			}
+			return false;
+		}
 	}
 
 	@Override

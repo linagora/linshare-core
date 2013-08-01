@@ -245,7 +245,7 @@ public class ListThreadDocument {
             throw new BusinessException(BusinessErrorCode.INVALID_UUID,	"invalid uuid for this user");
         } else {
         	try {
-                InputStream stream = threadEntryFacade.retrieveFileStream(current, user);
+                InputStream stream = threadEntryFacade.retrieveFileStream(user, current);
                 return new FileStreamResponse(current, stream);
 			} catch (Exception e) {
 				logger.error("File don't exist anymore, please remove it");

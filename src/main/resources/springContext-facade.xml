@@ -40,6 +40,7 @@
 		<constructor-arg ref="threadEntryTransformer" />
 		<constructor-arg ref="tagService" />
 		<constructor-arg ref="documentEntryService" />
+		<constructor-arg ref="userService" />
 	</bean>
 
 	<bean name="searchDocumentFacade" class="org.linagora.linshare.core.facade.impl.SearchDocumentFacadeImpl">
@@ -62,8 +63,6 @@
 		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="functionalityService" />
 		<constructor-arg ref="anonymousShareEntryService" />
-		<constructor-arg value="${linshare.info.url.base}" />
-		<constructor-arg value="${linshare.info.url.internal}" />
 		<constructor-arg ref="signatureTransformer" />
 	</bean>
 
