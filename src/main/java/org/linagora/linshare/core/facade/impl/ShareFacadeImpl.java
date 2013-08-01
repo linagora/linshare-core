@@ -103,16 +103,11 @@ public class ShareFacadeImpl implements ShareFacade {
 	private final AnonymousShareEntryService anonymousShareEntryService;
 	
 	private final SignatureTransformer signatureTransformer;
-	
-	private final String urlBase;
-	
-	private final String urlInternal;
     
 	
 	public ShareFacadeImpl(ShareEntryTransformer shareEntryTransformer, UserRepository<User> userRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
-			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService,
-			String urlBase, String urlInternal, SignatureTransformer signatureTransformer) {
+			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService, SignatureTransformer signatureTransformer) {
 		super();
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;
@@ -125,8 +120,6 @@ public class ShareFacadeImpl implements ShareFacade {
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
 		this.anonymousShareEntryService = anonymousShareEntryService;
-		this.urlBase = urlBase;
-		this.urlInternal = urlInternal;
 		this.signatureTransformer = signatureTransformer;
 	}
 	
@@ -186,9 +179,8 @@ public class ShareFacadeImpl implements ShareFacade {
 		for(UserVo userVo : successfullRecipient){
 			logger.debug("Sending sharing notification to user " + userVo.getLogin());
 			User recipient = userRepository.findByLsUuid(userVo.getLogin());
-			String linshareUrl = userVo.isGuest() ? urlBase : urlInternal;
 			
-			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, documentNames, linshareUrl, "", null, isOneDocEncrypted));
+			mailContainerWithRecipient.add(mailElementsFactory.buildMailNewSharingWithRecipient(owner_, mailContainer, recipient, documentNames, isOneDocEncrypted));
 
 		}
 		

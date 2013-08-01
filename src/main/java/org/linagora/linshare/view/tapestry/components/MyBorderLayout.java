@@ -50,16 +50,22 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Response;
+import org.linagora.linshare.core.domain.constants.FunctionalityNames;
 import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.vo.FunctionalityVo;
+import org.linagora.linshare.core.domain.vo.StringValueFunctionalityVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.view.tapestry.beans.MenuEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MyBorderLayout {
 
+	private static final Logger logger = LoggerFactory.getLogger(MyBorderLayout.class);
 
  	/* ***********************************************************
 	 *                         Parameters
@@ -216,7 +222,8 @@ public class MyBorderLayout {
 	private static final String helpLabelKey = "components.myborderlayout.help.title";
 	private static final String groupsLabelKey = "components.myborderlayout.group.title";
 	
-	
+	@Property
+	private String logoLink;
 	
 	@SuppressWarnings("unused")
 	@Inject
@@ -238,6 +245,10 @@ public class MyBorderLayout {
 			if(domainFacade.isCustomLogoActive(userVo)) {
 				customLogoUrl = domainFacade.getCustomLogoUrl(userVo);
 			}
+			if(functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier())) {
+				logoLink = domainFacade.getCustomLogoLink(userVo);
+			}
+			
 		} else if (domainFacade.isCustomLogoActiveInRootDomain()) {
 			customLogoUrl = domainFacade.getCustomLogoUrlInRootDomain();
 		}
@@ -266,6 +277,7 @@ public class MyBorderLayout {
 		MenuEntry homeMenu;
 		MenuEntry fileMenu;
 		MenuEntry userMenu;
+		MenuEntry threadAdminMenu;
 		MenuEntry threadMenu;
 		MenuEntry adminMenu;
 		MenuEntry domainMenu;
@@ -280,6 +292,8 @@ public class MyBorderLayout {
 		userMenu = new MenuEntry(response.encodeURL("user/index"),messages.get("components.myborderlayout.user.title"),null,null,"user");
 	
 		// Menu : Thread
+
+		threadAdminMenu = new MenuEntry(response.encodeURL("administration/thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		threadMenu = new MenuEntry(response.encodeURL("thread/index"),messages.get("components.myborderlayout.thread.title"),null,null,"thread");
 		
 		// Menu : Administration
@@ -320,8 +334,13 @@ public class MyBorderLayout {
 			}
 			if (showUserTab())
 				menu.addMenuEntry(userMenu);
-			if (!superadmin && showThreadTab())
-				menu.addMenuEntry(threadMenu);
+			if (showThreadTab()){
+				if(superadmin){
+					menu.addMenuEntry(threadAdminMenu);
+				} else {
+					menu.addMenuEntry(threadMenu);
+				}
+			}
 			if (superadmin || admin)
 				menu.addMenuEntry(adminMenu);
 			if (superadmin)
@@ -382,4 +401,12 @@ public class MyBorderLayout {
 		}
 		return false;
 	}
+	
+	public boolean getCustomLogoLink(){
+		if(userVoExists){
+			return functionalityFacade.isEnableCustomLogoLink(userVo.getDomainIdentifier());
+		}
+		return false;
+	}
+	
 }

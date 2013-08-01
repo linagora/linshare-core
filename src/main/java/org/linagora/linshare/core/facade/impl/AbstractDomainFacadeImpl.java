@@ -528,6 +528,17 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     }
     
     @Override
+    public String getCustomLogoLink(UserVo actorVo) throws BusinessException {
+        User actor = userAndDomainMultiService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
+        return functionalityService.getCustomLinkLogoFunctionality(actor.getDomain()).getValue();
+    }
+
+    @Override
+    public String getCustomLogoLinkInRootDomain() throws BusinessException {
+        return functionalityService.getCustomLinkLogoInRootDomain();
+    }
+    
+    @Override
     public Long getUsedSpace(String domainIdentifier) throws BusinessException {
         AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
         return domain.getUsedSpace();

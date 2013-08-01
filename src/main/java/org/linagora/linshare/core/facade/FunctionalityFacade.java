@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
+
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
 import org.linagora.linshare.core.domain.vo.PolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -55,6 +56,9 @@ public interface FunctionalityFacade {
 	public boolean isEnableAuditTab(String domainIdentifier);
 	public boolean isEnableHelpTab(String domainIdentifier);
 	public boolean isEnableThreadTab(String domainIdentifier);
+	public boolean isEnableUpdateFiles(String domainIdentifier);
+	public boolean isEnableCreateThread(String domainIdentifier);
+	public boolean isEnableCustomLogoLink(String domainIdentifier);
 	
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier);
 	public boolean isRestrictedGuestEnabled(String domainIdentifier);

@@ -259,6 +259,45 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	}
 
 	@Override
+	public boolean isEnableUpdateFiles(String domainIdentifier){
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality updateFilesFunctionality = functionalityService.getUpdateFilesFunctionality(domain);
+			return updateFilesFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find update files functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isEnableCustomLogoLink(String domainIdentifier){
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality customLogoLinkFunctionality = functionalityService.getCustomLinkLogoFunctionality(domain);
+			return customLogoLinkFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find custom logo link functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isEnableCreateThread(String domainIdentifier){
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality createThreadFunctionality = functionalityService.getThreadCreationPermissionFunctionality(domain);
+			return createThreadFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find thread creation functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean isEnableHelpTab(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
@@ -283,7 +322,6 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		}
 		return false;
 	}
-
 
 	@Override
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {

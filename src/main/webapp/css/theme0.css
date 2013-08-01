@@ -1377,7 +1377,7 @@ table.t-data-grid {
 }
 
 /* Page content */
-
+#thread #content h2,
 #pageContent h2 {
 	margin: .75em auto;
 	color: #3D697F;
@@ -1906,6 +1906,7 @@ DIV.t-palette-controls BUTTON {
 #audit #pageContent {
 }
 
+#thread #content fieldset.title_criteria_zone,
 #history #pageContent fieldset.title_criteria_zone,
 #audit #pageContent fieldset.title_criteria_zone {
 	float: left;

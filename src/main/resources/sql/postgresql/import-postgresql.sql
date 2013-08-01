@@ -462,6 +462,16 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (37, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
+--Functionality : UPDATE_FILE
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (27, true, 'UPDATE_FILE', 55, 56, 1);
+
+--Functionality : CREATE_THREAD_PERMISSION
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (57, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (58, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (28, true, 'CREATE_THREAD_PERMISSION', 57, 58, 1);
+
 
 -- Functionality : SECURED_ANONYMOUS_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
@@ -494,8 +504,20 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 49, 50, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');
 
+-- Functionality : LINK_LOGO
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (59, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (60, false, false, 1, false);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (29, false, 'LINK_LOGO', 59, 60, 1);
+INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
+
+--Functionality : NOTIFICATION_URL
+INSERT INTO policy(id,status,default_status,policy,system) VALUES(61,false,false,1,false);
+INSERT INTO policy(id,status,default_status,policy,system) VALUES(62,false,false,1,false);
+INSERT INTO functionality(id,system,identifier,policy_activation_id,policy_configuration_id,domain_id) VALUES(30,false,'NOTIFICATION_URL',61,62,1); 
+INSERT INTO functionality_string(functionality_id,string_value) VALUES (30,'http://localhost:8080/linshare/');
+
 -- LinShare version
-INSERT INTO version (id,description) VALUES (1,'1.1.0');
+INSERT INTO version (id,description) VALUES (1,'1.3.0');
 
 -- Sequence for hibernate
 SELECT setval('hibernate_sequence', 100);

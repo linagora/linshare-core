@@ -14,10 +14,6 @@
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
-            	    <a href="#" class="button" onclick="window_confirm.showCenter(true);">
-	                    <span><img src="${asset:context:images/popupImages/less.png}" alt=""/> 
-	                    ${message:pages.thread.admin.deleteButton}</span>
-	                </a>
                 <li>
 	                <t:actionLink class="button" t:id="editThread" t:zone="threadEditFormZone"
                             title="${message:pages.thread.admin.renameButton}">

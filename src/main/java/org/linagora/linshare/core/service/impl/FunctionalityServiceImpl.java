@@ -671,6 +671,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
+	public StringValueFunctionality getCustomLinkLogoFunctionality(AbstractDomain domain) {
+		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.LINK_LOGO);
+	}
+	
+	@Override
 	public Functionality getUserCanUploadFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.USER_CAN_UPLOAD);
 	}
@@ -684,7 +689,16 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public Functionality getUserTabFunctionality(AbstractDomain domain) {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_USER);
 	}
+	
+	@Override
+	public Functionality getThreadCreationPermissionFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.CREATE_THREAD_PERMISSION);
+	}
 
+	@Override
+	public Functionality getUpdateFilesFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.UPDATE_FILE);
+	}
 	
 	@Override
 	public Functionality getAuditTabFunctionality(AbstractDomain domain) {
@@ -706,6 +720,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	@Override
 	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain) {
 		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.SHARE_NOTIFICATION_BEFORE_EXPIRATION);
+	}
+	
+	@Override
+	public StringValueFunctionality getCustomNotificationUrlFunctionality(AbstractDomain domain) {
+		return (StringValueFunctionality) getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.NOTIFICATION_URL);
 	}
 
 	@Override
@@ -765,4 +784,25 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	public String getCustomLogoUrlInRootDomain() throws BusinessException {
 		return this.getCustomLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
 	}
+	
+	@Override
+	public boolean isCustomLinkLogoActiveInRootDomain() throws BusinessException {
+		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
+	}
+	
+	@Override
+	public String getCustomLinkLogoInRootDomain() throws BusinessException {
+		return this.getCustomLinkLogoFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
+	}
+	
+	@Override
+	public boolean isCustomNotificationURLActiveInRootDomain() throws BusinessException {
+		return this.getCustomNotificationUrlFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
+	}
+	
+	@Override
+	public String getCustomNotificationURLInRootDomain() throws BusinessException {
+		return this.getCustomNotificationUrlFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
+	}
+	
 }
