@@ -49,15 +49,15 @@ public interface DomainPolicyFacade {
 
 	public DomainPolicyVo retrieveDomainPolicy(String identifier)throws BusinessException;
 
-	public void deletePolicy(String policyToDelete, UserVo actorVo)throws BusinessException;
+	public void deletePolicy(UserVo actorVo, String policyToDelete)throws BusinessException;
 
-	public boolean policyIsDeletable(String policyToDelete, UserVo actor)throws BusinessException;
+	public boolean policyIsDeletable(UserVo actor, String policyToDelete)throws BusinessException;
 
 	public List<String> findAllDomainPoliciesIdentifiers();
 
 	public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException;
 
-	public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo) throws BusinessException;
+	public void deleteDomainAccessRule(DomainPolicyVo domainPolicyVo,DomainAccessRuleVo ruleVo) throws BusinessException;
 	
 	public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId)	throws BusinessException ;
 	

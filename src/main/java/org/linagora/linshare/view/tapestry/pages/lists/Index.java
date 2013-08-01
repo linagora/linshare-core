@@ -167,12 +167,10 @@ public class Index {
 
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
-    	List<MailingListVo> copy = mailingListFacade.copyList(lists);
     	mailingListFacade.deleteMailingList(listToDelete);
-    	lists.clear();
-    	for(MailingListVo current : copy){
-    		if(!(current.getPersistenceId() == listToDelete)){
-    			lists.add(current);
+    	for(MailingListVo current : lists){
+    		if(current.getPersistenceId() == listToDelete){
+    			lists.remove(current);
     		}
     	}
 		list=null;
@@ -183,12 +181,11 @@ public class Index {
 		return mailingListFacade.onProvideCompletionsForSearchList(input, criteriaOnSearch, loginUser);
 	}	
 
-	public Object onSuccessFromForm() throws BusinessException {
+	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
     	lists.clear();
     	lists= mailingListFacade.setListFromSearch(targetLists,criteriaOnSearch,loginUser);
     	fromCreate = false;
-		return null;
 	}
 
 	Object onException(Throwable cause) {
@@ -200,12 +197,7 @@ public class Index {
 
 	
 	public boolean getIsPublic() {
-		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
-		if(list.isPublic()){
-			return true;
-		} else {
-			return false;
-		}
+		return list.isPublic();
 	}
 	
 	public boolean isEmptyList() {

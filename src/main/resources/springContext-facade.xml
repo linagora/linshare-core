@@ -168,5 +168,6 @@
 		<constructor-arg ref="mailingListService" />
 		<constructor-arg ref="userService" />
 		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="accountService" />
 	</bean>
 </beans>

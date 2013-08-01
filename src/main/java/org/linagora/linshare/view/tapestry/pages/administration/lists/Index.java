@@ -125,8 +125,7 @@ public class Index {
 		        if (grid.getSortModel().getSortConstraints().isEmpty()) {
 		            grid.getSortModel().updateSort("identifier");
 		        }
-		        List<MailingListVo> copy = new ArrayList<MailingListVo>();
-		        copy = mailingListFacade.copyList(lists);
+		        List<MailingListVo> copy =mailingListFacade.copyList(lists);
 		        lists.clear();
 		        
 		    	for(MailingListVo current : copy){
@@ -150,26 +149,23 @@ public class Index {
     
     @OnEvent(value="listDeleteEvent")
     public void deleteList() throws BusinessException {
-    	List<MailingListVo> copy = mailingListFacade.copyList(lists);
     	mailingListFacade.deleteMailingList(listToDelete);
-    	lists.clear();
-    	
-    	for(MailingListVo current : copy){
-    		if(!(current.getPersistenceId() == listToDelete)){
-    			lists.add(current);
+    	for(MailingListVo current : lists){
+    		if(current.getPersistenceId() == listToDelete){
+    			lists.remove(current);
     		}
     	}
+		list=null;
     }
     
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
 		return mailingListFacade.onProvideCompletionsForSearchList(input, criteriaOnSearch, loginUser);
 	}
 	
-    public Object onSuccessFromForm() throws BusinessException {	
+    public void onSuccessFromForm() throws BusinessException {	
     	inSearch = true;
     	lists.clear();
     	lists= mailingListFacade.setListFromSearch(targetLists,criteriaOnSearch,loginUser);
-    	return null;
     }
     
     Object onException(Throwable cause) {
@@ -180,7 +176,6 @@ public class Index {
     }
     
 	public boolean getIsPublic() {
-		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
 		return list.isPublic(); 
 	}
 	

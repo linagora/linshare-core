@@ -43,4 +43,9 @@ public interface MailingListFacade {
     
     public List<MailingListVo> setListFromSearch(String targetLists, String criteriaOnSearch, UserVo loginUser) throws BusinessException;
 
+    public boolean checkUserIsContact(List<MailingListContactVo> contacts , String mail);
+    
+    public List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException ;
+    
+    public List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException;
 }

@@ -35,7 +35,7 @@
 		
 		<t:if test="inModify">
 		
-			<form t:type="form" t:id="formBis">
+			<form t:type="form" t:id="editContactForm">
 				<fieldset class="title_criteria_zone" id="contactCriterion">
 				<legend align="top" class="palette">${message:pages.lists.index.list.contact.edit.button}</legend>
 				<p><t:label for="email"/>:&nbsp;
@@ -52,7 +52,7 @@
 				</fieldset>
 			</form>
 		<p:else>
-			<form t:type="form" t:id="form">
+			<form t:type="form" t:id="addContactForm">
 				<fieldset class="title_criteria_zone" id="contactCriterion">
 				<legend align="top" class="palette">${message:pages.lists.addContact}</legend>
 				<p><t:label for="email"/>:&nbsp;
@@ -72,7 +72,7 @@
 			
 	  <div class="clear"></div>
 
-			<form t:type="form" t:id="forms">
+			<form t:type="form" t:id="SearchUserForm">
 				<fieldset style="width: 1000;" class="title_criteria_zone" id="userCriterion">
 				<legend align="top" class="palette">${message:pages.lists.addUser}</legend>		
 					<table>
