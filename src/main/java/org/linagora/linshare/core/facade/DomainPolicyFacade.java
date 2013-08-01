@@ -35,6 +35,7 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -57,12 +58,35 @@ public interface DomainPolicyFacade {
 	public List<DomainPolicyVo> findAllDomainPolicies() throws BusinessException;
 
 	public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo,DomainPolicyVo domainPolicyVo) throws BusinessException;
-
-	public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId)throws BusinessException;
 	
-	public void insertOnTop(DomainPolicyVo policyVo, DomainAccessRuleVo ruleVo);
-	 
-	public void sortDomainAccessRules(DomainPolicyVo policyVo, List<DomainAccessRuleVo> rulesVo) throws BusinessException;
+	public DomainAccessRuleVo retrieveDomainAccessRule(long persistenceId)	throws BusinessException ;
 	
-	public String checkIdentifierIsUnique(String value);
+	/**
+	 * Use to insert a rule on top of rule list
+	 * @param policyVo
+	 * @param ruleVo
+	 */
+	public void insertRuleOnTopOfList(DomainPolicyVo policyVo, DomainAccessRuleVo ruleVo);
+	
+	/**
+	 * Set and sort a domain access rule list
+	 * @param rulesVo
+	 * @param tabPos
+	 */
+	public void setAndSortDomainAccessRuleList(DomainPolicyVo policyVo, String tabPos) throws BusinessException;
+	
+	/**
+	 * When create DP, check if identifier is unique , if not , return an available identifier
+	 * @param value
+	 * @return
+	 */
+	public String checkDomainPolicyIdentifierIsUnique(String value);
+	
+	/**
+	 * set DomainAccessRuleVo according to select domainAccessRuleType
+	 * @param rule
+	 * @param domainSelection
+	 * @return
+	 */
+	public DomainAccessRuleVo getDomainAccessRuleVoFromSelect(DomainAccessRuleType rule, String domainSelection);
 }

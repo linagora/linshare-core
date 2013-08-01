@@ -35,135 +35,158 @@
 package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
-@Import(library = {"../../../components/jquery/jquery-1.7.2.js","../../../components/jquery/jquery.ui.core.js","../../../components/jquery/jquery.ui.widget.min.js","../../../components/jquery/jquery.ui.mouse.min.js","../../../components/jquery/jquery.ui.sortable.min.js","ManageDomainPolicy.js"}, stylesheet={"../../../components/jquery/jquery-ui-1.8.21.custom.css","ManageDomainPolicy.css"})
+@Import(library = { "../../../components/jquery/jquery-1.7.2.js","../../../components/jquery/jquery.ui.core.js","../../../components/jquery/jquery.ui.widget.min.js","../../../components/jquery/jquery.ui.mouse.min.js",
+		"../../../components/jquery/jquery.ui.sortable.min.js","ManageDomainPolicy.js" }, stylesheet = {"../../../components/jquery/jquery-ui-1.8.21.custom.css","ManageDomainPolicy.css" })
 public class ManageDomainPolicy {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(ManageDomainPolicy.class);
-	
+
 	@SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
-	
-    @Inject
-    private DomainPolicyFacade domainPolicyFacade;
-	
-	@SessionState(create=false)
 	@Property
-	private DomainPolicyVo domainPolicy;
+	private ShareSessionObjects shareSessionObjects;
 
-    @Inject
-    private PersistentLocale persistentLocale;
-	
+	@Inject
+	private DomainPolicyFacade domainPolicyFacade;
+
+	@SessionState(create = false)
+	@Property
+	private DomainPolicyVo domainPolicyVo;
+
+	@Inject
+	private PersistentLocale persistentLocale;
+
 	@SessionState
-    private UserVo loginUser;
-	
-    @Property
-    private String _rules;
-	
-    @Property
-    private DomainAccessRuleVo _rule;
-    
-    @Property
-    private long _ruleIdentifier;
-    
-    @Property 
-    private int indexRule;
+	private UserVo loginUser;
 
-    @Inject
-    private Messages messages;
-    
+	@Property
+	private String _rules;
+
+	@Property
+	private DomainAccessRuleVo _rule;
+
+	@Property
+	private long _ruleIdentifier;
+
+	@Property
+	private int indexRule;
+
+	@Inject
+	private Messages messages;
+
 	@Property
 	private String tabPos;
-    
 	
-	public List<DomainAccessRuleVo> getRulesList(){
+	@Property
+	@Persist
+	@Validate("required")
+    private DomainAccessRuleType ruleToAdd;
+	
+    @Property
+	@Validate("required")
+    private String domainSelection;
+    
+    @Inject
+    private AbstractDomainFacade domainFacade;
+    
+    @Property
+    private boolean onTop;
+    
+    @Persist
+    @Property
+    private List<String> domains;
+	
+    @Persist
+    @Property
+    private boolean showAddRuleForm;
+
+	public List<DomainAccessRuleVo> getRulesList() {
 		List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
-		rulesVo = domainPolicy.getDomainAccessPolicy().getRules();
-		for(DomainAccessRuleVo current : rulesVo){
+		rulesVo = domainPolicyVo.getDomainAccessPolicy().getRules();
+
+		for (DomainAccessRuleVo current : rulesVo) {
 			current.setDescription(current.toDisplay(persistentLocale));
 		}
 		return rulesVo;
 	}
 	
 	public void onActivate(String identifier) throws BusinessException {
-		domainPolicy = domainPolicyFacade.retrieveDomainPolicy(identifier);
-		for(DomainAccessRuleVo current : domainPolicy.getDomainAccessPolicy().getRules()){
-			current.setDescription(current.toDisplay(persistentLocale));
-		}
+		domainPolicyVo = domainPolicyFacade.retrieveDomainPolicy(identifier);
+		domains = domainFacade.findAllDomainIdentifiers();
+		showAddRuleForm = false;
 	}
 
-    public Object onRemove(long _ruleIdentifier) throws BusinessException {
-    	Iterator<DomainAccessRuleVo> it =domainPolicy.getDomainAccessPolicy().getRules().iterator();
-    	boolean delete=false;
-    	while(it.hasNext()){
-    		DomainAccessRuleVo rule=it.next();
-    		if(rule.getPersistenceId() == _ruleIdentifier && delete == false)
-    		{
-    			DomainAccessRuleVo deleteRule=new DomainAccessRuleVo();
-    			deleteRule.setPersistenceId(rule.getPersistenceId());
-    			it.remove();
-    			domainPolicyFacade.deleteDomainAccessRule(deleteRule,domainPolicy);
-    			delete=true;
-    		}
-    	}
-    	return null;
-    }
-	
-    public Object onActionFromCancel() {
-       domainPolicy=null;
-       return Index.class;
-    }
-   
-	public Object onSuccess() throws BusinessException{
+	public Object onRemove(long _ruleIdentifier) throws BusinessException {
+		DomainAccessRuleVo ruleToDelete = domainPolicyFacade.retrieveDomainAccessRule(_ruleIdentifier);
+		domainPolicyFacade.deleteDomainAccessRule(ruleToDelete, domainPolicyVo);
+		domainPolicyVo = domainPolicyFacade.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
 
-			if(tabPos != null){
-				String[] domainIdentifiers = tabPos.split(";");
-				List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
-				DomainAccessRuleVo ruleVo; 
-				for (String domainIdentifier : domainIdentifiers) {
-					if(!domainIdentifier.isEmpty()){
-						ruleVo =domainPolicyFacade.retrieveDomainAccessRule(Long.parseLong(domainIdentifier));
-						rulesVo.add(ruleVo);
-					}
-				}
-				domainPolicyFacade.sortDomainAccessRules(domainPolicy,rulesVo);
-			}
-			try {
-				domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicy);
-			} catch (BusinessException e) {
-				e.printStackTrace();
-			}
-				domainPolicy=null;	
+		return null;
+	}
+
+	public Object onActionFromCancel() {
+		domainPolicyVo = null;
 		return Index.class;
-		
+	}
+
+	public Object onSuccessFromForm() throws BusinessException {
+
+		if (tabPos != null) {
+			domainPolicyFacade.setAndSortDomainAccessRuleList(domainPolicyVo,tabPos);
+		}
+		try {
+			domainPolicyFacade.updateDomainPolicy(loginUser, domainPolicyVo);
+		} catch (BusinessException e) {
+			e.printStackTrace();
+		}
+		domainPolicyVo = null;
+		return Index.class;
+
+	}
+
+	public Object onActionFromAdd() {
+		showAddRuleForm = true;
+		return null;
 	}
 	
-    Object onException(Throwable cause) {
-    	shareSessionObjects.addError(messages.get("global.exception.message"));
-    	logger.error(cause.getMessage());
-    	cause.printStackTrace();
-    	return this;
-    }
+	public Object onSuccessFromAddRuleForm() throws BusinessException{
+		DomainAccessRuleVo rule= domainPolicyFacade.getDomainAccessRuleVoFromSelect(ruleToAdd, domainSelection);
+		if(onTop){
+			domainPolicyFacade.insertRuleOnTopOfList(domainPolicyVo,rule);
+		} else {
+			domainPolicyVo.getDomainAccessPolicy().addRule(rule);
+		}
+		domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicyVo);
+		domainPolicyVo = domainPolicyFacade.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
+		showAddRuleForm = false;
+		return null;
+	}
 	
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
+	}
+
 }
