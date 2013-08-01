@@ -136,12 +136,10 @@ public class ManageDomainPolicy {
 		showAddRuleForm = false;
 	}
 
-	public Object onRemove(long _ruleIdentifier) throws BusinessException {
+	public void onRemove(long _ruleIdentifier) throws BusinessException {
 		DomainAccessRuleVo ruleToDelete = domainPolicyFacade.retrieveDomainAccessRule(_ruleIdentifier);
-		domainPolicyFacade.deleteDomainAccessRule(ruleToDelete, domainPolicyVo);
+		domainPolicyFacade.deleteDomainAccessRule(domainPolicyVo, ruleToDelete);
 		domainPolicyVo = domainPolicyFacade.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
-
-		return null;
 	}
 
 	public Object onActionFromCancel() {
@@ -164,12 +162,11 @@ public class ManageDomainPolicy {
 
 	}
 
-	public Object onActionFromAdd() {
+	public void onActionFromAdd() {
 		showAddRuleForm = true;
-		return null;
 	}
 	
-	public Object onSuccessFromAddRuleForm() throws BusinessException{
+	public void onSuccessFromAddRuleForm() throws BusinessException{
 		DomainAccessRuleVo rule= domainPolicyFacade.getDomainAccessRuleVoFromSelect(ruleToAdd, domainSelection);
 		if(onTop){
 			domainPolicyFacade.insertRuleOnTopOfList(domainPolicyVo,rule);
@@ -179,7 +176,6 @@ public class ManageDomainPolicy {
 		domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicyVo);
 		domainPolicyVo = domainPolicyFacade.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
 		showAddRuleForm = false;
-		return null;
 	}
 	
 	Object onException(Throwable cause) {

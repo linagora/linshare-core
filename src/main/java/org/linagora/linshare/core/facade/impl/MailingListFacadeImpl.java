@@ -1,7 +1,10 @@
 package org.linagora.linshare.core.facade.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailingList;
@@ -13,8 +16,10 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
+import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
+import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 
 
 public class MailingListFacadeImpl implements MailingListFacade {
@@ -22,13 +27,15 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	private final MailingListService mailingListService;
     private final UserService userService;
     private final AbstractDomainService abstractDomainService;
+    private final AccountService accountService;
     
-    public MailingListFacadeImpl(MailingListService mailingListService, UserService userService,AbstractDomainService abstractDomainService) {
+    public MailingListFacadeImpl(MailingListService mailingListService, UserService userService,AbstractDomainService abstractDomainService,AccountService accountService) {
         
     	super();
         this.mailingListService = mailingListService;
         this.userService = userService;
         this.abstractDomainService=abstractDomainService;
+        this.accountService = accountService;
     }
     
     @Override
@@ -319,4 +326,77 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		return finalList;
 	}
    
+   public boolean checkUserIsContact(List<MailingListContactVo> contacts , String mail){
+	  
+	   for (MailingListContactVo contact : contacts) {
+			if (contact.getMail().equals(mail)) {
+				return true;
+			}
+		}
+	   return false;
+   }
+
+	@Override
+	public List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLogin());
+		List<String> ret = new ArrayList<String>();
+
+		List<User> userSet = performSearchUser(actor, pattern);
+
+		for (User user : userSet) {
+			if (!(user.equals(actor))) {
+				String completeName = MailCompletionService.formatLabel(new UserVo(user)).substring(0, MailCompletionService.formatLabel(new UserVo(user)).length() - 1);
+				if (!ret.contains(completeName)) {
+					ret.add(completeName);
+				}
+			}
+		}
+		return ret;
+	}
+   
+   private List<User> performSearchUser(User loginUser,String input) throws BusinessException {
+			String firstName_ = null;
+			String lastName_ = null;
+
+			if (input != null && input.length() > 0) {
+				StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
+				if (stringTokenizer.hasMoreTokens()) {
+					firstName_ = stringTokenizer.nextToken();
+					if (stringTokenizer.hasMoreTokens()) {
+						lastName_ = stringTokenizer.nextToken();
+					}
+				}
+			}
+
+			Set<User> userSet = new HashSet<User>();
+
+				if (input != null) {
+					userSet.addAll(userService.searchUser(input.trim(), null, null, null, loginUser));
+				} else {
+					userSet.addAll(userService.searchUser(null, firstName_, lastName_, null, loginUser));
+				}
+
+			return new ArrayList<User>(userSet);
+	}
+   
+	@Override
+	public List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException {
+		List<User> results = new ArrayList<User>();
+		List<UserVo> finalResults = new ArrayList<UserVo>();
+		User owner = (User) accountService.findByLsUuid(userVo.getLogin());
+		if (input != null) {
+			if (input.startsWith("\"") && input.endsWith(">")) {
+				UserVo tmp = MailCompletionService.getUserFromDisplay(input);
+				results = userService.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), null, owner);
+			} else {
+				results = performSearchUser(owner, input);
+			}
+			for (User currentUser : results) {
+				if (!(currentUser.equals(owner))) {
+					finalResults.add(new UserVo(currentUser));
+				}
+			}
+		}
+		return finalResults;
+	}
 }

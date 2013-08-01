@@ -180,7 +180,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 	}
 
 	@Override
-	public void deletePolicy(String policyToDelete, UserVo actorVo)	throws BusinessException {
+	public void deletePolicy(UserVo actorVo, String policyToDelete)	throws BusinessException {
 		if (isAuthorized(actorVo)) {
 			domainPolicyService.deletePolicy(policyToDelete);
 		} else {
@@ -189,7 +189,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 	}
 
 	@Override
-	public boolean policyIsDeletable(String policyToDelete, UserVo actorVo)	throws BusinessException {
+	public boolean policyIsDeletable(UserVo actorVo, String policyToDelete)	throws BusinessException {
 		if (isAuthorized(actorVo)) {
 			return domainPolicyService.policyIsDeletable(policyToDelete);
 		} else
@@ -197,7 +197,7 @@ public class DomainPolicyFacadeImpl implements DomainPolicyFacade {
 	}
 
 	@Override
-	public void deleteDomainAccessRule(DomainAccessRuleVo ruleVo, DomainPolicyVo domainPolicyVo) throws BusinessException {
+	public void deleteDomainAccessRule(DomainPolicyVo domainPolicyVo, DomainAccessRuleVo ruleVo) throws BusinessException {
 		DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
 		Iterator<DomainAccessRule> it = policy.getDomainAccessPolicy().getRules().iterator();
 		boolean next = true;

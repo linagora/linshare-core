@@ -81,11 +81,6 @@
         </form>
         </t:if>
 		</div>
-
-		<script type="text/javascript">
-   			 $(function() {
-        $("select").change(function() {
-	</script>
 	</div><!-- id="content" -->
 
 

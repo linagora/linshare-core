@@ -162,7 +162,7 @@ public class Index {
     
     @OnEvent(value="policyDeleteEvent")
     public void deletePolicy() throws BusinessException {
-    	domainPolicyFacade.deletePolicy(policyToDelete, loginUser);
+    	domainPolicyFacade.deletePolicy(loginUser, policyToDelete);
         policies = domainPolicyFacade.findAllDomainPolicies();
     }
     
@@ -175,7 +175,7 @@ public class Index {
     }
 
     public boolean getPolicyIsDeletable() throws BusinessException {
-    	return domainPolicyFacade.policyIsDeletable(domainPolicy.getIdentifier(), loginUser);
+    	return domainPolicyFacade.policyIsDeletable(loginUser, domainPolicy.getIdentifier());
     }
     
     public String getConnectionIdentifier() {

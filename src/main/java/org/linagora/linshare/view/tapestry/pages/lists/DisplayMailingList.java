@@ -35,10 +35,7 @@
 package org.linagora.linshare.view.tapestry.pages.lists;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
@@ -83,8 +80,6 @@ public class DisplayMailingList {
 
 	@Persist
 	private List<MailingListContactVo> lists;
-
-	private MailingListContactVo list;
 	
 	@Persist
 	@Property
@@ -92,9 +87,6 @@ public class DisplayMailingList {
 
 	@Property
 	private UserVo contact;
-	
-	@Property
-	private UserVo contactForEdit;
 
 	@Persist
 	@Validate("required")
@@ -137,8 +129,6 @@ public class DisplayMailingList {
     
 	@Property
 	private int autocompleteMin = 3;
-
-	private boolean isEmpty;
 	
 	@Persist
 	private boolean inModify;
@@ -148,14 +138,10 @@ public class DisplayMailingList {
 
 	@SetupRender
 	public void init() throws BusinessException {
-
-		isEmpty = mailingList.getMails().isEmpty();
-		if (!isEmpty) {
-			lists = new ArrayList<MailingListContactVo>();
-			lists = mailingList.getMails();
+		if (!mailingList.getMails().isEmpty()) {
 			contacts = new ArrayList<UserVo>();
-			
-			for(MailingListContactVo current :lists){
+			lists = mailingList.getMails();
+			for(MailingListContactVo current :mailingList.getMails()){
 				contacts.add(MailCompletionService.getUserFromDisplay(current.getDisplay()));
 			}
 		}
@@ -167,73 +153,14 @@ public class DisplayMailingList {
 		} else {
 			mailingList = null;
 		}
-		email = null;
-		firstName = null;
-		lastName = null;
 		inModify = false;
 		displayGrid = false;
 	}
 
-	public List<String> onProvideCompletionsFromSearchUser(String input) {
-		List<UserVo> searchResults = performSearch(input);
-		List<UserVo> fromAuthorized = new ArrayList<UserVo>();
-
-		for(UserVo current :searchResults){
-			if(!(current.equals(loginUser))){
-				fromAuthorized.add(current);
-			}
-		}
-		List<String> elements = new ArrayList<String>();
-		
-		for (UserVo user : fromAuthorized) {
-			String completeName = MailCompletionService.formatLabel(user);
-			if (!elements.contains(completeName)) {
-				elements.add(completeName);
-			}
-		}
-		return elements;
-	}
-
-	/**
-	 * Perform a user search using the user search pattern.
-	 * 
-	 * @param input
-	 *            user search pattern.
-	 * @return list of users.
-	 */
-	private List<UserVo> performSearch(String input) {
-
-		Set<UserVo> userSet = new HashSet<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
-
-		try {
-			if (input != null) {
-				userSet.addAll(userFacade.searchUser(input.trim(), null, null,loginUser));
-			}
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,loginUser));
-
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,loginUser));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), loginUser));
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), loginUser);
-		} catch (BusinessException e) {
-			logger.error("Error while searching user", e);
-		}
-		return new ArrayList<UserVo>();
+	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
+		return mailingListFacade.completionOnUsers(loginUser, input);
 	}
 	
-
 	public Object onActionFromBack() {
 		mailingList = null;
 		lists = null;
@@ -257,7 +184,7 @@ public class DisplayMailingList {
 		lastName = null;
 	}
 	
-	public Object onSuccessFromForm() throws BusinessException {
+	public void onSuccessFromAddContactForm() throws BusinessException {
 		String display = MailCompletionService.formatLabel(email, firstName,lastName, false);
 		MailingListContactVo newContact = new MailingListContactVo(email,display);
 		if(mailingList.getMails() == null){
@@ -271,10 +198,9 @@ public class DisplayMailingList {
 		email = null;
 		firstName = null;
 		lastName = null;
-		return null;
 	}
 
-	public Object onSuccessFromFormBis() throws BusinessException {
+	public void onSuccessFromEditContactForm() throws BusinessException {
 		if(inModify == true){
 			String display = MailCompletionService.formatLabel(email, firstName,lastName, false);
 
@@ -290,45 +216,16 @@ public class DisplayMailingList {
 			firstName = null;
 			lastName = null;
 		}
-		return null;
 	}
 
 	
-	public Object onSuccessFromForms() throws BusinessException {
-		results = null;
-		if (recipientsSearch != null) {
-			if(recipientsSearch.substring(recipientsSearch.length()-1).equals(">")) {
-				UserVo tmp = MailCompletionService.getUserFromDisplay(recipientsSearch);
-				results = new ArrayList<UserVo>(userFacade.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), loginUser));
-			} else {
-			List<UserVo>searchResults = new ArrayList<UserVo>();
-			searchResults = performSearch(recipientsSearch);
-			results = new ArrayList<UserVo>();
-
-			for(UserVo current :searchResults){
-				if(!(current.equals(loginUser))){
-					results.add(current);
-				}
-			}
-			}
-		}
+	public void onSuccessFromSearchUserForm() throws BusinessException {
+		results = mailingListFacade.searchAmongUsers(loginUser, recipientsSearch);
 		displayGrid = true;
-		return null;
 	}
 
 	public boolean getIsInList() throws BusinessException {
-		boolean inList = false;
-		if (!mailingList.getMails().isEmpty()) {
-			List<MailingListContactVo> listing = new ArrayList<MailingListContactVo>();
-			listing = mailingList.getMails();
-			
-			for (MailingListContactVo contact : listing) {
-				if (contact.getMail().equals(result.getMail())) {
-					inList = true;
-				}
-			}
-		}
-		return inList;
+			return mailingListFacade.checkUserIsContact(mailingList.getMails(), result.getMail());
 	}
 
 	public boolean getUserIsOwner(){
@@ -364,7 +261,7 @@ public class DisplayMailingList {
 	}
 
 	public void onActionFromEditContact(String mail) {
-		
+		UserVo contactForEdit = null;
 		for(MailingListContactVo current : lists){
 			if(current.getMail().equals(mail)){
 				contactForEdit=MailCompletionService.getUserFromDisplay(current.getDisplay());
@@ -381,7 +278,7 @@ public class DisplayMailingList {
 	
 	public void onActionFromDeleteContact(String mail) {
 		
-		for(MailingListContactVo current : this.lists){
+		for(MailingListContactVo current : lists){
 			if(current.getMail().equals(mail)){
 				this.contactToDelete = current.getPersistenceId();
 			}
@@ -396,31 +293,11 @@ public class DisplayMailingList {
 	}
 
 	public boolean getIsEmpty() {
-		return isEmpty;
-	}
-
-	public List<MailingListContactVo> getLists() {
-		return lists;
-	}
-
-	public void setLists(List<MailingListContactVo> lists) {
-		this.lists = lists;
-	}
-
-	public MailingListContactVo getList() {
-		return list;
-	}
-
-	public void setList(MailingListContactVo list) {
-		this.list = list;
+		return mailingList.getMails().isEmpty();
 	}
 
 	public boolean isInModify() {
 		return inModify;
-	}
-
-	public void setInModify(boolean inModify) {
-		this.inModify = inModify;
 	}
 
 }
