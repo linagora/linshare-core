@@ -81,13 +81,13 @@ public interface ThreadEntryFacade {
 
 	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo, ThreadVo threadVo, TagVo[] tags) throws BusinessException;
 
-	public boolean isMember(ThreadVo threadVo, UserVo userVo) throws BusinessException;
+	public boolean userIsMember(ThreadVo threadVo, UserVo userVo) throws BusinessException;
 
-	public List<ThreadMemberVo> getThreadMembers(ThreadVo threadVo) throws BusinessException;
+	public List<ThreadMemberVo> getThreadMembers(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
 
 	public boolean userCanUpload(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
 
-	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) throws BusinessException;
+	public boolean userIsAdmin(ThreadVo threadVo, UserVo userVo) throws BusinessException;
 
 	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo) throws BusinessException;
 

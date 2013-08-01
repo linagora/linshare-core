@@ -404,7 +404,7 @@ public class ListThreadDocument {
     
     public boolean getIsAdmin(){
     	try {
-			return threadEntryFacade.userIsAdmin(user, threadVo);
+			return threadEntryFacade.userIsAdmin(threadVo, user);
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			return false;

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
@@ -107,10 +108,11 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public void create(Account actor, String name) throws BusinessException {
+	public Boolean create(Account actor, String name) throws BusinessException {
 		
+		boolean isGuest = actor.getAccountType().equals(AccountType.GUEST);
 		Functionality creation = functionalityService.getThreadCreationPermissionFunctionality(actor.getDomain());
-		if(creation.getActivationPolicy().getStatus()){
+		if (creation.getActivationPolicy().getStatus() && !isGuest){
 			Thread thread = null;
 			ThreadView threadView = null;
 			ThreadMember member = null;
@@ -136,6 +138,15 @@ public class ThreadServiceImpl implements ThreadService {
 			threadRepository.update(thread);
 			logEntryService.create(new ThreadLogEntry(actor, member, LogAction.THREAD_ADD_MEMBER,
 					"Creating the first member of the newly created thread."));
+			return true;
+		} else {
+			logger.error("You can not create thread, you are not authorized.");
+			if (isGuest) {
+				logger.error("guests are not authorised to create a thread");
+			} else {
+				logger.error("The current domain does not allowed you to create thread.");
+			}
+			return false;
 		}
 	}
 

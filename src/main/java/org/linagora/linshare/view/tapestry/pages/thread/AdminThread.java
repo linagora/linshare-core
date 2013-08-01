@@ -157,7 +157,7 @@ public class AdminThread {
 		if (!inSearch) {
 			try {
 				recipientsSearchMember = "*";
-				members = threadEntryFacade.getThreadMembers(currentThread);
+				members = threadEntryFacade.getThreadMembers(userVo, currentThread);
 				inSearch = true;
 			} catch (BusinessException e) {
 				logger.error(e.getMessage());
@@ -171,7 +171,7 @@ public class AdminThread {
 			return Index.class;
 		}
 		try {
-			if (!threadEntryFacade.userIsAdmin(userVo, currentThread)) {
+			if (!threadEntryFacade.userIsAdmin(currentThread, userVo)) {
 				logger.info("Unauthorized");
 				return ThreadContent.class;
 			}
@@ -247,7 +247,7 @@ public class AdminThread {
 
 		// refresh list
 		try {
-			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(currentThread);
+			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(userVo, currentThread);
 			members = tmp;
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
@@ -266,9 +266,9 @@ public class AdminThread {
 	public Object onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
 			if (recipientsSearchMember.equals("*")) {
-				members = threadEntryFacade.getThreadMembers(currentThread);
+				members = threadEntryFacade.getThreadMembers(userVo, currentThread);
 			} else {
-			members = threadEntryFacade.searchAmongMembers(userVo, currentThread, recipientsSearchMember);
+				members = threadEntryFacade.searchAmongMembers(userVo, currentThread, recipientsSearchMember);
 			}
 		}
 		return null;
@@ -278,21 +278,19 @@ public class AdminThread {
 		inSearch = false;
 	}
 
-	public Object onSuccessFromForm() throws BusinessException {
+	public void onSuccessFromForm() throws BusinessException {
 		userSearchResults = threadEntryFacade.searchAmongUsers(userVo, recipientsSearch);
 		displayGrid = true;
-		return null;
 	}
 
-	public Object onSelectedFromReset() {
+	public void onSelectedFromReset() {
 		displayGrid = false;
 		recipientsSearch = null;
-		return null;
 	}
 
 	public boolean getIsInList() throws BusinessException {
 		// check if user from searchList is thread member
-		return threadEntryFacade.isMember(currentThread, result);
+		return threadEntryFacade.userIsMember(currentThread, result);
 
 	}
 
@@ -300,15 +298,14 @@ public class AdminThread {
 		// adding new member to thread
 		threadEntryFacade.addUserToThread(userVo, currentThread, domain, mail);
 		// refresh list
-		members = threadEntryFacade.getThreadMembers(currentThread);
-
+		members = threadEntryFacade.getThreadMembers(userVo, currentThread);
 	}
 
 	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {
 		// remove user from thread
 		threadEntryFacade.removeMemberFromThread(userVo, currentThread, domain, mail);
 		// refresh list
-		members = threadEntryFacade.getThreadMembers(currentThread);
+		members = threadEntryFacade.getThreadMembers(userVo, currentThread);
 	}
 
 }

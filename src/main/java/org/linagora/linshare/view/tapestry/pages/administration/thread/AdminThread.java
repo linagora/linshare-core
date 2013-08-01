@@ -155,7 +155,7 @@ public class AdminThread {
 		if (!inSearch) {
 			try {
 				recipientsSearchMember = "*";
-				members = threadEntryFacade.getThreadMembers(currentThread);
+				members = threadEntryFacade.getThreadMembers(userVo, currentThread);
 				inSearch = true;
 			} catch (BusinessException e) {
 				logger.error(e.getMessage());
@@ -209,7 +209,7 @@ public class AdminThread {
 	public void deleteMember() {
 		threadEntryFacade.deleteMember(currentThread, userVo, toDelete);
 		try {
-			members = threadEntryFacade.getThreadMembers(currentThread);
+			members = threadEntryFacade.getThreadMembers(userVo, currentThread);
 
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
@@ -228,7 +228,7 @@ public class AdminThread {
 	public Object onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
 			if (recipientsSearchMember.equals("*")) {
-				members = threadEntryFacade.getThreadMembers(currentThread);
+				members = threadEntryFacade.getThreadMembers(null, currentThread);
 			} else {
 			members = threadEntryFacade.searchAmongMembers(userVo, currentThread, recipientsSearchMember);
 			}
@@ -254,7 +254,7 @@ public class AdminThread {
 
 	public boolean getIsInList() throws BusinessException {
 		// check if user from searchList is thread member
-		return threadEntryFacade.isMember(currentThread, result);
+		return threadEntryFacade.userIsMember(currentThread, result);
 
 	}
 
@@ -262,7 +262,7 @@ public class AdminThread {
 		// adding new member to thread
 		threadEntryFacade.addUserToThread(userVo, currentThread, domain, mail);
 		// refresh list
-		members = threadEntryFacade.getThreadMembers(currentThread);
+		members = threadEntryFacade.getThreadMembers(userVo, currentThread);
 
 	}
 
@@ -270,7 +270,7 @@ public class AdminThread {
 		// remove user from thread
 		threadEntryFacade.removeMemberFromThread(userVo, currentThread, domain, mail);
 		// refresh list
-		members = threadEntryFacade.getThreadMembers(currentThread);
+		members = threadEntryFacade.getThreadMembers(userVo, currentThread);
 	}
 
 }

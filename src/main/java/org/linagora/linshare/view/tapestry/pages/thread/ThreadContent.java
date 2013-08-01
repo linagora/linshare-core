@@ -211,7 +211,7 @@ public class ThreadContent {
 
 	public boolean getAdmin() {
 		try {
-			return threadEntryFacade.userIsAdmin(userVo, selectedThread);
+			return threadEntryFacade.userIsAdmin(selectedThread, userVo);
 		} catch (BusinessException e) {
 			logger.error("cannot retrieve user infos" + e.getMessage());
 			logger.debug(e.toString());
