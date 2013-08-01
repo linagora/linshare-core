@@ -796,13 +796,7 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 	
 	@Override
-	public boolean isCustomNotificationURLActiveInRootDomain() throws BusinessException {
-		return this.getCustomNotificationUrlFunctionality(abstractDomainRepository.getUniqueRootDomain()).getActivationPolicy().getStatus();
-	}
-	
-	@Override
 	public String getCustomNotificationURLInRootDomain() throws BusinessException {
 		return this.getCustomNotificationUrlFunctionality(abstractDomainRepository.getUniqueRootDomain()).getValue();
 	}
-	
 }
