@@ -67,7 +67,7 @@ public interface ThreadEntryFacade {
 	
 	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo, List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags) throws BusinessException;
 
-	public InputStream retrieveFileStream(ThreadEntryVo entry, UserVo actorVo) throws BusinessException;
+	public InputStream retrieveFileStream(UserVo actorVo, ThreadEntryVo entry) throws BusinessException;
 
 	public InputStream retrieveFileStream(ThreadEntryVo entry, String lsUid) throws BusinessException;
 
@@ -80,20 +80,20 @@ public interface ThreadEntryFacade {
 	public ThreadEntryVo findById(UserVo user, String threadEntryUuid) throws BusinessException;
 
 	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo, ThreadVo threadVo, TagVo[] tags) throws BusinessException;
-
-	public boolean userIsMember(ThreadVo threadVo, UserVo userVo) throws BusinessException;
+	
+	public boolean userIsMember(UserVo userVo, ThreadVo threadVo) throws BusinessException;
 
 	public List<ThreadMemberVo> getThreadMembers(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
 
 	public boolean userCanUpload(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
 
-	public boolean userIsAdmin(ThreadVo threadVo, UserVo userVo) throws BusinessException;
+	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) throws BusinessException;
 
 	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo) throws BusinessException;
 
-	public void addMember(ThreadVo threadVo, UserVo actorVo, UserVo newMember, boolean readOnly);
+	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember, boolean readOnly);
 
-	public void deleteMember(ThreadVo threadVo, UserVo actorVo, ThreadMemberVo memberVo);
+	public void deleteMember(UserVo actorVo, ThreadVo threadVo, ThreadMemberVo memberVo);
 
 	public boolean isUserAdminOfAnyThread(UserVo actorVo) throws BusinessException;
 

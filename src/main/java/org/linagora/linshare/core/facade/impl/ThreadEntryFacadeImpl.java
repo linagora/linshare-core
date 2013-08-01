@@ -41,8 +41,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.aspectj.apache.bcel.generic.RETURN;
-import org.codehaus.jackson.map.ser.PropertyBuilder.EmptyArrayChecker;
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Tag;
@@ -189,7 +187,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public boolean userIsAdmin(ThreadVo threadVo, UserVo userVo) throws BusinessException {
+	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) throws BusinessException {
 		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		return threadService.isUserAdmin(user, thread);
@@ -242,7 +240,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 
-		if (userCanUpload(actorVo, threadVo) || userIsAdmin(threadVo, actorVo)) {
+		if (userCanUpload(actorVo, threadVo) || userIsAdmin(actorVo, threadVo)) {
 			List<ThreadEntry> threadEntries = new ArrayList<ThreadEntry>();
 			for (ThreadEntryVo threadEntryVo : threadEntriesVo) {
 				threadEntries.add(threadEntryService.findById(actor, threadEntryVo.getIdentifier()));
@@ -261,7 +259,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public InputStream retrieveFileStream(ThreadEntryVo entry, UserVo actorVo) throws BusinessException {
+	public InputStream retrieveFileStream(UserVo actorVo, ThreadEntryVo entry) throws BusinessException {
 		return retrieveFileStream(entry, actorVo.getLsUuid());
 	}
 
@@ -324,7 +322,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public boolean userIsMember(ThreadVo threadVo, UserVo userVo) throws BusinessException {
+	public boolean userIsMember(UserVo userVo, ThreadVo threadVo) throws BusinessException {
 		User user = userService.findOrCreateUser(userVo.getMail(), userVo.getDomainIdentifier());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 		ThreadMember member = threadService.getThreadMemberFromUser(thread, user);
@@ -347,7 +345,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			throw new IllegalArgumentException("one argument is null, actorVo: " + actorVo + " , threadVo: " + threadVo);
 		}
 		List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
-		if(userIsMember(threadVo, actorVo) || actorVo.isSuperAdmin()) {
+		if(userIsMember(actorVo, threadVo) || actorVo.isSuperAdmin()) {
 			Set<ThreadMember> threadMembers = threadService.findByLsUuid(threadVo.getLsUuid()).getMyMembers();
 			for (ThreadMember threadMember : threadMembers) {
 				members.add(new ThreadMemberVo(threadMember));
@@ -358,9 +356,9 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public void addMember(ThreadVo threadVo, UserVo actorVo, UserVo newMember, boolean readOnly) {
+	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember, boolean readOnly) {
 		try {
-			if (userIsAdmin(threadVo, actorVo) || (actorVo.isSuperAdmin())) {
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(newMember.getLsUuid());
@@ -372,9 +370,9 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public void deleteMember(ThreadVo threadVo, UserVo actorVo, ThreadMemberVo memberVo) {
+	public void deleteMember(UserVo actorVo, ThreadVo threadVo, ThreadMemberVo memberVo) {
 		try {
-			if (userIsAdmin(threadVo, actorVo) || (actorVo.isSuperAdmin())) {
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(memberVo.getUser().getLsUuid());
@@ -389,7 +387,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo) {
 		try {
-			if (userIsAdmin(threadVo, actorVo) || (actorVo.isSuperAdmin())) {
+			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
 				Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 				Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
 				User user = (User) accountService.findByLsUuid(memberVo.getLsUuid());
@@ -420,7 +418,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		if (actorVo == null || threadVo == null)
 			return;
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		if (!userIsAdmin(threadVo, actorVo) && !(actorVo.isSuperAdmin())) {
+		if (!userIsAdmin(actorVo, threadVo) && !(actorVo.isSuperAdmin())) {
 			logger.error("not authorised");
 			return;
 		}
@@ -459,7 +457,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public ThreadVo getThread(UserVo userVo, String threadUuid) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		ThreadVo threadVo = new ThreadVo(thread);
-		if (!this.userIsMember(threadVo, userVo) && !(userVo.isSuperAdmin())) {
+		if (!this.userIsMember(userVo, threadVo) && !(userVo.isSuperAdmin())) {
 			logger.error("Not authorised to get the thread " + threadUuid);
 			throw new BusinessException("Not authorised to get the thread " + threadUuid);
 		}
@@ -471,7 +469,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		ThreadVo threadVo = new ThreadVo(thread);
 		User actor = (User) accountService.findByLsUuid(userVo.getLsUuid());
-		if (!this.userIsAdmin(threadVo, userVo)) {
+		if (!this.userIsAdmin(userVo, threadVo)) {
 			logger.error("Not authorised to get the thread " + threadUuid);
 			throw new BusinessException("Not authorised to get the thread " + threadUuid);
 		}

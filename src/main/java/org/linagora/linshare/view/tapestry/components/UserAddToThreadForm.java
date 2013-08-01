@@ -165,7 +165,7 @@ public class UserAddToThreadForm {
 				}
 		    	if (threadsWhereUserWillBeAdded.size() > 0) {
 		    		for (ThreadVo threadVo : threadsWhereUserWillBeAdded) {
-						threadEntryFacade.addMember(threadVo, userLoggedIn, user, readOnly);
+						threadEntryFacade.addMember(userLoggedIn, threadVo, user, readOnly);
 						shareSessionObjects.setReloadThreadsNeeded(true);
 						shareSessionObjects.addMessage(messages.format("components.userAddToThread.success", user.getCompleteName(), threadVo.getName()));
 					}

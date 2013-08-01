@@ -70,7 +70,7 @@ public class AdminThread {
 
 	@SessionState
 	@Property
-	private UserVo userVo;
+	private UserVo userLoggedIn;
 
 	@Property
 	@Persist
@@ -157,7 +157,7 @@ public class AdminThread {
 		if (!inSearch) {
 			try {
 				recipientsSearchMember = "*";
-				members = threadEntryFacade.getThreadMembers(userVo, currentThread);
+				members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 				inSearch = true;
 			} catch (BusinessException e) {
 				logger.error(e.getMessage());
@@ -171,7 +171,7 @@ public class AdminThread {
 			return Index.class;
 		}
 		try {
-			if (!threadEntryFacade.userIsAdmin(currentThread, userVo)) {
+			if (!threadEntryFacade.userIsAdmin(userLoggedIn, currentThread)) {
 				logger.info("Unauthorized");
 				return ThreadContent.class;
 			}
@@ -234,7 +234,7 @@ public class AdminThread {
 	@OnEvent(value = "deleteThreadPopupEvent")
 	public void deleteCurrentThread() {
 		try {
-			threadEntryFacade.deleteThread(userVo, currentThread);
+			threadEntryFacade.deleteThread(userLoggedIn, currentThread);
 			currentThread = null;
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
@@ -243,11 +243,11 @@ public class AdminThread {
 
 	@OnEvent(value = "deleteMemberPopupEvent")
 	public void deleteMember() {
-		threadEntryFacade.deleteMember(currentThread, userVo, toDelete);
+		threadEntryFacade.deleteMember(userLoggedIn, currentThread, toDelete);
 
 		// refresh list
 		try {
-			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(userVo, currentThread);
+			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 			members = tmp;
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
@@ -256,22 +256,21 @@ public class AdminThread {
 	}
 
 	public List<String> onProvideCompletionsFromSearchUser(String input) {
-		return threadEntryFacade.completionOnUsers(userVo, input);
+		return threadEntryFacade.completionOnUsers(userLoggedIn, input);
 	}
 
 	public List<String> onProvideCompletionsFromSearchMembers(String input) throws BusinessException {
-		return threadEntryFacade.completionOnMembers(userVo, currentThread, input);
+		return threadEntryFacade.completionOnMembers(userLoggedIn, currentThread, input);
 	}
 
-	public Object onSuccessFromFormSearch() throws BusinessException {
+	public void onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
 			if (recipientsSearchMember.equals("*")) {
-				members = threadEntryFacade.getThreadMembers(userVo, currentThread);
+				members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 			} else {
-				members = threadEntryFacade.searchAmongMembers(userVo, currentThread, recipientsSearchMember);
+				members = threadEntryFacade.searchAmongMembers(userLoggedIn, currentThread, recipientsSearchMember);
 			}
 		}
-		return null;
 	}
 
 	public void onSelectedFromStop() {
@@ -279,7 +278,7 @@ public class AdminThread {
 	}
 
 	public void onSuccessFromForm() throws BusinessException {
-		userSearchResults = threadEntryFacade.searchAmongUsers(userVo, recipientsSearch);
+		userSearchResults = threadEntryFacade.searchAmongUsers(userLoggedIn, recipientsSearch);
 		displayGrid = true;
 	}
 
@@ -290,22 +289,21 @@ public class AdminThread {
 
 	public boolean getIsInList() throws BusinessException {
 		// check if user from searchList is thread member
-		return threadEntryFacade.userIsMember(currentThread, result);
-
+		return threadEntryFacade.userIsMember(result, currentThread);
 	}
 
 	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
 		// adding new member to thread
-		threadEntryFacade.addUserToThread(userVo, currentThread, domain, mail);
+		threadEntryFacade.addUserToThread(userLoggedIn, currentThread, domain, mail);
 		// refresh list
-		members = threadEntryFacade.getThreadMembers(userVo, currentThread);
+		members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 	}
 
 	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {
 		// remove user from thread
-		threadEntryFacade.removeMemberFromThread(userVo, currentThread, domain, mail);
+		threadEntryFacade.removeMemberFromThread(userLoggedIn, currentThread, domain, mail);
 		// refresh list
-		members = threadEntryFacade.getThreadMembers(userVo, currentThread);
+		members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 	}
 
 }
