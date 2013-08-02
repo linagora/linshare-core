@@ -51,12 +51,10 @@ import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThreadFacadeImpl extends GenericFacadeImpl
-		implements ThreadFacade {
+public class ThreadFacadeImpl extends GenericFacadeImpl implements ThreadFacade {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory
-			.getLogger(ThreadFacadeImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ThreadFacadeImpl.class);
 
 	private final ThreadService threadService;
 
@@ -64,9 +62,7 @@ public class ThreadFacadeImpl extends GenericFacadeImpl
 
 	private final FunctionalityService functionalityService;
 
-	public ThreadFacadeImpl(ThreadService threadService,
-			AccountService accountService, UserService userService,
-			FunctionalityService functionalityService) {
+	public ThreadFacadeImpl(ThreadService threadService, AccountService accountService, UserService userService, FunctionalityService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;
@@ -76,13 +72,10 @@ public class ThreadFacadeImpl extends GenericFacadeImpl
 	@Override
 	public User checkAuthentication() throws BusinessException {
 		User user = super.checkAuthentication();
-		Functionality functionality = functionalityService
-				.getUserTabFunctionality(user.getDomain());
+		Functionality functionality = functionalityService.getThreadTabFunctionality(user.getDomain());
 
 		if (!functionality.getActivationPolicy().getStatus()) {
-			throw new BusinessException(
-					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
-					"You are not authorized to use this service");
+			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
 		}
 		return user;
 	}
@@ -105,11 +98,9 @@ public class ThreadFacadeImpl extends GenericFacadeImpl
 	}
 
 	@Override
-	public void addMember(Account actor, String threadUuid, String domainId,
-			String mail, boolean readonly) throws BusinessException {
+	public void addMember(Account actor, String threadUuid, String domainId, String mail, boolean readonly) throws BusinessException {
 		Thread thread = threadService.findByLsUuid(threadUuid);
-		User user = userService.findOrCreateUserWithDomainPolicies(mail,
-				domainId, actor.getDomainId());
+		User user = userService.findOrCreateUserWithDomainPolicies(mail, domainId, actor.getDomainId());
 
 		threadService.addMember(actor, thread, user, readonly);
 	}

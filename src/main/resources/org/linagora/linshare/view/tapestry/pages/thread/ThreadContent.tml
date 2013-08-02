@@ -2,14 +2,82 @@
         xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
         xmlns:p="tapestry:parameter">
 
+ <script type="text/javascript" language="javascript">
+        var sizeAvailable = ${maxFileSize};
+
+        jQuery(document).ready(function() {
+            var uploader = new qq.FineUploader({
+                element: jQuery('#uploader')[0],
+                debug: true,
+                maxConnections: 1,
+                request: {
+                    endpoint: "${contextPath}/webservice/fineuploader/upload/threadentry/${threadUuid}"
+                },
+                callbacks: {
+                    onError: function(id, fileName, reason) {
+                        qq.log("id: " + id + ", fileName: " + fileName + ", reason: " + reason);
+                        jQuery("#error").click();
+                    },
+                    onProgess: function(id) {
+                        jQuery("#progress").attr("value", uploader.getInProgress());
+                    },
+                    onComplete: function(id, name, responseJSON) {
+                        if (responseJSON.success) {
+                            console.log(name + "upload sucesssful");
+                            uuids.push(uploader.getUuid(id));
+                            //sizeAvailable -= uploader.getSize(id);
+                            //uploader._options.validation.sizeLimit = sizeAvailable;
+                        }
+                        jQuery("#progress").attr("value", uploader.getInProgress());
+                        if (uploader.getInProgress() == 0) {
+                            console.log("All upload are completed");
+                        }
+                    }
+                },
+                deleteFile: {
+                    enabled: false
+                },
+                messages: {
+                    typeError: "${message:pages.files.upload.typeError}",
+                    sizeError: "${message:pages.files.upload.sizeError}",
+                    minSizeError: "${message:pages.files.upload.minSizeError}",
+                    emptyError: "${message:pages.files.upload.emptyError}",
+                    noFilesError: "${message:pages.files.upload.noFilesError}",
+                    tooManyItemsError: "${message:pages.files.upload.tooManyItemsError}",
+                    retryFailTooManyItems: "${message:pages.files.upload.retryFailTooManyItems}",
+                    onLeave: "${message:pages.files.upload.onLeave}"
+                },
+                text: {
+                    uploadButton: "${message:pages.files.upload.uploadButton}",
+                    cancelButton: "${message:pages.files.upload.cancelButton}",
+                    retryButton: "${message:pages.files.upload.retryButton}",
+                    deleteButton: "${message:pages.files.upload.deleteButton}",
+                    failUpload: "${message:pages.files.upload.failUpload}",
+                    dragZone: "${message:pages.files.upload.dragZone}",
+                    dropProcessing: "${message:pages.files.upload.dropProcessing}",
+                    formatProgress: "${message:pages.files.upload.formatProgress}",
+                    waitingForResponse: "${message:pages.files.upload.waitingForResponse}"
+                },
+                validation: {
+                    sizeLimit: sizeAvailable
+                }
+            });
+        });
+    </script>
+    
     <!-- Main content -->
 
     <div id="content">
         <h1>${message:pages.thread.tree.title} : ${threadName}</h1>
 
+
         <t:messagePanel />
         <t:businessMessagesDisplayer />
 
+		<div class="example">
+            <ul id="uploader" class="unstyled"></ul>
+        </div>
+        
         <!-- Action bar -->
 
         <div id="actionBar">

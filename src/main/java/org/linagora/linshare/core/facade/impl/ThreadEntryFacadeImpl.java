@@ -106,7 +106,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
 		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, stream, size, fileName);
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, stream, fileName);
 		return new ThreadEntryVo(threadEntry);
 	}
 

@@ -32,4 +32,16 @@ public interface FineUploaderService {
 	 */
 	public FineUploaderDto delete(String uuid);
 
+	/**
+	 * Upload method contains logic for a file upload and return the correct
+	 * DocumentDto if upload was successful.
+	 * @param threadUuid TODO
+	 * @param file
+	 * @param fileName
+	 * @param body
+	 * 
+	 * @return
+	 */
+	public FineUploaderDto uploadThreadEntry(String threadUuid, InputStream file,
+			String fileName, MultipartBody body);
 }
