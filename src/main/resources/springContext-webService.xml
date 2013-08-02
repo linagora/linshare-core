@@ -131,8 +131,6 @@
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
-	<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
-	<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
 
 	<jaxrs:server id="restContainer" address="/">
 		<jaxrs:serviceBeans>
@@ -157,22 +155,34 @@
 			<entry key="xml" value="application/xml" />
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
+			<!--  ExceptionMappers. -->
+			<bean id="businessExceptionMapper" class="org.linagora.linshare.webservice.interceptor.BusinessExceptionMapper" />
+			<bean id="genericExceptionMapper" class="org.linagora.linshare.webservice.interceptor.GenericExceptionMapper" />
+			<bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper">
+				<property name="printStackTrace" value="false" />
+			</bean>
+			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
-			<!-- <bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper"> -->
-			<!-- <property name="printStackTrace" value="true" /> -->
-			<!-- </bean> -->
 		</jaxrs:providers>
 		<jaxrs:features>
 <!-- 			<cxf:logging /> -->
 		</jaxrs:features>
 		<jaxrs:inInterceptors>
+			<!-- For debug only : print input message -->
 <!-- 			<ref bean="logInbound" /> -->
-			<ref bean="timingInInterceptor" />
+			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
+			<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
+			<!-- For debug only : print output  message -->
 <!-- 			<ref bean="logOutbound" /> -->
-			<ref bean="timingOutInterceptor" />
+			<!-- This interceptor is designed compute request execution time.-->
+			<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
 		</jaxrs:outInterceptors>
+		<jaxrs:inFaultInterceptors>
+		</jaxrs:inFaultInterceptors>
+		<jaxrs:outFaultInterceptors>
+		</jaxrs:outFaultInterceptors>
 	</jaxrs:server>
 
 	<!-- enable json with jackson (not the default jettison) -->

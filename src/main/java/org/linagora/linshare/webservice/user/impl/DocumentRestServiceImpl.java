@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.webservice.user.impl;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -53,6 +52,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.DocumentFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
@@ -76,49 +76,37 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Path("/{uuid}/download")
 	@GET
 	@Override
-	public Response getDocumentStream(@PathParam("uuid") String uuid) {
-		try {
-			webServiceDocumentFacade.checkAuthentication();
-			DocumentDto documentDto = webServiceDocumentFacade.getDocument(uuid);
-			InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
-			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(),
-					documentDto.getType(), documentDto.getSize());
-			return response.build();
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public Response getDocumentStream(@PathParam("uuid") String uuid) throws BusinessException {
+		webServiceDocumentFacade.checkAuthentication();
+		DocumentDto documentDto = webServiceDocumentFacade.getDocument(uuid);
+		InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(), documentDto.getType(), documentDto.getSize());
+		return response.build();
 	}
 
 	@Path("/{uuid}/thumbnail")
 	@GET
 	@Override
-	public Response getThumbnailStream(@PathParam("uuid") String docUuid) {
-		try {
-			webServiceDocumentFacade.checkAuthentication();
-			DocumentDto documentDto = webServiceDocumentFacade.getDocument(docUuid);
-			InputStream documentStream = webServiceDocumentFacade.getThumbnailStream(docUuid);
-			ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName() + "_thumb.png",
-					"image/png");
-			return response.build();
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public Response getThumbnailStream(@PathParam("uuid") String docUuid) throws BusinessException {
+		webServiceDocumentFacade.checkAuthentication();
+		DocumentDto documentDto = webServiceDocumentFacade.getDocument(docUuid);
+		InputStream documentStream = webServiceDocumentFacade.getThumbnailStream(docUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName() + "_thumb.png", "image/png");
+		return response.build();
 	}
 
 	/**
 	 * get the files of the user
+	 * 
+	 * @throws BusinessException
 	 */
 	@Path("/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<DocumentDto> getDocuments() {
-		try {
-			webServiceDocumentFacade.checkAuthentication();
-			return webServiceDocumentFacade.getDocuments();
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public List<DocumentDto> getDocuments() throws BusinessException {
+		webServiceDocumentFacade.checkAuthentication();
+		return webServiceDocumentFacade.getDocuments();
 	}
 
 	/**
@@ -129,40 +117,35 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
-			@Multipart(value = "description", required = false) String description,
-			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) {
-		try {
-			User actor = webServiceDocumentFacade.checkAuthentication();
-			String fileName;
-			String comment = (description == null) ? "" : description;
+	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "description", required = false) String description,
+			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) throws BusinessException {
+		User actor = webServiceDocumentFacade.checkAuthentication();
+		String fileName;
+		String comment = (description == null) ? "" : description;
 
-			if ((actor instanceof Guest && !actor.getCanUpload())) {
-				throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
-			}
-			if (theFile == null) {
-				throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
-			}
-			if (givenFileName == null || givenFileName.isEmpty()) {
-				// parameter givenFileName is optional
-				// so need to search this information in the header of the
-				// attachement (with id file)
-				fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
-			} else {
-				fileName = givenFileName;
-			}
-
-			try {
-				byte[] bytes = fileName.getBytes("ISO-8859-1");
-				fileName = new String(bytes, "UTF-8");
-			} catch (UnsupportedEncodingException e1) {
-				logger.error("Can not encode file name " + e1.getMessage());
-			}
-
-			return webServiceDocumentFacade.uploadfile(theFile, fileName, comment);
-		} catch (Exception e) {
-			throw analyseFault(e);
+		if ((actor instanceof Guest && !actor.getCanUpload())) {
+			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
 		}
+		if (theFile == null) {
+			throw giveRestException(HttpStatus.SC_BAD_REQUEST, "Missing file (check parameter file)");
+		}
+		if (givenFileName == null || givenFileName.isEmpty()) {
+			// parameter givenFileName is optional
+			// so need to search this information in the header of the
+			// attachement (with id file)
+			fileName = body.getAttachment("file").getContentDisposition().getParameter("filename");
+		} else {
+			fileName = givenFileName;
+		}
+
+		try {
+			byte[] bytes = fileName.getBytes("ISO-8859-1");
+			fileName = new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			logger.error("Can not encode file name " + e1.getMessage());
+		}
+
+		return webServiceDocumentFacade.uploadfile(theFile, fileName, comment);
 	}
 
 	/**
@@ -170,45 +153,32 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	 * 
 	 * @param doca
 	 */
-
 	@POST
 	@Path("/xop")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public DocumentDto addDocumentXop(DocumentAttachement doca) {
-		try {
-			webServiceDocumentFacade.checkAuthentication(); // raise exception
-			return webServiceDocumentFacade.addDocumentXop(doca);
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException {
+		webServiceDocumentFacade.checkAuthentication(); // raise exception
+		return webServiceDocumentFacade.addDocumentXop(doca);
 	}
 
 	@GET
 	@Path("/userMaxFileSize")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public SimpleLongValue getUserMaxFileSize() {
-		try {
-			webServiceDocumentFacade.checkAuthentication();
-			return new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public SimpleLongValue getUserMaxFileSize() throws BusinessException {
+		webServiceDocumentFacade.checkAuthentication();
+		return new SimpleLongValue(webServiceDocumentFacade.getUserMaxFileSize());
 	}
 
 	@GET
 	@Path("/availableSize")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public SimpleLongValue getAvailableSize() {
-		try {
-			webServiceDocumentFacade.checkAuthentication();
-			return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public SimpleLongValue getAvailableSize() throws BusinessException {
+		webServiceDocumentFacade.checkAuthentication();
+		return new SimpleLongValue(webServiceDocumentFacade.getAvailableSize());
 	}
 
 }
