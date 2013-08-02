@@ -40,6 +40,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DocumentAttachement;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleLongValue;
@@ -51,18 +52,17 @@ import org.linagora.linshare.webservice.dto.SimpleLongValue;
 @Path("/rest/documents")
 public interface DocumentRestService {
 
-	List<DocumentDto> getDocuments();
+	List<DocumentDto> getDocuments() throws BusinessException;
 
-	SimpleLongValue getUserMaxFileSize();
+	SimpleLongValue getUserMaxFileSize() throws BusinessException;
 
-	SimpleLongValue getAvailableSize();
+	SimpleLongValue getAvailableSize() throws BusinessException;
 
-	DocumentDto uploadfile(InputStream theFile, String description,
-			String givenFileName, MultipartBody body);
+	DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body) throws BusinessException;
 
-	DocumentDto addDocumentXop(DocumentAttachement doca);
+	DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
 
-	Response getDocumentStream(String uuid);
-	
-	Response getThumbnailStream(String uuid);
+	Response getDocumentStream(String uuid) throws BusinessException;
+
+	Response getThumbnailStream(String uuid) throws BusinessException;
 }
