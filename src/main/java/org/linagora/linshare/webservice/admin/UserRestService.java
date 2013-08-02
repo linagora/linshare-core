@@ -38,10 +38,11 @@ import java.util.List;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 @Path("/rest/admin/users")
 public interface UserRestService {
 
-	List<UserDto> completionUser(@PathParam("pattern") String pattern);
+	List<UserDto> completionUser(@PathParam("pattern") String pattern) throws BusinessException;
 }

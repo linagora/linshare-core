@@ -49,6 +49,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.ShareFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.ShareDto;
@@ -57,12 +58,10 @@ import org.linagora.linshare.webservice.utils.DocumentStreamReponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ShareRestServiceImpl extends WebserviceBase implements
-		ShareRestService {
+public class ShareRestServiceImpl extends WebserviceBase implements ShareRestService {
 
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory
-			.getLogger(ShareRestServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ShareRestServiceImpl.class);
 
 	private final ShareFacade webServiceShareFacade;
 
@@ -77,61 +76,39 @@ public class ShareRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<ShareDto> getReceivedShares() {
-		try {
-			webServiceShareFacade.checkAuthentication();
-			return webServiceShareFacade.getReceivedShares();
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public List<ShareDto> getReceivedShares() throws BusinessException {
+		webServiceShareFacade.checkAuthentication();
+		return webServiceShareFacade.getReceivedShares();
 	}
 
 	@GET
 	@Path("/sharedocument/{targetMail}/{uuid}")
 	@Override
-	public void sharedocument(@PathParam("targetMail") String targetMail,
-			@PathParam("uuid") String uuid,
-			@DefaultValue("0") @QueryParam("securedShare") int securedShare) {
-		try {
-			webServiceShareFacade.checkAuthentication();
-			webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public void sharedocument(@PathParam("targetMail") String targetMail, @PathParam("uuid") String uuid,
+			@DefaultValue("0") @QueryParam("securedShare") int securedShare) throws BusinessException {
+		webServiceShareFacade.checkAuthentication();
+		webServiceShareFacade.sharedocument(targetMail, uuid, securedShare);
 	}
 
 	@POST
 	@Path("/multiplesharedocuments")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Override
-	public void multiplesharedocuments(ArrayList<ShareDto> shares,
-			@QueryParam("secured") boolean secured,
-			@QueryParam("message") String message) {
-		try {
-			webServiceShareFacade.checkAuthentication();
-			webServiceShareFacade.multiplesharedocuments(shares, secured,
-					message);
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public void multiplesharedocuments(ArrayList<ShareDto> shares, @QueryParam("secured") boolean secured, @QueryParam("message") String message)
+			throws BusinessException {
+		webServiceShareFacade.checkAuthentication();
+		webServiceShareFacade.multiplesharedocuments(shares, secured, message);
 	}
 
 	@Path("/download/{uuid}")
 	@GET
 	@Override
-	public Response getDocumentStream(@PathParam("uuid") String shareUuid) {
-		try {
-			webServiceShareFacade.checkAuthentication();
-			ShareDto shareDto = webServiceShareFacade
-					.getReceivedShare(shareUuid);
-			InputStream documentStream = webServiceShareFacade
-					.getDocumentStream(shareUuid);
-			ResponseBuilder response = DocumentStreamReponseBuilder
-					.getDocumentResponseBuilder(documentStream,
-							shareDto.getName(), shareDto.getType(), shareDto.getDocumentDto().getSize());
-			return response.build();
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public Response getDocumentStream(@PathParam("uuid") String shareUuid) throws BusinessException {
+		webServiceShareFacade.checkAuthentication();
+		ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
+		InputStream documentStream = webServiceShareFacade.getDocumentStream(shareUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, shareDto.getName(), shareDto.getType(),
+				shareDto.getDocumentDto().getSize());
+		return response.build();
 	}
 }

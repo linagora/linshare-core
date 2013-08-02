@@ -7,7 +7,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.linagora.linshare.webservice.WebserviceBase;
-import org.linagora.linshare.webservice.dto.SimpleStringValue;
 import org.linagora.linshare.webservice.user.CORSRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

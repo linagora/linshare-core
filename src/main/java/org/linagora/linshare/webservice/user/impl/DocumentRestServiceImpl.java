@@ -80,7 +80,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		webServiceDocumentFacade.checkAuthentication();
 		DocumentDto documentDto = webServiceDocumentFacade.getDocument(uuid);
 		InputStream documentStream = webServiceDocumentFacade.getDocumentStream(uuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(), documentDto.getType(), documentDto.getSize());
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName(),
+				documentDto.getType(), documentDto.getSize());
 		return response.build();
 	}
 
@@ -91,7 +92,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 		webServiceDocumentFacade.checkAuthentication();
 		DocumentDto documentDto = webServiceDocumentFacade.getDocument(docUuid);
 		InputStream documentStream = webServiceDocumentFacade.getThumbnailStream(docUuid);
-		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName() + "_thumb.png", "image/png");
+		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, documentDto.getName() + "_thumb.png",
+				"image/png");
 		return response.build();
 	}
 
@@ -117,7 +119,8 @@ public class DocumentRestServiceImpl extends WebserviceBase implements DocumentR
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile, @Multipart(value = "description", required = false) String description,
+	public DocumentDto uploadfile(@Multipart(value = "file") InputStream theFile,
+			@Multipart(value = "description", required = false) String description,
 			@Multipart(value = "filename", required = false) String givenFileName, MultipartBody body) throws BusinessException {
 		User actor = webServiceDocumentFacade.checkAuthentication();
 		String fileName;

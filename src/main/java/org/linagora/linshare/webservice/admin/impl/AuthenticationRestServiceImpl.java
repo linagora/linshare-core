@@ -43,13 +43,11 @@ import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.AuthenticationRestService;
 
-public class AuthenticationRestServiceImpl extends WebserviceBase implements
-		AuthenticationRestService {
+public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
 	private final AdminGenericFacade webServiceAdminFacade;
 
-	public AuthenticationRestServiceImpl(
-			final AdminGenericFacade webServiceAdminFacade) {
+	public AuthenticationRestServiceImpl(final AdminGenericFacade webServiceAdminFacade) {
 		this.webServiceAdminFacade = webServiceAdminFacade;
 	}
 
@@ -57,12 +55,8 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public Boolean isAuthorized() {
-		try {
-			webServiceAdminFacade.checkAuthentication();
-			return true;
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public Boolean isAuthorized() throws BusinessException {
+		webServiceAdminFacade.checkAuthentication();
+		return true;
 	}
 }

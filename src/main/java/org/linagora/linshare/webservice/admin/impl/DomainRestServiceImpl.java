@@ -53,14 +53,12 @@ import org.linagora.linshare.webservice.admin.DomainRestService;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
-public class DomainRestServiceImpl extends WebserviceBase implements
-		DomainRestService {
+public class DomainRestServiceImpl extends WebserviceBase implements DomainRestService {
 
 	private final DomainFacade domainFacade;
 	private final FunctionalityFacade functionalityFacade;
 
-	public DomainRestServiceImpl(final DomainFacade webServiceDomainFacade,
-			final FunctionalityFacade webServiceFunctionalityFacade) {
+	public DomainRestServiceImpl(final DomainFacade webServiceDomainFacade, final FunctionalityFacade webServiceFunctionalityFacade) {
 		this.domainFacade = webServiceDomainFacade;
 		this.functionalityFacade = webServiceFunctionalityFacade;
 	}
@@ -70,12 +68,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public DomainDto getDomains() throws BusinessException {
-		try {
-			domainFacade.checkAuthentication();
-			return domainFacade.getDomains();
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+		domainFacade.checkAuthentication();
+		return domainFacade.getDomains();
 	}
 
 	@Path("/")
@@ -83,12 +77,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void createDomain(DomainDto domain) throws BusinessException {
-		try {
-			domainFacade.checkAuthentication();
-			domainFacade.createDomain(domain);
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+		domainFacade.checkAuthentication();
+		domainFacade.createDomain(domain);
 	}
 
 	@Path("/")
@@ -96,12 +86,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void updateDomain(DomainDto domain) throws BusinessException {
-		try {
-			domainFacade.checkAuthentication();
-			domainFacade.updateDomain(domain);
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+		domainFacade.checkAuthentication();
+		domainFacade.updateDomain(domain);
 	}
 
 	@Path("/")
@@ -109,12 +95,8 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public void deleteDomain(DomainDto domain) throws BusinessException {
-		try {
-			domainFacade.checkAuthentication();
-			domainFacade.deleteDomain(domain);
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+		domainFacade.checkAuthentication();
+		domainFacade.deleteDomain(domain);
 	}
 
 	/*
@@ -125,45 +107,27 @@ public class DomainRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<FunctionalityDto> getDomainFunctionalities(
-			@PathParam(value = "domain") String domain)
-			throws BusinessException {
-		try {
-			functionalityFacade.checkAuthentication();
-			return functionalityFacade.getAll(domain);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public List<FunctionalityDto> getDomainFunctionalities(@PathParam(value = "domain") String domain) throws BusinessException {
+		functionalityFacade.checkAuthentication();
+		return functionalityFacade.getAll(domain);
 	}
 
 	@Path("/{domain}/functionality/{identifier}")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public FunctionalityDto getDomainFunctionality(
-			@PathParam(value = "domain") String domain,
-			@PathParam(value = "identifier") String identifier)
+	public FunctionalityDto getDomainFunctionality(@PathParam(value = "domain") String domain, @PathParam(value = "identifier") String identifier)
 			throws BusinessException {
-		try {
-			functionalityFacade.checkAuthentication();
-			return functionalityFacade.get(domain, identifier);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+		functionalityFacade.checkAuthentication();
+		return functionalityFacade.get(domain, identifier);
 	}
 
 	@Path("/{domain}/functionality")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateDomainFunctionality(
-			@PathParam(value = "domain") String domain, FunctionalityDto func)
-			throws BusinessException {
-		try {
-			functionalityFacade.checkAuthentication();
-			functionalityFacade.update(domain, func);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void updateDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
+		functionalityFacade.checkAuthentication();
+		functionalityFacade.update(domain, func);
 	}
 }
