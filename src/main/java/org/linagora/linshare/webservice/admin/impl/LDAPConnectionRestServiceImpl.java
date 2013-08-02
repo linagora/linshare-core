@@ -51,13 +51,11 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.LDAPConnectionRestService;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
-public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
-		LDAPConnectionRestService {
+public class LDAPConnectionRestServiceImpl extends WebserviceBase implements LDAPConnectionRestService {
 
 	private final LDAPConnectionFacade ldapConnectionFacade;
 
-	public LDAPConnectionRestServiceImpl(
-			final LDAPConnectionFacade ldapConnectionFacade) {
+	public LDAPConnectionRestServiceImpl(final LDAPConnectionFacade ldapConnectionFacade) {
 		this.ldapConnectionFacade = ldapConnectionFacade;
 	}
 
@@ -65,55 +63,35 @@ public class LDAPConnectionRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<LDAPConnectionDto> getLDAPConnections()
-			throws BusinessException {
-		try {
-			ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
-			return ldapConnectionFacade.getLDAPConnections();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public List<LDAPConnectionDto> getLDAPConnections() throws BusinessException {
+		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
+		return ldapConnectionFacade.getLDAPConnections();
 	}
 
 	@Path("/")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void createLDAPConnection(LDAPConnectionDto LDAPConnection)
-			throws BusinessException {
-		try {
-			ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
-			ldapConnectionFacade.createLDAPConnection(LDAPConnection);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void createLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
+		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
+		ldapConnectionFacade.createLDAPConnection(LDAPConnection);
 	}
 
 	@Path("/")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateLDAPConnection(LDAPConnectionDto LDAPConnection)
-			throws BusinessException {
-		try {
-			ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
-			ldapConnectionFacade.updateLDAPConnection(LDAPConnection);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void updateLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
+		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
+		ldapConnectionFacade.updateLDAPConnection(LDAPConnection);
 	}
 
 	@Path("/")
 	@DELETE
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void deleteLDAPConnection(LDAPConnectionDto LDAPConnection)
-			throws BusinessException {
-		try {
-			ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
-			ldapConnectionFacade.deleteLDAPConnection(LDAPConnection);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void deleteLDAPConnection(LDAPConnectionDto LDAPConnection) throws BusinessException {
+		ldapConnectionFacade.checkAuthentication(Role.SUPERADMIN);
+		ldapConnectionFacade.deleteLDAPConnection(LDAPConnection);
 	}
 }

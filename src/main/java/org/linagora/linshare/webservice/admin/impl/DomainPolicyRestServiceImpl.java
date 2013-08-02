@@ -46,13 +46,11 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainPolicyRestService;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
-public class DomainPolicyRestServiceImpl extends WebserviceBase implements
-		DomainPolicyRestService {
+public class DomainPolicyRestServiceImpl extends WebserviceBase implements DomainPolicyRestService {
 
 	private final DomainPolicyFacade domainPolicyFacade;
 
-	public DomainPolicyRestServiceImpl(
-			final DomainPolicyFacade domainPolicyFacade) {
+	public DomainPolicyRestServiceImpl(final DomainPolicyFacade domainPolicyFacade) {
 		this.domainPolicyFacade = domainPolicyFacade;
 	}
 
@@ -60,12 +58,8 @@ public class DomainPolicyRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<DomainPolicyDto> getDomainPolicies() {
-		try {
-			domainPolicyFacade.checkAuthentication();
-			return domainPolicyFacade.getDomainPolicies();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public List<DomainPolicyDto> getDomainPolicies() throws BusinessException {
+		domainPolicyFacade.checkAuthentication();
+		return domainPolicyFacade.getDomainPolicies();
 	}
 }

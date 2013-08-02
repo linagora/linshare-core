@@ -44,22 +44,20 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.user.ThreadMemberRestService;
 
-public class ThreadMemberRestServiceImpl extends WebserviceBase implements
-		ThreadMemberRestService {
+public class ThreadMemberRestServiceImpl extends WebserviceBase implements ThreadMemberRestService {
 
 	private ThreadFacade webServiceThreadFacade;
 
 	private ThreadMemberFacade webServiceThreadMemberFacade;
 
-	public ThreadMemberRestServiceImpl(
-			final ThreadFacade webServiceThreadFacade,
-			final ThreadMemberFacade webServiceThreadMemberFacade) {
+	public ThreadMemberRestServiceImpl(final ThreadFacade webServiceThreadFacade, final ThreadMemberFacade webServiceThreadMemberFacade) {
 		this.webServiceThreadFacade = webServiceThreadFacade;
 		this.webServiceThreadMemberFacade = webServiceThreadMemberFacade;
 	}
@@ -67,31 +65,18 @@ public class ThreadMemberRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Path("/add/{threadUuid}/{domainId}/{mail}")
 	@Override
-	public void addMember(@PathParam("threadUuid") String threadUuid,
-			@PathParam("domainId") String domainId,
-			@PathParam("mail") String mail,
-			@DefaultValue("false") @QueryParam("readonly") boolean readonly) {
-		try {
-			User actor = webServiceThreadFacade.checkAuthentication();
-			webServiceThreadFacade.addMember(actor, threadUuid, domainId, mail,
-					readonly);
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public void addMember(@PathParam("threadUuid") String threadUuid, @PathParam("domainId") String domainId, @PathParam("mail") String mail,
+			@DefaultValue("false") @QueryParam("readonly") boolean readonly) throws BusinessException {
+		User actor = webServiceThreadFacade.checkAuthentication();
+		webServiceThreadFacade.addMember(actor, threadUuid, domainId, mail, readonly);
 	}
 
 	@Path("/{threadUuid}/")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<ThreadMemberDto> getAllThreadMembers(
-			@PathParam("threadUuid") String threadUuid) {
-		try {
-			webServiceThreadFacade.checkAuthentication();
-			return webServiceThreadMemberFacade
-					.getAllThreadMembers(threadUuid);
-		} catch (Exception e) {
-			throw analyseFault(e);
-		}
+	public List<ThreadMemberDto> getAllThreadMembers(@PathParam("threadUuid") String threadUuid) throws BusinessException {
+		webServiceThreadFacade.checkAuthentication();
+		return webServiceThreadMemberFacade.getAllThreadMembers(threadUuid);
 	}
 }

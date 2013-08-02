@@ -39,6 +39,7 @@ import java.util.List;
 import javax.ws.rs.Path;
 
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
 
@@ -47,10 +48,8 @@ public interface PluginCompatibilityRestService {
 
 	SimpleStringValue getInformation();
 
-	void multiplesharedocuments(String targetMail, List<String> uuid,
-			int securedShare, String message, String inReplyTo,
-			String references);
+	void multiplesharedocuments(String targetMail, List<String> uuid, int securedShare, String message, String inReplyTo, String references)
+			throws BusinessException;
 
-	DocumentDto uploadfile(InputStream theFile, String description,
-			String givenFileName, MultipartBody body);
+	DocumentDto uploadfile(InputStream theFile, String description, String givenFileName, MultipartBody body) throws BusinessException;
 }

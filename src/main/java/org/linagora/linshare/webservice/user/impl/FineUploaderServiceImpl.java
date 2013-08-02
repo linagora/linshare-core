@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -50,15 +49,12 @@ public class FineUploaderServiceImpl extends WebserviceBase implements FineUploa
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public FineUploaderDto upload(@Multipart(value = FILE) InputStream file, @Multipart(value = FILE_NAME, required = false) String fileName, MultipartBody body) {
+	public FineUploaderDto upload(@Multipart(value = FILE) InputStream file, @Multipart(value = FILE_NAME, required = false) String fileName,
+			MultipartBody body) throws BusinessException {
 		User actor = null;
 
 		// Authentication, permission and error checking
-		try {
-			actor = documentFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+		actor = documentFacade.checkAuthentication();
 		if (actor instanceof Guest && !actor.getCanUpload()) {
 			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
 		}
@@ -88,15 +84,11 @@ public class FineUploaderServiceImpl extends WebserviceBase implements FineUploa
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public FineUploaderDto delete(@PathParam("uuid") String uuid) {
+	public FineUploaderDto delete(@PathParam("uuid") String uuid) throws BusinessException {
 		User actor = null;
 
 		// Authentication, permission and error checking
-		try {
-			actor = documentFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+		actor = documentFacade.checkAuthentication();
 		if (actor instanceof Guest && !actor.getCanUpload()) {
 			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
 		}
@@ -116,15 +108,12 @@ public class FineUploaderServiceImpl extends WebserviceBase implements FineUploa
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public FineUploaderDto uploadThreadEntry(@PathParam("threadUuid") String threadUuid, @Multipart(value = FILE) InputStream file, @Multipart(value = FILE_NAME, required = false) String fileName, MultipartBody body) {
+	public FineUploaderDto uploadThreadEntry(@PathParam("threadUuid") String threadUuid, @Multipart(value = FILE) InputStream file,
+			@Multipart(value = FILE_NAME, required = false) String fileName, MultipartBody body) throws BusinessException {
 		User actor = null;
 
 		// Authentication, permission and error checking
-		try {
-			actor = documentFacade.checkAuthentication();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+		actor = documentFacade.checkAuthentication();
 		if (actor instanceof Guest && !actor.getCanUpload()) {
 			throw giveRestException(HttpStatus.SC_FORBIDDEN, "You are not authorized to use this service");
 		}
@@ -152,9 +141,4 @@ public class FineUploaderServiceImpl extends WebserviceBase implements FineUploa
 			return new FineUploaderDto(false);
 		}
 	}
-
-	/**
-	 * THREADS
-	 */
-
 }

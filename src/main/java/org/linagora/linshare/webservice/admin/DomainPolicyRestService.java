@@ -37,10 +37,11 @@ import java.util.List;
 
 import javax.ws.rs.Path;
 
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 @Path("/rest/admin/domain_policies")
 public interface DomainPolicyRestService {
 
-	List<DomainPolicyDto> getDomainPolicies();
+	List<DomainPolicyDto> getDomainPolicies() throws BusinessException;
 }

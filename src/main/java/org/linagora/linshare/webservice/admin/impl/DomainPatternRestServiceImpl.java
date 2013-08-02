@@ -50,13 +50,11 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.DomainPatternRestService;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
-public class DomainPatternRestServiceImpl extends WebserviceBase implements
-		DomainPatternRestService {
+public class DomainPatternRestServiceImpl extends WebserviceBase implements DomainPatternRestService {
 
 	private final DomainPatternFacade webServiceDomainPatternFacade;
 
-	public DomainPatternRestServiceImpl(
-			final DomainPatternFacade webServiceDomainPatternFacade) {
+	public DomainPatternRestServiceImpl(final DomainPatternFacade webServiceDomainPatternFacade) {
 		this.webServiceDomainPatternFacade = webServiceDomainPatternFacade;
 	}
 
@@ -65,53 +63,34 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<DomainPatternDto> getDomainPatterns() throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			return webServiceDomainPatternFacade.getDomainPatterns();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+		webServiceDomainPatternFacade.checkAuthentication();
+		return webServiceDomainPatternFacade.getDomainPatterns();
 	}
 
 	@Path("/")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void createDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.createDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void createDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
+		webServiceDomainPatternFacade.checkAuthentication();
+		webServiceDomainPatternFacade.createDomainPattern(domainPattern);
 	}
 
 	@Path("/")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.updateDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void updateDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
+		webServiceDomainPatternFacade.checkAuthentication();
+		webServiceDomainPatternFacade.updateDomainPattern(domainPattern);
 	}
 
 	@Path("/")
 	@DELETE
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void deleteDomainPattern(DomainPatternDto domainPattern)
-			throws BusinessException {
-		try {
-			webServiceDomainPatternFacade.checkAuthentication();
-			webServiceDomainPatternFacade.deleteDomainPattern(domainPattern);
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+	public void deleteDomainPattern(DomainPatternDto domainPattern) throws BusinessException {
+		webServiceDomainPatternFacade.checkAuthentication();
+		webServiceDomainPatternFacade.deleteDomainPattern(domainPattern);
 	}
 }

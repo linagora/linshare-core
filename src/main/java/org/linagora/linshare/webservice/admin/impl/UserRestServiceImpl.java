@@ -41,18 +41,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.UserRestService;
 import org.linagora.linshare.webservice.dto.UserDto;
 
-public class UserRestServiceImpl extends WebserviceBase implements
-		UserRestService {
+public class UserRestServiceImpl extends WebserviceBase implements UserRestService {
 
 	private final UserFacade userFacade;
 
-	public UserRestServiceImpl(
-			final UserFacade userFacade) {
+	public UserRestServiceImpl(final UserFacade userFacade) {
 		this.userFacade = userFacade;
 	}
 
@@ -60,12 +59,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<UserDto> completionUser(@PathParam("pattern") String pattern) {
-		try {
-			return userFacade.completionUser(pattern);
-		} catch (Exception e) {
-			analyseFault(e);
-		}
-		return null;
+	public List<UserDto> completionUser(@PathParam("pattern") String pattern) throws BusinessException {
+		return userFacade.completionUser(pattern);
 	}
 }

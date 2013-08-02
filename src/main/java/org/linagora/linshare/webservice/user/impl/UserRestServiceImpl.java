@@ -46,8 +46,7 @@ import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.linagora.linshare.webservice.user.UserRestService;
 
-public class UserRestServiceImpl extends WebserviceBase implements
-		UserRestService {
+public class UserRestServiceImpl extends WebserviceBase implements UserRestService {
 
 	private final UserFacade webServiceUserFacade;
 
@@ -60,11 +59,7 @@ public class UserRestServiceImpl extends WebserviceBase implements
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public List<UserDto> getUsers() throws BusinessException {
-		try {
-			webServiceUserFacade.checkAuthentication();
-			return webServiceUserFacade.getUsers();
-		} catch (BusinessException e) {
-			throw analyseFault(e);
-		}
+		webServiceUserFacade.checkAuthentication();
+		return webServiceUserFacade.getUsers();
 	}
 }
