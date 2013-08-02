@@ -44,14 +44,12 @@ import org.slf4j.LoggerFactory;
 
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
 		"../../components/fineuploader/fineuploader-3.6.4.js",
-		"./fine-uploader/js/uploader-demo.js",
-		"../../components/bootstrap/js/bootstrap.js" }, stylesheet = {
-		"../../components/fineuploader/fineuploader-3.6.4.css",
-		"./fine-uploader/css/styles.css" })
+		"../../components/bootstrap/js/bootstrap.js" }, 
+		stylesheet = {"../../components/fineuploader/fineuploader-3.6.4.css"})
 public class Upload {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(QuickSharePopup.class);
+			.getLogger(Upload.class);
 
 	// illimited file size
 	private static final long DEFAULT_MAX_FILE_SIZE = 0;
