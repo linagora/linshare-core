@@ -24,7 +24,7 @@
                     onComplete: function(id, name, responseJSON) {
                         if (responseJSON.success) {
                             console.log(name + "upload sucesssful");
-                            uuids.push(uploader.getUuid(id));
+                            //uuids.push(uploader.getUuid(id));
                             //sizeAvailable -= uploader.getSize(id);
                             //uploader._options.validation.sizeLimit = sizeAvailable;
                         }
@@ -32,6 +32,8 @@
                         if (uploader.getInProgress() == 0) {
                             console.log("All upload are completed");
                         }
+                        jQuery("#fred").click();
+            
                     }
                 },
                 deleteFile: {
@@ -77,6 +79,8 @@
 		<div class="example">
             <ul id="uploader" class="unstyled"></ul>
         </div>
+      	<t:pageLink class="btn" page="thread/content" >Refresh</t:pageLink>
+        <!--   style="display:none" -->
         
         <!-- Action bar -->
 
@@ -133,7 +137,6 @@
                 </t:loop>
             </t:block>
         </div>
-
     </div><!-- id="content" -->
 
     <!-- Popups -->
