@@ -123,6 +123,7 @@
 
 	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.user.impl.FineUploaderServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsThreadEntryFacade" />
 	</bean>
 	
 	<bean id="CORSRestService" class="org.linagora.linshare.webservice.user.impl.CORSRestServiceImpl">
