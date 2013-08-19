@@ -139,7 +139,12 @@ public class ListThreadDocument {
 
     @Property
     private String checkBoxGroupUuid;
+    
+    @Property
+    private boolean canUpload;
 
+    @Property
+    private boolean isAdmin;
 
     /***********************************
      * Service injection
@@ -198,6 +203,14 @@ public class ListThreadDocument {
         checkBoxGroupUuid = "filesSelected_" + UUID.randomUUID().toString();
     }
 
+    public void onActivate() {
+    	try {
+			isAdmin = threadEntryFacade.userIsAdmin(user, threadVo);
+			canUpload = threadEntryFacade.userCanUpload(user, threadVo);
+		} catch (BusinessException e) {
+			logger.error("Can't get user membership info");
+		}
+    }
 
     /*********************************
      * Phase render
@@ -392,25 +405,6 @@ public class ListThreadDocument {
         return result;
     }
 
-    public boolean getCanUpload(){
-    	try {
-    		logger.debug(String.valueOf(threadEntryFacade.userCanUpload(user, threadVo)));
-			return threadEntryFacade.userCanUpload(user, threadVo);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-    }
-    
-    public boolean getIsAdmin(){
-    	try {
-			return threadEntryFacade.userIsAdmin(user, threadVo);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-    }
-    
     public Link getThumbnailPath() {
         return componentResources.createEventLink("thumbnail", threadEntry.getIdentifier());
     }

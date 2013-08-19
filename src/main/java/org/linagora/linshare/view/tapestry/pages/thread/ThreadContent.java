@@ -95,9 +95,6 @@ public class ThreadContent {
 	@Property
 	private String threadUuid;
 
-	@InjectComponent
-	private ThreadFileUploadPopup threadFileUploadPopup;
-
 	@InjectPage
 	private AdminThread adminThread;
 
@@ -124,7 +121,7 @@ public class ThreadContent {
 
 	@Property
 	private String contextPath;
-
+	
 	/* ***********************************************************
 	 * Injected services
 	 * ***********************************************************
@@ -149,7 +146,6 @@ public class ThreadContent {
 
 		threadName = selectedThread.getName();
 		threadUuid = selectedThread.getLsUuid();
-		threadFileUploadPopup.setMyCurrentThread(selectedThread);
 		depth = selectedThread.getView().getDepth();
 
 		List<ThreadViewAssoVo> listViewTag = selectedThread.getView().getThreadViewAssos();
@@ -190,6 +186,11 @@ public class ThreadContent {
 			throw new BusinessException("Can't generate the thread content tree view. Tree depth should be in [1..3] but is " + depth);
 		}
 		children = root != null ? Collections.list(root.children()) : new ArrayList<DefaultMutableTreeNode>();
+	}
+
+	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css" })
+	@CleanupRender
+	void cleanupRender() {
 	}
 
 	public Object onActivate() {
@@ -304,11 +305,6 @@ public class ThreadContent {
 			shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"), selectedVo.getFileName()));
 			logger.debug(e.toString());
 		}
-	}
-
-	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css" })
-	@CleanupRender
-	void cleanupRender() {
 	}
 
 	public long getMaxFileSize() {

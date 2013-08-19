@@ -2,8 +2,9 @@
         xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
         xmlns:p="tapestry:parameter">
 
- <script type="text/javascript" language="javascript">
+    <script type="text/javascript" language="javascript">
         var sizeAvailable = ${maxFileSize};
+        var err = false;
 
         jQuery(document).ready(function() {
             var uploader = new qq.FineUploader({
@@ -16,6 +17,7 @@
                 callbacks: {
                     onError: function(id, fileName, reason) {
                         qq.log("id: " + id + ", fileName: " + fileName + ", reason: " + reason);
+                        err = true;
                         jQuery("#error").click();
                     },
                     onProgess: function(id) {
@@ -31,9 +33,9 @@
                         jQuery("#progress").attr("value", uploader.getInProgress());
                         if (uploader.getInProgress() == 0) {
                             console.log("All upload are completed");
+                            if (!err)
+                                setTimeout(function() { jQuery("#refresh")[0].click(); }, 3000);
                         }
-                        jQuery("#fred").click();
-            
                     }
                 },
                 deleteFile: {
@@ -72,28 +74,24 @@
     <div id="content">
         <h1>${message:pages.thread.tree.title} : ${threadName}</h1>
 
-
         <t:messagePanel />
         <t:businessMessagesDisplayer />
 
-		<div class="example">
-            <ul id="uploader" class="unstyled"></ul>
-        </div>
-      	<t:pageLink class="btn" page="thread/content" >Refresh</t:pageLink>
-        <!--   style="display:none" -->
-        
+        <t:if test="canUpload">
+            <div class="example">
+                <ul id="uploader" class="unstyled"></ul>
+            </div>
+        </t:if>
         <!-- Action bar -->
 
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
-                <t:if test="canUpload">
-                    <li>
-                        <a href="#" class="button" onclick="threadFileUploadWindow.showCenter(true);">
-                            <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/> ${message:pages.thread.upload.addbutton}</span>
-                        </a>
-                    </li>
-                </t:if>
+                <li>
+                    <t:pageLink id="refresh" class="button" page="thread/content" >
+                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/> ${message:pages.thread.refresh}</span>
+                    </t:pageLink>
+                </li>
                 <t:if test="admin">
                     <li>
                         <t:actionLink t:id="admin" class="button" title="${message:pages.thread.admin.title}">
@@ -140,9 +138,6 @@
     </div><!-- id="content" -->
 
     <!-- Popups -->
-
-    <!-- Thread File Upload popup -->
-    <t:threadFileUploadPopup t:eventName="threadFileUploadPopupEvent" />
 
     <!-- Widgets -->
 
