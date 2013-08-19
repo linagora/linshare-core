@@ -40,15 +40,17 @@ import org.linagora.linshare.core.domain.entities.User;
 @XmlRootElement(name = "User")
 public class UserDto extends AccountDto {
 
-	protected String firstName;
-	protected String lastName;
-	protected String mail;
+	private String firstName;
+	private String lastName;
+	private String mail;
+	private String role;
 	
 	public UserDto(User u) {
 		super(u);
 		this.firstName = u.getFirstName();
 		this.lastName = u.getLastName();
 		this.mail = u.getMail();
+		this.setRole(u.getRole().toString());
 	}
 	
 	public UserDto() {
@@ -78,4 +80,52 @@ public class UserDto extends AccountDto {
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + ((mail == null) ? 0 : mail.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserDto other = (UserDto) obj;
+		if (firstName == null) {
+			if (other.firstName != null)
+				return false;
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		if (mail == null) {
+			if (other.mail != null)
+				return false;
+		} else if (!mail.equals(other.mail))
+			return false;
+		return true;
+	}
+
 }

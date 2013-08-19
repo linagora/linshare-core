@@ -38,10 +38,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.AdminGenericFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.admin.AuthenticationRestService;
+import org.linagora.linshare.webservice.dto.UserDto;
 
 public class AuthenticationRestServiceImpl extends WebserviceBase implements AuthenticationRestService {
 
@@ -55,8 +57,7 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public Boolean isAuthorized() throws BusinessException {
-		webServiceAdminFacade.checkAuthentication();
-		return true;
+	public UserDto isAuthorized() throws BusinessException {
+		return new UserDto(webServiceAdminFacade.checkAuthentication(Role.ADMIN));
 	}
 }

@@ -33,12 +33,15 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin;
 
-import java.util.List;
+
+import java.util.Set;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;
 
 public interface UserFacade extends AdminGenericFacade {
 
-	public List<UserDto> completionUser(String pattern) throws BusinessException;
+	Set<UserDto> completionUser(String pattern) throws BusinessException;
+
+	void updateUserRole(UserDto userDto) throws BusinessException;
 }

@@ -33,11 +33,10 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
@@ -62,10 +61,10 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public List<UserDto> completionUser(String pattern)
+	public Set<UserDto> completionUser(String pattern)
 			throws BusinessException {
 		User currentUser = super.checkAuthentication();
-		List<UserDto> usersDto = new ArrayList<UserDto>();
+		Set<UserDto> usersDto = new HashSet<UserDto>();
 		Set<User> users = new HashSet<User>();
 		users.addAll(userService.searchUser(pattern, null, null, null,
 				currentUser));
@@ -79,4 +78,9 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		return usersDto;
 	}
 
+	@Override
+	public void updateUserRole(UserDto userDto) throws BusinessException {
+		User actor = super.checkAuthentication();
+		userService.updateUserRole(userDto.getUuid(), userDto.getDomain(), userDto.getMail(), Role.valueOf(userDto.getRole()), actor);
+	}
 }

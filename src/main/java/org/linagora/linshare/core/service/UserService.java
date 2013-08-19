@@ -273,4 +273,7 @@ public interface UserService {
 	 * @return
 	 */
 	public boolean isAdminForThisUser(Account actor, String userDomainToManage, String userMailToManage);
+
+
+	void updateUserRole(String userUuid, String domain, String mail, Role role, User actor) throws BusinessException;
 }

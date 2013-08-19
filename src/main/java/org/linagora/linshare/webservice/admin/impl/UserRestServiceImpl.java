@@ -33,9 +33,10 @@
  */
 package org.linagora.linshare.webservice.admin.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -59,7 +60,15 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public List<UserDto> completionUser(@PathParam("pattern") String pattern) throws BusinessException {
+	public Set<UserDto> completionUser(@PathParam("pattern") String pattern) throws BusinessException {
 		return userFacade.completionUser(pattern);
+	}
+
+	@Path("/")
+	@PUT
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public void updateUserRole(UserDto userDto) throws BusinessException {
+		userFacade.updateUserRole(userDto);
 	}
 }

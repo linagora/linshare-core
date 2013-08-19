@@ -33,7 +33,7 @@
  */
 package org.linagora.linshare.webservice.admin;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -44,5 +44,7 @@ import org.linagora.linshare.webservice.dto.UserDto;
 @Path("/rest/admin/users")
 public interface UserRestService {
 
-	List<UserDto> completionUser(@PathParam("pattern") String pattern) throws BusinessException;
+	Set<UserDto> completionUser(String pattern) throws BusinessException;
+	
+	void updateUserRole(UserDto userDto) throws BusinessException;
 }
