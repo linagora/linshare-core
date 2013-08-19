@@ -36,9 +36,10 @@ package org.linagora.linshare.webservice.admin;
 import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.webservice.dto.UserDto;
 
 @Path("/rest/admin/authentication")
 public interface AuthenticationRestService {
 
-	Boolean isAuthorized() throws BusinessException;
+	UserDto isAuthorized() throws BusinessException;
 }

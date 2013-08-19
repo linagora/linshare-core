@@ -498,6 +498,30 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
+	public void updateUserRole(String userUuid, String domain, String mail, Role role, User actor) throws BusinessException{
+		User user = userRepository.findByLsUuid(userUuid);
+		if (user == null) {
+			user = userRepository.findByMailAndDomain(domain, mail);
+		}
+		
+		if (user == null) {
+			logger.debug("User " + mail + " was not found in the database. Searching in directories ...");
+			user = searchAndCreateUserEntityFromDirectory(domain, mail);
+		}
+		if (user == null) {
+			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user : " + mail + " in domain : " + domain);
+		} else {
+			logger.debug("User " + mail + " found.");
+			logger.debug("Update role to " + role);
+			user.setRole(role);
+			userRepository.update(user);
+			
+			UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Update of a user:" + user.getMail(), user);
+			logEntryService.create(logEntry);
+		}
+	}
+	
+	@Override
 	public void updateUserLocale(String domainId, String mail, String locale) throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);
 		if(user == null) {
