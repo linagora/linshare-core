@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.Import;
@@ -103,8 +104,6 @@ public class Index {
     @InjectComponent
     private Grid grid;
 	
-	private boolean emptyList;
-	
 	@Persist
 	@Property
 	private String criteriaOnSearch;
@@ -123,9 +122,8 @@ public class Index {
 	public void init() throws BusinessException {
 		if(inSearch == false && fromCreate == false){
 			targetLists = "*";
-			lists = mailingListFacade.findAllMailingListByOwner(loginUser);
-			List<MailingListVo> finalList = mailingListFacade.copyList(lists);
-			lists.clear();
+			List<MailingListVo> finalList =  mailingListFacade.findAllMailingListByOwner(loginUser);
+			lists = new ArrayList<MailingListVo>();
 			
 			for(MailingListVo current : finalList){
 				if(current.isPublic() == false){
@@ -141,12 +139,12 @@ public class Index {
 				}
 			}
 		} 
-			setEmptyList(lists.isEmpty());
-			if(!lists.isEmpty()){
-		        if (grid.getSortModel().getSortConstraints().isEmpty()) {
-		            grid.getSortModel().updateSort("identifier");
-		        }
-			}
+		if(!lists.isEmpty()){
+		    if (grid.getSortModel().getSortConstraints().isEmpty()) {
+		    		grid.getSortModel().updateSort("identifier");
+		    }
+		    mailingListFacade.refreshListOfMailingList(lists);
+		}
 	}
 	
 	public boolean getListIsDeletable() throws BusinessException {
@@ -176,15 +174,13 @@ public class Index {
 		list=null;
 	}
 
-
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		return mailingListFacade.onProvideCompletionsForSearchList(input, criteriaOnSearch, loginUser);
+		return mailingListFacade.completionsForSearchList(loginUser, input, criteriaOnSearch);
 	}	
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-    	lists.clear();
-    	lists= mailingListFacade.setListFromSearch(targetLists,criteriaOnSearch,loginUser);
+    	lists= mailingListFacade.setListFromSearch(loginUser,targetLists,criteriaOnSearch);
     	fromCreate = false;
 	}
 
@@ -201,11 +197,7 @@ public class Index {
 	}
 	
 	public boolean isEmptyList() {
-		return emptyList;
-	}
-
-	public void setEmptyList(boolean emptyList) {
-		this.emptyList = emptyList;
+		return lists.isEmpty();
 	}
 	
 	public String getPublic() { 

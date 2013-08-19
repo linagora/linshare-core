@@ -6,9 +6,9 @@
 			
 		<div id="content">
 		
-		<h1>${message:pages.lists.index}: ${mailingList.identifier} - ${mailingList.owner.firstName} ${mailingList.owner.lastName} </h1>
+		<h1>${message:pages.lists.index}: ${mailingListVo.identifier} - ${mailingListVo.owner.firstName} ${mailingListVo.owner.lastName} </h1>
 		<br></br>
-		<h2> ${message:pages.administration.displayLists.index}</h2>
+		<h2> ${message:pages.administration.lists.displayLists.index}</h2>
 
 		<t:if test="UserIsOwner">
 				<t:if test="isEmpty">
@@ -17,7 +17,7 @@
 			<t:grid source="contacts" rowsPerPage="10" include="firstName,lastName,mail" add="actions" row="contact">
 			<t:parameter name="actionsCell">
 			 	 		<t:actionLink t:id="editContact" context="contact.mail"
-			 	 			href="#formBis"
+			 	 			href="#addContactForm"
 			 	 			title="${message:pages.lists.index.list.contact.edit.button}">
 							<img src="${asset:context:images/icons/edit-button.png}" alt="${message:pages.lists.index.list.contact.edit.button}" />
 						</t:actionLink>
@@ -33,28 +33,14 @@
 		</t:if>
 		<div class="clear"></div>
 		
-		<t:if test="inModify">
-		
-			<form t:type="form" t:id="editContactForm">
+			<form t:type="form" t:id="contactForm">
 				<fieldset class="title_criteria_zone" id="contactCriterion">
-				<legend align="top" class="palette">${message:pages.lists.index.list.contact.edit.button}</legend>
-				<p><t:label for="email"/>:&nbsp;
-        		<t:textfield t:id="emailBis" value="email"/></p><br></br>
-				
-				<p><t:label for="firstName"/>:&nbsp;
-        		<t:textfield t:id="firstNameBis" value="firstName" /></p><br></br>
-   		
-   				<p><t:label for="lastName"/>:&nbsp;
-        		<t:textfield t:id="lastNameBis" value="lastName" /></p><br></br>
-		
-        		<p><input type="submit"  value="${message:pages.lists.index.list.contact.edit.button}"/>
-        		<input t:type="submit" t:id="reset" value="${message:global.button.reset}"/></p>
-				</fieldset>
-			</form>
-		<p:else>
-			<form t:type="form" t:id="addContactForm">
-				<fieldset class="title_criteria_zone" id="contactCriterion">
-				<legend align="top" class="palette">${message:pages.lists.addContact}</legend>
+				<t:if test="inModify">
+					<legend align="top" class="palette">${message:pages.lists.index.list.contact.edit.button}</legend>
+				<p:else>
+					<legend align="top" class="palette">${message:pages.lists.addContact}</legend>
+				</p:else>
+				</t:if>
 				<p><t:label for="email"/>:&nbsp;
         		<t:textfield t:id="email" value="email"/></p><br></br>
 				
@@ -63,12 +49,15 @@
    		
    				<p><t:label for="lastName"/>:&nbsp;
         		<t:textfield t:id="lastName" value="lastName" /></p><br></br>
-		
-        		<p><input type="submit"  value="${message:pages.lists.addContact}"/></p>
+				<t:if test="inModify">
+					<p><input type="submit"  value="${message:pages.lists.index.list.contact.edit.button}"/>
+        			<input t:type="submit" t:id="reset" value="${message:global.button.reset}"/></p>
+        		<p:else>
+        			<p><input type="submit"  value="${message:pages.lists.addContact}"/></p>
+				</p:else>
+				</t:if>
 				</fieldset>
 			</form>
-		</p:else>
-		</t:if>
 			
 	  <div class="clear"></div>
 
@@ -101,12 +90,12 @@
 			 				</t:parameter>
 			 				<t:parameter name="addRemoveCell">
 			 					<t:if t:test="isInList">
-			 						<t:actionLink t:id="deleteUser" context="[result.firstName,result.lastName,result.mail]"
+			 						<t:actionLink t:id="deleteUser" context="[result.domainIdentifier,result.mail]"
 			 	 						title="${message:pages.lists.index.list.display.delete.button}">
 										<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
 									</t:actionLink>
 			  					<p:else>
-			  						<t:actionLink t:id="addUser" context="[result.firstName,result.lastName,result.mail]"
+			  						<t:actionLink t:id="addUser" context="[result.domainIdentifier,result.mail]"
 			 	 						title="${message:pages.lists.adduser}">
 										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.lists.adduser}" />
 									</t:actionLink>

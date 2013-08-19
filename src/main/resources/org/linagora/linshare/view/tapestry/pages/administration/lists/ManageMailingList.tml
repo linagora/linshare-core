@@ -6,7 +6,7 @@
 			
 		<div id="content">
 			
-				<h1>${mailingList.identifier}</h1>
+				<h1>${mailingListVo.identifier}</h1>
 		<br></br>
 		<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
 		<br></br><br></br>
@@ -16,9 +16,9 @@
 			<fieldset class="title_criteria_zone" id="searchCriterion">
 			<legend align="top" class="palette">${message:pages.lists.owner}</legend>
 				<p><t:label for="identifier"/>:&nbsp;
-        		<t:textfield t:id="identifier" value="mailingList.identifier" validate="required"/></p>
+        		<t:textfield t:id="identifier" value="mailingListVo.identifier" validate="required"/></p>
 			     <br></br>
-				<p>${message:pages.lists.currentOwner}:  ${mailingList.owner.firstName} ${mailingList.owner.lastName}</p>
+				<p>${message:pages.lists.currentOwner}:  ${mailingListVo.owner.firstName} ${mailingListVo.owner.lastName}</p>
         		<p><t:label for="owner"/>&nbsp;
             	<t:textfield t:id="owner" t:value="newOwner" t:mixins="autocomplete" t:size="50" t:minChars="${autocompleteMin}" class="userSearchPattern"/></p>
         		<br></br>

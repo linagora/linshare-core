@@ -35,8 +35,6 @@
 package org.linagora.linshare.view.tapestry.pages.lists;
 
 import java.util.ArrayList;
-import java.util.List;
-
 
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -108,9 +106,6 @@ public class ManageMailingList {
 	@Property
 	private int autocompleteMin = 3;
 
-	@Property
-	private String currentVisibility;
-
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 	
@@ -127,20 +122,6 @@ public class ManageMailingList {
 		if (persistenceId != 0) {
 			inModify = true;
 			mailingList = mailingListFacade.retrieveMailingList(persistenceId);
-			if (mailingList.isPublic() == true) {
-				if (persistentLocale.get().toString().equals("fr")) {
-					currentVisibility = "Publique";
-				} else {
-					currentVisibility = "Public";
-				}
-			} else {
-				if (persistentLocale.get().toString().equals("fr")) {
-					currentVisibility = "Privée";
-				} else {
-					currentVisibility = "Private";
-				}
-			}
-			
 			oldIdentifier = mailingList.getIdentifier();
 			
 		} else {
@@ -157,7 +138,14 @@ public class ManageMailingList {
 		return index;
 	}
 
-
+	public String getCurrentVisibility(){
+		if (mailingList.isPublic() ) {
+			return String.format((messages.get("pages.lists.visibility.public")));
+		} else {
+			return String.format((messages.get("pages.lists.visibility.private")));
+		}
+	}
+	
     void onValidateFromIdentifier(String value) throws ValidationException, BusinessException {
         if (value != null) {
             if (!value.substring(0,1).matches("[A-Za-z]+")) {
@@ -165,7 +153,7 @@ public class ManageMailingList {
 				}
 			}
             if(!value.equals(oldIdentifier)){
-            	String copy = mailingListFacade.checkUniqueId(value, loginUser);
+            	String copy = mailingListFacade.checkUniqueId(loginUser, value);
             	if (!copy.equals(value)) {
             		throw new ValidationException(String.format(messages.get("pages.list.manage.identifierExist"),copy));
             	}
@@ -173,32 +161,20 @@ public class ManageMailingList {
     }
 	
 	public Object onSuccess() throws BusinessException {
+		if (visibility.toString().equals("Public")) {
+			mailingList.setPublic(true);
+		} else {
+			mailingList.setPublic(false);
+		}
+		mailingList.setOwner(loginUser);
+		domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
+		mailingList.setDomain(domain);
+			
 		if (inModify == true) {
-			if (visibility.toString().equals("Public")) {
-				mailingList.setPublic(true);
-			} else {
-				mailingList.setPublic(false);
-			}
-				mailingList.setOwner(loginUser);
-				domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
-				mailingList.setDomain(domain);
-		
 			mailingListFacade.updateMailingList(mailingList);
 			index.setFromCreate(false);
-			
 		} else {
-			mailingList.setOwner(loginUser);
-			domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
-			mailingList.setDomain(domain);
-
-			if (visibility.toString().equals("Public")) {
-				mailingList.setPublic(true);
-			} else {
-				mailingList.setPublic(false);
-			}
-				List<MailingListContactVo> current = new ArrayList<MailingListContactVo>();
-				mailingList.setMails(current);
-			
+			mailingList.setMails(new ArrayList<MailingListContactVo>());
 			mailingListFacade.createMailingList(mailingList);
 			index.setFromCreate(true);
 		}

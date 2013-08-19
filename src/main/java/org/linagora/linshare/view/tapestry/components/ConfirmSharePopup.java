@@ -435,7 +435,7 @@ public class ConfirmSharePopup{
 		} else {
 			recipientsSearch = listRecipientsSearch;
 		}
-		List<MailingListVo> mailingListSelected = mailingListFacade.getMailingListFromQuickShare(listRecipientsSearch,userVo);
+		List<MailingListVo> mailingListSelected = mailingListFacade.getMailingListFromQuickShare(userVo,listRecipientsSearch);
 		if(!(mailingListSelected.isEmpty())){
 			
 			for(MailingListVo current : mailingListSelected){

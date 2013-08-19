@@ -56,6 +56,8 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+
 @Import(library = { "../../../components/jquery/jquery-1.7.2.js","../../../components/jquery/jquery.ui.core.js","../../../components/jquery/jquery.ui.widget.min.js","../../../components/jquery/jquery.ui.mouse.min.js",
 		"../../../components/jquery/jquery.ui.sortable.min.js","ManageDomainPolicy.js" }, stylesheet = {"../../../components/jquery/jquery-ui-1.8.21.custom.css","ManageDomainPolicy.css" })
 public class ManageDomainPolicy {
@@ -148,21 +150,17 @@ public class ManageDomainPolicy {
 	}
 
 	public Object onSuccessFromForm() throws BusinessException {
-
 		if (tabPos != null) {
 			domainPolicyFacade.setAndSortDomainAccessRuleList(domainPolicyVo,tabPos);
 		}
-		try {
-			domainPolicyFacade.updateDomainPolicy(loginUser, domainPolicyVo);
-		} catch (BusinessException e) {
-			e.printStackTrace();
-		}
+		domainPolicyFacade.updateDomainPolicy(loginUser, domainPolicyVo);
 		domainPolicyVo = null;
 		return Index.class;
 
 	}
 
 	public void onActionFromAdd() {
+		domainSelection = null;
 		showAddRuleForm = true;
 	}
 	
