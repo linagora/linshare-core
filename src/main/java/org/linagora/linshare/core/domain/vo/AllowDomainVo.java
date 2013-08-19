@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
-import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.domain.entities.AllowDomain;
 
 public class AllowDomainVo extends DomainAccessRuleVo {
 
@@ -43,27 +41,16 @@ public class AllowDomainVo extends DomainAccessRuleVo {
 	public AllowDomainVo() {
 		super();
 	}
-
-	public String toDisplay(PersistentLocale persistentLocale) {
-		if (persistentLocale.get().toString().equals("fr")) {
-			return " Autorise (" + getDomainIdentifier() + ")";
-		} else
-			return "Allow Domain (" + getDomainIdentifier() + ")";
-	}
 	
-	public AllowDomainVo(AllowDomain allow) {
-		this.setPersistenceId(allow.getPersistenceId());
-		this.setDomainIdentifier(allow.getDomain().getIdentifier());
-	}
-	
-	public AllowDomainVo(AbstractDomainVo entity) {
-		this.domainIdentifier = entity.getIdentifier();
-	}
-
 	public AllowDomainVo(String domainIdentifier) {
 		this.domainIdentifier = domainIdentifier;
 	}
 
+	public AllowDomainVo(String identifier,long persistenceId) {
+		this.domainIdentifier = identifier;
+		this.setPersistenceId(persistenceId);
+	}
+	
 	public String getDomainIdentifier() {
 		return domainIdentifier;
 	}

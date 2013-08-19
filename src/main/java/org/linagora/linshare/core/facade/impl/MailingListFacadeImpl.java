@@ -263,21 +263,14 @@ public class MailingListFacadeImpl implements MailingListFacade {
 					}
 				} else {
 					lists = performSearch(targetLists, loginUser);
-					if (criteriaOnSearch.equals("public")) {
+					if (criteriaOnSearch.equals("public") || criteriaOnSearch.equals("private")) {
 						List<MailingListVo> finalList = lists;
 						lists.clear();
 
 						for (MailingListVo mailingListVo : finalList) {
-							if (mailingListVo.isPublic() == true) {
+							if (criteriaOnSearch.equals("private") && mailingListVo.isPublic() == false) {
 								lists.add(mailingListVo);
-							}
-						}
-					} else if (criteriaOnSearch.equals("private")) {
-						List<MailingListVo> finalList = lists;
-						lists.clear();
-
-						for (MailingListVo mailingListVo : finalList) {
-							if (mailingListVo.isPublic() == false) {
+							} else if (criteriaOnSearch.equals("public") && mailingListVo.isPublic() == true) {
 								lists.add(mailingListVo);
 							}
 						}
@@ -372,6 +365,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			} else {
 				results = performSearchUser(owner, input);
 			}
+			
 			for (User currentUser : results) {
 				if (!(currentUser.equals(owner))) {
 					finalResults.add(new UserVo(currentUser));
