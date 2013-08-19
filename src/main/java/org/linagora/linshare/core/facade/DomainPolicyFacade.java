@@ -80,7 +80,7 @@ public interface DomainPolicyFacade {
 	 * @param value
 	 * @return
 	 */
-	public String checkDomainPolicyIdentifierIsUnique(String value);
+	public String checkDomainPolicyIdentifier(String value);
 	
 	/**
 	 * set DomainAccessRuleVo according to select domainAccessRuleType

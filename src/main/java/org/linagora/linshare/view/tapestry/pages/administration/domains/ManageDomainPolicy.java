@@ -44,8 +44,10 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.DomainAccessRuleType;
+import org.linagora.linshare.core.domain.vo.AllowAllDomainVo;
+import org.linagora.linshare.core.domain.vo.AllowDomainVo;
+import org.linagora.linshare.core.domain.vo.DenyDomainVo;
 import org.linagora.linshare.core.domain.vo.DomainAccessRuleVo;
 import org.linagora.linshare.core.domain.vo.DomainPolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -55,8 +57,6 @@ import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 
 @Import(library = { "../../../components/jquery/jquery-1.7.2.js","../../../components/jquery/jquery.ui.core.js","../../../components/jquery/jquery.ui.widget.min.js","../../../components/jquery/jquery.ui.mouse.min.js",
 		"../../../components/jquery/jquery.ui.sortable.min.js","ManageDomainPolicy.js" }, stylesheet = {"../../../components/jquery/jquery-ui-1.8.21.custom.css","ManageDomainPolicy.css" })
@@ -74,9 +74,6 @@ public class ManageDomainPolicy {
 	@SessionState(create = false)
 	@Property
 	private DomainPolicyVo domainPolicyVo;
-
-	@Inject
-	private PersistentLocale persistentLocale;
 
 	@SessionState
 	private UserVo loginUser;
@@ -98,43 +95,42 @@ public class ManageDomainPolicy {
 
 	@Property
 	private String tabPos;
-	
+
 	@Property
 	@Persist
 	@Validate("required")
-    private DomainAccessRuleType ruleToAdd;
-	
-    @Property
-	@Validate("required")
-    private String domainSelection;
-    
-    @Inject
-    private AbstractDomainFacade domainFacade;
-    
-    @Property
-    private boolean onTop;
-    
-    @Persist
-    @Property
-    private List<String> domains;
-	
-    @Persist
-    @Property
-    private boolean showAddRuleForm;
+	private DomainAccessRuleType ruleToAdd;
+
+	@Property
+	private String domainSelection;
+
+	@Inject
+	private AbstractDomainFacade domainFacade;
+
+	@Property
+	private boolean onTop;
+
+	@Property
+	private boolean reset;
+
+	@Persist
+	@Property
+	private List<String> domains;
+
+	@Persist
+	@Property
+	private boolean showAddRuleForm;
 
 	public List<DomainAccessRuleVo> getRulesList() {
 		List<DomainAccessRuleVo> rulesVo = new ArrayList<DomainAccessRuleVo>();
 		rulesVo = domainPolicyVo.getDomainAccessPolicy().getRules();
-
-		for (DomainAccessRuleVo current : rulesVo) {
-			current.setDescription(current.toDisplay(persistentLocale));
-		}
 		return rulesVo;
 	}
-	
+
 	public void onActivate(String identifier) throws BusinessException {
 		domainPolicyVo = domainPolicyFacade.retrieveDomainPolicy(identifier);
 		domains = domainFacade.findAllDomainIdentifiers();
+		ruleToAdd = DomainAccessRuleType.ALLOW;
 		showAddRuleForm = false;
 	}
 
@@ -160,22 +156,40 @@ public class ManageDomainPolicy {
 	}
 
 	public void onActionFromAdd() {
-		domainSelection = null;
 		showAddRuleForm = true;
 	}
-	
-	public void onSuccessFromAddRuleForm() throws BusinessException{
-		DomainAccessRuleVo rule= domainPolicyFacade.getDomainAccessRuleVoFromSelect(ruleToAdd, domainSelection);
-		if(onTop){
-			domainPolicyFacade.insertRuleOnTopOfList(domainPolicyVo,rule);
-		} else {
-			domainPolicyVo.getDomainAccessPolicy().addRule(rule);
+
+	public void onSelectedFromReset() {
+		reset = true;
+	}
+
+	public void onSuccessFromAddRuleForm() throws BusinessException {
+		if (reset != true) {
+			DomainAccessRuleVo rule = domainPolicyFacade.getDomainAccessRuleVoFromSelect(ruleToAdd, domainSelection);
+			if (onTop) {
+				domainPolicyFacade.insertRuleOnTopOfList(domainPolicyVo, rule);
+			} else {
+				domainPolicyVo.getDomainAccessPolicy().addRule(rule);
+			}
+			domainPolicyFacade.updateDomainPolicy(loginUser, domainPolicyVo);
+			domainPolicyVo = domainPolicyFacade.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
+			ruleToAdd = DomainAccessRuleType.ALLOW;
 		}
-		domainPolicyFacade.updateDomainPolicy(loginUser,domainPolicyVo);
-		domainPolicyVo = domainPolicyFacade.retrieveDomainPolicy(domainPolicyVo.getIdentifier());
 		showAddRuleForm = false;
 	}
-	
+
+	public String getRuleDescription() {
+		if (_rule instanceof AllowDomainVo) {
+			return String.format((messages.get("pages.administration.domains.index.createdomainpolicy.allow")),((AllowDomainVo) _rule).getDomainIdentifier());
+		} else if (_rule instanceof DenyDomainVo) {
+			return String.format((messages.get("pages.administration.domains.index.createdomainpolicy.deny")),((DenyDomainVo) _rule).getDomainIdentifier());
+		} else if (_rule instanceof AllowAllDomainVo) {
+			return String.format((messages.get("pages.administration.domains.index.createdomainpolicy.allow_all")));
+		} else {
+			return String.format((messages.get("pages.administration.domains.index.createdomainpolicy.deny_all")));
+		}
+	}
+
 	Object onException(Throwable cause) {
 		shareSessionObjects.addError(messages.get("global.exception.message"));
 		logger.error(cause.getMessage());

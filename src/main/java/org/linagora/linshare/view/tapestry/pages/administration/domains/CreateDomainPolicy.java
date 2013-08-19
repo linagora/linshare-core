@@ -33,8 +33,6 @@
  */
 package org.linagora.linshare.view.tapestry.pages.administration.domains;
 
-
-
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -50,11 +48,9 @@ import org.linagora.linshare.core.facade.DomainPolicyFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class CreateDomainPolicy {
 
 	private static Logger logger = LoggerFactory.getLogger(CreateDomainPolicy.class);
-	
 	
     @Inject
     private DomainPolicyFacade domainPolicyFacade;
@@ -71,7 +67,6 @@ public class CreateDomainPolicy {
     
 	@SetupRender
 	public void init() {
-			
 			domainPolicy=null;
 			domainPolicy=new DomainPolicyVo();
 	}
@@ -87,16 +82,14 @@ public class CreateDomainPolicy {
 					throw new ValidationException(String.format(messages.get("pages.list.manage.letter")));
 				}
             
-            String copy = domainPolicyFacade.checkDomainPolicyIdentifierIsUnique(value);
+            String copy = domainPolicyFacade.checkDomainPolicyIdentifier(value);
         	if (!copy.equals(value)) {
         		throw new ValidationException(String.format(messages.get("pages.list.manage.identifierExist"),copy));
         	}
-			}
-        
+		}
     }
 	
 	public Object onSuccessFromForm() {
-		
 		try {
 				DomainAccessPolicyVo accessPolicy=new DomainAccessPolicyVo(new DomainAccessPolicy());
 				domainPolicy.setDomainAccessPolicy(accessPolicy);

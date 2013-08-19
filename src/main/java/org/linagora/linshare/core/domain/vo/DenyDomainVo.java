@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
-import org.apache.tapestry5.services.PersistentLocale;
 
 public class DenyDomainVo extends DomainAccessRuleVo {
 
@@ -43,22 +42,14 @@ public class DenyDomainVo extends DomainAccessRuleVo {
 		super();
 	}
 
-	@Override
-	public String toDisplay(PersistentLocale persistentLocale) {
-		if (persistentLocale.get().toString().equals("fr")) {
-			return " Interdit (" + getDomainIdentifier() + ")";
-		} else
-			return "Deny Domain (" + getDomainIdentifier() + ")";
-	}
-
-	public DenyDomainVo(AbstractDomainVo entity) {
-		this.domainIdentifier = entity.getIdentifier();
-	}
-
 	public DenyDomainVo(String domainIdentifier) {
 		this.domainIdentifier = domainIdentifier;
 	}
-
+	public DenyDomainVo(String identifier,long persistenceId) {
+		this.domainIdentifier = identifier;
+		this.setPersistenceId(persistenceId);
+	}
+	
 	public String getDomainIdentifier() {
 		return domainIdentifier;
 	}

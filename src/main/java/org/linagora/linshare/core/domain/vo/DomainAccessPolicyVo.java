@@ -55,28 +55,19 @@ public class DomainAccessPolicyVo {
 	public DomainAccessPolicyVo(DomainAccessPolicy policy) {
 
 		rules = new ArrayList<DomainAccessRuleVo>();
-		for (DomainAccessRule current : policy.getRules()) {
+		for (DomainAccessRule rule : policy.getRules()) {
 			
-			if(current instanceof AllowDomain){
-				AllowDomain allow = new AllowDomain(((AllowDomain) current).getDomain());
-				allow.setPersistenceId(current.getPersistenceId());
-				AllowDomainVo allowDomain = new AllowDomainVo(allow);
-				rules.add(allowDomain);
+			if(rule instanceof AllowDomain){
+				rules.add(new AllowDomainVo(((AllowDomain) rule).getDomain().getIdentifier(),rule.getPersistenceId()));
 				
-			} else if(current instanceof AllowAllDomain){
-				AllowAllDomainVo allowAllDomain = new AllowAllDomainVo();
-				allowAllDomain.setPersistenceId(current.getPersistenceId());
-				rules.add(allowAllDomain);
+			} else if(rule instanceof AllowAllDomain){
+				rules.add(new AllowAllDomainVo(rule.getPersistenceId()));
 				
-			}else if(current instanceof DenyDomain){
-				DenyDomainVo denyDomain = new DenyDomainVo(((DenyDomain) current).getDomain().getIdentifier());
-				denyDomain.setPersistenceId(current.getPersistenceId());
-				rules.add(denyDomain);
+			}else if(rule instanceof DenyDomain){
+				rules.add(new DenyDomainVo(((DenyDomain) rule).getDomain().getIdentifier(),rule.getPersistenceId()));
 				
-			} else if(current instanceof DenyAllDomain){
-				DenyAllDomainVo denyAllDomain = new DenyAllDomainVo();
-				denyAllDomain.setPersistenceId(current.getPersistenceId());
-				rules.add(denyAllDomain);
+			} else if(rule instanceof DenyAllDomain){
+				rules.add(new DenyAllDomainVo(rule.getPersistenceId()));
 			}	
 		}
 		this.id = policy.getPersistenceId();
@@ -96,23 +87,7 @@ public class DomainAccessPolicyVo {
 		}
 		this.rules.add(rule);
 	}
-
-	public boolean compareList(List<DomainAccessRuleVo> rules) {
-		int ok = 0;
-		for (DomainAccessRuleVo rule : rules) {
-			for (DomainAccessRuleVo rule2 : this.getRules()) {
-				if (rule.toString().equalsIgnoreCase(rule2.toString())) {
-					ok++;
-				}
-			}
-		}
-		if (ok == rules.size()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
+	
 	public long getId() {
 		return id;
 	}

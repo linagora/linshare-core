@@ -34,36 +34,14 @@
 
 package org.linagora.linshare.core.domain.vo;
 
-import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 
 public class DomainAccessRuleVo {
 
 	private String regexp;
 	private long persistenceId;
-	private String description;
 	
 	public DomainAccessRuleVo(){
-	}
-	
-	public DomainAccessRuleVo(DomainAccessRule rule,PersistentLocale persistentLocale)
-	{
-		this.regexp=rule.getRegexp();
-		this.description=this.toDisplay(persistentLocale);
-		this.persistenceId=rule.getPersistenceId();
-	}
-
-	public DomainAccessRuleVo(DomainAccessRuleVo rule,PersistentLocale persistentLocale)
-	{
-		this.regexp=rule.getRegexp();
-		this.description=this.toDisplay(persistentLocale);
-		this.persistenceId=rule.getPersistenceId();
-	}
-	
-	public DomainAccessRuleVo(DomainAccessRuleVo rule)
-	{
-		this.regexp=rule.getRegexp();
-		this.persistenceId=rule.getPersistenceId();
 	}
 	
 	public DomainAccessRuleVo(DomainAccessRule rule)
@@ -72,19 +50,17 @@ public class DomainAccessRuleVo {
 		this.persistenceId=rule.getPersistenceId();
 	}
 	
+	public DomainAccessRuleVo(DomainAccessRuleVo rule)
+	{
+		this.regexp=rule.getRegexp();
+		this.persistenceId=rule.getPersistenceId();
+	}
+
 	public String getRegexp() {
 		return regexp;
 	}
 	public void setRegexp(String regexp) {
 		this.regexp = regexp;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public long getPersistenceId() {
@@ -93,9 +69,5 @@ public class DomainAccessRuleVo {
 
 	public void setPersistenceId(long persistenceId) {
 		this.persistenceId = persistenceId;
-	}
-	
-	public String toDisplay(PersistentLocale persistentLocale) {
-		return null;
 	}
 }

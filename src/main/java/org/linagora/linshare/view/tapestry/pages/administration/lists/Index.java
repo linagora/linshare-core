@@ -58,133 +58,135 @@ import org.linagora.linshare.view.tapestry.pages.administration.lists.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Import(library = {"../../../components/jquery/jquery-1.7.2.js"})
+@Import(library = { "../../../components/jquery/jquery-1.7.2.js" })
 public class Index {
-	
-    private static Logger logger = LoggerFactory.getLogger(Index.class);
 
-    @SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
-    
-    @SessionState
-    @Property
-    private UserVo loginUser;
-    
-    @Inject
-    private Messages messages;
-    
-    @SessionState
-    @Property
-    private List<MailingListVo> lists;
-	
-    @Property
-    private MailingListVo list;
-    
-    @Property
-    @Persist(value="flash")
-    private long listToDelete;
-    
-    @Inject
-    private MailingListFacade mailingListFacade; 
-    
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
+
+	@SessionState
 	@Property
-	private int autocompleteMin=3;
-	
-    @InjectComponent
-    private Grid grid;
-	
+	private ShareSessionObjects shareSessionObjects;
+
+	@SessionState
+	@Property
+	private UserVo loginUser;
+
+	@Inject
+	private Messages messages;
+
+	@SessionState
+	@Property
+	private List<MailingListVo> lists;
+
+	@Property
+	private MailingListVo list;
+
+	@Property
+	@Persist(value = "flash")
+	private long listToDelete;
+
+	@Inject
+	private MailingListFacade mailingListFacade;
+
+	@Property
+	private int autocompleteMin = 3;
+
+	@InjectComponent
+	private Grid grid;
+
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
-	
+
 	@Persist
 	@Property
 	private String criteriaOnSearch;
-	
+
 	@Persist
 	@Property
 	private String targetLists;
-	
+
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 
 	@Persist
 	private boolean inSearch;
 
-
 	@SetupRender
-    public void init() throws BusinessException {
-		if(inSearch == false){
+	public void init() throws BusinessException {
+		if (inSearch == false) {
 			lists = new ArrayList<MailingListVo>();
-			targetLists ="*";
+			targetLists = "*";
+			criteriaOnSearch = "all";
 		}
-			if(!lists.isEmpty()){
-		        if (grid.getSortModel().getSortConstraints().isEmpty()) {
-		            grid.getSortModel().updateSort("identifier");
-		        }
-			    mailingListFacade.refreshListOfMailingList(lists);
+		if (!lists.isEmpty()) {
+			if (grid.getSortModel().getSortConstraints().isEmpty()) {
+				grid.getSortModel().updateSort("identifier");
 			}
-    }
+			mailingListFacade.refreshListOfMailingList(lists);
+		}
+	}
 
-    public boolean getListIsDeletable() throws BusinessException {
-    	list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
-    	if(loginUser.getMail().equals(list.getOwner().getMail())){
-    		return true;
-    	}
-    	return false;
-    }
-    
-    public void onActionFromDeleteList(long persistenceId) {
-    	this.listToDelete = persistenceId;
-    }
-    
-    @OnEvent(value="listDeleteEvent")
-    public void deleteList() throws BusinessException {
-    	mailingListFacade.deleteMailingList(listToDelete);
-    	for(MailingListVo current : lists){
-    		if(current.getPersistenceId() == listToDelete){
-    			lists.remove(current);
-    		}
-    	}
-		list=null;
-    }
-    
-	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		return mailingListFacade.completionsForSearchList(loginUser, input, criteriaOnSearch);
+	public boolean getListIsDeletable() throws BusinessException {
+		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
+		if (loginUser.getMail().equals(list.getOwner().getMail())) {
+			return true;
+		}
+		return false;
 	}
-	
-    public void onSuccessFromForm() throws BusinessException {	
-    	inSearch = true;
-    	lists= mailingListFacade.setListFromSearch(loginUser,targetLists,criteriaOnSearch);
-    }
-    
-    Object onException(Throwable cause) {
-        shareSessionObjects.addError(messages.get("global.exception.message"));
-        logger.error(cause.getMessage());
-        cause.printStackTrace();
-        return this;
-    }
-    
+
+	public void onActionFromDeleteList(long persistenceId) {
+		this.listToDelete = persistenceId;
+	}
+
+	@OnEvent(value = "listDeleteEvent")
+	public void deleteList() throws BusinessException {
+		mailingListFacade.deleteMailingList(listToDelete);
+		
+		for (MailingListVo current : lists) {
+			if (current.getPersistenceId() == listToDelete) {
+				lists.remove(current);
+			}
+		}
+		list = null;
+	}
+
+	public List<String> onProvideCompletionsFromSearch(String input)throws BusinessException {
+		return mailingListFacade.completionsForSearchList(loginUser, input,criteriaOnSearch);
+	}
+
+	public void onSuccessFromForm() throws BusinessException {
+		inSearch = true;
+		lists = mailingListFacade.setListFromSearch(loginUser, targetLists,criteriaOnSearch);
+	}
+
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
+	}
+
 	public boolean getIsPublic() {
-		return list.isPublic(); 
+		return list.isPublic();
 	}
-	
-	public String getPublic() { 
-		return "public"; 
+
+	public String getPublic() {
+		return "public";
 	}
-	
+
 	public String getPrivate() {
-		return "private"; 
+		return "private";
 	}
-	public String getAll() { 
-		return "all"; 
+
+	public String getAll() {
+		return "all";
 	}
-    
+
 	public boolean isEmptyList() {
 		return lists.isEmpty();
 	}
-	
-    public boolean isInSearch() {
+
+	public boolean isInSearch() {
 		return inSearch;
 	}
 

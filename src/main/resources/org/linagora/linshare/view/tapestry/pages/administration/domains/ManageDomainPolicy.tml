@@ -48,7 +48,7 @@
 					<ul id="sortable">
                 		<t:loop source="rulesList" value="rule" index="indexRule" formState="none">
                 			<li class="ui-state-default" >
-                			<span id="position" >${indexRule}</span><span id="ruleDescription" >${rule.Description}</span>
+                			<span id="position" >${indexRule}</span><span id="ruleDescription" >${ruleDescription}</span>
                 			<span id="ruleIdentifier" style="display:none" >${rule.persistenceId}</span>
 							<span class="ui-icon ui-icon-arrowthick-2-n-s" ></span> &nbsp;
 							<span>				
@@ -78,16 +78,17 @@
         				<legend align="top" class="palette">${message:pages.administration.domains.domainPolicy.form.add}</legend>
         				
         				<t:label for="ruleToAdd"/>:
-            			<select t:type="select" t:id="ruleToAdd" onchange="setOptions(document.addRuleForm.ruleToAdd.options[ document.addRuleForm.ruleToAdd.selectedIndex].text);"/>
+            			<select t:type="select" t:id="ruleToAdd" onchange="setOptions(document.addRuleForm.ruleToAdd.options[document.addRuleForm.ruleToAdd.selectedIndex].text);"/>
             			       <br></br><br></br>
             		   <t:label for="domainSelection"/>:
-            			<select t:type="select" t:id="domainSelection" t:model="domains"></select>
+            			<select t:type="select" t:id="domainSelection" t:blankoption="never" t:model="domains"></select>
             			       <br></br><br></br>
         			   <t:label for="onTop"/>:
             			<input t:type="checkbox" type="checkbox" t:id="onTop"/>&nbsp;
             		    ${message:pages.administration.domains.index.createdomainpolicy.selectrule.position}
             		            			       <br></br><br></br>
             		<input type="submit"  value="${message:pages.administration.domains.domainPolicy.form.add}"/>
+            		<input t:type="Submit" t:id="reset" value="${message:global.button.reset}"/>
         			</fieldset>
         </form>
         </t:if>
