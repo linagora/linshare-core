@@ -249,6 +249,17 @@ public class DocumentEntryServiceImplTest extends AbstractTransactionalJUnit4Spr
 				)
 		);
 		
+		functionalities.add(
+				new UnitValueFunctionality("FILESIZE_MAX",
+					true,
+					new Policy(Policies.ALLOWED, true),
+					new Policy(Policies.ALLOWED, true),
+					jane.getDomain(),
+					5,
+					new FileSizeUnitClass(FileSizeUnit.GIGA)
+				)
+		);
+		
 		for (Functionality functionality : functionalities) {
 			functionalityRepository.create(functionality);
 			jane.getDomain().addFunctionality(functionality);
