@@ -34,11 +34,7 @@
 
 package org.linagora.linshare.view.tapestry.pages.administration.lists;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.annotations.Component;
@@ -58,173 +54,114 @@ import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ManageMailingList {
 
-	private static Logger logger = LoggerFactory.getLogger(ManageMailingList.class);
-	
-    @Inject
-    private MailingListFacade mailingListFacade;
-	
-	@SessionState(create=false)
-    @Property
-    private MailingListVo mailingList;
-    
-    @SessionState
-    private UserVo loginUser;
-	
-    @Property
-    private AbstractDomainVo domain;
-    
+	@Inject
+	private MailingListFacade mailingListFacade;
+
+	@SessionState(create = false)
+	@Property
+	private MailingListVo mailingListVo;
+
+	@SessionState
+	private UserVo loginUser;
+
+	@Property
+	private AbstractDomainVo domain;
+
 	@Persist
 	@Property
 	private String oldIdentifier;
-    
+
 	@Persist
 	@Property
 	private UserVo oldOwner;
-	
-    @Inject
-    private Messages messages;
-    
+
+	@Inject
+	private Messages messages;
+
 	@Inject
 	private PersistentLocale persistentLocale;
-	
-    @Inject
-    private AbstractDomainFacade domainFacade;
-    
+
+	@Inject
+	private AbstractDomainFacade domainFacade;
+
 	@Inject
 	private UserFacade userFacade;
-    
+
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
-	
+
 	@Property
 	private String newOwner;
-	
+
 	@Property
-	private int autocompleteMin=3;
-	
+	private int autocompleteMin = 3;
+
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
-	
-    @Component
-    private Form form;
 
-	
+	@Component
+	private Form form;
+
 	public void onActivate(long persistenceId) throws BusinessException {
 		if (persistenceId != 0) {
-			mailingList = mailingListFacade.retrieveMailingList(persistenceId);
-			oldIdentifier = mailingList.getIdentifier();
-			oldOwner = mailingList.getOwner();
-		} 
-    }
-
-	public List<String> onProvideCompletionsFromOwner(String input) {
-		List<UserVo> searchResults = performSearch(input);
-		List<String> elements = new ArrayList<String>();
-		
-		for (UserVo user : searchResults) {
-			String completeName = MailCompletionService.formatLabel(user);
-			if (!elements.contains(completeName)) {
-				elements.add(completeName);
-			}
+			mailingListVo = mailingListFacade.retrieveMailingList(persistenceId);
+			oldIdentifier = mailingListVo.getIdentifier();
+			oldOwner = mailingListVo.getOwner();
 		}
-		return elements;
 	}
 
-	/**
-	 * Perform a user search using the user search pattern.
-	 * 
-	 * @param input
-	 *            user search pattern.
-	 * @return list of users.
-	 */
-	private List<UserVo> performSearch(String input) {
+	public List<String> onProvideCompletionsFromOwner(String input) throws BusinessException {
+		return mailingListFacade.completionOnUsers(loginUser, input);
+	}
 
-		Set<UserVo> userSet = new HashSet<UserVo>();
-
-		String firstName_ = null;
-		String lastName_ = null;
-
-		if (input != null && input.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
+	boolean onValidate(String newIdentifier) throws ValidationException,BusinessException {
+		if (newIdentifier != null) {
+			if (!mailingListVo.getOwner().equals(oldOwner)) {
+				String copy = mailingListFacade.checkUniqueId(mailingListVo.getOwner(),newIdentifier);
+				if (!copy.equals(newIdentifier)) {
+					return false;
+				}
+			} else {
+				if (!newIdentifier.equals(oldIdentifier)) {
+					String copy = mailingListFacade.checkUniqueId(mailingListVo.getOwner(),newIdentifier);
+					if (!copy.equals(newIdentifier)) {
+						return false;
+					}
 				}
 			}
 		}
-
-		try {
-			if (input != null) {
-				userSet.addAll(userFacade.searchUser(input.trim(), null, null,loginUser));
-			}
-			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,loginUser));
-			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,loginUser));
-			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(input.trim(), loginUser));
-			return recipientFavouriteFacade.recipientsOrderedByWeightDesc(new ArrayList<UserVo>(userSet), loginUser);
-		} catch (BusinessException e) {
-			logger.error("Error while searching user in QuickSharePopup", e);
-		}
-		return new ArrayList<UserVo>();
+		return true;
 	}
-	
-   boolean onValidate(String value) throws ValidationException, BusinessException {
-    	if (value != null) {
-            if(!mailingList.getOwner().equals(oldOwner)){
-                String copy = mailingListFacade.checkUniqueId(value,mailingList.getOwner());
-                if (!copy.equals(value)) {
-                	return false;
-                }
-            } else {
-                if(!value.equals(oldIdentifier)){
-                	String copy = mailingListFacade.checkUniqueId(value,mailingList.getOwner());
-                	if (!copy.equals(value)) {
-                		return false;
-                	}
-                }
-            }
-        }
-    	return true;
-    }
-   
-    public Object onActionFromCancel() {
-        mailingList=null;
+
+	public Object onActionFromCancel() {
+		mailingListVo = null;
 		oldIdentifier = null;
 		oldOwner = null;
-        return index;
-     }
+		return index;
+	}
 
-	public Object onSuccess() throws BusinessException, ValidationException{
-		if(newOwner!=null){
-			if (newOwner.substring(newOwner.length()-1).equals(">")) {
-				
-				UserVo selectedUser = MailCompletionService.getUserFromDisplay(newOwner);
-				List<UserVo> users = userFacade.searchUser(selectedUser.getMail(), selectedUser.getFirstName(), selectedUser.getLastName(), loginUser);
-				mailingList.setOwner(users.get(0));
-				domain = domainFacade.retrieveDomain(users.get(0).getDomainIdentifier());
-				mailingList.setDomain(domain);
+	public Object onSuccess() throws BusinessException, ValidationException {
+		if (newOwner != null) {
+			if (newOwner.substring(newOwner.length() - 1).equals(">")) {
+				mailingListFacade.setNewOwner(mailingListVo, newOwner);
 			} else {
-				mailingList.setOwner(loginUser);
-				domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
-				mailingList.setDomain(domain);
-			}
-		}
-			if(onValidate(mailingList.getIdentifier())){
-			 mailingListFacade.updateMailingList(mailingList);
-			} else{ 
-            	String copy = mailingListFacade.checkUniqueId(mailingList.getIdentifier(),mailingList.getOwner());
-					form.recordError(String.format(messages.get("pages.administration.changeOwner"), mailingList.getOwner().getFullName(),copy));
-
-				mailingList.setOwner(oldOwner);
+				form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"),newOwner));
 				return null;
 			}
-		mailingList=null;
+		}
+
+		if (onValidate(mailingListVo.getIdentifier())) {
+			mailingListFacade.updateMailingList(mailingListVo);
+		} else {
+			String copy = mailingListFacade.checkUniqueId(mailingListVo.getOwner(), mailingListVo.getIdentifier());
+			form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"),mailingListVo.getOwner().getFullName(), copy));
+			mailingListVo.setOwner(oldOwner);
+			return null;
+		}
+		mailingListVo = null;
 		return index;
 	}
 }

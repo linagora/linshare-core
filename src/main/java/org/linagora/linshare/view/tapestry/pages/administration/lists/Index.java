@@ -107,8 +107,6 @@ public class Index {
 	
 	@Inject
 	private FunctionalityFacade functionalityFacade;
-	
-	private boolean emptyList;
 
 	@Persist
 	private boolean inSearch;
@@ -120,18 +118,11 @@ public class Index {
 			lists = new ArrayList<MailingListVo>();
 			targetLists ="*";
 		}
-			setEmptyList(lists.isEmpty());
 			if(!lists.isEmpty()){
 		        if (grid.getSortModel().getSortConstraints().isEmpty()) {
 		            grid.getSortModel().updateSort("identifier");
 		        }
-		        List<MailingListVo> copy =mailingListFacade.copyList(lists);
-		        lists.clear();
-		        
-		    	for(MailingListVo current : copy){
-		    		current = mailingListFacade.retrieveMailingList(current.getPersistenceId());
-		    		lists.add(current);
-		    	}
+			    mailingListFacade.refreshListOfMailingList(lists);
 			}
     }
 
@@ -159,13 +150,12 @@ public class Index {
     }
     
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		return mailingListFacade.onProvideCompletionsForSearchList(input, criteriaOnSearch, loginUser);
+		return mailingListFacade.completionsForSearchList(loginUser, input, criteriaOnSearch);
 	}
 	
     public void onSuccessFromForm() throws BusinessException {	
     	inSearch = true;
-    	lists.clear();
-    	lists= mailingListFacade.setListFromSearch(targetLists,criteriaOnSearch,loginUser);
+    	lists= mailingListFacade.setListFromSearch(loginUser,targetLists,criteriaOnSearch);
     }
     
     Object onException(Throwable cause) {
@@ -191,11 +181,7 @@ public class Index {
 	}
     
 	public boolean isEmptyList() {
-		return emptyList;
-	}
-
-	public void setEmptyList(boolean emptyList) {
-		this.emptyList = emptyList;
+		return lists.isEmpty();
 	}
 	
     public boolean isInSearch() {

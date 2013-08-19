@@ -21,31 +21,103 @@ public interface MailingListFacade {
     
     public void updateMailingList(MailingListVo mailingListVo) throws BusinessException;
     
-    public List<MailingListVo> findAllMailingListByIdentifier(String identifier, UserVo actorVo) throws BusinessException ;
+    public List<MailingListVo> findAllMailingListByIdentifier(UserVo actorVo, String identifier) throws BusinessException ;
     
     public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException;
     
-    public MailingListContactVo retrieveMailingListContact(String mail , MailingListVo list);
+    public MailingListContactVo retrieveMailingListContact(MailingListVo list , String mail);
     
     public void updateMailingListContact(MailingListContactVo contactToUpdate) throws BusinessException;
     
-    public String checkUniqueId(String value,UserVo user)  throws BusinessException ;
-    
     public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException ;
     
-    public List<MailingListVo> copyList(List<MailingListVo> list);
-    
-    public List<MailingListVo> getMailingListFromQuickShare(final String mailingLists,UserVo user);
+    public List<MailingListVo> getMailingListFromQuickShare(UserVo user,final String mailingLists);
     
     public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName);
     
-    public List<String> onProvideCompletionsForSearchList(String input,String criteriaOnSearch,UserVo loginUser) throws BusinessException;
+    /**
+     * Check if list identifier exists, if it does , purpose an alternative identifier
+     * @param user
+     * @param value
+     * @return
+     * @throws BusinessException
+     */
+    public String checkUniqueId(UserVo user,String value)  throws BusinessException ;
     
-    public List<MailingListVo> setListFromSearch(String targetLists, String criteriaOnSearch, UserVo loginUser) throws BusinessException;
+    
+    /**
+     * provide completions to search a list
+     * @param loginUser
+     * @param input
+     * @param criteriaOnSearch
+     * @return
+     * @throws BusinessException
+     */
+    public List<String> completionsForSearchList(UserVo loginUser,String input,String criteriaOnSearch) throws BusinessException;
+    
+    /**
+     * Set list of results from search
+     * @param loginUser
+     * @param targetLists
+     * @param criteriaOnSearch
+     * @return
+     * @throws BusinessException
+     */
+    public List<MailingListVo> setListFromSearch(UserVo loginUser, String targetLists, String criteriaOnSearch) throws BusinessException;
 
+    /**
+     * Check if user is in mailing list
+     * @param contacts
+     * @param mail
+     * @return
+     */
     public boolean checkUserIsContact(List<MailingListContactVo> contacts , String mail);
     
+    
+    /**
+     * Provide completion for user search
+     * @param actorVo
+     * @param pattern
+     * @return
+     * @throws BusinessException
+     */
     public List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException ;
     
+    /**
+     * Search among user
+     * @param userVo
+     * @param input
+     * @return
+     * @throws BusinessException
+     */
     public List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException;
+    
+    /**
+     * Add user to mailing list
+     * @param mailingListVo
+     * @param domain
+     * @param mail
+     * @throws BusinessException
+     */
+    public void addUserToMailingListContact(MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
+    
+    /**
+     * remove contact from mailing list
+     * @param mailingListVo
+     * @param domain
+     * @param mail
+     * @return
+     * @throws BusinessException
+     */
+    public long removeContactFromMailingList(MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
+    
+    /**
+     * Set new owner to a mailing list 
+     * @param mailingListVo
+     * @param input
+     * @throws BusinessException
+     */
+	public void setNewOwner(MailingListVo mailingListVo, String input) throws BusinessException ;
+	
+	public void refreshListOfMailingList(List<MailingListVo> list);
 }

@@ -2,6 +2,17 @@
 <t:MyBorderLayout t:title="message:pages.administration.domains.index.createdomainpolicy.index" t:identifier="domains" t:currentHighlight="domains"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 
+
+	<script type='text/javaScript'>
+		function setOptions(chosen) {
+			if((chosen =="Deny All Domains") || (chosen =="Allow All Domains")) {
+				document.getElementById("domainSelection").disabled="true";
+			} else {
+				document.getElementById("domainSelection").disabled="";
+			}
+		}
+	</script>
+
 	<!-- Main content -->
 	
 	<div id="content">
@@ -62,12 +73,12 @@
 		
 				<div class="clear"></div>
 				<t:if test="showAddRuleForm">
-		 <form t:type="form" t:id="addRuleForm">
+		 <form t:type="form" t:id="addRuleForm" name="addRuleForm">
         			<fieldset class="title_criteria_zone" id="searchCriterion">
         				<legend align="top" class="palette">${message:pages.administration.domains.domainPolicy.form.add}</legend>
         				
         				<t:label for="ruleToAdd"/>:
-            			<select t:type="select" t:id="ruleToAdd"/>
+            			<select t:type="select" t:id="ruleToAdd" onchange="setOptions(document.addRuleForm.ruleToAdd.options[ document.addRuleForm.ruleToAdd.selectedIndex].text);"/>
             			       <br></br><br></br>
             		   <t:label for="domainSelection"/>:
             			<select t:type="select" t:id="domainSelection" t:model="domains"></select>

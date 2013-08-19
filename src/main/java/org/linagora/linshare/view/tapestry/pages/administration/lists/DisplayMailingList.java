@@ -58,8 +58,6 @@ public class DisplayMailingList {
     @Property
     private MailingListVo mailingList;
 	
-	private List<MailingListContactVo> lists;
-	
 	@Persist
 	@Property
 	private List<UserVo> contacts;
@@ -67,12 +65,8 @@ public class DisplayMailingList {
 	@Property
 	private UserVo contact;
 	
-	private MailingListContactVo list;
-	
     @SessionState
     private UserVo loginUser;
-    
-    private boolean isEmpty;
 	
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
@@ -84,14 +78,9 @@ public class DisplayMailingList {
 		} else {
 			mailingList = null;
 		}
-		
-		isEmpty = mailingList.getMails().isEmpty();
-		if(!isEmpty) {
-			lists = new ArrayList<MailingListContactVo>();
-			lists = mailingList.getMails();
+		if (!mailingList.getMails().isEmpty()) {
 			contacts = new ArrayList<UserVo>();
-			
-			for(MailingListContactVo current :lists){
+			for(MailingListContactVo current :mailingList.getMails()){
 				contacts.add(MailCompletionService.getUserFromDisplay(current.getDisplay()));
 			}
 		}
@@ -103,22 +92,6 @@ public class DisplayMailingList {
      }
 
     public boolean getIsEmpty(){
-    	return isEmpty;
+    	return mailingList.getMails().isEmpty();
     }
-    
-	public List<MailingListContactVo> getLists() {
-		return lists;
-	}
-
-	public void setLists(List<MailingListContactVo> lists) {
-		this.lists = lists;
-	}
-
-	public MailingListContactVo getList() {
-		return list;
-	}
-	
-	public void setList(MailingListContactVo list) {
-		this.list = list;
-	}
 }
