@@ -36,7 +36,6 @@ package org.linagora.linshare.webservice.admin;
 import java.util.Set;
 
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;

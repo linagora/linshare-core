@@ -70,7 +70,8 @@
 		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
 
-	<!-- REST -->
+	<!-- REST - USER -->
+	
 	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.user.impl.AuthenticationRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
 	</bean>
@@ -95,32 +96,7 @@
 	<bean id="userRestService" class="org.linagora.linshare.webservice.user.impl.UserRestServiceImpl">
 		<constructor-arg ref="wsUserFacade" />
 	</bean>
-
-	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.admin.impl.AuthenticationRestServiceImpl">
-		<constructor-arg ref="wsAdminGenericFacade" />
-	</bean>
-
-	<bean id="domainPatternRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPatternRestServiceImpl">
-		<constructor-arg ref="wsAdminDomainPatternFacade" />
-	</bean>
-
-	<bean id="ldapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
-		<constructor-arg ref="wsAdminLDAPConnectionFacade" />
-	</bean>
-
-	<bean id="domainRestService" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
-		<constructor-arg ref="wsAdminDomainFacade" />
-		<constructor-arg ref="wsAdminFunctionalityFacade" />
-	</bean>
-
-	<bean id="domainPolicyRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPolicyRestServiceImpl">
-		<constructor-arg ref="wsAdminDomainPolicyFacade" />
-	</bean>
-
-	<bean id="userRoleRestService" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
-		<constructor-arg ref="wsAdminUserRoleFacade" />
-	</bean>
-
+	
 	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.user.impl.FineUploaderServiceImpl">
 		<constructor-arg ref="wsDocumentFacade" />
 		<constructor-arg ref="wsThreadEntryFacade" />
@@ -128,6 +104,38 @@
 	
 	<bean id="CORSRestService" class="org.linagora.linshare.webservice.user.impl.CORSRestServiceImpl">
 	</bean>
+
+	<!-- REST - ADMIN -->
+
+	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.admin.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsAdminGenericFacade" />
+	</bean>
+
+	<bean id="adminDomainPatternRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPatternRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainPatternFacade" />
+	</bean>
+
+	<bean id="adminLdapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
+		<constructor-arg ref="wsAdminLDAPConnectionFacade" />
+	</bean>
+
+	<bean id="adminDomainRestService" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainFacade" />
+		<constructor-arg ref="wsAdminFunctionalityFacade" />
+	</bean>
+
+	<bean id="adminDomainPolicyRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPolicyRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainPolicyFacade" />
+	</bean>
+
+	<bean id="adminUserRoleRestService" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
+		<constructor-arg ref="wsAdminUserRoleFacade" />
+	</bean>
+
+	<bean id="adminUserRestService" class="org.linagora.linshare.webservice.admin.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsAdminUserFacade" />
+	</bean>
+
 
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
@@ -142,13 +150,14 @@
 			<ref bean="threadRestService" />
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
-			<ref bean="adminAuthenticationRestService" />
-			<ref bean="domainPatternRestService" />
-			<ref bean="ldapConnectionRestService" />
-			<ref bean="domainRestService" />
-			<ref bean="domainPolicyRestService" />
-			<ref bean="userRoleRestService" />
 			<ref bean="CORSRestService" />
+			<ref bean="adminAuthenticationRestService" />
+			<ref bean="adminDomainPatternRestService" />
+			<ref bean="adminLdapConnectionRestService" />
+			<ref bean="adminDomainRestService" />
+			<ref bean="adminDomainPolicyRestService" />
+			<ref bean="adminUserRoleRestService" />
+			<ref bean="adminUserRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
