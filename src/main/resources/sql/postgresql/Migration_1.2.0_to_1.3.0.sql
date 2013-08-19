@@ -53,7 +53,7 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (29, 'http://localhost:8080/linshare/en');
 
 --Functionality : NOTIFICATION_URL
-INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, false, false, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (61, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (62, false, false, 1, false);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES(30, false, 'NOTIFICATION_URL', 61, 62, 1); 
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
