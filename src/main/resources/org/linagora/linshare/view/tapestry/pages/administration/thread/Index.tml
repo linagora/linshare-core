@@ -88,7 +88,7 @@
                 			<t:actionLink t:id="deleteThread" context="currentThread.lsUuid" t:zone="zoneConfirmDelete"
 							title="${message:pages.thread.admin.deleteButton}">
 							<span onclick="window_confirm.showCenter(true)">
-								<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
+								<img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
 							</span>
 						</t:actionLink>
                 </p:actionCell>

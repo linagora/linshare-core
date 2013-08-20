@@ -15,7 +15,7 @@
             <h4>Actions</h4>
             <ul>
             	    <a href="#" class="button" onclick="window_confirm.showCenter(true);">
-	                    <span><img src="${asset:context:images/popupImages/less.png}" alt=""/> 
+	                    <span><img src="${asset:context:images/icons/delete-small.png}" alt=""/> 
 	                    ${message:pages.thread.admin.deleteButton}</span>
 	                </a>
                 <li>
@@ -57,7 +57,7 @@
                     <t:delegate to="type" />
 
 		            <t:block id="adminBlock">
-                        <span><img src="${asset:context:images/icons/usertype-small-admin2.png}" alt="${message:pages.thread.userType.admin}" title="${message:pages.thread.userType.admin}"/></span>
+                        <span><img src="${asset:context:images/icons/usertype-small-admin.png}" alt="${message:pages.thread.userType.admin}" title="${message:pages.thread.userType.admin}"/></span>
 		            </t:block>
 
                     <t:block id="userBlock">
