@@ -100,7 +100,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	/** Class logger */
 	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
 	
-	static CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
+	private static final CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
 
 	/**
 	 * see http://java.sun.com/developer/EJTechTips/2004/tt0625.html for

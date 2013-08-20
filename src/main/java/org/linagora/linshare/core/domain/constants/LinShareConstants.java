@@ -43,29 +43,29 @@ public class LinShareConstants {
 	/**
 	 * Default application root domain identifier 
 	 */
-	public static String rootDomainIdentifier = "LinShareRootDomain";
+	public static final String rootDomainIdentifier = "LinShareRootDomain";
 	
 	/**
 	 * Default application root domain identifier 
 	 */
-	public static String defaultDomainPolicyIdentifier = "DefaultDomainPolicy";
+	public static final String defaultDomainPolicyIdentifier = "DefaultDomainPolicy";
 	
 	/**
 	 * Default application root domain identifier 
 	 */
-	public static Integer completionThresholdConstantForDeactivation = 999999999;
+	public static final Integer completionThresholdConstantForDeactivation = 999999999;
 	
 	/**
 	 * Default max size for an upload 
 	 */
-	public static Long defaultMaxFileSize = Long.MAX_VALUE;	
+	public static final Long defaultMaxFileSize = Long.MAX_VALUE;	
 	
 	/**
 	 * Default max available size
 	 */
-	public static Long defaultFreeSpace = Long.MAX_VALUE;
+	public static final Long defaultFreeSpace = Long.MAX_VALUE;
 
-	public static String defaultThreadView = "Default";	
+	public static final String defaultThreadView = "Default";	
 	
 	
 }

@@ -99,7 +99,7 @@ import org.slf4j.LoggerFactory;
 @Import(library = { "Index.js" })
 public class Index {
 
-	public final static Logger logger = LoggerFactory.getLogger(Index.class);
+	private static final Logger logger = LoggerFactory.getLogger(Index.class);
 
 	@SessionState
 	@Property
