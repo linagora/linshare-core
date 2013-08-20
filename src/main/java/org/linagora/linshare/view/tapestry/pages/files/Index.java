@@ -35,8 +35,8 @@ package org.linagora.linshare.view.tapestry.pages.files;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.tapestry5.Link;
@@ -58,7 +58,6 @@ import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.vo.DocToSignContext;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;

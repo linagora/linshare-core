@@ -45,8 +45,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
 import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
+import org.linagora.linshare.core.facade.webservice.user.ThreadMemberFacade;
 import org.linagora.linshare.webservice.WebserviceBase;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 import org.linagora.linshare.webservice.user.ThreadMemberRestService;

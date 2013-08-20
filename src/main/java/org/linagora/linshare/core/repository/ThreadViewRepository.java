@@ -35,8 +35,8 @@ package org.linagora.linshare.core.repository;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.ThreadView;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadView;
 
 
 public interface ThreadViewRepository extends AbstractRepository<ThreadView> {

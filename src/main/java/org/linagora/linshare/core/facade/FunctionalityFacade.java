@@ -35,7 +35,6 @@ package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
-
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
 import org.linagora.linshare.core.domain.vo.PolicyVo;
 import org.linagora.linshare.core.domain.vo.UserVo;

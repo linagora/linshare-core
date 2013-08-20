@@ -89,7 +89,7 @@ public class DomainFacadeImpl extends AdminGenericFacadeImpl
 			break;
 		default:
 			throw new BusinessException(BusinessErrorCode.DOMAIN_INVALID_TYPE, "Try to create a root domain");
-		};
+		}
 	}
 
 	@Override

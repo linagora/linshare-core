@@ -31,7 +31,6 @@ import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.utils.StringJoiner;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.components.QuickSharePopup;
 import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
 import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
 import org.linagora.linshare.view.tapestry.objects.MessageSeverity;

@@ -46,7 +46,7 @@ public class DocumentStreamReponseBuilder {
 		return  getDocumentResponseBuilder(inputStream, fileName, mimeType, null);
 	}
 	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType, Long fileSize ) {
-		ResponseBuilder response = Response.ok((Object) inputStream);
+		ResponseBuilder response = Response.ok(inputStream);
 		response.header("Content-Disposition", getContentDispositionHeader(fileName));
         response.header("Content-Type", mimeType);
         response.header("Content-Transfer-Encoding","binary");

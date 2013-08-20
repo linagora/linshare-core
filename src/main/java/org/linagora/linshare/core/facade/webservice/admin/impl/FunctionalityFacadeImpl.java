@@ -3,12 +3,9 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections.Transformer;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
-import org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.FunctionalityService;
