@@ -5,6 +5,12 @@ SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 SET default_with_oids = false;
 
+-- Fix wrong tables
+DELETE TABLE IF EXISTS thread_member_history;
+DELETE TABLE IF EXISTS account_thread_member_history;
+DELETE TABLE IF EXISTS thread_thread_member_history;
+
+
 -- update mail subjects
 UPDATE mail_subjects SET content = E'${actorRepresentation} has just downloaded a file you made available for sharing' WHERE messages_configuration_id = 1 AND subject_id = 0 AND language_id = 0;
 UPDATE mail_subjects SET content = E'${actorRepresentation} has just downloaded a file you made available for sharing' WHERE messages_configuration_id = 1 AND subject_id = 1 AND language_id = 0;
