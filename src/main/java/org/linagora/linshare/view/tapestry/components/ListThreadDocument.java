@@ -203,14 +203,6 @@ public class ListThreadDocument {
         checkBoxGroupUuid = "filesSelected_" + UUID.randomUUID().toString();
     }
 
-    public void onActivate() {
-    	try {
-			isAdmin = threadEntryFacade.userIsAdmin(user, threadVo);
-			canUpload = threadEntryFacade.userCanUpload(user, threadVo);
-		} catch (BusinessException e) {
-			logger.error("Can't get user membership info");
-		}
-    }
 
     /*********************************
      * Phase render
@@ -223,6 +215,10 @@ public class ListThreadDocument {
     @SuppressWarnings("unchecked")
     @SetupRender
     public void init() throws BusinessException {
+    	
+		isAdmin = threadEntryFacade.userIsAdmin(user, threadVo);
+		canUpload = threadEntryFacade.userCanUpload(user, threadVo);
+    	
         if (listThreadEntries == null)
             return;
         Collections.sort(listThreadEntries);
@@ -319,16 +315,6 @@ public class ListThreadDocument {
     /***************************************************************************
      * Other methods
      **************************************************************************/
-    
-    
-    public boolean isDeletable() {
-    	try {
-    		return  null != threadEntryFacade.findById(user, threadEntry.getIdentifier());
-    	} catch(BusinessException e) {
-    		logger.debug(e.toString());
-    		return false;
-    	}
-    }
     
     
     /**
