@@ -24,38 +24,38 @@
 			</t:form>
 				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="public" onclick="this.form.submit()"/>&nbsp;<t:label for="public">${message:pages.list.radioGroupPub}</t:label>
+				                    <t:radio t:id="public" onclick="this.form.submit()"/>&nbsp;<t:label for="public">${message:pages.lists.radioGroupPub}</t:label>
 				                    ${message:global.space}
-				                    <t:radio t:id="private" onclick="this.form.submit()" />&nbsp;<t:label for="private">${message:pages.list.radioGroupPriv}</t:label>
+				                    <t:radio t:id="private" onclick="this.form.submit()" />&nbsp;<t:label for="private">${message:pages.lists.radioGroupPriv}</t:label>
 				                    ${message:global.space}				                    
-				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.list.radioGroupAll}</t:label>
+				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.lists.radioGroupAll}</t:label>
 				                    ${message:global.space}
 			               	</t:radiogroup>
 			    </t:form>
 			</fieldset>
 				  <div class="clear"></div>
-				${message:page.list.notification}
+				${message:pages.lists.notification}
 		<h2>${message:pages.administration.lists.index}</h2>
 				<t:if t:test="emptyList">
 					<t:if t:test="inSearch">
 						${message:pages.lists.nothing}
 						<p:else>
-						${message:pages.administration.index.init}
+						${message:pages.administration.lists.index.init}
 						</p:else>
 					</t:if>
 		<p:else>
 		<t:grid source="lists" rowsPerPage="10" include="identifier, listDescription , isPublic" add="ownership,actions" row="list">
 			 <t:parameter name="identifierCell">
-			 <t:pageLink page="administration/lists/DisplayMailingList" context="list.persistenceId">${list.identifier}</t:pageLink>
+			 <t:pageLink page="lists/DisplayMailingList" context="list.persistenceId">${list.identifier}</t:pageLink>
 			 </t:parameter>
 			 <t:parameter name="ownershipCell">
 			 	${list.owner.firstName} ${list.owner.lastName}
 			 </t:parameter>
 			 			 <t:parameter name="isPublicCell">
 			 	<t:if test="isPublic">
-			 	${message:pages.list.radioGroupPub}
+			 	${message:pages.lists.radioGroupPub}
 			 	<p:else>
-			 	${message:pages.list.radioGroupPriv}
+			 	${message:pages.lists.radioGroupPriv}
 			 	</p:else>
 			 	</t:if>
 			 </t:parameter>
@@ -67,7 +67,7 @@
 			 	 		<t:actionLink t:id="deleteList" context="list.persistenceId" t:zone="zoneConfirmDelete"
 			 	 			title="${message:pages.lists.index.list.delete.button}">
 			 	 			<span onclick="window_confirm.showCenter(true)">
-							<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
+							<img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
 							</span>
 						</t:actionLink>
 			 </t:parameter>

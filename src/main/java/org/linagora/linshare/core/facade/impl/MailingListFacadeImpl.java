@@ -220,14 +220,10 @@ public class MailingListFacadeImpl implements MailingListFacade {
 				completeName = "\"" + mailingListVo.getIdentifier()+ "\" (Me)";
 			}
 			
-			if (criteriaOnSearch.equals("public")) {
-				if (mailingListVo.isPublic() == true) {
-					elements.add(completeName);
-				}
-			} else if (criteriaOnSearch.equals("private")) {
-				if (mailingListVo.isPublic() == false) {
-					elements.add(completeName);
-				}
+			if (criteriaOnSearch.equals("public") && mailingListVo.isPublic() == true) {
+				elements.add(completeName);
+			} else if (criteriaOnSearch.equals("private") && mailingListVo.isPublic() == false) {
+				elements.add(completeName);
 			} else {
 				elements.add(completeName);
 			}
@@ -238,35 +234,23 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	@Override
 	public List<MailingListVo> setListFromSearch(UserVo loginUser, String targetLists, String criteriaOnSearch) throws BusinessException {
 		List<MailingListVo> lists = new ArrayList<MailingListVo>();
-		List<MailingListVo> searchResults = new ArrayList<MailingListVo>();
 		if (targetLists != null) {
 			if (targetLists.startsWith("\"") && targetLists.endsWith(")")) {
 				lists = this.getMailingListFromQuickShare(loginUser,targetLists);
 			} else {
-				if (targetLists.equals("*")) {
-					if (loginUser.isSuperAdmin()) {
-						searchResults = this.findAllMailingList();
-					} else {
-						searchResults = this.findAllMailingListByUser(loginUser);
-					}
-					if (criteriaOnSearch.equals("all")) {
-						lists = searchResults;
-					} else {
-
-						for (MailingListVo mailingListVo : searchResults) {
-							if (criteriaOnSearch.equals("private") && mailingListVo.isPublic() == false) {
-								lists.add(mailingListVo);
-							} else if (criteriaOnSearch.equals("public") && mailingListVo.isPublic() == true) {
-								lists.add(mailingListVo);
-							}
+					if (targetLists.equals("*")) {
+						if (loginUser.isSuperAdmin()) {
+							lists = this.findAllMailingList();
+						} else {
+							lists = this.findAllMailingListByUser(loginUser);
 						}
+					} else {
+						lists = performSearch(targetLists, loginUser);
 					}
-				} else {
-					lists = performSearch(targetLists, loginUser);
 					if (criteriaOnSearch.equals("public") || criteriaOnSearch.equals("private")) {
-						List<MailingListVo> finalList = lists;
+						List<MailingListVo> finalList = new ArrayList<MailingListVo>(lists);
 						lists.clear();
-
+						
 						for (MailingListVo mailingListVo : finalList) {
 							if (criteriaOnSearch.equals("private") && mailingListVo.isPublic() == false) {
 								lists.add(mailingListVo);
@@ -274,9 +258,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 								lists.add(mailingListVo);
 							}
 						}
-					}
+					} 
 				}
-			}
 		} else {
 			return new ArrayList<MailingListVo>();
 		}

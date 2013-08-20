@@ -124,6 +124,7 @@ public class Index {
 			targetLists = "*";
 			List<MailingListVo> finalList =  mailingListFacade.findAllMailingListByOwner(loginUser);
 			lists = new ArrayList<MailingListVo>();
+			criteriaOnSearch ="private";
 			
 			for(MailingListVo current : finalList){
 				if(current.isPublic() == false){
