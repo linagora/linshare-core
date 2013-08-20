@@ -135,6 +135,9 @@ public class DisplayMailingList {
 	private boolean fromReset;
 
 	@InjectPage
+	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index indexAdmin;
+	
+	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.lists.Index index;
 
 	@SetupRender
@@ -173,7 +176,12 @@ public class DisplayMailingList {
 		lastName = null;
 		inModify = false;
 		oldEmail = null;
+		
+		if(loginUser.isSuperAdmin()){
+			return indexAdmin;
+		} else {
 		return index;
+		}
 	}
 
 	public void onSelectedFromReset() throws BusinessException {

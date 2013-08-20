@@ -79,12 +79,12 @@ public class CreateDomainPolicy {
     void onValidateFromIdentifier(String value) throws ValidationException, BusinessException {
         if (value != null) {
             if (!value.substring(0,1).matches("[A-Za-z]+")) {
-					throw new ValidationException(String.format(messages.get("pages.list.manage.letter")));
+					throw new ValidationException(String.format(messages.get("pages.lists.manageList.letter")));
 				}
             
             String copy = domainPolicyFacade.checkDomainPolicyIdentifier(value);
         	if (!copy.equals(value)) {
-        		throw new ValidationException(String.format(messages.get("pages.list.manage.identifierExist"),copy));
+        		throw new ValidationException(String.format(messages.get("pages.lists.manageList.identifierExist"),copy));
         	}
 		}
     }
