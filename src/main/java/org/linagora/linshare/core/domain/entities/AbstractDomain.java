@@ -314,6 +314,11 @@ public abstract class AbstractDomain {
 		return this.getIdentifier().equals(d.getIdentifier());
 	}
 
+	@Override
+	public int hashCode() {
+		return this.getIdentifier().hashCode();
+	}
+
 	public Long getAuthShowOrder() {
 		return authShowOrder;
 	}

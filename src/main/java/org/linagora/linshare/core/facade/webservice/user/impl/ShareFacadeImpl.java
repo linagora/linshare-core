@@ -217,7 +217,6 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 		// Useful for Thunderbird plugin.
 		mailContainer.setReferences(references);
 		mailContainer.setInReplyTo(inReplyTo);
-		;
 
 		UserVo actorVo = new UserVo(actor);
 

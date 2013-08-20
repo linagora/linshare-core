@@ -117,8 +117,8 @@ public abstract class Unit<U> implements Cloneable {
 		return true;
 	}
 	
-	public void updateUnitFrom(Unit<?> unit) {
-		this.unitValue = (U) unit.getUnitValue();
+	public void updateUnitFrom(Unit<? extends U> unit) {
+		this.unitValue = unit.getUnitValue();
 	}
 	
 }

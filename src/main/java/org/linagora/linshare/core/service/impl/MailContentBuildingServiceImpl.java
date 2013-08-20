@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.linagora.linshare.core.domain.constants.AccountType;
-import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.constants.Language;
 import org.linagora.linshare.core.domain.constants.MailSubjectEnum;
 import org.linagora.linshare.core.domain.constants.MailTemplateEnum;
@@ -132,11 +130,11 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 			} else {
 				StringBuilder str = new StringBuilder();
 				str.append(this.firstName);
-				str.append(" ");
+				str.append(' ');
 				str.append(this.lastName);
 				str.append(" (");
 				str.append(this.mail);
-				str.append(")");
+				str.append(')');
 				return str.toString(); 
 			}
 		}

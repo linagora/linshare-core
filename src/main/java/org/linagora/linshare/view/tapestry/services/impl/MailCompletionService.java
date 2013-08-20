@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.view.tapestry.pages.thread.AdminThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
