@@ -129,7 +129,6 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     	MailingList list = retrieveMailingList(listToUpdate.getPersistenceId());
     	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setDescription(listToUpdate.getDescription());
-    	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setPublic(listToUpdate.isPublic());
 
     	list.getMails().clear();

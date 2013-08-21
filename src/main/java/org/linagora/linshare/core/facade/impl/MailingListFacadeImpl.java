@@ -101,8 +101,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	@Override
 	public List<MailingListVo> findAllMailingListByIdentifier(UserVo actorVo, String identifier) throws BusinessException {
 		List<MailingListVo> list = new ArrayList<MailingListVo>();
-		List<MailingListVo> listByUser = new ArrayList<MailingListVo>();
-		listByUser = findAllMailingListByUser(actorVo);
+		List<MailingListVo> listByUser = findAllMailingListByUser(actorVo);
 
 		for (MailingListVo mailingListVo : listByUser) {
 			if (mailingListVo.getIdentifier().equals(identifier)) {
@@ -134,8 +133,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 				persistenceId = mailingListContact.getPersistenceId();
 			}
 		}
-		return new MailingListContactVo(
-				mailingListService.retrieveMailingListContact(persistenceId));
+		return new MailingListContactVo(mailingListService.retrieveMailingListContact(persistenceId));
 	}
 
 	@Override
@@ -157,10 +155,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	@Override
 	public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException {
 		List<MailingListVo> list = new ArrayList<MailingListVo>();
-		List<MailingList> listFromDb = new ArrayList<MailingList>();
 		User actor = userService.findOrCreateUser(user.getMail(),user.getDomainIdentifier());
-
-		listFromDb = mailingListService.findAllMailingListByOwner(actor);
+		List<MailingList> listFromDb = mailingListService.findAllMailingListByOwner(actor);
+		
 		for (MailingList mailingList : listFromDb) {
 			list.add(new MailingListVo(mailingList));
 		}
@@ -196,8 +193,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName) {
-		List<MailingList> listFromDb = new ArrayList<MailingList>();
-		listFromDb = mailingListService.findAllMailingList();
+		List<MailingList> listFromDb = mailingListService.findAllMailingList();
 
 		for (MailingList mailingList : listFromDb) {
 			if ((mailingList.getIdentifier().equals(identifier)) && ((mailingList.getOwner().getFirstName() + " " + mailingList.getOwner().getLastName()).equals(ownerFullName))) {

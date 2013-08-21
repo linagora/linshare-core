@@ -76,8 +76,7 @@ public class DomainPolicyServiceImpl implements DomainPolicyService {
 
 	@Override
 	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
-		DomainPolicy createdPolicy = domainPolicyBusinessService.createDomainPolicy(domainPolicy);
-		return createdPolicy;
+		return domainPolicyBusinessService.createDomainPolicy(domainPolicy);
 	}
 
 	@Override
