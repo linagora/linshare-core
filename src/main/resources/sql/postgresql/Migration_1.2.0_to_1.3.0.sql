@@ -6,9 +6,9 @@ SET client_min_messages = warning;
 SET default_with_oids = false;
 
 -- Fix wrong tables
-DELETE TABLE IF EXISTS thread_member_history;
-DELETE TABLE IF EXISTS account_thread_member_history;
-DELETE TABLE IF EXISTS thread_thread_member_history;
+DROP TABLE IF EXISTS thread_member_history;
+DROP TABLE IF EXISTS account_thread_member_history;
+DROP TABLE IF EXISTS thread_thread_member_history;
 
 
 -- update mail subjects
