@@ -60,13 +60,11 @@ public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessServ
 	
     @Override
     public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException{
-        DomainPolicy createdPolicy = domainPolicyRepository.create(domainPolicy);
-        return createdPolicy;
+        return domainPolicyRepository.create(domainPolicy);
     }
 	
     @Override
     public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException {
-
     	DomainPolicy policy = domainPolicyRepository.findById(domainPolicy.getIdentifier());
         domainPolicyRepository.update(policy);
     }
@@ -77,7 +75,6 @@ public class DomainPolicyBusinessServiceImpl implements DomainPolicyBusinessServ
         if (!policyIsDeletable(policyToDelete)) {
             throw new BusinessException("Cannot delete policy because still used by domains");
         }
-
         DomainPolicy policy = retrieveDomainPolicy(policyToDelete);
         if(policy == null) {
         	logger.error("Policy not found: " + policyToDelete);
