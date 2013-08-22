@@ -41,6 +41,8 @@
 				                    ${message:global.space}				                    
 				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.lists.radioGroupAll}</t:label>
 				                    ${message:global.space}
+				                    <t:radio t:id="allMyLists" onclick="this.form.submit()" />&nbsp;<t:label for="allMyLists">${message:pages.lists.radioGroupAllMyLists}</t:label>
+				                    ${message:global.space}
 			               	</t:radiogroup>
 			    </t:form>
 			</fieldset>

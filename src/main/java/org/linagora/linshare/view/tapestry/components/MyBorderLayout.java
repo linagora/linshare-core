@@ -327,6 +327,13 @@ public class MyBorderLayout {
 				menu.addMenuEntry(homeMenu);
 				menu.addMenuEntry(fileMenu);
 			}
+			if (showListTab()){
+				if(superadmin){
+					menu.addMenuEntry(listAdminMenu);
+				} else {
+					menu.addMenuEntry(listMenu);
+				}
+			}
 			if (showUserTab())
 				menu.addMenuEntry(userMenu);
 			if (!superadmin && showThreadTab())
@@ -335,13 +342,6 @@ public class MyBorderLayout {
 				menu.addMenuEntry(adminMenu);
 			if (superadmin)
 				menu.addMenuEntry(domainMenu);			
-			if (showListTab()){
-				if(superadmin){
-					menu.addMenuEntry(listAdminMenu);
-				} else {
-					menu.addMenuEntry(listMenu);
-				}
-			}
 			if (showAuditTab())
 				menu.addMenuEntry(auditMenu);
 			if (showHelpTab())
