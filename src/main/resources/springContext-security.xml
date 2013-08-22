@@ -47,10 +47,14 @@
 			<sec:filter-chain pattern="/webservice/?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
+            <sec:filter-chain pattern="/webservice/rest/**"
+                filters="httpSessionIntegrationFilter,preflightedRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+            <sec:filter-chain pattern="/webservice/fineuploader/**"
+                filters="httpSessionIntegrationFilter,preflightedRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
 			<sec:filter-chain pattern="/webservice/**"
-				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 
 			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
 			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
@@ -80,7 +84,6 @@
 
 	<!-- FILTERS DEFINITION -->
 	<bean id="httpSessionIntegrationFilter" class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter" />
-
 
 	<bean id="authenticationProcessingFilter" class="org.linagora.linshare.auth.DomainAuthenticationProcessingFilter">
 
@@ -164,6 +167,8 @@
 			<value>Name Of Your LinShare Realm</value>
 		</property>
 	</bean>
+
+	<bean id="preflightedRequestFilter" class="org.linagora.linshare.auth.PreflightedRequestFilter" />
 
 	<bean id="basicExceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
 		<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint" />
