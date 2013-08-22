@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -27,6 +28,7 @@ import org.linagora.linshare.webservice.user.FineUploaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public class FineUploaderServiceImpl extends WebserviceBase implements FineUploaderService {
 
 	private static final Logger logger = LoggerFactory.getLogger(FineUploaderServiceImpl.class);
