@@ -476,7 +476,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		threadService.rename(actor, thread, threadName);
 	}
 
-	private List<User> performSearch(User actor, String pattern) {
+	private List<User> performSearch(User actor, String pattern) throws BusinessException {
 		String firstName_ = null;
 		String lastName_ = null;
 
@@ -494,17 +494,45 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		try {
 			if (pattern != null) {
 				userSet.addAll(userService.searchUser(pattern.trim(), null, null, null, actor));
+				userSet.addAll(userService.searchUser(null, pattern.trim(), null, null, actor));
+				userSet.addAll(userService.searchUser(null, null,pattern.trim(), null, actor));
 			} else {
 				userSet.addAll(userService.searchUser(null, firstName_, lastName_, null, actor));
 			}
 		} catch (BusinessException e) {
 			logger.error("Error while searching user", e);
 		}
-		return new ArrayList<User>(userSet);
+		
+		ArrayList<User> finalList = new ArrayList<User>();
+		for(User user : userSet){
+			User current = userService.findOrCreateUser(user.getMail(), user.getDomainId());
+			if(!(finalList.contains(current))) {
+				finalList.add(current);
+			}
+		}
+		return finalList;
 	}
 
 	@Override
-	public List<String> completionOnUsers(UserVo actorVo, String pattern) {
+    public List<String> completionOnThreads(UserVo actor,String input) {
+		List<ThreadVo> lists = new ArrayList<ThreadVo>();
+		if(actor.isSuperAdmin()){
+    		lists = this.getAllThread();
+    	} else {
+    		lists = this.getAllMyThread(actor);
+    	}
+    	List<String> elements = new ArrayList<String>();
+		
+		for(ThreadVo current : lists){
+			if(current.getName().toLowerCase().contains(input.toLowerCase())){
+				elements.add(current.getName());
+			}
+		}
+		return elements;
+    }
+	
+	@Override
+	public List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLogin());
 		List<String> ret = new ArrayList<String>();
 
@@ -512,7 +540,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 		for (User user : userSet) {
 			if (!(user.equals(actor))) {
-				String completeName = MailCompletionService.formatLabel(new UserVo(user)).substring(0, MailCompletionService.formatLabel(new UserVo(user)).length() - 1);
+				String completeName = MailCompletionService.formatLabel(new UserVo(user)).substring(0, MailCompletionService.formatLabel(new UserVo(user)).length() - 1).trim();
 				if (!ret.contains(completeName)) {
 					ret.add(completeName);
 				}
@@ -526,7 +554,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		List<String> ret = new ArrayList<String>();
 		try {
 			for (ThreadMemberVo threadMember : this.getThreadMembers(actorVo, currentThread)) {
-				if (threadMember.getMail().contains(pattern) || threadMember.getFullName().contains(pattern)) {
+				if (threadMember.getMail().toLowerCase().contains(pattern.toLowerCase()) || threadMember.getFullName().toLowerCase().contains(pattern.toLowerCase())) {
 					UserVo user = threadMember.getUser();
 					String completeName = MailCompletionService.formatLabel(user).substring(0, MailCompletionService.formatLabel(user).length() - 1);
 					if (!ret.contains(completeName)) {
@@ -608,9 +636,9 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			List<User> searchResults = performSearch(owner, input);
 
 			for (User currentUser : searchResults) {
-				logger.debug(currentUser.getFirstName() + " " + currentUser.getLastName());
 				for (ThreadMemberVo threadMemberVo : this.getThreadMembers(actorVo, currentThread)) {
 					if (threadMemberVo.getUser().getMail().equals(currentUser.getMail())) {
+						logger.debug(threadMemberVo.getUser().getFullName());
 						finalResults.add(threadMemberVo);
 					}
 				}
@@ -618,4 +646,51 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		}
 		return finalResults;
 	}
-}
+	
+	@Override
+	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,String criteriaOnSearch, String recipientsSearchUser) throws BusinessException{
+    	List<UserVo> users = new ArrayList<UserVo>();
+		List<ThreadVo> preList = new ArrayList<ThreadVo>();
+		List<ThreadVo> threads = new ArrayList<ThreadVo>();
+    	if(recipientsSearchUser.startsWith("\"") && recipientsSearchUser.endsWith(">")){
+    		UserVo alterUser = MailCompletionService.getUserFromDisplay(recipientsSearchUser);
+    		users.add(new UserVo(userService.findUnkownUserInDB(alterUser.getMail())));
+    	} else {
+    		users = searchAmongUsers(userVo, recipientsSearchUser);
+    	}
+    		
+        	for(UserVo current : users ){
+        		User user = userService.findOrCreateUser(current.getMail(), current.getDomainIdentifier());
+        		UserVo currentUser =new UserVo(user);
+        			
+            	if(criteriaOnSearch.equals("admin")){
+            		preList.addAll(getAllMyThreadWhereAdmin(currentUser));
+            	} else if(criteriaOnSearch.equals("simple")){
+           			List<ThreadVo> threadSimple  = getAllMyThreadWhereCanUpload(currentUser);
+      		
+           			for(ThreadVo currentThread : threadSimple){
+           				if(!(userIsAdmin(currentUser, currentThread))){
+           					preList.add(currentThread);
+           				}
+           			}
+           		} else if(criteriaOnSearch.equals("restricted")){
+           			List<ThreadVo> threadRestricted = getAllMyThread(currentUser);
+        
+           			for(ThreadVo currentThread : threadRestricted){
+           				if(!(userIsAdmin(currentUser, currentThread)) && !(userCanUpload(currentUser, currentThread))){
+           					preList.add(currentThread);
+           				}
+           			}
+           		} else {
+           			preList.addAll(getAllMyThread(currentUser));
+            	}
+        	}
+        	
+        	for(ThreadVo current : preList){
+        		if(!(threads.contains(current))){
+        			threads.add(current);
+        		}
+        	}
+        	return threads;
+	}
+ }

@@ -76,6 +76,25 @@ public class Index {
     @Property
     private ThreadVo currentThread;
     
+    @Persist
+    @Property
+    private String recipientsSearchUser;
+    
+    @Persist
+    @Property
+    private String criteriaOnSearch;
+    
+    @Persist
+    @Property
+    private String recipientsSearchThread;
+    
+	@Persist
+	@Property(write = true)
+	private boolean inSearch;
+	
+    @Property
+    private int autocompleteMin = 3;
+	
     @Property
     private boolean showThreadTab;
     
@@ -96,11 +115,14 @@ public class Index {
     @Inject
     private FunctionalityFacade functionalityFacade; 
 
-
     @SetupRender
-    public void setupRender() {
-    	logger.debug("setupRender()");
-    	threads = threadEntryFacade.getAllMyThread(userVo);
+    public void init() throws BusinessException{
+    	if(!inSearch){
+    			recipientsSearchThread = "*";
+    			threads = threadEntryFacade.getAllMyThread(userVo);
+    	    	criteriaOnSearch ="all";
+    			inSearch=true;
+		}
     	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
     	showCreateButton = functionalityFacade.isEnableCreateThread(userVo.getDomainIdentifier());
     }
@@ -159,6 +181,73 @@ public class Index {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+    public List<String> onProvideCompletionsFromSearchThread(String input) throws BusinessException {
+    	return threadEntryFacade.completionOnThreads(userVo, input);
+    }
+    
+	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
+		return threadEntryFacade.completionOnUsers(userVo, input);
+	}
+    
+    public void onSelectedFromStop() {
+        inSearch = false;
+    }
+   
+    public void onSelectedFromReset() {
+    	criteriaOnSearch = "all";
+    	recipientsSearchUser = "";
+        inSearch = false;
+    }
+    
+    public Object onSuccessFromFormSearchByUser() throws BusinessException {
+    	if(inSearch){
+    		threads.clear();
+    		List<ThreadVo> list = threadEntryFacade.getListOfThreadFromSearchByUser(userVo, criteriaOnSearch, recipientsSearchUser);
+    		for(ThreadVo current : list){
+    			if(threadEntryFacade.userIsMember(userVo, current)) {
+    				threads.add(current);
+    			}
+    		}
+    	} else {
+    		threads = threadEntryFacade.getAllMyThread(userVo);
+    	}
+    	return null;
+    }
+    
+	public Object onSuccessFromFormSearch() throws BusinessException{	
+		if(inSearch){
+			threads.clear();
+			if(recipientsSearchThread.equals("*")){
+				threads = threadEntryFacade.getAllMyThread(userVo);
+			} else {
+				List<ThreadVo> lists = threadEntryFacade.getAllMyThread(userVo);
+				
+				for(ThreadVo current : lists){
+					if(current.getName().contains(recipientsSearchThread)){
+						threads.add(current);
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public String getAdmin() { 
+		return "admin"; 
+	}
+	
+	public String getSimple() { 
+		return "simple"; 
+	}
+	
+	public String getrestricted() { 
+		return "restricted"; 
+	}
+	
+	public String getAll() { 
+		return "all"; 
 	}
 	
     public Object onException(Throwable cause) {

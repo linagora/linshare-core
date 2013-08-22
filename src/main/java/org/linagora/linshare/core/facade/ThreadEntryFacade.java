@@ -115,7 +115,15 @@ public interface ThreadEntryFacade {
 	 * @param pattern
 	 * @return
 	 */
-	public List<String> completionOnUsers(UserVo actorVo, String pattern);
+	public List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException;
+	
+	/**
+	 * Provide completion for search thread
+	 * @param actor
+	 * @param input
+	 * @return
+	 */
+	public List<String> completionOnThreads(UserVo actor,String input);
 	
 	/**
 	 * Provide completion for search thread member
@@ -165,5 +173,13 @@ public interface ThreadEntryFacade {
 	 * @throws BusinessException
 	 */
 	public List<ThreadMemberVo> searchAmongMembers(UserVo userVo, ThreadVo currentThread,String input) throws BusinessException;
-	
+	/**
+	 *  return list of threads
+	 * @param threads
+	 * @param userVo
+	 * @param criteriaOnSearch
+	 * @param recipientsSearchUser
+	 * @return 
+	 */
+	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,String criteriaOnSearch, String recipientsSearchUser) throws BusinessException;
 }
