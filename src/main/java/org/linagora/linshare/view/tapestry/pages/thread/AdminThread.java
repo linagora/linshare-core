@@ -255,7 +255,7 @@ public class AdminThread {
 		}
 	}
 
-	public List<String> onProvideCompletionsFromSearchUser(String input) {
+	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
 		return threadEntryFacade.completionOnUsers(userLoggedIn, input);
 	}
 

@@ -140,7 +140,7 @@
         			</t:if>
 				</fieldset>
 			</form>
-
+	<div class="clear"></div>
         <t:actionLink t:id="back" class="button" title="${message:pages.thread.admin.back}">
             <span><img src="${asset:context:images/icons/cancel.png}" alt="" /> ${message:pages.thread.admin.back}</span>
         </t:actionLink>

@@ -52,7 +52,6 @@ import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,15 +153,7 @@ public class Index {
     }
     
     public List<String> onProvideCompletionsFromSearchThread(String input) throws BusinessException {
-    	List<ThreadVo> lists = threadEntryFacade.getAllThread();
-		List<String> elements = new ArrayList<String>();
-		
-		for(ThreadVo current : lists){
-			if(current.getName().startsWith(input)){
-				elements.add(current.getName());
-			}
-		}
-		return elements;
+    	return threadEntryFacade.completionOnThreads(userVo, input);
     }
     
 	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
@@ -182,47 +173,10 @@ public class Index {
     }
     
     public Object onSuccessFromFormSearchByUser() throws BusinessException {
-    	List<UserVo> users = new ArrayList<UserVo>();
-    	threads.clear();
-    	if(recipientsSearchUser.startsWith("\"") && recipientsSearchUser.endsWith(">")){
-    		
-    		users.add(MailCompletionService.getUserFromDisplay(recipientsSearchUser));
-        	for(UserVo current : users ){
-        		if(criteriaOnSearch.equals("admin")){
-        			
-        			List<UserVo> user = userFacade.searchUser(current.getMail(), current.getFirstName(), current.getLastName(), userVo);
-        			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
-        			threads = threadEntryFacade.getAllMyThreadWhereAdmin(currentUser);
-        		} else if(criteriaOnSearch.equals("simple")){
-        			
-        			List<UserVo> user = userFacade.searchUser(current.getMail(), current.getFirstName(), current.getLastName(), userVo);
-        			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
-        			List<ThreadVo> threadSimple  = threadEntryFacade.getAllMyThreadWhereCanUpload(currentUser);
-        			for(ThreadVo currentThread : threadSimple){
-        				if(!(threadEntryFacade.userIsAdmin(currentUser, currentThread))){
-        					threads.add(currentThread);
-        				}
-        			}
-        			
-        		} else if(criteriaOnSearch.equals("restricted")){
-        			
-        			List<UserVo> user = userFacade.searchUser(current.getMail(), current.getFirstName(), current.getLastName(), userVo);
-        			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
-        			
-        			List<ThreadVo> threadRestricted = threadEntryFacade.getAllMyThread(currentUser);
-        			for(ThreadVo currentThread : threadRestricted){
-        				if(!(threadEntryFacade.userIsAdmin(currentUser, currentThread)) && !(threadEntryFacade.userCanUpload(currentUser, currentThread))){
-        					threads.add(currentThread);
-        				}
-        			}
-        			
-        		} else {
-        				
-        			List<UserVo> user = userFacade.searchUser(current.getMail(), current.getFirstName(), current.getLastName(), userVo);
-        			UserVo currentUser = userFacade.findUser(user.get(0).getDomainIdentifier(), user.get(0).getMail());
-        			threads = threadEntryFacade.getAllMyThread(currentUser);
-        		}
-        	}
+    	if(inSearch){
+    		threads = threadEntryFacade.getListOfThreadFromSearchByUser(userVo, criteriaOnSearch, recipientsSearchUser);
+    	} else {
+    		threads = threadEntryFacade.getAllThread();
     	}
     	return null;
     }
@@ -236,7 +190,7 @@ public class Index {
 				List<ThreadVo> lists = threadEntryFacade.getAllThread();
 				
 				for(ThreadVo current : lists){
-					if(current.getName().startsWith(recipientsSearchThread)){
+					if(current.getName().contains(recipientsSearchThread)){
 						threads.add(current);
 					}
 				}
