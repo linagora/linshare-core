@@ -124,7 +124,6 @@ public class Index {
 			targetLists = "*";
 			List<MailingListVo> finalList =  mailingListFacade.findAllMailingListByOwner(loginUser);
 			lists = new ArrayList<MailingListVo>();
-			criteriaOnSearch ="private";
 			
 			for(MailingListVo current : finalList){
 				if(current.isPublic() == false){
@@ -176,13 +175,26 @@ public class Index {
 	}
 
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		return mailingListFacade.completionsForSearchList(loginUser, input, criteriaOnSearch);
+		if(criteriaOnSearch.equals("allMyLists")){
+			List<MailingListVo> altList = mailingListFacade.findAllMailingListByOwner(loginUser);
+			List<String> finalList = new ArrayList<String>();
+			for(MailingListVo current : altList){
+				finalList.add(current.getIdentifier());
+			}
+			return finalList;
+		} else {
+			return mailingListFacade.completionsForSearchList(loginUser, input, criteriaOnSearch);
+		}
 	}	
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-    	lists= mailingListFacade.setListFromSearch(loginUser,targetLists,criteriaOnSearch);
-    	fromCreate = false;
+		if(criteriaOnSearch.equals("allMyLists")){
+			lists= mailingListFacade.findAllMailingListByOwner(loginUser);
+		} else {
+			lists= mailingListFacade.setListFromSearch(loginUser,targetLists,criteriaOnSearch);
+		}
+		fromCreate = false;
 	}
 
 	Object onException(Throwable cause) {
@@ -211,6 +223,10 @@ public class Index {
 	
 	public String getAll() { 
 		return "all"; 
+	}
+	
+	public String getAllMyLists() { 
+		return "allMyLists"; 
 	}
 
 	public boolean isFromCreate() {

@@ -14,13 +14,15 @@
 				<t:if test="isEmpty">
 						${message:pages.lists.empty}
 			<p:else>
-			<t:grid source="contacts" rowsPerPage="10" include="firstName,lastName,mail" add="actions" row="contact">
+			<t:grid source="contacts" rowsPerPage="10" include="firstName,lastName,mail" add="edit,actions" row="contact">
+			<t:parameter name="editCell">
+				<t:actionLink t:id="editContact" context="contact.mail"
+			 	 		href="#addContactForm"
+			 	 		title="${message:pages.lists.index.list.contact.edit.button}">
+						<img src="${asset:context:images/icons/edit-button.png}" alt="${message:pages.lists.index.list.contact.edit.button}" />
+				</t:actionLink>
+			</t:parameter>
 			<t:parameter name="actionsCell">
-			 	 		<t:actionLink t:id="editContact" context="contact.mail"
-			 	 			href="#addContactForm"
-			 	 			title="${message:pages.lists.index.list.contact.edit.button}">
-							<img src="${asset:context:images/icons/edit-button.png}" alt="${message:pages.lists.index.list.contact.edit.button}" />
-						</t:actionLink>
 			 	 		<t:actionLink t:id="deleteContact" context="contact.mail" t:zone="zoneConfirmDelete"
 			 	 			title="${message:pages.lists.index.list.display.delete.button}">
 			 	 			<span onclick="window_confirm.showCenter(true)">
