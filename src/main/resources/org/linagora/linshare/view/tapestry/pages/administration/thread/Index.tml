@@ -93,8 +93,12 @@
 						</t:actionLink>
                 </p:actionCell>
                 <p:empty>
-                    ${message:pages.thread.empty}
+                		<t:if test="firstConnect">
+                		 	${message:pages.thread.empty}
+                		 </t:if>
+                		    ${message:pages.thread.search}
                 </p:empty>
+
             </t:grid>
         </div>
         

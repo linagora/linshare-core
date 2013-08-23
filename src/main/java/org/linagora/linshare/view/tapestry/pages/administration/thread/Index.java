@@ -95,8 +95,16 @@ public class Index {
     private int autocompleteMin = 3;
     
 	@Persist
-	@Property(write = true)
+	@Property(write = false)
 	private boolean inSearch;
+	
+	@Property(write = false)
+	@Persist
+	private boolean fromReset;
+	
+	@Persist
+	@Property
+	private boolean firstConnect;
 	
     @Property
     @Persist
@@ -116,12 +124,13 @@ public class Index {
     
     @SetupRender
     public void init() throws BusinessException{
+    	
     	if(!inSearch){
     			recipientsSearchThread = "*";
-    	    	threads = threadEntryFacade.getAllThread();
     	    	criteriaOnSearch ="all";
-    			inSearch=true;
+    	    	inSearch = true;
 		}
+    	
     }
     
 	public int getCountDocuments() {
@@ -163,13 +172,16 @@ public class Index {
 
     
     public void onSelectedFromStop() {
-        inSearch = false;
+       inSearch = false;
+       fromReset=true;
+       firstConnect = true;
     }
    
     public void onSelectedFromReset() {
     	criteriaOnSearch = "all";
     	recipientsSearchUser = "";
-        inSearch = false;
+        inSearch = false;	
+        firstConnect = true;
     }
     
     public Object onSuccessFromFormSearchByUser() throws BusinessException {
@@ -178,12 +190,15 @@ public class Index {
     	} else {
     		threads = threadEntryFacade.getAllThread();
     	}
+    	firstConnect = true;
     	return null;
     }
     
 	public Object onSuccessFromFormSearch() throws BusinessException{	
 		if(inSearch){
-			threads.clear();
+			if(threads != null){
+				threads.clear();
+			}
 			if(recipientsSearchThread.equals("*")){
 				threads = threadEntryFacade.getAllThread();
 			} else {
@@ -195,7 +210,11 @@ public class Index {
 					}
 				}
 			}
+		} 
+		if(fromReset && inSearch == false){
+			threads = null;
 		}
+		firstConnect = true;
 		return null;
 	}
 	

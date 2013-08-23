@@ -49,9 +49,25 @@
         					<input t:type="Submit" style="margin-right:340px" t:id="stop" value="${message:global.button.reset}"/>
        					</td>
         			</tr>
-        		</table>
-        	</form>
+        			 <tr>
+        				<td>
+							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
+				                    <t:radio t:id="all" />&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>
+				                    ${message:global.space}
+				                    <t:radio t:id="admin" />&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>
+				                    ${message:global.space}			                    
+				                    <t:radio t:id="simple" />&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>
+				                    ${message:global.space}
+				               		<t:radio t:id="restricted"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>
+				                    ${message:global.space}
+			               	</t:radiogroup>
+			        	</td>
+			        </tr>
+			        </table>
+			    </form>
+
 			${message:pages.thread.notification}
+            <div class="clear"></div>
             <t:grid source="members" row="member" rowsPerPage="10" include="fullName,mail" add="type,edit,delete" >
                 <p:typeCell>
                     <t:delegate to="type" />

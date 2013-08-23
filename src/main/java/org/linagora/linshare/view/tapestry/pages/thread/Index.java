@@ -76,25 +76,20 @@ public class Index {
     @Property
     private ThreadVo currentThread;
     
-    @Persist
     @Property
-    private String recipientsSearchUser;
+    private boolean fromReset;
     
-    @Persist
     @Property
-    private String criteriaOnSearch;
+    @Persist
+    private boolean inSearch;
     
     @Persist
     @Property
     private String recipientsSearchThread;
     
-	@Persist
-	@Property(write = true)
-	private boolean inSearch;
-	
     @Property
     private int autocompleteMin = 3;
-	
+    
     @Property
     private boolean showThreadTab;
     
@@ -118,13 +113,12 @@ public class Index {
     @SetupRender
     public void init() throws BusinessException{
     	if(!inSearch){
-    			recipientsSearchThread = "*";
-    			threads = threadEntryFacade.getAllMyThread(userVo);
-    	    	criteriaOnSearch ="all";
-    			inSearch=true;
-		}
+        	threads = threadEntryFacade.getListOfLastModifiedThreads(userVo);
+    	}
     	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
     	showCreateButton = functionalityFacade.isEnableCreateThread(userVo.getDomainIdentifier());
+    	recipientsSearchThread = "*";
+    	
     }
 
     public Object onActionFromShowThreadContent(String lsUuid) {
@@ -146,6 +140,11 @@ public class Index {
     @AfterRender
     public void afterRender() {
     }
+    
+    public void onSelectedFromStop() {
+    	fromReset = true;
+    	inSearch = false;
+     }
     
     /**
 	 * Format the creation date for good displaying using DateFormatUtils of
@@ -183,72 +182,34 @@ public class Index {
 		return 0;
 	}
 	
-    public List<String> onProvideCompletionsFromSearchThread(String input) throws BusinessException {
-    	return threadEntryFacade.completionOnThreads(userVo, input);
-    }
-    
-	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
-		return threadEntryFacade.completionOnUsers(userVo, input);
-	}
-    
-    public void onSelectedFromStop() {
-        inSearch = false;
-    }
-   
-    public void onSelectedFromReset() {
-    	criteriaOnSearch = "all";
-    	recipientsSearchUser = "";
-        inSearch = false;
-    }
-    
-    public Object onSuccessFromFormSearchByUser() throws BusinessException {
-    	if(inSearch){
-    		threads.clear();
-    		List<ThreadVo> list = threadEntryFacade.getListOfThreadFromSearchByUser(userVo, criteriaOnSearch, recipientsSearchUser);
-    		for(ThreadVo current : list){
-    			if(threadEntryFacade.userIsMember(userVo, current)) {
-    				threads.add(current);
-    			}
-    		}
-    	} else {
-    		threads = threadEntryFacade.getAllMyThread(userVo);
-    	}
-    	return null;
-    }
     
 	public Object onSuccessFromFormSearch() throws BusinessException{	
-		if(inSearch){
-			threads.clear();
+		if(fromReset){
+			threads = threadEntryFacade.getAllMyThread(userVo);
+		} else {
+			if(threads != null){
+				threads.clear();
+			}
 			if(recipientsSearchThread.equals("*")){
 				threads = threadEntryFacade.getAllMyThread(userVo);
 			} else {
 				List<ThreadVo> lists = threadEntryFacade.getAllMyThread(userVo);
-				
+					
 				for(ThreadVo current : lists){
 					if(current.getName().contains(recipientsSearchThread)){
 						threads.add(current);
 					}
 				}
 			}
+			inSearch = true;
 		}
 		return null;
 	}
 	
-	public String getAdmin() { 
-		return "admin"; 
-	}
-	
-	public String getSimple() { 
-		return "simple"; 
-	}
-	
-	public String getrestricted() { 
-		return "restricted"; 
-	}
-	
-	public String getAll() { 
-		return "all"; 
-	}
+    public List<String> onProvideCompletionsFromSearchThread(String input) throws BusinessException {
+    	return threadEntryFacade.completionOnThreads(userVo, input);
+    }
+    
 	
     public Object onException(Throwable cause) {
         shareSessionObjects.addError(messages.get("global.exception.message"));

@@ -404,6 +404,12 @@ public class ThreadServiceImpl implements ThreadService {
 		}
 	}
 	
+	@Override
+	public List<Thread> findAllWhereMemberByDate(User actor){
+		List<Thread> ret =  threadRepository.findAllWhereMemberByDate(actor);
+		return ret != null ? ret : new ArrayList<Thread>();
+	}
+	
 	
     /* ***********************************************************
      *                   Helpers

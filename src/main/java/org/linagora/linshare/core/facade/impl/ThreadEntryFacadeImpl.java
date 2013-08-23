@@ -539,12 +539,10 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		List<User> userSet = performSearch(actor, pattern);
 
 		for (User user : userSet) {
-			if (!(user.equals(actor))) {
 				String completeName = MailCompletionService.formatLabel(new UserVo(user)).substring(0, MailCompletionService.formatLabel(new UserVo(user)).length() - 1).trim();
 				if (!ret.contains(completeName)) {
 					ret.add(completeName);
 				}
-			}
 		}
 		return ret;
 	}
@@ -607,38 +605,38 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 				results = performSearch(owner, input);
 			}
 			for (User currentUser : results) {
-				if (!(currentUser.equals(owner))) {
 					finalResults.add(new UserVo(currentUser));
-				}
 			}
 		}
 		return finalResults;
 	}
 
 	@Override
-	public List<ThreadMemberVo> searchAmongMembers(UserVo actorVo, ThreadVo currentThread, String input) throws BusinessException {
+	public List<ThreadMemberVo> searchAmongMembers(UserVo actorVo, ThreadVo currentThread, String input, String criteriaOnSearch) throws BusinessException {
 		List<ThreadMemberVo> finalResults = new ArrayList<ThreadMemberVo>();
 		User owner = (User) accountService.findByLsUuid(actorVo.getLogin());
-
+		List<ThreadMemberVo> listOfMembers = this.getThreadMembers(actorVo, currentThread);
+		List<User> listSelected = new ArrayList<User>();
 		if (input.startsWith("\"") && input.endsWith(">")) {
 			UserVo selected = MailCompletionService.getUserFromDisplay(input);
-			List<User> selected2 = userService.searchUser(selected.getMail(), selected.getFirstName(), selected.getLastName(), null, owner);
-
-			for (User currentUser : selected2) {
-
-				for (ThreadMemberVo threadMemberVo : this.getThreadMembers(actorVo, currentThread)) {
-					if (threadMemberVo.getUser().getMail().equals(currentUser.getMail())) {
-						finalResults.add(threadMemberVo);
-					}
-				}
+			listSelected = userService.searchUser(selected.getMail(), selected.getFirstName(), selected.getLastName(), null, owner);
+		} else if(input.equals("*")) {
+			for(ThreadMemberVo threadMemberVo : listOfMembers){
+				listSelected.add((User) accountService.findByLsUuid(threadMemberVo.getUser().getLogin()));
 			}
 		} else {
-			List<User> searchResults = performSearch(owner, input);
-
-			for (User currentUser : searchResults) {
-				for (ThreadMemberVo threadMemberVo : this.getThreadMembers(actorVo, currentThread)) {
-					if (threadMemberVo.getUser().getMail().equals(currentUser.getMail())) {
-						logger.debug(threadMemberVo.getUser().getFullName());
+			listSelected = performSearch(owner, input);
+		}
+		for (User currentUser : listSelected) {
+			for (ThreadMemberVo threadMemberVo : listOfMembers) {
+				if (threadMemberVo.getUser().getMail().equals(currentUser.getMail())) {
+					if(criteriaOnSearch.equals("admin") && threadMemberVo.isAdmin()){
+						finalResults.add(threadMemberVo);
+					} else if (criteriaOnSearch.equals("simple") && threadMemberVo.isCanUpload() && !(threadMemberVo.isAdmin())){
+						finalResults.add(threadMemberVo);
+					} else if (criteriaOnSearch.equals("restricted") && !(threadMemberVo.isCanUpload())){
+						finalResults.add(threadMemberVo);
+					} else if (criteriaOnSearch.equals("all")) {
 						finalResults.add(threadMemberVo);
 					}
 				}
@@ -693,4 +691,31 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
         	}
         	return threads;
 	}
+	
+	public List<ThreadVo> getListOfLastModifiedThreads(UserVo actorVo){
+		
+		List<ThreadVo> res = new ArrayList<ThreadVo>();
+		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
+
+		if (actor == null) {
+			logger.error("Can't find logged in user.");
+			return res;
+		}
+		logger.debug("actor : " + actor.getAccountReprentation());
+		for (Thread thread : threadService.findAllWhereMemberByDate(actor)) {
+			res.add(new ThreadVo(thread));
+		}
+		return res;
+		/*Calendar calendar=Calendar.getInstance();
+		calendar.add(Calendar.DATE,-15);
+		List<ThreadVo> finalList = new ArrayList<ThreadVo>();
+		List<ThreadVo> allMyThread = getAllMyThread(userVo);
+		for(ThreadVo threadVo : allMyThread){
+			if((calendar.getTime().compareTo(threadVo.getModificationDate()) == -1) || (calendar.getTime().compareTo(threadVo.getModificationDate()) == -0)) {
+				finalList.add(threadVo);
+			}
+		}
+		return finalList;*/
+	}
+	
  }

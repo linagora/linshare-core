@@ -172,7 +172,7 @@ public interface ThreadEntryFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<ThreadMemberVo> searchAmongMembers(UserVo userVo, ThreadVo currentThread,String input) throws BusinessException;
+	public List<ThreadMemberVo> searchAmongMembers(UserVo userVo, ThreadVo currentThread,String input,String criteriaOnSearch) throws BusinessException;
 	/**
 	 *  return list of threads
 	 * @param threads
@@ -182,4 +182,6 @@ public interface ThreadEntryFacade {
 	 * @return 
 	 */
 	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,String criteriaOnSearch, String recipientsSearchUser) throws BusinessException;
+	
+	public List<ThreadVo> getListOfLastModifiedThreads(UserVo userVo);
 }
