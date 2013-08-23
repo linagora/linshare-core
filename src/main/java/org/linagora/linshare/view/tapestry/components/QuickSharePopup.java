@@ -465,9 +465,15 @@ public class QuickSharePopup{
 				businessMessagesManagementService.notify(new BusinessUserMessage(
 	                BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
 			} else {
-				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-				businessMessagesManagementService.notify(new BusinessUserMessage(
-	                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
+				if(recipientsEmail.size() > 0){
+					recipientFavouriteFacade.increment(userVo, recipientsEmail);
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+			                BusinessUserMessageType.QUICKSHARE_SUCCESS, MessageSeverity.INFO));
+				} else {
+					businessMessagesManagementService.notify(new BusinessUserMessage(
+			                BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
+				}
+					
 			}
 			
     	}catch (NullPointerException e3) {

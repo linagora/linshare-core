@@ -531,9 +531,13 @@ public class ConfirmSharePopup{
 		} else {
 			if(recipientsEmail.size() > 0){
 				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-			}
 				shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));
 				componentResources.triggerEvent("resetListFiles", null, null);
+			} else {
+				businessMessagesManagementService.notify(new BusinessUserMessage(
+		                BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
+				componentResources.triggerEvent("resetListFiles", null, null);
+			}
 		}
 		return onSuccess;
 		
