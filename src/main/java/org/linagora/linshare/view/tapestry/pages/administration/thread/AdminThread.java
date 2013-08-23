@@ -125,6 +125,10 @@ public class AdminThread {
 	@Property
 	private String recipientsSearchMember;
 
+    @Persist
+    @Property
+    private String criteriaOnSearch;
+    
 	@Property
 	private int autocompleteMin = 3;
 
@@ -156,6 +160,7 @@ public class AdminThread {
 			try {
 				recipientsSearchMember = "*";
 				members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
+				criteriaOnSearch="all";
 				inSearch = true;
 			} catch (BusinessException e) {
 				logger.error(e.getMessage());
@@ -227,11 +232,7 @@ public class AdminThread {
 
 	public void onSuccessFromFormSearch() throws BusinessException {
 		if (inSearch) {
-			if (recipientsSearchMember.equals("*")) {
-				members = threadEntryFacade.getThreadMembers(null, currentThread);
-			} else {
-			members = threadEntryFacade.searchAmongMembers(userLoggedIn, currentThread, recipientsSearchMember);
-			}
+			members = threadEntryFacade.searchAmongMembers(userLoggedIn, currentThread, recipientsSearchMember,criteriaOnSearch);
 		}
 	}
 
@@ -269,4 +270,20 @@ public class AdminThread {
 		members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 	}
 
+	public String getAdmin() { 
+		return "admin"; 
+	}
+	
+	public String getSimple() { 
+		return "simple"; 
+	}
+	
+	public String getrestricted() { 
+		return "restricted"; 
+	}
+	
+	public String getAll() { 
+		return "all"; 
+	}
+	
 }

@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -91,6 +92,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
         det.createAlias("myMembers", "member");
         det.add(Restrictions.eq("member.user", actor));
         det.add(Restrictions.eq("member.admin", true));
+        
 		List<Thread> results = findByCriteria(det);
 		return results;
 	}
@@ -107,4 +109,17 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 		return results;
 	}
 	
+	@Override
+	public List<Thread> findAllWhereMemberByDate(User actor){
+		Calendar calendar=Calendar.getInstance();
+		calendar.add(Calendar.DATE,-16);
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		
+		//query
+        det.createAlias("myMembers", "member");
+        det.add(Restrictions.and(Restrictions.eq("member.user", actor),
+        		Restrictions.gt("member.modificationDate", calendar.getTime())));
+        List<Thread> results = findByCriteria(det);
+		return results;
+	}
 }

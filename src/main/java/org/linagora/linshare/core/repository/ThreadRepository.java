@@ -35,6 +35,7 @@ package org.linagora.linshare.core.repository;
 
 
 
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -65,5 +66,13 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	 * @return the list of Thread where actor can upload
 	 */
 	List<Thread> findAllWhereCanUpload(User actor);
+	
+	/**
+	 * Find all threads modified by the actor on last 15 days
+	 * @param Actor
+	 * @param date
+	 * @return
+	 */
+	List<Thread> findAllWhereMemberByDate(User Actor);
 	
 } 
