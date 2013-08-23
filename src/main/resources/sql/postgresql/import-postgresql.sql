@@ -27,6 +27,11 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- LinShare: A user has just made a file available to you!
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, E'A user ${actorRepresentation} has just made a file available to you!', 0);
 
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} from ${actorRepresentation}', 0);
+
+
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: A user has just modified a shared file you still have access to
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, E'A user ${actorRepresentation} has just modified a shared file you still have access to', 0);
@@ -123,6 +128,10 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- Subject NEW_SHARING
 -- LinShare: A user deposited files in sharing for you
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, E'Un utilisateur ${actorRepresentation} vous a déposé des fichiers en partage', 1);
+
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} de la part de ${actorRepresentation}', 1);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
@@ -221,6 +230,10 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- Subject NEW_SHARING
 -- LinShare: A user deposited files in sharing for you
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, E'Een gebruiker heeft te delen bestanden voor u klaargezet.', 2);
+
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} from ${actorRepresentation}', 2);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
