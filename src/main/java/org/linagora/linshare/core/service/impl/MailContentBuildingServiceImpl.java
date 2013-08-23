@@ -197,6 +197,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	 * @throws BusinessException when no mail subject was found for the given enum key
 	 */
 	private MailSubject getMailSubject(User actor, Language language, MailSubjectEnum mailSubjectEnum, ContactRepresentation contactRepresentation) throws BusinessException {
+		return getMailSubject(actor, language, mailSubjectEnum, contactRepresentation, null);
+	}
+	
+	private MailSubject getMailSubject(User actor, Language language, MailSubjectEnum mailSubjectEnum, ContactRepresentation contactRepresentation, String subject) throws BusinessException {
 		AbstractDomain domain = actor.getDomain();
 		Set<MailSubject> subjects = domain.getMessagesConfiguration().getMailSubjects();
 		MailSubject mailSubject = null;
@@ -214,9 +218,10 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		}
 		
 		if(contactRepresentation != null) {
-			String contentTXT = mailSubject.getContent();
-			contentTXT = StringUtils.replace(contentTXT, "${actorRepresentation}", contactRepresentation.getContactRepresntation());
-			mailSubject.setContent(contentTXT);
+			mailSubject.setContent(StringUtils.replace(mailSubject.getContent(), "${actorRepresentation}", contactRepresentation.getContactRepresntation()));
+		}
+		if(subject != null) {
+			mailSubject.setContent(StringUtils.replace(mailSubject.getContent(), "${actorSubject}", subject));
 		}
 		return mailSubject;
 	}
@@ -498,7 +503,9 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		String subjectContent = inputMailContainer.getSubject();
 		if (subjectContent != null && subjectContent.length() >= 1) {
 			// this means subject was filled by users 
-			mailContainer.setSubject(subjectContent);
+//			mailContainer.setSubject(subjectContent);
+			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING_WITH_ACTOR, new ContactRepresentation(sender), subjectContent));
+			
 		} else {
 			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING, new ContactRepresentation(sender)));
 		}
