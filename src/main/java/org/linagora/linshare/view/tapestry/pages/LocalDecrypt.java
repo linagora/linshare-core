@@ -46,7 +46,7 @@ import org.linagora.linshare.core.domain.objects.FileInfo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.view.tapestry.objects.CustomStreamResponse;
 import org.linagora.linshare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ public class LocalDecrypt {
 	private Asset jwsTemplate;
 
 	@Inject
-	FunctionalityService functionalityService;
+	FunctionalityOldService functionalityService;
 	
 	@Inject
 	private Templating templating;

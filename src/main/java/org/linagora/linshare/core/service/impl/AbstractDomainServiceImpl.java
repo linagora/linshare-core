@@ -60,7 +60,7 @@ import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.MessagesRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,13 +71,13 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	
 	private final AbstractDomainRepository abstractDomainRepository;
 	private final DomainPolicyService domainPolicyService;
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	private final UserProviderService userProviderService;
 	private final MessagesRepository messagesRepository;
 
 	public AbstractDomainServiceImpl(AbstractDomainRepository abstractDomainRepository,
 			DomainPolicyService domainPolicyService,
-			FunctionalityService functionalityService,
+			FunctionalityOldService functionalityService,
 			UserProviderService userProviderRepository,
 			MessagesRepository messagesRepository) {
 		this.abstractDomainRepository = abstractDomainRepository;

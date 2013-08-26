@@ -56,7 +56,7 @@ import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.repository.ShareEntryRepository;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.ShareEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 
     private final AccountRepository<Account> accountRepository;
     
-    private final FunctionalityService functionalityService;
+    private final FunctionalityOldService functionalityService;
     
     private final DocumentEntryService documentEntryService;
     
@@ -88,7 +88,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 
 	public ShareManagementBatchImpl(ShareEntryService shareEntryService, AnonymousShareEntryService anonymousShareEntryService, ShareEntryRepository shareEntryRepository,
 			AnonymousShareEntryRepository anonymousShareEntryRepository, DocumentEntryRepository documentEntryRepository, AccountRepository<Account> accountRepository,
-			FunctionalityService functionalityService, DocumentEntryService documentEntryService, AnonymousUrlRepository anonymousUrlRepository) {
+			FunctionalityOldService functionalityService, DocumentEntryService documentEntryService, AnonymousUrlRepository anonymousUrlRepository) {
 		super();
 		this.shareEntryService = shareEntryService;
 		this.anonymousShareEntryService = anonymousShareEntryService;

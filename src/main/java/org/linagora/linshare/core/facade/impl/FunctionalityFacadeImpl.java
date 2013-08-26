@@ -58,18 +58,18 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FunctionalityFacadeImpl implements FunctionalityFacade {
 
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityFacadeImpl.class);
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	private final AbstractDomainService abstractDomainService;
 	
 	
-	public FunctionalityFacadeImpl(FunctionalityService functionalityService, AbstractDomainService abstractDomainService) {
+	public FunctionalityFacadeImpl(FunctionalityOldService functionalityService, AbstractDomainService abstractDomainService) {
 		super();
 		this.functionalityService = functionalityService;
 		this.abstractDomainService = abstractDomainService;

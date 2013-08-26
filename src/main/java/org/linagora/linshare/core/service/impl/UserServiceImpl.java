@@ -62,7 +62,7 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     
     private final AbstractDomainService abstractDomainService;
     
-    private final FunctionalityService functionalityService;
+    private final FunctionalityOldService functionalityService;
     private final PasswordService passwordService;
     
     private final EntryService entryService;
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
     		final RecipientFavouriteService recipientFavouriteService,
     		final AllowedContactRepository allowedContactRepository,
     		final MailContentBuildingService mailElementsFactory,
-    		final FunctionalityService functionalityService,
+    		final FunctionalityOldService functionalityService,
     		final AbstractDomainService abstractDomainService,
     		final PasswordService passwordService,
     		final EntryService entryService,

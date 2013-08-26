@@ -42,7 +42,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.UserFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.UserDto;
 import org.slf4j.Logger;
@@ -56,11 +56,11 @@ public class UserFacadeImpl extends GenericFacadeImpl
 
 	private final UserService userService;
 
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 
 	public UserFacadeImpl(final UserService userService,
 			final AccountService accountService,
-			FunctionalityService functionalityService) {
+			FunctionalityOldService functionalityService) {
 		super(accountService);
 		this.userService = userService;
 		this.functionalityService = functionalityService;

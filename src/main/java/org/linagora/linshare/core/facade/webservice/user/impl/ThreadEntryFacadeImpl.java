@@ -10,7 +10,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.ThreadEntryFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.ThreadEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.webservice.dto.ThreadEntryDto;
@@ -24,9 +24,9 @@ public class ThreadEntryFacadeImpl extends GenericFacadeImpl implements ThreadEn
 	
 	private final ThreadEntryService threadEntryService;
 	private final ThreadService threadService;
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 
-	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, FunctionalityService functionalityService) {
+	public ThreadEntryFacadeImpl(AccountService accountService, ThreadService threadService, ThreadEntryService threadEntryService, FunctionalityOldService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.threadEntryService = threadEntryService;

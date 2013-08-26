@@ -59,7 +59,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 	
 	private final AbstractDomainService abstractDomainService;
 	
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	
 	class ContactRepresentation {
 		private String mail;
@@ -142,7 +142,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 
 	public MailContentBuildingServiceImpl(final String mailContentTxt,
 			final String mailContentHTML, final String mailContentHTMLWithoutLogo,
-			final boolean displayLogo, AbstractDomainService abstractDomainService,FunctionalityService functionalityService, boolean insertLicenceTerm) throws BusinessException {
+			final boolean displayLogo, AbstractDomainService abstractDomainService,FunctionalityOldService functionalityService, boolean insertLicenceTerm) throws BusinessException {
         this.mailContentTxt = mailContentTxt;
         this.mailContentHTML = mailContentHTML;
         this.mailContentHTMLWithoutLogo = mailContentHTMLWithoutLogo;
