@@ -67,6 +67,15 @@ public class DomainPatternRestServiceImpl extends WebserviceBase implements Doma
 		return webServiceDomainPatternFacade.getDomainPatterns();
 	}
 
+	@Path("/models")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public List<DomainPatternDto> getModels() throws BusinessException {
+		webServiceDomainPatternFacade.checkAuthentication();
+		return webServiceDomainPatternFacade.getModels();
+	}
+	
 	@Path("/")
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

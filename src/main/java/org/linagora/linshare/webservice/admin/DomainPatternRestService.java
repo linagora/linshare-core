@@ -45,9 +45,12 @@ public interface DomainPatternRestService {
 
 	List<DomainPatternDto> getDomainPatterns() throws BusinessException;
 
+	List<DomainPatternDto> getModels() throws BusinessException;
+	
 	void updateDomainPattern(DomainPatternDto domainPattern) throws BusinessException;
 
 	void createDomainPattern(DomainPatternDto domainPattern) throws BusinessException;
 
 	void deleteDomainPattern(DomainPatternDto domainPattern) throws BusinessException;
+	
 }

@@ -33,8 +33,11 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
 @XmlRootElement(name = "User")
@@ -44,6 +47,12 @@ public class UserDto extends AccountDto {
 	private String lastName;
 	private String mail;
 	private String role;
+	private boolean canUpload;
+	private boolean canCreateGuest;
+	private Date expirationDate;
+	private boolean guest = false;
+	private boolean restricted = false;
+	private String comment = null;
 	
 	public UserDto(User u) {
 		super(u);
@@ -51,6 +60,16 @@ public class UserDto extends AccountDto {
 		this.lastName = u.getLastName();
 		this.mail = u.getMail();
 		this.setRole(u.getRole().toString());
+		this.canUpload = u.getCanUpload();
+		this.canCreateGuest = u.getCanCreateGuest();
+		this.expirationDate = u.getExpirationDate();
+	}
+	
+	public UserDto(Guest g) {
+		this((User) g);
+		this.restricted = g.isRestricted();
+		this.comment = g.getComment();
+		this.guest = true;
 	}
 	
 	public UserDto() {
@@ -89,6 +108,54 @@ public class UserDto extends AccountDto {
 		this.role = role;
 	}
 	
+	public boolean isCanUpload() {
+		return canUpload;
+	}
+
+	public void setCanUpload(boolean canUpload) {
+		this.canUpload = canUpload;
+	}
+
+	public boolean isCanCreateGuest() {
+		return canCreateGuest;
+	}
+
+	public void setCanCreateGuest(boolean canCreateGuest) {
+		this.canCreateGuest = canCreateGuest;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public boolean isGuest() {
+		return guest;
+	}
+
+	public void setGuest(boolean guest) {
+		this.guest = guest;
+	}
+
+	public boolean isRestricted() {
+		return restricted;
+	}
+
+	public void setRestricted(boolean restricted) {
+		this.restricted = restricted;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

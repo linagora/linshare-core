@@ -67,6 +67,16 @@ public class DomainPatternFacadeImpl extends AdminGenericFacadeImpl implements D
 		}
 		return res;
 	}
+	
+	@Override
+	public List<DomainPatternDto> getModels() throws BusinessException {
+		List<DomainPattern> domainPatterns = userProviderService.findAllDomainPattern();
+		List<DomainPatternDto> res = new ArrayList<DomainPatternDto>();
+		for (DomainPattern domainPattern : domainPatterns) {
+			res.add(new DomainPatternDto(domainPattern));
+		}
+		return res;
+	}
 
 	@Override
 	public void updateDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException {

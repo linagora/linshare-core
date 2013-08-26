@@ -275,5 +275,33 @@ public interface UserService {
 	public boolean isAdminForThisUser(Account actor, String userDomainToManage, String userMailToManage);
 
 
-	void updateUserRole(String userUuid, String domain, String mail, Role role, User actor) throws BusinessException;
+	/**
+	 * 
+	 * New implementation created to not use old tapestry version.
+	 * Destined to be more clear and to replace the old implementation when tapestry will be destroy.
+	 * 
+	 */
+	
+	/**
+	 * Find the user matching updateUser and
+	 * update fields: first name, last name, role, create guest right and upload right
+	 * 
+	 * @param updatedUser
+	 * @param domainId domain id of the user
+	 * @param actor
+	 * @throws BusinessException
+	 */
+	void updateUser(User updatedUser, String domainId, User actor) throws BusinessException;
+	
+	/**
+	 * Find the guest matching updateGuest 
+	 * update fields: expiration date, comment, restricted right, owner
+	 * and update guest as user.
+	 * 
+	 * @param updatedGuest
+	 * @param domainId domain id of the guest
+	 * @param actor
+	 * @throws BusinessException
+	 */
+	void updateUser(Guest updatedGuest, String domainId, User actor) throws BusinessException;
 }

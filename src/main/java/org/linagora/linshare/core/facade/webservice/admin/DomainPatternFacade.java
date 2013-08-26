@@ -42,6 +42,8 @@ public interface DomainPatternFacade extends AdminGenericFacade {
 
 	List<DomainPatternDto> getDomainPatterns() throws BusinessException;
 
+	List<DomainPatternDto> getModels() throws BusinessException;
+	
 	void updateDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException;
 
 	void createDomainPattern(DomainPatternDto domainPatternDto) throws BusinessException;
