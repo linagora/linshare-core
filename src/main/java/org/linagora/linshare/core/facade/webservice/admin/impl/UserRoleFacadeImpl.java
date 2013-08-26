@@ -51,7 +51,9 @@ public class UserRoleFacadeImpl extends GenericFacadeImpl implements UserRoleFac
 	public List<String> getUserRoles() {
 		ArrayList<String> roles = new ArrayList<String>();
 		for (Role role : Role.values()) {
-			roles.add(role.toString());
+			if (role.toString() != "SYSTEM" && role.toString() != "SUPERADMIN") {
+				roles.add(role.toString());
+			}
 		}
 		return roles;
 	}

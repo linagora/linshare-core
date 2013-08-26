@@ -47,7 +47,7 @@ public class DomainDto {
 
 	private String identifier;
 	private String label;
-	private String description;
+	private String description = "";
 	private String type;
 	private String userRole;
 	private String locale;

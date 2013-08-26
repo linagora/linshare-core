@@ -146,6 +146,11 @@ public class UserProviderServiceImpl implements UserProviderService {
         return (!used);
     }
 
+	@Override
+	public List<DomainPattern> findAllDomainPattern() {
+        return domainPatternRepository.findAllDomainPattern();
+	}
+    
     @Override
     public List<DomainPattern> findAllUserDomainPattern() throws BusinessException {
         return domainPatternRepository.findAllUserDomainPattern();
@@ -253,7 +258,6 @@ public class UserProviderServiceImpl implements UserProviderService {
         }
         return list;
     }
-
 }
 
 

@@ -498,30 +498,6 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void updateUserRole(String userUuid, String domain, String mail, Role role, User actor) throws BusinessException{
-		User user = userRepository.findByLsUuid(userUuid);
-		if (user == null) {
-			user = userRepository.findByMailAndDomain(domain, mail);
-		}
-		
-		if (user == null) {
-			logger.debug("User " + mail + " was not found in the database. Searching in directories ...");
-			user = searchAndCreateUserEntityFromDirectory(domain, mail);
-		}
-		if (user == null) {
-			 throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user : " + mail + " in domain : " + domain);
-		} else {
-			logger.debug("User " + mail + " found.");
-			logger.debug("Update role to " + role);
-			user.setRole(role);
-			userRepository.update(user);
-			
-			UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Update of a user:" + user.getMail(), user);
-			logEntryService.create(logEntry);
-		}
-	}
-	
-	@Override
 	public void updateUserLocale(String domainId, String mail, String locale) throws BusinessException {
 		User user = findOrCreateUser(mail, domainId);
 		if(user == null) {
@@ -929,5 +905,60 @@ public class UserServiceImpl implements UserService {
 			logger.error("Impossible to create an user entity from domain : " + domainIdentifier + ". The searchUserRecursivelyWithoutRestriction method returns null.");
 		}
 		return null;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * New implementation created to not use old tapestry version.
+	 * Destined to be more clear and to replace the old implementation when tapestry will be destroy.
+	 * 
+	 * 
+	 */
+
+	
+	private User find(User tmpUser, String domainId) throws BusinessException {
+		User user = userRepository.findByLsUuid(tmpUser.getLsUuid());
+		if (user == null) {
+			logger.debug("User " + tmpUser.getMail() + " was not found in the database. Searching in directories ...");
+			user = this.findOrCreateUser(tmpUser.getMail(), domainId);
+			if (user == null) {
+				throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user : " + tmpUser.getMail() + " in domain : " + tmpUser.getDomainId());
+			}
+		}
+		logger.debug("User " + tmpUser.getMail() + " found.");
+		return user;
+	}
+	
+	@Override
+	public void updateUser(User updatedUser, String domainId, User actor) throws BusinessException {
+		User user = find(updatedUser, domainId);
+		
+		user.setFirstName(updatedUser.getFirstName());
+		user.setLastName(updatedUser.getLastName());
+		user.setRole(updatedUser.getRole());
+		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
+		user.setCanUpload(updatedUser.getCanUpload());
+		userRepository.update(user);
+		
+		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Update of a user:" + user.getMail(), user);
+		logEntryService.create(logEntry);
+	}
+	
+	
+	@Override
+	public void updateUser(Guest updatedGuest, String domainId, User actor) throws BusinessException {
+		User user = find(updatedGuest, domainId);
+		if (user.getAccountType() != AccountType.GUEST) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user : " + user.getMail() + " in domain : " + user.getDomainId() + " is not a guest");
+		}
+		Guest guest = (Guest) user;
+		guest.setExpirationDate(updatedGuest.getExpirationDate());
+		guest.setComment(updatedGuest.getComment());
+		guest.setRestricted(updatedGuest.isRestricted());
+		guest.setOwner(updatedGuest.getOwner());
+		
+		updateUser((User) updatedGuest, null, actor);
 	}
 }

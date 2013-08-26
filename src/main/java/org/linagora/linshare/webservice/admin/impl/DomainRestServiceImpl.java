@@ -103,7 +103,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	 * Functionalities
 	 */
 
-	@Path("/{domain}/functionality")
+	@Path("/{domain}/functionalities")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
