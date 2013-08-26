@@ -63,12 +63,28 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 	public Set<UserDto> completionUser(@PathParam("pattern") String pattern) throws BusinessException {
 		return userFacade.completionUser(pattern);
 	}
+	
+	@Path("/search/internals/{pattern}")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public Set<UserDto> getInternals(@PathParam("pattern") String pattern) throws BusinessException {
+		return userFacade.getInternals(pattern);
+	}
+	
+	@Path("/search/guests/{pattern}")
+	@GET
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public Set<UserDto> getGuests(@PathParam("pattern") String pattern) throws BusinessException {
+		return userFacade.getGuests(pattern);
+	}
 
 	@Path("/")
 	@PUT
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void updateUserRole(UserDto userDto) throws BusinessException {
-		userFacade.updateUserRole(userDto);
+	public void updateUser(UserDto userDto) throws BusinessException {
+		userFacade.updateUser(userDto);
 	}
 }
