@@ -281,6 +281,7 @@ public class MyBorderLayout {
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
 		
+		
 		// Menu : Home / File 
 		homeMenu = new MenuEntry(response.encodeURL("index"),messages.get("components.myborderlayout.home.title"),null,null,"home");
 		fileMenu = new MenuEntry(response.encodeURL("files/index"),messages.get("components.myborderlayout.file.title"),null,null,"files");
@@ -325,23 +326,27 @@ public class MyBorderLayout {
 		}
 		
 		if(userVoExists && !userExt) {
-			if (!superadmin) {
+			// users : Accueil / Fichiers / List / Threads / Users / History / help
+			// admin : Accueil / Fichiers / List / Threads / Users/ Admin /History / help
+			// root : Admin / Domain / Users / Threads / List / History / help
+			
+			if (superadmin) {
+				menu.addMenuEntry(adminMenu);
+				menu.addMenuEntry(domainMenu);
+				menu.addMenuEntry(userMenu);
+				if (showThreadTab())
+					menu.addMenuEntry(threadAdminMenu);
+				
+			} else {
 				menu.addMenuEntry(homeMenu);
 				menu.addMenuEntry(fileMenu);
-			}
-			if (showUserTab())
-				menu.addMenuEntry(userMenu);
-			if (showThreadTab()){
-				if(superadmin){
-					menu.addMenuEntry(threadAdminMenu);
-				} else {
+				if (showUserTab())
+					menu.addMenuEntry(userMenu);
+				if (showThreadTab()) 
 					menu.addMenuEntry(threadMenu);
-				}
+				if (admin)
+					menu.addMenuEntry(adminMenu);
 			}
-			if (superadmin || admin)
-				menu.addMenuEntry(adminMenu);
-			if (superadmin)
-				menu.addMenuEntry(domainMenu);			
 			if (showAuditTab())
 				menu.addMenuEntry(auditMenu);
 			if (showHelpTab())
