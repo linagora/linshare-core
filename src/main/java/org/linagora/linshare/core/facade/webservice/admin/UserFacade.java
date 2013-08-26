@@ -43,5 +43,10 @@ public interface UserFacade extends AdminGenericFacade {
 
 	Set<UserDto> completionUser(String pattern) throws BusinessException;
 
-	void updateUserRole(UserDto userDto) throws BusinessException;
+	Set<UserDto> getInternals(String pattern) throws BusinessException;
+	
+	Set<UserDto> getGuests(String pattern) throws BusinessException;
+	
+	void updateUser(UserDto userDto) throws BusinessException;
+
 }

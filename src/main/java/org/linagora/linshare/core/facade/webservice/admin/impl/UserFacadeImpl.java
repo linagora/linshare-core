@@ -36,7 +36,9 @@ package org.linagora.linshare.core.facade.webservice.admin.impl;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.entities.Guest;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.UserFacade;
@@ -61,16 +63,30 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public Set<UserDto> completionUser(String pattern)
-			throws BusinessException {
+	public Set<UserDto> completionUser(String pattern) throws BusinessException {
+		return searchUsers(pattern, null);
+	}
+	
+	@Override
+	public Set<UserDto> getInternals(String pattern) throws BusinessException {
+		return searchUsers(pattern, AccountType.INTERNAL);
+	}
+
+	@Override
+	public Set<UserDto> getGuests(String pattern) throws BusinessException {
+		return searchUsers(pattern, AccountType.GUEST);
+	}
+	
+	private Set<UserDto> searchUsers(String pattern, AccountType type) throws BusinessException {
 		User currentUser = super.checkAuthentication();
+
 		Set<UserDto> usersDto = new HashSet<UserDto>();
 		Set<User> users = new HashSet<User>();
-		users.addAll(userService.searchUser(pattern, null, null, null,
+		users.addAll(userService.searchUser(pattern, null, null, type,
 				currentUser));
-		users.addAll(userService.searchUser(null, pattern, null, null,
+		users.addAll(userService.searchUser(null, pattern, null, type,
 				currentUser));
-		users.addAll(userService.searchUser(null, null, pattern, null,
+		users.addAll(userService.searchUser(null, null, pattern, type,
 				currentUser));
 		for (User user : users) {
 			usersDto.add(new UserDto(user));
@@ -79,8 +95,14 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 	}
 
 	@Override
-	public void updateUserRole(UserDto userDto) throws BusinessException {
+	public void updateUser(UserDto userDto) throws BusinessException {
 		User actor = super.checkAuthentication();
-		userService.updateUserRole(userDto.getUuid(), userDto.getDomain(), userDto.getMail(), Role.valueOf(userDto.getRole()), actor);
+		User user;
+		if (userDto.isGuest()) {
+			user = new Guest(userDto);
+		} else {
+			user = new Internal(userDto);
+		}
+		userService.updateUser(user, userDto.getDomain(), actor);
 	}
 }
