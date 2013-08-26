@@ -1,36 +1,28 @@
 package org.linagora.linshare.webservice.dto;
 
-import java.util.AbstractMap.SimpleEntry;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.linagora.linshare.core.domain.entities.Functionality;
-import org.linagora.linshare.core.domain.entities.Policy;
 
 @XmlRootElement(name = "Functionality")
 public class FunctionalityDto {
 
 	private String identifier;
 	private String domain;
-	private SimpleEntry<Boolean, Integer> activation;
-	private SimpleEntry<Boolean, Integer> configuration;
-	
+
+	protected PolicyDto activationPolicy;
+	protected PolicyDto configurationPolicy;
+
 	public FunctionalityDto() {
 		super();
 	}
 
 	public FunctionalityDto(Functionality f) {
 		super();
-
-		Policy ap = f.getActivationPolicy();
-		Policy cp = f.getConfigurationPolicy();
-
+		this.activationPolicy = new PolicyDto(f.getActivationPolicy());
+		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
 		this.identifier = f.getIdentifier();
 		this.domain = f.getDomain().getIdentifier();
-		this.activation = new SimpleEntry<Boolean, Integer>(ap.getStatus(),
-				ap.getPolicy().toInt());
-		this.configuration = new SimpleEntry<Boolean, Integer>(cp.getStatus(),
-				cp.getPolicy().toInt());
 	}
 
 	public String getIdentifier() {
@@ -49,20 +41,19 @@ public class FunctionalityDto {
 		this.domain = domain;
 	}
 
-	public SimpleEntry<Boolean, Integer> getActivation() {
-		return activation;
+	public PolicyDto getActivationPolicy() {
+		return activationPolicy;
 	}
 
-	public void setActivation(SimpleEntry<Boolean, Integer> activation) {
-		this.activation = activation;
+	public void setActivationPolicy(PolicyDto activationPolicy) {
+		this.activationPolicy = activationPolicy;
 	}
 
-	public SimpleEntry<Boolean, Integer> getConfiguration() {
-		return configuration;
+	public PolicyDto getConfigurationPolicy() {
+		return configurationPolicy;
 	}
 
-	public void setConfiguration(SimpleEntry<Boolean, Integer> configuration) {
-		this.configuration = configuration;
+	public void setConfigurationPolicy(PolicyDto configurationPolicy) {
+		this.configurationPolicy = configurationPolicy;
 	}
-
 }

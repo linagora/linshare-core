@@ -68,7 +68,7 @@ import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
 import org.linagora.linshare.core.service.ShareEntryService;
@@ -98,7 +98,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	private final AbstractDomainService abstractDomainService;
 	
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	
 	private final AnonymousShareEntryService anonymousShareEntryService;
 	
@@ -107,7 +107,7 @@ public class ShareFacadeImpl implements ShareFacade {
 	
 	public ShareFacadeImpl(ShareEntryTransformer shareEntryTransformer, UserRepository<User> userRepository, NotifierService notifierService,
 			MailContentBuildingService mailElementsFactory, UserService userService, ShareEntryService shareEntryService, DocumentEntryTransformer documentEntryTransformer,
-			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityService functionalityService, AnonymousShareEntryService anonymousShareEntryService, SignatureTransformer signatureTransformer) {
+			DocumentEntryService documentEntryService, AbstractDomainService abstractDomainService, FunctionalityOldService functionalityService, AnonymousShareEntryService anonymousShareEntryService, SignatureTransformer signatureTransformer) {
 		super();
 		this.shareEntryTransformer = shareEntryTransformer;
 		this.userRepository = userRepository;

@@ -44,7 +44,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.user.ThreadFacade;
 import org.linagora.linshare.core.service.AccountService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.webservice.dto.ThreadDto;
@@ -60,9 +60,9 @@ public class ThreadFacadeImpl extends GenericFacadeImpl implements ThreadFacade 
 
 	private final UserService userService;
 
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 
-	public ThreadFacadeImpl(ThreadService threadService, AccountService accountService, UserService userService, FunctionalityService functionalityService) {
+	public ThreadFacadeImpl(ThreadService threadService, AccountService accountService, UserService userService, FunctionalityOldService functionalityService) {
 		super(accountService);
 		this.threadService = threadService;
 		this.functionalityService = functionalityService;

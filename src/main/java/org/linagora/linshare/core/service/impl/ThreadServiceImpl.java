@@ -55,7 +55,7 @@ import org.linagora.linshare.core.repository.TagRepository;
 import org.linagora.linshare.core.repository.ThreadMemberRepository;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.linagora.linshare.core.repository.ThreadViewRepository;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.ThreadService;
 import org.slf4j.Logger;
@@ -73,14 +73,14 @@ public class ThreadServiceImpl implements ThreadService {
 
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	
 	private final TagRepository tagRepository;
 
 	private final LogEntryService logEntryService;
 
 	public ThreadServiceImpl(ThreadRepository threadRepository, ThreadViewRepository threadViewRepository, ThreadMemberRepository threadMemberRepository, TagRepository tagRepository,
-			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService,FunctionalityService functionalityService) {
+			DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService,FunctionalityOldService functionalityService) {
 		super();
 		this.threadRepository = threadRepository;
 		this.threadViewRepository = threadViewRepository;

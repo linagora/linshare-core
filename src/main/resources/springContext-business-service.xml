@@ -56,5 +56,10 @@
 		<constructor-arg ref="threadEntryRepository" />
 		<constructor-arg ref="entryTagAssociationRepository"/>
 	</bean>
+	
+	<bean id="functionalityBusinessService" class="org.linagora.linshare.core.business.service.impl.FunctionalityBusinessServiceImpl">
+		<constructor-arg ref="functionalityRepository" />
+		<constructor-arg ref="abstractDomainRepository" />
+	</bean>
 
 </beans>

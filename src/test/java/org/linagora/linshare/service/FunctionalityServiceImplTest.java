@@ -53,7 +53,7 @@ import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +81,7 @@ public class FunctionalityServiceImplTest extends AbstractJUnit4SpringContextTes
 	private int TOTAL_COUNT_FUNC=LoadingServiceTestDatas.TOTAL_COUNT_FUNC;
 	
 	@Autowired
-	private FunctionalityService functionalityService;
+	private FunctionalityOldService functionalityService;
 	
 	@Autowired
 	private FunctionalityRepository functionalityRepository;

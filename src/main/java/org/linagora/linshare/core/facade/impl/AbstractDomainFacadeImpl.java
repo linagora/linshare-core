@@ -67,7 +67,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DomainPolicyService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.UserAndDomainMultiService;
 import org.linagora.linshare.core.service.UserProviderService;
 import org.linagora.linshare.core.utils.AESCrypt;
@@ -77,14 +77,14 @@ import org.slf4j.LoggerFactory;
 public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
     private final AbstractDomainService abstractDomainService;
-    private final FunctionalityService functionalityService;
+    private final FunctionalityOldService functionalityService;
     private final UserAndDomainMultiService userAndDomainMultiService;
     private final UserProviderService userProviderService;
     private final DomainPolicyService domainPolicyService;
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDomainFacadeImpl.class);
 
-    public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityService functionalityService,
+    public AbstractDomainFacadeImpl(AbstractDomainService abstractDomainService, FunctionalityOldService functionalityService,
             UserProviderService userProviderService, DomainPolicyService domainPolicyService, UserAndDomainMultiService userAndDomainMultiService) {
         super();
         this.abstractDomainService = abstractDomainService;
