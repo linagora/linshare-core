@@ -220,9 +220,11 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		if(contactRepresentation != null) {
 			mailSubject.setContent(StringUtils.replace(mailSubject.getContent(), "${actorRepresentation}", contactRepresentation.getContactRepresntation()));
 		}
+		
 		if(subject != null) {
 			mailSubject.setContent(StringUtils.replace(mailSubject.getContent(), "${actorSubject}", subject));
-		}
+		} 
+		
 		return mailSubject;
 	}
 	
@@ -503,7 +505,6 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		String subjectContent = inputMailContainer.getSubject();
 		if (subjectContent != null && subjectContent.length() >= 1) {
 			// this means subject was filled by users 
-//			mailContainer.setSubject(subjectContent);
 			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING_WITH_ACTOR, new ContactRepresentation(sender), subjectContent));
 			
 		} else {
@@ -562,11 +563,11 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		String subjectContent = inputMailContainer.getSubject();
 		if (subjectContent != null && subjectContent.length() >= 1) {
 			// this means subject was filled by users 
-			mailContainer.setSubject(subjectContent);
+			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING_WITH_ACTOR, new ContactRepresentation(sender), subjectContent));
 		} else {
 			mailContainer.setMailSubject(getMailSubject(sender, mailContainer.getLanguage(), MailSubjectEnum.NEW_SHARING, new ContactRepresentation(sender)));
 		}
-		
+			
 		// recipient mail
 		mailContainer.setRecipient(contact.getMail());
 		
