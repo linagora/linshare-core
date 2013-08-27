@@ -28,14 +28,16 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public boolean activationPolicyIsMutable(Functionality f) {
+	public boolean activationPolicyIsMutable(Functionality f, String domain) {
 		Assert.notNull(f);
-		return functionalityBusinessService.activationPolicyIsMutable(f);
+		Assert.notNull(domain);
+		return functionalityBusinessService.activationPolicyIsMutable(f, domain);
 	}
 
 	@Override
-	public boolean configurationPolicyIsMutable(Functionality f) {
+	public boolean configurationPolicyIsMutable(Functionality f, String domain) {
 		Assert.notNull(f);
-		return functionalityBusinessService.configurationPolicyIsMutable(f);
+		Assert.notNull(domain);
+		return functionalityBusinessService.configurationPolicyIsMutable(f, domain);
 	}
 }

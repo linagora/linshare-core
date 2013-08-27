@@ -26,12 +26,22 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 	@Override
 	public FunctionalityDto get(String domain, String identifier) throws BusinessException {
-		List<FunctionalityDto> all = this.getAll(domain);
-		for (FunctionalityDto functionalityDto : all) {
-			if(functionalityDto.getIdentifier().equals(identifier)) {
-				return functionalityDto;
+		Set<Functionality> entities = functionalityService.getAllFunctionalities(domain);
+		
+		for (Functionality f : entities) {
+			if(f.getIdentifier().equals(identifier)) {
+				boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f, domain);
+				boolean parentAllowCPUpdate = functionalityService.configurationPolicyIsMutable(f, domain);
+				FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate, parentAllowCPUpdate);
+				return func;
 			}
 		}
+//		List<FunctionalityDto> all = this.getAll(domain);
+//		for (FunctionalityDto functionalityDto : all) {
+//			if(functionalityDto.getIdentifier().equals(identifier)) {
+//				return functionalityDto;
+//			}
+//		}
 //		Functionality func = functionalityService.getFunctionalityByIdentifiers(domain, identifier);
 //		return new FunctionalityDto(func);
 		return null;
@@ -43,8 +53,8 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 		
 		List<FunctionalityDto> ret = new ArrayList<FunctionalityDto>();
 		for (Functionality f : entities) {
-			boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f);
-			boolean parentAllowCPUpdate = functionalityService.configurationPolicyIsMutable(f);
+			boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f, domain);
+			boolean parentAllowCPUpdate = functionalityService.configurationPolicyIsMutable(f, domain);
 			FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate, parentAllowCPUpdate);
 			ret.add(func);
 		}
