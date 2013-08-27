@@ -77,7 +77,8 @@ import org.slf4j.LoggerFactory;
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
 		"../../components/fineuploader/fineuploader-3.6.4.js",
 		"../../components/bootstrap/js/bootstrap.js" }, 
-		stylesheet = {"../../components/fineuploader/fineuploader-3.6.4.css"})
+		stylesheet = { "../../components/fineuploader/fineuploader-3.6.4.css",
+		"context:css/spinner.css" })
 public class Upload {
 
 	private static final Logger logger = LoggerFactory

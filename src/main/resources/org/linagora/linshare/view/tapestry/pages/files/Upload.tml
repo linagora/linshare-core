@@ -18,9 +18,10 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         }
 
         var trySubmit = function() {
-            if (jQuery("#progress").val() == 0) {
+            if (uuids.length != 0) {
                 if (jQuery("#is_submit").is(":checked")) {
-                    if (uuids.length != 0) {
+                    jQuery(".spinner").show();
+                    if (jQuery("#progress").val() == 0) {
                         jQuery("#submitShare").click();
                     }
                 }
@@ -35,6 +36,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         jQuery(document).ready(function() {
             // init
             jQuery("#is_submit").attr("checked", false);
+            jQuery(".spinner").hide();
 
             var uploader = new qq.FineUploader({
                 element: jQuery('#uploader')[0],
@@ -198,6 +200,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         alt="" />${message:global.button.share.cap}</span>
                     </a>
                 </div> <!--form-actions-->
+                <div class="spinner"></div>
             </fieldset>
         </t:form>
     </div>
