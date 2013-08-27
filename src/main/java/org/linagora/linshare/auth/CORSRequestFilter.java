@@ -37,12 +37,10 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * PreflightedRequestFilter is used to cut the filter chain when current request
@@ -51,24 +49,31 @@ import org.springframework.web.filter.GenericFilterBean;
  * 
  * @author nbertrand
  */
-public class PreflightedRequestFilter extends GenericFilterBean {
+public class CORSRequestFilter extends OncePerRequestFilter {
 
-	public PreflightedRequestFilter() throws ServletException {
+	public CORSRequestFilter() throws ServletException {
 		super();
 	}
 
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse res,
-			FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest) req;
-		HttpServletResponse response = (HttpServletResponse) res;
+	protected void doFilterInternal(HttpServletRequest req,
+			HttpServletResponse res, FilterChain chain)
+			throws ServletException, IOException {
+		res.addHeader("Access-Control-Allow-Origin", req.getHeader("Origin"));
+		res.addHeader("Access-Control-Allow-Credentials", "true");
 
-		if (request.getMethod().toLowerCase().contains("options")) {
-			response.addHeader("Access-Control-Allow-Origin", "*");
-			response.addHeader("Access-Control-Allow-Methods", "*");
-			response.addHeader("Access-Control-Allow-Headers", "Accept, "
+		/*
+		 * Request is a preflighted one
+		 */
+		if (req.getHeader("Access-Control-Request-Method") != null
+				&& req.getMethod().equals("OPTIONS")) {
+			res.addHeader("Access-Control-Allow-Methods",
+					"GET, POST, PUT, DELETE");
+			res.addHeader("Access-Control-Allow-Headers", "Accept, "
 					+ "Authorization, Cache-Control, Content-Type, Origin, "
 					+ "X-Requested-With");
+			res.addHeader("Access-Control-Max-Age", "1728000");
+
 			logger.debug("Preflighted OPTIONS request, no filter applied.");
 			return;
 		}

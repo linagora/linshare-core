@@ -136,7 +136,6 @@
 		<constructor-arg ref="wsAdminUserFacade" />
 	</bean>
 
-
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
@@ -184,7 +183,7 @@
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
 			<!-- For debug only : print output  message -->
-<!-- 			<ref bean="logOutbound" /> -->
+             <ref bean="logOutbound" /> 
 			<!-- This interceptor is designed compute request execution time.-->
 			<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
 		</jaxrs:outInterceptors>

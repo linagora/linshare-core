@@ -43,6 +43,11 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 request: {
                     endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
                 },
+                /* if one would've wanted to do CORS, put this in the uploader */
+                // cors: {
+                //     expected: true,
+                //     sendCredentials: true
+                // },
                 callbacks: {
                     onError: function(id, fileName, reason) {
                         qq.log("id: " + id + ", fileName: " + fileName + ", reason: " + reason);
