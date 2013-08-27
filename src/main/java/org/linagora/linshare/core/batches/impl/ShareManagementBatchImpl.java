@@ -152,7 +152,7 @@ public class ShareManagementBatchImpl implements ShareManagementBatch {
 			// we check if the current share is the last related entry to the document
 			if(sum -1 <= 0) {
 				// if this field is set, we must delete the document entry when the share entry is expired.
-				if(shareExpiryTimeFunctionality.isBool()) {
+				if(shareExpiryTimeFunctionality.getBool()) {
 					doDeleteDoc = true;
 					logger.debug("current document " + documentEntry.getUuid() + " need to be deleted.");
 				} else {

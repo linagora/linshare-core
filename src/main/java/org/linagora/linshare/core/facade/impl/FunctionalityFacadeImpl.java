@@ -135,7 +135,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 				
 				if(f.getUnit().getUnitType().equals(UnitType.TIME)) {
 					TimeUnitClass timeUnit = (TimeUnitClass)f.getUnit();
-					res.add(new TimeValueBooleanFunctionalityVo(functionality.getIdentifier(), domainIdentifier, f.getValue(), timeUnit.getUnitValue(), f.isBool()));
+					res.add(new TimeValueBooleanFunctionalityVo(functionality.getIdentifier(), domainIdentifier, f.getValue(), timeUnit.getUnitValue(), f.getBool()));
 				} else {
 					logger.error("Unknown Unit boolean Functionality Type for : " + functionality.getIdentifier());
 				}

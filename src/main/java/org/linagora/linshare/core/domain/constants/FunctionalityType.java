@@ -43,7 +43,8 @@ public enum FunctionalityType {
 	UNIT_TIME(5),
 	UNIT_BOOLEAN(6),
 	UNIT_BOOLEAN_TIME(7),
-	RANGE_UNIT(8);
+	RANGE_UNIT(8),
+	UNIT_BOOLEAN_SIZE(8);
 
 	private int value;
 

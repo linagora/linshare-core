@@ -44,22 +44,33 @@ public class ParameterDto {
 	
 	private String type;
 	
+	private boolean bool;
+	
 	public ParameterDto() {
 		super();
 	}
 	
 	public ParameterDto(String s) {
 		this.string = s;
+		this.type = "STRING";
 	}
 	
 	public ParameterDto(int i) {
 		this.integer = i;
+		this.type = "INTEGER";
 	}
 	
 	public ParameterDto(String type, String unit, int integer) {
 		this.string = unit;
 		this.integer = integer;
 		this.type = type;
+	}
+	
+	public ParameterDto(String type, String unit, int integer, boolean bool) {
+		this.string = unit;
+		this.integer = integer;
+		this.type = type;
+		this.bool = bool;
 	}
 
 	public int getInteger() {
@@ -84,5 +95,13 @@ public class ParameterDto {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public boolean getBool() {
+		return bool;
+	}
+
+	public void setBool(boolean bool) {
+		this.bool = bool;
 	}
 }

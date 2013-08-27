@@ -33,9 +33,13 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
 import org.linagora.linshare.core.domain.vo.TimeValueBooleanFunctionalityVo;
+import org.linagora.linshare.webservice.dto.ParameterDto;
 
 public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 
@@ -45,7 +49,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 		super();
 	}
 
-	public boolean isBool() {
+	public boolean getBool() {
 		return bool;
 	}
 
@@ -62,7 +66,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 	public boolean businessEquals(Functionality obj, boolean checkPolicies) {
 		if(super.businessEquals(obj, checkPolicies)) {
 			UnitBooleanValueFunctionality o = (UnitBooleanValueFunctionality)obj;
-			if(bool == o.isBool()) {
+			if(bool == o.getBool()) {
 				logger.debug("UnitBooleanValueFunctionality : " + this.toString() + " is equal to UnitBooleanValueFunctionality " + obj.toString());
 				return true;
 			}
@@ -81,7 +85,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
 		super.updateFunctionalityValuesOnlyFrom(functionality);
 		UnitBooleanValueFunctionality f = (UnitBooleanValueFunctionality)functionality;
-		this.bool = f.isBool();
+		this.bool = f.getBool();
 	}
 	
 	@Override
@@ -96,5 +100,25 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 				timeUnit.setUnitValue(f.getUnit());
 			}
 		} 
+	}
+
+	@Override
+	public List<ParameterDto> getParameters() {
+		List<ParameterDto> res = new ArrayList<ParameterDto>();
+		ParameterDto parameterDto = null;
+		if (getUnit() instanceof FileSizeUnitClass) {
+			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+			String unitType = FunctionalityType.UNIT_BOOLEAN_SIZE.toString();
+			String unit = sizeUnit.getUnitValue().toString();
+			parameterDto = new ParameterDto(unitType, unit, this.getValue(), this.getBool());
+
+		} else if (getUnit() instanceof TimeUnitClass) {
+			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+			String unitType = FunctionalityType.UNIT_BOOLEAN_TIME.toString();
+			String unit = timeUnit.getUnitValue().toString();
+			parameterDto = new ParameterDto(unitType, unit, this.getValue(), this.getBool());
+		}
+		res.add(parameterDto);
+		return res;
 	}
 }

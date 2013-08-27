@@ -33,11 +33,9 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javassist.expr.Instanceof;
-
-import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
 import org.linagora.linshare.core.domain.vo.SizeValueFunctionalityVo;
@@ -138,7 +136,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 
 	@Override
 	public List<ParameterDto> getParameters() {
-		List<ParameterDto> res = super.getParameters();
+		List<ParameterDto> res = new ArrayList<ParameterDto>();
 		ParameterDto parameterDto = null;
 		if (getUnit() instanceof FileSizeUnitClass) {
 			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
