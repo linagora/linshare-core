@@ -59,6 +59,11 @@ public class CORSRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest req,
 			HttpServletResponse res, FilterChain chain)
 			throws ServletException, IOException {
+		if (req.getHeader("Origin") == null) {
+			chain.doFilter(req, res);
+			return;
+		}
+
 		res.addHeader("Access-Control-Allow-Origin", req.getHeader("Origin"));
 		res.addHeader("Access-Control-Allow-Credentials", "true");
 
@@ -69,9 +74,8 @@ public class CORSRequestFilter extends OncePerRequestFilter {
 				&& req.getMethod().equals("OPTIONS")) {
 			res.addHeader("Access-Control-Allow-Methods",
 					"GET, POST, PUT, DELETE");
-			res.addHeader("Access-Control-Allow-Headers", "Accept, "
-					+ "Authorization, Cache-Control, Content-Type, Origin, "
-					+ "X-Requested-With");
+			res.addHeader("Access-Control-Allow-Headers",
+					"Accept, Authorization, Cache-Control, Content-Type, Origin, X-Requested-With");
 			res.addHeader("Access-Control-Max-Age", "1728000");
 
 			logger.debug("Preflighted OPTIONS request, no filter applied.");
@@ -79,5 +83,4 @@ public class CORSRequestFilter extends OncePerRequestFilter {
 		}
 		chain.doFilter(req, res);
 	}
-
 }
