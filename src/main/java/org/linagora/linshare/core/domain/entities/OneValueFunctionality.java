@@ -33,9 +33,6 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.List;
-
-import org.linagora.linshare.webservice.dto.ParameterDto;
 
 public abstract class OneValueFunctionality<U> extends Functionality {
 	
@@ -52,11 +49,6 @@ public abstract class OneValueFunctionality<U> extends Functionality {
 		this.value = value;
 	}
 
-	@Override
-	public List<ParameterDto> getParameters() {
-		return super.getParameters();
-	}
-	
 	public U getValue() {
 		return value;
 	}

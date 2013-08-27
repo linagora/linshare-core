@@ -72,7 +72,7 @@ public class PolicyDto {
 		this.parentAllowUpdate = false;
 	}
 
-	public boolean isStatus() {
+	public boolean getStatus() {
 		return status;
 	}
 
@@ -80,7 +80,7 @@ public class PolicyDto {
 		this.status = status;
 	}
 
-	public boolean isDefaultStatus() {
+	public boolean getDefaultStatus() {
 		return defaultStatus;
 	}
 
@@ -96,7 +96,7 @@ public class PolicyDto {
 		this.policy = policy;
 	}
 
-	public boolean isParentAllowUpdate() {
+	public boolean getParentAllowUpdate() {
 		return parentAllowUpdate;
 	}
 

@@ -44,6 +44,7 @@ public class FunctionalityDto {
 
 	protected String identifier;
 	protected String domain;
+	protected String type;
 
 	protected PolicyDto activationPolicy;
 	protected PolicyDto configurationPolicy;
@@ -61,6 +62,7 @@ public class FunctionalityDto {
 		this.identifier = f.getIdentifier();
 		this.domain = f.getDomain().getIdentifier();
 		this.parameters = f.getParameters();
+		this.type = f.getType().toString();
 	}
 	
 	public FunctionalityDto(Functionality f, boolean parentAllowAPUpdate, boolean parentAllowCPUpdate) {
@@ -74,6 +76,7 @@ public class FunctionalityDto {
 		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
 		this.configurationPolicy.setParentAllowUpdate(parentAllowCPUpdate);
 		this.parameters = f.getParameters();
+		this.type = f.getType().toString();
 	}
 	
 	public String getIdentifier() {
@@ -114,5 +117,13 @@ public class FunctionalityDto {
 
 	public void setParameters(List<ParameterDto> parameters) {
 		this.parameters = parameters;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

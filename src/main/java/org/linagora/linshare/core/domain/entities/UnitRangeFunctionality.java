@@ -33,10 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
-import java.util.List;
-
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
-import org.linagora.linshare.webservice.dto.ParameterDto;
 
 public class UnitRangeFunctionality extends AbstractRangeFunctionality<Integer,Unit<?>> {
 
@@ -70,10 +67,5 @@ public class UnitRangeFunctionality extends AbstractRangeFunctionality<Integer,U
 		this.max = u.getMax();
 		this.minUnit.updateUnitFrom(u.getMinUnit());
 		this.maxUnit.updateUnitFrom(u.getMaxUnit());
-	}
-	
-	@Override
-	public List<ParameterDto> getParameters() {
-		return super.getParameters();
 	}
 }
