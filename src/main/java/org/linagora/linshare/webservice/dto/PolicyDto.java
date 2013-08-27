@@ -40,7 +40,7 @@ import org.linagora.linshare.core.domain.entities.Policy;
 @XmlRootElement(name = "Policy")
 public class PolicyDto {
 	
-	protected int policy;
+	protected String policy;
 	
 	// Current status of the policy
 	protected boolean status;
@@ -56,20 +56,20 @@ public class PolicyDto {
 		super();
 	}
 
-	public PolicyDto(Integer policy, boolean status, boolean defaultStatus) {
+	public PolicyDto(String policy, boolean status, boolean defaultStatus) {
 		super();
 		this.policy = policy;
 		this.status = status;
 		this.defaultStatus = defaultStatus;
-		this.parentAllowUpdate = true;
+		this.parentAllowUpdate = false;
 	}
 	
 	public PolicyDto(Policy policy) {
 		super();
-		this.policy = policy.getPolicy().toInt();
+		this.policy = policy.getPolicy().toString();
 		this.status = policy.getStatus();
 		this.defaultStatus = policy.getDefaultStatus();
-		this.parentAllowUpdate = true;
+		this.parentAllowUpdate = false;
 	}
 
 	public boolean isStatus() {
@@ -88,11 +88,11 @@ public class PolicyDto {
 		this.defaultStatus = defaultStatus;
 	}
 
-	public int getPolicy() {
+	public String getPolicy() {
 		return policy;
 	}
 
-	public void setPolicy(int policy) {
+	public void setPolicy(String policy) {
 		this.policy = policy;
 	}
 

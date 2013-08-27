@@ -11,5 +11,8 @@ public interface FunctionalityBusinessService {
 	
 	public Set<Functionality> getAllFunctionalities(String domain);
 	
+	boolean activationPolicyIsMutable(Functionality f);
+	
+	boolean configurationPolicyIsMutable(Functionality f);
 
 }

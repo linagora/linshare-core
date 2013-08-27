@@ -38,10 +38,6 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 			return functionality;
 		}
 
-		public String getIdentifier() {
-			return identifier;
-		}
-
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -134,6 +130,18 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 	public Set<Functionality> getAllFunctionalities(String domain) {
 		AbstractDomain abstractDomain = abstractDomainRepository.findById(domain);
 		return getAllFunctionalities(abstractDomain);
+	}
+
+	@Override
+	public boolean activationPolicyIsMutable(Functionality f) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean configurationPolicyIsMutable(Functionality f) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	

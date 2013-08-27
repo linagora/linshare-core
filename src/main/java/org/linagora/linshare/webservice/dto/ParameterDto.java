@@ -33,86 +33,56 @@
  */
 package org.linagora.linshare.webservice.dto;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.linagora.linshare.core.domain.entities.Functionality;
-
-@XmlRootElement(name = "Functionality")
-public class FunctionalityDto {
-
-	protected String identifier;
-	protected String domain;
-
-	protected PolicyDto activationPolicy;
-	protected PolicyDto configurationPolicy;
+@XmlRootElement(name = "Parameter")
+public class ParameterDto {
 	
-	protected List<ParameterDto> parameters;
-
-	public FunctionalityDto() {
+	private int integer;
+	
+	private String string;
+	
+	private String type;
+	
+	public ParameterDto() {
 		super();
 	}
-
-	public FunctionalityDto(Functionality f) {
-		super();
-		this.activationPolicy = new PolicyDto(f.getActivationPolicy());
-		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
-		this.identifier = f.getIdentifier();
-		this.domain = f.getDomain().getIdentifier();
-		this.parameters = f.getParameters();
+	
+	public ParameterDto(String s) {
+		this.string = s;
 	}
 	
-	public FunctionalityDto(Functionality f, boolean parentAllowAPUpdate, boolean parentAllowCPUpdate) {
-		super();
-		this.domain = f.getDomain().getIdentifier();
-		this.identifier = f.getIdentifier();
-		// Activation policy
-		this.activationPolicy = new PolicyDto(f.getActivationPolicy());
-		this.activationPolicy.setParentAllowUpdate(parentAllowAPUpdate);
-		// Configuration policy
-		this.configurationPolicy = new PolicyDto(f.getConfigurationPolicy());
-		this.configurationPolicy.setParentAllowUpdate(parentAllowCPUpdate);
-		this.parameters = f.getParameters();
+	public ParameterDto(int i) {
+		this.integer = i;
 	}
 	
-	public String getIdentifier() {
-		return identifier;
+	public ParameterDto(String type, String unit, int integer) {
+		this.string = unit;
+		this.integer = integer;
+		this.type = type;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public int getInteger() {
+		return integer;
 	}
 
-	public String getDomain() {
-		return domain;
+	public void setInteger(int integer) {
+		this.integer = integer;
 	}
 
-	public void setDomain(String domain) {
-		this.domain = domain;
+	public String getString() {
+		return string;
 	}
 
-	public PolicyDto getActivationPolicy() {
-		return activationPolicy;
+	public void setString(String string) {
+		this.string = string;
 	}
 
-	public void setActivationPolicy(PolicyDto activationPolicy) {
-		this.activationPolicy = activationPolicy;
+	public String getType() {
+		return type;
 	}
 
-	public PolicyDto getConfigurationPolicy() {
-		return configurationPolicy;
-	}
-
-	public void setConfigurationPolicy(PolicyDto configurationPolicy) {
-		this.configurationPolicy = configurationPolicy;
-	}
-
-	public List<ParameterDto> getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(List<ParameterDto> parameters) {
-		this.parameters = parameters;
+	public void setType(String type) {
+		this.type = type;
 	}
 }
