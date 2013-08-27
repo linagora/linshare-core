@@ -26,6 +26,12 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 	@Override
 	public FunctionalityDto get(String domain, String identifier) throws BusinessException {
+		List<FunctionalityDto> all = this.getAll(domain);
+		for (FunctionalityDto functionalityDto : all) {
+			if(functionalityDto.getIdentifier().equals(identifier)) {
+				return functionalityDto;
+			}
+		}
 //		Functionality func = functionalityService.getFunctionalityByIdentifiers(domain, identifier);
 //		return new FunctionalityDto(func);
 		return null;
@@ -36,9 +42,11 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 		Set<Functionality> entities = functionalityService.getAllFunctionalities(domain);
 		
 		List<FunctionalityDto> ret = new ArrayList<FunctionalityDto>();
-
-		for (Functionality e : entities) {
-			ret.add(new FunctionalityDto(e));
+		for (Functionality f : entities) {
+			boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f);
+			boolean parentAllowCPUpdate = functionalityService.configurationPolicyIsMutable(f);
+			FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate, parentAllowCPUpdate);
+			ret.add(func);
 		}
 		return ret;
 	}

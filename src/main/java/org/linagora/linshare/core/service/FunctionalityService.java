@@ -7,8 +7,11 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 
 public interface FunctionalityService {
 	
-	public Set<Functionality> getAllFunctionalities(AbstractDomain domain);
+	Set<Functionality> getAllFunctionalities(AbstractDomain domain);
 	
-	public Set<Functionality> getAllFunctionalities(String domain);
-
+	Set<Functionality> getAllFunctionalities(String domain);
+	
+	boolean activationPolicyIsMutable(Functionality f);
+	
+	boolean configurationPolicyIsMutable(Functionality f);
 }

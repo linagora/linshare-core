@@ -33,8 +33,12 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
+import org.linagora.linshare.webservice.dto.ParameterDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +90,10 @@ public class Functionality implements Cloneable {
 		return FunctionalityType.DEFAULT;
 	}
 
+	public List<ParameterDto> getParameters() {
+		return new ArrayList<ParameterDto>();
+	}
+	
 	public long getId() {
 		return persistenceId;
 	}
@@ -217,7 +225,6 @@ public class Functionality implements Cloneable {
 		this.configurationPolicy.updatePolicyFrom(functionality.getConfigurationPolicy());
 	}
 	
-	
 	public void updateFunctionalityValuesOnlyFrom(Functionality functionality) {
 		// no data in this class.
 	}
@@ -226,7 +233,4 @@ public class Functionality implements Cloneable {
 		logger.debug("Functionality:updateFunctionalityValuesOnlyFromVo : " + identifier + " : ");
 		// no data in this class.
 	}
-	
-	
-	
 }

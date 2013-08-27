@@ -112,7 +112,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 		return functionalityFacade.getAll(domain);
 	}
 
-	@Path("/{domain}/functionality/{identifier}")
+	@Path("/{domain}/functionalities/{identifier}")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
@@ -122,7 +122,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 		return functionalityFacade.get(domain, identifier);
 	}
 
-	@Path("/{domain}/functionality")
+	@Path("/{domain}/functionalities")
 	@PUT
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override

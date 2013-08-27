@@ -33,6 +33,10 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.List;
+
+import org.linagora.linshare.webservice.dto.ParameterDto;
+
 public abstract class AbstractRangeFunctionality<U,T extends Unit<?>> extends Functionality {
 	protected U min;
 
@@ -111,4 +115,9 @@ public abstract class AbstractRangeFunctionality<U,T extends Unit<?>> extends Fu
       	func.maxUnit = (T) maxUnit.clone();
 	    return func;
   	}
+
+	@Override
+	public List<ParameterDto> getParameters() {
+		return super.getParameters();
+	}
 }
