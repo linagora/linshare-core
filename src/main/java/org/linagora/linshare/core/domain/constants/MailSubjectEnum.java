@@ -40,20 +40,21 @@ package org.linagora.linshare.core.domain.constants;
  *
  */
 public enum MailSubjectEnum {
-	ANONYMOUS_DOWNLOAD(0), 
+	ANONYMOUS_DOWNLOAD(0),
 	REGISTERED_DOWNLOAD(1), 
-	NEW_GUEST(2), 
+	NEW_GUEST(2),
 	RESET_PASSWORD(3), 
-	NEW_SHARING(4), 
+	NEW_SHARING(4),
 	SHARED_DOC_UPDATED(5),
-	NEW_GROUP_SHARING(6),
-	MEMBERSHIP_REQUEST_STATUS(7),
-	NEW_GROUP_MEMBER(8),
-	GROUP_SHARING_DELETED(9),
-	SHARED_DOC_DELETED(10),
+//	NEW_GROUP_SHARING(6), // DO NOT USE ! 
+//	MEMBERSHIP_REQUEST_STATUS(7), // DO NOT USE ! 
+//	NEW_GROUP_MEMBER(8), // DO NOT USE ! 
+//	GROUP_SHARING_DELETED(9), // DO NOT USE ! 
+	SHARED_DOC_DELETED(10), // user
 	SHARED_DOC_UPCOMING_OUTDATED(11),
-	DOC_UPCOMING_OUTDATED(12);
-
+	DOC_UPCOMING_OUTDATED(12),
+	NEW_SHARING_WITH_ACTOR(13);
+	
 	private int value;
 
 	private MailSubjectEnum(final int value) {
@@ -65,50 +66,11 @@ public enum MailSubjectEnum {
 	}
 
 	public static MailSubjectEnum fromInt(final int value) {
-		MailSubjectEnum ret = null;
-		switch (value) {
-		case 0:
-			ret = ANONYMOUS_DOWNLOAD;
-			break;
-		case 1:
-			ret = REGISTERED_DOWNLOAD;
-			break;
-		case 2:
-			ret = NEW_GUEST;
-			break;
-		case 3:
-			ret = RESET_PASSWORD;
-			break;
-		case 4:
-			ret = NEW_SHARING;
-			break;
-		case 5:
-			ret = SHARED_DOC_UPDATED;
-			break;
-		case 6:
-			ret = NEW_GROUP_SHARING;
-			break;
-		case 7:
-			ret = MEMBERSHIP_REQUEST_STATUS;
-			break;
-		case 8:
-			ret = NEW_GROUP_MEMBER;
-			break;
-		case 9:
-			ret = GROUP_SHARING_DELETED;
-			break;
-		case 10:
-			ret = SHARED_DOC_DELETED;
-			break;
-		case 11:
-			ret = SHARED_DOC_UPCOMING_OUTDATED;
-			break;
-		case 12:
-			ret = DOC_UPCOMING_OUTDATED;
-			break;
-		default:
-			throw new IllegalArgumentException("Doesn't match an existing MailSubjects");
+		for (MailSubjectEnum subject : values()) {
+			if (subject.value == value) {
+				return subject;
+			}
 		}
-		return ret;
+		throw new IllegalArgumentException("Doesn't match an existing MailSubjects");
 	}
 }

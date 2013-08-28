@@ -155,8 +155,7 @@ public class UserProviderRepositoryImplTest extends AbstractTransactionalJUnit4S
 		LdapUserProvider newProvider = ldapUserProviderRepository.findById(provider.getPersistenceId());
 		Assert.assertTrue(newProvider != null);
 		
-		Assert.assertTrue(newProvider instanceof LdapUserProvider);
-		LdapUserProvider ldapProvider = (LdapUserProvider)newProvider; 
+		LdapUserProvider ldapProvider = newProvider; 
 		
 		Assert.assertTrue(ldapProvider.getBaseDn().equals(baseDn));
 		Assert.assertTrue(ldapProvider.getPattern().getIdentifier().equals(identifierP));

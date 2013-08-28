@@ -74,7 +74,6 @@ public interface AbstractDomainFacade {
     public List<String> findAllDomainPatternIdentifiers();
     public List<String> findAllUserDomainPatternIdentifiers();
     public List<String> findAllSystemDomainPatternIdentifiers();
-    public List<DomainPatternVo> findAllDomainPatterns() throws BusinessException ;
     public List<DomainPatternVo> findAllSystemDomainPatterns() throws BusinessException;
     public List<DomainPatternVo> findAllUserDomainPatterns() throws BusinessException;
     
@@ -96,6 +95,8 @@ public interface AbstractDomainFacade {
 	public boolean isCustomLogoActiveInRootDomain() throws BusinessException;
     public String getCustomLogoUrl(UserVo actorVo) throws BusinessException;
 	public String getCustomLogoUrlInRootDomain() throws BusinessException;
+    public String getCustomLogoLink(UserVo actorVo) throws BusinessException;
+    public String getCustomLogoLinkInRootDomain() throws BusinessException ;
 
     public MessagesConfiguration getMessages(String domainIdentifier) throws BusinessException;
     public void updateMessages(UserVo actorVo, String domainIdentifier, MessagesConfiguration messages) throws BusinessException;

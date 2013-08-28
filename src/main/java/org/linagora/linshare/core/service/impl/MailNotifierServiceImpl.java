@@ -34,6 +34,8 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -97,6 +99,8 @@ public class MailNotifierServiceImpl implements NotifierService {
 
 	/** Class logger */
 	private static final Logger logger = LoggerFactory.getLogger(MailNotifierServiceImpl.class);
+	
+	private static final CharsetEncoder asciiEncoder = Charset.forName("US-ASCII").newEncoder();
 
 	/**
 	 * see http://java.sun.com/developer/EJTechTips/2004/tt0625.html for
@@ -115,17 +119,12 @@ public class MailNotifierServiceImpl implements NotifierService {
 		this.displayLicenceLogo = displayLicenceLogo;
 	}
 
-	/**
-	 * Send notification to a recipient.
-	 * @param recipient
-	 *            notification recipient.
-	 * @param subject
-	 *            subject.
-	 * @param content
-	 *            content.
-	 */
+	public static boolean isPureAscii(String v) {
+		return asciiEncoder.canEncode(v);
+	}
+	  
 	@Override
-	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent, String textContent) throws SendFailedException{
+	public void sendNotification(String smtpSender, String replyTo, String recipient, String subject, String htmlContent, String textContent, String inReplyTo, String references) throws SendFailedException {
 
 		// get the mail session
 		Session session = getMailSession();
@@ -145,6 +144,20 @@ public class MailNotifierServiceImpl implements NotifierService {
 			messageMim.addRecipient(javax.mail.Message.RecipientType.TO,
 					new InternetAddress(recipient));
 
+			if (inReplyTo != null) {
+				// This field should contain only ASCCI character (RFC 822)
+				if(isPureAscii(inReplyTo)) {
+					messageMim.setHeader("In-Reply-To", inReplyTo);
+				}
+			}
+			
+			if (references != null) {
+				// This field should contain only ASCCI character (RFC 822)  
+				if(isPureAscii(references)) {
+					messageMim.setHeader("References", references);
+				}
+			}
+			
 			messageMim.setSubject(subject, charset);
 
 			// Create a "related" Multipart message
@@ -272,7 +285,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 	 */
 	@Override
 	public void sendNotification(String smtpSender, String replyTo, String recipient, MailContainer mailContainer) throws SendFailedException{
-		sendNotification(smtpSender, replyTo, recipient, mailContainer.getSubject(), mailContainer.getContentHTML(), mailContainer.getContentTXT());
+		sendNotification(smtpSender, replyTo, recipient, mailContainer.getSubject(), mailContainer.getContentHTML(), mailContainer.getContentTXT(), mailContainer.getInReplyTo(), mailContainer.getReferences());
 
 	}
 	

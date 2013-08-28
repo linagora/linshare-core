@@ -53,7 +53,7 @@ import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.AnonymousShareEntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
 
 public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryService {
 
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	
 	private final AnonymousShareEntryBusinessService anonymousShareEntryBusinessService;
 	
@@ -79,7 +79,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
     
     private static final Logger logger = LoggerFactory.getLogger(AnonymousShareEntryServiceImpl.class);
     
-	public AnonymousShareEntryServiceImpl(FunctionalityService functionalityService, AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
+	public AnonymousShareEntryServiceImpl(FunctionalityOldService functionalityService, AnonymousShareEntryBusinessService anonymousShareEntryBusinessService,
 			ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, NotifierService notifierService, MailContentBuildingService mailElementsFactory,
 			DocumentEntryBusinessService documentEntryBusinessService) {
 		super();
@@ -203,7 +203,8 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	private AnonymousShareEntry downloadAnonymousShareEntry(String shareUuid) throws BusinessException {
 		AnonymousShareEntry shareEntry = anonymousShareEntryBusinessService.findByUuidForDownload(shareUuid);
 		
-		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(), shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD, "Anonymous download of a file");
+		ShareLogEntry logEntry = new ShareLogEntry(shareEntry.getEntryOwner(), shareEntry, LogAction.ANONYMOUS_SHARE_DOWNLOAD,
+				"Anonymous user " + shareEntry.getEntryOwner() +  " downloaded a file");
 		logEntryService.create(logEntry);
 		return shareEntry;
 	}

@@ -37,7 +37,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.repository.LogEntryRepository;
@@ -90,11 +92,19 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		
 		
 		if ((logCriteria.getActorMails()!=null) && (logCriteria.getActorMails().size()>0)) {
-			criteria.add(Restrictions.in("actorMail", logCriteria.getActorMails()));
+			Disjunction or = Restrictions.disjunction();
+			for (String mail : logCriteria.getActorMails()) {
+				or.add(Restrictions.like("actorMail", mail, MatchMode.ANYWHERE));
+			}
+			criteria.add(or);
 		}
 		
 		if ((logCriteria.getTargetMails()!=null) && (logCriteria.getTargetMails().size()>0)) {
-			criteria.add(Restrictions.in("targetMail", logCriteria.getTargetMails()));
+			Disjunction or = Restrictions.disjunction();
+			for (String mail : logCriteria.getTargetMails()) {
+				or.add(Restrictions.like("targetMail", mail, MatchMode.ANYWHERE));
+			}
+			criteria.add(or);
 		}
 		
 		if ((logCriteria.getActorFirstname()!=null) && (logCriteria.getActorFirstname().length()>0)) {
@@ -146,6 +156,8 @@ public class LogEntryRepositoryImpl extends AbstractRepositoryImpl<LogEntry> imp
 		if (logCriteria.getFileExtension() != null) {
 			criteria.add(Restrictions.like("fileName", logCriteria.getFileExtension(), MatchMode.END).ignoreCase());
 		}
+		
+		criteria.addOrder(Order.desc("actionDate"));
 		
 		return getHibernateTemplate().findByCriteria(criteria);
 	}

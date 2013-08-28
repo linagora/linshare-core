@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.service;
 
+
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -46,6 +47,5 @@ public interface AccountService {
     public Account findByLsUuid(String uuid);
  
     public Account update(Account account) throws BusinessException;
-    
     
 }

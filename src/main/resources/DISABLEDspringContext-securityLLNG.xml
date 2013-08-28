@@ -48,6 +48,11 @@
 			
 			<sec:filter-chain pattern="/webservice/?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
+            <sec:filter-chain pattern="/webservice/rest/**"
+                filters="httpSessionIntegrationFilter,preflightedRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+            <sec:filter-chain pattern="/webservice/fineuploader/**"
+                filters="httpSessionIntegrationFilter,preflightedRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
 			<sec:filter-chain pattern="/webservice/**"
@@ -162,7 +167,7 @@
 		</property>
 	</bean>
 
-	<bean id="restAuthenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+	<bean id="restAuthenticationEntryPoint" class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
 		<property name="realmName">
 			<value>Name Of Your LinShare Realm</value>
 		</property>
@@ -172,9 +177,7 @@
 		<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint" />
 	</bean>
 
-
 	<!-- AUTHENTICATION MANAGEMENT -->
-
 	<!-- Authentication manager -->
 	<bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
 		<property name="providers">
@@ -209,6 +212,7 @@
 	<bean id="domainAuthenticationProvider" class="org.linagora.linshare.auth.DomainAuthProviderDao">
 		<property name="userService" ref="userService" />
 		<property name="abstractDomainService" ref="abstractDomainService" />
+		<property name="logEntryService" ref="logEntryService" />
 	</bean>
 
 

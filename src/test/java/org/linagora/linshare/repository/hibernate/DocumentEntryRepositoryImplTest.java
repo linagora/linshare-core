@@ -72,7 +72,7 @@ public class DocumentEntryRepositoryImplTest  extends AbstractTransactionalJUnit
     
     private final String identifier = "docId";
     private final String type = "doctype";
-    private final long fileSize = 1l;
+    private final long fileSize = 1L;
     
     
     // Members

@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.index.title" t:identifier="home" t:currentHighlight="files"
+xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <script type="text/javascript" language="javascript">
+        var uuids = new Array();
+
+        var sizeAvailable = ${maxFileSize};
+
+        var rm_errorclass = function(){
+            document.getElementById('recipientsPattern').className = 
+                document.getElementById('recipientsPattern').className.replace( /(?:^|\s)t-error(?!\S)/ , '' );
+        }
+
+        var tryReturn = function() {
+            return (jQuery("#progress").val() == 0);
+        }
+
+        var trySubmit = function() {
+            if (uuids.length != 0) {
+                if (jQuery("#is_submit").is(":checked")) {
+                    jQuery(".spinner").show();
+                    if (jQuery("#progress").val() == 0) {
+                        jQuery("#submitShare").click();
+                    }
+                }
+            }
+        }
+
+        var requestSubmit = function() {
+            jQuery("#is_submit").attr("checked", true);
+            trySubmit();
+        }
+
+        jQuery(document).ready(function() {
+            // init
+            jQuery("#is_submit").attr("checked", false);
+            jQuery(".spinner").hide();
+
+            var uploader = new qq.FineUploader({
+                element: jQuery('#uploader')[0],
+                debug: true,
+                maxConnections: 1,
+                request: {
+                    endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
+                },
+                /* if one would've wanted to do CORS, put this in the uploader */
+                // cors: {
+                //     expected: true,
+                //     sendCredentials: true
+                // },
+                callbacks: {
+                    onError: function(id, fileName, reason) {
+                        qq.log("id: " + id + ", fileName: " + fileName + ", reason: " + reason);
+                        jQuery("#error").click();
+                    },
+                    onDelete: function(id) {
+                        // remove item from list of uploaded items to share
+                        uuids.splice(uuids.indexOf(uploader.getUuid(id)), 1);
+                    },
+                    onProgess: function(id) {
+                        jQuery("#progress").attr("value", uploader.getInProgress());
+                    },
+                    onComplete: function(id, name, responseJSON) {
+                        if (responseJSON.success) {
+                            console.log(name + "upload sucesssful");
+                            uuids.push(uploader.getUuid(id));
+                            sizeAvailable -= uploader.getSize(id);
+                            uploader._options.validation.sizeLimit = sizeAvailable;
+                        }
+                        jQuery("#progress").attr("value", uploader.getInProgress());
+                        if (uploader.getInProgress() == 0) {
+                            console.log("All upload are completed");
+                            jQuery("#uuids").attr("value", uuids.join());
+                        }
+                        trySubmit();
+                    }
+                },
+                deleteFile: {
+                    enabled: true,
+                    forceConfirm: true,
+                    endpoint: "${contextPath}/webservice/fineuploader/upload/receiver"
+                },
+                messages: {
+                    typeError: "${message:pages.files.upload.typeError}",
+                    sizeError: "${message:pages.files.upload.sizeError}",
+                    minSizeError: "${message:pages.files.upload.minSizeError}",
+                    emptyError: "${message:pages.files.upload.emptyError}",
+                    noFilesError: "${message:pages.files.upload.noFilesError}",
+                    tooManyItemsError: "${message:pages.files.upload.tooManyItemsError}",
+                    retryFailTooManyItems: "${message:pages.files.upload.retryFailTooManyItems}",
+                    onLeave: "${message:pages.files.upload.onLeave}"
+                },
+                text: {
+                    uploadButton: "${message:pages.files.upload.uploadButton}",
+                    cancelButton: "${message:pages.files.upload.cancelButton}",
+                    retryButton: "${message:pages.files.upload.retryButton}",
+                    deleteButton: "${message:pages.files.upload.deleteButton}",
+                    failUpload: "${message:pages.files.upload.failUpload}",
+                    dragZone: "${message:pages.files.upload.dragZone}",
+                    dropProcessing: "${message:pages.files.upload.dropProcessing}",
+                    formatProgress: "${message:pages.files.upload.formatProgress}",
+                    waitingForResponse: "${message:pages.files.upload.waitingForResponse}"
+                },
+                validation: {
+                    sizeLimit: sizeAvailable
+                }
+            });
+
+            // XXX HACK : css is for losers ;]
+            jQuery(".qq-upload-button").attr("class", "btn btn-primary")
+        });
+    </script>
+
+    <!-- Main content -->
+    <div id="content">
+        <legend>${message:pages.files.upload.upload.title}</legend>
+        <div class="example">
+            <ul id="uploader" class="unstyled"></ul>
+        </div>
+        <t:form t:id="quickShareForm" class="form-horizontal">
+            <fieldset>
+                <legend>${message:pages.files.upload.share.title}</legend>
+                <t:errors />
+
+                <!--upload and share client logic-->
+                <t:textfield t:id='uuids' name="uuids" style="display:none" />
+                <t:checkbox t:id='is_submit' name="is_submit" style="display:none" />
+                <t:textfield t:id='progress' name="progress" style="display:none" />
+
+                <div class="control-group">
+                    <t:label for="recipientsPattern" class="control-label required">
+                    ${message:pages.files.upload.recipients.title}</t:label>
+                    <div class="controls">
+                        <t:textarea t:id="recipientsPattern" t:value="recipientsSearch" t:mixins="autocomplete"
+                        t:minChars="${autocompleteMin}" t:tokens="," class="input-xxlarge"
+                        onchange="rm_errorclass();" />
+                        <p class="help-block">${message:pages.files.upload.recipients.description}</p>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <t:if test="showSecureSharingCheckBox">
+                        <t:label for="secureSharing" class="control-label">
+                        ${message:pages.files.upload.secureSharing}</t:label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <t:checkbox t:id="secureSharing" />
+                                <span class="help-inline">
+                                ${message:pages.files.upload.secureSharing.description}</span>
+                            </label>
+                        </div>
+                    </t:if>
+                </div>
+
+                <div class="accordion" id="accordionMessage">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionMessage"
+                            href="#collapseOne">${message:pages.files.upload.message.custom}</a>
+                        </div>
+
+                        <div id="collapseOne" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <p class="help-block">${message:pages.files.upload.message.description}</p>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <t:label for="textAreaSubjectValue" class="control-label">
+                                    ${message:pages.files.upload.subject.title}</t:label>
+                                    <div class="controls">
+                                        <t:textfield t:id="textAreaSubjectValue" size="100" class="input-xxlarge"
+                                        onkeypress="if (event.keyCode == 13) return false;" />
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <t:label for="textAreaValue" class="control-label">
+                                    ${message:pages.files.upload.message.title}</t:label>
+                                    <div class="controls">
+                                        <t:textarea rows="8" t:id="textAreaValue" class="input-xxlarge" />
+                                    </div> <!--controls-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="background-color: transparent">
+                    <t:pageLink page="files" class="btn" onlick="tryReturn()">
+                    ${message:pages.files.upload.cancelButton}</t:pageLink>
+                    <input name="submitShare" id="submitShare" type="submit" style="display:none" />
+                    <a id="formShareSubmit" class="btn btn-primary" onclick="requestSubmit()">
+                        <span>
+                        <img src="${asset:context:images/icons/share-on-small.png}"
+                        alt="" />${message:global.button.share.cap}</span>
+                    </a>
+                </div> <!--form-actions-->
+                <div class="spinner"></div>
+            </fieldset>
+        </t:form>
+    </div>
+</t:MyBorderLayout>

@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic mail completion methods
@@ -48,7 +50,8 @@ public class MailCompletionService {
 	 * Regular expression to validate mails
 	 */
 	public static final Pattern MAILREGEXP = Pattern.compile("^[A-Z0-9'._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$");
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(MailCompletionService.class);
 	/**
 	 * Returns the formated label for a user, i.e. "Michael georges" <michael@yoursociety.com>
 	 * if the user name and firstname aren't null, michael@yoursociety.com otherwise
@@ -135,7 +138,6 @@ public class MailCompletionService {
 			return str.substring(deb+1, end).trim();
 		}
 	}
-	
 	
 	public static UserVo getUserFromDisplay(String display) {	
 		int index1 = display.indexOf("<");

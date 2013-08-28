@@ -43,7 +43,8 @@ public enum FunctionalityType {
 	UNIT_TIME(5),
 	UNIT_BOOLEAN(6),
 	UNIT_BOOLEAN_TIME(7),
-	RANGE_UNIT(8);
+	RANGE_UNIT(8),
+	UNIT_BOOLEAN_SIZE(8);
 
 	private int value;
 
@@ -56,17 +57,11 @@ public enum FunctionalityType {
 	}
 
 	public static FunctionalityType fromInt(int value) {
-        switch (value) {
-            case 0: return FunctionalityType.DEFAULT;
-            case 1: return FunctionalityType.INTEGER;
-            case 2: return FunctionalityType.STRING;
-            case 3: return FunctionalityType.UNIT;
-            case 4: return FunctionalityType.UNIT_SIZE;
-            case 5: return FunctionalityType.UNIT_TIME;
-            case 6: return FunctionalityType.UNIT_BOOLEAN;
-            case 7: return FunctionalityType.UNIT_BOOLEAN_TIME;
-            case 8: return FunctionalityType.RANGE_UNIT;
-            default : throw new IllegalArgumentException("Doesn't match an existing FunctionalityType");
+		for (FunctionalityType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
         }
+		throw new IllegalArgumentException("Doesn't match an existing FunctionalityType");
 	}
 }

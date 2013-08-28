@@ -62,7 +62,7 @@ import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.repository.UserRepository;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.EntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     
     private final AbstractDomainService abstractDomainService;
     
-    private final FunctionalityService functionalityService;
+    private final FunctionalityOldService functionalityService;
     private final PasswordService passwordService;
     
     private final EntryService entryService;
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
     		final RecipientFavouriteService recipientFavouriteService,
     		final AllowedContactRepository allowedContactRepository,
     		final MailContentBuildingService mailElementsFactory,
-    		final FunctionalityService functionalityService,
+    		final FunctionalityOldService functionalityService,
     		final AbstractDomainService abstractDomainService,
     		final PasswordService passwordService,
     		final EntryService entryService,
@@ -151,7 +151,6 @@ public class UserServiceImpl implements UserService {
 		if(domain == null) {
 			throw new BusinessException(BusinessErrorCode.DOMAIN_ID_NOT_FOUND,"Domain was not found");
 		}
-		
 		
 		User ownerUser = userRepository.findByLsUuid(ownerLogin); 
 		
@@ -906,5 +905,60 @@ public class UserServiceImpl implements UserService {
 			logger.error("Impossible to create an user entity from domain : " + domainIdentifier + ". The searchUserRecursivelyWithoutRestriction method returns null.");
 		}
 		return null;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * New implementation created to not use old tapestry version.
+	 * Destined to be more clear and to replace the old implementation when tapestry will be destroy.
+	 * 
+	 * 
+	 */
+
+	
+	private User find(User tmpUser, String domainId) throws BusinessException {
+		User user = userRepository.findByLsUuid(tmpUser.getLsUuid());
+		if (user == null) {
+			logger.debug("User " + tmpUser.getMail() + " was not found in the database. Searching in directories ...");
+			user = this.findOrCreateUser(tmpUser.getMail(), domainId);
+			if (user == null) {
+				throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Couldn't find the user : " + tmpUser.getMail() + " in domain : " + tmpUser.getDomainId());
+			}
+		}
+		logger.debug("User " + tmpUser.getMail() + " found.");
+		return user;
+	}
+	
+	@Override
+	public void updateUser(User updatedUser, String domainId, User actor) throws BusinessException {
+		User user = find(updatedUser, domainId);
+		
+		user.setFirstName(updatedUser.getFirstName());
+		user.setLastName(updatedUser.getLastName());
+		user.setRole(updatedUser.getRole());
+		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
+		user.setCanUpload(updatedUser.getCanUpload());
+		userRepository.update(user);
+		
+		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Update of a user:" + user.getMail(), user);
+		logEntryService.create(logEntry);
+	}
+	
+	
+	@Override
+	public void updateUser(Guest updatedGuest, String domainId, User actor) throws BusinessException {
+		User user = find(updatedGuest, domainId);
+		if (user.getAccountType() != AccountType.GUEST) {
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user : " + user.getMail() + " in domain : " + user.getDomainId() + " is not a guest");
+		}
+		Guest guest = (Guest) user;
+		guest.setExpirationDate(updatedGuest.getExpirationDate());
+		guest.setComment(updatedGuest.getComment());
+		guest.setRestricted(updatedGuest.isRestricted());
+		guest.setOwner(updatedGuest.getOwner());
+		
+		updateUser((User) updatedGuest, null, actor);
 	}
 }

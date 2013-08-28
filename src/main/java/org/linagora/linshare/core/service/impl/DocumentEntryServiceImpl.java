@@ -67,7 +67,7 @@ import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
 import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MimeTypeService;
 import org.linagora.linshare.core.service.VirusScannerService;
@@ -82,13 +82,13 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 	private final LogEntryService logEntryService;
 	private final AbstractDomainService abstractDomainService;
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	private final MimeTypeService mimeTypeService;
 	private final VirusScannerService virusScannerService;
 	private final MimeTypeMagicNumberDao mimeTypeIdentifier;
 
 	public DocumentEntryServiceImpl(DocumentEntryBusinessService documentEntryBusinessService, LogEntryService logEntryService, AbstractDomainService abstractDomainService,
-			FunctionalityService functionalityService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier) {
+			FunctionalityOldService functionalityService, MimeTypeService mimeTypeService, VirusScannerService virusScannerService, MimeTypeMagicNumberDao mimeTypeIdentifier) {
 		super();
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.logEntryService = logEntryService;
@@ -311,23 +311,22 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	@Override
 	public void deleteDocumentEntry(Account actor, DocumentEntry documentEntry) throws BusinessException {
+		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentEntry.getUuid());
 		try {
 			if (!isOwnerOrAdmin(actor, documentEntry.getEntryOwner())) {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
 			}
-
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
+				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. There's still existing shares.");
 			}
-
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
 
 			FileLogEntry logEntry = new FileLogEntry(actor, LogAction.FILE_DELETE, "Deletion of a file", documentEntry.getName(), documentEntry.getDocument().getSize(), documentEntry.getDocument()
 					.getType());
+
 			logEntryService.create(LogEntryService.INFO, logEntry);
 			documentEntryBusinessService.deleteDocumentEntry(documentEntry);
-
 		} catch (IllegalArgumentException e) {
 			logger.error("Could not delete file " + documentEntry.getName() + " of user " + actor.getLsUuid() + ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
@@ -336,11 +335,8 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	@Override
 	public long getUserMaxFileSize(Account account) throws BusinessException {
-
 		// if user is not in one domain = BOUM
-
 		AbstractDomain domain = abstractDomainService.retrieveDomain(account.getDomain().getIdentifier());
-
 		SizeUnitValueFunctionality userMaxFileSizeFunctionality = functionalityService.getUserMaxFileSizeFunctionality(domain);
 
 		if (userMaxFileSizeFunctionality.getActivationPolicy().getStatus()) {
@@ -516,10 +512,15 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 	private void checkSpace(long size, String fileName, Account owner) throws BusinessException {
 		// check the user quota
-		if (getAvailableSize(owner) < size) {
-			logger.info("The file  " + fileName + " is too large to fit in " + owner.getLsUuid() + " user's space");
+		if (size > getUserMaxFileSize(owner)) {
+			logger.info("The file  " + fileName + " is larger than " + owner.getLsUuid() + " user's max file size.");
 			String[] extras = { fileName };
-			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space", extras);
+			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is larger than user's max file size.", extras);
+		}
+		if (getAvailableSize(owner) < size) {
+			logger.info("The file  " + fileName + " is too large to fit in " + owner.getLsUuid() + " user's space.");
+			String[] extras = { fileName };
+			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE, "The file is too large to fit in user's space.", extras);
 		}
 	}
 

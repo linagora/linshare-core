@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-	xmlns:jaxws="http://cxf.apache.org/jaxws"
-	xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:cxf="http://cxf.apache.org/core"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -15,31 +13,30 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-	
-	
-	<!-- SOAP  -->
 
+
+	<!-- SOAP -->
 
 	<bean id="soapService" class="org.linagora.linshare.webservice.impl.SoapServiceImpl">
-		<constructor-arg ref="webServiceDocumentFacade" />
-		<constructor-arg ref="webServiceShareFacade" />
-		<constructor-arg ref="webServiceThreadFacade" />
-		<constructor-arg ref="webServiceUserFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsShareFacade" />
+		<constructor-arg ref="wsThreadFacade" />
+		<constructor-arg ref="wsUserFacade" />
 	</bean>
 	
 	<bean id="MTOMUploadSoapService" class="org.linagora.linshare.webservice.impl.MTOMUploadSoapServiceImpl">
-		<constructor-arg ref="webServiceDocumentFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
 	</bean>
-	
+
 	<bean id="soapExceptionInterceptor" class="org.linagora.linshare.webservice.interceptor.SoapExceptionInterceptor" />
 
 
 	<cxf:bus>
 		<cxf:features>
-		<!-- Could be uncommented : inbound cxf messages and outbound cxf messages are written to stdout.  -->
-<!-- 			<cxf:logging />  -->
+			<!-- Could be uncommented : inbound cxf messages and outbound cxf messages are written to stdout. -->
+			<!-- <cxf:logging /> -->
 		</cxf:features>
-		
+
 		<cxf:inInterceptors />
 		<cxf:outInterceptors />
 		<cxf:outFaultInterceptors>
@@ -52,71 +49,150 @@
 		<jaxws:outFaultInterceptors>
 			<ref bean="soapExceptionInterceptor" />
 		</jaxws:outFaultInterceptors>
-	</jaxws:endpoint>  
-	
-	
+	</jaxws:endpoint>
+
+
 	<jaxws:endpoint id="MTOMUploadEndpoint" implementor="#MTOMUploadSoapService" address="/upload">
 		<jaxws:properties>
 			<entry key="mtom-enabled" value="true" />
 			<entry key="attachment-directory" value="${webservice.attachment-directory}" />
-			<!-- data exceeding the memory threshold will be written to the directory 
-				specified in bytes -->
+			<!-- data exceeding the memory threshold will be written to the directory specified in bytes -->
 			<entry key="attachment-memory-threshold" value="${webservice.attachment-memory-threshold}" />
 		</jaxws:properties>
 		<jaxws:outFaultInterceptors>
 			<ref bean="soapExceptionInterceptor" />
 		</jaxws:outFaultInterceptors>
-	</jaxws:endpoint>  
-	
+	</jaxws:endpoint>
 
-	<!-- REST  -->
-	<bean id="documentRestService" class="org.linagora.linshare.webservice.impl.DocumentRestServiceImpl">
-		<constructor-arg ref="webServiceDocumentFacade" />
-	</bean>
-	
-	<bean id="shareRestService" class="org.linagora.linshare.webservice.impl.ShareRestServiceImpl">
-		<constructor-arg ref="webServiceShareFacade" />
-	</bean>
-	
+	<!-- Compatibility thunderbird -->
 	<bean id="pluginCompatibilityRestService" class="org.linagora.linshare.webservice.impl.PluginCompatibilityRestServiceImpl">
-		<constructor-arg ref="webServiceShareFacade" />
-		<constructor-arg ref="webServiceDocumentFacade" />
+		<constructor-arg ref="wsShareFacade" />
+		<constructor-arg ref="wsDocumentFacade" />
+	</bean>
+
+	<!-- REST - USER -->
+	
+	<bean id="authenticationRestService" class="org.linagora.linshare.webservice.user.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
+	</bean>
+
+	<bean id="documentRestService" class="org.linagora.linshare.webservice.user.impl.DocumentRestServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+	</bean>
+
+	<bean id="shareRestService" class="org.linagora.linshare.webservice.user.impl.ShareRestServiceImpl">
+		<constructor-arg ref="wsShareFacade" />
+	</bean>
+
+	<bean id="threadRestService" class="org.linagora.linshare.webservice.user.impl.ThreadRestServiceImpl">
+		<constructor-arg ref="wsThreadFacade" />
+	</bean>
+
+	<bean id="threadMemberRestService" class="org.linagora.linshare.webservice.user.impl.ThreadMemberRestServiceImpl">
+		<constructor-arg ref="wsThreadFacade" />
+		<constructor-arg ref="wsThreadMemberFacade" />
+	</bean>
+
+	<bean id="userRestService" class="org.linagora.linshare.webservice.user.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsUserFacade" />
 	</bean>
 	
-	<bean id="threadRestService" class="org.linagora.linshare.webservice.impl.ThreadRestServiceImpl">
-		<constructor-arg ref="webServiceThreadFacade" />
+	<bean id="fineUploaderService" class="org.linagora.linshare.webservice.user.impl.FineUploaderServiceImpl">
+		<constructor-arg ref="wsDocumentFacade" />
+		<constructor-arg ref="wsThreadEntryFacade" />
+	</bean>
+	
+	<bean id="CORSRestService" class="org.linagora.linshare.webservice.user.impl.CORSRestServiceImpl">
 	</bean>
 
-    <bean id="threadMemberRestService" class="org.linagora.linshare.webservice.impl.ThreadMemberRestServiceImpl">
-		<constructor-arg ref="webServiceThreadFacade" />
+	<!-- REST - ADMIN -->
+
+	<bean id="adminAuthenticationRestService" class="org.linagora.linshare.webservice.admin.impl.AuthenticationRestServiceImpl">
+		<constructor-arg ref="wsAdminGenericFacade" />
 	</bean>
 
-	<bean id="userRestService" class="org.linagora.linshare.webservice.impl.UserRestServiceImpl">
-		<constructor-arg ref="webServiceUserFacade" />
+	<bean id="adminDomainPatternRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPatternRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainPatternFacade" />
 	</bean>
+
+	<bean id="adminLdapConnectionRestService" class="org.linagora.linshare.webservice.admin.impl.LDAPConnectionRestServiceImpl">
+		<constructor-arg ref="wsAdminLDAPConnectionFacade" />
+	</bean>
+
+	<bean id="adminDomainRestService" class="org.linagora.linshare.webservice.admin.impl.DomainRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainFacade" />
+		<constructor-arg ref="wsAdminFunctionalityFacade" />
+	</bean>
+
+	<bean id="adminDomainPolicyRestService" class="org.linagora.linshare.webservice.admin.impl.DomainPolicyRestServiceImpl">
+		<constructor-arg ref="wsAdminDomainPolicyFacade" />
+	</bean>
+
+	<bean id="adminUserRoleRestService" class="org.linagora.linshare.webservice.admin.impl.UserRoleRestServiceImpl">
+		<constructor-arg ref="wsAdminUserRoleFacade" />
+	</bean>
+
+	<bean id="adminUserRestService" class="org.linagora.linshare.webservice.admin.impl.UserRestServiceImpl">
+		<constructor-arg ref="wsAdminUserFacade" />
+	</bean>
+
+	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
 	<jaxrs:server id="restContainer" address="/">
 		<jaxrs:serviceBeans>
+			<ref bean="authenticationRestService" />
 			<ref bean="documentRestService" />
 			<ref bean="shareRestService" />
+			<ref bean="fineUploaderService" />
 			<ref bean="pluginCompatibilityRestService" />
 			<ref bean="threadRestService" />
 			<ref bean="threadMemberRestService" />
 			<ref bean="userRestService" />
+			<ref bean="CORSRestService" />
+			<ref bean="adminAuthenticationRestService" />
+			<ref bean="adminDomainPatternRestService" />
+			<ref bean="adminLdapConnectionRestService" />
+			<ref bean="adminDomainRestService" />
+			<ref bean="adminDomainPolicyRestService" />
+			<ref bean="adminUserRoleRestService" />
+			<ref bean="adminUserRestService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="json" value="application/json" />
 			<entry key="xml" value="application/xml" />
 		</jaxrs:extensionMappings>
 		<jaxrs:providers>
+			<!--  ExceptionMappers. -->
+			<bean id="businessExceptionMapper" class="org.linagora.linshare.webservice.interceptor.BusinessExceptionMapper" />
+			<bean id="genericExceptionMapper" class="org.linagora.linshare.webservice.interceptor.GenericExceptionMapper" />
+			<bean class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper">
+				<property name="printStackTrace" value="false" />
+			</bean>
+			<!-- Json provider for serialisation -->
 			<ref bean="jsonProvider" />
 		</jaxrs:providers>
 		<jaxrs:features>
-			<!--<cxf:logging /> -->
+<!-- 			<cxf:logging /> -->
 		</jaxrs:features>
+		<jaxrs:inInterceptors>
+			<!-- For debug only : print input message -->
+<!-- 			<ref bean="logInbound" /> -->
+			<!-- This interceptor is designed to store some context properties in message exchange context for timingOutInterceptor -->
+			<bean id="timingInInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingInInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<!-- For debug only : print output  message -->
+             <ref bean="logOutbound" /> 
+			<!-- This interceptor is designed compute request execution time.-->
+			<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
+		</jaxrs:outInterceptors>
+		<jaxrs:inFaultInterceptors>
+		</jaxrs:inFaultInterceptors>
+		<jaxrs:outFaultInterceptors>
+		</jaxrs:outFaultInterceptors>
 	</jaxrs:server>
-	
-	<!-- enable json with jackson (not the default jettison)-->
-	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
 
+	<!-- enable json with jackson (not the default jettison) -->
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
 </beans>

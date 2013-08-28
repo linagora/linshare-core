@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.view.tapestry.pages.history;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -44,14 +45,12 @@ import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
-import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
@@ -100,15 +99,8 @@ public class Index {
 	@Environmental
 	private FormSupport formSupport;
 	
-
-	@InjectComponent
-	private TextArea targetMails;
-	
 	@Component
 	private Form formReport;
-
-    @InjectPage
-    private org.linagora.linshare.view.tapestry.pages.history.Index historyPage;
 
     @InjectPage
     private org.linagora.linshare.view.tapestry.pages.administration.Audit auditPage;
@@ -136,7 +128,7 @@ public class Index {
 	/**
 	 * the list of traces matching the request
 	 */
-	@Persist 
+	@Persist("flash") 
 	@Property
 	private List<DisplayableLogEntryVo> logEntries;
 	
@@ -149,7 +141,7 @@ public class Index {
 	private boolean displayGrid;
 	
 	@Property
-	@Persist
+	@Persist("flash")
 	private LogCriteriaBean criteria;
 	
 	@SessionState
@@ -301,6 +293,11 @@ public class Index {
     public Object onActionFromApplicationAudit() {
         return auditPage;
     }
+    
+	public String getActionDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
+		return formatter.format(logEntry.getActionDate().getTime());
+	}
 
 	public CriterionMatchMode getFileNameMatchModeStart() { return CriterionMatchMode.START; }
 	public CriterionMatchMode getFileNameMatchModeAnywhere() { return CriterionMatchMode.ANYWHERE; }

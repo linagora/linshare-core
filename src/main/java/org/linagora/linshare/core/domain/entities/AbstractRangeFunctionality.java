@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+
 public abstract class AbstractRangeFunctionality<U,T extends Unit<?>> extends Functionality {
 	protected U min;
 
@@ -104,6 +105,7 @@ public abstract class AbstractRangeFunctionality<U,T extends Unit<?>> extends Fu
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object clone() {
 		AbstractRangeFunctionality<U,T> func = null;
       	func = (AbstractRangeFunctionality<U,T>) super.clone();

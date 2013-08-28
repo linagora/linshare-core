@@ -54,7 +54,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.GuestRepository;
 import org.linagora.linshare.core.service.DocumentEntryService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.LogEntryService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
@@ -69,7 +69,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	
 	private final GuestRepository guestRepository;
 	
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	
 	private final ShareEntryBusinessService shareEntryBusinessService;
 	
@@ -86,7 +86,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
     private final MailContentBuildingService mailContentBuildingService;
 
 
-	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityService functionalityService, ShareEntryBusinessService shareEntryBusinessService,
+	public ShareEntryServiceImpl(GuestRepository guestRepository, FunctionalityOldService functionalityService, ShareEntryBusinessService shareEntryBusinessService,
 		ShareExpiryDateService shareExpiryDateService, LogEntryService logEntryService, DocumentEntryService documentEntryService, NotifierService notifierService,
 		MailContentBuildingService mailElementsFactory, DocumentEntryBusinessService documentEntryBusinessService) {
 	super();
@@ -115,8 +115,9 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			updateGuestExpirationDate(recipient);
 		}
 		
-		ShareLogEntry logEntry = new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file");
-	    logEntryService.create(logEntry);
+	    logEntryService.create(new ShareLogEntry(sender, createShare, LogAction.FILE_SHARE, "Sharing of a file"));
+	    logEntryService.create(new ShareLogEntry(
+	    		recipient, LogAction.SHARE_RECEIVED, "Reveicing a shared file", createShare, sender));
 	    
 		return createShare;
 	}
@@ -329,7 +330,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share.");
 			}
 			ShareLogEntry logEntryActor = new ShareLogEntry(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing", shareEntry, shareEntry.getEntryOwner());
-			ShareLogEntry logEntryTarget = new ShareLogEntry(shareEntry.getEntryOwner(), LogAction.SHARE_DOWNLOAD, "Sharing donwloaded by " + actor.getMail(), shareEntry, actor);
+			ShareLogEntry logEntryTarget = new ShareLogEntry(shareEntry.getEntryOwner(), LogAction.SHARE_DOWNLOADED, "Sharing donwloaded by " + actor.getMail(), shareEntry, actor);
 			logEntryService.create(logEntryActor);
 			logEntryService.create(logEntryTarget);
 			shareEntryBusinessService.addDownload(shareEntry);

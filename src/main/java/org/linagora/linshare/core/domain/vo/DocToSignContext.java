@@ -49,10 +49,11 @@ public enum DocToSignContext {
     }
 
     public static DocToSignContext fromInt(int value) {
-        switch(value) {
-            case 0 : return DOCUMENT; //list of simple documents
-            case 1 : return SHARED; //shared documents
-            default : throw new IllegalArgumentException("not a valid context, check the type of document");
+		for (DocToSignContext context : values()) {
+			if (context.value == value) {
+				return context;
+			}
         }
+        throw new IllegalArgumentException("Not a valid context, check the type of document");
     }
 }

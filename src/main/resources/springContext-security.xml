@@ -46,10 +46,15 @@
 			
 			<sec:filter-chain pattern="/webservice/?_wadl" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
+			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
+            <sec:filter-chain pattern="/webservice/rest/**"
+                filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+            <sec:filter-chain pattern="/webservice/fineuploader/**"
+                filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
 			<sec:filter-chain pattern="/webservice/**"
-				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter ,filterSecurityInterceptor" />
+				filters="httpSessionIntegrationFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 
 			<sec:filter-chain pattern="/index.form" filters="httpSessionIntegrationFilter" />
 			<sec:filter-chain pattern="/j_security_check" filters="httpSessionIntegrationFilter,authenticationProcessingFilter" />
@@ -79,7 +84,6 @@
 
 	<!-- FILTERS DEFINITION -->
 	<bean id="httpSessionIntegrationFilter" class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter" />
-
 
 	<bean id="authenticationProcessingFilter" class="org.linagora.linshare.auth.DomainAuthenticationProcessingFilter">
 
@@ -140,6 +144,7 @@
 				<sec:intercept-url pattern="/**/administration/domains/**" access="ROLE_SUPERADMIN" />
 				<sec:intercept-url pattern="/**/administration/" access="ROLE_ADMIN" />
 				<sec:intercept-url pattern="/**/testpopup/" access="ROLE_ADMIN" />
+				<sec:intercept-url pattern="/**/webservice/rest/admin/**" access="ROLE_ADMIN" />
 				<sec:intercept-url pattern="/**" access="ROLE_AUTH" />
 			</sec:filter-security-metadata-source>
 		</property>
@@ -157,11 +162,13 @@
 		</property>
 	</bean>
 
-	<bean id="restAuthenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+	<bean id="restAuthenticationEntryPoint" class="org.linagora.linshare.auth.LinShareBasicAuthenticationEntryPoint">
 		<property name="realmName">
 			<value>Name Of Your LinShare Realm</value>
 		</property>
 	</bean>
+
+	<bean id="CORSRequestFilter" class="org.linagora.linshare.auth.CORSRequestFilter" />
 
 	<bean id="basicExceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
 		<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint" />
@@ -201,6 +208,7 @@
 	<bean id="domainAuthenticationProvider" class="org.linagora.linshare.auth.DomainAuthProviderDao">
 		<property name="userService" ref="userService" />
 		<property name="abstractDomainService" ref="abstractDomainService" />
+		<property name="logEntryService" ref="logEntryService" />
 	</bean>
 
 	<!-- AUTHORIZATIONS MANAGEMENT -->

@@ -1286,20 +1286,22 @@ div.dialog button img {
 * Objects > Button link 2  (gray squared)
 */
 
-.btn {
-	min-width: 22px;
-	min-height:22px;
-	margin : 3px;
-	padding: 3px;
-	background-color: rgb(243,242,235);
-	border-bottom: 1px solid #E6DFCF;
-	border-right: 1px solid #E6DFCF;
-	color: #A68C53;
-	text-align: center;
-	font-weight: bold;
-	font-size: 16px;
-	text-decoration: none;
-}
+/*
+ *.btn {
+ *    min-width: 22px;
+ *    min-height:22px;
+ *    margin : 3px;
+ *    padding: 3px;
+ *    background-color: rgb(243,242,235);
+ *    border-bottom: 1px solid #E6DFCF;
+ *    border-right: 1px solid #E6DFCF;
+ *    color: #A68C53;
+ *    text-align: center;
+ *    font-weight: bold;
+ *    font-size: 16px;
+ *    text-decoration: none;
+ *}
+ */
 
 
 /*--------------------------------------------------------------------------
@@ -1375,7 +1377,7 @@ table.t-data-grid {
 }
 
 /* Page content */
-
+#thread #content h2,
 #content h2 {
 	margin: .75em auto;
 	color: #3D697F;
@@ -1914,6 +1916,7 @@ DIV.t-palette-controls BUTTON {
 }
 #lists #content fieldset.title_criteria_zone,
 #domains #content fieldset.title_criteria_zone,
+#thread #content fieldset.title_criteria_zone,
 #history #pageContent fieldset.title_criteria_zone,
 #audit #pageContent fieldset.title_criteria_zone {
 	float: left;
@@ -3915,6 +3918,19 @@ input.ck-kaptcha {
 /* QuickShareWindow */
 #quickShareWindowContent #panelUpload_content h2 {
 	display: none;
+}
+
+/* ThreadFileUploadWindow */
+#threadFileUploadWindowContent #panelUpload_content h2 {
+	display: none;
+}
+
+/* no title displayed */
+.notitle h2 {
+    display: none !important;
+}
+.notitle hr:first-of-type {
+    display: none !important;
 }
 
 

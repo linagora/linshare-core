@@ -456,13 +456,13 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		Guest user1 = new Guest("John","Doe","user1@linpki.org");
 		user1.setDomain(rootDomain);
 		
-		String oldPassword = new String("password");
+		String oldPassword = "password";
 		
 		user1.setPassword(
 				HashUtils.hashSha1withBase64(oldPassword.getBytes()));
 		
 		userService.saveOrUpdateUser(user1);
-		String newPassword = new String("newPassword");
+		String newPassword = "newPassword";
 		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(oldPassword.getBytes())));
 		userService.changePassword(user1.getLsUuid(), "user1@linpki.org", oldPassword, newPassword);
 		Assert.assertTrue(user1.getPassword().equals(HashUtils.hashSha1withBase64(newPassword.getBytes())));
@@ -489,7 +489,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		guest.setOwner(user1);
 		guest.setExternalMailLocale(guestDomain.getDefaultLocale());
 		guest.setLocale(guestDomain.getDefaultLocale());
-		String oldPassword = new String("password222");
+		String oldPassword = "password222";
 		
 		guest.setPassword(
 				HashUtils.hashSha1withBase64(oldPassword.getBytes()));
@@ -565,7 +565,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
 		boolean test = false;
 		for (AllowedContact allowedContact : listAllowedContact) {
-			if(allowedContact.getContact().getLsUuid() == guest2.getLsUuid()){
+			if(allowedContact.getContact().getLsUuid().equals(guest2.getLsUuid())){
 				test=true;
 			}	
 		}
@@ -612,7 +612,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		List<AllowedContact> listAllowedContact= allowedContactRepository.findByOwner(guest);
 		boolean test = false;
 		for (AllowedContact allowedContact : listAllowedContact) {
-			if(allowedContact.getContact().getLsUuid() == guest2.getLsUuid()){
+			if(allowedContact.getContact().getLsUuid().equals(guest2.getLsUuid())){
 				test=true;
 			}	
 		}

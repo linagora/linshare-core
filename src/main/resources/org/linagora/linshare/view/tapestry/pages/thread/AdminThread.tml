@@ -3,6 +3,7 @@
         xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
         xmlns:p="tapestry:parameter">
 
+
     <div id="content">
         <h1>${message:pages.thread.admin.title} : ${currentThread.name}</h1>
 
@@ -13,16 +14,15 @@
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
-                <li>
-	                <a href="#" class="button" onclick="window_confirm.showCenter(true);">
-	                    <span><img src="${asset:context:images/icons/delete-small.png}" alt=""/> ${message:pages.thread.admin.deleteButton}</span>
+            	    <a href="#" class="button" onclick="window_confirm.showCenter(true);">
+	                    <span><img src="${asset:context:images/icons/delete-small.png}" alt=""/> 
+	                    ${message:pages.thread.admin.deleteButton}</span>
 	                </a>
-                </li>
                 <li>
 	                <t:actionLink class="button" t:id="editThread" t:zone="threadEditFormZone"
                             title="${message:pages.thread.admin.renameButton}">
                         <span onclick="threadEditWindow.showCenter(true)">
-                            <img src="${asset:context:images/icons/edit.png}" alt=""/>
+                            <img src="${asset:context:images/icons/edit-button.png}" alt=""/>
                             ${message:pages.thread.admin.renameButton}
                         </span>
                     </t:actionLink>
@@ -30,21 +30,58 @@
             </ul>
         </div>
 
+		<br></br>
+		<h2> ${message:pages.thread.admin.index}</h2>
+
         <div id="pageContent">
-            <t:grid source="members" row="member" include="fullName,mail" add="type,edit,delete" >
+        	<form t:type="form" t:id="formSearch">
+        		<table>
+					<tr>
+						<td>
+							<t:textfield t:id="searchMembers" t:validate="required" t:value="recipientsSearchMember" t:size="50" t:mixins="autocomplete" 
+				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
+				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
+				    	</td>
+				    	<td>
+        					<input type="submit" value="${message:global.button.search}"/>
+        				</td>
+        				<td>
+        					<input t:type="Submit" style="margin-right:340px" t:id="stop" value="${message:global.button.reset}"/>
+       					</td>
+        			</tr>
+        			 <tr>
+        				<td>
+							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
+				                    <t:radio t:id="all" />&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>
+				                    ${message:global.space}
+				                    <t:radio t:id="admin" />&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>
+				                    ${message:global.space}			                    
+				                    <t:radio t:id="simple" />&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>
+				                    ${message:global.space}
+				               		<t:radio t:id="restricted"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>
+				                    ${message:global.space}
+			               	</t:radiogroup>
+			        	</td>
+			        </tr>
+			        </table>
+			    </form>
+
+			${message:pages.thread.notification}
+            <div class="clear"></div>
+            <t:grid source="members" row="member" rowsPerPage="10" include="fullName,mail" add="type,edit,delete" >
                 <p:typeCell>
                     <t:delegate to="type" />
 
 		            <t:block id="adminBlock">
-                        <span><img src="${asset:context:images/icons/usertype-threadadmin.png}" alt="${message:pages.thread.userType.admin}" title="${message:pages.thread.userType.admin}"/></span>
+                        <span><img src="${asset:context:images/icons/usertype-small-admin.png}" alt="${message:pages.thread.userType.admin}" title="${message:pages.thread.userType.admin}"/></span>
 		            </t:block>
 
                     <t:block id="userBlock">
-                        <span><img src="${asset:context:images/icons/usertype-internalsimple.png}" alt="${message:pages.thread.userType.user}" title="${message:pages.thread.userType.user}"/></span>
+                        <span><img src="${asset:context:images/icons/usertype-small-normal.png}" alt="${message:pages.thread.userType.user}" title="${message:pages.thread.userType.user}"/></span>
 		            </t:block>
 
                     <t:block id="restrictedUserBlock">
-                        <span><img src="${asset:context:images/icons/usertype-userrestricted.png}" alt="${message:pages.thread.userType.userRestricted}" title="${message:pages.thread.userType.userRestricted}"/></span>
+                        <span><img src="${asset:context:images/icons/usertype-small-restricted.png}" alt="${message:pages.thread.userType.userRestricted}" title="${message:pages.thread.userType.userRestricted}"/></span>
 		            </t:block>
                 </p:typeCell>
 
@@ -55,7 +92,7 @@
                 <p:editCell>
                     <t:actionLink t:id="editMember" t:context="${member.lsUuid}" t:zone="memberEditFormZone">
                         <span onclick="memberEditWindow.showCenter(true)">
-                            <img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}"
+                            <img src="${asset:context:images/icons/edit-button.png}" alt="${message:global.button.edit}"
                                 title="${message:pages.thread.editUserType}" />
                         </span>
                     </t:actionLink>
@@ -64,7 +101,7 @@
                 <p:deleteCell>
                     <t:actionLink t:id="deleteMember" t:context="${member.lsUuid}" t:zone="zoneConfirmDelete">
                         <span onclick="window_confirm_0.showCenter(true);">
-                            <img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}"
+                            <img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}"
                                 title="${message:pages.thread.member.delete}" />
                         </span>
                     </t:actionLink>
@@ -72,9 +109,57 @@
             </t:grid>
         </div><!-- id="list" -->
 
-        <t:pageLink page="thread/ThreadContent" class="button" title="${message:pages.thread.admin.back}">
+      		<div class="clear"></div>
+			<form t:type="form" t:id="form">
+				<fieldset style="width: 1000;" class="title_criteria_zone" id="userCriterion">
+				<legend align="top" class="palette">${message:pages.thread.addUser}</legend>		
+					<table>
+						<tr>
+							<td>
+							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
+				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
+				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
+				    		</td>
+				    		<td>
+        					<input type="submit" value="${message:global.button.search}"/>
+        					</td>
+        					<td>
+        					<input t:type="Submit" style="margin-right:340px" t:id="reset" value="${message:global.button.reset}"/>
+        					</td>
+        				</tr>
+        			</table>
+        			<t:if t:test="displayGrid">
+        				<t:grid source="userSearchResults"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
+	    				   <t:parameter name="inListCell">
+			  					<t:if t:test="isInList">
+			  						<img src="${asset:context:images/icons/validate-mini.png}"/>
+			  					<p:else>
+			  						<img src="${asset:context:images/icons/absent-small.png}"/>
+			  					</p:else>
+								</t:if>
+			 				</t:parameter>
+			 				<t:parameter name="addRemoveCell">
+			 					<t:if t:test="isInList">
+			 						<t:actionLink t:id="deleteUser" context="[result.domainIdentifier,result.mail]"
+			 	 						title="${message:pages.thread.member.delete}">
+										<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
+									</t:actionLink>
+			  					<p:else>
+			  						<t:actionLink t:id="addUser" context="[result.domainIdentifier,result.mail]"
+			 	 						title="${message:pages.thread.addUser}">
+										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.thread.adduser}" />
+									</t:actionLink>
+			  					</p:else>
+								</t:if>
+			 				</t:parameter>
+	    				</t:grid>
+        			</t:if>
+				</fieldset>
+			</form>
+	<div class="clear"></div>
+        <t:actionLink t:id="back" class="button" title="${message:pages.thread.admin.back}">
             <span><img src="${asset:context:images/icons/cancel.png}" alt="" /> ${message:pages.thread.admin.back}</span>
-        </t:pageLink>
+        </t:actionLink>
 
 	    <!-- Popups -->
 
@@ -105,7 +190,7 @@
 	    <!-- Delete member confirm popup -->
         <t:zone t:id="zoneConfirmDelete" />
         <t:confirmPopup t:eventName="deleteMemberPopupEvent"
-            t:messageLabel="${message:pages.thread.admin.confirmDelete}"/>
+            t:messageLabel="${message:pages.thread.admin.member.confirmDelete}"/>
 
 		<!-- <t:threadEditForm t:editThreadWithUuid="${currentThread.lsUuid}" /> -->
     </div>

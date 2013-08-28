@@ -77,7 +77,7 @@ public class Parameters {
     /* ***********************************************************
      *                      Injected services
      ************************************************************ */
-
+    
 	@Inject
 	private Messages messages;
     @Inject
@@ -227,6 +227,25 @@ public class Parameters {
 	@Property
 	private String customLogo;
 
+	//	CUSTOM_LOGO_LINK
+	@Persist
+	@Property
+	private StringValueFunctionalityVo customLogoLinkFunctionality;
+	@Property
+	private boolean showCustomLogoLink = false;
+	@Property
+	private String customLogoLink;
+
+	
+	//	CUSTOM_NOTIFICATION_URL
+	@Persist
+	@Property
+	private StringValueFunctionalityVo customNotificationUrlFunctionality;
+	@Property
+	private boolean showCustomNotificationUrl = false;
+	@Property
+	private String customNotificationUrl;
+	
 	
 	//	COMPLETION
 	@Persist
@@ -274,6 +293,7 @@ public class Parameters {
 		Collections.sort(functionalities);
 		
 		for (FunctionalityVo functionality : functionalities) {
+			
 			if(functionality.getIdentifier().equals(FunctionalityNames.FILESIZE_MAX)) {
 				userMaxFileSizeFunctionality = (SizeValueFunctionalityVo)functionality; 
 				showUserMaxFileSize = true;
@@ -326,6 +346,14 @@ public class Parameters {
 				customLogoFunctionality = (StringValueFunctionalityVo) functionality;
 				showCustomLogo = true;
 				customLogo = customLogoFunctionality.getValue();
+			} else if(functionality.getIdentifier().equals(FunctionalityNames.LINK_LOGO)) {
+				customLogoLinkFunctionality = (StringValueFunctionalityVo) functionality;
+				showCustomLogoLink = true;
+				customLogoLink = customLogoLinkFunctionality.getValue();	
+			} else if(functionality.getIdentifier().equals(FunctionalityNames.NOTIFICATION_URL)) {
+				customNotificationUrlFunctionality = (StringValueFunctionalityVo) functionality;
+				showCustomNotificationUrl = true;
+				customNotificationUrl = customNotificationUrlFunctionality.getValue();	
 			} else if(functionality.getIdentifier().equals(FunctionalityNames.COMPLETION)) {
 				completionFunctionality = (IntegerValueFunctionalityVo) functionality;
 				showCompletion = true;
@@ -375,6 +403,12 @@ public class Parameters {
 		}
 		if(customLogoFunctionality != null ){
 			customLogoFunctionality.setValue(customLogo);
+		}
+		if(customLogoLinkFunctionality != null ){
+			customLogoLinkFunctionality.setValue(customLogoLink);
+		}
+		if(customNotificationUrlFunctionality != null ){
+			customNotificationUrlFunctionality.setValue(customNotificationUrl);
 		}
 		if(completionFunctionality != null ){
 			completionFunctionality.setValue(autoCompleteThreshold);

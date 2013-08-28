@@ -44,7 +44,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface ThreadEntryService {
 
 	
-	public ThreadEntry createThreadEntry(Account actor, Thread thread, InputStream stream, Long size, String fileName) throws BusinessException;
+	public ThreadEntry createThreadEntry(Account actor, Thread thread, InputStream stream, String filename) throws BusinessException;
 	
 	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException;
 	

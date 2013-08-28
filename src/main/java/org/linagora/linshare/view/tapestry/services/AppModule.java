@@ -231,7 +231,7 @@ public class AppModule
                     throws IOException
             {
                 long startTime = System.currentTimeMillis();
-				log.info(String.format("%s (XHR:%s) : %s", request.getMethod(), request.isXHR(), request.getPath()));
+                log.debug(String.format("%s (XHR:%s) : %s", request.getMethod(), request.isXHR(), request.getPath()) + " ...");
                 try
                 {
                     // The responsibility of a filter is to invoke the corresponding method
@@ -243,8 +243,7 @@ public class AppModule
                 finally
                 {
                     long elapsed = System.currentTimeMillis() - startTime;
-
-                    log.info(String.format("Request time: %d ms", elapsed));
+                    log.info(String.format("%s (XHR:%s) : %s : Request time: %d ms", request.getMethod(), request.isXHR(), request.getPath(), elapsed));
                 }
             }
         };
@@ -355,7 +354,7 @@ public class AppModule
     
 	public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
 	{
-	  configuration.add("/webservice/.*");
+		configuration.add("/webservice/.*");
 	}
     
     

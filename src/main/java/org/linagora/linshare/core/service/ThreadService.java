@@ -50,7 +50,7 @@ public interface ThreadService {
 
 	public List<Thread> findAll();
 
-	public void create(Account actor, String name) throws BusinessException;
+	public Boolean create(Account actor, String name) throws BusinessException;
 	
 	public ThreadMember getThreadMemberById(long id) throws BusinessException;
 	
@@ -89,4 +89,6 @@ public interface ThreadService {
 	public void deleteAllTags(User user, Thread thread) throws BusinessException;
 
 	public void rename(User actor, Thread thread, String threadName) throws BusinessException;
+	
+	public List<Thread> findAllWhereMemberByDate(User actor);
 }

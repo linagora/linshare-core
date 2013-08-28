@@ -48,10 +48,11 @@ public enum CriterionMatchMode {
 	}
 
 	public static CriterionMatchMode fromInt(int value) {
-        switch (value) {
-            case 0: return CriterionMatchMode.START;
-            case 1: return CriterionMatchMode.ANYWHERE;
-            default : throw new IllegalArgumentException("Doesn't match an existing MatchMode");
+		for (CriterionMatchMode mode : values()) {
+			if (mode.value == value) {
+				return mode;
+			}
         }
+        throw new IllegalArgumentException("Doesn't match an existing MatchMode");
 	}
 }
