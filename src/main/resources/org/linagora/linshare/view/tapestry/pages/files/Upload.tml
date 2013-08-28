@@ -17,10 +17,15 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
             return (jQuery("#progress").val() == 0);
         }
 
+        var startSpinner = function() {
+            jQuery(".spinner").show();
+            jQuery("#formShareSubmit").hide();
+        }
+
         var trySubmit = function() {
             if (uuids.length != 0) {
                 if (jQuery("#is_submit").is(":checked")) {
-                    jQuery(".spinner").show();
+                    startSpinner();
                     if (jQuery("#progress").val() == 0) {
                         jQuery("#submitShare").click();
                     }
@@ -29,7 +34,8 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         }
 
         var requestSubmit = function() {
-            jQuery("#is_submit").attr("checked", true);
+            if (uuids.length + jQuery("#progress").val() != 0)
+                jQuery("#is_submit").attr("checked", true);
             trySubmit();
         }
 
@@ -199,8 +205,8 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         <img src="${asset:context:images/icons/share-on-small.png}"
                         alt="" />${message:global.button.share.cap}</span>
                     </a>
+                    <div class="spinner"></div>
                 </div> <!--form-actions-->
-                <div class="spinner"></div>
             </fieldset>
         </t:form>
     </div>
