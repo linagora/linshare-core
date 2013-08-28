@@ -33,6 +33,7 @@
 			 </t:grid>
 			</p:else>
 		</t:if>
+		<br></br>
 		<div class="clear"></div>
 		
 			<form t:type="form" t:id="contactForm">
@@ -62,7 +63,7 @@
 			</form>
 			
 	  <div class="clear"></div>
-
+<br></br>
 			<form t:type="form" t:id="SearchUserForm">
 				<fieldset style="width: 1000;" class="title_criteria_zone" id="userCriterion">
 				<legend align="top" class="palette">${message:pages.lists.addUser}</legend>		
