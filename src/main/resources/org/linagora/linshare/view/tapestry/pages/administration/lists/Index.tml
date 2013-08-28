@@ -17,7 +17,7 @@
 							<t:textfield t:id="search" t:validate="required" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}"/>
 						</td>
 						<td>
-						    <t:linkSubmit style="margin-left:10px" class="button"><span>${message:global.button.search}</span></t:linkSubmit>
+						    <input type="submit" value="${message:global.button.search}"/>
 						</td>
 					</tr>
 				</table>

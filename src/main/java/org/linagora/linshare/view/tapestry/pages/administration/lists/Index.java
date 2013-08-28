@@ -115,8 +115,6 @@ public class Index {
 	public void init() throws BusinessException {
 		if (inSearch == false) {
 			lists = new ArrayList<MailingListVo>();
-			targetLists = "*";
-			criteriaOnSearch = "all";
 		}
 		if (!lists.isEmpty()) {
 			if (grid.getSortModel().getSortConstraints().isEmpty()) {

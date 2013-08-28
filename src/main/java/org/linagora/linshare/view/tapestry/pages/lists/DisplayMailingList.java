@@ -176,6 +176,7 @@ public class DisplayMailingList {
 		lastName = null;
 		inModify = false;
 		oldEmail = null;
+		contacts = null;
 		
 		if(loginUser.isSuperAdmin()){
 			return indexAdmin;
