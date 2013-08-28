@@ -1,7 +1,9 @@
 .spinner {
+    display:inline-block;
+    vertical-align:middle;
     height:18px;
     width:18px;
-    margin:0 auto;
+    margin:0 25px;
     position:relative;
     -webkit-animation: rotation .6s infinite linear;
     -moz-animation: rotation .6s infinite linear;
