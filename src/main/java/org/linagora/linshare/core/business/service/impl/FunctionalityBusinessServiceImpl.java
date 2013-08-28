@@ -216,4 +216,27 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		return false;
 	}
 
+	
+	private  Functionality getFunctionalityEntityByIdentifiers(AbstractDomain domain, String functionalityId) {
+		Assert.notNull(domain);
+		Assert.notNull(functionalityId);
+		Functionality fonc = functionalityRepository.findById(domain, functionalityId);
+		if (fonc == null && domain.getParentDomain() != null) {
+			fonc = getFunctionalityEntityByIdentifiers(domain.getParentDomain(), functionalityId);
+		}
+		return fonc;
+	}
+	
+	@Override
+	public Functionality getFunctionality(String domainId, String functionalityId) {
+		Assert.notNull(domainId);
+		Assert.notNull(functionalityId);
+		
+		AbstractDomain domain = abstractDomainRepository.findById(domainId);
+		Functionality functionality = getFunctionalityEntityByIdentifiers(domain, functionalityId);
+		// Never returns the entity when we try to modify the functionality.
+		// The current functionality returned could belong to a parent domain. 
+		// In this case, the functionality will be clone, linked to the current domain and the updated by the FonctionalityBusiness update method.
+		return (Functionality)functionality.clone();
+	}
 }
