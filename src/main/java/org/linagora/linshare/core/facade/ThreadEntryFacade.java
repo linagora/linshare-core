@@ -184,4 +184,6 @@ public interface ThreadEntryFacade {
 	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,String criteriaOnSearch, String recipientsSearchUser) throws BusinessException;
 	
 	public List<ThreadVo> getListOfLastModifiedThreads(UserVo userVo);
+	
+	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
 }

@@ -62,7 +62,12 @@
         		</table>
         	</form>
 			${message:pages.thread.notification}
+			<br></br><br></br>
+			<div class="clear"></div>
             <t:grid source="members" row="member" rowsPerPage="10" include="fullName,mail" add="type,edit,delete" >
+                        					<p:empty>
+        						${message:pages.thread.adminThread.search}
+        					</p:empty> 
                 <p:typeCell>
                     <t:delegate to="type" />
 
@@ -91,7 +96,7 @@
                         </span>
                     </t:actionLink>
                 </p:editCell>
-
+			 	<t:if t:test="isDeletable">
                 <p:deleteCell>
                     <t:actionLink t:id="deleteMember" t:context="${member.lsUuid}" t:zone="zoneConfirmDelete">
                         <span onclick="window_confirm_0.showCenter(true);">
@@ -100,9 +105,10 @@
                         </span>
                     </t:actionLink>
                 </p:deleteCell>
+                </t:if>
             </t:grid>
         </div><!-- id="list" -->
-
+			<br></br>
       		<div class="clear"></div>
 			<form t:type="form" t:id="form">
 				<fieldset style="width: 1000;" class="title_criteria_zone" id="userCriterion">
@@ -122,8 +128,13 @@
         					</td>
         				</tr>
         			</table>
+        			<br></br>
         			<t:if t:test="displayGrid">
         				<t:grid source="userSearchResults"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
+	    				    <p:empty>
+        						${message:pages.thread.adminThread.search}
+        					</p:empty> 
+	    				   
 	    				   <t:parameter name="inListCell">
 			  					<t:if t:test="isInList">
 			  						<img src="${asset:context:images/icons/validate-mini.png}"/>
@@ -134,10 +145,12 @@
 			 				</t:parameter>
 			 				<t:parameter name="addRemoveCell">
 			 					<t:if t:test="isInList">
+			 						<t:if t:test="isDeletable">
 			 						<t:actionLink t:id="deleteUser" context="[result.domainIdentifier,result.mail]"
 			 	 						title="${message:pages.thread.member.delete}">
 										<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
 									</t:actionLink>
+									</t:if>
 			  					<p:else>
 			  						<t:actionLink t:id="addUser" context="[result.domainIdentifier,result.mail]"
 			 	 						title="${message:pages.thread.addUser}">

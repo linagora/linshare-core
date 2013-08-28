@@ -188,7 +188,7 @@ public class Index {
     	if(inSearch){
     		threads = threadEntryFacade.getListOfThreadFromSearchByUser(userVo, criteriaOnSearch, recipientsSearchUser);
     	} else {
-    		threads = threadEntryFacade.getAllThread();
+    		threads = null;
     	}
     	firstConnect = true;
     	return null;
