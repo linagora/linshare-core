@@ -203,5 +203,6 @@
 		<constructor-arg ref="accountService" />
         <constructor-arg ref="abstractDomainService" />
         <constructor-arg ref="functionalityService" />
+        <constructor-arg ref="functionalityOldService" />
 	</bean>		
 </beans>

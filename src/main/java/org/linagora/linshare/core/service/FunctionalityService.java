@@ -14,4 +14,6 @@ public interface FunctionalityService {
 	boolean activationPolicyIsMutable(Functionality f, String domain);
 	
 	boolean configurationPolicyIsMutable(Functionality f, String domain);
+	
+	Functionality getFunctionality(String domainId, String functionalityId);
 }

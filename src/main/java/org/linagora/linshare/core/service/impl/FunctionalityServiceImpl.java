@@ -40,4 +40,11 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 		Assert.notNull(domain);
 		return functionalityBusinessService.configurationPolicyIsMutable(f, domain);
 	}
+
+	@Override
+	public Functionality getFunctionality(String domainId, String functionalityId) {
+		Assert.notNull(domainId);
+		Assert.notNull(functionalityId);
+		return functionalityBusinessService.getFunctionality(domainId, functionalityId);
+	}
 }
