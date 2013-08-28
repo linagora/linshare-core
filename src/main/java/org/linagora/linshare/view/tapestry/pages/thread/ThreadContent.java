@@ -42,7 +42,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.CleanupRender;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
@@ -51,6 +52,7 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
 import org.linagora.linshare.core.domain.vo.ThreadViewAssoVo;
@@ -59,13 +61,17 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.components.ThreadFileUploadPopup;
+import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Import(library = { "../../components/jquery/jquery-1.7.2.js", "../../components/fineuploader/fineuploader-3.6.4.js", "../../components/bootstrap/js/bootstrap.js" }, stylesheet = { "../../components/fineuploader/fineuploader-3.6.4.css" })
 public class ThreadContent {
 	private static final Logger logger = LoggerFactory.getLogger(ThreadContent.class);
-	
+
+	// illimited file size
+	private static final long DEFAULT_MAX_FILE_SIZE = 0;
+
 	@SessionState
 	@Property
 	private ShareSessionObjects shareSessionObjects;
@@ -80,13 +86,13 @@ public class ThreadContent {
 
 	@Persist
 	private int depth;
-	
+
 	@Property
 	private String threadName;
-
-	@InjectComponent
-	private ThreadFileUploadPopup threadFileUploadPopup;
 	
+	@Property
+	private String threadUuid;
+
 	@InjectPage
 	private AdminThread adminThread;
 
@@ -95,26 +101,32 @@ public class ThreadContent {
 
 	@Persist
 	private String selectedThreadEntryId;
-	
+
 	@Property
 	private DefaultMutableTreeNode root;
-	
+
 	@Property
 	private List<DefaultMutableTreeNode> children;
-	
+
 	@Property
 	private DefaultMutableTreeNode currentChild;
-	
+
 	@Property
 	private DefaultMutableTreeNode currentLeaf;
 
 	@Inject
 	private Block case0, case1, case2, case3;
 
-
+	@Property
+	private String contextPath;
+	
 	/* ***********************************************************
-	 *                      Injected services
-	 ************************************************************ */
+	 * Injected services
+	 * ***********************************************************
+	 */
+
+	@Inject
+	private RequestGlobals requestGlobals;
 
 	@Inject
 	private Messages messages;
@@ -122,14 +134,16 @@ public class ThreadContent {
 	@Inject
 	private ThreadEntryFacade threadEntryFacade;
 
+	@Inject
+	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	@SuppressWarnings("unchecked")
 	@SetupRender
 	public void setupRender() throws BusinessException {
 		logger.debug("Setup Render begins");
-		
+
 		threadName = selectedThread.getName();
-		threadFileUploadPopup.setMyCurrentThread(selectedThread);
+		threadUuid = selectedThread.getLsUuid();
 		depth = selectedThread.getView().getDepth();
 
 		List<ThreadViewAssoVo> listViewTag = selectedThread.getView().getThreadViewAssos();
@@ -171,18 +185,24 @@ public class ThreadContent {
 		}
 		children = root != null ? Collections.list(root.children()) : new ArrayList<DefaultMutableTreeNode>();
 	}
-	
+
+	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css" })
+	@CleanupRender
+	void cleanupRender() {
+	}
+
 	public Object onActivate() {
 		if (selectedThread == null) {
 			return Index.class;
 		}
+		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
 		return null;
 	}
 
 	@AfterRender
 	public void afterRender() {
 	}
-	
+
 	public Object onActionFromAdmin() {
 		if (!this.getAdmin())
 			return null;
@@ -198,7 +218,7 @@ public class ThreadContent {
 	public List<DefaultMutableTreeNode> getLeaves() {
 		return Collections.list(currentChild.children());
 	}
-	
+
 	public boolean getCanUpload() {
 		try {
 			return threadEntryFacade.userCanUpload(userVo, selectedThread);
@@ -250,14 +270,14 @@ public class ThreadContent {
 	}
 
 	/*
-	 *  Mandatory for page generation
+	 * Mandatory for page generation
 	 */
 	public void setMySelectedThread(ThreadVo selectedThread) {
 		this.selectedThread = selectedThread;
 	}
 
 	/*
-	 *  Mandatory for page generation
+	 * Mandatory for page generation
 	 */
 	public void setDepth(int depth) {
 		this.depth = depth;
@@ -271,7 +291,7 @@ public class ThreadContent {
 		this.selectedThreadEntryId = selectedThreadEntry;
 	}
 
-	@OnEvent(value="eventDeleteThreadEntry")
+	@OnEvent(value = "eventDeleteThreadEntry")
 	public void deleteThreadEntry() {
 		ThreadEntryVo selectedVo = null;
 		try {
@@ -280,9 +300,19 @@ public class ThreadContent {
 			shareSessionObjects.removeDocument(selectedVo);
 			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"), selectedVo.getFileName()));
 		} catch (BusinessException e) {
-			shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"), selectedVo.getFileName()) );
+			shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"), selectedVo.getFileName()));
 			logger.debug(e.toString());
 		}
+	}
+
+	public long getMaxFileSize() {
+		// try {
+		// return documentFacade.getUserAvailableSize(userVo);
+		// } catch (BusinessException e) {
+		// logger.error("Can not set user maximum size for a file : "+
+		// e.getLocalizedMessage());
+		// }
+		return DEFAULT_MAX_FILE_SIZE;
 	}
 
 	Object onException(Throwable cause) {

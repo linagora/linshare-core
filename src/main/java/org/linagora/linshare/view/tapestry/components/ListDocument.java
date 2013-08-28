@@ -303,6 +303,9 @@ public class ListDocument {
 	private List<DocumentVo> docs;
 
     private Logger logger = LoggerFactory.getLogger(ListDocument.class);
+    
+    @Property
+    private boolean showUpd;
 	
 	/***************************************************************************
 	 * Phase render
@@ -324,7 +327,7 @@ public class ListDocument {
 		actionbutton = ActionFromBarDocument.NO_ACTION;
 		activeSignature = documentFacade.isSignatureActive(user);
 		activeEncipherment = documentFacade.isEnciphermentActive(user);
-
+		showUpd = functionalityFacade.isEnableUpdateFiles(user.getDomainIdentifier());
 		// if(model==null)
 		initModel();
 		buildTooltipValues();
@@ -996,5 +999,5 @@ public class ListDocument {
 
 		}
 	}
-
+	
 }

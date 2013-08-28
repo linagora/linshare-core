@@ -77,7 +77,24 @@ public class Index {
     private ThreadVo currentThread;
     
     @Property
+    private boolean fromReset;
+    
+    @Property
+    @Persist
+    private boolean inSearch;
+    
+    @Persist
+    @Property
+    private String recipientsSearchThread;
+    
+    @Property
+    private int autocompleteMin = 3;
+    
+    @Property
     private boolean showThreadTab;
+    
+    @Property
+    private boolean showCreateButton;
     
 
     /* ***********************************************************
@@ -93,12 +110,15 @@ public class Index {
     @Inject
     private FunctionalityFacade functionalityFacade; 
 
-
     @SetupRender
-    public void setupRender() {
-    	logger.debug("setupRender()");
-    	threads = threadEntryFacade.getAllMyThread(userVo);
+    public void init() throws BusinessException{
+    	if(!inSearch){
+        	threads = threadEntryFacade.getListOfLastModifiedThreads(userVo);
+    	}
     	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
+    	showCreateButton = functionalityFacade.isEnableCreateThread(userVo.getDomainIdentifier());
+    	recipientsSearchThread = "*";
+    	
     }
 
     public Object onActionFromShowThreadContent(String lsUuid) {
@@ -120,6 +140,11 @@ public class Index {
     @AfterRender
     public void afterRender() {
     }
+    
+    public void onSelectedFromStop() {
+    	fromReset = true;
+    	inSearch = false;
+     }
     
     /**
 	 * Format the creation date for good displaying using DateFormatUtils of
@@ -157,10 +182,40 @@ public class Index {
 		return 0;
 	}
 	
+    
+	public Object onSuccessFromFormSearch() throws BusinessException{	
+		if(fromReset){
+			threads = threadEntryFacade.getAllMyThread(userVo);
+		} else {
+			if(threads != null){
+				threads.clear();
+			}
+			if(recipientsSearchThread.equals("*")){
+				threads = threadEntryFacade.getAllMyThread(userVo);
+			} else {
+				List<ThreadVo> lists = threadEntryFacade.getAllMyThread(userVo);
+					
+				for(ThreadVo current : lists){
+					if(current.getName().contains(recipientsSearchThread)){
+						threads.add(current);
+					}
+				}
+			}
+			inSearch = true;
+		}
+		return null;
+	}
+	
+    public List<String> onProvideCompletionsFromSearchThread(String input) throws BusinessException {
+    	return threadEntryFacade.completionOnThreads(userVo, input);
+    }
+    
+	
     public Object onException(Throwable cause) {
         shareSessionObjects.addError(messages.get("global.exception.message"));
         logger.error(cause.getMessage());
         cause.printStackTrace();
         return this;
     }
+    
 }

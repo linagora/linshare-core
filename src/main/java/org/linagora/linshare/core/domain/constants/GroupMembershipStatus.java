@@ -48,12 +48,12 @@ public enum GroupMembershipStatus {
 	}
 
 	public static GroupMembershipStatus fromInt(int value) {
-        switch (value) {
-            case 0: return GroupMembershipStatus.WAITING_APPROVAL;
-            case 1: return GroupMembershipStatus.ACCEPTED;
-            case 2: return GroupMembershipStatus.REJECTED;
-            default : throw new IllegalArgumentException("Doesn't match an existing GroupMembershipStatus");
-        }
+		for (GroupMembershipStatus status : values()) {
+			if (status.value == value) {
+				return status;
+			}
+		}
+        throw new IllegalArgumentException("Doesn't match an existing GroupMembershipStatus");
 	}
 
 }

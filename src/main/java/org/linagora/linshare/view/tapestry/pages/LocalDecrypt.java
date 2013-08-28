@@ -43,8 +43,10 @@ import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.linagora.linshare.core.domain.objects.FileInfo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.TechnicalErrorCode;
 import org.linagora.linshare.core.exception.TechnicalException;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.view.tapestry.objects.CustomStreamResponse;
 import org.linagora.linshare.view.tapestry.services.Templating;
 import org.slf4j.Logger;
@@ -73,29 +75,28 @@ public class LocalDecrypt {
 	@Inject @Symbol("javawebstart.decrypt.url.suffixcodebase")
 	private String suffixcodebase;
 	
-	
-	@Inject @Symbol("linshare.info.url.base")
-	private String linshareInfoUrlBase;
-	
-	
 	@Inject
 	@Path("context:templates/jws/localDecrypt.jnlp")
 	private Asset jwsTemplate;
+
+	@Inject
+	FunctionalityOldService functionalityService;
 	
 	@Inject
 	private Templating templating;
 	
 	
-	public CustomStreamResponse onActivate() {
+	public CustomStreamResponse onActivate() throws BusinessException {
 		
 		try {
 			String tplcontent = templating.readFullyTemplateContent(jwsTemplate.getResource().openStream());
 			
-			Map<String,String> templateParams=new HashMap<String, String>();
+			String linshareInfoUrl = functionalityService.getCustomNotificationURLInRootDomain();
 			
+			Map<String,String> templateParams=new HashMap<String, String>();
 			//result codebase for JNLP is an url like http://localhost:8080/linshare/applet to download jwsDecrypt.jar
-			StringBuffer jwsUrlToPut = new StringBuffer(linshareInfoUrlBase);
-			if(!linshareInfoUrlBase.endsWith("/")) jwsUrlToPut.append('/');
+			StringBuffer jwsUrlToPut = new StringBuffer(linshareInfoUrl);
+			if(!linshareInfoUrl.endsWith("/")) jwsUrlToPut.append('/');
 			jwsUrlToPut.append(suffixcodebase); //application jws directory: applet in this case
 			if(suffixcodebase.endsWith("/")) jwsUrlToPut.deleteCharAt(jwsUrlToPut.length()-1);
 			

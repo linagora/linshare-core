@@ -47,10 +47,11 @@ public enum UnitType {
     }
 
     public static UnitType fromInt(int value) {
-        switch(value) {
-            case 0 : return TIME;
-            case 1 : return SIZE;
-            default : throw new IllegalArgumentException("Doesn't match an existing type of unit");
-        }
+		for (UnitType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
+		}
+        throw new IllegalArgumentException("Doesn't match an existing type of unit");
     }
 }

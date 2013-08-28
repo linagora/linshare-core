@@ -48,12 +48,11 @@ public enum GroupMemberType {
 	}
 
 	public static GroupMemberType fromInt(int value) {
-        switch (value) {
-            case 0: return GroupMemberType.OWNER;
-            case 1: return GroupMemberType.MANAGER;
-            case 2: return GroupMemberType.MEMBER;
-            case 3: return GroupMemberType.WAITING_APPROVAL;
-            default : throw new IllegalArgumentException("Doesn't match an existing GroupMemberType");
-        }
+		for (GroupMemberType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
+		}
+        throw new IllegalArgumentException("Doesn't match an existing GroupMemberType");
 	}
 }

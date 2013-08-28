@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.vo.SubDomainVo;
+import org.linagora.linshare.webservice.dto.DomainDto;
 
 public class SubDomain extends AbstractDomain {
 
@@ -50,6 +51,10 @@ public class SubDomain extends AbstractDomain {
 
 	public SubDomain(SubDomainVo subDomain) {
 		super(subDomain);
+	}
+
+	public SubDomain(DomainDto domainDto, AbstractDomain parent) {
+		super(domainDto, parent);
 	}
 
 	@Override

@@ -33,9 +33,39 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.GuestDomain;
+import org.linagora.linshare.core.domain.entities.RootDomain;
+import org.linagora.linshare.core.domain.entities.SubDomain;
+import org.linagora.linshare.core.domain.entities.TopDomain;
+import org.linagora.linshare.webservice.dto.DomainDto;
+
 public enum DomainType {
 
-	ROOTDOMAIN(0), TOPDOMAIN(1), SUBDOMAIN(2), GUESTDOMAIN(3);
+	ROOTDOMAIN(0) {
+		@Override
+		public RootDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
+			throw new IllegalAccessError("Should not be used with root domain");
+		}
+	},
+	TOPDOMAIN(1) {
+		@Override
+		public TopDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
+			return new TopDomain(domainDto, parent);
+		}
+	},
+	SUBDOMAIN(2) {
+		@Override
+		public SubDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
+			return new SubDomain(domainDto, parent);
+		}
+	},
+	GUESTDOMAIN(3) {
+		@Override
+		public GuestDomain getDomain(DomainDto domainDto, AbstractDomain parent) {
+			return new GuestDomain(domainDto, parent);
+		}
+	};
 
 	private int value;
 
@@ -48,12 +78,13 @@ public enum DomainType {
 	}
 
 	public static DomainType fromInt(int value) {
-        switch (value) {
-            case 0: return DomainType.ROOTDOMAIN;
-            case 1: return DomainType.TOPDOMAIN;
-            case 2: return DomainType.SUBDOMAIN;
-            case 3: return DomainType.GUESTDOMAIN;
-            default : throw new IllegalArgumentException("Doesn't match an existing DomainType");
-        }
+		for (DomainType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match an existing DomainType");
 	}
+	
+	public abstract AbstractDomain getDomain(DomainDto domainDto, AbstractDomain parent);
 }

@@ -34,6 +34,7 @@
 package org.linagora.linshare.auth;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import org.springframework.util.Assert;
-import java.util.Arrays;
 
 /**
  * This Spring Security filter is designed to filter authentication

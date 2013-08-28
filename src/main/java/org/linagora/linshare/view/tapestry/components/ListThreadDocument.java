@@ -139,7 +139,12 @@ public class ListThreadDocument {
 
     @Property
     private String checkBoxGroupUuid;
+    
+    @Property
+    private boolean canUpload;
 
+    @Property
+    private boolean isAdmin;
 
     /***********************************
      * Service injection
@@ -210,6 +215,10 @@ public class ListThreadDocument {
     @SuppressWarnings("unchecked")
     @SetupRender
     public void init() throws BusinessException {
+    	
+		isAdmin = threadEntryFacade.userIsAdmin(user, threadVo);
+		canUpload = threadEntryFacade.userCanUpload(user, threadVo);
+    	
         if (listThreadEntries == null)
             return;
         Collections.sort(listThreadEntries);
@@ -245,7 +254,7 @@ public class ListThreadDocument {
             throw new BusinessException(BusinessErrorCode.INVALID_UUID,	"invalid uuid for this user");
         } else {
         	try {
-                InputStream stream = threadEntryFacade.retrieveFileStream(current, user);
+                InputStream stream = threadEntryFacade.retrieveFileStream(user, current);
                 return new FileStreamResponse(current, stream);
 			} catch (Exception e) {
 				logger.error("File don't exist anymore, please remove it");
@@ -306,16 +315,6 @@ public class ListThreadDocument {
     /***************************************************************************
      * Other methods
      **************************************************************************/
-    
-    
-    public boolean isDeletable() {
-    	try {
-    		return  null != threadEntryFacade.findById(user, threadEntry.getIdentifier());
-    	} catch(BusinessException e) {
-    		logger.debug(e.toString());
-    		return false;
-    	}
-    }
     
     
     /**
@@ -392,25 +391,6 @@ public class ListThreadDocument {
         return result;
     }
 
-    public boolean getCanUpload(){
-    	try {
-    		logger.debug(String.valueOf(threadEntryFacade.userCanUpload(user, threadVo)));
-			return threadEntryFacade.userCanUpload(user, threadVo);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-    }
-    
-    public boolean getIsAdmin(){
-    	try {
-			return threadEntryFacade.userIsAdmin(user, threadVo);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-    }
-    
     public Link getThumbnailPath() {
         return componentResources.createEventLink("thumbnail", threadEntry.getIdentifier());
     }

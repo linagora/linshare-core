@@ -49,12 +49,11 @@ public enum DomainAccessRuleType {
 	}
 
 	public DomainAccessRuleType fromInt(int value) {
-        switch (value) {
-            case 0: return DomainAccessRuleType.ALLOW_ALL;
-            case 1: return DomainAccessRuleType.DENY_ALL;
-            case 2: return DomainAccessRuleType.ALLOW;
-            case 3: return DomainAccessRuleType.DENY;
-            default : throw new IllegalArgumentException("Doesn't match an existing DomainAccessRuleType");
-        }
+		for (DomainAccessRuleType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match an existing DomainAccessRuleType");
 	}
 }

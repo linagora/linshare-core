@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.webservice.dto.UserDto;
 
 /** Guest is a user that is not registered in LDAP server.
  */
@@ -59,6 +60,13 @@ public class Guest extends User {
         this.restricted = false;
         this.comment = "";
     }
+
+	public Guest(UserDto userDto) {
+		super(userDto.getFirstName(), userDto.getLastName(), userDto.getMail());
+		this.restricted = userDto.isRestricted();
+		this.comment = userDto.getComment();
+		this.canCreateGuest = false;
+	}
 
 	@Override
 	public AccountType getAccountType() {

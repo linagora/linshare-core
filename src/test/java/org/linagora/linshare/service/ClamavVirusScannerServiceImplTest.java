@@ -73,7 +73,7 @@ public class ClamavVirusScannerServiceImplTest {
 		}
 		String clamavHost = (String) properties.get("test.virusscanner.clamav.host");
 		Integer clamavPort = new Integer((String) properties.get("test.virusscanner.clamav.port"));
-		fileNameToCheck = (String) properties.getProperty("test.virusscanner.clamav.filetocheck");
+		fileNameToCheck = properties.getProperty("test.virusscanner.clamav.filetocheck");
 		virusScannerService = new ClamavVirusScannerServiceImpl(clamavHost,clamavPort.intValue());
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}

@@ -58,18 +58,18 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FunctionalityFacadeImpl implements FunctionalityFacade {
 
 	protected final Logger logger = LoggerFactory.getLogger(FunctionalityFacadeImpl.class);
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 	private final AbstractDomainService abstractDomainService;
 	
 	
-	public FunctionalityFacadeImpl(FunctionalityService functionalityService, AbstractDomainService abstractDomainService) {
+	public FunctionalityFacadeImpl(FunctionalityOldService functionalityService, AbstractDomainService abstractDomainService) {
 		super();
 		this.functionalityService = functionalityService;
 		this.abstractDomainService = abstractDomainService;
@@ -135,7 +135,7 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 				
 				if(f.getUnit().getUnitType().equals(UnitType.TIME)) {
 					TimeUnitClass timeUnit = (TimeUnitClass)f.getUnit();
-					res.add(new TimeValueBooleanFunctionalityVo(functionality.getIdentifier(), domainIdentifier, f.getValue(), timeUnit.getUnitValue(), f.isBool()));
+					res.add(new TimeValueBooleanFunctionalityVo(functionality.getIdentifier(), domainIdentifier, f.getValue(), timeUnit.getUnitValue(), f.getBool()));
 				} else {
 					logger.error("Unknown Unit boolean Functionality Type for : " + functionality.getIdentifier());
 				}
@@ -259,6 +259,45 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	}
 
 	@Override
+	public boolean isEnableUpdateFiles(String domainIdentifier){
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality updateFilesFunctionality = functionalityService.getUpdateFilesFunctionality(domain);
+			return updateFilesFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find update files functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isEnableCustomLogoLink(String domainIdentifier){
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality customLogoLinkFunctionality = functionalityService.getCustomLinkLogoFunctionality(domain);
+			return customLogoLinkFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find custom logo link functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isEnableCreateThread(String domainIdentifier){
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality createThreadFunctionality = functionalityService.getThreadCreationPermissionFunctionality(domain);
+			return createThreadFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find thread creation functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean isEnableHelpTab(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
@@ -296,7 +335,6 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 		}
 		return false;
 	}
-
 
 	@Override
 	public boolean getDefaultRestrictedGuestValue(String domainIdentifier) {

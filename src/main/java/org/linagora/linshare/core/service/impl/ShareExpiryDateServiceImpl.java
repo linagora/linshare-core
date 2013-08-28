@@ -41,16 +41,16 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.DocumentEntry;
 import org.linagora.linshare.core.domain.entities.ShareExpiryRule;
 import org.linagora.linshare.core.domain.objects.TimeUnitBooleanValueFunctionality;
-import org.linagora.linshare.core.service.FunctionalityService;
+import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.ShareExpiryDateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShareExpiryDateServiceImpl implements ShareExpiryDateService {
 	private static final Logger logger = LoggerFactory.getLogger(ShareExpiryDateServiceImpl.class);
-	private final FunctionalityService functionalityService;
+	private final FunctionalityOldService functionalityService;
 
-	public ShareExpiryDateServiceImpl(FunctionalityService functionalityService) {
+	public ShareExpiryDateServiceImpl(FunctionalityOldService functionalityService) {
 		this.functionalityService = functionalityService;
 	}
 	

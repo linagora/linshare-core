@@ -68,5 +68,4 @@ public class UnitRangeFunctionality extends AbstractRangeFunctionality<Integer,U
 		this.minUnit.updateUnitFrom(u.getMinUnit());
 		this.maxUnit.updateUnitFrom(u.getMaxUnit());
 	}
-	
 }

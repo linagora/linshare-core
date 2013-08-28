@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import org.linagora.linshare.webservice.dto.DomainPolicyDto;
 
 public class DomainPolicy {
 	
@@ -49,6 +50,17 @@ public class DomainPolicy {
 
 	public DomainPolicy() {
 		super();
+	}
+
+	public DomainPolicy(String identifier, DomainAccessPolicy policy) {
+		super();
+		this.identifier = identifier;
+		this.domainAccessPolicy = policy;
+	}
+
+	public DomainPolicy(DomainPolicyDto policy) {
+		this.identifier = policy.getIdentifier();
+		this.description = policy.getDescription();
 	}
 	
 	public DomainPolicy(String identifier,String description,DomainAccessPolicy domainAccessPolicy) {
@@ -79,12 +91,6 @@ public class DomainPolicy {
 
 	public void setDomainAccessPolicy(DomainAccessPolicy domainAccessPolicy) {
 		this.domainAccessPolicy = domainAccessPolicy;
-	}
-
-	public DomainPolicy(String identifier, DomainAccessPolicy policy) {
-		super();
-		this.identifier = identifier;
-		this.domainAccessPolicy = policy;
 	}
 
 	public long getPersistenceId() {

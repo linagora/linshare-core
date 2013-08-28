@@ -137,7 +137,7 @@ public class ShareLogEntry extends FileLogEntry {
 	 * This constructor is used for Share Download logging
 	 */
 	public ShareLogEntry(Account actor, LogAction logAction, String description, ShareEntry shareEntry, Account target) {
-		this(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing", shareEntry.getDocumentEntry().getName(),
+		this(actor, logAction, "Download of a sharing", shareEntry.getDocumentEntry().getName(),
 				shareEntry.getDocumentEntry().getSize(), shareEntry.getDocumentEntry().getType(),
 				shareEntry.getEntryOwner(), shareEntry.getExpirationDate());
 	}

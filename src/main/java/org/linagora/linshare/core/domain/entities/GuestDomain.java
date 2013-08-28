@@ -35,6 +35,7 @@ package org.linagora.linshare.core.domain.entities;
 
 import org.linagora.linshare.core.domain.constants.DomainType;
 import org.linagora.linshare.core.domain.vo.GuestDomainVo;
+import org.linagora.linshare.webservice.dto.DomainDto;
 
 public class GuestDomain extends AbstractDomain {
 
@@ -47,6 +48,10 @@ public class GuestDomain extends AbstractDomain {
 
 	public GuestDomain(String identifier, String label) {
 		super(identifier, label);
+	}
+
+	public GuestDomain(DomainDto domainDto, AbstractDomain parent) {
+		super(domainDto, parent);
 	}
 
 	@Override

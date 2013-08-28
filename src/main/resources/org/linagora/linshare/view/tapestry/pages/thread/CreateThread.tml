@@ -28,7 +28,7 @@
                 <br/>
                 <br/>
                 <div class="button">
-                    <t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-small.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
+                    <t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-button.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
                     <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
                 </div>
             </form>

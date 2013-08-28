@@ -130,7 +130,6 @@ public class ActivationPolicy {
         }
 
 		activationPolicies = functionalityFacade.getAllActivationPolicy(identifier);
-
 		return null;
 	}
 

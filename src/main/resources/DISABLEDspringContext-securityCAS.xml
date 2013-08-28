@@ -191,6 +191,7 @@
        <bean id="domainAuthenticationProvider" class="org.linagora.linshare.auth.DomainAuthProviderDao">
            <property name="userService" ref="userService"/>
            <property name="abstractDomainService" ref="abstractDomainService"/>
+           <property name="logEntryService" ref="logEntryService" />
        </bean>
 
        <!--     AUTHORIZATIONS MANAGEMENT   -->
