@@ -5,7 +5,7 @@
  *
  * Language: all
  * Encoding: UTF-8
- * 2013-03-19, LINAGORA Group
+ * 2013-08-28, LINAGORA
  */
 
 
@@ -285,7 +285,6 @@ strong {
 	text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	-o-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	-moz-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
-	-icab-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	-khtml-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	-webkit-text-shadow: 2px 2px 1px rgba(0,0,0,.10);
 	font-size: 1.8em;
@@ -301,8 +300,8 @@ strong {
 #users #content h1 {
 	background-image: url("../images/theme0/icon-heading-users.png");
 }
-#groups #content h1 {
-	background-image: url("../images/theme0/icon-heading-groups.png");
+#thread #content h1 {
+	background-image: url("../images/theme0/icon-heading-thread.png");
 }
 #history #content h1 {
 	background-image: url("../images/theme0/icon-heading-history.png");
@@ -326,7 +325,7 @@ strong {
 	background-image: url("../images/theme0/icon-heading-help.png");
 }
 #exception #content h1 {
-	background-image: url(../images/theme0/icon-heading-exception.png);
+	background-image: url("../images/theme0/icon-heading-exception.png");
 }
 #error #content h1 {
 	padding-left: 0px;
@@ -391,7 +390,6 @@ strong {
 	box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 	-o-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 	-moz-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
-	-icab-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 	-khtml-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 	-webkit-box-shadow: 3px 3px 3px rgba(0,0,0,.30);
 }
@@ -555,7 +553,6 @@ strong {
 	border-radius: 3px;
 	-o-border-radius: 3px;
 	-moz-border-radius: 3px;
-	-icab-border-radius: 3px;
 	-khtml-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	background-color: #FCCFD7 !important;
@@ -836,7 +833,6 @@ div#rights a {
 	border-radius: 12px;
 	-o-border-radius: 12px;
 	-moz-border-radius: 12px;
-	-icab-border-radius: 12px;
 	-khtml-border-radius: 12px;
 	-webkit-border-radius: 12px;
 	color: #3D697F;
@@ -2176,7 +2172,6 @@ div#blocDL ul li {
 	border-radius: .5em;
 	-o-border-radius: 3px;
 	-moz-border-radius: .3em;
-	-icab-border-radius: 3px;
 	-khtml-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	background-color: #EEE;
