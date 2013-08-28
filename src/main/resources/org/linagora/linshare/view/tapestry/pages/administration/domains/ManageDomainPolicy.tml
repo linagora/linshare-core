@@ -66,7 +66,7 @@
             			${message:pages.administration.domains.index.domainPolicy.help2}
             		</p:else>	
             	</t:if>
-            		<br></br>
+            		<br></br><br></br>
             		<input type="submit"  value="${message:global.button.validate}"/>
             	</fieldset>
 		</t:form>	

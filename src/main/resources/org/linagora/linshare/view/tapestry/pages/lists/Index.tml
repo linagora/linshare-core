@@ -1,14 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="lists" t:currentHighlight="lists"
+<t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="thread" t:currentHighlight="lists"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 	
 	<!-- Main content -->
 	
 		<div id="content">
-
-		<!-- Page content -->
-
-		<div id="pageContent">
 
 		<h1>${message:components.myborderlayout.list.title}</h1>
 		<br></br><br></br>
@@ -16,9 +12,9 @@
 			<span><img src="${asset:context:images/icons/icon-list-mini.png}" alt=""/>
 			${message:pages.lists.create}</span>
 		</t:pageLink>
-		
-		<br></br><br></br><br></br>
 
+				  <div class="clear"></div>
+					<br></br>
 				<fieldset class="title_criteria_zone" id="searchCriterion">
 			<legend align="top" class="palette">${message:global.button.search}</legend>
 					<t:form id="form">
@@ -28,7 +24,7 @@
 							<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}" t:validate="required"/>
 						</td>
 						<td>
-						    <t:linkSubmit style="margin-left:10px" class="button"><span>${message:global.button.search}</span></t:linkSubmit>
+						     <input type="submit" value="${message:global.button.search}"/>
 						</td>
 					</tr>
 				</table>
@@ -91,7 +87,6 @@
 	    </t:grid>
 	    </p:else>
 		</t:if>
-	    		</div>
 	    
 		</div><!-- id="content" -->
 	

@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="lists" t:currentHighlight="lists"
+<t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="thread" t:currentHighlight="lists"
 	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
 	
 	<!-- Main content -->
@@ -41,7 +41,8 @@
             </t:if>
         	<t:label for="visibility"/>:&nbsp;
         	<select t:type="select" t:id="visibility"></select>
-             <div class="clear"></div>		
+             <div class="clear"></div>	
+             <br></br>	
         	<p><input type="submit"  value="${message:global.button.validate}"/></p>
 		</fieldset>
         </t:form>         

@@ -104,15 +104,23 @@
 			  					</p:else>
 								</t:if>
 			 				</t:parameter>
+			 				<p:empty>
+			 					${message:pages.lists.searchUser.empty}
+			 				</p:empty>
 	    				</t:grid>
         			</t:if>
 				</fieldset>
 			</form>
 		<p:else>
-		<t:grid source="contacts" rowsPerPage="15" include="firstName,lastName,mail"></t:grid>
+		<t:grid source="contacts" rowsPerPage="15" include="firstName,lastName,mail">
+		<p:empty>
+			${message:pages.lists.display.isEmpty}
+		</p:empty>
+		</t:grid>
 		</p:else>
 		</t:if>
 	  <div class="clear"></div>
+	  		<br></br>
 		<t:actionLink t:id="back" class="button">
 		<span>${message:pages.thread.admin.back}</span>
 		</t:actionLink>

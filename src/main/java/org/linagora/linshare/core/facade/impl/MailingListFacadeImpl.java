@@ -21,17 +21,19 @@ import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MailingListFacadeImpl implements MailingListFacade {
 	
+	Logger logger = LoggerFactory.getLogger(MailingListFacadeImpl.class);
 	private final MailingListService mailingListService;
 	private final UserService userService;
 	private final AbstractDomainService abstractDomainService;
 	private final AccountService accountService;
 
 	public MailingListFacadeImpl(MailingListService mailingListService,UserService userService,AbstractDomainService abstractDomainService,AccountService accountService) {
-		
 		super();
 		this.mailingListService = mailingListService;
 		this.userService = userService;
@@ -220,7 +222,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 				elements.add(completeName);
 			} else if (criteriaOnSearch.equals("private") && mailingListVo.isPublic() == false) {
 				elements.add(completeName);
-			} else {
+			} else if(criteriaOnSearch.equals("all")){
 				elements.add(completeName);
 			}
 		}
@@ -243,6 +245,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 					} else {
 						lists = performSearch(targetLists, loginUser);
 					}
+			}
 					if (criteriaOnSearch.equals("public") || criteriaOnSearch.equals("private")) {
 						List<MailingListVo> finalList = new ArrayList<MailingListVo>(lists);
 						lists.clear();
@@ -255,7 +258,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 							}
 						}
 					} 
-				}
 		} else {
 			return new ArrayList<MailingListVo>();
 		}
