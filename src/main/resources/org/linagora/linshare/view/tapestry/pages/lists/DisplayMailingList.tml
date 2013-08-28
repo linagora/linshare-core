@@ -79,7 +79,7 @@
         				</tr>
         			</table>
         			
-        			
+        			<br></br>
         			<t:if t:test="displayGrid">
         				<t:grid source="results"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
 	    					<t:parameter name="inListCell">
