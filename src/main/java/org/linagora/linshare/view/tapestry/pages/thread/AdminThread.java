@@ -325,4 +325,7 @@ public class AdminThread {
 		return "all"; 
 	}
 	
+	public boolean getIsDeletable() throws BusinessException {
+		return threadEntryFacade.memberIsDeletable(userLoggedIn, currentThread);
+	}
 }

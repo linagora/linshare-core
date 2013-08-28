@@ -706,16 +706,14 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			res.add(new ThreadVo(thread));
 		}
 		return res;
-		/*Calendar calendar=Calendar.getInstance();
-		calendar.add(Calendar.DATE,-15);
-		List<ThreadVo> finalList = new ArrayList<ThreadVo>();
-		List<ThreadVo> allMyThread = getAllMyThread(userVo);
-		for(ThreadVo threadVo : allMyThread){
-			if((calendar.getTime().compareTo(threadVo.getModificationDate()) == -1) || (calendar.getTime().compareTo(threadVo.getModificationDate()) == -0)) {
-				finalList.add(threadVo);
-			}
+	}
+	
+	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo) throws BusinessException{
+		List<ThreadMemberVo> threadMembers = getThreadMembers(actorVo, threadVo);
+		if(threadMembers.size() == 1){
+			return false;
 		}
-		return finalList;*/
+		return true;
 	}
 	
  }
