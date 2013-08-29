@@ -236,18 +236,18 @@ public class AdminThread {
 		}
 	}
 
-	public void onSelectedFromStop() {
-		inSearch = false;
-	}
+    public void onSuccessFromResetSearch() {
+        inSearch = false;
+     }
+    
+     public void onSuccessFromResetSearchByUser() {
+		displayGrid = false;
+		recipientsSearch = null;
+     }
 
 	public void onSuccessFromForm() throws BusinessException {
 		userSearchResults = threadEntryFacade.searchAmongUsers(userLoggedIn, recipientsSearch);
 		displayGrid = true;
-	}
-
-	public void onSelectedFromReset() {
-		displayGrid = false;
-		recipientsSearch = null;
 	}
 
 	public boolean getIsInList() throws BusinessException {

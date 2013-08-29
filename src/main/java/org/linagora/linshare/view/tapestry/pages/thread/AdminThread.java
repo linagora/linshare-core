@@ -121,7 +121,6 @@ public class AdminThread {
 	@Property
 	private String recipientsSearch;
 
-    
     @Persist
     @Property
     private String criteriaOnSearch;
@@ -154,9 +153,7 @@ public class AdminThread {
 	@Property
 	private UserVo result;
 
-	/*
-	 * Assuming currentThread isn't be null
-	 */
+
 	@SetupRender
 	public void init() {
 		if (!inSearch) {
@@ -275,20 +272,19 @@ public class AdminThread {
 		}
 	}
 
-	public void onSelectedFromStop() {
-		inSearch = false;
-	}
-
+    public void onSuccessFromResetSearch() {
+        inSearch = false;
+     }
+    
+     public void onSuccessFromResetSearchByUser() {
+		displayGrid = false;
+		recipientsSearch = null;
+     }
 	public void onSuccessFromForm() throws BusinessException {
 		userSearchResults = threadEntryFacade.searchAmongUsers(userLoggedIn, recipientsSearch);
 		displayGrid = true;
 	}
-
-	public void onSelectedFromReset() {
-		displayGrid = false;
-		recipientsSearch = null;
-	}
-
+	
 	public boolean getIsInList() throws BusinessException {
 		// check if user from searchList is thread member
 		return threadEntryFacade.userIsMember(result, currentThread);
