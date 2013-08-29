@@ -4,24 +4,6 @@
         xmlns:p="tapestry:parameter">
 
     <!-- Main content -->
-
- <script type="text/javascript">
-		function setOptions(chosen) {
-			if(chosen) {
-				document.getElementById("stop").disabled=true;
-			} else {
-				document.getElementById("stop").disabled=false;
-			}
-		}
-		
-		function setOption(chosen) {
-			if(chosen) {
-				document.getElementById("reset").disabled=true;
-			} else {
-				document.getElementById("reset").disabled=false;
-			}
-		}
-</script>
     <div id="content">
 
         <h1>${message:pages.thread.index.title}</h1>
@@ -31,65 +13,69 @@
         
                <div id="pageContent">
                <h2> ${message:pages.thread.admin.index.title}</h2>
-               <form t:type="form" t:id="formSearch" name="formSearch">
                	<fieldset  class="title_criteria_zone" id="userCriterion">
 				<legend align="top" class="palette">${message:pages.thread.SearchByName}</legend>	
         		<table>
 					<tr>
+					<form t:type="form" t:id="formSearch" >
 						<td>
 							<t:textfield t:id="searchThread" t:validate="required" t:value="recipientsSearchThread" t:size="30" t:mixins="autocomplete" 
 				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"
-				    		onKeyPress="setOptions(document.formSearch.searchThread.value);"
 				    		/>
 				    	</td>
 				    	<td>
-        					<input type="submit" value="${message:global.button.search}"/>
+        					<input type="submit" id="submit" value="${message:global.button.search}"/>	
         				</td>
+        				</form>
         				<td>
-        					<input t:type="Submit" t:id="stop" value="${message:global.button.reset}"/>
+        				 	<form t:type="form" t:id="resetSearch">
+        						<input type="submit" id="stop" value="${message:global.button.reset}"/>
+        					</form>
        					</td>
         			</tr>
         		</table>
         		${message:pages.thread.admin.notification}
         		</fieldset>
-        	</form>
 			<div class="clear"></div>
 			    <fieldset style="width: 500;" class="title_criteria_zone" id="userCriterion">
 				<legend align="top" class="palette">${message:pages.thread.SearchByUser}</legend>
-			    <form t:type="form" t:id="formSearchByUser" name="formSearchByUser">
+			   
 				<table>
 					<tr>
+					<form t:type="form" t:id="formSearchByUser">
 						<td>
 							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearchUser" t:size="50" t:mixins="autocomplete" 
 				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
-				    		title="${message:components.quickSharePopup.texarea.recipients.title}"
-				    		onKeyPress="setOption(document.formSearchByUser.searchUser.value);"
-				    		/>
+				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    	</td>
 				    	<td>
-        					<input type="submit" value="${message:global.button.search}"/>
+        					<input type="submit" id="submitSearchUser" value="${message:global.button.search}"/>
         				</td>
+        				</form>
         				<td>
-        					<input t:type="Submit" t:id="reset" value="${message:global.button.reset}"/>
+        				<form t:type="form" t:id="resetSearchByUser">
+        					<input type="submit" id="reset" value="${message:global.button.reset}"/>
+       					</form>
        					</td>
         			</tr>
         			<tr>
         				<td>
+        				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="all" />&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>
+				                    <t:radio t:id="all" onclick="this.form.submit()"/>&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>
 				                    ${message:global.space}
-				                    <t:radio t:id="admin" />&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>
+				                    <t:radio t:id="admin" onclick="this.form.submit()"/>&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>
 				                    ${message:global.space}			                    
-				                    <t:radio t:id="simple" />&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>
+				                    <t:radio t:id="simple" onclick="this.form.submit()"/>&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>
 				                    ${message:global.space}
-				               		<t:radio t:id="restricted"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>
+				               		<t:radio t:id="restricted" onclick="this.form.submit()"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>
 				                    ${message:global.space}
 			               	</t:radiogroup>
+			            </t:form>
 			        	</td>
 			        </tr>
 			        </table>
-			    </form>
         	</fieldset>
         			<div class="clear"></div>
             <t:grid source="threads" row="currentThread" include="name, creationDate, modificationDate" add="countDocuments,action"  rowsPerPage="10">
