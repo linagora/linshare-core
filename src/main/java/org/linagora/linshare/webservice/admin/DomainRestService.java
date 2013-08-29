@@ -63,4 +63,7 @@ public interface DomainRestService {
 
 	FunctionalityDto getDomainFunctionality(String domain,
 			String identifier) throws BusinessException;
+	
+	void deleteDomainFunctionality(String domain, FunctionalityDto func)
+			throws BusinessException;
 }

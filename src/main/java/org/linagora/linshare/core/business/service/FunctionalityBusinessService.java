@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface FunctionalityBusinessService {
 	
@@ -16,6 +17,9 @@ public interface FunctionalityBusinessService {
 	boolean configurationPolicyIsMutable(Functionality f, String domain);
 	
 	Functionality getFunctionality(String domainId, String functionalityId);
+
+	void delete(String domainId, String functionalityId) throws IllegalArgumentException, BusinessException;
 	
 //	void update(String domain, FunctionalityDto func) throws BusinessException;
+	
 }
