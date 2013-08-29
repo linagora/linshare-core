@@ -477,7 +477,7 @@ strong {
 
 #settings #connection div.logout {
 	float: right;
-	width: 450px;
+	width: 500px;
 }
 
 #settings #connection .userName {
@@ -621,7 +621,7 @@ div#rights {
   margin: 10px 0 0;
   padding: 5px 10px;
   text-align: center;
-  width: 430px;
+  width: 480px;
 }
 /* Overriding to fix Upload page */
 #upload div#rights {
