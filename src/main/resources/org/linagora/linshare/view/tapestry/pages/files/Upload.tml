@@ -139,6 +139,17 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         <p class="help-block">${message:pages.files.upload.recipients.description}</p>
                     </div>
                 </div>
+                
+               <div class="control-group">
+                    <t:label for="recipientsPattern" class="control-label required">
+                    ${message:pages.files.upload.recipientsMailingList.title}</t:label>
+                    <div class="controls">
+                        <t:textarea t:id="listRecipientsPattern" t:value="listRecipientsSearch" t:mixins="autocomplete"
+                        t:minChars="${autocompleteMin}" t:tokens="," class="input-xxlarge"
+                        onchange="rm_errorclass();" />
+                        <p class="help-block">${message:pages.files.upload.recipientsMailingList.description}</p>
+                    </div>
+                </div>
 
                 <div class="control-group">
                     <t:if test="showSecureSharingCheckBox">

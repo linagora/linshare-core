@@ -53,12 +53,15 @@ import org.apache.tapestry5.services.RequestGlobals;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserFacade;
@@ -123,6 +126,9 @@ public class Upload {
 	@Property
 	private String recipientsSearch;
 
+	@Property
+	private String listRecipientsSearch;
+	
 	@Persist("flash")
 	@Property
 	private boolean secureSharing;
@@ -159,6 +165,9 @@ public class Upload {
 	@Inject
 	private UserFacade userFacade;
 
+	@Inject
+	private MailingListFacade mailingListFacade;
+	
 	@Inject
 	private ShareFacade shareFacade;
 
@@ -232,8 +241,22 @@ public class Upload {
 
 		try {
 			List<DocumentVo> addedDocuments = new ArrayList<DocumentVo>();
-			List<String> recipients = MailCompletionService
-					.parseEmails(recipientsSearch);
+			List<String> recipients = new ArrayList<String>();
+			if(recipientsSearch != null){
+	    		recipients = MailCompletionService.parseEmails(recipientsSearch);
+			} else {
+				recipientsSearch = listRecipientsSearch;
+			}
+			List<MailingListVo> mailingListSelected = mailingListFacade.getMailingListFromQuickShare(userVo,listRecipientsSearch);
+			if(!(mailingListSelected.isEmpty())){
+				
+				for(MailingListVo current : mailingListSelected){
+					
+					for(MailingListContactVo currentContact : current.getMails()){
+						recipients.add(currentContact.getMail());
+					}
+				}
+			}
 			List<String> recipientsEmail;
 
 			String badFormatEmail = "";
@@ -332,11 +355,12 @@ public class Upload {
 								BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS,
 								MessageSeverity.WARNING));
 			} else {
+				if(recipientsEmail.size() > 0){
 				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-				businessMessagesManagementService
-						.notify(new BusinessUserMessage(
-								BusinessUserMessageType.QUICKSHARE_SUCCESS,
-								MessageSeverity.INFO));
+				businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_SUCCESS,MessageSeverity.INFO));
+				} else {
+					businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
+				}
 			}
 
 		} catch (NullPointerException e3) {
@@ -361,6 +385,21 @@ public class Upload {
 		return elements;
 	}
 
+	public List<String> onProvideCompletionsFromListRecipientsPattern(String input) throws BusinessException {
+		List<MailingListVo> searchResults = performSearchForMailingList(input);
+		List<String> elements = new ArrayList<String>();
+		for (MailingListVo current: searchResults) {
+			if(current.getOwner().equals(userVo)){
+				String completeName = "\""+current.getIdentifier()+"\" (Me)";
+				elements.add(completeName);
+			} else {
+				String completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
+				elements.add(completeName);
+			}
+		}
+		return elements;
+	}
+	
 	public long getMaxFileSize() {
 		try {
 			return documentFacade.getUserAvailableSize(userVo);
@@ -371,6 +410,26 @@ public class Upload {
 		return DEFAULT_MAX_FILE_SIZE;
 	}
 
+	/**
+	 * Perform a list search.
+	 * 
+	 * @param input
+	 *            list search pattern.
+	 * @return list of lists.
+	 * @throws BusinessException 
+	 */
+	private List<MailingListVo> performSearchForMailingList(String input) throws BusinessException {
+		List<MailingListVo> list = new ArrayList<MailingListVo>();
+		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
+		list = mailingListFacade.findAllMailingListByUser(userVo);
+		for(MailingListVo current : list){
+			if(current.getIdentifier().indexOf(input) != -1){
+				finalList.add(current);
+			}
+		}
+		return finalList;
+	}
+	
 	/*
 	 * Helpers
 	 */
