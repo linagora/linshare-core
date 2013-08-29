@@ -36,6 +36,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 		boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f, domain);
 		boolean parentAllowCPUpdate = functionalityService.configurationPolicyIsMutable(f, domain);
 		FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate, parentAllowCPUpdate);
+		func.setDomain(domain);
 		return func;
 	}
 
@@ -48,16 +49,16 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 			boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f, domain);
 			boolean parentAllowCPUpdate = functionalityService.configurationPolicyIsMutable(f, domain);
 			FunctionalityDto func = new FunctionalityDto(f, parentAllowAPUpdate, parentAllowCPUpdate);
+			// We force the domain id to be coherent to the argument.
+			func.setDomain(domain);
 			ret.add(func);
-			this.update(domain, func);
 		}
-		
 		return ret;
 	}
 
 	@Override
 	public void update(String domain, FunctionalityDto func) throws BusinessException {
-		User actor = checkAuthentication(Role.ADMIN);
+		checkAuthentication(Role.ADMIN);
 		Functionality f = functionalityService.getFunctionality(domain, func.getIdentifier());
 		
 		String ap = func.getActivationPolicy().getPolicy().trim().toUpperCase();
@@ -72,5 +73,11 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 		
 //		f.updateFunctionalityFrom(func)
 		
+	}
+
+	@Override
+	public void delete(String domain, FunctionalityDto func) throws BusinessException {
+		checkAuthentication(Role.ADMIN);
+		functionalityService.deleteFunctionality(domain, func.getIdentifier());
 	}
 }

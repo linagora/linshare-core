@@ -6,12 +6,17 @@ import java.util.Set;
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Functionality;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.AbstractDomainRepository;
 import org.linagora.linshare.core.repository.FunctionalityRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessService {
 
+	private final static Logger logger = LoggerFactory.getLogger(FunctionalityBusinessServiceImpl.class);
+	
 	private FunctionalityRepository functionalityRepository;
 
 	private AbstractDomainRepository abstractDomainRepository;
@@ -238,5 +243,21 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		// The current functionality returned could belong to a parent domain. 
 		// In this case, the functionality will be clone, linked to the current domain and the updated by the FonctionalityBusiness update method.
 		return (Functionality)functionality.clone();
+	}
+
+	@Override
+	public void delete(String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
+		Assert.notNull(domainId);
+		Assert.notNull(functionalityId);
+		
+		Functionality f = getFunctionality(domainId, functionalityId);
+
+		// The functionality belong to the current domain. We can delete it.
+		if (f.getDomain().getIdentifier().equals(domainId)){
+			logger.debug("suppression of the functionality : " + domainId + " : " + functionalityId);
+			functionalityRepository.delete(f);
+		} else {
+			logger.warn("You are try to delete the functionality "  + domainId + " : " + functionalityId + " which does not belong to the current domain : " + f.getDomain().getIdentifier());
+		}	
 	}
 }
