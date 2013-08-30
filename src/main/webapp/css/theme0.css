@@ -5,7 +5,7 @@
  *
  * Language: all
  * Encoding: UTF-8
- * 2013-08-29, LINAGORA
+ * 2013-08-30, LINAGORA
  */
 
 
@@ -1611,9 +1611,22 @@ table.t-data-grid {
 	text-align: center;
 }
 
-#thread .countDocuments {
+#thread table.t-data-grid .countDocuments {
 	text-align: center !important;
 }
+
+#thread table.t-data-grid .inList,
+#thread table.t-data-grid .addRemove
+{
+	text-align: center;
+}
+#thread table.t-data-grid .type,
+#thread table.t-data-grid .edit,
+#thread table.t-data-grid .delete 
+{
+	text-align: center;
+}
+
 
 /*--------------------------------------------------------------------------
 * Pages > Users

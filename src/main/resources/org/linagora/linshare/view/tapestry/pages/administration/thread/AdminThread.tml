@@ -25,8 +25,7 @@
             </ul>
         </div>
 
-		<br></br>
-		<h2> ${message:pages.thread.admin.index}</h2>
+		<h2>${message:pages.thread.admin.index}</h2>
 
         <div id="pageContent">
         		<table>
@@ -49,22 +48,24 @@
         			</tr>
         			 <tr>
         				<td>
+        				<p>
         				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>
+				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>&nbsp;
 				                    ${message:global.space}
-				                    <t:radio t:id="admin" onclick="this.form.submit()" />&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>
+				                    <t:radio t:id="admin" onclick="this.form.submit()" />&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>&nbsp;
 				                    ${message:global.space}			                    
-				                    <t:radio t:id="simple" onclick="this.form.submit()" />&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>
+				                    <t:radio t:id="simple" onclick="this.form.submit()" />&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>&nbsp;
 				                    ${message:global.space}
-				               		<t:radio t:id="restricted" onclick="this.form.submit()"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>
+				               		<t:radio t:id="restricted" onclick="this.form.submit()" />&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>&nbsp;
 				                    ${message:global.space}
 			               	</t:radiogroup>
 			            </t:form>
+			            </p>
 			        	</td>
 			        </tr>
         		</table>
-			${message:pages.thread.notification}
+			<p>${message:pages.thread.notification}</p>
 			<br></br><br></br>
 			<div class="clear"></div>
             <t:grid source="members" row="member" rowsPerPage="10" include="fullName,mail" add="type,edit,delete" >
@@ -136,7 +137,7 @@
         			</table>
         			<br></br>
         			<t:if t:test="displayGrid">
-        				<t:grid source="userSearchResults"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
+        				<t:grid source="userSearchResults"  rowsPerPage="5" include="firstName,lastName,mail" add="inList,addRemove"   row="result" width="500">
 	    				    <p:empty>
         						${message:pages.thread.adminThread.search}
         					</p:empty> 
@@ -168,10 +169,13 @@
 	    				</t:grid>
         			</t:if>
 				</fieldset>
-	<div class="clear"></div>
+
+	    <div class="clear"></div>
+
         <t:actionLink t:id="back" class="button" title="${message:pages.thread.admin.back}">
             <span><img src="${asset:context:images/icons/cancel.png}" alt="" /> ${message:pages.thread.admin.back}</span>
         </t:actionLink>
+        <br/>
 
 	    <!-- Popups -->
 

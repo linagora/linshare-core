@@ -19,7 +19,7 @@
 					<tr>
 					<form t:type="form" t:id="formSearch" >
 						<td>
-							<t:textfield t:id="searchThread" t:validate="required" t:value="recipientsSearchThread" t:size="30" t:mixins="autocomplete" 
+							<t:textfield t:id="searchThread" t:validate="required" t:value="recipientsSearchThread" t:size="50" t:mixins="autocomplete" 
 				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"
 				    		/>
@@ -35,7 +35,7 @@
        					</td>
         			</tr>
         		</table>
-        		${message:pages.thread.admin.notification}
+        		<p>${message:pages.thread.admin.notification}</p>
         		</fieldset>
 			<div class="clear"></div>
 			    <fieldset style="width: 500;" class="title_criteria_zone" id="userCriterion">
@@ -61,18 +61,20 @@
         			</tr>
         			<tr>
         				<td>
+        				<p>
         				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="all" onclick="this.form.submit()"/>&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>
+				                    <t:radio t:id="all" onclick="this.form.submit()"/>&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>&nbsp;
 				                    ${message:global.space}
-				                    <t:radio t:id="admin" onclick="this.form.submit()"/>&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>
+				                    <t:radio t:id="admin" onclick="this.form.submit()"/>&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>&nbsp;
 				                    ${message:global.space}			                    
-				                    <t:radio t:id="simple" onclick="this.form.submit()"/>&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>
+				                    <t:radio t:id="simple" onclick="this.form.submit()"/>&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>&nbsp;
 				                    ${message:global.space}
-				               		<t:radio t:id="restricted" onclick="this.form.submit()"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>
+				               		<t:radio t:id="restricted" onclick="this.form.submit()"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>&nbsp;
 				                    ${message:global.space}
 			               	</t:radiogroup>
 			            </t:form>
+        				</p>
 			        	</td>
 			        </tr>
 			        </table>
