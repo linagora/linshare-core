@@ -78,10 +78,11 @@
         <t:businessMessagesDisplayer />
 
         <t:if test="canUpload">
-            <div class="example">
+            <div>
                 <ul id="uploader" class="unstyled"></ul>
             </div>
         </t:if>
+        
         <!-- Action bar -->
 
         <div id="actionBar">
@@ -89,7 +90,7 @@
             <ul>
                 <li>
                     <t:pageLink id="refresh" class="button" page="thread/content" >
-                        <span><img src="${asset:context:images/icons/icon-add-files.png}" alt=""/> ${message:pages.thread.refresh}</span>
+                        <span><img src="${asset:context:images/icons/icon-refresh.png}" alt=""/> ${message:pages.thread.refresh}</span>
                     </t:pageLink>
                 </li>
                 <t:if test="admin">

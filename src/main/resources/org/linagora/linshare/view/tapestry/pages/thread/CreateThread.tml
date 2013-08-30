@@ -22,15 +22,17 @@
                 <br/>
                 <div id="thread_creation_form">
                     <t:label for="name">${message:pages.thread.form.name} : </t:label>
-                    <t:textfield t:id="name" value="name"/>
+                    <t:textfield t:id="name" value="name" t:size="50"/>
                 </div>
 
                 <br/>
-                <br/>
                 <div class="button">
                     <t:linkSubmit class="button"><span><img src="${asset:context:images/icons/edit-button.png}" alt=""/>${message:pages.administration.index.button.save}</span></t:linkSubmit>
+                    ${message:global.space}
                     <t:actionLink t:id="cancel" class="button"><span><img src="${asset:context:images/icons/cancel.png}" alt=""/>${message:global.button.cancel}</span></t:actionLink>
                 </div>
+                <br/>
+                <br/>
             </form>
         </div>
 
