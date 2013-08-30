@@ -7,7 +7,6 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Role;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -22,8 +21,9 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 	private FunctionalityService functionalityService;
 	private FunctionalityOldService functionalityOldService;
 
-	public FunctionalityFacadeImpl(final AccountService accountService, final AbstractDomainService abstractDomainService,
-			final FunctionalityService functionalityService, FunctionalityOldService functionalityOldService) {
+	public FunctionalityFacadeImpl(final AccountService accountService,
+			final AbstractDomainService abstractDomainService, final FunctionalityService functionalityService,
+			FunctionalityOldService functionalityOldService) {
 		super(accountService);
 		this.abstractDomainService = abstractDomainService;
 		this.functionalityService = functionalityService;
@@ -43,7 +43,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 	@Override
 	public List<FunctionalityDto> getAll(String domain) throws BusinessException {
 		Set<Functionality> entities = functionalityService.getAllFunctionalities(domain);
-		
+
 		List<FunctionalityDto> ret = new ArrayList<FunctionalityDto>();
 		for (Functionality f : entities) {
 			boolean parentAllowAPUpdate = functionalityService.activationPolicyIsMutable(f, domain);
@@ -61,18 +61,19 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 		checkAuthentication(Role.ADMIN);
 		Functionality f = functionalityService.getFunctionality(domain, func.getIdentifier());
 		
+		// copy of activation policy.
 		String ap = func.getActivationPolicy().getPolicy().trim().toUpperCase();
 		f.getActivationPolicy().setPolicy(Policies.valueOf(ap));
 		f.getActivationPolicy().setStatus(func.getActivationPolicy().getStatus());
-		
+
+		// copy of configuration policy.
 		String cp = func.getConfigurationPolicy().getPolicy().trim().toUpperCase();
 		f.getConfigurationPolicy().setPolicy(Policies.valueOf(cp));
 		f.getConfigurationPolicy().setStatus(func.getConfigurationPolicy().getStatus());
 
+		// copy of parameters.
+		f.updateFunctionalityValuesOnlyFromDto(func);
 		functionalityOldService.update(domain, f);
-		
-//		f.updateFunctionalityFrom(func)
-		
 	}
 
 	@Override

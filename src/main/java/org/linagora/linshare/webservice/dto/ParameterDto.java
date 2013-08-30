@@ -33,6 +33,9 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Parameter")
@@ -45,6 +48,8 @@ public class ParameterDto {
 	private String type;
 	
 	private boolean bool;
+	
+	private List<String> select;
 	
 	public ParameterDto() {
 		super();
@@ -60,16 +65,15 @@ public class ParameterDto {
 		this.type = "INTEGER";
 	}
 	
-	public ParameterDto(String type, String unit, int integer) {
+	public ParameterDto(String type, List<String> listUnit, String unit, int integer) {
 		this.string = unit;
 		this.integer = integer;
 		this.type = type;
+		this.select = new ArrayList<String>(listUnit);
 	}
 	
-	public ParameterDto(String type, String unit, int integer, boolean bool) {
-		this.string = unit;
-		this.integer = integer;
-		this.type = type;
+	public ParameterDto(boolean bool) {
+		this.type = "BOOLEAN";
 		this.bool = bool;
 	}
 
