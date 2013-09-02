@@ -37,6 +37,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
+import org.linagora.linshare.core.domain.constants.DomainType;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.User;
@@ -103,6 +105,6 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		} else {
 			user = new Internal(userDto);
 		}
-		userService.updateUser(user, userDto.getDomain(), actor);
+		userService.updateUser(actor, user, userDto.getDomain());
 	}
 }

@@ -285,23 +285,11 @@ public interface UserService {
 	/**
 	 * Find the user matching updateUser and
 	 * update fields: first name, last name, role, create guest right and upload right
-	 * 
+	 * @param actor
 	 * @param updatedUser
 	 * @param domainId domain id of the user
-	 * @param actor
-	 * @throws BusinessException
-	 */
-	void updateUser(User updatedUser, String domainId, User actor) throws BusinessException;
-	
-	/**
-	 * Find the guest matching updateGuest 
-	 * update fields: expiration date, comment, restricted right, owner
-	 * and update guest as user.
 	 * 
-	 * @param updatedGuest
-	 * @param domainId domain id of the guest
-	 * @param actor
 	 * @throws BusinessException
 	 */
-	void updateUser(Guest updatedGuest, String domainId, User actor) throws BusinessException;
+	void updateUser(User actor, User updatedUser, String domainId) throws BusinessException;
 }

@@ -43,6 +43,8 @@ import org.linagora.linshare.core.domain.entities.Functionality;
 public class FunctionalityDto {
 
 	protected String identifier;
+	// Only used for internationalization of the angular interface (temp attribute)
+	private String name;
 	protected String domain;
 	protected String type;
 
@@ -125,5 +127,13 @@ public class FunctionalityDto {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
