@@ -358,7 +358,8 @@ public class UserServiceImpl implements UserService {
                 deleteUser(guest.getLsUuid(), systemAccount);
                 logger.info("Removed expired user : " + guest.getAccountReprentation());
             } catch (BusinessException ex) {
-                logger.warn("Unable to remove expired user : " + guest.getAccountReprentation() + "\n" + ex.toString());
+                logger.warn("Unable to remove expired user : " + guest.getAccountReprentation()
+                		+ System.lineSeparator() + ex.toString());
             }
         }
     }

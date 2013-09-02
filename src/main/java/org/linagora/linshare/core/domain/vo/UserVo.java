@@ -322,15 +322,17 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	}
 
 	public String toString() {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("\nlogin : ").append(login);
-        stringBuffer.append("\nfirst name : ").append(firstName);
-        stringBuffer.append("\nlast name : ").append(lastName);
-        stringBuffer.append("\nmail : ").append(mail);
-        stringBuffer.append("\nuser type : ").append(userType);
-        stringBuffer.append("\nrole : ").append(role);
-        stringBuffer.append("\ndomain : ").append(domainIdentifier);
-        return stringBuffer.toString();
+        StringBuilder buf = new StringBuilder();
+        String nl = System.lineSeparator();
+
+        buf.append(nl).append("login : ").append(login);
+        buf.append(nl).append("first name : ").append(firstName);
+        buf.append(nl).append("last name : ").append(lastName);
+        buf.append(nl).append("mail : ").append(mail);
+        buf.append(nl).append("user type : ").append(userType);
+        buf.append(nl).append("role : ").append(role);
+        buf.append(nl).append("domain : ").append(domainIdentifier);
+        return buf.toString();
     }
     
 

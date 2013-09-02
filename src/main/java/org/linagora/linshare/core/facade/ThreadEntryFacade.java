@@ -46,144 +46,190 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface ThreadEntryFacade {
-	
-	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo, InputStream stream, Long size, String fileName) throws BusinessException ;
 
-	public void copyDocinThread(UserVo actorVo, ThreadVo threadVo, DocumentVo documentVo) throws BusinessException;
-	
-	public void createThread(UserVo actorVo, String name) throws BusinessException;
-	
-	// public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
-	
+	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo,
+			InputStream stream, Long size, String fileName)
+			throws BusinessException;
+
+	public void copyDocinThread(UserVo actorVo, ThreadVo threadVo,
+			DocumentVo documentVo) throws BusinessException;
+
+	public void createThread(UserVo actorVo, String name)
+			throws BusinessException;
+
+	// public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws
+	// BusinessException;
+
 	public List<ThreadVo> getAllThread();
-	
+
 	public List<ThreadVo> getAllMyThread(UserVo actorVo);
-	
+
 	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo);
 
-	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
-	
-	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name) throws BusinessException;
-	
-	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo, List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags) throws BusinessException;
+	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo,
+			ThreadVo threadVo) throws BusinessException;
 
-	public InputStream retrieveFileStream(UserVo actorVo, ThreadEntryVo entry) throws BusinessException;
+	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name)
+			throws BusinessException;
 
-	public InputStream retrieveFileStream(ThreadEntryVo entry, String lsUid) throws BusinessException;
+	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo,
+			List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags)
+			throws BusinessException;
+
+	public InputStream retrieveFileStream(UserVo actorVo, ThreadEntryVo entry)
+			throws BusinessException;
+
+	public InputStream retrieveFileStream(ThreadEntryVo entry, String lsUid)
+			throws BusinessException;
 
 	public boolean documentHasThumbnail(String lsUid, String docId);
 
-	public InputStream getDocumentThumbnail(String actorUuid, String docEntryUuid);
+	public InputStream getDocumentThumbnail(String actorUuid,
+			String docEntryUuid);
 
-	public void removeDocument(UserVo userVo, ThreadEntryVo threadEntryVo) throws BusinessException;
+	public void removeDocument(UserVo userVo, ThreadEntryVo threadEntryVo)
+			throws BusinessException;
 
-	public ThreadEntryVo findById(UserVo user, String threadEntryUuid) throws BusinessException;
+	public ThreadEntryVo findById(UserVo user, String threadEntryUuid)
+			throws BusinessException;
 
-	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo, ThreadVo threadVo, TagVo[] tags) throws BusinessException;
-	
-	public boolean userIsMember(UserVo userVo, ThreadVo threadVo) throws BusinessException;
+	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo,
+			ThreadVo threadVo, TagVo[] tags) throws BusinessException;
 
-	public List<ThreadMemberVo> getThreadMembers(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
+	public boolean userIsMember(UserVo userVo, ThreadVo threadVo)
+			throws BusinessException;
 
-	public boolean userCanUpload(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
+	public List<ThreadMemberVo> getThreadMembers(UserVo actorVo,
+			ThreadVo threadVo) throws BusinessException;
 
-	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo) throws BusinessException;
+	public boolean userCanUpload(UserVo actorVo, ThreadVo threadVo)
+			throws BusinessException;
 
-	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo) throws BusinessException;
+	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo)
+			throws BusinessException;
 
-	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember, boolean readOnly);
+	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo)
+			throws BusinessException;
 
-	public void deleteMember(UserVo actorVo, ThreadVo threadVo, ThreadMemberVo memberVo);
+	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember,
+			boolean readOnly);
 
-	public boolean isUserAdminOfAnyThread(UserVo actorVo) throws BusinessException;
+	public void deleteMember(UserVo actorVo, ThreadVo threadVo,
+			ThreadMemberVo memberVo);
 
-	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo, ThreadVo threadVo);
+	public boolean isUserAdminOfAnyThread(UserVo actorVo)
+			throws BusinessException;
 
-	public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
+	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo,
+			ThreadVo threadVo);
 
-	public void updateFileProperties(String lsUid, String threadEntryUuid, String fileComment);
+	public void deleteThread(UserVo actorVo, ThreadVo threadVo)
+			throws BusinessException;
+
+	public void updateFileProperties(String lsUid, String threadEntryUuid,
+			String fileComment);
 
 	public ThreadEntryVo getThreadEntry(String login, String threadEntryUuid);
 
-	public ThreadVo getThread(UserVo login, String threadUuid) throws BusinessException;
+	public ThreadVo getThread(UserVo login, String threadUuid)
+			throws BusinessException;
 
-	public void renameThread(UserVo userVo, String threadUuid, String threadName) throws BusinessException;
+	public void renameThread(UserVo userVo, String threadUuid, String threadName)
+			throws BusinessException;
 
 	/**
 	 * Provide completion for search User
+	 * 
 	 * @param actorVo
 	 * @param pattern
 	 * @return
 	 */
-	public List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException;
-	
+	public List<String> completionOnUsers(UserVo actorVo, String pattern)
+			throws BusinessException;
+
 	/**
 	 * Provide completion for search thread
+	 * 
 	 * @param actor
 	 * @param input
 	 * @return
 	 */
-	public List<String> completionOnThreads(UserVo actor,String input);
-	
+	public List<String> completionOnThreads(UserVo actor, String input);
+
 	/**
 	 * Provide completion for search thread member
+	 * 
 	 * @param actorVo
 	 * @param currentThread
 	 * @param pattern
 	 * @return
 	 */
-	public List<String> completionOnMembers(UserVo actorVo, ThreadVo currentThread, String pattern);
-	
+	public List<String> completionOnMembers(UserVo actorVo,
+			ThreadVo currentThread, String pattern);
+
 	/**
 	 * Add User to thread
+	 * 
 	 * @param currentUser
 	 * @param threadVo
 	 * @param domain
 	 * @param mail
 	 * @throws BusinessException
 	 */
-	public void addUserToThread(UserVo currentUser, ThreadVo threadVo,String domain, String mail) throws BusinessException;
-	
+	public void addUserToThread(UserVo currentUser, ThreadVo threadVo,
+			String domain, String mail) throws BusinessException;
+
 	/**
 	 * Remove member from thread
+	 * 
 	 * @param currentUser
 	 * @param threadVo
 	 * @param domain
 	 * @param mail
 	 * @throws BusinessException
 	 */
-	public void removeMemberFromThread(UserVo currentUser, ThreadVo threadVo,String domain, String mail) throws BusinessException;
-	
-	
+	public void removeMemberFromThread(UserVo currentUser, ThreadVo threadVo,
+			String domain, String mail) throws BusinessException;
+
 	/**
 	 * Return list of users according to search input
+	 * 
 	 * @param userVo
 	 * @param input
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<UserVo> searchAmongUsers(UserVo userVo,String input) throws BusinessException;
-	
+	public List<UserVo> searchAmongUsers(UserVo userVo, String input)
+			throws BusinessException;
+
 	/**
 	 * Return list of thread members according to search input
+	 * 
 	 * @param userVo
 	 * @param currentThread
 	 * @param input
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<ThreadMemberVo> searchAmongMembers(UserVo userVo, ThreadVo currentThread,String input,String criteriaOnSearch) throws BusinessException;
+	public List<ThreadMemberVo> searchAmongMembers(UserVo userVo,
+			ThreadVo currentThread, String input, String criteriaOnSearch)
+			throws BusinessException;
+
 	/**
-	 *  return list of threads
+	 * return list of threads
+	 * 
 	 * @param threads
 	 * @param userVo
 	 * @param criteriaOnSearch
 	 * @param recipientsSearchUser
-	 * @return 
+	 * @return
 	 */
-	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,String criteriaOnSearch, String recipientsSearchUser) throws BusinessException;
-	
+	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,
+			String criteriaOnSearch, String recipientsSearchUser)
+			throws BusinessException;
+
 	public List<ThreadVo> getListOfLastModifiedThreads(UserVo userVo);
-	
-	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo) throws BusinessException;
+
+	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
+			throws BusinessException;
 }
