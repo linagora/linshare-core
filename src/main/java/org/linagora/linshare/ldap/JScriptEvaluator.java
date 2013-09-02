@@ -142,7 +142,6 @@ public final class JScriptEvaluator {
 	public List<String> evalToStringList(String expression,
 					Map<String, Object> params) {
 		Object result = instanceEval(expression, params);
-		LOGGER.debug(result.toString());
 
 		// First try to convert to Array, else to List, and finally to String
 		try {
