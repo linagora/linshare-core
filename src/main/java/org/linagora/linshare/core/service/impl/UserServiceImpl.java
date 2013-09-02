@@ -73,6 +73,7 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 /** Services for User management.
  */
@@ -920,7 +921,10 @@ public class UserServiceImpl implements UserService {
 
 	
 	private User find(User tmpUser, String domainId) throws BusinessException {
-		User user = userRepository.findByLsUuid(tmpUser.getLsUuid());
+		User user = null;
+		if (tmpUser.getLsUuid() != null) {
+			user = userRepository.findByLsUuid(tmpUser.getLsUuid());
+		}
 		if (user == null) {
 			logger.debug("User " + tmpUser.getMail() + " was not found in the database. Searching in directories ...");
 			user = this.findOrCreateUser(tmpUser.getMail(), domainId);
@@ -933,33 +937,31 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void updateUser(User updatedUser, String domainId, User actor) throws BusinessException {
+	public void updateUser(User actor, User updatedUser, String domainId) throws BusinessException {
 		User user = find(updatedUser, domainId);
+		Assert.notNull(updatedUser.getRole());
 		
 		user.setFirstName(updatedUser.getFirstName());
 		user.setLastName(updatedUser.getLastName());
 		user.setRole(updatedUser.getRole());
 		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
 		user.setCanUpload(updatedUser.getCanUpload());
+		if (user.getAccountType() == AccountType.GUEST) {
+			Assert.notNull(updatedUser.getOwner());
+			Assert.notNull(updatedUser.getExpirationDate());
+			Assert.isTrue(updatedUser.getCanCreateGuest() == false);
+			Guest guest = (Guest) user;
+			Guest updatedGuest = (Guest) updatedUser;
+			guest.setExpirationDate(updatedGuest.getExpirationDate());
+			guest.setComment(updatedGuest.getComment());
+			guest.setRestricted(updatedGuest.isRestricted());
+			User owner = find((User)updatedGuest.getOwner(), updatedGuest.getOwner().getDomainId());
+			guest.setOwner(owner);
+		}
+		
 		userRepository.update(user);
 		
 		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Update of a user:" + user.getMail(), user);
 		logEntryService.create(logEntry);
-	}
-	
-	
-	@Override
-	public void updateUser(Guest updatedGuest, String domainId, User actor) throws BusinessException {
-		User user = find(updatedGuest, domainId);
-		if (user.getAccountType() != AccountType.GUEST) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user : " + user.getMail() + " in domain : " + user.getDomainId() + " is not a guest");
-		}
-		Guest guest = (Guest) user;
-		guest.setExpirationDate(updatedGuest.getExpirationDate());
-		guest.setComment(updatedGuest.getComment());
-		guest.setRestricted(updatedGuest.isRestricted());
-		guest.setOwner(updatedGuest.getOwner());
-		
-		updateUser((User) updatedGuest, null, actor);
 	}
 }

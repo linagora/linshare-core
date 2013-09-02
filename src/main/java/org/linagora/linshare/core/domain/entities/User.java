@@ -66,7 +66,7 @@ public abstract class User extends Account {
 	protected TechnicalAccountPermission technicalAccountPermission;
 	
 	/** If the user is allowed to create guest */
-	protected Boolean canCreateGuest;
+	protected boolean canCreateGuest;
 
 	
 	public User() {
@@ -198,7 +198,7 @@ public abstract class User extends Account {
 		this.myThreads = myThreads;
 	}
 	
-	public Boolean getCanCreateGuest() {
+	public boolean getCanCreateGuest() {
 		return canCreateGuest;
 	}
 	

@@ -135,7 +135,7 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 	@DELETE
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void deleteDomainFunctionality(String domain, FunctionalityDto func) throws BusinessException {
+	public void deleteDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
 		functionalityFacade.checkAuthentication();
 		functionalityFacade.delete(domain, func);
 	}

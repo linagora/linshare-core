@@ -108,4 +108,12 @@ public class ParameterDto {
 	public void setBool(boolean bool) {
 		this.bool = bool;
 	}
+
+	public List<String> getSelect() {
+		return select;
+	}
+
+	public void setSelect(List<String> select) {
+		this.select = select;
+	}
 }

@@ -47,7 +47,7 @@ public class AccountDto {
 	protected Date modificationDate;
 	protected String locale;
 	protected String domain;
-	protected String owner;
+	protected UserDto owner = null;
 
 	public AccountDto() {
 		super();
@@ -59,9 +59,6 @@ public class AccountDto {
 		this.modificationDate = a.getModificationDate();
 		this.locale = a.getLocale();
 		this.domain = a.getDomainId();
-		if (a.getOwner() != null) {
-			this.owner = a.getOwner().getLsUuid();
-		}
 	}
 
 	public String getUuid() {
@@ -104,11 +101,11 @@ public class AccountDto {
 		this.domain = domain;
 	}
 
-	public String getOwner() {
+	public UserDto getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(UserDto owner) {
 		this.owner = owner;
 	}
 }

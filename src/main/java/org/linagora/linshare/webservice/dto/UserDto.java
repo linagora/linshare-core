@@ -37,6 +37,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
@@ -63,13 +64,14 @@ public class UserDto extends AccountDto {
 		this.canUpload = u.getCanUpload();
 		this.canCreateGuest = u.getCanCreateGuest();
 		this.expirationDate = u.getExpirationDate();
-	}
-	
-	public UserDto(Guest g) {
-		this((User) g);
-		this.restricted = g.isRestricted();
-		this.comment = g.getComment();
-		this.guest = true;
+		if (u.getAccountType() == AccountType.GUEST) {
+			Guest g = (Guest) u;
+			this.owner = new UserDto((User) g.getOwner());
+			this.expirationDate = g.getExpirationDate();
+			this.restricted = g.isRestricted();
+			this.comment = g.getComment();
+			this.guest = true;
+		}
 	}
 	
 	public UserDto() {
