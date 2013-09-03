@@ -33,6 +33,7 @@
  */
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
@@ -43,10 +44,12 @@ import org.linagora.linshare.core.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdminGenericFacadeImpl extends GenericFacadeImpl implements AdminGenericFacade {
+public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
+		AdminGenericFacade {
 
-	private static final Logger logger = LoggerFactory.getLogger(AdminGenericFacadeImpl.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(AdminGenericFacadeImpl.class);
+
 	public AdminGenericFacadeImpl(final AccountService accountService) {
 		super(accountService);
 	}
@@ -54,14 +57,16 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements AdminGe
 	@Override
 	public User checkAuthentication(Role role) throws BusinessException {
 		User user = super.checkAuthentication();
+
 		if (role != Role.SUPERADMIN && role != Role.ADMIN) {
-			throw new IllegalArgumentException("role must be SUPERADMIN or ADMIN");
+			logger.error("Programmatic error: role must be set either to SUPERADMIN or ADMIN but is " + role.name());
+			throw new IllegalArgumentException(
+					"role must be either SUPERADMIN or ADMIN");
 		}
-		if (role == Role.SUPERADMIN && user.getRole() != Role.SUPERADMIN) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
-		} else if (role == Role.ADMIN && (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPERADMIN)) {
-			throw new BusinessException(BusinessErrorCode.WEBSERVICE_UNAUTHORIZED, "You are not authorized to use this service");
-		}
+		if (user.getRole().toInt() >= role.toInt())
+			throw new BusinessException(
+					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
+					"You are not authorized to use this service");
 		return user;
 	}
 }
