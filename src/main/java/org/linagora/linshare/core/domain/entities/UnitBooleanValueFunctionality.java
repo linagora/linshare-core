@@ -59,7 +59,7 @@ public class UnitBooleanValueFunctionality extends UnitValueFunctionality {
 
 	@Override
 	public FunctionalityType getType() {
-		return FunctionalityType.UNIT_BOOLEAN;
+		return FunctionalityType.UNIT_BOOLEAN_TIME;
 	}
 	
 	@Override
