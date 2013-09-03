@@ -279,8 +279,8 @@ public class Index {
 	 */
 	@OnEvent(value = "eventDeleteFromListDocument")
 	public void deleteFromListDocument(Object[] object) {
-
 		boolean flagError = false;
+
 		for (Object currentObject : object) {
 			try {
 				documentFacade.removeDocument(userVo, ((DocumentVo) currentObject));

@@ -133,6 +133,7 @@ public class JScriptLdapQuery {
 		List<String> uidList = jScriptEvaluator.evalToStringList(command, params);
 		if(uidList == null) {
 			logger.error("searchUser:The uidList is null.");
+			return new ArrayList<User>();
 		}
         return dnListToUsersList(uidList);
 	}

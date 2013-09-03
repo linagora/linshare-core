@@ -317,7 +317,7 @@ public class ThreadServiceImpl implements ThreadService {
 		// permission check
 		checkUserIsAdmin(user, thread);
 		
-		thread.getThreadViews().remove(filter);
+		thread.getTagFilters().remove(filter);
 		try {
 			threadRepository.update(thread);
 		} catch (BusinessException e) {
