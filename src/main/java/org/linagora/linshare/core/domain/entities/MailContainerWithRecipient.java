@@ -112,7 +112,7 @@ public class MailContainerWithRecipient extends MailContainer {
 	
 	
 	public void appendTemplate(MailTemplate template) {
-		bufferTXT.append(template.getContentTXT() + System.lineSeparator());
+		bufferTXT.append(template.getContentTXT() + "\n");
 		bufferHTML.append(template.getContentHTML() + "<br/>");
 	}
 	
