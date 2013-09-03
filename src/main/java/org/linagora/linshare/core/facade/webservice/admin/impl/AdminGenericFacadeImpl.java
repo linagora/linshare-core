@@ -63,7 +63,8 @@ public class AdminGenericFacadeImpl extends GenericFacadeImpl implements
 			throw new IllegalArgumentException(
 					"role must be either SUPERADMIN or ADMIN");
 		}
-		if (user.getRole().toInt() >= role.toInt())
+		// user as at least admin role 
+		if (user.getRole().toInt() < role.toInt())
 			throw new BusinessException(
 					BusinessErrorCode.WEBSERVICE_UNAUTHORIZED,
 					"You are not authorized to use this service");
