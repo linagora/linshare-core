@@ -323,7 +323,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 
 	public String toString() {
         StringBuilder buf = new StringBuilder();
-        String nl = System.lineSeparator();
+        String nl = "\n";
 
         buf.append(nl).append("login : ").append(login);
         buf.append(nl).append("first name : ").append(firstName);

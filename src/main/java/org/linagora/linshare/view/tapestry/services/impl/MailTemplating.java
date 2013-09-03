@@ -75,7 +75,7 @@ public class MailTemplating implements Templating {
 			BufferedReader buffer = new BufferedReader(streamReader);
 			String line = "";
 			while (null != (line = buffer.readLine())) {
-				writer.write(line + System.lineSeparator());
+				writer.write(line + "\n");
 			}
 			content = writer.toString();
 		} catch (IOException e) {
