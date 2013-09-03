@@ -255,7 +255,11 @@ public class FunctionalityBusinessServiceImpl implements FunctionalityBusinessSe
 		// The functionality belong to the current domain. We can delete it.
 		if (f.getDomain().getIdentifier().equals(domainId)){
 			logger.debug("suppression of the functionality : " + domainId + " : " + functionalityId);
-			functionalityRepository.delete(f);
+			AbstractDomain domain = abstractDomainRepository.findById(domainId);
+			Functionality rawFunc = functionalityRepository.findById(domain, functionalityId);
+			functionalityRepository.delete(rawFunc);
+			domain.getFunctionalities().remove(rawFunc);
+			abstractDomainRepository.update(domain);
 		} else {
 			logger.warn("You are try to delete the functionality "  + domainId + " : " + functionalityId + " which does not belong to the current domain : " + f.getDomain().getIdentifier());
 		}	
