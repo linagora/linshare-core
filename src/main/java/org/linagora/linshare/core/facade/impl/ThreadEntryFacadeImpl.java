@@ -852,12 +852,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
 			throws BusinessException {
-		List<ThreadMemberVo> threadMembers = getThreadMembers(actorVo, threadVo);
-
-		if (threadMembers.size() == 1) {
-			return false;
-		}
-		return true;
+		return getThreadMembers(actorVo, threadVo).size() != 1;
 	}
 
 }

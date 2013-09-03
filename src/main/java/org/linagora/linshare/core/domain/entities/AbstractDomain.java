@@ -310,6 +310,8 @@ public abstract class AbstractDomain {
 
 	@Override
 	public boolean equals(Object arg0) {
+		if (arg0 == null)
+			return false;
 		AbstractDomain d = (AbstractDomain) arg0;
 		return this.getIdentifier().equals(d.getIdentifier());
 	}

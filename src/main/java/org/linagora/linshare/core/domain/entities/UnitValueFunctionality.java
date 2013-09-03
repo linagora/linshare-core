@@ -143,10 +143,10 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 		this.value = parameterDto.getInteger();
 		String unit = parameterDto.getString().trim().toUpperCase();
 
-		if (type.equals(FunctionalityType.UNIT_SIZE)) {
+		if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
 			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
 			sizeUnit.setUnitValue(FileSizeUnit.valueOf(unit));
-		} else if (type.equals(FunctionalityType.UNIT_TIME)) {
+		} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
 			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 			timeUnit.setUnitValue(TimeUnit.valueOf(unit));
 		}
