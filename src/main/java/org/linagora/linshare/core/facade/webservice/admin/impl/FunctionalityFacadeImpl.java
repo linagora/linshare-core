@@ -7,6 +7,7 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.constants.Policies;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.Role;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.webservice.admin.FunctionalityFacade;
 import org.linagora.linshare.core.service.AbstractDomainService;
@@ -78,7 +79,7 @@ public class FunctionalityFacadeImpl extends AdminGenericFacadeImpl implements F
 
 	@Override
 	public void delete(String domain, FunctionalityDto func) throws BusinessException {
-		checkAuthentication(Role.ADMIN);
-		functionalityService.deleteFunctionality(domain, func.getIdentifier());
+		User actor = checkAuthentication(Role.ADMIN);
+		functionalityService.deleteFunctionality(actor, domain, func.getIdentifier());
 	}
 }

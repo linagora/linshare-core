@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.linagora.linshare.core.business.service.FunctionalityBusinessService;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.FunctionalityService;
@@ -50,9 +51,10 @@ public class FunctionalityServiceImpl implements FunctionalityService {
 	}
 
 	@Override
-	public void deleteFunctionality(String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
+	public void deleteFunctionality(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException {
 		Assert.notNull(domainId);
 		Assert.notNull(functionalityId);
+		// TODO : FMA check if we are authorized to delete the functionality.
 		functionalityBusinessService.delete(domainId, functionalityId);
 	}
 }
