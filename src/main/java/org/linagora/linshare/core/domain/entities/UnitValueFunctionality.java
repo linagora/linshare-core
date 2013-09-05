@@ -170,7 +170,7 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 			unitType = FunctionalityType.UNIT_TIME.toString();
 			currentUnit = timeUnit.getUnitValue().toString();
-			for (FileSizeUnit val : FileSizeUnit.values()) {
+			for (TimeUnit val : TimeUnit.values()) {
 				units.add(val.toString());
 			}
 		}
