@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 
+// we need to ignore route property. It was added my Restangular (Javascript IHM)
 @JsonIgnoreProperties({"route"})
 @XmlRootElement(name = "Domain")
 public class DomainDto {
