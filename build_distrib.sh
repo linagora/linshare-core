@@ -142,8 +142,10 @@ function build_source ()
 {
 	local linshare_soure=linshare-src
 	local linshare_archive=linshare-${g_version}-src.tar.bz2
+	set +e
 	svn info &> /dev/null
 	if [ $? -eq 0 ] ; then
+		set -e
 		# the current working directory is a svn checkout
 		local l_url=$(svn info|grep ^URL|cut -d' ' -f2)
 		rm -fr ${linshare_soure} 
@@ -151,11 +153,12 @@ function build_source ()
 		svn export ${l_url} ${linshare_soure} &> /dev/null
 		echo_linshare "Done."
 	else
+		set -e
 		maven_clean
 		# the current directory is a svn export
 		rm -fr ${linshare_soure} 
 		mkdir -p ${linshare_soure}
-		cp -r * ${linshare_soure}/
+		cp -r * ${linshare_soure}/ ||true
 		rm -fr ${linshare_soure}/target ${linshare_soure}/bin ${linshare_soure}/distrib
 	fi
 	echo_linshare "Archive creation in progress : ${linshare_archive}"
