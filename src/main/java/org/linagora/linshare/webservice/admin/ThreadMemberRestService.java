@@ -5,7 +5,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
-@Path("/admin/members")
+@Path("/rest/admin/members")
 public interface ThreadMemberRestService {
 
 	public ThreadMemberDto get(Long id) throws BusinessException;
