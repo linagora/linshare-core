@@ -94,7 +94,7 @@ public abstract class User extends Account {
 		this.lastName = userDto.getLastName();
 		this.mail = userDto.getMail();
 		this.role = Role.valueOf(userDto.getRole());
-		this.canUpload = userDto.isCanUpload();
+		this.canUpload = userDto.getCanUpload();
 		this.canCreateGuest = userDto.isCanCreateGuest();
 	}
 	

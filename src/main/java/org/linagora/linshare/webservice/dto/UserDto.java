@@ -110,7 +110,7 @@ public class UserDto extends AccountDto {
 		this.role = role;
 	}
 	
-	public boolean isCanUpload() {
+	public boolean getCanUpload() {
 		return canUpload;
 	}
 
