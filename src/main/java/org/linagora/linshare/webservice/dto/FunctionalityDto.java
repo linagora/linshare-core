@@ -35,16 +35,21 @@ package org.linagora.linshare.webservice.dto;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.Functionality;
 
+// This field is added to the JSON object by the angular interface for internationalization. 
+@JsonIgnoreProperties({"name"})
 @XmlRootElement(name = "Functionality")
 public class FunctionalityDto {
 
 	protected String identifier;
-	// Only used for internationalization of the angular interface (temp attribute)
-	private String name;
+	@XmlTransient private String name;
+	
 	protected String domain;
 	protected String type;
 
