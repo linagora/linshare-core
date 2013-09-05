@@ -193,7 +193,7 @@
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
 			<!-- For debug only : print output  message -->
-             <ref bean="logOutbound" /> 
+<!--             	<ref bean="logOutbound" /> -->
 			<!-- This interceptor is designed compute request execution time.-->
 			<bean id="timingOutInterceptor" class="org.linagora.linshare.webservice.interceptor.TimingOutInterceptor" />
 		</jaxrs:outInterceptors>

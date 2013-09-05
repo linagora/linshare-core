@@ -3,6 +3,7 @@ package org.linagora.linshare.core.service;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.exception.BusinessException;
 
@@ -18,5 +19,5 @@ public interface FunctionalityService {
 	
 	Functionality getFunctionality(String domainId, String functionalityId);
 	
-	void deleteFunctionality(String domainId, String functionalityId) throws IllegalArgumentException, BusinessException;
+	void deleteFunctionality(Account actor, String domainId, String functionalityId) throws IllegalArgumentException, BusinessException;
 }
