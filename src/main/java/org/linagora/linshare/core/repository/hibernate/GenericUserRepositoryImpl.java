@@ -57,7 +57,11 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 
 	@Override
 	public U findByMail(String mail) {
-		 List<U> users = findByCriteria(Restrictions.eq("mail", mail).ignoreCase());
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("mail",mail).ignoreCase());
+		criteria.add(Restrictions.eq("destroyed",false));
+		List<U> users = findByCriteria(criteria);
+		
 	        if (users == null || users.isEmpty()) {
 	            return null;
 	        } else if (users.size() == 1) {
@@ -71,10 +75,11 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	public U findByMailAndDomain(String domain, String mail) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.like("domain.identifier",domain));
+		criteria.add(Restrictions.eq("domain.identifier",domain));
 		criteria.add(Restrictions.eq("mail", mail).ignoreCase());
+		criteria.add(Restrictions.eq("destroyed",false));
 		
-		 List<U> users = findByCriteria(criteria);
+		List<U> users = findByCriteria(criteria);
 		 
         if (users == null || users.isEmpty()) {
             return null;
@@ -91,8 +96,8 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.like("domain.identifier",domain));
-		
+		criteria.add(Restrictions.eq("domain.identifier",domain));
+		criteria.add(Restrictions.eq("destroyed",false));
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
 	
@@ -102,6 +107,7 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 	public List<U> findByCriteria(AccountOccupationCriteriaBean accountCriteria) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed",false));
 		
 		if ((accountCriteria.getActorMails()!=null) && (accountCriteria.getActorMails().size()>0)) {
 			criteria.add(Restrictions.in("mail", accountCriteria.getActorMails()));
@@ -188,13 +194,9 @@ abstract class GenericUserRepositoryImpl<U extends User> extends GenericAccountR
 			public Object doInHibernate(final Session session)
 			throws HibernateException, SQLException {
 				
-						
-				final Query query = session.createQuery("select u.mail from User u where lower(u.mail) like :mail");
-				
+				final Query query = session.createQuery("select u.mail from User u where lower(u.mail) like :mail and destroyed=false");
 				
 				query.setParameter("mail", beginWith+"%");
-				
-				
 				
 				return query.setCacheable(true).list();
 			}
