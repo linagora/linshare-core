@@ -300,7 +300,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 		for (User user : userSet) {
 			if (!(user.equals(actor))) {
-				String completeName = MailCompletionService.formatLabel(new UserVo(user)).substring(0,MailCompletionService.formatLabel(new UserVo(user)).length());
+				String completeName = MailCompletionService.formatLabel(new UserVo(user),false);
 				if (!ret.contains(completeName)) {
 					ret.add(completeName);
 				}
