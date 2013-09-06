@@ -539,7 +539,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		List<User> userSet = performSearch(actor, pattern);
 
 		for (User user : userSet) {
-				String completeName = MailCompletionService.formatLabel(new UserVo(user)).substring(0, MailCompletionService.formatLabel(new UserVo(user)).length() - 1).trim();
+				String completeName = MailCompletionService.formatLabel(new UserVo(user),false);
 				if (!ret.contains(completeName)) {
 					ret.add(completeName);
 				}
@@ -554,7 +554,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			for (ThreadMemberVo threadMember : this.getThreadMembers(actorVo, currentThread)) {
 				if (threadMember.getMail().toLowerCase().contains(pattern.toLowerCase()) || threadMember.getFullName().toLowerCase().contains(pattern.toLowerCase())) {
 					UserVo user = threadMember.getUser();
-					String completeName = MailCompletionService.formatLabel(user).substring(0, MailCompletionService.formatLabel(user).length() - 1);
+					String completeName = MailCompletionService.formatLabel(user,false);
 					if (!ret.contains(completeName)) {
 						ret.add(completeName);
 					}
@@ -706,16 +706,6 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			res.add(new ThreadVo(thread));
 		}
 		return res;
-		/*Calendar calendar=Calendar.getInstance();
-		calendar.add(Calendar.DATE,-15);
-		List<ThreadVo> finalList = new ArrayList<ThreadVo>();
-		List<ThreadVo> allMyThread = getAllMyThread(userVo);
-		for(ThreadVo threadVo : allMyThread){
-			if((calendar.getTime().compareTo(threadVo.getModificationDate()) == -1) || (calendar.getTime().compareTo(threadVo.getModificationDate()) == -0)) {
-				finalList.add(threadVo);
-			}
-		}
-		return finalList;*/
 	}
 	
  }
