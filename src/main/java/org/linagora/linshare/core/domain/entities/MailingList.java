@@ -34,8 +34,8 @@
 
 package org.linagora.linshare.core.domain.entities;
 
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
@@ -48,49 +48,67 @@ public class MailingList {
 	 * Database persistence identifier
 	 */
 	private long persistenceId;
+
+	/**
+	 * Application identifier 
+	 */
+	private String uuid;
+	
+	/**
+	 * User identifier
+	 */
 	private String identifier;
+	
 	private String description;
+	
+	/**
+	 * Visibility : could be private (visible by the owner only) or public.
+	 */
 	private boolean isPublic;
+	
 	private User owner;
+	
 	private AbstractDomain domain;
+
+	// List of contacts.
 	private List<MailingListContact> mailingListContact;
 	
-	public MailingList(){
+	protected Date creationDate;
+	
+	protected Date modificationDate;
+
+	public MailingList() {
 		super();
 	}
-	
-	public MailingList(MailingList list)
-	{
-		this.persistenceId=list.getPersistenceId();
-		this.identifier=list.getIdentifier();
-		this.description=list.getDescription();
-		this.isPublic=list.isPublic();
-		this.owner=list.getOwner();
-		this.domain=list.getDomain();
-		this.mailingListContact=list.getMails();
+
+	public MailingList(MailingList list) {
+		this.persistenceId = list.getPersistenceId();
+		this.identifier = list.getIdentifier();
+		this.description = list.getDescription();
+		this.isPublic = list.isPublic();
+		this.owner = list.getOwner();
+		this.domain = list.getDomain();
+		this.mailingListContact = list.getMails();
 	}
-	
-	public MailingList(MailingListVo list)
-	{
-		this.persistenceId=list.getPersistenceId();
-		this.identifier=list.getIdentifier();
-		this.description=list.getListDescription();
-		this.isPublic=list.isPublic();
-		if(!list.getMails().isEmpty()){
-			if(mailingListContact == null){
+
+	public MailingList(MailingListVo list) {
+		this.persistenceId = list.getPersistenceId();
+		this.identifier = list.getIdentifier();
+		this.description = list.getListDescription();
+		this.isPublic = list.isPublic();
+		if (!list.getMails().isEmpty()) {
+			if (mailingListContact == null) {
 				mailingListContact = new ArrayList<MailingListContact>();
 			}
-			
-			for(MailingListContactVo current : list.getMails()) {
+
+			for (MailingListContactVo current : list.getMails()) {
 				mailingListContact.add(new MailingListContact(current));
 			}
 		}
 	}
-	
-	
-	public MailingList(String identifier)
-	{
-		this.identifier=identifier;
+
+	public MailingList(String identifier) {
+		this.identifier = identifier;
 	}
 
 	public long getPersistenceId() {
@@ -120,14 +138,15 @@ public class MailingList {
 	public boolean isPublic() {
 		return isPublic;
 	}
-	
+
 	public String visibility(boolean isPublic) {
-		if(isPublic == true){
+		if (isPublic == true) {
 			return "Public";
 		} else {
-			return "Private" ;
+			return "Private";
 		}
 	}
+
 	public void setPublic(boolean isPublic) {
 		this.isPublic = isPublic;
 	}
@@ -155,5 +174,36 @@ public class MailingList {
 	public void setMails(List<MailingListContact> mailingListContact) {
 		this.mailingListContact = mailingListContact;
 	}
-	
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public List<MailingListContact> getMailingListContact() {
+		return mailingListContact;
+	}
+
+	public void setMailingListContact(List<MailingListContact> mailingListContact) {
+		this.mailingListContact = mailingListContact;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+	}
 }

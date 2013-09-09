@@ -35,9 +35,12 @@
 package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
@@ -45,28 +48,28 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingList> implements MailingListRepository{
+public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingList> implements MailingListRepository {
 
 	public MailingListRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
-	
+
 	@Override
-	public MailingList findById(long id) {
-		List<MailingList> mailingList = findByCriteria(Restrictions.eq("id", id));
+	public MailingList findByUuid(String uuid) {
+		List<MailingList> mailingList = findByCriteria(Restrictions.eq("uuid", uuid));
 		if (mailingList == null || mailingList.isEmpty()) {
 			return null;
 		} else if (mailingList.size() == 1) {
 			return mailingList.get(0);
 		} else {
-			throw new IllegalStateException("Id must be unique");
+			throw new IllegalStateException("Uuid must be unique");
 		}
 	}
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailingList entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailingList.class).add(
-				Restrictions.eq("id", entity.getPersistenceId()));
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
+				Restrictions.eq("uuid", entity.getUuid()));
 		return det;
 	}
 
@@ -80,26 +83,43 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		} else {
 			throw new IllegalStateException("Id must be unique");
 		}
-		
+
 	}
 
 	@Override
 	public List<MailingList> findallMyList(User user) {
-		DetachedCriteria det = DetachedCriteria.forClass(MailingList.class);
-		det.add(Restrictions.or(Restrictions.eq("owner",user), 
-				Restrictions.and(Restrictions.eq("domain",user.getDomain()),
-						Restrictions.and(Restrictions.eq("isPublic",true), Restrictions.ne("owner",user)))));
-		
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		// all public lists that belong to my domain.
+		LogicalExpression allPublicLists = Restrictions.and(Restrictions.eq("isPublic", true), Restrictions.eq("domain", user.getDomain()));
+		// we exclude my personal lists. 
+		LogicalExpression allMyDomainPublicLists = Restrictions.and(allPublicLists, Restrictions.ne("owner", user));
+		// adding all private and public lists that belong to me, to the public lists.
+		det.add(Restrictions.or(Restrictions.eq("owner", user), allMyDomainPublicLists));
+
 		List<MailingList> mailingList = findByCriteria(det);
 		if (mailingList == null || mailingList.isEmpty()) {
 			return new ArrayList<MailingList>();
 		}
 		return mailingList;
 	}
-	
+
+	// public MailingList update(MailingList entity) throws BusinessException {
+	// getHibernateTemplate().merge(entity);
+	// return super.update(entity);
+	// }
+
+	@Override
 	public MailingList update(MailingList entity) throws BusinessException {
-	    getHibernateTemplate().merge(entity);
+		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
-	
+
+	@Override
+	public MailingList create(MailingList entity) throws BusinessException {
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
+		entity.setUuid(UUID.randomUUID().toString());
+		return super.create(entity);
+	}
+
 }
