@@ -21,5 +21,5 @@ public interface ThreadRestService {
 	public void addMember(String uuid, ThreadMemberDto member)
 			throws BusinessException;
 
-	public void delete(String uuid) throws BusinessException;
+	public void delete(ThreadDto thread) throws BusinessException;
 }
