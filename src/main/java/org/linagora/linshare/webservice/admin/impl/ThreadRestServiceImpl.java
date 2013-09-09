@@ -34,7 +34,7 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 		return threadFacade.getAll();
 	}
 
-	@Path("/")
+	@Path("/{uuid}")
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
@@ -64,12 +64,12 @@ public class ThreadRestServiceImpl implements ThreadRestService {
 		threadFacade.addMember(uuid, member);
 	}
 
-	@Path("/{uuid}")
+	@Path("/")
 	@DELETE
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
-	public void delete(@PathParam("uuid") String uuid) throws BusinessException {
+	public void delete(ThreadDto thread) throws BusinessException {
 		threadFacade.checkAuthentication();
-		threadFacade.delete(uuid);
+		threadFacade.delete(thread.getUuid());
 	}
 }
