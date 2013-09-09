@@ -41,7 +41,7 @@ import org.linagora.linshare.core.domain.entities.User;
 
 public interface MailingListRepository extends AbstractRepository<MailingList> {
 
-	public MailingList findById(long id);
+	public MailingList findByUuid(String uuid);
 	
 	public MailingList findByIdentifier(String identifier);
 	

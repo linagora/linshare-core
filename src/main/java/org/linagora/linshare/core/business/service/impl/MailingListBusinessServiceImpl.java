@@ -84,7 +84,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     
     @Override
     public MailingList retrieveMailingList(long persistenceId) {
-    	return mailingListRepository.findById(persistenceId);
+    	return mailingListRepository.findByUuid(persistenceId);
     }
     
     @Override
