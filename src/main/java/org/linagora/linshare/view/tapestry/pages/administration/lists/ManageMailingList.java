@@ -105,9 +105,9 @@ public class ManageMailingList {
 	@Component
 	private Form form;
 
-	public void onActivate(long persistenceId) throws BusinessException {
-		if (persistenceId != 0) {
-			mailingListVo = mailingListFacade.retrieveMailingList(persistenceId);
+	public void onActivate(String uuid) throws BusinessException {
+		if (uuid != null) {
+			mailingListVo = mailingListFacade.retrieveList(uuid);
 			oldIdentifier = mailingListVo.getIdentifier();
 			oldOwner = mailingListVo.getOwner();
 		}
@@ -154,7 +154,7 @@ public class ManageMailingList {
 		}
 
 		if (onValidate(mailingListVo.getIdentifier())) {
-			mailingListFacade.updateMailingList(mailingListVo);
+			mailingListFacade.updateList(mailingListVo);
 		} else {
 			String copy = mailingListFacade.checkUniqueId(mailingListVo.getOwner(), mailingListVo.getIdentifier());
 			form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"),mailingListVo.getOwner().getFullName(), copy));

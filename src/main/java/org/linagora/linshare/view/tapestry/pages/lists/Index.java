@@ -86,7 +86,7 @@ public class Index {
 
 	@Property
 	@Persist(value = "flash")
-	private long listToDelete;
+	private String listToDelete;
 
 	@Inject
 	private MailingListFacade mailingListFacade;
@@ -122,7 +122,7 @@ public class Index {
 	public void init() throws BusinessException {
 		if(inSearch == false && fromCreate == false){
 			targetLists = "*";
-			List<MailingListVo> finalList =  mailingListFacade.findAllMailingListByOwner(loginUser);
+			List<MailingListVo> finalList =  mailingListFacade.findAllMyList(loginUser);
 			lists = new ArrayList<MailingListVo>();
 			
 			for(MailingListVo current : finalList){
@@ -132,7 +132,7 @@ public class Index {
 			}
 		}
 		if(fromCreate == true){
-			lists = mailingListFacade.findAllMailingListByOwner(loginUser);
+			lists = mailingListFacade.findAllMyList(loginUser);
 			for(MailingListVo current : lists){
 				if(current.isPublic() == true){
 					targetLists="";
@@ -148,35 +148,32 @@ public class Index {
 	}
 	
 	public boolean getListIsDeletable() throws BusinessException {
-		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
-		if (loginUser.getMail().equals(list.getOwner().getMail())) {
-			return true;
-		}
-		return false;
+		return mailingListFacade.getListIsDeletable(loginUser, list);
 	}
 	
 	public boolean getUserIsOwner() throws BusinessException {
 		return loginUser.equals(list.getOwner());
 	}
 
-	public void onActionFromDeleteList(long persistenceId) {
-		this.listToDelete = persistenceId;
+	public void onActionFromDeleteList(String uuid) {
+		this.listToDelete = uuid;
 	}
 
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
-    	mailingListFacade.deleteMailingList(listToDelete);
-    	for(MailingListVo current : lists){
-    		if(current.getPersistenceId() == listToDelete){
-    			lists.remove(current);
-    		}
-    	}
-		list=null;
+		mailingListFacade.deleteList(loginUser, listToDelete);
+		
+		for (MailingListVo current : lists) {
+			if (current.getUuid() == listToDelete) {
+				lists.remove(current);
+			}
+		}
+		list = null;
 	}
 
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
 		if(criteriaOnSearch.equals("allMyLists")){
-			List<MailingListVo> altList = mailingListFacade.findAllMailingListByOwner(loginUser);
+			List<MailingListVo> altList = mailingListFacade.findAllMyList(loginUser);
 			List<String> finalList = new ArrayList<String>();
 			for(MailingListVo current : altList){
 				finalList.add(current.getIdentifier());
@@ -190,7 +187,7 @@ public class Index {
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
 		if(criteriaOnSearch.equals("allMyLists")){
-			lists= mailingListFacade.findAllMailingListByOwner(loginUser);
+			lists= mailingListFacade.findAllMyList(loginUser);
 		} else {
 			lists= mailingListFacade.setListFromSearch(loginUser,targetLists,criteriaOnSearch);
 		}

@@ -74,8 +74,11 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public MailingList findByIdentifier(String identifier) {
-		List<MailingList> mailingList = findByCriteria(Restrictions.eq("identifier", identifier));
+	public MailingList findByIdentifier(User owner, String identifier) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
+				Restrictions.and(Restrictions.eq("identifier", identifier),Restrictions.eq("owner", owner)));
+		
+		List<MailingList> mailingList = findByCriteria(det);
 		if (mailingList == null || mailingList.isEmpty()) {
 			return null;
 		} else if (mailingList.size() == 1) {
@@ -85,7 +88,13 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		}
 
 	}
-
+	
+	@Override
+	public List<MailingList> findAllListWhereOwner (User user) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("owner", user));
+		return findByCriteria(det);
+	}
 	@Override
 	public List<MailingList> findallMyList(User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());

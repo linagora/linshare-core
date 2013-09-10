@@ -9,29 +9,27 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListFacade {
 
-    public MailingListVo retrieveMailingList(long persistenceId);
+	public MailingListVo retrieveList(String uuid);
     
-    public MailingListVo createMailingList(MailingListVo mailingListVo) throws BusinessException;
+    public MailingListVo createList(MailingListVo mailingListVo) throws BusinessException;
     
-    public List<MailingListVo> findAllMailingList();
+    public List<MailingListVo> findAllList();
     
-    public List<MailingListVo> findAllMailingListByUser(UserVo actorVo) throws BusinessException;
+    public List<MailingListVo> findAllListByUser(UserVo actorVo) throws BusinessException;
     
-    public void deleteMailingList(long persistenceId) throws BusinessException;
+	public void deleteList(UserVo actorVo, String uuid) throws BusinessException;
     
-    public void updateMailingList(MailingListVo mailingListVo) throws BusinessException;
+    public void updateList(MailingListVo mailingListVo) throws BusinessException;
     
-    public List<MailingListVo> findAllMailingListByIdentifier(UserVo actorVo, String identifier) throws BusinessException ;
+	public void deleteContact(MailingListVo listVo, String mail) throws BusinessException;
     
-    public void deleteMailingListContact(MailingListVo listVo,long persistenceId) throws BusinessException;
+    public MailingListContactVo retrieveContact(MailingListVo list , String mail);
     
-    public MailingListContactVo retrieveMailingListContact(MailingListVo list , String mail);
+    public void updateContact(MailingListVo listVo, MailingListContactVo contactToUpdate) throws BusinessException;
     
-    public void updateMailingListContact(MailingListContactVo contactToUpdate) throws BusinessException;
+    public List<MailingListVo> findAllMyList(UserVo user) throws BusinessException ;
     
-    public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException ;
-    
-    public List<MailingListVo> getMailingListFromQuickShare(UserVo user,final String mailingLists);
+    public List<MailingListVo> getListFromQuickShare(UserVo user, String mailingLists);
     
     public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName);
     
@@ -100,17 +98,7 @@ public interface MailingListFacade {
      * @throws BusinessException
      */
     public void addUserToMailingListContact(MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
-    
-    /**
-     * remove contact from mailing list
-     * @param mailingListVo
-     * @param domain
-     * @param mail
-     * @return
-     * @throws BusinessException
-     */
-    public long removeContactFromMailingList(MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
-    
+
     /**
      * Set new owner to a mailing list 
      * @param mailingListVo
@@ -120,4 +108,6 @@ public interface MailingListFacade {
 	public void setNewOwner(MailingListVo mailingListVo, String input) throws BusinessException ;
 	
 	public void refreshListOfMailingList(List<MailingListVo> list);
+	
+	public boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
 }

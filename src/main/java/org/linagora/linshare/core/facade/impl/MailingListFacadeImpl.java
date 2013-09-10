@@ -10,7 +10,6 @@ import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
-import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -42,107 +41,80 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public MailingListVo retrieveMailingList(long persistenceId) {
-		MailingList mailingList = mailingListService.retrieveMailingList(persistenceId);
+	public MailingListVo retrieveList(String uuid) {
+		MailingList mailingList = mailingListService.retrieveList(uuid);
 		return new MailingListVo(mailingList);
 	}
 
 	@Override
-	public MailingListVo createMailingList(MailingListVo mailingListVo) throws BusinessException {
+	public MailingListVo createList(MailingListVo mailingListVo) throws BusinessException {
 		MailingList mailingList = new MailingList(mailingListVo);
-		User actor = userService.findOrCreateUser(mailingListVo.getOwner().getMail(), mailingListVo.getOwner().getDomainIdentifier());
+		String ownerMail = mailingListVo.getOwner().getMail();
+		String ownerDomainId = mailingListVo.getOwner().getDomainIdentifier(); 
+		User actor = userService.findOrCreateUser(ownerMail,ownerDomainId);
 		mailingList.setOwner(actor);
 		mailingList.setMails(null);
-		AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomain().getIdentifier());
+		AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomainId());
 		mailingList.setDomain(domain);
-		mailingListService.createMailingList(mailingList);
+		mailingListService.createList(mailingList);
 		return mailingListVo;
 	}
 
 	@Override
-	public List<MailingListVo> findAllMailingList() {
-		List<MailingListVo> list = new ArrayList<MailingListVo>();
-
-		for (MailingList mailingList : mailingListService.findAllMailingList()) {
-			list.add(new MailingListVo(mailingList));
-		}
-		return list;
+	public List<MailingListVo> findAllList() {
+		return ListToListVo(mailingListService.findAllList());
 	}
 
 	@Override
-	public List<MailingListVo> findAllMailingListByUser(UserVo actorVo) throws BusinessException {
-		List<MailingListVo> list = new ArrayList<MailingListVo>();
+	public List<MailingListVo> findAllListByUser(UserVo actorVo) throws BusinessException {
 		User actor = userService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
-
-		for (MailingList mailingList : mailingListService.findAllMailingListByUser(actor)) {
-			list.add(new MailingListVo(mailingList));
-		}
-		return list;
+		return ListToListVo(mailingListService.findAllListByUser(actor));
 	}
 
 	@Override
-	public void deleteMailingList(long persistenceId) throws BusinessException {
-		mailingListService.deleteMailingList(persistenceId);
+	public void deleteList(UserVo actorVo, String uuid) throws BusinessException {
+		User actor = userService.findOrCreateUser(actorVo.getMail(),actorVo.getDomainIdentifier());
+		mailingListService.deleteList(actor, uuid);
 	}
 
 	@Override
-	public void updateMailingList(MailingListVo mailingListVo) throws BusinessException {
+	public void updateList(MailingListVo mailingListVo) throws BusinessException {
 		MailingList mailingList = new MailingList(mailingListVo);
-		User actor = userService.findOrCreateUser(mailingListVo.getOwner().getMail(), mailingListVo.getOwner().getDomainIdentifier());
+		String ownerMail = mailingListVo.getOwner().getMail();
+		String ownerDomainId = mailingListVo.getOwner().getDomainIdentifier(); 
+		User actor = userService.findOrCreateUser(ownerMail, ownerDomainId);
 		mailingList.setOwner(actor);
-		AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomain().getIdentifier());
+		AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getIdentifier());
 		mailingList.setDomain(domain);
-		mailingListService.updateMailingList(mailingList);
+		mailingListService.updateList(mailingList);
 	}
 
 	@Override
-	public void updateMailingListContact(MailingListContactVo contactToUpdate) throws BusinessException {
-		mailingListService.updateMailingListContact(new MailingListContact(contactToUpdate));
+	public void updateContact(MailingListVo listVo, MailingListContactVo contactToUpdate) throws BusinessException {
+		MailingList list = mailingListService.retrieveList(listVo.getUuid());
+		MailingListContact contact = mailingListService.retrieveContact(list, contactToUpdate.getMail());
+		mailingListService.updateContact(list,contact);
 	}
 
 	@Override
-	public List<MailingListVo> findAllMailingListByIdentifier(UserVo actorVo, String identifier) throws BusinessException {
-		List<MailingListVo> list = new ArrayList<MailingListVo>();
-		List<MailingListVo> listByUser = findAllMailingListByUser(actorVo);
-
-		for (MailingListVo mailingListVo : listByUser) {
-			if (mailingListVo.getIdentifier().equals(identifier)) {
-				list.add(mailingListVo);
-			}
-		}
-		return list;
+	public void deleteContact(MailingListVo listVo, String mail) throws BusinessException {
+		MailingList list = mailingListService.retrieveList(listVo.getUuid());
+		mailingListService.deleteContact(list, mail);
+		mailingListService.updateList(list);
 	}
 
 	@Override
-	public void deleteMailingListContact(MailingListVo listVo, long persistenceId) throws BusinessException {
-		MailingList list = new MailingList(listVo);
-		mailingListService.deleteMailingListContact(list, persistenceId);
-		User actor = userService.findOrCreateUser(listVo.getOwner().getMail(),listVo.getOwner().getDomainIdentifier());
-		list.setOwner(actor);
-		AbstractDomain domain = abstractDomainService.retrieveDomain(listVo.getDomain().getIdentifier());
-		list.setDomain(domain);
-		mailingListService.updateMailingList(list);
+	public MailingListContactVo retrieveContact(MailingListVo list, String mail) {
+		MailingList mailingList = mailingListService.retrieveList(list.getUuid());
+		return new MailingListContactVo(mailingListService.retrieveContact(mailingList, mail));
 	}
-
-	@Override
-	public MailingListContactVo retrieveMailingListContact(MailingListVo list, String mail) {
-
-		MailingList mailingList = mailingListService.retrieveMailingList(list.getPersistenceId());
-		long persistenceId = 0;
-
-		for (MailingListContact mailingListContact : mailingList.getMails()) {
-			if (mailingListContact.getMails().equals(mail)) {
-				persistenceId = mailingListContact.getPersistenceId();
-			}
-		}
-		return new MailingListContactVo(mailingListService.retrieveMailingListContact(persistenceId));
-	}
-
+	
+// A modifieeeeeeer
 	@Override
 	public String checkUniqueId(UserVo user, String value) throws BusinessException {
 		List<MailingListVo> list = new ArrayList<MailingListVo>();
-		list = findAllMailingListByOwner(user);
-		int i = 0;
+		list = findAllMyList(user);
+		int i = 1;
 		String copy = value;
 
 		for (MailingListVo mailingListVo : list) {
@@ -155,22 +127,17 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public List<MailingListVo> findAllMailingListByOwner(UserVo user) throws BusinessException {
-		List<MailingListVo> list = new ArrayList<MailingListVo>();
+	public List<MailingListVo> findAllMyList(UserVo user) throws BusinessException {
 		User actor = userService.findOrCreateUser(user.getMail(),user.getDomainIdentifier());
-		List<MailingList> listFromDb = mailingListService.findAllMailingListByOwner(actor);
-		
-		for (MailingList mailingList : listFromDb) {
-			list.add(new MailingListVo(mailingList));
-		}
-		return list;
+		return ListToListVo(mailingListService.findAllListByOwner(actor));
 	}
 
+	// a retoucherrrrrrrrrrrrrrr
 	@Override
-	public List<MailingListVo> getMailingListFromQuickShare(UserVo user, final String mailingLists) {
+	public List<MailingListVo> getListFromQuickShare(UserVo user, String mailingLists) {
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
 		if (mailingLists != null) {
-			String[] recipients = mailingLists.replaceAll(";", ",").split(",");
+			String[] recipients = mailingLists.replaceAll("",",").split(",");
 			if (mailingLists.startsWith("\"") && mailingLists.endsWith(")")) {
 
 				for (String oneMailingList : recipients) {
@@ -194,15 +161,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName) {
-		List<MailingList> listFromDb = mailingListService.findAllMailingList();
-
-		for (MailingList mailingList : listFromDb) {
-			if ((mailingList.getIdentifier().equals(identifier)) && ((mailingList.getOwner().getFirstName() + " " + mailingList.getOwner().getLastName()).equals(ownerFullName))) {
-				return new MailingListVo(mailingList);
-			}
-		}
-		return new MailingListVo();
+	public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerUuid) {
+		User actor = (User) userService.findByLsUuid(ownerUuid);
+		return new MailingListVo(mailingListService.findListByIdentifier(actor, identifier));
 	}
 
 	@Override
@@ -234,13 +195,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		List<MailingListVo> lists = new ArrayList<MailingListVo>();
 		if (targetLists != null) {
 			if (targetLists.startsWith("\"") && targetLists.endsWith(")")) {
-				lists = this.getMailingListFromQuickShare(loginUser,targetLists);
+				lists = this.getListFromQuickShare(loginUser,targetLists);
 			} else {
 					if (targetLists.equals("*")) {
 						if (loginUser.isSuperAdmin()) {
-							lists = this.findAllMailingList();
+							lists = this.findAllList();
 						} else {
-							lists = this.findAllMailingListByUser(loginUser);
+							lists = this.findAllListByUser(loginUser);
 						}
 					} else {
 						lists = performSearch(targetLists, loginUser);
@@ -268,9 +229,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		List<MailingListVo> list = new ArrayList<MailingListVo>();
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
 		if (loginUser.isSuperAdmin()) {
-			list = this.findAllMailingList();
+			list = this.findAllList();
 		} else {
-			list = this.findAllMailingListByUser(loginUser);
+			list = this.findAllListByUser(loginUser);
 		}
 
 		for (MailingListVo mailingListVo : list) {
@@ -365,21 +326,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 			mailingListVo.addContact(newContact);
 		}
 	}
-
-	@Override
-	public long removeContactFromMailingList(MailingListVo mailingListVo,String domain, String mail) throws BusinessException {
-		User selectedUser = userService.findOrCreateUser(mail, domain);
-		if (selectedUser != null) {
-
-			for (MailingListContactVo mailingListContactVo : mailingListVo.getMails()) {
-				if (mailingListContactVo.getMail().equals(selectedUser.getMail())) {
-					return mailingListContactVo.getPersistenceId();
-				}
-			}
-		}
-		return 0;
-	}
-
+	
 	@Override
 	public void setNewOwner(MailingListVo mailingListVo, String input) throws BusinessException {
 
@@ -387,7 +334,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		User user = userService.findUnkownUserInDB(selectedUser.getMail());
 		mailingListVo.setOwner(new UserVo(user));
 		AbstractDomain domain = abstractDomainService.retrieveDomain(user.getDomainId());
-		mailingListVo.setDomain(new AbstractDomainVo(domain));
+		mailingListVo.setDomainId(domain.getIdentifier());
 
 	}
 	
@@ -396,7 +343,28 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		List<MailingListVo> refreshList = new ArrayList<MailingListVo>(list);
 		list.clear();
 		for(MailingListVo mailingListVo : refreshList){
-			list.add(this.retrieveMailingList(mailingListVo.getPersistenceId()));
+			list.add(this.retrieveList(mailingListVo.getUuid()));
 		}
 	}
+	
+	private List<MailingListVo> ListToListVo(List<MailingList> list){
+		List<MailingListVo> listVo = new ArrayList<MailingListVo>();
+		if(list!=null){
+			for(MailingList currentList : list){
+				listVo.add(new MailingListVo(currentList));
+			}
+		}
+		return listVo;
+	}
+	
+	@Override
+	public boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException {
+		MailingList list = mailingListService.retrieveList(listVo.getUuid());
+		User actor = (User) userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
+		if (list.getOwner().equals(actor)) {
+			return true;
+		}
+		return false;
+	}
+
 }

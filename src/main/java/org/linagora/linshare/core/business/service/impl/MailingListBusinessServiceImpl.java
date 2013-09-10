@@ -62,8 +62,8 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 	
 	@Override
-	public void deleteMailingListContact(long persistenceId) throws BusinessException{ 
-		MailingListContact mailToDelete = retrieveMailingListContact(persistenceId);
+	public void deleteContact(MailingList mailingList, String mail) throws BusinessException { 
+		MailingListContact mailToDelete = retrieveContact(mailingList, mail);
     	if (mailToDelete == null) {
     		logger.error("mail not found");
     	} else {
@@ -72,49 +72,53 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 	
     @Override
-    public MailingListContact retrieveMailingListContact(long persistenceId) {
-    	return mailingListContactRepository.findById(persistenceId);
+    public MailingListContact retrieveContact(MailingList mailingList, String mail) {
+    	return mailingListContactRepository.findByMail(mailingList, mail);
     }
 	
     @Override
-    public MailingList createMailingList(MailingList mailingList) throws BusinessException{
-        MailingList createdList = mailingListRepository.create(mailingList);
+    public MailingList createList(MailingList mailingList) throws BusinessException{
+        List<MailingList> myList = mailingListRepository.findAllListWhereOwner(mailingList.getOwner());
+        for(MailingList currentList : myList){
+        	if(currentList.getIdentifier().equals(mailingList.getIdentifier())){
+        		logger.error("identifier already exists !");
+        		return null;
+        	}
+        }
+    	MailingList createdList = mailingListRepository.create(mailingList);
         return createdList;
     }
     
     @Override
-    public MailingList retrieveMailingList(long persistenceId) {
-    	return mailingListRepository.findByUuid(persistenceId);
+    public MailingList retrieveList(String uuid) {
+    	return mailingListRepository.findByUuid(uuid);
     }
     
     @Override
-    public List<MailingList> findAllMailingList() {
+    public MailingList findListByIdentifier(User owner, String identifier){
+    	return mailingListRepository.findByIdentifier(owner, identifier);
+    }
+    
+    @Override
+    public List<MailingList> findAllList() {
     	List<MailingList> myList = new ArrayList<MailingList>();
     	myList = mailingListRepository.findAll();
     	return myList;
     }
     
     @Override
-    public List<MailingList> findAllMailingListByUser(User user) {
+    public List<MailingList> findAllListByUser(User user) {
     	return mailingListRepository.findallMyList(user);
     }
     
     @Override
-    public List<MailingList> findAllMailingListByOwner(User user) {
-    	List<MailingList> myList = new ArrayList<MailingList>();
-    	List<MailingList> list =mailingListRepository.findAll();
-    	
-    	for(MailingList current : list ) {
-    		if((current.getOwner().equals(user))) {
-    			myList.add(current);
-    		}
-    	}
-    	return myList;
+    public List<MailingList> findAllMyList(User user) {
+    	return mailingListRepository.findAllListWhereOwner(user);
     }
     
     @Override
-    public void deleteMailingList(long persistenceId) throws BusinessException{
-    	MailingList listToDelete = retrieveMailingList(persistenceId);
+    public void deleteList(String uuid) throws BusinessException{
+    	MailingList listToDelete = retrieveList(uuid);
     	if (listToDelete == null) {
     		logger.error("List not found");
     	} else {
@@ -124,16 +128,12 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     }
     
     @Override
-    public void updateMailingList(MailingList listToUpdate) throws BusinessException{
+    public void updateList(MailingList listToUpdate) throws BusinessException{
     	
-    	MailingList list = retrieveMailingList(listToUpdate.getPersistenceId());
+    	MailingList list = retrieveList(listToUpdate.getUuid());
     	list.setIdentifier(listToUpdate.getIdentifier());
     	list.setDescription(listToUpdate.getDescription());
     	list.setPublic(listToUpdate.isPublic());
-
-    	list.getMails().clear();
-    	list.setMails(listToUpdate.getMails());
-    	
     	list.setDomain(listToUpdate.getDomain());
     	list.setOwner(listToUpdate.getOwner());
     
@@ -141,9 +141,9 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
     }
     
     @Override
-    public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException {
-    	MailingListContact contact = retrieveMailingListContact(contactToUpdate.getPersistenceId());
-    	contact.setMails(contactToUpdate.getMails());
+    public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException {
+    	MailingListContact contact = retrieveContact(list, contactToUpdate.getMail());
+    	contact.setMails(contactToUpdate.getMail());
     	contact.setDisplay(contactToUpdate.getDisplay());
     	mailingListContactRepository.update(contact);
     }

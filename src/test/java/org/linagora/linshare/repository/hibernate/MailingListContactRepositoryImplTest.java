@@ -23,7 +23,7 @@ public class MailingListContactRepositoryImplTest extends AbstractJUnit4SpringCo
 	public void testCreateMailingListContact1() throws BusinessException{
 		
 		MailingListContact contact = new MailingListContact(mailName0);
-		logger.debug("mail:"+contact.getMails());
+		logger.debug("mail:"+contact.getMail());
 		
 		mailingListContactRepository.create(contact);
 		Assert.assertNotNull(contact.getPersistenceId());

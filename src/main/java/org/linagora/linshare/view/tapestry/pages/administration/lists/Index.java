@@ -83,7 +83,7 @@ public class Index {
 
 	@Property
 	@Persist(value = "flash")
-	private long listToDelete;
+	private String listToDelete;
 
 	@Inject
 	private MailingListFacade mailingListFacade;
@@ -125,23 +125,19 @@ public class Index {
 	}
 
 	public boolean getListIsDeletable() throws BusinessException {
-		list = mailingListFacade.retrieveMailingList(list.getPersistenceId());
-		if (loginUser.getMail().equals(list.getOwner().getMail())) {
-			return true;
-		}
-		return false;
+		return mailingListFacade.getListIsDeletable(loginUser, list);
 	}
 
-	public void onActionFromDeleteList(long persistenceId) {
-		this.listToDelete = persistenceId;
+	public void onActionFromDeleteList(String uuid) {
+		this.listToDelete = uuid;
 	}
 
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
-		mailingListFacade.deleteMailingList(listToDelete);
+		mailingListFacade.deleteList(loginUser, listToDelete);
 		
 		for (MailingListVo current : lists) {
-			if (current.getPersistenceId() == listToDelete) {
+			if (current.getUuid() == listToDelete) {
 				lists.remove(current);
 			}
 		}

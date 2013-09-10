@@ -43,23 +43,25 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListService {
 
-    public MailingList createMailingList(MailingList mailingList) throws BusinessException;
+    public MailingList createList(MailingList mailingList) throws BusinessException;
     
-    public MailingList retrieveMailingList(long persistenceId);
+    public MailingList retrieveList(String uuid);
     
-    public List<MailingList> findAllMailingList();
+    public List<MailingList> findAllList();
     
-    public List<MailingList> findAllMailingListByUser(User user);
+    public List<MailingList> findAllListByUser(User user);
     
-    public void deleteMailingList(long persistenceId) throws BusinessException;
+    public void deleteList(User actor, String uuid) throws BusinessException;
     
-    public void updateMailingList(MailingList listToUpdate) throws BusinessException;
+    public void updateList(MailingList listToUpdate) throws BusinessException;
     
-    public List<MailingList> findAllMailingListByOwner(User user);
+    public List<MailingList> findAllListByOwner(User user);
     
-    public void deleteMailingListContact(MailingList list,long persistenceId) throws BusinessException;
+    public void deleteContact(MailingList list,String mail) throws BusinessException;
     
-    public MailingListContact retrieveMailingListContact(long persistenceId);
+    public MailingListContact retrieveContact(MailingList mailingList, String mail);
     
-    public void updateMailingListContact(MailingListContact contactToUpdate) throws BusinessException;
+	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
+
+	public MailingList findListByIdentifier(User owner, String identifier);
 }

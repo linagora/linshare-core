@@ -83,16 +83,19 @@ public class MailingList {
 
 	public MailingList(MailingList list) {
 		this.persistenceId = list.getPersistenceId();
+		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
 		this.owner = list.getOwner();
 		this.domain = list.getDomain();
 		this.mailingListContact = list.getMails();
+		this.creationDate = list.getCreationDate();
+		this.modificationDate = list.getModificationDate();
 	}
 
 	public MailingList(MailingListVo list) {
-		this.persistenceId = list.getPersistenceId();
+		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
 		this.description = list.getListDescription();
 		this.isPublic = list.isPublic();

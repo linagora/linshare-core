@@ -13,7 +13,7 @@ public class MailingListContact {
 	}
 	
 	public MailingListContact(MailingListContact mailingListContact) {
-		this.mail = mailingListContact.getMails();
+		this.mail = mailingListContact.getMail();
 		this.persistenceId = mailingListContact.getPersistenceId();
 		this.display = mailingListContact.getDisplay();
 	}
@@ -36,7 +36,7 @@ public class MailingListContact {
 		this.persistenceId = persistenceId;
 	}
 
-	public String getMails() {
+	public String getMail() {
 		return mail;
 	}
 
