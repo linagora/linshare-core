@@ -43,7 +43,9 @@ public interface MailingListRepository extends AbstractRepository<MailingList> {
 
 	public MailingList findByUuid(String uuid);
 	
-	public MailingList findByIdentifier(String identifier);
+	public List<MailingList> findAllListWhereOwner (User user);
+	
+	public MailingList findByIdentifier(User owner, String identifier);
 	
 	public List<MailingList> findallMyList(User user);
 }

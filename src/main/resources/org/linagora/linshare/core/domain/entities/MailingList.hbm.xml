@@ -11,6 +11,10 @@
 	<property access="field" name="isPublic" column="is_public" type="boolean" not-null="true"/>
 	<property access="field" name="identifier" column="identifier" type="string" length="255" not-null="true" />
 	<property access="field" name="description" column="description" type="text" />
+	<property name="creationDate" column="creation_date" type="timestamp" length="29" not-null="true" lazy="false"/>
+	<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false"/>
+	<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
+	
 	
 	<list name="mailingListContact" lazy="false" cascade="all">
 		<key column="mailing_list_id" not-null="true"/>

@@ -65,7 +65,7 @@ public class MailingListRepositoryImplTest extends AbstractJUnit4SpringContextTe
 		mailingListRepository.create(current);
 		Assert.assertNotNull(current.getPersistenceId());
 		
-		MailingList myList = mailingListRepository.findByUuid(current.getPersistenceId());
+		MailingList myList = mailingListRepository.findByIdentifier(null, "mailingListName0");
 		Assert.assertTrue(myList != null );
 		logger.debug("My name is : " + myList.getIdentifier());
 		logger.debug("My visibility: "+myList.visibility(myList.isPublic()));

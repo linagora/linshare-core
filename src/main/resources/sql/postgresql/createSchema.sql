@@ -439,7 +439,10 @@ CREATE TABLE mailing_list (
   user_id            int8 NOT NULL, 
   is_public          bool NOT NULL, 
   identifier         varchar(255) NOT NULL, 
-  description        text NOT NULL, 
+  description        text, 
+  uuid               varchar(255) NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
   id                 int8 NOT NULL, 

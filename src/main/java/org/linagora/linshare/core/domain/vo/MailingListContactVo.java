@@ -19,7 +19,7 @@ public class MailingListContactVo {
 
 	public MailingListContactVo(MailingListContact mail) {
 		this.persistenceId = mail.getPersistenceId();
-		this.mail = mail.getMails();
+		this.mail = mail.getMail();
 		this.display = mail.getDisplay();
 	}
 

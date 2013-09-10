@@ -159,7 +159,7 @@ public class QuickForwardPopup {
 		} else {
 			recipientsSearch = listRecipientsSearch;
 		}
-		List<MailingListVo> mailingListSelected = mailingListFacade.getMailingListFromQuickShare(userLoggedIn,listRecipientsSearch);
+		List<MailingListVo> mailingListSelected = mailingListFacade.getListFromQuickShare(userLoggedIn,listRecipientsSearch);
 		if(!(mailingListSelected.isEmpty())){
 			
 			for(MailingListVo current : mailingListSelected){
@@ -300,7 +300,7 @@ public class QuickForwardPopup {
 	private List<MailingListVo> performSearchForMailingList(String input) throws BusinessException {
 		List<MailingListVo> list = new ArrayList<MailingListVo>();
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		list = mailingListFacade.findAllMailingListByUser(userLoggedIn);
+		list = mailingListFacade.findAllListByUser(userLoggedIn);
 		for(MailingListVo current : list){
 			if(current.getIdentifier().indexOf(input) != -1){
 				finalList.add(current);

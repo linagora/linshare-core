@@ -118,10 +118,10 @@ public class ManageMailingList {
 		}
 	}
 
-	public void onActivate(long persistenceId) throws BusinessException {
-		if (persistenceId != 0) {
+	public void onActivate(String uuid) throws BusinessException {
+		if (uuid != null) {
 			inModify = true;
-			mailingList = mailingListFacade.retrieveMailingList(persistenceId);
+			mailingList = mailingListFacade.retrieveList(uuid);
 			oldIdentifier = mailingList.getIdentifier();
 			
 		} else {
@@ -168,14 +168,14 @@ public class ManageMailingList {
 		}
 		mailingList.setOwner(loginUser);
 		domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
-		mailingList.setDomain(domain);
+		mailingList.setDomainId(domain.getIdentifier());
 			
 		if (inModify == true) {
-			mailingListFacade.updateMailingList(mailingList);
+			mailingListFacade.updateList(mailingList);
 			index.setFromCreate(false);
 		} else {
 			mailingList.setMails(new ArrayList<MailingListContactVo>());
-			mailingListFacade.createMailingList(mailingList);
+			mailingListFacade.createList(mailingList);
 			index.setFromCreate(true);
 		}
 		inModify = false;

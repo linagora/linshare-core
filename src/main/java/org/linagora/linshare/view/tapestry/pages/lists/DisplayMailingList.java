@@ -118,7 +118,7 @@ public class DisplayMailingList {
 	
 	@Property
 	@Persist(value = "flash")
-	private long contactToDelete;
+	private String contactToDelete;
 
     @Inject
     private Messages messages;
@@ -151,9 +151,9 @@ public class DisplayMailingList {
 		}
 	}
 
-	public void onActivate(long persistenceId) throws BusinessException {
-		if (persistenceId != 0) {
-			mailingListVo = mailingListFacade.retrieveMailingList(persistenceId);
+	public void onActivate(String uuid) throws BusinessException {
+		if (uuid != null) {
+			mailingListVo = mailingListFacade.retrieveList(uuid);
 		} else {
 			mailingListVo = null;
 		}
@@ -197,17 +197,17 @@ public class DisplayMailingList {
 		String display = MailCompletionService.formatLabel(email, firstName,lastName, false);
 		if(inModify == true){
 			if (!fromReset){
-				MailingListContactVo contact= mailingListFacade.retrieveMailingListContact(mailingListVo,oldEmail);
+				MailingListContactVo contact= mailingListFacade.retrieveContact(mailingListVo,oldEmail);
 				contact.setDisplay(display);
 				contact.setMail(email);
-				mailingListFacade.updateMailingListContact(contact);
+				mailingListFacade.updateContact(mailingListVo, contact);
 			}
 		} else {
 				MailingListContactVo newContact = new MailingListContactVo(email,display);
 				mailingListVo.addContact(newContact);
-				mailingListFacade.updateMailingList(mailingListVo);
+				mailingListFacade.updateList(mailingListVo);
 			}
-		mailingListVo = mailingListFacade.retrieveMailingList(mailingListVo.getPersistenceId());
+		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 		inModify = false;
 		email = null;
 		oldEmail = null;
@@ -232,14 +232,14 @@ public class DisplayMailingList {
 	
 	public void onActionFromAddUser(String domain,String mail) throws BusinessException {
 		mailingListFacade.addUserToMailingListContact(mailingListVo, domain, mail);
-		mailingListFacade.updateMailingList(mailingListVo);
-		mailingListVo = mailingListFacade.retrieveMailingList(mailingListVo.getPersistenceId());
+		mailingListFacade.updateList(mailingListVo);
+		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 	}
 
 	public void onActionFromDeleteUser(String domain , String mail) throws BusinessException {
-		contactToDelete = mailingListFacade.removeContactFromMailingList(mailingListVo, domain, mail);
-		mailingListFacade.deleteMailingListContact(mailingListVo,this.contactToDelete);
-		mailingListVo = mailingListFacade.retrieveMailingList(mailingListVo.getPersistenceId());
+		
+		mailingListFacade.deleteContact(mailingListVo,mail);
+		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 	}
 
 	public void onActionFromEditContact(String mail) {
@@ -258,18 +258,13 @@ public class DisplayMailingList {
 	
 	
 	public void onActionFromDeleteContact(String mail) {
-		
-		for(MailingListContactVo current : lists){
-			if(current.getMail().equals(mail)){
-				this.contactToDelete = current.getPersistenceId();
-			}
-		}
+		contactToDelete = mail;
 	}
 
 	@OnEvent(value = "contactDeleteEvent")
 	public void deleteContactFromList() throws BusinessException {
-		mailingListFacade.deleteMailingListContact(mailingListVo, contactToDelete);
-		mailingListVo = mailingListFacade.retrieveMailingList(mailingListVo.getPersistenceId());
+		mailingListFacade.deleteContact(mailingListVo, contactToDelete);
+		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 	}
 
 	public boolean getIsEmpty() {

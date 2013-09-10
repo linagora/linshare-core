@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
@@ -29,8 +30,11 @@ public class MailingListContactRepositoryImpl extends AbstractRepositoryImpl<Mai
 	}
 
 	@Override
-	public MailingListContact findByMail(String mail) {
-		List<MailingListContact> mailingList = findByCriteria(Restrictions.eq("mail", mail));
+	public MailingListContact findByMail(MailingList list, String mail) {
+		DetachedCriteria det = DetachedCriteria.forClass(MailingListContact.class).add(Restrictions.and(
+				Restrictions.eq("mailing_list_id", list.getPersistenceId()),Restrictions.eq("mail", mail)));
+		
+		List<MailingListContact> mailingList = findByCriteria(det);
 		if (mailingList == null || mailingList.isEmpty()) {
 			return null;
 		} else if (mailingList.size() == 1) {
@@ -48,7 +52,7 @@ public class MailingListContactRepositoryImpl extends AbstractRepositoryImpl<Mai
 	}
 	
 	public MailingListContact update(MailingListContact entity) throws BusinessException {
-	    getHibernateTemplate().merge(entity);
+	   // getHibernateTemplate().merge(entity);
 		return super.update(entity);
 	}
 }

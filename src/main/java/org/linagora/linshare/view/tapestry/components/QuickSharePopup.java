@@ -348,7 +348,7 @@ public class QuickSharePopup{
 	private List<MailingListVo> performSearchForMailingList(String input) throws BusinessException {
 		List<MailingListVo> list = new ArrayList<MailingListVo>();
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		list = mailingListFacade.findAllMailingListByUser(userVo);
+		list = mailingListFacade.findAllListByUser(userVo);
 		for(MailingListVo current : list){
 			if(current.getIdentifier().indexOf(input) != -1){
 				finalList.add(current);
@@ -385,7 +385,7 @@ public class QuickSharePopup{
     			recipientsSearch = listRecipientsSearch;
     		}
     		
-			List<MailingListVo> mailingListSelected = mailingListFacade.getMailingListFromQuickShare(userVo,listRecipientsSearch);
+			List<MailingListVo> mailingListSelected = mailingListFacade.getListFromQuickShare(userVo,listRecipientsSearch);
 			if(!(mailingListSelected.isEmpty())){
 			
 				for(MailingListVo current : mailingListSelected){

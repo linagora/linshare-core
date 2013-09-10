@@ -46,7 +46,7 @@
 		<p:else>
 		<t:grid source="lists" rowsPerPage="10" include="identifier, listDescription , isPublic" add="ownership,actions" row="list">
 			 <t:parameter name="identifierCell">
-			 <t:pageLink page="lists/DisplayMailingList" context="list.persistenceId">${list.identifier}</t:pageLink>
+			 <t:pageLink page="lists/DisplayMailingList" context="list.uuid">${list.identifier}</t:pageLink>
 			 </t:parameter>
 			 <t:parameter name="ownershipCell">
 			 	${list.owner.firstName} ${list.owner.lastName}
@@ -60,11 +60,11 @@
 			 	</t:if>
 			 </t:parameter>
 			 <t:parameter name="actionsCell">
-			  		<t:pageLink page="administration/lists/ManageMailingList" context="list.persistenceId"
+			  		<t:pageLink page="administration/lists/ManageMailingList" context="list.uuid"
 						title="${message:pages.lists.index.list.edit.button}">
 						<img src="${asset:context:images/icons/edit-button.png}" alt="${message:global.button.edit}" />
 			 		 </t:pageLink>
-			 	 		<t:actionLink t:id="deleteList" context="list.persistenceId" t:zone="zoneConfirmDelete"
+			 	 		<t:actionLink t:id="deleteList" context="list.uuid" t:zone="zoneConfirmDelete"
 			 	 			title="${message:pages.lists.index.list.delete.button}">
 			 	 			<span onclick="window_confirm.showCenter(true)">
 							<img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
