@@ -48,7 +48,6 @@ public class UserRepositoryImpl extends GenericUserRepositoryImpl<User> implemen
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(User.class).add(Restrictions.eq("lsUuid", user.getLsUuid()));
-		det.add(Restrictions.eq("destroyed", false));
 		return det;
 	}
 }

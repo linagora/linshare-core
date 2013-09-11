@@ -53,7 +53,11 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public U findByLsUuid(String lsUuid) {
-		 List<U> users = findByCriteria(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
+		criteria.add(Restrictions.eq("destroyed", false));
+		
+		 List<U> users = findByCriteria(criteria);
 	        if (users == null || users.isEmpty()) {
 	            return null;
 	        } else if (users.size() == 1) {
@@ -63,22 +67,39 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	        }
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<U> findByDomain(String domain) {
 		
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
-		criteria.add(Restrictions.like("domain.identifier",domain));
+		criteria.add(Restrictions.eq("domain.identifier",domain));
+		criteria.add(Restrictions.eq("destroyed", false));
 		return getHibernateTemplate().findByCriteria(criteria);
 	}
 	
 
 	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(U entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.eq("destroyed", false));
+		// query
+		det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
+		return det;
+	}
+
+	@Override
+	public List<U> findAll() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", false));
+		return findByCriteria(criteria);
+	}
+
+	@Override
 	public boolean exist(String lsUuid) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid));
+		criteria.add(Restrictions.eq("destroyed", false));
 		List<U> accounts = null;
 		accounts = findByCriteria(criteria);
 
@@ -90,14 +111,12 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 			throw new IllegalStateException("lsUid must be unique");
 		}
 	}
-
 	
 	@Override
 	public U update(U entity) throws BusinessException {
 		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
-
 	
 	@Override
 	public U create(U entity) throws BusinessException {
@@ -106,7 +125,6 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 		entity.setLsUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}
-	
 	
 	@Override
 	public SystemAccount getSystemAccount() {
@@ -120,5 +138,11 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
         } else {
             throw new IllegalStateException("lsUuid must be unique");
         }
+	}
+
+	@Override
+	public void delete(U entity) throws BusinessException, IllegalArgumentException {
+		entity.setDestroyed(true);
+		this.update(entity);
 	}
 }
