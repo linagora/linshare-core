@@ -264,7 +264,7 @@ public class UserServiceImpl implements UserService {
     			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
     					+" cannot be deleted, he is not a guest, or "+ actor.getAccountReprentation() + " is not an admin");
     		} else {
-    			doDeleteUser(actor, userToDelete);
+    			setUserToDestroy(actor, userToDelete);
     		}
     	} else {
     		logger.debug("User not found in DB : " + login);
@@ -281,7 +281,7 @@ public class UserServiceImpl implements UserService {
 		logger.info("Delete all user from domain " + domainIdentifier + ", count: "+ users.size() );
     	
     	for (User user : users) {
-    		doDeleteUser( actor, user);
+    		setUserToDestroy( actor, user);
 		}
     	
     	logger.debug("deleteAllUsersFromDomain: end");
@@ -313,6 +313,20 @@ public class UserServiceImpl implements UserService {
 	}
     
 
+	private void setUserToDestroy(Account actor, User userToDelete) throws BusinessException {
+		try {
+			userRepository.delete(userToDelete);
+			
+			UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting an user", userToDelete);
+			logEntryService.create(logEntry);
+
+		} catch (IllegalArgumentException e) {
+			logger.error("Couldn't find the user " + userToDelete.getAccountReprentation() + " to be deleted", e);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user "
+					+ userToDelete.getAccountReprentation() + " to be deleted");
+		}
+
+	}
 	private void doDeleteUser(Account actor, User userToDelete) throws BusinessException {
 		try {
 			
@@ -412,9 +426,11 @@ public class UserServiceImpl implements UserService {
 		List<User> internals =  abstractDomainService.searchUserWithDomainPolicies(currentUser.getDomain().getIdentifier(), mail, firstName, lastName);
 		logger.debug("result internals list : size : " + internals.size());
 		for (User ldapuser : internals) {
-			User userdb = userRepository.findByMail(ldapuser.getMail());
-			if (userdb != null)
+			User userdb = userRepository.findByMailAndDomain(ldapuser.getDomainId(), ldapuser.getMail());
+			if (userdb != null) {
 				ldapuser.setRole(userdb.getRole());
+				ldapuser.setLsUuid(userdb.getLsUuid());
+			}
 		}
 		return internals;
 	}

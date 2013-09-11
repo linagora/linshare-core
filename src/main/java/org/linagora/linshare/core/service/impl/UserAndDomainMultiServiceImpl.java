@@ -55,8 +55,6 @@ public class UserAndDomainMultiServiceImpl implements UserAndDomainMultiService 
 		this.abstractDomainService = abstractDomainService;
 		this.userService = userService;
 	}
-
-	
 	
 	@Override
 	public void deleteDomainAndUsers(User actor, String domainIdentifier) throws BusinessException {
@@ -80,8 +78,6 @@ public class UserAndDomainMultiServiceImpl implements UserAndDomainMultiService 
 		}
 		logger.debug("deleteDomainAndUsers: end");		
 	}
-
-
 
 	@Override
 	public User findOrCreateUser(String mail, String domainId) throws BusinessException {
