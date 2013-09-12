@@ -88,6 +88,7 @@
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
+            <br></br><br></br>
                 <li>
                     <t:pageLink id="refresh" class="button" page="thread/content" >
                         <span><img src="${asset:context:images/icons/icon-refresh.png}" alt=""/> ${message:pages.thread.refresh}</span>

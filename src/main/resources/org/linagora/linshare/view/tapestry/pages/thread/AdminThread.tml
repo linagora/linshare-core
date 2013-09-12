@@ -5,14 +5,15 @@
 
     <div id="content">
         <h1>${message:pages.thread.index.title} : ${currentThread.name}</h1>
-
         <t:messagePanel />
         <t:businessMessagesDisplayer />
         <!-- Page content -->
 
+
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
+            <br></br><br></br>
             	    <a href="#" class="button" onclick="window_confirm.showCenter(true);">
 	                    <span><img src="${asset:context:images/icons/delete-small.png}" alt=""/> 
 	                    ${message:pages.thread.admin.deleteButton}</span>

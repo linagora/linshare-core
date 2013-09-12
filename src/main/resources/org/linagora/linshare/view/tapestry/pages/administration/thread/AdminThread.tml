@@ -5,7 +5,6 @@
         
     <div id="content">
         <h1>${message:pages.thread.index.title} : ${currentThread.name}</h1>
-
         <t:messagePanel />
         <t:businessMessagesDisplayer />
         <!-- Page content -->
@@ -14,6 +13,7 @@
             <h4>Actions</h4>
             <ul>
                 <li>
+                <br></br><br></br>
 	                <t:actionLink class="button" t:id="editThread" t:zone="threadEditFormZone"
                             title="${message:pages.thread.admin.renameButton}">
                         <span onclick="threadEditWindow.showCenter(true)">
