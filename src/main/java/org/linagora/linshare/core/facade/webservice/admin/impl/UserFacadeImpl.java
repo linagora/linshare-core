@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.facade.webservice.admin.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -91,20 +92,38 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		users.addAll(userService.searchUser(null, null, pattern, type,
 				currentUser));
 		for (User user : users) {
-			usersDto.add(new UserDto(user));
-		}
+			UserDto userDto = new UserDto(user);
+			if (userDto.isGuest() && user.isRestricted()) {
+				for (User contact : userService.fetchGuestContacts(user.getLsUuid())) {
+					userDto.getRestrictedContacts().add(contact.getMail());
+				}
+			}
+			usersDto.add(userDto);
+		}		
 		return usersDto;
 	}
 
 	@Override
 	public void updateUser(UserDto userDto) throws BusinessException {
 		User actor = super.checkAuthentication();
-		User user;
-		if (userDto.isGuest()) {
-			user = new Guest(userDto);
-		} else {
-			user = new Internal(userDto);
-		}
+		User user = getUser(userDto);
 		userService.updateUser(actor, user, userDto.getDomain());
+		if (userDto.isGuest() && user.isRestricted()) {
+			userService.setGuestContactRestriction(userDto.getUuid(), userDto.getRestrictedContacts());
+		}
+	}
+
+	@Override
+	public void deleteUser(UserDto userDto) throws BusinessException {
+		User actor = super.checkAuthentication();
+		userService.deleteUser(actor, userDto.getUuid());
+	}
+	
+	private User getUser(UserDto userDto) {
+		if (userDto.isGuest()) {
+			return new Guest(userDto);
+		} else {
+			return new Internal(userDto);
+		}
 	}
 }

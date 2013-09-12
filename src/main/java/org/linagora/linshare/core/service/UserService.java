@@ -86,13 +86,13 @@ public interface UserService {
     	
     /**
      * Delete a User (and all the corresponding share )
-     * @param login
      * @param actor 
+     * @param uuid
      * @param checkOwnership : if true, check that the owner is the creator of the user
      * 			useful for the batch
      * @throws BusinessException 
      */
-    void deleteUser(String login, Account actor) throws BusinessException;
+    void deleteUser(Account actor, String uuid) throws BusinessException;
     
     /**
      * Delete all users from domain (and all the related data )

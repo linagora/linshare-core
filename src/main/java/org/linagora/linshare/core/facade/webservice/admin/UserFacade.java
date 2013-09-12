@@ -49,4 +49,6 @@ public interface UserFacade extends AdminGenericFacade {
 	
 	void updateUser(UserDto userDto) throws BusinessException;
 
+	void deleteUser(UserDto userDto) throws BusinessException;
+
 }

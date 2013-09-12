@@ -140,9 +140,9 @@ public class LoadingServiceTestDatas {
 	public  void deleteUsers() throws BusinessException {
 		User root = userService.findOrCreateUser("root@localhost.localdomain", LinShareConstants.rootDomainIdentifier);
 		
-		userService.deleteUser(getUser1().getLsUuid(), root);
-		userService.deleteUser(getUser2().getLsUuid(), root);
-		userService.deleteUser(getUser3().getLsUuid(), root);
+		userService.deleteUser(root, getUser1().getLsUuid());
+		userService.deleteUser(root, getUser2().getLsUuid());
+		userService.deleteUser(root, getUser3().getLsUuid());
 		
 		abstractDomainRepository.delete(getRootDomain());
 		domainPolicyRepository.delete(defaultPolicy);
