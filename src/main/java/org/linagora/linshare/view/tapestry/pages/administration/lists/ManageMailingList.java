@@ -117,16 +117,16 @@ public class ManageMailingList {
 		return mailingListFacade.completionOnUsers(loginUser, input);
 	}
 
-	boolean onValidate(String newIdentifier) throws ValidationException,BusinessException {
+	boolean onValidate(String newIdentifier) throws ValidationException, BusinessException {
 		if (newIdentifier != null) {
 			if (!mailingListVo.getOwner().equals(oldOwner)) {
-				String copy = mailingListFacade.checkUniqueId(mailingListVo.getOwner(),newIdentifier);
+				String copy = mailingListFacade.checkUniqueIdentifier(mailingListVo.getOwner(), newIdentifier);
 				if (!copy.equals(newIdentifier)) {
 					return false;
 				}
 			} else {
 				if (!newIdentifier.equals(oldIdentifier)) {
-					String copy = mailingListFacade.checkUniqueId(mailingListVo.getOwner(),newIdentifier);
+					String copy = mailingListFacade.checkUniqueIdentifier(mailingListVo.getOwner(), newIdentifier);
 					if (!copy.equals(newIdentifier)) {
 						return false;
 					}
@@ -148,16 +148,18 @@ public class ManageMailingList {
 			if (newOwner.substring(newOwner.length() - 1).equals(">")) {
 				mailingListFacade.setNewOwner(mailingListVo, newOwner);
 			} else {
-				form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"),newOwner));
+				form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"), newOwner));
 				return null;
 			}
 		}
 
 		if (onValidate(mailingListVo.getIdentifier())) {
-			mailingListFacade.updateList(mailingListVo);
+			mailingListFacade.updateList(loginUser, mailingListVo);
 		} else {
-			String copy = mailingListFacade.checkUniqueId(mailingListVo.getOwner(), mailingListVo.getIdentifier());
-			form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"),mailingListVo.getOwner().getFullName(), copy));
+			String copy = mailingListFacade.checkUniqueIdentifier(mailingListVo.getOwner(),
+					mailingListVo.getIdentifier());
+			form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"), mailingListVo
+					.getOwner().getFullName(), copy));
 			mailingListVo.setOwner(oldOwner);
 			return null;
 		}

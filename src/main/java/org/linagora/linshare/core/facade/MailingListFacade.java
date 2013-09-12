@@ -19,19 +19,17 @@ public interface MailingListFacade {
     
 	public void deleteList(UserVo actorVo, String uuid) throws BusinessException;
     
-    public void updateList(MailingListVo mailingListVo) throws BusinessException;
+	public void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
     
 	public void deleteContact(MailingListVo listVo, String mail) throws BusinessException;
     
-    public MailingListContactVo retrieveContact(MailingListVo list , String mail);
+    public MailingListContactVo retrieveContact(MailingListVo list , String mail) throws BusinessException;
     
     public void updateContact(MailingListVo listVo, MailingListContactVo contactToUpdate) throws BusinessException;
     
     public List<MailingListVo> findAllMyList(UserVo user) throws BusinessException ;
     
     public List<MailingListVo> getListFromQuickShare(UserVo user, String mailingLists);
-    
-    public MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerFullName);
     
     /**
      * Check if list identifier exists, if it does , purpose an alternative identifier
@@ -40,7 +38,7 @@ public interface MailingListFacade {
      * @return
      * @throws BusinessException
      */
-    public String checkUniqueId(UserVo user,String value)  throws BusinessException ;
+    public String checkUniqueIdentifier(UserVo user,String value)  throws BusinessException ;
     
     
     /**
@@ -97,8 +95,10 @@ public interface MailingListFacade {
      * @param mail
      * @throws BusinessException
      */
-    public void addUserToMailingListContact(MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
+    public void addUserToList(MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
 
+	public void addNewContactToList(MailingListVo mailingListVo, MailingListContactVo contactVo) throws BusinessException;
+    
     /**
      * Set new owner to a mailing list 
      * @param mailingListVo
@@ -107,7 +107,7 @@ public interface MailingListFacade {
      */
 	public void setNewOwner(MailingListVo mailingListVo, String input) throws BusinessException ;
 	
-	public void refreshListOfMailingList(List<MailingListVo> list);
+	public void refreshList(List<MailingListVo> list);
 	
 	public boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
 }

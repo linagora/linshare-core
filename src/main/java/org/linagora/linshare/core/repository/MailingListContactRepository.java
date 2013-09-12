@@ -5,7 +5,7 @@ import org.linagora.linshare.core.domain.entities.MailingListContact;
 
 public interface MailingListContactRepository extends AbstractRepository<MailingListContact> {
 
-	public MailingListContact findByMail(MailingList list, String mail);
+	public MailingListContact findByMail(final MailingList list, final String mail);
 	
 	public MailingListContact findById(long id);
 }

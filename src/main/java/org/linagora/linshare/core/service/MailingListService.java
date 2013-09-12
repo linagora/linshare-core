@@ -51,15 +51,17 @@ public interface MailingListService {
     
     public List<MailingList> findAllListByUser(User user);
     
+	public void createContact(MailingListContact contact) throws BusinessException;
+    
     public void deleteList(User actor, String uuid) throws BusinessException;
     
-    public void updateList(MailingList listToUpdate) throws BusinessException;
+    public void updateList(User actor,MailingList listToUpdate) throws BusinessException;
     
     public List<MailingList> findAllListByOwner(User user);
     
     public void deleteContact(MailingList list,String mail) throws BusinessException;
     
-    public MailingListContact retrieveContact(MailingList mailingList, String mail);
+    public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
     
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
 

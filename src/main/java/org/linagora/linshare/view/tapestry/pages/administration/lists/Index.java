@@ -115,12 +115,13 @@ public class Index {
 	public void init() throws BusinessException {
 		if (inSearch == false) {
 			lists = new ArrayList<MailingListVo>();
+			criteriaOnSearch = "all";
 		}
 		if (!lists.isEmpty()) {
 			if (grid.getSortModel().getSortConstraints().isEmpty()) {
 				grid.getSortModel().updateSort("identifier");
 			}
-			mailingListFacade.refreshListOfMailingList(lists);
+			mailingListFacade.refreshList(lists);
 		}
 	}
 
@@ -135,7 +136,7 @@ public class Index {
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
 		mailingListFacade.deleteList(loginUser, listToDelete);
-		
+
 		for (MailingListVo current : lists) {
 			if (current.getUuid() == listToDelete) {
 				lists.remove(current);
@@ -144,13 +145,18 @@ public class Index {
 		list = null;
 	}
 
-	public List<String> onProvideCompletionsFromSearch(String input)throws BusinessException {
-		return mailingListFacade.completionsForSearchList(loginUser, input,criteriaOnSearch);
+	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
+		return mailingListFacade.completionsForSearchList(loginUser, input, criteriaOnSearch);
 	}
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-		lists = mailingListFacade.setListFromSearch(loginUser, targetLists,criteriaOnSearch);
+		lists = mailingListFacade.setListFromSearch(loginUser, targetLists, criteriaOnSearch);
+	}
+
+	public void onSuccessFromResetForm() {
+		inSearch = false;
+		targetLists = "";
 	}
 
 	Object onException(Throwable cause) {

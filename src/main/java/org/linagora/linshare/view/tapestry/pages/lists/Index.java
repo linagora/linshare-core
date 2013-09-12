@@ -58,7 +58,7 @@ import org.linagora.linshare.view.tapestry.pages.lists.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Import(library = {"../../components/jquery/jquery-1.7.2.js"})
+@Import(library = { "../../components/jquery/jquery-1.7.2.js" })
 public class Index {
 
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
@@ -73,7 +73,7 @@ public class Index {
 
 	@Inject
 	private PersistentLocale persistentLocale;
-	
+
 	@Inject
 	private Messages messages;
 
@@ -92,7 +92,7 @@ public class Index {
 	private MailingListFacade mailingListFacade;
 
 	@Property
-	private int autocompleteMin=3;
+	private int autocompleteMin = 3;
 
 	@Persist
 	@Property
@@ -101,56 +101,55 @@ public class Index {
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 
-    @InjectComponent
-    private Grid grid;
-	
+	@InjectComponent
+	private Grid grid;
+
 	@Persist
 	@Property
 	private String criteriaOnSearch;
-	
+
 	@Persist
 	private boolean inSearch;
-	
+
 	@Property
 	private String selectedRadioButton;
-	
+
 	@Persist
 	private boolean fromCreate;
 
-	
 	@SetupRender
 	public void init() throws BusinessException {
-		if(inSearch == false && fromCreate == false){
+		if (inSearch == false && fromCreate == false) {
 			targetLists = "*";
-			List<MailingListVo> finalList =  mailingListFacade.findAllMyList(loginUser);
+			List<MailingListVo> finalList = mailingListFacade.findAllMyList(loginUser);
 			lists = new ArrayList<MailingListVo>();
-			
-			for(MailingListVo current : finalList){
-				if(current.isPublic() == false){
+
+			for (MailingListVo current : finalList) {
+				if (current.isPublic() == false) {
 					lists.add(current);
 				}
 			}
 		}
-		if(fromCreate == true){
+		if (fromCreate == true) {
 			lists = mailingListFacade.findAllMyList(loginUser);
-			for(MailingListVo current : lists){
-				if(current.isPublic() == true){
-					targetLists="";
+			for (MailingListVo current : lists) {
+				if (current.isPublic() == true) {
+					targetLists = "";
 				}
 			}
-		} 
-		if(!lists.isEmpty()){
-		    if (grid.getSortModel().getSortConstraints().isEmpty()) {
-		    		grid.getSortModel().updateSort("identifier");
-		    }
-		    mailingListFacade.refreshListOfMailingList(lists);
+		}
+		if (!lists.isEmpty()) {
+			if (grid.getSortModel().getSortConstraints().isEmpty()) {
+				grid.getSortModel().updateSort("identifier");
+			}
+			mailingListFacade.refreshList(lists);
 		}
 	}
-	
+
 	public boolean getListIsDeletable() throws BusinessException {
 		return mailingListFacade.getListIsDeletable(loginUser, list);
 	}
-	
+
 	public boolean getUserIsOwner() throws BusinessException {
 		return loginUser.equals(list.getOwner());
 	}
@@ -162,7 +161,7 @@ public class Index {
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
 		mailingListFacade.deleteList(loginUser, listToDelete);
-		
+
 		for (MailingListVo current : lists) {
 			if (current.getUuid() == listToDelete) {
 				lists.remove(current);
@@ -172,26 +171,32 @@ public class Index {
 	}
 
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		if(criteriaOnSearch.equals("allMyLists")){
+		if (criteriaOnSearch.equals("allMyLists")) {
 			List<MailingListVo> altList = mailingListFacade.findAllMyList(loginUser);
 			List<String> finalList = new ArrayList<String>();
-			for(MailingListVo current : altList){
+			for (MailingListVo current : altList) {
 				finalList.add(current.getIdentifier());
 			}
 			return finalList;
 		} else {
 			return mailingListFacade.completionsForSearchList(loginUser, input, criteriaOnSearch);
 		}
-	}	
+	}
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-		if(criteriaOnSearch.equals("allMyLists")){
-			lists= mailingListFacade.findAllMyList(loginUser);
+		if (criteriaOnSearch.equals("allMyLists")) {
+			lists = mailingListFacade.findAllMyList(loginUser);
 		} else {
-			lists= mailingListFacade.setListFromSearch(loginUser,targetLists,criteriaOnSearch);
+			lists = mailingListFacade.setListFromSearch(loginUser, targetLists, criteriaOnSearch);
 		}
 		fromCreate = false;
+	}
+
+	public void onSuccessFromResetForm() {
+		inSearch = false;
+		fromCreate = false;
+		criteriaOnSearch = "allMyLists";
 	}
 
 	Object onException(Throwable cause) {
@@ -201,35 +206,34 @@ public class Index {
 		return this;
 	}
 
-	
 	public boolean getIsPublic() {
 		return list.isPublic();
 	}
-	
+
 	public boolean isEmptyList() {
 		return lists.isEmpty();
 	}
-	
-	public String getPublic() { 
-		return "public"; 
+
+	public String getPublic() {
+		return "public";
 	}
-	
-	public String getPrivate() { 
-		return "private"; 
+
+	public String getPrivate() {
+		return "private";
 	}
-	
-	public String getAll() { 
-		return "all"; 
+
+	public String getAll() {
+		return "all";
 	}
-	
-	public String getAllMyLists() { 
-		return "allMyLists"; 
+
+	public String getAllMyLists() {
+		return "allMyLists";
 	}
 
 	public boolean isFromCreate() {
 		return fromCreate;
 	}
-	
+
 	public void setFromCreate(boolean fromCreate) {
 		this.fromCreate = fromCreate;
 	}

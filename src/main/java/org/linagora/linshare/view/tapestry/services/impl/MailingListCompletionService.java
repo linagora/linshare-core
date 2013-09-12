@@ -1,0 +1,116 @@
+/*
+ * LinShare is an open source filesharing software, part of the LinPKI software
+ * suite, developed by Linagora.
+ * 
+ * Copyright (C) 2013 LINAGORA
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version, provided you comply with the Additional Terms applicable for
+ * LinShare software by Linagora pursuant to Section 7 of the GNU Affero General
+ * Public License, subsections (b), (c), and (e), pursuant to which you must
+ * notably (i) retain the display of the “LinShare™” trademark/logo at the top
+ * of the interface window, the display of the “You are using the Open Source
+ * and free version of LinShare™, powered by Linagora © 2009–2013. Contribute to
+ * Linshare R&D by subscribing to an Enterprise offer!” infobox and in the
+ * e-mails sent with the Program, (ii) retain all hypertext links between
+ * LinShare and linshare.org, between linagora.com and Linagora, and (iii)
+ * refrain from infringing Linagora intellectual property rights over its
+ * trademarks and commercial brands. Other Additional Terms apply, see
+ * <http://www.linagora.com/licenses/> for more details.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License and
+ * its applicable Additional Terms for LinShare along with this program. If not,
+ * see <http://www.gnu.org/licenses/> for the GNU Affero General Public License
+ * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
+ * applicable to LinShare software.
+ */
+package org.linagora.linshare.view.tapestry.services.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.linagora.linshare.core.domain.vo.MailingListVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.facade.MailingListFacade;
+
+public class MailingListCompletionService {
+
+	private MailingListFacade mailingListFacade;
+	
+	public static String formatLabelForAdmin(MailingListVo listVo, boolean virgule) {
+		StringBuffer buf = new StringBuffer();
+		
+		if(listVo != null){
+			buf.append('"').append(listVo.getIdentifier().trim()).append('"');
+			buf.append(" (").append(listVo.getOwner().getFullName()).append(")");
+			buf.append(" <").append(listVo.getUuid()).append(">");
+			if(virgule)	buf.append(",");
+		} else {
+			buf.append(listVo.getUuid()).append(',');
+		}
+		return buf.toString();
+	}
+	
+	public static String formatLabelForUser(UserVo actorVo, MailingListVo listVo, boolean virgule) {
+		StringBuffer buf = new StringBuffer();
+		
+		if(listVo != null){
+			buf.append('"').append(listVo.getIdentifier().trim()).append('"');
+			if(actorVo.getLsUuid().equals(listVo.getOwner().getLsUuid())){
+				buf.append(" (Me)");
+			} else {
+				buf.append(" (").append(listVo.getOwner().getFullName()).append(")");
+			}
+			buf.append(" <").append(listVo.getUuid()).append(">");
+			if(virgule)	buf.append(",");
+		} else {
+			buf.append(listVo.getUuid()).append(',');
+		}
+		return buf.toString();
+	}
+	
+	public List<MailingListVo> parseLists(final String recipientsList) {
+		String[] recipients = recipientsList.replaceAll(";", ",").split(",");
+		ArrayList<MailingListVo> lists = new ArrayList<MailingListVo>();
+		
+		for (String oneList : recipients) {
+			String uuid = contentInsideToken(oneList, "<",">");
+			if (uuid == null) {
+				uuid = oneList.trim();
+			}
+			if (!uuid.equals("")) {
+				MailingListVo listVo = mailingListFacade.retrieveList(uuid);
+				if (!lists.contains(listVo)) {
+					lists.add(listVo); 
+				}
+			}
+		}
+		
+		return lists;
+	}
+	
+	/**
+	 * Gives the content inside two tokens
+	 * 
+	 * @param str
+	 * @param tokenright
+	 * @param tokenleft
+	 * @return
+	 */
+	public static String contentInsideToken(final String str, final String tokenright, final String tokenleft) {
+		int deb = str.indexOf(tokenright,0);
+		int end = str.indexOf(tokenleft,1);
+		if (deb == -1 || end == -1) {
+			return null;
+		} else {
+			return str.substring(deb+1, end).trim();
+		}
+	}
+}

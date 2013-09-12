@@ -38,44 +38,78 @@
 		
 			<form t:type="form" t:id="contactForm">
 				<fieldset class="title_criteria_zone" id="contactCriterion">
+				
 				<t:if test="inModify">
 					<legend align="top" class="palette">${message:pages.lists.index.list.contact.edit.button}</legend>
 				<p:else>
 					<legend align="top" class="palette">${message:pages.lists.addContact}</legend>
 				</p:else>
 				</t:if>
-				<p><t:label for="email"/>:&nbsp;
-        		<t:textfield t:id="email" value="email"/></p><br></br>
 				
-				<p><t:label for="firstName"/>:&nbsp;
-        		<t:textfield t:id="firstName" value="firstName"/></p><br></br>
-   		
-   				<p><t:label for="lastName"/>:&nbsp;
-        		<t:textfield t:id="lastName" value="lastName" /></p><br></br>
-				<t:if test="inModify">
-					<p><input type="submit"  value="${message:pages.lists.index.list.contact.edit.button}"/>
-        			<input t:type="submit" t:id="reset" value="${message:global.button.reset}"/></p>
-        		<p:else>
-        			<p><input type="submit"  value="${message:pages.lists.addContact}"/></p>
-				</p:else>
-				</t:if>
+				<table>
+					<tr>
+						<td>
+							<t:label for="email"/>:&nbsp;
+						</td>
+						<td>
+							<t:textfield t:id="email" value="email" disabled="inModify"/>
+						</td>
+					</tr>
+					<tr>
+						<td HEIGHT="50">
+							<t:label for="firstName"/>:&nbsp;
+						</td>
+						<td>
+							<t:textfield t:id="firstName" value="firstName"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<t:label for="lastName"/>:&nbsp;
+						</td>
+						<td>
+							<t:textfield t:id="lastName" value="lastName" />
+						</td>
+					</tr>
+					<tr>				
+						<t:if test="inModify">
+						<td HEIGHT="50">
+							<input type="submit"  value="${message:pages.lists.index.list.contact.edit.button}"/>
+						</td>
+						<td>
+        					<input t:type="submit" t:id="reset" value="${message:global.button.reset}"/>
+        				</td>
+        				<p:else>
+        				<td HEIGHT="50">
+							<input type="submit"  value="${message:pages.lists.addContact}"/>
+						</td>
+						</p:else>
+						</t:if>
+					</tr>
+				</table>
 				</fieldset>
 			</form>
 			
 	  <div class="clear"></div>
 <br></br>
-			<form t:type="form" t:id="SearchUserForm">
 				<fieldset style="width: 1000;" class="title_criteria_zone" id="userCriterion">
 				<legend align="top" class="palette">${message:pages.lists.addUser}</legend>		
 					<table>
 						<tr>
+						<form t:type="form" t:id="SearchUserForm">
 							<td>
 							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
 				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    		</td>
 				    		<td>
-        					<input type="submit" style="margin-right:380px" value="${message:global.button.search}"/>
+        					<input type="submit" value="${message:global.button.search}"/>
+        					</td>
+        					</form>
+        					<td>
+        					<form t:type="form" t:id="resetSearchUserForm">
+        						<input type="submit" style="margin-right:330px" value="${message:global.button.reset}"/>
+        					</form>
         					</td>
         				</tr>
         			</table>
@@ -111,7 +145,6 @@
 	    				</t:grid>
         			</t:if>
 				</fieldset>
-			</form>
 		<p:else>
 		<t:grid source="contacts" rowsPerPage="15" include="firstName,lastName,mail">
 		<p:empty>

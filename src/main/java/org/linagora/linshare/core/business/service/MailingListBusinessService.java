@@ -47,6 +47,8 @@ public interface MailingListBusinessService {
     
     public List<MailingList> findAllList();
     
+    public void createContact(MailingListContact contact) throws BusinessException;
+    
     public List<MailingList> findAllListByUser(User user);
     
     public void deleteList(String uuid) throws BusinessException;
@@ -55,7 +57,7 @@ public interface MailingListBusinessService {
     
     public List<MailingList> findAllMyList(User user);
 
-    public MailingListContact retrieveContact(MailingList mailingList, String mail);
+    public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
     
     public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
     

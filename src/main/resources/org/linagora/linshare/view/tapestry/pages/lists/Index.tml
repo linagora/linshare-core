@@ -17,18 +17,23 @@
 					<br></br>
 				<fieldset class="title_criteria_zone" id="searchCriterion">
 			<legend align="top" class="palette">${message:global.button.search}</legend>
-					<t:form id="form">
         		<table>
 					<tr>
+						<t:form id="form">
 						<td>
 							<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}" t:validate="required"/>
 						</td>
 						<td>
 						     <input type="submit" value="${message:global.button.search}"/>
 						</td>
+						</t:form>
+						<td>
+							<t:form t:type="form" t:id="resetForm">
+								<input type="submit" value="${message:global.button.reset}"/>
+							</t:form>
+						</td>
 					</tr>
 				</table>
-			</t:form>
 				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
 				                    <t:radio t:id="public" onclick="this.form.submit()"/>&nbsp;<t:label for="public">${message:pages.lists.radioGroupPub}</t:label>
@@ -49,7 +54,7 @@
 		<t:if t:test="emptyList">
 		${message:pages.lists.nothing}
 		<p:else>
-		<t:grid source="lists" rowsPerPage="10"  include="identifier, listDescription, isPublic" add="ownership,actions" row="list">
+		<t:grid source="lists" rowsPerPage="10"  include="identifier, listDescription, isPublic" add="ownership,edit,delete" row="list">
 			 <t:parameter name="identifierCell">
 			 <t:pageLink page="lists/DisplayMailingList" context="list.uuid"
 			 title="${message:pages.lists.link}">${list.identifier}</t:pageLink>
@@ -70,12 +75,16 @@
 			 </p:else>
 			 </t:if>
 			 </t:parameter>
-			 <t:parameter name="actionsCell">
-			  	<t:if test="listIsDeletable">
+			 <t:parameter name="editCell">
+			 	<t:if test="listIsDeletable">
 			  		<t:pageLink page="lists/ManageMailingList" context="list.uuid"
 						title="${message:pages.lists.index.list.edit.button}">
 						<img src="${asset:context:images/icons/edit-button.png}" alt="${message:global.button.edit}" />
 			 		 </t:pageLink>
+			 	</t:if>
+			 </t:parameter>
+			 <t:parameter name="deleteCell">
+			  	<t:if test="listIsDeletable">
 			 	 		<t:actionLink t:id="deleteList" context="list.uuid" t:zone="zoneConfirmDelete"
 			 	 			title="${message:pages.lists.index.list.delete.button}">
 			 	 			<span onclick="window_confirm.showCenter(true)">

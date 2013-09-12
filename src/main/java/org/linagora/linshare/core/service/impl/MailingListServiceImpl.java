@@ -35,7 +35,6 @@
 package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
-
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
@@ -45,76 +44,86 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MailingListService;
 
 public class MailingListServiceImpl implements MailingListService {
-	
+
 	private final MailingListBusinessService mailingListBusinessService;
-	
-	public MailingListServiceImpl(MailingListBusinessService mailingListBusinessService)
-	{
+
+	public MailingListServiceImpl(MailingListBusinessService mailingListBusinessService) {
 		super();
-		this.mailingListBusinessService=mailingListBusinessService;
+		this.mailingListBusinessService = mailingListBusinessService;
 	}
-	
+
 	@Override
-    public MailingList createList(MailingList mailingList) throws BusinessException {
-    	return mailingListBusinessService.createList(mailingList);
-    }
-	
+	public MailingList createList(MailingList mailingList) throws BusinessException {
+		return mailingListBusinessService.createList(mailingList);
+	}
+
 	@Override
-    public MailingList retrieveList(String uuid) {
-    	return mailingListBusinessService.retrieveList(uuid);
-    }
-	
+	public void createContact(MailingListContact contact) throws BusinessException {
+		mailingListBusinessService.createContact(contact);
+	}
+
+	@Override
+	public MailingList retrieveList(String uuid) {
+		return mailingListBusinessService.retrieveList(uuid);
+	}
+
 	@Override
 	public MailingList findListByIdentifier(User owner, String identifier) {
 		return mailingListBusinessService.findListByIdentifier(owner, identifier);
 	}
-	
+
 	@Override
-    public MailingListContact retrieveContact(MailingList mailingList, String mail) {
+	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException {
 		return mailingListBusinessService.retrieveContact(mailingList, mail);
 	}
-    
+
 	@Override
-    public List<MailingList> findAllList() {
+	public List<MailingList> findAllList() {
 		return mailingListBusinessService.findAllList();
 	}
-	
+
 	@Override
-    public List<MailingList> findAllListByUser(User user) {
+	public List<MailingList> findAllListByUser(User user) {
 		return mailingListBusinessService.findAllListByUser(user);
 	}
-	
+
 	@Override
-    public void deleteList(User actor, String uuid) throws BusinessException {
-		
+	public void deleteList(User actor, String uuid) throws BusinessException {
+
 		MailingList mailingList = mailingListBusinessService.retrieveList(uuid);
 		String ownerUuid = mailingList.getOwner().getLsUuid();
-		
-		if(actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
+
+		if (actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
 			mailingListBusinessService.deleteList(uuid);
 		} else {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this list.");
 		}
-		
+
 	}
-	
+
 	@Override
-    public void updateList(MailingList listToUpdate) throws BusinessException {
+	public void updateList(User actor, MailingList listToUpdate) throws BusinessException {
+		String ownerUuid = listToUpdate.getOwner().getLsUuid();
+		if (actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
+			mailingListBusinessService.updateList(listToUpdate);
+		} else {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this list.");
+		}
 		mailingListBusinessService.updateList(listToUpdate);
 	}
-	
+
 	@Override
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException {
 		mailingListBusinessService.updateContact(list, contactToUpdate);
 	}
-	
+
 	@Override
-    public List<MailingList> findAllListByOwner(User user) {
+	public List<MailingList> findAllListByOwner(User user) {
 		return mailingListBusinessService.findAllMyList(user);
 	}
-	
+
 	@Override
-	public void deleteContact(MailingList list,String mail) throws BusinessException { 
+	public void deleteContact(MailingList list, String mail) throws BusinessException {
 		mailingListBusinessService.deleteContact(list, mail);
 	}
 }
