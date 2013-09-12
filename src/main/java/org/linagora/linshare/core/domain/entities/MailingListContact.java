@@ -20,7 +20,6 @@ public class MailingListContact {
 	
 	public MailingListContact(MailingListContactVo mailingListContact){
 		this.mail = mailingListContact.getMail();
-		this.persistenceId = mailingListContact.getPersistenceId();
 		this.display = mailingListContact.getDisplay();
 	}
 	

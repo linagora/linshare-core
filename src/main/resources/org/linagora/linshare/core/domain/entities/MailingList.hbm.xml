@@ -16,7 +16,7 @@
 	<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
 	
 	
-	<list name="mailingListContact" lazy="false" cascade="all">
+	<list name="mailingListContact" lazy="true" cascade="all">
 		<key column="mailing_list_id" not-null="true"/>
 		<list-index column="mailing_list_contact_index"/>
 		<one-to-many class="org.linagora.linshare.core.domain.entities.MailingListContact"/>

@@ -57,7 +57,6 @@ import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 
-
 public class ManageMailingList {
 
 	@Inject
@@ -86,7 +85,7 @@ public class ManageMailingList {
 	@Persist
 	@Property
 	private String oldIdentifier;
-	
+
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.lists.Index index;
 
@@ -94,9 +93,9 @@ public class ManageMailingList {
 	@Property
 	private VisibilityType visibility;
 
-    @Inject
-    private Messages messages;
-	
+	@Inject
+	private Messages messages;
+
 	@Inject
 	private PersistentLocale persistentLocale;
 
@@ -108,7 +107,7 @@ public class ManageMailingList {
 
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
-	
+
 	@SetupRender
 	public void init() {
 		if (mailingList == null) {
@@ -123,7 +122,7 @@ public class ManageMailingList {
 			inModify = true;
 			mailingList = mailingListFacade.retrieveList(uuid);
 			oldIdentifier = mailingList.getIdentifier();
-			
+
 		} else {
 			inModify = false;
 			mailingList = null;
@@ -138,28 +137,29 @@ public class ManageMailingList {
 		return index;
 	}
 
-	public String getCurrentVisibility(){
-		if (mailingList.isPublic() ) {
+	public String getCurrentVisibility() {
+		if (mailingList.isPublic()) {
 			return String.format((messages.get("pages.lists.visibility.public")));
 		} else {
 			return String.format((messages.get("pages.lists.visibility.private")));
 		}
 	}
-	
-    void onValidateFromIdentifier(String value) throws ValidationException, BusinessException {
-        if (value != null) {
-            if (!value.substring(0,1).matches("[A-Za-z]+")) {
-					throw new ValidationException(String.format(messages.get("pages.lists.manageList.letter")));
-				}
+
+	void onValidateFromIdentifier(String value) throws ValidationException, BusinessException {
+		if (value != null) {
+			if (!value.substring(0, 1).matches("[A-Za-z]+")) {
+				throw new ValidationException(String.format(messages.get("pages.lists.manageList.letter")));
 			}
-            if(!value.equals(oldIdentifier)){
-            	String copy = mailingListFacade.checkUniqueId(loginUser, value);
-            	if (!copy.equals(value)) {
-            		throw new ValidationException(String.format(messages.get("pages.lists.manageList.identifierExist"),copy));
-            	}
-            }
-    }
-	
+		}
+		if (!value.equals(oldIdentifier)) {
+			String copy = mailingListFacade.checkUniqueIdentifier(loginUser, value);
+			if (!copy.equals(value)) {
+				throw new ValidationException(String.format(messages.get("pages.lists.manageList.identifierExist"),
+						copy));
+			}
+		}
+	}
+
 	public Object onSuccess() throws BusinessException {
 		if (visibility.toString().equals("Public")) {
 			mailingList.setPublic(true);
@@ -169,9 +169,9 @@ public class ManageMailingList {
 		mailingList.setOwner(loginUser);
 		domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
 		mailingList.setDomainId(domain.getIdentifier());
-			
+
 		if (inModify == true) {
-			mailingListFacade.updateList(mailingList);
+			mailingListFacade.updateList(loginUser, mailingList);
 			index.setFromCreate(false);
 		} else {
 			mailingList.setMails(new ArrayList<MailingListContactVo>());

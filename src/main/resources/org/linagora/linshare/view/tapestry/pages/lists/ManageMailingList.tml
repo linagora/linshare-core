@@ -30,20 +30,44 @@
 					<br></br>
 				</p:else>
 				</t:if>
-			<p><t:label for="identifier"/>:&nbsp;
-        	<t:textfield t:id="identifier" value="mailingList.identifier" validate="required"/></p>
-		<br></br>			
-			<p><t:label for="listDescription"/>:&nbsp;
-        	<t:textarea t:id="listDescription" value="mailingList.listDescription" cols="40" rows="1"/></p>
-        <br></br>
-            <t:if test="inModify">
-            <p>${message:pages.lists.currentVisibility}: ${currentVisibility}</p>
-            </t:if>
-        	<t:label for="visibility"/>:&nbsp;
-        	<select t:type="select" t:id="visibility"></select>
-             <div class="clear"></div>	
-             <br></br>	
-        	<p><input type="submit"  value="${message:global.button.validate}"/></p>
+			<table>
+				<tr>
+					<td>
+						<t:label for="identifier"/>:&nbsp;
+					</td>
+					<td>
+        				<t:textfield t:id="identifier" value="mailingList.identifier" validate="required"/>
+        			</td>
+        		</tr>
+        		<tr>
+					<td HEIGHT="50">
+						<t:label for="listDescription"/>:&nbsp;
+					</td>
+					<td  HEIGHT="50">
+        				<t:textarea t:id="listDescription" value="mailingList.listDescription" cols="40" rows="2"/>
+        			</td>
+        		</tr>	
+        		<tr>
+        			<td>
+        			   <t:if test="inModify">
+            				${message:pages.lists.currentVisibility}: ${currentVisibility}
+            		   </t:if>
+            		</td>
+        		</tr>	
+            	<tr>
+        			<td>	 
+        				<t:label for="visibility"/>:&nbsp;
+        			</td>
+        			<td>
+        				<select t:type="select" t:id="visibility"></select>
+        			</td>
+        		</tr>	
+            	<tr>
+        			<td HEIGHT="30">	
+        				<input type="submit"  value="${message:global.button.validate}"/>
+        			</td>
+        	    </tr>
+        </table>
 		</fieldset>
         </t:form>         
         

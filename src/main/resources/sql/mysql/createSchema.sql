@@ -433,6 +433,27 @@ CREATE TABLE thread_view_asso (
   thread_view_id bigint(8) NOT NULL,
   depth          int(4) NOT NULL,
   PRIMARY KEY (id)) CHARACTER SET UTF8;
+CREATE TABLE mailing_list (
+  id                  bigint8 NOT NULL, 
+  domain_abstract_id bigint8 NOT NULL, 
+  user_id            bigint8 NOT NULL, 
+  is_public          bool NOT NULL, 
+  identifier         varchar(255) NOT NULL, 
+  description        text, 
+  uuid               varchar(255) NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
+  PRIMARY KEY (id));
+CREATE TABLE mailing_list_contact (
+  id                 bigint8 NOT NULL, 
+  mailing_list_id    bigint8 NOT NULL, 
+  mail               varchar(255) NOT NULL, 
+  display            varchar(255) NOT NULL, 
+  mailing_list_contact_index int4, 
+  PRIMARY KEY (id));
+
+  
+  
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec4e302e7 (user_provider_id), ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec59e1e332 (domain_policy_id), ADD CONSTRAINT fk449bc2ec59e1e332 FOREIGN KEY (domain_policy_id) REFERENCES domain_policy (id) ON UPDATE No action ON DELETE No action;
 ALTER TABLE domain_abstract ADD INDEX fk449bc2ec9083e725 (parent_id), ADD CONSTRAINT fk449bc2ec9083e725 FOREIGN KEY (parent_id) REFERENCES domain_abstract (id) ON UPDATE No action ON DELETE No action;
@@ -507,6 +528,10 @@ ALTER TABLE thread_view ADD INDEX FKthread_vie68184 (thread_account_id), ADD CON
 ALTER TABLE thread_view_asso ADD INDEX FKthread_vie285846 (thread_view_id), ADD CONSTRAINT FKthread_vie285846 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
 ALTER TABLE thread_view_asso ADD INDEX FKthread_vie896171 (tag_id), ADD CONSTRAINT FKthread_vie896171 FOREIGN KEY (tag_id) REFERENCES tag (id);
 ALTER TABLE thread ADD INDEX FKthread957862 (thread_view_id), ADD CONSTRAINT FKthread957862 FOREIGN KEY (thread_view_id) REFERENCES thread_view (id);
+ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
+ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
+ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
+
 CREATE UNIQUE INDEX account_lsuid_index
   ON account (ls_uuid);
 CREATE INDEX allowed_mimetype_index

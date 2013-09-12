@@ -4,7 +4,6 @@ import org.linagora.linshare.core.domain.entities.MailingListContact;
 
 public class MailingListContactVo {
 
-	private long persistenceId;
 	private String mail;
 	private String display;
 
@@ -13,12 +12,10 @@ public class MailingListContactVo {
 
 	public MailingListContactVo(MailingListContactVo mailingListContact) {
 		this.mail = mailingListContact.getMail();
-		this.persistenceId = mailingListContact.getPersistenceId();
 		this.display = mailingListContact.getDisplay();
 	}
 
 	public MailingListContactVo(MailingListContact mail) {
-		this.persistenceId = mail.getPersistenceId();
 		this.mail = mail.getMail();
 		this.display = mail.getDisplay();
 	}
@@ -30,14 +27,6 @@ public class MailingListContactVo {
 
 	public MailingListContactVo(String mail) {
 		this.mail = mail;
-	}
-	
-	public long getPersistenceId() {
-		return persistenceId;
-	}
-
-	public void setPersistenceId(long persistenceId) {
-		this.persistenceId = persistenceId;
 	}
 
 	public String getMail() {

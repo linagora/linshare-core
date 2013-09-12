@@ -76,7 +76,7 @@ public class DisplayMailingList {
 
 	@Persist
 	private List<MailingListContactVo> lists;
-	
+
 	@Persist
 	@Property
 	private List<UserVo> contacts;
@@ -98,14 +98,14 @@ public class DisplayMailingList {
 	@Validate("required")
 	@Property
 	private String email;
-	
+
 	@Persist
 	private String oldEmail;
 
 	@Persist
 	@Property(write = false)
 	private boolean displayGrid;
-	
+
 	@SessionState
 	private UserVo loginUser;
 
@@ -115,28 +115,28 @@ public class DisplayMailingList {
 
 	@Property
 	private UserVo result;
-	
+
 	@Property
 	@Persist(value = "flash")
 	private String contactToDelete;
 
-    @Inject
-    private Messages messages;
-    
+	@Inject
+	private Messages messages;
+
 	@Property
 	private int autocompleteMin = 3;
-	
+
 	@Persist
 	@Property
 	private boolean inModify;
-	
+
 	@Persist
 	@Property
 	private boolean fromReset;
 
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index indexAdmin;
-	
+
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.lists.Index index;
 
@@ -145,7 +145,7 @@ public class DisplayMailingList {
 		if (!mailingListVo.getMails().isEmpty()) {
 			contacts = new ArrayList<UserVo>();
 			lists = mailingListVo.getMails();
-			for(MailingListContactVo current :mailingListVo.getMails()){
+			for (MailingListContactVo current : mailingListVo.getMails()) {
 				contacts.add(MailCompletionService.getUserFromDisplay(current.getDisplay()));
 			}
 		}
@@ -163,7 +163,7 @@ public class DisplayMailingList {
 	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
 		return mailingListFacade.completionOnUsers(loginUser, input);
 	}
-	
+
 	public Object onActionFromBack() {
 		mailingListVo = null;
 		lists = null;
@@ -177,11 +177,11 @@ public class DisplayMailingList {
 		inModify = false;
 		oldEmail = null;
 		contacts = null;
-		
-		if(loginUser.isSuperAdmin()){
+
+		if (loginUser.isSuperAdmin()) {
 			return indexAdmin;
 		} else {
-		return index;
+			return index;
 		}
 	}
 
@@ -192,21 +192,20 @@ public class DisplayMailingList {
 		lastName = null;
 		fromReset = true;
 	}
-	
+
 	public void onSuccessFromContactForm() throws BusinessException {
-		String display = MailCompletionService.formatLabel(email, firstName,lastName, false);
-		if(inModify == true){
-			if (!fromReset){
-				MailingListContactVo contact= mailingListFacade.retrieveContact(mailingListVo,oldEmail);
+		String display = MailCompletionService.formatLabel(email, firstName, lastName, false);
+		if (inModify == true) {
+			if (!fromReset) {
+				MailingListContactVo contact = mailingListFacade.retrieveContact(mailingListVo, oldEmail);
 				contact.setDisplay(display);
 				contact.setMail(email);
 				mailingListFacade.updateContact(mailingListVo, contact);
 			}
 		} else {
-				MailingListContactVo newContact = new MailingListContactVo(email,display);
-				mailingListVo.addContact(newContact);
-				mailingListFacade.updateList(mailingListVo);
-			}
+			MailingListContactVo newContact = new MailingListContactVo(email, display);
+			mailingListFacade.addNewContactToList(mailingListVo, newContact);
+		}
 		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 		inModify = false;
 		email = null;
@@ -221,32 +220,35 @@ public class DisplayMailingList {
 		displayGrid = true;
 	}
 
-	public boolean getIsInList() throws BusinessException {
-			return mailingListFacade.checkUserIsContact(mailingListVo.getMails(), result.getMail());
+	public void onSuccessFromResetSearchUserForm() throws BusinessException {
+		results = null;
+		recipientsSearch = null;
+		displayGrid = false;
 	}
 
-	public boolean getUserIsOwner(){
+	public boolean getIsInList() throws BusinessException {
+		return mailingListFacade.checkUserIsContact(mailingListVo.getMails(), result.getMail());
+	}
+
+	public boolean getUserIsOwner() {
 		return loginUser.equals(mailingListVo.getOwner());
 	}
-	
-	
-	public void onActionFromAddUser(String domain,String mail) throws BusinessException {
-		mailingListFacade.addUserToMailingListContact(mailingListVo, domain, mail);
-		mailingListFacade.updateList(mailingListVo);
+
+	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
+		mailingListFacade.addUserToList(mailingListVo, domain, mail);
 		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 	}
 
-	public void onActionFromDeleteUser(String domain , String mail) throws BusinessException {
-		
-		mailingListFacade.deleteContact(mailingListVo,mail);
+	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {
+		mailingListFacade.deleteContact(mailingListVo, mail);
 		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 	}
 
 	public void onActionFromEditContact(String mail) {
 		UserVo contactForEdit = null;
-		for(MailingListContactVo current : lists){
-			if(current.getMail().equals(mail)){
-				contactForEdit=MailCompletionService.getUserFromDisplay(current.getDisplay());
+		for (MailingListContactVo current : lists) {
+			if (current.getMail().equals(mail)) {
+				contactForEdit = MailCompletionService.getUserFromDisplay(current.getDisplay());
 			}
 		}
 		this.email = contactForEdit.getMail();
@@ -255,8 +257,7 @@ public class DisplayMailingList {
 		oldEmail = email;
 		inModify = true;
 	}
-	
-	
+
 	public void onActionFromDeleteContact(String mail) {
 		contactToDelete = mail;
 	}
