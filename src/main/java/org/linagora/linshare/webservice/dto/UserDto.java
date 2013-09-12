@@ -33,7 +33,9 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -53,6 +55,7 @@ public class UserDto extends AccountDto {
 	private Date expirationDate;
 	private boolean guest = false;
 	private boolean restricted = false;
+	private List<String> restrictedContacts = new ArrayList<String>();
 	private String comment = null;
 	
 	public UserDto(User u) {
@@ -195,6 +198,14 @@ public class UserDto extends AccountDto {
 		} else if (!mail.equals(other.mail))
 			return false;
 		return true;
+	}
+
+	public List<String> getRestrictedContacts() {
+		return restrictedContacts;
+	}
+
+	public void setRestrictedContacts(List<String> restrictedContacts) {
+		this.restrictedContacts = restrictedContacts;
 	}
 
 }

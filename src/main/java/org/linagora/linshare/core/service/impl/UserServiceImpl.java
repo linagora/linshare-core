@@ -252,8 +252,8 @@ public class UserServiceImpl implements UserService {
     
     
     @Override
-    public void deleteUser(String login, Account actor) throws BusinessException {
-    	User userToDelete = userRepository.findByLsUuid(login);
+    public void deleteUser(Account actor, String uuid) throws BusinessException {
+    	User userToDelete = userRepository.findByLsUuid(uuid);
 
     	if (userToDelete != null) {
     		boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());
@@ -261,13 +261,13 @@ public class UserServiceImpl implements UserService {
     		logger.debug("Has right ? : " + hasRightToDeleteThisUser);
 
     		if (!hasRightToDeleteThisUser) {
-    			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
+    			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + uuid 
     					+" cannot be deleted, he is not a guest, or "+ actor.getAccountReprentation() + " is not an admin");
     		} else {
     			setUserToDestroy(actor, userToDelete);
     		}
     	} else {
-    		logger.debug("User not found in DB : " + login);
+    		logger.debug("User not found in DB : " + uuid);
     	}
     }
     
@@ -370,7 +370,7 @@ public class UserServiceImpl implements UserService {
         logger.info(guests.size() + " guest(s) have been found to be removed");
         for (User guest : guests) {
             try {
-                deleteUser(guest.getLsUuid(), systemAccount);
+                deleteUser(systemAccount, guest.getLsUuid());
                 logger.info("Removed expired user : " + guest.getAccountReprentation());
             } catch (BusinessException ex) {
                 logger.warn("Unable to remove expired user : " + guest.getAccountReprentation()
@@ -957,12 +957,13 @@ public class UserServiceImpl implements UserService {
 		logger.debug("User " + tmpUser.getMail() + " found.");
 		return user;
 	}
-	
+
 	@Override
-	public void updateUser(User actor, User updatedUser, String domainId) throws BusinessException {
+	public void updateUser(User actor, User updatedUser, String domainId)
+			throws BusinessException {
 		User user = find(updatedUser, domainId);
 		Assert.notNull(updatedUser.getRole());
-		
+
 		user.setFirstName(updatedUser.getFirstName());
 		user.setLastName(updatedUser.getLastName());
 		user.setRole(updatedUser.getRole());
@@ -977,13 +978,13 @@ public class UserServiceImpl implements UserService {
 			guest.setExpirationDate(updatedGuest.getExpirationDate());
 			guest.setComment(updatedGuest.getComment());
 			guest.setRestricted(updatedGuest.isRestricted());
-			User owner = find((User)updatedGuest.getOwner(), updatedGuest.getOwner().getDomainId());
+			User owner = find((User) updatedGuest.getOwner(), updatedGuest
+					.getOwner().getDomainId());
 			guest.setOwner(owner);
 		}
-		
 		userRepository.update(user);
-		
-		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Update of a user:" + user.getMail(), user);
+		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE,
+				"Update of a user:" + user.getMail(), user);
 		logEntryService.create(logEntry);
 	}
 }
