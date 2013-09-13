@@ -358,7 +358,7 @@ public class QuickSharePopup{
 			
 				for(MailingListVo current : mailingListSelected){
 					
-					for(MailingListContactVo currentContact : current.getMails()){
+					for(MailingListContactVo currentContact : current.getContacts()){
 						recipients.add(currentContact.getMail());
 					}
 				}

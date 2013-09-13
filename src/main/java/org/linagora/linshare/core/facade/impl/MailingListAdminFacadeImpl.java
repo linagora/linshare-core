@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
@@ -67,19 +68,20 @@ public class MailingListAdminFacadeImpl implements MailingListAdminFacade {
 	}
 
 	@Override
-	public List<String> completionsForAdminSearchList(UserVo loginUser, String input, String criteriaOnSearch)
+	public List<String> completionsForAdminSearchList(UserVo actorVo, String input, String criteriaOnSearch)
 			throws BusinessException {
-		List<MailingListVo> searchResults = performSearchForAdmin(input, criteriaOnSearch);
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		List<MailingListVo> searchResults = performSearchForAdmin(actor, input, criteriaOnSearch);
 		List<String> elements = new ArrayList<String>();
 
 		for (MailingListVo mailingListVo : searchResults) {
-			elements.add(MailingListCompletionService.formatLabel(loginUser, mailingListVo, false));
+			elements.add(MailingListCompletionService.formatLabel(actorVo, mailingListVo, false));
 		}
 		return elements;
 	}
 
-	private List<MailingListVo> performSearchForAdmin(String input, String criteriaOnSearch) throws BusinessException {
-		List<MailingList> listByVisibility = mailingListService.findAllListByVisibilityForAdmin(criteriaOnSearch);
+	private List<MailingListVo> performSearchForAdmin(Account actor, String input, String criteriaOnSearch) throws BusinessException {
+		List<MailingList> listByVisibility = mailingListService.findAllListByVisibilityForAdmin(actor, criteriaOnSearch);
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
 		for (MailingList list : listByVisibility) {
 			if (list.getIdentifier().toLowerCase().startsWith(input.toLowerCase())) {
@@ -90,16 +92,17 @@ public class MailingListAdminFacadeImpl implements MailingListAdminFacade {
 	}
 
 	@Override
-	public List<MailingListVo> setListFromAdminSearch(String targetLists, String criteriaOnSearch)
+	public List<MailingListVo> setListFromAdminSearch(UserVo actorVo, String targetLists, String criteriaOnSearch)
 			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		List<MailingList> lists = new ArrayList<MailingList>();
 		if (targetLists.equals("*")) {
-			lists = mailingListService.findAllListByVisibilityForAdmin(criteriaOnSearch);
+			lists = mailingListService.findAllListByVisibilityForAdmin(actor, criteriaOnSearch);
 		} else if (targetLists.startsWith("\"") && targetLists.endsWith(">")) {
-			MailingList list = mailingListService.retrieveList(MailingListCompletionService.parseOneList(targetLists));
+			MailingList list = mailingListService.retrieveList(MailingListCompletionService.parseFirstElement(targetLists));
 			lists.add(list);
 		} else {
-			return performSearchForAdmin(targetLists, criteriaOnSearch);
+			return performSearchForAdmin(null, targetLists, criteriaOnSearch);
 		}
 		return ListToListVo(lists);
 	}

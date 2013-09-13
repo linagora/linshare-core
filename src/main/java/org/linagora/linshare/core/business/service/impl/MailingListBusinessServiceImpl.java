@@ -158,14 +158,14 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void updateList(MailingList listToUpdate) throws BusinessException {
-		MailingList list = retrieveList(listToUpdate.getUuid());
-		list.setIdentifier(listToUpdate.getIdentifier());
-		list.setDescription(listToUpdate.getDescription());
-		list.setPublic(listToUpdate.isPublic());
-		list.setDomain(listToUpdate.getDomain());
-		list.setOwner(listToUpdate.getOwner());
-		list.setMails(listToUpdate.getMails());
+	public void updateList(MailingList mailingList) throws BusinessException {
+		MailingList list = retrieveList(mailingList.getUuid());
+		list.setIdentifier(mailingList.getIdentifier());
+		list.setDescription(mailingList.getDescription());
+		list.setPublic(mailingList.isPublic());
+		list.setDomain(mailingList.getDomain());
+		list.setOwner(mailingList.getOwner());
+		list.setMailingListContact(mailingList.getMailingListContact());
 		mailingListRepository.update(list);
 	}
 
@@ -177,4 +177,11 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 		mailingListContactRepository.update(contact);
 	}
 
+	@Override
+	public void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException {
+		mailingList.addMailingListContact(contact);
+		mailingListRepository.update(mailingList);
+	}
+
+	
 }

@@ -34,22 +34,30 @@
 
 package org.linagora.linshare.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MailingListService;
+import org.linagora.linshare.core.service.UserService;
+import org.springframework.util.Assert;
 
 public class MailingListServiceImpl implements MailingListService {
 
 	private final MailingListBusinessService mailingListBusinessService;
+	
+	private final UserService userService;
 
-	public MailingListServiceImpl(MailingListBusinessService mailingListBusinessService) {
+	public MailingListServiceImpl(MailingListBusinessService mailingListBusinessService, UserService userService) {
 		super();
 		this.mailingListBusinessService = mailingListBusinessService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -103,16 +111,22 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibilityForAdmin(String criteriaOnSearch) {
-		boolean isPublic;
-		if (criteriaOnSearch.equals("all")) {
-			return mailingListBusinessService.findAllList();
-		} else if (criteriaOnSearch.equals("public")) {
-			isPublic = true;
-		} else {
-			isPublic = false;
+	public List<MailingList> findAllListByVisibilityForAdmin(Account actor, String criteriaOnSearch) {
+		List<MailingList> result = new ArrayList<MailingList>();
+		if (actor.isSuperAdmin()) {
+			if (criteriaOnSearch.equals("all")) {
+				result = mailingListBusinessService.findAllList();
+			} else {
+				boolean isPublic;
+				if (criteriaOnSearch.equals("public")) {
+					isPublic = true;
+				} else {
+					isPublic = false;
+				}
+				result = mailingListBusinessService.findAllListByVisibilityForAdmin(isPublic);
+			}
 		}
-		return mailingListBusinessService.findAllListByVisibilityForAdmin(isPublic);
+		return result;
 	}
 
 	@Override
@@ -135,9 +149,24 @@ public class MailingListServiceImpl implements MailingListService {
 		if (actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
 			mailingListBusinessService.updateList(listToUpdate);
 		} else {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this list.");
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this list.");
 		}
 		mailingListBusinessService.updateList(listToUpdate);
+	}
+
+	
+	@Override
+	public void addNewContact(User actor, String mailingListUuid, MailingListContact contact)
+			throws BusinessException {
+		Assert.notNull(actor);
+		Assert.notNull(mailingListUuid);
+		Assert.notNull(contact);
+		
+		User actorEntity = userService.findByLsUuid(actor.getLsUuid());
+		MailingList mailingList = mailingListBusinessService.retrieveList(mailingListUuid);
+		if(mailingList.isOwner(actorEntity)) {
+			mailingListBusinessService.addContact(mailingList, contact);
+		}
 	}
 
 	@Override

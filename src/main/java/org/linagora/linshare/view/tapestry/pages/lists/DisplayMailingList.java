@@ -142,10 +142,10 @@ public class DisplayMailingList {
 
 	@SetupRender
 	public void init() throws BusinessException {
-		if (!mailingListVo.getMails().isEmpty()) {
+		if (!mailingListVo.getContacts().isEmpty()) {
 			contacts = new ArrayList<UserVo>();
-			lists = mailingListVo.getMails();
-			for (MailingListContactVo current : mailingListVo.getMails()) {
+			lists = mailingListVo.getContacts();
+			for (MailingListContactVo current : mailingListVo.getContacts()) {
 				contacts.add(MailCompletionService.getUserFromDisplay(current.getDisplay()));
 			}
 		}
@@ -204,7 +204,7 @@ public class DisplayMailingList {
 			}
 		} else {
 			MailingListContactVo newContact = new MailingListContactVo(email, display);
-			mailingListFacade.addNewContactToList(mailingListVo, newContact);
+			mailingListFacade.addNewContactToList(loginUser, mailingListVo, newContact);
 		}
 		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 		inModify = false;
@@ -227,7 +227,7 @@ public class DisplayMailingList {
 	}
 
 	public boolean getIsInList() throws BusinessException {
-		return mailingListFacade.checkUserIsContact(mailingListVo.getMails(), result.getMail());
+		return mailingListFacade.checkUserIsContact(mailingListVo.getContacts(), result.getMail());
 	}
 
 	public boolean getUserIsOwner() {
@@ -269,7 +269,7 @@ public class DisplayMailingList {
 	}
 
 	public boolean getIsEmpty() {
-		return mailingListVo.getMails().isEmpty();
+		return mailingListVo.getContacts().isEmpty();
 	}
 
 	public boolean isInModify() {

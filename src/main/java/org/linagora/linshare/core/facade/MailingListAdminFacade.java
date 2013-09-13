@@ -44,7 +44,7 @@ public interface MailingListAdminFacade {
 	public List<String> completionsForAdminSearchList(UserVo loginUser, String input, String criteriaOnSearch)
 			throws BusinessException;
 
-	public List<MailingListVo> setListFromAdminSearch(String targetLists, String criteriaOnSearch)
+	public List<MailingListVo> setListFromAdminSearch(UserVo actorVo, String targetLists, String criteriaOnSearch)
 			throws BusinessException;
 
 	/**

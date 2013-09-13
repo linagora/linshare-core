@@ -101,7 +101,7 @@ public interface MailingListFacade {
 	 */
 	public void addUserToList(MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
 
-	public void addNewContactToList(MailingListVo mailingListVo, MailingListContactVo contactVo)
+	public void addNewContactToList(UserVo actorVo, MailingListVo mailingListVo, MailingListContactVo contactVo)
 			throws BusinessException;
 
 	public void refreshList(List<MailingListVo> list);

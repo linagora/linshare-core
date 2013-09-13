@@ -50,8 +50,6 @@ public class MailingListCompletionService {
 			buf.append(" <").append(listVo.getUuid()).append(">");
 			if (virgule)
 				buf.append(",");
-		} else {
-			buf.append(listVo.getUuid()).append(',');
 		}
 		return buf.toString();
 	}
@@ -69,14 +67,12 @@ public class MailingListCompletionService {
 			buf.append(" <").append(listVo.getUuid()).append(">");
 			if (virgule)
 				buf.append(",");
-		} else {
-			buf.append(listVo.getUuid()).append(',');
 		}
 		return buf.toString();
 	}
 
 	public static List<String> parseLists(final String recipientsList) {
-		String[] recipients = recipientsList.replaceAll(";", ",").split(",");
+		String[] recipients = recipientsList.split(",");
 		ArrayList<String> lists = new ArrayList<String>();
 
 		for (String oneList : recipients) {
@@ -93,21 +89,12 @@ public class MailingListCompletionService {
 		return lists;
 	}
 
-	public static String parseOneList(final String recipientsList) {
-		String[] recipients = recipientsList.replaceAll(";", ",").split(",");
-
-		for (String oneList : recipients) {
-			String uuid = contentInsideToken(oneList, "<", ">");
-			if (uuid == null) {
-				uuid = oneList.trim();
-			}
-			if (!uuid.equals("")) {
-				{
-					return uuid;
-				}
-			}
+	public static String parseFirstElement(final String recipientsList) {
+		List<String> parseLists = parseLists(recipientsList);
+		if (!parseLists.isEmpty()) {
+			return parseLists.get(0);
 		}
-		return null;
+		return "";
 	}
 
 	/**

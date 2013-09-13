@@ -155,7 +155,7 @@ public class Index {
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-		lists = mailingListAdminFacade.setListFromAdminSearch(targetLists, criteriaOnSearch);
+		lists = mailingListAdminFacade.setListFromAdminSearch(loginUser, targetLists, criteriaOnSearch);
 	}
 
 	public void onSuccessFromResetForm() {
