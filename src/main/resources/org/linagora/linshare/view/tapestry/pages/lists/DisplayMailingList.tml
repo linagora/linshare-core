@@ -98,8 +98,7 @@
 						<tr>
 						<form t:type="form" t:id="SearchUserForm">
 							<td>
-							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
-				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
+							<t:textfield t:id="searchUser" t:validate="required,minLength=3" t:value="recipientsSearch" t:size="50" class="recipientsPattern"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    		</td>
 				    		<td>
@@ -108,7 +107,7 @@
         					</form>
         					<td>
         					<form t:type="form" t:id="resetSearchUserForm">
-        						<input type="submit" style="margin-right:330px" value="${message:global.button.reset}"/>
+        						<input type="submit" style="margin-right:300px" value="${message:global.button.reset}"/>
         					</form>
         					</td>
         				</tr>

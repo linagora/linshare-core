@@ -123,9 +123,6 @@ public class DisplayMailingList {
 	@Inject
 	private Messages messages;
 
-	@Property
-	private int autocompleteMin = 3;
-
 	@Persist
 	@Property
 	private boolean inModify;
@@ -158,10 +155,6 @@ public class DisplayMailingList {
 			mailingListVo = null;
 		}
 		displayGrid = false;
-	}
-
-	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
-		return mailingListFacade.completionOnUsers(loginUser, input);
 	}
 
 	public Object onActionFromBack() {
@@ -235,7 +228,7 @@ public class DisplayMailingList {
 	}
 
 	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
-		mailingListFacade.addUserToList(mailingListVo, domain, mail);
+		mailingListFacade.addUserToList(loginUser, mailingListVo, domain, mail);
 		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 	}
 

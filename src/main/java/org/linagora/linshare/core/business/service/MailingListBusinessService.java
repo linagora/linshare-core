@@ -71,4 +71,14 @@ public interface MailingListBusinessService {
 
 	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic);
 
+	public List<MailingList> findAllMyListsForSearch(User user, String input);
+
+	public List<MailingList> findAllListByUserForSearch(User user, String input);
+
+	public List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input);
+
+	public List<MailingList> findAllListForAdminSearch(String input);
+
+	public List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input);
+
 }

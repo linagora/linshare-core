@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
@@ -80,15 +79,9 @@ public class MailingListAdminFacadeImpl implements MailingListAdminFacade {
 		return elements;
 	}
 
-	private List<MailingListVo> performSearchForAdmin(Account actor, String input, String criteriaOnSearch) throws BusinessException {
-		List<MailingList> listByVisibility = mailingListService.findAllListByVisibilityForAdmin(actor, criteriaOnSearch);
-		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		for (MailingList list : listByVisibility) {
-			if (list.getIdentifier().toLowerCase().startsWith(input.toLowerCase())) {
-				finalList.add(new MailingListVo(list));
-			}
-		}
-		return finalList;
+	private List<MailingListVo> performSearchForAdmin(User actor, String input, String criteriaOnSearch) throws BusinessException {
+		List<MailingList> finalList = mailingListService.findAllListByVisibilityForAdminSearch(criteriaOnSearch, input);
+		return ListToListVo(finalList);
 	}
 
 	@Override

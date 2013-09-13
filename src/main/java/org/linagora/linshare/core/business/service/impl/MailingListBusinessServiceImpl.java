@@ -89,8 +89,6 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			}
 		}
 		return null;
-		// return mailingListContactRepository.findByMail(mailingList, mail);
-
 	}
 
 	@Override
@@ -127,15 +125,39 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
+	public List<MailingList> findAllListForAdminSearch(String input) {
+		return mailingListRepository.findAllForAdminSearch(input);
+	}
+	
+	@Override
+	public List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input) {
+		return mailingListRepository.findByVisibilityForAdminSearch(isPublic, input);
+	}
+	
+	@Override
+	public List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input) {
+		return mailingListRepository.findByVisibilityForSearch(owner, isPublic, input);
+	}
+
+	@Override
 	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic) {
 		return mailingListRepository.findByVisibility(owner, isPublic);
 	}
-
+	
 	@Override
 	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic) {
 		return mailingListRepository.findByVisibilityForAdmin(isPublic);
 	}
 
+	@Override
+	public List<MailingList> findAllMyListsForSearch(User user, String input) {
+		return mailingListRepository.findAllListWhereOwnerForSearch(user, input);
+	}
+	@Override
+	public List<MailingList> findAllListByUserForSearch(User user, String input) {
+		return mailingListRepository.findAllMyListForSearch(user, input);
+	}
+	
 	@Override
 	public List<MailingList> findAllListByUser(User user) {
 		return mailingListRepository.findAllMyList(user);
