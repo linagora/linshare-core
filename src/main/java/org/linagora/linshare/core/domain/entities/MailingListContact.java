@@ -27,6 +27,11 @@ public class MailingListContact {
 		this.mail = mail;
 	}
 	
+	public MailingListContact(String mail, String display) {
+		this.mail = mail;
+		this.display = display;
+	}
+	
 	public long getPersistenceId() {
 		return persistenceId;
 	}

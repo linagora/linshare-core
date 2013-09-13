@@ -175,7 +175,7 @@ public class ManageMailingList {
 			index.setFromCreate(false);
 		} else {
 			mailingList.setContacts(new ArrayList<MailingListContactVo>());
-			mailingListFacade.createList(mailingList);
+			mailingListFacade.createList(loginUser, mailingList);
 			index.setFromCreate(true);
 		}
 		inModify = false;

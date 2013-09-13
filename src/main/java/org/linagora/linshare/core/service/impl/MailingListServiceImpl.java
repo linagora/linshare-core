@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -61,8 +60,14 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public MailingList createList(MailingList mailingList) throws BusinessException {
-		return mailingListBusinessService.createList(mailingList);
+	public MailingList createList(User user, MailingList mailingList) throws BusinessException {
+		User actor = userService.findByLsUuid(user.getLsUuid());
+		if(!actor.isSuperAdmin()){
+			mailingList.setOwner(actor);
+			mailingList.setDomain(actor.getDomain());
+			return mailingListBusinessService.createList(mailingList);
+		}
+		return null;
 	}
 
 	@Override
@@ -77,7 +82,8 @@ public class MailingListServiceImpl implements MailingListService {
 
 	@Override
 	public MailingList findListByIdentifier(User owner, String identifier) {
-		return mailingListBusinessService.findListByIdentifier(owner, identifier);
+		User actor = userService.findByLsUuid(owner.getLsUuid());
+		return mailingListBusinessService.findListByIdentifier(actor, identifier);
 	}
 
 	@Override
@@ -96,6 +102,39 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
+	public List<MailingList> findAllListByVisibilityForSearch(User user, String criteriaOnSearch, String input) {
+		boolean isPublic;
+		if (criteriaOnSearch.equals("all")) {
+			return mailingListBusinessService.findAllListByUserForSearch(user, input);
+		} else if (criteriaOnSearch.equals("allMyLists")) {
+			return mailingListBusinessService.findAllMyListsForSearch(user, input);
+		} else if (criteriaOnSearch.equals("public")) {
+			isPublic = true;
+		} else {
+			isPublic = false;
+		}
+		return mailingListBusinessService.findAllListByVisibilityForSearch(user, isPublic, input);
+	}
+	
+	@Override
+	public List<MailingList> findAllListByVisibilityForAdminSearch(String criteriaOnSearch, String input) {
+		List<MailingList> result = new ArrayList<MailingList>();
+
+			if (criteriaOnSearch.equals("all")) {
+				result = mailingListBusinessService.findAllListForAdminSearch(input);
+			} else {
+				boolean isPublic;
+				if (criteriaOnSearch.equals("public")) {
+					isPublic = true;
+				} else {
+					isPublic = false;
+				}
+				result = mailingListBusinessService.findAllListByVisibilityForAdminSearch(isPublic, input);
+			}
+		return result;
+	}
+	
+	@Override
 	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch) {
 		boolean isPublic;
 		if (criteriaOnSearch.equals("all")) {
@@ -111,7 +150,7 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibilityForAdmin(Account actor, String criteriaOnSearch) {
+	public List<MailingList> findAllListByVisibilityForAdmin(User actor, String criteriaOnSearch) {
 		List<MailingList> result = new ArrayList<MailingList>();
 		if (actor.isSuperAdmin()) {
 			if (criteriaOnSearch.equals("all")) {
@@ -171,12 +210,16 @@ public class MailingListServiceImpl implements MailingListService {
 
 	@Override
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException {
+		Assert.notNull(list);
+		Assert.notNull(contactToUpdate);
+		
 		mailingListBusinessService.updateContact(list, contactToUpdate);
 	}
 
 	@Override
 	public List<MailingList> findAllListByOwner(User user) {
-		return mailingListBusinessService.findAllMyList(user);
+		User actor = userService.findByLsUuid(user.getLsUuid());
+		return mailingListBusinessService.findAllMyList(actor);
 	}
 
 	@Override

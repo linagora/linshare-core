@@ -11,7 +11,7 @@ public interface MailingListFacade {
 
 	public MailingListVo retrieveList(String uuid);
 
-	public MailingListVo createList(MailingListVo mailingListVo) throws BusinessException;
+	public MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
 	public List<MailingListVo> findAllListByUser(UserVo actorVo) throws BusinessException;
 
@@ -99,7 +99,7 @@ public interface MailingListFacade {
 	 * @param mail
 	 * @throws BusinessException
 	 */
-	public void addUserToList(MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
+	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
 
 	public void addNewContactToList(UserVo actorVo, MailingListVo mailingListVo, MailingListContactVo contactVo)
 			throws BusinessException;

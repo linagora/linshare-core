@@ -85,15 +85,10 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public MailingListVo createList(MailingListVo mailingListVo) throws BusinessException {
+	public MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException {
 		MailingList mailingList = new MailingList(mailingListVo);
-		String ownerMail = mailingListVo.getOwner().getMail();
-		String ownerDomainId = mailingListVo.getOwner().getDomainIdentifier();
-		User actor = userService.findOrCreateUser(ownerMail, ownerDomainId);
-		mailingList.setOwner(actor);
-		AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomainId());
-		mailingList.setDomain(domain);
-		mailingListService.createList(mailingList);
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
+		mailingListService.createList(actor, mailingList);
 		return mailingListVo;
 	}
 
@@ -111,7 +106,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException {
-		MailingList mailingList = new MailingList(mailingListVo);
+		MailingList mailingList = mailingListService.retrieveList(mailingListVo.getUuid());
 		User actor = (User) userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
 		String ownerMail = mailingListVo.getOwner().getMail();
 		String ownerDomainId = mailingListVo.getOwner().getDomainIdentifier();
@@ -202,14 +197,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	private List<MailingListVo> performSearchForUser(UserVo loginUser, String input, String criteriaOnSearch)
 			throws BusinessException {
 		User actor = (User) userService.findOrCreateUser(loginUser.getMail(), loginUser.getDomainIdentifier());
-		List<MailingList> listByVisibility = mailingListService.findAllListByVisibility(actor, criteriaOnSearch);
-		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		for (MailingList list : listByVisibility) {
-			if (list.getIdentifier().toLowerCase().startsWith(input.toLowerCase())) {
-				finalList.add(new MailingListVo(list));
-			}
-		}
-		return finalList;
+		List<MailingList> listByVisibility = mailingListService.findAllListByVisibilityForSearch(actor, criteriaOnSearch, input);
+		return ListToListVo(listByVisibility);
 	}
 
 	@Override
@@ -304,17 +293,14 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public void addUserToList(MailingListVo mailingListVo, String domain, String mail) throws BusinessException {
-		User actor = (User) userService.findOrCreateUser(mailingListVo.getOwner().getMail(), mailingListVo.getOwner()
-				.getDomainIdentifier());
+	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail) throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		User selectedUser = userService.findOrCreateUser(mail, domain);
 		if (selectedUser != null) {
 			String display = MailCompletionService.formatLabel(selectedUser.getMail(), selectedUser.getFirstName(),
 					selectedUser.getLastName(), false);
-			MailingListContactVo newContact = new MailingListContactVo(mail, display);
-			MailingList list = mailingListService.retrieveList(mailingListVo.getUuid());
-			list.getMailingListContact().add(new MailingListContact(newContact));
-			mailingListService.updateList(actor, list);
+			MailingListContact contact = new MailingListContact(mail, display);
+			mailingListService.addNewContact(actor, mailingListVo.getUuid(), contact);
 		}
 	}
 

@@ -38,9 +38,9 @@
 			               	</t:radiogroup>
 			    </t:form>
 			</fieldset>
-				
+			<div class="clear"></div>
 				${message:pages.lists.notification}
-				<br></br><br></br>
+				<div class="clear"></div>
 		<h2>${message:pages.administration.lists.index}</h2>
 				<t:if t:test="emptyList">
 					<t:if t:test="inSearch">

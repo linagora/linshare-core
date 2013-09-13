@@ -36,7 +36,6 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -44,7 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListService {
 
-	public MailingList createList(MailingList mailingList) throws BusinessException;
+	public MailingList createList(User user, MailingList mailingList) throws BusinessException;
 
 	public MailingList retrieveList(String uuid);
 
@@ -57,7 +56,7 @@ public interface MailingListService {
 	public void deleteList(User actor, String uuid) throws BusinessException;
 
 	public void updateList(User actor, MailingList listToUpdate) throws BusinessException;
-	
+
 	public void addNewContact(User actor, String mailingListUuid, MailingListContact contact) throws BusinessException;
 
 	public List<MailingList> findAllListByOwner(User user);
@@ -70,13 +69,19 @@ public interface MailingListService {
 
 	public MailingList findListByIdentifier(User owner, String identifier);
 
-	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch);
-
 	/**
 	 * retrieving all list from repository. Method allowed only for Root.
+	 * 
 	 * @param actor
-	 * @param criteriaOnSearch : could be "public", "private" or "all"
+	 * @param criteriaOnSearch
+	 *            : could be "public", "private" or "all"
 	 * @return list of MailingList objects.
 	 */
-	public List<MailingList> findAllListByVisibilityForAdmin(Account actor, String criteriaOnSearch);
+	public List<MailingList> findAllListByVisibilityForAdmin(User user, String criteriaOnSearch);
+
+	public List<MailingList> findAllListByVisibilityForSearch(User user, String criteriaOnSearch, String input);
+
+	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch);
+
+	public List<MailingList> findAllListByVisibilityForAdminSearch(String criteriaOnSearch, String input);
 }
