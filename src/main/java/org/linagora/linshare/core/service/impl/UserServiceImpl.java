@@ -253,6 +253,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public void deleteUser(Account actor, String uuid) throws BusinessException {
+    	Assert.notNull(uuid);
     	User userToDelete = userRepository.findByLsUuid(uuid);
 
     	if (userToDelete != null) {
@@ -315,6 +316,9 @@ public class UserServiceImpl implements UserService {
 
 	private void setUserToDestroy(Account actor, User userToDelete) throws BusinessException {
 		try {
+			//clear all thread memberships
+			threadService.deleteAllUserMemberships(actor, userToDelete);
+			
 			userRepository.delete(userToDelete);
 			
 			UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting an user", userToDelete);

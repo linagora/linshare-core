@@ -249,6 +249,7 @@ public class AdminThread {
 			currentThread = null;
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
+			logger.debug(e.toString());
 		}
 	}
 
@@ -293,9 +294,16 @@ public class AdminThread {
 		displayGrid = true;
 	}
 	
-	public boolean getIsInList() throws BusinessException {
+	public boolean getIsInList() {
 		// check if user from searchList is thread member
-		return threadEntryFacade.userIsMember(result, currentThread);
+		boolean userIsMember = false;
+		try {
+			userIsMember = threadEntryFacade.userIsMember(result, currentThread);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return userIsMember;
 	}
 
 	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
@@ -331,5 +339,12 @@ public class AdminThread {
 	
 	public boolean getIsDeletable() throws BusinessException {
 		return threadEntryFacade.memberIsDeletable(userLoggedIn, currentThread);
+	}
+	
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }

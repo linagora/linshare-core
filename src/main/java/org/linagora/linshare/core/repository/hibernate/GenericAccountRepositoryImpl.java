@@ -54,6 +54,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public U findByLsUuid(String lsUuid) {
+		Assert.notNull(lsUuid);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid).ignoreCase());
 		criteria.add(Restrictions.eq("destroyed", false));
@@ -71,7 +72,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<U> findByDomain(String domain) {
-		
+		Assert.notNull(domain);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.createAlias("domain", "domain");
 		criteria.add(Restrictions.eq("domain.identifier",domain));
@@ -98,6 +99,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 
 	@Override
 	public boolean exist(String lsUuid) {
+		Assert.notNull(lsUuid);
 		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
 		criteria.add(Restrictions.eq("lsUuid", lsUuid));
 		criteria.add(Restrictions.eq("destroyed", false));
@@ -145,5 +147,12 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	public void delete(U entity) throws BusinessException, IllegalArgumentException {
 		entity.setDestroyed(true);
 		this.update(entity);
+	}
+
+	@Override
+	public List<U> findAllDestroyedAccounts() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(getPersistentClass());
+		criteria.add(Restrictions.eq("destroyed", true));
+		return findByCriteria(criteria);
 	}
 }
