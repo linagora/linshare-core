@@ -76,8 +76,8 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	@Override
 	public MailingList findByIdentifier(User owner, String identifier) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
-				Restrictions.and(Restrictions.eq("identifier", identifier),Restrictions.eq("owner", owner)));
-		
+				Restrictions.and(Restrictions.eq("identifier", identifier), Restrictions.eq("owner", owner)));
+
 		List<MailingList> mailingList = findByCriteria(det);
 		if (mailingList == null || mailingList.isEmpty()) {
 			return null;
@@ -88,21 +88,54 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		}
 
 	}
-	
+
 	@Override
-	public List<MailingList> findAllListWhereOwner (User user) {
+	public List<MailingList> findAllListWhereOwner(User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		det.add(Restrictions.eq("owner", user));
 		return findByCriteria(det);
 	}
+
 	@Override
-	public List<MailingList> findallMyList(User user) {
+	public List<MailingList> findByVisibility(User user, boolean isPublic) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		if (isPublic == false) {
+			det.add(Restrictions.and(Restrictions.eq("owner", user), Restrictions.eq("isPublic", false)));
+		} else {
+			det.add(Restrictions.and(Restrictions.eq("isPublic", true),Restrictions.eq("domain", user.getDomain())));
+		}
+		List<MailingList> mailingList = findByCriteria(det);
+		if (mailingList == null || mailingList.isEmpty()) {
+			return new ArrayList<MailingList>();
+		}
+		return mailingList;
+	}
+	
+	@Override
+	public List<MailingList> findByVisibilityForAdmin(boolean isPublic) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		if (isPublic == false) {
+			det.add(Restrictions.eq("isPublic", false));
+		} else {
+			det.add(Restrictions.eq("isPublic", true));
+		}
+		List<MailingList> mailingList = findByCriteria(det);
+		if (mailingList == null || mailingList.isEmpty()) {
+			return new ArrayList<MailingList>();
+		}
+		return mailingList;
+	}
+
+	@Override
+	public List<MailingList> findAllMyList(User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		// all public lists that belong to my domain.
-		LogicalExpression allPublicLists = Restrictions.and(Restrictions.eq("isPublic", true), Restrictions.eq("domain", user.getDomain()));
-		// we exclude my personal lists. 
+		LogicalExpression allPublicLists = Restrictions.and(Restrictions.eq("isPublic", true),
+				Restrictions.eq("domain", user.getDomain()));
+		// we exclude my personal lists.
 		LogicalExpression allMyDomainPublicLists = Restrictions.and(allPublicLists, Restrictions.ne("owner", user));
-		// adding all private and public lists that belong to me, to the public lists.
+		// adding all private and public lists that belong to me, to the public
+		// lists.
 		det.add(Restrictions.or(Restrictions.eq("owner", user), allMyDomainPublicLists));
 
 		List<MailingList> mailingList = findByCriteria(det);
@@ -111,11 +144,6 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		}
 		return mailingList;
 	}
-
-	// public MailingList update(MailingList entity) throws BusinessException {
-	// getHibernateTemplate().merge(entity);
-	// return super.update(entity);
-	// }
 
 	@Override
 	public MailingList update(MailingList entity) throws BusinessException {

@@ -247,7 +247,7 @@ public class Upload {
 			} else {
 				recipientsSearch = listRecipientsSearch;
 			}
-			List<MailingListVo> mailingListSelected = mailingListFacade.getListFromQuickShare(userVo,listRecipientsSearch);
+			List<MailingListVo> mailingListSelected = mailingListFacade.getListsFromShare(listRecipientsSearch);
 			if(!(mailingListSelected.isEmpty())){
 				
 				for(MailingListVo current : mailingListSelected){
@@ -386,18 +386,7 @@ public class Upload {
 	}
 
 	public List<String> onProvideCompletionsFromListRecipientsPattern(String input) throws BusinessException {
-		List<MailingListVo> searchResults = performSearchForMailingList(input);
-		List<String> elements = new ArrayList<String>();
-		for (MailingListVo current: searchResults) {
-			if(current.getOwner().equals(userVo)){
-				String completeName = "\""+current.getIdentifier()+"\" (Me)";
-				elements.add(completeName);
-			} else {
-				String completeName = "\""+current.getIdentifier()+"\" ("+current.getOwner().getFullName()+")";
-				elements.add(completeName);
-			}
-		}
-		return elements;
+		return mailingListFacade.completionsForShare(userVo, input);
 	}
 	
 	public long getMaxFileSize() {
@@ -410,26 +399,6 @@ public class Upload {
 		return DEFAULT_MAX_FILE_SIZE;
 	}
 
-	/**
-	 * Perform a list search.
-	 * 
-	 * @param input
-	 *            list search pattern.
-	 * @return list of lists.
-	 * @throws BusinessException 
-	 */
-	private List<MailingListVo> performSearchForMailingList(String input) throws BusinessException {
-		List<MailingListVo> list = new ArrayList<MailingListVo>();
-		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		list = mailingListFacade.findAllListByUser(userVo);
-		for(MailingListVo current : list){
-			if(current.getIdentifier().indexOf(input) != -1){
-				finalList.add(current);
-			}
-		}
-		return finalList;
-	}
-	
 	/*
 	 * Helpers
 	 */

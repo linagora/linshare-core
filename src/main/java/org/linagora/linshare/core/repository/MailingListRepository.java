@@ -47,6 +47,10 @@ public interface MailingListRepository extends AbstractRepository<MailingList> {
 	
 	public MailingList findByIdentifier(User owner, String identifier);
 	
-	public List<MailingList> findallMyList(User user);
+	public List<MailingList> findAllMyList(User user);
+
+	public List<MailingList> findByVisibility(User user, boolean isPublic);
+
+	public List<MailingList> findByVisibilityForAdmin(boolean isPublic);
 }
  

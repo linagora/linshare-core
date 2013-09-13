@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -124,14 +123,22 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 
 	@Override
 	public List<MailingList> findAllList() {
-		List<MailingList> myList = new ArrayList<MailingList>();
-		myList = mailingListRepository.findAll();
-		return myList;
+		return mailingListRepository.findAll();
+	}
+
+	@Override
+	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic) {
+		return mailingListRepository.findByVisibility(owner, isPublic);
+	}
+
+	@Override
+	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic) {
+		return mailingListRepository.findByVisibilityForAdmin(isPublic);
 	}
 
 	@Override
 	public List<MailingList> findAllListByUser(User user) {
-		return mailingListRepository.findallMyList(user);
+		return mailingListRepository.findAllMyList(user);
 	}
 
 	@Override

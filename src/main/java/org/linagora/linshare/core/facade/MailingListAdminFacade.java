@@ -31,43 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-
-package org.linagora.linshare.core.service;
+package org.linagora.linshare.core.facade;
 
 import java.util.List;
 
-import org.linagora.linshare.core.domain.entities.MailingList;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
-import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
+import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 
-public interface MailingListService {
+public interface MailingListAdminFacade {
 
-	public MailingList createList(MailingList mailingList) throws BusinessException;
+	public List<String> completionsForAdminSearchList(UserVo loginUser, String input, String criteriaOnSearch)
+			throws BusinessException;
 
-	public MailingList retrieveList(String uuid);
+	public List<MailingListVo> setListFromAdminSearch(String targetLists, String criteriaOnSearch)
+			throws BusinessException;
 
-	public List<MailingList> findAllList();
+	/**
+	 * Set new owner to a mailing list
+	 * 
+	 * @param mailingListVo
+	 * @param input
+	 * @throws BusinessException
+	 */
+	public void setNewOwner(MailingListVo mailingListVo, String input) throws BusinessException;
 
-	public List<MailingList> findAllListByUser(User user);
-
-	public void createContact(MailingListContact contact) throws BusinessException;
-
-	public void deleteList(User actor, String uuid) throws BusinessException;
-
-	public void updateList(User actor, MailingList listToUpdate) throws BusinessException;
-
-	public List<MailingList> findAllListByOwner(User user);
-
-	public void deleteContact(MailingList list, String mail) throws BusinessException;
-
-	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
-
-	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
-
-	public MailingList findListByIdentifier(User owner, String identifier);
-
-	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch);
-
-	public List<MailingList> findAllListByVisibilityForAdmin(String criteriaOnSearch);
 }

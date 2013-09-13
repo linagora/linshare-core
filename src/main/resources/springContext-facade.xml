@@ -141,6 +141,19 @@
 		<constructor-arg value="classpath:antisamy-strict.xml" type="java.io.InputStream" />
 	</bean>
 	
+	<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
+		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="abstractDomainService" />
+		<constructor-arg ref="accountService" />
+	</bean>
+	
+	<bean id="mailingListAdminFacade" class="org.linagora.linshare.core.facade.impl.MailingListAdminFacadeImpl">
+		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="abstractDomainService" />
+	</bean>
+	
 	<!-- WEB SERVICES -->
 	
 	<bean id="wsDocumentFacade" class="org.linagora.linshare.core.facade.webservice.user.impl.DocumentFacadeImpl">
@@ -174,12 +187,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityOldService" />
 	</bean>
-	<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
-		<constructor-arg ref="mailingListService" />
-		<constructor-arg ref="userService" />
-		<constructor-arg ref="abstractDomainService" />
-		<constructor-arg ref="accountService" />
-	</bean>
+
 	<bean id="wsAdminGenericFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl">
 		<constructor-arg ref="accountService" />
 	</bean>

@@ -88,6 +88,34 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
+	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch) {
+		boolean isPublic;
+		if (criteriaOnSearch.equals("all")) {
+			return mailingListBusinessService.findAllListByUser(user);
+		} else if (criteriaOnSearch.equals("allMyLists")) {
+			return mailingListBusinessService.findAllMyList(user);
+		} else if (criteriaOnSearch.equals("public")) {
+			isPublic = true;
+		} else {
+			isPublic = false;
+		}
+		return mailingListBusinessService.findAllListByVisibility(user, isPublic);
+	}
+
+	@Override
+	public List<MailingList> findAllListByVisibilityForAdmin(String criteriaOnSearch) {
+		boolean isPublic;
+		if (criteriaOnSearch.equals("all")) {
+			return mailingListBusinessService.findAllList();
+		} else if (criteriaOnSearch.equals("public")) {
+			isPublic = true;
+		} else {
+			isPublic = false;
+		}
+		return mailingListBusinessService.findAllListByVisibilityForAdmin(isPublic);
+	}
+
+	@Override
 	public void deleteList(User actor, String uuid) throws BusinessException {
 
 		MailingList mailingList = mailingListBusinessService.retrieveList(uuid);

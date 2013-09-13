@@ -99,11 +99,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public List<MailingListVo> findAllList() {
-		return ListToListVo(mailingListService.findAllList());
-	}
-
-	@Override
 	public List<MailingListVo> findAllListByUser(UserVo actorVo) throws BusinessException {
 		User actor = userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
 		return ListToListVo(mailingListService.findAllListByUser(actor));
@@ -170,114 +165,68 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public List<MailingListVo> getListFromQuickShare(UserVo user, String mailingLists) {
-		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		if (mailingLists != null) {
-			String[] recipients = mailingLists.split(",");
-			if (mailingLists.startsWith("\"") && mailingLists.endsWith(")")) {
-				for (String oneMailingList : recipients) {
-					int index1 = oneMailingList.indexOf("(");
-					String owner = oneMailingList.substring(index1 + 1, oneMailingList.length() - 1);
-
-					int index2 = oneMailingList.indexOf(" ");
-					String identifier = oneMailingList.substring(1, index2 - 1);
-
-					if (owner.equals("Me")) {
-						owner = user.getFullName();
-					}
-					MailingListVo mailingListVo = retrieveMailingListByOwnerAndIdentifier(identifier, owner);
-					finalList.add(mailingListVo);
-				}
+	public List<String> completionsForShare(UserVo user, String input) throws BusinessException {
+		User actor = (User) userService.findOrCreateUser(user.getMail(), user.getDomainIdentifier());
+		List<MailingListVo> lists = ListToListVo(mailingListService.findAllListByUser(actor));
+		List<String> finalList = new ArrayList<String>();
+		for (MailingListVo list : lists) {
+			if (list.getIdentifier().startsWith(input)) {
+				finalList.add(MailingListCompletionService.formatLabel(user, list, true));
 			}
-		} else {
-			finalList = new ArrayList<MailingListVo>();
 		}
 		return finalList;
 	}
 
-	private MailingListVo retrieveMailingListByOwnerAndIdentifier(String identifier, String ownerUuid) {
-		User actor = (User) userService.findByLsUuid(ownerUuid);
-		return new MailingListVo(mailingListService.findListByIdentifier(actor, identifier));
+	@Override
+	public List<MailingListVo> getListsFromShare(String recipients) {
+		List<String> uuids = MailingListCompletionService.parseLists(recipients);
+		List<MailingList> lists = new ArrayList<MailingList>();
+		for (String list : uuids) {
+			MailingList listToAdd = mailingListService.retrieveList(list);
+			lists.add(listToAdd);
+		}
+		return ListToListVo(lists);
 	}
 
 	@Override
-	public List<String> completionsForSearchList(UserVo loginUser, String input, String criteriaOnSearch)
+	public List<String> completionsForUserSearchList(UserVo loginUser, String input, String criteriaOnSearch)
 			throws BusinessException {
-		List<MailingListVo> searchResults = performSearch(input, loginUser);
+		List<MailingListVo> searchResults = performSearchForUser(loginUser, input, criteriaOnSearch);
 		List<String> elements = new ArrayList<String>();
-		
-		for (MailingListVo mailingListVo : searchResults) {
-			elements.add(MailingListCompletionService.formatLabelForUser(loginUser,mailingListVo, false));
-		}
-		/*	if (!(mailingListVo.getOwner().equals(loginUser))) {
-				completeName = "\"" + mailingListVo.getIdentifier() + "\" (" + mailingListVo.getOwner().getFullName()
-						+ ")";
-			} else {
-				completeName = "\"" + mailingListVo.getIdentifier() + "\" (Me)";
-			}
 
-			if (criteriaOnSearch.equals("public") && mailingListVo.isPublic() == true) {
-				elements.add(completeName);
-			} else if (criteriaOnSearch.equals("private") && mailingListVo.isPublic() == false) {
-				elements.add(completeName);
-			} else if (criteriaOnSearch.equals("all")) {
-				elements.add(completeName);
-			}
-		}*/
+		for (MailingListVo mailingListVo : searchResults) {
+			elements.add(MailingListCompletionService.formatLabel(loginUser, mailingListVo, false));
+		}
 		return elements;
 	}
 
-	@Override
-	public List<MailingListVo> setListFromSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
+	private List<MailingListVo> performSearchForUser(UserVo loginUser, String input, String criteriaOnSearch)
 			throws BusinessException {
-		List<MailingListVo> lists = new ArrayList<MailingListVo>();
-		if (targetLists != null) {
-			if (targetLists.startsWith("\"") && targetLists.endsWith(")")) {
-				lists = this.getListFromQuickShare(loginUser, targetLists);
-			} else {
-				if (targetLists.equals("*")) {
-					if (loginUser.isSuperAdmin()) {
-						lists = this.findAllList();
-					} else {
-						lists = this.findAllListByUser(loginUser);
-					}
-				} else {
-					lists = performSearch(targetLists, loginUser);
-				}
-			}
-			if (criteriaOnSearch.equals("public") || criteriaOnSearch.equals("private")) {
-				List<MailingListVo> finalList = new ArrayList<MailingListVo>(lists);
-				lists.clear();
-
-				for (MailingListVo mailingListVo : finalList) {
-					if (criteriaOnSearch.equals("private") && mailingListVo.isPublic() == false) {
-						lists.add(mailingListVo);
-					} else if (criteriaOnSearch.equals("public") && mailingListVo.isPublic() == true) {
-						lists.add(mailingListVo);
-					}
-				}
-			}
-		} else {
-			return new ArrayList<MailingListVo>();
-		}
-		return lists;
-	}
-
-	private List<MailingListVo> performSearch(String input, UserVo loginUser) throws BusinessException {
-		List<MailingListVo> list = new ArrayList<MailingListVo>();
+		User actor = (User) userService.findOrCreateUser(loginUser.getMail(), loginUser.getDomainIdentifier());
+		List<MailingList> listByVisibility = mailingListService.findAllListByVisibility(actor, criteriaOnSearch);
 		List<MailingListVo> finalList = new ArrayList<MailingListVo>();
-		if (loginUser.isSuperAdmin()) {
-			list = this.findAllList();
-		} else {
-			list = this.findAllListByUser(loginUser);
-		}
-
-		for (MailingListVo mailingListVo : list) {
-			if (mailingListVo.getIdentifier().indexOf(input) != -1) {
-				finalList.add(mailingListVo);
+		for (MailingList list : listByVisibility) {
+			if (list.getIdentifier().toLowerCase().startsWith(input.toLowerCase())) {
+				finalList.add(new MailingListVo(list));
 			}
 		}
 		return finalList;
+	}
+
+	@Override
+	public List<MailingListVo> setListFromUserSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
+			throws BusinessException {
+		User actor = (User) userService.findOrCreateUser(loginUser.getMail(), loginUser.getDomainIdentifier());
+		List<MailingList> lists = new ArrayList<MailingList>();
+		if (targetLists.equals("*")) {
+			lists = mailingListService.findAllListByVisibility(actor, criteriaOnSearch);
+		} else if (targetLists.startsWith("\"") && targetLists.endsWith(">")) {
+			MailingList list = mailingListService.retrieveList(MailingListCompletionService.parseOneList(targetLists));
+			lists.add(list);
+		} else {
+			return performSearchForUser(loginUser, targetLists, criteriaOnSearch);
+		}
+		return ListToListVo(lists);
 	}
 
 	public boolean checkUserIsContact(List<MailingListContactVo> contacts, String mail) {
@@ -379,17 +328,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		MailingListContact contact = new MailingListContact(contactVo);
 		list.getMailingListContact().add(contact);
 		mailingListService.updateList(actor, list);
-	}
-
-	@Override
-	public void setNewOwner(MailingListVo mailingListVo, String input) throws BusinessException {
-
-		UserVo selectedUser = MailCompletionService.getUserFromDisplay(input);
-		User user = userService.findUnkownUserInDB(selectedUser.getMail());
-		mailingListVo.setOwner(new UserVo(user));
-		AbstractDomain domain = abstractDomainService.retrieveDomain(user.getDomainId());
-		mailingListVo.setDomainId(domain.getIdentifier());
-
 	}
 
 	@Override
