@@ -53,7 +53,9 @@ public interface MailingListBusinessService {
 
 	public void deleteList(String uuid) throws BusinessException;
 
-	public void updateList(MailingList listToUpdate) throws BusinessException;
+	public void updateList(MailingList mailingList) throws BusinessException;
+	
+	public void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
 
 	public List<MailingList> findAllMyList(User user);
 

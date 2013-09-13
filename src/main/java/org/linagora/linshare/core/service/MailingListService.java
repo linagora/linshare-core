@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service;
 
 import java.util.List;
 
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -56,6 +57,8 @@ public interface MailingListService {
 	public void deleteList(User actor, String uuid) throws BusinessException;
 
 	public void updateList(User actor, MailingList listToUpdate) throws BusinessException;
+	
+	public void addNewContact(User actor, String mailingListUuid, MailingListContact contact) throws BusinessException;
 
 	public List<MailingList> findAllListByOwner(User user);
 
@@ -69,5 +72,11 @@ public interface MailingListService {
 
 	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch);
 
-	public List<MailingList> findAllListByVisibilityForAdmin(String criteriaOnSearch);
+	/**
+	 * retrieving all list from repository. Method allowed only for Root.
+	 * @param actor
+	 * @param criteriaOnSearch : could be "public", "private" or "all"
+	 * @return list of MailingList objects.
+	 */
+	public List<MailingList> findAllListByVisibilityForAdmin(Account actor, String criteriaOnSearch);
 }

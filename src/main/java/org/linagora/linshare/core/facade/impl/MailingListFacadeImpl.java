@@ -91,7 +91,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		String ownerDomainId = mailingListVo.getOwner().getDomainIdentifier();
 		User actor = userService.findOrCreateUser(ownerMail, ownerDomainId);
 		mailingList.setOwner(actor);
-		mailingList.setMails(null);
 		AbstractDomain domain = abstractDomainService.retrieveDomain(mailingListVo.getDomainId());
 		mailingList.setDomain(domain);
 		mailingListService.createList(mailingList);
@@ -221,7 +220,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		if (targetLists.equals("*")) {
 			lists = mailingListService.findAllListByVisibility(actor, criteriaOnSearch);
 		} else if (targetLists.startsWith("\"") && targetLists.endsWith(">")) {
-			MailingList list = mailingListService.retrieveList(MailingListCompletionService.parseOneList(targetLists));
+			MailingList list = mailingListService.retrieveList(MailingListCompletionService.parseFirstElement(targetLists));
 			lists.add(list);
 		} else {
 			return performSearchForUser(loginUser, targetLists, criteriaOnSearch);
@@ -320,14 +319,11 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public void addNewContactToList(MailingListVo mailingListVo, MailingListContactVo contactVo)
+	public void addNewContactToList(UserVo actorVo, MailingListVo mailingListVo, MailingListContactVo contactVo)
 			throws BusinessException {
-		MailingList list = mailingListService.retrieveList(mailingListVo.getUuid());
-		User actor = (User) userService.findOrCreateUser(mailingListVo.getOwner().getMail(), mailingListVo.getOwner()
-				.getDomainIdentifier());
+		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		MailingListContact contact = new MailingListContact(contactVo);
-		list.getMailingListContact().add(contact);
-		mailingListService.updateList(actor, list);
+		mailingListService.addNewContact(actor, mailingListVo.getUuid(), contact);
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class MailingListVo {
 	private boolean isPublic;
 	private UserVo owner;
 	private String domainId;
-	private List<MailingListContactVo> mails;
+	private List<MailingListContactVo> contacts;
 	private String uuid;
 	
 
@@ -62,10 +62,10 @@ public class MailingListVo {
 		this.isPublic = list.isPublic();
 		this.owner = new UserVo(list.getOwner());
 		this.domainId = list.getDomain().getIdentifier();
-		mails = new ArrayList<MailingListContactVo>();
+		contacts = new ArrayList<MailingListContactVo>();
 		
-		for(MailingListContact current : list.getMails()) {
-			mails.add(new MailingListContactVo(current));
+		for(MailingListContact current : list.getMailingListContact()) {
+			contacts.add(new MailingListContactVo(current));
 		}
 	}
 
@@ -76,7 +76,7 @@ public class MailingListVo {
 		this.isPublic = list.isPublic();
 		this.owner = list.getOwner();
 		this.domainId = list.getDomainId();
-		this.mails = list.getMails();
+		this.contacts = list.getContacts();
 	}
 
 	public MailingListVo(String uuid, String identifier, String description,
@@ -88,7 +88,7 @@ public class MailingListVo {
 		this.isPublic = isPublic;
 		this.owner = owner;
 		this.domainId = domain;
-		this.mails = mails;
+		this.contacts = mails;
 	}
 
 	public String getIdentifier() {
@@ -131,16 +131,16 @@ public class MailingListVo {
 		this.domainId = domain;
 	}
 
-	public List<MailingListContactVo> getMails() {
-		return mails;
+	public List<MailingListContactVo> getContacts() {
+		return contacts;
 	}
 	
 	public void addContact(MailingListContactVo contact) {
-		mails.add(contact);
+		contacts.add(contact);
 	}
 
-	public void setMails(List<MailingListContactVo> mails) {
-		this.mails = mails;
+	public void setContacts(List<MailingListContactVo> mails) {
+		this.contacts = mails;
 	}
 
 	public String getUuid() {

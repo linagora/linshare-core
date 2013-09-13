@@ -40,7 +40,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
-import org.linagora.linshare.core.domain.entities.MailingListContact;
 
 public class MailingList {
 
@@ -89,7 +88,7 @@ public class MailingList {
 		this.isPublic = list.isPublic();
 		this.owner = list.getOwner();
 		this.domain = list.getDomain();
-		this.mailingListContact = list.getMails();
+		this.mailingListContact = list.getMailingListContact();
 		this.creationDate = list.getCreationDate();
 		this.modificationDate = list.getModificationDate();
 	}
@@ -99,12 +98,12 @@ public class MailingList {
 		this.identifier = list.getIdentifier();
 		this.description = list.getListDescription();
 		this.isPublic = list.isPublic();
-		if (!list.getMails().isEmpty()) {
+		if (!list.getContacts().isEmpty()) {
 			if (mailingListContact == null) {
 				mailingListContact = new ArrayList<MailingListContact>();
 			}
 
-			for (MailingListContactVo current : list.getMails()) {
+			for (MailingListContactVo current : list.getContacts()) {
 				mailingListContact.add(new MailingListContact(current));
 			}
 		}
@@ -170,14 +169,6 @@ public class MailingList {
 		this.domain = domain;
 	}
 
-	public List<MailingListContact> getMails() {
-		return mailingListContact;
-	}
-
-	public void setMails(List<MailingListContact> mailingListContact) {
-		this.mailingListContact = mailingListContact;
-	}
-
 	public String getUuid() {
 		return uuid;
 	}
@@ -189,7 +180,7 @@ public class MailingList {
 	public List<MailingListContact> getMailingListContact() {
 		return mailingListContact;
 	}
-
+	
 	public void setMailingListContact(List<MailingListContact> mailingListContact) {
 		this.mailingListContact = mailingListContact;
 	}
@@ -208,5 +199,30 @@ public class MailingList {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+	
+	/**
+	 * Helpers.
+	 */
+	
+
+	/**
+	 * Add a new contact to the mailing list contacts.
+	 * @param contact
+	 */
+	public void addMailingListContact(MailingListContact contact) {
+		mailingListContact.add(contact);
+	}
+
+	/**
+	 * Check if the actor parameter is the owner of the mailing list.
+	 * @param account
+	 * @return
+	 */
+	public boolean isOwner(Account account) {
+		if(account.getLsUuid().equals(getOwner().getLsUuid())) {
+			return true;
+		}
+		return false;
 	}
 }
