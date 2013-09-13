@@ -93,7 +93,7 @@ public class ThreadMemberEditForm {
     public void init() {
     	member = null;
     	if (editMemberId == null) {
-    		logger.error("No member selected, identifier is null");
+    		logger.debug("No member selected, identifier is null");
     	}
     	else {
     		logger.info("editMemberId : " + editMemberId);
@@ -108,7 +108,7 @@ public class ThreadMemberEditForm {
     		}
     	}
     	if (member == null) {
-    		logger.error("Member doesn't exist. Can't find a user with this identifier in members list");
+    		logger.debug("Member doesn't exist. Can't find a user with this identifier in members list");
     		member = new ThreadMemberVo();
     	}
     }
