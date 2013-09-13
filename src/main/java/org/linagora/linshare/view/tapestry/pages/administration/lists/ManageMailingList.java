@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
+import org.linagora.linshare.core.facade.MailingListAdminFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
@@ -86,6 +87,9 @@ public class ManageMailingList {
 
 	@Inject
 	private AbstractDomainFacade domainFacade;
+
+	@Inject
+	private MailingListAdminFacade mailingListAdminFacade;
 
 	@Inject
 	private UserFacade userFacade;
@@ -146,7 +150,7 @@ public class ManageMailingList {
 	public Object onSuccess() throws BusinessException, ValidationException {
 		if (newOwner != null) {
 			if (newOwner.substring(newOwner.length() - 1).equals(">")) {
-				mailingListFacade.setNewOwner(mailingListVo, newOwner);
+				mailingListAdminFacade.setNewOwner(mailingListVo, newOwner);
 			} else {
 				form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"), newOwner));
 				return null;

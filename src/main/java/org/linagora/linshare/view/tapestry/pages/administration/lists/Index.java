@@ -51,6 +51,7 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListAdminFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
@@ -87,6 +88,9 @@ public class Index {
 
 	@Inject
 	private MailingListFacade mailingListFacade;
+
+	@Inject
+	private MailingListAdminFacade mailingListAdminFacade;
 
 	@Property
 	private int autocompleteMin = 3;
@@ -146,12 +150,12 @@ public class Index {
 	}
 
 	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		return mailingListFacade.completionsForSearchList(loginUser, input, criteriaOnSearch);
+		return mailingListAdminFacade.completionsForAdminSearchList(loginUser, input, criteriaOnSearch);
 	}
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-		lists = mailingListFacade.setListFromSearch(loginUser, targetLists, criteriaOnSearch);
+		lists = mailingListAdminFacade.setListFromAdminSearch(targetLists, criteriaOnSearch);
 	}
 
 	public void onSuccessFromResetForm() {

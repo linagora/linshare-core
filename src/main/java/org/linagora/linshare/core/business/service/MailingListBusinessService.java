@@ -41,28 +41,32 @@ import java.util.List;
 
 public interface MailingListBusinessService {
 
-    public MailingList createList(MailingList mailingList) throws BusinessException;
-    
-    public MailingList retrieveList(String uuid);
-    
-    public List<MailingList> findAllList();
-    
-    public void createContact(MailingListContact contact) throws BusinessException;
-    
-    public List<MailingList> findAllListByUser(User user);
-    
-    public void deleteList(String uuid) throws BusinessException;
-    
-    public void updateList(MailingList listToUpdate) throws BusinessException;
-    
-    public List<MailingList> findAllMyList(User user);
+	public MailingList createList(MailingList mailingList) throws BusinessException;
 
-    public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
-    
-    public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
-    
+	public MailingList retrieveList(String uuid);
+
+	public List<MailingList> findAllList();
+
+	public void createContact(MailingListContact contact) throws BusinessException;
+
+	public List<MailingList> findAllListByUser(User user);
+
+	public void deleteList(String uuid) throws BusinessException;
+
+	public void updateList(MailingList listToUpdate) throws BusinessException;
+
+	public List<MailingList> findAllMyList(User user);
+
+	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
+
+	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
+
 	public void deleteContact(MailingList list, String mail) throws BusinessException;
 
 	public MailingList findListByIdentifier(User owner, String identifier);
+
+	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic);
+
+	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic);
 
 }

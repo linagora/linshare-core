@@ -38,64 +38,78 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
-import org.linagora.linshare.core.facade.MailingListFacade;
 
 public class MailingListCompletionService {
 
-	private MailingListFacade mailingListFacade;
-	
 	public static String formatLabelForAdmin(MailingListVo listVo, boolean virgule) {
 		StringBuffer buf = new StringBuffer();
-		
-		if(listVo != null){
+
+		if (listVo != null) {
 			buf.append('"').append(listVo.getIdentifier().trim()).append('"');
 			buf.append(" (").append(listVo.getOwner().getFullName()).append(")");
 			buf.append(" <").append(listVo.getUuid()).append(">");
-			if(virgule)	buf.append(",");
+			if (virgule)
+				buf.append(",");
 		} else {
 			buf.append(listVo.getUuid()).append(',');
 		}
 		return buf.toString();
 	}
-	
-	public static String formatLabelForUser(UserVo actorVo, MailingListVo listVo, boolean virgule) {
+
+	public static String formatLabel(UserVo actorVo, MailingListVo listVo, boolean virgule) {
 		StringBuffer buf = new StringBuffer();
-		
-		if(listVo != null){
+
+		if (listVo != null) {
 			buf.append('"').append(listVo.getIdentifier().trim()).append('"');
-			if(actorVo.getLsUuid().equals(listVo.getOwner().getLsUuid())){
+			if (actorVo.getLsUuid().equals(listVo.getOwner().getLsUuid())) {
 				buf.append(" (Me)");
 			} else {
 				buf.append(" (").append(listVo.getOwner().getFullName()).append(")");
 			}
 			buf.append(" <").append(listVo.getUuid()).append(">");
-			if(virgule)	buf.append(",");
+			if (virgule)
+				buf.append(",");
 		} else {
 			buf.append(listVo.getUuid()).append(',');
 		}
 		return buf.toString();
 	}
-	
-	public List<MailingListVo> parseLists(final String recipientsList) {
+
+	public static List<String> parseLists(final String recipientsList) {
 		String[] recipients = recipientsList.replaceAll(";", ",").split(",");
-		ArrayList<MailingListVo> lists = new ArrayList<MailingListVo>();
-		
+		ArrayList<String> lists = new ArrayList<String>();
+
 		for (String oneList : recipients) {
-			String uuid = contentInsideToken(oneList, "<",">");
+			String uuid = contentInsideToken(oneList, "<", ">");
 			if (uuid == null) {
 				uuid = oneList.trim();
 			}
 			if (!uuid.equals("")) {
-				MailingListVo listVo = mailingListFacade.retrieveList(uuid);
-				if (!lists.contains(listVo)) {
-					lists.add(listVo); 
+				if (!lists.contains(uuid)) {
+					lists.add(uuid);
 				}
 			}
 		}
-		
 		return lists;
 	}
-	
+
+	public static String parseOneList(final String recipientsList) {
+		String[] recipients = recipientsList.replaceAll(";", ",").split(",");
+
+		for (String oneList : recipients) {
+			String uuid = contentInsideToken(oneList, "<", ">");
+			if (uuid == null) {
+				uuid = oneList.trim();
+			}
+			if (!uuid.equals("")) {
+				{
+					return uuid;
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Gives the content inside two tokens
 	 * 
@@ -105,12 +119,12 @@ public class MailingListCompletionService {
 	 * @return
 	 */
 	public static String contentInsideToken(final String str, final String tokenright, final String tokenleft) {
-		int deb = str.indexOf(tokenright,0);
-		int end = str.indexOf(tokenleft,1);
+		int deb = str.indexOf(tokenright, 0);
+		int end = str.indexOf(tokenleft, 1);
 		if (deb == -1 || end == -1) {
 			return null;
 		} else {
-			return str.substring(deb+1, end).trim();
+			return str.substring(deb + 1, end).trim();
 		}
 	}
 }
