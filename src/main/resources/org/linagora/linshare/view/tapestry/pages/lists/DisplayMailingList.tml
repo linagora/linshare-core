@@ -49,10 +49,10 @@
 				<table>
 					<tr>
 						<td>
-							<t:label for="email"/>:&nbsp;
+							<t:label for="mail"/>:&nbsp;
 						</td>
 						<td>
-							<t:textfield t:id="email" value="email" disabled="inModify"/>
+							<t:textfield t:id="mail" value="mail" disabled="inModify"/>
 						</td>
 					</tr>
 					<tr>

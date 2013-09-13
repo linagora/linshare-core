@@ -102,18 +102,22 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibilityForSearch(User user, String criteriaOnSearch, String input) {
+	public List<MailingList> findAllListByVisibilityForSearch(User actor, String criteriaOnSearch, String pattern) {
+		Assert.notNull(actor);
+		Assert.notNull(criteriaOnSearch);
+		Assert.notNull(pattern);
+		
 		boolean isPublic;
 		if (criteriaOnSearch.equals("all")) {
-			return mailingListBusinessService.findAllListByUserForSearch(user, input);
+			return mailingListBusinessService.findAllListByUserForSearch(actor, pattern);
 		} else if (criteriaOnSearch.equals("allMyLists")) {
-			return mailingListBusinessService.findAllMyListsForSearch(user, input);
+			return mailingListBusinessService.findAllMyListsForSearch(actor, pattern);
 		} else if (criteriaOnSearch.equals("public")) {
 			isPublic = true;
 		} else {
 			isPublic = false;
 		}
-		return mailingListBusinessService.findAllListByVisibilityForSearch(user, isPublic, input);
+		return mailingListBusinessService.findAllListByVisibilityForSearch(actor, isPublic, pattern);
 	}
 	
 	@Override
