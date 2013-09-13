@@ -36,6 +36,7 @@ package org.linagora.linshare.view.tapestry.pages.thread;
 import java.util.List;
 
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -169,6 +170,13 @@ public class AdminThread {
 		}
 	}
 
+	@AfterRender
+	public void cleanPage() {
+		displayGrid = false;
+		recipientsSearch = null;
+		userSearchResults = null;
+	}
+	
 	public Object onActivate() {
 		if (currentThread == null) {
 			return Index.class;
