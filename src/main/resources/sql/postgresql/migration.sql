@@ -5,8 +5,6 @@ SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 SET default_with_oids = false;
 
-ALTER SEQUENCE hibernate_sequence INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
