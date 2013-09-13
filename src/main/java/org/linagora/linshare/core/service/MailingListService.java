@@ -79,7 +79,7 @@ public interface MailingListService {
 	 */
 	public List<MailingList> findAllListByVisibilityForAdmin(User user, String criteriaOnSearch);
 
-	public List<MailingList> findAllListByVisibilityForSearch(User user, String criteriaOnSearch, String input);
+	public List<MailingList> findAllListByVisibilityForSearch(User actor, String criteriaOnSearch, String pattern);
 
 	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch);
 

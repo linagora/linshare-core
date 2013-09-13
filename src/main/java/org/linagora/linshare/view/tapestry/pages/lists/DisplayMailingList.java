@@ -97,7 +97,7 @@ public class DisplayMailingList {
 	@Persist
 	@Validate("required")
 	@Property
-	private String email;
+	private String mail;
 
 	@Persist
 	private String oldEmail;
@@ -164,7 +164,7 @@ public class DisplayMailingList {
 		recipientsSearch = null;
 		results = null;
 		index.setFromCreate(false);
-		email = null;
+		mail = null;
 		firstName = null;
 		lastName = null;
 		inModify = false;
@@ -179,7 +179,7 @@ public class DisplayMailingList {
 	}
 
 	public void onSelectedFromReset() throws BusinessException {
-		email = null;
+		mail = null;
 		firstName = null;
 		oldEmail = null;
 		lastName = null;
@@ -187,21 +187,21 @@ public class DisplayMailingList {
 	}
 
 	public void onSuccessFromContactForm() throws BusinessException {
-		String display = MailCompletionService.formatLabel(email, firstName, lastName, false);
+		String display = MailCompletionService.formatLabel(mail, firstName, lastName, false);
 		if (inModify == true) {
 			if (!fromReset) {
 				MailingListContactVo contact = mailingListFacade.retrieveContact(mailingListVo, oldEmail);
 				contact.setDisplay(display);
-				contact.setMail(email);
+				contact.setMail(mail);
 				mailingListFacade.updateContact(mailingListVo, contact);
 			}
 		} else {
-			MailingListContactVo newContact = new MailingListContactVo(email, display);
+			MailingListContactVo newContact = new MailingListContactVo(mail, display);
 			mailingListFacade.addNewContactToList(loginUser, mailingListVo, newContact);
 		}
 		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 		inModify = false;
-		email = null;
+		mail = null;
 		oldEmail = null;
 		firstName = null;
 		lastName = null;
@@ -237,14 +237,14 @@ public class DisplayMailingList {
 		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
 	}
 
-	public void onActionFromEditContact(String mail) {
+	public void onActionFromEditContact(String email) {
 		UserVo contactForEdit = null;
 		for (MailingListContactVo current : lists) {
-			if (current.getMail().equals(mail)) {
+			if (current.getMail().equals(email)) {
 				contactForEdit = MailCompletionService.getUserFromDisplay(current.getDisplay());
 			}
 		}
-		this.email = contactForEdit.getMail();
+		this.mail = contactForEdit.getMail();
 		this.firstName = contactForEdit.getFirstName();
 		this.lastName = contactForEdit.getLastName();
 		oldEmail = email;
@@ -268,5 +268,5 @@ public class DisplayMailingList {
 	public boolean isInModify() {
 		return inModify;
 	}
-
+	
 }
