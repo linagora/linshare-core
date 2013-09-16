@@ -66,6 +66,9 @@ public class Guest extends User {
 		this.restricted = userDto.isRestricted();
 		this.comment = userDto.getComment();
 		this.canCreateGuest = false;
+		this.owner = new Internal(userDto.getOwner());
+		this.expirationDate = userDto.getExpirationDate();
+		this.canUpload = userDto.getCanUpload();
 	}
 
 	@Override

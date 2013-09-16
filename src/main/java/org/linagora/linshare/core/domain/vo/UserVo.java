@@ -55,7 +55,7 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	private final String lastName;
 	private final String mail;
 	private final AccountType userType;
-	private final Role role;
+	private Role role;
 	private final boolean upload;
 	private final boolean createGuest;
 	private String ownerLogin = null;

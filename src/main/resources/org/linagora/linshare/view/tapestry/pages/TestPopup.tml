@@ -1,6 +1,17 @@
 <t:MyBorderLayout t:title="TEST POPUPS" t:identifier="home"
 xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
+
+    <h1>Test of tapestry-tagselect</h1>
+    <form t:type="form">
+        <div t:type="tag/tagselect" t:id="tags" t:value="tags" t:dropdown="false" t:minChars="3" t:frequency="0.5" style="width: 400px;"></div>
+        <t:submit/>
+    </form>
+
+
+
+    <h1>Miscellaneous</h1>
+
    <a href="#" onclick="window1.showCenter(true)">click here for modal window</a>
     
     <a href="#" onclick="test();">click here for modal window</a>
@@ -97,7 +108,6 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
       <t:actionlink t:id="test2">test Action Link</t:actionlink>
         
         
-        
-   		
-</t:MyBorderLayout>   
- 
+
+  </t:MyBorderLayout>   
+

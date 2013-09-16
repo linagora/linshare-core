@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
+import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,6 +232,10 @@ public class Functionality implements Cloneable {
 	
 	public void updateFunctionalityValuesOnlyFromVo(FunctionalityVo functionality) {
 		logger.debug("Functionality:updateFunctionalityValuesOnlyFromVo : " + identifier + " : ");
+		// no data in this class.
+	}
+	
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionality) {
 		// no data in this class.
 	}
 }

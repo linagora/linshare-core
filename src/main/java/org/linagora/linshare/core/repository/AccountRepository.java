@@ -51,4 +51,6 @@ public interface AccountRepository<U extends Account> extends AbstractRepository
 
 	SystemAccount getSystemAccount();
 	
+    List<U> findAllDestroyedAccounts();
+	
 } 

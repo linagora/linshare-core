@@ -35,8 +35,10 @@ package org.linagora.linshare.webservice.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.linagora.linshare.core.domain.entities.Policy;
 
+@JsonIgnoreProperties({"previousPolicy"})
 @XmlRootElement(name = "Policy")
 public class PolicyDto {
 	

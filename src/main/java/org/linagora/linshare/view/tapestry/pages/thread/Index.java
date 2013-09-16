@@ -141,10 +141,11 @@ public class Index {
     public void afterRender() {
     }
     
-    public void onSelectedFromStop() {
-    	fromReset = true;
-    	inSearch = false;
+    public void onSuccessFromResetSearch() {
+        inSearch = false;
+        fromReset=true;
      }
+
     
     /**
 	 * Format the creation date for good displaying using DateFormatUtils of

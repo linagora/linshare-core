@@ -33,9 +33,13 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.io.Serializable;
+
 import org.linagora.linshare.core.domain.constants.EntryType;
 
-public class ThreadEntry extends Entry{
+public class ThreadEntry extends Entry implements Serializable {
+
+	private static final long serialVersionUID = 9142518443629423165L;
 
 	protected Document document;
 	

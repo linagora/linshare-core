@@ -286,7 +286,6 @@ public class Upload {
 						.notify(new BusinessUserMessage(
 								BusinessUserMessageType.QUICKSHARE_BADMAIL,
 								MessageSeverity.ERROR, badFormatEmail));
-				addedDocuments = new ArrayList<DocumentVo>();
 				return Upload.class;
 			} else {
 				recipientsEmail = recipients;
@@ -336,9 +335,6 @@ public class Upload {
 					logger.error("Could not create sharing, caught a BusinessException.");
 					logger.error(e1.getMessage());
 					businessMessagesManagementService.notify(e1);
-
-					// reset list of documents
-					addedDocuments = new ArrayList<DocumentVo>();
 					return Upload.class;
 				}
 			}

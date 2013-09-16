@@ -50,4 +50,6 @@ public interface UserRestService {
 	Set<UserDto> getGuests(String pattern) throws BusinessException;
 	
 	void updateUser(UserDto userDto) throws BusinessException;
+
+	void deleteUser(UserDto userDto) throws BusinessException;
 }

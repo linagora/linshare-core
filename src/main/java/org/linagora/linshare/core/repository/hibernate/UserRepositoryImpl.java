@@ -33,7 +33,6 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.User;
@@ -42,13 +41,13 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class UserRepositoryImpl extends GenericUserRepositoryImpl<User> implements UserRepository<User> {
 
-    public UserRepositoryImpl(HibernateTemplate hibernateTemplate) {
-        super(hibernateTemplate);
-    }
+	public UserRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-    @Override
-    protected DetachedCriteria getNaturalKeyCriteria(User user) {
-        DetachedCriteria det = DetachedCriteria.forClass(User.class).add(Restrictions.eq("lsUuid", user.getLsUuid()));
-        return det;
-    }
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(User user) {
+		DetachedCriteria det = DetachedCriteria.forClass(User.class).add(Restrictions.eq("lsUuid", user.getLsUuid()));
+		return det;
+	}
 }

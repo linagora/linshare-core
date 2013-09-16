@@ -39,6 +39,7 @@ import java.util.List;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
 import org.linagora.linshare.core.domain.vo.IntegerValueFunctionalityVo;
+import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
 
 public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
@@ -88,7 +89,16 @@ public class IntegerValueFunctionality extends OneValueFunctionality<Integer> {
 		IntegerValueFunctionalityVo f = (IntegerValueFunctionalityVo)functionality;
 		this.value = f.getValue();
 	}
-	
+
+	@Override
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionality) {
+		List<ParameterDto> parameters = functionality.getParameters();
+		if (parameters != null && !parameters.isEmpty()) {
+			ParameterDto parameterDto = parameters.get(0);
+			this.value = parameterDto.getInteger();
+		}
+	}
+
 	@Override
 	public List<ParameterDto> getParameters() {
 		 List<ParameterDto> res = new ArrayList<ParameterDto>();

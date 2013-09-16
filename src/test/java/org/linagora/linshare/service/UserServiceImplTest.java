@@ -247,7 +247,7 @@ public class UserServiceImplTest extends AbstractTransactionalJUnit4SpringContex
 		try {
 			logger.info("John Doe trying to delete Jane Smith");
 			User u = userService.findUserInDB(LoadingServiceTestDatas.sqlSubDomain, "user2@linpki.org");
-			userService.deleteUser(u.getLsUuid(), user1);
+			userService.deleteUser(user1, u.getLsUuid());
 		} catch (BusinessException e) {
 			Assert.fail(e.getMessage());
 		}
