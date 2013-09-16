@@ -33,13 +33,33 @@
  */
 package org.linagora.linshare.view.tapestry.pages;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.apache.tapestry5.OptionGroupModel;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.SelectModelVisitor;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
 import org.linagora.linshare.core.batches.UserManagementBatch;
+import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
+import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
 import org.linagora.linshare.core.repository.DocumentEntryRepository;
 import org.linagora.linshare.core.service.UserService;
@@ -47,8 +67,11 @@ import org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
+import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
 
 /**
  * Test showing how to use the PasswordPopup
@@ -173,4 +196,107 @@ public class TestPopup {
     }
 	
 	
+	/**
+	 * Testing tapestry-tagselect
+	 */
+	@SessionState
+	private UserVo userVo;
+
+	@Persist
+    @Property
+    private List<String> tags;
+
+	@Inject
+	private UserFacade userFacade;
+
+	@Inject
+	private RecipientFavouriteFacade recipientFavouriteFacade;
+
+    public void onPrepare() {
+        if (this.tags == null) {
+            this.tags = new ArrayList<String>();
+        }
+    }
+    
+    SelectModel onProvideCompletionsFromTags(final String input) {
+        final List<String> result = new ArrayList<String>(); 
+		List<UserVo> searchResults = performSearch(input);
+
+		for (UserVo user : searchResults) {
+			String completeName = MailCompletionService.formatLabel(user);
+			if (!result.contains(completeName)) {
+				result.add(completeName);
+			}
+		}
+		if (result.isEmpty())
+			result.add(input);
+        return new StringSelectModel(result);
+    }
+
+    private static class StringSelectModel implements SelectModel {
+        private final List<String> strings;
+
+        public StringSelectModel(final List<String> strings) {
+            this.strings = strings;
+        }
+
+        @Override
+        public List<OptionModel> getOptions() {
+            final List<OptionModel> options = new ArrayList<OptionModel>();
+
+            for (final String string : this.strings) {
+                options.add(new OptionModelImpl(string));
+            }
+            return options;
+        }
+
+        @Override
+        public List<OptionGroupModel> getOptionGroups() {
+            return null;
+        }
+
+        @Override
+        public void visit(final SelectModelVisitor visitor) {
+        }
+    }
+	
+	/**
+	 * Perform a user search using the user search pattern.
+	 * 
+	 * @param input
+	 *            user search pattern.
+	 * @return list of users.
+	 */
+	private List<UserVo> performSearch(String input) {
+		Set<UserVo> userSet = new HashSet<UserVo>();
+		List<UserVo> res = new ArrayList<UserVo>();
+
+		String firstName_ = null;
+		String lastName_ = null;
+		String input_ = input != null ? input.trim() : null;
+
+		if (input_.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(input, " ");
+			if (stringTokenizer.hasMoreTokens()) {
+				firstName_ = stringTokenizer.nextToken();
+				if (stringTokenizer.hasMoreTokens()) {
+					lastName_ = stringTokenizer.nextToken();
+				}
+			}
+		}
+		try {
+			userSet.addAll(userFacade.searchUser(input_, null, null, userVo));
+			userSet.addAll(userFacade.searchUser(null, firstName_, lastName_,
+					userVo));
+			userSet.addAll(userFacade.searchUser(null, lastName_, firstName_,
+					userVo));
+			userSet.addAll(recipientFavouriteFacade.findRecipientFavorite(
+					input.trim(), userVo));
+			res.addAll(recipientFavouriteFacade.recipientsOrderedByWeightDesc(
+					new ArrayList<UserVo>(userSet), userVo));
+		} catch (BusinessException e) {
+			logger.error("Error while searching user in QuickSharePopup", e);
+		}
+		return res;
+	}
 }
