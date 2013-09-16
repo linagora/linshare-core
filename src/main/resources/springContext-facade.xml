@@ -208,6 +208,14 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="domainPolicyService" />
 	</bean>
+	<bean id="wsAdminThreadFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="threadService" />
+	</bean>
+	<bean id="wsAdminThreadMemberFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.ThreadMemberFacadeImpl">
+		<constructor-arg ref="accountService" />
+		<constructor-arg ref="threadService" />
+	</bean>
 	<bean id="wsAdminUserRoleFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.UserRoleFacadeImpl">
 		<constructor-arg ref="accountService" />
 	</bean>
@@ -219,5 +227,6 @@
 		<constructor-arg ref="accountService" />
         <constructor-arg ref="abstractDomainService" />
         <constructor-arg ref="functionalityService" />
+        <constructor-arg ref="functionalityOldService" />
 	</bean>		
 </beans>

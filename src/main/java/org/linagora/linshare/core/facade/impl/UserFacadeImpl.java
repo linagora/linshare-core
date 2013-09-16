@@ -198,7 +198,7 @@ public class UserFacadeImpl implements UserFacade {
     public void deleteUser(String login, UserVo actorVo) {
     	User actor = userRepository.findByLsUuid(actorVo.getLogin());
         try {
-			userService.deleteUser(login, actor);
+			userService.deleteUser(actor, login);
 		} catch (BusinessException e) {
 			logger.error("can't delete user : " + actorVo.getLsUuid() + " : " + e.getMessage());
 			logger.debug(e.toString());

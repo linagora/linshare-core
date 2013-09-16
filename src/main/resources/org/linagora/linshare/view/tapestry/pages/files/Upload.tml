@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<t:MyBorderLayout t:title="message:pages.index.title" t:identifier="home" t:currentHighlight="files"
+<t:MyBorderLayout t:title="message:pages.files.upload.title" t:identifier="upload" t:currentHighlight="files"
 xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <script type="text/javascript" language="javascript">
@@ -17,10 +17,15 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
             return (jQuery("#progress").val() == 0);
         }
 
+        var startSpinner = function() {
+            jQuery(".spinner").show();
+            jQuery("#formShareSubmit").hide();
+        }
+
         var trySubmit = function() {
             if (uuids.length != 0) {
                 if (jQuery("#is_submit").is(":checked")) {
-                    jQuery(".spinner").show();
+                    startSpinner();
                     if (jQuery("#progress").val() == 0) {
                         jQuery("#submitShare").click();
                     }
@@ -29,7 +34,8 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         }
 
         var requestSubmit = function() {
-            jQuery("#is_submit").attr("checked", true);
+            if (uuids.length + jQuery("#progress").val() != 0)
+                jQuery("#is_submit").attr("checked", true);
             trySubmit();
         }
 
@@ -115,13 +121,17 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <!-- Main content -->
     <div id="content">
-        <legend>${message:pages.files.upload.upload.title}</legend>
-        <div class="example">
+
+        <h1>${message:pages.files.upload.title}</h1>
+
+        <h2>${message:pages.files.upload.upload.title}</h2>
+        <div>
             <ul id="uploader" class="unstyled"></ul>
         </div>
+
+        <h2>${message:pages.files.upload.share.title}</h2>
         <t:form t:id="quickShareForm" class="form-horizontal">
             <fieldset>
-                <legend>${message:pages.files.upload.share.title}</legend>
                 <t:errors />
 
                 <!--upload and share client logic-->
@@ -204,15 +214,17 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                 <div class="form-actions" style="background-color: transparent">
                     <t:pageLink page="files" class="btn" onlick="tryReturn()">
                     ${message:pages.files.upload.cancelButton}</t:pageLink>
+                    ${message:global.space}
                     <input name="submitShare" id="submitShare" type="submit" style="display:none" />
                     <a id="formShareSubmit" class="btn btn-primary" onclick="requestSubmit()">
-                        <span>
-                        <img src="${asset:context:images/icons/share-on-small.png}"
-                        alt="" />${message:global.button.share.cap}</span>
+                        <span><img src="${asset:context:images/icons/share-on-small.png}"
+                        alt="" /> ${message:global.button.share.cap}</span>
                     </a>
+                    <div class="spinner"></div>
                 </div> <!--form-actions-->
-                <div class="spinner"></div>
+
             </fieldset>
         </t:form>
+
     </div>
 </t:MyBorderLayout>

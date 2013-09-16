@@ -171,24 +171,28 @@ public class Index {
     
 
     
-    public void onSelectedFromStop() {
+    public void onSuccessFromResetSearch() {
+       threads = null;
+       recipientsSearchUser = "";
        inSearch = false;
        fromReset=true;
        firstConnect = true;
     }
    
-    public void onSelectedFromReset() {
+    public void onSuccessFromResetSearchByUser() {
+    	threads = null;
     	criteriaOnSearch = "all";
     	recipientsSearchUser = "";
         inSearch = false;	
         firstConnect = true;
     }
     
+    
     public Object onSuccessFromFormSearchByUser() throws BusinessException {
     	if(inSearch){
     		threads = threadEntryFacade.getListOfThreadFromSearchByUser(userVo, criteriaOnSearch, recipientsSearchUser);
     	} else {
-    		threads = threadEntryFacade.getAllThread();
+    		threads = null;
     	}
     	firstConnect = true;
     	return null;

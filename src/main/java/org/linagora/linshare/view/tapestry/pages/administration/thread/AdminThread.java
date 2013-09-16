@@ -36,6 +36,7 @@ package org.linagora.linshare.view.tapestry.pages.administration.thread;
 import java.util.List;
 
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -169,6 +170,13 @@ public class AdminThread {
 		}
 	}
 
+	@AfterRender
+	public void cleanPage() {
+		displayGrid = false;
+		recipientsSearch = null;
+		userSearchResults = null;
+	}
+	
 	public Object getType() {
 		return (member.isAdmin() ? adminBlock : member.isCanUpload() ? userBlock : restrictedUserBlock);
 	}
@@ -236,18 +244,18 @@ public class AdminThread {
 		}
 	}
 
-	public void onSelectedFromStop() {
-		inSearch = false;
-	}
+    public void onSuccessFromResetSearch() {
+        inSearch = false;
+     }
+    
+     public void onSuccessFromResetSearchByUser() {
+		displayGrid = false;
+		recipientsSearch = null;
+     }
 
 	public void onSuccessFromForm() throws BusinessException {
 		userSearchResults = threadEntryFacade.searchAmongUsers(userLoggedIn, recipientsSearch);
 		displayGrid = true;
-	}
-
-	public void onSelectedFromReset() {
-		displayGrid = false;
-		recipientsSearch = null;
 	}
 
 	public boolean getIsInList() throws BusinessException {
@@ -284,6 +292,10 @@ public class AdminThread {
 	
 	public String getAll() { 
 		return "all"; 
+	}
+	
+	public boolean getIsDeletable() throws BusinessException {
+		return threadEntryFacade.memberIsDeletable(userLoggedIn, currentThread);
 	}
 	
 }

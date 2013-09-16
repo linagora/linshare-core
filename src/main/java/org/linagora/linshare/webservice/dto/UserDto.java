@@ -33,10 +33,13 @@
  */
 package org.linagora.linshare.webservice.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.linagora.linshare.core.domain.constants.AccountType;
 import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.User;
 
@@ -52,6 +55,7 @@ public class UserDto extends AccountDto {
 	private Date expirationDate;
 	private boolean guest = false;
 	private boolean restricted = false;
+	private List<String> restrictedContacts = new ArrayList<String>();
 	private String comment = null;
 	
 	public UserDto(User u) {
@@ -63,13 +67,14 @@ public class UserDto extends AccountDto {
 		this.canUpload = u.getCanUpload();
 		this.canCreateGuest = u.getCanCreateGuest();
 		this.expirationDate = u.getExpirationDate();
-	}
-	
-	public UserDto(Guest g) {
-		this((User) g);
-		this.restricted = g.isRestricted();
-		this.comment = g.getComment();
-		this.guest = true;
+		if (u.getAccountType() == AccountType.GUEST) {
+			Guest g = (Guest) u;
+			this.owner = new UserDto((User) g.getOwner());
+			this.expirationDate = g.getExpirationDate();
+			this.restricted = g.isRestricted();
+			this.comment = g.getComment();
+			this.guest = true;
+		}
 	}
 	
 	public UserDto() {
@@ -108,7 +113,7 @@ public class UserDto extends AccountDto {
 		this.role = role;
 	}
 	
-	public boolean isCanUpload() {
+	public boolean getCanUpload() {
 		return canUpload;
 	}
 
@@ -193,6 +198,14 @@ public class UserDto extends AccountDto {
 		} else if (!mail.equals(other.mail))
 			return false;
 		return true;
+	}
+
+	public List<String> getRestrictedContacts() {
+		return restrictedContacts;
+	}
+
+	public void setRestrictedContacts(List<String> restrictedContacts) {
+		this.restrictedContacts = restrictedContacts;
 	}
 
 }

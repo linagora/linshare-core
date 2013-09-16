@@ -41,7 +41,8 @@ import org.linagora.linshare.core.facade.webservice.admin.UserRoleFacade;
 import org.linagora.linshare.core.facade.webservice.user.impl.GenericFacadeImpl;
 import org.linagora.linshare.core.service.AccountService;
 
-public class UserRoleFacadeImpl extends GenericFacadeImpl implements UserRoleFacade {
+public class UserRoleFacadeImpl extends GenericFacadeImpl implements
+		UserRoleFacade {
 
 	public UserRoleFacadeImpl(final AccountService accountService) {
 		super(accountService);
@@ -51,7 +52,8 @@ public class UserRoleFacadeImpl extends GenericFacadeImpl implements UserRoleFac
 	public List<String> getUserRoles() {
 		ArrayList<String> roles = new ArrayList<String>();
 		for (Role role : Role.values()) {
-			if (role.toString() != "SYSTEM" && role.toString() != "SUPERADMIN") {
+			if (!role.toString().equals("SYSTEM")
+					&& !role.toString().equals("SUPERADMIN")) {
 				roles.add(role.toString());
 			}
 		}

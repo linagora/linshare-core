@@ -3,17 +3,17 @@
         xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
         xmlns:p="tapestry:parameter">
 
-
     <div id="content">
-        <h1>${message:pages.thread.admin.title} : ${currentThread.name}</h1>
-
+        <h1>${message:pages.thread.index.title} : ${currentThread.name}</h1>
         <t:messagePanel />
         <t:businessMessagesDisplayer />
         <!-- Page content -->
 
+
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
+            <br></br><br></br>
             	    <a href="#" class="button" onclick="window_confirm.showCenter(true);">
 	                    <span><img src="${asset:context:images/icons/delete-small.png}" alt=""/> 
 	                    ${message:pages.thread.admin.deleteButton}</span>
@@ -34,41 +34,48 @@
 		<h2> ${message:pages.thread.admin.index}</h2>
 
         <div id="pageContent">
-        	<form t:type="form" t:id="formSearch">
-        		<table>
+        		 <table>
 					<tr>
+					<form t:type="form" t:id="formSearch" >
 						<td>
-							<t:textfield t:id="searchMembers" t:validate="required" t:value="recipientsSearchMember" t:size="50" t:mixins="autocomplete" 
+							<t:textfield t:id="searchMembers"  t:validate="required" t:value="recipientsSearchMember" t:size="50" t:mixins="autocomplete" 
 				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    	</td>
 				    	<td>
-        					<input type="submit" value="${message:global.button.search}"/>
+        					<input type="submit" id="submit" value="${message:global.button.search}"/>
         				</td>
+        				</form>
         				<td>
-        					<input t:type="Submit" style="margin-right:340px" t:id="stop" value="${message:global.button.reset}"/>
+        				 	<form t:type="form" t:id="resetSearch">
+        						<input type="submit" id="stop" value="${message:global.button.reset}"/>
+        					</form>
        					</td>
         			</tr>
         			 <tr>
         				<td>
+        				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="all" />&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>
+				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>
 				                    ${message:global.space}
-				                    <t:radio t:id="admin" />&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>
+				                    <t:radio t:id="admin" onclick="this.form.submit()" />&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>
 				                    ${message:global.space}			                    
-				                    <t:radio t:id="simple" />&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>
+				                    <t:radio t:id="simple" onclick="this.form.submit()" />&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>
 				                    ${message:global.space}
-				               		<t:radio t:id="restricted"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>
+				               		<t:radio t:id="restricted" onclick="this.form.submit()"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>
 				                    ${message:global.space}
 			               	</t:radiogroup>
+			            </t:form>
 			        	</td>
 			        </tr>
-			        </table>
-			    </form>
-
+        		</table>
 			${message:pages.thread.notification}
+			<br></br><br></br>
             <div class="clear"></div>
             <t:grid source="members" row="member" rowsPerPage="10" include="fullName,mail" add="type,edit,delete" >
+                        					<p:empty>
+        						${message:pages.thread.adminThread.search}
+        					</p:empty> 
                 <p:typeCell>
                     <t:delegate to="type" />
 
@@ -97,24 +104,25 @@
                         </span>
                     </t:actionLink>
                 </p:editCell>
-
                 <p:deleteCell>
+                <t:if t:test="isDeletable">
                     <t:actionLink t:id="deleteMember" t:context="${member.lsUuid}" t:zone="zoneConfirmDelete">
                         <span onclick="window_confirm_0.showCenter(true);">
                             <img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}"
                                 title="${message:pages.thread.member.delete}" />
                         </span>
                     </t:actionLink>
+                     </t:if>
                 </p:deleteCell>
             </t:grid>
         </div><!-- id="list" -->
-
+			<br></br>
       		<div class="clear"></div>
-			<form t:type="form" t:id="form">
 				<fieldset style="width: 1000;" class="title_criteria_zone" id="userCriterion">
 				<legend align="top" class="palette">${message:pages.thread.addUser}</legend>		
-					<table>
+										<table>
 						<tr>
+						<form t:type="form" t:id="form">
 							<td>
 							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
 				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
@@ -123,13 +131,20 @@
 				    		<td>
         					<input type="submit" value="${message:global.button.search}"/>
         					</td>
+        					</form>
         					<td>
-        					<input t:type="Submit" style="margin-right:340px" t:id="reset" value="${message:global.button.reset}"/>
+        				<form t:type="form" t:id="resetSearchByUser">
+        					<input type="submit" style="margin-right:340px" id="reset" value="${message:global.button.reset}"/>
+       					</form>
         					</td>
         				</tr>
         			</table>
+        			<br></br>
         			<t:if t:test="displayGrid">
         				<t:grid source="userSearchResults"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
+        					<p:empty>
+        						${message:pages.thread.adminThread.search}
+        					</p:empty> 
 	    				   <t:parameter name="inListCell">
 			  					<t:if t:test="isInList">
 			  						<img src="${asset:context:images/icons/validate-mini.png}"/>
@@ -140,10 +155,12 @@
 			 				</t:parameter>
 			 				<t:parameter name="addRemoveCell">
 			 					<t:if t:test="isInList">
+			 						<t:if t:test="isDeletable">
 			 						<t:actionLink t:id="deleteUser" context="[result.domainIdentifier,result.mail]"
 			 	 						title="${message:pages.thread.member.delete}">
 										<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
 									</t:actionLink>
+									</t:if>
 			  					<p:else>
 			  						<t:actionLink t:id="addUser" context="[result.domainIdentifier,result.mail]"
 			 	 						title="${message:pages.thread.addUser}">
@@ -155,7 +172,6 @@
 	    				</t:grid>
         			</t:if>
 				</fieldset>
-			</form>
 	<div class="clear"></div>
         <t:actionLink t:id="back" class="button" title="${message:pages.thread.admin.back}">
             <span><img src="${asset:context:images/icons/cancel.png}" alt="" /> ${message:pages.thread.admin.back}</span>

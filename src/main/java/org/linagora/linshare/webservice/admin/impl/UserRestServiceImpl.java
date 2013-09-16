@@ -35,6 +35,7 @@ package org.linagora.linshare.webservice.admin.impl;
 
 import java.util.Set;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -87,4 +88,12 @@ public class UserRestServiceImpl extends WebserviceBase implements UserRestServi
 	public void updateUser(UserDto userDto) throws BusinessException {
 		userFacade.updateUser(userDto);
 	}
+	
+	@Path("/")
+	@DELETE
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public void deleteUser(UserDto userDto) throws BusinessException {
+		userFacade.deleteUser(userDto);
+	}	
 }

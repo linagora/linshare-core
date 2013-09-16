@@ -36,6 +36,7 @@ package org.linagora.linshare.view.tapestry.pages.thread;
 import java.util.List;
 
 import org.apache.tapestry5.Block;
+import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -121,7 +122,6 @@ public class AdminThread {
 	@Property
 	private String recipientsSearch;
 
-    
     @Persist
     @Property
     private String criteriaOnSearch;
@@ -154,9 +154,7 @@ public class AdminThread {
 	@Property
 	private UserVo result;
 
-	/*
-	 * Assuming currentThread isn't be null
-	 */
+
 	@SetupRender
 	public void init() {
 		if (!inSearch) {
@@ -172,6 +170,13 @@ public class AdminThread {
 		}
 	}
 
+	@AfterRender
+	public void cleanPage() {
+		displayGrid = false;
+		recipientsSearch = null;
+		userSearchResults = null;
+	}
+	
 	public Object onActivate() {
 		if (currentThread == null) {
 			return Index.class;
@@ -244,6 +249,7 @@ public class AdminThread {
 			currentThread = null;
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
+			logger.debug(e.toString());
 		}
 	}
 
@@ -275,23 +281,29 @@ public class AdminThread {
 		}
 	}
 
-	public void onSelectedFromStop() {
-		inSearch = false;
-	}
-
+    public void onSuccessFromResetSearch() {
+        inSearch = false;
+     }
+    
+     public void onSuccessFromResetSearchByUser() {
+		displayGrid = false;
+		recipientsSearch = null;
+     }
 	public void onSuccessFromForm() throws BusinessException {
 		userSearchResults = threadEntryFacade.searchAmongUsers(userLoggedIn, recipientsSearch);
 		displayGrid = true;
 	}
-
-	public void onSelectedFromReset() {
-		displayGrid = false;
-		recipientsSearch = null;
-	}
-
-	public boolean getIsInList() throws BusinessException {
+	
+	public boolean getIsInList() {
 		// check if user from searchList is thread member
-		return threadEntryFacade.userIsMember(result, currentThread);
+		boolean userIsMember = false;
+		try {
+			userIsMember = threadEntryFacade.userIsMember(result, currentThread);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+			logger.debug(e.toString());
+		}
+		return userIsMember;
 	}
 
 	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
@@ -325,4 +337,14 @@ public class AdminThread {
 		return "all"; 
 	}
 	
+	public boolean getIsDeletable() throws BusinessException {
+		return threadEntryFacade.memberIsDeletable(userLoggedIn, currentThread);
+	}
+	
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
+	}
 }

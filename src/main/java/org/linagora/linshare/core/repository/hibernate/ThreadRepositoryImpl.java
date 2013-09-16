@@ -56,8 +56,10 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
         
         // filter enabled thread only.
         det.add(Restrictions.eq("enable", true));
+        det.add(Restrictions.eq("destroyed", false));
         // query
         det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
+        
         return det;
     }
 
@@ -67,6 +69,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 		
 		// filter enabled thread only.
         det.add(Restrictions.eq("enable", true));
+        det.add(Restrictions.eq("destroyed", false));
         //query
 		List<Thread> results = findByCriteria(det);
 		return results;
@@ -75,6 +78,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 	@Override
 	public List<Thread> findAllWhereMember(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
 		
         //query
         det.createAlias("myMembers", "member");
@@ -87,6 +91,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 	@Override
 	public List<Thread> findAllWhereAdmin(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
 		
         //query
         det.createAlias("myMembers", "member");
@@ -100,6 +105,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 	@Override
 	public List<Thread> findAllWhereCanUpload(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
 		
         //query
         det.createAlias("myMembers", "member");
@@ -114,6 +120,7 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
 		Calendar calendar=Calendar.getInstance();
 		calendar.add(Calendar.DATE,-16);
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
 		
 		//query
         det.createAlias("myMembers", "member");

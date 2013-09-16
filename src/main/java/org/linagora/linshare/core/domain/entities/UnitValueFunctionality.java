@@ -36,10 +36,13 @@ package org.linagora.linshare.core.domain.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.linagora.linshare.core.domain.constants.FileSizeUnit;
 import org.linagora.linshare.core.domain.constants.FunctionalityType;
+import org.linagora.linshare.core.domain.constants.TimeUnit;
 import org.linagora.linshare.core.domain.vo.FunctionalityVo;
 import org.linagora.linshare.core.domain.vo.SizeValueFunctionalityVo;
 import org.linagora.linshare.core.domain.vo.TimeValueFunctionalityVo;
+import org.linagora.linshare.webservice.dto.FunctionalityDto;
 import org.linagora.linshare.webservice.dto.ParameterDto;
 
 public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
@@ -124,33 +127,54 @@ public class UnitValueFunctionality extends OneValueFunctionality<Integer> {
 				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
 				timeUnit.setUnitValue(f.getUnit());
 			}
-		} else if (functionality.getType().equals(FunctionalityType.UNIT_BOOLEAN_TIME)) {
-			TimeValueFunctionalityVo f = (TimeValueFunctionalityVo) functionality;
-			if (f.getTime() != null) {
-				this.value = f.getTime();
-				TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
-				timeUnit.setUnitValue(f.getUnit());
-			}
+		}
+	}
+
+	@Override
+	public void updateFunctionalityValuesOnlyFromDto(FunctionalityDto functionalityDto) {
+		List<ParameterDto> parameters = functionalityDto.getParameters();
+		if (parameters != null && !parameters.isEmpty()) {
+			ParameterDto parameterDto = parameters.get(0);
+			updateFunctionality(functionalityDto.getType(), parameterDto);
+		}
+	}
+
+	protected void updateFunctionality(String type, ParameterDto parameterDto) {
+		this.value = parameterDto.getInteger();
+		String unit = parameterDto.getString().trim().toUpperCase();
+
+		if (type.equals(FunctionalityType.UNIT_SIZE.toString())) {
+			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
+			sizeUnit.setUnitValue(FileSizeUnit.valueOf(unit));
+		} else if (type.equals(FunctionalityType.UNIT_TIME.toString())) {
+			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
+			timeUnit.setUnitValue(TimeUnit.valueOf(unit));
 		}
 	}
 
 	@Override
 	public List<ParameterDto> getParameters() {
 		List<ParameterDto> res = new ArrayList<ParameterDto>();
-		ParameterDto parameterDto = null;
+		String unitType = null;
+		String currentUnit = null;
+		List<String> units = new ArrayList<String>();
+		
 		if (getUnit() instanceof FileSizeUnitClass) {
 			FileSizeUnitClass sizeUnit = (FileSizeUnitClass) getUnit();
-			String unitType = FunctionalityType.UNIT_SIZE.toString();
-			String unit = sizeUnit.getUnitValue().toString();
-			parameterDto = new ParameterDto(unitType, unit, this.getValue());
-
+			unitType = FunctionalityType.UNIT_SIZE.toString();
+			currentUnit = sizeUnit.getUnitValue().toString();
+			for (FileSizeUnit val : FileSizeUnit.values()) {
+				units.add(val.toString());
+			}
 		} else if (getUnit() instanceof TimeUnitClass) {
 			TimeUnitClass timeUnit = (TimeUnitClass) getUnit();
-			String unitType = FunctionalityType.UNIT_TIME.toString();
-			String unit = timeUnit.getUnitValue().toString();
-			parameterDto = new ParameterDto(unitType, unit, this.getValue());
+			unitType = FunctionalityType.UNIT_TIME.toString();
+			currentUnit = timeUnit.getUnitValue().toString();
+			for (TimeUnit val : TimeUnit.values()) {
+				units.add(val.toString());
+			}
 		}
-		res.add(parameterDto);
+		res.add(new ParameterDto(unitType, units, currentUnit, this.getValue()));
 		return res;
 	}
 }

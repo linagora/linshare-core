@@ -73,6 +73,7 @@ import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.core.utils.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 /** Services for User management.
  */
@@ -251,8 +252,9 @@ public class UserServiceImpl implements UserService {
     
     
     @Override
-    public void deleteUser(String login, Account actor) throws BusinessException {
-    	User userToDelete = userRepository.findByLsUuid(login);
+    public void deleteUser(Account actor, String uuid) throws BusinessException {
+    	Assert.notNull(uuid);
+    	User userToDelete = userRepository.findByLsUuid(uuid);
 
     	if (userToDelete != null) {
     		boolean hasRightToDeleteThisUser = isAdminForThisUser(actor, userToDelete.getDomainId(), userToDelete.getMail());
@@ -260,13 +262,13 @@ public class UserServiceImpl implements UserService {
     		logger.debug("Has right ? : " + hasRightToDeleteThisUser);
 
     		if (!hasRightToDeleteThisUser) {
-    			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + login 
+    			throw new BusinessException(BusinessErrorCode.CANNOT_DELETE_USER, "The user " + uuid 
     					+" cannot be deleted, he is not a guest, or "+ actor.getAccountReprentation() + " is not an admin");
     		} else {
-    			doDeleteUser(actor, userToDelete);
+    			setUserToDestroy(actor, userToDelete);
     		}
     	} else {
-    		logger.debug("User not found in DB : " + login);
+    		logger.debug("User not found in DB : " + uuid);
     	}
     }
     
@@ -280,7 +282,7 @@ public class UserServiceImpl implements UserService {
 		logger.info("Delete all user from domain " + domainIdentifier + ", count: "+ users.size() );
     	
     	for (User user : users) {
-    		doDeleteUser( actor, user);
+    		setUserToDestroy( actor, user);
 		}
     	
     	logger.debug("deleteAllUsersFromDomain: end");
@@ -312,6 +314,23 @@ public class UserServiceImpl implements UserService {
 	}
     
 
+	private void setUserToDestroy(Account actor, User userToDelete) throws BusinessException {
+		try {
+			//clear all thread memberships
+			threadService.deleteAllUserMemberships(actor, userToDelete);
+			
+			userRepository.delete(userToDelete);
+			
+			UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_DELETE, "Deleting an user", userToDelete);
+			logEntryService.create(logEntry);
+
+		} catch (IllegalArgumentException e) {
+			logger.error("Couldn't find the user " + userToDelete.getAccountReprentation() + " to be deleted", e);
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND, "Couldn't find the user "
+					+ userToDelete.getAccountReprentation() + " to be deleted");
+		}
+
+	}
 	private void doDeleteUser(Account actor, User userToDelete) throws BusinessException {
 		try {
 			
@@ -355,10 +374,11 @@ public class UserServiceImpl implements UserService {
         logger.info(guests.size() + " guest(s) have been found to be removed");
         for (User guest : guests) {
             try {
-                deleteUser(guest.getLsUuid(), systemAccount);
+                deleteUser(systemAccount, guest.getLsUuid());
                 logger.info("Removed expired user : " + guest.getAccountReprentation());
             } catch (BusinessException ex) {
-                logger.warn("Unable to remove expired user : " + guest.getAccountReprentation() + "\n" + ex.toString());
+                logger.warn("Unable to remove expired user : " + guest.getAccountReprentation()
+                		+ "\n" + ex.toString());
             }
         }
     }
@@ -410,9 +430,11 @@ public class UserServiceImpl implements UserService {
 		List<User> internals =  abstractDomainService.searchUserWithDomainPolicies(currentUser.getDomain().getIdentifier(), mail, firstName, lastName);
 		logger.debug("result internals list : size : " + internals.size());
 		for (User ldapuser : internals) {
-			User userdb = userRepository.findByMail(ldapuser.getMail());
-			if (userdb != null)
+			User userdb = userRepository.findByMailAndDomain(ldapuser.getDomainId(), ldapuser.getMail());
+			if (userdb != null) {
 				ldapuser.setRole(userdb.getRole());
+				ldapuser.setLsUuid(userdb.getLsUuid());
+			}
 		}
 		return internals;
 	}
@@ -877,15 +899,21 @@ public class UserServiceImpl implements UserService {
     		}
     		return null;
     	} else {
-    		// The user was found in the database, but we have to check if this user is still in the ldap.
-    		logger.debug("User '" + userDB.getMail() + "'found in database. Checking if he is still in the ldap");
-    		List<User> list = abstractDomainService.searchUserWithoutRestriction(userDB.getDomain(), userDB.getMail(), null, null);
-    		if(list.size()==1) {
-    			// the user still exists in the ldap, it is ok.
+    		// The user was found in the database, but we have to check if this user is still in the ldap
+    		// except for the root account.
+    		if (!userDB.getAccountType().equals(AccountType.ROOT)) {
+    			List<User> list = abstractDomainService.searchUserWithoutRestriction(userDB.getDomain(), userDB.getMail(), null, null);
+    			if(list.size()==1) {
+    				logger.debug("User '" + userDB.getMail() + "'found in database. Checking if he is still in the ldap");
+    				// the user still exists in the ldap, it is ok.
+    				return userDB;
+    			}
+    			logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
+    			return null;
+    		} else {
+    			// return root account.
     			return userDB;
     		}
-    		logger.warn("PreAuthenticationHeader (SSO) is looking for someone who does not belong to the ldap domain anymore.");
-    		return null;
     	}
 	}
 
@@ -919,7 +947,10 @@ public class UserServiceImpl implements UserService {
 
 	
 	private User find(User tmpUser, String domainId) throws BusinessException {
-		User user = userRepository.findByLsUuid(tmpUser.getLsUuid());
+		User user = null;
+		if (tmpUser.getLsUuid() != null) {
+			user = userRepository.findByLsUuid(tmpUser.getLsUuid());
+		}
 		if (user == null) {
 			logger.debug("User " + tmpUser.getMail() + " was not found in the database. Searching in directories ...");
 			user = this.findOrCreateUser(tmpUser.getMail(), domainId);
@@ -930,35 +961,34 @@ public class UserServiceImpl implements UserService {
 		logger.debug("User " + tmpUser.getMail() + " found.");
 		return user;
 	}
-	
+
 	@Override
-	public void updateUser(User updatedUser, String domainId, User actor) throws BusinessException {
+	public void updateUser(User actor, User updatedUser, String domainId)
+			throws BusinessException {
 		User user = find(updatedUser, domainId);
-		
+		Assert.notNull(updatedUser.getRole());
+
 		user.setFirstName(updatedUser.getFirstName());
 		user.setLastName(updatedUser.getLastName());
 		user.setRole(updatedUser.getRole());
 		user.setCanCreateGuest(updatedUser.getCanCreateGuest());
 		user.setCanUpload(updatedUser.getCanUpload());
-		userRepository.update(user);
-		
-		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE, "Update of a user:" + user.getMail(), user);
-		logEntryService.create(logEntry);
-	}
-	
-	
-	@Override
-	public void updateUser(Guest updatedGuest, String domainId, User actor) throws BusinessException {
-		User user = find(updatedGuest, domainId);
-		if (user.getAccountType() != AccountType.GUEST) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "The user : " + user.getMail() + " in domain : " + user.getDomainId() + " is not a guest");
+		if (user.getAccountType() == AccountType.GUEST) {
+			Assert.notNull(updatedUser.getOwner());
+			Assert.notNull(updatedUser.getExpirationDate());
+			Assert.isTrue(updatedUser.getCanCreateGuest() == false);
+			Guest guest = (Guest) user;
+			Guest updatedGuest = (Guest) updatedUser;
+			guest.setExpirationDate(updatedGuest.getExpirationDate());
+			guest.setComment(updatedGuest.getComment());
+			guest.setRestricted(updatedGuest.isRestricted());
+			User owner = find((User) updatedGuest.getOwner(), updatedGuest
+					.getOwner().getDomainId());
+			guest.setOwner(owner);
 		}
-		Guest guest = (Guest) user;
-		guest.setExpirationDate(updatedGuest.getExpirationDate());
-		guest.setComment(updatedGuest.getComment());
-		guest.setRestricted(updatedGuest.isRestricted());
-		guest.setOwner(updatedGuest.getOwner());
-		
-		updateUser((User) updatedGuest, null, actor);
+		userRepository.update(user);
+		UserLogEntry logEntry = new UserLogEntry(actor, LogAction.USER_UPDATE,
+				"Update of a user:" + user.getMail(), user);
+		logEntryService.create(logEntry);
 	}
 }

@@ -33,12 +33,15 @@
  */
 package org.linagora.linshare.core.domain.entities;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.linagora.linshare.core.domain.constants.EntryType;
 
-public class DocumentEntry extends Entry {
+public class DocumentEntry extends Entry implements Serializable {
+
+	private static final long serialVersionUID = -6168359253673278696L;
 
 	protected Document document;
 	

@@ -41,6 +41,8 @@ import org.linagora.linshare.core.domain.entities.ThreadMember;
 public class ThreadMemberDto {
 
 	private Long id;
+	private boolean admin;
+	private boolean readonly;
 	private String role;
 	private String firstName;
 	private String lastName;
@@ -48,7 +50,6 @@ public class ThreadMemberDto {
 	private String userMail;
 	private String userDomainId;
 	private String threadUuid;
-	private boolean readonly;
 
 	private static enum Roles {
 		NORMAL, RESTRICTED, ADMIN;
@@ -58,10 +59,11 @@ public class ThreadMemberDto {
 		this.id = member.getId();
 		this.firstName = member.getUser().getFirstName();
 		this.lastName = member.getUser().getLastName();
-		this.role = (member.getAdmin() ? Roles.ADMIN
-				: member.getCanUpload() ? Roles.NORMAL : Roles.RESTRICTED)
-				.name().toLowerCase();
+		this.admin = member.getAdmin();
 		this.readonly = !member.getCanUpload();
+		this.role = (admin ? Roles.ADMIN
+				: readonly ? Roles.RESTRICTED : Roles.NORMAL)
+				.name().toLowerCase();
 		this.userUuid = member.getUser().getLsUuid();
 		this.threadUuid = member.getThread().getLsUuid();
 		this.userMail = member.getUser().getMail();
@@ -142,5 +144,13 @@ public class ThreadMemberDto {
 
 	public void setReadonly(boolean readonly) {
 		this.readonly = readonly;
+	}
+
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 }

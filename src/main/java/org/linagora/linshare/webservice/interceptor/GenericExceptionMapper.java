@@ -21,7 +21,7 @@ public class GenericExceptionMapper implements ExceptionMapper<Exception> {
 	public Response toResponse(Exception exception) {
 		logger.error("A NullPointerException was caught : " + exception.getLocalizedMessage() + ". ", exception);
 		ErrorDto errorDto = new ErrorDto(BusinessErrorCode.WEBSERVICE_FAULT.getCode(), "Unexpected exception : " + exception.getClass().toString() + " : " +exception.getMessage());
-		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
+		ResponseBuilder response = Response.status(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 		response.entity(errorDto);
 		return response.build();
 	}

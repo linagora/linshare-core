@@ -247,7 +247,6 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 
 	@Override
 	public void updateFileProperties(ThreadEntry entry, String fileComment) throws BusinessException {
-		String uuid = entry.getDocument().getUuid();
 		entry.setComment(fileComment);
         threadEntryRepository.update(entry);
 	}

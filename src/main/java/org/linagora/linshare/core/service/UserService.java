@@ -86,13 +86,13 @@ public interface UserService {
     	
     /**
      * Delete a User (and all the corresponding share )
-     * @param login
      * @param actor 
+     * @param uuid
      * @param checkOwnership : if true, check that the owner is the creator of the user
      * 			useful for the batch
      * @throws BusinessException 
      */
-    void deleteUser(String login, Account actor) throws BusinessException;
+    void deleteUser(Account actor, String uuid) throws BusinessException;
     
     /**
      * Delete all users from domain (and all the related data )
@@ -285,23 +285,11 @@ public interface UserService {
 	/**
 	 * Find the user matching updateUser and
 	 * update fields: first name, last name, role, create guest right and upload right
-	 * 
+	 * @param actor
 	 * @param updatedUser
 	 * @param domainId domain id of the user
-	 * @param actor
-	 * @throws BusinessException
-	 */
-	void updateUser(User updatedUser, String domainId, User actor) throws BusinessException;
-	
-	/**
-	 * Find the guest matching updateGuest 
-	 * update fields: expiration date, comment, restricted right, owner
-	 * and update guest as user.
 	 * 
-	 * @param updatedGuest
-	 * @param domainId domain id of the guest
-	 * @param actor
 	 * @throws BusinessException
 	 */
-	void updateUser(Guest updatedGuest, String domainId, User actor) throws BusinessException;
+	void updateUser(User actor, User updatedUser, String domainId) throws BusinessException;
 }

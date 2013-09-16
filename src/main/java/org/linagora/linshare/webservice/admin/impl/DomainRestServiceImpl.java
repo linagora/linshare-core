@@ -130,4 +130,13 @@ public class DomainRestServiceImpl extends WebserviceBase implements DomainRestS
 		functionalityFacade.checkAuthentication();
 		functionalityFacade.update(domain, func);
 	}
+
+	@Path("/{domain}/functionalities")
+	@DELETE
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Override
+	public void deleteDomainFunctionality(@PathParam(value = "domain") String domain, FunctionalityDto func) throws BusinessException {
+		functionalityFacade.checkAuthentication();
+		functionalityFacade.delete(domain, func);
+	}
 }
