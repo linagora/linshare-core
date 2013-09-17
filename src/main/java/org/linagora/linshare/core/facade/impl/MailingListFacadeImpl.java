@@ -87,9 +87,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	@Override
 	public MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException {
 		MailingList mailingList = new MailingList(mailingListVo);
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		mailingListService.createList(actor, mailingList);
-		return mailingListVo;
+		// actor and owner are the same person.
+		MailingList createdList = mailingListService.createList(actorVo.getLsUuid(), actorVo.getLsUuid(), mailingList);
+		return new MailingListVo(createdList);
 	}
 
 	@Override

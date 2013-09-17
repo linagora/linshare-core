@@ -76,8 +76,8 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 
 	@Override
 	public MailingList findByIdentifier(User owner, String identifier) {
-		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
-				Restrictions.and(Restrictions.eq("identifier", identifier), Restrictions.eq("owner", owner)));
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+		det.add(Restrictions.and(Restrictions.eq("identifier", identifier), Restrictions.eq("owner", owner)));
 
 		List<MailingList> mailingList = findByCriteria(det);
 		if (mailingList == null || mailingList.isEmpty()) {

@@ -41,6 +41,7 @@ import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
@@ -61,23 +62,26 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void deleteContact(MailingList mailingList, String mail) throws BusinessException {
-		MailingList list = mailingListRepository.findByUuid(mailingList.getUuid());
-		MailingListContact mailToDelete = retrieveContact(list, mail);
-		Iterator<MailingListContact> it = list.getMailingListContact().iterator();
-		boolean next = true;
-		while (it.hasNext() && next == true) {
-			MailingListContact contact = it.next();
-			if (contact.getMail().equals(mail)) {
-				it.remove();
-				next = false;
-			}
+	public void deleteContact(String listUuid, String mail) throws BusinessException {
+		
+		MailingList mailingList = mailingListRepository.findByUuid(listUuid);
+		if(mailingList==null) {
+			String msg = "The current mailing list do not exist : " + listUuid;
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);
 		}
-		if (mailToDelete == null) {
-			logger.error("mail not found");
-		} else {
-			mailingListContactRepository.delete(mailToDelete);
+		
+		MailingListContact contactToDelete = retrieveContact(mailingList, mail);
+		// The current contact could be not found.
+		if(contactToDelete == null) {
+			String msg = "The current contact you are trying to removed do not exist : " + mail;
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);
 		}
+		
+		mailingList.deleteMailingListContact(contactToDelete);
+		mailingListRepository.update(mailingList);
+		mailingListContactRepository.delete(contactToDelete);
 	}
 
 	@Override
@@ -92,16 +96,19 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public MailingList createList(MailingList mailingList) throws BusinessException {
-		List<MailingList> myList = mailingListRepository.findAllListWhereOwner(mailingList.getOwner());
-		for (MailingList currentList : myList) {
-			if (currentList.getIdentifier().equals(mailingList.getIdentifier())) {
-				logger.error("identifier already exists !");
-				return null;
-			}
+	public MailingList createList(MailingList mailingList, User owner) throws BusinessException {
+		// check if list identifier is unique (do not already exist)
+		if (mailingListRepository.findByIdentifier(owner, mailingList.getIdentifier()) == null ) {
+			// Setting extra fields.
+			mailingList.setOwner(owner);
+			mailingList.setDomain(owner.getDomain());
+			MailingList createdList = mailingListRepository.create(mailingList);			
+			return createdList;
+		} else {
+			String msg = "The current list you are trying to create already exists : " + mailingList.getIdentifier();
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.LIST_ALDREADY_EXISTS, msg);
 		}
-		MailingList createdList = mailingListRepository.create(mailingList);
-		return createdList;
 	}
 
 	@Override
