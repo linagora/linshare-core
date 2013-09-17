@@ -5,9 +5,7 @@ import java.util.List;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
-import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
-
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class MailingListContactRepositoryImpl extends AbstractRepositoryImpl<MailingListContact> implements
@@ -34,9 +32,5 @@ public class MailingListContactRepositoryImpl extends AbstractRepositoryImpl<Mai
 		DetachedCriteria det = DetachedCriteria.forClass(MailingListContact.class).add(
 				Restrictions.eq("id", entity.getPersistenceId()));
 		return det;
-	}
-
-	public MailingListContact update(MailingListContact entity) throws BusinessException {
-		return super.update(entity);
 	}
 }

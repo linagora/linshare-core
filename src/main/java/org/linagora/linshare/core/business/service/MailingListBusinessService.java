@@ -41,9 +41,15 @@ import java.util.List;
 
 public interface MailingListBusinessService {
 
+	/**
+	 * Find a mailing list by its uuid.
+	 * @param uuid
+	 * @return
+	 * @throws BusinessException if not found.
+	 */
+	MailingList findByUuid(String uuid) throws BusinessException;
+	
 	public MailingList createList(MailingList mailingList, User owner) throws BusinessException;
-
-	public MailingList retrieveList(String uuid);
 
 	public List<MailingList> findAllList();
 
@@ -73,11 +79,11 @@ public interface MailingListBusinessService {
 	 */
 	public List<MailingList> findAllMyList(User user);
 
-	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
+	public MailingListContact findContact(MailingList mailingList, String mail) throws BusinessException;
 
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
 
-	public void deleteContact(String listUuid, String mail) throws BusinessException;
+	public void deleteContact(MailingList mailingList, String mail) throws BusinessException;
 
 	/**
 	 * Find all my list according to select visibility
