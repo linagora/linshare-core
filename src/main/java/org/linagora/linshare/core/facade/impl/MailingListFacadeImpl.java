@@ -107,6 +107,9 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	@Override
 	public void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException {
 		MailingList mailingList = mailingListService.retrieveList(mailingListVo.getUuid());
+		mailingList.setDescription(mailingListVo.getDescription());
+		mailingList.setIdentifier(mailingListVo.getIdentifier());
+		mailingList.setPublic(mailingListVo.isPublic());
 		User actor = (User) userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
 		String ownerMail = mailingListVo.getOwner().getMail();
 		String ownerDomainId = mailingListVo.getOwner().getDomainIdentifier();

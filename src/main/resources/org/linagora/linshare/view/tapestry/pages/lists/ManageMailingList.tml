@@ -44,7 +44,7 @@
 						<t:label for="listDescription"/>:&nbsp;
 					</td>
 					<td  HEIGHT="50">
-        				<t:textarea t:id="listDescription" value="mailingList.listDescription" cols="40" rows="2"/>
+        				<t:textarea t:id="listDescription" value="mailingList.description" cols="40" rows="2"/>
         			</td>
         		</tr>	
         		<tr>

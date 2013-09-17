@@ -21,7 +21,7 @@
 					<tr>
 						<t:form id="form">
 						<td>
-							<t:textfield t:id="search" value="targetLists" t:mixins="autoComplete" t:minChars="${autocompleteMin}" t:validate="required"/>
+							<t:textfield t:id="search" value="targetLists" t:validate="required"/>
 						</td>
 						<td>
 						     <input type="submit" value="${message:global.button.search}"/>
@@ -54,7 +54,7 @@
 		<t:if t:test="emptyList">
 		${message:pages.lists.nothing}
 		<p:else>
-		<t:grid source="lists" rowsPerPage="10"  include="identifier, listDescription, isPublic" add="ownership,edit,delete" row="list">
+		<t:grid source="lists" rowsPerPage="10"  include="identifier, description, isPublic" add="ownership,edit,delete" row="list">
 			 <t:parameter name="identifierCell">
 			 <t:pageLink page="lists/DisplayMailingList" context="list.uuid"
 			 title="${message:pages.lists.link}">${list.identifier}</t:pageLink>

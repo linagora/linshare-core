@@ -113,7 +113,7 @@ public class ManageMailingList {
 		if (mailingList == null) {
 			mailingList = new MailingListVo();
 			mailingList.setIdentifier("");
-			mailingList.setListDescription("");
+			mailingList.setDescription("");
 		}
 	}
 
