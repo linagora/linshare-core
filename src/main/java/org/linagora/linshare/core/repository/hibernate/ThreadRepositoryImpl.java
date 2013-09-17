@@ -56,7 +56,6 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> i
         
         // filter enabled thread only.
         det.add(Restrictions.eq("enable", true));
-        det.add(Restrictions.eq("destroyed", false));
         // query
         det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
         
