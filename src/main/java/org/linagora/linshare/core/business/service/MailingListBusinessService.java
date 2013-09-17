@@ -47,16 +47,30 @@ public interface MailingListBusinessService {
 
 	public List<MailingList> findAllList();
 
-	public void createContact(MailingListContact contact) throws BusinessException;
-
+	/**
+	 * Find all list of the selected user (private and public)
+	 * @param user
+	 * @return
+	 */
 	public List<MailingList> findAllListByUser(User user);
 
 	public void deleteList(String uuid) throws BusinessException;
 
 	public void updateList(MailingList mailingList) throws BusinessException;
 	
+	/**
+	 * Add contact to list
+	 * @param mailingList
+	 * @param contact
+	 * @throws BusinessException
+	 */
 	public void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
 
+	/**
+	 * Find all list where user is owner
+	 * @param user
+	 * @return
+	 */
 	public List<MailingList> findAllMyList(User user);
 
 	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
@@ -65,20 +79,59 @@ public interface MailingListBusinessService {
 
 	public void deleteContact(MailingList list, String mail) throws BusinessException;
 
-	public MailingList findListByIdentifier(User owner, String identifier);
-
+	/**
+	 * Find all my list according to select visibility
+	 * @param owner
+	 * @param isPublic
+	 * @return
+	 */
 	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic);
 
+	/**
+	 * Find all list for root according to selected visibility
+	 * @param isPublic
+	 * @return
+	 */
 	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic);
 
+	/**
+	 * Find All list according to pattern where user is owner
+	 * @param user
+	 * @param input
+	 * @return
+	 */
 	public List<MailingList> findAllMyListsForSearch(User user, String input);
 
+	/**
+	 * Find all user list according to pattern
+	 * @param user
+	 * @param input
+	 * @return
+	 */
 	public List<MailingList> findAllListByUserForSearch(User user, String input);
 
+	/**
+	 * Find all user list according to selected visibility and input
+	 * @param owner
+	 * @param isPublic
+	 * @param input
+	 * @return
+	 */
 	public List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input);
 
+	/**
+	 * Find all list according to pattern for root
+	 * @param input
+	 * @return
+	 */
 	public List<MailingList> findAllListForAdminSearch(String input);
 
+	/**
+	 * Find all list according to selected visibility and pattern for root
+	 * @param isPublic
+	 * @param input
+	 * @return
+	 */
 	public List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input);
 
 }

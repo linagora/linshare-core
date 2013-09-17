@@ -47,7 +47,6 @@ import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
 import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
-import org.linagora.linshare.view.tapestry.services.impl.MailingListCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,20 +65,8 @@ public class MailingListAdminFacadeImpl implements MailingListAdminFacade {
 		this.abstractDomainService = abstractDomainService;
 	}
 
-	@Override
-	public List<String> completionsForAdminSearchList(UserVo actorVo, String input, String criteriaOnSearch)
+	private List<MailingListVo> performSearchForAdmin(User actor, String input, String criteriaOnSearch)
 			throws BusinessException {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		List<MailingListVo> searchResults = performSearchForAdmin(actor, input, criteriaOnSearch);
-		List<String> elements = new ArrayList<String>();
-
-		for (MailingListVo mailingListVo : searchResults) {
-			elements.add(MailingListCompletionService.formatLabel(actorVo, mailingListVo, false));
-		}
-		return elements;
-	}
-
-	private List<MailingListVo> performSearchForAdmin(User actor, String input, String criteriaOnSearch) throws BusinessException {
 		List<MailingList> finalList = mailingListService.findAllListByVisibilityForAdminSearch(criteriaOnSearch, input);
 		return ListToListVo(finalList);
 	}
@@ -88,16 +75,11 @@ public class MailingListAdminFacadeImpl implements MailingListAdminFacade {
 	public List<MailingListVo> setListFromAdminSearch(UserVo actorVo, String targetLists, String criteriaOnSearch)
 			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
-		List<MailingList> lists = new ArrayList<MailingList>();
 		if (targetLists.equals("*")) {
-			lists = mailingListService.findAllListByVisibilityForAdmin(actor, criteriaOnSearch);
-		} else if (targetLists.startsWith("\"") && targetLists.endsWith(">")) {
-			MailingList list = mailingListService.retrieveList(MailingListCompletionService.parseFirstElement(targetLists));
-			lists.add(list);
+			return ListToListVo(mailingListService.findAllListByVisibilityForAdmin(actor, criteriaOnSearch));
 		} else {
 			return performSearchForAdmin(null, targetLists, criteriaOnSearch);
 		}
-		return ListToListVo(lists);
 	}
 
 	@Override

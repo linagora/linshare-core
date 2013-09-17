@@ -268,5 +268,5 @@ public class DisplayMailingList {
 	public boolean isInModify() {
 		return inModify;
 	}
-	
+
 }

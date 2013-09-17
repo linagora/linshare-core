@@ -42,11 +42,11 @@ import org.linagora.linshare.core.domain.entities.User;
 public interface MailingListRepository extends AbstractRepository<MailingList> {
 
 	public MailingList findByUuid(String uuid);
-	
-	public List<MailingList> findAllListWhereOwner (User user);
-	
+
+	public List<MailingList> findAllListWhereOwner(User user);
+
 	public MailingList findByIdentifier(User owner, String identifier);
-	
+
 	public List<MailingList> findAllMyList(User user);
 
 	public List<MailingList> findByVisibility(User user, boolean isPublic);
@@ -63,4 +63,3 @@ public interface MailingListRepository extends AbstractRepository<MailingList> {
 
 	public List<MailingList> findByVisibilityForAdminSearch(boolean isPublic, String input);
 }
- 

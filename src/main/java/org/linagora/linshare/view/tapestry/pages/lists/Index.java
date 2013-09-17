@@ -111,22 +111,22 @@ public class Index {
 	@Property
 	private String selectedRadioButton;
 
-	@Persist 
+	@Persist
 	private boolean alreadyConnect;
-	
+
 	@Persist
 	private boolean fromCreate;
 
 	@SetupRender
 	public void init() throws BusinessException {
-		if(alreadyConnect == false){
+		if (alreadyConnect == false) {
 			criteriaOnSearch = "allMyLists";
 			targetLists = "*";
 		}
 		if (inSearch == false && fromCreate == false) {
 			List<MailingListVo> finalList = mailingListFacade.findAllMyList(loginUser);
 			lists = new ArrayList<MailingListVo>();
-			
+
 			for (MailingListVo current : finalList) {
 				if (current.isPublic() == false) {
 					lists.add(current);

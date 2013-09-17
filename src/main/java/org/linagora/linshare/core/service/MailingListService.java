@@ -47,18 +47,31 @@ public interface MailingListService {
 
 	public MailingList retrieveList(String uuid);
 
-	public List<MailingList> findAllList();
-
+	/**
+	 * Find all list (private and public) of the selected user 
+	 * @param user
+	 * @return
+	 */
 	public List<MailingList> findAllListByUser(User user);
-
-	public void createContact(MailingListContact contact) throws BusinessException;
 
 	public void deleteList(User actor, String uuid) throws BusinessException;
 
 	public void updateList(User actor, MailingList listToUpdate) throws BusinessException;
 
+	/**
+	 * Add contact to list
+	 * @param actor
+	 * @param mailingListUuid
+	 * @param contact
+	 * @throws BusinessException
+	 */
 	public void addNewContact(User actor, String mailingListUuid, MailingListContact contact) throws BusinessException;
 
+	/**
+	 * Find all list of the user 
+	 * @param user
+	 * @return
+	 */
 	public List<MailingList> findAllListByOwner(User user);
 
 	public void deleteContact(MailingList list, String mail) throws BusinessException;
@@ -66,8 +79,6 @@ public interface MailingListService {
 	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
 
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
-
-	public MailingList findListByIdentifier(User owner, String identifier);
 
 	/**
 	 * retrieving all list from repository. Method allowed only for Root.
@@ -79,9 +90,28 @@ public interface MailingListService {
 	 */
 	public List<MailingList> findAllListByVisibilityForAdmin(User user, String criteriaOnSearch);
 
+	/**
+	 * find list of result according to visibility selected and pattern
+	 * @param actor
+	 * @param criteriaOnSearch
+	 * @param pattern
+	 * @return
+	 */
 	public List<MailingList> findAllListByVisibilityForSearch(User actor, String criteriaOnSearch, String pattern);
 
+	/**
+	 * Find all user list of the selected visibility
+	 * @param user
+	 * @param criteriaOnSearch
+	 * @return
+	 */
 	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch);
 
+	/**
+	 * Find all list of the selected visibility
+	 * @param criteriaOnSearch
+	 * @param input
+	 * @return
+	 */
 	public List<MailingList> findAllListByVisibilityForAdminSearch(String criteriaOnSearch, String input);
 }
