@@ -13,8 +13,6 @@ public interface MailingListFacade {
 
 	public MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
-	public List<MailingListVo> findAllListByUser(UserVo actorVo) throws BusinessException;
-
 	public void deleteList(UserVo actorVo, String uuid) throws BusinessException;
 
 	public void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
@@ -37,18 +35,6 @@ public interface MailingListFacade {
 	 * @throws BusinessException
 	 */
 	public String checkUniqueIdentifier(UserVo user, String value) throws BusinessException;
-
-	/**
-	 * provide completions to search a list for user
-	 * 
-	 * @param loginUser
-	 * @param input
-	 * @param criteriaOnSearch
-	 * @return
-	 * @throws BusinessException
-	 */
-	public List<String> completionsForUserSearchList(UserVo loginUser, String input, String criteriaOnSearch)
-			throws BusinessException;
 
 	/**
 	 * Set list of results from search
@@ -99,8 +85,17 @@ public interface MailingListFacade {
 	 * @param mail
 	 * @throws BusinessException
 	 */
-	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail) throws BusinessException;
+	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail)
+			throws BusinessException;
 
+	/**
+	 * Add contact to mailing list
+	 * 
+	 * @param actorVo
+	 * @param mailingListVo
+	 * @param contactVo
+	 * @throws BusinessException
+	 */
 	public void addNewContactToList(UserVo actorVo, MailingListVo mailingListVo, MailingListContactVo contactVo)
 			throws BusinessException;
 
@@ -108,6 +103,12 @@ public interface MailingListFacade {
 
 	public boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
 
+	/**
+	 * Get list from share
+	 * 
+	 * @param recipients
+	 * @return
+	 */
 	public List<MailingListVo> getListsFromShare(String recipients);
 
 	public List<String> completionsForShare(UserVo user, String input) throws BusinessException;

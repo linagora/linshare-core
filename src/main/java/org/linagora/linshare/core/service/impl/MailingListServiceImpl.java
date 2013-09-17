@@ -50,7 +50,7 @@ import org.springframework.util.Assert;
 public class MailingListServiceImpl implements MailingListService {
 
 	private final MailingListBusinessService mailingListBusinessService;
-	
+
 	private final UserService userService;
 
 	public MailingListServiceImpl(MailingListBusinessService mailingListBusinessService, UserService userService) {
@@ -62,7 +62,7 @@ public class MailingListServiceImpl implements MailingListService {
 	@Override
 	public MailingList createList(User user, MailingList mailingList) throws BusinessException {
 		User actor = userService.findByLsUuid(user.getLsUuid());
-		if(!actor.isSuperAdmin()){
+		if (!actor.isSuperAdmin()) {
 			mailingList.setOwner(actor);
 			mailingList.setDomain(actor.getDomain());
 			return mailingListBusinessService.createList(mailingList);
@@ -71,29 +71,13 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void createContact(MailingListContact contact) throws BusinessException {
-		mailingListBusinessService.createContact(contact);
-	}
-
-	@Override
 	public MailingList retrieveList(String uuid) {
 		return mailingListBusinessService.retrieveList(uuid);
 	}
 
 	@Override
-	public MailingList findListByIdentifier(User owner, String identifier) {
-		User actor = userService.findByLsUuid(owner.getLsUuid());
-		return mailingListBusinessService.findListByIdentifier(actor, identifier);
-	}
-
-	@Override
 	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException {
 		return mailingListBusinessService.retrieveContact(mailingList, mail);
-	}
-
-	@Override
-	public List<MailingList> findAllList() {
-		return mailingListBusinessService.findAllList();
 	}
 
 	@Override
@@ -106,7 +90,7 @@ public class MailingListServiceImpl implements MailingListService {
 		Assert.notNull(actor);
 		Assert.notNull(criteriaOnSearch);
 		Assert.notNull(pattern);
-		
+
 		boolean isPublic;
 		if (criteriaOnSearch.equals("all")) {
 			return mailingListBusinessService.findAllListByUserForSearch(actor, pattern);
@@ -119,25 +103,25 @@ public class MailingListServiceImpl implements MailingListService {
 		}
 		return mailingListBusinessService.findAllListByVisibilityForSearch(actor, isPublic, pattern);
 	}
-	
+
 	@Override
 	public List<MailingList> findAllListByVisibilityForAdminSearch(String criteriaOnSearch, String input) {
 		List<MailingList> result = new ArrayList<MailingList>();
 
-			if (criteriaOnSearch.equals("all")) {
-				result = mailingListBusinessService.findAllListForAdminSearch(input);
+		if (criteriaOnSearch.equals("all")) {
+			result = mailingListBusinessService.findAllListForAdminSearch(input);
+		} else {
+			boolean isPublic;
+			if (criteriaOnSearch.equals("public")) {
+				isPublic = true;
 			} else {
-				boolean isPublic;
-				if (criteriaOnSearch.equals("public")) {
-					isPublic = true;
-				} else {
-					isPublic = false;
-				}
-				result = mailingListBusinessService.findAllListByVisibilityForAdminSearch(isPublic, input);
+				isPublic = false;
 			}
+			result = mailingListBusinessService.findAllListByVisibilityForAdminSearch(isPublic, input);
+		}
 		return result;
 	}
-	
+
 	@Override
 	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch) {
 		boolean isPublic;
@@ -197,17 +181,15 @@ public class MailingListServiceImpl implements MailingListService {
 		mailingListBusinessService.updateList(listToUpdate);
 	}
 
-	
 	@Override
-	public void addNewContact(User actor, String mailingListUuid, MailingListContact contact)
-			throws BusinessException {
+	public void addNewContact(User actor, String mailingListUuid, MailingListContact contact) throws BusinessException {
 		Assert.notNull(actor);
 		Assert.notNull(mailingListUuid);
 		Assert.notNull(contact);
-		
+
 		User actorEntity = userService.findByLsUuid(actor.getLsUuid());
 		MailingList mailingList = mailingListBusinessService.retrieveList(mailingListUuid);
-		if(mailingList.isOwner(actorEntity)) {
+		if (mailingList.isOwner(actorEntity)) {
 			mailingListBusinessService.addContact(mailingList, contact);
 		}
 	}
@@ -216,7 +198,7 @@ public class MailingListServiceImpl implements MailingListService {
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException {
 		Assert.notNull(list);
 		Assert.notNull(contactToUpdate);
-		
+
 		mailingListBusinessService.updateContact(list, contactToUpdate);
 	}
 

@@ -41,19 +41,6 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 
 public class MailingListCompletionService {
 
-	public static String formatLabelForAdmin(MailingListVo listVo, boolean virgule) {
-		StringBuffer buf = new StringBuffer();
-
-		if (listVo != null) {
-			buf.append('"').append(listVo.getIdentifier().trim()).append('"');
-			buf.append(" (").append(listVo.getOwner().getFullName()).append(")");
-			buf.append(" <").append(listVo.getUuid()).append(">");
-			if (virgule)
-				buf.append(",");
-		}
-		return buf.toString();
-	}
-
 	public static String formatLabel(UserVo actorVo, MailingListVo listVo, boolean virgule) {
 		StringBuffer buf = new StringBuffer();
 
@@ -87,14 +74,6 @@ public class MailingListCompletionService {
 			}
 		}
 		return lists;
-	}
-
-	public static String parseFirstElement(final String recipientsList) {
-		List<String> parseLists = parseLists(recipientsList);
-		if (!parseLists.isEmpty()) {
-			return parseLists.get(0);
-		}
-		return "";
 	}
 
 	/**

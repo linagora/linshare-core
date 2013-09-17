@@ -101,11 +101,13 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	public List<MailingList> findByVisibilityForSearch(User user, boolean isPublic, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		if (isPublic == false) {
-			LogicalExpression publicLists = Restrictions.and(Restrictions.eq("owner", user), Restrictions.eq("isPublic", false));
-			det.add(Restrictions.and(Restrictions.like("identifier", "%"+input+"%").ignoreCase(),publicLists));
+			LogicalExpression publicLists = Restrictions.and(Restrictions.eq("owner", user),
+					Restrictions.eq("isPublic", false));
+			det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(), publicLists));
 		} else {
-			LogicalExpression privateLists = Restrictions.and(Restrictions.eq("isPublic", true),Restrictions.eq("domain", user.getDomain()));
-			det.add(Restrictions.and(Restrictions.like("identifier", "%"+input+"%").ignoreCase(),privateLists));
+			LogicalExpression privateLists = Restrictions.and(Restrictions.eq("isPublic", true),
+					Restrictions.eq("domain", user.getDomain()));
+			det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(), privateLists));
 		}
 		det.addOrder(Property.forName("identifier").desc());
 		List<MailingList> mailingList = findByCriteria(det);
@@ -114,7 +116,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		}
 		return mailingList;
 	}
-	
+
 	@Override
 	public List<MailingList> findAllMyListForSearch(User user, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
@@ -125,9 +127,9 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		LogicalExpression allMyDomainPublicLists = Restrictions.and(allPublicLists, Restrictions.ne("owner", user));
 		// adding all private and public lists that belong to me, to the public
 		// lists.
-		
+
 		LogicalExpression allMyLists = Restrictions.or(Restrictions.eq("owner", user), allMyDomainPublicLists);
-		det.add(Restrictions.and(allMyLists,Restrictions.like("identifier", "%"+input+"%").ignoreCase()));
+		det.add(Restrictions.and(allMyLists, Restrictions.like("identifier", "%" + input + "%").ignoreCase()));
 		det.addOrder(Property.forName("identifier").desc());
 		List<MailingList> mailingList = findByCriteria(det);
 		if (mailingList == null || mailingList.isEmpty()) {
@@ -135,22 +137,23 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		}
 		return mailingList;
 	}
-	
+
 	@Override
 	public List<MailingList> findAllListWhereOwnerForSearch(User user, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-		det.add(Restrictions.and(Restrictions.eq("owner", user), Restrictions.like("identifier", "%"+input+"%").ignoreCase()));
+		det.add(Restrictions.and(Restrictions.eq("owner", user), Restrictions.like("identifier", "%" + input + "%")
+				.ignoreCase()));
 		det.addOrder(Property.forName("identifier").desc());
 		return findByCriteria(det);
 	}
-	
+
 	@Override
 	public List<MailingList> findByVisibility(User user, boolean isPublic) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		if (isPublic == false) {
 			det.add(Restrictions.and(Restrictions.eq("owner", user), Restrictions.eq("isPublic", false)));
 		} else {
-			det.add(Restrictions.and(Restrictions.eq("isPublic", true),Restrictions.eq("domain", user.getDomain())));
+			det.add(Restrictions.and(Restrictions.eq("isPublic", true), Restrictions.eq("domain", user.getDomain())));
 		}
 		det.addOrder(Property.forName("identifier").desc());
 		List<MailingList> mailingList = findByCriteria(det);
@@ -159,7 +162,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		}
 		return mailingList;
 	}
-	
+
 	@Override
 	public List<MailingList> findByVisibilityForAdmin(boolean isPublic) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
@@ -168,7 +171,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		} else {
 			det.add(Restrictions.eq("isPublic", true));
 		}
-		
+
 		List<MailingList> mailingList = findByCriteria(det);
 		if (mailingList == null || mailingList.isEmpty()) {
 			return new ArrayList<MailingList>();
@@ -180,9 +183,11 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	public List<MailingList> findByVisibilityForAdminSearch(boolean isPublic, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 		if (isPublic == false) {
-			det.add(Restrictions.and(Restrictions.like("identifier", "%"+input+"%").ignoreCase(),Restrictions.eq("isPublic", false)));
+			det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
+					Restrictions.eq("isPublic", false)));
 		} else {
-			det.add(Restrictions.and(Restrictions.like("identifier", "%"+input+"%").ignoreCase(),Restrictions.eq("isPublic", true)));
+			det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
+					Restrictions.eq("isPublic", true)));
 		}
 		det.addOrder(Property.forName("identifier").desc());
 		List<MailingList> mailingList = findByCriteria(det);
@@ -191,17 +196,17 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		}
 		return mailingList;
 	}
-	
+
 	@Override
 	public List<MailingList> findAllForAdminSearch(String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(MailingList.class);
-		
-        det.add(Restrictions.like("identifier", "%"+input+"%").ignoreCase());
-        //query
+
+		det.add(Restrictions.like("identifier", "%" + input + "%").ignoreCase());
+		// query
 		List<MailingList> results = findByCriteria(det);
 		return results;
 	}
-	
+
 	@Override
 	public List<MailingList> findAllMyList(User user) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
@@ -220,7 +225,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		}
 		return mailingList;
 	}
-	
+
 	@Override
 	public MailingList update(MailingList entity) throws BusinessException {
 		entity.setModificationDate(new Date());

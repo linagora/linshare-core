@@ -93,12 +93,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public List<MailingListVo> findAllListByUser(UserVo actorVo) throws BusinessException {
-		User actor = userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
-		return ListToListVo(mailingListService.findAllListByUser(actor));
-	}
-
-	@Override
 	public void deleteList(UserVo actorVo, String uuid) throws BusinessException {
 		User actor = userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
 		mailingListService.deleteList(actor, uuid);
@@ -185,22 +179,11 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		return ListToListVo(lists);
 	}
 
-	@Override
-	public List<String> completionsForUserSearchList(UserVo loginUser, String input, String criteriaOnSearch)
-			throws BusinessException {
-		List<MailingListVo> searchResults = performSearchForUser(loginUser, input, criteriaOnSearch);
-		List<String> elements = new ArrayList<String>();
-
-		for (MailingListVo mailingListVo : searchResults) {
-			elements.add(MailingListCompletionService.formatLabel(loginUser, mailingListVo, false));
-		}
-		return elements;
-	}
-
 	private List<MailingListVo> performSearchForUser(UserVo loginUser, String input, String criteriaOnSearch)
 			throws BusinessException {
 		User actor = (User) userService.findOrCreateUser(loginUser.getMail(), loginUser.getDomainIdentifier());
-		List<MailingList> listByVisibility = mailingListService.findAllListByVisibilityForSearch(actor, criteriaOnSearch, input);
+		List<MailingList> listByVisibility = mailingListService.findAllListByVisibilityForSearch(actor,
+				criteriaOnSearch, input);
 		return ListToListVo(listByVisibility);
 	}
 
@@ -208,16 +191,11 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	public List<MailingListVo> setListFromUserSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
 			throws BusinessException {
 		User actor = (User) userService.findOrCreateUser(loginUser.getMail(), loginUser.getDomainIdentifier());
-		List<MailingList> lists = new ArrayList<MailingList>();
 		if (targetLists.equals("*")) {
-			lists = mailingListService.findAllListByVisibility(actor, criteriaOnSearch);
-		} else if (targetLists.startsWith("\"") && targetLists.endsWith(">")) {
-			MailingList list = mailingListService.retrieveList(MailingListCompletionService.parseFirstElement(targetLists));
-			lists.add(list);
+			return ListToListVo(mailingListService.findAllListByVisibility(actor, criteriaOnSearch));
 		} else {
 			return performSearchForUser(loginUser, targetLists, criteriaOnSearch);
 		}
-		return ListToListVo(lists);
 	}
 
 	public boolean checkUserIsContact(List<MailingListContactVo> contacts, String mail) {
@@ -279,13 +257,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		List<UserVo> finalResults = new ArrayList<UserVo>();
 		User owner = (User) accountService.findByLsUuid(userVo.getLogin());
 		if (input != null) {
-			if (input.startsWith("\"") && input.endsWith(">")) {
-				UserVo tmp = MailCompletionService.getUserFromDisplay(input);
-				results = userService.searchUser(tmp.getMail(), tmp.getFirstName(), tmp.getLastName(), null, owner);
-			} else {
 				results = performSearchUser(owner, input);
-			}
-
+				
 			for (User currentUser : results) {
 				if (!(currentUser.equals(owner))) {
 					finalResults.add(new UserVo(currentUser));
@@ -296,7 +269,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail) throws BusinessException {
+	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail)
+			throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		User selectedUser = userService.findOrCreateUser(mail, domain);
 		if (selectedUser != null) {
@@ -345,5 +319,4 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		}
 		return false;
 	}
-
 }

@@ -109,15 +109,15 @@ public class Index {
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 
-	@Persist 
+	@Persist
 	private boolean alreadyConnect;
-	
+
 	@Persist
 	private boolean inSearch;
 
 	@SetupRender
 	public void init() throws BusinessException {
-		if(alreadyConnect == false){
+		if (alreadyConnect == false) {
 			criteriaOnSearch = "all";
 			targetLists = "*";
 		}

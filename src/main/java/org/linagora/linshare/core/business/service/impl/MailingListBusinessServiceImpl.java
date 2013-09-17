@@ -105,18 +105,8 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public void createContact(MailingListContact contact) throws BusinessException {
-		mailingListContactRepository.create(contact);
-	}
-
-	@Override
 	public MailingList retrieveList(String uuid) {
 		return mailingListRepository.findByUuid(uuid);
-	}
-
-	@Override
-	public MailingList findListByIdentifier(User owner, String identifier) {
-		return mailingListRepository.findByIdentifier(owner, identifier);
 	}
 
 	@Override
@@ -128,12 +118,12 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	public List<MailingList> findAllListForAdminSearch(String input) {
 		return mailingListRepository.findAllForAdminSearch(input);
 	}
-	
+
 	@Override
 	public List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input) {
 		return mailingListRepository.findByVisibilityForAdminSearch(isPublic, input);
 	}
-	
+
 	@Override
 	public List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input) {
 		return mailingListRepository.findByVisibilityForSearch(owner, isPublic, input);
@@ -143,7 +133,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic) {
 		return mailingListRepository.findByVisibility(owner, isPublic);
 	}
-	
+
 	@Override
 	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic) {
 		return mailingListRepository.findByVisibilityForAdmin(isPublic);
@@ -153,11 +143,12 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	public List<MailingList> findAllMyListsForSearch(User user, String input) {
 		return mailingListRepository.findAllListWhereOwnerForSearch(user, input);
 	}
+
 	@Override
 	public List<MailingList> findAllListByUserForSearch(User user, String input) {
 		return mailingListRepository.findAllMyListForSearch(user, input);
 	}
-	
+
 	@Override
 	public List<MailingList> findAllListByUser(User user) {
 		return mailingListRepository.findAllMyList(user);
@@ -204,6 +195,4 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 		mailingList.addMailingListContact(contact);
 		mailingListRepository.update(mailingList);
 	}
-
-	
 }
