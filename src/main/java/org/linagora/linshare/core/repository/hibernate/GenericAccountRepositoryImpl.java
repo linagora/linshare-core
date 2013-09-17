@@ -84,7 +84,7 @@ abstract class GenericAccountRepositoryImpl<U extends Account> extends AbstractR
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(U entity) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-		det.add(Restrictions.eq("destroyed", false));
+//		det.add(Restrictions.eq("destroyed", false));
 		// query
 		det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
 		return det;
