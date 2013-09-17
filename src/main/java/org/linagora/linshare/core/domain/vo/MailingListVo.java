@@ -72,7 +72,7 @@ public class MailingListVo {
 	public MailingListVo(MailingListVo list) {
 		this.uuid= list.getUuid();
 		this.identifier = list.getIdentifier();
-		this.description = list.getListDescription();
+		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
 		this.owner = list.getOwner();
 		this.domainId = list.getDomainId();
@@ -99,11 +99,11 @@ public class MailingListVo {
 		this.identifier = identifier;
 	}
 
-	public String getListDescription() {
+	public String getDescription() {
 		return description;
 	}
 
-	public void setListDescription(String description) {
+	public void setDescription(String description) {
 		this.description = description;
 	}
 

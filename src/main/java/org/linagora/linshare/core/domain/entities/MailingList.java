@@ -96,7 +96,7 @@ public class MailingList {
 	public MailingList(MailingListVo list) {
 		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
-		this.description = list.getListDescription();
+		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
 		if (!list.getContacts().isEmpty()) {
 			if (mailingListContact == null) {

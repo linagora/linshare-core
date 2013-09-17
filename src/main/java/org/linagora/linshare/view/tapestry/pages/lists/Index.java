@@ -91,9 +91,6 @@ public class Index {
 	@Inject
 	private MailingListFacade mailingListFacade;
 
-	@Property
-	private int autocompleteMin = 3;
-
 	@Persist
 	@Property
 	private String targetLists;
@@ -114,16 +111,22 @@ public class Index {
 	@Property
 	private String selectedRadioButton;
 
+	@Persist 
+	private boolean alreadyConnect;
+	
 	@Persist
 	private boolean fromCreate;
 
 	@SetupRender
 	public void init() throws BusinessException {
-		if (inSearch == false && fromCreate == false) {
+		if(alreadyConnect == false){
+			criteriaOnSearch = "allMyLists";
 			targetLists = "*";
+		}
+		if (inSearch == false && fromCreate == false) {
 			List<MailingListVo> finalList = mailingListFacade.findAllMyList(loginUser);
 			lists = new ArrayList<MailingListVo>();
-
+			
 			for (MailingListVo current : finalList) {
 				if (current.isPublic() == false) {
 					lists.add(current);
@@ -144,6 +147,7 @@ public class Index {
 			}
 			mailingListFacade.refreshList(lists);
 		}
+		alreadyConnect = true;
 	}
 
 	public boolean getListIsDeletable() throws BusinessException {
@@ -168,10 +172,6 @@ public class Index {
 			}
 		}
 		list = null;
-	}
-
-	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		return mailingListFacade.completionsForUserSearchList(loginUser, input, criteriaOnSearch);
 	}
 
 	public void onSuccessFromForm() throws BusinessException {

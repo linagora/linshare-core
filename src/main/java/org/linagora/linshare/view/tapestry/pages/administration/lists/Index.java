@@ -92,9 +92,6 @@ public class Index {
 	@Inject
 	private MailingListAdminFacade mailingListAdminFacade;
 
-	@Property
-	private int autocompleteMin = 3;
-
 	@InjectComponent
 	private Grid grid;
 
@@ -112,14 +109,20 @@ public class Index {
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 
+	@Persist 
+	private boolean alreadyConnect;
+	
 	@Persist
 	private boolean inSearch;
 
 	@SetupRender
 	public void init() throws BusinessException {
+		if(alreadyConnect == false){
+			criteriaOnSearch = "all";
+			targetLists = "*";
+		}
 		if (inSearch == false) {
 			lists = new ArrayList<MailingListVo>();
-			criteriaOnSearch = "all";
 		}
 		if (!lists.isEmpty()) {
 			if (grid.getSortModel().getSortConstraints().isEmpty()) {
@@ -127,6 +130,7 @@ public class Index {
 			}
 			mailingListFacade.refreshList(lists);
 		}
+		alreadyConnect = true;
 	}
 
 	public boolean getListIsDeletable() throws BusinessException {
@@ -147,10 +151,6 @@ public class Index {
 			}
 		}
 		list = null;
-	}
-
-	public List<String> onProvideCompletionsFromSearch(String input) throws BusinessException {
-		return mailingListAdminFacade.completionsForAdminSearchList(loginUser, input, criteriaOnSearch);
 	}
 
 	public void onSuccessFromForm() throws BusinessException {

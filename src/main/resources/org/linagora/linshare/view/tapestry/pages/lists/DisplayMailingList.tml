@@ -99,10 +99,10 @@
 						<form t:type="form" t:id="SearchUserForm">
 							<td>
 							<t:textfield t:id="searchUser" t:validate="required,minLength=3" t:value="recipientsSearch" t:size="50" class="recipientsPattern"
-				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
+				    		title="${message:components.quickSharePopup.texarea.recipients.title}" onkeyPress="setDisabled()" />
 				    		</td>
 				    		<td>
-        					<input type="submit" value="${message:global.button.search}"/>
+        					<input type="submit" id="submitSearchUser" value="${message:global.button.search}"/>
         					</td>
         					</form>
         					<td>
