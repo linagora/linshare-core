@@ -60,14 +60,18 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public MailingList createList(User user, MailingList mailingList) throws BusinessException {
-		User actor = userService.findByLsUuid(user.getLsUuid());
+	public MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException {
+		Assert.notNull(actorUuid);
+		Assert.notNull(ownerUuid);
+		Assert.notNull(mailingList);
+		
+		User actor = userService.findByLsUuid(actorUuid);
+		User owner = userService.findByLsUuid(ownerUuid);
 		if (!actor.isSuperAdmin()) {
-			mailingList.setOwner(actor);
-			mailingList.setDomain(actor.getDomain());
-			return mailingListBusinessService.createList(mailingList);
+			return mailingListBusinessService.createList(mailingList, owner);
+		} else {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to create a list.");
 		}
-		return null;
 	}
 
 	@Override
@@ -157,13 +161,13 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void deleteList(User actor, String uuid) throws BusinessException {
+	public void deleteList(User actor, String mailingListUuid) throws BusinessException {
 
-		MailingList mailingList = mailingListBusinessService.retrieveList(uuid);
+		MailingList mailingList = mailingListBusinessService.retrieveList(mailingListUuid);
 		String ownerUuid = mailingList.getOwner().getLsUuid();
 
 		if (actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
-			mailingListBusinessService.deleteList(uuid);
+			mailingListBusinessService.deleteList(mailingListUuid);
 		} else {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this list.");
 		}
@@ -210,6 +214,6 @@ public class MailingListServiceImpl implements MailingListService {
 
 	@Override
 	public void deleteContact(MailingList list, String mail) throws BusinessException {
-		mailingListBusinessService.deleteContact(list, mail);
+		mailingListBusinessService.deleteContact(list.getUuid(), mail);
 	}
 }

@@ -213,6 +213,14 @@ public class MailingList {
 	public void addMailingListContact(MailingListContact contact) {
 		mailingListContact.add(contact);
 	}
+	
+	/**
+	 * remove a contact from the mailing list contacts.
+	 * @param contact
+	 */
+	public void deleteMailingListContact(MailingListContact contact) {
+		mailingListContact.remove(contact);
+	}
 
 	/**
 	 * Check if the actor parameter is the owner of the mailing list.

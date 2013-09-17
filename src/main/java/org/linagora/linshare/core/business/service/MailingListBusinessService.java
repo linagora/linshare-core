@@ -41,7 +41,7 @@ import java.util.List;
 
 public interface MailingListBusinessService {
 
-	public MailingList createList(MailingList mailingList) throws BusinessException;
+	public MailingList createList(MailingList mailingList, User owner) throws BusinessException;
 
 	public MailingList retrieveList(String uuid);
 
@@ -77,7 +77,7 @@ public interface MailingListBusinessService {
 
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
 
-	public void deleteContact(MailingList list, String mail) throws BusinessException;
+	public void deleteContact(String listUuid, String mail) throws BusinessException;
 
 	/**
 	 * Find all my list according to select visibility
