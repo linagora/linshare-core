@@ -45,7 +45,7 @@ public interface MailingListService {
 
 	public MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException;
 
-	public MailingList retrieveList(String uuid);
+	public MailingList retrieveList(String uuid) throws BusinessException;
 
 	/**
 	 * Find all list (private and public) of the selected user 
@@ -74,7 +74,7 @@ public interface MailingListService {
 	 */
 	public List<MailingList> findAllListByOwner(User user);
 
-	public void deleteContact(MailingList list, String mail) throws BusinessException;
+	public void deleteContact(String listUuid, String mail) throws BusinessException;
 
 	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
 

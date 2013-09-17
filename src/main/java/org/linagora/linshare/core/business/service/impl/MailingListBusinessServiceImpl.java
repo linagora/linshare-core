@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.business.service.impl;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
@@ -51,58 +50,37 @@ import org.slf4j.LoggerFactory;
 public class MailingListBusinessServiceImpl implements MailingListBusinessService {
 
 	private static final Logger logger = LoggerFactory.getLogger(MailingListBusinessServiceImpl.class);
-	private final MailingListRepository mailingListRepository;
-	private final MailingListContactRepository mailingListContactRepository;
+	private final MailingListRepository listRepository;
+	private final MailingListContactRepository contactRepository;
 
 	public MailingListBusinessServiceImpl(MailingListRepository mailingListRepository,
 			MailingListContactRepository mailingListContactRepository) {
 		super();
-		this.mailingListRepository = mailingListRepository;
-		this.mailingListContactRepository = mailingListContactRepository;
+		this.listRepository = mailingListRepository;
+		this.contactRepository = mailingListContactRepository;
 	}
 
+	
 	@Override
-	public void deleteContact(String listUuid, String mail) throws BusinessException {
-		
-		MailingList mailingList = mailingListRepository.findByUuid(listUuid);
-		if(mailingList==null) {
-			String msg = "The current mailing list do not exist : " + listUuid;
+	public MailingList findByUuid(String uuid) throws BusinessException {
+		MailingList mailingList = listRepository.findByUuid(uuid);
+		if (mailingList == null) {
+			String msg = "The current mailing list do not exist : " + uuid;
 			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);
+			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, msg);
 		}
-		
-		MailingListContact contactToDelete = retrieveContact(mailingList, mail);
-		// The current contact could be not found.
-		if(contactToDelete == null) {
-			String msg = "The current contact you are trying to removed do not exist : " + mail;
-			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);
-		}
-		
-		mailingList.deleteMailingListContact(contactToDelete);
-		mailingListRepository.update(mailingList);
-		mailingListContactRepository.delete(contactToDelete);
+		return mailingList;
 	}
 
-	@Override
-	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException {
-		MailingList list = mailingListRepository.findByUuid(mailingList.getUuid());
-		for (MailingListContact current : list.getMailingListContact()) {
-			if (current.getMail().equals(mail)) {
-				return current;
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public MailingList createList(MailingList mailingList, User owner) throws BusinessException {
 		// check if list identifier is unique (do not already exist)
-		if (mailingListRepository.findByIdentifier(owner, mailingList.getIdentifier()) == null ) {
+		if (listRepository.findByIdentifier(owner, mailingList.getIdentifier()) == null) {
 			// Setting extra fields.
 			mailingList.setOwner(owner);
 			mailingList.setDomain(owner.getDomain());
-			MailingList createdList = mailingListRepository.create(mailingList);			
+			MailingList createdList = listRepository.create(mailingList);
 			return createdList;
 		} else {
 			String msg = "The current list you are trying to create already exists : " + mailingList.getIdentifier();
@@ -110,96 +88,117 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			throw new BusinessException(BusinessErrorCode.LIST_ALDREADY_EXISTS, msg);
 		}
 	}
-
-	@Override
-	public MailingList retrieveList(String uuid) {
-		return mailingListRepository.findByUuid(uuid);
-	}
-
-	@Override
-	public List<MailingList> findAllList() {
-		return mailingListRepository.findAll();
-	}
-
-	@Override
-	public List<MailingList> findAllListForAdminSearch(String input) {
-		return mailingListRepository.findAllForAdminSearch(input);
-	}
-
-	@Override
-	public List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input) {
-		return mailingListRepository.findByVisibilityForAdminSearch(isPublic, input);
-	}
-
-	@Override
-	public List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input) {
-		return mailingListRepository.findByVisibilityForSearch(owner, isPublic, input);
-	}
-
-	@Override
-	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic) {
-		return mailingListRepository.findByVisibility(owner, isPublic);
-	}
-
-	@Override
-	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic) {
-		return mailingListRepository.findByVisibilityForAdmin(isPublic);
-	}
-
-	@Override
-	public List<MailingList> findAllMyListsForSearch(User user, String input) {
-		return mailingListRepository.findAllListWhereOwnerForSearch(user, input);
-	}
-
-	@Override
-	public List<MailingList> findAllListByUserForSearch(User user, String input) {
-		return mailingListRepository.findAllMyListForSearch(user, input);
-	}
-
-	@Override
-	public List<MailingList> findAllListByUser(User user) {
-		return mailingListRepository.findAllMyList(user);
-	}
-
-	@Override
-	public List<MailingList> findAllMyList(User user) {
-		return mailingListRepository.findAllListWhereOwner(user);
-	}
-
+	
+	
 	@Override
 	public void deleteList(String uuid) throws BusinessException {
-		MailingList listToDelete = retrieveList(uuid);
-		if (listToDelete == null) {
-			logger.error("List not found");
-		} else {
-			logger.debug("List to delete: " + listToDelete.getIdentifier());
-			mailingListRepository.delete(listToDelete);
-		}
+		MailingList listToDelete = findByUuid(uuid);
+		logger.debug("List to delete: " + uuid);
+		listRepository.delete(listToDelete);
+		// TODO : and contacts ?
 	}
 
 	@Override
 	public void updateList(MailingList mailingList) throws BusinessException {
-		MailingList list = retrieveList(mailingList.getUuid());
+		MailingList list = findByUuid(mailingList.getUuid());
 		list.setIdentifier(mailingList.getIdentifier());
 		list.setDescription(mailingList.getDescription());
 		list.setPublic(mailingList.isPublic());
 		list.setDomain(mailingList.getDomain());
 		list.setOwner(mailingList.getOwner());
 		list.setMailingListContact(mailingList.getMailingListContact());
-		mailingListRepository.update(list);
+		listRepository.update(list);
+	}
+
+	@Override
+	public List<MailingList> findAllList() {
+		return listRepository.findAll();
+	}
+
+	@Override
+	public List<MailingList> findAllListForAdminSearch(String input) {
+		return listRepository.findAllForAdminSearch(input);
+	}
+
+	@Override
+	public List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input) {
+		return listRepository.findByVisibilityForAdminSearch(isPublic, input);
+	}
+
+	@Override
+	public List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input) {
+		return listRepository.findByVisibilityForSearch(owner, isPublic, input);
+	}
+
+	@Override
+	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic) {
+		return listRepository.findByVisibility(owner, isPublic);
+	}
+
+	@Override
+	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic) {
+		return listRepository.findByVisibilityForAdmin(isPublic);
+	}
+
+	@Override
+	public List<MailingList> findAllMyListsForSearch(User user, String input) {
+		return listRepository.findAllListWhereOwnerForSearch(user, input);
+	}
+
+	@Override
+	public List<MailingList> findAllListByUserForSearch(User user, String input) {
+		return listRepository.findAllMyListForSearch(user, input);
+	}
+
+	@Override
+	public List<MailingList> findAllListByUser(User user) {
+		return listRepository.findAllMyList(user);
+	}
+
+	@Override
+	public List<MailingList> findAllMyList(User user) {
+		return listRepository.findAllListWhereOwner(user);
+	}
+
+
+	/**
+	 * Mailing list contacts management.
+	 */
+
+	@Override
+	public MailingListContact findContact(MailingList mailingList, String mailContact) throws BusinessException {
+		MailingList list = findByUuid(mailingList.getUuid());
+		
+		// The current contact could be not found.
+		for (MailingListContact current : list.getMailingListContact()) {
+			if (current.getMail().equals(mailContact)) {
+				return current;
+			}
+		}
+		String msg = "The current contact you are trying to find do not exist : " + mailContact;
+		logger.error(msg);
+		throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);
+	}
+
+	@Override
+	public void deleteContact(MailingList mailingList, String mail) throws BusinessException {
+		MailingListContact contactToDelete = findContact(mailingList, mail);
+		mailingList.deleteMailingListContact(contactToDelete);
+		listRepository.update(mailingList);
+		contactRepository.delete(contactToDelete);
 	}
 
 	@Override
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException {
-		MailingListContact contact = retrieveContact(list, contactToUpdate.getMail());
+		MailingListContact contact = findContact(list, contactToUpdate.getMail());
 		contact.setMails(contactToUpdate.getMail());
 		contact.setDisplay(contactToUpdate.getDisplay());
-		mailingListContactRepository.update(contact);
+		contactRepository.update(contact);
 	}
 
 	@Override
 	public void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException {
 		mailingList.addMailingListContact(contact);
-		mailingListRepository.update(mailingList);
+		listRepository.update(mailingList);
 	}
 }

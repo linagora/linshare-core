@@ -45,10 +45,14 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 public class MailingListServiceImpl implements MailingListService {
 
+	private static final Logger logger = LoggerFactory.getLogger(MailingListServiceImpl.class);
+	
 	private final MailingListBusinessService mailingListBusinessService;
 
 	private final UserService userService;
@@ -75,13 +79,13 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public MailingList retrieveList(String uuid) {
-		return mailingListBusinessService.retrieveList(uuid);
+	public MailingList retrieveList(String uuid) throws BusinessException {
+		return mailingListBusinessService.findByUuid(uuid);
 	}
 
 	@Override
 	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException {
-		return mailingListBusinessService.retrieveContact(mailingList, mail);
+		return mailingListBusinessService.findContact(mailingList, mail);
 	}
 
 	@Override
@@ -163,7 +167,7 @@ public class MailingListServiceImpl implements MailingListService {
 	@Override
 	public void deleteList(User actor, String mailingListUuid) throws BusinessException {
 
-		MailingList mailingList = mailingListBusinessService.retrieveList(mailingListUuid);
+		MailingList mailingList = mailingListBusinessService.findByUuid(mailingListUuid);
 		String ownerUuid = mailingList.getOwner().getLsUuid();
 
 		if (actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
@@ -192,7 +196,7 @@ public class MailingListServiceImpl implements MailingListService {
 		Assert.notNull(contact);
 
 		User actorEntity = userService.findByLsUuid(actor.getLsUuid());
-		MailingList mailingList = mailingListBusinessService.retrieveList(mailingListUuid);
+		MailingList mailingList = mailingListBusinessService.findByUuid(mailingListUuid);
 		if (mailingList.isOwner(actorEntity)) {
 			mailingListBusinessService.addContact(mailingList, contact);
 		}
@@ -213,7 +217,13 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void deleteContact(MailingList list, String mail) throws BusinessException {
-		mailingListBusinessService.deleteContact(list.getUuid(), mail);
+	public void deleteContact(String listUuid, String mail) throws BusinessException {
+		MailingList mailingList = mailingListBusinessService.findByUuid(listUuid);
+		if(mailingList==null) {
+			String msg = "The current mailing list do not exist : " + listUuid;
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, msg);
+		}
+		mailingListBusinessService.deleteContact(mailingList, mail);
 	}
 }

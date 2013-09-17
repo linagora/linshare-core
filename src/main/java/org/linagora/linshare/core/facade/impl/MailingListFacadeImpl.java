@@ -76,12 +76,15 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public MailingListVo retrieveList(String uuid) {
-		MailingList mailingList = mailingListService.retrieveList(uuid);
-		if (mailingList != null) {
+		MailingList mailingList;
+		try {
+			mailingList = mailingListService.retrieveList(uuid);
 			return new MailingListVo(mailingList);
-		} else {
-			return null;
+		} catch (BusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	@Override
@@ -124,8 +127,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public void deleteContact(MailingListVo listVo, String mail) throws BusinessException {
-		MailingList list = mailingListService.retrieveList(listVo.getUuid());
-		mailingListService.deleteContact(list, mail);
+		mailingListService.deleteContact(listVo.getUuid(), mail);
 	}
 
 	@Override
@@ -173,8 +175,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		List<String> uuids = MailingListCompletionService.parseLists(recipients);
 		List<MailingList> lists = new ArrayList<MailingList>();
 		for (String list : uuids) {
-			MailingList listToAdd = mailingListService.retrieveList(list);
-			lists.add(listToAdd);
+			try {
+				MailingList listToAdd = mailingListService.retrieveList(list);
+				lists.add(listToAdd);
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return ListToListVo(lists);
 	}
