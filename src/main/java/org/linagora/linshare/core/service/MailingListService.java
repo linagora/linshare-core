@@ -43,9 +43,21 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListService {
 
-	public MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException;
+	/**
+	 * 
+	 * @param actorUuid : actor
+	 * @param ownerUuid : list owner 
+	 * @param mailingList : mailing list to be created
+	 * @return Mailing list created
+	 * @throws BusinessException : could be raised if list already exists or you are not authorized. 
+	 */
+	MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException;
 
-	public MailingList retrieveList(String uuid) throws BusinessException;
+	void deleteList(User actor, String mailingListUuid) throws BusinessException;
+
+	void updateList(User actor, MailingList listToUpdate) throws BusinessException;
+	
+	MailingList retrieveList(String uuid) throws BusinessException;
 
 	/**
 	 * Find all list (private and public) of the selected user 
@@ -54,9 +66,7 @@ public interface MailingListService {
 	 */
 	public List<MailingList> findAllListByUser(User user);
 
-	public void deleteList(User actor, String mailingListUuid) throws BusinessException;
-
-	public void updateList(User actor, MailingList listToUpdate) throws BusinessException;
+	
 
 	/**
 	 * Add contact to list

@@ -174,6 +174,7 @@ public class ManageMailingList {
 			mailingListFacade.updateList(loginUser, mailingList);
 			index.setFromCreate(false);
 		} else {
+			// TODO : Check if list already exists.
 			mailingList.setContacts(new ArrayList<MailingListContactVo>());
 			mailingListFacade.createList(loginUser, mailingList);
 			index.setFromCreate(true);
