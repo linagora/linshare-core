@@ -150,7 +150,7 @@ public class DisplayMailingList {
 
 	public void onActivate(String uuid) throws BusinessException {
 		if (uuid != null) {
-			mailingListVo = mailingListFacade.retrieveList(uuid);
+			mailingListVo = mailingListFacade.searchList(uuid);
 		} else {
 			mailingListVo = null;
 		}
@@ -193,13 +193,13 @@ public class DisplayMailingList {
 				MailingListContactVo contact = mailingListFacade.retrieveContact(mailingListVo, oldEmail);
 				contact.setDisplay(display);
 				contact.setMail(mail);
-				mailingListFacade.updateContact(mailingListVo, contact);
+				mailingListFacade.updateContact(loginUser, mailingListVo, contact);
 			}
 		} else {
 			MailingListContactVo newContact = new MailingListContactVo(mail, display);
 			mailingListFacade.addNewContactToList(loginUser, mailingListVo, newContact);
 		}
-		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
+		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 		inModify = false;
 		mail = null;
 		oldEmail = null;
@@ -229,12 +229,12 @@ public class DisplayMailingList {
 
 	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
 		mailingListFacade.addUserToList(loginUser, mailingListVo, domain, mail);
-		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
+		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 	}
 
 	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {
-		mailingListFacade.deleteContact(mailingListVo, mail);
-		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
+		mailingListFacade.deleteContact(loginUser, mailingListVo, mail);
+		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 	}
 
 	public void onActionFromEditContact(String email) {
@@ -257,8 +257,8 @@ public class DisplayMailingList {
 
 	@OnEvent(value = "contactDeleteEvent")
 	public void deleteContactFromList() throws BusinessException {
-		mailingListFacade.deleteContact(mailingListVo, contactToDelete);
-		mailingListVo = mailingListFacade.retrieveList(mailingListVo.getUuid());
+		mailingListFacade.deleteContact(loginUser, mailingListVo, contactToDelete);
+		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 	}
 
 	public boolean getIsEmpty() {

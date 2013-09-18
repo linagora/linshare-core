@@ -9,21 +9,17 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListFacade {
 
-	public MailingListVo retrieveList(String uuid);
+	MailingListVo searchList(String uuid) throws BusinessException;
 
-	public MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
+	MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
-	public void deleteList(UserVo actorVo, String uuid) throws BusinessException;
+	void deleteList(UserVo actorVo, String uuid) throws BusinessException;
 
-	public void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
+	void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
-	public void deleteContact(MailingListVo listVo, String mail) throws BusinessException;
+	MailingListContactVo retrieveContact(MailingListVo list, String mail) throws BusinessException;
 
-	public MailingListContactVo retrieveContact(MailingListVo list, String mail) throws BusinessException;
-
-	public void updateContact(MailingListVo listVo, MailingListContactVo contactToUpdate) throws BusinessException;
-
-	public List<MailingListVo> findAllMyList(UserVo user) throws BusinessException;
+	List<MailingListVo> getAllMyList(UserVo user) throws BusinessException;
 
 	/**
 	 * Check if list identifier exists, if it does , purpose an alternative
@@ -34,7 +30,7 @@ public interface MailingListFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public String checkUniqueIdentifier(UserVo user, String value) throws BusinessException;
+	String checkUniqueIdentifier(UserVo user, String value) throws BusinessException;
 
 	/**
 	 * Set list of results from search
@@ -45,7 +41,7 @@ public interface MailingListFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<MailingListVo> setListFromUserSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
+	List<MailingListVo> setListFromUserSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
 			throws BusinessException;
 
 	/**
@@ -55,7 +51,7 @@ public interface MailingListFacade {
 	 * @param mail
 	 * @return
 	 */
-	public boolean checkUserIsContact(List<MailingListContactVo> contacts, String mail);
+	boolean checkUserIsContact(List<MailingListContactVo> contacts, String mail);
 
 	/**
 	 * Provide completion for user search
@@ -65,7 +61,7 @@ public interface MailingListFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException;
+	List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException;
 
 	/**
 	 * Search among user
@@ -75,7 +71,7 @@ public interface MailingListFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException;
+	List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException;
 
 	/**
 	 * Add user to mailing list
@@ -85,7 +81,7 @@ public interface MailingListFacade {
 	 * @param mail
 	 * @throws BusinessException
 	 */
-	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail)
+	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail)
 			throws BusinessException;
 
 	/**
@@ -96,12 +92,12 @@ public interface MailingListFacade {
 	 * @param contactVo
 	 * @throws BusinessException
 	 */
-	public void addNewContactToList(UserVo actorVo, MailingListVo mailingListVo, MailingListContactVo contactVo)
+	void addNewContactToList(UserVo actorVo, MailingListVo mailingListVo, MailingListContactVo contactVo)
 			throws BusinessException;
 
-	public void refreshList(List<MailingListVo> list);
+	void refreshList(List<MailingListVo> list);
 
-	public boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
+	boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
 
 	/**
 	 * Get list from share
@@ -109,7 +105,12 @@ public interface MailingListFacade {
 	 * @param recipients
 	 * @return
 	 */
-	public List<MailingListVo> getListsFromShare(String recipients);
+	List<MailingListVo> getListsFromShare(String recipients);
 
-	public List<String> completionsForShare(UserVo user, String input) throws BusinessException;
+	List<String> completionsForShare(UserVo user, String input) throws BusinessException;
+
+	void deleteContact(UserVo actorVo, MailingListVo listVo, String mail) throws BusinessException;
+
+	void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactToUpdate)
+			throws BusinessException;
 }
