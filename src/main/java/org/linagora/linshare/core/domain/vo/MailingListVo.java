@@ -150,6 +150,15 @@ public class MailingListVo {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
+	
+	public String getRepresentation() {
+		return identifier + " (" + owner.getCompleteName() + ")";
+	}
+	
+	@Override
+	public String toString() {
+		return getRepresentation();
+	}
 
 	@Override
 	public int hashCode() {
@@ -175,7 +184,5 @@ public class MailingListVo {
 			return false;
 		return true;
 	}
-	
-	
 
 }
