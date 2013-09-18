@@ -57,6 +57,8 @@ import org.linagora.linshare.view.tapestry.services.impl.MailingListCompletionSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.mail.util.MailLogger;
+
 public class MailingListFacadeImpl implements MailingListFacade {
 
 	Logger logger = LoggerFactory.getLogger(MailingListFacadeImpl.class);
@@ -213,11 +215,18 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		return ListToListVo(lists);
 	}
 
-	private List<MailingListVo> performSearchForUser(UserVo loginUser, String input, String criteriaOnSearch)
+	@Override
+	public List<MailingListVo> performSearchForUser(UserVo loginUser, String input, String criteriaOnSearch)
 			throws BusinessException {
 		List<MailingList> listByVisibility = mailingListService.findAllListByVisibilityForSearch(loginUser.getLsUuid(),
 				criteriaOnSearch, input);
 		return ListToListVo(listByVisibility);
+	}
+	
+	@Override
+	public List<MailingListVo> completionForUploadForm(UserVo userVo,
+			String input) throws BusinessException {
+		return performSearchForUser(userVo, input, "all");
 	}
 
 	@Override

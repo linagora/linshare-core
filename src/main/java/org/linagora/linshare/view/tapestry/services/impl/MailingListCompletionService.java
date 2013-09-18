@@ -41,7 +41,8 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 
 public class MailingListCompletionService {
 
-	public static String formatLabel(UserVo actorVo, MailingListVo listVo, boolean virgule) {
+	public static String formatLabel(UserVo actorVo, MailingListVo listVo,
+			boolean virgule) {
 		StringBuffer buf = new StringBuffer();
 
 		if (listVo != null) {
@@ -49,7 +50,8 @@ public class MailingListCompletionService {
 			if (actorVo.getLsUuid().equals(listVo.getOwner().getLsUuid())) {
 				buf.append(" (Me)");
 			} else {
-				buf.append(" (").append(listVo.getOwner().getFullName()).append(")");
+				buf.append(" (").append(listVo.getOwner().getFullName())
+						.append(")");
 			}
 			buf.append(" <").append(listVo.getUuid()).append(">");
 			if (virgule)
@@ -84,7 +86,8 @@ public class MailingListCompletionService {
 	 * @param tokenleft
 	 * @return
 	 */
-	public static String contentInsideToken(final String str, final String tokenright, final String tokenleft) {
+	public static String contentInsideToken(final String str,
+			final String tokenright, final String tokenleft) {
 		int deb = str.indexOf(tokenright, 0);
 		int end = str.indexOf(tokenleft, 1);
 		if (deb == -1 || end == -1) {

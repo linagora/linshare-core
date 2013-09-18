@@ -33,6 +33,18 @@ public interface MailingListFacade {
 	String checkUniqueIdentifier(UserVo user, String value) throws BusinessException;
 
 	/**
+	 * provide completions to search a list for user
+	 * 
+	 * @param loginUser
+	 * @param input
+	 * @param criteriaOnSearch
+	 * @return
+	 * @throws BusinessException
+	 */
+	public List<MailingListVo> performSearchForUser(UserVo loginUser,
+			String input, String criteriaOnSearch) throws BusinessException;
+
+	/**
 	 * Set list of results from search
 	 * 
 	 * @param loginUser
@@ -113,4 +125,6 @@ public interface MailingListFacade {
 
 	void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactToUpdate)
 			throws BusinessException;
+
+	public List<MailingListVo> completionForUploadForm(UserVo userVo, String input) throws BusinessException;
 }
