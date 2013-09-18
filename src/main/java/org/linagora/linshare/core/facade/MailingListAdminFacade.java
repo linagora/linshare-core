@@ -41,7 +41,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListAdminFacade {
 
-	public List<MailingListVo> setListFromAdminSearch(UserVo actorVo, String targetLists, String criteriaOnSearch)
+	List<MailingListVo> setListFromAdminSearch(UserVo actorVo, String targetLists, String criteriaOnSearch)
 			throws BusinessException;
 
 	/**
@@ -51,6 +51,6 @@ public interface MailingListAdminFacade {
 	 * @param input
 	 * @throws BusinessException
 	 */
-	public void setNewOwner(MailingListVo mailingListVo, String input) throws BusinessException;
+	void setNewOwner(MailingListVo mailingListVo, String input) throws BusinessException;
 
 }

@@ -41,25 +41,25 @@ import org.linagora.linshare.core.domain.entities.User;
 
 public interface MailingListRepository extends AbstractRepository<MailingList> {
 
-	public MailingList findByUuid(String uuid);
+	MailingList findByUuid(String uuid);
 
-	public List<MailingList> findAllListWhereOwner(User user);
+	List<MailingList> findAllListWhereOwner(User user);
 
-	public MailingList findByIdentifier(User owner, String identifier);
+	MailingList findByIdentifier(User owner, String identifier);
 
-	public List<MailingList> findAllMyList(User user);
+	List<MailingList> findAllMyList(User user);
 
-	public List<MailingList> findByVisibility(User user, boolean isPublic);
+	List<MailingList> findByVisibility(User user, boolean isPublic);
 
-	public List<MailingList> findByVisibilityForAdmin(boolean isPublic);
+	List<MailingList> findByVisibilityForAdmin(boolean isPublic);
 
-	public List<MailingList> findAllMyListForSearch(User user, String input);
+	List<MailingList> findAllMyListForSearch(User user, String input);
 
-	public List<MailingList> findAllListWhereOwnerForSearch(User user, String input);
+	List<MailingList> findAllListWhereOwnerForSearch(User user, String input);
 
-	public List<MailingList> findByVisibilityForSearch(User user, boolean isPublic, String input);
+	List<MailingList> findByVisibilityForSearch(User user, boolean isPublic, String input);
 
-	public List<MailingList> findAllForAdminSearch(String input);
+	List<MailingList> findAllForAdminSearch(String input);
 
-	public List<MailingList> findByVisibilityForAdminSearch(boolean isPublic, String input);
+	List<MailingList> findByVisibilityForAdminSearch(boolean isPublic, String input);
 }

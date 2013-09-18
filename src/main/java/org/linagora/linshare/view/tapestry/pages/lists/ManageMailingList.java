@@ -120,7 +120,7 @@ public class ManageMailingList {
 	public void onActivate(String uuid) throws BusinessException {
 		if (uuid != null) {
 			inModify = true;
-			mailingList = mailingListFacade.retrieveList(uuid);
+			mailingList = mailingListFacade.searchList(uuid);
 			oldIdentifier = mailingList.getIdentifier();
 
 		} else {

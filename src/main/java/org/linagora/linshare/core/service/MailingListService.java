@@ -38,7 +38,6 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
-import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListService {
@@ -53,18 +52,18 @@ public interface MailingListService {
 	 */
 	MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException;
 
-	void deleteList(User actor, String mailingListUuid) throws BusinessException;
+	void deleteList(String actorUuid, String mailingListUuid) throws BusinessException;
 
-	void updateList(User actor, MailingList listToUpdate) throws BusinessException;
+	void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
 	
-	MailingList retrieveList(String uuid) throws BusinessException;
+	MailingList searchList(String uuid) throws BusinessException;
 
 	/**
 	 * Find all list (private and public) of the selected user 
 	 * @param user
 	 * @return
 	 */
-	public List<MailingList> findAllListByUser(User user);
+	List<MailingList> findAllListByUser(String userUuid);
 
 	
 
@@ -75,20 +74,17 @@ public interface MailingListService {
 	 * @param contact
 	 * @throws BusinessException
 	 */
-	public void addNewContact(User actor, String mailingListUuid, MailingListContact contact) throws BusinessException;
+	void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact) throws BusinessException;
 
 	/**
 	 * Find all list of the user 
 	 * @param user
 	 * @return
 	 */
-	public List<MailingList> findAllListByOwner(User user);
+	List<MailingList> findAllListByOwner(String ownerUuid);
 
-	public void deleteContact(String listUuid, String mail) throws BusinessException;
+	MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
 
-	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
-
-	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
 
 	/**
 	 * retrieving all list from repository. Method allowed only for Root.
@@ -98,7 +94,7 @@ public interface MailingListService {
 	 *            : could be "public", "private" or "all"
 	 * @return list of MailingList objects.
 	 */
-	public List<MailingList> findAllListByVisibilityForAdmin(User user, String criteriaOnSearch);
+	List<MailingList> findAllListByVisibilityForAdmin(String userUuid, String criteriaOnSearch);
 
 	/**
 	 * find list of result according to visibility selected and pattern
@@ -107,7 +103,7 @@ public interface MailingListService {
 	 * @param pattern
 	 * @return
 	 */
-	public List<MailingList> findAllListByVisibilityForSearch(User actor, String criteriaOnSearch, String pattern);
+	List<MailingList> findAllListByVisibilityForSearch(String actorUuid, String criteriaOnSearch, String pattern);
 
 	/**
 	 * Find all user list of the selected visibility
@@ -115,7 +111,7 @@ public interface MailingListService {
 	 * @param criteriaOnSearch
 	 * @return
 	 */
-	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch);
+	List<MailingList> findAllListByVisibility(String actorUuid, String criteriaOnSearch);
 
 	/**
 	 * Find all list of the selected visibility
@@ -123,5 +119,9 @@ public interface MailingListService {
 	 * @param input
 	 * @return
 	 */
-	public List<MailingList> findAllListByVisibilityForAdminSearch(String criteriaOnSearch, String input);
+	List<MailingList> findAllListByVisibilityForAdminSearch(String criteriaOnSearch, String input);
+
+	void deleteContact(String ownerUuid, String listUuid, String mail) throws BusinessException;
+
+	void updateContact(String ownerUuid, MailingList list, MailingListContact contactToUpdate) throws BusinessException;
 }

@@ -63,6 +63,10 @@ public class MailingListServiceImpl implements MailingListService {
 		this.userService = userService;
 	}
 
+	/**
+	 * Basic operations on mailingList
+	 */
+	
 	@Override
 	public MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException {
 		Assert.notNull(actorUuid);
@@ -79,27 +83,29 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public MailingList retrieveList(String uuid) throws BusinessException {
+	public MailingList searchList(String uuid) throws BusinessException {
+		Assert.notNull(uuid);
+		
 		return mailingListBusinessService.findByUuid(uuid);
 	}
 
 	@Override
-	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException {
-		return mailingListBusinessService.findContact(mailingList, mail);
+	public List<MailingList> findAllListByUser(String ownerUuid) {
+		Assert.notNull(ownerUuid);
+		
+		User owner = userService.findByLsUuid(ownerUuid);
+		return mailingListBusinessService.findAllListByUser(owner);
 	}
 
 	@Override
-	public List<MailingList> findAllListByUser(User user) {
-		return mailingListBusinessService.findAllListByUser(user);
-	}
-
-	@Override
-	public List<MailingList> findAllListByVisibilityForSearch(User actor, String criteriaOnSearch, String pattern) {
-		Assert.notNull(actor);
+	public List<MailingList> findAllListByVisibilityForSearch(String ownerUuid, String criteriaOnSearch, String pattern) {
+		Assert.notNull(ownerUuid);
 		Assert.notNull(criteriaOnSearch);
 		Assert.notNull(pattern);
-
+		
 		boolean isPublic;
+		User actor = userService.findByLsUuid(ownerUuid);
+		
 		if (criteriaOnSearch.equals("all")) {
 			return mailingListBusinessService.findAllListByUserForSearch(actor, pattern);
 		} else if (criteriaOnSearch.equals("allMyLists")) {
@@ -114,6 +120,9 @@ public class MailingListServiceImpl implements MailingListService {
 
 	@Override
 	public List<MailingList> findAllListByVisibilityForAdminSearch(String criteriaOnSearch, String input) {
+		Assert.notNull(criteriaOnSearch);
+		Assert.notNull(input);
+		
 		List<MailingList> result = new ArrayList<MailingList>();
 
 		if (criteriaOnSearch.equals("all")) {
@@ -131,8 +140,13 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibility(User user, String criteriaOnSearch) {
+	public List<MailingList> findAllListByVisibility(String ownerUuid, String criteriaOnSearch) {
+		Assert.notNull(criteriaOnSearch);
+		Assert.notNull(ownerUuid);
+		
 		boolean isPublic;
+		User user = userService.findByLsUuid(ownerUuid);
+		
 		if (criteriaOnSearch.equals("all")) {
 			return mailingListBusinessService.findAllListByUser(user);
 		} else if (criteriaOnSearch.equals("allMyLists")) {
@@ -146,7 +160,12 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibilityForAdmin(User actor, String criteriaOnSearch) {
+	public List<MailingList> findAllListByVisibilityForAdmin(String ownerUuid, String criteriaOnSearch) {
+		Assert.notNull(criteriaOnSearch);
+		Assert.notNull(ownerUuid);
+		
+		User actor = userService.findByLsUuid(ownerUuid);
+		
 		List<MailingList> result = new ArrayList<MailingList>();
 		if (actor.isSuperAdmin()) {
 			if (criteriaOnSearch.equals("all")) {
@@ -165,10 +184,21 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void deleteList(User actor, String mailingListUuid) throws BusinessException {
-
+	public List<MailingList> findAllListByOwner(String ownerUuid) {
+		Assert.notNull(ownerUuid);
+		
+		User actor = userService.findByLsUuid(ownerUuid);
+		return mailingListBusinessService.findAllMyList(actor);
+	}
+	
+	@Override
+	public void deleteList(String actorUuid, String mailingListUuid) throws BusinessException {
+		Assert.notNull(mailingListUuid);
+		Assert.notNull(actorUuid);
+		
 		MailingList mailingList = mailingListBusinessService.findByUuid(mailingListUuid);
 		String ownerUuid = mailingList.getOwner().getLsUuid();
+		User actor = userService.findByLsUuid(actorUuid);
 
 		if (actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
 			mailingListBusinessService.deleteList(mailingListUuid);
@@ -179,8 +209,12 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void updateList(User actor, MailingList listToUpdate) throws BusinessException {
+	public void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException {
+		Assert.notNull(actorUuid);
+		
+		User actor = userService.findByLsUuid(actorUuid);
 		String ownerUuid = listToUpdate.getOwner().getLsUuid();
+		
 		if (actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
 			mailingListBusinessService.updateList(listToUpdate);
 		} else {
@@ -189,13 +223,17 @@ public class MailingListServiceImpl implements MailingListService {
 		mailingListBusinessService.updateList(listToUpdate);
 	}
 
+	/**
+	 * Basic operations on mailingListContact
+	 */
+	
 	@Override
-	public void addNewContact(User actor, String mailingListUuid, MailingListContact contact) throws BusinessException {
-		Assert.notNull(actor);
+	public void addNewContact(String ownerUuid, String mailingListUuid, MailingListContact contact) throws BusinessException {
+		Assert.notNull(ownerUuid);
 		Assert.notNull(mailingListUuid);
 		Assert.notNull(contact);
 
-		User actorEntity = userService.findByLsUuid(actor.getLsUuid());
+		User actorEntity = userService.findByLsUuid(ownerUuid);
 		MailingList mailingList = mailingListBusinessService.findByUuid(mailingListUuid);
 		if (mailingList.isOwner(actorEntity)) {
 			mailingListBusinessService.addContact(mailingList, contact);
@@ -203,27 +241,42 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException {
+	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException {
+		Assert.notNull(mail);
+		
+		return mailingListBusinessService.findContact(mailingList, mail);
+	}
+	
+	@Override
+	public void updateContact(String ownerUuid, MailingList list, MailingListContact contactToUpdate) throws BusinessException {
 		Assert.notNull(list);
+		Assert.notNull(ownerUuid);
 		Assert.notNull(contactToUpdate);
-
-		mailingListBusinessService.updateContact(list, contactToUpdate);
+		
+		User actor = userService.findByLsUuid(ownerUuid);
+		if(actor.getLsUuid().equals(list.getOwner().getLsUuid())){
+			mailingListBusinessService.updateContact(list, contactToUpdate);	
+		} else {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete a contact");
+		}
 	}
 
 	@Override
-	public List<MailingList> findAllListByOwner(User user) {
-		User actor = userService.findByLsUuid(user.getLsUuid());
-		return mailingListBusinessService.findAllMyList(actor);
-	}
-
-	@Override
-	public void deleteContact(String listUuid, String mail) throws BusinessException {
+	public void deleteContact(String ownerUuid, String listUuid, String mail) throws BusinessException {
+		Assert.notNull(listUuid);
+		Assert.notNull(ownerUuid);
+		
+		User actor = userService.findByLsUuid(ownerUuid);
 		MailingList mailingList = mailingListBusinessService.findByUuid(listUuid);
 		if(mailingList==null) {
 			String msg = "The current mailing list do not exist : " + listUuid;
 			logger.error(msg);
 			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, msg);
 		}
-		mailingListBusinessService.deleteContact(mailingList, mail);
+		if(actor.getLsUuid().equals(mailingList.getOwner().getLsUuid())){
+			mailingListBusinessService.deleteContact(mailingList, mail);	
+		} else {
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete a contact");
+		}
 	}
 }

@@ -74,9 +74,8 @@ public class MailingListAdminFacadeImpl implements MailingListAdminFacade {
 	@Override
 	public List<MailingListVo> setListFromAdminSearch(UserVo actorVo, String targetLists, String criteriaOnSearch)
 			throws BusinessException {
-		User actor = userService.findByLsUuid(actorVo.getLsUuid());
 		if (targetLists.equals("*")) {
-			return ListToListVo(mailingListService.findAllListByVisibilityForAdmin(actor, criteriaOnSearch));
+			return ListToListVo(mailingListService.findAllListByVisibilityForAdmin(actorVo.getLsUuid(), criteriaOnSearch));
 		} else {
 			return performSearchForAdmin(null, targetLists, criteriaOnSearch);
 		}

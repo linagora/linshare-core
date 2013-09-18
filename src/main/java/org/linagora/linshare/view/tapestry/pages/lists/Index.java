@@ -124,7 +124,7 @@ public class Index {
 			targetLists = "*";
 		}
 		if (inSearch == false && fromCreate == false) {
-			List<MailingListVo> finalList = mailingListFacade.findAllMyList(loginUser);
+			List<MailingListVo> finalList = mailingListFacade.getAllMyList(loginUser);
 			lists = new ArrayList<MailingListVo>();
 
 			for (MailingListVo current : finalList) {
@@ -134,7 +134,7 @@ public class Index {
 			}
 		}
 		if (fromCreate == true) {
-			lists = mailingListFacade.findAllMyList(loginUser);
+			lists = mailingListFacade.getAllMyList(loginUser);
 			for (MailingListVo current : lists) {
 				if (current.isPublic() == true) {
 					targetLists = "";

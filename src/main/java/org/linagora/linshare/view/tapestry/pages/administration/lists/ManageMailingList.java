@@ -111,7 +111,7 @@ public class ManageMailingList {
 
 	public void onActivate(String uuid) throws BusinessException {
 		if (uuid != null) {
-			mailingListVo = mailingListFacade.retrieveList(uuid);
+			mailingListVo = mailingListFacade.searchList(uuid);
 			oldIdentifier = mailingListVo.getIdentifier();
 			oldOwner = mailingListVo.getOwner();
 		}

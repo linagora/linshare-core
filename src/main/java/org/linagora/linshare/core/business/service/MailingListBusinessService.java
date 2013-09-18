@@ -49,20 +49,20 @@ public interface MailingListBusinessService {
 	 */
 	MailingList findByUuid(String uuid) throws BusinessException;
 	
-	public MailingList createList(MailingList mailingList, User owner) throws BusinessException;
+	MailingList createList(MailingList mailingList, User owner) throws BusinessException;
 
-	public List<MailingList> findAllList();
+	List<MailingList> findAllList();
 
 	/**
 	 * Find all list of the selected user (private and public)
 	 * @param user
 	 * @return
 	 */
-	public List<MailingList> findAllListByUser(User user);
+	List<MailingList> findAllListByUser(User user);
 
-	public void deleteList(String uuid) throws BusinessException;
+	void deleteList(String uuid) throws BusinessException;
 
-	public void updateList(MailingList mailingList) throws BusinessException;
+	void updateList(MailingList mailingList) throws BusinessException;
 	
 	/**
 	 * Add contact to list
@@ -70,20 +70,20 @@ public interface MailingListBusinessService {
 	 * @param contact
 	 * @throws BusinessException
 	 */
-	public void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
+	void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
 
 	/**
 	 * Find all list where user is owner
 	 * @param user
 	 * @return
 	 */
-	public List<MailingList> findAllMyList(User user);
+	List<MailingList> findAllMyList(User user);
 
-	public MailingListContact findContact(MailingList mailingList, String mail) throws BusinessException;
+	MailingListContact findContact(MailingList mailingList, String mail) throws BusinessException;
 
-	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
+	void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
 
-	public void deleteContact(MailingList mailingList, String mail) throws BusinessException;
+	void deleteContact(MailingList mailingList, String mail) throws BusinessException;
 
 	/**
 	 * Find all my list according to select visibility
@@ -91,14 +91,14 @@ public interface MailingListBusinessService {
 	 * @param isPublic
 	 * @return
 	 */
-	public List<MailingList> findAllListByVisibility(User owner, boolean isPublic);
+	List<MailingList> findAllListByVisibility(User owner, boolean isPublic);
 
 	/**
 	 * Find all list for root according to selected visibility
 	 * @param isPublic
 	 * @return
 	 */
-	public List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic);
+	List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic);
 
 	/**
 	 * Find All list according to pattern where user is owner
@@ -106,7 +106,7 @@ public interface MailingListBusinessService {
 	 * @param input
 	 * @return
 	 */
-	public List<MailingList> findAllMyListsForSearch(User user, String input);
+	List<MailingList> findAllMyListsForSearch(User user, String input);
 
 	/**
 	 * Find all user list according to pattern
@@ -114,7 +114,7 @@ public interface MailingListBusinessService {
 	 * @param input
 	 * @return
 	 */
-	public List<MailingList> findAllListByUserForSearch(User user, String input);
+	List<MailingList> findAllListByUserForSearch(User user, String input);
 
 	/**
 	 * Find all user list according to selected visibility and input
@@ -123,14 +123,14 @@ public interface MailingListBusinessService {
 	 * @param input
 	 * @return
 	 */
-	public List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input);
+	List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input);
 
 	/**
 	 * Find all list according to pattern for root
 	 * @param input
 	 * @return
 	 */
-	public List<MailingList> findAllListForAdminSearch(String input);
+	List<MailingList> findAllListForAdminSearch(String input);
 
 	/**
 	 * Find all list according to selected visibility and pattern for root
@@ -138,6 +138,6 @@ public interface MailingListBusinessService {
 	 * @param input
 	 * @return
 	 */
-	public List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input);
+	List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input);
 
 }
