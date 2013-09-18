@@ -216,12 +216,12 @@ public class Upload {
 	void cleanupRender() {
 	}
 
-    public void onPrepare() {
-        if (this.mailingLists == null) {
-            this.mailingLists = new ArrayList<MailingListVo>();
-        }
-    }
-    
+	public void onPrepare() {
+		if (this.mailingLists == null) {
+			this.mailingLists = new ArrayList<MailingListVo>();
+		}
+	}
+
 	void onValidateFromDidjeridooForm() {
 		is_submit = true;
 
@@ -397,7 +397,7 @@ public class Upload {
 		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(
 				userVo, input);
 
-		return selectModelFactory.create(lists, "identifier");
+		return selectModelFactory.create(lists, "representation");
 	}
 
 	public long getMaxFileSize() {
@@ -426,7 +426,7 @@ public class Upload {
 
 			@Override
 			public String getLabel(MailingListVo arg0) {
-				return arg0.getIdentifier();
+				return arg0.toString();
 			}
 		};
 	}
