@@ -51,7 +51,6 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
-import org.linagora.linshare.core.facade.MailingListAdminFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
@@ -88,9 +87,6 @@ public class Index {
 
 	@Inject
 	private MailingListFacade mailingListFacade;
-
-	@Inject
-	private MailingListAdminFacade mailingListAdminFacade;
 
 	@InjectComponent
 	private Grid grid;
@@ -155,7 +151,7 @@ public class Index {
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-		lists = mailingListAdminFacade.setListFromAdminSearch(loginUser, targetLists, criteriaOnSearch);
+		lists = mailingListFacade.setListFromUserSearch(loginUser, targetLists, criteriaOnSearch);
 	}
 
 	public void onSuccessFromResetForm() {

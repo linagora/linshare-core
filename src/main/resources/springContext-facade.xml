@@ -144,15 +144,9 @@
 	<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
 		<constructor-arg ref="mailingListService" />
 		<constructor-arg ref="userService" />
-		<constructor-arg ref="abstractDomainService" />
 		<constructor-arg ref="accountService" />
 	</bean>
 	
-	<bean id="mailingListAdminFacade" class="org.linagora.linshare.core.facade.impl.MailingListAdminFacadeImpl">
-		<constructor-arg ref="mailingListService" />
-		<constructor-arg ref="userService" />
-		<constructor-arg ref="abstractDomainService" />
-	</bean>
 	
 	<!-- WEB SERVICES -->
 	
