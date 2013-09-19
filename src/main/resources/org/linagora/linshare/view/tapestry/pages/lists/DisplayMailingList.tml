@@ -126,12 +126,12 @@
 			 				</t:parameter>
 			 				<t:parameter name="addRemoveCell">
 			 					<t:if t:test="isInList">
-			 						<t:actionLink t:id="deleteUser" context="[result.domainIdentifier,result.mail]"
+			 						<t:actionLink t:id="deleteUser" context="result.lsUuid"
 			 	 						title="${message:pages.lists.index.list.display.delete.button}">
 										<img src="${asset:context:images/popupImages/less.png}" alt="${message:global.button.delete}" />
 									</t:actionLink>
 			  					<p:else>
-			  						<t:actionLink t:id="addUser" context="[result.domainIdentifier,result.mail]"
+			  						<t:actionLink t:id="addUser" context="result.lsUuid"
 			 	 						title="${message:pages.lists.adduser}">
 										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.lists.adduser}" />
 									</t:actionLink>

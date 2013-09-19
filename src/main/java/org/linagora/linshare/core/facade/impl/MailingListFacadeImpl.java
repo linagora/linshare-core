@@ -124,7 +124,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	public void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactToUpdate)
 			throws BusinessException {
 		MailingList list = mailingListService.searchList(listVo.getUuid());
-		MailingListContact contact = mailingListService.retrieveContact(list, contactToUpdate.getMail());
+		MailingListContact contact = mailingListService.searchContact(list, contactToUpdate.getMail());
 		contact.setDisplay(contactToUpdate.getDisplay());
 		mailingListService.updateContact(actorVo.getLsUuid(), list, contact);
 	}
@@ -135,19 +135,19 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public MailingListContactVo retrieveContact(MailingListVo list, String mail) throws BusinessException {
+	public MailingListContactVo searchContact(MailingListVo list, String mail) throws BusinessException {
 		MailingList mailingList = mailingListService.searchList(list.getUuid());
-		return new MailingListContactVo(mailingListService.retrieveContact(mailingList, mail));
+		return new MailingListContactVo(mailingListService.searchContact(mailingList, mail));
 	}
 
 	@Override
-	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail)
+	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid)
 			throws BusinessException {
-		User selectedUser = userService.findOrCreateUser(mail, domain);
+		User selectedUser = userService.findByLsUuid(uuid);
 		if (selectedUser != null) {
 			String display = MailCompletionService.formatLabel(selectedUser.getMail(), selectedUser.getFirstName(),
 					selectedUser.getLastName(), false);
-			MailingListContact contact = new MailingListContact(mail, display);
+			MailingListContact contact = new MailingListContact(selectedUser.getMail(), display);
 			mailingListService.addNewContact(actorVo.getLsUuid(), mailingListVo.getUuid(), contact);
 		}
 	}
@@ -210,8 +210,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		return ListToListVo(lists);
 	}
 
-	@Override
-	public List<MailingListVo> performSearchForUser(UserVo loginUser, String input, String criteriaOnSearch)
+	private List<MailingListVo> performSearchList(UserVo loginUser, String input, String criteriaOnSearch)
 			throws BusinessException {
 		List<MailingList> listByVisibility = mailingListService.searchListByVisibility(loginUser.getLsUuid(),
 				criteriaOnSearch, input);
@@ -220,20 +219,20 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public List<MailingListVo> completionForUploadForm(UserVo userVo, String input) throws BusinessException {
-		return performSearchForUser(userVo, input, "all");
+		return performSearchList(userVo, input, "all");
 	}
 
 	@Override
-	public List<MailingListVo> setListFromUserSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
+	public List<MailingListVo> setListFromSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
 			throws BusinessException {
 		if (targetLists.equals("*")) {
 			return ListToListVo(mailingListService.findAllListByVisibility(loginUser.getLsUuid(), criteriaOnSearch));
 		} else {
-			return performSearchForUser(loginUser, targetLists, criteriaOnSearch);
+			return performSearchList(loginUser, targetLists, criteriaOnSearch);
 		}
 	}
 
-	public boolean checkUserIsContact(List<MailingListContactVo> contacts, String mail) {
+	public boolean userIsContact(List<MailingListContactVo> contacts, String mail) {
 
 		for (MailingListContactVo contact : contacts) {
 			if (contact.getMail().equals(mail)) {
