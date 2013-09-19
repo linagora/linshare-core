@@ -51,7 +51,6 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.AbstractDomainFacade;
-import org.linagora.linshare.core.facade.MailingListAdminFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
@@ -89,9 +88,6 @@ public class ManageMailingList {
 	private AbstractDomainFacade domainFacade;
 
 	@Inject
-	private MailingListAdminFacade mailingListAdminFacade;
-
-	@Inject
 	private UserFacade userFacade;
 
 	@InjectPage
@@ -124,16 +120,10 @@ public class ManageMailingList {
 	boolean onValidate(String newIdentifier) throws ValidationException, BusinessException {
 		if (newIdentifier != null) {
 			if (!mailingListVo.getOwner().equals(oldOwner)) {
-				String copy = mailingListFacade.checkUniqueIdentifier(mailingListVo.getOwner(), newIdentifier);
-				if (!copy.equals(newIdentifier)) {
-					return false;
-				}
+				return mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), newIdentifier);
 			} else {
 				if (!newIdentifier.equals(oldIdentifier)) {
-					String copy = mailingListFacade.checkUniqueIdentifier(mailingListVo.getOwner(), newIdentifier);
-					if (!copy.equals(newIdentifier)) {
-						return false;
-					}
+					return mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), newIdentifier);
 				}
 			}
 		}
@@ -148,19 +138,25 @@ public class ManageMailingList {
 	}
 
 	public Object onSuccess() throws BusinessException, ValidationException {
-		if (newOwner != null) {
-			if (newOwner.substring(newOwner.length() - 1).equals(">")) {
-				mailingListAdminFacade.setNewOwner(mailingListVo, newOwner);
-			} else {
-				form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"), newOwner));
-				return null;
-			}
-		}
+		// TODO : fix the interface to modify owner list (we must not uses email
+		// as unique identifier instead of uuid !!!
+
+		// if (newOwner != null) {
+		// if (newOwner.substring(newOwner.length() - 1).equals(">")) {
+		// UserVo newOwnerVo =
+		// MailCompletionService.getUserFromDisplay(newOwner);
+		// mailingListVo.setOwner(newOwnerVo);
+		// } else {
+		// form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"),
+		// newOwner));
+		// return null;
+		// }
+		// }
 
 		if (onValidate(mailingListVo.getIdentifier())) {
 			mailingListFacade.updateList(loginUser, mailingListVo);
 		} else {
-			String copy = mailingListFacade.checkUniqueIdentifier(mailingListVo.getOwner(),
+			String copy = mailingListFacade.findAvailableIdentifier(mailingListVo.getOwner(),
 					mailingListVo.getIdentifier());
 			form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"), mailingListVo
 					.getOwner().getFullName(), copy));

@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -48,7 +47,6 @@ import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
-import org.linagora.linshare.core.service.AbstractDomainService;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
@@ -57,29 +55,25 @@ import org.linagora.linshare.view.tapestry.services.impl.MailingListCompletionSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.mail.util.MailLogger;
-
 public class MailingListFacadeImpl implements MailingListFacade {
 
 	Logger logger = LoggerFactory.getLogger(MailingListFacadeImpl.class);
 	private final MailingListService mailingListService;
 	private final UserService userService;
-	private final AbstractDomainService abstractDomainService;
 	private final AccountService accountService;
 
 	public MailingListFacadeImpl(MailingListService mailingListService, UserService userService,
-			AbstractDomainService abstractDomainService, AccountService accountService) {
+			AccountService accountService) {
 		super();
 		this.mailingListService = mailingListService;
 		this.userService = userService;
-		this.abstractDomainService = abstractDomainService;
 		this.accountService = accountService;
 	}
 
 	/**
 	 * Basic operations on mailingList
 	 */
-	
+
 	@Override
 	public MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException {
 		MailingList mailingList = new MailingList(mailingListVo);
@@ -99,39 +93,36 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public List<MailingListVo> getAllMyList(UserVo user) throws BusinessException {
 		return ListToListVo(mailingListService.findAllListByOwner(user.getLsUuid()));
 	}
-	
+
 	@Override
 	public void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException {
-		MailingList mailingList = mailingListService.searchList(mailingListVo.getUuid());
-		mailingList.setDescription(mailingListVo.getDescription());
-		mailingList.setIdentifier(mailingListVo.getIdentifier());
-		mailingList.setPublic(mailingListVo.isPublic());
-		String ownerMail = mailingListVo.getOwner().getMail();
-		String ownerDomainId = mailingListVo.getOwner().getDomainIdentifier();
-		User owner = userService.findOrCreateUser(ownerMail, ownerDomainId);
-		mailingList.setOwner(owner);
-		AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomainId());
-		mailingList.setDomain(domain);
+		MailingList mailingList = new MailingList(mailingListVo);
 		mailingListService.updateList(actorVo.getLsUuid(), mailingList);
 	}
-	
+
+	@Override
+	public void updateList(UserVo actorVo, MailingListVo mailingListVo, String newOwnerUuid) throws BusinessException {
+		MailingList mailingList = new MailingList(mailingListVo);
+		mailingListService.updateList(actorVo.getLsUuid(), mailingList, newOwnerUuid);
+	}
+
 	@Override
 	public void deleteList(UserVo actorVo, String uuid) throws BusinessException {
 		mailingListService.deleteList(actorVo.getLsUuid(), uuid);
 	}
 
-	
 	/**
 	 * Basic operations on mailingListContact
 	 */
-	
+
 	@Override
-	public void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactToUpdate) throws BusinessException {
+	public void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactToUpdate)
+			throws BusinessException {
 		MailingList list = mailingListService.searchList(listVo.getUuid());
 		MailingListContact contact = mailingListService.retrieveContact(list, contactToUpdate.getMail());
 		contact.setDisplay(contactToUpdate.getDisplay());
@@ -167,23 +158,27 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		MailingListContact contact = new MailingListContact(contactVo);
 		mailingListService.addNewContact(actorVo.getLsUuid(), mailingListVo.getUuid(), contact);
 	}
-	
-	
+
 	/**
 	 * Helpers
 	 */
-	
+
 	@Override
-	public String checkUniqueIdentifier(UserVo user, String value) throws BusinessException {
-		List<MailingListVo> list = getAllMyList(user);
+	public boolean identifierIsAvailable(UserVo user, String purposedIdentifier) {
+		if (mailingListService.findByIdentifier(user.getLsUuid(), purposedIdentifier) == null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public String findAvailableIdentifier(UserVo user, String value) {
 		int i = 1;
 		String copy = value;
-
-		for (MailingListVo mailingListVo : list) {
-			while (mailingListVo.getIdentifier().equals(copy)) {
-				copy = value + i;
-				i++;
-			}
+		while (identifierIsAvailable(user, copy) == false) {
+			copy = value + i;
+			i++;
 		}
 		return copy;
 	}
@@ -298,8 +293,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		List<UserVo> finalResults = new ArrayList<UserVo>();
 		User owner = (User) accountService.findByLsUuid(userVo.getLogin());
 		if (input != null) {
-				results = performSearchUser(owner, input);
-				
+			results = performSearchUser(owner, input);
+
 			for (User currentUser : results) {
 				if (!(currentUser.equals(owner))) {
 					finalResults.add(new UserVo(currentUser));

@@ -43,61 +43,61 @@ import org.linagora.linshare.core.exception.BusinessException;
 public interface MailingListService {
 
 	/**
+	 * Basic operations on mailingList
+	 */
+
+	/**
 	 * 
-	 * @param actorUuid : actor
-	 * @param ownerUuid : list owner 
-	 * @param mailingList : mailing list to be created
+	 * @param actorUuid
+	 *            : actor
+	 * @param ownerUuid
+	 *            : list owner
+	 * @param mailingList
+	 *            : mailing list to be created
 	 * @return Mailing list created
-	 * @throws BusinessException : could be raised if list already exists or you are not authorized. 
+	 * @throws BusinessException
+	 *             : could be raised if list already exists or you are not
+	 *             authorized.
 	 */
 	MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException;
 
 	void deleteList(String actorUuid, String mailingListUuid) throws BusinessException;
 
+	/**
+	 * 
+	 * @param actorUuid
+	 * @param listToUpdate
+	 * @param newOwnerUuid
+	 *            : this parameter could be null if not modified
+	 * @throws BusinessException
+	 */
+	void updateList(String actorUuid, MailingList listToUpdate, String newOwnerUuid) throws BusinessException;
+
 	void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
-	
+
 	MailingList searchList(String uuid) throws BusinessException;
 
 	/**
-	 * Find all list (private and public) of the selected user 
+	 * Find all list (private and public) of the selected user
+	 * 
 	 * @param user
 	 * @return
 	 */
 	List<MailingList> findAllListByUser(String userUuid);
 
-	
+	public MailingList findByIdentifier(String ownerUuid, String identifier);
 
 	/**
-	 * Add contact to list
-	 * @param actor
-	 * @param mailingListUuid
-	 * @param contact
-	 * @throws BusinessException
-	 */
-	void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact) throws BusinessException;
-
-	/**
-	 * Find all list of the user 
+	 * Find all list of the user
+	 * 
 	 * @param user
 	 * @return
 	 */
 	List<MailingList> findAllListByOwner(String ownerUuid);
 
-	MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
-
-
-	/**
-	 * retrieving all list from repository. Method allowed only for Root.
-	 * 
-	 * @param actor
-	 * @param criteriaOnSearch
-	 *            : could be "public", "private" or "all"
-	 * @return list of MailingList objects.
-	 */
-	List<MailingList> findAllListByVisibilityForAdmin(String userUuid, String criteriaOnSearch);
-
 	/**
 	 * find list of result according to visibility selected and pattern
+	 * 
 	 * @param actor
 	 * @param criteriaOnSearch
 	 * @param pattern
@@ -107,6 +107,7 @@ public interface MailingListService {
 
 	/**
 	 * Find all user list of the selected visibility
+	 * 
 	 * @param user
 	 * @param criteriaOnSearch
 	 * @return
@@ -114,14 +115,23 @@ public interface MailingListService {
 	List<MailingList> findAllListByVisibility(String actorUuid, String criteriaOnSearch);
 
 	/**
-	 * Find all list of the selected visibility
-	 * @param criteriaOnSearch
-	 * @param input
-	 * @return
+	 * Basic operations on mailingListContact
 	 */
-	List<MailingList> findAllListByVisibilityForAdminSearch(String criteriaOnSearch, String input);
+
+	/**
+	 * Add contact to list
+	 * 
+	 * @param actor
+	 * @param mailingListUuid
+	 * @param contact
+	 * @throws BusinessException
+	 */
+	void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact) throws BusinessException;
+
+	MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException;
 
 	void deleteContact(String ownerUuid, String listUuid, String mail) throws BusinessException;
 
 	void updateContact(String ownerUuid, MailingList list, MailingListContact contactToUpdate) throws BusinessException;
+
 }

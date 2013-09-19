@@ -70,7 +70,7 @@ public class MailingList {
 	private AbstractDomain domain;
 
 	// List of contacts.
-	private List<MailingListContact> mailingListContact;
+	private List<MailingListContact> mailingListContact = new ArrayList<MailingListContact>();
 	
 	protected Date creationDate;
 	
@@ -98,14 +98,8 @@ public class MailingList {
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
-		if (!list.getContacts().isEmpty()) {
-			if (mailingListContact == null) {
-				mailingListContact = new ArrayList<MailingListContact>();
-			}
-
-			for (MailingListContactVo current : list.getContacts()) {
-				mailingListContact.add(new MailingListContact(current));
-			}
+		for (MailingListContactVo current : list.getContacts()) {
+			mailingListContact.add(new MailingListContact(current));
 		}
 	}
 
@@ -232,5 +226,14 @@ public class MailingList {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Set a new owner to the current list
+	 * @param owner
+	 */
+	public void setNewOwner(User owner) {
+		setOwner(owner);
+		setDomain(owner.getDomain());
 	}
 }

@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.Import;
@@ -124,14 +123,7 @@ public class Index {
 			targetLists = "*";
 		}
 		if (inSearch == false && fromCreate == false) {
-			List<MailingListVo> finalList = mailingListFacade.getAllMyList(loginUser);
-			lists = new ArrayList<MailingListVo>();
-
-			for (MailingListVo current : finalList) {
-				if (current.isPublic() == false) {
-					lists.add(current);
-				}
-			}
+			lists = mailingListFacade.getAllMyList(loginUser);
 		}
 		if (fromCreate == true) {
 			lists = mailingListFacade.getAllMyList(loginUser);

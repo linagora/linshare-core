@@ -34,8 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
-import java.util.ArrayList;
-
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
@@ -48,7 +46,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
-import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -152,8 +149,8 @@ public class ManageMailingList {
 			}
 		}
 		if (!value.equals(oldIdentifier)) {
-			String copy = mailingListFacade.checkUniqueIdentifier(loginUser, value);
-			if (!copy.equals(value)) {
+			if (!mailingListFacade.identifierIsAvailable(loginUser, value)) {
+				String copy = mailingListFacade.findAvailableIdentifier(loginUser, value);
 				throw new ValidationException(String.format(messages.get("pages.lists.manageList.identifierExist"),
 						copy));
 			}
@@ -175,7 +172,6 @@ public class ManageMailingList {
 			index.setFromCreate(false);
 		} else {
 			// TODO : Check if list already exists.
-			mailingList.setContacts(new ArrayList<MailingListContactVo>());
 			mailingListFacade.createList(loginUser, mailingList);
 			index.setFromCreate(true);
 		}

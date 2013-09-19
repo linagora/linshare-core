@@ -38,28 +38,28 @@ import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.User;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface MailingListRepository extends AbstractRepository<MailingList> {
 
 	MailingList findByUuid(String uuid);
 
-	List<MailingList> findAllListWhereOwner(User user);
-
 	MailingList findByIdentifier(User owner, String identifier);
+
+	List<MailingList> findAllListWhereOwner(User user);
 
 	List<MailingList> findAllMyList(User user);
 
-	List<MailingList> findByVisibility(User user, boolean isPublic);
+	List<MailingList> searchListByVisibility(User user, boolean isPublic);
 
-	List<MailingList> findByVisibilityForAdmin(boolean isPublic);
+	List<MailingList> searchListWithInput(User user, String input);
 
-	List<MailingList> findAllMyListForSearch(User user, String input);
+	List<MailingList> searchMyListWithInput(User user, String input);
 
-	List<MailingList> findAllListWhereOwnerForSearch(User user, String input);
+	List<MailingList> searchWithInputByVisibility(User user, boolean isPublic, String input);
+	
+	MailingList update(MailingList entity) throws BusinessException;
+	
+	MailingList create(MailingList entity) throws BusinessException;
 
-	List<MailingList> findByVisibilityForSearch(User user, boolean isPublic, String input);
-
-	List<MailingList> findAllForAdminSearch(String input);
-
-	List<MailingList> findByVisibilityForAdminSearch(boolean isPublic, String input);
 }

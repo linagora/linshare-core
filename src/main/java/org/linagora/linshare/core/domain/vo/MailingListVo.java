@@ -47,7 +47,7 @@ public class MailingListVo {
 	private boolean isPublic;
 	private UserVo owner;
 	private String domainId;
-	private List<MailingListContactVo> contacts;
+	private List<MailingListContactVo> contacts = new ArrayList<MailingListContactVo>();
 	private String uuid;
 	
 
@@ -62,7 +62,6 @@ public class MailingListVo {
 		this.isPublic = list.isPublic();
 		this.owner = new UserVo(list.getOwner());
 		this.domainId = list.getDomain().getIdentifier();
-		contacts = new ArrayList<MailingListContactVo>();
 		
 		for(MailingListContact current : list.getMailingListContact()) {
 			contacts.add(new MailingListContactVo(current));

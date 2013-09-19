@@ -42,19 +42,26 @@ import java.util.List;
 public interface MailingListBusinessService {
 
 	/**
+	 * Mailing list management.
+	 */
+
+	MailingList createList(MailingList mailingList, User owner) throws BusinessException;
+
+	/**
 	 * Find a mailing list by its uuid.
+	 * 
 	 * @param uuid
 	 * @return
-	 * @throws BusinessException if not found.
+	 * @throws BusinessException
+	 *             if not found.
 	 */
 	MailingList findByUuid(String uuid) throws BusinessException;
-	
-	MailingList createList(MailingList mailingList, User owner) throws BusinessException;
 
 	List<MailingList> findAllList();
 
 	/**
 	 * Find all list of the selected user (private and public)
+	 * 
 	 * @param user
 	 * @return
 	 */
@@ -63,30 +70,20 @@ public interface MailingListBusinessService {
 	void deleteList(String uuid) throws BusinessException;
 
 	void updateList(MailingList mailingList) throws BusinessException;
-	
-	/**
-	 * Add contact to list
-	 * @param mailingList
-	 * @param contact
-	 * @throws BusinessException
-	 */
-	void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
 
 	/**
 	 * Find all list where user is owner
+	 * 
 	 * @param user
 	 * @return
 	 */
 	List<MailingList> findAllMyList(User user);
 
-	MailingListContact findContact(MailingList mailingList, String mail) throws BusinessException;
-
-	void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
-
-	void deleteContact(MailingList mailingList, String mail) throws BusinessException;
+	public MailingList findByIdentifier(User owner, String identifier);
 
 	/**
 	 * Find all my list according to select visibility
+	 * 
 	 * @param owner
 	 * @param isPublic
 	 * @return
@@ -94,14 +91,8 @@ public interface MailingListBusinessService {
 	List<MailingList> findAllListByVisibility(User owner, boolean isPublic);
 
 	/**
-	 * Find all list for root according to selected visibility
-	 * @param isPublic
-	 * @return
-	 */
-	List<MailingList> findAllListByVisibilityForAdmin(boolean isPublic);
-
-	/**
 	 * Find All list according to pattern where user is owner
+	 * 
 	 * @param user
 	 * @param input
 	 * @return
@@ -110,6 +101,7 @@ public interface MailingListBusinessService {
 
 	/**
 	 * Find all user list according to pattern
+	 * 
 	 * @param user
 	 * @param input
 	 * @return
@@ -118,6 +110,7 @@ public interface MailingListBusinessService {
 
 	/**
 	 * Find all user list according to selected visibility and input
+	 * 
 	 * @param owner
 	 * @param isPublic
 	 * @param input
@@ -126,18 +119,22 @@ public interface MailingListBusinessService {
 	List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input);
 
 	/**
-	 * Find all list according to pattern for root
-	 * @param input
-	 * @return
+	 * Mailing listContact management.
 	 */
-	List<MailingList> findAllListForAdminSearch(String input);
+
+	MailingListContact findContact(MailingList mailingList, String mail) throws BusinessException;
+
+	void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
+
+	void deleteContact(MailingList mailingList, String mail) throws BusinessException;
 
 	/**
-	 * Find all list according to selected visibility and pattern for root
-	 * @param isPublic
-	 * @param input
-	 * @return
+	 * Add contact to list
+	 * 
+	 * @param mailingList
+	 * @param contact
+	 * @throws BusinessException
 	 */
-	List<MailingList> findAllListByVisibilityForAdminSearch(boolean isPublic, String input);
+	void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
 
 }
