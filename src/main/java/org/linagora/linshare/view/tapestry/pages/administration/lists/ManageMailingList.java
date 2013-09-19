@@ -117,19 +117,6 @@ public class ManageMailingList {
 		return mailingListFacade.completionOnUsers(loginUser, input);
 	}
 
-	boolean onValidate(String newIdentifier) throws ValidationException, BusinessException {
-		if (newIdentifier != null) {
-			if (!mailingListVo.getOwner().equals(oldOwner)) {
-				return mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), newIdentifier);
-			} else {
-				if (!newIdentifier.equals(oldIdentifier)) {
-					return mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), newIdentifier);
-				}
-			}
-		}
-		return true;
-	}
-
 	public Object onActionFromCancel() {
 		mailingListVo = null;
 		oldIdentifier = null;
@@ -153,7 +140,7 @@ public class ManageMailingList {
 		// }
 		// }
 
-		if (onValidate(mailingListVo.getIdentifier())) {
+		if (mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), mailingListVo.getIdentifier())) {
 			mailingListFacade.updateList(loginUser, mailingListVo);
 		} else {
 			String copy = mailingListFacade.findAvailableIdentifier(mailingListVo.getOwner(),

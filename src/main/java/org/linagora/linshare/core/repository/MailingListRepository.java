@@ -57,9 +57,9 @@ public interface MailingListRepository extends AbstractRepository<MailingList> {
 	List<MailingList> searchMyListWithInput(User user, String input);
 
 	List<MailingList> searchWithInputByVisibility(User user, boolean isPublic, String input);
-	
+
 	MailingList update(MailingList entity) throws BusinessException;
-	
+
 	MailingList create(MailingList entity) throws BusinessException;
 
 }
