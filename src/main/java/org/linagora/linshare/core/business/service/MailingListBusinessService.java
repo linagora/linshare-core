@@ -53,7 +53,7 @@ public interface MailingListBusinessService {
 	 * @param uuid
 	 * @return
 	 * @throws BusinessException
-	 *             if not found.
+	 * if not found.
 	 */
 	MailingList findByUuid(String uuid) throws BusinessException;
 
@@ -97,7 +97,7 @@ public interface MailingListBusinessService {
 	 * @param input
 	 * @return
 	 */
-	List<MailingList> findAllMyListsForSearch(User user, String input);
+	List<MailingList> searchMyLists(User user, String input);
 
 	/**
 	 * Find all user list according to pattern
@@ -106,7 +106,7 @@ public interface MailingListBusinessService {
 	 * @param input
 	 * @return
 	 */
-	List<MailingList> findAllListByUserForSearch(User user, String input);
+	List<MailingList> searchListByUser(User user, String input);
 
 	/**
 	 * Find all user list according to selected visibility and input
@@ -116,7 +116,7 @@ public interface MailingListBusinessService {
 	 * @param input
 	 * @return
 	 */
-	List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input);
+	List<MailingList> searchListByVisibility(User owner, boolean isPublic, String input);
 
 	/**
 	 * Mailing listContact management.

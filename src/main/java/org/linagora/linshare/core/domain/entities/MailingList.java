@@ -49,31 +49,31 @@ public class MailingList {
 	private long persistenceId;
 
 	/**
-	 * Application identifier 
+	 * Application identifier
 	 */
 	private String uuid;
-	
+
 	/**
 	 * User identifier
 	 */
 	private String identifier;
-	
+
 	private String description;
-	
+
 	/**
 	 * Visibility : could be private (visible by the owner only) or public.
 	 */
 	private boolean isPublic;
-	
+
 	private User owner;
-	
+
 	private AbstractDomain domain;
 
 	// List of contacts.
 	private List<MailingListContact> mailingListContact = new ArrayList<MailingListContact>();
-	
+
 	protected Date creationDate;
-	
+
 	protected Date modificationDate;
 
 	public MailingList() {
@@ -174,7 +174,7 @@ public class MailingList {
 	public List<MailingListContact> getMailingListContact() {
 		return mailingListContact;
 	}
-	
+
 	public void setMailingListContact(List<MailingListContact> mailingListContact) {
 		this.mailingListContact = mailingListContact;
 	}
@@ -194,22 +194,23 @@ public class MailingList {
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 	}
-	
+
 	/**
 	 * Helpers.
 	 */
-	
 
 	/**
 	 * Add a new contact to the mailing list contacts.
+	 * 
 	 * @param contact
 	 */
 	public void addMailingListContact(MailingListContact contact) {
 		mailingListContact.add(contact);
 	}
-	
+
 	/**
 	 * remove a contact from the mailing list contacts.
+	 * 
 	 * @param contact
 	 */
 	public void deleteMailingListContact(MailingListContact contact) {
@@ -218,11 +219,12 @@ public class MailingList {
 
 	/**
 	 * Check if the actor parameter is the owner of the mailing list.
+	 * 
 	 * @param account
 	 * @return
 	 */
 	public boolean isOwner(Account account) {
-		if(account.getLsUuid().equals(getOwner().getLsUuid())) {
+		if (account.getLsUuid().equals(getOwner().getLsUuid())) {
 			return true;
 		}
 		return false;
@@ -230,6 +232,7 @@ public class MailingList {
 
 	/**
 	 * Set a new owner to the current list
+	 * 
 	 * @param owner
 	 */
 	public void setNewOwner(User owner) {

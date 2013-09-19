@@ -49,7 +49,6 @@ public class MailingListVo {
 	private String domainId;
 	private List<MailingListContactVo> contacts = new ArrayList<MailingListContactVo>();
 	private String uuid;
-	
 
 	public MailingListVo() {
 	}
@@ -62,14 +61,14 @@ public class MailingListVo {
 		this.isPublic = list.isPublic();
 		this.owner = new UserVo(list.getOwner());
 		this.domainId = list.getDomain().getIdentifier();
-		
-		for(MailingListContact current : list.getMailingListContact()) {
+
+		for (MailingListContact current : list.getMailingListContact()) {
 			contacts.add(new MailingListContactVo(current));
 		}
 	}
 
 	public MailingListVo(MailingListVo list) {
-		this.uuid= list.getUuid();
+		this.uuid = list.getUuid();
 		this.identifier = list.getIdentifier();
 		this.description = list.getDescription();
 		this.isPublic = list.isPublic();
@@ -78,9 +77,8 @@ public class MailingListVo {
 		this.contacts = list.getContacts();
 	}
 
-	public MailingListVo(String uuid, String identifier, String description,
-			boolean isPublic, UserVo owner, String domain,
-			List<MailingListContactVo> mails) {
+	public MailingListVo(String uuid, String identifier, String description, boolean isPublic, UserVo owner,
+			String domain, List<MailingListContactVo> mails) {
 		this.uuid = uuid;
 		this.identifier = identifier;
 		this.description = description;
@@ -133,7 +131,7 @@ public class MailingListVo {
 	public List<MailingListContactVo> getContacts() {
 		return contacts;
 	}
-	
+
 	public void addContact(MailingListContactVo contact) {
 		contacts.add(contact);
 	}
@@ -149,11 +147,11 @@ public class MailingListVo {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-	
+
 	public String getRepresentation() {
 		return identifier + " (" + owner.getCompleteName() + ")";
 	}
-	
+
 	@Override
 	public String toString() {
 		return getRepresentation();

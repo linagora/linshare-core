@@ -71,10 +71,10 @@ public class MailingListServiceImpl implements MailingListService {
 		Assert.notNull(actorUuid);
 		Assert.notNull(ownerUuid);
 		Assert.notNull(mailingList);
-		
+
 		User actor = userService.findByLsUuid(actorUuid);
 		User owner = userService.findByLsUuid(ownerUuid);
-		
+
 		if (!actor.isSuperAdmin()) {
 			return mailingListBusinessService.createList(mailingList, owner);
 		} else {
@@ -106,7 +106,7 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibilityForSearch(String ownerUuid, String criteriaOnSearch, String pattern) {
+	public List<MailingList> searchListByVisibility(String ownerUuid, String criteriaOnSearch, String pattern) {
 		Assert.notNull(ownerUuid);
 		Assert.notNull(criteriaOnSearch);
 		Assert.notNull(pattern);
@@ -115,15 +115,15 @@ public class MailingListServiceImpl implements MailingListService {
 		User actor = userService.findByLsUuid(ownerUuid);
 
 		if (criteriaOnSearch.equals("all")) {
-			return mailingListBusinessService.findAllListByUserForSearch(actor, pattern);
+			return mailingListBusinessService.searchListByUser(actor, pattern);
 		} else if (criteriaOnSearch.equals("allMyLists")) {
-			return mailingListBusinessService.findAllMyListsForSearch(actor, pattern);
+			return mailingListBusinessService.searchMyLists(actor, pattern);
 		} else if (criteriaOnSearch.equals("public")) {
 			isPublic = true;
 		} else {
 			isPublic = false;
 		}
-		return mailingListBusinessService.findAllListByVisibilityForSearch(actor, isPublic, pattern);
+		return mailingListBusinessService.searchListByVisibility(actor, isPublic, pattern);
 	}
 
 	@Override

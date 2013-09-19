@@ -103,7 +103,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibilityForSearch(User owner, boolean isPublic, String input) {
+	public List<MailingList> searchListByVisibility(User owner, boolean isPublic, String input) {
 		return listRepository.searchWithInputByVisibility(owner, isPublic, input);
 	}
 
@@ -113,12 +113,12 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public List<MailingList> findAllMyListsForSearch(User user, String input) {
+	public List<MailingList> searchMyLists(User user, String input) {
 		return listRepository.searchMyListWithInput(user, input);
 	}
 
 	@Override
-	public List<MailingList> findAllListByUserForSearch(User user, String input) {
+	public List<MailingList> searchListByUser(User user, String input) {
 		return listRepository.searchListWithInput(user, input);
 	}
 

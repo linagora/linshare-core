@@ -103,7 +103,7 @@ public interface MailingListService {
 	 * @param pattern
 	 * @return
 	 */
-	List<MailingList> findAllListByVisibilityForSearch(String actorUuid, String criteriaOnSearch, String pattern);
+	List<MailingList> searchListByVisibility(String actorUuid, String criteriaOnSearch, String pattern);
 
 	/**
 	 * Find all user list of the selected visibility

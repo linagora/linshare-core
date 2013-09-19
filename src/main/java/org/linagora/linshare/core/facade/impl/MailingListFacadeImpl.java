@@ -213,14 +213,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	@Override
 	public List<MailingListVo> performSearchForUser(UserVo loginUser, String input, String criteriaOnSearch)
 			throws BusinessException {
-		List<MailingList> listByVisibility = mailingListService.findAllListByVisibilityForSearch(loginUser.getLsUuid(),
+		List<MailingList> listByVisibility = mailingListService.searchListByVisibility(loginUser.getLsUuid(),
 				criteriaOnSearch, input);
 		return ListToListVo(listByVisibility);
 	}
-	
+
 	@Override
-	public List<MailingListVo> completionForUploadForm(UserVo userVo,
-			String input) throws BusinessException {
+	public List<MailingListVo> completionForUploadForm(UserVo userVo, String input) throws BusinessException {
 		return performSearchForUser(userVo, input, "all");
 	}
 
