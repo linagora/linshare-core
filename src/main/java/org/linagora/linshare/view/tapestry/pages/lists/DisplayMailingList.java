@@ -136,7 +136,7 @@ public class DisplayMailingList {
 
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.lists.Index index;
-
+	
 	@SetupRender
 	public void init() throws BusinessException {
 		if (!mailingListVo.getContacts().isEmpty()) {
@@ -190,7 +190,7 @@ public class DisplayMailingList {
 		String display = MailCompletionService.formatLabel(mail, firstName, lastName, false);
 		if (inModify == true) {
 			if (!fromReset) {
-				MailingListContactVo contact = mailingListFacade.retrieveContact(mailingListVo, oldEmail);
+				MailingListContactVo contact = mailingListFacade.searchContact(mailingListVo, oldEmail);
 				contact.setDisplay(display);
 				contact.setMail(mail);
 				mailingListFacade.updateContact(loginUser, mailingListVo, contact);
@@ -220,19 +220,19 @@ public class DisplayMailingList {
 	}
 
 	public boolean getIsInList() throws BusinessException {
-		return mailingListFacade.checkUserIsContact(mailingListVo.getContacts(), result.getMail());
+		return mailingListFacade.userIsContact(mailingListVo.getContacts(), result.getMail());
 	}
 
 	public boolean getUserIsOwner() {
 		return loginUser.equals(mailingListVo.getOwner());
 	}
 
-	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
-		mailingListFacade.addUserToList(loginUser, mailingListVo, domain, mail);
+	public void onActionFromAddUser(String lsUuid) throws BusinessException {
+		mailingListFacade.addUserToList(loginUser, mailingListVo, lsUuid);
 		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 	}
 
-	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {
+	public void onActionFromDeleteUser(String mail) throws BusinessException {
 		mailingListFacade.deleteContact(loginUser, mailingListVo, mail);
 		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 	}

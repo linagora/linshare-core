@@ -228,7 +228,7 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public MailingListContact retrieveContact(MailingList mailingList, String mail) throws BusinessException {
+	public MailingListContact searchContact(MailingList mailingList, String mail) throws BusinessException {
 		Assert.notNull(mail);
 
 		return mailingListBusinessService.findContact(mailingList, mail);

@@ -151,7 +151,7 @@ public class Index {
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
-		lists = mailingListFacade.setListFromUserSearch(loginUser, targetLists, criteriaOnSearch);
+		lists = mailingListFacade.setListFromSearch(loginUser, targetLists, criteriaOnSearch);
 	}
 
 	public void onSuccessFromResetForm() {

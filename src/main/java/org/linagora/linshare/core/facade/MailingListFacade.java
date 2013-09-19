@@ -67,7 +67,7 @@ public interface MailingListFacade {
 
 	void deleteContact(UserVo actorVo, MailingListVo listVo, String mail) throws BusinessException;
 
-	MailingListContactVo retrieveContact(MailingListVo list, String mail) throws BusinessException;
+	MailingListContactVo searchContact(MailingListVo list, String mail) throws BusinessException;
 
 	/**
 	 * Add user to mailing list
@@ -79,7 +79,7 @@ public interface MailingListFacade {
 	 *             list doesn't exist or user doesn't have rights to create
 	 *             contact
 	 */
-	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String domain, String mail)
+	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid)
 			throws BusinessException;
 
 	/**
@@ -96,18 +96,6 @@ public interface MailingListFacade {
 			throws BusinessException;
 
 	/**
-	 * provide completions to search a list for user
-	 * 
-	 * @param loginUser
-	 * @param input
-	 * @param criteriaOnSearch
-	 * @return
-	 * @throws BusinessException
-	 */
-	public List<MailingListVo> performSearchForUser(UserVo loginUser, String input, String criteriaOnSearch)
-			throws BusinessException;
-
-	/**
 	 * Set list of results from search
 	 * 
 	 * @param loginUser
@@ -117,7 +105,7 @@ public interface MailingListFacade {
 	 * @throws BusinessException
 	 *             list doesn't exist
 	 */
-	List<MailingListVo> setListFromUserSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
+	List<MailingListVo> setListFromSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
 			throws BusinessException;
 
 	/**
@@ -127,7 +115,7 @@ public interface MailingListFacade {
 	 * @param mail
 	 * @return
 	 */
-	boolean checkUserIsContact(List<MailingListContactVo> contacts, String mail);
+	boolean userIsContact(List<MailingListContactVo> contacts, String mail);
 
 	/**
 	 * Provide completion for user search
