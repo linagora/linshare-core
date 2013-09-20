@@ -67,27 +67,6 @@ public class MailingListVo {
 		}
 	}
 
-	public MailingListVo(MailingListVo list) {
-		this.uuid = list.getUuid();
-		this.identifier = list.getIdentifier();
-		this.description = list.getDescription();
-		this.isPublic = list.isPublic();
-		this.owner = list.getOwner();
-		this.domainId = list.getDomainId();
-		this.contacts = list.getContacts();
-	}
-
-	public MailingListVo(String uuid, String identifier, String description, boolean isPublic, UserVo owner,
-			String domain, List<MailingListContactVo> mails) {
-		this.uuid = uuid;
-		this.identifier = identifier;
-		this.description = description;
-		this.isPublic = isPublic;
-		this.owner = owner;
-		this.domainId = domain;
-		this.contacts = mails;
-	}
-
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -182,4 +161,35 @@ public class MailingListVo {
 		return true;
 	}
 
+	
+	/**
+	 * Helpers
+	 */
+
+	/**
+	 * Check if user is in mailing list
+	 * 
+	 * @param contacts
+	 * @param mail
+	 * @return
+	 */
+	public boolean isAlreadyAContact(MailingListContactVo contact) {
+		return isAlreadyAContact(contact.getMail());
+	}
+
+	/**
+	 * Check if user is in mailing list
+	 * 
+	 * @param contacts
+	 * @param mail
+	 * @return
+	 */
+	public boolean isAlreadyAContact(String mail) {
+		for (MailingListContactVo contact : contacts) {
+			if (contact.getMail().equals(mail)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

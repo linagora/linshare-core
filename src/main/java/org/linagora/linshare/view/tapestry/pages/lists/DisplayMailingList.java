@@ -220,7 +220,7 @@ public class DisplayMailingList {
 	}
 
 	public boolean getIsInList() throws BusinessException {
-		return mailingListFacade.userIsContact(mailingListVo.getContacts(), result.getMail());
+		return mailingListVo.isAlreadyAContact(result.getMail());
 	}
 
 	public boolean getUserIsOwner() {

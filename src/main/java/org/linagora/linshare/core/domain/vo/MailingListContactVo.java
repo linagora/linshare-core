@@ -5,7 +5,14 @@ import org.linagora.linshare.core.domain.entities.MailingListContact;
 public class MailingListContactVo {
 
 	private String mail;
+	
 	private String display;
+	
+	private String uuid;
+	
+	private String firstName;
+	
+	private String lastName;
 
 	public MailingListContactVo() {
 	}
@@ -13,6 +20,9 @@ public class MailingListContactVo {
 	public MailingListContactVo(MailingListContactVo mailingListContact) {
 		this.mail = mailingListContact.getMail();
 		this.display = mailingListContact.getDisplay();
+		this.uuid = mailingListContact.getUuid();
+		this.lastName = mail;
+		this.firstName = mail;
 	}
 
 	public MailingListContactVo(MailingListContact mail) {
@@ -43,5 +53,29 @@ public class MailingListContactVo {
 
 	public void setDisplay(String display) {
 		this.display = display;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 }

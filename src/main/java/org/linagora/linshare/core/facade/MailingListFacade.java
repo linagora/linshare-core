@@ -66,6 +66,9 @@ public interface MailingListFacade {
 			throws BusinessException;
 
 	void deleteContact(UserVo actorVo, MailingListVo listVo, String mail) throws BusinessException;
+	
+	void deleteContact(UserVo actorVo, String contactUuid) throws BusinessException;
+	
 
 	MailingListContactVo searchContact(MailingListVo list, String mail) throws BusinessException;
 
@@ -107,15 +110,6 @@ public interface MailingListFacade {
 	 */
 	List<MailingListVo> setListFromSearch(UserVo loginUser, String targetLists, String criteriaOnSearch)
 			throws BusinessException;
-
-	/**
-	 * Check if user is in mailing list
-	 * 
-	 * @param contacts
-	 * @param mail
-	 * @return
-	 */
-	boolean userIsContact(List<MailingListContactVo> contacts, String mail);
 
 	/**
 	 * Provide completion for user search
