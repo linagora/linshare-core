@@ -133,6 +133,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	public void deleteContact(UserVo actorVo, MailingListVo listVo, String mail) throws BusinessException {
 		mailingListService.deleteContact(actorVo.getLsUuid(), listVo.getUuid(), mail);
 	}
+	
+
+	@Override
+	public void deleteContact(UserVo actorVo, String contactUuid) throws BusinessException {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public MailingListContactVo searchContact(MailingListVo list, String mail) throws BusinessException {
@@ -230,16 +237,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		} else {
 			return performSearchList(loginUser, targetLists, criteriaOnSearch);
 		}
-	}
-
-	public boolean userIsContact(List<MailingListContactVo> contacts, String mail) {
-
-		for (MailingListContactVo contact : contacts) {
-			if (contact.getMail().equals(mail)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override

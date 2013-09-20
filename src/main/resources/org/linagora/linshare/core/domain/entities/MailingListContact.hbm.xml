@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<hibernate-mapping default-access="field" package="org.linagora.linshare.core.domain.entities">
+<hibernate-mapping package="org.linagora.linshare.core.domain.entities">
 
-<class name="MailingListContact" table="mailing_list_contact" lazy="false" discriminator-value= "-1">
+	<class name="MailingListContact" table="mailing_list_contact" lazy="false" discriminator-value="-1">
 
 		<id name="persistenceId" type="long">
-			<column name="id" not-null="true"/>
+			<column name="id" not-null="true" />
 			<generator class="native" />
 		</id>
-		<property access="field" name="mail" column="mail" type="string" length="255" not-null="true" lazy="false"/>
-		<property access="field" name="display" column="display" type="string" length="255" not-null="true" lazy="false"/>
-		</class>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
+		<property name="mail" column="mail" type="string" length="255" not-null="true" lazy="false" />
+		<property name="display" column="display" type="string" length="255" not-null="true" lazy="false" />
+	</class>
 </hibernate-mapping>

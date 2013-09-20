@@ -192,14 +192,20 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	@Override
 	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException {
 		MailingListContact contact = findContact(list, contactToUpdate.getMail());
-		contact.setMails(contactToUpdate.getMail());
+//		contact.setMails(contactToUpdate.getMail());
+		//TODO  FMA : HACK 2013.09.19
 		contact.setDisplay(contactToUpdate.getDisplay());
 		contactRepository.update(contact);
 	}
 
 	@Override
 	public void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException {
-		mailingList.addMailingListContact(contact);
-		listRepository.update(mailingList);
+		if(!mailingList.getMailingListContact().contains(contact)) {
+			mailingList.addMailingListContact(contact);
+			contactRepository.create(contact);
+			listRepository.update(mailingList);
+		} else {
+			logger.debug("Concact already present : "  + contact.getMail());
+		}
 	}
 }

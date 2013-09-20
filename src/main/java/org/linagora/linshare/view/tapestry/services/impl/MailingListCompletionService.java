@@ -61,6 +61,8 @@ public class MailingListCompletionService {
 	}
 
 	public static List<String> parseLists(final String recipientsList) {
+		if(recipientsList == null) 
+			return new ArrayList<String>();
 		String[] recipients = recipientsList.split(",");
 		ArrayList<String> lists = new ArrayList<String>();
 
