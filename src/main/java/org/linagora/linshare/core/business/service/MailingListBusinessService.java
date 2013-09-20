@@ -53,7 +53,7 @@ public interface MailingListBusinessService {
 	 * @param uuid
 	 * @return
 	 * @throws BusinessException
-	 * if not found.
+	 *             if not found.
 	 */
 	MailingList findListByUuid(String uuid) throws BusinessException;
 
@@ -121,7 +121,6 @@ public interface MailingListBusinessService {
 	/**
 	 * Mailing listContact management.
 	 */
-	
 
 	void deleteContact(MailingList mailingList, String mail) throws BusinessException;
 

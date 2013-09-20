@@ -217,7 +217,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 			contactRepository.create(contact);
 			listRepository.update(mailingList);
 		} else {
-			logger.debug("Concact already present : "  + contact.getMail());
+			logger.debug("Concact already present : " + contact.getMail());
 		}
 	}
 }
