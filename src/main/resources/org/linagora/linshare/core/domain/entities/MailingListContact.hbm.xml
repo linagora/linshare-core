@@ -10,6 +10,9 @@
 		</id>
 		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
 		<property name="mail" column="mail" type="string" length="255" not-null="true" lazy="false" />
-		<property name="display" column="display" type="string" length="255" not-null="true" lazy="false" />
+		<property name="creationDate" column="creation_date" type="timestamp" length="29" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false" />
+		<property name="lastName" column="lastname" type="string" length="255" lazy="false" />
+		<property name="firstName" column="firstname" type="string" length="255" lazy="false" />
 	</class>
 </hibernate-mapping>

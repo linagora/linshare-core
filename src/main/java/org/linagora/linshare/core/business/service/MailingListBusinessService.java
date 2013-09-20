@@ -55,7 +55,7 @@ public interface MailingListBusinessService {
 	 * @throws BusinessException
 	 * if not found.
 	 */
-	MailingList findByUuid(String uuid) throws BusinessException;
+	MailingList findListByUuid(String uuid) throws BusinessException;
 
 	List<MailingList> findAllList();
 
@@ -121,10 +121,7 @@ public interface MailingListBusinessService {
 	/**
 	 * Mailing listContact management.
 	 */
-
-	MailingListContact findContact(MailingList mailingList, String mail) throws BusinessException;
-
-	void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException;
+	
 
 	void deleteContact(MailingList mailingList, String mail) throws BusinessException;
 
@@ -136,5 +133,11 @@ public interface MailingListBusinessService {
 	 * @throws BusinessException
 	 */
 	void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException;
+
+	MailingListContact findContact(String contactUuid) throws BusinessException;
+
+	void updateContact(MailingListContact contactToUpdate) throws BusinessException;
+
+	MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException;
 
 }

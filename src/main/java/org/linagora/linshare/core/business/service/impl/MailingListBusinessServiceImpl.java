@@ -82,7 +82,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public MailingList findByUuid(String uuid) throws BusinessException {
+	public MailingList findListByUuid(String uuid) throws BusinessException {
 		MailingList mailingList = listRepository.findByUuid(uuid);
 		if (mailingList == null) {
 			String msg = "The current mailing list do not exist : " + uuid;
@@ -134,15 +134,14 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 
 	@Override
 	public void deleteList(String uuid) throws BusinessException {
-		MailingList listToDelete = findByUuid(uuid);
+		MailingList listToDelete = findListByUuid(uuid);
 		logger.debug("List to delete: " + uuid);
 		listRepository.delete(listToDelete);
-		// TODO : and contacts ?
 	}
 
 	@Override
 	public void updateList(MailingList updatedMailingList) throws BusinessException {
-		MailingList entity = findByUuid(updatedMailingList.getUuid());
+		MailingList entity = findListByUuid(updatedMailingList.getUuid());
 		String newIdentifier = updatedMailingList.getIdentifier();
 		if (!entity.getIdentifier().equals(newIdentifier)) {
 			// The identifier was changed.
@@ -167,34 +166,47 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	 */
 
 	@Override
-	public MailingListContact findContact(MailingList mailingList, String mailContact) throws BusinessException {
-		MailingList list = findByUuid(mailingList.getUuid());
-
-		// The current contact could be not found.
-		for (MailingListContact current : list.getMailingListContact()) {
-			if (current.getMail().equals(mailContact)) {
-				return current;
+	public MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException {
+		MailingList list = listRepository.findByUuid(listUuid);
+		MailingListContact contact = null;
+		for(MailingListContact current : list.getMailingListContact()){
+			if(current.getMail().equals(mail)){
+				contact = current;
 			}
 		}
-		String msg = "The current contact you are trying to find do not exist : " + mailContact;
-		logger.error(msg);
-		throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);
+		if(contact == null){
+			String msg = "The current contact you are trying to find do not exist : " + mail;
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);	
+		} 
+		return contact;
+	}
+	
+	@Override
+	public MailingListContact findContact(String contactUuid) throws BusinessException {
+		MailingListContact contact = contactRepository.findByUuid(contactUuid);
+		if(contact == null){
+			String msg = "The current contact you are trying to find do not exist : " + contactUuid;
+			logger.error(msg);
+			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);	
+		} 
+		return contact;
 	}
 
 	@Override
-	public void deleteContact(MailingList mailingList, String mail) throws BusinessException {
-		MailingListContact contactToDelete = findContact(mailingList, mail);
+	public void deleteContact(MailingList mailingList, String contactUuid) throws BusinessException {
+		MailingListContact contactToDelete = findContact(contactUuid);
 		mailingList.deleteMailingListContact(contactToDelete);
 		listRepository.update(mailingList);
 		contactRepository.delete(contactToDelete);
 	}
 
 	@Override
-	public void updateContact(MailingList list, MailingListContact contactToUpdate) throws BusinessException {
-		MailingListContact contact = findContact(list, contactToUpdate.getMail());
-//		contact.setMails(contactToUpdate.getMail());
-		//TODO  FMA : HACK 2013.09.19
-		contact.setDisplay(contactToUpdate.getDisplay());
+	public void updateContact(MailingListContact contactToUpdate) throws BusinessException {
+		MailingListContact contact = findContact(contactToUpdate.getUuid());
+		contact.setMail(contactToUpdate.getMail());
+		contact.setLastName(contactToUpdate.getLastName());
+		contact.setFirstName(contactToUpdate.getFirstName());
 		contactRepository.update(contact);
 	}
 

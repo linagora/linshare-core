@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.InjectPage;
@@ -43,7 +42,6 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
@@ -53,7 +51,6 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 
 public class DisplayMailingList {
 
@@ -75,32 +72,23 @@ public class DisplayMailingList {
 	private MailingListVo mailingListVo;
 
 	@Persist
-	private List<MailingListContactVo> lists;
-
-	@Persist
 	@Property
-	private List<UserVo> contacts;
+	private List<MailingListContactVo> contacts;
 
 	@Property
-	private UserVo contact;
+	private MailingListContactVo contact;
 
 	@Persist
-	@Validate("required")
 	@Property
 	private String firstName;
 
 	@Persist
-	@Validate("required")
 	@Property
 	private String lastName;
 
 	@Persist
-	@Validate("required")
 	@Property
 	private String mail;
-
-	@Persist
-	private String oldEmail;
 
 	@Persist
 	@Property(write = false)
@@ -120,6 +108,10 @@ public class DisplayMailingList {
 	@Persist(value = "flash")
 	private String contactToDelete;
 
+	@Property
+	@Persist
+	private String contactToUpdate;
+
 	@Inject
 	private Messages messages;
 
@@ -136,15 +128,11 @@ public class DisplayMailingList {
 
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.lists.Index index;
-	
+
 	@SetupRender
 	public void init() throws BusinessException {
 		if (!mailingListVo.getContacts().isEmpty()) {
-			contacts = new ArrayList<UserVo>();
-			lists = mailingListVo.getContacts();
-			for (MailingListContactVo current : mailingListVo.getContacts()) {
-				contacts.add(MailCompletionService.getUserFromDisplay(current.getDisplay()));
-			}
+			contacts = mailingListVo.getContacts();
 		}
 	}
 
@@ -159,7 +147,6 @@ public class DisplayMailingList {
 
 	public Object onActionFromBack() {
 		mailingListVo = null;
-		lists = null;
 		displayGrid = false;
 		recipientsSearch = null;
 		results = null;
@@ -168,7 +155,6 @@ public class DisplayMailingList {
 		firstName = null;
 		lastName = null;
 		inModify = false;
-		oldEmail = null;
 		contacts = null;
 
 		if (loginUser.isSuperAdmin()) {
@@ -181,28 +167,26 @@ public class DisplayMailingList {
 	public void onSelectedFromReset() throws BusinessException {
 		mail = null;
 		firstName = null;
-		oldEmail = null;
 		lastName = null;
 		fromReset = true;
 	}
 
 	public void onSuccessFromContactForm() throws BusinessException {
-		String display = MailCompletionService.formatLabel(mail, firstName, lastName, false);
 		if (inModify == true) {
 			if (!fromReset) {
-				MailingListContactVo contact = mailingListFacade.searchContact(mailingListVo, oldEmail);
-				contact.setDisplay(display);
+				MailingListContactVo contact = mailingListFacade.searchContact(contactToUpdate);
+				contact.setFirstName(firstName);
+				contact.setLastName(lastName);
 				contact.setMail(mail);
 				mailingListFacade.updateContact(loginUser, mailingListVo, contact);
 			}
 		} else {
-			MailingListContactVo newContact = new MailingListContactVo(mail, display);
+			MailingListContactVo newContact = new MailingListContactVo(mail, firstName, lastName);
 			mailingListFacade.addNewContactToList(loginUser, mailingListVo, newContact);
 		}
 		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 		inModify = false;
 		mail = null;
-		oldEmail = null;
 		firstName = null;
 		lastName = null;
 		fromReset = false;
@@ -233,31 +217,27 @@ public class DisplayMailingList {
 	}
 
 	public void onActionFromDeleteUser(String mail) throws BusinessException {
-		mailingListFacade.deleteContact(loginUser, mailingListVo, mail);
+		MailingListContactVo contactToRemove = mailingListFacade.findContactByMail(mailingListVo.getUuid(), mail);
+		mailingListFacade.deleteContact(loginUser, mailingListVo.getUuid(), contactToRemove.getUuid());
 		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 	}
 
-	public void onActionFromEditContact(String email) {
-		UserVo contactForEdit = null;
-		for (MailingListContactVo current : lists) {
-			if (current.getMail().equals(email)) {
-				contactForEdit = MailCompletionService.getUserFromDisplay(current.getDisplay());
-			}
-		}
-		this.mail = contactForEdit.getMail();
-		this.firstName = contactForEdit.getFirstName();
-		this.lastName = contactForEdit.getLastName();
-		oldEmail = email;
+	public void onActionFromEditContact(String uuid) throws BusinessException {
+		MailingListContactVo contact = mailingListFacade.searchContact(uuid);
+		this.contactToUpdate = uuid;
+		this.mail = contact.getMail();
+		this.firstName = contact.getFirstName();
+		this.lastName = contact.getLastName();
 		inModify = true;
 	}
 
-	public void onActionFromDeleteContact(String mail) {
-		contactToDelete = mail;
+	public void onActionFromDeleteContact(String contactUuid) {
+		contactToDelete = contactUuid;
 	}
 
 	@OnEvent(value = "contactDeleteEvent")
 	public void deleteContactFromList() throws BusinessException {
-		mailingListFacade.deleteContact(loginUser, mailingListVo, contactToDelete);
+		mailingListFacade.deleteContact(loginUser, mailingListVo.getUuid(), contactToDelete);
 		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
 	}
 

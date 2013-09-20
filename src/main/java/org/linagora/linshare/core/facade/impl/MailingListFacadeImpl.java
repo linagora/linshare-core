@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 public class MailingListFacadeImpl implements MailingListFacade {
 
 	Logger logger = LoggerFactory.getLogger(MailingListFacadeImpl.class);
+
 	private final MailingListService mailingListService;
 	private final UserService userService;
 	private final AccountService accountService;
@@ -121,41 +122,37 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	 */
 
 	@Override
-	public void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactToUpdate)
+	public void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactVo)
 			throws BusinessException {
-		MailingList list = mailingListService.searchList(listVo.getUuid());
-		MailingListContact contact = mailingListService.searchContact(list, contactToUpdate.getMail());
-		contact.setDisplay(contactToUpdate.getDisplay());
-		mailingListService.updateContact(actorVo.getLsUuid(), list, contact);
+		MailingListContact contact = new MailingListContact(contactVo);
+		mailingListService.updateContact(actorVo.getLsUuid(), listVo.getUuid(), contact);
 	}
 
 	@Override
-	public void deleteContact(UserVo actorVo, MailingListVo listVo, String mail) throws BusinessException {
-		mailingListService.deleteContact(actorVo.getLsUuid(), listVo.getUuid(), mail);
-	}
-	
+	public void deleteContact(UserVo actorVo, String listUuid, String contactUuid) throws BusinessException {
+		mailingListService.deleteContact(actorVo.getLsUuid(), listUuid, contactUuid);
 
-	@Override
-	public void deleteContact(UserVo actorVo, String contactUuid) throws BusinessException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
-	public MailingListContactVo searchContact(MailingListVo list, String mail) throws BusinessException {
-		MailingList mailingList = mailingListService.searchList(list.getUuid());
-		return new MailingListContactVo(mailingListService.searchContact(mailingList, mail));
+	public MailingListContactVo searchContact(String uuid) throws BusinessException {
+		return new MailingListContactVo(mailingListService.searchContact(uuid));
 	}
 
 	@Override
-	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid)
-			throws BusinessException {
+	public MailingListContactVo findContactByMail(String listUuid, String mail) throws BusinessException {
+		return new MailingListContactVo(mailingListService.findContactWithMail(listUuid, mail));
+	}
+
+	@Override
+	public void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid) throws BusinessException {
 		User selectedUser = userService.findByLsUuid(uuid);
 		if (selectedUser != null) {
-			String display = MailCompletionService.formatLabel(selectedUser.getMail(), selectedUser.getFirstName(),
-					selectedUser.getLastName(), false);
-			MailingListContact contact = new MailingListContact(selectedUser.getMail(), display);
+			MailingListContact contact = new MailingListContact(selectedUser.getMail(), selectedUser.getFirstName(),
+					selectedUser.getLastName());
 			mailingListService.addNewContact(actorVo.getLsUuid(), mailingListVo.getUuid(), contact);
+		} else {
+			logger.error("User not found !");
 		}
 	}
 

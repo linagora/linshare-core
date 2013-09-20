@@ -1,5 +1,7 @@
 package org.linagora.linshare.core.domain.entities;
 
+import java.util.Date;
+
 import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 
 public class MailingListContact {
@@ -10,8 +12,14 @@ public class MailingListContact {
 
 	private String mail;
 
-	private String display;
+	private String firstName;
+	
+	private String lastName;
 
+	protected Date creationDate;
+
+	protected Date modificationDate;
+	
 	/**
 	 * Constructors
 	 */
@@ -23,15 +31,17 @@ public class MailingListContact {
 	private MailingListContact() {
 	}
 
-	public MailingListContact(String mail, String display) {
+	public MailingListContact(String mail, String firstName, String lastName) {
 		this.mail = mail;
-		this.display = display;
+		this.setLastName(lastName);
+		this.setFirstName(firstName);
 	}
 	
-	public MailingListContact(MailingListContactVo mailingListContact) {
+	public MailingListContact(MailingListContactVo mailingListContact)  {
 		this.mail = mailingListContact.getMail();
-		this.display = mailingListContact.getDisplay();
 		this.uuid = mailingListContact.getUuid();
+		this.setLastName(mailingListContact.getLastName());
+		this.setFirstName(mailingListContact.getFirstName());
 	}
 
 	/**
@@ -62,12 +72,20 @@ public class MailingListContact {
 		this.mail = mail;
 	}
 
-	public String getDisplay() {
-		return display;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setDisplay(String display) {
-		this.display = display;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	@Override
@@ -93,6 +111,22 @@ public class MailingListContact {
 		} else if (!mail.equals(other.mail))
 			return false;
 		return true;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 
 	/**

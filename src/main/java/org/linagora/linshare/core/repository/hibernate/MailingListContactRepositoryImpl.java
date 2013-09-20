@@ -1,5 +1,6 @@
 package org.linagora.linshare.core.repository.hibernate;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,19 @@ public class MailingListContactRepositoryImpl extends AbstractRepositoryImpl<Mai
 	}
 
 	@Override
+	public MailingListContact findByUuid(String uuid) {
+		List<MailingListContact> mailingList = findByCriteria(Restrictions.eq("uuid", uuid));
+		if (mailingList == null || mailingList.isEmpty()) {
+			return null;
+		} else if (mailingList.size() == 1) {
+			return mailingList.get(0);
+		} else {
+			throw new IllegalStateException("Id must be unique");
+		}
+	}
+
+	
+	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailingListContact entity) {
 		DetachedCriteria det = DetachedCriteria.forClass(MailingListContact.class).add(
 				Restrictions.eq("id", entity.getPersistenceId()));
@@ -38,14 +52,14 @@ public class MailingListContactRepositoryImpl extends AbstractRepositoryImpl<Mai
 
 	@Override
 	public MailingListContact update(MailingListContact entity) throws BusinessException {
-		// entity.setModificationDate(new Date());
+		entity.setModificationDate(new Date());
 		return super.update(entity);
 	}
 
 	@Override
 	public MailingListContact create(MailingListContact entity) throws BusinessException {
-		// entity.setCreationDate(new Date());
-		// entity.setModificationDate(new Date());
+		entity.setCreationDate(new Date());
+		entity.setModificationDate(new Date());
 		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
 	}

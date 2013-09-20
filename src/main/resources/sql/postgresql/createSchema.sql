@@ -448,7 +448,11 @@ CREATE TABLE mailing_list_contact (
   id                 int8 NOT NULL, 
   mailing_list_id    int8 NOT NULL, 
   mail               varchar(255) NOT NULL, 
-  display            varchar(255) NOT NULL, 
+  firstname			 varchar(255),
+  lastame			 varchar(255),
+  uuid               varchar(255) NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   mailing_list_contact_index int4, 
   PRIMARY KEY (id));
 ALTER TABLE domain_abstract ADD CONSTRAINT fk449bc2ec4e302e7 FOREIGN KEY (user_provider_id) REFERENCES user_provider_ldap (id) ON UPDATE No action ON DELETE No action;
@@ -630,3 +634,7 @@ CREATE INDEX user_provider_ldap_index
   ON user_provider_ldap (id);
 CREATE INDEX welcome_texts_i 
   ON welcome_texts (messages_configuration_id);
+CREATE INDEX mailing_list_index 
+  ON mailing_list (uuid);
+CREATE INDEX mailing_list_contact_index 
+  ON mailing_list_contact (uuid);
