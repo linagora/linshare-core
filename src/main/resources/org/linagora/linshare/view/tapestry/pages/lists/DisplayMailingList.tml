@@ -35,7 +35,6 @@
 		</t:if>
 		<br></br>
 		<div class="clear"></div>
-		
 			<form t:type="form" t:id="contactForm">
 				<fieldset class="title_criteria_zone" id="contactCriterion">
 				
