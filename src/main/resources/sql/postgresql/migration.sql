@@ -11,20 +11,32 @@ CREATE TABLE mailing_list (
   user_id            int8 NOT NULL, 
   is_public          bool NOT NULL, 
   identifier         varchar(255) NOT NULL, 
-  description        text NOT NULL, 
+  description        text, 
+  uuid               varchar(255) NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   PRIMARY KEY (id));
 CREATE TABLE mailing_list_contact (
-  id               int8 NOT NULL, 
-  mailing_list_id int8 NOT NULL, 
-  mail            varchar(255) NOT NULL,
-  uuid            varchar(255) NOT NULL,
-  display            varchar(255) NOT NULL, 
+  id                 int8 NOT NULL, 
+  mailing_list_id    int8 NOT NULL, 
+  mail               varchar(255) NOT NULL, 
+  firstName			 varchar(255),
+  lastName			 varchar(255),
+  uuid               varchar(255) NOT NULL, 
+  creation_date      timestamp(6) NOT NULL, 
+  modification_date  timestamp(6) NOT NULL, 
   mailing_list_contact_index int4, 
   PRIMARY KEY (id));
 
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id) REFERENCES users (account_id);
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKmailing_li272876 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
+
+CREATE INDEX mailing_list_index 
+  ON mailing_list (uuid);
+CREATE INDEX mailing_list_contact_index 
+  ON mailing_list_contact (uuid);
+
 
 -- Functionality : TAB_LIST
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);

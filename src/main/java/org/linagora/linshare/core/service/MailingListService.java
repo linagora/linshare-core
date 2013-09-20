@@ -128,10 +128,12 @@ public interface MailingListService {
 	 */
 	void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact) throws BusinessException;
 
-	MailingListContact searchContact(MailingList mailingList, String mail) throws BusinessException;
-
 	void deleteContact(String ownerUuid, String listUuid, String mail) throws BusinessException;
 
-	void updateContact(String ownerUuid, MailingList list, MailingListContact contactToUpdate) throws BusinessException;
+	MailingListContact searchContact(String uuid) throws BusinessException;
+
+	void updateContact(String ownerUuid, String listUuid, MailingListContact contactToUpdate) throws BusinessException;
+
+	MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException;
 
 }

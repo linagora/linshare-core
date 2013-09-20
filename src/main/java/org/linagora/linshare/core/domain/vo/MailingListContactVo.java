@@ -6,8 +6,6 @@ public class MailingListContactVo {
 
 	private String mail;
 	
-	private String display;
-	
 	private String uuid;
 	
 	private String firstName;
@@ -19,20 +17,22 @@ public class MailingListContactVo {
 
 	public MailingListContactVo(MailingListContactVo mailingListContact) {
 		this.mail = mailingListContact.getMail();
-		this.display = mailingListContact.getDisplay();
 		this.uuid = mailingListContact.getUuid();
-		this.lastName = mail;
-		this.firstName = mail;
+		this.lastName = mailingListContact.getLastName();
+		this.firstName = mailingListContact.getFirstName();
 	}
 
-	public MailingListContactVo(MailingListContact mail) {
-		this.mail = mail.getMail();
-		this.display = mail.getDisplay();
+	public MailingListContactVo(MailingListContact mailingListContact) {
+		this.mail = mailingListContact.getMail();
+		this.uuid = mailingListContact.getUuid();
+		this.lastName = mailingListContact.getLastName();
+		this.firstName = mailingListContact.getFirstName();
 	}
 
-	public MailingListContactVo(String mail, String display) {
+	public MailingListContactVo(String mail, String firstName, String lastName) {
 		this.mail = mail;
-		this.display = display;
+		this.lastName = lastName;
+		this.firstName = firstName;
 	}
 
 	public MailingListContactVo(String mail) {
@@ -45,14 +45,6 @@ public class MailingListContactVo {
 
 	public void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	public String getDisplay() {
-		return display;
-	}
-
-	public void setDisplay(String display) {
-		this.display = display;
 	}
 
 	public String getUuid() {

@@ -60,17 +60,17 @@ public interface MailingListFacade {
 
 	/**
 	 * Basic operations on mailingListContact
+	 * 
+	 * @throws BusinessException
 	 */
 
-	void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactToUpdate)
-			throws BusinessException;
+	MailingListContactVo findContactByMail(String listUuid, String mail) throws BusinessException;
 
-	void deleteContact(UserVo actorVo, MailingListVo listVo, String mail) throws BusinessException;
-	
-	void deleteContact(UserVo actorVo, String contactUuid) throws BusinessException;
-	
+	void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactVo) throws BusinessException;
 
-	MailingListContactVo searchContact(MailingListVo list, String mail) throws BusinessException;
+	public void deleteContact(UserVo actorVo, String listUuid, String contactUuid) throws BusinessException;
+
+	public MailingListContactVo searchContact(String uuid) throws BusinessException;
 
 	/**
 	 * Add user to mailing list
@@ -82,8 +82,7 @@ public interface MailingListFacade {
 	 *             list doesn't exist or user doesn't have rights to create
 	 *             contact
 	 */
-	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid)
-			throws BusinessException;
+	void addUserToList(UserVo actorVo, MailingListVo mailingListVo, String uuid) throws BusinessException;
 
 	/**
 	 * Add contact to mailing list
@@ -174,4 +173,5 @@ public interface MailingListFacade {
 	String findAvailableIdentifier(UserVo user, String value);
 
 	public List<MailingListVo> completionForUploadForm(UserVo userVo, String input) throws BusinessException;
+
 }
