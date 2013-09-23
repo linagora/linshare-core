@@ -113,7 +113,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public void deleteList(UserVo actorVo, String uuid) throws BusinessException {
+	public void deleteList(UserVo actorVo,String uuid) throws BusinessException {
 		mailingListService.deleteList(actorVo.getLsUuid(), uuid);
 	}
 
@@ -298,15 +298,22 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public void refreshList(List<MailingListVo> list) {
-		List<MailingListVo> refreshList = new ArrayList<MailingListVo>(list);
+		List<MailingListVo> listVo = new ArrayList<MailingListVo>(list);
 		list.clear();
-		for (MailingListVo mailingListVo : refreshList) {
-			if (searchList(mailingListVo.getUuid()) != null) {
-				list.add(searchList(mailingListVo.getUuid()));
-			}
+		for (MailingListVo current : listVo) {
+			list.add(searchList(current.getUuid()));
 		}
 	}
 
+	@Override
+	public void refreshListAfterDelete(List<MailingListVo> list, String listToDelete) {
+		for(MailingListVo current : list){
+			if(current.getUuid().equals(listToDelete)){
+				list.remove(current);
+			}
+		}
+	}
+	
 	private List<MailingListVo> ListToListVo(List<MailingList> list) {
 		List<MailingListVo> listVo = new ArrayList<MailingListVo>();
 		if (list != null) {
