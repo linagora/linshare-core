@@ -4016,6 +4016,11 @@ input.ck-kaptcha {
 }
 
 
+.uiTokenizer {
+    font-size: 12px; !important;
+}
+
+
 /**
  * Fix auto complete position for IE 10
  */
