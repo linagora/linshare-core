@@ -157,13 +157,7 @@ public class Index {
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
 		mailingListFacade.deleteList(loginUser, listToDelete);
-
-		for (MailingListVo current : lists) {
-			if (current.getUuid() == listToDelete) {
-				lists.remove(current);
-			}
-		}
-		list = null;
+		mailingListFacade.refreshListAfterDelete(lists, listToDelete);
 	}
 
 	public void onSuccessFromForm() throws BusinessException {

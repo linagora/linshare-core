@@ -139,8 +139,8 @@ public class ManageMailingList {
 		// return null;
 		// }
 		// }
-
-		if (mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), mailingListVo.getIdentifier())) {
+		if (mailingListVo.getIdentifier().equals(oldIdentifier)
+				|| mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), mailingListVo.getIdentifier())) {
 			mailingListFacade.updateList(loginUser, mailingListVo);
 		} else {
 			String copy = mailingListFacade.findAvailableIdentifier(mailingListVo.getOwner(),
