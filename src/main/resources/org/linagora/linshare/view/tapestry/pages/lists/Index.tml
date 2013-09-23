@@ -36,13 +36,13 @@
 				</table>
 				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="public" onclick="this.form.submit()"/>&nbsp;<t:label for="public">${message:pages.lists.radioGroupPub}</t:label>
+				                    <t:radio t:id="Public" onclick="this.form.submit()"/>&nbsp;<t:label for="public">${message:pages.lists.radioGroupPub}</t:label>
 				                    ${message:global.space}
-				                    <t:radio t:id="private" onclick="this.form.submit()" />&nbsp;<t:label for="private">${message:pages.lists.radioGroupPriv}</t:label>
+				                    <t:radio t:id="Private" onclick="this.form.submit()" />&nbsp;<t:label for="private">${message:pages.lists.radioGroupPriv}</t:label>
 				                    ${message:global.space}				                    
-				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.lists.radioGroupAll}</t:label>
+				                    <t:radio t:id="All" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.lists.radioGroupAll}</t:label>
 				                    ${message:global.space}
-				                    <t:radio t:id="allMyLists" onclick="this.form.submit()" />&nbsp;<t:label for="allMyLists">${message:pages.lists.radioGroupAllMyLists}</t:label>
+				                    <t:radio t:id="AllMyLists" onclick="this.form.submit()" />&nbsp;<t:label for="allMyLists">${message:pages.lists.radioGroupAllMyLists}</t:label>
 				                    ${message:global.space}
 			               	</t:radiogroup>
 			    </t:form>
