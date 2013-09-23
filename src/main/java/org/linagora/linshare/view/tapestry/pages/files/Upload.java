@@ -91,7 +91,7 @@ public class Upload {
 
 	private static final Logger logger = LoggerFactory.getLogger(Upload.class);
 
-	// illimited file size
+	// unlimited file size
 	private static final long DEFAULT_MAX_FILE_SIZE = 0;
 
 	/* ***********************************************************
@@ -110,10 +110,7 @@ public class Upload {
 
 	@InjectComponent
 	@Property
-	private Form didjeridooForm;
-
-	// @InjectComponent
-	// private Zone shareZone;
+	private Form uploaderForm;
 
 	@Persist("flash")
 	@Property
@@ -230,13 +227,13 @@ public class Upload {
 		}
 	}
 
-	Object onSubmitFromDidjeridooForm() throws BusinessException {
+	Object onSubmitFromUploaderForm() throws BusinessException {
 		/*
 		 * XXX FIXME TODO HACK : same code as QuickSharePopup ... it's not just
 		 * smelly
 		 */
 		logger.debug("uuids = " + uuids);
-		filter = new XSSFilter(shareSessionObjects, didjeridooForm,
+		filter = new XSSFilter(shareSessionObjects, uploaderForm,
 				antiSamyPolicy, messages);
 		try {
 			textAreaSubjectValue = filter.clean(textAreaSubjectValue);

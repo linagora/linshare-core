@@ -34,11 +34,10 @@
 
 package org.linagora.linshare.view.tapestry.pages.administration.lists;
 
-import java.util.List;
-
+import org.apache.commons.lang.StringUtils;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
@@ -46,6 +45,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -55,17 +55,16 @@ import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 
+import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
+
 public class ManageMailingList {
-
-	@Inject
-	private MailingListFacade mailingListFacade;
-
-	@SessionState(create = false)
-	@Property
-	private MailingListVo mailingListVo;
 
 	@SessionState
 	private UserVo loginUser;
+
+	@Persist
+	@Property
+	private MailingListVo mailingListVo;
 
 	@Property
 	private AbstractDomainVo domain;
@@ -78,8 +77,20 @@ public class ManageMailingList {
 	@Property
 	private UserVo oldOwner;
 
+	@Property
+	private String newOwner;
+
+	@Property
+	private static final int autocompleteMin = 3;
+
+	@Component
+	private Form form;
+
 	@Inject
 	private Messages messages;
+
+	@Inject
+	private MailingListFacade mailingListFacade;
 
 	@Inject
 	private PersistentLocale persistentLocale;
@@ -90,58 +101,86 @@ public class ManageMailingList {
 	@Inject
 	private UserFacade userFacade;
 
-	@InjectPage
-	private org.linagora.linshare.view.tapestry.pages.administration.lists.Index index;
-
-	@Property
-	private String newOwner;
-
-	@Property
-	private int autocompleteMin = 3;
-
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 
-	@Component
-	private Form form;
-
-	public void onActivate(String uuid) throws BusinessException {
-		if (uuid != null) {
-			mailingListVo = mailingListFacade.searchList(uuid);
-			oldIdentifier = mailingListVo.getIdentifier();
-			oldOwner = mailingListVo.getOwner();
-		}
+	@Inject
+	private SelectModelFactory selectModelFactory;
+	
+	public Object onActivate() {
+		if (mailingListVo == null)
+			return Index.class;
+		return null;
 	}
 
-	public List<String> onProvideCompletionsFromOwner(String input) throws BusinessException {
-		return mailingListFacade.completionOnUsers(loginUser, input);
+	public Object onActivate(String uuid) throws BusinessException {
+		oldIdentifier = mailingListVo.getIdentifier();
+		oldOwner = mailingListVo.getOwner();
+		return null;
+	}
+
+	public SelectModel onProvideCompletionsFromNewOwner(String input) throws BusinessException {
+		return selectModelFactory.create(mailingListFacade.completionOnUsers(loginUser, input), "completeName");
+	}
+	
+	public LabelAwareValueEncoder<UserVo> getEncoder() {
+		return new LabelAwareValueEncoder<UserVo>() {
+			@Override
+			public String toClient(UserVo value) {
+				return value.getDomainIdentifier() + "," + value.getMail();
+			}
+
+			@Override
+			public UserVo toValue(String clientValue) {
+				String[] spl = StringUtils.split(clientValue, ',');
+				String d, m;
+
+				if (spl.length == 2) {
+					d = spl[0];
+					m = spl[1];
+				} else {
+					d = m = "";
+				}
+				try {
+					return userFacade.findUser(d, m);
+				} catch (BusinessException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+
+			@Override
+			public String getLabel(UserVo arg0) {
+				return arg0.getCompleteName();
+			}
+		};
 	}
 
 	public Object onActionFromCancel() {
 		mailingListVo = null;
 		oldIdentifier = null;
 		oldOwner = null;
-		return index;
+		return Index.class;
 	}
 
 	public Object onSuccess() throws BusinessException, ValidationException {
 		// TODO : fix the interface to modify owner list (we must not uses email
-		// as unique identifier instead of uuid !!!
+        // as unique identifier instead of uuid !!!
 
-		// if (newOwner != null) {
-		// if (newOwner.substring(newOwner.length() - 1).equals(">")) {
-		// UserVo newOwnerVo =
-		// MailCompletionService.getUserFromDisplay(newOwner);
-		// mailingListVo.setOwner(newOwnerVo);
-		// } else {
-		// form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"),
-		// newOwner));
-		// return null;
-		// }
-		// }
+        // if (newOwner != null) {
+        // if (newOwner.substring(newOwner.length() - 1).equals(">")) {
+        // UserVo newOwnerVo =
+        // MailCompletionService.getUserFromDisplay(newOwner);
+        // mailingListVo.setOwner(newOwnerVo);
+        // } else {
+        // form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"),
+        // newOwner));
+        // return null;
+        // }
+        // }
 		if (mailingListVo.getIdentifier().equals(oldIdentifier)
 				|| mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), mailingListVo.getIdentifier())) {
-			mailingListFacade.updateList(loginUser, mailingListVo);
+            mailingListFacade.updateList(loginUser, mailingListVo);
 		} else {
 			String copy = mailingListFacade.findAvailableIdentifier(mailingListVo.getOwner(),
 					mailingListVo.getIdentifier());
@@ -151,6 +190,10 @@ public class ManageMailingList {
 			return null;
 		}
 		mailingListVo = null;
-		return index;
+		return Index.class;
+	}
+
+	public void setList(MailingListVo list) {
+		this.mailingListVo = list;
 	}
 }

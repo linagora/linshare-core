@@ -119,7 +119,7 @@ public interface MailingListFacade {
 	 * @throws BusinessException
 	 *             user not find
 	 */
-	List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException;
+	List<UserVo> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException;
 
 	/**
 	 * Search among userq

@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -54,7 +55,6 @@ import org.linagora.linshare.core.facade.FunctionalityFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
-import org.linagora.linshare.view.tapestry.pages.administration.lists.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +110,9 @@ public class Index {
 
 	@Persist
 	private boolean inSearch;
+	
+	@InjectPage
+	private ManageMailingList manageMailingListPage;
 
 	@SetupRender
 	public void init() throws BusinessException {
@@ -151,6 +154,16 @@ public class Index {
 	public void onSuccessFromResetForm() {
 		inSearch = false;
 		targetLists = "";
+	}
+	
+	public Object onActionFromEdit(String uuid) {
+		for (MailingListVo ml : lists) {
+			if (ml.getUuid().equals(uuid)) {
+				manageMailingListPage.setList(ml);
+				return manageMailingListPage;
+			}
+		}
+		return null;
 	}
 
 	Object onException(Throwable cause) {

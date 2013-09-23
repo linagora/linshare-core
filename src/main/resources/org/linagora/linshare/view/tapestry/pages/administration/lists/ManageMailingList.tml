@@ -1,31 +1,32 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="lists" t:currentHighlight="lists"
-	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
-	
-	<!-- Main content -->
-			
-		<div id="content">
-			
-				<h1>${mailingListVo.identifier}</h1>
-		<br></br>
-		<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
-		<br></br><br></br>
-			<!-- FORM -->
-		<t:form t:id="form">
-		 <t:errors banner="${message:pages.administration.userconfig.password.error}"/>
-			<fieldset class="title_criteria_zone" id="searchCriterion">
-			<legend align="top" class="palette">${message:global.button.update}</legend>
-				<p><t:label for="identifier"/>:&nbsp;
-        		<t:textfield t:id="identifier" value="mailingListVo.identifier" validate="required"/></p>
-			     <br></br>
-				<p>${message:pages.lists.currentOwner}:  ${mailingListVo.owner.firstName} ${mailingListVo.owner.lastName}</p>
-        		<p><t:label for="owner"/>&nbsp;
-            	<t:textfield t:id="owner" t:value="newOwner" t:mixins="autocomplete" t:size="50" t:minChars="${autocompleteMin}" class="userSearchPattern"/></p>
-        		<br></br>
-        		<input type="submit"  t:event="add" value="${message:global.button.validate}"/>
-			</fieldset>
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+    <!-- Main content -->
+
+    <div id="content">
+
+        <h1>${mailingListVo.identifier}</h1>
+        <br/>
+        <t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+        <br/>
+        <br/>
+        <t:form t:id="form">
+            <t:errors banner="${message:pages.administration.userconfig.password.error}"/>
+            <fieldset class="title_criteria_zone" id="searchCriterion">
+                <legend align="top" class="palette">${message:pages.lists.owner}</legend>
+                <p><t:label for="identifier"/>:&nbsp;
+                    <t:textfield t:id="identifier" value="mailingListVo.identifier" validate="required"/></p>
+                <br></br>
+                <p>${message:pages.lists.currentOwner}:  ${mailingListVo.owner.firstName} ${mailingListVo.owner.lastName}</p>
+                <t:label for="newOwner"/>&nbsp;
+                    <div t:type="tag/tagselect" t:id="newOwner" t:value="newOwner" t:dropdown="false"
+                        t:encoder="encoder" t:minChars="${autocompleteMin}"/>
+                <br></br>
+                <input type="submit" t:event="add" value="${message:global.button.validate}"/>
+            </fieldset>
         </t:form>         
-        
-		</div><!-- id="content" -->
-		
-	</t:MyBorderLayout>
+
+    </div><!-- id="content" -->
+
+</t:MyBorderLayout>
