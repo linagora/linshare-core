@@ -237,20 +237,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public List<String> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException {
+	public List<UserVo> completionOnUsers(UserVo actorVo, String pattern) throws BusinessException {
 		User actor = userService.findByLsUuid(actorVo.getLogin());
-		List<String> ret = new ArrayList<String>();
-
+		List<UserVo> ret = new ArrayList<UserVo>();
 		List<User> userSet = performSearchUser(actor, pattern);
 
-		for (User user : userSet) {
-			if (!(user.equals(actor))) {
-				String completeName = MailCompletionService.formatLabel(new UserVo(user), false);
-				if (!ret.contains(completeName)) {
-					ret.add(completeName);
-				}
-			}
-		}
+		for (User user : userSet)
+			ret.add(new UserVo(user));
 		return ret;
 	}
 

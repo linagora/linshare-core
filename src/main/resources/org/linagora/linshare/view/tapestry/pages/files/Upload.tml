@@ -130,7 +130,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         </div>
 
         <h2>${message:pages.files.upload.share.title}</h2>
-        <t:form t:id="didjeridooForm" class="form-horizontal">
+        <t:form t:id="uploaderForm" class="form-horizontal">
             <fieldset>
                 <t:errors />
 
@@ -155,7 +155,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     ${message:pages.files.upload.recipientsMailingList.title}</t:label>
                     <div class="controls">
                         <div t:type="tag/tagselect" t:id="mailingLists" t:value="mailingLists"
-                        t:encoder="encoder" t:dropdown="false" t:minChars="3" t:frequency="0.5" style="width: 535px;"></div>
+                        t:encoder="encoder" t:dropdown="false" t:minChars="3" style="width: 535px;"></div>
                         <p class="help-block">${message:pages.files.upload.recipientsMailingList.description}</p>
                     </div>
                 </div>
