@@ -78,7 +78,7 @@ public class ManageMailingList {
 	private UserVo oldOwner;
 
 	@Property
-	private String newOwner;
+	private UserVo newOwner;
 
 	@Property
 	private static final int autocompleteMin = 3;
