@@ -48,13 +48,12 @@ public enum VisibilityType {
 	}
 
 	public VisibilityType fromInt(int value) {
-        switch (value) {
-            case 0: return VisibilityType.Private;
-            case 1: return VisibilityType.Public;
-            case 2: return VisibilityType.All;
-            case 3: return VisibilityType.AllMyLists;
-            default : throw new IllegalArgumentException("Doesn't match an existing MailingListType");
-        }
+		for (VisibilityType type : values()) {
+			if (type.value == value) {
+				return type;
+			}
+		}
+		throw new IllegalArgumentException("Doesn't match an existing MailingListType");
 	}
 	
 }
