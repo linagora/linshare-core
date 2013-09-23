@@ -48,6 +48,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -117,7 +118,7 @@ public class Index {
 	@SetupRender
 	public void init() throws BusinessException {
 		if (alreadyConnect == false) {
-			criteriaOnSearch = "all";
+			criteriaOnSearch = VisibilityType.All.toString();
 			targetLists = "*";
 		}
 		if (inSearch == false) {
@@ -154,6 +155,7 @@ public class Index {
 	public void onSuccessFromResetForm() {
 		inSearch = false;
 		targetLists = "";
+		criteriaOnSearch = VisibilityType.All.toString();
 	}
 	
 	public Object onActionFromEdit(String uuid) {
@@ -178,15 +180,15 @@ public class Index {
 	}
 
 	public String getPublic() {
-		return "public";
+		return VisibilityType.Public.toString();
 	}
 
 	public String getPrivate() {
-		return "private";
+		return VisibilityType.Private.toString();
 	}
 
 	public String getAll() {
-		return "all";
+		return VisibilityType.All.toString();
 	}
 
 	public boolean isEmptyList() {

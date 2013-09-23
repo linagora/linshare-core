@@ -47,6 +47,7 @@ import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -119,7 +120,7 @@ public class Index {
 	@SetupRender
 	public void init() throws BusinessException {
 		if (alreadyConnect == false) {
-			criteriaOnSearch = "allMyLists";
+			criteriaOnSearch = VisibilityType.AllMyLists.toString();
 			targetLists = "*";
 		}
 		if (inSearch == false && fromCreate == false) {
@@ -169,7 +170,7 @@ public class Index {
 	public void onSuccessFromResetForm() {
 		inSearch = false;
 		fromCreate = false;
-		criteriaOnSearch = "allMyLists";
+		criteriaOnSearch = VisibilityType.AllMyLists.toString();
 	}
 
 	Object onException(Throwable cause) {
@@ -188,19 +189,19 @@ public class Index {
 	}
 
 	public String getPublic() {
-		return "public";
+		return VisibilityType.Public.toString();
 	}
 
 	public String getPrivate() {
-		return "private";
+		return VisibilityType.Private.toString();
 	}
 
 	public String getAll() {
-		return "all";
+		return VisibilityType.All.toString();
 	}
 
 	public String getAllMyLists() {
-		return "allMyLists";
+		return VisibilityType.AllMyLists.toString();
 	}
 
 	public boolean isFromCreate() {

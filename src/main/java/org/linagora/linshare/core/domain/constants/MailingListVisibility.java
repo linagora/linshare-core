@@ -33,13 +33,13 @@
  */
 package org.linagora.linshare.core.domain.constants;
 
-public enum VisibilityType {
+public enum MailingListVisibility {
 
-	Private(0), Public(1), All(2), AllMyLists(3);
+	Private(0), Public(1);
 
 	private int value;
 
-	private VisibilityType(int value) {
+	private MailingListVisibility(int value) {
 		this.value = value;
 	}
 
@@ -47,14 +47,11 @@ public enum VisibilityType {
 		return value;
 	}
 
-	public VisibilityType fromInt(int value) {
+	public MailingListVisibility fromInt(int value) {
         switch (value) {
-            case 0: return VisibilityType.Private;
-            case 1: return VisibilityType.Public;
-            case 2: return VisibilityType.All;
-            case 3: return VisibilityType.AllMyLists;
-            default : throw new IllegalArgumentException("Doesn't match an existing MailingListType");
+            case 0: return MailingListVisibility.Private;
+            case 1: return MailingListVisibility.Public;
+            default : throw new IllegalArgumentException("Doesn't match an existing MailingListVisibilityType");
         }
 	}
-	
 }

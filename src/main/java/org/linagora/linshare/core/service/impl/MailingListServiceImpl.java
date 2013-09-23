@@ -37,6 +37,7 @@ package org.linagora.linshare.core.service.impl;
 import java.util.List;
 
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
+import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -114,11 +115,11 @@ public class MailingListServiceImpl implements MailingListService {
 		boolean isPublic;
 		User actor = userService.findByLsUuid(ownerUuid);
 
-		if (criteriaOnSearch.equals("all")) {
+		if (criteriaOnSearch.equals(VisibilityType.All.toString())) {
 			return mailingListBusinessService.searchListByUser(actor, pattern);
-		} else if (criteriaOnSearch.equals("allMyLists")) {
+		} else if (criteriaOnSearch.equals(VisibilityType.AllMyLists.toString())) {
 			return mailingListBusinessService.searchMyLists(actor, pattern);
-		} else if (criteriaOnSearch.equals("public")) {
+		} else if (criteriaOnSearch.equals(VisibilityType.Public.toString())) {
 			isPublic = true;
 		} else {
 			isPublic = false;
@@ -134,15 +135,15 @@ public class MailingListServiceImpl implements MailingListService {
 		boolean isPublic;
 		User user = userService.findByLsUuid(ownerUuid);
 
-		if (criteriaOnSearch.equals("all")) {
+		if (criteriaOnSearch.equals(VisibilityType.All.toString())) {
 			if (user.isSuperAdmin()) {
 				return mailingListBusinessService.findAllList();
 			} else {
 				return mailingListBusinessService.findAllListByUser(user);
 			}
-		} else if (criteriaOnSearch.equals("allMyLists")) {
+		} else if (criteriaOnSearch.equals(VisibilityType.AllMyLists.toString())) {
 			return mailingListBusinessService.findAllMyList(user);
-		} else if (criteriaOnSearch.equals("public")) {
+		} else if (criteriaOnSearch.equals(VisibilityType.Public.toString())) {
 			isPublic = true;
 		} else {
 			isPublic = false;

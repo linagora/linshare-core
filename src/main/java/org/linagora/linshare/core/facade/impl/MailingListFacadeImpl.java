@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -50,7 +51,6 @@ import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.service.AccountService;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.linagora.linshare.view.tapestry.services.impl.MailingListCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +113,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public void deleteList(UserVo actorVo,String uuid) throws BusinessException {
+	public void deleteList(UserVo actorVo, String uuid) throws BusinessException {
 		mailingListService.deleteList(actorVo.getLsUuid(), uuid);
 	}
 
@@ -131,7 +131,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	@Override
 	public void deleteContact(UserVo actorVo, String listUuid, String contactUuid) throws BusinessException {
 		mailingListService.deleteContact(actorVo.getLsUuid(), listUuid, contactUuid);
-
 	}
 
 	@Override
@@ -223,7 +222,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public List<MailingListVo> completionForUploadForm(UserVo userVo, String input) throws BusinessException {
-		return performSearchList(userVo, input, "all");
+		return performSearchList(userVo, input, VisibilityType.All.toString());
 	}
 
 	@Override
@@ -268,7 +267,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		} else {
 			userSet.addAll(userService.searchUser(null, firstName_, lastName_, null, loginUser));
 		}
-
 		return new ArrayList<User>(userSet);
 	}
 
@@ -300,13 +298,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public void refreshListAfterDelete(List<MailingListVo> list, String listToDelete) {
-		for(MailingListVo current : list){
-			if(current.getUuid().equals(listToDelete)){
+		for (MailingListVo current : list) {
+			if (current.getUuid().equals(listToDelete)) {
 				list.remove(current);
 			}
 		}
 	}
-	
+
 	private List<MailingListVo> ListToListVo(List<MailingList> list) {
 		List<MailingListVo> listVo = new ArrayList<MailingListVo>();
 		if (list != null) {

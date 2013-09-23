@@ -44,7 +44,7 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.domain.constants.VisibilityType;
+import org.linagora.linshare.core.domain.constants.MailingListVisibility;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -88,7 +88,7 @@ public class ManageMailingList {
 
 	@Validate("required")
 	@Property
-	private VisibilityType visibility;
+	private MailingListVisibility visibility;
 
 	@Inject
 	private Messages messages;
@@ -158,7 +158,7 @@ public class ManageMailingList {
 	}
 
 	public Object onSuccess() throws BusinessException {
-		if (visibility.toString().equals("Public")) {
+		if (visibility.toString().equals(MailingListVisibility.Public.toString())) {
 			mailingList.setPublic(true);
 		} else {
 			mailingList.setPublic(false);
