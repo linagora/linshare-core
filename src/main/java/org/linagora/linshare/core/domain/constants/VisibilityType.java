@@ -55,5 +55,4 @@ public enum VisibilityType {
 		}
 		throw new IllegalArgumentException("Doesn't match an existing MailingListType");
 	}
-	
 }

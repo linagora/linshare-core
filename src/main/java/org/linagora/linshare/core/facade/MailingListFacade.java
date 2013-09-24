@@ -48,7 +48,7 @@ public interface MailingListFacade {
 
 	MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
-	MailingListVo searchList(String uuid) throws BusinessException;
+	MailingListVo findByUuid(String uuid) throws BusinessException;
 
 	List<MailingListVo> getAllMyList(UserVo user) throws BusinessException;
 

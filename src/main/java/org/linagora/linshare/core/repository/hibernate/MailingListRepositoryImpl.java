@@ -200,9 +200,8 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		det.add(Restrictions.or(Restrictions.eq("owner", user), allMyDomainPublicLists));
 
 		List<MailingList> mailingList = findByCriteria(det);
-		if (mailingList == null || mailingList.isEmpty()) {
+		if (mailingList == null)
 			return new ArrayList<MailingList>();
-		}
 		return mailingList;
 	}
 

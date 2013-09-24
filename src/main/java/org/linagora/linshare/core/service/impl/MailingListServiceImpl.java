@@ -36,6 +36,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.business.service.MailingListBusinessService;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.entities.MailingList;
@@ -47,7 +48,6 @@ import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 public class MailingListServiceImpl implements MailingListService {
 
@@ -64,53 +64,59 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	/**
-	 * Basic operations on mailingList
+	 * Basic operations on list
 	 */
 
 	@Override
-	public MailingList createList(String actorUuid, String ownerUuid, MailingList mailingList) throws BusinessException {
-		Assert.notNull(actorUuid);
-		Assert.notNull(ownerUuid);
-		Assert.notNull(mailingList);
+	public MailingList createList(String actorUuid, String ownerUuid, MailingList list) throws BusinessException {
+		Validate.notEmpty(actorUuid);
+		Validate.notEmpty(ownerUuid);
+		Validate.notNull(list);
 
 		User actor = userService.findByLsUuid(actorUuid);
 		User owner = userService.findByLsUuid(ownerUuid);
 
 		if (!actor.isSuperAdmin()) {
-			return mailingListBusinessService.createList(mailingList, owner);
+			return mailingListBusinessService.createList(list, owner);
 		} else {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to create a list.");
 		}
 	}
 
 	@Override
-	public MailingList searchList(String uuid) throws BusinessException {
-		Assert.notNull(uuid);
+	public MailingList findByUuid(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid);
 
-		return mailingListBusinessService.findListByUuid(uuid);
+		MailingList list = mailingListBusinessService.findByUuid(uuid);
+		if (list == null)
+			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST,
+					"List does not exist : " + uuid);
+		return list;
 	}
 
 	@Override
 	public MailingList findByIdentifier(String ownerUuid, String identifier) {
-		Assert.notNull(ownerUuid);
+		Validate.notEmpty(ownerUuid);
 
 		User owner = userService.findByLsUuid(ownerUuid);
+
 		return mailingListBusinessService.findByIdentifier(owner, identifier);
 	}
 
 	@Override
-	public List<MailingList> findAllListByUser(String ownerUuid) {
-		Assert.notNull(ownerUuid);
+	public List<MailingList> findAllListByUser(String actorUuid) {
+		Validate.notEmpty(actorUuid);
 
-		User owner = userService.findByLsUuid(ownerUuid);
+		User owner = userService.findByLsUuid(actorUuid);
+
 		return mailingListBusinessService.findAllListByUser(owner);
 	}
 
 	@Override
 	public List<MailingList> searchListByVisibility(String ownerUuid, String criteriaOnSearch, String pattern) {
-		Assert.notNull(ownerUuid);
-		Assert.notNull(criteriaOnSearch);
-		Assert.notNull(pattern);
+		Validate.notEmpty(ownerUuid);
+		Validate.notEmpty(criteriaOnSearch);
+		Validate.notEmpty(pattern);
 
 		boolean isPublic;
 		User actor = userService.findByLsUuid(ownerUuid);
@@ -128,77 +134,68 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibility(String ownerUuid, String criteriaOnSearch) {
-		Assert.notNull(criteriaOnSearch);
-		Assert.notNull(ownerUuid);
+	public List<MailingList> findAllListByVisibility(String actorUuid,
+			String criteriaOnSearch) {
+		Validate.notEmpty(criteriaOnSearch);
+		Validate.notEmpty(actorUuid);
 
-		boolean isPublic;
-		User user = userService.findByLsUuid(ownerUuid);
+		User actor = userService.findByLsUuid(actorUuid);
 
-		if (criteriaOnSearch.equals(VisibilityType.All.toString())) {
-			if (user.isSuperAdmin()) {
-				return mailingListBusinessService.findAllList();
-			} else {
-				return mailingListBusinessService.findAllListByUser(user);
-			}
-		} else if (criteriaOnSearch.equals(VisibilityType.AllMyLists.toString())) {
-			return mailingListBusinessService.findAllMyList(user);
-		} else if (criteriaOnSearch.equals(VisibilityType.Public.toString())) {
-			isPublic = true;
-		} else {
-			isPublic = false;
-		}
-		return mailingListBusinessService.findAllListByVisibility(user, isPublic);
+		if (criteriaOnSearch.equals(VisibilityType.All))
+			return actor.isSuperAdmin() ? mailingListBusinessService
+					.findAllList() : mailingListBusinessService
+					.findAllListByUser(actor);
+		if (criteriaOnSearch.equals(VisibilityType.AllMyLists))
+			return mailingListBusinessService.findAllMyList(actor);
+		return mailingListBusinessService.findAllListByVisibility(actor,
+				criteriaOnSearch.equals(VisibilityType.Public));
 	}
 
 	@Override
 	public List<MailingList> findAllListByOwner(String ownerUuid) {
-		Assert.notNull(ownerUuid);
+		Validate.notEmpty(ownerUuid);
 
 		User actor = userService.findByLsUuid(ownerUuid);
+
 		return mailingListBusinessService.findAllMyList(actor);
 	}
 
 	@Override
 	public void deleteList(String actorUuid, String mailingListUuid) throws BusinessException {
-		Assert.notNull(mailingListUuid);
-		Assert.notNull(actorUuid);
+		Validate.notEmpty(mailingListUuid);
+		Validate.notEmpty(actorUuid);
 
-		MailingList mailingList = mailingListBusinessService.findListByUuid(mailingListUuid);
-		String ownerUuid = mailingList.getOwner().getLsUuid();
+		MailingList list = findByUuid(mailingListUuid);
 		User actor = userService.findByLsUuid(actorUuid);
 
-		if (actor.isSuperAdmin() || actor.getLsUuid().equals(ownerUuid)) {
-			mailingListBusinessService.deleteList(mailingListUuid);
-		} else {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this list.");
-		}
-
+		if (!actor.isSuperAdmin())
+			checkRights(actor, list, "You are not authorized to delete this list.");
+		mailingListBusinessService.deleteList(mailingListUuid);
 	}
 
 	@Override
-	public void updateList(String actorUuid, MailingList listToUpdate, String newOwnerUuid) throws BusinessException {
-		Assert.notNull(actorUuid);
-		Assert.notNull(listToUpdate);
-		User actor = userService.findByLsUuid(actorUuid);
-		MailingList mailingList = mailingListBusinessService.findListByUuid(listToUpdate.getUuid());
+	public void updateList(String actorUuid, MailingList listToUpdate, String newOwnerUuid)
+			throws BusinessException {
+		Validate.notEmpty(actorUuid);
+		Validate.notNull(listToUpdate);
 
-		if (actor.isSuperAdmin() || actor.getLsUuid().equals(mailingList.getOwner().getLsUuid())) {
-			if (newOwnerUuid != null) {
-				if (actor.isSuperAdmin()) {
-					User owner = userService.findByLsUuid(newOwnerUuid);
-					listToUpdate.setNewOwner(owner);
-				} else {
-					logger.warn("The current user " + actor.getAccountReprentation()
-							+ " is trying to update the owner.");
-				}
+		User actor = userService.findByLsUuid(actorUuid);
+		MailingList list = findByUuid(listToUpdate.getUuid());
+
+		if (!actor.isSuperAdmin())
+			checkRights(actor, list, "You are not authorized to update this list.");
+		if (newOwnerUuid != null) {
+			if (actor.isSuperAdmin()) {
+				User owner = userService.findByLsUuid(newOwnerUuid);
+				listToUpdate.setNewOwner(owner);
 			} else {
-				listToUpdate.setOwner(mailingList.getOwner());
+				logger.warn("The current user " + actor.getAccountReprentation()
+						+ " is trying to update the owner.");
 			}
-			mailingListBusinessService.updateList(listToUpdate);
 		} else {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this list.");
+			listToUpdate.setOwner(list.getOwner());
 		}
+		mailingListBusinessService.updateList(listToUpdate);
 	}
 
 	/**
@@ -208,22 +205,20 @@ public class MailingListServiceImpl implements MailingListService {
 	@Override
 	public void addNewContact(String ownerUuid, String mailingListUuid, MailingListContact contact)
 			throws BusinessException {
-		Assert.notNull(ownerUuid);
-		Assert.notNull(mailingListUuid);
-		Assert.notNull(contact);
+		Validate.notEmpty(ownerUuid);
+		Validate.notEmpty(mailingListUuid);
+		Validate.notNull(contact);
 
-		User actorEntity = userService.findByLsUuid(ownerUuid);
-		MailingList mailingList = mailingListBusinessService.findListByUuid(mailingListUuid);
-		if (mailingList.isOwner(actorEntity)) {
-			mailingListBusinessService.addContact(mailingList, contact);
-		} else {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to create a contact");
-		}
+		User actor = userService.findByLsUuid(ownerUuid);
+		MailingList list = findByUuid(mailingListUuid);
+
+		checkRights(actor, list, "You are not authorized to create a contact");
+		mailingListBusinessService.addContact(list, contact);
 	}
 
 	@Override
 	public MailingListContact searchContact(String uuid) throws BusinessException {
-		Assert.notNull(uuid);
+		Validate.notNull(uuid);
 
 		return mailingListBusinessService.findContact(uuid);
 	}
@@ -236,35 +231,34 @@ public class MailingListServiceImpl implements MailingListService {
 	@Override
 	public void updateContact(String ownerUuid, String listUuid, MailingListContact contactToUpdate)
 			throws BusinessException {
-		Assert.notNull(listUuid);
-		Assert.notNull(ownerUuid);
-		Assert.notNull(contactToUpdate);
+		Validate.notEmpty(listUuid);
+		Validate.notEmpty(ownerUuid);
+		Validate.notNull(contactToUpdate);
 
-		MailingList list = mailingListBusinessService.findListByUuid(listUuid);
+		MailingList list = findByUuid(listUuid);
 		User actor = userService.findByLsUuid(ownerUuid);
-		if (actor.getLsUuid().equals(list.getOwner().getLsUuid())) {
-			mailingListBusinessService.updateContact(contactToUpdate);
-		} else {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete a contact");
-		}
+
+		checkRights(actor, list, "You are not authorized to delete a contact");
+		mailingListBusinessService.updateContact(contactToUpdate);
 	}
 
 	@Override
-	public void deleteContact(String ownerUuid, String listUuid, String contactUuid) throws BusinessException {
-		Assert.notNull(listUuid);
-		Assert.notNull(ownerUuid);
-		Assert.notNull(contactUuid);
-		User actor = userService.findByLsUuid(ownerUuid);
-		MailingList mailingList = mailingListBusinessService.findListByUuid(listUuid);
-		if (mailingList == null) {
-			String msg = "The current mailing list do not exist : " + listUuid;
-			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, msg);
-		}
-		if (actor.getLsUuid().equals(mailingList.getOwner().getLsUuid())) {
-			mailingListBusinessService.deleteContact(mailingList, contactUuid);
-		} else {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete a contact");
-		}
+	public void deleteContact(String actorUuid, String listUuid, String contactUuid)
+			throws BusinessException {
+		Validate.notEmpty(listUuid);
+		Validate.notEmpty(actorUuid);
+		Validate.notEmpty(contactUuid);
+
+		User actor = userService.findByLsUuid(actorUuid);
+		MailingList list = findByUuid(listUuid);
+
+		checkRights(actor, list, "You are not authorized to delete a contact");
+		mailingListBusinessService.deleteContact(list, contactUuid);
+	}
+	
+	private void checkRights(User actor, MailingList list, String msg)
+			throws BusinessException {
+		if (!actor.equals(list.getOwner()))
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, msg);
 	}
 }

@@ -84,10 +84,11 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	}
 
 	@Override
-	public MailingListVo searchList(String uuid) {
+	public MailingListVo findByUuid(String uuid) {
 		MailingList mailingList;
+
 		try {
-			mailingList = mailingListService.searchList(uuid);
+			mailingList = mailingListService.findByUuid(uuid);
 			return new MailingListVo(mailingList);
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -203,7 +204,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		List<MailingList> lists = new ArrayList<MailingList>();
 		for (String list : uuids) {
 			try {
-				MailingList listToAdd = mailingListService.searchList(list);
+				MailingList listToAdd = mailingListService.findByUuid(list);
 				lists.add(listToAdd);
 			} catch (BusinessException e) {
 				e.printStackTrace();
@@ -291,7 +292,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		List<MailingListVo> listVo = new ArrayList<MailingListVo>(list);
 		list.clear();
 		for (MailingListVo current : listVo) {
-			list.add(searchList(current.getUuid()));
+			list.add(findByUuid(current.getUuid()));
 		}
 	}
 
@@ -316,7 +317,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException {
-		MailingList list = mailingListService.searchList(listVo.getUuid());
+		MailingList list = mailingListService.findByUuid(listVo.getUuid());
 		User actor = (User) userService.findOrCreateUser(actorVo.getMail(), actorVo.getDomainIdentifier());
 		if (list.getOwner().equals(actor) || actorVo.isSuperAdmin()) {
 			return true;

@@ -138,7 +138,7 @@ public class DisplayMailingList {
 
 	public void onActivate(String uuid) throws BusinessException {
 		if (uuid != null) {
-			mailingListVo = mailingListFacade.searchList(uuid);
+			mailingListVo = mailingListFacade.findByUuid(uuid);
 		} else {
 			mailingListVo = null;
 		}
@@ -184,7 +184,7 @@ public class DisplayMailingList {
 			MailingListContactVo newContact = new MailingListContactVo(mail, firstName, lastName);
 			mailingListFacade.addNewContactToList(loginUser, mailingListVo, newContact);
 		}
-		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
+		mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
 		inModify = false;
 		mail = null;
 		firstName = null;
@@ -213,13 +213,13 @@ public class DisplayMailingList {
 
 	public void onActionFromAddUser(String lsUuid) throws BusinessException {
 		mailingListFacade.addUserToList(loginUser, mailingListVo, lsUuid);
-		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
+		mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
 	}
 
 	public void onActionFromDeleteUser(String mail) throws BusinessException {
 		MailingListContactVo contactToRemove = mailingListFacade.findContactByMail(mailingListVo.getUuid(), mail);
 		mailingListFacade.deleteContact(loginUser, mailingListVo.getUuid(), contactToRemove.getUuid());
-		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
+		mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
 	}
 
 	public void onActionFromEditContact(String uuid) throws BusinessException {
@@ -238,7 +238,7 @@ public class DisplayMailingList {
 	@OnEvent(value = "contactDeleteEvent")
 	public void deleteContactFromList() throws BusinessException {
 		mailingListFacade.deleteContact(loginUser, mailingListVo.getUuid(), contactToDelete);
-		mailingListVo = mailingListFacade.searchList(mailingListVo.getUuid());
+		mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
 	}
 
 	public boolean getIsEmpty() {
