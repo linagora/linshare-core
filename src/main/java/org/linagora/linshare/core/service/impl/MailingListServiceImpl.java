@@ -177,15 +177,9 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException {
-		this.updateList(actorUuid, listToUpdate, null);
-	}
-
-	@Override
 	public void updateList(String actorUuid, MailingList listToUpdate, String newOwnerUuid) throws BusinessException {
 		Assert.notNull(actorUuid);
 		Assert.notNull(listToUpdate);
-
 		User actor = userService.findByLsUuid(actorUuid);
 		MailingList mailingList = mailingListBusinessService.findListByUuid(listToUpdate.getUuid());
 
@@ -194,14 +188,13 @@ public class MailingListServiceImpl implements MailingListService {
 				if (actor.isSuperAdmin()) {
 					User owner = userService.findByLsUuid(newOwnerUuid);
 					listToUpdate.setNewOwner(owner);
-					listToUpdate.setDomain(owner.getDomain());
 				} else {
 					logger.warn("The current user " + actor.getAccountReprentation()
 							+ " is trying to update the owner.");
 				}
+			} else {
+				listToUpdate.setOwner(mailingList.getOwner());
 			}
-			listToUpdate.setOwner(mailingList.getOwner());
-			listToUpdate.setDomain(mailingList.getOwner().getDomain());
 			mailingListBusinessService.updateList(listToUpdate);
 		} else {
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this list.");

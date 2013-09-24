@@ -78,6 +78,7 @@ public class ManageMailingList {
 	private UserVo oldOwner;
 
 	@Property
+	@Persist
 	private UserVo newOwner;
 
 	@Property
@@ -106,23 +107,22 @@ public class ManageMailingList {
 
 	@Inject
 	private SelectModelFactory selectModelFactory;
-	
-	public Object onActivate() {
-		if (mailingListVo == null)
-			return Index.class;
-		return null;
-	}
 
-	public Object onActivate(String uuid) throws BusinessException {
-		oldIdentifier = mailingListVo.getIdentifier();
-		oldOwner = mailingListVo.getOwner();
-		return null;
+	public Object onActivate() {
+
+		if (mailingListVo == null) {
+			return Index.class;
+		} else {
+			oldIdentifier = mailingListVo.getIdentifier();
+			newOwner = mailingListVo.getOwner();
+			return null;
+		}
 	}
 
 	public SelectModel onProvideCompletionsFromNewOwner(String input) throws BusinessException {
 		return selectModelFactory.create(mailingListFacade.completionOnUsers(loginUser, input), "completeName");
 	}
-	
+
 	public LabelAwareValueEncoder<UserVo> getEncoder() {
 		return new LabelAwareValueEncoder<UserVo>() {
 			@Override
@@ -159,36 +159,25 @@ public class ManageMailingList {
 	public Object onActionFromCancel() {
 		mailingListVo = null;
 		oldIdentifier = null;
-		oldOwner = null;
 		return Index.class;
 	}
 
-	public Object onSuccess() throws BusinessException, ValidationException {
-		// TODO : fix the interface to modify owner list (we must not uses email
-        // as unique identifier instead of uuid !!!
+	public void onValidateFromForm() {
 
-        // if (newOwner != null) {
-        // if (newOwner.substring(newOwner.length() - 1).equals(">")) {
-        // UserVo newOwnerVo =
-        // MailCompletionService.getUserFromDisplay(newOwner);
-        // mailingListVo.setOwner(newOwnerVo);
-        // } else {
-        // form.recordError(String.format(messages.get("pages.administration.lists.unavailableOwner"),
-        // newOwner));
-        // return null;
-        // }
-        // }
-		if (mailingListVo.getIdentifier().equals(oldIdentifier)
-				|| mailingListFacade.identifierIsAvailable(mailingListVo.getOwner(), mailingListVo.getIdentifier())) {
-            mailingListFacade.updateList(loginUser, mailingListVo);
-		} else {
-			String copy = mailingListFacade.findAvailableIdentifier(mailingListVo.getOwner(),
-					mailingListVo.getIdentifier());
-			form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"), mailingListVo
-					.getOwner().getFullName(), copy));
-			mailingListVo.setOwner(oldOwner);
-			return null;
+		if (!mailingListVo.getOwner().equals(newOwner) || (mailingListVo.getOwner().equals(newOwner) && !mailingListVo.getIdentifier().equals(oldIdentifier))) {
+			if (!mailingListFacade.identifierIsAvailable(newOwner, mailingListVo.getIdentifier())) {
+				String copy = mailingListFacade.findAvailableIdentifier(newOwner, mailingListVo.getIdentifier());
+				form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"),
+						newOwner.getFullName(), copy));
+			}
+		} 
+		if (newOwner == null) {
+			form.recordError(String.format(messages.get("pages.lists.administration.newOwnerNotFound")));
 		}
+	}
+
+	public Object onSuccess() throws BusinessException, ValidationException {
+		mailingListFacade.updateList(loginUser, mailingListVo, newOwner.getLsUuid());
 		mailingListVo = null;
 		return Index.class;
 	}

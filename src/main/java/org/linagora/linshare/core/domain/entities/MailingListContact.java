@@ -19,7 +19,7 @@ public class MailingListContact {
 	protected Date creationDate;
 
 	protected Date modificationDate;
-	
+
 	/**
 	 * Constructors
 	 */

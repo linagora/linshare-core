@@ -73,8 +73,6 @@ public interface MailingListService {
 	 */
 	void updateList(String actorUuid, MailingList listToUpdate, String newOwnerUuid) throws BusinessException;
 
-	void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
-
 	MailingList searchList(String uuid) throws BusinessException;
 
 	/**
