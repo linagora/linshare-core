@@ -82,7 +82,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	}
 
 	@Override
-	public MailingList findListByUuid(String uuid) throws BusinessException {
+	public MailingList findByUuid(String uuid) throws BusinessException {
 		MailingList mailingList = listRepository.findByUuid(uuid);
 		if (mailingList == null) {
 			String msg = "The current mailing list do not exist : " + uuid;
@@ -134,14 +134,14 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 
 	@Override
 	public void deleteList(String uuid) throws BusinessException {
-		MailingList listToDelete = findListByUuid(uuid);
+		MailingList listToDelete = findByUuid(uuid);
 		logger.debug("List to delete: " + uuid);
 		listRepository.delete(listToDelete);
 	}
 
 	@Override
 	public void updateList(MailingList updatedMailingList) throws BusinessException {
-		MailingList entity = findListByUuid(updatedMailingList.getUuid());
+		MailingList entity = findByUuid(updatedMailingList.getUuid());
 		String newIdentifier = updatedMailingList.getIdentifier();
 		if (!entity.getIdentifier().equals(newIdentifier)) {
 			// The identifier was changed.

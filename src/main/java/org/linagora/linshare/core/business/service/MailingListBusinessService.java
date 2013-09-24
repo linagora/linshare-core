@@ -55,7 +55,7 @@ public interface MailingListBusinessService {
 	 * @throws BusinessException
 	 *             if not found.
 	 */
-	MailingList findListByUuid(String uuid) throws BusinessException;
+	MailingList findByUuid(String uuid) throws BusinessException;
 
 	List<MailingList> findAllList();
 

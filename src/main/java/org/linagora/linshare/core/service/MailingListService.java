@@ -73,7 +73,7 @@ public interface MailingListService {
 	 */
 	void updateList(String actorUuid, MailingList listToUpdate, String newOwnerUuid) throws BusinessException;
 
-	MailingList searchList(String uuid) throws BusinessException;
+	MailingList findByUuid(String uuid) throws BusinessException;
 
 	/**
 	 * Find all list (private and public) of the selected user
@@ -126,7 +126,7 @@ public interface MailingListService {
 	 */
 	void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact) throws BusinessException;
 
-	void deleteContact(String ownerUuid, String listUuid, String mail) throws BusinessException;
+	void deleteContact(String actorUuid, String listUuid, String mail) throws BusinessException;
 
 	MailingListContact searchContact(String uuid) throws BusinessException;
 
