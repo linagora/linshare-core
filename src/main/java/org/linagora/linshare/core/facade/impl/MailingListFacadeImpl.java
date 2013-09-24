@@ -102,8 +102,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException {
-		MailingList mailingList = new MailingList(mailingListVo);
-		mailingListService.updateList(actorVo.getLsUuid(), mailingList);
+		updateList(actorVo, mailingListVo, null);
 	}
 
 	@Override
