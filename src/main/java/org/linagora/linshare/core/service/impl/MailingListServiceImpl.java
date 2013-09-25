@@ -91,8 +91,10 @@ public class MailingListServiceImpl implements MailingListService {
 		Validate.notEmpty(uuid);
 
 		MailingList list = mailingListBusinessService.findByUuid(uuid);
+
 		if (list == null)
-			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST, "List does not exist : " + uuid);
+			throw new BusinessException(BusinessErrorCode.LIST_DO_NOT_EXIST,
+					"List does not exist : " + uuid);
 		return list;
 	}
 
@@ -110,11 +112,13 @@ public class MailingListServiceImpl implements MailingListService {
 		Validate.notEmpty(actorUuid);
 
 		User actor = userService.findByLsUuid(actorUuid);
+
 		return mailingListBusinessService.findAllListByUser(actor);
 	}
 
 	@Override
-	public List<MailingList> searchListByVisibility(String actorUuid, String criteriaOnSearch, String pattern) {
+	public List<MailingList> searchListByVisibility(String actorUuid,
+			String criteriaOnSearch, String pattern) {
 		Validate.notEmpty(actorUuid);
 		Validate.notEmpty(criteriaOnSearch);
 		Validate.notEmpty(pattern);
@@ -130,19 +134,19 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public List<MailingList> findAllListByVisibility(String actorUuid, String criteriaOnSearch) {
+	public List<MailingList> findAllListByVisibility(String actorUuid,
+			String criteriaOnSearch) {
 		Validate.notEmpty(criteriaOnSearch);
 		Validate.notEmpty(actorUuid);
 
 		User actor = userService.findByLsUuid(actorUuid);
 
 		if (criteriaOnSearch.equals(VisibilityType.All))
-			return actor.isSuperAdmin() ? mailingListBusinessService.findAllList() : mailingListBusinessService
-					.findAllListByUser(actor);
+			return mailingListBusinessService.findAllListByUser(actor);
 		if (criteriaOnSearch.equals(VisibilityType.AllMyLists))
 			return mailingListBusinessService.findAllMyList(actor);
-		return mailingListBusinessService
-				.findAllListByVisibility(actor, criteriaOnSearch.equals(VisibilityType.Public));
+		return mailingListBusinessService.findAllListByVisibility(actor,
+				criteriaOnSearch.equals(VisibilityType.Public));
 	}
 
 	@Override
@@ -150,6 +154,7 @@ public class MailingListServiceImpl implements MailingListService {
 		Validate.notEmpty(ownerUuid);
 
 		User owner = userService.findByLsUuid(ownerUuid);
+
 		return mailingListBusinessService.findAllMyList(owner);
 	}
 
@@ -169,7 +174,8 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void updateList(String actorUuid, MailingList listToUpdate, String newOwnerUuid) throws BusinessException {
+	public void updateList(String actorUuid, MailingList listToUpdate,
+			String newOwnerUuid) throws BusinessException {
 		Validate.notEmpty(actorUuid);
 		Validate.notNull(listToUpdate);
 
@@ -184,7 +190,9 @@ public class MailingListServiceImpl implements MailingListService {
 				User owner = userService.findByLsUuid(newOwnerUuid);
 				listToUpdate.setNewOwner(owner);
 			} else {
-				logger.warn("The current user " + actor.getAccountReprentation() + " is trying to update the owner.");
+				logger.warn("The current user "
+						+ actor.getAccountReprentation()
+						+ " is trying to update the owner.");
 			}
 		} else {
 			listToUpdate.setNewOwner(list.getOwner());
@@ -197,19 +205,18 @@ public class MailingListServiceImpl implements MailingListService {
 	 */
 
 	@Override
-	public void addNewContact(String actorUuid, String mailingListUuid, MailingListContact contact)
-			throws BusinessException {
+	public void addNewContact(String actorUuid, String mailingListUuid,
+			MailingListContact contact) throws BusinessException {
 		Validate.notEmpty(actorUuid);
 		Validate.notEmpty(mailingListUuid);
 		Validate.notNull(contact);
 
 		User actor = userService.findByLsUuid(actorUuid);
-		MailingList mailingList = mailingListBusinessService.findByUuid(mailingListUuid);
-		if (mailingList.isOwner(actor)) {
-			mailingListBusinessService.addContact(mailingList, contact);
-		} else {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to create a contact");
-		}
+		MailingList list = mailingListBusinessService
+				.findByUuid(mailingListUuid);
+
+		checkRights(actor, list, "You are not authorized to create a contact");
+		mailingListBusinessService.addContact(list, contact);
 	}
 
 	@Override
@@ -227,12 +234,15 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void updateContact(String actorUuid, MailingListContact contactToUpdate) throws BusinessException {
+	public void updateContact(String actorUuid,
+			MailingListContact contactToUpdate) throws BusinessException {
 		Validate.notNull(actorUuid);
 		Validate.notNull(contactToUpdate);
 
-		MailingListContact contact = mailingListBusinessService.findContact(contactToUpdate.getUuid());
-		MailingList list = mailingListBusinessService.findByUuid(contact.getMailingList().getUuid());
+		MailingListContact contact = mailingListBusinessService
+				.findContact(contactToUpdate.getUuid());
+		MailingList list = mailingListBusinessService.findByUuid(contact
+				.getMailingList().getUuid());
 		User actor = userService.findByLsUuid(actorUuid);
 
 		checkRights(actor, list, "You are not authorized to delete a contact");
@@ -240,19 +250,24 @@ public class MailingListServiceImpl implements MailingListService {
 	}
 
 	@Override
-	public void deleteContact(String actorUuid, String contactUuid) throws BusinessException {
+	public void deleteContact(String actorUuid, String contactUuid)
+			throws BusinessException {
 		Validate.notEmpty(actorUuid);
 		Validate.notEmpty(contactUuid);
 
 		User actor = userService.findByLsUuid(actorUuid);
-		MailingListContact contact = mailingListBusinessService.findContact(contactUuid);
-		MailingList mailingList = mailingListBusinessService.findByUuid(contact.getMailingList().getUuid());
+		MailingListContact contact = mailingListBusinessService
+				.findContact(contactUuid);
+		MailingList mailingList = mailingListBusinessService.findByUuid(contact
+				.getMailingList().getUuid());
 
-		checkRights(actor, mailingList, "You are not authorized to delete a contact");
+		checkRights(actor, mailingList,
+				"You are not authorized to delete a contact");
 		mailingListBusinessService.deleteContact(mailingList, contactUuid);
 	}
 
-	private void checkRights(User actor, MailingList list, String msg) throws BusinessException {
+	private void checkRights(User actor, MailingList list, String msg)
+			throws BusinessException {
 		if (!actor.equals(list.getOwner()))
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, msg);
 	}
