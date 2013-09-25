@@ -113,7 +113,6 @@ public class ManageMailingList {
 			inModify = true;
 			mailingList = mailingListFacade.findByUuid(uuid);
 			oldIdentifier = mailingList.getIdentifier();
-
 		} else {
 			inModify = false;
 			mailingList = null;
