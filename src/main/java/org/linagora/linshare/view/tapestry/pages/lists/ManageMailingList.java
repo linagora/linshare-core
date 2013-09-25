@@ -40,11 +40,9 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
-import org.linagora.linshare.core.domain.constants.MailingListVisibility;
 import org.linagora.linshare.core.domain.vo.AbstractDomainVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -85,10 +83,6 @@ public class ManageMailingList {
 
 	@InjectPage
 	private org.linagora.linshare.view.tapestry.pages.lists.Index index;
-
-	@Validate("required")
-	@Property
-	private MailingListVisibility visibility;
 
 	@Inject
 	private Messages messages;
@@ -158,15 +152,6 @@ public class ManageMailingList {
 	}
 
 	public Object onSuccess() throws BusinessException {
-		if (visibility.toString().equals(MailingListVisibility.Public.toString())) {
-			mailingList.setPublic(true);
-		} else {
-			mailingList.setPublic(false);
-		}
-		mailingList.setOwner(loginUser);
-		domain = domainFacade.retrieveDomain(loginUser.getDomainIdentifier());
-		mailingList.setDomainId(domain.getIdentifier());
-
 		if (inModify == true) {
 			mailingListFacade.updateList(loginUser, mailingList);
 			index.setFromCreate(false);
