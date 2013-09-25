@@ -164,13 +164,14 @@ public class ManageMailingList {
 
 	public void onValidateFromForm() {
 
-		if (!mailingListVo.getOwner().equals(newOwner) || (mailingListVo.getOwner().equals(newOwner) && !mailingListVo.getIdentifier().equals(oldIdentifier))) {
+		if (!mailingListVo.getOwner().equals(newOwner)
+				|| (mailingListVo.getOwner().equals(newOwner) && !mailingListVo.getIdentifier().equals(oldIdentifier))) {
 			if (!mailingListFacade.identifierIsAvailable(newOwner, mailingListVo.getIdentifier())) {
 				String copy = mailingListFacade.findAvailableIdentifier(newOwner, mailingListVo.getIdentifier());
 				form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"),
 						newOwner.getFullName(), copy));
 			}
-		} 
+		}
 		if (newOwner == null) {
 			form.recordError(String.format(messages.get("pages.lists.administration.newOwnerNotFound")));
 		}

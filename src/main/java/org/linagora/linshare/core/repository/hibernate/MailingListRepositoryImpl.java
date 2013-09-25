@@ -34,7 +34,6 @@
 
 package org.linagora.linshare.core.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -118,8 +117,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailingList entity) {
-		return DetachedCriteria.forClass(getPersistentClass()).add(
-				Restrictions.eq("uuid", entity.getUuid()));
+		return DetachedCriteria.forClass(getPersistentClass()).add(Restrictions.eq("uuid", entity.getUuid()));
 	}
 
 	@Override
@@ -174,7 +172,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 			det.add(Restrictions.and(allMyLists, Restrictions.like("identifier", "%" + input + "%").ignoreCase()));
 		}
 		det.addOrder(Property.forName("identifier").desc());
-		
+
 		return findByCriteria(det);
 	}
 
