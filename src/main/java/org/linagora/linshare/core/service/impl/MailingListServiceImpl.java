@@ -187,7 +187,7 @@ public class MailingListServiceImpl implements MailingListService {
 				logger.warn("The current user " + actor.getAccountReprentation() + " is trying to update the owner.");
 			}
 		} else {
-			listToUpdate.setOwner(list.getOwner());
+			listToUpdate.setNewOwner(list.getOwner());
 		}
 		mailingListBusinessService.updateList(listToUpdate);
 	}
