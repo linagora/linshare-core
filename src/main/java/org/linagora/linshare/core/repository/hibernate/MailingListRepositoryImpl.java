@@ -58,6 +58,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	@Override
 	public List<MailingList> searchWithInputByVisibility(User user, boolean isPublic, String input) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+
 		if (isPublic == false) {
 			if (user.isSuperAdmin()) {
 				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
@@ -78,16 +79,13 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 			}
 		}
 		det.addOrder(Property.forName("identifier").desc());
-		List<MailingList> mailingList = findByCriteria(det);
-		if (mailingList == null || mailingList.isEmpty()) {
-			return new ArrayList<MailingList>();
-		}
-		return mailingList;
+		return findByCriteria(det);
 	}
 
 	@Override
 	public List<MailingList> searchListByVisibility(User user, boolean isPublic) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+
 		if (isPublic == false) {
 			if (user.isSuperAdmin()) {
 				det.add(Restrictions.eq("isPublic", false));
@@ -102,16 +100,13 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 			}
 		}
 		det.addOrder(Property.forName("identifier").desc());
-		List<MailingList> mailingList = findByCriteria(det);
-		if (mailingList == null || mailingList.isEmpty()) {
-			return new ArrayList<MailingList>();
-		}
-		return mailingList;
+		return findByCriteria(det);
 	}
 
 	@Override
 	public MailingList findByUuid(String uuid) {
 		List<MailingList> mailingList = findByCriteria(Restrictions.eq("uuid", uuid));
+
 		if (mailingList == null || mailingList.isEmpty()) {
 			return null;
 		} else if (mailingList.size() == 1) {
@@ -123,17 +118,17 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailingList entity) {
-		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass()).add(
+		return DetachedCriteria.forClass(getPersistentClass()).add(
 				Restrictions.eq("uuid", entity.getUuid()));
-		return det;
 	}
 
 	@Override
 	public MailingList findByIdentifier(User owner, String identifier) {
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-		det.add(Restrictions.and(Restrictions.eq("identifier", identifier), Restrictions.eq("owner", owner)));
 
+		det.add(Restrictions.and(Restrictions.eq("identifier", identifier), Restrictions.eq("owner", owner)));
 		List<MailingList> mailingList = findByCriteria(det);
+
 		if (mailingList == null || mailingList.isEmpty()) {
 			return null;
 		} else if (mailingList.size() == 1) {
@@ -141,7 +136,6 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		} else {
 			throw new IllegalStateException("Id must be unique");
 		}
-
 	}
 
 	@Override
@@ -180,16 +174,17 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 			det.add(Restrictions.and(allMyLists, Restrictions.like("identifier", "%" + input + "%").ignoreCase()));
 		}
 		det.addOrder(Property.forName("identifier").desc());
-		List<MailingList> mailingList = findByCriteria(det);
-		if (mailingList == null || mailingList.isEmpty()) {
-			return new ArrayList<MailingList>();
-		}
-		return mailingList;
+		
+		return findByCriteria(det);
 	}
 
 	@Override
 	public List<MailingList> findAllMyList(User user) {
+		if (user.isSuperAdmin())
+			return findAll();
+
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+
 		// all public lists that belong to my domain.
 		LogicalExpression allPublicLists = Restrictions.and(Restrictions.eq("isPublic", true),
 				Restrictions.eq("domain", user.getDomain()));
@@ -199,10 +194,7 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		// lists.
 		det.add(Restrictions.or(Restrictions.eq("owner", user), allMyDomainPublicLists));
 
-		List<MailingList> mailingList = findByCriteria(det);
-		if (mailingList == null)
-			return new ArrayList<MailingList>();
-		return mailingList;
+		return findByCriteria(det);
 	}
 
 	@Override
