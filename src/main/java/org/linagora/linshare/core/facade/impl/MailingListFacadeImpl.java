@@ -286,24 +286,6 @@ public class MailingListFacadeImpl implements MailingListFacade {
 		return finalResults;
 	}
 
-	@Override
-	public void refreshList(List<MailingListVo> list) {
-		List<MailingListVo> listVo = new ArrayList<MailingListVo>(list);
-		list.clear();
-		for (MailingListVo current : listVo) {
-			list.add(findByUuid(current.getUuid()));
-		}
-	}
-
-	@Override
-	public void refreshListAfterDelete(List<MailingListVo> list, String listToDelete) {
-		for (MailingListVo current : list) {
-			if (current.getUuid().equals(listToDelete)) {
-				list.remove(current);
-			}
-		}
-	}
-
 	private List<MailingListVo> ListToListVo(List<MailingList> list) {
 		List<MailingListVo> listVo = new ArrayList<MailingListVo>();
 		if (list != null) {

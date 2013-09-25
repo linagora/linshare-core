@@ -132,8 +132,6 @@ public interface MailingListFacade {
 	 */
 	List<UserVo> searchAmongUsers(UserVo userVo, String input) throws BusinessException;
 
-	public void refreshList(List<MailingListVo> list);
-
 	boolean getListIsDeletable(UserVo actorVo, MailingListVo listVo) throws BusinessException;
 
 	/**
@@ -173,7 +171,5 @@ public interface MailingListFacade {
 	String findAvailableIdentifier(UserVo user, String value);
 
 	public List<MailingListVo> completionForUploadForm(UserVo userVo, String input) throws BusinessException;
-
-	void refreshListAfterDelete(List<MailingListVo> list, String listToDelete);
 
 }

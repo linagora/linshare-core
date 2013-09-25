@@ -34,6 +34,7 @@
 
 package org.linagora.linshare.view.tapestry.pages.lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tapestry5.annotations.Import;
@@ -138,7 +139,7 @@ public class Index {
 			if (grid.getSortModel().getSortConstraints().isEmpty()) {
 				grid.getSortModel().updateSort("identifier");
 			}
-			mailingListFacade.refreshList(lists);
+			refreshList(lists);
 		}
 		alreadyConnect = true;
 	}
@@ -157,8 +158,26 @@ public class Index {
 
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
+		refreshListAfterDelete();
 		mailingListFacade.deleteList(loginUser, listToDelete);
-		mailingListFacade.refreshListAfterDelete(lists, listToDelete);
+	}
+
+	private void refreshListAfterDelete() {
+		List<MailingListVo> list = new ArrayList<MailingListVo>(lists);
+		lists.clear();
+		for (MailingListVo currentList : list) {
+			if (!currentList.getUuid().equals(listToDelete)) {
+				lists.add(currentList);
+			}
+		}
+	}
+
+	private void refreshList(List<MailingListVo> list) throws BusinessException {
+		List<MailingListVo> listVo = new ArrayList<MailingListVo>(list);
+		list.clear();
+		for (MailingListVo current : listVo) {
+			list.add(mailingListFacade.findByUuid(current.getUuid()));
+		}
 	}
 
 	public void onSuccessFromForm() throws BusinessException {

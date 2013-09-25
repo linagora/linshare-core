@@ -111,7 +111,7 @@ public class Index {
 
 	@Persist
 	private boolean inSearch;
-	
+
 	@InjectPage
 	private ManageMailingList manageMailingListPage;
 
@@ -128,7 +128,7 @@ public class Index {
 			if (grid.getSortModel().getSortConstraints().isEmpty()) {
 				grid.getSortModel().updateSort("identifier");
 			}
-			mailingListFacade.refreshList(lists);
+			refreshList(lists);
 		}
 		alreadyConnect = true;
 	}
@@ -143,8 +143,26 @@ public class Index {
 
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
+		refreshListAfterDelete();
 		mailingListFacade.deleteList(loginUser, listToDelete);
-		mailingListFacade.refreshListAfterDelete(lists, listToDelete);
+	}
+
+	private void refreshListAfterDelete() {
+		List<MailingListVo> list = new ArrayList<MailingListVo>(lists);
+		lists.clear();
+		for (MailingListVo currentList : list) {
+			if (!currentList.getUuid().equals(listToDelete)) {
+				lists.add(currentList);
+			}
+		}
+	}
+
+	private void refreshList(List<MailingListVo> list) throws BusinessException {
+		List<MailingListVo> listVo = new ArrayList<MailingListVo>(list);
+		list.clear();
+		for (MailingListVo current : listVo) {
+			list.add(mailingListFacade.findByUuid(current.getUuid()));
+		}
 	}
 
 	public void onSuccessFromForm() throws BusinessException {
@@ -155,9 +173,9 @@ public class Index {
 	public void onSuccessFromResetForm() {
 		inSearch = false;
 		targetLists = "";
-		criteriaOnSearch = VisibilityType.All.toString();
+		criteriaOnSearch = VisibilityType.All.name();
 	}
-	
+
 	public Object onActionFromEdit(String uuid) {
 		for (MailingListVo ml : lists) {
 			if (ml.getUuid().equals(uuid)) {
@@ -180,15 +198,15 @@ public class Index {
 	}
 
 	public String getPublic() {
-		return VisibilityType.Public.toString();
+		return VisibilityType.Public.name();
 	}
 
 	public String getPrivate() {
-		return VisibilityType.Private.toString();
+		return VisibilityType.Private.name();
 	}
 
 	public String getAll() {
-		return VisibilityType.All.toString();
+		return VisibilityType.All.name();
 	}
 
 	public boolean isEmptyList() {
