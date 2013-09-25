@@ -11,6 +11,8 @@ public class MailingListContactVo {
 	private String firstName;
 	
 	private String lastName;
+	
+	private String mailingListUuid;
 
 	public MailingListContactVo() {
 	}
@@ -20,6 +22,7 @@ public class MailingListContactVo {
 		this.uuid = mailingListContact.getUuid();
 		this.lastName = mailingListContact.getLastName();
 		this.firstName = mailingListContact.getFirstName();
+		this.mailingListUuid = mailingListContact.getMailingListUuid();
 	}
 
 	public MailingListContactVo(MailingListContact mailingListContact) {
@@ -27,6 +30,7 @@ public class MailingListContactVo {
 		this.uuid = mailingListContact.getUuid();
 		this.lastName = mailingListContact.getLastName();
 		this.firstName = mailingListContact.getFirstName();
+		this.mailingListUuid = mailingListContact.getUuid();
 	}
 
 	public MailingListContactVo(String mail, String firstName, String lastName) {
@@ -69,5 +73,13 @@ public class MailingListContactVo {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getMailingListUuid() {
+		return mailingListUuid;
+	}
+
+	public void setMailingListUuid(String mailingListUuid) {
+		this.mailingListUuid = mailingListUuid;
 	}
 }

@@ -178,7 +178,7 @@ public class DisplayMailingList {
 				contact.setFirstName(firstName);
 				contact.setLastName(lastName);
 				contact.setMail(mail);
-				mailingListFacade.updateContact(loginUser, mailingListVo, contact);
+				mailingListFacade.updateContact(loginUser, contact);
 			}
 		} else {
 			MailingListContactVo newContact = new MailingListContactVo(mail, firstName, lastName);
@@ -218,7 +218,7 @@ public class DisplayMailingList {
 
 	public void onActionFromDeleteUser(String mail) throws BusinessException {
 		MailingListContactVo contactToRemove = mailingListFacade.findContactByMail(mailingListVo.getUuid(), mail);
-		mailingListFacade.deleteContact(loginUser, mailingListVo.getUuid(), contactToRemove.getUuid());
+		mailingListFacade.deleteContact(loginUser, contactToRemove.getUuid());
 		mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
 	}
 
@@ -237,7 +237,7 @@ public class DisplayMailingList {
 
 	@OnEvent(value = "contactDeleteEvent")
 	public void deleteContactFromList() throws BusinessException {
-		mailingListFacade.deleteContact(loginUser, mailingListVo.getUuid(), contactToDelete);
+		mailingListFacade.deleteContact(loginUser, contactToDelete);
 		mailingListVo = mailingListFacade.findByUuid(mailingListVo.getUuid());
 	}
 

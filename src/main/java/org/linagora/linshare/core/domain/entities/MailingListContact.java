@@ -19,7 +19,8 @@ public class MailingListContact {
 	protected Date creationDate;
 
 	protected Date modificationDate;
-
+	
+	private MailingList mailingList;
 	/**
 	 * Constructors
 	 */
@@ -127,6 +128,14 @@ public class MailingListContact {
 
 	public void setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+	}
+
+	public MailingList getMailingList() {
+		return mailingList;
+	}
+
+	public void setMailingList(MailingList mailingList) {
+		this.mailingList = mailingList;
 	}
 
 	/**

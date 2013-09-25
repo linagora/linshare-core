@@ -66,9 +66,9 @@ public interface MailingListFacade {
 
 	MailingListContactVo findContactByMail(String listUuid, String mail) throws BusinessException;
 
-	void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactVo) throws BusinessException;
+	void updateContact(UserVo actorVo, MailingListContactVo contactVo) throws BusinessException;
 
-	public void deleteContact(UserVo actorVo, String listUuid, String contactUuid) throws BusinessException;
+	public void deleteContact(UserVo actorVo, String contactUuid) throws BusinessException;
 
 	public MailingListContactVo searchContact(String uuid) throws BusinessException;
 

@@ -168,28 +168,23 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	@Override
 	public MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException {
 		MailingList list = listRepository.findByUuid(listUuid);
-		MailingListContact contact = null;
-		for(MailingListContact current : list.getMailingListContact()){
-			if(current.getMail().equals(mail)){
-				contact = current;
-			}
-		}
-		if(contact == null){
+		MailingListContact contact = contactRepository.findByMail(list, mail);
+		if (contact == null) {
 			String msg = "The current contact you are trying to find do not exist : " + mail;
 			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);	
-		} 
+			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);
+		}
 		return contact;
 	}
-	
+
 	@Override
 	public MailingListContact findContact(String contactUuid) throws BusinessException {
 		MailingListContact contact = contactRepository.findByUuid(contactUuid);
-		if(contact == null){
+		if (contact == null) {
 			String msg = "The current contact you are trying to find do not exist : " + contactUuid;
 			logger.error(msg);
-			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);	
-		} 
+			throw new BusinessException(BusinessErrorCode.CONTACT_LIST_DO_NOT_EXIST, msg);
+		}
 		return contact;
 	}
 
@@ -212,7 +207,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 
 	@Override
 	public void addContact(MailingList mailingList, MailingListContact contact) throws BusinessException {
-		if(!mailingList.getMailingListContact().contains(contact)) {
+		if (!mailingList.getMailingListContact().contains(contact)) {
 			mailingList.addMailingListContact(contact);
 			contactRepository.create(contact);
 			listRepository.update(mailingList);
