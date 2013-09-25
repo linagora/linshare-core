@@ -14,5 +14,7 @@
 		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false" />
 		<property name="lastName" column="last_name" type="string" length="255" lazy="false" />
 		<property name="firstName" column="first_name" type="string" length="255" lazy="false" />
+		<many-to-one name="mailingList" cascade="lock" column="mailing_list_id" class="org.linagora.linshare.core.domain.entities.MailingList" not-null="true" lazy="no-proxy" insert="false" update="false">
+		</many-to-one>
 	</class>
 </hibernate-mapping>

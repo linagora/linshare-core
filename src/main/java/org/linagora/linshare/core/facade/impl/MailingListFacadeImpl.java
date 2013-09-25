@@ -122,15 +122,14 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	 */
 
 	@Override
-	public void updateContact(UserVo actorVo, MailingListVo listVo, MailingListContactVo contactVo)
-			throws BusinessException {
+	public void updateContact(UserVo actorVo, MailingListContactVo contactVo) throws BusinessException {
 		MailingListContact contact = new MailingListContact(contactVo);
-		mailingListService.updateContact(actorVo.getLsUuid(), listVo.getUuid(), contact);
+		mailingListService.updateContact(actorVo.getLsUuid(), contact);
 	}
 
 	@Override
-	public void deleteContact(UserVo actorVo, String listUuid, String contactUuid) throws BusinessException {
-		mailingListService.deleteContact(actorVo.getLsUuid(), listUuid, contactUuid);
+	public void deleteContact(UserVo actorVo, String contactUuid) throws BusinessException {
+		mailingListService.deleteContact(actorVo.getLsUuid(), contactUuid);
 	}
 
 	@Override

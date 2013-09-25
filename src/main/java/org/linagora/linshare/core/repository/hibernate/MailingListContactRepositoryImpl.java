@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.MailingListContactRepository;
@@ -42,6 +43,19 @@ public class MailingListContactRepositoryImpl extends AbstractRepositoryImpl<Mai
 		}
 	}
 
+	@Override
+	public MailingListContact findByMail(MailingList list, String mail) {
+		DetachedCriteria det = DetachedCriteria.forClass(MailingListContact.class);
+		det.add(Restrictions.and(Restrictions.eq("mail", mail),Restrictions.eq("mailingList",list)));
+		List<MailingListContact> mailingList = findByCriteria(det);
+		if (mailingList == null || mailingList.isEmpty()) {
+			return null;
+		} else if (mailingList.size() == 1) {
+			return mailingList.get(0);
+		} else {
+			throw new IllegalStateException("Id must be unique");
+		}
+	}
 	
 	@Override
 	protected DetachedCriteria getNaturalKeyCriteria(MailingListContact entity) {
