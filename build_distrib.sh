@@ -15,8 +15,8 @@ g_main_function=$1
 
 g_version=`grep -E "<version>(.*)</version>" pom.xml -o|head -n1|sed -r 's/<version>(.*)<\/version>/\1/g'`
 g_logfile=linshare.build.$$.log
-#g_mvn_opts="-Dmaven.test.skip"
 g_mvn_opts=""
+g_mvn_opts="-Dmaven.test.skip"
 g_output_dir="./target"
 g_distribution_dir="./distrib"
 g_ressources="./src/main/resources"
@@ -82,7 +82,8 @@ function init_context ()
 	echo_linshare "Log file : ${g_logfile}"
 	echo_linshare "Building LinShare ${g_version} distribution"
 	echo_linshare "Creating distrib dir..."
-	rm -f ${g_distribution_dir}/*
+	cd $(dirname $0)
+	rm -rf ${g_distribution_dir}/
 	mkdir -p ${g_distribution_dir}
 }
 
@@ -137,6 +138,45 @@ function build_sso ()
 	mv ${g_ressources}/{,DISABLED}springContext-securityLLNG.xml
 }
 
+function build_source ()
+{
+	local linshare_soure=linshare-src
+	local linshare_archive=linshare-${g_version}-src.tar.bz2
+	set +e
+	svn info &> /dev/null
+	if [ $? -eq 0 ] ; then
+		set -e
+		# the current working directory is a svn checkout
+		local l_url=$(svn info|grep ^URL|cut -d' ' -f2)
+		rm -fr ${linshare_soure} 
+		echo_linshare "Exporting data ..."
+		svn export ${l_url} ${linshare_soure} &> /dev/null
+		echo_linshare "Done."
+	else
+		set -e
+		maven_clean
+		# the current directory is a svn export
+		rm -fr ${linshare_soure} 
+		mkdir -p ${linshare_soure}
+		cp -r * ${linshare_soure}/ ||true
+		rm -fr ${linshare_soure}/target ${linshare_soure}/bin ${linshare_soure}/distrib
+	fi
+	echo_linshare "Archive creation in progress : ${linshare_archive}"
+	tar cjf ${linshare_archive} ${linshare_soure}/
+	echo_linshare "Done."
+	rm -fr ${linshare_soure}/
+	mv ${linshare_archive} ${g_distribution_dir}/
+}
+
+function test_linshare ()
+{
+	# Creation de la version avec SSO
+	maven_clean
+	echo_linshare "Testing LinShare"
+	echo "> mvn test"
+	mvn test >> $g_logfile
+}
+
 ############################################################
 # MAIN
 ############################################################
@@ -145,6 +185,9 @@ function build_sso ()
 init_context
 
 if [ -z $g_main_function ] ; then 
+	# Testing LinShare
+	test_linshare
+
 	# Creation de la version avec installeur.
 	build_installer
 
@@ -157,10 +200,10 @@ if [ -z $g_main_function ] ; then
 	# Creation de la version avec SSO
 	build_sso
 else
-	if [ `declare -F $g_main_function|wc -l` -eq 1 ] ; then 
-		$g_main_function
+	if [ `declare -F "build_${g_main_function}"|wc -l` -eq 1 ] ; then 
+		"build_${g_main_function}"
 	else
-		echo "ERROR:$g_main_function is not a valid function : possible choices are : build_classic , build_installer , build_cas , build_sso "
+		echo "ERROR:$g_main_function is not a valid function : possible choices are : default , installer , cas , sso , source"
 		exit 1
 	fi
 fi
