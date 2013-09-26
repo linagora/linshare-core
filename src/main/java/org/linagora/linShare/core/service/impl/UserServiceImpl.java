@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.core.service.impl;
 
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -369,7 +370,12 @@ public class UserServiceImpl implements UserService {
 				String fileUUID = document.getIdentifier();
 				String thumbnailUUID = document.getThmbUUID();
 				if (thumbnailUUID != null && thumbnailUUID.length()>0) {
-					fileSystemDao.removeFileByUUID(thumbnailUUID);
+					InputStream inputStream = fileSystemDao.getFileContentByUUID(thumbnailUUID);
+					if(inputStream != null) {
+						fileSystemDao.removeFileByUUID(thumbnailUUID);
+					} else {
+						logger.warn("suppression of an inconsistent thumnail : " + document.getName());
+					}
 				}
 				fileSystemDao.removeFileByUUID(fileUUID);
 				FileLogEntry logEntry = new FileLogEntry(owner.getMail(), 

@@ -45,9 +45,19 @@
 			</roles>
 		</developer>
 		<developer>
-			<id>sduprey</id>
-			<name>Stefanie Duprey</name>
-			<email>sduprey@linagora.com</email>
+			<id>fmartin</id>
+			<name>Frederic Martin</name>
+			<email>fmartin@linagora.com</email>
+			<organization>LINAGORA</organization>
+			<organizationUrl>http://www.linagora.com/</organizationUrl>
+			<roles>
+				<role>Manager</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>ctjhoa</id>
+			<name>Camille Tjhoa</name>
+			<email>ctjhoa@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
@@ -55,26 +65,9 @@
 			</roles>
 		</developer>
 		<developer>
-			<id>sbahloul</id>
-			<name>Sebastien Bahloul</name>
-			<email>sbahloul@linagora.com</email>
-			<organization>LINAGORA</organization>
-			<organizationUrl>http://www.linagora.com/</organizationUrl>
-		</developer>
-		<developer>
-			<id>mlaborie</id>
-			<name>Matthieu Laborie</name>
-			<email>mlaborie@linagora.com</email>
-			<organization>LINAGORA</organization>
-			<organizationUrl>http://www.linagora.com/</organizationUrl>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>cvargas</id>
-			<name>Christophe Vargas</name>
-			<email>cvargas@linagora.com</email>
+			<id>nbertrand</id>
+			<name>Nicolas Bertrand</name>
+			<email>nbertrand@linagora.com</email>
 			<organization>LINAGORA</organization>
 			<organizationUrl>http://www.linagora.com/</organizationUrl>
 			<roles>
@@ -381,7 +374,7 @@
 			<version>${slf4j-release-version}</version>
 		</dependency>
 
-
+		<!-- Mime type detection tools. -->
 		<dependency>
 			<groupId>org.semanticdesktop</groupId>
 			<artifactId>rdf2go.api</artifactId>
@@ -472,6 +465,7 @@
 			<artifactId>jcr</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>com.aparzev</groupId>
 			<artifactId>commons</artifactId>
@@ -482,6 +476,7 @@
 			<artifactId>doka</artifactId>
 			<version>0.1</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.safehaus.jug</groupId>
 			<artifactId>jug</artifactId>
@@ -1265,20 +1260,6 @@
 	</profiles>
 
 	<repositories>
-		<!-- This can be commented out when the tapestry-release-version is a not 
-			a snapshot. The non-snapshot Tapestry artifacts are distributed through the 
-			central repository at ibiblio. -->
-
-		<!-- <repository> <id>tapestry-snapshots</id> <url>http://tapestry.formos.com/maven-snapshot-repository/</url> 
-			<snapshots> <enabled>true</enabled> </snapshots> </repository> -->
-		<repository>
-			<id>chenillekit</id>
-			<url>http://www.chenillekit.org/mvnrepo/release/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-
 		<repository>
 			<id>linagora</id>
 			<url>http://repo.linpki.org/nexus/content/repositories/public/</url>
@@ -1302,7 +1283,7 @@
 
 		<repository>
 			<id>IBiblio-mirror</id>
-			<url>http://www.ibiblio.org/maven/mule/dependencies/maven2/</url>
+			<url>http://www.ibiblio.org/pub/mirrors/maven/mule/dependencies/maven2/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -1342,7 +1323,7 @@
 		</repository>
 		<repository>
 			<id>Maven Central Repository</id>
-			<url>http://repo1.maven.org/maven2/</url>
+			<url>http://repo1.maven.org/maven2</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -1355,7 +1336,7 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>Codehaus</id>
+			<id>Codehaumaven-compiler-plugins</id>
 			<url>http://repository.codehaus.org/</url>
 			<snapshots>
 				<enabled>false</enabled>

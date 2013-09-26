@@ -111,7 +111,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 	private final LogEntryService logEntryService;
 
-	private static Log log = LogFactory
+	private static Log logger = LogFactory
 			.getLog(DocumentServiceImpl.class);
 
 	public DocumentServiceImpl(final DocumentRepository documentRepository,
@@ -149,7 +149,7 @@ public class DocumentServiceImpl implements DocumentService {
 			bytes = IOUtil.readBytes(theFileStream, identifier
 					.getMinArrayLength());
 		} catch (IOException e) {
-			log.error("Could not read the uploaded file " + theFilePath
+			logger.error("Could not read the uploaded file " + theFilePath
 					+ " to fetch its mime : ", e);
 			throw new BusinessException(BusinessErrorCode.MIME_NOT_FOUND,
 					"Could not read the uploaded file to fetch its mime");
@@ -175,15 +175,15 @@ public class DocumentServiceImpl implements DocumentService {
 		boolean putwarning =  false;
 		
 
-		if (log.isDebugEnabled()) {
-			log.debug("*****begin process insertFile");
-			log.debug("1)check the user quota:" + getAvailableSize(owner) + ">"
+		if (logger.isDebugEnabled()) {
+			logger.debug("*****begin process insertFile");
+			logger.debug("1)check the user quota:" + getAvailableSize(owner) + ">"
 					+ size);
 		}
 
 		// check the user quota
 		if (getAvailableSize(owner) < size) {
-			log.info("The file  " + fileName + " is too large to fit in "
+			logger.info("The file  " + fileName + " is too large to fit in "
 					+ owner.getLogin() + " user's space");
             String[] extras = {fileName};
 			throw new BusinessException(BusinessErrorCode.FILE_TOO_LARGE,
@@ -193,8 +193,8 @@ public class DocumentServiceImpl implements DocumentService {
 		// check if the file MimeType is allowed
 		if (domain.getParameter() != null) {
 			// use mimetype filtering
-			if (log.isDebugEnabled()) {
-				log.debug("2)check the type mime:" + mimeType);
+			if (logger.isDebugEnabled()) {
+				logger.debug("2)check the type mime:" + mimeType);
 			}
 
 				// if we refuse some type of mime type
@@ -202,15 +202,15 @@ public class DocumentServiceImpl implements DocumentService {
 					MimeTypeStatus status = mimeTypeService.giveStatus(mimeType);
 
 					if (status==MimeTypeStatus.DENIED) {
-						if (log.isDebugEnabled())
-							log.debug("mimetype not allowed: " + mimeType);
+						if (logger.isDebugEnabled())
+							logger.debug("mimetype not allowed: " + mimeType);
                         String[] extras = {fileName};
 						throw new BusinessException(
 								BusinessErrorCode.FILE_MIME_NOT_ALLOWED,
 								"This kind of file is not allowed: " + mimeType, extras);
 					} else if(status==MimeTypeStatus.WARN){
-						if (log.isInfoEnabled())
-							log.info("mimetype warning: " + mimeType + "for user: "+owner.getMail());
+						if (logger.isInfoEnabled())
+							logger.info("mimetype warning: " + mimeType + "for user: "+owner.getMail());
 						putwarning = true;
 					}
 				} else {
@@ -231,14 +231,14 @@ public class DocumentServiceImpl implements DocumentService {
 			extension = fileName.substring(splitIdx, fileName.length());
 		}
 		
-		log.debug("Found extension :"+extension);
+		logger.debug("Found extension :"+extension);
 
 		try {
 			tempFile = File.createTempFile("linshare", extension); //we need to keep the extension for the thumbnail generator
 			tempFile.deleteOnExit();
 
-			if (log.isDebugEnabled()) {
-				log.debug("3)createTempFile:" + tempFile);
+			if (logger.isDebugEnabled()) {
+				logger.debug("3)createTempFile:" + tempFile);
 			}
 
 			bof = new BufferedOutputStream(new FileOutputStream(tempFile));
@@ -297,8 +297,8 @@ public class DocumentServiceImpl implements DocumentService {
 			}
 		}
 
-		if (log.isDebugEnabled()) {
-			log.debug("4)antivirus activation:"
+		if (logger.isDebugEnabled()) {
+			logger.debug("4)antivirus activation:"
 					+ !virusScannerService.isDisabled());
 		}
 
@@ -311,7 +311,7 @@ public class DocumentServiceImpl implements DocumentService {
 						owner.getLastName(), owner.getDomainId(), 
 						LogAction.ANTIVIRUS_SCAN_FAILED, e.getMessage());
 				logEntryService.create(LogEntryService.ERROR,logEntry);
-				log.error("File scan failed: antivirus enabled but not available ?");
+				logger.error("File scan failed: antivirus enabled but not available ?");
 				throw new BusinessException(BusinessErrorCode.FILE_SCAN_FAILED,
 					"File scan failed", e);
 			}
@@ -320,7 +320,7 @@ public class DocumentServiceImpl implements DocumentService {
 				LogEntry logEntry = new AntivirusLogEntry(owner.getMail(), owner.getFirstName(), 
 						owner.getLastName(), owner.getDomainId(), LogAction.FILE_WITH_VIRUS, fileName);
 				logEntryService.create(LogEntryService.WARN,logEntry);
-				log.warn(owner.getMail()
+				logger.warn(owner.getMail()
 						+ " tried to upload a file containing virus:" + fileName);
 				tempFile.delete(); // SOS ! do not keep the file on the system...
 	            String[] extras = {fileName};
@@ -341,7 +341,7 @@ public class DocumentServiceImpl implements DocumentService {
 				if(timeStampingService.isDisabled()){
 					//service is activated but
 					//it is disabled because bad configuration !
-					log.error("TSA service not well configured, check tsa.url");
+					logger.error("TSA service not well configured, check tsa.url");
 				} else {
 					
 					fis = new FileInputStream(tempFile);
@@ -349,13 +349,13 @@ public class DocumentServiceImpl implements DocumentService {
 					timestampToken  = resp.getEncoded();
 				}
 			} catch (TSPException e) {
-				log.error(e);
+				logger.error(e);
 				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
 			} catch (FileNotFoundException e) {
-				log.error(e);
+				logger.error(e);
 				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
 			} catch (IOException e) {
-				log.error(e);
+				logger.error(e);
 				throw new BusinessException(BusinessErrorCode.FILE_TIMESTAMP_NOT_COMPUTED,"TimeStamp on file is not computed", new String[] {fileName});
 			} finally {
 
@@ -378,8 +378,8 @@ public class DocumentServiceImpl implements DocumentService {
 		try {
 			fis = new FileInputStream(tempFile);
 
-			if (log.isDebugEnabled()) {
-				log.debug("5.2)start insert of the document in jack rabbit:" + fileName);
+			if (logger.isDebugEnabled()) {
+				logger.debug("5.2)start insert of the document in jack rabbit:" + fileName);
 			}
 
 			uuid = fileSystemDao.insertFile(owner.getLogin(), fis, size,
@@ -408,8 +408,8 @@ public class DocumentServiceImpl implements DocumentService {
 			aDoc.setThmbUUID(uuidThmb);
 			if(timestampToken!=null) aDoc.setTimeStamp(timestampToken);
 
-			if (log.isDebugEnabled()) {
-				log.debug("6)start insert in database file uuid:" + uuid);
+			if (logger.isDebugEnabled()) {
+				logger.debug("6)start insert in database file uuid:" + uuid);
 			}
 
 			docEntity = documentRepository.create(aDoc);
@@ -428,17 +428,22 @@ public class DocumentServiceImpl implements DocumentService {
 			addDocSizeToGlobalUsedQuota(docEntity, domain.getParameter());
 
 		} catch (BusinessException e) {
-			log.error("Could not add  " + fileName + " to user "
+			logger.error("Could not add  " + fileName + " to user "
 					+ owner.getLogin() + ", reason : ", e);
-			fileSystemDao.removeFileByUUID(uuid);
+			InputStream inputStream = fileSystemDao.getFileContentByUUID(uuid);
+			if(inputStream != null) {
+				fileSystemDao.removeFileByUUID(uuid);
+			} else {
+				logger.warn("can not deleted the document previously inserted : " + uuid);
+			}
 			throw new TechnicalException(
 					TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT,
 					"couldn't register the file in the database");
 
 		}
 
-		if (log.isDebugEnabled()) {
-			log.debug("*****end process insertFile");
+		if (logger.isDebugEnabled()) {
+			logger.debug("*****end process insertFile");
 		}
 
 		if(putwarning){
@@ -483,8 +488,8 @@ public class DocumentServiceImpl implements DocumentService {
 					if (bufferedImage!=null)
 						ImageIO.write(bufferedImage, Constants.THMB_DEFAULT_FORMAT, tempThumbFile);
 				
-					if (log.isDebugEnabled()) {
-						log.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
+					if (logger.isDebugEnabled()) {
+						logger.debug("5.1)start insert of thumbnail in jack rabbit:" + tempThumbFile.getName());
 					}
 					String mimeTypeThb = "image/png";//getMimeType(fisThmb, file.getAbsolutePath());
 					
@@ -493,11 +498,11 @@ public class DocumentServiceImpl implements DocumentService {
 				}
 				
 			} catch (FileNotFoundException e) {
-				log.error(e,e);
+				logger.error(e,e);
 				// if the thumbnail generation fails, it's not big deal, it has not to block
 				// the entire process, we just don't have a thumbnail for this document
 			} catch (IOException e) {
-				log.error(e,e);
+				logger.error(e,e);
 			} finally {
 	
 				try {
@@ -595,7 +600,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 			return aDoc;
 		} catch (BusinessException e) {
-			log.error("Could not update file identifier" + currentFileUUID
+			logger.error("Could not update file identifier" + currentFileUUID
 					+ " to user " + owner.getLogin() + ", reason : ", e);
 			if (newUuid != null)
 				fileSystemDao.removeFileByUUID(newUuid);
@@ -718,9 +723,19 @@ public class DocumentServiceImpl implements DocumentService {
 					// If the reason of the delete is inconsistency, the
 					// document doesn't exist in file system.
 					if (thumbnailUUID != null && thumbnailUUID.length()>0) {
-						fileSystemDao.removeFileByUUID(thumbnailUUID);
+						InputStream inputStream = fileSystemDao.getFileContentByUUID(thumbnailUUID);
+						if(inputStream != null) {
+							fileSystemDao.removeFileByUUID(thumbnailUUID);
+						} else {
+							logger.warn("suppression of an inconsistent thumnail : " + doc.getName());
+						}
 					}
-					fileSystemDao.removeFileByUUID(fileUUID);
+					InputStream inputStream = fileSystemDao.getFileContentByUUID(fileUUID);
+					if(inputStream != null) {
+						fileSystemDao.removeFileByUUID(fileUUID);
+					} else {
+						logger.warn("suppression of an inconsistent document : " + doc.getName());
+					}
 				}
 
 				FileLogEntry logEntry;
@@ -748,7 +763,7 @@ public class DocumentServiceImpl implements DocumentService {
 				logEntryService.create(level, logEntry);
 
 			} catch (IllegalArgumentException e) {
-				log.error("Could not delete file " + doc.getName()
+				logger.error("Could not delete file " + doc.getName()
 						+ " of user " + owner.getLogin() + ", reason : ", e);
 				throw new TechnicalException(
 						TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT,

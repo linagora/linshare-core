@@ -313,7 +313,6 @@ public class JackRabbitFileSystem implements FileSystemDao {
 				return null;
 			}
 		});
-
 	}
 
 	public FileInfo getFileInfoByUUID(final String uuid) {

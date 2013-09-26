@@ -24,8 +24,11 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.linagora.linShare.core.batches.DocumentManagementBatch;
 import org.linagora.linShare.view.tapestry.components.PasswordPopup;
 import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test showing how to use the PasswordPopup
@@ -34,8 +37,15 @@ import org.linagora.linShare.view.tapestry.components.WindowWithEffects;
  */
 public class TestPopup {
 
+	private static final Logger logger = LoggerFactory.getLogger(TestPopup.class);
+	
+	
 	@Inject
 	private Messages messages;
+	
+	@Inject
+	private DocumentManagementBatch documentManagementBatch;
+	
 	
 	@Component
 	private PasswordPopup passwordPopup; 
@@ -100,5 +110,14 @@ public class TestPopup {
 		}	
 		
 	} 
+	
+	void onActionFromCleanDocumentBatch()
+    {
+		logger.debug("begin method onActionFromCleanDocumentBatch");
+		documentManagementBatch.cleanOldDocuments();
+		logger.debug("endmethod onActionFromCleanDocumentBatch");
+    }
+	
+	
 
 }
