@@ -257,7 +257,6 @@ public class JackRabbitFileSystem implements FileSystemDao {
 
 			public Object doInJcr(Session session) throws RepositoryException {
 
-
 				return getContentFileUUID(uuid);
 
 			}
@@ -266,11 +265,28 @@ public class JackRabbitFileSystem implements FileSystemDao {
 
 	}
 
+	@Override
+	public boolean exists(final String uuid) {
+		InputStream inputStream = (InputStream)jcrTemplate.execute(new JcrCallback() {
 
+			public Object doInJcr(Session session) throws RepositoryException {
 
+				return getContentFileUUID(uuid);
 
-
-
+			}
+		});
+		if(inputStream != null) {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+				Logger.debug(e.getStackTrace().toString());
+			}
+			return true;
+		}
+		return false;
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<FileInfo> getAllFilePathInSubPath(final String path) {
@@ -303,16 +319,20 @@ public class JackRabbitFileSystem implements FileSystemDao {
 	}
 
 	public void removeFileByUUID(final String uuid) {
-		jcrTemplate.execute(new JcrCallback() {
-
-			public Object doInJcr(Session session) throws RepositoryException {
-
-				Node node=session.getNodeByUUID(uuid).getParent();
-				node.remove();
-				session.save();
-				return null;
-			}
-		});
+		if(exists(uuid)) {
+			jcrTemplate.execute(new JcrCallback() {
+				
+				public Object doInJcr(Session session) throws RepositoryException {
+					
+					Node node=session.getNodeByUUID(uuid).getParent();
+					node.remove();
+					session.save();
+					return null;
+				}
+			});
+		} else {
+			Logger.warn("can not delete missing resource : " + uuid);
+		}
 	}
 
 	public FileInfo getFileInfoByUUID(final String uuid) {

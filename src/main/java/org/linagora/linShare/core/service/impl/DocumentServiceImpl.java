@@ -430,12 +430,7 @@ public class DocumentServiceImpl implements DocumentService {
 		} catch (BusinessException e) {
 			logger.error("Could not add  " + fileName + " to user "
 					+ owner.getLogin() + ", reason : ", e);
-			InputStream inputStream = fileSystemDao.getFileContentByUUID(uuid);
-			if(inputStream != null) {
-				fileSystemDao.removeFileByUUID(uuid);
-			} else {
-				logger.warn("can not deleted the document previously inserted : " + uuid);
-			}
+			fileSystemDao.removeFileByUUID(uuid);
 			throw new TechnicalException(
 					TechnicalErrorCode.COULD_NOT_INSERT_DOCUMENT,
 					"couldn't register the file in the database");
@@ -723,19 +718,9 @@ public class DocumentServiceImpl implements DocumentService {
 					// If the reason of the delete is inconsistency, the
 					// document doesn't exist in file system.
 					if (thumbnailUUID != null && thumbnailUUID.length()>0) {
-						InputStream inputStream = fileSystemDao.getFileContentByUUID(thumbnailUUID);
-						if(inputStream != null) {
 							fileSystemDao.removeFileByUUID(thumbnailUUID);
-						} else {
-							logger.warn("suppression of an inconsistent thumnail : " + doc.getName());
-						}
 					}
-					InputStream inputStream = fileSystemDao.getFileContentByUUID(fileUUID);
-					if(inputStream != null) {
-						fileSystemDao.removeFileByUUID(fileUUID);
-					} else {
-						logger.warn("suppression of an inconsistent document : " + doc.getName());
-					}
+					fileSystemDao.removeFileByUUID(fileUUID);
 				}
 
 				FileLogEntry logEntry;

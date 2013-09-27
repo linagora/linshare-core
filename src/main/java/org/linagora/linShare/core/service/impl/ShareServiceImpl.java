@@ -420,12 +420,9 @@ public class ShareServiceImpl implements ShareService{
 				userRepository.update(owner);
 				
 				
-				InputStream stream = fileSystemDao.getFileContentByUUID(fileUUID);
-				if(stream!=null) {
-					fileSystemDao.removeFileByUUID(fileUUID);
-					if (thumbnailUUID != null && thumbnailUUID.length() > 0) {
-						fileSystemDao.removeFileByUUID(thumbnailUUID);
-					}
+				fileSystemDao.removeFileByUUID(fileUUID);
+				if (thumbnailUUID != null && thumbnailUUID.length() > 0) {
+					fileSystemDao.removeFileByUUID(thumbnailUUID);
 				}
 				
 				logEntryService.create(logEntry);

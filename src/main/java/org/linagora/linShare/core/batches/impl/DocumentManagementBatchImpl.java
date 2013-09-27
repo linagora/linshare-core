@@ -20,6 +20,7 @@
 */
 package org.linagora.linShare.core.batches.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
@@ -74,9 +75,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
         logger.info("Remove missing documents batch launched.");
 
         for (Document document : documents) {
-            InputStream stream = fileSystemDao.getFileContentByUUID(document.getIdentifier());
-
-            if (stream == null) {
+            if (!fileSystemDao.exists(document.getIdentifier())) {
                 try {
                     logger.info("Removing file with UID = {} because of inconsistency", document.getIdentifier());
                     documentService.deleteFile(document.getOwner().getLogin(), document.getIdentifier(),

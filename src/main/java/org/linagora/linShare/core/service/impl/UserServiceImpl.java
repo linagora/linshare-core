@@ -370,12 +370,7 @@ public class UserServiceImpl implements UserService {
 				String fileUUID = document.getIdentifier();
 				String thumbnailUUID = document.getThmbUUID();
 				if (thumbnailUUID != null && thumbnailUUID.length()>0) {
-					InputStream inputStream = fileSystemDao.getFileContentByUUID(thumbnailUUID);
-					if(inputStream != null) {
-						fileSystemDao.removeFileByUUID(thumbnailUUID);
-					} else {
-						logger.warn("suppression of an inconsistent thumnail : " + document.getName());
-					}
+					fileSystemDao.removeFileByUUID(thumbnailUUID);
 				}
 				fileSystemDao.removeFileByUUID(fileUUID);
 				FileLogEntry logEntry = new FileLogEntry(owner.getMail(), 

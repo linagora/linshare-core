@@ -94,6 +94,13 @@ public interface FileSystemDao {
 	 * @return the file content associated with the specified uuid.
 	 */
 	public InputStream getFileContentByUUID(String uuid);
+	
+	/**
+	 * Test if a file exits.
+	 * @param uuid
+	 * @return
+	 */
+	public boolean exists(String uuid);
 	/**
 	 * execute severals XpathQuery.
 	 * @param statements the statements. 
