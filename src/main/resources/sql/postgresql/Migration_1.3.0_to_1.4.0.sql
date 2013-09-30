@@ -5,6 +5,11 @@ SET client_encoding = 'UTF8';
 SET client_min_messages = warning;
 SET default_with_oids = false;
 
+-- update mail subjects
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} from ${actorRepresentation}', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} de la part de ${actorRepresentation}', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, E'${actorSubject} from ${actorRepresentation}', 2);
+
 CREATE TABLE mailing_list (
   id                  int8 NOT NULL, 
   domain_abstract_id int8 NOT NULL, 
