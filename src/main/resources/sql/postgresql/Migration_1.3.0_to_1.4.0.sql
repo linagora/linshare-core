@@ -1,4 +1,4 @@
--- Postgresql migration script : 1.2.0 to 1.3.0
+-- Postgresql migration script : 1.3.0 to 1.4.0
 BEGIN;
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -43,5 +43,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true,
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (54, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (26, true, 'TAB_LIST', 53, 54, 1);
 
+-- LinShare version
+INSERT INTO version (id,description) VALUES ((SELECT nextVal('hibernate_sequence')),'1.4.0');
 
 COMMIT;
