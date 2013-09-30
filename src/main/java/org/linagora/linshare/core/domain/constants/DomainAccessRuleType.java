@@ -48,7 +48,7 @@ public enum DomainAccessRuleType {
 		return value;
 	}
 
-	public DomainAccessRuleType fromInt(int value) {
+	public static DomainAccessRuleType fromInt(int value) {
 		for (DomainAccessRuleType type : values()) {
 			if (type.value == value) {
 				return type;
