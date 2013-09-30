@@ -27,6 +27,11 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- LinShare: A user has just made a file available to you!
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'A user ${actorRepresentation} has just made a file available to you!', 0);
 
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 0);
+
+
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: A user has just modified a shared file you still have access to
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 5, 'A user ${actorRepresentation} has just modified a shared file you still have access to', 0);
@@ -102,8 +107,6 @@ INSERT INTO mail_templates (messages_configuration_id, template_id, content_html
 INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id) VALUES (1, 'Welcome to LinShare, THE Secure, Open-Source File Sharing Tool.', 0);
 
 
-
-
 -- LOCALE fr
 -- Mail subjects
 -- Subject ANONYMOUS_DOWNLOAD
@@ -125,6 +128,10 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- Subject NEW_SHARING
 -- LinShare: A user deposited files in sharing for you
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'Un utilisateur ${actorRepresentation} vous a déposé des fichiers en partage', 1);
+
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} de la part de ${actorRepresentation}', 1);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
@@ -202,7 +209,6 @@ INSERT INTO welcome_texts (messages_configuration_id, welcome_text, language_id)
 
 
 
-
 -- LOCALE nl
 -- Mail subjects
 -- Subject ANONYMOUS_DOWNLOAD
@@ -224,6 +230,10 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- Subject NEW_SHARING
 -- LinShare: A user deposited files in sharing for you
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 4, 'Een gebruiker heeft te delen bestanden voor u klaargezet.', 2);
+
+-- Subject NEW_SHARING_WITH_ACTOR
+-- LinShare: sharing file with personal message.
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 2);
 
 -- Subject SHARED_DOC_UPDATED
 -- LinShare: An user has updated a shared file
@@ -466,7 +476,7 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (38, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (19, true, 'TAB_USER', 37, 38, 1);
 
 
--- Functionality : SECURE_URL
+-- Functionality : SECURE_ANONYMOUS_URL
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (41, false, false, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (42, false, false, 1, true);
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (21, true, 'SECURED_ANONYMOUS_URL', 41, 42, 1);
@@ -496,6 +506,11 @@ INSERT INTO policy(id, status, default_status, policy, system) VALUES (50, false
 INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (25, false, 'DOMAIN_MAIL', 49, 50, 1);
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (25, 'linshare-noreply@linagora.com');
 
+-- Functionality : TAB_LIST
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (53, true, true, 1, false);
+INSERT INTO policy(id, status, default_status, policy, system) VALUES (54, false, false, 1, true);
+INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_configuration_id, domain_id) VALUES (26, true, 'TAB_LIST', 53, 54, 1);
+
 --Functionality : UPDATE_FILE
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (55, true, true, 1, false);
 INSERT INTO policy(id, status, default_status, policy, system) VALUES (56, false, false, 1, true);
@@ -519,5 +534,5 @@ INSERT INTO functionality(id, system, identifier, policy_activation_id, policy_c
 INSERT INTO functionality_string(functionality_id, string_value) VALUES (30, 'http://localhost:8080/linshare/');
 
 -- LinShare version
-INSERT INTO version (id,description) VALUES (1,'1.3.0');
+INSERT INTO version (id,description) VALUES (1,'1.4.0');
 
