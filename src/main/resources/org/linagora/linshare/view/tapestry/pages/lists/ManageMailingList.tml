@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.lists.index" t:identifier="thread" t:currentHighlight="lists"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+	
+	<!-- Main content -->
+			
+		<div id="content">
+			
+		<t:if test="inModify">
+				<h1>${mailingList.identifier}</h1>
+			<p:else>
+				<h1>${message:pages.lists.createList}</h1>
+			</p:else>
+		</t:if>
+		
+		
+						<div id="pageContent">	
+				
+		<t:actionLink t:id="cancel">${message:global.button.cancel}</t:actionLink>
+		<br></br>
+		
+			<!-- FORM -->
+					
+           
+		<t:beanEditForm t:object="mailingList" submitlabel="message:global.button.validate">
+		 <t:errors banner="${message:pages.administration.userconfig.password.error}"/>
+				 <p:identifier>
+					<t:label for="identifier"/>
+                    <t:textfield t:id="identifier" value="mailingList.identifier" t:validate="required"/>
+				</p:identifier>
+		        <p:description>
+					<t:label for="description"/>
+                    <t:textarea t:id="description" value="mailingList.Description" cols="70"/>
+				</p:description>
+				<p:uuid>
+                	<t:hidden value="mailingList.Uuid"/>
+           		</p:uuid>
+           		<p:domainId>
+                	<t:hidden value="mailingList.domainId"/>
+           		</p:domainId>
+		</t:beanEditForm>      
+        </div>
+        
+		</div><!-- id="content" -->
+		
+	</t:MyBorderLayout>

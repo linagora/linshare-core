@@ -280,6 +280,8 @@ public class MyBorderLayout {
 		MenuEntry domainMenu;
 		MenuEntry auditMenu;
 		MenuEntry helpMenu;
+		MenuEntry listMenu;
+		MenuEntry listAdminMenu;
 		
 		
 		// Menu : Home / File 
@@ -306,6 +308,13 @@ public class MyBorderLayout {
 		} else {
 			auditMenu = new MenuEntry(response.encodeURL("history/index"),messages.get("components.myborderlayout.history.title"),null,null,"history");
 		}
+		
+		// Menu : ListsAdmin
+		listAdminMenu = new MenuEntry(response.encodeURL("administration/lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
+				
+		// Menu : Lists	
+		listMenu = new MenuEntry(response.encodeURL("lists/index"),messages.get("components.myborderlayout.list.title"),null,null,"lists");
+				
 		
 		// Menu : Help
 		helpMenu = new MenuEntry(response.encodeURL("help/index"),messages.get("components.myborderlayout.help.title"),null,null,"help");
@@ -334,6 +343,8 @@ public class MyBorderLayout {
 				menu.addMenuEntry(adminMenu);
 				menu.addMenuEntry(domainMenu);
 				menu.addMenuEntry(userMenu);
+				if (showListTab())
+					menu.addMenuEntry(listAdminMenu);
 				if (showThreadTab())
 					menu.addMenuEntry(threadAdminMenu);
 				
@@ -342,6 +353,8 @@ public class MyBorderLayout {
 				menu.addMenuEntry(fileMenu);
 				if (showUserTab())
 					menu.addMenuEntry(userMenu);
+				if (showListTab())
+					menu.addMenuEntry(listMenu);
 				if (showThreadTab()) 
 					menu.addMenuEntry(threadMenu);
 				if (admin)
@@ -393,6 +406,13 @@ public class MyBorderLayout {
 				return true;
 			}
 			return functionalityFacade.isEnableHelpTab(userVo.getDomainIdentifier());
+		}
+		return false;
+	}
+	
+	boolean showListTab() {
+		if (userVoExists && userVo.getDomainIdentifier() != null && userVo.getDomainIdentifier().length() > 0) {
+			return functionalityFacade.isEnableListTab(userVo.getDomainIdentifier());
 		}
 		return false;
 	}

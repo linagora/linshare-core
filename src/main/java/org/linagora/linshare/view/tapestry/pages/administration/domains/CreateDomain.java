@@ -134,7 +134,7 @@ public class CreateDomain {
 
         patterns = domainFacade.findAllUserDomainPatternIdentifiers();
         connections = domainFacade.findAllLDAPConnectionIdentifiers();
-        policies = domainPolicyFacade.getAllDomainPolicyIdentifiers();
+        policies = domainPolicyFacade.findAllDomainPoliciesIdentifiers();
 
         if(null==locales || locales.size()==0){
             if(null!=symbolSource.valueForSymbol(SymbolConstants.SUPPORTED_LOCALES)){

@@ -4,7 +4,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
     <h1>Test of tapestry-tagselect</h1>
     <form t:type="form">
-        <div t:type="tag/tagselect" t:id="tags" t:value="tags" t:dropdown="false" t:minChars="3" t:frequency="0.5" style="width: 400px;"></div>
+        <div t:type="tag/tagselect" t:id="tags" t:value="tags" t:encoder="encoder" t:dropdown="false" t:minChars="3" t:frequency="0.5" style="width: 400px;"></div>
         <t:submit/>
     </form>
 

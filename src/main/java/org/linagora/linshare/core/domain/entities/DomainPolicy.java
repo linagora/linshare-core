@@ -63,6 +63,12 @@ public class DomainPolicy {
 		this.description = policy.getDescription();
 	}
 	
+	public DomainPolicy(String identifier,String description,DomainAccessPolicy domainAccessPolicy) {
+        this.identifier = identifier;
+        this.description = description;
+        this.domainAccessPolicy=domainAccessPolicy;
+	}
+
 	public String getIdentifier() {
 		return identifier;
 	}

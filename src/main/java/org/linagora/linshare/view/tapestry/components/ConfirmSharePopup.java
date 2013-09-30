@@ -63,11 +63,14 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareExpiryDateFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
@@ -87,6 +90,8 @@ import org.slf4j.LoggerFactory;
 @Import(library={"SizeOfPopup.js"})
 public class ConfirmSharePopup{
 	private static final Logger logger = LoggerFactory.getLogger(ConfirmSharePopup.class);
+	
+	public static final String RELOADZONE_EVENT = "reload";
 	
 	@SessionState
 	private UserVo userVo;
@@ -129,6 +134,9 @@ public class ConfirmSharePopup{
 //	@Persist("flash")
 	@Property
 	private String recipientsSearch;
+	
+	@Property
+	private String listRecipientsSearch;
 	
 	@Persist("flash")
 	@Property
@@ -201,6 +209,9 @@ public class ConfirmSharePopup{
 	@Inject
 	private UserFacade userFacade;
 
+	@Inject
+	private MailingListFacade mailingListFacade;
+	
 	@Inject
 	private PersistentLocale persistentLocale;
 	
@@ -377,7 +388,9 @@ public class ConfirmSharePopup{
 		return new ArrayList<UserVo>();
 	}
 	
-	
+	public List<String> onProvideCompletionsFromListRecipientsPatternSharePopup(String input) throws BusinessException {
+		return mailingListFacade.completionsForShare(userVo, input);
+	}
 	
 	public void onValidateFormFromConfirmshare() throws BusinessException {
 		if (confirmshare.getHasErrors()) {
@@ -386,7 +399,22 @@ public class ConfirmSharePopup{
     	
     	boolean sendErrors = false;
 		
-		List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+		List<String> recipients = new ArrayList<String>();
+		if(recipientsSearch != null){
+    		recipients = MailCompletionService.parseEmails(recipientsSearch);
+		} else {
+			recipientsSearch = listRecipientsSearch;
+		}
+		List<MailingListVo> mailingListSelected = mailingListFacade.getListsFromShare(listRecipientsSearch);
+		if(!(mailingListSelected.isEmpty())){
+			
+			for(MailingListVo current : mailingListSelected){
+				
+				for(MailingListContactVo currentContact : current.getContacts()){
+					recipients.add(currentContact.getMail());
+				}
+			}
+		}
 		String badFormatEmail =  "";
 		
 		for (String recipient : recipients) {
@@ -408,9 +436,9 @@ public class ConfirmSharePopup{
     	return onFailure;
     }
 	
-	
-    public Block onSuccess() throws BusinessException {
-		filter = new XSSFilter(shareSessionObjects, confirmshare, antiSamyPolicy, messages);
+
+    public Block onSubmit() throws BusinessException {
+    	filter = new XSSFilter(shareSessionObjects, confirmshare, antiSamyPolicy, messages);
 		try {
 			textAreaSubjectValue = filter.clean(textAreaSubjectValue);	
 			textAreaValue = filter.clean(textAreaValue);
@@ -421,11 +449,7 @@ public class ConfirmSharePopup{
 		} catch (BusinessException e) {
 			businessMessagesManagementService.notify(e);
 		}
-    	
-    	/** 
-		 * verify the value of the expiration date selected
-		 * 
-		 */
+
 		Calendar dateExpiry = Calendar.getInstance();
 		Date dateSelected = datePicker.getDatePicked();
 		if (dateSelected == null || dateSelected.after(maxDatePicker) || dateSelected.before(Calendar.getInstance().getTime())) {
@@ -441,7 +465,6 @@ public class ConfirmSharePopup{
 		try {
 			MailContainer mailContainer = new MailContainer(userVo.getLocale(), textAreaValue, textAreaSubjectValue);
 			sharing = shareFacade.createSharingWithMailUsingRecipientsEmailAndExpiryDate(userVo, documentsVo, recipientsEmail, secureSharing, mailContainer, dateExpiry);
-
 		
 		} catch (BusinessException e1) {
 			// IF RELAY IS DISABLE ON SMTP SERVER 
@@ -466,7 +489,6 @@ public class ConfirmSharePopup{
 			}
 		}
 
-		
 		shareSessionObjects=new ShareSessionObjects();
 		if (sharing.getFailsItem().size()>0) {
 			shareSessionObjects.addError(messages.get("components.confirmSharePopup.fail"));
@@ -475,16 +497,20 @@ public class ConfirmSharePopup{
 			businessMessagesManagementService.notify(new BusinessUserMessage(
                 BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
 		} else {
-			recipientFavouriteFacade.increment(userVo, recipientsEmail);
-			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));
-			componentResources.triggerEvent("resetListFiles", null, null);
+			if(recipientsEmail.size() > 0){
+				recipientFavouriteFacade.increment(userVo, recipientsEmail);
+				shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));
+				componentResources.triggerEvent("resetListFiles", null, null);
+			} else {
+				businessMessagesManagementService.notify(new BusinessUserMessage(
+		                BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
+				componentResources.triggerEvent("resetListFiles", null, null);
+			}
 		}
-		
 		return onSuccess;
 		
 	}
-    
-
+   
 	public String getJSONId() {
 		return confirmWindow.getJSONId();
 	}

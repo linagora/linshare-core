@@ -115,7 +115,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
             });
 
             // XXX HACK : css is for losers ;]
-            jQuery(".qq-upload-button").attr("class", "btn btn-primary")
+            jQuery(".qq-upload-button").attr("class", "btn btn-primary");
         });
     </script>
 
@@ -130,7 +130,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
         </div>
 
         <h2>${message:pages.files.upload.share.title}</h2>
-        <t:form t:id="quickShareForm" class="form-horizontal">
+        <t:form t:id="uploaderForm" class="form-horizontal">
             <fieldset>
                 <t:errors />
 
@@ -147,6 +147,16 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                         t:minChars="${autocompleteMin}" t:tokens="," class="input-xxlarge"
                         onchange="rm_errorclass();" />
                         <p class="help-block">${message:pages.files.upload.recipients.description}</p>
+                    </div>
+                </div>
+                
+               <div class="control-group">
+                    <t:label for="mailingLists" class="control-label required">
+                    ${message:pages.files.upload.recipientsMailingList.title}</t:label>
+                    <div class="controls">
+                        <div t:type="tag/tagselect" t:id="mailingLists" t:value="mailingLists"
+                        t:encoder="encoder" t:dropdown="false" t:minChars="3" style="width: 535px;"></div>
+                        <p class="help-block">${message:pages.files.upload.recipientsMailingList.description}</p>
                     </div>
                 </div>
 

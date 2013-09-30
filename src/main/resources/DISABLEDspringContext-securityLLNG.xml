@@ -50,9 +50,9 @@
 			<sec:filter-chain pattern="/webservice/rest/plugin/information" filters="none" />
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
             <sec:filter-chain pattern="/webservice/rest/**"
-                filters="httpSessionIntegrationFilter,preflightedRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+                filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
             <sec:filter-chain pattern="/webservice/fineuploader/**"
-                filters="httpSessionIntegrationFilter,preflightedRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+                filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
 			<sec:filter-chain pattern="/webservice/**"
@@ -172,6 +172,8 @@
 			<value>Name Of Your LinShare Realm</value>
 		</property>
 	</bean>
+
+	<bean id="CORSRequestFilter" class="org.linagora.linshare.auth.CORSRequestFilter" />
 
 	<bean id="basicExceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
 		<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint" />

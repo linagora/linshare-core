@@ -58,7 +58,7 @@ public class DomainPolicyFacadeImpl extends AdminGenericFacadeImpl implements Do
 	public List<DomainPolicyDto> getDomainPolicies() throws BusinessException {
 		checkAuthentication(Role.SUPERADMIN);
 		ArrayList<DomainPolicyDto> domainPolicies = new ArrayList<DomainPolicyDto>();
-		for (DomainPolicy domainPolicy : domainPolicyService.getAllDomainPolicy()) {
+		for (DomainPolicy domainPolicy : domainPolicyService.findAllDomainPolicy()) {
 			domainPolicies.add(new DomainPolicyDto(domainPolicy));
 		}
 		return domainPolicies;

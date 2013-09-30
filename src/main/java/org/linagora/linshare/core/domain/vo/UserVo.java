@@ -44,7 +44,7 @@ import org.linagora.linshare.core.domain.entities.User;
 
 /**
  * @author ncharles
- *
+ * 
  */
 public class UserVo implements Serializable, Comparable<UserVo> {
 
@@ -57,86 +57,102 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	private final AccountType userType;
 	private Role role;
 	private final boolean upload;
-	private final boolean createGuest; 
-    private String ownerLogin = null;
-    private Date expirationDate = null;
-    private String comment;
-    private String locale;
-    private boolean restricted;
-    private String domainIdentifier;
+	private final boolean createGuest;
+	private String ownerLogin = null;
+	private Date expirationDate = null;
+	private String comment;
+	private String locale;
+	private boolean restricted;
+	private String domainIdentifier;
 
-    public UserVo(Account account) {
-        this.login = account.getLsUuid();
-        this.userType = account.getAccountType();
-        this.role = account.getRole();
-        this.locale = account.getLocale();
-        this.restricted = false;
-        
-        if(userType.equals(AccountType.GUEST) || userType.equals(AccountType.INTERNAL) ||userType.equals(AccountType.ROOT)) {
-        	User user = (User)account;
-        	this.firstName = user.getFirstName();
-        	this.lastName = user.getLastName();
-        	this.mail = user.getMail();
-        	this.upload = user.getCanUpload();
-        	this.createGuest= user.getCanCreateGuest();
-        	this.expirationDate = user.getExpirationDate();
-        } else {
-        	this.firstName = null;
-        	this.lastName = null;
-        	this.mail = null;
-        	this.upload = false;
-        	this.createGuest=false;
-        }
-        if (account.getDomain() != null) {
-        	this.domainIdentifier = account.getDomain().getIdentifier();
-        }
-    }
-    
-    
-    public UserVo(User user) {
-        this.login = user.getLsUuid();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.mail = user.getMail();
-        this.userType = user.getAccountType();
-        this.role = user.getRole();
-        this.upload= user.getCanUpload();
-        this.createGuest=user.getCanCreateGuest();
-        this.restricted = false;
-        
-        this.locale = user.getLocale();
-        if (user instanceof Guest) {
-            Guest guest = (Guest) user;
-            ownerLogin = ((User)guest.getOwner()).getMail();
-            expirationDate = (Date)guest.getExpirationDate().clone();	
-            this.comment = guest.getComment();
-            this.restricted = guest.isRestricted();
-        }
-        if (user.getDomain() != null) {
-        	this.domainIdentifier = user.getDomain().getIdentifier();
-        }
-    }
+	public UserVo(String mail, String firstName, String lastName) {
+		this.login = null;
+		this.mail = mail;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.userType = null;
+		this.role = Role.SIMPLE;
+		this.upload = true;
+		this.createGuest = true;
+		this.ownerLogin = "";
+		this.restricted = false;
+		this.domainIdentifier = null;
+	}
 	
-    public UserVo(Guest user) {
-    	this.login = user.getLsUuid();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.mail = user.getMail();
-        this.userType = user.getAccountType();
-        this.role = user.getRole();
-        this.upload= user.getCanUpload();
-        this.createGuest=user.getCanCreateGuest();
-        this.ownerLogin = ((User)user.getOwner()).getMail(); 
-        this.expirationDate = (Date)user.getExpirationDate().clone();
-        this.comment = user.getComment();
-        this.locale = user.getLocale();
-        this.restricted = user.isRestricted();
-        if (user.getDomain() != null) {
-        	this.domainIdentifier = user.getDomain().getIdentifier();
-        }
-    }
-	public UserVo(String login, String firstName, String lastName,
-			String mail, AccountType userType) {
+	public UserVo(Account account) {
+		this.login = account.getLsUuid();
+		this.userType = account.getAccountType();
+		this.role = account.getRole();
+		this.locale = account.getLocale();
+		this.restricted = false;
+
+		if (userType.equals(AccountType.GUEST)
+				|| userType.equals(AccountType.INTERNAL)
+				|| userType.equals(AccountType.ROOT)) {
+			User user = (User) account;
+			this.firstName = user.getFirstName();
+			this.lastName = user.getLastName();
+			this.mail = user.getMail();
+			this.upload = user.getCanUpload();
+			this.createGuest = user.getCanCreateGuest();
+			this.expirationDate = user.getExpirationDate();
+		} else {
+			this.firstName = null;
+			this.lastName = null;
+			this.mail = null;
+			this.upload = false;
+			this.createGuest = false;
+		}
+		if (account.getDomain() != null) {
+			this.domainIdentifier = account.getDomain().getIdentifier();
+		}
+	}
+
+	public UserVo(User user) {
+		this.login = user.getLsUuid();
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.mail = user.getMail();
+		this.userType = user.getAccountType();
+		this.role = user.getRole();
+		this.upload = user.getCanUpload();
+		this.createGuest = user.getCanCreateGuest();
+		this.restricted = false;
+
+		this.locale = user.getLocale();
+		if (user instanceof Guest) {
+			Guest guest = (Guest) user;
+			ownerLogin = ((User) guest.getOwner()).getMail();
+			expirationDate = (Date) guest.getExpirationDate().clone();
+			this.comment = guest.getComment();
+			this.restricted = guest.isRestricted();
+		}
+		if (user.getDomain() != null) {
+			this.domainIdentifier = user.getDomain().getIdentifier();
+		}
+	}
+
+	public UserVo(Guest user) {
+		this.login = user.getLsUuid();
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
+		this.mail = user.getMail();
+		this.userType = user.getAccountType();
+		this.role = user.getRole();
+		this.upload = user.getCanUpload();
+		this.createGuest = user.getCanCreateGuest();
+		this.ownerLogin = ((User) user.getOwner()).getMail();
+		this.expirationDate = (Date) user.getExpirationDate().clone();
+		this.comment = user.getComment();
+		this.locale = user.getLocale();
+		this.restricted = user.isRestricted();
+		if (user.getDomain() != null) {
+			this.domainIdentifier = user.getDomain().getIdentifier();
+		}
+	}
+
+	public UserVo(String login, String firstName, String lastName, String mail,
+			AccountType userType) {
 		super();
 		this.login = login;
 		this.firstName = firstName;
@@ -144,15 +160,15 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.mail = mail;
 		this.userType = userType;
 		this.role = Role.SIMPLE;
-		this.upload=true;
-		this.createGuest=true;
+		this.upload = true;
+		this.createGuest = true;
 		this.ownerLogin = "";
-        this.restricted = false;
-        this.domainIdentifier = null;
+		this.restricted = false;
+		this.domainIdentifier = null;
 	}
-	
-	public UserVo(String login, String firstName, String lastName,
-			String mail, Role role,AccountType userType) {
+
+	public UserVo(String login, String firstName, String lastName, String mail,
+			Role role, AccountType userType) {
 		super();
 		this.login = login;
 		this.firstName = firstName;
@@ -160,14 +176,14 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.mail = mail;
 		this.userType = userType;
 		this.role = role;
-		this.upload=true;
-		this.createGuest=true;
-        this.restricted = false;
-        this.domainIdentifier = null;
+		this.upload = true;
+		this.createGuest = true;
+		this.restricted = false;
+		this.domainIdentifier = null;
 	}
-	
-	public UserVo(String login, String firstName, String lastName,
-			String mail, Role role, AccountType userType, String locale) {
+
+	public UserVo(String login, String firstName, String lastName, String mail,
+			Role role, AccountType userType, String locale) {
 		super();
 		this.login = login;
 		this.firstName = firstName;
@@ -175,63 +191,68 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 		this.mail = mail;
 		this.userType = userType;
 		this.role = role;
-		this.upload=true;
-		this.createGuest=true;
+		this.upload = true;
+		this.createGuest = true;
 		this.locale = locale;
-        this.restricted = false;
-        this.domainIdentifier = null;
+		this.restricted = false;
+		this.domainIdentifier = null;
 	}
 
 	// We keep login for compatibility
 	public String getLogin() {
 		return login;
 	}
-	
+
 	// the getter represent the real content of this variable.
 	public String getLsUuid() {
 		return login;
 	}
 
-    public String getOwnerLogin() {
-        return ownerLogin;
-    }
+	public String getOwnerLogin() {
+		return ownerLogin;
+	}
 
-    public String getCompleteName() {
-        return firstName + " " + lastName;
-    }
+	public String getCompleteName() {
+		return firstName + " " + lastName;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public String getMail() {
 		return mail;
 	}
+
 	public AccountType getUserType() {
 		return userType;
 	}
+
 	public Role getRole() {
 		return role;
 	}
 
-    public boolean isAdministrator() {
-        return Role.ADMIN.equals(role)||isSuperAdmin();
-    }
+	public boolean isAdministrator() {
+		return Role.ADMIN.equals(role) || isSuperAdmin();
+	}
 
 	public boolean isSuperAdmin() {
 		return Role.SUPERADMIN.equals(role);
 	}
 
-    public boolean isGuest() {
-        return AccountType.GUEST.equals(userType);
-    }
+	public boolean isGuest() {
+		return AccountType.GUEST.equals(userType);
+	}
 
 	public boolean isUpload() {
 		return upload;
 	}
 
-    public boolean isCreateGuest() {
+	public boolean isCreateGuest() {
 		return createGuest;
 	}
 
@@ -322,29 +343,26 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	}
 
 	public String toString() {
-        StringBuilder buf = new StringBuilder();
-        String nl = "\n";
-
-        buf.append(nl).append("login : ").append(login);
-        buf.append(nl).append("first name : ").append(firstName);
-        buf.append(nl).append("last name : ").append(lastName);
-        buf.append(nl).append("mail : ").append(mail);
-        buf.append(nl).append("user type : ").append(userType);
-        buf.append(nl).append("role : ").append(role);
-        buf.append(nl).append("domain : ").append(domainIdentifier);
-        return buf.toString();
-    }
-    
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append("\nlogin : ").append(login);
+		stringBuffer.append("\nfirst name : ").append(firstName);
+		stringBuffer.append("\nlast name : ").append(lastName);
+		stringBuffer.append("\nmail : ").append(mail);
+		stringBuffer.append("\nuser type : ").append(userType);
+		stringBuffer.append("\nrole : ").append(role);
+		stringBuffer.append("\ndomain : ").append(domainIdentifier);
+		return stringBuffer.toString();
+	}
 
 	public String getFullName() {
-    	return this.firstName + " " + this.lastName;
-    }
-    
-    public String getDomainIdentifier() {
+		return this.firstName + " " + this.lastName;
+	}
+
+	public String getDomainIdentifier() {
 		return domainIdentifier;
 	}
-    
-    public void setDomainIdentifier(String domainIdentifier) {
+
+	public void setDomainIdentifier(String domainIdentifier) {
 		this.domainIdentifier = domainIdentifier;
 	}
 

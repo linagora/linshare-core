@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.domains.index.createdomainpolicy.index" t:identifier="domains" t:currentHighlight="domains"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+
+
+	<script type='text/javaScript'>
+		function setOptions(chosen) {
+			if((chosen =="Deny All Domains") || (chosen =="Allow All Domains")) {
+				document.getElementById("domainSelection").disabled="true";
+			} else {
+				document.getElementById("domainSelection").disabled="";
+			}
+		}
+	</script>
+
+	<!-- Main content -->
+	
+	<div id="content">
+
+		<h1>${message:pages.administration.domains.index.createdomainpolicy.index}: ${domainPolicyVo.identifier}</h1>
+		
+		<t:messagePanel />	
+		
+		<div id="pageContent">
+			
+			<!-- FORM -->
+			
+						<t:actionLink t:id="cancel">${message:pages.thread.admin.back}</t:actionLink>
+		<t:form t:id="form">
+			<fieldset class="title_criteria_zone" id="searchCriterion">
+			<legend align="top" class="palette">${message:global.button.update}</legend>
+					
+					<p><t:label for="policyDescription"/>:&nbsp;
+                    <t:textarea t:id="policyDescription" value="domainPolicyVo.policyDescription" cols="70" rows="1"/></p>
+                    
+					
+					<p>			
+						<t:actionLink t:id="add" title="${message:pages.administration.domains.domainPolicy.form.add}">
+							<img src="${asset:context:images/popupImages/plus.png}" alt="" />
+						</t:actionLink>
+						${message:pages.administration.domains.domainPolicy.form.add}
+					</p>
+					
+					<t:if test="rulesList">
+					
+					<p>${message:pages.administration.domains.index.domainPolicy.help}</p>
+	
+					<ul id="sortable">
+                		<t:loop source="rulesList" value="rule" index="indexRule" formState="none">
+                			<li class="ui-state-default" >
+                			<span id="position" >${indexRule}</span><span id="ruleDescription" >${ruleDescription}</span>
+                			<span id="ruleIdentifier" style="display:none" >${rule.persistenceId}</span>
+							<span class="ui-icon ui-icon-arrowthick-2-n-s" ></span> &nbsp;
+							<span>				
+							   <t:eventLink event="remove" context="rule.persistenceId">
+							     <img src="${asset:context:images/popupImages/less.png}" alt=""/>
+							   </t:eventLink>
+							</span>
+                			</li>
+                		</t:loop>
+            		</ul>
+            		
+            		<input t:type="TextField" t:id="tabPos" style="display:none" />
+            		
+            		<p:else>
+            			${message:pages.administration.domains.index.domainPolicy.help2}
+            		</p:else>	
+            	</t:if>
+            		<br></br><br></br>
+            		<input type="submit"  value="${message:global.button.validate}"/>
+            	</fieldset>
+		</t:form>	
+		
+				<div class="clear"></div>
+				<t:if test="showAddRuleForm">
+		 <form t:type="form" t:id="addRuleForm" name="addRuleForm">
+        			<fieldset class="title_criteria_zone" id="searchCriterion">
+        				<legend align="top" class="palette">${message:pages.administration.domains.domainPolicy.form.add}</legend>
+        				
+        				<t:label for="ruleToAdd"/>:
+            			<select t:type="select" t:id="ruleToAdd" onchange="setOptions(document.addRuleForm.ruleToAdd.options[document.addRuleForm.ruleToAdd.selectedIndex].text);"/>
+            			       <br></br><br></br>
+            		   <t:label for="domainSelection"/>:
+            			<select t:type="select" t:id="domainSelection" t:blankoption="never" t:model="domains"></select>
+            			       <br></br><br></br>
+        			   <t:label for="onTop"/>:
+            			<input t:type="checkbox" type="checkbox" t:id="onTop"/>&nbsp;
+            		    ${message:pages.administration.domains.index.createdomainpolicy.selectrule.position}
+            		            			       <br></br><br></br>
+            		<input type="submit"  value="${message:pages.administration.domains.domainPolicy.form.add}"/>
+            		<input t:type="Submit" t:id="reset" value="${message:global.button.reset}"/>
+        			</fieldset>
+        </form>
+        </t:if>
+		</div>
+	</div><!-- id="content" -->
+
+
+</t:MyBorderLayout>

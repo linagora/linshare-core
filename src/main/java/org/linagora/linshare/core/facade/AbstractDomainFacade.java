@@ -76,13 +76,13 @@ public interface AbstractDomainFacade {
     public List<String> findAllSystemDomainPatternIdentifiers();
     public List<DomainPatternVo> findAllSystemDomainPatterns() throws BusinessException;
     public List<DomainPatternVo> findAllUserDomainPatterns() throws BusinessException;
+    
     public void createDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException ;
     public DomainPatternVo retrieveDomainPattern(String identifier) throws BusinessException ;
     public void updateDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException ;
     public void deletePattern(String patternToDelete, UserVo actorVo) throws BusinessException ;
     public boolean patternIsDeletable(String patternToDelete, UserVo actor) ;
-
-
+    
     public List<String> findAllLDAPConnectionIdentifiers();
     public List<LDAPConnectionVo> findAllLDAPConnections() throws BusinessException ;
     public LDAPConnectionVo createLDAPConnection(UserVo actorVo, LDAPConnectionVo ldapConnectionVo) throws BusinessException ;

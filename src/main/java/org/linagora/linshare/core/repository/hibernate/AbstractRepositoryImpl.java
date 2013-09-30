@@ -82,7 +82,7 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
         if (entity == null) {
             throw new IllegalArgumentException("Entity must not be null");
         }
-
+        logger.debug("entity created:"+entity);
         // perform unicity check:
         checkUnicity(entity);
 

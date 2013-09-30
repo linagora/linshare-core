@@ -48,7 +48,7 @@ public class SubDomain extends AbstractDomain {
 		this.defaultLocale="en";
 		this.parentDomain=topDomain;
 	}
-	
+
 	public SubDomain(SubDomainVo subDomain) {
 		super(subDomain);
 	}

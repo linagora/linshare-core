@@ -297,11 +297,10 @@ public class UserFacadeImpl implements UserFacade {
 	@Override
 	public UserVo findUserInDb(String mail, String domain) {
 		User user = userService.findUserInDB(domain, mail);
-		if(user != null) {
-			return new UserVo(user);
-		} else {
+
+		if (user == null)
 			return null;
-		}
+		return new UserVo(user);
 	}
 	
 
@@ -313,42 +312,42 @@ public class UserFacadeImpl implements UserFacade {
 	@Override
     public UserVo findUser(String domain, String mail) throws BusinessException {
 		User user = userService.findOrCreateUser(mail,domain);
-    	if (user != null) {
-    		return new UserVo(user);
-    	}
-    	return null;
+
+    	if (user == null)
+    		return null;
+    	return new UserVo(user);
     }
 	
 	
 	@Override
 	public UserVo findGuestWithMailAndUserLoggedIn(UserVo userLoggedIn, String mail) {
 		Guest guest = guestRepository.findByMail(mail);
+
 		if (guest == null)
 			return null;
-		if (((User)guest.getOwner()).getLogin().equals(userLoggedIn.getLogin())) {
-			return new UserVo(guest);
-		}
-		return null;
+		if (!((User)guest.getOwner()).getLogin().equals(userLoggedIn.getLogin()))
+			return null;
+		return new UserVo(guest);
 	}
 	
 
 	@Override
 	public UserVo findGuestByLsUuid(UserVo actorVo, String guestUuid) {
 		Guest guest = guestRepository.findByLsUuid(guestUuid);
-		if (guest != null) {
-			return new UserVo(guest);
-		}
-		return null;
+
+		if (guest == null)
+			return null;
+		return new UserVo(guest);
 	}
 	
 
 	@Override
 	public UserVo findUserByLsUuid(UserVo actorVo, String uuid) {
 		User user = userRepository.findByLsUuid(uuid);
-		if (user != null) {
-			return new UserVo(user);
-		}
-		return null;
+
+		if (user == null)
+			return null;
+		return new UserVo(user);
 	}
 
 

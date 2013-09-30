@@ -163,6 +163,7 @@ public interface FunctionalityOldService {
 	public Functionality getAuditTabFunctionality(AbstractDomain domain);
 	public Functionality getThreadTabFunctionality(AbstractDomain domain);
 	public Functionality getHelpTabFunctionality(AbstractDomain domain);
+	public Functionality getListTabFunctionality(AbstractDomain domain);
 	
 	
 	/**

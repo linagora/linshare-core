@@ -60,15 +60,24 @@ public class MailCompletionService {
 	 * @return
 	 */
 	public static String formatLabel(final UserVo user) {
+		return formatLabel(user, false);
+	}
+	
+	public static String formatLabel(final UserVo user, boolean virgule) {
+		return formatLabel(user.getMail(), user.getFirstName(), user.getLastName(), virgule);
+	}
+	
+	public static String formatLabel(String mail, String firstName, String lastName, boolean virgule) {
 		StringBuffer buf = new StringBuffer();
 		
-		if(user.getLastName()!=null&&user.getFirstName()!=null){
+		if(lastName != null && firstName != null){
 			//uservo from USER table or ldap
-			buf.append('"').append(user.getLastName().trim()).append(' ').append(user.getFirstName().trim()).append('"');
-			buf.append(" <").append(user.getMail()).append(">,");
+			buf.append('"').append(lastName.trim()).append(' ').append(firstName.trim()).append('"');
+			buf.append(" <").append(mail).append(">");
+			if(virgule)	buf.append(",");
 		} else {
 			//uservo from favorite table
-			buf.append(user.getMail()).append(',');
+			buf.append(mail).append(',');
 		}
 		return buf.toString();
 	}
