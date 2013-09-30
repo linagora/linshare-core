@@ -144,14 +144,14 @@ public class MailNotifierServiceImpl implements NotifierService {
 			messageMim.addRecipient(javax.mail.Message.RecipientType.TO,
 					new InternetAddress(recipient));
 
-			if (inReplyTo != null) {
+			if (inReplyTo != null && inReplyTo != "") {
 				// This field should contain only ASCCI character (RFC 822)
 				if(isPureAscii(inReplyTo)) {
 					messageMim.setHeader("In-Reply-To", inReplyTo);
 				}
 			}
 			
-			if (references != null) {
+			if (references != null && references != "") {
 				// This field should contain only ASCCI character (RFC 822)  
 				if(isPureAscii(references)) {
 					messageMim.setHeader("References", references);
