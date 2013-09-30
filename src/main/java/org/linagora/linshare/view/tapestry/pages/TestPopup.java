@@ -80,7 +80,7 @@ import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
  */
 public class TestPopup {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserAndDomainMultiServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(TestPopup.class);
 	
 	@Inject
     private BusinessMessagesManagementService businessMessagesManagementService;
