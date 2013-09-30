@@ -57,7 +57,7 @@ public class FileStreamResponse implements StreamResponse{
 	
 	public FileStreamResponse(DocumentVo documentVo,InputStream stream){
 		this.inputStream=stream;
-		this.size = documentVo.getSize().intValue();
+		this.size = documentVo.getSize();
 		this.fileName=documentVo.getFileName();
 		
 		//this.contentType = BINARY_MIME_TYPE; //always save the doc before reading it ....
@@ -66,7 +66,7 @@ public class FileStreamResponse implements StreamResponse{
 	
 	public FileStreamResponse(SignatureVo signatureVo,InputStream stream){
 		this.inputStream=stream;
-		this.size = signatureVo.getSize().intValue();
+		this.size = signatureVo.getSize();
 		
 		//we want unicity of the name of file
 		//so we put this name signed_fileName.ext_idDatabase.xml
