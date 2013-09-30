@@ -311,6 +311,19 @@ public class FunctionalityFacadeImpl implements FunctionalityFacade {
 	}
 	
 	@Override
+	public boolean isEnableListTab(String domainIdentifier) {
+		try {
+			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);
+			Functionality listTabFunctionality = functionalityService.getListTabFunctionality(domain);
+			return listTabFunctionality.getActivationPolicy().getStatus();
+		} catch (BusinessException e) {
+			logger.error("Can't find list tab functionality for domain : " + domainIdentifier);
+			logger.debug(e.getMessage());
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean isEnableGuest(String domainIdentifier) {
 		try {
 			AbstractDomain domain = abstractDomainService.retrieveDomain(domainIdentifier);

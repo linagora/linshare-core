@@ -21,11 +21,14 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserFacade;
@@ -77,6 +80,9 @@ public class QuickForwardPopup {
 	private List<String> recipientsEmail;
 
 	@Property
+	private String listRecipientsSearch;
+	
+	@Property
 	private String recipientsSearch;
 	
 	@Property
@@ -99,6 +105,9 @@ public class QuickForwardPopup {
 
 	@Inject
 	private UserFacade userFacade;
+	
+	@Inject
+	private MailingListFacade mailingListFacade;
 
 	@Inject
 	private Messages messages;
@@ -143,8 +152,22 @@ public class QuickForwardPopup {
     	}
     	
     	boolean sendErrors = false;
-    	logger.debug("FOOBAR :" + recipientsSearch);
-		List<String> recipients = MailCompletionService.parseEmails(recipientsSearch);
+		List<String> recipients = new ArrayList<String>();
+		if(recipientsSearch != null){
+    		recipients = MailCompletionService.parseEmails(recipientsSearch);
+		} else {
+			recipientsSearch = listRecipientsSearch;
+		}
+		List<MailingListVo> mailingListSelected = mailingListFacade.getListsFromShare(listRecipientsSearch);
+		if(!(mailingListSelected.isEmpty())){
+			
+			for(MailingListVo current : mailingListSelected){
+				
+				for(MailingListContactVo currentContact : current.getContacts()){
+					recipients.add(currentContact.getMail());
+				}
+			}
+		}
 		String badFormatEmail =  "";
 		
 		for (String recipient : recipients) {
@@ -224,9 +247,15 @@ public class QuickForwardPopup {
 			businessMessagesManagementService.notify(new BusinessUserMessage(
                 BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS, MessageSeverity.WARNING));				
 		} else {
+			if(recipientsEmail.size() > 0){
 			recipientFavouriteFacade.increment(userLoggedIn, recipientsEmail);
 			shareSessionObjects.addMessage(messages.get("components.confirmSharePopup.success"));
 			componentResources.triggerEvent("resetListFiles", null, null);
+			} else {
+				businessMessagesManagementService.notify(new BusinessUserMessage(
+		                BusinessUserMessageType.QUICKSHARE_NOMAIL, MessageSeverity.ERROR));
+				componentResources.triggerEvent("resetListFiles", null, null);
+			}
 		}
     }
     
@@ -243,6 +272,11 @@ public class QuickForwardPopup {
 
 		return elements;
 	}
+	
+	public List<String> onProvideCompletionsFromListRecipientsPatternSharePopup(String input) throws BusinessException {
+		return mailingListFacade.completionsForShare(userLoggedIn, input);
+	}
+
 	
 	public String getCssClassNumber() {
 		cssClassNumberCpt += 1;

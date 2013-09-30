@@ -42,6 +42,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.DomainPolicyRepository;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -74,7 +75,7 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 	
 	@SuppressWarnings("unchecked")
 	public List<String> findAllIdentifiers() {
-
+		// FIXME
 		return getHibernateTemplate().executeFind(
 				new HibernateCallback() {
 					public Object doInHibernate(final Session session)
@@ -83,5 +84,11 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 						return query.setCacheable(true).list();
 					}
 				});
+	}
+	
+	public DomainPolicy update(DomainPolicy entity) throws BusinessException {
+		// FIXME
+	    getHibernateTemplate().merge(entity);
+		return super.update(entity);
 	}
 }

@@ -36,13 +36,29 @@ package org.linagora.linshare.core.service;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
 import org.linagora.linshare.core.domain.entities.DomainPolicy;
+import org.linagora.linshare.core.exception.BusinessException;
 
 public interface DomainPolicyService {
 
-	public DomainPolicy findById(String identifier);
-	public List<DomainPolicy> getAllDomainPolicy();
+	public DomainPolicy createDomainPolicy(DomainPolicy domainPolicy) throws BusinessException ;
+	
+    public DomainPolicy retrieveDomainPolicy(String identifier) throws BusinessException;
+    
+    public void updateDomainPolicy(DomainPolicy domainPolicy) throws BusinessException;
+    
+	public List<DomainPolicy> findAllDomainPolicy() throws BusinessException;
+	
 	public List<String> getAllDomainPolicyIdentifiers();
+	
+	public void deletePolicy(String policyToDelete) throws BusinessException;
+	
+	public boolean policyIsDeletable(String policyToDelete);
+	
+	public DomainAccessRule retrieveDomainAccessRule(long id);
+	
+	public void deleteDomainAccessRule(DomainPolicy policy,long persistenceID) throws BusinessException;
 	
 	/**
 	 * This method returns true if we have the right to communicate with itself.

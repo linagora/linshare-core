@@ -31,10 +31,16 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.core.domain.constants;
+package org.linagora.linshare.core.business.service;
 
-/** List reasons of some events.
- */
-public enum Reason {
-    EXPIRY, INCONSISTENCY, USER_DELETED, NONE;
+
+import org.linagora.linshare.core.domain.entities.DomainAccessRule;
+import org.linagora.linshare.core.exception.BusinessException;
+
+public interface DomainAccessPolicyBusinessService {
+	
+	public DomainAccessRule retrieveDomainAccessRule(long id);
+	
+	public void deleteDomainAccessRule(long persistenceID)throws BusinessException;
+	
 }

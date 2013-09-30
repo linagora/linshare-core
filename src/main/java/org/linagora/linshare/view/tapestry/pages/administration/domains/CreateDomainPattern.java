@@ -96,8 +96,10 @@ public class CreateDomainPattern {
 	}
 
 	public Object onSubmit() {
+		
 		try {
 			if (inModify) {
+				logger.debug("description:"+domainPattern.getPatternDescription());
 				domainFacade.updateDomainPattern(loginUser, domainPattern);
 			} else {
 				domainFacade.createDomainPattern(loginUser, domainPattern);

@@ -52,14 +52,9 @@ public class TopDomain extends AbstractDomain {
 		this.parentDomain = rootDomain;
 	}
 
-	/*
-	 * For tests only
-	 */
-	public TopDomain(String identifier, String label, LDAPConnection ldapConn,
-			DomainPattern domainPattern, String baseDn) {
-		this(identifier, label, null);
-		this.userProvider = new LdapUserProvider(baseDn, ldapConn,
-				domainPattern);
+	public TopDomain(String identifier, String label, LDAPConnection ldapConn, DomainPattern domainPattern, String baseDn) {
+		this(identifier,label,null);
+		this.userProvider = new LdapUserProvider(baseDn,ldapConn,domainPattern);
 	}
 
 	public TopDomain(TopDomainVo topDomain) {

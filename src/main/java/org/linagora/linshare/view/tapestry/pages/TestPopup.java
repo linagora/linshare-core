@@ -34,7 +34,6 @@
 package org.linagora.linshare.view.tapestry.pages;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +43,6 @@ import org.apache.tapestry5.OptionGroupModel;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.SelectModelVisitor;
-import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -53,11 +51,14 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.batches.DocumentManagementBatch;
 import org.linagora.linshare.core.batches.ShareManagementBatch;
 import org.linagora.linshare.core.batches.UserManagementBatch;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.core.repository.AnonymousUrlRepository;
@@ -67,7 +68,6 @@ import org.linagora.linshare.core.service.impl.UserAndDomainMultiServiceImpl;
 import org.linagora.linshare.view.tapestry.components.PasswordPopup;
 import org.linagora.linshare.view.tapestry.components.WindowWithEffects;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
-import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,25 +212,23 @@ public class TestPopup {
 	@Inject
 	private RecipientFavouriteFacade recipientFavouriteFacade;
 
+	@Inject
+	private SelectModelFactory selectModelFactory;
+
+	@Inject
+	private MailingListFacade mailingListFacade;
+
     public void onPrepare() {
         if (this.tags == null) {
             this.tags = new ArrayList<String>();
         }
     }
     
-    SelectModel onProvideCompletionsFromTags(final String input) {
-        final List<String> result = new ArrayList<String>(); 
-		List<UserVo> searchResults = performSearch(input);
+    SelectModel onProvideCompletionsFromTags(final String input) throws BusinessException {
+		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(userVo, input);
+		SelectModel ret = selectModelFactory.create(lists, "identifier");
 
-		for (UserVo user : searchResults) {
-			String completeName = MailCompletionService.formatLabel(user);
-			if (!result.contains(completeName)) {
-				result.add(completeName);
-			}
-		}
-		if (result.isEmpty())
-			result.add(input);
-        return new StringSelectModel(result);
+		return ret;
     }
 
     private static class StringSelectModel implements SelectModel {
@@ -259,6 +257,27 @@ public class TestPopup {
         public void visit(final SelectModelVisitor visitor) {
         }
     }
+
+	public LabelAwareValueEncoder<MailingListVo> getEncoder() {
+		return new LabelAwareValueEncoder<MailingListVo>() {
+			@Override
+			public String toClient(MailingListVo value) {
+				return value.getUuid();
+			}
+
+			@Override
+			public MailingListVo toValue(String clientValue) {
+				MailingListVo ret = new MailingListVo();
+				ret.setUuid(clientValue);
+				return ret;
+			}
+
+			@Override
+			public String getLabel(MailingListVo arg0) {
+				return arg0.getIdentifier();
+			}
+		};
+	}
 	
 	/**
 	 * Perform a user search using the user search pattern.

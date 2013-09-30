@@ -191,7 +191,8 @@
 
 
 	<bean name="domainPolicyService" class="org.linagora.linshare.core.service.impl.DomainPolicyServiceImpl">
-		<constructor-arg ref="domainPolicyRepository" />
+		<constructor-arg ref="domainPolicyBusinessService" />
+		<constructor-arg ref="domainAccessPolicyBusinessService" />
 	</bean>
 
 	<bean name="abstractDomainService" class="org.linagora.linshare.core.service.impl.AbstractDomainServiceImpl">
@@ -214,6 +215,11 @@
 
 	<bean name="tagService" class="org.linagora.linshare.core.service.impl.TagServiceImpl">
 		<constructor-arg ref="tagBusinessService" />
+	</bean>
+	
+		<bean name="mailingListService" class="org.linagora.linshare.core.service.impl.MailingListServiceImpl">
+		<constructor-arg ref="mailingListBusinessService" />
+		<constructor-arg ref="userService" />
 	</bean>
 
 </beans>

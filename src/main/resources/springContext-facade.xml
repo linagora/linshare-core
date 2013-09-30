@@ -127,6 +127,8 @@
 
 	<bean name="domainPolicyFacade" class="org.linagora.linshare.core.facade.impl.DomainPolicyFacadeImpl">
 		<constructor-arg ref="domainPolicyService" />
+		<constructor-arg ref="userService" />
+	    <constructor-arg ref="abstractDomainService" />
 	</bean>
 
 	<bean name="functionalityFacade" class="org.linagora.linshare.core.facade.impl.FunctionalityFacadeImpl">
@@ -138,6 +140,13 @@
 		<!-- type needed because there is also a getInstance(String) method -->
 		<constructor-arg value="classpath:antisamy-strict.xml" type="java.io.InputStream" />
 	</bean>
+	
+	<bean id="mailingListFacade" class="org.linagora.linshare.core.facade.impl.MailingListFacadeImpl">
+		<constructor-arg ref="mailingListService" />
+		<constructor-arg ref="userService" />
+		<constructor-arg ref="accountService" />
+	</bean>
+	
 	
 	<!-- WEB SERVICES -->
 	
@@ -172,6 +181,7 @@
 		<constructor-arg ref="accountService" />
 		<constructor-arg ref="functionalityOldService" />
 	</bean>
+
 	<bean id="wsAdminGenericFacade" class="org.linagora.linshare.core.facade.webservice.admin.impl.AdminGenericFacadeImpl">
 		<constructor-arg ref="accountService" />
 	</bean>

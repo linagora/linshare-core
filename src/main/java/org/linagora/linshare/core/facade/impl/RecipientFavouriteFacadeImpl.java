@@ -41,6 +41,7 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.exception.LinShareNotSuchElementException;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
+import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.RecipientFavouriteService;
 import org.linagora.linshare.core.service.UserService;
 

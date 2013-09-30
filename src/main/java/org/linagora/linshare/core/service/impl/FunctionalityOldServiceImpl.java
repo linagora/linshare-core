@@ -716,6 +716,10 @@ public class FunctionalityOldServiceImpl implements FunctionalityOldService {
 		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_HELP);
 	}
 	
+	@Override
+	public Functionality getListTabFunctionality(AbstractDomain domain) {
+		return getFunctionalityEntityByIdentifiers(domain, FunctionalityNames.TAB_LIST);
+	}
 	
 	@Override
 	public StringValueFunctionality getShareNotificationBeforeExpirationFunctionality(AbstractDomain domain) {

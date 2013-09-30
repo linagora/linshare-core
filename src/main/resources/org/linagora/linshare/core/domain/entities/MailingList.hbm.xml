@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.linagora.linshare.core.domain.entities">
+
+	<class name="MailingList" table="mailing_list">
+		<id name="persistenceId" type="long">
+			<column name="id" not-null="true" />
+			<generator class="native" />
+		</id>
+
+		<property access="field" name="isPublic" column="is_public" type="boolean" not-null="true" />
+		<property name="identifier" column="identifier" type="string" length="255" not-null="true" />
+		<property name="description" column="description" type="text" />
+		<property name="creationDate" column="creation_date" type="timestamp" length="29" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false" />
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
+
+
+		<list name="mailingListContact" cascade="all" lazy="true">
+			<key column="mailing_list_id" not-null="true" />
+			<list-index column="mailing_list_contact_index" />
+			<one-to-many class="org.linagora.linshare.core.domain.entities.MailingListContact" />
+		</list>
+
+		<many-to-one name="domain" class="org.linagora.linshare.core.domain.entities.AbstractDomain" column="domain_abstract_id"
+			lazy="no-proxy" cascade="lock"></many-to-one>
+		<many-to-one name="owner" class="org.linagora.linshare.core.domain.entities.User" cascade="lock" column="user_id"
+			lazy="no-proxy"></many-to-one>
+
+	</class>
+</hibernate-mapping>

@@ -20,6 +20,8 @@
 			<p><t:pageLink page="administration/domains/CreateDomain">${message:pages.administration.domains.index.addDomain}</t:pageLink></p>
 			
 			<p><t:pageLink page="administration/domains/ManageDomain">${message:pages.administration.domains.index.manageDomains}</t:pageLink></p>
+			
+			<p><t:pageLink page="administration/domains/CreateDomainPolicy">${message:pages.administration.domains.index.addDomainPolicy}</t:pageLink></p>
 
 			<!-- <p><t:pageLink page="administration/domains/MultipleDomainUpdate">${message:pages.administration.domains.multipleDomainUpdate.title}</t:pageLink></p> -->
 		
@@ -45,7 +47,7 @@
 					<t:actionLink t:id="deleteDomain" context="domain.identifier" t:zone="zoneConfirmDelete"
 						title="${message:pages.administration.domains.index.domain.delete.button}">
 						<span onclick="window_confirm.showCenter(true)">
-							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+						<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
 						</span>
 					</t:actionLink>
 				</t:parameter>
@@ -62,7 +64,7 @@
 						<t:actionLink t:id="deletePattern" context="domainPattern.identifier" t:zone="zoneConfirmDelete"
 							title="${message:pages.administration.domains.index.pattern.delete.button}">
 							<span onclick="window_confirm_0.showCenter(true)">
-								<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
 							</span>
 						</t:actionLink>
 					</t:if>
@@ -80,13 +82,31 @@
 						<t:actionLink t:id="deleteConnection" context="ldapConnection.identifier" t:zone="zoneConfirmDelete"
 							title="${message:pages.administration.domains.index.connection.delete.button}">
 							<span onclick="window_confirm_1.showCenter(true)">
-								<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
 							</span>
 						</t:actionLink>
 					</t:if>
 				</t:parameter>
 			  </t:grid>
-
+			   
+			<h2>${message:pages.administration.domains.index.domainPolicies}</h2>
+		 	  <t:grid rowsPerPage="5" source="policies" include="identifier, policyDescription" add="actions" row="domainPolicy">
+			  	<t:parameter name="actionsCell">
+			  		<t:pageLink page="administration/domains/ManageDomainPolicy" context="domainPolicy.identifier"
+						title="${message:pages.administration.domains.index.policy.edit.button}">
+						<img src="${asset:context:images/icons/edit.png}" alt="${message:global.button.edit}" />
+			 	 	</t:pageLink>
+					<t:if test="policyIsDeletable">
+			 	 		<t:actionLink t:id="deletePolicy" context="domainPolicy.identifier" t:zone="zoneConfirmDelete"
+			 	 			title="${message:pages.administration.domains.index.policy.delete.button}">
+			 	 			<span onclick="window_confirm_2.showCenter(true)">
+							<img src="${asset:context:images/icons/delete.png}" alt="${message:global.button.delete}" />
+							</span>
+						</t:actionLink>
+					</t:if>
+			 	</t:parameter>
+			  </t:grid>
+		
 		</div>
 
 	</div><!-- id="content" -->
@@ -102,7 +122,11 @@
     <t:confirmPopup
         t:messageLabel="${message:pages.administration.domains.index.connection.delete.ask}"
         t:eventName="connectionDeleteEvent" t:windowId="confirm3" />
-
+        
+    <t:confirmPopup
+        t:messageLabel="${message:pages.administration.domains.index.policy.delete.ask}"
+        t:eventName="policyDeleteEvent" t:windowId="confirm4" />
+        
     <t:zone t:id="zoneConfirmDelete" />
 
 </t:MyBorderLayout>

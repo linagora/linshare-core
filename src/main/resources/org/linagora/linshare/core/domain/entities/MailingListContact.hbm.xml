@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.linagora.linshare.core.domain.entities">
+
+	<class name="MailingListContact" table="mailing_list_contact" lazy="false" discriminator-value="-1">
+
+		<id name="persistenceId" type="long">
+			<column name="id" not-null="true" />
+			<generator class="native" />
+		</id>
+		<property name="uuid" column="uuid" type="string" length="255" not-null="true" lazy="false" unique="true" />
+		<property name="mail" column="mail" type="string" length="255" not-null="true" lazy="false" />
+		<property name="creationDate" column="creation_date" type="timestamp" length="29" not-null="true" lazy="false" />
+		<property name="modificationDate" column="modification_date" type="timestamp" length="29" not-null="true" lazy="false" />
+		<property name="lastName" column="last_name" type="string" length="255" lazy="false" />
+		<property name="firstName" column="first_name" type="string" length="255" lazy="false" />
+		<many-to-one name="mailingList" cascade="lock" column="mailing_list_id" class="org.linagora.linshare.core.domain.entities.MailingList" not-null="true" lazy="no-proxy" insert="false" update="false">
+		</many-to-one>
+	</class>
+</hibernate-mapping>

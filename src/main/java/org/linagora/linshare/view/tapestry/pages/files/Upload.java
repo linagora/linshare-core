@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
@@ -50,15 +52,19 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
+import org.linagora.linshare.core.domain.vo.MailingListContactVo;
+import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.DocumentFacade;
 import org.linagora.linshare.core.facade.FunctionalityFacade;
+import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ShareFacade;
 import org.linagora.linshare.core.facade.UserFacade;
@@ -74,17 +80,18 @@ import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
+
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
 		"../../components/fineuploader/fineuploader-3.6.4.js",
-		"../../components/bootstrap/js/bootstrap.js" }, 
-		stylesheet = { "../../components/fineuploader/fineuploader-3.6.4.css",
+		"../../components/bootstrap/js/bootstrap.js" }, stylesheet = {
+		"../../components/fineuploader/fineuploader-3.6.4.css",
 		"context:css/spinner.css" })
 public class Upload {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(Upload.class);
+	private static final Logger logger = LoggerFactory.getLogger(Upload.class);
 
-	// illimited file size
+	// unlimited file size
 	private static final long DEFAULT_MAX_FILE_SIZE = 0;
 
 	/* ***********************************************************
@@ -103,10 +110,7 @@ public class Upload {
 
 	@InjectComponent
 	@Property
-	private Form quickShareForm;
-
-	// @InjectComponent
-	// private Zone shareZone;
+	private Form uploaderForm;
 
 	@Persist("flash")
 	@Property
@@ -122,6 +126,9 @@ public class Upload {
 
 	@Property
 	private String recipientsSearch;
+
+	@Property
+	private List<MailingListVo> mailingLists;
 
 	@Persist("flash")
 	@Property
@@ -160,6 +167,9 @@ public class Upload {
 	private UserFacade userFacade;
 
 	@Inject
+	private MailingListFacade mailingListFacade;
+
+	@Inject
 	private ShareFacade shareFacade;
 
 	@Inject
@@ -170,6 +180,9 @@ public class Upload {
 
 	@Inject
 	private FunctionalityFacade functionalityFacade;
+
+	@Inject
+	private SelectModelFactory selectModelFactory;
 
 	@Inject
 	private Policy antiSamyPolicy;
@@ -191,29 +204,36 @@ public class Upload {
 					.getDefaultSecuredAnonymousUrlCheckBoxValue(domainId);
 		}
 	}
-	
+
 	/*
 	 * Hack: force bootstrap css to be the last stylesheet loaded
 	 */
-	@Import(stylesheet = {"../../components/bootstrap/css/bootstrap.css" })
+	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css" })
 	@CleanupRender
 	void cleanupRender() {
 	}
 
-	void onValidateFromQuickShareForm() {
+	public void onPrepare() {
+		if (this.mailingLists == null) {
+			this.mailingLists = new ArrayList<MailingListVo>();
+		}
+	}
+
+	void onValidateFromDidjeridooForm() {
 		is_submit = true;
+
 		if (progress > 0) {
 			return; // some uploads are still in progress
 		}
 	}
 
-	Object onSubmitFromQuickShareForm() throws BusinessException {
+	Object onSubmitFromUploaderForm() throws BusinessException {
 		/*
 		 * XXX FIXME TODO HACK : same code as QuickSharePopup ... it's not just
 		 * smelly
 		 */
 		logger.debug("uuids = " + uuids);
-		filter = new XSSFilter(shareSessionObjects, quickShareForm,
+		filter = new XSSFilter(shareSessionObjects, uploaderForm,
 				antiSamyPolicy, messages);
 		try {
 			textAreaSubjectValue = filter.clean(textAreaSubjectValue);
@@ -232,8 +252,13 @@ public class Upload {
 
 		try {
 			List<DocumentVo> addedDocuments = new ArrayList<DocumentVo>();
-			List<String> recipients = MailCompletionService
-					.parseEmails(recipientsSearch);
+			List<String> recipients = new ArrayList<String>();
+
+			if (recipientsSearch != null) {
+				recipients = MailCompletionService
+						.parseEmails(recipientsSearch);
+			}
+
 			List<String> recipientsEmail;
 
 			String badFormatEmail = "";
@@ -328,11 +353,18 @@ public class Upload {
 								BusinessUserMessageType.SHARE_WARNING_MAIL_ADDRESS,
 								MessageSeverity.WARNING));
 			} else {
-				recipientFavouriteFacade.increment(userVo, recipientsEmail);
-				businessMessagesManagementService
-						.notify(new BusinessUserMessage(
-								BusinessUserMessageType.QUICKSHARE_SUCCESS,
-								MessageSeverity.INFO));
+				if (recipientsEmail.size() > 0) {
+					recipientFavouriteFacade.increment(userVo, recipientsEmail);
+					businessMessagesManagementService
+							.notify(new BusinessUserMessage(
+									BusinessUserMessageType.QUICKSHARE_SUCCESS,
+									MessageSeverity.INFO));
+				} else {
+					businessMessagesManagementService
+							.notify(new BusinessUserMessage(
+									BusinessUserMessageType.QUICKSHARE_NOMAIL,
+									MessageSeverity.ERROR));
+				}
 			}
 
 		} catch (NullPointerException e3) {
@@ -357,6 +389,14 @@ public class Upload {
 		return elements;
 	}
 
+	public SelectModel onProvideCompletionsFromMailingLists(String input)
+			throws BusinessException {
+		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(
+				userVo, input);
+
+		return selectModelFactory.create(lists, "representation");
+	}
+
 	public long getMaxFileSize() {
 		try {
 			return documentFacade.getUserAvailableSize(userVo);
@@ -365,6 +405,27 @@ public class Upload {
 					+ e.getLocalizedMessage());
 		}
 		return DEFAULT_MAX_FILE_SIZE;
+	}
+
+	public LabelAwareValueEncoder<MailingListVo> getEncoder() {
+		return new LabelAwareValueEncoder<MailingListVo>() {
+			@Override
+			public String toClient(MailingListVo value) {
+				return value.getUuid();
+			}
+
+			@Override
+			public MailingListVo toValue(String clientValue) {
+				MailingListVo ret = new MailingListVo();
+				ret.setUuid(clientValue);
+				return ret;
+			}
+
+			@Override
+			public String getLabel(MailingListVo arg0) {
+				return arg0.toString();
+			}
+		};
 	}
 
 	/*

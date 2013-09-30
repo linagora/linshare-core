@@ -161,7 +161,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
 
         DomainPattern domainPattern = userProviderService.retrieveDomainPattern(domainVo.getPatternIdentifier());
         LDAPConnection ldapConn = userProviderService.retrieveLDAPConnection(domainVo.getLdapIdentifier());
-        DomainPolicy policy = domainPolicyService.findById(domainVo.getPolicyIdentifier());
+        DomainPolicy policy = domainPolicyService.retrieveDomainPolicy(domainVo.getPolicyIdentifier());
 
         LdapUserProvider provider = null;
         String baseDn = domainVo.getDifferentialKey();
@@ -380,7 +380,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
     public List<String> findAllDomainPatternIdentifiers() {
         return userProviderService.findAllDomainPatternIdentifiers();
     }
-
+    
     @Override
     public List<String> findAllUserDomainPatternIdentifiers() {
         return userProviderService.findAllUserDomainPatternIdentifiers();
@@ -391,6 +391,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         return userProviderService.findAllSystemDomainPatternIdentifiers();
     }
 
+    
     @Override
     public List<DomainPatternVo> findAllUserDomainPatterns() throws BusinessException {
         List<DomainPatternVo> res = new ArrayList<DomainPatternVo>();
@@ -425,6 +426,7 @@ public class AbstractDomainFacadeImpl implements AbstractDomainFacade {
         return new DomainPatternVo(pattern);
     }
 
+   
     @Override
     public void updateDomainPattern(UserVo actorVo, DomainPatternVo domainPatternVo) throws BusinessException {
         if(isAuthorized(actorVo)) {
