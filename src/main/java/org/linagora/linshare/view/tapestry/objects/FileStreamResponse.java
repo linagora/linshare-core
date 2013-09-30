@@ -48,7 +48,7 @@ import org.linagora.linshare.core.utils.ArchiveZipStream;
 public class FileStreamResponse implements StreamResponse{
 
 	private InputStream inputStream;
-	private int size;
+	private long size;
 	private String contentType;
 	private String fileName;
 	
@@ -91,11 +91,11 @@ public class FileStreamResponse implements StreamResponse{
 	
 	// *** getters/setters
 
-	public int getSize() {
+	public long getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize(long size) {
 		this.size = size;
 	}
 	public void setContentType(String contentType) {
@@ -126,7 +126,7 @@ public class FileStreamResponse implements StreamResponse{
         //This allows MS-IE to save the content as a temporary file in its local cache,
         //but in not general public cache servers, before handing it off the plugin, e.g. Adobe Acrobat, to handle it.
 		
-		response.setContentLength(this.size);
+		response.setHeader("Content-Length", String.valueOf(this.size));
         response.setHeader("Content-disposition", getContentDispositionHeader());
         response.setHeader("Content-Transfer-Encoding","none");
         
