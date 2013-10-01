@@ -37,7 +37,7 @@ import java.util.List;
 
 import javax.ws.rs.Path;
 
-@Path("/rest/admin/user_roles")
+@Path("/user_roles")
 public interface UserRoleRestService {
 
 	List<String> getUserRoles();

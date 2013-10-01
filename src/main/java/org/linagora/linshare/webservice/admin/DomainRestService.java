@@ -41,7 +41,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainDto;
 import org.linagora.linshare.webservice.dto.FunctionalityDto;
 
-@Path("/rest/admin/domains")
+@Path("/domains")
 public interface DomainRestService {
 
 	DomainDto getDomains() throws BusinessException;

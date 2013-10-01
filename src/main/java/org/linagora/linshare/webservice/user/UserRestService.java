@@ -40,7 +40,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;
 
-@Path("/rest/users")
+@Path("/users")
 public interface UserRestService {
 
 	List<UserDto> getUsers() throws BusinessException;

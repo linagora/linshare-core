@@ -40,7 +40,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.UserDto;
 
-@Path("/rest/admin/users")
+@Path("/users")
 public interface UserRestService {
 
 	Set<UserDto> completionUser(String pattern) throws BusinessException;

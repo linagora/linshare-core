@@ -40,7 +40,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 
-@Path("/rest/threads")
+@Path("/threads")
 public interface ThreadRestService {
 
 	List<ThreadDto> getAllMyThread() throws BusinessException;

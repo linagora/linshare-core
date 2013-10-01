@@ -49,7 +49,7 @@ import org.linagora.linshare.webservice.dto.SimpleLongValue;
  * REST jaxRS interface
  */
 
-@Path("/rest/documents")
+@Path("/documents")
 public interface DocumentRestService {
 
 	List<DocumentDto> getDocuments() throws BusinessException;
