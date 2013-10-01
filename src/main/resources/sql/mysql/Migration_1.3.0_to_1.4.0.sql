@@ -21,5 +21,9 @@ ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li478123 FOREIGN KEY (user_id)
 ALTER TABLE mailing_list ADD CONSTRAINT FKmailing_li335663 FOREIGN KEY (domain_abstract_id) REFERENCES domain_abstract (id);
 ALTER TABLE mailing_list_contact ADD CONSTRAINT FKMailingLis595962 FOREIGN KEY (mailing_list_id) REFERENCES mailing_list (id);
 
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 0);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} de la part de ${actorRepresentation}', 1);
+INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 2);
+
 -- LinShare version
 INSERT INTO version (description) VALUES ('1.4.0');
