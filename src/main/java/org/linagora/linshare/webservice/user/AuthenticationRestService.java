@@ -37,7 +37,7 @@ import javax.ws.rs.Path;
 
 import org.linagora.linshare.core.exception.BusinessException;
 
-@Path("/rest/authentication")
+@Path("/authentication")
 public interface AuthenticationRestService {
 
 	Boolean isAuthorized() throws BusinessException;

@@ -40,7 +40,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DomainPatternDto;
 
-@Path("/rest/admin/domain_patterns")
+@Path("/domain_patterns")
 public interface DomainPatternRestService {
 
 	List<DomainPatternDto> getDomainPatterns() throws BusinessException;

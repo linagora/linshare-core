@@ -40,7 +40,7 @@ import javax.ws.rs.Path;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.LDAPConnectionDto;
 
-@Path("/rest/admin/ldap_connections")
+@Path("/ldap_connections")
 public interface LDAPConnectionRestService {
 
 	List<LDAPConnectionDto> getLDAPConnections() throws BusinessException;

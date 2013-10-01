@@ -48,7 +48,7 @@ import org.linagora.linshare.webservice.dto.ShareDto;
  * sharing
  */
 
-@Path("/rest/shares")
+@Path("/shares")
 public interface ShareRestService {
 
 	/**

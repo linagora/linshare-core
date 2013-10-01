@@ -41,7 +41,7 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.FineUploaderDto;
 
-@Path("/fineuploader/upload")
+@Path("/upload")
 public interface FineUploaderService {
 
 	/**

@@ -43,7 +43,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.DocumentDto;
 import org.linagora.linshare.webservice.dto.SimpleStringValue;
 
-@Path("/rest")
+@Path("/")
 public interface PluginCompatibilityRestService {
 
 	SimpleStringValue getInformation();

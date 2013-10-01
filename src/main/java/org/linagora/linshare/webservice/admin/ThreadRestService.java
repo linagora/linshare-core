@@ -8,7 +8,7 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.webservice.dto.ThreadDto;
 import org.linagora.linshare.webservice.dto.ThreadMemberDto;
 
-@Path("/rest/admin/threads")
+@Path("/threads")
 public interface ThreadRestService {
 
 	public List<ThreadDto> getAll() throws BusinessException;
