@@ -48,8 +48,6 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- LinShare: A shared file is about to be deleted!
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'A shared file is about to be deleted!', 0);
 
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 0);
-
 -- Mail templates
 -- Template GREETINGS
 INSERT INTO mail_templates (messages_configuration_id, template_id, content_html, content_txt, language_id) VALUES (1, 0, 'Hello ${firstName} ${lastName},', 'Hello ${firstName} ${lastName},<br/><br/>', 0);
@@ -150,8 +148,6 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- Subject DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'Un fichier va bientôt être supprimé', 1);
-
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} de la part de ${actorRepresentation}', 1);
 
 -- Mail templates
 -- Template GREETINGS
@@ -254,8 +250,6 @@ INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, langu
 -- Subject DOC_UPCOMING_OUTDATED
 -- LinShare: A sharing will be soon deleted
 INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 12, 'Een bestand zal binnenkort gewist worden.', 2);
-
-INSERT INTO mail_subjects (messages_configuration_id, subject_id, content, language_id) VALUES (1, 13, '${actorSubject} from ${actorRepresentation}', 2);
 
 -- Mail templates
 -- Template GREETINGS
