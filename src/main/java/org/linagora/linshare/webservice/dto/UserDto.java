@@ -50,15 +50,19 @@ public class UserDto extends AccountDto {
 	private String lastName;
 	private String mail;
 	private String role;
-	private boolean canUpload;
-	private boolean canCreateGuest;
+	private Boolean canUpload;
+	private Boolean canCreateGuest;
 	private Date expirationDate;
-	private boolean guest = false;
-	private boolean restricted = false;
+	private Boolean guest = false;
+	private Boolean restricted;
 	private List<String> restrictedContacts = new ArrayList<String>();
-	private String comment = null;
-	
-	public UserDto(User u) {
+	private String comment;
+
+	public UserDto() {
+		super();
+	}
+
+	protected UserDto(User u) {
 		super(u);
 		this.firstName = u.getFirstName();
 		this.lastName = u.getLastName();
@@ -77,8 +81,24 @@ public class UserDto extends AccountDto {
 		}
 	}
 	
-	public UserDto() {
-		super();
+	protected UserDto(String uuid, String domain, String firstName,
+			String lastName, String mail, String role, Boolean guest) {
+		super(uuid, null, null, null, domain, null);
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mail = mail;
+		this.role = role;
+		this.guest = guest;
+	}
+
+	public static UserDto getSimple(User u) {
+		return new UserDto(u.getLsUuid(), u.getDomainId(), u.getFirstName(),
+				u.getLastName(), u.getMail(), u.getRole().toString(), u
+						.getAccountType().equals(AccountType.GUEST));
+	}
+
+	public static UserDto getFull(User u) {
+		return new UserDto(u);
 	}
 
 	public String getFirstName() {
@@ -112,20 +132,20 @@ public class UserDto extends AccountDto {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
-	public boolean getCanUpload() {
+
+	public Boolean getCanUpload() {
 		return canUpload;
 	}
 
-	public void setCanUpload(boolean canUpload) {
+	public void setCanUpload(Boolean canUpload) {
 		this.canUpload = canUpload;
 	}
 
-	public boolean isCanCreateGuest() {
+	public Boolean isCanCreateGuest() {
 		return canCreateGuest;
 	}
 
-	public void setCanCreateGuest(boolean canCreateGuest) {
+	public void setCanCreateGuest(Boolean canCreateGuest) {
 		this.canCreateGuest = canCreateGuest;
 	}
 
@@ -137,19 +157,19 @@ public class UserDto extends AccountDto {
 		this.expirationDate = expirationDate;
 	}
 
-	public boolean isGuest() {
+	public Boolean isGuest() {
 		return guest;
 	}
 
-	public void setGuest(boolean guest) {
+	public void setGuest(Boolean guest) {
 		this.guest = guest;
 	}
 
-	public boolean isRestricted() {
+	public Boolean isRestricted() {
 		return restricted;
 	}
 
-	public void setRestricted(boolean restricted) {
+	public void setRestricted(Boolean restricted) {
 		this.restricted = restricted;
 	}
 

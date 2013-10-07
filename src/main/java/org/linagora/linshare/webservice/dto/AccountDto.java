@@ -60,6 +60,17 @@ public class AccountDto {
 		this.locale = a.getLocale();
 		this.domain = a.getDomainId();
 	}
+	
+	protected AccountDto(String uuid, Date creationDate, Date modificationDate,
+			String locale, String domain, UserDto owner) {
+		super();
+		this.uuid = uuid;
+		this.creationDate = creationDate;
+		this.modificationDate = modificationDate;
+		this.locale = locale;
+		this.domain = domain;
+		this.owner = owner;
+	}
 
 	public String getUuid() {
 		return uuid;

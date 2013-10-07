@@ -87,9 +87,8 @@ public class UserFacadeImpl extends GenericFacadeImpl
 		List<User> users = userService
 				.searchUser(null, null, null, null, actor);
 
-		for (User user : users) {
-			res.add(new UserDto(user));
-		}
+		for (User user : users)
+			res.add(UserDto.getSimple(user));
 		logger.debug("user found : " + res.size());
 		return res;
 	}

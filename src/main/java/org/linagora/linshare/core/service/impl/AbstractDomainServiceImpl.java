@@ -381,31 +381,29 @@ public class AbstractDomainServiceImpl implements AbstractDomainService {
 	
 	private  List<User> searchUserWithDomainPolicies(AbstractDomain domain, String mail, String firstName, String lastName) throws BusinessException {
 		List<User> users = new ArrayList<User>();
-
 		List<AbstractDomain> allAuthorizedDomain = domainPolicyService.getAllAuthorizedDomain(domain);
+
 		for (AbstractDomain d : allAuthorizedDomain) {
-			
-			if(d.getUserProvider() != null) {
-				try {
-					List<User> list = userProviderService.searchUser(d.getUserProvider(),mail,firstName,lastName);
-					// For each user, we set the domain which he came from.
-					for (User user : list) {
-						user.setDomain(d);
-						user.setRole(d.getDefaultRole());
-					}
-					users.addAll(list);
-				} catch (NamingException e) {
-					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
-					logger.error(e.toString());
-				} catch (IOException e) {
-					logger.error("Error while searching for a user in domain {}", d.getIdentifier());
-					logger.error(e.toString());
-				}
-			} else {
+			if (d.getUserProvider() == null) {
 				logger.debug("UserProvider is null for domain : " + domain.getIdentifier());
+				continue;
+			}
+			try {
+				List<User> list = userProviderService.searchUser(d.getUserProvider(),mail,firstName,lastName);
+				// For each user, we set the domain which he came from.
+				for (User user : list) {
+					user.setDomain(d);
+					user.setRole(d.getDefaultRole());
+				}
+				users.addAll(list);
+			} catch (NamingException e) {
+				logger.error("Error while searching for a user in domain {}", d.getIdentifier());
+				logger.error(e.toString());
+			} catch (IOException e) {
+				logger.error("Error while searching for a user in domain {}", d.getIdentifier());
+				logger.error(e.toString());
 			}
 		}
-
 		return users;
 	}
 

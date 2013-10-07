@@ -46,7 +46,6 @@ public class DocumentDto {
 	protected String uuid;
 	protected String name;
 	protected String description;
-	protected UserDto owner;
 	protected Calendar creationDate;
 	protected Calendar modificationDate;
 	protected Calendar expirationDate;
@@ -66,7 +65,6 @@ public class DocumentDto {
 		this.description = de.getComment();
 		this.ciphered = de.getCiphered();
 		this.type = de.getDocument().getType();
-		this.owner = new UserDto((User) de.getEntryOwner());
 		this.size = de.getDocument().getSize();
 	}
 
@@ -120,14 +118,6 @@ public class DocumentDto {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public UserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(UserDto owner) {
-		this.owner = owner;
 	}
 
 	public Calendar getCreationDate() {
