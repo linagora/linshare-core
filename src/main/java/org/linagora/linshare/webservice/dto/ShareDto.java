@@ -66,7 +66,7 @@ public class ShareDto {
 		this.modificationDate = shareEntry.getModificationDate();
 		this.expirationDate = shareEntry.getExpirationDate();
 		this.description = shareEntry.getComment();
-		this.owner = new UserDto((User) shareEntry.getEntryOwner());
+		this.owner = UserDto.getSimple((User) shareEntry.getEntryOwner());
 		this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
 		this.downloaded = shareEntry.getDownloaded();
 		this.recipient = new UserDto(shareEntry.getRecipient());

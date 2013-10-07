@@ -58,6 +58,6 @@ public class AuthenticationRestServiceImpl extends WebserviceBase implements Aut
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Override
 	public UserDto isAuthorized() throws BusinessException {
-		return new UserDto(webServiceAdminFacade.checkAuthentication(Role.ADMIN));
+		return UserDto.getFull(webServiceAdminFacade.checkAuthentication(Role.ADMIN));
 	}
 }
