@@ -61,6 +61,14 @@ public class ShareRepositoryImpl extends AbstractRepositoryImpl<Share> implement
         }
 	}
 
+	public List<Share> getShares(Document doc, User sender) {
+		DetachedCriteria crit = DetachedCriteria.forClass(Share.class);
+		
+		crit.add(Restrictions.eq("sender", sender));
+		crit.add(Restrictions.eq("document", doc));
+		return findByCriteria(crit);
+	}
+
 	public List<Share> getSharesLinkedToDocument(Document doc) {
 		return findByCriteria(Restrictions.eq("document", doc));
 	}

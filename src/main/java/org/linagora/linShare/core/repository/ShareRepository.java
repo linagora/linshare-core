@@ -37,6 +37,8 @@ public interface ShareRepository extends AbstractRepository<Share> {
 	 */
 	public Share getShare(Document shareDocument,User sender,User recipient);
 	
+	public List<Share> getShares(Document doc, User sender);
+
 	/**
 	 * Get all the shares linked to a document
 	 * @param doc

@@ -192,21 +192,15 @@ public class ShareFacadeImpl implements ShareFacade {
 	}
 
 	public List<ShareDocumentVo> getSharingsByUserAndFile(UserVo sender, DocumentVo document) {
-		User userSender = userRepository.findByLogin(sender.getLogin());
-		if (userSender==null) {
-			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
-		}
-		
-		Set<Share> shares = shareService.getSentSharesByUser(userSender);
+		User user = userRepository.findByLogin(sender.getLogin());
+		Document doc = documentRepository.findById(document.getIdentifier());
 
-		List<Share> sharingsOfDocument = new ArrayList<Share>();
-		for (Share share : shares) {			
-			if (share.getDocument().getIdentifier().equalsIgnoreCase(document.getIdentifier())) {
-				sharingsOfDocument.add(share);
-			}
-		}
-		
-		return shareTransformer.disassembleList(sharingsOfDocument);
+		if (user == null)
+			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
+
+		List<Share> shares = shareService.getSentSharesFromDocument(doc, user);
+		logger.error("Shares found : " + shares.size());
+		return shareTransformer.disassembleList(shares);
 	}
 
 	public void deleteSharing(ShareDocumentVo share, UserVo actor) throws BusinessException {

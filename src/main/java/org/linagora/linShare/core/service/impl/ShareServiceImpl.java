@@ -118,6 +118,7 @@ public class ShareServiceImpl implements ShareService{
 		}
         this.urlBase = urlBase;
 	}
+	
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedDocumentsByUser(User)
 	 */
@@ -142,6 +143,13 @@ public class ShareServiceImpl implements ShareService{
 			sharesDocument.add(share.getDocument());
 		}
 		return sharesDocument;
+	}
+	/**
+	 * @see org.linagora.linShare.core.service.ShareService#getSentSharesFromDocument(Document, User)
+
+	 */
+	public List<Share> getSentSharesFromDocument(Document doc, User sender) {
+		return shareRepository.getShares(doc, sender);
 	}
 	/**
 	 * @see org.linagora.linShare.core.service.ShareService#getReceivedSharesByUser(User)
@@ -618,7 +626,6 @@ public class ShareServiceImpl implements ShareService{
 		logEntryService.create(logEntryShare);
 		logEntryService.create(logEntryDelete);
 	}
-	
 
 	public void notifyGroupSharingDeleted(Document doc, User manager, Group group,
 			MailContainer mailContainer) throws BusinessException {

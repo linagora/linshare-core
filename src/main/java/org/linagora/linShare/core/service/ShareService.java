@@ -56,6 +56,14 @@ public interface ShareService {
 	 * @return list of sharedDocument sent by the user.
 	 */
 	public List<Document> getSentDocumentsByUser(User user);
+
+	/**
+	 * Retrieve all shares for a document sent by a user.
+	 * @param doc the document.
+	 * @param user the user.
+	 * @return list of shares for this document sent by the user.
+	 */
+	public List<Share> getSentSharesFromDocument(Document doc, User sender);
 	
 	/**
 	 * Retrieve all received documents for an user (without share information).
