@@ -199,7 +199,6 @@ public class ShareFacadeImpl implements ShareFacade {
 			throw new TechnicalException(TechnicalErrorCode.USER_INCOHERENCE, "Could not find the user");
 
 		List<Share> shares = shareService.getSentSharesFromDocument(doc, user);
-		logger.error("Shares found : " + shares.size());
 		return shareTransformer.disassembleList(shares);
 	}
 
