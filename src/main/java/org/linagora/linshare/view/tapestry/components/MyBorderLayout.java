@@ -418,10 +418,7 @@ public class MyBorderLayout {
 	}
 	
 	public boolean getDisplayLogo() {
-		if(linshareLicenceTerm || linshareLogoVisible) {
-			return true;
-		}
-		return false;
+		return linshareLicenceTerm || linshareLogoVisible;
 	}
 	
 	public boolean getCustomLogoLink(){

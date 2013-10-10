@@ -406,6 +406,10 @@ public class Upload {
 		}
 		return DEFAULT_MAX_FILE_SIZE;
 	}
+	
+	public boolean isEnableListTab() {
+		return functionalityFacade.isEnableListTab(userVo.getDomainIdentifier());
+	}
 
 	public LabelAwareValueEncoder<MailingListVo> getEncoder() {
 		return new LabelAwareValueEncoder<MailingListVo>() {
