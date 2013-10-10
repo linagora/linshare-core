@@ -38,8 +38,7 @@
 					<tr>
 					<form t:type="form" t:id="formSearch" >
 						<td>
-							<t:textfield t:id="searchMembers"  t:validate="required" t:value="recipientsSearchMember" t:size="50" t:mixins="autocomplete" 
-				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
+							<t:textfield t:id="searchMembers"  t:validate="required" t:value="recipientsSearchMember" t:size="50"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    	</td>
 				    	<td>
@@ -124,8 +123,7 @@
 						<tr>
 						<form t:type="form" t:id="form">
 							<td>
-							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearch" t:size="50" t:mixins="autocomplete" 
-				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
+							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearch" t:size="50"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    		</td>
 				    		<td>
@@ -141,7 +139,7 @@
         			</table>
         			<br></br>
         			<t:if t:test="displayGrid">
-        				<t:grid source="userSearchResults"  rowsPerPage="5" include="firstName,lastName,mail" add="inList , addRemove"   row="result" width="500">
+        				<t:grid source="userSearchResults" rowsPerPage="5" include="firstName,lastName,mail" add="inList,addRemove" row="result" width="500">
         					<p:empty>
         						${message:pages.thread.adminThread.search}
         					</p:empty> 
