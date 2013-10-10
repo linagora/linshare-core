@@ -130,9 +130,6 @@ public class AdminThread {
 	@Property
 	private String recipientsSearchMember;
 
-	@Property
-	private int autocompleteMin = 3;
-
 	@Inject
 	private Block adminBlock, userBlock, restrictedUserBlock;
 
@@ -178,9 +175,8 @@ public class AdminThread {
 	}
 	
 	public Object onActivate() {
-		if (currentThread == null) {
+		if (currentThread == null)
 			return Index.class;
-		}
 		try {
 			if (!threadEntryFacade.userIsAdmin(userLoggedIn, currentThread)) {
 				logger.info("Unauthorized");
@@ -267,18 +263,9 @@ public class AdminThread {
 		}
 	}
 
-	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
-		return threadEntryFacade.completionOnUsers(userLoggedIn, input);
-	}
-
-	public List<String> onProvideCompletionsFromSearchMembers(String input) throws BusinessException {
-		return threadEntryFacade.completionOnMembers(userLoggedIn, currentThread, input);
-	}
-
 	public void onSuccessFromFormSearch() throws BusinessException {
-		if (inSearch) {
+		if (inSearch)
 			members = threadEntryFacade.searchAmongMembers(userLoggedIn, currentThread, recipientsSearchMember,criteriaOnSearch);
-		}
 	}
 
     public void onSuccessFromResetSearch() {
@@ -295,15 +282,13 @@ public class AdminThread {
 	}
 	
 	public boolean getIsInList() {
-		// check if user from searchList is thread member
-		boolean userIsMember = false;
 		try {
-			userIsMember = threadEntryFacade.userIsMember(result, currentThread);
+			return threadEntryFacade.userIsMember(result, currentThread);
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			logger.debug(e.toString());
 		}
-		return userIsMember;
+		return false;
 	}
 
 	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
@@ -320,7 +305,6 @@ public class AdminThread {
 		members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 	}
 
-	
 	public String getAdmin() { 
 		return "admin"; 
 	}
