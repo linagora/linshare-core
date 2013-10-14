@@ -53,7 +53,7 @@ public class UserDto extends AccountDto {
 	private Boolean canUpload;
 	private Boolean canCreateGuest;
 	private Date expirationDate;
-	private Boolean guest = false;
+	private Boolean guest;
 	private Boolean restricted;
 	private List<String> restrictedContacts = new ArrayList<String>();
 	private String comment;
@@ -80,7 +80,7 @@ public class UserDto extends AccountDto {
 			this.guest = true;
 		}
 	}
-	
+
 	protected UserDto(String uuid, String domain, String firstName,
 			String lastName, String mail, String role, Boolean guest) {
 		super(uuid, null, null, null, domain, null);
@@ -93,8 +93,8 @@ public class UserDto extends AccountDto {
 
 	public static UserDto getSimple(User u) {
 		return new UserDto(u.getLsUuid(), u.getDomainId(), u.getFirstName(),
-				u.getLastName(), u.getMail(), u.getRole().toString(), u
-						.getAccountType().equals(AccountType.GUEST));
+				u.getLastName(), u.getMail(), null, u.getAccountType().equals(
+						AccountType.GUEST));
 	}
 
 	public static UserDto getFull(User u) {
