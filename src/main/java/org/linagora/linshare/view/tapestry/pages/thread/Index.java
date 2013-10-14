@@ -88,9 +88,6 @@ public class Index {
     private String recipientsSearchThread;
     
     @Property
-    private int autocompleteMin = 3;
-    
-    @Property
     private boolean showThreadTab;
     
     @Property
@@ -206,11 +203,6 @@ public class Index {
 		}
 		return null;
 	}
-	
-    public List<String> onProvideCompletionsFromSearchThread(String input) throws BusinessException {
-    	return threadEntryFacade.completionOnThreads(userVo, input);
-    }
-    
 	
     public Object onException(Throwable cause) {
         shareSessionObjects.addError(messages.get("global.exception.message"));

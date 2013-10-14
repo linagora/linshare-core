@@ -36,8 +36,8 @@
 					<tr>
 					<form t:type="form" t:id="formSearch">
 						<td>
-							<t:textfield t:id="searchThread"  t:validate="required" t:value="recipientsSearchThread" t:size="50" t:mixins="autocomplete" 
-				    		t:minChars="${autocompleteMin}" class="recipientsPattern"
+							<t:textfield t:id="searchThread"  t:validate="required" t:value="recipientsSearchThread" t:size="50"
+				    		class="recipientsPattern"
 				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
 				    	</td>
 				    	<td>
