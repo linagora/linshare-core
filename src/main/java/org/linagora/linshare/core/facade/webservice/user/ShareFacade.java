@@ -56,4 +56,6 @@ public interface ShareFacade extends GenericFacade {
 	
 	public InputStream getDocumentStream(String shareEntryUuid) throws BusinessException;
 	
+	public InputStream getThumbnailStream(String shareEntryUuid) throws BusinessException;
+	
 }
