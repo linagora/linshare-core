@@ -43,81 +43,71 @@ import org.linagora.linshare.core.domain.entities.User;
 @XmlRootElement(name = "Share")
 public class ShareDto {
 
+	/**
+	 * Share
+	 */
 	protected String uuid;
 	protected String name;
-	protected String description;
-	protected UserDto owner;
 	protected Calendar creationDate;
 	protected Calendar modificationDate;
 	protected Calendar expirationDate;
 	protected Long downloaded;
-	protected UserDto recipient;
-	protected DocumentDto documentDto;
-	protected int secured;
-	private String message;
 
-	public ShareDto(ShareEntry shareEntry) {
-		if (shareEntry == null) {
-			return;
-		}
+	/**
+	 * SentShare
+	 */
+	protected DocumentDto documentDto;
+	protected UserDto recipient;
+
+	/**
+	 * Received Share.
+	 */
+	protected String description;
+	protected UserDto sender;
+	protected Long size;
+	protected String type;
+	protected Boolean ciphered;
+
+	/**
+	 * ???
+	 */
+	protected String message;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param shareEntry
+	 */
+	protected ShareDto(ShareEntry shareEntry, boolean receivedShare) {
 		this.uuid = shareEntry.getUuid();
 		this.name = shareEntry.getName();
 		this.creationDate = shareEntry.getCreationDate();
 		this.modificationDate = shareEntry.getModificationDate();
 		this.expirationDate = shareEntry.getExpirationDate();
-		this.description = shareEntry.getComment();
-		this.owner = UserDto.getSimple((User) shareEntry.getEntryOwner());
-		this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
-		this.downloaded = shareEntry.getDownloaded();
-		this.recipient = new UserDto(shareEntry.getRecipient());
+		if (receivedShare) {
+			this.downloaded = shareEntry.getDownloaded();
+			this.description = shareEntry.getComment();
+			this.sender = UserDto.getSimple((User) shareEntry.getEntryOwner());
+			this.size = shareEntry.getDocumentEntry().getSize();
+			this.type = shareEntry.getDocumentEntry().getType();
+			this.ciphered = shareEntry.getDocumentEntry().getCiphered();
+		} else {
+			// sent share.
+			this.documentDto = new DocumentDto(shareEntry.getDocumentEntry());
+			this.recipient = UserDto.getSimple((User) shareEntry.getRecipient());
+		}
 	}
 
 	public ShareDto() {
 		super();
 	}
 
-	public Long getDownloaded() {
-		return downloaded;
+	public static ShareDto getReceivedShare(ShareEntry shareEntry) {
+		return new ShareDto(shareEntry, true);
 	}
 
-	public void setDownloaded(Long downloaded) {
-		this.downloaded = downloaded;
-	}
-
-	public UserDto getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(UserDto recipient) {
-		this.recipient = recipient;
-	}
-
-	public DocumentDto getDocumentDto() {
-		return documentDto;
-	}
-
-	public void setDocumentDto(DocumentDto documentDto) {
-		this.documentDto = documentDto;
-	}
-
-	public String getType() {
-		return this.documentDto.getType();
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public int getSecured() {
-		return secured;
-	}
-
-	public void setSecured(int secured) {
-		this.secured = secured;
+	public static ShareDto getSentShare(ShareEntry shareEntry) {
+		return new ShareDto(shareEntry, false);
 	}
 
 	public String getUuid() {
@@ -134,22 +124,6 @@ public class ShareDto {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public UserDto getOwner() {
-		return owner;
-	}
-
-	public void setOwner(UserDto owner) {
-		this.owner = owner;
 	}
 
 	public Calendar getCreationDate() {
@@ -174,5 +148,77 @@ public class ShareDto {
 
 	public void setExpirationDate(Calendar expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public Long getDownloaded() {
+		return downloaded;
+	}
+
+	public void setDownloaded(Long downloaded) {
+		this.downloaded = downloaded;
+	}
+
+	public DocumentDto getDocumentDto() {
+		return documentDto;
+	}
+
+	public void setDocumentDto(DocumentDto documentDto) {
+		this.documentDto = documentDto;
+	}
+
+	public UserDto getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(UserDto recipient) {
+		this.recipient = recipient;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public UserDto getSender() {
+		return sender;
+	}
+
+	public void setSender(UserDto sender) {
+		this.sender = sender;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long size) {
+		this.size = size;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Boolean getCiphered() {
+		return ciphered;
+	}
+
+	public void setCiphered(Boolean ciphered) {
+		this.ciphered = ciphered;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }

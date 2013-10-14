@@ -89,17 +89,17 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 		if (shares == null)
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_NOT_FOUND,
 					"No such share");
-		return convertShareEntryList(shares);
+		return convertReceivedShareEntryList(shares);
 	}
 
-	private static List<ShareDto> convertShareEntryList(List<ShareEntry> input) {
+	private static List<ShareDto> convertReceivedShareEntryList(List<ShareEntry> input) {
 		if (input == null)
 			return null;
 
 		List<ShareDto> output = new ArrayList<ShareDto>();
 
 		for (ShareEntry var : input) {
-			output.add(new ShareDto(var));
+			output.add(ShareDto.getReceivedShare(var));
 		}
 		return output;
 	}
@@ -288,7 +288,7 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 	public ShareDto getReceivedShare(String shareEntryUuid)
 			throws BusinessException {
 		User actor = getAuthentication();
-		return new ShareDto(shareEntryService.findByUuid(actor, shareEntryUuid));
+		return ShareDto.getReceivedShare(shareEntryService.findByUuid(actor, shareEntryUuid));
 	}
 
 	@Override
