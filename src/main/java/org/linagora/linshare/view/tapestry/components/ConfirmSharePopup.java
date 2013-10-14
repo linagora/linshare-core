@@ -435,7 +435,10 @@ public class ConfirmSharePopup{
     public Block onFailure() {
     	return onFailure;
     }
-	
+    
+    public boolean isEnableListTab() {
+    	return functionalityFacade.isEnableListTab(userVo.getDomainIdentifier());
+    }
 
     public Block onSubmit() throws BusinessException {
     	filter = new XSSFilter(shareSessionObjects, confirmshare, antiSamyPolicy, messages);

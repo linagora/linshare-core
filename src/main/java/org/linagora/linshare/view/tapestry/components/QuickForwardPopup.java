@@ -277,6 +277,9 @@ public class QuickForwardPopup {
 		return mailingListFacade.completionsForShare(userLoggedIn, input);
 	}
 
+    public boolean isEnableListTab() {
+    	return functionalityFacade.isEnableListTab(userLoggedIn.getDomainIdentifier());
+    }
 	
 	public String getCssClassNumber() {
 		cssClassNumberCpt += 1;

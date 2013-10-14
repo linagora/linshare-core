@@ -130,9 +130,6 @@ public class AdminThread {
     @Property
     private String criteriaOnSearch;
     
-	@Property
-	private int autocompleteMin = 3;
-
 	@Inject
 	private Block adminBlock, userBlock, restrictedUserBlock;
 
@@ -228,14 +225,6 @@ public class AdminThread {
 			logger.error(e.getMessage());
 			logger.debug(e.toString());
 		}
-	}
-
-	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
-		return threadEntryFacade.completionOnUsers(userLoggedIn, input);
-	}
-
-	public List<String> onProvideCompletionsFromSearchMembers(String input) throws BusinessException {
-		return threadEntryFacade.completionOnMembers(userLoggedIn, currentThread, input);
 	}
 
 	public void onSuccessFromFormSearch() throws BusinessException {

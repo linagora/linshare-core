@@ -91,9 +91,6 @@ public class Index {
     @Property
     private String criteriaOnSearch;
     
-    @Property
-    private int autocompleteMin = 3;
-    
 	@Persist
 	@Property(write = false)
 	private boolean inSearch;
@@ -111,7 +108,7 @@ public class Index {
     private List<ThreadVo> threads;
     
     @InjectPage
-    private org.linagora.linshare.view.tapestry.pages.administration.thread.AdminThread adminThread;
+    private AdminThread adminThread;
     
     @Persist
     @Property
@@ -160,16 +157,6 @@ public class Index {
     	}
     	return adminThread;
     }
-    
-    public List<String> onProvideCompletionsFromSearchThread(String input) throws BusinessException {
-    	return threadEntryFacade.completionOnThreads(userVo, input);
-    }
-    
-	public List<String> onProvideCompletionsFromSearchUser(String input) throws BusinessException {
-		return threadEntryFacade.completionOnUsers(userVo, input);
-	}
-    
-
     
     public void onSuccessFromResetSearch() {
        threads = null;

@@ -49,14 +49,15 @@
 					onchange="rm_errorclass();"/>
 			</div>
 			<div class="clear"></div>
-			<br></br>
-			<div class="description"><p>${message:components.quickSharePopup.listRecipients.description}</p></div>
-			<div t:type="ck/SlidingPanel" t:id="listRecipients" t:closed="true" t:subject="${message:components.quickSharePopup.listRecipients.subject}" t:options="{duration:0.3}">      
-				<t:textarea t:id="listRecipientsPatternSharePopup" cols="74" t:value="listRecipientsSearch" t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens="," class="listRecipientsPattern" title="${message:components.quickSharePopup.listRecipients.subject}" onchange="rm_errorclass();"/>
-			</div>
+            <t:if test="enableListTab">
+                <br></br>
+                <div class="description"><p>${message:components.quickSharePopup.listRecipients.description}</p></div>
+                <div t:type="ck/SlidingPanel" t:id="listRecipients" t:closed="true" t:subject="${message:components.quickSharePopup.listRecipients.subject}" t:options="{duration:0.3}">      
+                    <t:textarea t:id="listRecipientsPatternSharePopup" cols="74" t:value="listRecipientsSearch" t:mixins="autocomplete" t:minChars="${autocompleteMin}" t:tokens="," class="listRecipientsPattern" title="${message:components.quickSharePopup.listRecipients.subject}" onchange="rm_errorclass();"/>
+                </div>
+            </t:if>
 
 			<hr />
-			
 			
 			<t:if test="showSecureSharingCheckBox">
 				<div class="${cssClassNumber}"></div>
