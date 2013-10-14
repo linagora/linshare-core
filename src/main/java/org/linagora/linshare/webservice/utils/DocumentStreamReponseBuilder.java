@@ -43,40 +43,56 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 public class DocumentStreamReponseBuilder {
 
 	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType) {
-		return  getDocumentResponseBuilder(inputStream, fileName, mimeType, null);
+		return getDocumentResponseBuilder(inputStream, fileName, mimeType, null);
 	}
-	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType, Long fileSize ) {
+
+	public static ResponseBuilder getThumbnailResponseBuilder(InputStream inputStream) {
+		return getDocumentResponseBuilder(inputStream, null, "image/png", null);
+	}
+
+	public static ResponseBuilder getDocumentResponseBuilder(InputStream inputStream, String fileName, String mimeType,
+			Long fileSize) {
 		ResponseBuilder response = Response.ok(inputStream);
-		response.header("Content-Disposition", getContentDispositionHeader(fileName));
-        response.header("Content-Type", mimeType);
-        response.header("Content-Transfer-Encoding","binary");
-        if (fileSize != null) response.header("Content-Length",fileSize);
-        
-		//BUG WITH IE WHEN PRAGMA IS NO-CACHE solution is:
-        //The proper solution to IE cache issues is to declare the attachment as "Pragma: private"
-        //and "Cache-Control: private, must-revalidate" in the HTTP Response.
-        //This allows MS-IE to save the content as a temporary file in its local cache,
-        //but in not general public cache servers, before handing it off the plugin, e.g. Adobe Acrobat, to handle it.
-		
-		//Pragma is a HTTP 1.0 directive that was retained in HTTP 1.1 for backward compatibility.
-        //no-cache prevent caching in proxy
-        response.header("Pragma","private"); 
-        
-        
-        //cache-control: private. It instructs proxies in the path not to cache the page. But it permits browsers to cache the page.
-        //must-revalidate means the browser must revalidate the page against the server before serving it from cache
-        
-        //post-check Defines an interval in seconds after which an entity must be checked for freshness.
-        //The check may happen after the user is shown the resource but ensures that on the next roundtrip
-        //the cached copy will be up-to-date
-        //pre-check Defines an interval in seconds after
-        //which an entity must be checked for freshness prior to showing the user the resource.
-        
-        response.header("Cache-Control","private,must-revalidate, post-check=0, pre-check=0");
-        
+		if (fileName != null)
+			response.header("Content-Disposition", getContentDispositionHeader(fileName));
+		response.header("Content-Type", mimeType);
+		response.header("Content-Transfer-Encoding", "binary");
+		if (fileSize != null)
+			response.header("Content-Length", fileSize);
+
+		// BUG WITH IE WHEN PRAGMA IS NO-CACHE solution is:
+		// The proper solution to IE cache issues is to declare the attachment
+		// as "Pragma: private"
+		// and "Cache-Control: private, must-revalidate" in the HTTP Response.
+		// This allows MS-IE to save the content as a temporary file in its
+		// local cache,
+		// but in not general public cache servers, before handing it off the
+		// plugin, e.g. Adobe Acrobat, to handle it.
+
+		// Pragma is a HTTP 1.0 directive that was retained in HTTP 1.1 for
+		// backward compatibility.
+		// no-cache prevent caching in proxy
+		response.header("Pragma", "private");
+
+		// cache-control: private. It instructs proxies in the path not to cache
+		// the page. But it permits browsers to cache the page.
+		// must-revalidate means the browser must revalidate the page against
+		// the server before serving it from cache
+
+		// post-check Defines an interval in seconds after which an entity must
+		// be checked for freshness.
+		// The check may happen after the user is shown the resource but ensures
+		// that on the next roundtrip
+		// the cached copy will be up-to-date
+		// pre-check Defines an interval in seconds after
+		// which an entity must be checked for freshness prior to showing the
+		// user the resource.
+
+		response.header("Cache-Control", "private,must-revalidate, post-check=0, pre-check=0");
+
 		return response;
 	}
-	
+
 	private static String getContentDispositionHeader(String fileName) {
 		String encodeFileName = null;
 		try {
@@ -85,15 +101,16 @@ public class DocumentStreamReponseBuilder {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("attachment; ");
-		
+
 		// Adding filename using the old way for old browser compatibility
-		sb.append("filename=\""+fileName+"\"; ");
-		
-		// Adding UTF-8 encoded filename. If the browser do not support this parameter, it will use the old way.
-		if(encodeFileName != null) {
+		sb.append("filename=\"" + fileName + "\"; ");
+
+		// Adding UTF-8 encoded filename. If the browser do not support this
+		// parameter, it will use the old way.
+		if (encodeFileName != null) {
 			sb.append("filename*= UTF-8''" + encodeFileName);
 		}
 		return sb.toString();

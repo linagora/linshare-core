@@ -100,7 +100,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		webServiceShareFacade.multiplesharedocuments(shares, secured, message);
 	}
 
-	@Path("/download/{uuid}")
+	@Path("/{uuid}/download")
 	@GET
 	@Override
 	public Response getDocumentStream(@PathParam("uuid") String shareUuid) throws BusinessException {
@@ -109,6 +109,16 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		InputStream documentStream = webServiceShareFacade.getDocumentStream(shareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, shareDto.getName(), shareDto.getType(),
 				shareDto.getSize());
+		return response.build();
+	}
+
+	@Path("/{uuid}/thumbnail")
+	@GET
+	@Override
+	public Response getThumbnailStream(@PathParam("uuid") String shareUuid) throws BusinessException {
+		webServiceShareFacade.checkAuthentication();
+		InputStream documentStream = webServiceShareFacade.getThumbnailStream(shareUuid);
+		ResponseBuilder response = DocumentStreamReponseBuilder.getThumbnailResponseBuilder(documentStream);
 		return response.build();
 	}
 }

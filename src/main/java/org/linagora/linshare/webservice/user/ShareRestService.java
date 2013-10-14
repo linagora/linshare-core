@@ -74,5 +74,7 @@ public interface ShareRestService {
 	// public List<ShareDto> getMyOwnShares();
 	List<ShareDto> getReceivedShares() throws BusinessException;
 
-	Response getDocumentStream(String uuid) throws BusinessException;
+	Response getDocumentStream(String shareUuid) throws BusinessException;
+	
+	Response getThumbnailStream(String shareUuid) throws BusinessException;
 }
