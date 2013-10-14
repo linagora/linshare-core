@@ -108,7 +108,7 @@ public class ShareRestServiceImpl extends WebserviceBase implements ShareRestSer
 		ShareDto shareDto = webServiceShareFacade.getReceivedShare(shareUuid);
 		InputStream documentStream = webServiceShareFacade.getDocumentStream(shareUuid);
 		ResponseBuilder response = DocumentStreamReponseBuilder.getDocumentResponseBuilder(documentStream, shareDto.getName(), shareDto.getType(),
-				shareDto.getDocumentDto().getSize());
+				shareDto.getSize());
 		return response.build();
 	}
 }
