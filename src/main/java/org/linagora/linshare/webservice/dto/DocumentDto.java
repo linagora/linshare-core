@@ -54,9 +54,8 @@ public class DocumentDto {
 	protected Long size;
 
 	public DocumentDto(DocumentEntry de) {
-		if (de == null) {
+		if (de == null)
 			return;
-		}
 		this.uuid = de.getUuid();
 		this.name = de.getName();
 		this.creationDate = de.getCreationDate();
