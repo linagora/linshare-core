@@ -33,17 +33,30 @@
  */
 package org.linagora.linshare.view.tapestry.pages;
 
-
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SessionState;
+import org.linagora.linshare.core.domain.vo.UserVo;
 
 /**
- * Start page of application linshare.
- * this page is accessed from spring security (target URL)
- * a redirection has to be done to fix the user locale in the page (we need to set the user locale read from database)
+ * Start page of application linshare. this page is accessed from spring
+ * security (target URL) a redirection has to be done to fix the user locale in
+ * the page (we need to set the user locale read from database)
  */
 public class StartingPage {
 
-   Object onActivate() {
-	   return Index.class;
-   } 
-   
+	@Property
+	private boolean userVoExists;
+
+	@SessionState
+    @Property
+    private UserVo userVo;
+    
+	Object onActivate() {
+		if (userVoExists && userVo.isSuperAdmin()) {
+			return org.linagora.linshare.view.tapestry.pages.administration.Index.class;
+		}
+		return Index.class;
+	}
+
+	
 }
