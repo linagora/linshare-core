@@ -148,7 +148,7 @@ public class Index {
 		return mailingListFacade.getListIsDeletable(loginUser, list);
 	}
 
-	public boolean getUserIsOwner() throws BusinessException {
+	public boolean getUserIsOwner() {
 		return loginUser.equals(list.getOwner());
 	}
 

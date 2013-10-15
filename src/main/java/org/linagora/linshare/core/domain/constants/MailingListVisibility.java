@@ -53,6 +53,6 @@ public enum MailingListVisibility {
 				return mlv;
 			}
 		}
-        throw new IllegalArgumentException("Doesn't match an existing MailingListVisibilityType");
+        throw new IllegalArgumentException("Doesn't match an existing MailingListVisibility");
 	}
 }

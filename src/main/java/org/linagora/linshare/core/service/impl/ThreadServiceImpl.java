@@ -102,16 +102,14 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public List<Thread> findAll() {
-		List<Thread> all = threadRepository.findAll();
-		logger.debug("Total of thread found : " + all.size());
-		return all;
+		return threadRepository.findAll();
 	}
 
 	@Override
 	public Boolean create(Account actor, String name) throws BusinessException {
-		
 		boolean isGuest = actor.getAccountType().equals(AccountType.GUEST);
 		Functionality creation = functionalityService.getThreadCreationPermissionFunctionality(actor.getDomain());
+		
 		if (creation.getActivationPolicy().getStatus() && !isGuest){
 			Thread thread = null;
 			ThreadView threadView = null;
@@ -142,7 +140,7 @@ public class ThreadServiceImpl implements ThreadService {
 		} else {
 			logger.error("You can not create thread, you are not authorized.");
 			if (isGuest) {
-				logger.error("guests are not authorised to create a thread");
+				logger.error("Guests are not authorised to create a thread.");
 			} else {
 				logger.error("The current domain does not allowed you to create thread.");
 			}
@@ -157,33 +155,22 @@ public class ThreadServiceImpl implements ThreadService {
 
 	@Override
 	public ThreadMember getThreadMemberFromUser(Thread thread, User user) throws BusinessException {
-		logger.debug("Seeking membership from user " + user.getAccountReprentation() + " in thread "
-				+ thread.getAccountReprentation());
 		return threadMemberRepository.findUserThreadMember(thread, user);
 	}
 	
 	@Override
 	public List<Thread> findAllWhereMember(User user) {
-		List<Thread> ret =  threadRepository.findAllWhereMember(user);
-		logger.debug("thread where user " + user.getAccountReprentation() + " is member found : "
-				+ (ret != null ? ret.size() : 0));
-		return ret != null ? ret : new ArrayList<Thread>();
+		return threadRepository.findAllWhereMember(user);
 	}
 
 	@Override
 	public List<Thread> findAllWhereAdmin(User user) {
-		List<Thread> ret =  threadRepository.findAllWhereAdmin(user);
-		logger.debug("thread where user " + user.getAccountReprentation() + " is admin found : "
-				+ (ret != null ? ret.size() : 0));
-		return ret != null ? ret : new ArrayList<Thread>();
+		return threadRepository.findAllWhereAdmin(user);
 	}
 
 	@Override
 	public List<Thread> findAllWhereCanUpload(User user) {
-		List<Thread> ret =  threadRepository.findAllWhereCanUpload(user);
-		logger.debug("thread where user " + user.getAccountReprentation() + " can upload found : "
-				+ (ret != null ? ret.size() : 0));
-		return ret != null ? ret : new ArrayList<Thread>();
+		return threadRepository.findAllWhereCanUpload(user);
 	}
 
 	@Override
@@ -202,26 +189,23 @@ public class ThreadServiceImpl implements ThreadService {
 		checkUserIsAdmin(actor, thread);
 		
 		ThreadMember member = getThreadMemberFromUser(thread, user);
+
 		if (member != null) {
 			logger.warn("The current " + user.getAccountReprentation()
 					+ " user is already member of the thread : "
 					+ thread.getAccountReprentation());
 			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
-					"you are not authorize to add member to this thread. Already exists.");
+					"You are not authorize to add member to this thread. Already exists.");
 		}
 
 		member = new ThreadMember(!readOnly, false, user, thread);
-		try {
-			thread.getMyMembers().add(member);
-			threadRepository.update(thread);
-			logEntryService.create(new ThreadLogEntry(actor, member,
-					LogAction.THREAD_ADD_MEMBER,
-					"Adding a new member in a thread : "
-							+ member.getUser().getAccountReprentation()));
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
+		thread.getMyMembers().add(member);
+		threadRepository.update(thread);
+
+		logEntryService.create(new ThreadLogEntry(actor, member,
+				LogAction.THREAD_ADD_MEMBER,
+				"Adding a new member to a thread : "
+						+ member.getUser().getAccountReprentation()));
 	}
 
 	@Override
@@ -231,12 +215,7 @@ public class ThreadServiceImpl implements ThreadService {
 	
 		member.setAdmin(admin);
 		member.setCanUpload(canUpload);
-		try {
-			threadMemberRepository.update(member);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
+		threadMemberRepository.update(member);
 	}
 
 	@Override
@@ -245,15 +224,12 @@ public class ThreadServiceImpl implements ThreadService {
 		checkUserIsAdmin(actor, thread);
 		
 		thread.getMyMembers().remove(member);
-		try {
-			ThreadLogEntry log = new ThreadLogEntry(actor, member, LogAction.THREAD_REMOVE_MEMBER, "Deleting a member in a thread.");
-			threadRepository.update(thread);
-			threadMemberRepository.delete(member);
-			logEntryService.create(log);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
+		threadRepository.update(thread);
+		threadMemberRepository.delete(member);
+
+		logEntryService.create(new ThreadLogEntry(actor, member,
+				LogAction.THREAD_REMOVE_MEMBER,
+				"Deleting a member in a thread."));
 	}
 
 	@Override
@@ -265,13 +241,8 @@ public class ThreadServiceImpl implements ThreadService {
 
 		for (Object threadMember : myMembers) {
 			thread.getMyMembers().remove(threadMember);
-			try {
-				threadRepository.update(thread);
-				threadMemberRepository.delete((ThreadMember) threadMember);
-			} catch (BusinessException e) {
-				logger.error(e.getMessage());
-				throw e;
-			}
+			threadRepository.update(thread);
+			threadMemberRepository.delete((ThreadMember) threadMember);
 		}
 		logEntryService.create(new ThreadLogEntry(actor, thread, LogAction.THREAD_REMOVE_MEMBER, "Deleting all members in a thread."));
 	}
@@ -290,13 +261,8 @@ public class ThreadServiceImpl implements ThreadService {
 		checkUserIsAdmin(user, thread);
 		
 		thread.getThreadViews().remove(threadView);
-		try {
-			threadRepository.update(thread);
-			threadViewRepository.delete(threadView);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
+		threadRepository.update(thread);
+		threadViewRepository.delete(threadView);
 	}
 
 	@Override
@@ -308,13 +274,8 @@ public class ThreadServiceImpl implements ThreadService {
 
 		for (Object threadView : myThreadViews) {
 			thread.getThreadViews().remove(threadView);
-			try {
-				threadRepository.update(thread);
-				threadViewRepository.delete((ThreadView) threadView);
-			} catch (BusinessException e) {
-				logger.error(e.getMessage());
-				throw e;
-			}
+			threadRepository.update(thread);
+			threadViewRepository.delete((ThreadView) threadView);
 		}
 	}
 
@@ -324,12 +285,7 @@ public class ThreadServiceImpl implements ThreadService {
 		checkUserIsAdmin(user, thread);
 		
 		thread.getTagFilters().remove(filter);
-		try {
-			threadRepository.update(thread);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
+		threadRepository.update(thread);
 	}
 
 	@Override
@@ -338,13 +294,8 @@ public class ThreadServiceImpl implements ThreadService {
 		checkUserIsAdmin(user, thread);
 		
 		thread.getTags().remove(tag);
-		try {
-			threadRepository.update(thread);
-			tagRepository.delete(tag);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
+		threadRepository.update(thread);
+		tagRepository.delete(tag);
 	}
 
 	@Override
@@ -356,13 +307,8 @@ public class ThreadServiceImpl implements ThreadService {
 
 		for (Object tag : myTags) {
 			thread.getTags().remove(tag);
-			try {
-				threadRepository.update(thread);
-				tagRepository.delete((Tag) tag);
-			} catch (BusinessException e) {
-				logger.error(e.getMessage());
-				throw e;
-			}
+			threadRepository.update(thread);
+			tagRepository.delete((Tag) tag);
 		}
 	}
 
@@ -371,27 +317,22 @@ public class ThreadServiceImpl implements ThreadService {
 		// permission check
 		checkUserIsAdmin(actor, thread);
 		
-		try {
-			ThreadLogEntry log = new ThreadLogEntry(actor, thread, LogAction.THREAD_DELETE, "Deleting a thread.");
-			// Delete all entries
-			documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
-			thread.setEntries(null);
-			threadRepository.update(thread);
-			// Deleting views
-			thread.setCurrentThreadView(null);
-			threadRepository.update(thread);
-			this.deleteAllThreadViews(actor, thread);
-			// Deleting tags
-			this.deleteAllTags(actor, thread);
-			// Deleting members
-			this.deleteAllMembers(actor, thread);
-			// Deleting the thread
-			threadRepository.delete(thread);
-			logEntryService.create(log);
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
+		ThreadLogEntry log = new ThreadLogEntry(actor, thread, LogAction.THREAD_DELETE, "Deleting a thread.");
+		// Delete all entries
+		documentEntryBusinessService.deleteSetThreadEntry(thread.getEntries());
+		thread.setEntries(null);
+		threadRepository.update(thread);
+		// Deleting views
+		thread.setCurrentThreadView(null);
+		threadRepository.update(thread);
+		this.deleteAllThreadViews(actor, thread);
+		// Deleting tags
+		this.deleteAllTags(actor, thread);
+		// Deleting members
+		this.deleteAllMembers(actor, thread);
+		// Deleting the thread
+		threadRepository.delete(thread);
+		logEntryService.create(log);
 	}
 
 	@Override
@@ -401,19 +342,15 @@ public class ThreadServiceImpl implements ThreadService {
 		
 		String oldname = thread.getName();
 		thread.setName(threadName);
-		try {
-			threadRepository.update(thread);
-			logEntryService.create(new ThreadLogEntry(actor, thread,
-					LogAction.THREAD_RENAME, "Renamed thread from " + oldname + " to " + threadName));
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage());
-		}
+		threadRepository.update(thread);
+
+		logEntryService.create(new ThreadLogEntry(actor, thread,
+				LogAction.THREAD_RENAME, "Renamed thread from " + oldname + " to " + threadName));
 	}
 	
 	@Override
-	public List<Thread> findAllWhereMemberByDate(User actor){
-		List<Thread> ret =  threadRepository.findAllWhereMemberByDate(actor);
-		return ret != null ? ret : new ArrayList<Thread>();
+	public List<Thread> findLatestWhereMember(User actor) {
+		return threadRepository.findLatestWhereMember(actor);
 	}
 	
 	

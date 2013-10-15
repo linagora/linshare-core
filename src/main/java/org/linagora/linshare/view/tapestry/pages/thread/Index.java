@@ -110,7 +110,7 @@ public class Index {
     @SetupRender
     public void init() throws BusinessException{
     	if(!inSearch){
-        	threads = threadEntryFacade.getListOfLastModifiedThreads(userVo);
+        	threads = threadEntryFacade.getLatestThreads(userVo);
     	}
     	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
     	showCreateButton = functionalityFacade.isEnableCreateThread(userVo.getDomainIdentifier());

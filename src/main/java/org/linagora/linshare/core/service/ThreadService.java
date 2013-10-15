@@ -61,6 +61,8 @@ public interface ThreadService {
 	public List<Thread> findAllWhereAdmin(User user);
 
 	public List<Thread> findAllWhereCanUpload(User user);
+	
+	public List<Thread> findLatestWhereMember(User actor);
 
 	public boolean hasAnyWhereAdmin(User user);
 
@@ -89,6 +91,4 @@ public interface ThreadService {
 	public void deleteAllTags(User user, Thread thread) throws BusinessException;
 
 	public void rename(User actor, Thread thread, String threadName) throws BusinessException;
-	
-	public List<Thread> findAllWhereMemberByDate(User actor);
 }

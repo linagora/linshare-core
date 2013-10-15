@@ -73,6 +73,6 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	 * @param date
 	 * @return
 	 */
-	List<Thread> findAllWhereMemberByDate(User Actor);
+	List<Thread> findLatestWhereMember(User Actor);
 	
 } 
