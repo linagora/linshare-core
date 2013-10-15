@@ -33,99 +33,97 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-
-import java.util.Calendar;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread> implements ThreadRepository {
+public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
+		implements ThreadRepository {
 
-    public ThreadRepositoryImpl(HibernateTemplate hibernateTemplate) {
-        super(hibernateTemplate);
-    }
+	public ThreadRepositoryImpl(HibernateTemplate hibernateTemplate) {
+		super(hibernateTemplate);
+	}
 
-    @Override
-    protected DetachedCriteria getNaturalKeyCriteria(Thread entity) {
-        DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-        
-        // filter enabled thread only.
-        det.add(Restrictions.eq("enable", true));
-        // query
-        det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
-        
-        return det;
-    }
+	@Override
+	protected DetachedCriteria getNaturalKeyCriteria(Thread entity) {
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+
+		// filter enabled thread only.
+		det.add(Restrictions.eq("enable", true));
+		// query
+		det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
+
+		return det;
+	}
 
 	@Override
 	public List<Thread> findAll() {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
-		
+
 		// filter enabled thread only.
-        det.add(Restrictions.eq("enable", true));
-        det.add(Restrictions.eq("destroyed", false));
-        //query
-		List<Thread> results = findByCriteria(det);
-		return results;
+		det.add(Restrictions.eq("enable", true));
+		// query
+		det.add(Restrictions.eq("destroyed", false));
+
+		return findByCriteria(det);
 	}
-	
+
 	@Override
 	public List<Thread> findAllWhereMember(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", false));
-		
-        //query
-        det.createAlias("myMembers", "member");
-        det.add(Restrictions.eq("member.user", actor));
-		List<Thread> results = findByCriteria(det);
-		return results;
+
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+
+		return findByCriteria(det);
 	}
-	
-	
+
 	@Override
 	public List<Thread> findAllWhereAdmin(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", false));
-		
-        //query
-        det.createAlias("myMembers", "member");
-        det.add(Restrictions.eq("member.user", actor));
-        det.add(Restrictions.eq("member.admin", true));
-        
-		List<Thread> results = findByCriteria(det);
-		return results;
+
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+		det.add(Restrictions.eq("member.admin", true));
+
+		return findByCriteria(det);
 	}
-	
+
 	@Override
 	public List<Thread> findAllWhereCanUpload(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", false));
-		
-        //query
-        det.createAlias("myMembers", "member");
-        det.add(Restrictions.eq("member.user", actor));
-        det.add(Restrictions.eq("member.canUpload", true));
-		List<Thread> results = findByCriteria(det);
-		return results;
+
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+		det.add(Restrictions.eq("member.canUpload", true));
+
+		return findByCriteria(det);
 	}
-	
+
 	@Override
-	public List<Thread> findAllWhereMemberByDate(User actor){
-		Calendar calendar=Calendar.getInstance();
-		calendar.add(Calendar.DATE,-16);
+	public List<Thread> findLatestWhereMember(User actor) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", false));
-		
-		//query
-        det.createAlias("myMembers", "member");
-        det.add(Restrictions.and(Restrictions.eq("member.user", actor),
-        		Restrictions.gt("member.modificationDate", calendar.getTime())));
-        List<Thread> results = findByCriteria(det);
-		return results;
+
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+		det.addOrder(Order.desc("member.modificationDate"));
+		det.getExecutableCriteria(getCurrentSession()).setMaxResults(10);
+
+		return findByCriteria(det);
 	}
 }

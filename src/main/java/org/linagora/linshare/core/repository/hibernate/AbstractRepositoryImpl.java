@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.hibernate.TransientObjectException;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -205,5 +206,12 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     
     protected Class<T> getPersistentClass() {
     	return persistentClass;
+    }
+ 
+    /** Get current Hibernate session from SessionFactory
+     * @return current session
+     */
+    protected Session getCurrentSession() {
+    	return hibernateTemplate.getSessionFactory().getCurrentSession();
     }
 }

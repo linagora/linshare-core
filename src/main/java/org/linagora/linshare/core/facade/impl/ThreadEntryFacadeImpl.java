@@ -835,7 +835,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return threads;
 	}
 
-	public List<ThreadVo> getListOfLastModifiedThreads(UserVo actorVo) {
+	public List<ThreadVo> getLatestThreads(UserVo actorVo) {
 		List<ThreadVo> res = new ArrayList<ThreadVo>();
 		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
 
@@ -844,7 +844,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			return res;
 		}
 		logger.debug("actor : " + actor.getAccountReprentation());
-		for (Thread thread : threadService.findAllWhereMemberByDate(actor)) {
+		for (Thread thread : threadService.findLatestWhereMember(actor)) {
 			res.add(new ThreadVo(thread));
 		}
 		return res;

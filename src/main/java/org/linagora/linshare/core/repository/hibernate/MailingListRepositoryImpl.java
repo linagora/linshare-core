@@ -55,51 +55,8 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 	}
 
 	@Override
-	public List<MailingList> searchWithInputByVisibility(User user, boolean isPublic, String input) {
-		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-
-		if (isPublic == false) {
-			if (user.isSuperAdmin()) {
-				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
-						Restrictions.eq("isPublic", false)));
-			} else {
-				LogicalExpression publicLists = Restrictions.and(Restrictions.eq("owner", user),
-						Restrictions.eq("isPublic", false));
-				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(), publicLists));
-			}
-		} else {
-			if (user.isSuperAdmin()) {
-				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
-						Restrictions.eq("isPublic", true)));
-			} else {
-				LogicalExpression privateLists = Restrictions.and(Restrictions.eq("isPublic", true),
-						Restrictions.eq("domain", user.getDomain()));
-				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(), privateLists));
-			}
-		}
-		det.addOrder(Property.forName("identifier").desc());
-		return findByCriteria(det);
-	}
-
-	@Override
-	public List<MailingList> searchListByVisibility(User user, boolean isPublic) {
-		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
-
-		if (isPublic == false) {
-			if (user.isSuperAdmin()) {
-				det.add(Restrictions.eq("isPublic", false));
-			} else {
-				det.add(Restrictions.and(Restrictions.eq("owner", user), Restrictions.eq("isPublic", false)));
-			}
-		} else {
-			if (user.isSuperAdmin()) {
-				det.add(Restrictions.eq("isPublic", true));
-			} else {
-				det.add(Restrictions.and(Restrictions.eq("isPublic", true), Restrictions.eq("domain", user.getDomain())));
-			}
-		}
-		det.addOrder(Property.forName("identifier").desc());
-		return findByCriteria(det);
+	protected DetachedCriteria getNaturalKeyCriteria(MailingList entity) {
+		return DetachedCriteria.forClass(getPersistentClass()).add(Restrictions.eq("uuid", entity.getUuid()));
 	}
 
 	@Override
@@ -113,11 +70,6 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		} else {
 			throw new IllegalStateException("Uuid must be unique");
 		}
-	}
-
-	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(MailingList entity) {
-		return DetachedCriteria.forClass(getPersistentClass()).add(Restrictions.eq("uuid", entity.getUuid()));
 	}
 
 	@Override
@@ -207,6 +159,54 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 		entity.setModificationDate(new Date());
 		entity.setUuid(UUID.randomUUID().toString());
 		return super.create(entity);
+	}
+
+	@Override
+	public List<MailingList> searchWithInputByVisibility(User user, boolean isPublic, String input) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+
+		if (isPublic == false) {
+			if (user.isSuperAdmin()) {
+				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
+						Restrictions.eq("isPublic", false)));
+			} else {
+				LogicalExpression publicLists = Restrictions.and(Restrictions.eq("owner", user),
+						Restrictions.eq("isPublic", false));
+				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(), publicLists));
+			}
+		} else {
+			if (user.isSuperAdmin()) {
+				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(),
+						Restrictions.eq("isPublic", true)));
+			} else {
+				LogicalExpression privateLists = Restrictions.and(Restrictions.eq("isPublic", true),
+						Restrictions.eq("domain", user.getDomain()));
+				det.add(Restrictions.and(Restrictions.like("identifier", "%" + input + "%").ignoreCase(), privateLists));
+			}
+		}
+		det.addOrder(Property.forName("identifier").desc());
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<MailingList> searchListByVisibility(User user, boolean isPublic) {
+		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
+
+		if (isPublic == false) {
+			if (user.isSuperAdmin()) {
+				det.add(Restrictions.eq("isPublic", false));
+			} else {
+				det.add(Restrictions.and(Restrictions.eq("owner", user), Restrictions.eq("isPublic", false)));
+			}
+		} else {
+			if (user.isSuperAdmin()) {
+				det.add(Restrictions.eq("isPublic", true));
+			} else {
+				det.add(Restrictions.and(Restrictions.eq("isPublic", true), Restrictions.eq("domain", user.getDomain())));
+			}
+		}
+		det.addOrder(Property.forName("identifier").desc());
+		return findByCriteria(det);
 	}
 
 }
