@@ -167,8 +167,12 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		}
 	
 	private String getLinShareUrlForAContactRecipient(Account sender) {
-		GuestDomain guest = abstractDomainService.getGuestDomain(sender.getDomainId());
-		return functionalityService.getCustomNotificationUrlFunctionality(guest).getValue();
+		AbstractDomain senderDomain = abstractDomainService.getGuestDomain(sender.getDomainId());
+		// guest domain could be inexistent into the database.
+		if(senderDomain == null) {
+			senderDomain = sender.getDomain();
+		}
+		return functionalityService.getCustomNotificationUrlFunctionality(senderDomain).getValue();
 	}
 	
 	
