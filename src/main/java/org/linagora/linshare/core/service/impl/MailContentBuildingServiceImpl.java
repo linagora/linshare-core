@@ -274,7 +274,7 @@ public class MailContentBuildingServiceImpl implements MailContentBuildingServic
 		User owner = (User) shareEntry.getEntryOwner();
 		User recipient = shareEntry.getRecipient();
 		
-		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(owner.getExternalMailLocale());
+		MailContainerWithRecipient mailContainer = new MailContainerWithRecipient(recipient.getExternalMailLocale());
 		String shareEntryUrl = getLinShareUrlForAUserRecipient(recipient);
 
 		// expired share notification 
