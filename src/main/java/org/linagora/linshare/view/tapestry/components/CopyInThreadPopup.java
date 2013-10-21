@@ -137,9 +137,10 @@ public class CopyInThreadPopup {
 	
 	/**
 	 * Initialization of the form.
+	 * @throws BusinessException 
 	 */
 	@SetupRender
-	public void init() {
+	public void init() throws BusinessException {
 		allMyThreadWhereCanUpload = threadEntryFacade.getAllMyThreadWhereCanUpload(userVo);
 //    	List<String> threadList = new ArrayList<String>();
 //    	for (ThreadVo threadVo : allMyThreadWhereCanUpload) {

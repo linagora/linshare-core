@@ -34,6 +34,7 @@
 package org.linagora.linshare.core.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Tag;
@@ -54,7 +55,9 @@ public interface ThreadService {
 	
 	public ThreadMember getThreadMemberById(long id) throws BusinessException;
 	
-	public ThreadMember getThreadMemberFromUser(Thread thread, User user) throws BusinessException;
+	public ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException;
+
+	public Set<ThreadMember> getMembers(User actor, Thread thread) throws BusinessException;
 
 	public List<Thread> findAllWhereMember(User user);
 	
@@ -62,11 +65,13 @@ public interface ThreadService {
 
 	public List<Thread> findAllWhereCanUpload(User user);
 	
-	public List<Thread> findLatestWhereMember(User actor);
+	public List<Thread> findLatestWhereMember(User actor, int limit);
 
 	public boolean hasAnyWhereAdmin(User user);
 
 	public boolean isUserAdmin(User user, Thread thread);
+
+	public long countMembers(Thread thread);
 
 	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException;
 
@@ -91,4 +96,9 @@ public interface ThreadService {
 	public void deleteAllTags(User user, Thread thread) throws BusinessException;
 
 	public void rename(User actor, Thread thread, String threadName) throws BusinessException;
+
+	public List<Thread> searchByName(User actor, String pattern);
+
+	public List<Thread> searchByMembers(User actor, String pattern);
+
 }

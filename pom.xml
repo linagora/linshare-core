@@ -706,6 +706,13 @@
 			<artifactId>jackson-jaxrs</artifactId>
 			<version>1.9.11</version>
 		</dependency>
+
+		<!-- Google Guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>15.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

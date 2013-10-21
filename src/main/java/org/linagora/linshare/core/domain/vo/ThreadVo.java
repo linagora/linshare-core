@@ -38,6 +38,8 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 
+import com.google.common.base.Function;
+
 public class ThreadVo extends AccountVo {
 	
 	private static final long serialVersionUID = 907135796857640950L;
@@ -86,7 +88,8 @@ public class ThreadVo extends AccountVo {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.getLsUuid() == null) ? 0 : this.getLsUuid().hashCode());
+		result = prime * result + ((this.getLsUuid() == null) ? 0 :
+			this.getLsUuid().hashCode());
 		return result;
 	}
 
@@ -107,4 +110,15 @@ public class ThreadVo extends AccountVo {
 		return true;
 	}
 	
+	/*
+	 * Transformers
+	 */
+	public static Function<Thread, ThreadVo> toVo() {
+		return new Function<Thread, ThreadVo>() {
+			@Override
+			public ThreadVo apply(Thread arg0) {
+				return new ThreadVo(arg0);
+			}
+		};
+	}
 }

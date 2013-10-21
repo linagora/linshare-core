@@ -324,7 +324,7 @@ public class ThreadEditForm {
     
     public void onSuccessFromThreadForm() {
     	try {
-			threadEntryFacade.renameThread(userVo, currentThread.getLsUuid(), threadName);
+			threadEntryFacade.renameThread(userVo, currentThread, threadName);
 		} catch (BusinessException e) {
 			logger.error("Unable to rename current thread" + e.getMessage());
 		}

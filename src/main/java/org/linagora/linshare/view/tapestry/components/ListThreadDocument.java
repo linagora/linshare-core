@@ -132,9 +132,6 @@ public class ListThreadDocument {
     private ThreadEntryVo threadEntry;
 
     @Property
-    private String login;
-
-    @Property
     private boolean valueCheck;
 
     @Property
@@ -222,7 +219,6 @@ public class ListThreadDocument {
         if (listThreadEntries == null)
             return;
         Collections.sort(listThreadEntries);
-        login = user.getLogin();
         initModel();
     }
 
@@ -396,7 +392,7 @@ public class ListThreadDocument {
     }
 
     public boolean getThumbnailExists() {
-        return threadEntryFacade.documentHasThumbnail(login, threadEntry.getIdentifier());
+        return threadEntryFacade.documentHasThumbnail(user, threadEntry.getIdentifier());
     }
 
     public void onThumbnail(String docId) {
@@ -409,7 +405,7 @@ public class ListThreadDocument {
             }
         }
         try {
-        	stream = threadEntryFacade.getDocumentThumbnail(user.getLsUuid(), current.getIdentifier());
+        	stream = threadEntryFacade.getDocumentThumbnail(user, current.getIdentifier());
         } catch (Exception e) {
 			logger.error("Trying to get a thumbnail linked to a document which doesn't exist anymore");
 		}

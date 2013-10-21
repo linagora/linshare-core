@@ -169,7 +169,11 @@ public class ThreadEntryEditForm {
 		}
 		if(reset) return;
 
-        threadEntryFacade.updateFileProperties(userLoggedIn.getLsUuid(), threadEntryUuid, fileComment);
+        try {
+			threadEntryFacade.updateFileProperties(userLoggedIn.getLsUuid(), threadEntryUuid, fileComment);
+		} catch (BusinessException e) {
+			logger.error("Couldn't update thread entry.", e.getMessage());
+		}
         shareSessionObjects.addMessage(messages.get("component.fileEditForm.action.update.confirm"));
         componentResources.triggerEvent("resetListFiles", null, null);
 	}
@@ -215,8 +219,13 @@ public class ThreadEntryEditForm {
 	
     private void initFormToEdit() {
 		if(threadEntryUuid != null) {
-		    	ThreadEntryVo doc = threadEntryFacade.getThreadEntry(userLoggedIn.getLogin(), threadEntryUuid);
-		    	fileComment = doc.getFileComment();
+			ThreadEntryVo doc;
+			try {
+				doc = threadEntryFacade.getThreadEntry(userLoggedIn, threadEntryUuid);
+				fileComment = doc.getFileComment();
+			} catch (BusinessException e) {
+				logger.error("Could not get thread entry.", e.getMessage());
+			}
 		}
     }
 }

@@ -70,6 +70,9 @@ import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	private static final Logger logger = LoggerFactory
@@ -108,10 +111,8 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public ThreadEntryVo insertFile(UserVo actorVo, ThreadVo threadVo,
 			InputStream stream, Long size, String fileName)
 			throws BusinessException {
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor,
-				thread, stream, fileName);
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(
+				findUser(actorVo), findThread(threadVo), stream, fileName);
 
 		return new ThreadEntryVo(threadEntry);
 	}
@@ -129,589 +130,290 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public List<ThreadVo> getAllThread() {
-		List<Thread> all = threadService.findAll();
-		List<ThreadVo> res = new ArrayList<ThreadVo>();
-
-		for (Thread thread : all) {
-			res.add(new ThreadVo(thread));
-		}
-		return res;
+		return Lists.transform(threadService.findAll(), ThreadVo.toVo());
 	}
 
 	@Override
-	public List<ThreadVo> getAllMyThread(UserVo actorVo) {
-		List<ThreadVo> res = new ArrayList<ThreadVo>();
-		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
-
-		if (actor == null) {
-			logger.error("Can't find logged in user.");
-			return res;
-		}
-		logger.debug("actor : " + actor.getAccountReprentation());
-		for (Thread thread : threadService.findAllWhereMember(actor)) {
-			res.add(new ThreadVo(thread));
-		}
-		return res;
+	public List<ThreadVo> getAllMyThread(UserVo actorVo)
+			throws BusinessException {
+		return Lists.transform(
+				threadService.findAllWhereMember(findUser(actorVo)),
+				ThreadVo.toVo());
 	}
 
 	@Override
-	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo) {
-		List<ThreadVo> res = new ArrayList<ThreadVo>();
-		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
-
-		if (actor == null) {
-			logger.error("Can't find logged in user.");
-			return res;
-		}
-		logger.debug("actor : " + actor.getAccountReprentation());
-		for (Thread thread : threadService.findAllWhereCanUpload(actor)) {
-			res.add(new ThreadVo(thread));
-		}
-		return res;
+	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo)
+			throws BusinessException {
+		return Lists.transform(
+				threadService.findAllWhereCanUpload(findUser(actorVo)),
+				ThreadVo.toVo());
 	}
 
 	@Override
 	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo)
 			throws BusinessException {
-		List<ThreadVo> res = new ArrayList<ThreadVo>();
-		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
-
-		if (actor == null) {
-			logger.error("Can't find logged in user.");
-			return res;
-		}
-		logger.debug("actor : " + actor.getAccountReprentation());
-		for (Thread thread : threadService.findAllWhereAdmin(actor)) {
-			res.add(new ThreadVo(thread));
-		}
-		return res;
+		return Lists.transform(
+				threadService.findAllWhereAdmin(findUser(actorVo)),
+				ThreadVo.toVo());
 	}
 
 	@Override
 	public boolean isUserAdminOfAnyThread(UserVo actorVo)
 			throws BusinessException {
-		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
-
-		if (actor == null) {
-			logger.error("Can't find logged user.");
-			return false;
-		}
-		return threadService.hasAnyWhereAdmin(actor);
+		return threadService.hasAnyWhereAdmin(findUser(actorVo));
 	}
 
 	@Override
 	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo)
 			throws BusinessException {
-		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-
-		return threadService.isUserAdmin(user, thread);
+		return threadService.isUserAdmin(findUser(userVo), findThread(threadVo));
 	}
 
 	@Override
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException {
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		List<ThreadEntry> threadEntries = threadEntryService
-				.findAllThreadEntries(actor, thread);
-		List<ThreadEntryVo> res = new ArrayList<ThreadEntryVo>();
-
-		for (ThreadEntry threadEntry : threadEntries) {
-			res.add(new ThreadEntryVo(threadEntry));
-		}
-		return res;
-	}
-
-	@Override
-	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo,
-			ThreadVo threadVo, TagVo[] tags) throws BusinessException {
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		String[] names = new String[tags.length];
-
-		for (int i = 0; i < names.length; ++i) {
-			names[i] = tags[i].getName();
-		}
-
-		List<ThreadEntry> threadEntries = threadEntryService
-				.findAllThreadEntriesTaggedWith(actor, thread, names);
-		List<ThreadEntryVo> res = new ArrayList<ThreadEntryVo>();
-
-		for (ThreadEntry threadEntry : threadEntries) {
-			res.add(new ThreadEntryVo(threadEntry));
-		}
-		return res;
-	}
-
-	@Override
-	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name)
-			throws BusinessException {
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		Tag tag = tagService.findByOwnerAndName(actor, thread, name);
-
-		if (tag != null && tag.getTagType().equals(TagType.ENUM)) {
-			return new TagEnumVo((TagEnum) tag);
-		}
-		return null;
-	}
-
-	@Override
-	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo,
-			List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags)
-			throws BusinessException {
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-
-		if (userCanUpload(actorVo, threadVo) || userIsAdmin(actorVo, threadVo)) {
-			List<ThreadEntry> threadEntries = new ArrayList<ThreadEntry>();
-			for (ThreadEntryVo threadEntryVo : threadEntriesVo) {
-				threadEntries.add(threadEntryService.findById(actor,
-						threadEntryVo.getIdentifier()));
-			}
-
-			for (TagVo tagVo : tags) {
-				tagService.setTagToThreadEntries(actor, thread, threadEntries,
-						tagVo.getName(), tagVo.getTagEnumValue());
-			}
-		}
-	}
-
-	@Override
-	public InputStream retrieveFileStream(ThreadEntryVo entry, String lsUid)
-			throws BusinessException {
-		Account actor = accountService.findByLsUuid(lsUid);
-
-		return threadEntryService.getDocumentStream(actor,
-				entry.getIdentifier());
+		return Lists.transform(threadEntryService.findAllThreadEntries(
+				findUser(actorVo), findThread(threadVo)), ThreadEntryVo.toVo());
 	}
 
 	@Override
 	public InputStream retrieveFileStream(UserVo actorVo, ThreadEntryVo entry)
 			throws BusinessException {
-		return retrieveFileStream(entry, actorVo.getLsUuid());
+		return threadEntryService.getDocumentStream(findUser(actorVo),
+				entry.getIdentifier());
 	}
 
 	@Override
-	public boolean documentHasThumbnail(String lsUid, String docId) {
-		if (lsUid == null) {
-			logger.error("Can't find user with null parameter.");
-			return false;
-		}
-
-		Account actor = accountService.findByLsUuid(lsUid);
-
-		if (actor == null) {
-			logger.error("Can't find logged user.");
-			return false;
-		}
-		return threadEntryService.documentHasThumbnail(actor, docId);
-	}
-
-	@Override
-	public InputStream getDocumentThumbnail(String actorUuid,
-			String docEntryUuid) {
-		if (actorUuid == null) {
-			logger.error("Can't find user with null parameter.");
-			return null;
-		}
-
-		Account actor = accountService.findByLsUuid(actorUuid);
-
-		if (actor == null) {
-			logger.error("Can't find logged user.");
-			return null;
-		}
+	public boolean documentHasThumbnail(UserVo actorVo, String documentEntryId) {
 		try {
-			return threadEntryService.getDocumentThumbnailStream(actor,
-					docEntryUuid);
+			return threadEntryService.documentHasThumbnail(
+					findUser(actorVo), documentEntryId);
+		} catch (BusinessException e) {
+			logger.error("Can't get if document has thumbnail : "
+					+ documentEntryId + " : " + e.getMessage());
+			return false;
+		}
+	}
+
+	@Override
+	public InputStream getDocumentThumbnail(UserVo actorVo,
+			String docEntryUuid) {
+		try {
+			return threadEntryService.getDocumentThumbnailStream(
+					findUser(actorVo), docEntryUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't get document thumbnail : " + docEntryUuid
 					+ " : " + e.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public void removeDocument(UserVo actorVo, ThreadEntryVo threadEntryVo)
-			throws BusinessException {
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		ThreadEntry threadEntry = threadEntryService.findById(actor,
-				threadEntryVo.getIdentifier());
-
-		if (actor != null) {
-			try {
-				threadEntryService.deleteThreadEntry(actor, threadEntry);
-			} catch (BusinessException e) {
-				logger.error("Cannot delete Thread Entry : "
-						+ threadEntryVo.getIdentifier());
-				throw e;
-			}
-		} else {
-			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
-					"The user couldn't be found");
-		}
-	}
-
-	@Override
-	public ThreadEntryVo findById(UserVo actorVo, String threadEntryUuid)
-			throws BusinessException {
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-		ThreadEntry threadEntry = threadEntryService.findById(actor,
-				threadEntryUuid);
-		if (threadEntry == null)
 			return null;
-		return new ThreadEntryVo(threadEntry);
+		}
+	}
+
+	@Override
+	public void removeDocument(UserVo actorVo, ThreadEntryVo entryVo)
+			throws BusinessException {
+		User actor = findUser(actorVo);
+		ThreadEntry threadEntry = findEntry(actor, entryVo.getIdentifier());
+
+		threadEntryService.deleteThreadEntry(actor, threadEntry);
+	}
+
+	@Override
+	public ThreadEntryVo findById(UserVo actorVo, String entryUuid)
+			throws BusinessException {
+		return new ThreadEntryVo(findEntry(findUser(actorVo), entryUuid));
 	}
 
 	@Override
 	public boolean userIsMember(UserVo userVo, ThreadVo threadVo)
 			throws BusinessException {
-		User user = userService.findOrCreateUser(userVo.getMail(),
-				userVo.getDomainIdentifier());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		ThreadMember member = threadService.getThreadMemberFromUser(thread,
-				user);
-
-		return member != null;
+		return findMember(findThread(threadVo), findUser(userVo)) != null;
 	}
 
 	@Override
 	public boolean userCanUpload(UserVo userVo, ThreadVo threadVo)
 			throws BusinessException {
-		User user = (User) accountService.findByLsUuid(userVo.getLsUuid());
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		ThreadMember member = threadService.getThreadMemberFromUser(thread,
-				user);
+		ThreadMember member = findMember(findThread(threadVo), findUser(userVo));
 
-		if (member == null)
-			return false;
 		return member.getCanUpload() || member.getAdmin();
 	}
 
 	@Override
 	public List<ThreadMemberVo> getThreadMembers(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException {
-		if (actorVo == null || threadVo == null) {
-			throw new IllegalArgumentException(
-					"one argument is null, actorVo: " + actorVo
-							+ " , threadVo: " + threadVo);
-		}
+		List<ThreadMember> members = Lists.newArrayList(threadService
+				.getMembers(findUser(actorVo), findThread(threadVo)));
+		List<ThreadMemberVo> ret = Lists.transform(members,
+				ThreadMemberVo.toVo());
 
-		List<ThreadMemberVo> members = new ArrayList<ThreadMemberVo>();
-
-		if (userIsMember(actorVo, threadVo) || actorVo.isSuperAdmin()) {
-			Set<ThreadMember> threadMembers = threadService.findByLsUuid(
-					threadVo.getLsUuid()).getMyMembers();
-			for (ThreadMember threadMember : threadMembers) {
-				members.add(new ThreadMemberVo(threadMember));
-			}
-			Collections.sort(members);
-		}
-		return members;
+		Collections.sort(ret);
+		return ret;
 	}
 
 	@Override
 	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember,
-			boolean readOnly) {
-		try {
-			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
-				Thread thread = threadService
-						.findByLsUuid(threadVo.getLsUuid());
-				Account actor = accountService
-						.findByLsUuid(actorVo.getLsUuid());
-				User user = (User) accountService.findByLsUuid(newMember
-						.getLsUuid());
-
-				threadService.addMember(actor, thread, user, readOnly);
-			}
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-		}
+			boolean readOnly) throws BusinessException {
+		threadService.addMember(findUser(actorVo), findThread(threadVo),
+				findUser(newMember), readOnly);
 	}
 
 	@Override
 	public void deleteMember(UserVo actorVo, ThreadVo threadVo,
-			ThreadMemberVo memberVo) {
-		try {
-			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
-				Thread thread = threadService
-						.findByLsUuid(threadVo.getLsUuid());
-				Account actor = accountService
-						.findByLsUuid(actorVo.getLsUuid());
-				User user = (User) accountService.findByLsUuid(memberVo
-						.getUser().getLsUuid());
-				ThreadMember member = threadService.getThreadMemberFromUser(
-						thread, user);
+			ThreadMemberVo memberVo) throws BusinessException {
+		Thread thread = findThread(threadVo);
+		Account actor = findUser(actorVo);
+		User user = findUser(memberVo.getUser());
+		ThreadMember member = findMember(thread, user);
 
-				threadService.deleteMember(actor, thread, member);
-			}
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-		}
+		threadService.deleteMember(actor, thread, member);
 	}
 
 	@Override
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo,
-			ThreadVo threadVo) {
-		try {
-			if (userIsAdmin(actorVo, threadVo) || (actorVo.isSuperAdmin())) {
-				Account actor = accountService
-						.findByLsUuid(actorVo.getLsUuid());
-				Thread thread = threadService
-						.findByLsUuid(threadVo.getLsUuid());
-				User user = (User) accountService.findByLsUuid(memberVo
-						.getLsUuid());
-				ThreadMember member = threadService.getThreadMemberFromUser(
-						thread, user);
+			ThreadVo threadVo) throws BusinessException {
+		Thread thread = findThread(threadVo);
+		Account actor = findUser(actorVo);
+		User user = findUser(memberVo.getUser());
+		ThreadMember member = findMember(thread, user);
 
-				if (member == null) {
-					logger.error("Member not found. User: "
-							+ user.getAccountReprentation() + "; Thread: "
-							+ thread.getAccountReprentation());
-					return;
-				}
-				threadService.updateMember(actor, member, memberVo.isAdmin(),
-						memberVo.isCanUpload());
-			}
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-		}
+		threadService.updateMember(actor, member, memberVo.isAdmin(),
+				memberVo.isCanUpload());
 	}
 
 	@Override
 	public void createThread(UserVo actorVo, String name)
 			throws BusinessException {
-		if (actorVo == null || name == null)
-			return;
-
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
-
-		if (actor != null)
-			threadService.create(actor, name);
+		threadService.create(findUser(actorVo), name);
 	}
 
 	@Override
 	public void deleteThread(UserVo actorVo, ThreadVo threadVo)
 			throws BusinessException {
-		if (actorVo == null || threadVo == null)
-			return;
-
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
-
-		if (!userIsAdmin(actorVo, threadVo) && !(actorVo.isSuperAdmin())) {
-			logger.error("not authorised");
-			return;
-		}
-		threadService.deleteThread(actor, thread);
+		threadService.deleteThread(findUser(actorVo), findThread(threadVo));
 	}
 
 	@Override
 	public void updateFileProperties(String lsUid, String threadEntryUuid,
-			String fileComment) {
+			String fileComment) throws BusinessException {
 		Account actor = accountService.findByLsUuid(lsUid);
 
-		if (fileComment == null)
-			fileComment = "";
-		try {
-			threadEntryService.updateFileProperties(actor, threadEntryUuid,
-					fileComment);
-		} catch (BusinessException e) {
-			logger.error("Can't update file properties document : "
-					+ threadEntryUuid + " : " + e.getMessage());
-		}
+		threadEntryService.updateFileProperties(actor, threadEntryUuid,
+				fileComment);
 	}
 
 	@Override
-	public ThreadEntryVo getThreadEntry(String login, String threadEntryUuid) {
-		Account actor = accountService.findByLsUuid(login);
-
-		if (actor != null) {
-			ThreadEntry entry;
-
-			try {
-				entry = threadEntryService.findById(actor, threadEntryUuid);
-				return new ThreadEntryVo(entry);
-			} catch (BusinessException e) {
-				logger.error("can't get document : " + e.getMessage());
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public ThreadVo getThread(UserVo userVo, String threadUuid)
+	public ThreadEntryVo getThreadEntry(UserVo actorVo, String threadEntryUuid)
 			throws BusinessException {
-		Thread thread = threadService.findByLsUuid(threadUuid);
-		ThreadVo threadVo = new ThreadVo(thread);
-
-		if (!this.userIsMember(userVo, threadVo) && !(userVo.isSuperAdmin())) {
-			logger.error("Not authorised to get the thread " + threadUuid);
-			throw new BusinessException("Not authorised to get the thread "
-					+ threadUuid);
-		}
-		return threadVo;
+		return new ThreadEntryVo(findEntry(findUser(actorVo), threadEntryUuid));
 	}
 
 	@Override
-	public void renameThread(UserVo userVo, String threadUuid, String threadName)
+	public List<ThreadVo> searchThread(UserVo userVo, String pattern)
 			throws BusinessException {
-		Thread thread = threadService.findByLsUuid(threadUuid);
-		ThreadVo threadVo = new ThreadVo(thread);
 		User actor = (User) accountService.findByLsUuid(userVo.getLsUuid());
+		Set<Thread> res = Sets.newHashSet();
 
-		if (!this.userIsAdmin(userVo, threadVo)) {
-			logger.error("Not authorised to get the thread " + threadUuid);
-			throw new BusinessException("Not authorised to get the thread "
-					+ threadUuid);
-		}
-		threadService.rename(actor, thread, threadName);
+		res.addAll(threadService.searchByName(actor, pattern));
+		res.addAll(threadService.searchByMembers(actor, pattern));
+		return Lists.transform(Lists.newArrayList(res), ThreadVo.toVo());
 	}
 
-	private List<User> performSearch(User actor, String pattern)
+	@Override
+	public void renameThread(UserVo actorVo, ThreadVo threadVo, String threadName)
 			throws BusinessException {
-		String firstName_ = null;
-		String lastName_ = null;
-		Set<User> userSet = new HashSet<User>();
-		ArrayList<User> finalList = new ArrayList<User>();
-
-		if (pattern != null && pattern.length() > 0) {
-			StringTokenizer stringTokenizer = new StringTokenizer(pattern, " ");
-			if (stringTokenizer.hasMoreTokens()) {
-				firstName_ = stringTokenizer.nextToken();
-				if (stringTokenizer.hasMoreTokens()) {
-					lastName_ = stringTokenizer.nextToken();
-				}
-			}
-		}
-
-		try {
-			if (pattern != null) {
-				userSet.addAll(userService.searchUser(pattern.trim(), null,
-						null, null, actor));
-				userSet.addAll(userService.searchUser(null, pattern.trim(),
-						null, null, actor));
-				userSet.addAll(userService.searchUser(null, null,
-						pattern.trim(), null, actor));
-			} else {
-				userSet.addAll(userService.searchUser(null, firstName_,
-						lastName_, null, actor));
-			}
-		} catch (BusinessException e) {
-			logger.error("Error while searching user", e);
-		}
-		for (User user : userSet) {
-			User current = userService.findOrCreateUser(user.getMail(),
-					user.getDomainId());
-			if (!(finalList.contains(current))) {
-				finalList.add(current);
-			}
-		}
-		return finalList;
+		threadService.rename(findUser(actorVo), findThread(threadVo), threadName);
 	}
 
 	@Override
-	public List<String> completionOnThreads(UserVo actor, String input) {
-		List<ThreadVo> lists = new ArrayList<ThreadVo>();
-
-		if (actor.isSuperAdmin()) {
-			lists = this.getAllThread();
-		} else {
-			lists = this.getAllMyThread(actor);
-		}
-		List<String> elements = new ArrayList<String>();
-
-		for (ThreadVo current : lists) {
-			if (current.getName().toLowerCase().contains(input.toLowerCase())) {
-				elements.add(current.getName());
-			}
-		}
-		return elements;
-	}
-
-	@Override
-	public List<String> completionOnUsers(UserVo actorVo, String pattern)
-			throws BusinessException {
-		User actor = userService.findByLsUuid(actorVo.getLogin());
-		List<String> ret = new ArrayList<String>();
-		List<User> userSet = performSearch(actor, pattern);
-
-		for (User user : userSet) {
-			String completeName = MailCompletionService
-					.formatLabel(new UserVo(user))
-					.substring(
-							0,
-							MailCompletionService.formatLabel(new UserVo(user))
-									.length() - 1).trim();
-			if (!ret.contains(completeName)) {
-				ret.add(completeName);
-			}
-		}
-		return ret;
-	}
-
-	@Override
-	public List<String> completionOnMembers(UserVo actorVo,
-			ThreadVo currentThread, String pattern) {
-		List<String> ret = new ArrayList<String>();
-
-		try {
-			for (ThreadMemberVo threadMember : this.getThreadMembers(actorVo,
-					currentThread)) {
-				if (threadMember.getMail().toLowerCase()
-						.contains(pattern.toLowerCase())
-						|| threadMember.getFullName().toLowerCase()
-								.contains(pattern.toLowerCase())) {
-					UserVo user = threadMember.getUser();
-					String completeName = MailCompletionService.formatLabel(
-							user)
-							.substring(
-									0,
-									MailCompletionService.formatLabel(user)
-											.length() - 1);
-					if (!ret.contains(completeName)) {
-						ret.add(completeName);
-					}
-				}
-
-			}
-		} catch (BusinessException e) {
-			logger.error(e.getMessage());
-		}
-		return ret;
-	}
-
-	@Override
-	public void addUserToThread(UserVo currentUser, ThreadVo threadVo,
+	public void addMember(UserVo actorVo, ThreadVo threadVo,
 			String domain, String mail) throws BusinessException {
 		User user = userService.findOrCreateUser(mail, domain);
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		Account actor = accountService.findByLsUuid(currentUser.getLsUuid());
 
-		if (user != null) {
-			threadService.addMember(actor, thread, user, true);
-		}
+		threadService.addMember(findUser(actorVo), findThread(threadVo), user, true);
 	}
 
 	@Override
-	public void removeMemberFromThread(UserVo actorVo, ThreadVo threadVo,
+	public void removeMember(UserVo actorVo, ThreadVo threadVo,
 			String domain, String mail) throws BusinessException {
-		User user = userService.findOrCreateUser(mail, domain);
-		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
-		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
+		// FIXME
+		User user = userService.findOrCreateUser(mail, domain); // XXX TODO FIXME: wat?
+		Thread thread = findThread(threadVo);
+		User actor = findUser(actorVo);
+		ThreadMember member = findMember(thread, user);
 
-		for (ThreadMemberVo threadMemberVo : this.getThreadMembers(actorVo,
-				threadVo)) {
-			if (user.getLsUuid().equals(threadMemberVo.getLsUuid())) {
-				ThreadMember member = threadService.getThreadMemberFromUser(
-						thread, user);
-				threadService.deleteMember(actor, thread, member);
-			}
-		}
+		threadService.deleteMember(actor, thread, member);
 	}
 
+	@Override
+	public List<ThreadVo> getLatestThreads(UserVo actorVo, int limit) 
+			throws BusinessException {
+		return Lists.transform(
+				threadService.findLatestWhereMember(findUser(actorVo), limit),
+				ThreadVo.toVo());
+	}
+
+	@Override
+	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
+			throws BusinessException {
+		return threadService.countMembers(findThread(threadVo)) != 1;
+	}
+
+
+	/*
+	 * Helpers.
+	 * 
+	 * Use theses instead of their respective services to ensure proper error handling
+	 * and cleaner code.
+	 */
+	
+	private User findUser(UserVo userVo) throws BusinessException {
+		User u = (User) accountService.findByLsUuid(userVo.getLsUuid());
+	
+		if (u == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"Cannot find user : " + userVo.getLsUuid());
+		}
+		return u;
+	}
+	
+	private Thread findThread(ThreadVo threadVo) throws BusinessException {
+		Thread t = threadService.findByLsUuid(threadVo.getLsUuid());
+		
+		if (t == null) {
+			throw new BusinessException(BusinessErrorCode.THREAD_NOT_FOUND,
+					"Cannot find thread : " + threadVo.getLsUuid());
+		}
+		return t;
+	}
+	
+	private ThreadMember findMember(Thread thread, User user)
+			throws BusinessException {
+		ThreadMember m = threadService.getMemberFromUser(thread, user);
+
+		if (m == null) {
+			throw new BusinessException(BusinessErrorCode.THREAD_MEMBER_NOT_FOUND,
+					"Cannot find member from user : " + user.getMail()
+							+ " in thread : " + thread.getLsUuid());
+		}
+		return m;
+	}
+	
+	private ThreadEntry findEntry(User actor, String entryUuid)
+			throws BusinessException {
+		ThreadEntry e = threadEntryService.findById(actor, entryUuid);
+		
+		if (e == null) {
+			throw new BusinessException(BusinessErrorCode.THREAD_ENTRY_NOT_FOUND,
+					"Cannot find thread entry : " + entryUuid);
+		}
+		return e;
+	}
+	
+	
+	/*
+	 * NO TRESPASSING
+	 */
+
+	@Deprecated
 	@Override
 	public List<UserVo> searchAmongUsers(UserVo userVo, String input)
 			throws BusinessException {
@@ -734,6 +436,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return finalResults;
 	}
 
+	@Deprecated
 	@Override
 	public List<ThreadMemberVo> searchAmongMembers(UserVo actorVo,
 			ThreadVo currentThread, String input, String criteriaOnSearch)
@@ -780,6 +483,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return finalResults;
 	}
 
+	@Deprecated
 	@Override
 	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,
 			String criteriaOnSearch, String recipientsSearchUser)
@@ -835,24 +539,183 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		return threads;
 	}
 
-	public List<ThreadVo> getLatestThreads(UserVo actorVo) {
-		List<ThreadVo> res = new ArrayList<ThreadVo>();
-		User actor = (User) accountService.findByLsUuid(actorVo.getLsUuid());
+	@Deprecated
+	private List<User> performSearch(User actor, String pattern)
+			throws BusinessException {
+		String firstName_ = null;
+		String lastName_ = null;
+		Set<User> userSet = new HashSet<User>();
+		ArrayList<User> finalList = new ArrayList<User>();
 
-		if (actor == null) {
-			logger.error("Can't find logged in user.");
-			return res;
+		if (pattern != null && pattern.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(pattern, " ");
+			if (stringTokenizer.hasMoreTokens()) {
+				firstName_ = stringTokenizer.nextToken();
+				if (stringTokenizer.hasMoreTokens()) {
+					lastName_ = stringTokenizer.nextToken();
+				}
+			}
 		}
-		logger.debug("actor : " + actor.getAccountReprentation());
-		for (Thread thread : threadService.findLatestWhereMember(actor)) {
-			res.add(new ThreadVo(thread));
+
+		try {
+			if (pattern != null) {
+				userSet.addAll(userService.searchUser(pattern.trim(), null,
+						null, null, actor));
+				userSet.addAll(userService.searchUser(null, pattern.trim(),
+						null, null, actor));
+				userSet.addAll(userService.searchUser(null, null,
+						pattern.trim(), null, actor));
+			} else {
+				userSet.addAll(userService.searchUser(null, firstName_,
+						lastName_, null, actor));
+			}
+		} catch (BusinessException e) {
+			logger.error("Error while searching user", e);
+		}
+		for (User user : userSet) {
+			User current = userService.findOrCreateUser(user.getMail(),
+					user.getDomainId());
+			if (!(finalList.contains(current))) {
+				finalList.add(current);
+			}
+		}
+		return finalList;
+	}
+
+	@Deprecated
+	@Override
+	public List<String> completionOnThreads(UserVo actor, String input) {
+		List<ThreadVo> lists = new ArrayList<ThreadVo>();
+
+		if (actor.isSuperAdmin()) {
+			lists = this.getAllThread();
+		} else {
+			try {
+				lists = this.getAllMyThread(actor);
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		List<String> elements = new ArrayList<String>();
+
+		for (ThreadVo current : lists) {
+			if (current.getName().toLowerCase().contains(input.toLowerCase())) {
+				elements.add(current.getName());
+			}
+		}
+		return elements;
+	}
+
+	@Deprecated
+	@Override
+	public List<String> completionOnUsers(UserVo actorVo, String pattern)
+			throws BusinessException {
+		User actor = userService.findByLsUuid(actorVo.getLogin());
+		List<String> ret = new ArrayList<String>();
+		List<User> userSet = performSearch(actor, pattern);
+
+		for (User user : userSet) {
+			String completeName = MailCompletionService
+					.formatLabel(new UserVo(user))
+					.substring(
+							0,
+							MailCompletionService.formatLabel(new UserVo(user))
+									.length() - 1).trim();
+			if (!ret.contains(completeName)) {
+				ret.add(completeName);
+			}
+		}
+		return ret;
+	}
+
+	@Deprecated
+	@Override
+	public List<String> completionOnMembers(UserVo actorVo,
+			ThreadVo currentThread, String pattern) {
+		List<String> ret = new ArrayList<String>();
+
+		try {
+			for (ThreadMemberVo threadMember : this.getThreadMembers(actorVo,
+					currentThread)) {
+				if (threadMember.getMail().toLowerCase()
+						.contains(pattern.toLowerCase())
+						|| threadMember.getFullName().toLowerCase()
+								.contains(pattern.toLowerCase())) {
+					UserVo user = threadMember.getUser();
+					String completeName = MailCompletionService.formatLabel(
+							user)
+							.substring(
+									0,
+									MailCompletionService.formatLabel(user)
+											.length() - 1);
+					if (!ret.contains(completeName)) {
+						ret.add(completeName);
+					}
+				}
+
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
+		}
+		return ret;
+	}
+
+	@Deprecated
+	@Override
+	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo,
+			ThreadVo threadVo, TagVo[] tags) throws BusinessException {
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		String[] names = new String[tags.length];
+
+		for (int i = 0; i < names.length; ++i) {
+			names[i] = tags[i].getName();
+		}
+
+		List<ThreadEntry> threadEntries = threadEntryService
+				.findAllThreadEntriesTaggedWith(actor, thread, names);
+		List<ThreadEntryVo> res = new ArrayList<ThreadEntryVo>();
+
+		for (ThreadEntry threadEntry : threadEntries) {
+			res.add(new ThreadEntryVo(threadEntry));
 		}
 		return res;
 	}
 
-	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
+	@Deprecated
+	@Override
+	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name)
 			throws BusinessException {
-		return getThreadMembers(actorVo, threadVo).size() != 1;
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+		Tag tag = tagService.findByOwnerAndName(actor, thread, name);
+
+		if (tag != null && tag.getTagType().equals(TagType.ENUM)) {
+			return new TagEnumVo((TagEnum) tag);
+		}
+		return null;
 	}
 
+	@Deprecated
+	@Override
+	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo,
+			List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags)
+			throws BusinessException {
+		Account actor = accountService.findByLsUuid(actorVo.getLsUuid());
+		Thread thread = threadService.findByLsUuid(threadVo.getLsUuid());
+
+		if (userCanUpload(actorVo, threadVo) || userIsAdmin(actorVo, threadVo)) {
+			List<ThreadEntry> threadEntries = new ArrayList<ThreadEntry>();
+			for (ThreadEntryVo threadEntryVo : threadEntriesVo) {
+				threadEntries.add(threadEntryService.findById(actor,
+						threadEntryVo.getIdentifier()));
+			}
+
+			for (TagVo tagVo : tags) {
+				tagService.setTagToThreadEntries(actor, thread, threadEntries,
+						tagVo.getName(), tagVo.getTagEnumValue());
+			}
+		}
+	}
 }

@@ -45,6 +45,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.ThreadMemberVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
+import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.facade.UserFacade;
 import org.slf4j.Logger;
@@ -113,7 +114,7 @@ public class ThreadMemberEditForm {
     	}
     }
     
-    public void onSuccessFromMemberForm() {
+    public void onSuccessFromMemberForm() throws BusinessException {
     	member.setAdmin(admin);
     	member.setCanUpload(canUpload);
     	threadEntryFacade.updateMember(userVo, member, currentThread);
