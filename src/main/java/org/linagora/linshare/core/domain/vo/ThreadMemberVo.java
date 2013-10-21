@@ -35,6 +35,8 @@ package org.linagora.linshare.core.domain.vo;
 
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
+import com.google.common.base.Function;
+
 public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 	
 	private UserVo user;
@@ -104,5 +106,17 @@ public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 		if (this.canUpload)
 			return o.admin ? 1 : o.canUpload ? this.user.compareTo(o.getUser()) : -1;
 		return o.admin || o.canUpload ? 1 : this.user.compareTo(o.getUser());
+	}
+	
+	/*
+	 * Transformers
+	 */
+	public static Function<ThreadMember, ThreadMemberVo> toVo() {
+		return new Function<ThreadMember, ThreadMemberVo>() {
+			@Override
+			public ThreadMemberVo apply(ThreadMember arg0) {
+				return new ThreadMemberVo(arg0);
+			}
+		};
 	}
 }

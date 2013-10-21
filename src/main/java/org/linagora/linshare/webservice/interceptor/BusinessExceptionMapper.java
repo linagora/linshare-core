@@ -19,10 +19,16 @@ public class BusinessExceptionMapper implements ExceptionMapper<BusinessExceptio
 
 	@Override
 	public Response toResponse(BusinessException exception) {
-		logger.error("A BusinessException was caught : code=" + exception.getErrorCode().toString() + ",  "+ exception.getLocalizedMessage());
+		logger.error("A BusinessException was caught : code="
+				+ exception.getErrorCode().toString() + ",  "
+				+ exception.getLocalizedMessage());
 		logger.debug("Stacktrace: ", exception);
-		ErrorDto errorDto = new ErrorDto(exception.getErrorCode().getCode(), exception.getMessage());
-		ResponseBuilder response = Response.status(HttpStatus.SC_BAD_REQUEST);
+
+		ErrorDto errorDto = new ErrorDto(
+				exception.getErrorCode().getCode(), exception.getMessage());
+		ResponseBuilder response = Response.status(
+				exception.getErrorCode().getStatus());
+
 		response.entity(errorDto);
 		return response.build();
 	}

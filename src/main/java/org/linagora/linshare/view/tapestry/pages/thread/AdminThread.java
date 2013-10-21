@@ -251,12 +251,9 @@ public class AdminThread {
 
 	@OnEvent(value = "deleteMemberPopupEvent")
 	public void deleteMember() {
-		threadEntryFacade.deleteMember(userLoggedIn, currentThread, toDelete);
-
-		// refresh list
 		try {
-			List<ThreadMemberVo> tmp = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
-			members = tmp;
+			threadEntryFacade.deleteMember(userLoggedIn, currentThread, toDelete);
+			members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 			logger.debug(e.toString());
@@ -293,14 +290,14 @@ public class AdminThread {
 
 	public void onActionFromAddUser(String domain, String mail) throws BusinessException {
 		// adding new member to thread
-		threadEntryFacade.addUserToThread(userLoggedIn, currentThread, domain, mail);
+		threadEntryFacade.addMember(userLoggedIn, currentThread, domain, mail);
 		// refresh list
 		members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 	}
 
 	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {
 		// remove user from thread
-		threadEntryFacade.removeMemberFromThread(userLoggedIn, currentThread, domain, mail);
+		threadEntryFacade.removeMember(userLoggedIn, currentThread, domain, mail);
 		// refresh list
 		members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 	}

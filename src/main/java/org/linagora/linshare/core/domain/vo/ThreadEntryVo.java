@@ -41,6 +41,8 @@ import java.util.Set;
 import org.linagora.linshare.core.domain.entities.EntryTagAssociation;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 
+import com.google.common.base.Function;
+
 public class ThreadEntryVo extends DocumentVo {
 
 	private static final long serialVersionUID = -8188541199713836570L;
@@ -73,4 +75,15 @@ public class ThreadEntryVo extends DocumentVo {
 		this.tags.add(tag);
 	}
 
+	/*
+	 * Transformers
+	 */
+	public static Function<ThreadEntry, ThreadEntryVo> toVo() {
+		return new Function<ThreadEntry, ThreadEntryVo>() {
+			@Override
+			public ThreadEntryVo apply(ThreadEntry arg0) {
+				return new ThreadEntryVo(arg0);
+			}
+		};
+	}
 }

@@ -35,7 +35,6 @@ package org.linagora.linshare.core.repository.hibernate;
 
 import java.util.List;
 
-import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -59,7 +58,6 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		det.add(Restrictions.eq("enable", true));
 		// query
 		det.add(Restrictions.eq("lsUuid", entity.getLsUuid()));
-
 		return det;
 	}
 
@@ -71,7 +69,6 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		det.add(Restrictions.eq("enable", true));
 		// query
 		det.add(Restrictions.eq("destroyed", false));
-
 		return findByCriteria(det);
 	}
 
@@ -83,7 +80,6 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		// query
 		det.createAlias("myMembers", "member");
 		det.add(Restrictions.eq("member.user", actor));
-
 		return findByCriteria(det);
 	}
 
@@ -96,7 +92,6 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		det.createAlias("myMembers", "member");
 		det.add(Restrictions.eq("member.user", actor));
 		det.add(Restrictions.eq("member.admin", true));
-
 		return findByCriteria(det);
 	}
 
@@ -109,21 +104,20 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		det.createAlias("myMembers", "member");
 		det.add(Restrictions.eq("member.user", actor));
 		det.add(Restrictions.eq("member.canUpload", true));
-
 		return findByCriteria(det);
 	}
 
 	@Override
-	public List<Thread> findLatestWhereMember(User actor) {
+	public List<Thread> findLatestWhereMember(User actor, int limit) {
 		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
 		det.add(Restrictions.eq("destroyed", false));
 
+		if (limit < 1)
+			 limit = 1;
 		// query
 		det.createAlias("myMembers", "member");
 		det.add(Restrictions.eq("member.user", actor));
 		det.addOrder(Order.desc("member.modificationDate"));
-		det.getExecutableCriteria(getCurrentSession()).setMaxResults(10);
-
-		return findByCriteria(det);
+		return findByCriteria(det, limit);
 	}
 }

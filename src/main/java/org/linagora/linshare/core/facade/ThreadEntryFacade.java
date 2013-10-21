@@ -57,44 +57,28 @@ public interface ThreadEntryFacade {
 	public void createThread(UserVo actorVo, String name)
 			throws BusinessException;
 
-	// public void deleteThread(UserVo actorVo, ThreadVo threadVo) throws
-	// BusinessException;
-
 	public List<ThreadVo> getAllThread();
 
-	public List<ThreadVo> getAllMyThread(UserVo actorVo);
+	public List<ThreadVo> getAllMyThread(UserVo actorVo) throws BusinessException;
 
-	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo);
+	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo) throws BusinessException;
 
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException;
 
-	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name)
-			throws BusinessException;
-
-	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo,
-			List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags)
-			throws BusinessException;
-
 	public InputStream retrieveFileStream(UserVo actorVo, ThreadEntryVo entry)
 			throws BusinessException;
 
-	public InputStream retrieveFileStream(ThreadEntryVo entry, String lsUid)
-			throws BusinessException;
+	public boolean documentHasThumbnail(UserVo actorVo, String documentEntryId);
 
-	public boolean documentHasThumbnail(String lsUid, String docId);
-
-	public InputStream getDocumentThumbnail(String actorUuid,
+	public InputStream getDocumentThumbnail(UserVo actorVo,
 			String docEntryUuid);
 
-	public void removeDocument(UserVo userVo, ThreadEntryVo threadEntryVo)
+	public void removeDocument(UserVo userVo, ThreadEntryVo entryVo)
 			throws BusinessException;
 
-	public ThreadEntryVo findById(UserVo user, String threadEntryUuid)
+	public ThreadEntryVo findById(UserVo user, String entryUuid)
 			throws BusinessException;
-
-	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo,
-			ThreadVo threadVo, TagVo[] tags) throws BusinessException;
 
 	public boolean userIsMember(UserVo userVo, ThreadVo threadVo)
 			throws BusinessException;
@@ -108,75 +92,41 @@ public interface ThreadEntryFacade {
 	public boolean userIsAdmin(UserVo userVo, ThreadVo threadVo)
 			throws BusinessException;
 
-	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo)
-			throws BusinessException;
+	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo) throws BusinessException;
 
 	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember,
-			boolean readOnly);
+			boolean readOnly) throws BusinessException;
 
 	public void deleteMember(UserVo actorVo, ThreadVo threadVo,
-			ThreadMemberVo memberVo);
+			ThreadMemberVo memberVo) throws BusinessException;
 
 	public boolean isUserAdminOfAnyThread(UserVo actorVo)
 			throws BusinessException;
 
 	public void updateMember(UserVo actorVo, ThreadMemberVo memberVo,
-			ThreadVo threadVo);
+			ThreadVo threadVo) throws BusinessException;
 
 	public void deleteThread(UserVo actorVo, ThreadVo threadVo)
 			throws BusinessException;
 
 	public void updateFileProperties(String lsUid, String threadEntryUuid,
-			String fileComment);
+			String fileComment) throws BusinessException;
 
-	public ThreadEntryVo getThreadEntry(String login, String threadEntryUuid);
+	public ThreadEntryVo getThreadEntry(UserVo actorVo, String threadEntryUuid) throws BusinessException;
 
-	public ThreadVo getThread(UserVo login, String threadUuid)
+	public void renameThread(UserVo actorVo, ThreadVo threadVo, String threadName)
 			throws BusinessException;
-
-	public void renameThread(UserVo userVo, String threadUuid, String threadName)
-			throws BusinessException;
-
-	/**
-	 * Provide completion for search User
-	 * 
-	 * @param actorVo
-	 * @param pattern
-	 * @return
-	 */
-	public List<String> completionOnUsers(UserVo actorVo, String pattern)
-			throws BusinessException;
-
-	/**
-	 * Provide completion for search thread
-	 * 
-	 * @param actor
-	 * @param input
-	 * @return
-	 */
-	public List<String> completionOnThreads(UserVo actor, String input);
-
-	/**
-	 * Provide completion for search thread member
-	 * 
-	 * @param actorVo
-	 * @param currentThread
-	 * @param pattern
-	 * @return
-	 */
-	public List<String> completionOnMembers(UserVo actorVo,
-			ThreadVo currentThread, String pattern);
 
 	/**
 	 * Add User to thread
 	 * 
-	 * @param currentUser
+	 * @param actorVo
 	 * @param threadVo
 	 * @param domain
 	 * @param mail
 	 * @throws BusinessException
 	 */
-	public void addUserToThread(UserVo currentUser, ThreadVo threadVo,
+	public void addMember(UserVo actorVo, ThreadVo threadVo,
 			String domain, String mail) throws BusinessException;
 
 	/**
@@ -188,8 +138,36 @@ public interface ThreadEntryFacade {
 	 * @param mail
 	 * @throws BusinessException
 	 */
-	public void removeMemberFromThread(UserVo currentUser, ThreadVo threadVo,
+	public void removeMember(UserVo currentUser, ThreadVo threadVo,
 			String domain, String mail) throws BusinessException;
+
+	/**
+	 * Get list of the latest threads orderer by modification date
+	 * 
+	 * @param actorVo
+	 * @param limit amount of threads wanted
+	 * @return list of latest threads ordered by modification date
+	 * @throws BusinessException
+	 */
+	public List<ThreadVo> getLatestThreads(UserVo actorVo, int limit)
+			throws BusinessException;
+
+	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
+			throws BusinessException;
+
+	/**
+	 * Search a thread by name
+	 * @param userVo
+	 * @param pattern
+	 * @return list of matching threads
+	 */
+	public List<ThreadVo> searchThread(UserVo userVo, String pattern)
+			throws BusinessException;
+
+
+    /*
+     * Deprecated methods
+     */
 
 	/**
 	 * Return list of users according to search input
@@ -199,6 +177,7 @@ public interface ThreadEntryFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
+    @Deprecated
 	public List<UserVo> searchAmongUsers(UserVo userVo, String input)
 			throws BusinessException;
 
@@ -211,6 +190,7 @@ public interface ThreadEntryFacade {
 	 * @return
 	 * @throws BusinessException
 	 */
+    @Deprecated
 	public List<ThreadMemberVo> searchAmongMembers(UserVo userVo,
 			ThreadVo currentThread, String input, String criteriaOnSearch)
 			throws BusinessException;
@@ -224,12 +204,55 @@ public interface ThreadEntryFacade {
 	 * @param recipientsSearchUser
 	 * @return
 	 */
+    @Deprecated
 	public List<ThreadVo> getListOfThreadFromSearchByUser(UserVo userVo,
 			String criteriaOnSearch, String recipientsSearchUser)
 			throws BusinessException;
 
-	public List<ThreadVo> getLatestThreads(UserVo userVo);
+	/**
+	 * Provide completion for search thread
+	 * 
+	 * @param actor
+	 * @param input
+	 * @return
+	 */
+    @Deprecated
+	public List<String> completionOnThreads(UserVo actor, String input);
 
-	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
+	/**
+	 * Provide completion for search User
+	 * 
+	 * @param actorVo
+	 * @param pattern
+	 * @return
+	 */
+    @Deprecated
+	public List<String> completionOnUsers(UserVo actorVo, String pattern)
 			throws BusinessException;
+
+	/**
+	 * Provide completion for search thread member
+	 * 
+	 * @param actorVo
+	 * @param currentThread
+	 * @param pattern
+	 * @return
+	 */
+    @Deprecated
+	public List<String> completionOnMembers(UserVo actorVo,
+			ThreadVo currentThread, String pattern);
+
+    @Deprecated
+	public List<ThreadEntryVo> getAllThreadEntriesTaggedWith(UserVo actorVo,
+			ThreadVo threadVo, TagVo[] tags) throws BusinessException;
+
+    @Deprecated
+	public TagEnumVo getTagEnumVo(UserVo actorVo, ThreadVo threadVo, String name)
+			throws BusinessException;
+
+    @Deprecated
+	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo,
+			List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags)
+			throws BusinessException;
+
 }

@@ -210,7 +210,8 @@ public class Index {
 	}
 	
     public void onActionFromDeleteThread(String lsuuid) throws BusinessException {
-    	this.threadToDelete= threadEntryFacade.getThread(userVo, lsuuid);
+    	// FIXME
+    	//this.threadToDelete= threadEntryFacade.getThread(userVo, lsuuid);
 		logger.debug("thread to delete :"+threadToDelete.getName());
     }
 	

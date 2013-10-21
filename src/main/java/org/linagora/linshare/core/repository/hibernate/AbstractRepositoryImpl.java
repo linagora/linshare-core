@@ -76,7 +76,7 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     /** Persist the provided entiry.
      * @param entity the entity to persist.
      * @return persisted entity.
-     * @throws org.xinit.openApm.coreManagement.exception.BusinessException in case of failure.
+     * @throws org.linagora.linshare.core.BusinessException in case of failure.
      * @throws java.lang.IllegalArgumentException if entity is null.
      */
     public T create(T entity) throws BusinessException {
@@ -151,7 +151,7 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
     /** Check entity unicity.
      * This method must throw a business exception if the unicity constraint is violated.
      * @param entity entity to check.
-     * @throws org.xinit.openApm.coreManagement.exception.BusinessException
+     * @throws org.linagora.linshare.core.BusinessException
      */
     private void checkUnicity(T entity) throws BusinessException {
         if (findByCriteria(getNaturalKeyCriteria(entity)).size() > 0) {
@@ -201,6 +201,17 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
      */
     @SuppressWarnings("unchecked")
 	protected List<T> findByCriteria(final DetachedCriteria criteria) {
+        return hibernateTemplate.findByCriteria(criteria);
+    }
+    
+    /** Find by criteria.
+     * @param a detached criteria.
+     * @param limit the results
+     * @return search result.
+     */
+    @SuppressWarnings("unchecked")
+	protected List<T> findByCriteria(final DetachedCriteria criteria, int limit) {
+    	criteria.getExecutableCriteria(getCurrentSession()).setMaxResults(limit);
         return hibernateTemplate.findByCriteria(criteria);
     }
     

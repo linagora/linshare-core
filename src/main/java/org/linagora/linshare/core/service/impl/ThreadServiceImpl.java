@@ -35,6 +35,7 @@ package org.linagora.linshare.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.linagora.linshare.core.business.service.DocumentEntryBusinessService;
 import org.linagora.linshare.core.domain.constants.AccountType;
@@ -94,12 +95,13 @@ public class ThreadServiceImpl implements ThreadService {
 	@Override
 	public Thread findByLsUuid(String uuid) {
 		Thread thread = threadRepository.findByLsUuid(uuid);
+
 		if (thread == null) {
 			logger.error("Can't find thread  : " + uuid);
 		}
 		return thread;
 	}
-
+	
 	@Override
 	public List<Thread> findAll() {
 		return threadRepository.findAll();
@@ -154,8 +156,17 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 
 	@Override
-	public ThreadMember getThreadMemberFromUser(Thread thread, User user) throws BusinessException {
+	public ThreadMember getMemberFromUser(Thread thread, User user) throws BusinessException {
 		return threadMemberRepository.findUserThreadMember(thread, user);
+	}
+	
+	@Override
+	public Set<ThreadMember> getMembers(User actor, Thread thread)
+			throws BusinessException {
+		if (getMemberFromUser(thread, actor) == null)
+			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
+					"Actor is not a member of the thread.");
+		return thread.getMyMembers();
 	}
 	
 	@Override
@@ -182,20 +193,25 @@ public class ThreadServiceImpl implements ThreadService {
 	public boolean isUserAdmin(User user, Thread thread) {
 		return threadMemberRepository.isUserAdmin(user, thread);
 	}
+	
+	@Override
+	public long countMembers(Thread thread) {
+		return threadMemberRepository.count(thread);
+	}
 
 	@Override
 	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException {
 		// permission check
 		checkUserIsAdmin(actor, thread);
 		
-		ThreadMember member = getThreadMemberFromUser(thread, user);
+		ThreadMember member = getMemberFromUser(thread, user);
 
 		if (member != null) {
 			logger.warn("The current " + user.getAccountReprentation()
 					+ " user is already member of the thread : "
 					+ thread.getAccountReprentation());
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
-					"You are not authorize to add member to this thread. Already exists.");
+			throw new BusinessException(
+					"You are not authorized to add member to this thread. Already exists.");
 		}
 
 		member = new ThreadMember(!readOnly, false, user, thread);
@@ -349,10 +365,22 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 	
 	@Override
-	public List<Thread> findLatestWhereMember(User actor) {
-		return threadRepository.findLatestWhereMember(actor);
+	public List<Thread> findLatestWhereMember(User actor, int limit) {
+		return threadRepository.findLatestWhereMember(actor, limit);
 	}
 	
+	@Override
+	public List<Thread> searchByName(User actor, String pattern) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Thread> searchByMembers(User actor, String pattern) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
     /* ***********************************************************
      *                   Helpers
