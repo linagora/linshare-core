@@ -157,7 +157,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	public DocumentEntry updateDocumentEntry(Account actor, String docEntryUuid, InputStream stream, Long size, String fileName) throws BusinessException {
 		DocumentEntry originalEntry = documentEntryBusinessService.findById(docEntryUuid);
 		if (!originalEntry.getEntryOwner().equals(actor)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
 		}
 
 		DocumentUtils util = new DocumentUtils();
@@ -270,7 +270,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		try {
 
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. It still exists shares.");
 			}
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
@@ -292,7 +292,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		try {
 
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. It still exists shares.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. It still exists shares.");
 			}
 
 			AbstractDomain domain = abstractDomainService.retrieveDomain(owner.getDomain().getIdentifier());
@@ -314,10 +314,10 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		logger.debug("Actor: " + actor.getAccountReprentation() + " is trying to delete document entry: " + documentEntry.getUuid());
 		try {
 			if (!isOwnerOrAdmin(actor, documentEntry.getEntryOwner())) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document.");
 			}
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document. There's still existing shares.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document. There's still existing shares.");
 			}
 			AbstractDomain domain = abstractDomainService.retrieveDomain(actor.getDomain().getIdentifier());
 			removeDocSizeFromGlobalUsedQuota(documentEntry.getDocument().getSize(), domain);
@@ -421,7 +421,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + docEntryUuid);
 			return null;
 		} else if (!documentEntry.getEntryOwner().equals(owner)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this document.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get thumbnail for this document.");
 		} else {
 			return documentEntryBusinessService.getDocumentThumbnailStream(documentEntry);
 		}
@@ -434,7 +434,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 			logger.error("Can't find document entry, are you sure it is not a share ? : " + docEntryUuid);
 			return null;
 		} else if (!documentEntry.getEntryOwner().equals(owner)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document.");
 		} else {
 			return documentEntryBusinessService.getDocumentStream(documentEntry);
 		}
@@ -474,7 +474,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 
 		}
 		if (!isOwnerOrAdmin(actor, entry.getEntryOwner())) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document. current actor is : " + actor.getAccountReprentation());
 		}
 		return entry;
 	}
@@ -482,7 +482,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 	@Override
 	public List<DocumentEntry> findAllMyDocumentEntries(Account actor, User owner) throws BusinessException {
 		if (!isOwnerOrAdmin(actor, owner)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get these documents.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get these documents.");
 		}
 		List<DocumentEntry> entry = documentEntryBusinessService.findAllMyDocumentEntries(owner);
 		return entry;
@@ -493,7 +493,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
 		if (!actor.isSuperAdmin() && !actor.isTechnicalAccount()) {
 			if (!entry.getEntryOwner().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to rename this document.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to rename this document.");
 			}
 		}
 		documentEntryBusinessService.renameDocumentEntry(entry, newName);
@@ -504,7 +504,7 @@ public class DocumentEntryServiceImpl implements DocumentEntryService {
 		DocumentEntry entry = documentEntryBusinessService.findById(docEntryUuid);
 		if (!actor.isSuperAdmin() && !actor.isTechnicalAccount()) {
 			if (!entry.getEntryOwner().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
 			}
 		}
 		documentEntryBusinessService.updateFileProperties(entry, newName, fileComment);

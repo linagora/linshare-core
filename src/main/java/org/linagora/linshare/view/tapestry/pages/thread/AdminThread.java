@@ -297,7 +297,8 @@ public class AdminThread {
 
 	public void onActionFromDeleteUser(String domain, String mail) throws BusinessException {
 		// remove user from thread
-		threadEntryFacade.removeMember(userLoggedIn, currentThread, domain, mail);
+		// FIXME
+		//threadEntryFacade.removeMember(userLoggedIn, currentThread, domain);
 		// refresh list
 		members = threadEntryFacade.getThreadMembers(userLoggedIn, currentThread);
 	}

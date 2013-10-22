@@ -134,12 +134,11 @@ public interface ThreadEntryFacade {
 	 * 
 	 * @param currentUser
 	 * @param threadVo
-	 * @param domain
-	 * @param mail
+	 * @param userVo
 	 * @throws BusinessException
 	 */
 	public void removeMember(UserVo currentUser, ThreadVo threadVo,
-			String domain, String mail) throws BusinessException;
+			UserVo userVo) throws BusinessException;
 
 	/**
 	 * Get list of the latest threads orderer by modification date

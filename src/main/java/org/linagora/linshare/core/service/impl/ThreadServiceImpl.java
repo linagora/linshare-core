@@ -164,7 +164,7 @@ public class ThreadServiceImpl implements ThreadService {
 	public Set<ThreadMember> getMembers(User actor, Thread thread)
 			throws BusinessException {
 		if (getMemberFromUser(thread, actor) == null)
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"Actor is not a member of the thread.");
 		return thread.getMyMembers();
 	}
@@ -398,7 +398,7 @@ public class ThreadServiceImpl implements ThreadService {
 		if (!isUserAdmin((User) actor, thread)) {
 			logger.error("Actor: " + actor.getAccountReprentation() + " isn't admin of the Thread: "
 					+ thread.getAccountReprentation());
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"you are not authorized to perform this action on this thread.");
 		}
 	}
