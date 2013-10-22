@@ -151,7 +151,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	public ThreadEntry findById(Account actor, String threadEntryUuid) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
 		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) actor)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document.");
 		}
 		return threadEntry;
 	}
@@ -160,7 +160,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException {
 		try {
 			if (!this.isAdmin((Thread) threadEntry.getEntryOwner(), (User) actor)) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this document.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document.");
 			}
 			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_ENTRY, "Deleting a thread entry.");
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
@@ -197,7 +197,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			return null;
 		}
 		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) actor)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this document.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document.");
 		}
 		return documentEntryBusinessService.getDocumentStream(threadEntry);
 	}
@@ -210,7 +210,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 			return null;
 		}
 		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) owner)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this document.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get thumbnail for this document.");
 		}
 		return documentEntryBusinessService.getThreadEntryThumbnailStream(threadEntry);
 	}
@@ -234,7 +234,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 	public void updateFileProperties(Account actor, String threadEntryUuid, String fileComment) throws BusinessException {
 		ThreadEntry threadEntry = documentEntryBusinessService.findThreadEntryById(threadEntryUuid);
 		if (!this.canUpload((Thread) threadEntry.getEntryOwner(), (User) actor)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update this document.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update this document.");
 		}
 		documentEntryBusinessService.updateFileProperties(threadEntry, fileComment);
 	}

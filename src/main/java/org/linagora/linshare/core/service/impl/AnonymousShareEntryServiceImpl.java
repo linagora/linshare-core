@@ -104,7 +104,7 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share, it does not belong to you.");
 		}
 	}
 	

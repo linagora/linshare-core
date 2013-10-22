@@ -82,7 +82,7 @@ public class MailingListServiceImpl implements MailingListService {
 		User owner = userService.findByLsUuid(ownerUuid);
 
 		if (actor.isSuperAdmin())
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED,
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"You are not authorized to create a list.");
 		return mailingListBusinessService.createList(list, owner);
 	}
@@ -268,6 +268,6 @@ public class MailingListServiceImpl implements MailingListService {
 	private void checkRights(User actor, MailingList list, String msg)
 			throws BusinessException {
 		if (!actor.equals(list.getOwner()))
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, msg);
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, msg);
 	}
 }

@@ -190,7 +190,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
         
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this share, it does not belong to you.");
 		}
 	}
 	
@@ -206,7 +206,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	        
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to delete this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this share, it does not belong to you.");
 		}
 	}
 	
@@ -251,7 +251,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 	        return newDocumentEntry;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to copy this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to copy this share, it does not belong to you.");
 		}
 		
 	}
@@ -268,7 +268,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			return share;
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share, it does not belong to you.");
 		}
 	}
 
@@ -284,7 +284,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 			shareEntryBusinessService.updateShareComment(share, comment);
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + shareUuid);
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to update comment on this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to update comment on this share, it does not belong to you.");
 		}
 		
 	}
@@ -312,7 +312,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		try {
 			ShareEntry shareEntry = findByUuid(actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get thumbnail for this share.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get thumbnail for this share.");
 			}
 			return documentEntryBusinessService.getDocumentThumbnailStream(shareEntry.getDocumentEntry());
 		} catch (BusinessException e) {
@@ -327,7 +327,7 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 		try {
 			ShareEntry shareEntry = findByUuid(actor, shareEntryUuid);
 			if (!shareEntry.getRecipient().equals(actor)) {
-				throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this share.");
+				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this share.");
 			}
 			ShareLogEntry logEntryActor = new ShareLogEntry(actor, LogAction.SHARE_DOWNLOAD, "Download of a sharing", shareEntry, shareEntry.getEntryOwner());
 			ShareLogEntry logEntryTarget = new ShareLogEntry(shareEntry.getEntryOwner(), LogAction.SHARE_DOWNLOADED, "Sharing donwloaded by " + actor.getMail(), shareEntry, actor);

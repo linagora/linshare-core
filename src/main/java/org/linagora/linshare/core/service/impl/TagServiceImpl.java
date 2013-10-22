@@ -69,7 +69,7 @@ public class TagServiceImpl implements TagService {
 	public Tag findByOwnerAndName(User owner, String name) throws BusinessException {
 		Tag tag = tagBusinessService.findByOwnerAndName(owner, name);
 		if(!tag.getOwner().equals(owner)) {
-			throw new BusinessException(BusinessErrorCode.NOT_AUTHORIZED, "You are not authorized to get this tag.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this tag.");
 		}
 		return tag;
 	}

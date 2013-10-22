@@ -333,12 +333,10 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public void removeMember(UserVo actorVo, ThreadVo threadVo,
-			String domain, String mail) throws BusinessException {
-		// FIXME
-		User user = userService.findOrCreateUser(mail, domain); // XXX TODO FIXME: wat?
+			UserVo userVo) throws BusinessException {
 		Thread thread = findThread(threadVo);
 		User actor = findUser(actorVo);
-		ThreadMember member = findMember(thread, user);
+		ThreadMember member = findMember(thread, findUser(userVo));
 
 		threadService.deleteMember(actor, thread, member);
 	}
