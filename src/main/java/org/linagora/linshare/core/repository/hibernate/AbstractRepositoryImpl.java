@@ -211,8 +211,7 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
      */
     @SuppressWarnings("unchecked")
 	protected List<T> findByCriteria(final DetachedCriteria criteria, int limit) {
-    	criteria.getExecutableCriteria(getCurrentSession()).setMaxResults(limit);
-        return hibernateTemplate.findByCriteria(criteria);
+        return hibernateTemplate.findByCriteria(criteria, -1, limit);
     }
     
     protected Class<T> getPersistentClass() {
