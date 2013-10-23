@@ -35,7 +35,7 @@ package org.linagora.linshare.core.facade.impl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +70,9 @@ import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
@@ -130,31 +132,26 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	@Override
 	public List<ThreadVo> getAllThread() {
-		return Lists.transform(threadService.findAll(), ThreadVo.toVo());
+		return toThreadVo(threadService.findAll());
 	}
 
 	@Override
 	public List<ThreadVo> getAllMyThread(UserVo actorVo)
 			throws BusinessException {
-		return Lists.transform(
-				threadService.findAllWhereMember(findUser(actorVo)),
-				ThreadVo.toVo());
+		return toThreadVo(threadService.findAllWhereMember(findUser(actorVo)));
 	}
 
 	@Override
 	public List<ThreadVo> getAllMyThreadWhereCanUpload(UserVo actorVo)
 			throws BusinessException {
-		return Lists.transform(
-				threadService.findAllWhereCanUpload(findUser(actorVo)),
-				ThreadVo.toVo());
+		return toThreadVo(threadService
+				.findAllWhereCanUpload(findUser(actorVo)));
 	}
 
 	@Override
 	public List<ThreadVo> getAllMyThreadWhereAdmin(UserVo actorVo)
 			throws BusinessException {
-		return Lists.transform(
-				threadService.findAllWhereAdmin(findUser(actorVo)),
-				ThreadVo.toVo());
+		return toThreadVo(threadService.findAllWhereAdmin(findUser(actorVo)));
 	}
 
 	@Override
@@ -172,8 +169,8 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException {
-		return Lists.transform(threadEntryService.findAllThreadEntries(
-				findUser(actorVo), findThread(threadVo)), ThreadEntryVo.toVo());
+		return toThreadEntryVo(threadEntryService.findAllThreadEntries(
+				findUser(actorVo), findThread(threadVo)));
 	}
 
 	@Override
@@ -240,13 +237,9 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public List<ThreadMemberVo> getThreadMembers(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException {
-		List<ThreadMember> members = Lists.newArrayList(threadService
-				.getMembers(findUser(actorVo), findThread(threadVo)));
-		List<ThreadMemberVo> ret = Lists.transform(members,
-				ThreadMemberVo.toVo());
-
-		Collections.sort(ret);
-		return ret;
+		return Ordering.natural().immutableSortedCopy(
+				toThreadMemberVo(threadService.getMembers(findUser(actorVo),
+						findThread(threadVo))));
 	}
 
 	@Override
@@ -314,7 +307,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 		res.addAll(threadService.searchByName(actor, pattern));
 		res.addAll(threadService.searchByMembers(actor, pattern));
-		return Lists.transform(Lists.newArrayList(res), ThreadVo.toVo());
+		return toThreadVo(res);
 	}
 
 	@Override
@@ -344,9 +337,8 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public List<ThreadVo> getLatestThreads(UserVo actorVo, int limit) 
 			throws BusinessException {
-		return Lists.transform(
-				threadService.findLatestWhereMember(findUser(actorVo), limit),
-				ThreadVo.toVo());
+		return toThreadVo(threadService.findLatestWhereMember(
+				findUser(actorVo), limit));
 	}
 
 	@Override
@@ -358,9 +350,36 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	/*
 	 * Helpers.
-	 * 
-	 * Use theses instead of their respective services to ensure proper error handling
-	 * and cleaner code.
+	 */
+	
+	/*
+	 * Guava helpers, as Lists.transform return a lazy loaded list of proxies.
+	 * Avoid LazyLoadingException from the Hibernate proxies as Session is
+	 * bound to the facade layer.
+	 */
+	/*
+	 * TODO: externalize these :
+	 *    - transformable VO interfaces (toVo)
+	 *    - generic helper that transform transformable VOs
+	 */
+	private List<ThreadVo> toThreadVo(Collection<Thread> col) {
+		return ImmutableList.copyOf(Lists.transform(ImmutableList.copyOf(col),
+				ThreadVo.toVo()));
+	}
+
+	private List<ThreadMemberVo> toThreadMemberVo(Collection<ThreadMember> col) {
+		return ImmutableList.copyOf(Lists.transform(ImmutableList.copyOf(col),
+				ThreadMemberVo.toVo()));
+	}
+
+	private List<ThreadEntryVo> toThreadEntryVo(Collection<ThreadEntry> col) {
+		return ImmutableList.copyOf(Lists.transform(ImmutableList.copyOf(col),
+				ThreadEntryVo.toVo()));
+	}
+
+	/*
+	 * Use theses instead of their respective services to ensure proper error
+	 * handling and cleaner code.
 	 */
 	
 	private User findUser(UserVo userVo) throws BusinessException {

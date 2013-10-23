@@ -69,11 +69,11 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	
 	/**
 	 * Find all threads modified by the actor on last 15 days
-	 * @param Actor
+	 * @param actor
 	 * @param limit TODO
 	 * @param date
 	 * @return
 	 */
-	List<Thread> findLatestWhereMember(User Actor, int limit);
+	List<Thread> findLatestWhereMember(User actor, int limit);
 	
 } 

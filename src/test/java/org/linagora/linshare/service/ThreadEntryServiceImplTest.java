@@ -297,4 +297,17 @@ public class ThreadEntryServiceImplTest extends AbstractTransactionalJUnit4Sprin
 		logger.info(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testFindLatest() throws BusinessException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+
+		List<Thread> latests = threadService.findLatestWhereMember(john, 10);
+		Assert.assertFalse(latests.isEmpty());
+		logger.debug("Latests :");
+		for (Thread thread : latests) {
+			logger.debug('\t' + thread.getName());
+		}
+
+		logger.info(LinShareTestConstants.END_TEST);
+	}
 }

@@ -115,7 +115,6 @@ public class Index {
     	showThreadTab = functionalityFacade.isEnableThreadTab(userVo.getDomainIdentifier());
     	showCreateButton = functionalityFacade.isEnableCreateThread(userVo.getDomainIdentifier());
     	recipientsSearchThread = "*";
-    	
     }
 
     public Object onActionFromShowThreadContent(String lsUuid) {
