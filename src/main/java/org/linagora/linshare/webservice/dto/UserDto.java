@@ -71,6 +71,8 @@ public class UserDto extends AccountDto {
 		this.canUpload = u.getCanUpload();
 		this.canCreateGuest = u.getCanCreateGuest();
 		this.expirationDate = u.getExpirationDate();
+		this.restricted = false;
+		this.guest = false;
 		if (u.getAccountType() == AccountType.GUEST) {
 			Guest g = (Guest) u;
 			this.owner = new UserDto((User) g.getOwner());
