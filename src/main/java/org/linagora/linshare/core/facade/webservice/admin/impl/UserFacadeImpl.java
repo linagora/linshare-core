@@ -94,9 +94,11 @@ public class UserFacadeImpl extends AdminGenericFacadeImpl implements
 		for (User user : users) {
 			UserDto userDto = UserDto.getFull(user);
 
-			if (userDto.isGuest() && user.isRestricted()) {
-				for (User contact : userService.fetchGuestContacts(user.getLsUuid())) {
-					userDto.getRestrictedContacts().add(contact.getMail());
+			if (userDto.isGuest()) {
+				if (user.isRestricted()) {
+					for (User contact : userService.fetchGuestContacts(user.getLsUuid())) {
+						userDto.getRestrictedContacts().add(contact.getMail());
+					}
 				}
 			}
 			usersDto.add(userDto);
