@@ -71,15 +71,13 @@ public class UserDto extends AccountDto {
 		this.canUpload = u.getCanUpload();
 		this.canCreateGuest = u.getCanCreateGuest();
 		this.expirationDate = u.getExpirationDate();
-		this.restricted = false;
-		this.guest = false;
-		if (u.getAccountType() == AccountType.GUEST) {
+		this.guest = u.getAccountType() == AccountType.GUEST;
+		if (this.guest) {
 			Guest g = (Guest) u;
 			this.owner = new UserDto((User) g.getOwner());
 			this.expirationDate = g.getExpirationDate();
 			this.restricted = g.isRestricted();
 			this.comment = g.getComment();
-			this.guest = true;
 		}
 	}
 
