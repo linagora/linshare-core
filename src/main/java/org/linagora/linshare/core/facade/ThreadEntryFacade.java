@@ -77,6 +77,9 @@ public interface ThreadEntryFacade {
 	public void removeDocument(UserVo userVo, ThreadEntryVo entryVo)
 			throws BusinessException;
 
+	public int countEntries(ThreadVo threadVo)
+			throws BusinessException;
+
 	public ThreadEntryVo findById(UserVo user, String entryUuid)
 			throws BusinessException;
 

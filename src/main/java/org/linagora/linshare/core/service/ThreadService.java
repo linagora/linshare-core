@@ -71,7 +71,9 @@ public interface ThreadService {
 
 	public boolean isUserAdmin(User user, Thread thread);
 
-	public long countMembers(Thread thread);
+	public int countMembers(Thread thread);
+
+	public int countEntries(Thread thread);
 
 	public void addMember(Account actor, Thread thread, User user, boolean readOnly) throws BusinessException;
 

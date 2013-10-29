@@ -378,6 +378,11 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 	}
 	
 	@Override
+	public int countThreadEntries(Thread thread) {
+		return threadEntryRepository.count(thread);
+	}
+	
+	@Override
 	public InputStream getDocumentStream(ThreadEntry entry) {
 		String UUID = entry.getDocument().getUuid();
 		if (UUID!=null && UUID.length()>0) {

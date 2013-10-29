@@ -195,8 +195,13 @@ public class ThreadServiceImpl implements ThreadService {
 	}
 	
 	@Override
-	public long countMembers(Thread thread) {
+	public int countMembers(Thread thread) {
 		return threadMemberRepository.count(thread);
+	}
+	
+	@Override
+	public int countEntries(Thread thread) {
+		return documentEntryBusinessService.countThreadEntries(thread);
 	}
 
 	@Override
@@ -371,14 +376,12 @@ public class ThreadServiceImpl implements ThreadService {
 	
 	@Override
 	public List<Thread> searchByName(User actor, String pattern) {
-		// TODO Auto-generated method stub
-		return null;
+		return threadRepository.searchByName(actor, pattern);
 	}
 
 	@Override
 	public List<Thread> searchByMembers(User actor, String pattern) {
-		// TODO Auto-generated method stub
-		return null;
+		return threadRepository.searchAmongMembers(actor, pattern);
 	}
 
 	

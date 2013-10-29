@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.thread.index.title" t:identifier="thread" t:currentHighlight="thread"
+        xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
+
+    <!-- Main content -->
+    <div id="content">
+        <h1>${message:pages.thread.index.title}</h1>
+        <div id="actionBar">
+            <h4>Actions</h4>
+            <ul>
+                <li>
+                <t:if test="showCreateButton">
+                    <t:pageLink page="thread/CreateThread" class="button" title="${message:pages.thread.index.addbutton}">
+                        <span><img src="${asset:context:images/icons/create-group-mini.png}" alt="" /> ${message:pages.thread.index.addbutton}</span>
+                    </t:pageLink>
+                </t:if>
+                </li>
+            </ul>
+        </div>
+        <!-- Page content -->
+        <div id="pageContent">
+            <div id="threads">
+                <div id="searchBar">
+                    <t:form t:id="threadSearch" class="form-search text-center">
+                        <div class="input-append">
+                            <t:textfield t:id="pattern" placeholder="${message:pages.thread.index.placeholder}" class="span7 search-query"/>
+                            <button type="submit" class="btn"><i class="icon-search"/></button>
+                        </div>
+                    </t:form>
+                </div>
+
+                <t:if test="latest">
+                    <h2> ${message:pages.thread.index.chronoMessage}</h2>
+                </t:if>
+                <t:grid source="threads" row="current" include="name, creationDate, modificationDate" add="countDocuments" rowsPerPage="10">
+                    <p:nameCell>
+                        <t:actionlink t:id="showThreadContent" context="current.lsUuid"> ${current.name}</t:actionlink>
+                    </p:nameCell>
+                    <p:modificationDateCell>
+                        <span class="modificationDate">${modificationDate}</span>
+                    </p:modificationDateCell>
+                    <p:creationDateCell>
+                        <span class="creationDate">${creationDate}</span>
+                    </p:creationDateCell>
+                    <p:countDocumentsCell>
+                        <span class="countDocuments" style="text-align : center;">${count}</span>
+                    </p:countDocumentsCell>
+                    <p:empty>
+                        ${message:pages.thread.empty}
+                    </p:empty>
+                </t:grid>
+            </div>
+        </div>
+    </div>
+
+</t:MyBorderLayout>

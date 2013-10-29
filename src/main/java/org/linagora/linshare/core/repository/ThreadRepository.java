@@ -35,7 +35,6 @@ package org.linagora.linshare.core.repository;
 
 
 
-import java.util.Date;
 import java.util.List;
 
 import org.linagora.linshare.core.domain.entities.Thread;
@@ -75,5 +74,9 @@ public interface ThreadRepository extends AccountRepository<Thread> {
 	 * @return
 	 */
 	List<Thread> findLatestWhereMember(User actor, int limit);
+
+	public List<Thread> searchByName(User actor, String pattern);
+
+	public List<Thread> searchAmongMembers(User actor, String pattern);
 	
 } 
