@@ -36,15 +36,22 @@ package org.linagora.linshare.core.repository.hibernate;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.linagora.linshare.core.domain.entities.Thread;
+import org.linagora.linshare.core.domain.entities.ThreadMember;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.repository.ThreadRepository;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		implements ThreadRepository {
+	
+	private static final MatchMode ANYWHERE = MatchMode.ANYWHERE;
 
 	public ThreadRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
@@ -117,7 +124,41 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 		// query
 		det.createAlias("myMembers", "member");
 		det.add(Restrictions.eq("member.user", actor));
-		det.addOrder(Order.desc("member.modificationDate"));
+		det.addOrder(Order.desc("modificationDate"));
 		return findByCriteria(det, limit);
+	}
+
+	@Override
+	public List<Thread> searchByName(User actor, String pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
+
+		// query
+		det.createAlias("myMembers", "member");
+		det.add(Restrictions.eq("member.user", actor));
+		det.addOrder(Order.desc("modificationDate"));
+		det.add(Restrictions.ilike("name", pattern, ANYWHERE));
+		return findByCriteria(det);
+	}
+
+	@Override
+	public List<Thread> searchAmongMembers(User actor, String pattern) {
+		DetachedCriteria det = DetachedCriteria.forClass(Thread.class);
+		det.add(Restrictions.eq("destroyed", false));
+
+		Disjunction or = Restrictions.disjunction();
+
+		det.createAlias("myMembers", "member2");
+		det.createAlias("member2.user", "u");
+		or.add(Restrictions.ilike("u.firstName", pattern, ANYWHERE));
+		or.add(Restrictions.ilike("u.lastName", pattern, ANYWHERE));
+		det.add(or);
+
+		DetachedCriteria sub = DetachedCriteria.forClass(Thread.class);
+		sub.createAlias("myMembers", "member");
+		sub.setProjection(Projections.id());
+
+		det.add(Subqueries.propertyIn("id", sub));
+		return findByCriteria(det);
 	}
 }

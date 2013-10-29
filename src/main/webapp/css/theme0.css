@@ -4020,6 +4020,16 @@ input.ck-kaptcha {
     font-size: 12px; !important;
 }
 
+/* Thread index search bar */
+#searchBar input[type="text"] {
+    height: 20px; /* 20px + 4px + 6px = 30px */
+    padding: 4px 6px !important;
+}
+
+#searchBar .btn {
+    height: 30px;
+    width: 80px;
+}
 
 /**
  * Fix auto complete position for IE 10

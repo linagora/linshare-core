@@ -49,4 +49,6 @@ public interface ThreadEntryRepository extends AbstractRepository<ThreadEntry> {
 	public List<ThreadEntry> findAllThreadEntries(Thread owner);
 
 	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names);
+
+	public int count(Thread thread);
 }

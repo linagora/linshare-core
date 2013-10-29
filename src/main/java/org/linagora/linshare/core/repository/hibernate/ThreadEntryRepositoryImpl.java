@@ -33,49 +33,50 @@
  */
 package org.linagora.linshare.core.repository.hibernate;
 
-
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.repository.ThreadEntryRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class ThreadEntryRepositoryImpl extends AbstractRepositoryImpl<ThreadEntry> implements ThreadEntryRepository {
-	
+public class ThreadEntryRepositoryImpl extends
+		AbstractRepositoryImpl<ThreadEntry> implements ThreadEntryRepository {
+
 	public ThreadEntryRepositoryImpl(HibernateTemplate hibernateTemplate) {
 		super(hibernateTemplate);
 	}
-	
+
 	@Override
-	protected DetachedCriteria getNaturalKeyCriteria(ThreadEntry thread) {
-		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class).add(Restrictions.eq( "uuid", thread.getUuid()) );
+	protected DetachedCriteria getNaturalKeyCriteria(ThreadEntry entry) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class);
+
+		det.add(Restrictions.eq("uuid", entry.getUuid()));
 		return det;
 	}
-	
-	 /** Find a document using its id.
-     * @param id
-     * @return found document (null if no document found).
-     */
-	@Override
-    public ThreadEntry findByUuid(String uuid) {
-        List<ThreadEntry> entries = findByCriteria(Restrictions.eq("uuid", uuid));
-        if (entries == null || entries.isEmpty()) {
-            return null;
-        } else if (entries.size() == 1) {
-            return entries.get(0);
-        } else {
-            throw new IllegalStateException("Id must be unique");
-        }
-    }
 
-	
+	/**
+	 * Find a document using its id.
+	 * 
+	 * @param id
+	 * @return found document (null if no document found).
+	 */
+	@Override
+	public ThreadEntry findByUuid(String uuid) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class);
+
+		det.add(Restrictions.eq("uuid", uuid));
+		return DataAccessUtils.singleResult(findByCriteria(det));
+	}
+
 	@Override
 	public ThreadEntry create(ThreadEntry entity) throws BusinessException {
 		entity.setCreationDate(new GregorianCalendar());
@@ -84,26 +85,35 @@ public class ThreadEntryRepositoryImpl extends AbstractRepositoryImpl<ThreadEntr
 		return super.create(entity);
 	}
 
-	
 	@Override
 	public ThreadEntry update(ThreadEntry entity) throws BusinessException {
 		entity.setModificationDate(new GregorianCalendar());
 		return super.update(entity);
 	}
 
-	
 	@Override
 	public List<ThreadEntry> findAllThreadEntries(Thread owner) {
-		List<ThreadEntry> entries = findByCriteria(Restrictions.eq("entryOwner", owner));
-        return entries;
+		return findByCriteria(Restrictions.eq("entryOwner", owner));
 	}
 
 	@Override
-	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner, String[] names) {
+	public int count(Thread thread) {
+		DetachedCriteria det = DetachedCriteria.forClass(ThreadEntry.class);
+
+		det.add(Restrictions.eq("entryOwner", thread));
+		det.setProjection(Projections.rowCount());
+		return DataAccessUtils.intResult(findByCriteria(det));
+	}
+
+	@Deprecated
+	@Override
+	public List<ThreadEntry> findAllThreadEntriesTaggedWith(Thread owner,
+			String[] names) {
 		List<ThreadEntry> res = null;
 
 		for (String name : names) {
-			DetachedCriteria criteria = DetachedCriteria.forClass(ThreadEntry.class);
+			DetachedCriteria criteria = DetachedCriteria
+					.forClass(ThreadEntry.class);
 			criteria.add(Restrictions.eq("entryOwner", owner));
 			criteria.createAlias("tagAssociations", "ta", Criteria.LEFT_JOIN);
 			criteria.createAlias("ta.tag", "t", Criteria.LEFT_JOIN);
@@ -115,4 +125,5 @@ public class ThreadEntryRepositoryImpl extends AbstractRepositoryImpl<ThreadEntr
 		}
 		return res;
 	}
+
 }

@@ -213,6 +213,11 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 		threadEntryService.deleteThreadEntry(actor, threadEntry);
 	}
+	
+	@Override
+	public int countEntries(ThreadVo threadVo) throws BusinessException {
+		return threadService.countEntries(findThread(threadVo));
+	}
 
 	@Override
 	public ThreadEntryVo findById(UserVo actorVo, String entryUuid)
@@ -426,9 +431,9 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 	
 	
-	/*
-	 * NO TRESPASSING
-	 */
+    /*
+     * Thou Shalt Not Trespass For Thy Life Is Endangered
+     */
 
 	@Deprecated
 	@Override
