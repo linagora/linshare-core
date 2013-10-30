@@ -4021,7 +4021,7 @@ input.ck-kaptcha {
 }
 
 /* Thread index search bar */
-#searchBar input[type="text"] {
+#searchBar input[type="search"] {
     height: 20px; /* 20px + 4px + 6px = 30px */
     padding: 4px 6px !important;
 }

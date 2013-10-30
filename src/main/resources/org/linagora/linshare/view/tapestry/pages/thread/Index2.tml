@@ -22,12 +22,7 @@
         <div id="pageContent">
             <div id="threads">
                 <div id="searchBar">
-                    <t:form t:id="threadSearch" class="form-search text-center">
-                        <div class="input-append">
-                            <t:textfield t:id="pattern" placeholder="${message:pages.thread.index.placeholder}" class="span7 search-query"/>
-                            <button type="submit" class="btn"><i class="icon-search"/></button>
-                        </div>
-                    </t:form>
+                    <t:searchBar t:id="threadSearch" t:value="pattern" t:placeholder="${message:pages.thread.index.placeholder}"/>
                 </div>
 
                 <t:if test="latest">

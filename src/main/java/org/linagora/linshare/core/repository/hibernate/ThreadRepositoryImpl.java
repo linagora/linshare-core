@@ -135,7 +135,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 
 		// query
 		det.createAlias("myMembers", "member");
-		det.add(Restrictions.eq("member.user", actor));
+		if (!actor.isSuperAdmin())
+			det.add(Restrictions.eq("member.user", actor));
 		det.addOrder(Order.desc("modificationDate"));
 		det.add(Restrictions.ilike("name", pattern, ANYWHERE));
 		return findByCriteria(det);
@@ -156,6 +157,8 @@ public class ThreadRepositoryImpl extends GenericAccountRepositoryImpl<Thread>
 
 		DetachedCriteria sub = DetachedCriteria.forClass(Thread.class);
 		sub.createAlias("myMembers", "member");
+		if (!actor.isSuperAdmin())
+			sub.add(Restrictions.eq("member.user", actor));
 		sub.setProjection(Projections.id());
 
 		det.add(Subqueries.propertyIn("id", sub));

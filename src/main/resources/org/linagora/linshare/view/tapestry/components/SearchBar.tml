@@ -1,0 +1,12 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:container
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <div id="searchBar">
+        <form t:id="form" class="form-search text-center">
+            <div class="input-append">
+                <t:searchfield t:id="value" placeholder="${placeholder}" class="span7 search-query" result="5"/>
+                <button type="submit" class="btn"><i class="icon-search"/></button>
+            </div>
+        </form>
+    </div>
+</t:container>
