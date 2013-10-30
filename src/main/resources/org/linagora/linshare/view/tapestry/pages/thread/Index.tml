@@ -5,15 +5,7 @@
 
     <!-- Main content -->
     <div id="content">
-
         <h1>${message:pages.thread.index.title}</h1>
-
-        <t:messagePanel />
-        <t:businessMessagesDisplayer />
-
-
-        <!-- Action bar -->
-
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
@@ -25,63 +17,36 @@
                 </t:if>
                 </li>
             </ul>
-        </div><!-- id="actionBar" -->
-
-        <!-- Page content -->
-		<h2> ${message:pages.thread.admin.index.title}</h2>
-        <div id="pageContent">
-               	<fieldset  class="title_criteria_zone" id="userCriterion">
-				<legend align="top" class="palette">${message:global.button.search}</legend>	
-        		<table>
-					<tr>
-					<form t:type="form" t:id="formSearch">
-						<td>
-							<t:textfield t:id="searchThread"  t:validate="required" t:value="recipientsSearchThread" t:size="50"
-				    		class="recipientsPattern"
-				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
-				    	</td>
-				    	<td>
-        					<input type="submit" id="submit" value="${message:global.button.search}"/>
-        				</td>
-        				</form>
-        				<td>
-        				 	<form t:type="form" t:id="resetSearch">
-        						<input type="submit" id="stop" value="${message:global.button.reset}"/>
-        					</form>
-       					</td>
-        			</tr>
-        		</table>
-        		<p>${message:pages.thread.admin.notification}</p>
-        		</fieldset>
-			<div class="clear"></div>
-            <t:unless test="inSearch">
-            	<h2> ${message:pages.thread.index.chronoMessage}</h2>
-            </t:unless>
-            <t:grid source="threads" row="currentThread" include="name, creationDate, modificationDate" add="countDocuments" rowsPerPage="10">
-            
-                <p:nameCell>
-                    <t:actionlink t:id="showThreadContent" context="currentThread.lsUuid"> ${currentThread.name}</t:actionlink>
-                </p:nameCell>
-                <p:modificationDateCell>
-                    <span class="modificationDate">${modificationDate}</span>
-                </p:modificationDateCell>
-                <p:creationDateCell>
-                    <span class="creationDate">${creationDate}</span>
-                </p:creationDateCell>
-                <p:countDocumentsCell>
-                    <span class="countDocuments" style="text-align : center;">${countDocuments}</span>
-                </p:countDocumentsCell>
-                <p:empty>
-                    ${message:pages.thread.empty}
-                </p:empty>
-            </t:grid>
         </div>
+        <!-- Page content -->
+        <div id="pageContent">
+            <div id="threads">
+                <div id="searchBar">
+                    <t:searchBar t:id="threadSearch" t:value="pattern" t:placeholder="${message:pages.thread.index.placeholder}"/>
+                </div>
 
-    </div><!-- id="content" -->
-
-    <!-- Popups -->
-
-
-    <!-- Widgets -->
+                <t:if test="latest">
+                    <h2> ${message:pages.thread.index.chronoMessage}</h2>
+                </t:if>
+                <t:grid source="threads" row="current" include="name, creationDate, modificationDate" add="countDocuments" rowsPerPage="10">
+                    <p:nameCell>
+                        <t:actionlink t:id="showThreadContent" context="current.lsUuid"> ${current.name}</t:actionlink>
+                    </p:nameCell>
+                    <p:modificationDateCell>
+                        <span class="modificationDate">${modificationDate}</span>
+                    </p:modificationDateCell>
+                    <p:creationDateCell>
+                        <span class="creationDate">${creationDate}</span>
+                    </p:creationDateCell>
+                    <p:countDocumentsCell>
+                        <span class="countDocuments" style="text-align : center;">${count}</span>
+                    </p:countDocumentsCell>
+                    <p:empty>
+                        ${message:pages.thread.empty}
+                    </p:empty>
+                </t:grid>
+            </div>
+        </div>
+    </div>
 
 </t:MyBorderLayout>
