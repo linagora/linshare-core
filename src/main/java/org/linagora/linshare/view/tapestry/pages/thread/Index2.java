@@ -57,8 +57,6 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Import(library = { "../../components/jquery/jquery-1.7.2.js",
-					"../../components/bootstrap/js/bootstrap.js" })
 public class Index2 {
 
 	private static Logger logger = LoggerFactory.getLogger(Index2.class);
@@ -123,13 +121,6 @@ public class Index2 {
 		}
 	}
 	
-	/*
-	 * Hack: force bootstrap css to be the last stylesheet loaded
-	 */
-	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css" })
-	@AfterRender
-	public void cssInit() { }
-
 	public void onSuccessFromThreadSearch() throws BusinessException {
 		StringUtils.trim(pattern);
 		updateMailingLists();
