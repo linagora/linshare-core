@@ -4024,11 +4024,17 @@ input.ck-kaptcha {
 #searchBar input[type="search"] {
     height: 20px; /* 20px + 4px + 6px = 30px */
     padding: 4px 6px !important;
+    -webkit-border-radius: 8px 0 0 8px;
+       -moz-border-radius: 8px 0 0 8px;
+            border-radius: 8px 0 0 8px;
 }
 
 #searchBar .btn {
     height: 30px;
     width: 80px;
+    -webkit-border-radius: 0 8px 8px 0;
+       -moz-border-radius: 0 8px 8px 0;
+            border-radius: 0 8px 8px 0;
 }
 
 /**

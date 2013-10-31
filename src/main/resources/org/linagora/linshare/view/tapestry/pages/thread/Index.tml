@@ -16,6 +16,11 @@
                     </t:pageLink>
                 </t:if>
                 </li>
+                <li>
+                    <t:actionlink id="latests" class="button" title="${message:pages.thread.index.latests}">
+                        <span><img src="${asset:context:images/icons/icon-refresh.png}" alt="" /> ${message:pages.thread.index.latests}</span>
+                    </t:actionlink>
+                </li>
             </ul>
         </div>
         <!-- Page content -->

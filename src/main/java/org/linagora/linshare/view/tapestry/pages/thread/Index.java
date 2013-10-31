@@ -38,8 +38,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -117,13 +115,13 @@ public class Index {
 	@SetupRender
 	public void init() throws BusinessException {
 		if (StringUtils.isBlank(pattern)) {
-			updateMailingLists();
+			updateThreadList();
 		}
 	}
 	
 	public void onSuccessFromThreadSearch() throws BusinessException {
 		StringUtils.trim(pattern);
-		updateMailingLists();
+		updateThreadList();
 	}
 
     public Object onActionFromShowThreadContent(String lsUuid) {
@@ -136,6 +134,12 @@ public class Index {
     	return null;
     }
  
+    public Object onActionFromLatests() {
+    	threads = null;
+    	pattern = null;
+    	return null;
+    }
+
 	/*
 	 * Getters
 	 */
@@ -177,7 +181,7 @@ public class Index {
 	 * Helpers
 	 */
 	
-	private void updateMailingLists() throws BusinessException {
+	private void updateThreadList() throws BusinessException {
 		latest = threads == null;
 		if (latest) {
 			threads = threadEntryFacade.getLatestThreads(userVo, 10);
