@@ -6,6 +6,10 @@
     <!-- Main content -->
     <div id="content">
         <h1>${message:pages.thread.index.title}</h1>
+
+		<t:messagePanel />
+		<t:businessMessagesDisplayer />
+
         <div id="actionBar">
             <h4>Actions</h4>
             <ul>
