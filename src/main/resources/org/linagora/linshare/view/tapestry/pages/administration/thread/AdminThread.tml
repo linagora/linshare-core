@@ -51,13 +51,13 @@
         				<p>
         				<t:form id="formRadio">	
 							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="all" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>&nbsp;
+				                    <t:radio t:id="all"/>&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>&nbsp;
 				                    ${message:global.space}
-				                    <t:radio t:id="admin" onclick="this.form.submit()" />&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>&nbsp;
+				                    <t:radio t:id="admin"/>&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>&nbsp;
 				                    ${message:global.space}			                    
-				                    <t:radio t:id="simple" onclick="this.form.submit()" />&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>&nbsp;
+				                    <t:radio t:id="simple"/>&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>&nbsp;
 				                    ${message:global.space}
-				               		<t:radio t:id="restricted" onclick="this.form.submit()" />&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>&nbsp;
+				               		<t:radio t:id="restricted"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>&nbsp;
 				                    ${message:global.space}
 			               	</t:radiogroup>
 			            </t:form>
