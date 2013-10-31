@@ -182,13 +182,14 @@ public class Index {
 	 */
 	
 	private void updateThreadList() throws BusinessException {
-		latest = threads == null;
-		if (latest) {
+		if (threads == null) {
 			threads = threadEntryFacade.getLatestThreads(userVo, 10);
+			latest = true;
 		} else {
 			threads = StringUtils.isNotBlank(pattern) ?
 					threadEntryFacade.searchThread(userVo, pattern) :
 					threadEntryFacade.getAllMyThread(userVo);
+			latest = false;
 		}
 	}
 	
