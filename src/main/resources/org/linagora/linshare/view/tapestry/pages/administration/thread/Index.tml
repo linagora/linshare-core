@@ -5,121 +5,52 @@
 
     <!-- Main content -->
     <div id="content">
+        <h1>${message:pages.thread.admin.index.title}</h1>
 
-        <h1>${message:pages.thread.index.title}</h1>
+		<t:messagePanel />
+		<t:businessMessagesDisplayer />
 
-        <t:messagePanel />
-        <t:businessMessagesDisplayer />
-        
-               <div id="pageContent">
-               <h2> ${message:pages.thread.admin.index.title}</h2>
-               	<fieldset  class="title_criteria_zone" id="userCriterion">
-				<legend align="top" class="palette">${message:pages.thread.SearchByName}</legend>	
-        		<table>
-					<tr>
-					<form t:type="form" t:id="formSearch" >
-						<td>
-							<t:textfield t:id="searchThread" t:validate="required" t:value="recipientsSearchThread" t:size="50"
-				    		class="recipientsPattern"
-				    		title="${message:components.quickSharePopup.texarea.recipients.title}"
-				    		/>
-				    	</td>
-				    	<td>
-        					<input type="submit" id="submit" value="${message:global.button.search}"/>	
-        				</td>
-        				</form>
-        				<td>
-        				 	<form t:type="form" t:id="resetSearch">
-        						<input type="submit" id="stop" value="${message:global.button.reset}"/>
-        					</form>
-       					</td>
-        			</tr>
-        		</table>
-        		<p>${message:pages.thread.admin.notification}</p>
-        		</fieldset>
-			<div class="clear"></div>
-			    <fieldset style="width: 500;" class="title_criteria_zone" id="userCriterion">
-				<legend align="top" class="palette">${message:pages.thread.SearchByUser}</legend>
-			   
-				<table>
-					<tr>
-					<form t:type="form" t:id="formSearchByUser">
-						<td>
-							<t:textfield t:id="searchUser" t:validate="required" t:value="recipientsSearchUser" t:size="50"
-				    		class="recipientsPattern"
-				    		title="${message:components.quickSharePopup.texarea.recipients.title}"/>
-				    	</td>
-				    	<td>
-        					<input type="submit" id="submitSearchUser" value="${message:global.button.search}"/>
-        				</td>
-        				</form>
-        				<td>
-        				<form t:type="form" t:id="resetSearchByUser">
-        					<input type="submit" id="reset" value="${message:global.button.reset}"/>
-       					</form>
-       					</td>
-        			</tr>
-        			<tr>
-        				<td>
-        				<p>
-        				<t:form id="formRadio">	
-							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="all" onclick="this.form.submit()"/>&nbsp;<t:label for="all">${message:pages.thread.admin.button.all}</t:label>&nbsp;
-				                    ${message:global.space}
-				                    <t:radio t:id="admin" onclick="this.form.submit()"/>&nbsp;<t:label for="admin">${message:pages.thread.admin.button.admin}</t:label>&nbsp;
-				                    ${message:global.space}			                    
-				                    <t:radio t:id="simple" onclick="this.form.submit()"/>&nbsp;<t:label for="simple">${message:pages.thread.admin.button.simple}</t:label>&nbsp;
-				                    ${message:global.space}
-				               		<t:radio t:id="restricted" onclick="this.form.submit()"/>&nbsp;<t:label for="restricted">${message:pages.thread.admin.button.restricted}</t:label>&nbsp;
-				                    ${message:global.space}
-			               	</t:radiogroup>
-			            </t:form>
-        				</p>
-			        	</td>
-			        </tr>
-			        </table>
-        	</fieldset>
-        			<div class="clear"></div>
-            <t:grid source="threads" row="currentThread" include="name, creationDate, modificationDate" add="countDocuments,action"  rowsPerPage="10">
-                <p:nameCell>
-                    <t:actionlink t:id="showThreadContent" context="currentThread.lsUuid"> ${currentThread.name}</t:actionlink>
-                </p:nameCell>
-                <p:modificationDateCell>
-                    <span class="modificationDate">${modificationDate}</span>
-                </p:modificationDateCell>
-                <p:creationDateCell>
-                    <span class="creationDate">${creationDate}</span>
-                </p:creationDateCell>
-                <p:countDocumentsCell>
-                	<span class="countDocuments">${countDocuments}</span>
-                </p:countDocumentsCell>
-                <p:actionCell>
-                			<t:actionLink t:id="deleteThread" context="currentThread.lsUuid" t:zone="zoneConfirmDelete"
-							title="${message:pages.thread.admin.deleteButton}">
-							<span onclick="window_confirm.showCenter(true)">
-								<img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
-							</span>
-						</t:actionLink>
-                </p:actionCell>
-                <p:empty>
-                		<t:if test="firstConnect">
-                		 	${message:pages.thread.empty}
-                		 </t:if>
-                		    ${message:pages.thread.search}
-                </p:empty>
-
-            </t:grid>
+        <div id="actionBar">
+            <h4>Actions</h4>
         </div>
-        
-        
-   </div><!-- id="content" -->
+        <!-- Page content -->
+        <div id="pageContent">
+            <div id="threads">
+                <div id="searchBar">
+                    <t:searchBar t:id="threadSearch" t:value="pattern" t:placeholder="${message:pages.thread.index.placeholder}"/>
+                </div>
+
+                <t:grid source="threads" row="current" include="name, creationDate, modificationDate" add="countDocuments, action" rowsPerPage="10">
+                    <p:nameCell>
+                        <t:actionlink t:id="showAdmin" context="current.lsUuid"> ${current.name}</t:actionlink>
+                    </p:nameCell>
+                    <p:modificationDateCell>
+                        <span class="modificationDate">${modificationDate}</span>
+                    </p:modificationDateCell>
+                    <p:creationDateCell>
+                        <span class="creationDate">${creationDate}</span>
+                    </p:creationDateCell>
+                    <p:countDocumentsCell>
+                        <span class="countDocuments" style="text-align : center;">${count}</span>
+                    </p:countDocumentsCell>
+                    <p:actionCell>
+                        <t:actionLink t:id="delete" context="current.lsUuid" t:zone="zoneConfirmDelete"
+                        title="${message:pages.thread.admin.deleteButton}">
+                        <span onclick="window_confirm.showCenter(true)">
+                            <img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
+                        </span>
+                    </t:actionLink>
+                    </p:actionCell>
+                    <p:empty>
+                        ${message:pages.thread.empty}
+                    </p:empty>
+                </t:grid>
+            </div>
+        </div>
+   </div>
 
     <!-- Popups -->
-        <t:confirmPopup t:eventName="deleteThreadEvent"
-            t:messageLabel="${message:pages.thread.admin.confirmDelete}"/>
-    <!-- Widgets -->
-
-    <t:zone t:id="zoneConfirmDelete" />
+    <t:confirmPopup t:eventName="delete" t:messageLabel="${message:pages.thread.admin.confirmDelete}"/>
+    <t:zone t:id="zoneConfirmDelete"/>
 
 </t:MyBorderLayout>
-        

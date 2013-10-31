@@ -340,7 +340,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public List<ThreadVo> getLatestThreads(UserVo actorVo, int limit) 
+	public List<ThreadVo> getLatestThreads(UserVo actorVo, int limit)
 			throws BusinessException {
 		return toThreadVo(threadService.findLatestWhereMember(
 				findUser(actorVo), limit));

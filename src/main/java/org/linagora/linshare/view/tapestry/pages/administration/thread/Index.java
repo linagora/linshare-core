@@ -33,25 +33,26 @@
  */
 package org.linagora.linshare.view.tapestry.pages.administration.thread;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.annotations.InjectPage;
-import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
-import org.linagora.linshare.core.facade.UserFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
+import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,192 +60,136 @@ public class Index {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Index.class);
 	
-    @SessionState
-    @Property
-    private ShareSessionObjects shareSessionObjects;
+	/*
+	 * Tapestry properties
+	 */
 
-    @SessionState
-    @Property
-    private UserVo userVo;
-    
-    @Inject
-    private Messages messages;
-    
-    @Inject
-    private RecipientFavouriteFacade recipientFavouriteFacade;
-    
-    @Inject
-    private UserFacade userFacade;
-    
-    @Inject
-    private ThreadEntryFacade threadEntryFacade;
-    
-    @Persist
-    @Property
-    private String recipientsSearchThread;
-	
-    @Persist
-    @Property
-    private String recipientsSearchUser;
-    
-    @Persist
-    @Property
-    private String criteriaOnSearch;
-    
-	@Persist
-	@Property(write = false)
-	private boolean inSearch;
-	
-	@Property(write = false)
-	@Persist
-	private boolean fromReset;
-	
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
+
+	@SessionState
+	@Property
+	private UserVo userVo;
+
 	@Persist
 	@Property
-	private boolean firstConnect;
-	
+	private List<ThreadVo> threads;
+
+	@Persist
+	@Property
+	private String pattern;
+
     @Property
-    @Persist
-    private List<ThreadVo> threads;
+    private ThreadVo current;
     
+    @Persist
+    private ThreadVo delete;
+    
+	/*
+	 * Injected beans
+	 */
+
     @InjectPage
     private AdminThread adminThread;
-    
-    @Persist
-    @Property
-    private ThreadVo currentThread;
-    
-    @Property
-    @Persist(value="flash")
-    private ThreadVo threadToDelete;
-    
-    
-    @SetupRender
-    public void init() throws BusinessException{
-    	
-    	if(!inSearch){
-    			recipientsSearchThread = "*";
-    	    	criteriaOnSearch ="all";
-    	    	inSearch = true;
-		}
-    	
-    }
-    
-	public int getCountDocuments() {
-		try {
-			return threadEntryFacade.getAllThreadEntryVo(userVo, currentThread).size();
-		} catch (BusinessException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-    
-	public String getCreationDate() {
-		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
-		return formatter.format(currentThread.getCreationDate().getTime());
+
+	@Inject
+	private Messages messages;
+
+	@Inject
+	private ThreadEntryFacade threadEntryFacade;
+
+	@Inject
+	private BusinessMessagesManagementService businessMessagesManagementService;
+
+	public void onSuccessFromThreadSearch() throws BusinessException {
+		StringUtils.trim(pattern);
+		updateThreadList();
 	}
 
-	public String getModificationDate() {
-		SimpleDateFormat formatter = new SimpleDateFormat(messages.get("global.pattern.timestamp"));
-		return formatter.format(currentThread.getModificationDate().getTime());
-	}
-	
-    public Object onActionFromShowThreadContent(String lsUuid) {
-    	for(ThreadVo current : threads){
-    		if(current.getLsUuid().equals(lsUuid)){
-            	adminThread.setSelectedCurrentThread(current);
-    		}
-    	}
-    	return adminThread;
-    }
-    
-    public void onSuccessFromResetSearch() {
-       threads = null;
-       recipientsSearchUser = "";
-       inSearch = false;
-       fromReset=true;
-       firstConnect = true;
-    }
-   
-    public void onSuccessFromResetSearchByUser() {
-    	threads = null;
-    	criteriaOnSearch = "all";
-    	recipientsSearchUser = "";
-        inSearch = false;	
-        firstConnect = true;
-    }
-    
-    
-    public Object onSuccessFromFormSearchByUser() throws BusinessException {
-    	if(inSearch){
-    		threads = threadEntryFacade.getListOfThreadFromSearchByUser(userVo, criteriaOnSearch, recipientsSearchUser);
-    	} else {
-    		threads = null;
-    	}
-    	firstConnect = true;
+    public Object onActionFromShowAdmin(String lsUuid) {
+    	for (ThreadVo thread : threads) {
+			if (thread.getLsUuid().equals(lsUuid)) {
+		    	adminThread.setSelectedCurrentThread(thread);
+		    	return adminThread;
+			}
+		}
     	return null;
     }
-    
-	public Object onSuccessFromFormSearch() throws BusinessException{	
-		if(inSearch){
-			if(threads != null){
-				threads.clear();
+ 
+	public void onActionFromDelete(String lsUuid) {
+    	for (ThreadVo thread : threads) {
+			if (thread.getLsUuid().equals(lsUuid)) {
+				delete = thread;
+		    	return;
 			}
-			if(recipientsSearchThread.equals("*")){
-				threads = threadEntryFacade.getAllThread();
-			} else {
-				List<ThreadVo> lists = threadEntryFacade.getAllThread();
-				
-				for(ThreadVo current : lists){
-					if(current.getName().contains(recipientsSearchThread)){
-						threads.add(current);
-					}
-				}
-			}
-		} 
-		if(fromReset && inSearch == false){
-			threads = null;
 		}
-		firstConnect = true;
-		return null;
-	}
-	
-    public void onActionFromDeleteThread(String lsuuid) throws BusinessException {
-    	// FIXME
-    	//this.threadToDelete= threadEntryFacade.getThread(userVo, lsuuid);
-		logger.debug("thread to delete :"+threadToDelete.getName());
     }
 	
-	@OnEvent(value="deleteThreadEvent")
-	public void deleteThread() {
+	public boolean onDelete() throws BusinessException {
+		if (delete == null)
+			return true;
+		BusinessUserMessage msg;
+
 		try {
-			threadEntryFacade.deleteThread(userVo,threadToDelete);
+			threadEntryFacade.deleteThread(userVo, delete);
+			msg = new BusinessUserMessage(
+					BusinessUserMessageType.THREAD_DELETE_SUCCESS,
+					MessageSeverity.INFO, delete.getName());
+		} catch (Exception e) {
+			msg = new BusinessUserMessage(
+					BusinessUserMessageType.THREAD_DELETE_FAILED,
+					MessageSeverity.ERROR, delete.getName());
+		}
+		delete = null;
+		updateThreadList();
+		businessMessagesManagementService.notify(msg);
+		return true; // avoid bubbling
+	}
+
+	/*
+	 * Getters
+	 */
+
+	public int getCount() {
+		try {
+			return threadEntryFacade.countEntries(current);
 		} catch (BusinessException e) {
 			logger.error(e.getMessage());
 		}
-		List<ThreadVo> copy = new ArrayList<ThreadVo>(threads);
-		threads.clear();
-		for(ThreadVo current : copy){
-			if(!(current.getLsUuid().equals(threadToDelete.getLsUuid()))){
-				threads.add(current);
-			}
-		}
+		return 0;
+	}
+
+	public String getCreationDate() {
+		return getFormatter().format(current.getCreationDate().getTime());
+	}
+
+	public String getModificationDate() {
+		return getFormatter().format(current.getModificationDate().getTime());
+	}
+
+	/*
+	 * Exception Handling
+	 */
+
+	public Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 	
-	public String getAdmin() { 
-		return "admin"; 
+	/*
+	 * Helpers
+	 */
+	
+	private void updateThreadList() throws BusinessException {
+		threads = StringUtils.isNotBlank(pattern) ?
+				threadEntryFacade.searchThread(userVo, pattern) :
+				threadEntryFacade.getAllThread();
 	}
 	
-	public String getSimple() { 
-		return "simple"; 
+	private Format getFormatter() {
+		return new SimpleDateFormat(messages.get("global.pattern.timestamp"));
 	}
-	
-	public String getrestricted() { 
-		return "restricted"; 
-	}
-	
-	public String getAll() { 
-		return "all"; 
-	}
-	
 }

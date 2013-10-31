@@ -112,7 +112,7 @@ public class CreateThread {
 		} catch (BusinessException e) {
 			logger.error("Can not create thread : " + e.getMessage());
 			logger.debug(e.toString());
-    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.THREAD_CREATION_FAIL, MessageSeverity.ERROR));
+    		businessMessagesManagementService.notify(new BusinessUserMessage(BusinessUserMessageType.THREAD_CREATION_FAILED, MessageSeverity.ERROR));
 		}
 		name = null;
 		return Index.class;
