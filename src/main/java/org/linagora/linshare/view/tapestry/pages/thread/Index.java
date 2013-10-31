@@ -114,7 +114,7 @@ public class Index {
 
 	@SetupRender
 	public void init() throws BusinessException {
-		if (StringUtils.isBlank(pattern)) {
+		if (!latest) {
 			updateThreadList();
 		}
 	}
@@ -182,14 +182,13 @@ public class Index {
 	 */
 	
 	private void updateThreadList() throws BusinessException {
-		if (threads == null) {
+		latest = threads == null;
+		if (latest) {
 			threads = threadEntryFacade.getLatestThreads(userVo, 10);
-			latest = true;
 		} else {
 			threads = StringUtils.isNotBlank(pattern) ?
 					threadEntryFacade.searchThread(userVo, pattern) :
 					threadEntryFacade.getAllMyThread(userVo);
-			latest = false;
 		}
 	}
 	
