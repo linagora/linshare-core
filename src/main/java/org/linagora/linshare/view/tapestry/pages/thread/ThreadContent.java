@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
 public class ThreadContent {
 	private static final Logger logger = LoggerFactory.getLogger(ThreadContent.class);
 
-	// illimited file size
+	// unlimited file size
 	private static final long DEFAULT_MAX_FILE_SIZE = 0;
 
 	@SessionState
@@ -94,7 +94,7 @@ public class ThreadContent {
 	private String threadUuid;
 
 	@InjectPage
-	private AdminThread adminThread;
+	private Admin admin;
 
 	@Property
 	private ThreadEntryVo entry;
@@ -206,8 +206,8 @@ public class ThreadContent {
 	public Object onActionFromAdmin() {
 		if (!this.getAdmin())
 			return null;
-		adminThread.setSelectedCurrentThread(selectedThread);
-		return adminThread;
+		admin.setSelectedThread(selectedThread);
+		return admin;
 	}
 
 	public String getCurrentChildSubject() {
