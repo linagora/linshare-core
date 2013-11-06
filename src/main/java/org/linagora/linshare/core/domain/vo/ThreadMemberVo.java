@@ -33,16 +33,19 @@
  */
 package org.linagora.linshare.core.domain.vo;
 
+import org.linagora.linshare.core.domain.constants.ThreadRoles;
 import org.linagora.linshare.core.domain.entities.ThreadMember;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
-	
+
 	private UserVo user;
-	
+
 	private boolean canUpload;
-	
+
 	private boolean admin;
 
 	public ThreadMemberVo(ThreadMember threadMember) {
@@ -85,15 +88,15 @@ public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
 	}
-	
+
 	public String getMail() {
 		return user.getMail();
 	}
-	
+
 	public String getFullName() {
 		return user.getFullName();
 	}
-	
+
 	public String getLsUuid() {
 		return user.getLsUuid();
 	}
@@ -104,10 +107,11 @@ public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 			return o.admin ? this.user.compareTo(o.getUser()) : -1;
 		}
 		if (this.canUpload)
-			return o.admin ? 1 : o.canUpload ? this.user.compareTo(o.getUser()) : -1;
+			return o.admin ? 1 : o.canUpload ? this.user.compareTo(o.getUser())
+					: -1;
 		return o.admin || o.canUpload ? 1 : this.user.compareTo(o.getUser());
 	}
-	
+
 	/*
 	 * Transformers
 	 */
@@ -116,6 +120,29 @@ public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 			@Override
 			public ThreadMemberVo apply(ThreadMember arg0) {
 				return new ThreadMemberVo(arg0);
+			}
+		};
+	}
+
+	/*
+	 * Filters
+	 */
+	public static Predicate<ThreadMemberVo> hasRole(final ThreadRoles role) {
+		if (role == null)
+			return Predicates.alwaysTrue();
+		return new Predicate<ThreadMemberVo>() {
+			@Override
+			public boolean apply(ThreadMemberVo input) {
+				switch (role) {
+				case ADMIN:
+					return input.admin;
+				case NORMAL:
+					return input.canUpload && !input.admin;
+				case RESTRICTED:
+					return !(input.canUpload || input.admin);
+				default: /* NOT REACHED */
+					return true;
+				}
 			}
 		};
 	}

@@ -160,10 +160,10 @@
 									</t:actionLink>
 									</t:if>
 			  					<p:else>
-			  						<t:actionLink t:id="addUser" context="[result.domainIdentifier,result.mail]"
-			 	 						title="${message:pages.thread.addUser}">
-										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.thread.adduser}" />
-									</t:actionLink>
+			  						<t:actionlink t:id="adduser" context="[result.domainidentifier,result.mail]"
+			 	 						title="${message:pages.thread.adduser}">
+										<img src="${asset:context:images/popupimages/plus.png}" alt="${message:pages.thread.adduser}" />
+									</t:actionlink>
 			  					</p:else>
 								</t:if>
 			 				</t:parameter>

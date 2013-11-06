@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.linagora.linshare.core.domain.constants.TagType;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Tag;
@@ -443,17 +444,16 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 		List<UserVo> finalResults = new ArrayList<UserVo>();
 		User owner = (User) accountService.findByLsUuid(userVo.getLogin());
 
-		if (input != null) {
-			if (input.startsWith("\"") && input.endsWith(">")) {
-				UserVo tmp = MailCompletionService.getUserFromDisplay(input);
-				results = userService.searchUser(tmp.getMail(),
-						tmp.getFirstName(), tmp.getLastName(), null, owner);
-			} else {
-				results = performSearch(owner, input);
-			}
-			for (User currentUser : results) {
-				finalResults.add(new UserVo(currentUser));
-			}
+		input = StringUtils.defaultString(input);
+		if (input.startsWith("\"") && input.endsWith(">")) {
+			UserVo tmp = MailCompletionService.getUserFromDisplay(input);
+			results = userService.searchUser(tmp.getMail(),
+					tmp.getFirstName(), tmp.getLastName(), null, owner);
+		} else {
+			results = performSearch(owner, input);
+		}
+		for (User currentUser : results) {
+			finalResults.add(new UserVo(currentUser));
 		}
 		return finalResults;
 	}
@@ -469,6 +469,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 				currentThread);
 		List<User> listSelected = new ArrayList<User>();
 
+		input = StringUtils.defaultString(input);
 		if (input.startsWith("\"") && input.endsWith(">")) {
 			UserVo selected = MailCompletionService.getUserFromDisplay(input);
 			listSelected = userService.searchUser(selected.getMail(),

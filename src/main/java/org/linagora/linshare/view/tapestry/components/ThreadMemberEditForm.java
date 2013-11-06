@@ -92,6 +92,7 @@ public class ThreadMemberEditForm {
     
     @SetupRender
     public void init() {
+    	logger.debug("FOOBAR" + currentThread.getName());
     	member = null;
     	if (editMemberId == null) {
     		logger.debug("No member selected, identifier is null");

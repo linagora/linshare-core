@@ -190,13 +190,6 @@ public class AdminThread {
 	}
 
 	/*
-	 * Handle page layout with Tapestry Blocks
-	 */
-	public Object getType() {
-		return (member.isAdmin() ? adminBlock : member.isCanUpload() ? userBlock : restrictedUserBlock);
-	}
-
-	/*
 	 * Called externally before calling the page. Refer to Tapestry
 	 * Documentation about passing data from page to page Setup render will fail
 	 * if this is not called (currentThread would be null)
