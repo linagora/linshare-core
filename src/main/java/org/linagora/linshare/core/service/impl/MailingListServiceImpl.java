@@ -47,6 +47,7 @@ import org.linagora.linshare.core.exception.BusinessErrorCode;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.service.MailingListService;
 import org.linagora.linshare.core.service.UserService;
+import org.semanticdesktop.aperture.outlook.OutlookResource.Mail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,12 +127,12 @@ public class MailingListServiceImpl implements MailingListService {
 
 		User actor = userService.findByLsUuid(actorUuid);
 
-		if (criteriaOnSearch.equals(VisibilityType.All))
+		if (criteriaOnSearch.equals(VisibilityType.All.name()))
 			return mailingListBusinessService.searchListByUser(actor, pattern);
-		if (criteriaOnSearch.equals(VisibilityType.AllMyLists))
+		if (criteriaOnSearch.equals(VisibilityType.AllMyLists.name()))
 			return mailingListBusinessService.searchMyLists(actor, pattern);
 		return mailingListBusinessService.searchListByVisibility(actor,
-				criteriaOnSearch.equals(VisibilityType.Public), pattern);
+				criteriaOnSearch.equals(VisibilityType.Public.name()), pattern);
 	}
 
 	@Override
@@ -142,12 +143,12 @@ public class MailingListServiceImpl implements MailingListService {
 
 		User actor = userService.findByLsUuid(actorUuid);
 
-		if (criteriaOnSearch.equals(VisibilityType.All))
+		if (criteriaOnSearch.equals(VisibilityType.All.name()))
 			return mailingListBusinessService.findAllListByUser(actor);
-		if (criteriaOnSearch.equals(VisibilityType.AllMyLists))
+		if (criteriaOnSearch.equals(VisibilityType.AllMyLists.name()))
 			return mailingListBusinessService.findAllMyList(actor);
 		return mailingListBusinessService.findAllListByVisibility(actor,
-				criteriaOnSearch.equals(VisibilityType.Public));
+				criteriaOnSearch.equals(VisibilityType.Public.name()));
 	}
 
 	@Override

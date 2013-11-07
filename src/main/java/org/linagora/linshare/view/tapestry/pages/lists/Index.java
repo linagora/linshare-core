@@ -89,6 +89,10 @@ public class Index {
 	@Persist(value = "flash")
 	private String listToDelete;
 
+	@Persist
+	@Property
+	private VisibilityType visibility;
+
 	@Inject
 	private MailingListFacade mailingListFacade;
 
@@ -182,6 +186,8 @@ public class Index {
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
+		criteriaOnSearch = visibility != null ?
+				visibility.name() : VisibilityType.All.toString();
 		lists = mailingListFacade.setListFromSearch(loginUser, targetLists, criteriaOnSearch);
 		fromCreate = false;
 	}
@@ -205,22 +211,6 @@ public class Index {
 
 	public boolean isEmptyList() {
 		return lists.isEmpty();
-	}
-
-	public String getPublic() {
-		return VisibilityType.Public.toString();
-	}
-
-	public String getPrivate() {
-		return VisibilityType.Private.toString();
-	}
-
-	public String getAll() {
-		return VisibilityType.All.toString();
-	}
-
-	public String getAllMyLists() {
-		return VisibilityType.AllMyLists.toString();
 	}
 
 	public boolean isFromCreate() {

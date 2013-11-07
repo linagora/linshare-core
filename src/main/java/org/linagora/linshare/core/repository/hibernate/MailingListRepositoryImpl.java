@@ -130,8 +130,9 @@ public class MailingListRepositoryImpl extends AbstractRepositoryImpl<MailingLis
 
 	@Override
 	public List<MailingList> findAllMyList(User user) {
-		if (user.isSuperAdmin())
+		if (user.isSuperAdmin()) {
 			return findAll();
+		}
 
 		DetachedCriteria det = DetachedCriteria.forClass(getPersistentClass());
 
