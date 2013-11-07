@@ -154,6 +154,9 @@ public interface ThreadEntryFacade {
 	public List<ThreadVo> getLatestThreads(UserVo actorVo, int limit)
 			throws BusinessException;
 
+	public int countMembers(UserVo actorVo, ThreadVo threadVo)
+			throws BusinessException;
+
 	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
 			throws BusinessException;
 
@@ -256,5 +259,4 @@ public interface ThreadEntryFacade {
 	public void setTagsToThreadEntries(UserVo actorVo, ThreadVo threadVo,
 			List<ThreadEntryVo> threadEntriesVo, List<TagVo> tags)
 			throws BusinessException;
-
 }

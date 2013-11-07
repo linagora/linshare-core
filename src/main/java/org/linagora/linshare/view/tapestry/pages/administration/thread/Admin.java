@@ -1,4 +1,4 @@
-package org.linagora.linshare.view.tapestry.pages.thread;
+package org.linagora.linshare.view.tapestry.pages.administration.thread;
 
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -46,24 +46,15 @@ public class Admin {
 	public Object onActivate() {
 		if (thread == null) {
 			logger.info("No thread selected, abort");
-			return ThreadContent.class;
-		}
-		try {
-			if (!threadEntryFacade.userIsAdmin(userVo, thread)) {
-				logger.info("Unauthorized");
-				return ThreadContent.class;
-			}
-		} catch (BusinessException e) {
-			e.printStackTrace();
-			return ThreadContent.class;
+			return Index.class;
 		}
 		return null;
 	}
-
+	
 	public void setSelectedThread(ThreadVo thread) {
 		this.thread = thread;
 	}
-
+	
 	public void onDelete() throws BusinessException {
 		threadEntryFacade.deleteThread(userVo, thread);
 	}

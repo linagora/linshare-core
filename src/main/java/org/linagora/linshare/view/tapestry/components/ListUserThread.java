@@ -78,12 +78,9 @@ public class ListUserThread {
 	}
 
 	public void onActionFromAdd(String uuid) throws BusinessException {
-		for (UserVo u : users) {
-			if (u.getLsUuid().equals(uuid))
-				threadEntryFacade.addMember(userVo, thread,
-						u.getDomainIdentifier(), u.getMail());
-			return;
-		}
+		UserVo u = Iterables.find(users, UserVo.equalTo(uuid));
+		threadEntryFacade.addMember(userVo, thread, u.getDomainIdentifier(),
+				u.getMail());
 	}
 
 	public void updateUserList() throws BusinessException {

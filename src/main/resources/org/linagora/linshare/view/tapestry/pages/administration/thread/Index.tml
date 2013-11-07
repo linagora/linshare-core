@@ -18,31 +18,33 @@
             <div id="threads">
                 <t:searchBar t:id="threadSearch" t:value="pattern" t:placeholder="${message:pages.thread.index.placeholder}"/>
 
-                <t:grid source="threads" row="current" include="name, creationDate, modificationDate" add="countDocuments, action" rowsPerPage="10">
-                    <p:nameCell>
-                        <t:actionlink t:id="showAdmin" context="current.lsUuid"> ${current.name}</t:actionlink>
-                    </p:nameCell>
-                    <p:modificationDateCell>
-                        <span class="modificationDate">${modificationDate}</span>
-                    </p:modificationDateCell>
-                    <p:creationDateCell>
-                        <span class="creationDate">${creationDate}</span>
-                    </p:creationDateCell>
-                    <p:countDocumentsCell>
-                        <span class="countDocuments" style="text-align : center;">${count}</span>
-                    </p:countDocumentsCell>
-                    <p:actionCell>
-                        <t:actionLink t:id="delete" context="current.lsUuid" t:zone="zoneConfirmDelete"
-                        title="${message:pages.thread.admin.deleteButton}">
-                        <span onclick="window_confirm.showCenter(true)">
-                            <img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
-                        </span>
-                    </t:actionLink>
-                    </p:actionCell>
-                    <p:empty>
-                        ${message:pages.thread.empty}
-                    </p:empty>
-                </t:grid>
+                <t:if t:test="show">
+                    <t:grid source="threads" row="current" include="name, creationDate, modificationDate" add="countDocuments, action" rowsPerPage="10">
+                        <p:nameCell>
+                            <t:actionlink t:id="showAdmin" context="current.lsUuid"> ${current.name}</t:actionlink>
+                        </p:nameCell>
+                        <p:modificationDateCell>
+                            <span class="modificationDate">${modificationDate}</span>
+                        </p:modificationDateCell>
+                        <p:creationDateCell>
+                            <span class="creationDate">${creationDate}</span>
+                        </p:creationDateCell>
+                        <p:countDocumentsCell>
+                            <span class="countDocuments" style="text-align : center;">${count}</span>
+                        </p:countDocumentsCell>
+                        <p:actionCell>
+                            <t:actionLink t:id="delete" context="current.lsUuid" t:zone="zoneConfirmDelete"
+                            title="${message:pages.thread.admin.deleteButton}">
+                            <span onclick="window_confirm.showCenter(true)">
+                                <img src="${asset:context:images/icons/delete-small.png}" alt="${message:global.button.delete}" />
+                            </span>
+                        </t:actionLink>
+                        </p:actionCell>
+                        <p:empty>
+                            ${message:pages.thread.empty}
+                        </p:empty>
+                    </t:grid>
+                </t:if>
             </div>
         </div>
    </div>

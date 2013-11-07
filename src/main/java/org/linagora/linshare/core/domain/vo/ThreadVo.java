@@ -39,6 +39,8 @@ import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.Thread;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 public class ThreadVo extends AccountVo {
 	
@@ -48,7 +50,6 @@ public class ThreadVo extends AccountVo {
 	
 	@NonVisual
 	protected ThreadViewVo view;
-
 
 	// constructor just for test
 	public ThreadVo(String uuid, String name) {
@@ -120,5 +121,12 @@ public class ThreadVo extends AccountVo {
 				return new ThreadVo(arg0);
 			}
 		};
+	}
+	
+	/*
+	 * Filters
+	 */
+	public static Predicate<ThreadVo> equalTo(final String uuid) {
+		return Predicates.equalTo(new ThreadVo(uuid, ""));
 	}
 }

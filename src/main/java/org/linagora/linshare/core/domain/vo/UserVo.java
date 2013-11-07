@@ -42,6 +42,8 @@ import org.linagora.linshare.core.domain.entities.Guest;
 import org.linagora.linshare.core.domain.entities.Role;
 import org.linagora.linshare.core.domain.entities.User;
 
+import com.google.common.base.Predicate;
+
 /**
  * @author ncharles
  * 
@@ -370,5 +372,17 @@ public class UserVo implements Serializable, Comparable<UserVo> {
 	public int compareTo(UserVo o) {
 		int res = this.lastName.compareToIgnoreCase(o.lastName);
 		return res != 0 ? res : this.firstName.compareToIgnoreCase(o.firstName);
+	}
+
+	/*
+	 * Filters
+	 */
+	public static Predicate<UserVo> equalTo(final String uuid) {
+		return new Predicate<UserVo>() {
+			@Override
+			public boolean apply(UserVo input) {
+				return input.getLsUuid().equals(uuid);
+			}
+		};
 	}
 }
