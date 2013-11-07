@@ -252,7 +252,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	public void addMember(UserVo actorVo, ThreadVo threadVo, UserVo newMember,
 			boolean readOnly) throws BusinessException {
 		threadService.addMember(findUser(actorVo), findThread(threadVo),
-				findUser(newMember), readOnly);
+				findOrCreateUser(newMember), readOnly);
 	}
 
 	@Override
@@ -390,6 +390,17 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	
 	private User findUser(UserVo userVo) throws BusinessException {
 		User u = (User) accountService.findByLsUuid(userVo.getLsUuid());
+	
+		if (u == null) {
+			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
+					"Cannot find user : " + userVo.getLsUuid());
+		}
+		return u;
+	}
+	
+	private User findOrCreateUser(UserVo userVo) throws BusinessException {
+		User u = userService.findOrCreateUser(userVo.getMail(),
+				userVo.getDomainIdentifier());
 	
 		if (u == null) {
 			throw new BusinessException(BusinessErrorCode.USER_NOT_FOUND,
