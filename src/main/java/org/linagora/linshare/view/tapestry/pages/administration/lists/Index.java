@@ -37,6 +37,11 @@ package org.linagora.linshare.view.tapestry.pages.administration.lists;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.EnumerationUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.enums.EnumUtils;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
@@ -46,8 +51,11 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Grid;
+import org.apache.tapestry5.corelib.components.Select;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.util.EnumSelectModel;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -58,6 +66,11 @@ import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 @Import(library = { "../../../components/jquery/jquery-1.7.2.js" })
 public class Index {
@@ -85,6 +98,10 @@ public class Index {
 	@Property
 	@Persist(value = "flash")
 	private String listToDelete;
+
+	@Persist
+	@Property
+	private VisibilityType visibility;
 
 	@Inject
 	private MailingListFacade mailingListFacade;
@@ -167,6 +184,8 @@ public class Index {
 
 	public void onSuccessFromForm() throws BusinessException {
 		inSearch = true;
+		criteriaOnSearch = visibility != null ?
+				visibility.name() : VisibilityType.All.toString();
 		lists = mailingListFacade.setListFromSearch(loginUser, targetLists, criteriaOnSearch);
 	}
 
@@ -197,18 +216,6 @@ public class Index {
 		return list.isPublic();
 	}
 
-	public String getPublic() {
-		return VisibilityType.Public.name();
-	}
-
-	public String getPrivate() {
-		return VisibilityType.Private.name();
-	}
-
-	public String getAll() {
-		return VisibilityType.All.name();
-	}
-
 	public boolean isEmptyList() {
 		return lists.isEmpty();
 	}
@@ -217,4 +224,9 @@ public class Index {
 		return inSearch;
 	}
 
+	public SelectModel getVisibilityTypeModel() {
+		return new EnumSelectModel(VisibilityType.class, messages,
+				(VisibilityType[]) ArrayUtils.removeElement(
+						VisibilityType.values(), VisibilityType.AllMyLists));
+	}
 }

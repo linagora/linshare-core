@@ -23,6 +23,9 @@
 						<td>
 							<t:textfield t:id="search" value="targetLists" t:validate="required"/>
 						</td>
+                        <td>
+                            <t:select t:id="visibility"/>
+                        </td>
 						<td>
 						     <input type="submit" value="${message:global.button.search}"/>
 						</td>
@@ -34,18 +37,6 @@
 						</td>
 					</tr>
 				</table>
-				<t:form id="formRadio">	
-							<t:radiogroup t:id="searchCriteria" t:value="criteriaOnSearch">
-				                    <t:radio t:id="Public" onclick="this.form.submit()"/>&nbsp;<t:label for="public">${message:pages.lists.radioGroupPub}</t:label>
-				                    ${message:global.space}
-				                    <t:radio t:id="Private" onclick="this.form.submit()" />&nbsp;<t:label for="private">${message:pages.lists.radioGroupPriv}</t:label>
-				                    ${message:global.space}				                    
-				                    <t:radio t:id="All" onclick="this.form.submit()" />&nbsp;<t:label for="all">${message:pages.lists.radioGroupAll}</t:label>
-				                    ${message:global.space}
-				                    <t:radio t:id="AllMyLists" onclick="this.form.submit()" />&nbsp;<t:label for="allMyLists">${message:pages.lists.radioGroupAllMyLists}</t:label>
-				                    ${message:global.space}
-			               	</t:radiogroup>
-			    </t:form>
 			</fieldset>
 				  <div class="clear"></div>
 		${message:pages.lists.notification}

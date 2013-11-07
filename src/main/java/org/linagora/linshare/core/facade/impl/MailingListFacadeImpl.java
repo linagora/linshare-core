@@ -167,11 +167,8 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public boolean identifierIsAvailable(UserVo user, String purposedIdentifier) {
-		if (mailingListService.findByIdentifier(user.getLsUuid(), purposedIdentifier) == null) {
-			return true;
-		} else {
-			return false;
-		}
+		return mailingListService.findByIdentifier(user.getLsUuid(),
+				purposedIdentifier) == null;
 	}
 
 	@Override
