@@ -56,6 +56,8 @@ import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+
 public class Index {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Index.class);
@@ -80,6 +82,10 @@ public class Index {
 	@Property
 	private String pattern;
 
+	@Persist
+	@Property
+	private boolean show;
+
     @Property
     private ThreadVo current;
     
@@ -91,7 +97,7 @@ public class Index {
 	 */
 
     @InjectPage
-    private AdminThread adminThread;
+    private Admin admin;
 
 	@Inject
 	private Messages messages;
@@ -103,27 +109,19 @@ public class Index {
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
 	public void onSuccessFromThreadSearch() throws BusinessException {
+		show = true;
 		StringUtils.trim(pattern);
 		updateThreadList();
 	}
 
     public Object onActionFromShowAdmin(String lsUuid) {
-    	for (ThreadVo thread : threads) {
-			if (thread.getLsUuid().equals(lsUuid)) {
-		    	adminThread.setSelectedCurrentThread(thread);
-		    	return adminThread;
-			}
-		}
-    	return null;
+		admin.setSelectedThread(Iterables.find(threads,
+				ThreadVo.equalTo(lsUuid)));
+		return admin;
     }
  
 	public void onActionFromDelete(String lsUuid) {
-    	for (ThreadVo thread : threads) {
-			if (thread.getLsUuid().equals(lsUuid)) {
-				delete = thread;
-		    	return;
-			}
-		}
+		delete = Iterables.find(threads, ThreadVo.equalTo(lsUuid));
     }
 	
 	public boolean onDelete() throws BusinessException {

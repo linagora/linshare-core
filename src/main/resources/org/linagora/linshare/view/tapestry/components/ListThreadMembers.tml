@@ -4,7 +4,7 @@
 
     <div id="listThreadMembers">
         <fieldset>
-            <legend>${message:pages.thread.admin.members}</legend>
+            <legend>${message:pages.thread.admin.members}${countMembers}</legend>
             <t:searchBar t:id="memberSearch" t:value="pattern" t:placeholder="${message:pages.thread.admin.member.placeholder}"/>
 
             <t:if test="show">
@@ -54,14 +54,6 @@
         </div>
         <div t:id="memberEditWindow">
             <t:zone id="memberEditFormZone" update="show"/>
-        </div>
-        <div style="display:none">
-            <t:zone t:id="threadEditTemplateZone">
-                <t:threadEditForm currentThread="thread" />
-            </t:zone>
-        </div>
-        <div t:id="threadEditWindow">
-            <t:zone id="threadEditFormZone" update="show" />
         </div>
 
 	    <!-- Delete member confirm popup -->

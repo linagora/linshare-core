@@ -23,13 +23,11 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.core.facade.UserFacade;
-import org.linagora.linshare.view.tapestry.enums.UserTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 public class ListThreadMembers {
 
@@ -43,20 +41,14 @@ public class ListThreadMembers {
 	@Property
 	private ThreadVo thread;
 	
-	@Component(parameters = { "style=bluelighting", "show=false", "width=520", "height=180" })
+	@Component(parameters = { "style=bluelighting", "show=false", "width=650", "height=225" })
 	private WindowWithEffects memberEditWindow;
-
-	@Component(parameters = { "style=bluelighting", "show=false", "width=520", "height=180" })
-	private WindowWithEffects threadEditWindow;
 
 	@InjectComponent
 	private ConfirmPopup confirmPopup;
 
 	@InjectComponent
 	private Zone memberEditTemplateZone;
-
-	@InjectComponent
-	private Zone threadEditTemplateZone;
 
 	@InjectComponent
 	private Zone reloadZone;
@@ -126,26 +118,14 @@ public class ListThreadMembers {
 		return memberEditTemplateZone;
 	}
 
-	public Zone onActionFromEditThread() {
-		logger.info("Trying to edit current thread ");
-		return threadEditTemplateZone;
-	}
-
 	public void onActionFromDeleteMember(String identifier) {
-		logger.info("Trying to delete a member.");
-
-		for (ThreadMemberVo m : members) {
-			logger.debug(m.getLsUuid() + " compared to parameter " + identifier);
-			if (m.getLsUuid().equals(identifier)) {
-				selectedMemberId = identifier;
-				toDelete = m;
-				logger.info("Trying to delete " + toDelete.getLsUuid());
-			}
-		}
+		toDelete = Iterables.find(members, ThreadMemberVo.equalTo(identifier));
+		selectedMemberId = identifier;
 	}
 
 	public void onDeleteMember() {
 		try {
+			logger.info("Trying to delete " + toDelete.getLsUuid());
 			threadEntryFacade.deleteMember(userVo, thread, toDelete);
 			members = threadEntryFacade.getThreadMembers(userVo, thread);
 		} catch (BusinessException e) {
@@ -170,7 +150,17 @@ public class ListThreadMembers {
 	public boolean getIsDeletable() throws BusinessException {
 		return threadEntryFacade.memberIsDeletable(userVo, thread);
 	}
-	
+
+	public String getCountMembers() {
+		try {
+			return " (Total : "
+					+ threadEntryFacade.countMembers(userVo, thread) + ")";
+		} catch (BusinessException e) {
+			logger.info("Couldn't get thread's members count.");
+			return "";
+		}
+	}
+
 	/*
 	 * Helpers
 	 */

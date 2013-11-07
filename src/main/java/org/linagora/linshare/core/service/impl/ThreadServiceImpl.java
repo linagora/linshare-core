@@ -163,7 +163,7 @@ public class ThreadServiceImpl implements ThreadService {
 	@Override
 	public Set<ThreadMember> getMembers(User actor, Thread thread)
 			throws BusinessException {
-		if (getMemberFromUser(thread, actor) == null)
+		if (getMemberFromUser(thread, actor) == null && !actor.isSuperAdmin())
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
 					"Actor is not a member of the thread.");
 		return thread.getMyMembers();

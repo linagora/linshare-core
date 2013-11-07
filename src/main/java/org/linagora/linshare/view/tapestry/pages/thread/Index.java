@@ -55,6 +55,8 @@ import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+
 public class Index {
 
 	private static Logger logger = LoggerFactory.getLogger(Index.class);
@@ -125,13 +127,9 @@ public class Index {
 	}
 
     public Object onActionFromShowThreadContent(String lsUuid) {
-    	for (ThreadVo thread : threads) {
-			if (thread.getLsUuid().equals(lsUuid)) {
-		    	threadContent.setMySelectedThread(thread);
-		    	return threadContent;
-			}
-		}
-    	return null;
+		threadContent.setMySelectedThread(Iterables.find(threads,
+				ThreadVo.equalTo(lsUuid)));
+		return threadContent;
     }
  
     public Object onActionFromLatests() {

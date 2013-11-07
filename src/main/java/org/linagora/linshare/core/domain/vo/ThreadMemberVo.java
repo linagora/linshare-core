@@ -146,4 +146,13 @@ public class ThreadMemberVo implements Comparable<ThreadMemberVo> {
 			}
 		};
 	}
+	
+	public static Predicate<ThreadMemberVo> equalTo(final String identifier) {
+		return new Predicate<ThreadMemberVo>() {
+			@Override
+			public boolean apply(ThreadMemberVo input) {
+				return input.getLsUuid().equals(identifier);
+			}
+		};
+	}
 }

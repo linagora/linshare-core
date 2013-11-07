@@ -76,6 +76,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 
 	private static final Logger logger = LoggerFactory
@@ -348,11 +350,17 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	}
 
 	@Override
-	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
+	public int countMembers(UserVo actorVo, ThreadVo threadVo)
 			throws BusinessException {
-		return threadService.countMembers(findThread(threadVo)) != 1;
+		return threadService.countMembers(findThread(threadVo));
 	}
 
+	@Override
+	public boolean memberIsDeletable(UserVo actorVo, ThreadVo threadVo)
+			throws BusinessException {
+		return countMembers(actorVo, threadVo) != 1;
+	}
+	
 
 	/*
 	 * Helpers.
@@ -514,6 +522,7 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 				}
 			}
 		}
+		Collections.sort(finalResults);
 		return finalResults;
 	}
 
