@@ -35,7 +35,9 @@ package org.linagora.linshare.core.facade.impl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +73,9 @@ import org.linagora.linshare.view.tapestry.services.impl.MailCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
@@ -174,8 +178,19 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 			ThreadVo threadVo) throws BusinessException {
 		List<ThreadEntry> threadEntries = threadEntryService.findAllThreadEntries(
 						findUser(actorVo), findThread(threadVo));
-		 Collections.sort(threadEntries);
-		return toThreadEntryVo(threadEntries);
+		
+			
+		Function<ThreadEntry, Calendar> getCreationDateFunction = new Function<ThreadEntry, Calendar>() {
+		    public Calendar apply(ThreadEntry from) {
+		        return from.getCreationDate();
+		    }
+		};
+		
+		Ordering<ThreadEntry> creationDateOrdering = Ordering.natural().onResultOf(getCreationDateFunction);
+		ImmutableSortedSet<ThreadEntry> sortedThreadEntries = ImmutableSortedSet.orderedBy(
+				creationDateOrdering).addAll(threadEntries).build().descendingSet();
+
+		return toThreadEntryVo(sortedThreadEntries);
 	}
 
 	@Override
