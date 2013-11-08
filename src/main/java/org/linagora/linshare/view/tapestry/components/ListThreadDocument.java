@@ -40,7 +40,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -209,7 +208,6 @@ public class ListThreadDocument {
      * Initialization of the selected list and set the userLogin from the user ASO.
      * @throws BusinessException 
      */
-    @SuppressWarnings("unchecked")
     @SetupRender
     public void init() throws BusinessException {
     	
@@ -218,7 +216,6 @@ public class ListThreadDocument {
     	
         if (listThreadEntries == null)
             return;
-        Collections.sort(listThreadEntries);
         initModel();
     }
 

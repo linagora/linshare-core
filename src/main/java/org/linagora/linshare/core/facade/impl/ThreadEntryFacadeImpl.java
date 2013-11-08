@@ -172,8 +172,10 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException {
-		return toThreadEntryVo(threadEntryService.findAllThreadEntries(
-				findUser(actorVo), findThread(threadVo)));
+		List<ThreadEntry> threadEntries = threadEntryService.findAllThreadEntries(
+						findUser(actorVo), findThread(threadVo));
+		 Collections.sort(threadEntries);
+		return toThreadEntryVo(threadEntries);
 	}
 
 	@Override
