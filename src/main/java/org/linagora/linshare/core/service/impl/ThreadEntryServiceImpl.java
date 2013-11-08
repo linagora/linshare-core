@@ -199,6 +199,7 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 		if (!this.isThreadMember((Thread) threadEntry.getEntryOwner(), (User) actor)) {
 			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to get this document.");
 		}
+		logEntryService.create(new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_DOWNLOAD_ENTRY, "Downloading a file in a thread."));
 		return documentEntryBusinessService.getDocumentStream(threadEntry);
 	}
 
