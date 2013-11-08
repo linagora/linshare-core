@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+#set -x
 
 #if [ $# -ne 1 ] ; then
 #	echo "ERROR: the first an unique argument is the linshare version number, ex 0.9.3"
@@ -11,6 +12,9 @@ set -e
 ############################################################
 # Argument : optional : build function name, ex: build_sso
 g_main_function=$1
+g_set_current_revision=0
+[ ! -z "${2}" ] && g_set_current_revision=1
+
 
 
 g_version=`grep -E "<version>(.*)</version>" pom.xml -o|head -n1|sed -r 's/<version>(.*)<\/version>/\1/g'`
@@ -20,7 +24,8 @@ g_mvn_opts="-Dmaven.test.skip"
 g_output_dir="./target"
 g_distribution_dir="./distrib"
 g_ressources="./src/main/resources"
-
+g_revision=""
+g_revision=$(svn info |grep "^Révision"|head -n1|cut -d' ' -f2)
 
 ############################################################
 # FUNCTIONS
@@ -66,6 +71,11 @@ function distribute_war ()
 	local l_extension="war"
 	local l_root_name="linshare"
 	local l_ouput_name="linshare-${l_version}"
+	if [ ${g_set_current_revision} -eq 1 ] ; then
+		if [ ! -z "${g_revision}" ] ; then
+			l_ouput_name="${l_ouput_name}-r${g_revision}"
+		fi
+	fi
 
 	if [ "${l_suffix}" != "" ] ; then
 		l_ouput_name="${l_ouput_name}${l_suffix}"
@@ -80,6 +90,7 @@ function init_context ()
 {
 	### Initialisation du workspace.
 	echo_linshare "Log file : ${g_logfile}"
+	echo_linshare "Current revision : ${g_revision}"
 	echo_linshare "Building LinShare ${g_version} distribution"
 	echo_linshare "Creating distrib dir..."
 	cd $(dirname $0)
