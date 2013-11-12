@@ -40,6 +40,8 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,7 +62,9 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
+import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.grid.ColumnSort;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
@@ -81,6 +85,8 @@ import org.linagora.linshare.view.tapestry.pages.thread.ThreadContent;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 
 @Import(library= { "ListThreadDocument.js"})
@@ -204,6 +210,8 @@ public class ListThreadDocument {
      * Phase render
      *********************************/
 
+    @InjectComponent
+    private Grid grid;
     /**
      * Initialization of the selected list and set the userLogin from the user ASO.
      * @throws BusinessException 
@@ -217,6 +225,16 @@ public class ListThreadDocument {
         if (listThreadEntries == null)
             return;
         initModel();
+
+        /*
+         * Default to descending order of creation date column
+         */
+		if (grid.getSortModel().getSortConstraints().isEmpty()) {
+			while (!grid.getSortModel().getColumnSort("creationDate")
+					.equals(ColumnSort.DESCENDING)) {
+				grid.getSortModel().updateSort("creationDate");
+			}
+		}
     }
 
     /***************************************************************************
@@ -327,14 +345,8 @@ public class ListThreadDocument {
         sorterModel = new ThreadEntrySorterModel(listThreadEntries);
         model = beanModelSource.createDisplayModel(ThreadEntryVo.class, componentResources.getMessages());
         model.add("fileProperties", null);
-        if (admin) {
-        	model.add("fileDelete", null);
-        }
         List<String> reorderlist = new ArrayList<String>();
         reorderlist.add("fileProperties");
-        if (admin) {
-        	reorderlist.add("fileDelete");
-        }
         model.reorder(reorderlist.toArray(new String[reorderlist.size()]));
 
         return model;
