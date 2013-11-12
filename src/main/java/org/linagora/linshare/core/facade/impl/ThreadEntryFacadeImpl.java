@@ -176,21 +176,8 @@ public class ThreadEntryFacadeImpl implements ThreadEntryFacade {
 	@Override
 	public List<ThreadEntryVo> getAllThreadEntryVo(UserVo actorVo,
 			ThreadVo threadVo) throws BusinessException {
-		List<ThreadEntry> threadEntries = threadEntryService.findAllThreadEntries(
-						findUser(actorVo), findThread(threadVo));
-		
-			
-		Function<ThreadEntry, Calendar> getCreationDateFunction = new Function<ThreadEntry, Calendar>() {
-		    public Calendar apply(ThreadEntry from) {
-		        return from.getCreationDate();
-		    }
-		};
-		
-		Ordering<ThreadEntry> creationDateOrdering = Ordering.natural().onResultOf(getCreationDateFunction);
-		ImmutableSortedSet<ThreadEntry> sortedThreadEntries = ImmutableSortedSet.orderedBy(
-				creationDateOrdering).addAll(threadEntries).build().descendingSet();
-
-		return toThreadEntryVo(sortedThreadEntries);
+		return toThreadEntryVo(threadEntryService.findAllThreadEntries(
+				findUser(actorVo), findThread(threadVo)));
 	}
 
 	@Override

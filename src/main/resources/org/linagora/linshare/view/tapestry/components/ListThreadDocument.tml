@@ -14,7 +14,7 @@
 
         <t:form t:id="search">
 
-            <t:grid source="listThreadEntries" row="threadEntry" include="fileName, size, creationDate"
+            <t:grid t:id="grid" source="listThreadEntries" row="threadEntry" include="fileName, size, creationDate" model="model"
                 exclude="ownerLogin, identifier, type, shared, shareActive, fileComment, downloaded, actions, expirationDate" add="fileEdit, fileDelete"
                 rowsPerPage="10">
 
