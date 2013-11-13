@@ -214,6 +214,15 @@ public abstract class AbstractRepositoryImpl<T> implements AbstractRepository<T>
         return hibernateTemplate.findByCriteria(criteria, -1, limit);
     }
     
+    /** Find by criteria.
+     * @param a detached criteria.
+     * @return search result.
+     */
+    @SuppressWarnings("rawtypes")
+	protected List listByCriteria(final DetachedCriteria criteria) {
+    	return hibernateTemplate.findByCriteria(criteria);
+    }
+    
     protected Class<T> getPersistentClass() {
     	return persistentClass;
     }

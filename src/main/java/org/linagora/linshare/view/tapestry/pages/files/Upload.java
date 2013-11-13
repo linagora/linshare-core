@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Import;
@@ -95,7 +96,8 @@ public class Upload {
 	private static final long DEFAULT_MAX_FILE_SIZE = 0;
 
 	/* ***********************************************************
-	 * Parameters ***********************************************************
+	 * Parameters
+	 * ***********************************************************
 	 */
 
 	/* ***********************************************************
@@ -112,15 +114,15 @@ public class Upload {
 	@Property
 	private Form uploaderForm;
 
-	@Persist("flash")
+	@Persist(PersistenceConstants.FLASH)
 	@Property
 	private String uuids;
 
-	@Persist("flash")
+	@Persist(PersistenceConstants.FLASH)
 	@Property
 	private boolean is_submit;
 
-	@Persist("flash")
+	@Persist(PersistenceConstants.FLASH)
 	@Property
 	private int progress;
 
@@ -130,7 +132,7 @@ public class Upload {
 	@Property
 	private List<MailingListVo> mailingLists;
 
-	@Persist("flash")
+	@Persist(PersistenceConstants.FLASH)
 	@Property
 	private boolean secureSharing;
 
@@ -219,7 +221,7 @@ public class Upload {
 		}
 	}
 
-	void onValidateFromDidjeridooForm() {
+	void onValidateFromUploaderForm() {
 		is_submit = true;
 
 		if (progress > 0) {
@@ -227,7 +229,7 @@ public class Upload {
 		}
 	}
 
-	Object onSubmitFromUploaderForm() throws BusinessException {
+	public Object onSubmitFromUploaderForm() throws BusinessException {
 		/*
 		 * XXX FIXME TODO HACK : same code as QuickSharePopup ... it's not just
 		 * smelly
@@ -275,6 +277,10 @@ public class Upload {
 				addedDocuments.add(d);
 			}
 
+			for (MailingListVo ml : mailingLists) {
+				recipients.addAll(mailingListFacade.getAllContactMails(ml));
+			}
+
 			for (String recipient : recipients) {
 				if (!MailCompletionService.MAILREGEXP.matcher(
 						recipient.toUpperCase()).matches()) {
@@ -318,9 +324,7 @@ public class Upload {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER
 				if (e1.getErrorCode() == BusinessErrorCode.RELAY_HOST_NOT_ENABLE) {
-					logger.error(
-							"Could not create sharing, relay host is disable : ",
-							e1);
+					logger.error("Could not create sharing, relay host is disable : ", e1);
 
 					String buffer = "";
 					String sep = "";
@@ -376,7 +380,7 @@ public class Upload {
 		return Index.class;
 	}
 
-	List<String> onProvideCompletionsFromRecipientsPattern(String input) {
+	public List<String> onProvideCompletionsFromRecipientsPattern(String input) {
 		List<String> elements = new ArrayList<String>();
 		List<UserVo> searchResults = performSearch(input);
 
@@ -420,9 +424,7 @@ public class Upload {
 
 			@Override
 			public MailingListVo toValue(String clientValue) {
-				MailingListVo ret = new MailingListVo();
-				ret.setUuid(clientValue);
-				return ret;
+				return mailingListFacade.findByUuid(clientValue);
 			}
 
 			@Override

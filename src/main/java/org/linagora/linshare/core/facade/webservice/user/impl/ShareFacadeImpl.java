@@ -149,22 +149,16 @@ public class ShareFacadeImpl extends GenericFacadeImpl
 
 		UserVo uo = new UserVo(actor);
 
-		try {
-			successes = tapestryShareFacade.createSharingWithMailUsingRecipientsEmail(
-					uo, listDoc, listRecipient, (securedShare == 1),
-					mailContainer);
+		successes = tapestryShareFacade.createSharingWithMailUsingRecipientsEmail(
+				uo, listDoc, listRecipient, (securedShare == 1), mailContainer);
 
-		} catch (BusinessException e) {
-			throw e;
-		}
 
-		if ((successes.getSuccessesItem() == null)
-				|| ((successes.getFailsItem() != null) && (successes
-						.getFailsItem().size() > 0))) {
+		if ((successes.getSuccessesItem() == null) ||
+			((successes.getFailsItem() != null) &&
+			(successes.getFailsItem().size() > 0))) {
 			throw new BusinessException(BusinessErrorCode.WEBSERVICE_FAULT,
 					"Could not share the document");
 		}
-
 	}
 
 	@Override
