@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<t:MyBorderLayout t:title="message:pages.administration.index.title" t:identifier="administration" t:currentHighlight="administration"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<!-- Main content -->
+	<div id="content">
+		<h1>${message:components.myborderlayout.administration.title}</h1>
+		<t:messagePanel />
+		<div id="pageContent">
+		
+				<div id="version">
+					<strong>${message:global.version.label} : </strong> <code>${version}</code>
+					<br/>
+				</div>
+		</div>
+	</div><!-- id="content" -->
+</t:MyBorderLayout>
