@@ -101,6 +101,11 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	public MailingList findByIdentifier(User owner, String identifier) {
 		return listRepository.findByIdentifier(owner, identifier);
 	}
+	
+	@Override
+	public List<String> getAllContactMails(MailingList list) {
+		return contactRepository.getAllContactMails(list);
+	}
 
 	@Override
 	public List<MailingList> searchListByVisibility(User owner, boolean isPublic, String input) {

@@ -48,7 +48,7 @@ public interface MailingListFacade {
 
 	MailingListVo createList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
-	MailingListVo findByUuid(String uuid) throws BusinessException;
+	MailingListVo findByUuid(String uuid);
 
 	List<MailingListVo> getAllMyList(UserVo user) throws BusinessException;
 
@@ -171,5 +171,7 @@ public interface MailingListFacade {
 	String findAvailableIdentifier(UserVo user, String value);
 
 	public List<MailingListVo> completionForUploadForm(UserVo userVo, String input) throws BusinessException;
+
+	public List<String> getAllContactMails(MailingListVo ml) throws BusinessException;
 
 }

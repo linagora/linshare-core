@@ -37,6 +37,7 @@ import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+
 import java.util.List;
 
 public interface MailingListBusinessService {
@@ -138,5 +139,7 @@ public interface MailingListBusinessService {
 	void updateContact(MailingListContact contactToUpdate) throws BusinessException;
 
 	MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException;
+
+	List<String> getAllContactMails(MailingList list);
 
 }

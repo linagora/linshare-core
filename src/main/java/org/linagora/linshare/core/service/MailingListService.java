@@ -134,4 +134,6 @@ public interface MailingListService {
 
 	MailingListContact findContactWithMail(String listUuid, String mail) throws BusinessException;
 
+	List<String> getAllContactMails(String uuid) throws BusinessException;
+
 }

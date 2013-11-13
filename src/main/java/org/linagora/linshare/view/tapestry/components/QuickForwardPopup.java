@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Parameter;
@@ -18,10 +19,10 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.SelectModelFactory;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -42,6 +43,8 @@ import org.linagora.linshare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
 
 public class QuickForwardPopup {
 	
@@ -80,11 +83,11 @@ public class QuickForwardPopup {
 	private List<String> recipientsEmail;
 
 	@Property
-	private String listRecipientsSearch;
-	
-	@Property
 	private String recipientsSearch;
 	
+	@Property
+	private List<MailingListVo> mailingLists;
+
 	@Property
 	private int autocompleteMin;
 
@@ -124,6 +127,9 @@ public class QuickForwardPopup {
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 
+	@Inject
+	private SelectModelFactory selectModelFactory;
+
 	@Component(parameters = {"style=bluelighting", "show=false","width=650", "height=550", "closable=true"})
 	private WindowWithEffects quickForwardWindow;
 
@@ -153,21 +159,19 @@ public class QuickForwardPopup {
     	
     	boolean sendErrors = false;
 		List<String> recipients = new ArrayList<String>();
-		if(recipientsSearch != null){
-    		recipients = MailCompletionService.parseEmails(recipientsSearch);
-		} else {
-			recipientsSearch = listRecipientsSearch;
+
+		if (recipientsSearch != null) {
+			recipients = MailCompletionService.parseEmails(recipientsSearch);
 		}
-		List<MailingListVo> mailingListSelected = mailingListFacade.getListsFromShare(listRecipientsSearch);
-		if(!(mailingListSelected.isEmpty())){
-			
-			for(MailingListVo current : mailingListSelected){
-				
-				for(MailingListContactVo currentContact : current.getContacts()){
-					recipients.add(currentContact.getMail());
-				}
+
+		for (MailingListVo ml : mailingLists) {
+			try {
+				recipients.addAll(mailingListFacade.getAllContactMails(ml));
+			} catch (BusinessException e) {
+				logger.error(e.getMessage());
 			}
 		}
+
 		String badFormatEmail =  "";
 		
 		for (String recipient : recipients) {
@@ -210,6 +214,10 @@ public class QuickForwardPopup {
 	        	// no space left or wrong mime type
 	        	businessMessagesManagementService.notify(e);
 	        }
+    	}
+
+    	for (MailingListVo ml : mailingLists) {
+    		recipientsEmail.addAll(mailingListFacade.getAllContactMails(ml));
     	}
 
     	// Share the copied documents to recipients
@@ -273,8 +281,12 @@ public class QuickForwardPopup {
 		return elements;
 	}
 	
-	public List<String> onProvideCompletionsFromListRecipientsPatternSharePopup(String input) throws BusinessException {
-		return mailingListFacade.completionsForShare(userLoggedIn, input);
+	public SelectModel onProvideCompletionsFromMailingLists(String input)
+			throws BusinessException {
+		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(
+				userLoggedIn, input);
+
+		return selectModelFactory.create(lists, "representation");
 	}
 
     public boolean isEnableListTab() {
@@ -284,6 +296,25 @@ public class QuickForwardPopup {
 	public String getCssClassNumber() {
 		cssClassNumberCpt += 1;
 		return "number" + Integer.toString(cssClassNumberCpt);
+	}
+
+	public LabelAwareValueEncoder<MailingListVo> getEncoder() {
+		return new LabelAwareValueEncoder<MailingListVo>() {
+			@Override
+			public String toClient(MailingListVo value) {
+				return value.getUuid();
+			}
+
+			@Override
+			public MailingListVo toValue(String clientValue) {
+				return mailingListFacade.findByUuid(clientValue);
+			}
+
+			@Override
+			public String getLabel(MailingListVo arg0) {
+				return arg0.toString();
+			}
+		};
 	}
 
 	/** Perform a user search using the user search pattern.

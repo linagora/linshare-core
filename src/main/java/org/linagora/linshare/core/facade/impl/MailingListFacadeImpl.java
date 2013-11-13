@@ -55,6 +55,8 @@ import org.linagora.linshare.view.tapestry.services.impl.MailingListCompletionSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 public class MailingListFacadeImpl implements MailingListFacade {
 
 	Logger logger = LoggerFactory.getLogger(MailingListFacadeImpl.class);
@@ -85,13 +87,10 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public MailingListVo findByUuid(String uuid) {
-		MailingList mailingList;
-
 		try {
-			mailingList = mailingListService.findByUuid(uuid);
-			return new MailingListVo(mailingList);
+			return new MailingListVo(mailingListService.findByUuid(uuid));
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -99,6 +98,11 @@ public class MailingListFacadeImpl implements MailingListFacade {
 	@Override
 	public List<MailingListVo> getAllMyList(UserVo user) throws BusinessException {
 		return ListToListVo(mailingListService.findAllListByOwner(user.getLsUuid()));
+	}
+	
+	@Override
+	public List<String> getAllContactMails(MailingListVo ml) throws BusinessException {
+		return mailingListService.getAllContactMails(ml.getUuid());
 	}
 
 	@Override

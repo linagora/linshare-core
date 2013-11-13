@@ -108,6 +108,13 @@ public class MailingListServiceImpl implements MailingListService {
 
 		return mailingListBusinessService.findByIdentifier(owner, identifier);
 	}
+	
+	@Override
+	public List<String> getAllContactMails(String uuid) throws BusinessException {
+		Validate.notEmpty(uuid);
+
+		return mailingListBusinessService.getAllContactMails(findByUuid(uuid));
+	}
 
 	@Override
 	public List<MailingList> findAllListByUser(String actorUuid) {
