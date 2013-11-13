@@ -41,7 +41,7 @@
 				<t:if test="inModify">
 					<legend align="top" class="palette">${message:pages.lists.index.list.contact.edit.button}</legend>
 				<p:else>
-					<legend align="top" class="palette">${message:pages.lists.addContact}</legend>
+					<legend align="top" class="palette">${message:pages.lists.addContact.legend}</legend>
 				</p:else>
 				</t:if>
 				
@@ -76,11 +76,11 @@
 							<input type="submit"  value="${message:pages.lists.index.list.contact.edit.button}"/>
 						</td>
 						<td>
-        					<input t:type="submit" t:id="reset" value="${message:global.button.reset}"/>
+        					<input t:type="submit" t:id="reset" value="${message:pages.lists.addContact.button.reset}"/>
         				</td>
         				<p:else>
         				<td HEIGHT="50">
-							<input type="submit"  value="${message:pages.lists.addContact}"/>
+							<input type="submit"  value="${message:pages.lists.addContact.button}"/>
 						</td>
 						</p:else>
 						</t:if>
@@ -92,7 +92,7 @@
 	  <div class="clear"></div>
 <br></br>
 				<fieldset style="width: 1000;" class="title_criteria_zone" id="userCriterion">
-				<legend align="top" class="palette">${message:pages.lists.addUser}</legend>		
+				<legend align="top" class="palette">${message:pages.lists.addUser.legend}</legend>		
 					<table>
 						<tr>
 						<form t:type="form" t:id="SearchUserForm">
@@ -131,8 +131,8 @@
 									</t:actionLink>
 			  					<p:else>
 			  						<t:actionLink t:id="addUser" context="result.lsUuid"
-			 	 						title="${message:pages.lists.adduser}">
-										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.lists.adduser}" />
+			 	 						title="${message:pages.lists.adduser.tooltip}">
+										<img src="${asset:context:images/popupImages/plus.png}" alt="${message:pages.lists.adduser.tooltip}" />
 									</t:actionLink>
 			  					</p:else>
 								</t:if>
