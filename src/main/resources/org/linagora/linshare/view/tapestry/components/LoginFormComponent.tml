@@ -10,8 +10,9 @@
 			<t:pagelink page="logout">${message:pages.index.link.logout}</t:pagelink>
 			
 			<t:if test="linshareLicenceTerm">
-				<div id="rights">	
-				${message:pages.index.rights1} <a href="${message:pages.index.rights.link.url}">LinShare</a>${message:pages.index.rights2} 
+				<div id="rights">
+				${message:pages.index.rights1} <a href="${message:pages.index.rights.link.url}">LinShare</a>${message:pages.index.rights2}
+				<a href="${message:global.companyURL}">Linagora </a>${message:pages.index.rights3}
 				</div>
 			</t:if>
 		</div>
