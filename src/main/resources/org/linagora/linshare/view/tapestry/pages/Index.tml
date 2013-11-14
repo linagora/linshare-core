@@ -71,6 +71,7 @@
 					<div id="rights">
 						<p>
 							${message:pages.index.rights1} <a href="${message:pages.index.rights.link.url}">LinShare</a>${message:pages.index.rights2}
+							<a href="${message:global.companyURL}">Linagora </a>${message:pages.index.rights3}
 						</p>
 					</div>
 				</t:if>
