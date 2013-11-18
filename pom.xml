@@ -128,7 +128,7 @@
 		<dependency>
 			<groupId>se.unbound</groupId>
 			<artifactId>tapestry-tagselect</artifactId>
-			<version>1.4</version>
+			<version>1.4-linagora1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code</groupId>
