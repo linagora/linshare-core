@@ -45,6 +45,7 @@ import java.util.StringTokenizer;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
@@ -59,11 +60,11 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.services.SelectModelFactory;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.linagora.linshare.core.domain.entities.MailContainer;
 import org.linagora.linshare.core.domain.objects.SuccessesAndFailsItems;
 import org.linagora.linshare.core.domain.vo.DocumentVo;
-import org.linagora.linshare.core.domain.vo.MailingListContactVo;
 import org.linagora.linshare.core.domain.vo.MailingListVo;
 import org.linagora.linshare.core.domain.vo.ShareDocumentVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
@@ -86,6 +87,8 @@ import org.linagora.linshare.view.tapestry.utils.XSSFilter;
 import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
 
 @Import(library={"SizeOfPopup.js"})
 public class ConfirmSharePopup{
@@ -130,14 +133,12 @@ public class ConfirmSharePopup{
 	@Property
 	private String textAreaSubjectValue;
 	
-	
-//	@Persist("flash")
 	@Property
 	private String recipientsSearch;
 	
 	@Property
-	private String listRecipientsSearch;
-	
+	private List<MailingListVo> mailingLists;
+
 	@Persist("flash")
 	@Property
 	private boolean secureSharing;
@@ -150,11 +151,8 @@ public class ConfirmSharePopup{
 	@Property
 	private int cssClassNumberCpt;
 	
-	
-	
 	@Persist("flash")
 	private List<String> recipientsEmail;
-	
 	
     // The block that contains the action to be thrown on success 
 	@Inject
@@ -237,6 +235,8 @@ public class ConfirmSharePopup{
 	@Inject
 	private FunctionalityFacade functionalityFacade;
 	
+	@Inject
+	private SelectModelFactory selectModelFactory;
 	   
 	private XSSFilter filter;
 	
@@ -400,21 +400,17 @@ public class ConfirmSharePopup{
     	boolean sendErrors = false;
 		
 		List<String> recipients = new ArrayList<String>();
-		if(recipientsSearch != null){
+		if (recipientsSearch != null){
     		recipients = MailCompletionService.parseEmails(recipientsSearch);
-		} else {
-			recipientsSearch = listRecipientsSearch;
 		}
-		List<MailingListVo> mailingListSelected = mailingListFacade.getListsFromShare(listRecipientsSearch);
-		if(!(mailingListSelected.isEmpty())){
-			
-			for(MailingListVo current : mailingListSelected){
-				
-				for(MailingListContactVo currentContact : current.getContacts()){
-					recipients.add(currentContact.getMail());
-				}
+		for (MailingListVo ml : mailingLists) {
+			try {
+				recipients.addAll(mailingListFacade.getAllContactMails(ml));
+			} catch (BusinessException e) {
+				logger.error(e.getMessage());
 			}
 		}
+
 		String badFormatEmail =  "";
 		
 		for (String recipient : recipients) {
@@ -511,9 +507,35 @@ public class ConfirmSharePopup{
 			}
 		}
 		return onSuccess;
-		
 	}
-   
+
+	public SelectModel onProvideCompletionsFromMailingLists(String input)
+			throws BusinessException {
+		List<MailingListVo> lists = mailingListFacade.completionForUploadForm(
+				userVo, input);
+
+		return selectModelFactory.create(lists, "representation");
+	}
+
+	public LabelAwareValueEncoder<MailingListVo> getEncoder() {
+		return new LabelAwareValueEncoder<MailingListVo>() {
+			@Override
+			public String toClient(MailingListVo value) {
+				return value.getUuid();
+			}
+
+			@Override
+			public MailingListVo toValue(String clientValue) {
+				return mailingListFacade.findByUuid(clientValue);
+			}
+
+			@Override
+			public String getLabel(MailingListVo arg0) {
+				return arg0.toString();
+			}
+		};
+	}
+
 	public String getJSONId() {
 		return confirmWindow.getJSONId();
 	}
@@ -522,6 +544,4 @@ public class ConfirmSharePopup{
 		cssClassNumberCpt+=1;
 		return "number" + Integer.toString(cssClassNumberCpt);
 	}
-
-
 }
