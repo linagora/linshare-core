@@ -51,8 +51,10 @@
 			<sec:filter-chain pattern="/webservice/rest/cors" filters="none" />
             <sec:filter-chain pattern="/webservice/rest/**"
                 filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+                
             <sec:filter-chain pattern="/webservice/fineuploader/**"
-                filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
+                filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,internetExplorerCompatibilityFilter" />
+                
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
 			<sec:filter-chain pattern="/webservice/**"
