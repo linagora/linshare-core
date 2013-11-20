@@ -201,6 +201,7 @@ public class Index {
 		if (flagFinishShare) {
 			flagFinishShare = false;
 			share.setSelectedDocuments(shareSessionObjects.getDocuments());
+			clearList();
 			return share;
 		}
 		return null;
