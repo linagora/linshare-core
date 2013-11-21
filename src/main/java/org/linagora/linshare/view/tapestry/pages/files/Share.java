@@ -78,6 +78,9 @@ import org.owasp.validator.html.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
 
 @Import(library = { "../../components/jquery/jquery-1.7.2.js",
@@ -218,6 +221,25 @@ public class Share {
 		boolean sendErrors = false;
 
 		try {
+			/*
+			 * Handle forward
+			 */
+			if (documents.get(0) instanceof ShareDocumentVo) {
+				List tmp = documents;
+				documents = Lists.newArrayList();
+				for (ShareDocumentVo doc : (List<ShareDocumentVo>) tmp) {
+					try {
+						DocumentVo copied = shareFacade.createLocalCopy(doc, userVo);
+						documents.add(copied);
+						businessMessagesManagementService.notify(new BusinessUserMessage(
+								BusinessUserMessageType.LOCAL_COPY_OK, MessageSeverity.INFO));
+					} catch (BusinessException e) {
+						// no space left or wrong mime type
+						businessMessagesManagementService.notify(e);
+					}
+				}
+			}
+
 			List<String> recipients = new ArrayList<String>();
 
 			if (recipientsSearch != null) {
