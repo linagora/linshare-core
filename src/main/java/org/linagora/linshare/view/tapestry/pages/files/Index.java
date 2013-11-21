@@ -156,9 +156,6 @@ public class Index {
 	@Inject
 	private PageRenderLinkSource linkFactory;
 
-    @Environmental
-    private TrackableComponentEventCallback eventCallback;
-
 	/* ***********************************************************
 	 * Properties & injected symbol, ASO, etc
 	 * ***********************************************************
