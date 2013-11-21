@@ -101,7 +101,7 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 	public MailingList findByIdentifier(User owner, String identifier) {
 		return listRepository.findByIdentifier(owner, identifier);
 	}
-	
+
 	@Override
 	public List<String> getAllContactMails(MailingList list) {
 		return contactRepository.getAllContactMails(list);
@@ -160,9 +160,10 @@ public class MailingListBusinessServiceImpl implements MailingListBusinessServic
 		entity.setIdentifier(newIdentifier);
 		entity.setDescription(updatedMailingList.getDescription());
 		entity.setPublic(updatedMailingList.isPublic());
-		entity.setDomain(updatedMailingList.getDomain());
-		entity.setOwner(updatedMailingList.getOwner());
-		entity.setMailingListContact(updatedMailingList.getMailingListContact());
+		if (updatedMailingList.getDomain() != null)
+			entity.setDomain(updatedMailingList.getDomain());
+		if (updatedMailingList.getOwner() != null)
+			entity.setOwner(updatedMailingList.getOwner());
 		listRepository.update(entity);
 	}
 

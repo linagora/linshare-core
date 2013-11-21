@@ -39,7 +39,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.Validate;
 import org.linagora.linshare.core.domain.constants.VisibilityType;
+import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.MailingList;
 import org.linagora.linshare.core.domain.entities.MailingListContact;
 import org.linagora.linshare.core.domain.entities.User;
@@ -107,13 +109,13 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException {
-		updateList(actorVo, mailingListVo, null);
-	}
-
-	@Override
-	public void updateList(UserVo actorVo, MailingListVo mailingListVo, String newOwnerUuid) throws BusinessException {
 		MailingList mailingList = new MailingList(mailingListVo);
-		mailingListService.updateList(actorVo.getLsUuid(), mailingList, newOwnerUuid);
+		UserVo ownerVo = mailingListVo.getOwner();
+		if(ownerVo != null) {
+			User owner = userService.findByLsUuid(ownerVo.getLsUuid());
+			mailingList.setOwner(owner);
+		}
+		mailingListService.updateList(actorVo.getLsUuid(), mailingList);
 	}
 
 	@Override
@@ -171,6 +173,7 @@ public class MailingListFacadeImpl implements MailingListFacade {
 
 	@Override
 	public boolean identifierIsAvailable(UserVo user, String purposedIdentifier) {
+		Validate.notNull(user);
 		return mailingListService.findByIdentifier(user.getLsUuid(),
 				purposedIdentifier) == null;
 	}

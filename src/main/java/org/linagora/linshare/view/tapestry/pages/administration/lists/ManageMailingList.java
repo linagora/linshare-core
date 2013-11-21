@@ -139,7 +139,7 @@ public class ManageMailingList {
 					d = spl[0];
 					m = spl[1];
 				} else {
-					d = m = "";
+					return null;
 				}
 				try {
 					return userFacade.findUser(d, m);
@@ -164,21 +164,27 @@ public class ManageMailingList {
 
 	public void onValidateFromForm() {
 
-		if (!mailingListVo.getOwner().equals(newOwner)
-				|| (mailingListVo.getOwner().equals(newOwner) && !mailingListVo.getIdentifier().equals(oldIdentifier))) {
+		if (newOwner == null) {
+			form.recordError(String.format(messages.get("pages.lists.administration.newOwnerNotFound")));
+			return;
+		}
+		
+		if (!mailingListVo.getOwner().equals(newOwner) || 
+			(mailingListVo.getOwner().equals(newOwner) && 
+			!mailingListVo.getIdentifier().equals(oldIdentifier))) {
+			
 			if (!mailingListFacade.identifierIsAvailable(newOwner, mailingListVo.getIdentifier())) {
 				String copy = mailingListFacade.findAvailableIdentifier(newOwner, mailingListVo.getIdentifier());
 				form.recordError(String.format(messages.get("pages.administration.lists.changeOwner"),
 						newOwner.getFullName(), copy));
 			}
 		}
-		if (newOwner == null) {
-			form.recordError(String.format(messages.get("pages.lists.administration.newOwnerNotFound")));
-		}
+		
 	}
 
 	public Object onSuccess() throws BusinessException, ValidationException {
-		mailingListFacade.updateList(loginUser, mailingListVo, newOwner.getLsUuid());
+		mailingListVo.setOwner(newOwner);
+		mailingListFacade.updateList(loginUser, mailingListVo);
 		mailingListVo = null;
 		return Index.class;
 	}
