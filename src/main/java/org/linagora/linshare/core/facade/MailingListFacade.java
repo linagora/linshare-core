@@ -54,8 +54,6 @@ public interface MailingListFacade {
 
 	void updateList(UserVo actorVo, MailingListVo mailingListVo) throws BusinessException;
 
-	void updateList(UserVo actorVo, MailingListVo mailingListVo, String newOwnerUuid) throws BusinessException;
-
 	void deleteList(UserVo actorVo, String uuid) throws BusinessException;
 
 	/**

@@ -67,11 +67,9 @@ public interface MailingListService {
 	 * 
 	 * @param actorUuid
 	 * @param listToUpdate
-	 * @param newOwnerUuid
-	 *            : this parameter could be null if not modified
 	 * @throws BusinessException
 	 */
-	void updateList(String actorUuid, MailingList listToUpdate, String newOwnerUuid) throws BusinessException;
+	void updateList(String actorUuid, MailingList listToUpdate) throws BusinessException;
 
 	MailingList findByUuid(String uuid) throws BusinessException;
 
