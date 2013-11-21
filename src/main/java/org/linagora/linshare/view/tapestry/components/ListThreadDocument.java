@@ -166,10 +166,6 @@ public class ListThreadDocument {
 
     @Property
     @Persist
-    private BeanModel<ThreadEntryVo> model;
-
-    @Property
-    @Persist
     private SorterModel<ThreadEntryVo> sorterModel;
 
     @Inject
@@ -224,8 +220,6 @@ public class ListThreadDocument {
     	
         if (listThreadEntries == null)
             return;
-        initModel();
-
         /*
          * Default to descending order of creation date column
          */
@@ -235,6 +229,11 @@ public class ListThreadDocument {
 				grid.getSortModel().updateSort("creationDate");
 			}
 		}
+    }
+
+    public BeanModel<ThreadEntryVo> getModel() {
+		return beanModelSource
+				.createDisplayModel(ThreadEntryVo.class, messages);
     }
 
     /***************************************************************************
@@ -307,16 +306,6 @@ public class ListThreadDocument {
      * Events
      **************************************************************************/
 
-    @SuppressWarnings("unchecked")
-    @OnEvent(value="eventReorderList")
-    public void reorderList(Object[] o1) {
-        if (o1 != null && o1.length > 0) {
-            this.entries = (List<ThreadEntryVo>)Arrays.copyOf(o1,1)[0];
-            this.sorterModel = new ThreadEntrySorterModel(this.entries);
-            refreshFlag = true;
-        }
-    }
-    
     @OnEvent(value="eventDelete")
     public void deleteEntry() {
     	componentResources.getPage().getComponentResources().triggerEvent("eventDeleteThreadEntry", null, null);
@@ -328,30 +317,6 @@ public class ListThreadDocument {
      **************************************************************************/
     
     
-    /**
-     * model for the datagrid we need it to switch off the signature and the
-     * encrypted column dynamically administration can desactivate the signature
-     * and encryption function
-     * 
-     * @return
-     * @throws BusinessException
-     */
-    public BeanModel<ThreadEntryVo> initModel() throws BusinessException {
-        //Initialize the sorter model for sorter component.
-        if (refreshFlag) {
-            listThreadEntries = entries;
-            refreshFlag = false;
-        }
-        sorterModel = new ThreadEntrySorterModel(listThreadEntries);
-        model = beanModelSource.createDisplayModel(ThreadEntryVo.class, componentResources.getMessages());
-        model.add("fileProperties", null);
-        List<String> reorderlist = new ArrayList<String>();
-        reorderlist.add("fileProperties");
-        model.reorder(reorderlist.toArray(new String[reorderlist.size()]));
-
-        return model;
-    }
-
     /**
      * Generate the css class in order to display the icon corresponding to the file mime type
      * 

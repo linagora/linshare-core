@@ -107,35 +107,7 @@
         <!-- Page content -->
 
         <div id="pageContent">
-            <t:delegate to="case" />
-
-            <t:block id="case0">
-                <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${threadName}" />
-                <br />
-            </t:block>
-
-            <t:block id="case1">
-                <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
-                <br />
-            </t:block>
-
-            <t:block id="case2">
-                <t:loop source="leaves" value="currentLeaf">
-                    <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
-                    <br />
-                </t:loop>
-            </t:block>
-
-            <t:block id="case3">
-                <t:loop source="children" value="currentChild">
-                    <div t:type="ck/SlidingPanel" t:id="currentChild" t:closed="true" t:subject="${currentChildSubject}" t:options="{duration:0.3}">
-                        <t:loop source="leaves" value="currentLeaf">
-                            <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${currentLeaf}" />
-                            <br />
-                        </t:loop>
-                    </div>
-                </t:loop>
-            </t:block>
+            <t:ListThreadDocument t:listThreadEntries="currentEntriesList" t:threadVo="selectedThread" t:user="userVo" t:admin="admin" t:title="${threadName}" />
         </div>
     </div><!-- id="content" -->
 

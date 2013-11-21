@@ -69,17 +69,6 @@
                     </div>
                 </p:fileNameCell>
                 
-                <p:encryptedCell>
-					<t:if t:test="${threadEntry.encrypted}">
-						<img src="${asset:context:images/icons/encrypt-on.png}" alt=""
- 							title="${message:components.listDocument.picture.encrypton.title}" />
-						<t:parameter name="else">
-							<img src="${asset:context:images/icons/encrypt-off.png}" alt=""
-							title="${message:components.listDocument.picture.encryptoff.title}" />
-						</t:parameter>
-					</t:if>
-				</p:encryptedCell>
-				
 				<p:creationDateCell>
 					<span class="creationDate">${message:components.listDocument.uploadOn} ${creationDate}</span>${message:global.space}
 				</p:creationDateCell>

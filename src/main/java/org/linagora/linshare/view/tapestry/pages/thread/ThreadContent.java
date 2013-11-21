@@ -33,14 +33,8 @@
  */
 package org.linagora.linshare.view.tapestry.pages.thread;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import org.apache.tapestry5.Block;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Import;
@@ -53,9 +47,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.RequestGlobals;
-import org.linagora.linshare.core.domain.vo.TagVo;
 import org.linagora.linshare.core.domain.vo.ThreadEntryVo;
-import org.linagora.linshare.core.domain.vo.ThreadViewAssoVo;
 import org.linagora.linshare.core.domain.vo.ThreadVo;
 import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
@@ -65,9 +57,14 @@ import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementSe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Import(library = { "../../components/jquery/jquery-1.7.2.js", "../../components/fineuploader/fineuploader-3.6.4.js", "../../components/bootstrap/js/bootstrap.js" }, stylesheet = { "../../components/fineuploader/fineuploader-3.6.4.css" })
+@Import(library = { "../../components/jquery/jquery-1.7.2.js",
+					"../../components/fineuploader/fineuploader-3.6.4.js",
+					"../../components/bootstrap/js/bootstrap.js" },
+		stylesheet = { "../../components/fineuploader/fineuploader-3.6.4.css" })
 public class ThreadContent {
-	private static final Logger logger = LoggerFactory.getLogger(ThreadContent.class);
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(ThreadContent.class);
 
 	// unlimited file size
 	private static final long DEFAULT_MAX_FILE_SIZE = 0;
@@ -84,12 +81,9 @@ public class ThreadContent {
 	@Persist
 	private ThreadVo selectedThread;
 
-	@Persist
-	private int depth;
-
 	@Property
 	private String threadName;
-	
+
 	@Property
 	private String threadUuid;
 
@@ -103,23 +97,8 @@ public class ThreadContent {
 	private String selectedThreadEntryId;
 
 	@Property
-	private DefaultMutableTreeNode root;
-
-	@Property
-	private List<DefaultMutableTreeNode> children;
-
-	@Property
-	private DefaultMutableTreeNode currentChild;
-
-	@Property
-	private DefaultMutableTreeNode currentLeaf;
-
-	@Inject
-	private Block case0, case1, case2, case3;
-
-	@Property
 	private String contextPath;
-	
+
 	/* ***********************************************************
 	 * Injected services
 	 * ***********************************************************
@@ -137,6 +116,14 @@ public class ThreadContent {
 	@Inject
 	private BusinessMessagesManagementService businessMessagesManagementService;
 
+	public Object onActivate() {
+		if (selectedThread == null) {
+			return Index.class;
+		}
+		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	@SetupRender
 	public void setupRender() throws BusinessException {
@@ -144,59 +131,11 @@ public class ThreadContent {
 
 		threadName = selectedThread.getName();
 		threadUuid = selectedThread.getLsUuid();
-		depth = selectedThread.getView().getDepth();
-
-		List<ThreadViewAssoVo> listViewTag = selectedThread.getView().getThreadViewAssos();
-		DefaultMutableTreeNode root = null;
-
-		// building Tag Tree from listViewTag
-		for (ThreadViewAssoVo view : listViewTag) {
-			switch (view.getDepth()) {
-			case 1:
-				root = new DefaultMutableTreeNode(view.getTagVo());
-				break;
-			case 2:
-				root.add(new DefaultMutableTreeNode(view.getTagVo()));
-				break;
-			case 3:
-				for (int i = 0; i < root.getChildCount(); ++i) {
-					DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
-					child.add(new DefaultMutableTreeNode(view.getTagVo()));
-				}
-				break;
-			default:
-				throw new BusinessException("Can't generate the thread content tree view. Tree depth should be in [1..3] but is " + view.getDepth());
-			}
-		}
-		switch (depth) {
-		case 0:
-			root = null;
-			break;
-		case 1:
-			currentLeaf = root;
-			break;
-		case 2:
-			currentChild = root;
-			break;
-		case 3:
-			break;
-		default:
-			throw new BusinessException("Can't generate the thread content tree view. Tree depth should be in [1..3] but is " + depth);
-		}
-		children = root != null ? Collections.list(root.children()) : new ArrayList<DefaultMutableTreeNode>();
 	}
 
 	@Import(stylesheet = { "../../components/bootstrap/css/bootstrap.css" })
 	@CleanupRender
 	void cleanupRender() {
-	}
-
-	public Object onActivate() {
-		if (selectedThread == null) {
-			return Index.class;
-		}
-		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
-		return null;
 	}
 
 	@AfterRender
@@ -208,15 +147,6 @@ public class ThreadContent {
 			return null;
 		admin.setSelectedThread(selectedThread);
 		return admin;
-	}
-
-	public String getCurrentChildSubject() {
-		return currentChild.toString();
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<DefaultMutableTreeNode> getLeaves() {
-		return Collections.list(currentChild.children());
 	}
 
 	public boolean getCanUpload() {
@@ -239,34 +169,8 @@ public class ThreadContent {
 		}
 	}
 
-	/*
-	 * Handle page layout with Tapestry Blocks
-	 */
-	public Object getCase() {
-		logger.debug("Depth = " + depth);
-		switch (depth) {
-		case 0:
-			return case0;
-		case 1:
-			return case1;
-		case 2:
-			return case2;
-		case 3:
-			return case3;
-		default:
-			return null;
-		}
-	}
-
 	public List<ThreadEntryVo> getCurrentEntriesList() throws BusinessException {
-		// handling list displaying without any tag
-		if (depth == 0) {
-			return threadEntryFacade.getAllThreadEntryVo(userVo, selectedThread);
-		}
-		// handling list displaying with tags
-		Object[] objs = currentLeaf.getUserObjectPath();
-		TagVo[] tags = Arrays.copyOf(objs, objs.length, TagVo[].class);
-		return threadEntryFacade.getAllThreadEntriesTaggedWith(userVo, selectedThread, tags);
+		return threadEntryFacade.getAllThreadEntryVo(userVo, selectedThread);
 	}
 
 	/*
@@ -274,13 +178,6 @@ public class ThreadContent {
 	 */
 	public void setMySelectedThread(ThreadVo selectedThread) {
 		this.selectedThread = selectedThread;
-	}
-
-	/*
-	 * Mandatory for page generation
-	 */
-	public void setDepth(int depth) {
-		this.depth = depth;
 	}
 
 	public String getSelectedThreadEntryId() {
@@ -295,23 +192,22 @@ public class ThreadContent {
 	public void deleteThreadEntry() {
 		ThreadEntryVo selectedVo = null;
 		try {
-			selectedVo = threadEntryFacade.findById(userVo, selectedThreadEntryId);
+			selectedVo = threadEntryFacade.findById(userVo,
+					selectedThreadEntryId);
 			threadEntryFacade.removeDocument(userVo, selectedVo);
 			shareSessionObjects.removeDocument(selectedVo);
-			shareSessionObjects.addMessage(String.format(messages.get("pages.index.message.fileRemoved"), selectedVo.getFileName()));
+			shareSessionObjects.addMessage(String.format(
+					messages.get("pages.index.message.fileRemoved"),
+					selectedVo.getFileName()));
 		} catch (BusinessException e) {
-			shareSessionObjects.addError(String.format(messages.get("pages.index.message.failRemovingFile"), selectedVo.getFileName()));
+			shareSessionObjects.addError(String.format(
+					messages.get("pages.index.message.failRemovingFile"),
+					selectedVo.getFileName()));
 			logger.debug(e.toString());
 		}
 	}
 
 	public long getMaxFileSize() {
-		// try {
-		// return documentFacade.getUserAvailableSize(userVo);
-		// } catch (BusinessException e) {
-		// logger.error("Can not set user maximum size for a file : "+
-		// e.getLocalizedMessage());
-		// }
 		return DEFAULT_MAX_FILE_SIZE;
 	}
 
