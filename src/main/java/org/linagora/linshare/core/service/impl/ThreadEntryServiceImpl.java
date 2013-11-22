@@ -45,9 +45,12 @@ import org.linagora.linshare.core.domain.constants.LogAction;
 import org.linagora.linshare.core.domain.entities.AbstractDomain;
 import org.linagora.linshare.core.domain.entities.Account;
 import org.linagora.linshare.core.domain.entities.AntivirusLogEntry;
+import org.linagora.linshare.core.domain.entities.DocumentEntry;
+import org.linagora.linshare.core.domain.entities.FileLogEntry;
 import org.linagora.linshare.core.domain.entities.Functionality;
 import org.linagora.linshare.core.domain.entities.LogEntry;
 import org.linagora.linshare.core.domain.entities.StringValueFunctionality;
+import org.linagora.linshare.core.domain.entities.SystemAccount;
 import org.linagora.linshare.core.domain.entities.Thread;
 import org.linagora.linshare.core.domain.entities.ThreadEntry;
 import org.linagora.linshare.core.domain.entities.ThreadLogEntry;
@@ -158,15 +161,29 @@ public class ThreadEntryServiceImpl implements ThreadEntryService {
 
 	@Override
 	public void deleteThreadEntry(Account actor, ThreadEntry threadEntry) throws BusinessException {
+		Thread owner = (Thread)threadEntry.getEntryOwner();
 		try {
-			if (!this.isAdmin((Thread) threadEntry.getEntryOwner(), (User) actor)) {
+			if (!this.isAdmin(owner, (User) actor)) {
 				throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this document.");
 			}
 			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_ENTRY, "Deleting a thread entry.");
 			documentEntryBusinessService.deleteThreadEntry(threadEntry);
 			logEntryService.create(log);
 		} catch (IllegalArgumentException e) {
-			logger.error("Could not delete file " + threadEntry.getName() + " of user " + actor.getLsUuid() + ", reason : ", e);
+			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + owner.getLsUuid() + " by account " + actor.getLsUuid()+ ", reason : ", e);
+			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
+		}
+	}
+	
+	@Override
+	public void deleteInconsistentThreadEntry(SystemAccount actor, ThreadEntry threadEntry) throws BusinessException {
+		Thread owner = (Thread)threadEntry.getEntryOwner();
+		try {
+			ThreadLogEntry log = new ThreadLogEntry(actor, threadEntry, LogAction.THREAD_REMOVE_INCONSISTENCY_ENTRY, "Deleting an inconsistent thread entry.");
+			logEntryService.create(LogEntryService.WARN, log);
+			documentEntryBusinessService.deleteThreadEntry(threadEntry);
+		} catch (IllegalArgumentException e) {
+			logger.error("Could not delete thread entry " + threadEntry.getUuid() + " in thread " + owner.getLsUuid() + " by account " + actor.getLsUuid()+ ", reason : ", e);
 			throw new TechnicalException(TechnicalErrorCode.COULD_NOT_DELETE_DOCUMENT, "Could not delete document");
 		}
 	}

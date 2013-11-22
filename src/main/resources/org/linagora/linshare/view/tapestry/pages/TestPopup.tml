@@ -107,6 +107,11 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
       <br/>
       <t:actionlink t:id="test2">test Action Link</t:actionlink>
         
+	<t:actionlink t:id="cleanOutDatedShares">clean old share entries : cleanOutDatedShares</t:actionlink>
+	
+	<t:actionlink t:id="removeMissingDocuments">removeMissingDocuments</t:actionlink>
+	
+	
         
 
   </t:MyBorderLayout>   

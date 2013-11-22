@@ -57,6 +57,7 @@ import org.linagora.linshare.core.service.EntryService;
 import org.linagora.linshare.core.service.FunctionalityOldService;
 import org.linagora.linshare.core.service.MailContentBuildingService;
 import org.linagora.linshare.core.service.NotifierService;
+import org.linagora.linshare.core.service.ThreadEntryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,24 +71,37 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 	private final DocumentRepository documentRepository;
 
 	private final DocumentEntryRepository documentEntryRepository;
+	
 	private final DocumentEntryService documentEntryService;
+	
+	private final ThreadEntryService threadEntryService;
+	
 	private final DocumentEntryBusinessService documentEntryBusinessService;
 
 	private final AccountRepository<Account> accountRepository;
 
 	private final FileSystemDao fileSystemDao;
+	
 	private final boolean cronActivated;
+	
 	private final NotifierService notifierService;
+	
 	private final MailContentBuildingService mailBuilder;
+	
 	private final FunctionalityOldService functionalityService;
+	
 	private final EntryService entryService;
+	
 	private final MimeTypeMagicNumberDao mimeTypeMagicNumberDao;
+	
+	
 
-	public DocumentManagementBatchImpl(DocumentRepository documentRepository, DocumentEntryRepository documentEntryRepository,
-			DocumentEntryService documentEntryService, AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao,
-			boolean cronActivated, NotifierService notifierService, MailContentBuildingService mailBuilder,
-			FunctionalityOldService functionalityService, EntryService entryService, DocumentEntryBusinessService documentEntryBusinessService,
-			MimeTypeMagicNumberDao mimeTypeMagicNumberDao) {
+	public DocumentManagementBatchImpl(DocumentRepository documentRepository,
+			DocumentEntryRepository documentEntryRepository, DocumentEntryService documentEntryService,
+			AccountRepository<Account> accountRepository, FileSystemDao fileSystemDao, boolean cronActivated,
+			NotifierService notifierService, MailContentBuildingService mailBuilder,
+			FunctionalityOldService functionalityService, EntryService entryService,
+			DocumentEntryBusinessService documentEntryBusinessService, MimeTypeMagicNumberDao mimeTypeMagicNumberDao, ThreadEntryService threadEntryService) {
 		super();
 		this.documentRepository = documentRepository;
 		this.documentEntryRepository = documentEntryRepository;
@@ -101,6 +115,11 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		this.entryService = entryService;
 		this.documentEntryBusinessService = documentEntryBusinessService;
 		this.mimeTypeMagicNumberDao = mimeTypeMagicNumberDao;
+		this.threadEntryService = threadEntryService;
+	}
+
+	private String getCpt(long curr, long total) {
+		return String.valueOf(curr) + "/" + String.valueOf(total) + ":";
 	}
 
 	@Override
@@ -108,19 +127,43 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 		SystemAccount systemAccount = accountRepository.getSystemAccount();
 
 		List<Document> documents = documentRepository.findAll();
-
-		logger.info("Remove missing documents batch launched.");
+		long totalDocument = documents.size();
+		logger.info("Remove missing documents batch launched : {}", totalDocument);
+		long cpt = 0;
 
 		for (Document document : documents) {
-			InputStream stream = fileSystemDao.getFileContentByUUID(document.getUuid());
+			cpt++;
+			logger.debug(getCpt(cpt, totalDocument) + "processing current document : {}", document.getUuid());
+
+			InputStream stream = null;
+			try {
+				stream = fileSystemDao.getFileContentByUUID(document.getUuid());
+			} catch (org.springmodules.jcr.JcrSystemException e) {
+				// TODO : should never happen ! need to send a notification to
+				// admins.
+				logger.error("Document with UID = {} was not found in datastore.", document.getUuid());
+				logger.debug(e.toString());
+			}
 
 			if (stream == null) {
 				try {
-					logger.info("Removing file with UID = {} because of inconsistency", document.getUuid());
-					entryService.deleteAllInconsistentShareEntries(systemAccount, document.getDocumentEntry());
-					documentEntryService.deleteInconsistentDocumentEntry(systemAccount, document.getDocumentEntry());
+					if (document.getDocumentEntry() != null) {
+						logger.info("Removing document (document entry) with UID = {} because of inconsistency",
+								document.getUuid());
+						entryService.deleteAllInconsistentShareEntries(systemAccount, document.getDocumentEntry());
+						documentEntryService
+								.deleteInconsistentDocumentEntry(systemAccount, document.getDocumentEntry());
+					} else if (document.getThreadEntry() != null) {
+						logger.info("Removing document (thread entry) with UID = {} because of inconsistency",
+								document.getUuid());
+						threadEntryService.deleteInconsistentThreadEntry(systemAccount, document.getThreadEntry());
+					} else {
+						logger.warn("Removing a document unrelated to an entry with UID = {} because of inconsistency",
+								document.getUuid());
+					}
 				} catch (BusinessException ex) {
-					logger.error("Error when processing cleaning of document whith UID = {} during consistency check " + "process",
+					logger.error(
+							"Error when processing cleaning of document with UID = {} during consistency check process",
 							document.getUuid());
 					logger.debug(ex.toString());
 				}
@@ -128,7 +171,8 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 				try {
 					stream.close();
 				} catch (IOException e) {
-					logger.error("Error when closing document stream '{}' during consistency check ", document.getUuid());
+					logger.error("Error when closing document stream '{}' during consistency check ",
+							document.getUuid());
 					logger.debug(e.getMessage());
 				}
 			}
@@ -159,14 +203,15 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 			// we check if there is not related shares. Should not happen.
 			if (documentEntryBusinessService.getRelatedEntriesCount(documentEntry) > 0) {
 
-				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService.getDefaultFileExpiryTimeFunctionality(documentEntry
-						.getEntryOwner().getDomain());
+				TimeUnitValueFunctionality fileExpirationTimeFunctionality = functionalityService
+						.getDefaultFileExpiryTimeFunctionality(documentEntry.getEntryOwner().getDomain());
 				if (fileExpirationTimeFunctionality.getActivationPolicy().getStatus()) {
 					if (documentEntry.getExpirationDate().before(now)) {
 						try {
 							documentEntryService.deleteExpiredDocumentEntry(systemAccount, documentEntry);
 						} catch (BusinessException e) {
-							logger.error("Can't delete expired document entry : " + documentEntry.getUuid() + " : " + e.getMessage());
+							logger.error("Can't delete expired document entry : " + documentEntry.getUuid() + " : "
+									+ e.getMessage());
 							logger.debug(e.toString());
 						}
 					}
@@ -200,7 +245,7 @@ public class DocumentManagementBatchImpl implements DocumentManagementBatch {
 					documentRepository.update(doc);
 					logger.info("Changing document : " + doc.getUuid() + " Mime Type to " + type);
 				} else {
-					logger.warn("the file {} is missing in the content repository." , doc.getUuid());
+					logger.warn("the file {} is missing in the content repository.", doc.getUuid());
 				}
 			} catch (BusinessException e) {
 				logger.error("Can't find file with uuid : " + doc.getUuid() + " : " + e.getMessage());

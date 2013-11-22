@@ -196,6 +196,21 @@ public class TestPopup {
     }
 	
 	
+	void onActionFromCleanOutDatedShares()
+	{
+		logger.debug("begin method onActionFromCleanOutDatedShares");
+		shareManagementBatch.cleanOutdatedShares();
+		logger.debug("endmethod onActionFromCleanOutDatedShares");
+	}
+	
+	void onActionFromRemoveMissingDocuments()
+	{
+		logger.debug("begin method onActionFromRemoveMissingDocuments");
+		documentManagementBatch.removeMissingDocuments();
+		logger.debug("endmethod onActionFromRemoveMissingDocuments");
+	}
+	
+	
 	/**
 	 * Testing tapestry-tagselect
 	 */

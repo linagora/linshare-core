@@ -428,12 +428,23 @@ public class DocumentEntryBusinessServiceImpl implements DocumentEntryBusinessSe
 		String oldThumbUuid = document.getThmbUuid(); 
 		if (oldThumbUuid != null && oldThumbUuid.length() > 0) {
 			logger.debug("suppresion of Thumb, Uuid : " + oldThumbUuid);
-			fileSystemDao.removeFileByUUID(oldThumbUuid);
+			
+			try {
+				fileSystemDao.removeFileByUUID(oldThumbUuid);
+			} catch (org.springframework.dao.DataRetrievalFailureException e) {
+				logger.error("Can not suppress document {}", document.getUuid());
+				logger.debug(e.toString());
+			}
 		}
 		
 		// remove old document in JCR
 		logger.debug("suppresion of doc, Uuid : " + document.getUuid());
-		fileSystemDao.removeFileByUUID(document.getUuid());
+		try {
+			fileSystemDao.removeFileByUUID(document.getUuid());
+		} catch (org.springframework.dao.DataRetrievalFailureException e) {
+			logger.error("Can not suppress document {}", document.getUuid());
+			logger.debug(e.toString());
+		}
 		
 		//clean all signatures ...
 		Set<Signature> signatures = document.getSignatures();
