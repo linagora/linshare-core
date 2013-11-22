@@ -188,15 +188,23 @@ public class AnonymousShareEntryServiceImpl implements AnonymousShareEntryServic
 	
 	@Override
 	public InputStream getAnonymousShareEntryStream(String shareUuid) throws BusinessException {
+		AnonymousShareEntry shareEntry;
 		try {
-			AnonymousShareEntry shareEntry = downloadAnonymousShareEntry(shareUuid);
-			//send a notification by mail to the owner
-			notifierService.sendAllNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
-			return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
+			shareEntry = downloadAnonymousShareEntry(shareUuid);
 		} catch (BusinessException e) {
 			logger.error("Can't find anonymous share : " + shareUuid + " : " + e.getMessage());
 			throw e;
 		}
+		try {
+			//send a notification by mail to the owner
+			notifierService.sendAllNotification(mailContentBuildingService.buildMailAnonymousDownload(shareEntry));
+		} catch (BusinessException e) {
+			// TODO : FIXME : send the notification to the domain administration address. => a new functionality need to be add. 
+			if(e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
+				logger.error("Can't send notification to anonymous share (" + shareUuid + ") owner because : " + e.getMessage());
+			}
+		}
+		return documentEntryBusinessService.getDocumentStream(shareEntry.getDocumentEntry());
 	}
 
 	

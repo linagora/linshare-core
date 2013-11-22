@@ -242,7 +242,7 @@ public class MailNotifierServiceImpl implements NotifierService {
 				Transport.send(messageMim);
 			}
 		} catch (SendFailedException e) {
-			logger.error("Error sending notification on " + smtpServer + " port " + smtpPort +"to"+ recipient, e);
+			logger.error("Error sending notification on " + smtpServer + " port " + smtpPort +" to "+ recipient, e);
 			throw e;
 		} catch (MessagingException e) {
 			logger.error("Error sending notification on " + smtpServer + " port " + smtpPort, e);
