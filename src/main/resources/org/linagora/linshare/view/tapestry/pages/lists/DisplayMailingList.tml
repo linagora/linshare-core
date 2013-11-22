@@ -51,7 +51,7 @@
 							<t:label for="mail"/>:&nbsp;
 						</td>
 						<td>
-							<t:textfield t:id="mail" value="mail"/>
+							<t:textfield t:id="mail" value="mail" t:validate="required,maxlength=255"/>
 						</td>
 					</tr>
 					<tr>
