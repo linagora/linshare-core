@@ -26,7 +26,7 @@
 		 <t:errors banner="${message:pages.administration.userconfig.password.error}"/>
 				 <p:identifier>
 					<t:label for="identifier"/>
-                    <t:textfield t:id="identifier" value="mailingList.identifier" t:validate="required"/>
+                    <t:textfield t:id="identifier" value="mailingList.identifier" t:validate="required,maxlength=255" size="72"/>
 				</p:identifier>
 		        <p:description>
 					<t:label for="description"/>

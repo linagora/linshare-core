@@ -21,7 +21,7 @@
 					<tr>
 						<t:form id="form">
 						<td>
-							<t:textfield t:id="search" value="targetLists" t:validate="required"/>
+							<t:textfield t:id="search" value="targetLists" t:validate="required" size="50" />
 						</td>
                         <td>
                             <t:select t:id="visibility"/>

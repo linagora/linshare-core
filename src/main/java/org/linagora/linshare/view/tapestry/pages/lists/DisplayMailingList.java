@@ -51,9 +51,14 @@ import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DisplayMailingList {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(DisplayMailingList.class);
+	
 	@Inject
 	private MailingListFacade mailingListFacade;
 
@@ -174,11 +179,16 @@ public class DisplayMailingList {
 	public void onSuccessFromContactForm() throws BusinessException {
 		if (inModify == true) {
 			if (!fromReset) {
-				MailingListContactVo contact = mailingListFacade.searchContact(contactToUpdate);
-				contact.setFirstName(firstName);
-				contact.setLastName(lastName);
-				contact.setMail(mail);
-				mailingListFacade.updateContact(loginUser, contact);
+				try {
+					MailingListContactVo contact = mailingListFacade.searchContact(contactToUpdate);
+					contact.setFirstName(firstName);
+					contact.setLastName(lastName);
+					contact.setMail(mail);
+					mailingListFacade.updateContact(loginUser, contact);	
+				} catch (BusinessException e) {
+					logger.error("cannot retrieve user" + e.getMessage());
+					logger.debug(e.toString());
+				}
 			}
 		} else {
 			MailingListContactVo newContact = new MailingListContactVo(mail, firstName, lastName);
