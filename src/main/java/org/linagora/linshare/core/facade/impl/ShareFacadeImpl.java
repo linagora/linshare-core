@@ -75,6 +75,7 @@ import org.linagora.linshare.core.service.ShareEntryService;
 import org.linagora.linshare.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.jpa.support.SharedEntityManagerBean;
 
 public class ShareFacadeImpl implements ShareFacade {
 
@@ -371,8 +372,16 @@ public class ShareFacadeImpl implements ShareFacade {
     public void sendDownloadNotification(ShareDocumentVo sharedDocument, UserVo currentUser) throws BusinessException {
 		
 		User user = userRepository.findByLsUuid(currentUser.getLogin());
-		ShareEntry shareEntry = shareEntryService.findByUuid(user, sharedDocument.getIdentifier());
-		notifierService.sendAllNotification(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
+		try {
+			//send a notification by mail to the owner
+			ShareEntry shareEntry = shareEntryService.findByUuid(user, sharedDocument.getIdentifier());
+			notifierService.sendAllNotification(mailElementsFactory.buildMailRegisteredDownloadWithOneRecipient(shareEntry));
+		} catch (BusinessException e) {
+			// TODO : FIXME : send the notification to the domain administration address. => a new functionality need to be add. 
+			if(e.getErrorCode().equals(BusinessErrorCode.RELAY_HOST_NOT_ENABLE)) {
+				logger.error("Can't send share downloaded notification (" + sharedDocument.getIdentifier() + ") to owner because : " + e.getMessage());
+			}
+		}
     }
     
 	
