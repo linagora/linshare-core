@@ -51,7 +51,7 @@
 							<t:label for="mail"/>:&nbsp;
 						</td>
 						<td>
-							<t:textfield t:id="mail" value="mail" t:validate="required,maxlength=255"/>
+							<t:textfield t:id="mail" value="mail" t:validate="required,regexp,maxlength=255"/>
 						</td>
 					</tr>
 					<tr>
@@ -59,7 +59,7 @@
 							<t:label for="firstName"/>:&nbsp;
 						</td>
 						<td>
-							<t:textfield t:id="firstName" value="firstName"/>
+							<t:textfield t:id="firstName" value="firstName" t:validate="maxlength=255" />
 						</td>
 					</tr>
 					<tr>
@@ -67,7 +67,7 @@
 							<t:label for="lastName"/>:&nbsp;
 						</td>
 						<td>
-							<t:textfield t:id="lastName" value="lastName" />
+							<t:textfield t:id="lastName" value="lastName"  t:validate="maxlength=255" />
 						</td>
 					</tr>
 					<tr>				
