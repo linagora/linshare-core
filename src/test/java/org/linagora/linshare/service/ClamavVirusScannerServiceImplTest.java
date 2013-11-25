@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
