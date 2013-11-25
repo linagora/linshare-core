@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 @ContextConfiguration(locations = { 
 		"classpath:springContext-datasource.xml",
@@ -64,7 +64,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 		"classpath:springContext-jackRabbit.xml",
 		"classpath:springContext-test.xml"
 		})
-public class AbstractDomainServiceImplTest extends AbstractJUnit4SpringContextTests{
+public class AbstractDomainServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests{
 	
 	private static Logger logger = LoggerFactory.getLogger(AbstractDomainServiceImplTest.class);
 

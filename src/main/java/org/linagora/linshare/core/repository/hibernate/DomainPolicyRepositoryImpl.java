@@ -85,10 +85,4 @@ public class DomainPolicyRepositoryImpl extends AbstractRepositoryImpl<DomainPol
 					}
 				});
 	}
-	
-	public DomainPolicy update(DomainPolicy entity) throws BusinessException {
-		// FIXME
-	    getHibernateTemplate().merge(entity);
-		return super.update(entity);
-	}
 }
