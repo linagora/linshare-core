@@ -35,40 +35,94 @@
 package org.linagora.linshare.repository.hibernate;
 
 import junit.framework.Assert;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.linagora.linshare.core.domain.constants.LinShareConstants;
+import org.linagora.linshare.core.domain.entities.AbstractDomain;
+import org.linagora.linshare.core.domain.entities.Account;
+import org.linagora.linshare.core.domain.entities.Internal;
 import org.linagora.linshare.core.domain.entities.MailingList;
+import org.linagora.linshare.core.domain.entities.User;
 import org.linagora.linshare.core.exception.BusinessException;
+import org.linagora.linshare.core.repository.AbstractDomainRepository;
+import org.linagora.linshare.core.repository.AccountRepository;
 import org.linagora.linshare.core.repository.MailingListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations={"classpath:springContext-test.xml",
+@ContextConfiguration(locations = { "classpath:springContext-test.xml",
 		"classpath:springContext-datasource.xml",
-        "classpath:springContext-repository.xml"})
-public class MailingListRepositoryImplTest extends AbstractJUnit4SpringContextTests {
+		"classpath:springContext-repository.xml" })
+public class MailingListRepositoryImplTest extends
+		AbstractJUnit4SpringContextTests {
+
+	// default import.sql
+	private static final String DOMAIN_IDENTIFIER = LinShareConstants.rootDomainIdentifier;
+
+	private static final String FIRST_NAME = "first name";
+	private static final String LAST_NAME = "last name";
+	private static final String MAIL = "mail";
+	private static final String UID = "uid";
+
+	@Autowired
+	@Qualifier("accountRepository")
+	private AccountRepository<Account> accountRepository;
 
 	@Autowired
 	private MailingListRepository mailingListRepository;
-	
-	private static String mailingListName0 = "TestMailingList0";
-	
+
+	@Autowired
+	private AbstractDomainRepository abstractDomainRepository;
+
+	private AbstractDomain domain;
+
+	private User internal;
+
+	private static String identifier = "TestMailingList0";
+
+	@Before
+	public void setUp() throws Exception {
+		logger.debug("Begin setUp");
+
+		domain = abstractDomainRepository.findById(DOMAIN_IDENTIFIER);
+		internal = new Internal(FIRST_NAME, LAST_NAME, MAIL, UID);
+		internal.setLocale(domain.getDefaultLocale());
+		internal.setDomain(domain);
+		accountRepository.create(internal);
+
+		logger.debug("End setUp");
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		logger.debug("Begin tearDown");
+
+		accountRepository.delete(internal);
+
+		logger.debug("End tearDown");
+	}
+
 	@Test
-	public void testCreateMailingList1() throws BusinessException{
-		
-		MailingList current=new MailingList(mailingListName0);
-		logger.debug("Current listId : " + current.getIdentifier());
+	public void testCreateMailingList1() throws BusinessException {
+
+		MailingList current = new MailingList();
+		current.setIdentifier(identifier);
+		current.setOwner(internal);
+		current.setDomain(domain);
 		current.setPublic(true);
-		logger.debug("Visibility: "+current.isPublic());
 		current.setDescription("yoyo");
 
 		mailingListRepository.create(current);
+
 		Assert.assertNotNull(current.getPersistenceId());
-		
-		MailingList myList = mailingListRepository.findByIdentifier(null, "mailingListName0");
-		Assert.assertTrue(myList != null );
-		logger.debug("My name is : " + myList.getIdentifier());
-		logger.debug("My visibility: "+myList.visibility(myList.isPublic()));
+
+		MailingList myList = mailingListRepository.findByIdentifier(internal,
+				identifier);
+		Assert.assertTrue(myList != null);
 
 		mailingListRepository.delete(myList);
 	}
