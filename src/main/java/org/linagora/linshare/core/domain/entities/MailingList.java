@@ -103,10 +103,6 @@ public class MailingList {
 		}
 	}
 
-	public MailingList(String identifier) {
-		this.identifier = identifier;
-	}
-
 	public long getPersistenceId() {
 		return persistenceId;
 	}
