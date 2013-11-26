@@ -14,6 +14,7 @@ ALTER TABLE domain_pattern ADD COLUMN search_page_size int DEFAULT 500 NOT NULL;
 ALTER TABLE domain_pattern ADD COLUMN search_size_limit int DEFAULT 500 NOT NULL;
 ALTER TABLE domain_pattern ADD COLUMN completion_page_size int DEFAULT 20 NOT NULL;
 ALTER TABLE domain_pattern ADD COLUMN completion_size_limit int DEFAULT 500 NOT NULL;
+ALTER TABLE domain_pattern DROP COLUMN auto_complete_command;
 
 
 
