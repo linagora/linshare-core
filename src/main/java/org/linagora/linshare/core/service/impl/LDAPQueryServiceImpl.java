@@ -98,7 +98,9 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		logger.debug("LDAPQueryServiceImpl.authUser: baseDn: '" + baseDn + "' , login : '" + userLogin + "'");
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		return query.auth2(ldapConnection, userLogin, userPasswd);
+		User user = query.auth2(ldapConnection, userLogin, userPasswd);
+		ldapContext.close();
+		return user;
 	}
 
 	@Override
@@ -113,7 +115,9 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		return query.findUser(mail);
+		User user = query.findUser(mail);
+		ldapContext.close();
+		return user;
 	}
 
 	@Override
@@ -130,8 +134,9 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		return query.searchUser(mail, first_name, last_name);
-
+		List<User> list = query.searchUser(mail, first_name, last_name);
+		ldapContext.close();
+		return list;
 	}
 
 	@Override
@@ -146,7 +151,9 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (pattern) : '" + pattern + "'");
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		return query.complete(pattern);
+		List<User> list = query.complete(pattern); 
+		ldapContext.close();
+		return list;
 	}
 
 	@Override
@@ -162,7 +169,9 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (firstName lastName) : '" + first_name + "' et '" + last_name + "'");
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		return query.complete(first_name, last_name);
+		List<User> list = query.complete(first_name, last_name); 
+		ldapContext.close();
+		return list;
 	}
 
 	@Override
@@ -177,6 +186,8 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		logger.debug("LDAPQueryServiceImpl.searchUser: baseDn: '" + baseDn + "' , motif (mail) : '" + mail + "'");
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		return query.isUserExist(mail);
+		Boolean userExist = query.isUserExist(mail);
+		ldapContext.close();
+		return userExist;
 	}
 }
