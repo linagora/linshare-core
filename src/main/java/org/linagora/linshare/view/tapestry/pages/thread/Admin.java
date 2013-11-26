@@ -54,7 +54,7 @@ public class Admin {
 				return ThreadContent.class;
 			}
 		} catch (BusinessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return ThreadContent.class;
 		}
 		return null;
