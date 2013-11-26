@@ -55,7 +55,7 @@ public class Admin {
 		this.thread = thread;
 	}
 	
-	public void onDelete() throws BusinessException {
+	public void onActionFromDelete() throws BusinessException {
 		threadEntryFacade.deleteThread(userVo, thread);
 	}
 
