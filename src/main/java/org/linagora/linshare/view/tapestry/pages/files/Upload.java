@@ -283,7 +283,7 @@ public class Upload {
 
 			for (String recipient : recipients) {
 				if (!MailCompletionService.MAILREGEXP.matcher(
-						recipient.toUpperCase()).matches()) {
+						recipient.toUpperCase().trim()).matches()) {
 					badFormatEmail = badFormatEmail + recipient + " ";
 					sendErrors = true;
 				}
