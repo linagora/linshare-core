@@ -170,6 +170,7 @@ function build_source ()
 		rm -fr ${linshare_soure} 
 		mkdir -p ${linshare_soure}
 		cp -r * ${linshare_soure}/ ||true
+		rmdir ${linshare_soure}/${linshare_soure}
 		rm -fr ${linshare_soure}/target ${linshare_soure}/bin ${linshare_soure}/distrib
 	fi
 	echo_linshare "Archive creation in progress : ${linshare_archive}"
@@ -210,6 +211,9 @@ if [ -z $g_main_function ] ; then
 
 	# Creation de la version avec SSO
 	build_sso
+
+	# Creation de l'archive des sources
+	build_source
 else
 	if [ `declare -F "build_${g_main_function}"|wc -l` -eq 1 ] ; then 
 		"build_${g_main_function}"
