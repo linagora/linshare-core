@@ -82,7 +82,7 @@ public class ManageMailingList {
 	private String oldIdentifier;
 
 	@InjectPage
-	private org.linagora.linshare.view.tapestry.pages.lists.Index index;
+	private Index index;
 
 	@Inject
 	private Messages messages;
@@ -136,15 +136,11 @@ public class ManageMailingList {
 	}
 
 	void onValidateFromIdentifier(String value) throws ValidationException, BusinessException {
-		if (value != null) {
-			if (!value.substring(0, 1).matches("[A-Za-z]+")) {
-				throw new ValidationException(String.format(messages.get("pages.lists.manageList.letter")));
-			}
-		}
 		if (!value.equals(oldIdentifier)) {
 			if (!mailingListFacade.identifierIsAvailable(loginUser, value)) {
 				String copy = mailingListFacade.findAvailableIdentifier(loginUser, value);
-				throw new ValidationException(String.format(messages.get("pages.lists.manageList.identifierExist"),
+				throw new ValidationException(String.format(
+						messages.get("pages.lists.manageList.identifierExist"),
 						copy));
 			}
 		}

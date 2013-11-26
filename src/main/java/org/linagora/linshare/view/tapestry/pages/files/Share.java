@@ -258,6 +258,7 @@ public class Share {
 			for (String recipient : recipients) {
 				if (!MailCompletionService.MAILREGEXP.matcher(
 						recipient.toUpperCase()).matches()) {
+					logger.error("Bad format email: " + recipient);
 					badFormatEmail = badFormatEmail + recipient + " ";
 					sendErrors = true;
 				}
@@ -268,7 +269,7 @@ public class Share {
 						.notify(new BusinessUserMessage(
 								BusinessUserMessageType.QUICKSHARE_BADMAIL,
 								MessageSeverity.ERROR, badFormatEmail));
-				return Upload.class;
+				return Share.class;
 			} else {
 				recipientsEmail = recipients;
 			}
@@ -278,14 +279,14 @@ public class Share {
 						.notify(new BusinessUserMessage(
 								BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE,
 								MessageSeverity.ERROR));
-				return Upload.class;
+				return Share.class;
 			}
 
 			// PROCESS SHARE
 
 			Boolean errorOnAddress = false;
-
 			SuccessesAndFailsItems<ShareDocumentVo> sharing = new SuccessesAndFailsItems<ShareDocumentVo>();
+
 			try {
 				MailContainer mailContainer = new MailContainer(
 						userVo.getLocale(), textAreaValue, textAreaSubjectValue);
@@ -293,7 +294,6 @@ public class Share {
 						.createSharingWithMailUsingRecipientsEmailAndExpiryDate(
 								userVo, documents, recipientsEmail,
 								secureSharing, mailContainer, null);
-
 			} catch (BusinessException e1) {
 
 				// IF RELAY IS DISABLE ON SMTP SERVER
