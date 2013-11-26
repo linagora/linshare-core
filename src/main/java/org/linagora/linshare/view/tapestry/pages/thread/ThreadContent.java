@@ -118,13 +118,22 @@ public class ThreadContent {
 
 	public Object onActivate() {
 		if (selectedThread == null) {
+			logger.info("No thread selected, abort");
+			return Index.class;
+		}
+		try {
+			if (threadEntryFacade.userIsMember(userVo, selectedThread)) {
+				logger.info("Unauthorized");
+				return Index.class;
+			}
+		} catch (BusinessException e) {
+			logger.error(e.getMessage());
 			return Index.class;
 		}
 		contextPath = requestGlobals.getHTTPServletRequest().getContextPath();
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@SetupRender
 	public void setupRender() throws BusinessException {
 		logger.debug("Setup Render begins");
