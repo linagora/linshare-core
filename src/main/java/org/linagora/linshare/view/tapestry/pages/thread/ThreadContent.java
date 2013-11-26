@@ -122,7 +122,7 @@ public class ThreadContent {
 			return Index.class;
 		}
 		try {
-			if (threadEntryFacade.userIsMember(userVo, selectedThread)) {
+			if (!threadEntryFacade.userIsMember(userVo, selectedThread)) {
 				logger.info("Unauthorized");
 				return Index.class;
 			}
