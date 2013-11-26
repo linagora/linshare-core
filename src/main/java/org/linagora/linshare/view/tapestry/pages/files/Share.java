@@ -257,8 +257,8 @@ public class Share {
 
 			for (String recipient : recipients) {
 				if (!MailCompletionService.MAILREGEXP.matcher(
-						recipient.toUpperCase()).matches()) {
-					logger.error("Bad format email: " + recipient);
+						recipient.toUpperCase().trim()).matches()) {
+					logger.error("Bad format email: \"" + recipient + "\"");
 					badFormatEmail = badFormatEmail + recipient + " ";
 					sendErrors = true;
 				}
@@ -269,7 +269,7 @@ public class Share {
 						.notify(new BusinessUserMessage(
 								BusinessUserMessageType.QUICKSHARE_BADMAIL,
 								MessageSeverity.ERROR, badFormatEmail));
-				return Share.class;
+				return Index.class;
 			} else {
 				recipientsEmail = recipients;
 			}
@@ -279,7 +279,7 @@ public class Share {
 						.notify(new BusinessUserMessage(
 								BusinessUserMessageType.QUICKSHARE_NO_FILE_TO_SHARE,
 								MessageSeverity.ERROR));
-				return Share.class;
+				return Index.class;
 			}
 
 			// PROCESS SHARE
