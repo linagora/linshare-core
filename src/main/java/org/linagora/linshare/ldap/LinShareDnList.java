@@ -57,6 +57,10 @@ public class LinShareDnList extends DnList {
 		scs.setSearchScope(scope);
 		// ManageReferralControl ?
 //		scs.setDerefLinkFlag(false);
+//		sc.setDerefLinkFlag(false);
+//		sc.setReturningAttributes(new String[]{"1.1"});
+//		sc.setSearchScope(scope);
+//		sc.setReturningObjFlag(true);
 		
 		try {
 			// Setting pagination control.
@@ -70,7 +74,6 @@ public class LinShareDnList extends DnList {
 				SearchResult entry = (SearchResult) results.next();
 				if(logger.isDebugEnabled()) {
 					logger.debug("entry name : " + entry.getName());
-					logger.debug("entry attributes : " + entry.getAttributes());
 				}
 
 				// Handle the entry's response controls (if any)
