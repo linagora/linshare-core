@@ -53,6 +53,9 @@ import org.linagora.linshare.core.domain.vo.UserVo;
 import org.linagora.linshare.core.exception.BusinessException;
 import org.linagora.linshare.core.facade.ThreadEntryFacade;
 import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.linagora.linshare.view.tapestry.enums.BusinessUserMessageType;
+import org.linagora.linshare.view.tapestry.objects.BusinessUserMessage;
+import org.linagora.linshare.view.tapestry.objects.MessageSeverity;
 import org.linagora.linshare.view.tapestry.services.BusinessMessagesManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +127,9 @@ public class ThreadContent {
 		try {
 			if (!threadEntryFacade.userIsMember(userVo, selectedThread)) {
 				logger.info("Unauthorized");
+				businessMessagesManagementService.notify(new BusinessUserMessage(
+								BusinessUserMessageType.THREAD_NOT_FOUND,
+								MessageSeverity.ERROR));
 				return Index.class;
 			}
 		} catch (BusinessException e) {
@@ -226,5 +232,4 @@ public class ThreadContent {
 		cause.printStackTrace();
 		return this;
 	}
-
 }
