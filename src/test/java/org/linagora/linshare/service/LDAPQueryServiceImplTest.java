@@ -121,22 +121,8 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 								// last name attributes (association)
 				5, 5, false);
 
-		// pattern= new DomainPattern("testPattern", "testPattern",
-		// " ",
-		// " ",
-		// "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(cn=*)(sn=*)(mail=\"+login+\"))\");",
-		// // auth command
-		// "ldap.search(domain, \"(&(objectClass=inetOrgPerson)(mail=\"+mail+\")(cn=*)(sn=*))\");",
-		// // search command
-		// attributes,
-		// "ldap.search(domain, \"(&(objectClass=obmUser)(|(mail=\"+pattern+\")(givenName=\"+pattern+\")(sn=\"+pattern+\"))(mail=*)(givenName=*)(sn=*))\");",
-		// // auto complete command
-		// false);
-		// baseDn = "ou=users,dc=int1.linshare.dev,dc=local";
-//		baseDn = "ou=People,o=insee,c=fr";
 		baseDn = "ou=users,dc=int5.linshare.dev,dc=local";
-		// "ldap.search(domain, \"(&(objectClass=obmUser)(mail=\"+mail+\")(givenName=\"+firstName+\")(sn=\"+lastName+\"))\");",
-		// // search command
+		baseDn = "dc=int5.linshare.dev,dc=local";
 
 		logger.debug(LinShareTestConstants.END_SETUP);
 	}
@@ -151,7 +137,7 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 	public void testAuth() throws BusinessException, NamingException, IOException {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
-		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, userMail1, userPassword1);
+		User user = ldapQueryService.auth(ldapConn, baseDn, domainPattern, "abdel.alvarez@int5.linshare.dev", userPassword1);
 		Date date_after = new Date();
 		Assert.assertNotNull(user);
 		logUser(user);
@@ -227,16 +213,33 @@ public class LDAPQueryServiceImplTest extends AbstractJUnit4SpringContextTests {
 		logger.info(LinShareTestConstants.BEGIN_TEST);
 		Date date_before = new Date();
 //		User user = ldapQueryService.findUser(ldapConn, baseDn, domainPattern, "abdel.bleuse@int5.linshare.dev");
-		ldapQueryService.completeUser(ldapConn, baseDn, domainPattern, "abdel");
+		List<User> user = ldapQueryService.completeUser(ldapConn, baseDn, domainPattern, "abdel");
 		Date date_after = new Date();
 		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
-//		Assert.assertNotNull(user);
-//		logUser(user);
-//		
-//		user = ldapQueryService.findUser(ldapConn, baseDn, domainPattern, userMail1 + "abdel");
-//		Assert.assertNull(user);
-		
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
+	
+	@Test
+	public void testGetUser() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date date_before = new Date();
+		User user = ldapQueryService.findUser(ldapConn, baseDn, domainPattern, "abdel.bleuse@int5.linshare.dev");
+		Date date_after = new Date();
+		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
+		Assert.assertNotNull(user);
+		logUser(user);
 		logger.debug(LinShareTestConstants.END_TEST);
 	}
 
+	@Test
+	public void testGetUser2() throws BusinessException, NamingException, IOException {
+		logger.info(LinShareTestConstants.BEGIN_TEST);
+		Date date_before = new Date();
+		domainPattern.getAttributes().put(DomainPattern.USER_FIRST_NAME, new LdapAttribute(DomainPattern.USER_FIRST_NAME, "plopName", true));
+		User user = ldapQueryService.findUser(ldapConn, baseDn, domainPattern, "abdel.bleuse@int5.linshare.dev");
+		Date date_after = new Date();
+		logger.info("fin test : " + String.valueOf(date_after.getTime() - date_before.getTime()) + " milliseconds.");
+		Assert.assertNull(user);
+		logger.debug(LinShareTestConstants.END_TEST);
+	}
 }
