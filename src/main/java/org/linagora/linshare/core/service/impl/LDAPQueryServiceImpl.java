@@ -59,9 +59,6 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(LDAPQueryServiceImpl.class);
 
-	/** Local LDAP cache */
-	// private IDnList dnList;
-
 	public LDAPQueryServiceImpl() {
 		super();
 	}
