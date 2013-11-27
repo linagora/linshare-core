@@ -95,7 +95,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 
 		logger.debug("LDAPQueryServiceImpl.authUser: baseDn: '" + baseDn + "' , login : '" + userLogin + "'");
 		JScriptLdapQuery query = new JScriptLdapQuery(lqlctx, baseDn, domainPattern, dnList);
-		User user = query.auth2(ldapConnection, userLogin, userPasswd);
+		User user = query.auth(ldapConnection, userLogin, userPasswd);
 		ldapContext.close();
 		return user;
 	}
