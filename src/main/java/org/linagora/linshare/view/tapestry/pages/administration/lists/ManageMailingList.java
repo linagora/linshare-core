@@ -54,10 +54,19 @@ import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
+import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.unbound.tapestry.tagselect.LabelAwareValueEncoder;
 
 public class ManageMailingList {
+
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
+
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
 
 	@SessionState
 	private UserVo loginUser;
@@ -163,12 +172,10 @@ public class ManageMailingList {
 	}
 
 	public void onValidateFromForm() {
-
 		if (newOwner == null) {
 			form.recordError(String.format(messages.get("pages.lists.administration.newOwnerNotFound")));
 			return;
 		}
-		
 		if (!mailingListVo.getOwner().equals(newOwner) || 
 			(mailingListVo.getOwner().equals(newOwner) && 
 			!mailingListVo.getIdentifier().equals(oldIdentifier))) {
@@ -191,5 +198,12 @@ public class ManageMailingList {
 
 	public void setList(MailingListVo list) {
 		this.mailingListVo = list;
+	}
+
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }

@@ -162,25 +162,22 @@ public class Index {
 
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
-		refreshListAfterDelete();
 		mailingListFacade.deleteList(loginUser, listToDelete);
+		refreshListAfterDelete();
 	}
 
 	private void refreshListAfterDelete() {
-		List<MailingListVo> list = new ArrayList<MailingListVo>(lists);
-		lists.clear();
-		for (MailingListVo currentList : list) {
-			if (!currentList.getUuid().equals(listToDelete)) {
-				lists.add(currentList);
+		for (MailingListVo l : lists) {
+			if (l.getUuid().equals(listToDelete)) {
+				lists.remove(l);
+				return;
 			}
 		}
 	}
 
 	private void refreshList(List<MailingListVo> list) throws BusinessException {
-		List<MailingListVo> listVo = new ArrayList<MailingListVo>(list);
-		list.clear();
-		for (MailingListVo current : listVo) {
-			list.add(mailingListFacade.findByUuid(current.getUuid()));
+		for (MailingListVo l : list) {
+			l = mailingListFacade.findByUuid(l.getUuid());
 		}
 	}
 
@@ -198,13 +195,6 @@ public class Index {
 		criteriaOnSearch = VisibilityType.AllMyLists.toString();
 	}
 
-	Object onException(Throwable cause) {
-		shareSessionObjects.addError(messages.get("global.exception.message"));
-		logger.error(cause.getMessage());
-		cause.printStackTrace();
-		return this;
-	}
-
 	public boolean getIsPublic() {
 		return list.isPublic();
 	}
@@ -219,5 +209,12 @@ public class Index {
 
 	public void setFromCreate(boolean fromCreate) {
 		this.fromCreate = fromCreate;
+	}
+
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }
