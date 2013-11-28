@@ -42,24 +42,16 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.annotation.Nullable;
-import javax.naming.CommunicationException;
-import javax.naming.LimitExceededException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.HasControls;
-import javax.naming.ldap.LdapName;
 
 import org.linagora.linshare.core.domain.entities.DomainPattern;
 import org.linagora.linshare.core.domain.entities.Internal;
@@ -71,7 +63,6 @@ import org.linid.dm.authorization.lql.LqlRequestCtx;
 import org.linid.dm.authorization.lql.dnlist.IDnList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -80,11 +71,7 @@ import org.springframework.security.ldap.authentication.BindAuthenticator;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Maps.EntryTransformer;
-import com.unboundid.ldap.sdk.Filter;
 
 public class JScriptLdapQuery {
 
@@ -92,10 +79,9 @@ public class JScriptLdapQuery {
 
 	// Logger
 	private static final Logger logger = LoggerFactory.getLogger(JScriptLdapQuery.class);
-
-	// Java to JavaScript Translator object
+	
 	private JScriptEvaluator evaluator;
-
+	
 	private String baseDn;
 
 	private DomainPattern domainPattern;
@@ -134,7 +120,7 @@ public class JScriptLdapQuery {
 	public List<String> evaluate(String lqlExpression) throws NamingException {
 		try {
 			Date date_before = new Date();
-			JScriptEvaluator evaluator = JScriptEvaluator.getInstance(lqlctx.getLdapCtx(), dnList);
+			evaluator = JScriptEvaluator.getInstance(lqlctx.getLdapCtx(), dnList);
 			List<String> evalToStringList = evaluator.evalToStringList(lqlExpression, lqlctx.getVariables());
 			if (logger.isDebugEnabled()) {
 				Date date_after = new Date();
@@ -206,9 +192,9 @@ public class JScriptLdapQuery {
 	}
 
 	/**
-	 * 
-	 * @param pattern
-	 *            : could be first name, surname, or mail fragment.
+	 * Looking for a user using first name and last name. Only for auto-complete.
+	 * @param first_name
+	 * @param last_name
 	 * @return
 	 * @throws NamingException
 	 */
@@ -232,12 +218,12 @@ public class JScriptLdapQuery {
 	}
 
 	/**
-	 * 
+	 * This function build user list from input dn list
 	 * @param dnResultList
 	 *            : // list of dn without baseDn used by the previous search.
 	 * @param completionMode
 	 *            : completion mode return a user object with only mail,
-	 *            firstname, and lastname set. Otherwise all defined attributes
+	 *            first name, and last name set. Otherwise all defined attributes
 	 *            will be search and set (mail, firstname, lastname, uid, ...)
 	 * @return List of user
 	 */
@@ -265,6 +251,13 @@ public class JScriptLdapQuery {
 		return users;
 	}
 
+	/**
+	 * This function build user from input dn
+	 * @param dn
+	 * @param completionMode
+	 * @return
+	 * @throws NamingException
+	 */
 	private User dnToUser(String dn, boolean completionMode) throws NamingException {
 		ControlContext controlContext = initControlContext(completionMode);
 		return dnToUser(dn, controlContext.getLdapDbAttributes(), controlContext.getSearchControls());
