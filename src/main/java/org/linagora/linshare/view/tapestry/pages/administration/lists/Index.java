@@ -164,10 +164,19 @@ public class Index {
 		this.listToDelete = uuid;
 	}
 
+	private void refreshListAfterDelete() {
+		for (MailingListVo l : lists) {
+			if (l.getUuid().equals(listToDelete)) {
+				lists.remove(l);
+				return;
+			}
+		}
+	}
+
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
 		mailingListFacade.deleteList(userVo, listToDelete);
-		lists.remove(listToDelete);
+		refreshListAfterDelete();
 	}
 
 	private void refreshList(List<MailingListVo> list) throws BusinessException {
