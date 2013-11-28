@@ -66,13 +66,12 @@ public class CreateLdapConnection {
 	public void onActivate(String identifier) throws BusinessException {
         logger.debug("ldapConnectionIdentifier:" + identifier);
 		if (identifier != null) {
-			inModify = true;
 			ldapConn = domainFacade.retrieveLDAPConnection(identifier);
+			inModify = (ldapConn != null);
 		} else {
 			inModify = false;
 			ldapConn = null;
 		}
-		
 	}
 	
 	@SetupRender
