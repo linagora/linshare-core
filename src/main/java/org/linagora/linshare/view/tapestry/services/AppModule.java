@@ -37,8 +37,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -54,9 +55,11 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.AliasContribution;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestExceptionHandler;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestHandler;
 import org.apache.tapestry5.services.Response;
@@ -368,4 +371,30 @@ public class AppModule
     	configuration.add(ChenilleKitImageConstants.KAPATCHA_CONFIG_KEY, properties);
     }
 
+    /**
+     * Silently redirect the user to the intended page when browsing through
+     * tapestry forms through browser history
+     *
+     * See http://apache-tapestry-mailing-list-archives.1045711.n5.nabble.com/Safari-for-example-browser-history-and-form-exception-td4942074.html
+     */
+	public RequestExceptionHandler decorateRequestExceptionHandler(
+			final ComponentSource componentSource, final Response response,
+			final RequestExceptionHandler oldHandler) {
+		return new RequestExceptionHandler() {
+			@Override
+			public void handleRequestException(Throwable exception)
+					throws IOException {
+				final String msg = "Forms require that the request method be POST and that the t:formdata query parameter have values";
+				if (!exception.getMessage().contains(msg)) {
+					oldHandler.handleRequestException(exception);
+					return;
+				}
+				ComponentResources cr = componentSource.getActivePage()
+						.getComponentResources();
+				Link link = cr.createEventLink("");
+				String uri = link.toRedirectURI().replaceAll(":", "");
+				response.sendRedirect(uri);
+			}
+		};
+	}
 }
