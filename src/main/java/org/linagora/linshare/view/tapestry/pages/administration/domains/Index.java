@@ -137,9 +137,6 @@ public class Index {
         domainPatterns = domainFacade.findAllUserDomainPatterns();
         ldapConnections = domainFacade.findAllLDAPConnections();
         policies = domainPolicyFacade.findAllDomainPolicies();  
-        if (grid.getSortModel().getSortConstraints().isEmpty()) {
-            grid.getSortModel().updateSort("identifier");
-        }
     }
 
     @OnEvent(value="domainDeleteEvent")
