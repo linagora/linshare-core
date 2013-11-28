@@ -83,7 +83,7 @@ public class Index {
 
 	@SessionState
 	@Property
-	private UserVo loginUser;
+	private UserVo userVo;
 
 	@Inject
 	private Messages messages;
@@ -132,6 +132,12 @@ public class Index {
 	@InjectPage
 	private ManageMailingList manageMailingListPage;
 
+	public Object onActivate() {
+		if (!functionalityFacade.isEnableListTab(userVo.getDomainIdentifier()))
+			return org.linagora.linshare.view.tapestry.pages.Index.class;
+		return null;
+	}
+
 	@SetupRender
 	public void init() throws BusinessException {
 		if (alreadyConnect == false) {
@@ -139,7 +145,7 @@ public class Index {
 			targetLists = "*";
 		}
 		if (inSearch == false) {
-			lists = new ArrayList<MailingListVo>();
+			lists = Lists.newArrayList();
 		}
 		if (!lists.isEmpty()) {
 			if (grid.getSortModel().getSortConstraints().isEmpty()) {
@@ -151,7 +157,7 @@ public class Index {
 	}
 
 	public boolean getListIsDeletable() throws BusinessException {
-		return mailingListFacade.getListIsDeletable(loginUser, list);
+		return mailingListFacade.getListIsDeletable(userVo, list);
 	}
 
 	public void onActionFromDeleteList(String uuid) {
@@ -160,25 +166,13 @@ public class Index {
 
 	@OnEvent(value = "listDeleteEvent")
 	public void deleteList() throws BusinessException {
-		refreshListAfterDelete();
-		mailingListFacade.deleteList(loginUser, listToDelete);
-	}
-
-	private void refreshListAfterDelete() {
-		List<MailingListVo> list = new ArrayList<MailingListVo>(lists);
-		lists.clear();
-		for (MailingListVo currentList : list) {
-			if (!currentList.getUuid().equals(listToDelete)) {
-				lists.add(currentList);
-			}
-		}
+		mailingListFacade.deleteList(userVo, listToDelete);
+		lists.remove(listToDelete);
 	}
 
 	private void refreshList(List<MailingListVo> list) throws BusinessException {
-		List<MailingListVo> listVo = new ArrayList<MailingListVo>(list);
-		list.clear();
-		for (MailingListVo current : listVo) {
-			list.add(mailingListFacade.findByUuid(current.getUuid()));
+		for (MailingListVo l : list) {
+			l = mailingListFacade.findByUuid(l.getUuid());
 		}
 	}
 
@@ -186,7 +180,7 @@ public class Index {
 		inSearch = true;
 		criteriaOnSearch = visibility != null ?
 				visibility.name() : VisibilityType.All.toString();
-		lists = mailingListFacade.setListFromSearch(loginUser, targetLists, criteriaOnSearch);
+		lists = mailingListFacade.setListFromSearch(userVo, targetLists, criteriaOnSearch);
 	}
 
 	public void onSuccessFromResetForm() {
