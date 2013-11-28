@@ -232,7 +232,7 @@ public class RecipientFavouriteRepositoryImpl extends AbstractRepositoryImpl<Rec
 	public List<String> findMatchElementsOrderByWeight(String matchStartWith, User owner) {
 		DetachedCriteria det = DetachedCriteria.forClass(RecipientFavourite.class);
 		det.add(Restrictions.eq("owner", owner));
-		det.add(Restrictions.ilike("recipient", matchStartWith,MatchMode.START));
+		det.add(Restrictions.ilike("recipient", matchStartWith,MatchMode.ANYWHERE));
 		det.addOrder(Order.desc("weight"));
 		List<RecipientFavourite> recipients=findByCriteria(det);
 		
