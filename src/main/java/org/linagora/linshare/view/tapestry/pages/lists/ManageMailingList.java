@@ -51,8 +51,17 @@ import org.linagora.linshare.core.facade.AbstractDomainFacade;
 import org.linagora.linshare.core.facade.MailingListFacade;
 import org.linagora.linshare.core.facade.RecipientFavouriteFacade;
 import org.linagora.linshare.core.facade.UserFacade;
+import org.linagora.linshare.view.tapestry.beans.ShareSessionObjects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManageMailingList {
+
+	private static Logger logger = LoggerFactory.getLogger(Index.class);
+
+	@SessionState
+	@Property
+	private ShareSessionObjects shareSessionObjects;
 
 	@Inject
 	private MailingListFacade mailingListFacade;
@@ -157,5 +166,12 @@ public class ManageMailingList {
 		inModify = false;
 		mailingList = null;
 		return index;
+	}
+
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }

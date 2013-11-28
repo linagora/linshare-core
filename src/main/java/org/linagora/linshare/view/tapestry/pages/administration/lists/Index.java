@@ -199,13 +199,6 @@ public class Index {
 		return null;
 	}
 
-	Object onException(Throwable cause) {
-		shareSessionObjects.addError(messages.get("global.exception.message"));
-		logger.error(cause.getMessage());
-		cause.printStackTrace();
-		return this;
-	}
-
 	public boolean getIsPublic() {
 		return list.isPublic();
 	}
@@ -222,5 +215,12 @@ public class Index {
 		return new EnumSelectModel(VisibilityType.class, messages,
 				(VisibilityType[]) ArrayUtils.removeElement(
 						VisibilityType.values(), VisibilityType.AllMyLists));
+	}
+
+	Object onException(Throwable cause) {
+		shareSessionObjects.addError(messages.get("global.exception.message"));
+		logger.error(cause.getMessage());
+		cause.printStackTrace();
+		return this;
 	}
 }
