@@ -80,7 +80,7 @@ public class LocalDecrypt {
 	private Asset jwsTemplate;
 
 	@Inject
-	FunctionalityOldService functionalityService;
+	private FunctionalityOldService functionalityService;
 	
 	@Inject
 	private Templating templating;
