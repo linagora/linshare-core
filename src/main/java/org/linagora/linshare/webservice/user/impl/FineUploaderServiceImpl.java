@@ -83,7 +83,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 	@Path("/receiver")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Override
 	public FineUploaderDto upload(@Multipart(value = FILE) InputStream file,
 			@Multipart(value = FILE_NAME, required = false) String fileName,
@@ -122,7 +122,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 
 	@Path("/receiver/{uuid}")
 	@DELETE
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Override
 	public FineUploaderDto delete(@PathParam("uuid") String uuid)
 			throws BusinessException {
@@ -149,7 +149,7 @@ public class FineUploaderServiceImpl extends WebserviceBase implements
 	@Path("/threadentry/{threadUuid}")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Override
 	public FineUploaderDto uploadThreadEntry(
 			@PathParam("threadUuid") String threadUuid,
