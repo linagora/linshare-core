@@ -53,7 +53,7 @@
                 filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
                 
             <sec:filter-chain pattern="/webservice/fineuploader/**"
-                filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,internetExplorerCompatibilityFilter" />
+                filters="httpSessionIntegrationFilter,CORSRequestFilter,lemonLDAPFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
                 
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 			
