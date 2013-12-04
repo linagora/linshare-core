@@ -31,53 +31,29 @@
  * version 3 and <http://www.linagora.com/licenses/> for the Additional Terms
  * applicable to LinShare software.
  */
-package org.linagora.linshare.webservice.user;
+package org.linagora.linshare.webservice.jaxrs;
 
-import java.io.InputStream;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.Provider;
 
-import javax.ws.rs.Path;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.map.ObjectMapper;
 
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.linagora.linshare.core.exception.BusinessException;
-import org.linagora.linshare.webservice.dto.FineUploaderDto;
+@Provider
+@Produces({ MediaType.APPLICATION_JSON, "text/json", MediaType.TEXT_PLAIN })
+public class TextPlainJsonProvider extends JacksonJsonProvider {
+	public TextPlainJsonProvider() {
+		super();
+	}
 
-@Path("/upload")
-public interface FineUploaderService {
+	public TextPlainJsonProvider(ObjectMapper mapper) {
+		super(mapper);
+	}
 
-	/**
-	 * Upload method contains logic for a file upload and return the correct
-	 * DocumentDto if upload was successful.
-	 * 
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * @return
-	 */
-	public FineUploaderDto upload(InputStream file, String fileName,
-			MultipartBody body) throws BusinessException;
-
-	/**
-	 * Delete an existing file.
-	 * 
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * @return
-	 */
-	public FineUploaderDto delete(String uuid) throws BusinessException;
-
-	/**
-	 * Upload method contains logic for a file upload and return the correct
-	 * DocumentDto if upload was successful.
-	 * 
-	 * @param threadUuid
-	 * @param file
-	 * @param fileName
-	 * @param body
-	 * 
-	 * @return
-	 */
-	public FineUploaderDto uploadThreadEntry(String threadUuid,
-			InputStream file, String fileName, MultipartBody body)
-			throws BusinessException;
+	@Override
+	protected boolean isJsonType(MediaType mediaType) {
+		return mediaType.equals(MediaType.TEXT_PLAIN_TYPE) ?
+				true : super.isJsonType(mediaType);
+	}
 }
