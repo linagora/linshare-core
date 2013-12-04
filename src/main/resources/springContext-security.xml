@@ -51,7 +51,7 @@
 				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 				
 			<sec:filter-chain pattern="/webservice/fineuploader/**"
-				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor,internetExplorerCompatibilityFilter" />
+				filters="httpSessionIntegrationFilter,CORSRequestFilter,basicProcessingFilter,basicExceptionTranslationFilter,filterSecurityInterceptor" />
 				
 			<sec:filter-chain pattern="/webservice/services/**" filters="none" />
 
@@ -172,8 +172,6 @@
 	</bean>
 
 	<bean id="CORSRequestFilter" class="org.linagora.linshare.auth.CORSRequestFilter" />
-	<!-- This filter is designed to fix Internet explorer 8 an d 9 compatibility with application/json content type. -->
-	<bean id="internetExplorerCompatibilityFilter" class="org.linagora.linshare.filters.InternetExplorerCompatibilityFilter"/>
 
 	<bean id="basicExceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
 		<property name="authenticationEntryPoint" ref="restAuthenticationEntryPoint" />
