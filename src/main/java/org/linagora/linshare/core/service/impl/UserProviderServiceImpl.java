@@ -213,7 +213,7 @@ public class UserProviderServiceImpl implements UserProviderService {
 
     @Override
     public User findUser(LdapUserProvider userProvider, String mail) throws BusinessException, NamingException, IOException {
-    	return ldapQueryService.findUser(userProvider.getLdapconnexion(), userProvider.getBaseDn(), userProvider.getPattern(), mail);
+    	return ldapQueryService.getUser(userProvider.getLdapconnexion(), userProvider.getBaseDn(), userProvider.getPattern(), mail);
     }
 
     @Override
