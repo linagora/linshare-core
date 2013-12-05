@@ -50,6 +50,7 @@ import javax.naming.ldap.HasControls;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.PagedResultsControl;
+import javax.naming.ldap.PagedResultsResponseControl;
 
 import org.linid.dm.authorization.lql.dnlist.DnList;
 import org.slf4j.Logger;
@@ -57,77 +58,155 @@ import org.slf4j.LoggerFactory;
 
 public class LinShareDnList extends DnList {
 
-	final static protected Logger logger = LoggerFactory.getLogger(LinShareDnList.class);
+	final static protected Logger logger = LoggerFactory
+			.getLogger(LinShareDnList.class);
 
-	protected int searchPageSize;
+	protected int pageSize;
 
-	protected int searchSizeLimit;
+	protected int sizeLimit;
 
 	public LinShareDnList() {
 		super();
-		this.searchPageSize = 500;
-		this.searchSizeLimit = 500;
+		this.pageSize = 50;
+		this.sizeLimit = 50;
 	}
 
 	public LinShareDnList(int searchPageSize, int searchSizeLimit) {
 		super();
-		this.searchPageSize = searchPageSize;
-		this.searchSizeLimit = searchSizeLimit;
+		this.pageSize = searchPageSize;
+		this.sizeLimit = searchSizeLimit;
 	}
 
 	@Override
-	public List<String> getDnList(LdapContext ldapCtx, String base, String filter, int scope) throws NamingException {
-		if (searchPageSize == 0) {
+	public List<String> getDnList(LdapContext ldapCtx, String base,
+			String filter, int scope) throws NamingException {
+		if (pageSize == 0) {
 			return getDnListNoPagination(ldapCtx, base, filter, scope);
 		} else {
 			return getDnListWithPagination(ldapCtx, base, filter, scope);
 		}
 	}
 
-	private List<String> getDnListWithPagination(LdapContext ldapCtx, String base, String filter, int scope) throws NamingException {
+	private List<String> getDnListWithPagination(LdapContext ldapCtx,
+			String base, String filter, int scope) throws NamingException {
 		List<String> cList = new ArrayList<String>();
 		SearchControls scs = new SearchControls();
 		scs.setSearchScope(scope);
-		// ManageReferralControl ?
-//		scs.setDerefLinkFlag(false);
-//		sc.setDerefLinkFlag(false);
-//		sc.setReturningAttributes(new String[]{"1.1"});
-//		sc.setSearchScope(scope);
-//		sc.setReturningObjFlag(true);
-		
+		scs.setDerefLinkFlag(true);
+		if (sizeLimit != 0) {
+			if(pageSize == sizeLimit) {
+				scs.setCountLimit(sizeLimit + 1);
+			} else {
+				scs.setCountLimit(sizeLimit);
+			}
+		}
+
 		try {
 			// Setting pagination control.
-			ldapCtx.setRequestControls(new Control[] { new PagedResultsControl(searchPageSize, Control.CRITICAL) });
-			
+			ldapCtx.setRequestControls(new Control[] { new PagedResultsControl(
+					pageSize, Control.CRITICAL) });
+
 			// No attributes will be return. Official LDAP syntax
-			scs.setReturningAttributes(new String [] { "1.1" }); 
-			
-			NamingEnumeration<SearchResult> results = ldapCtx.search(base, filter, scs);
-			while (results != null && results.hasMore()) {
-				SearchResult entry = (SearchResult) results.next();
-				if(logger.isDebugEnabled()) {
-					logger.debug("entry name : " + entry.getName());
+			scs.setReturningAttributes(new String[] { "1.1" });
+
+			byte[] cookie = null;
+			int nbResult = 0;
+			do {
+				NamingEnumeration<SearchResult> results = ldapCtx.search(base,
+						filter, scs);
+				while (results != null && results.hasMore()) {
+					SearchResult entry = (SearchResult) results.next();
+					if (logger.isDebugEnabled()) {
+						logger.debug("entry name : " + entry.getName());
+					}
+
+					// Handle the entry's response controls (if any)
+					if (entry instanceof HasControls) {
+						Control[] controls = ((HasControls) entry)
+								.getControls();
+						if (logger.isDebugEnabled()) {
+							logger.debug("entry name has controls "
+									+ controls.toString());
+						}
+					}
+
+					String dn = entry.getName();
+					if (base.length() > 0) {
+						dn += "," + base;
+					}
+					cList.add(dn);
+					nbResult += 1;
 				}
 
-				// Handle the entry's response controls (if any)
-				if (entry instanceof HasControls) {
-					Control[] controls = ((HasControls) entry).getControls();
-					if(logger.isDebugEnabled()) {
-						logger.debug("entry name has controls " + controls.toString());
+				// Examine the paged results control response
+				Control[] controls = ldapCtx.getResponseControls();
+				if (controls != null) {
+					for (int i = 0; i < controls.length; i++) {
+						if (controls[i] instanceof PagedResultsResponseControl) {
+							PagedResultsResponseControl prrc = (PagedResultsResponseControl) controls[i];
+							// int estimatedTotal = prrc.getResultSize();
+							cookie = prrc.getCookie();
+						} else {
+							// Handle other response controls (if any)
+						}
 					}
 				}
 
-				// String dn = results.next().getName();
-				String dn = entry.getName();
+				// limit total results.
+				if (sizeLimit != 0 && nbResult >= sizeLimit) {
+					cookie = null;
+				}
+
+				// Re-activate paged results
+				ldapCtx.setRequestControls(new Control[] { new PagedResultsControl(
+						pageSize, cookie, Control.CRITICAL) });
+
+			} while (cookie != null);
+
+		} catch (IOException e1) {
+			logger.error("Can not set pagination control");
+		} catch (LimitExceededException e) {
+			logger.error("Limit exceeded (" + String.valueOf(sizeLimit)
+					+ ") : " + e.getMessage());
+		} catch (NameNotFoundException nnfe) {
+			logger.info("While evaluating getDnList, " + base
+					+ " seems to be inexistent !");
+		} catch (CommunicationException e) {
+			Hashtable<?, ?> env = ldapCtx.getEnvironment();
+			Control[] controls = ldapCtx.getConnectControls();
+			ldapCtx.close();
+			ldapCtx = new InitialLdapContext(env, controls);
+		}
+		// Re-activate paged results
+		ldapCtx.setRequestControls(new Control[] {});
+		return cList;
+	}
+
+	private List<String> getDnListNoPagination(LdapContext ldapCtx,
+			String base, String filter, int scope) throws NamingException {
+		List<String> cList = new ArrayList<String>();
+		SearchControls scs = new SearchControls();
+		scs.setSearchScope(scope);
+		scs.setDerefLinkFlag(true);
+		if (sizeLimit != 0)
+			scs.setCountLimit(sizeLimit);
+
+		try {
+			NamingEnumeration<SearchResult> ne = ldapCtx.search(base, filter,
+					scs);
+			while (ne.hasMore()) {
+				String dn = ne.next().getName();
 				if (base.length() > 0) {
 					dn += "," + base;
 				}
 				cList.add(dn);
 			}
-		} catch (IOException e1) {
-			logger.error("Can not set pagination control");
 		} catch (NameNotFoundException nnfe) {
-			logger.info("While evaluating getDnList, " + base + " seems to be inexistent !");
+			logger.info("While evaluating getDnList, " + base
+					+ " seems to be inexistent !");
+		} catch (LimitExceededException e) {
+			logger.error("Limit exceeded (" + String.valueOf(sizeLimit)
+					+ ") : " + e.getMessage());
 		} catch (CommunicationException e) {
 			Hashtable<?, ?> env = ldapCtx.getEnvironment();
 			Control[] controls = ldapCtx.getConnectControls();
@@ -135,33 +214,6 @@ public class LinShareDnList extends DnList {
 			ldapCtx = new InitialLdapContext(env, controls);
 		}
 		return cList;
-	}
-
-	private List<String> getDnListNoPagination(LdapContext ldapCtx, String base, String filter, int scope)
-			throws NamingException {
-        List<String> cList = new ArrayList<String>();
-    	SearchControls scs = new SearchControls();
-   		scs.setSearchScope(scope);
-   		try {
-   	   		NamingEnumeration<SearchResult> ne = ldapCtx.search(base, filter, scs);
-   	        while(ne.hasMore()) {
-   	        	String dn = ne.next().getName();
-   	        	if(base.length() > 0) {
-   	        		dn += "," + base;
-   	        	}
-   	        	cList.add(dn);
-   	        }
-   		} catch (NameNotFoundException nnfe) {
-   			logger.info("While evaluating getDnList, " + base + " seems to be inexistent !");
-   		} catch (LimitExceededException e) {
-   			logger.error("Limit exceeded : " + e.getMessage());
-   		} catch (CommunicationException e) {
-   			Hashtable<?, ?> env = ldapCtx.getEnvironment();
-   			Control[] controls = ldapCtx.getConnectControls();
-   			ldapCtx.close();
-   			ldapCtx = new InitialLdapContext(env, controls);
-   		}
-   		return cList;
 	}
 
 }

@@ -101,7 +101,7 @@ public class LDAPQueryServiceImpl implements LDAPQueryService {
 	}
 
 	@Override
-	public User findUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
+	public User getUser(LDAPConnection ldapConnection, String baseDn, DomainPattern domainPattern, String mail) throws BusinessException, NamingException, IOException {
 		LdapContext ldapContext = (LdapContext) getLdapContext(ldapConnection, baseDn).getReadOnlyContext();
 
 		Map<String, Object> vars = new HashMap<String, Object>();
