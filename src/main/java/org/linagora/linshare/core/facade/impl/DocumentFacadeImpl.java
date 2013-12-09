@@ -107,6 +107,8 @@ public class DocumentFacadeImpl implements DocumentFacade {
 	public DocumentVo insertFile(InputStream in, String fileName, UserVo owner) throws BusinessException {
 		logger.debug("insert files for document entries");
 		Account actor = accountService.findByLsUuid(owner.getLsUuid());
+		fileName = fileName.replace("\\", "_");
+		fileName = fileName.replace(":", "_");
 		DocumentEntry createDocumentEntry = documentEntryService.createDocumentEntry(actor, in, fileName);
 		return documentEntryTransformer.disassemble(createDocumentEntry);
 	}

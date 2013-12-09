@@ -48,7 +48,7 @@ public interface DocumentFacade extends GenericFacade {
 	public DocumentDto addDocumentXop(DocumentAttachement doca) throws BusinessException;
 	public Long getUserMaxFileSize() throws BusinessException;
 	public Long getAvailableSize() throws BusinessException;
-	public DocumentDto uploadfile(InputStream fi, String filename, String description) throws BusinessException;
+	public DocumentDto uploadfile(InputStream fi, String fileName, String description) throws BusinessException;
 	public InputStream getDocumentStream(String docEntryUuid) throws BusinessException;
 	public InputStream getThumbnailStream(String docEntryUuid) throws BusinessException;
 	public void deleteFile(String uuid) throws BusinessException;
