@@ -45,13 +45,15 @@ public class ThreadEntryFacadeImpl extends GenericFacadeImpl implements ThreadEn
 	}
 
 	@Override
-	public ThreadEntryDto uploadfile(String threadUuid, InputStream fi, String filename, String description) throws BusinessException {
+	public ThreadEntryDto uploadfile(String threadUuid, InputStream fi, String fileName, String description) throws BusinessException {
 		User actor = getAuthentication();
 		Thread thread = threadService.findByLsUuid(threadUuid);
 		if (thread == null) {
 			throw new BusinessException(BusinessErrorCode.NO_SUCH_ELEMENT, "Current thread was not found : " + threadUuid);
 		}
-		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, fi, filename);
+		fileName = fileName.replace("\\", "_");
+		fileName = fileName.replace(":", "_");
+		ThreadEntry threadEntry = threadEntryService.createThreadEntry(actor, thread, fi, fileName);
 		threadEntryService.updateFileProperties(actor, threadEntry.getUuid(), description);
 		return new ThreadEntryDto(threadEntry);
 	}

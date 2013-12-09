@@ -91,11 +91,13 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 	}
 
 	@Override
-	public DocumentDto uploadfile(InputStream fi, String filename,
+	public DocumentDto uploadfile(InputStream fi, String fileName,
 			String description) throws BusinessException {
 		User actor = getAuthentication();
+		fileName = fileName.replace("\\", "_");
+		fileName = fileName.replace(":", "_");
 		DocumentEntry res = documentEntryService.createDocumentEntry(actor, fi,
-				filename);
+				fileName);
 
 		documentEntryService.updateFileProperties(actor, res.getUuid(),
 				res.getName(), description);
@@ -109,8 +111,12 @@ public class DocumentFacadeImpl extends GenericFacadeImpl
 			User actor = getAuthentication();
 			DataHandler dh = doca.getDocument();
 			InputStream in = dh.getInputStream();
+			String fileName = doca.getFilename();
+			fileName = fileName.replace("\\", "_");
+			fileName = fileName.replace(":", "_");
+			
 			DocumentEntry res = documentEntryService.createDocumentEntry(actor,
-					in, doca.getFilename());
+					in, fileName);
 			// mandatory ?
 			String comment = (doca.getComment() == null) ? "" : doca
 					.getComment();
