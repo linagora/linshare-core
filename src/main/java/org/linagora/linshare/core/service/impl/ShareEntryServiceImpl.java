@@ -179,18 +179,23 @@ public class ShareEntryServiceImpl implements ShareEntryService {
 
 	@Override
 	public void deleteShare(Account actor, ShareEntry share) throws BusinessException {
-		if(share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin() || actor.isTechnicalAccount()) {
+		if (share.getEntryOwner().equals(actor) || share.getRecipient().equals(actor) || actor.isSuperAdmin()
+				|| actor.isTechnicalAccount()) {
 			ShareLogEntry logEntry = new ShareLogEntry(actor, share, LogAction.SHARE_DELETE, "Delete a sharing");
-	        logEntryService.create(logEntry);
-	        
-	        logger.info("delete share : " + share.getUuid());
-	        shareEntryBusinessService.deleteShare(share);
-	        
-        	notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(actor, share));
-        
+			logEntryService.create(logEntry);
+
+			logger.info("delete share : " + share.getUuid());
+			shareEntryBusinessService.deleteShare(share);
+
+			if (share.getEntryOwner().equals(actor) || actor.isSuperAdmin() || actor.isTechnicalAccount()) {
+				notifierService.sendAllNotification(mailContentBuildingService.buildMailSharedFileDeletedWithRecipient(
+						actor, share));
+			}
+
 		} else {
 			logger.error("Actor " + actor.getAccountReprentation() + " does not own the share : " + share.getUuid());
-			throw new BusinessException(BusinessErrorCode.FORBIDDEN, "You are not authorized to delete this share, it does not belong to you.");
+			throw new BusinessException(BusinessErrorCode.FORBIDDEN,
+					"You are not authorized to delete this share, it does not belong to you.");
 		}
 	}
 	
