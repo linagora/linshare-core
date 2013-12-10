@@ -6,13 +6,13 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <script type="text/template" id="qq-template">
         <div class="qq-uploader-selector qq-uploader">
             <div class="qq-upload-drop-area-selector qq-upload-drop-area">
-                <span>Drop files here to upload</span>
+                <span>${message:pages.files.upload.dragZone}</span>
             </div>
             <div class="qq-upload-button-selector qq-upload-button">
-                <div>Upload a file</div>
+                <div>${message:pages.files.upload.uploadButton}</div>
             </div>
             <span class="qq-drop-processing-selector qq-drop-processing">
-                <span>Processing dropped files...</span>
+                <span>${message:pages.files.upload.dropProcessing}</span>
                 <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
             </span>
             <ul class="qq-upload-list-selector qq-upload-list">
@@ -25,9 +25,9 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     <span class="qq-upload-file-selector qq-upload-file"></span>
                     <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text"/>
                     <span class="qq-upload-size-selector qq-upload-size"></span>
-                    <a class="qq-upload-cancel-selector qq-upload-cancel" href="#">Cancel</a>
-                    <a class="qq-upload-retry-selector qq-upload-retry" href="#">Retry</a>
-                    <a class="qq-upload-delete-selector qq-upload-delete" href="#">Delete</a>
+                    <a class="qq-upload-cancel-selector qq-upload-cancel" href="#">${message:pages.files.upload.cancelButton}</a>
+                    <a class="qq-upload-retry-selector qq-upload-retry" href="#">${message:pages.files.upload.retryButton}</a>
+                    <a class="qq-upload-delete-selector qq-upload-delete" href="#">${message:pages.files.upload.deleteButton}</a>
                     <span class="qq-upload-status-text-selector qq-upload-status-text"></span>
                 </li>
             </ul>
@@ -135,13 +135,7 @@ xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
                     onLeave: "${message:pages.files.upload.onLeave}"
                 },
                 text: {
-                    uploadButton: "${message:pages.files.upload.uploadButton}",
-                    cancelButton: "${message:pages.files.upload.cancelButton}",
-                    retryButton: "${message:pages.files.upload.retryButton}",
-                    deleteButton: "${message:pages.files.upload.deleteButton}",
                     failUpload: "${message:pages.files.upload.failUpload}",
-                    dragZone: "${message:pages.files.upload.dragZone}",
-                    dropProcessing: "${message:pages.files.upload.dropProcessing}",
                     formatProgress: "${message:pages.files.upload.formatProgress}",
                     waitingForResponse: "${message:pages.files.upload.waitingForResponse}"
                 },
